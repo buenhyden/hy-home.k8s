@@ -96,7 +96,7 @@ class DocumentProfile:
     headings: HeadingContract
     template: PurePosixPath | None
     mode: Literal[
-        "authored", "template", "frontmatter-free", "native", "generated", "non-target"
+        "authored", "template", "frontmatter-free", "classification-only", "generated", "non-target"
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]

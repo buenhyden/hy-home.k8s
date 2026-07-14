@@ -3,7 +3,7 @@ title: 'Governance Owner and Roster Currentness Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Governance Owner and Roster Currentness Implementation Plan
@@ -31,6 +31,13 @@ This Plan converts the approved Spec 025 disposition ledgers into six
 independently testable and reviewable implementation tasks. It preserves
 completed evidence, repairs current ownership and navigation, and adds one
 focused repository-static roster validator.
+
+**2026-07-14 terminology correction:** Completed command examples, fixture
+counts, and commit evidence below remain point-in-time records. The current
+machine contract calls the inventory `local`, `claude`, and `codex` adapter
+surfaces, and the current roster phrase is `Ten shared local role stems / thirty
+tracked role adapters`. `.agents/**` is local/Antigravity evidence, not Gemini
+CLI native evidence.
 
 ## Context
 

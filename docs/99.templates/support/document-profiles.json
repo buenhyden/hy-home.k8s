@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
-  "schemaVersion": 3,
+  "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
+  "schemaVersion": 4,
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -1915,13 +1915,69 @@
       "appendContract": null
     },
     {
-      "id": "exception/provider-native-metadata",
+      "id": "exception/local-agent-asset",
       "class": "exception",
-      "mode": "native",
+      "mode": "classification-only",
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.(?:agents|claude|codex)/.+\\.md$"
+          "value": "^\\.agents/.+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/repository-runtime-baseline",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": ".claude/CLAUDE.md"
+        },
+        {
+          "kind": "exact",
+          "value": ".codex/CODEX.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/provider-native-metadata",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^\\.claude/agents/[^/]+\\.md$"
         }
       ],
       "frontmatter": {
@@ -1969,7 +2025,7 @@
     {
       "id": "exception/native-contract",
       "class": "exception",
-      "mode": "native",
+      "mode": "classification-only",
       "routes": [
         {
           "kind": "regex",

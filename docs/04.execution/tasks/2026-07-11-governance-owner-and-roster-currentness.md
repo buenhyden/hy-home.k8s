@@ -3,7 +3,7 @@ title: 'Task: Governance Owner and Roster Currentness'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Task: Governance Owner and Roster Currentness
@@ -13,6 +13,11 @@ updated: 2026-07-13
 This document tracks implementation and verification work for governance owner
 and roster currentness. It keeps tasks derived from Spec 025 and its execution
 Plan traceable while preserving repository-static evidence boundaries.
+
+**2026-07-14 terminology correction:** The completed RCR evidence and counts
+remain unchanged. Current roster validation names `local`, `claude`, and
+`codex` adapter surfaces and requires `Ten shared local role stems / thirty
+tracked role adapters`; `.agents/**` does not prove Gemini CLI native support.
 
 ## Inputs
 

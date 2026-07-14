@@ -3773,22 +3773,22 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
 
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"
-gemini_agents_dir = root / ".agents/agents"
+local_agents_dir = root / ".agents/agents"
 if claude_agents_dir.is_symlink():
     fail(".claude/agents must be a real Claude-specific directory, not a symlink")
 elif not claude_agents_dir.is_dir():
     fail(".claude/agents must be a real Claude-specific directory")
 claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
 codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
-gemini_agents = {path.stem: path for path in sorted(gemini_agents_dir.glob("*.md"))}
+local_agents = {path.stem: path for path in sorted(local_agents_dir.glob("*.md"))}
 for stem in sorted(set(claude_agents) - set(codex_agents)):
     fail(f"missing Codex agent adapter for .claude/agents/{stem}.md")
 for stem in sorted(set(codex_agents) - set(claude_agents)):
     fail(f"Codex agent adapter has no Claude peer: .codex/agents/{stem}.toml")
-for stem in sorted(set(claude_agents) - set(gemini_agents)):
-    fail(f"missing Gemini agent adapter for .claude/agents/{stem}.md")
-for stem in sorted(set(gemini_agents) - set(claude_agents)):
-    fail(f"Gemini agent adapter has no Claude peer: .agents/agents/{stem}.md")
+for stem in sorted(set(claude_agents) - set(local_agents)):
+    fail(f"missing local/Antigravity agent adapter for .claude/agents/{stem}.md")
+for stem in sorted(set(local_agents) - set(claude_agents)):
+    fail(f"local/Antigravity agent adapter has no Claude peer: .agents/agents/{stem}.md")
 
 expected_codex_agent_models = {
     "supervisor": ("gpt-5.5", "xhigh"),
@@ -3826,6 +3826,10 @@ expected_claude_agent_tools = {
     "security-auditor": "Read, Grep, Glob, Bash",
     "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
 }
+expected_local_agent_models = {
+    stem: "Gemini 3.1 Pro" if stem == "supervisor" else "Gemini 3.5 Flash"
+    for stem in expected_claude_agent_models
+}
 for stem, claude_path in sorted(claude_agents.items()):
     claude_text = read_text(claude_path)
     claude_metadata = load_markdown_frontmatter(claude_path)
@@ -3838,7 +3842,7 @@ for stem, claude_path in sorted(claude_agents.items()):
     if expected_claude_tools and normalize_tools(claude_metadata.get("tools")) != expected_claude_tools:
         fail(f"{rel(claude_path)} tools must be {expected_claude_tools!r}")
     codex_path = codex_agents.get(stem)
-    gemini_path = gemini_agents.get(stem)
+    local_path = local_agents.get(stem)
     if not codex_path:
         continue
     codex_text = read_text(codex_path)
@@ -3856,26 +3860,29 @@ for stem, claude_path in sorted(claude_agents.items()):
             fail(f"{rel(codex_path)} model must be {expected_model!r}")
         if codex_data.get("model_reasoning_effort") != expected_effort:
             fail(f"{rel(codex_path)} model_reasoning_effort must be {expected_effort!r}")
-    if not gemini_path:
+    if not local_path:
         continue
-    gemini_text = read_text(gemini_path)
-    gemini_metadata = load_markdown_frontmatter(gemini_path)
-    if gemini_metadata.get("name") != stem:
-        fail(f"{rel(gemini_path)} name must match file stem: {stem}")
-    expected_gemini_model = "Gemini 3.1 Pro" if stem == "supervisor" else "Gemini 3.5 Flash"
-    if gemini_metadata.get("model") != expected_gemini_model:
-        fail(f"{rel(gemini_path)} model must be {expected_gemini_model!r}")
-    provider_scope_imports = {
+    local_text = read_text(local_path)
+    local_metadata = load_markdown_frontmatter(local_path)
+    if local_metadata.get("name") != stem:
+        fail(f"{rel(local_path)} name must match file stem: {stem}")
+    expected_local_model = expected_local_agent_models.get(stem)
+    if local_metadata.get("model") != expected_local_model:
+        fail(
+            f"{rel(local_path)} local/Antigravity adapter model label must be "
+            f"{expected_local_model!r}"
+        )
+    adapter_scope_imports = {
         "claude": extract_scope_imports(claude_text),
         "codex": extract_scope_imports(codex_text),
-        "gemini": extract_scope_imports(gemini_text),
+        "local": extract_scope_imports(local_text),
     }
-    if len({tuple(imports) for imports in provider_scope_imports.values()}) != 1:
+    if len({tuple(imports) for imports in adapter_scope_imports.values()}) != 1:
         fail(
             f"scope import mismatch for role {stem}: "
             + ", ".join(
-                f"{provider}={imports!r}"
-                for provider, imports in sorted(provider_scope_imports.items())
+                f"{surface}={imports!r}"
+                for surface, imports in sorted(adapter_scope_imports.items())
             )
         )
 

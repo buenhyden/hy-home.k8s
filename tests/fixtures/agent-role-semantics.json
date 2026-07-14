@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "providers": ["gemini", "claude", "codex"],
+  "schemaVersion": 2,
+  "adapterSurfaces": ["local", "claude", "codex"],
   "roles": [
     "code-reviewer",
     "doc-writer",
@@ -21,7 +21,7 @@
     "handoffs": "ROLE-HANDOFF",
     "capabilityTier": "ROLE-CAPABILITY-TIER",
     "requiredEvidence": "ROLE-EVIDENCE",
-    "providerStem": "ROLE-PROVIDER-STEM"
+    "adapterStem": "ROLE-ADAPTER-STEM"
   },
   "mutations": ["remove", "replace"],
   "forbiddenCommonFields": ["model", "tools", "modelReasoningEffort"],
@@ -40,31 +40,31 @@
   "adversarialCases": [
     {
       "name": "yaml-duplicate-name",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "code-reviewer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "yamlDuplicateName",
       "expectedRule": "ROLE-ADAPTER-PARSE"
     },
     {
       "name": "yaml-nonmapping-frontmatter",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "doc-writer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "yamlNonMapping",
       "expectedRule": "ROLE-ADAPTER-PARSE"
     },
     {
       "name": "yaml-nonscalar-name",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "gitops-reviewer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "yamlNonScalarName",
       "expectedRule": "ROLE-ADAPTER-PARSE"
     },
     {
       "name": "fenced-responsibility",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "incident-responder",
       "category": "responsibilities",
       "mutation": "fenced",
@@ -72,7 +72,7 @@
     },
     {
       "name": "commented-output",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "k8s-implementer",
       "category": "outputs",
       "mutation": "htmlComment",
@@ -80,7 +80,7 @@
     },
     {
       "name": "struck-prohibition",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "network-reviewer",
       "category": "prohibitedActions",
       "mutation": "strikethrough",
@@ -88,7 +88,7 @@
     },
     {
       "name": "revoked-stop",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "observability-reviewer",
       "category": "stopConditions",
       "mutation": "revoked",
@@ -96,7 +96,7 @@
     },
     {
       "name": "contradicted-handoff",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "security-auditor",
       "category": "handoffs",
       "mutation": "contradicted",
@@ -104,7 +104,7 @@
     },
     {
       "name": "commented-capability",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "supervisor",
       "category": "capabilityTier",
       "mutation": "htmlComment",
@@ -112,23 +112,23 @@
     },
     {
       "name": "fenced-evidence",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "wiki-curator",
       "category": "requiredEvidence",
       "mutation": "fenced",
       "expectedRule": "ROLE-EVIDENCE"
     },
     {
-      "name": "struck-provider-heading",
-      "provider": "gemini",
+      "name": "struck-adapter-heading",
+      "adapterSurface": "local",
       "role": "code-reviewer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "strikethrough",
-      "expectedRule": "ROLE-PROVIDER-STEM"
+      "expectedRule": "ROLE-ADAPTER-STEM"
     },
     {
       "name": "wrapped-contradiction",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "doc-writer",
       "category": "requiredEvidence",
       "mutation": "wrappedContradiction",
@@ -136,7 +136,7 @@
     },
     {
       "name": "quoted-responsibility",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "code-reviewer",
       "category": "responsibilities",
       "mutation": "blockquote",
@@ -144,7 +144,7 @@
     },
     {
       "name": "nested-quoted-output",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "doc-writer",
       "category": "outputs",
       "mutation": "nestedBlockquote",
@@ -152,7 +152,7 @@
     },
     {
       "name": "lazy-quoted-prohibition",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "gitops-reviewer",
       "category": "prohibitedActions",
       "mutation": "lazyBlockquote",
@@ -160,7 +160,7 @@
     },
     {
       "name": "quoted-stop",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "incident-responder",
       "category": "stopConditions",
       "mutation": "blockquote",
@@ -168,7 +168,7 @@
     },
     {
       "name": "nested-quoted-handoff",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "k8s-implementer",
       "category": "handoffs",
       "mutation": "nestedBlockquote",
@@ -176,7 +176,7 @@
     },
     {
       "name": "lazy-quoted-capability",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "network-reviewer",
       "category": "capabilityTier",
       "mutation": "lazyBlockquote",
@@ -184,7 +184,7 @@
     },
     {
       "name": "quoted-evidence",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "observability-reviewer",
       "category": "requiredEvidence",
       "mutation": "blockquote",
@@ -192,7 +192,7 @@
     },
     {
       "name": "indented-tilde-output",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "security-auditor",
       "category": "outputs",
       "mutation": "indentedTildeFence",
@@ -200,7 +200,7 @@
     },
     {
       "name": "following-paragraph-revocation",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "security-auditor",
       "category": "responsibilities",
       "mutation": "followingParagraphRevocation",
@@ -208,7 +208,7 @@
     },
     {
       "name": "following-list-revocation",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "supervisor",
       "category": "handoffs",
       "mutation": "followingListRevocation",
@@ -216,7 +216,7 @@
     },
     {
       "name": "not-true-claim",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "wiki-curator",
       "category": "prohibitedActions",
       "mutation": "notTrue",
@@ -224,7 +224,7 @@
     },
     {
       "name": "forward-revocation",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "supervisor",
       "category": "responsibilities",
       "mutation": "forwardRevocation",
@@ -232,7 +232,7 @@
     },
     {
       "name": "external-negative-prefix",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "incident-responder",
       "category": "outputs",
       "mutation": "negativePrefix",
@@ -240,7 +240,7 @@
     },
     {
       "name": "inline-code-only-capability",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "k8s-implementer",
       "category": "capabilityTier",
       "mutation": "inlineCodeOnly",
@@ -248,31 +248,31 @@
     },
     {
       "name": "list-contained-blockquote",
-      "provider": "claude",
+      "adapterSurface": "claude",
       "role": "network-reviewer",
       "category": "handoffs",
       "mutation": "listBlockquote",
       "expectedRule": "ROLE-HANDOFF"
     },
     {
-      "name": "quoted-provider-heading",
-      "provider": "codex",
+      "name": "quoted-adapter-heading",
+      "adapterSurface": "codex",
       "role": "code-reviewer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "blockquote",
-      "expectedRule": "ROLE-PROVIDER-STEM"
+      "expectedRule": "ROLE-ADAPTER-STEM"
     },
     {
-      "name": "nested-quoted-provider-heading",
-      "provider": "claude",
+      "name": "nested-quoted-adapter-heading",
+      "adapterSurface": "claude",
       "role": "gitops-reviewer",
-      "category": "providerStem",
+      "category": "adapterStem",
       "mutation": "nestedBlockquote",
-      "expectedRule": "ROLE-PROVIDER-STEM"
+      "expectedRule": "ROLE-ADAPTER-STEM"
     },
     {
       "name": "unordered-list-indented-code",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "observability-reviewer",
       "category": "outputs",
       "mutation": "unorderedListIndentedCode",
@@ -280,7 +280,7 @@
     },
     {
       "name": "ordered-list-indented-code",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "security-auditor",
       "category": "requiredEvidence",
       "mutation": "orderedListIndentedCode",
@@ -288,7 +288,7 @@
     },
     {
       "name": "forward-false-revocation",
-      "provider": "gemini",
+      "adapterSurface": "local",
       "role": "doc-writer",
       "category": "outputs",
       "mutation": "forwardFalse",
@@ -296,7 +296,7 @@
     },
     {
       "name": "backward-not-true-revocation",
-      "provider": "codex",
+      "adapterSurface": "codex",
       "role": "gitops-reviewer",
       "category": "stopConditions",
       "mutation": "backwardNotTrue",

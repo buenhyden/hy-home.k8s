@@ -21,6 +21,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from document_contracts import (
+    REGISTRY_PATH,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
@@ -29,6 +30,7 @@ from document_contracts import (
     enumerate_target_markdown,
     load_registry,
     read_repository_text,
+    validate_registry,
 )
 
 
@@ -788,7 +790,42 @@ def _repository_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
+def _classification_route_mutation_registry(
+    root: Path,
+    raw_registry: dict[str, Any],
+    profile_id: str,
+    fixture_path: PurePosixPath,
+) -> Any:
+    mutated = copy.deepcopy(raw_registry)
+    try:
+        profile = next(
+            item for item in mutated["profiles"] if item["id"] == profile_id
+        )
+    except StopIteration as exc:
+        raise ContractError(f"unknown classification-only profile: {profile_id}") from exc
+
+    path_text = fixture_path.as_posix()
+    mutation_count = 0
+    for route in profile["routes"]:
+        matches = (
+            path_text == route["value"]
+            if route["kind"] == "exact"
+            else re.fullmatch(route["value"], path_text) is not None
+        )
+        if not matches:
+            continue
+        route["kind"] = "exact"
+        route["value"] = f"{path_text}.classification-route-mismatch"
+        mutation_count += 1
+    if mutation_count != 1:
+        raise ContractError(
+            f"classification-only route mutation expected one route, got {mutation_count}"
+        )
+    return validate_registry(root, mutated)
+
+
 def _self_test(root: Path) -> list[str]:
+    raw_registry = json.loads((root / REGISTRY_PATH).read_text(encoding="utf-8"))
     registry = load_registry(root)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     inventory = enumerate_target_markdown(root)
@@ -989,7 +1026,7 @@ def _self_test(root: Path) -> list[str]:
             ):
                 failures.append(f"invalid validate-document mode: {profile.profile_id}")
             if applicability == "classification-only" and (
-                profile.mode not in {"native", "generated"} or not structural_na
+                profile.mode not in {"classification-only", "generated"} or not structural_na
             ):
                 failures.append(f"invalid classification-only mode: {profile.profile_id}")
             if applicability == "append-fragment" and profile.profile_id != "governance/progress-entry":
@@ -1047,10 +1084,32 @@ def _self_test(root: Path) -> list[str]:
                             f"classification-only structural N/A {profile.profile_id}: {actual_rules}"
                         )
                 for mutation in row["negativeMutations"]:
+                    expected_mutation = {
+                        "kind": "classification-route-mismatch",
+                        "expectedRuleIds": ["REGISTRY_ROUTE_UNCOVERED"],
+                    }
+                    if mutation != expected_mutation:
+                        failures.append(
+                            "classification negative "
+                            f"{profile.profile_id}: mutation contract must be "
+                            f"{expected_mutation!r}, got {mutation!r}"
+                        )
+                        continue
                     try:
-                        classify_path(registry, PurePosixPath("uncovered.fixture"))
+                        mutated_registry = _classification_route_mutation_registry(
+                            root,
+                            raw_registry,
+                            profile.profile_id,
+                            path,
+                        )
+                        classify_path(mutated_registry, path)
                         actual_rules: list[str] = []
-                    except DocumentContractError as exc:
+                    except (ContractError, DocumentContractError) as exc:
+                        if isinstance(exc, ContractError):
+                            failures.append(
+                                f"classification negative {profile.profile_id}: {exc}"
+                            )
+                            continue
                         actual_rules = _rule_ids(exc.diagnostics)
                     if actual_rules != mutation["expectedRuleIds"]:
                         failures.append(

@@ -3,7 +3,7 @@ title: 'Agent Governance Contract Normalization Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Agent Governance Contract Normalization Technical Specification (Spec)
@@ -12,15 +12,19 @@ updated: 2026-07-13
 
 This document defines the design for normalizing the AI-agent governance,
 provider-adapter, and validation surfaces in `hy-home.k8s`. The target surfaces
-are the root provider shims (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`),
-provider runtime directories (`.agents/`, `.claude/`, `.codex/`), GitHub control
-and CI surfaces (`.github/`), and the canonical governance stage
+are the root provider shims (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`), the
+Claude-native role files at `.claude/agents/*.md`, Codex-native role files at
+`.codex/agents/*.toml`, repository-local baselines at `.claude/CLAUDE.md` and
+`.codex/CODEX.md`, local/Antigravity `.agents/**` assets, GitHub control and CI
+surfaces (`.github/`), and the canonical governance stage
 (`docs/00.agent-governance/`).
 
 The work keeps the repository's existing architecture: Stage 00 owns durable
-agent governance; `.agents/` owns provider-neutral shared assets; provider
-adapters expose native runtime files and wiring; validators and CI close the
-feedback loop.
+agent governance; `.agents/` owns provider-neutral shared assets and
+local/Antigravity adapters; Claude and Codex expose native role files;
+`.codex/hooks.json` and `.agents/hooks.json` provide context/validation wiring;
+validators and CI close the feedback loop. Gemini CLI native `.gemini/**` is
+absent and remains `DEFER`.
 
 ## Strategic Boundaries & Non-goals
 
@@ -32,8 +36,8 @@ In scope:
 - Resolve contradictions, duplicated policy, old wording, and ambiguous
   frontmatter or section contracts in the target surfaces.
 - Keep root provider shims thin and route durable policy to Stage 00 owners.
-- Preserve provider-native capability differences instead of forcing one
-  provider's metadata model onto every adapter.
+- Preserve native and repository-local capability differences instead of
+  forcing one provider's metadata model onto every adapter.
 - Align hooks, CI, PR templates, and repository validators with the documented
   governance contract where deterministic checks are reasonable.
 - Record external official-source basis for Claude, Codex, Gemini, and GitHub
@@ -54,11 +58,14 @@ Out of scope:
   owns durable policy. Provider runtime baselines own provider-specific loading
   order, hook behavior notes, and validation expectations without duplicating
   long policy bodies.
-- **Data / Interface Contract**: Provider agent definitions remain
-  provider-native: Claude uses Markdown frontmatter with native `tools:`;
-  Gemini uses `.agents/agents/*.md` as Gemini-tier agent reference indexes;
-  Codex uses `.codex/agents/*.toml` with `model` and
-  `model_reasoning_effort`.
+- **Data / Interface Contract**: Role projections retain their surface
+  contracts: Claude uses `.claude/agents/*.md` Markdown frontmatter with native
+  `tools:`; Codex uses `.codex/agents/*.toml` with `model` and
+  `model_reasoning_effort`; local/Antigravity uses `.agents/agents/*.md`.
+  `.claude/CLAUDE.md` and `.codex/CODEX.md` are repository-local baselines,
+  while `.agents/hooks.json` and `.codex/hooks.json` are context/validation
+  wiring. Gemini CLI native `.gemini/agents/**` and `.gemini/settings.json` are
+  absent/`DEFER`.
 - **Governance Contract**: Capability parity is role parity, not identical key
   parity. The same role, scope imports, guardrails, handoff, and postflight
   expectations must be preserved across providers, while native metadata
@@ -70,9 +77,11 @@ Out of scope:
   - Governance Core: `docs/00.agent-governance/**`, root shims, provider
     notes, harness catalog, subagent protocol, common governance, and model
     policy.
-  - Provider Adapters: `.agents/**`, `.claude/**`, and `.codex/**`, including
-    agent definitions, runtime baselines, hooks wiring, skills, workflows, and
-    output styles.
+  - Adapter Surfaces: native role definitions at `.claude/agents/*.md` and
+    `.codex/agents/*.toml`; repository-local baselines at `.claude/CLAUDE.md`
+    and `.codex/CODEX.md`; shared/local assets at `.agents/**`; exact Claude and
+    Codex shared-asset symlink views; and context/validation wiring at
+    `.codex/hooks.json` and `.agents/hooks.json`.
   - Validation & Automation: `.github/**`, shared hook scripts, repository
     validators, CI workflow, PR template, and validation evidence surfaces.
 - **Key Dependencies**:
@@ -83,7 +92,7 @@ Out of scope:
   - `scripts/validate-repo-quality-gates.sh` as the primary repo-static gate.
 - **Tech Stack**:
   - Markdown and TOML provider-adapter files.
-  - JSON hook wiring for Claude, Codex, and Gemini surfaces.
+  - JSON settings/wiring for Claude, Codex, and local/Antigravity surfaces.
   - GitHub Actions YAML for CI.
   - Shell and Python-backed repository validation scripts.
 
@@ -92,8 +101,9 @@ Out of scope:
 - **Schema / Entity Strategy**:
   - Treat each governance document as a contract surface with one canonical
     owner.
-  - Treat each provider adapter as a projection of the canonical contract into
-    provider-native syntax.
+  - Treat each tracked adapter as a projection of the canonical contract into
+    its declared native or repository-local syntax without upgrading local
+    files to provider-native capability.
   - Treat hooks, validators, and CI workflow files as enforcement projections,
     not independent policy owners.
 - **Migration / Transition Plan**:
@@ -288,8 +298,9 @@ surfaces change.
   hooks, QA, CI/CD, and memory.
 - **VAL-AGC-002**: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` remain
   frontmatter-free thin gateways and do not duplicate durable policy bodies.
-- **VAL-AGC-003**: `.agents`, `.claude`, and `.codex` adapters preserve role
-  parity while representing provider-native metadata accurately.
+- **VAL-AGC-003**: `.agents`, `.claude`, and `.codex` tracked adapters preserve
+  role parity while distinguishing local/Antigravity, repository-baseline, and
+  Claude/Codex native role metadata accurately; Gemini CLI remains `DEFER`.
 - **VAL-AGC-004**: `.github` control surfaces remain GitHub-native and
   frontmatter-free while reflecting canonical QA/CI and security owners.
 - **VAL-AGC-005**: Repository validation gates pass, and any optional-tool

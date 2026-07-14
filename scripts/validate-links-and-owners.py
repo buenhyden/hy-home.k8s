@@ -1471,7 +1471,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
     profile_map: dict[PurePosixPath, ProfileView] = {}
     for item, path in zip(documents, paths, strict=True):
         profile_map[path] = ProfileView(item["profile"], item["profileClass"], item["mode"])
-        if item["mode"] in {"frontmatter-free", "native"}:
+        if item["mode"] in {"frontmatter-free", "classification-only"}:
             texts[path] = item["body"]
         elif item["body"] != "@ledger":
             texts[path] = authored(item["title"], item["type"], item["status"], item["body"])

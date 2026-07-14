@@ -21,9 +21,9 @@ hooks, pre-commit, CI job selection, shared roles, and provider gateways.
 
 **Architecture:** Stage 00 JSON contracts own path selection and role semantics;
 small Python programs validate, select, and execute local lanes. Hooks and CI
-consume selector output rather than copying path globs, while provider adapters
-retain native syntax and share only responsibility, output, prohibition, stop,
-handoff, capability-tier, and evidence meaning.
+consume selector output rather than copying path globs, while tracked adapters
+retain surface-specific syntax and share only responsibility, output,
+prohibition, stop, handoff, capability-tier, and evidence meaning.
 
 **Tech Stack:** JSON Schema 2020-12, Python 3.11 standard library, Bash,
 pre-commit, GitHub Actions YAML, Markdown/TOML provider adapters, and existing
@@ -38,7 +38,7 @@ repository-static validators.
 - Validation results are exactly `PASS`, `SKIP`, `FAIL`, or `DEFER`; no matching files is `SKIP`, not `PASS`.
 - `pre-commit run --all-files` does not prove `commit-msg` or `manual` stages; record them separately.
 - Ignored `_workspace/**` children are not changed-path inputs; only `_workspace/README.md` and ignore contracts are tracked surfaces.
-- Provider-native syntax and metadata remain distinct; common role semantics must not duplicate provider model IDs, Claude tools, or Codex effort values.
+- Surface-specific syntax and metadata remain distinct; common role semantics must not duplicate provider/local model IDs, Claude tools, or Codex effort values.
 - This Plan owns workflow path detection and job routing only. Spec 032 owns Action identity, permissions, and protected-domain behavior.
 - Post-Spec-030 program-created authored documents add an exact fourteen-column
   durable migration-ledger row in their creation commit; never weaken strict
@@ -53,13 +53,21 @@ This Plan implements Spec 031 through execution startup, affected-surface
 contracts, local lane integration, CI selector integration, role-semantic
 contracts, and provider/gateway closure.
 
+**2026-07-14 terminology correction:** The completed ASQA steps, 480 mutation
+cases, 33 adversarial cases, 20 vocabulary probes, and commit evidence below are
+preserved. The current machine owner is agent-role-semantics v2 with
+`adapterSurfaces = [local, claude, codex]`, `adapterStem`, and
+`ROLE-ADAPTER-STEM`; `.agents/**` is a local/Antigravity adapter surface, not a
+Gemini CLI native surface.
+
 ## Context
 
 The current workflow and hooks duplicate path conditions. CI does not fully
 cover `_workspace/README.md`, `.gitignore`, `.env.example`, all GitOps and
 infrastructure paths, policy, secrets, or Traefik. Current agent validation
 checks stems and selected Claude/Codex phrases but does not enforce complete
-role semantics across Gemini, Claude, and Codex for all ten roles.
+role semantics across local/Antigravity, Claude, and Codex adapters for all ten
+roles.
 
 ## Goals & In-Scope
 
@@ -67,7 +75,7 @@ role semantics across Gemini, Claude, and Codex for all ten roles.
   CI jobs, protected level, fallback, and evidence lane.
 - Drive pre/post-edit and completion validation from the canonical mapping.
 - Replace copied GitHub path filters with deterministic selector outputs.
-- Enforce shared role semantics across thirty provider adapters.
+- Enforce shared role semantics across thirty tracked role adapters.
 - Align provider gateways and handoff evidence without overstating runtime use.
 
 ## Non-Goals & Out-of-Scope
@@ -87,7 +95,7 @@ role semantics across Gemini, Claude, and Codex for all ten roles.
 | Local consumers | shared hooks, three hook configs, `.pre-commit-config.yaml`, QA workflow | Pass changed paths to selector/runner and report exact results. |
 | CI consumer | `.github/workflows/ci.yml` | Collect changed paths and expose canonical job-selection outputs. |
 | Role contract | `agent-role-semantics.json` and schema | Ten-role provider-neutral semantic owner. |
-| Role validator | `scripts/validate-agent-role-semantics.py`, fixture JSON | Validate thirty adapters without redefining native metadata. |
+| Role validator | `scripts/validate-agent-role-semantics.py`, fixture JSON | Validate thirty local/Claude/Codex adapters without redefining surface metadata. |
 | Gateways/governance | root shims, runtime baselines, provider notes, Stage 00 QA docs | Link canonical contracts and define evidence lanes/handoffs. |
 
 ### Affected-Surface Interfaces
@@ -528,7 +536,7 @@ git commit -m "ci(qa): select jobs from affected-surface registry"
 
 **Interfaces:**
 
-- Consumes: provider-native bodies and canonical model policy without copying model metadata.
+- Consumes: local/Claude/Codex adapter bodies and canonical model policy without copying model metadata.
 - Produces: category-specific semantic diagnostics for thirty adapters.
 
 - [ ] **Step 1: Define ten role records and mutation fixtures**
@@ -536,7 +544,7 @@ git commit -m "ci(qa): select jobs from affected-surface registry"
 Roles are exactly `supervisor`, `code-reviewer`, `doc-writer`,
 `gitops-reviewer`, `incident-responder`, `k8s-implementer`,
 `network-reviewer`, `observability-reviewer`, `security-auditor`, and
-`wiki-curator`. For every role/provider, fixtures remove or replace one
+`wiki-curator`. For every role/adapter surface, fixtures remove or replace one
 responsibility, output, prohibition, stop, handoff, capability tier, or evidence
 anchor and name the exact expected rule ID.
 
@@ -548,19 +556,22 @@ python3 scripts/validate-agent-role-semantics.py --self-test
 
 Expected: exit 1 for unimplemented `ROLE-RESPONSIBILITY`, `ROLE-OUTPUT`,
 `ROLE-PROHIBITED`, `ROLE-STOP`, `ROLE-HANDOFF`, `ROLE-CAPABILITY-TIER`,
-`ROLE-EVIDENCE`, and `ROLE-PROVIDER-STEM` cases.
+`ROLE-EVIDENCE`, and current `ROLE-ADAPTER-STEM` cases. The original
+`ROLE-PROVIDER-STEM` name is retained only in dated historical evidence.
 
-- [ ] **Step 3: Parse provider-native bodies**
+- [ ] **Step 3: Parse surface-specific bodies**
 
-Use YAML Frontmatter plus Markdown body for `.agents`/`.claude`; use `tomllib`
-and `developer_instructions` for Codex. Normalize whitespace only; retain exact
-scope import targets and provider metadata validation in existing owners.
+Use YAML Frontmatter plus Markdown body for local `.agents` and native Claude
+`.claude`; use `tomllib` and `developer_instructions` for native Codex.
+Normalize whitespace only; retain exact scope import targets and
+surface-metadata validation in existing owners.
 
 - [ ] **Step 4: Align role bodies with the common contract**
 
 Add missing semantic content to the owning section in all provider forms.
-Do not change model, reasoning effort, or native tool metadata. Make the
-smallest topic-specific edit needed for each failed category.
+Do not change model declarations, reasoning effort, or Claude-native tool
+metadata. Make the smallest topic-specific edit needed for each failed
+category.
 
 - [ ] **Step 5: Run GREEN role validation**
 
@@ -637,8 +648,8 @@ runtime-consumption evidence.
 - [x] **Step 4: Integrate focused validators into repository quality**
 
 Invoke `validate-affected-surfaces.py` and `validate-agent-role-semantics.py`;
-remove superseded hardcoded path/semantic checks while retaining provider-native
-metadata and roster-currentness validation.
+remove superseded hardcoded path/semantic checks while retaining
+surface-specific metadata and roster-currentness validation.
 
 - [x] **Step 5: Run full GREEN bundle**
 
@@ -686,7 +697,7 @@ git commit -m "docs(agents): align provider qa evidence contracts"
 
 - [x] Every protected and validator-consumed tracked path has deterministic local and CI selection coverage.
 - [x] Local hooks, pre-commit, and CI consume the canonical surface contract.
-- [x] Thirty provider adapters satisfy all shared semantic categories without common model/tool metadata duplication.
+- [x] Thirty tracked adapters across `local`, `claude`, and `codex` satisfy all shared semantic categories without common model/tool metadata duplication.
 - [x] PASS/SKIP/FAIL/DEFER and all validation lanes are documented and evidenced without overclaim.
 - [x] Action identity, permissions, and protected behavior remain assigned to Spec 032.
 

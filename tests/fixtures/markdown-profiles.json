@@ -548,10 +548,40 @@
       ]
     },
     {
-      "profile": "exception/provider-native-metadata",
-      "mode": "native",
+      "profile": "exception/local-agent-asset",
+      "mode": "classification-only",
       "applicability": "classification-only",
       "fixturePath": ".agents/fixture.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/repository-runtime-baseline",
+      "mode": "classification-only",
+      "applicability": "classification-only",
+      "fixturePath": ".codex/CODEX.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/provider-native-metadata",
+      "mode": "classification-only",
+      "applicability": "classification-only",
+      "fixturePath": ".claude/agents/fixture.md",
       "positiveSource": "# Fixture Document\n",
       "negativeMutations": [
         {
@@ -579,7 +609,7 @@
     },
     {
       "profile": "exception/native-contract",
-      "mode": "native",
+      "mode": "classification-only",
       "applicability": "classification-only",
       "fixturePath": "docs/03.specs/999-fixture/contracts/openapi.yaml",
       "positiveSource": "# Fixture Document\n",

@@ -3,7 +3,7 @@ title: 'README and Workspace Profiles Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # README and Workspace Profiles Implementation Plan
@@ -346,8 +346,10 @@ Expected: commit succeeds.
 - Produces 61 registry profiles and 28 tracked Markdown template forms, up from
   55 and 22. Add six profile and six template coverage rows to
   `registry-cases.json`, add six rows to `templateModeCoverage`, and update the
-  `DocumentProfileContract.v1` and `TemplateCompatibilityContract.v1` semantic
-  digests without changing authored compatibility-debt baselines.
+  the then-current document-profile and template-compatibility semantic digests
+  without changing authored compatibility-debt baselines. The current registry
+  projection is `DocumentProfileContract.v2`; the completed RWP counts and
+  commands remain historical evidence.
 - Defines `--profile readme` as a family alias selecting only IDs beginning
   `readme/` whose class is `readme` and mode is `frontmatter-free`. Exact-ID
   selection remains supported, and `template/readme/*` never counts in the

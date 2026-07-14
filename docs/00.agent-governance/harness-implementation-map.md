@@ -102,8 +102,8 @@ where is the evidence recorded?_
 
 | Surface | Source | Role | Required Validation | Evidence |
 | --- | --- | --- | --- | --- |
-| Role semantics | `contracts/agent-role-semantics.json`, adjacent schema, thirty provider adapters | Own provider-neutral responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims without copying model/tool/effort metadata | `python3 scripts/validate-agent-role-semantics.py --self-test` and `--root .` | Spec 031 Task |
-| Native adapter metadata and roster | Provider-native adapters, `harness-catalog.md` | Preserve provider-owned model/tool/effort fields, exact ten-role stems, thirty adapters, and scope imports | repository quality gate plus roster-currentness validator | Spec 031 Task |
+| Role semantics | `contracts/agent-role-semantics.json`, adjacent schema, thirty tracked role adapters | Own shared responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims across `local`, `claude`, and `codex` adapter surfaces without copying model/tool/effort metadata | `python3 scripts/validate-agent-role-semantics.py --self-test` and `--root .` | Spec 031 Task |
+| Surface metadata and roster | Native Claude/Codex plus local/Antigravity adapters, `harness-catalog.md` | Preserve surface-owned model/tool/effort fields, exact ten-role stems, thirty adapters, and scope imports without claiming Gemini CLI native parity | repository quality gate plus roster-currentness validator | Spec 031 Task |
 | Lane, result, and handoff contract | `rules/quality-standards.md`, `rules/postflight-checklist.md` | Define `affected`, `staged`, `all-files`, `message/manual`, `ci`, `remote/live`; require `PASS`/`SKIP`/`FAIL`/`DEFER` and complete handoff fields | postflight review and repository quality gate | owning Task and `memory/progress.md` |
 
 Tracked gateway, hook, and role-adapter files are repository configuration.

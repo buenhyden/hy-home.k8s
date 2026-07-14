@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Template Frontmatter Schema
@@ -51,7 +51,8 @@ The registry defines the complete profile set. The families remain useful as a
 human model: SDLC profiles cover delivery records, common and governance
 profiles cover durable repository support, README profiles stay
 frontmatter-free, and explicit exception profiles preserve GitHub-native,
-provider-native, generated, and native-contract behavior. Exact `type` values,
+Claude-native, repository-local, classification-only, and generated behavior.
+Exact `type` values,
 keys, states, headings, and templates must be read from the registry rather
 than copied into a Markdown table.
 

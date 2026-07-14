@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Observability and Network Review Agents Task Record
@@ -11,8 +11,14 @@ updated: 2026-07-13
 ## Overview
 
 This record tracks adding two worker-tier review agents,
-`observability-reviewer` and `network-reviewer`, across the three provider
-adapters and the harness catalog, without mutating any live system.
+`observability-reviewer` and `network-reviewer`, across Claude-native,
+Codex-native, and local/Antigravity tracked adapter surfaces and the harness
+catalog, without mutating any live system.
+
+**2026-07-14 terminology correction:** ONA-001 through ONA-004 remain done;
+their six adapter files, commands, count evidence, and commit/push facts are
+preserved. `.agents/agents/*.md` is repository-local, not Gemini CLI native;
+Gemini CLI `.gemini/**` remains absent/`DEFER`.
 
 ## Inputs
 
@@ -26,14 +32,14 @@ adapters and the harness catalog, without mutating any live system.
 | ------- | --------------------------------------------- | ------ | --------------------- | ------------------- | ----------------------------------------------------------- | -------- | ------ |
 | ONA-001 | Author Stage 03 spec and agent-design         | doc    | Core Design           | Phase 1             | Required headings, frontmatter profile, repo-quality gate   | platform | Done   |
 | ONA-002 | Create plan and task records with indexes     | doc    | Work Breakdown        | Phase 2             | Index coverage, repo-quality gate                           | platform | Done   |
-| ONA-003 | Create six provider adapters and catalog rows | doc    | Contracts             | Phase 3-4           | Adapter parity, catalog rows, repo-quality gate             | platform | Done   |
+| ONA-003 | Create six tracked role adapters and catalog rows | doc | Contracts | Phase 3-4 | Claude/Codex/local surface parity, catalog rows, repo-quality gate | platform | Done |
 | ONA-004 | Update progress ledger and validate           | memory | Completion Criteria   | Phase 5-6           | Progress entry, `git diff --check`, repo-quality gate, push | platform | Done   |
 
 ### Phase View
 
 - [x] ONA-001 spec and agent-design authored.
 - [x] ONA-002 plan, task, and index coverage.
-- [x] ONA-003 six adapters plus harness catalog roster and adapter rows.
+- [x] ONA-003 six tracked adapters plus harness catalog roster and adapter rows.
 - [x] ONA-004 progress ledger entry, validation, and human-approved push.
 
 ## Approval and Safety Boundaries

@@ -3,7 +3,7 @@ title: 'Document Contract Registry Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-14
 ---
 
 # Document Contract Registry Technical Specification (Spec)
@@ -12,7 +12,7 @@ updated: 2026-07-12
 
 This Spec defines the single machine-readable registry for document routes,
 frontmatter profiles, lifecycle state domains, section profiles, template
-ownership, README profiles, and explicit native/control exceptions. It is the
+ownership, README profiles, and explicit classification/control exceptions. It is the
 foundation for Specs 027 through 032.
 
 ## Strategic Boundaries & Non-goals
@@ -25,13 +25,17 @@ does not introduce universal metadata fields or a root `DESIGN.md`.
 ## Contracts
 
 - **Config Contract**: `docs/99.templates/support/document-profiles.json`
-  declares schema version, profile definitions, path routes, exact or patterned
+  declares current schema version `4`, profile definitions, path routes, exact or patterned
   exceptions, and template paths. It validates against
   `docs/99.templates/support/document-profiles.schema.json` using JSON Schema
   2020-12.
 - **Data / Interface Contract**: Every routed tracked Markdown path resolves to
   exactly one profile. A profile declares required and allowed keys, ordered-key
-  convention, types, states, required and allowed headings, and template mode.
+  convention, types, states, required and allowed headings, and processing mode.
+  `classification-only` means the registry classifies a path without owning or
+  interpreting that file's frontmatter; it does not assert native runtime or
+  provider consumption. The semantic projection is
+  `DocumentProfileContract.v2`.
 - **Governance Contract**: Stage 99 support owns the registry. Stage 00,
   templates, validators, README indexes, and CI link to or consume it and must
   not reproduce full route or lifecycle tables.
@@ -54,8 +58,13 @@ The registry covers these profile classes:
 - Governance: reference and template support.
 - README: repository, stage-index, collection-index, implementation,
   snapshot-pack, and workspace-staging.
-- Explicit exceptions: root provider shims, provider-native metadata,
-  GitHub-native control Markdown, generated records, and native contracts.
+- Explicit exceptions: root provider shims,
+  `exception/local-agent-asset` for `.agents/**`,
+  `exception/repository-runtime-baseline` for `.claude/CLAUDE.md` and
+  `.codex/CODEX.md`, Claude-only `exception/provider-native-metadata`,
+  GitHub-native control Markdown, generated records, and classification-only
+  external-schema API contracts. `.gemini/**` stays uncovered until a
+  separately approved Gemini CLI native design exists.
 
 ## Data Modeling & Storage Strategy
 
@@ -63,8 +72,11 @@ The registry covers these profile classes:
   `frontmatter`, `statusDomain`, `headings`, `template`, and `mode`. Each route
   is either an exact repository-relative path or an anchored regular expression;
   mixed implicit glob semantics are forbidden. Exact key sets use JSON Schema
-  `required` and closed additional properties. README and exception profiles set
-  `frontmatter` to forbidden.
+  `required` and closed additional properties. Root provider shims and
+  GitHub-native control profiles use `frontmatter-free` with frontmatter
+  `forbidden`; local-agent assets, repository runtime baselines, Claude-native
+  metadata, and native-contract profiles use `classification-only` with
+  frontmatter `not-applicable`.
 - **Migration / Transition Plan**: Start in compatibility mode, classify the
   fixed inventory, migrate templates and authored documents, then enable strict
   mode after uncovered and ambiguous routes reach zero.

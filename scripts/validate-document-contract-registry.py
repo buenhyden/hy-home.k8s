@@ -32,6 +32,12 @@ from document_contracts import (
 
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
+LOCAL_AGENT_FIXTURE_FIELD = "localAgentFixtureSamplePath"
+RESERVED_GEMINI_NATIVE_SURFACE_RULE = "REGISTRY_RESERVED_GEMINI_NATIVE_SURFACE"
+RESERVED_GEMINI_NATIVE_SURFACE_ERROR = (
+    f"{RESERVED_GEMINI_NATIVE_SURFACE_RULE}: reserved Gemini CLI native surface "
+    "must remain absent from the Git index"
+)
 CURRENT_OWNER_SAMPLE_PATHS = (
     "docs/00.agent-governance/current-alpha.md",
     "docs/00.agent-governance/current-beta.md",
@@ -269,16 +275,18 @@ EXPECTED_CASES = (
     ),
 )
 
-DOCUMENT_PROFILE_CONTRACT_V1 = {
-    "name": "DocumentProfileContract.v1",
+DOCUMENT_PROFILE_CONTRACT_V2 = {
+    "name": "DocumentProfileContract.v2",
     "profile_ids": (
         "content/archive-tombstone",
         "content/reference",
         "exception/generated-record",
         "exception/github-native-control",
+        "exception/local-agent-asset",
         "exception/native-contract",
         "exception/program-non-target",
         "exception/provider-native-metadata",
+        "exception/repository-runtime-baseline",
         "exception/root-provider-shim",
         "governance/memory",
         "governance/progress-entry",
@@ -334,10 +342,10 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8"  # pragma: allowlist secret
+        "68dd0d00127ede998e42c7f6a7646c0ebe8daad55e4374ec3cd618cc60262a9c"  # pragma: allowlist secret
     ),
 }
-DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
+DOCUMENT_PROFILE_CONTRACT_V2_FIELDS = (
     "id",
     "class",
     "mode",
@@ -388,7 +396,7 @@ def _document_profile_contract_projection(
     for profile in sorted(raw_registry["profiles"], key=lambda item: item["id"]):
         row = {
             field: copy.deepcopy(profile[field])
-            for field in DOCUMENT_PROFILE_CONTRACT_V1_FIELDS
+            for field in DOCUMENT_PROFILE_CONTRACT_V2_FIELDS
         }
         row["routes"] = sorted(
             row["routes"], key=lambda route: (route["kind"], route["value"])
@@ -398,13 +406,13 @@ def _document_profile_contract_projection(
 
 
 def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
-    expected_ids = DOCUMENT_PROFILE_CONTRACT_V1["profile_ids"]
+    expected_ids = DOCUMENT_PROFILE_CONTRACT_V2["profile_ids"]
     actual_ids = tuple(sorted(profile["id"] for profile in raw_registry["profiles"]))
     if actual_ids != expected_ids:
         missing = sorted(set(expected_ids) - set(actual_ids))
         extra = sorted(set(actual_ids) - set(expected_ids))
         raise AssertionError(
-            "DocumentProfileContract.v1 ID mismatch: "
+            "DocumentProfileContract.v2 ID mismatch: "
             f"missing={missing!r} extra={extra!r}"
         )
 
@@ -415,10 +423,10 @@ def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
         sort_keys=True,
     ).encode("utf-8")
     actual_digest = hashlib.sha256(canonical).hexdigest()
-    expected_digest = DOCUMENT_PROFILE_CONTRACT_V1["semantic_sha256"]
+    expected_digest = DOCUMENT_PROFILE_CONTRACT_V2["semantic_sha256"]
     if actual_digest != expected_digest:
         raise AssertionError(
-            "DocumentProfileContract.v1 semantic digest mismatch: "
+            "DocumentProfileContract.v2 semantic digest mismatch: "
             f"expected={expected_digest} actual={actual_digest}"
         )
     return len(actual_ids)
@@ -456,12 +464,12 @@ def _assert_document_profile_contract_mutation_proof(
         except AssertionError as exc:
             if "semantic digest mismatch" not in str(exc):
                 raise AssertionError(
-                    "DocumentProfileContract.v1 "
+                    "DocumentProfileContract.v2 "
                     f"{label} mutation proof failed unexpectedly"
                 ) from exc
         else:
             raise AssertionError(
-                "DocumentProfileContract.v1 accepted a "
+                "DocumentProfileContract.v2 accepted a "
                 f"{label} semantic mutation"
             )
 
@@ -469,15 +477,15 @@ def _assert_document_profile_contract_mutation_proof(
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
-        "schemaVersion": 3,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
+        "schemaVersion": 4,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
             {
                 "id": "test/sample",
                 "class": "exception",
-                "mode": "native",
+                "mode": "classification-only",
                 "routes": [
                     {"kind": "exact", "value": SAMPLE_PATH.as_posix()},
                     {
@@ -724,7 +732,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             for candidate in raw_registry["profiles"]
             if candidate["id"] == "governance/reference"
         )
-        governance_profile["mode"] = "native"
+        governance_profile["mode"] = "classification-only"
         return
     if mutation == "reverse-governance-current-owner-states":
         raw_registry["governanceCurrentOwners"]["allowedStates"].reverse()
@@ -985,7 +993,7 @@ def _assert_role_specific_spec_routes(registry: Any) -> None:
             )
 
 
-def _assert_tracked_negative_fixture_sample(root: Path, registry: Any) -> None:
+def _assert_tracked_local_agent_fixture_sample(root: Path, registry: Any) -> None:
     completed = subprocess.run(
         ["git", "ls-files", "--error-unmatch", "--", SAMPLE_PATH.as_posix()],
         cwd=root,
@@ -995,12 +1003,134 @@ def _assert_tracked_negative_fixture_sample(root: Path, registry: Any) -> None:
         text=True,
     )
     if completed.stdout.strip() != SAMPLE_PATH.as_posix():
-        raise AssertionError("negative fixture sample must be one exact tracked path")
+        raise AssertionError("local agent fixture sample must be one exact tracked path")
     actual_profile = classify_path(registry, SAMPLE_PATH).profile_id
-    if actual_profile != "exception/provider-native-metadata":
+    if actual_profile != "exception/local-agent-asset":
         raise AssertionError(
-            f"{SAMPLE_PATH}: expected provider metadata, got {actual_profile!r}"
+            f"{SAMPLE_PATH}: expected local agent asset, got {actual_profile!r}"
         )
+
+
+def _assert_reserved_gemini_native_surfaces_absent(root: Path) -> None:
+    """Reject reserved Gemini CLI native paths using index metadata only."""
+    completed = subprocess.run(
+        [
+            "git",
+            "ls-files",
+            "-z",
+            "--",
+            ".gemini/agents",
+            ".gemini/settings.json",
+        ],
+        cwd=root,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.stdout and not completed.stdout.endswith(b"\0"):
+        raise AssertionError(
+            f"{RESERVED_GEMINI_NATIVE_SURFACE_RULE}: Git index inventory must be NUL terminated"
+        )
+    if completed.stdout:
+        raise AssertionError(RESERVED_GEMINI_NATIVE_SURFACE_ERROR)
+
+
+def _assert_reserved_gemini_native_surface_mutation_proofs() -> None:
+    for reserved_path in (
+        PurePosixPath(".gemini/agents/fixture-agent.md"),
+        PurePosixPath(".gemini/settings.json"),
+    ):
+        with tempfile.TemporaryDirectory(
+            prefix="document-registry-gemini-reserved-"
+        ) as directory:
+            fixture_root = Path(directory)
+            subprocess.run(
+                ["git", "init", "--quiet"], cwd=fixture_root, check=True
+            )
+            target = fixture_root / reserved_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("{}\n", encoding="utf-8")
+
+            # The guard is index-scoped: an untracked local file is not a
+            # repository declaration and therefore remains outside this rule.
+            _assert_reserved_gemini_native_surfaces_absent(fixture_root)
+            subprocess.run(
+                ["git", "add", "--", reserved_path.as_posix()],
+                cwd=fixture_root,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            try:
+                _assert_reserved_gemini_native_surfaces_absent(fixture_root)
+            except AssertionError as exc:
+                if str(exc) != RESERVED_GEMINI_NATIVE_SURFACE_ERROR:
+                    raise AssertionError(
+                        "reserved Gemini native surface guard returned an unstable error"
+                    ) from exc
+            else:
+                raise AssertionError(
+                    "reserved Gemini native surface guard accepted a tracked mutation"
+                )
+
+
+def _assert_adapter_surface_routes(
+    root: Path, raw_registry: dict[str, Any], registry: Any
+) -> None:
+    probes = {
+        PurePosixPath(".agents/GEMINI.md"): "exception/local-agent-asset",
+        PurePosixPath(".agents/agents/code-reviewer.md"): "exception/local-agent-asset",
+        PurePosixPath(".claude/CLAUDE.md"): "exception/repository-runtime-baseline",
+        PurePosixPath(".codex/CODEX.md"): "exception/repository-runtime-baseline",
+        PurePosixPath(".claude/agents/code-reviewer.md"): (
+            "exception/provider-native-metadata"
+        ),
+    }
+    for path, expected_profile in probes.items():
+        actual_profile = classify_path(registry, path).profile_id
+        if actual_profile != expected_profile:
+            raise AssertionError(
+                f"{path}: expected {expected_profile!r}, got {actual_profile!r}"
+            )
+
+    try:
+        classify_path(registry, PurePosixPath(".gemini/agents/code-reviewer.md"))
+    except DocumentContractError as exc:
+        if _ordered_rule_ids(exc.diagnostics) != ("REGISTRY_ROUTE_UNCOVERED",):
+            raise AssertionError(".gemini/** uncovered probe returned wrong rule") from exc
+    else:
+        raise AssertionError(".gemini/** must remain outside the tracked adapter contract")
+
+    broad_registry = copy.deepcopy(raw_registry)
+    provider_profile = next(
+        profile
+        for profile in broad_registry["profiles"]
+        if profile["id"] == "exception/provider-native-metadata"
+    )
+    provider_profile["routes"][0]["value"] = r"^\.(?:agents|claude)/.+\.md$"
+    try:
+        broad_candidate = validate_registry(root, broad_registry)
+        classify_path(broad_candidate, PurePosixPath(".agents/GEMINI.md"))
+    except DocumentContractError as exc:
+        if "REGISTRY_ROUTE_AMBIGUOUS" not in _ordered_rule_ids(exc.diagnostics):
+            raise AssertionError("broad provider route probe returned wrong rule") from exc
+    else:
+        raise AssertionError("broad provider route must be rejected as ambiguous")
+
+    missing_route_registry = copy.deepcopy(raw_registry)
+    missing_route_registry["profiles"] = [
+        profile
+        for profile in missing_route_registry["profiles"]
+        if profile["id"] != "exception/local-agent-asset"
+    ]
+    try:
+        missing_route_candidate = validate_registry(root, missing_route_registry)
+        classify_path(missing_route_candidate, PurePosixPath(".agents/GEMINI.md"))
+    except DocumentContractError as exc:
+        if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(exc.diagnostics):
+            raise AssertionError("local route removal probe returned wrong rule") from exc
+    else:
+        raise AssertionError("removing the local agent route must leave tracked paths uncovered")
 
 
 def _assert_positive_coverage(
@@ -1009,7 +1139,8 @@ def _assert_positive_coverage(
     registry = validate_registry(root, raw_registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     _assert_role_specific_spec_routes(registry)
-    _assert_tracked_negative_fixture_sample(root, registry)
+    _assert_tracked_local_agent_fixture_sample(root, registry)
+    _assert_adapter_surface_routes(root, raw_registry, registry)
 
     coverage = fixture.get("profileCoverage")
     if not isinstance(coverage, list):
@@ -1759,8 +1890,8 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 3
-        or fixture.get("negativeFixtureSamplePath") != SAMPLE_PATH.as_posix()
+        fixture.get("schemaVersion") != 4
+        or fixture.get(LOCAL_AGENT_FIXTURE_FIELD) != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
         print("FAIL document contract registry self-test: fixture contract mismatch")
@@ -1830,6 +1961,7 @@ def _self_test(root: Path) -> int:
                 return 1
 
     try:
+        _assert_reserved_gemini_native_surface_mutation_proofs()
         _assert_parser_safety()
         _assert_inventory_safety(root)
         profile_count, template_count = _assert_positive_coverage(
@@ -1853,7 +1985,7 @@ def _self_test(root: Path) -> int:
         )
         if profile_count != contract_profile_count:
             raise AssertionError(
-                "profileCoverage count differs from DocumentProfileContract.v1"
+                "profileCoverage count differs from DocumentProfileContract.v2"
             )
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry self-test: {exc}")
@@ -1882,6 +2014,7 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
+        _assert_reserved_gemini_native_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         is_readme_family = args.profile == "readme"
         if args.profile and not is_readme_family and args.profile not in profile_ids:

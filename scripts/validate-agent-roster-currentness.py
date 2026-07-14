@@ -22,11 +22,14 @@ REQUIRED_OWNER_LINKS = {
 }
 STALE_COUNT_VARIANTS = (
     "8 local agents",
-    "Eight local provider adapters",
+    "Eight local role adapters",
     "eight shared roles",
     "8 role stems",
 )
-VALID_ROSTER_PHRASE = "Ten shared local role stems / thirty provider adapters"
+VALID_ROSTER_PHRASE = "Ten shared local role stems / thirty tracked role adapters"
+VALID_ROSTER_PHRASE_ERROR = (
+    "harness catalog canonical roster phrase must appear exactly once"
+)
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)")
 
 
@@ -44,15 +47,15 @@ FIXTURE_CASE_SCHEMA = {
         "mutation": "remove-network-from-claude",
         "expected_errors": frozenset({
             "claude roster missing expected stems: network-reviewer",
-            "provider adapter inventory must contain exactly 30 files",
+            "role adapter inventory must contain exactly 30 files",
         }),
         "catalog_variants": None,
     },
-    "provider-mismatch": {
+    "surface-mismatch": {
         "mutation": "add-extra-to-codex",
         "expected_errors": frozenset({
             "codex roster has unexpected stems: extra-reviewer",
-            "provider adapter inventory must contain exactly 30 files",
+            "role adapter inventory must contain exactly 30 files",
         }),
         "catalog_variants": None,
     },
@@ -73,6 +76,11 @@ FIXTURE_CASE_SCHEMA = {
         }),
         "catalog_variants": None,
     },
+    "missing-current-phrase": {
+        "mutation": "remove-current-roster-phrase",
+        "expected_errors": frozenset({VALID_ROSTER_PHRASE_ERROR}),
+        "catalog_variants": None,
+    },
 }
 REQUIRED_CASE_NAMES = frozenset(FIXTURE_CASE_SCHEMA)
 
@@ -84,26 +92,28 @@ def normalize_markdown_label(label: str) -> str:
 
 
 def validate_contract(
-    provider_stems: dict[str, set[str]], catalog_text: str
+    surface_stems: dict[str, set[str]], catalog_text: str
 ) -> list[str]:
     errors: list[str] = []
-    for provider in ("claude", "codex", "gemini"):
-        stems = provider_stems[provider]
+    for surface in ("local", "claude", "codex"):
+        stems = surface_stems[surface]
         missing = sorted(EXPECTED_STEMS - stems)
         extra = sorted(stems - EXPECTED_STEMS)
         if missing:
-            errors.append(f"{provider} roster missing expected stems: {', '.join(missing)}")
+            errors.append(f"{surface} roster missing expected stems: {', '.join(missing)}")
         if extra:
-            errors.append(f"{provider} roster has unexpected stems: {', '.join(extra)}")
-    if sum(len(stems) for stems in provider_stems.values()) != 30:
-        errors.append("provider adapter inventory must contain exactly 30 files")
+            errors.append(f"{surface} roster has unexpected stems: {', '.join(extra)}")
+    if sum(len(stems) for stems in surface_stems.values()) != 30:
+        errors.append("role adapter inventory must contain exactly 30 files")
     if re.search(
         r"\b(?:8|eight)\s+(?:local\s+|shared\s+)?"
-        r"(?:provider adapters|agents|roles|role stems)\b",
+        r"(?:provider adapters|role adapters|agents|roles|role stems)\b",
         catalog_text,
         re.IGNORECASE,
     ):
         errors.append("harness catalog contains stale eight-role currentness prose")
+    if catalog_text.count(VALID_ROSTER_PHRASE) != 1:
+        errors.append(VALID_ROSTER_PHRASE_ERROR)
     catalog_links = {
         (normalize_markdown_label(label), target)
         for label, target in MARKDOWN_LINK_RE.findall(catalog_text)
@@ -115,15 +125,15 @@ def validate_contract(
 
 
 def repository_inputs(root: Path) -> tuple[dict[str, set[str]], str]:
-    providers = {
+    surfaces = {
         "claude": {path.stem for path in (root / ".claude/agents").glob("*.md")},
         "codex": {path.stem for path in (root / ".codex/agents").glob("*.toml")},
-        "gemini": {path.stem for path in (root / ".agents/agents").glob("*.md")},
+        "local": {path.stem for path in (root / ".agents/agents").glob("*.md")},
     }
     catalog = (root / "docs/00.agent-governance/harness-catalog.md").read_text(
         encoding="utf-8"
     )
-    return providers, catalog
+    return surfaces, catalog
 
 
 def run_self_test(fixture_path: Path) -> list[str]:
@@ -178,13 +188,13 @@ def run_self_test(fixture_path: Path) -> list[str]:
     base_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
         f"[`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
     )
-    probe_providers = {
-        name: set(EXPECTED_STEMS) for name in ("claude", "codex", "gemini")
+    probe_surfaces = {
+        name: set(EXPECTED_STEMS) for name in ("local", "claude", "codex")
     }
     image_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
         f"![`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
     )
-    image_errors = set(validate_contract(probe_providers, image_catalog))
+    image_errors = set(validate_contract(probe_surfaces, image_catalog))
     expected_image_errors = {
         missing_owner_link_error(label, target)
         for label, target in REQUIRED_OWNER_LINKS.items()
@@ -205,20 +215,32 @@ def run_self_test(fixture_path: Path) -> list[str]:
         ("trailing backtick", f"[{bootstrap_label}`]({bootstrap_target})"),
     ):
         probe_catalog = base_catalog.replace(valid_bootstrap_link, malformed_link, 1)
-        probe_errors = set(validate_contract(probe_providers, probe_catalog))
+        probe_errors = set(validate_contract(probe_surfaces, probe_catalog))
         if probe_errors != expected_bootstrap_error:
             failures.append(
                 f"bootstrap owner-link {probe_name} probe: expected exact errors "
                 f"{sorted(expected_bootstrap_error)!r}, got {sorted(probe_errors)!r}"
             )
+    duplicate_phrase_errors = set(
+        validate_contract(
+            probe_surfaces,
+            f"{VALID_ROSTER_PHRASE}\n{base_catalog}",
+        )
+    )
+    if duplicate_phrase_errors != {VALID_ROSTER_PHRASE_ERROR}:
+        failures.append(
+            "duplicate canonical roster phrase probe: expected exact errors "
+            f"{[VALID_ROSTER_PHRASE_ERROR]!r}, got "
+            f"{sorted(duplicate_phrase_errors)!r}"
+        )
     for case in cases:
-        providers = {name: set(EXPECTED_STEMS) for name in ("claude", "codex", "gemini")}
+        surfaces = {name: set(EXPECTED_STEMS) for name in ("local", "claude", "codex")}
         catalog = base_catalog
         mutation = case["mutation"]
         if mutation == "remove-network-from-claude":
-            providers["claude"].remove("network-reviewer")
+            surfaces["claude"].remove("network-reviewer")
         elif mutation == "add-extra-to-codex":
-            providers["codex"].add("extra-reviewer")
+            surfaces["codex"].add("extra-reviewer")
         elif mutation == "check-stale-count-variants":
             variants = case["catalog_variants"]
             if variants != list(STALE_COUNT_VARIANTS):
@@ -229,8 +251,8 @@ def run_self_test(fixture_path: Path) -> list[str]:
             expected = set(case["expected_errors"])
             for variant in variants:
                 errors = validate_contract(
-                    providers,
-                    catalog.replace(VALID_ROSTER_PHRASE, variant, 1),
+                    surfaces,
+                    f"{catalog}\n{variant}",
                 )
                 if set(errors) != expected:
                     failures.append(
@@ -244,10 +266,16 @@ def run_self_test(fixture_path: Path) -> list[str]:
                 "[`docs/00.agent-governance/rules/bootstrap.md`](rules/persona.md)",
                 1,
             )
+        elif mutation == "remove-current-roster-phrase":
+            catalog = catalog.replace(
+                VALID_ROSTER_PHRASE,
+                "Current roster phrase intentionally removed by fixture",
+                1,
+            )
         elif mutation != "none":
             failures.append(f"{case['name']}: unknown mutation {mutation}")
             continue
-        errors = validate_contract(providers, catalog)
+        errors = validate_contract(surfaces, catalog)
         expected = set(case["expected_errors"])
         if set(errors) != expected:
             failures.append(
@@ -268,8 +296,8 @@ def main() -> int:
                 args.repo_root / "tests/fixtures/agent-roster-currentness.json"
             )
         else:
-            providers, catalog = repository_inputs(args.repo_root)
-            errors = validate_contract(providers, catalog)
+            surfaces, catalog = repository_inputs(args.repo_root)
+            errors = validate_contract(surfaces, catalog)
     except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
         print(f"ERR agent roster currentness input error: {exc}", file=sys.stderr)
         return 1

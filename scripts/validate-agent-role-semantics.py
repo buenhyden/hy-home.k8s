@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate provider-neutral role semantics across native agent adapters."""
+"""Validate shared role semantics across local and provider adapter surfaces."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-role-semantics.json")
-PROVIDERS = ("gemini", "claude", "codex")
+ADAPTER_SURFACES = ("local", "claude", "codex")
 ROLE_IDS = (
     "code-reviewer",
     "doc-writer",
@@ -47,10 +47,10 @@ CATEGORY_RULES = {
     "handoffs": "ROLE-HANDOFF",
     "capabilityTier": "ROLE-CAPABILITY-TIER",
     "requiredEvidence": "ROLE-EVIDENCE",
-    "providerStem": "ROLE-PROVIDER-STEM",
+    "adapterStem": "ROLE-ADAPTER-STEM",
 }
 CONTRACT_CATEGORIES = tuple(
-    category for category in CATEGORY_RULES if category != "providerStem"
+    category for category in CATEGORY_RULES if category != "adapterStem"
 )
 CATEGORY_SECTIONS = {
     "responsibilities": "Role",
@@ -63,7 +63,7 @@ CATEGORY_SECTIONS = {
 }
 FORBIDDEN_COMMON_FIELDS = ("model", "tools", "modelReasoningEffort")
 ADAPTER_LOCATIONS = {
-    "gemini": (PurePosixPath(".agents/agents"), ".md"),
+    "local": (PurePosixPath(".agents/agents"), ".md"),
     "claude": (PurePosixPath(".claude/agents"), ".md"),
     "codex": (PurePosixPath(".codex/agents"), ".toml"),
 }
@@ -123,15 +123,15 @@ LIST_INDENTED_CODE = re.compile(
 )
 ADVERSARIAL_SCHEMA = {
     "yaml-duplicate-name": (
-        "gemini", "code-reviewer", "providerStem", "yamlDuplicateName",
+        "local", "code-reviewer", "adapterStem", "yamlDuplicateName",
         "ROLE-ADAPTER-PARSE",
     ),
     "yaml-nonmapping-frontmatter": (
-        "claude", "doc-writer", "providerStem", "yamlNonMapping",
+        "claude", "doc-writer", "adapterStem", "yamlNonMapping",
         "ROLE-ADAPTER-PARSE",
     ),
     "yaml-nonscalar-name": (
-        "gemini", "gitops-reviewer", "providerStem", "yamlNonScalarName",
+        "local", "gitops-reviewer", "adapterStem", "yamlNonScalarName",
         "ROLE-ADAPTER-PARSE",
     ),
     "fenced-responsibility": (
@@ -139,7 +139,7 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-RESPONSIBILITY",
     ),
     "commented-output": (
-        "gemini", "k8s-implementer", "outputs", "htmlComment", "ROLE-OUTPUT",
+        "local", "k8s-implementer", "outputs", "htmlComment", "ROLE-OUTPUT",
     ),
     "struck-prohibition": (
         "claude", "network-reviewer", "prohibitedActions", "strikethrough",
@@ -150,7 +150,7 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-STOP",
     ),
     "contradicted-handoff": (
-        "gemini", "security-auditor", "handoffs", "contradicted",
+        "local", "security-auditor", "handoffs", "contradicted",
         "ROLE-HANDOFF",
     ),
     "commented-capability": (
@@ -161,16 +161,16 @@ ADVERSARIAL_SCHEMA = {
         "codex", "wiki-curator", "requiredEvidence", "fenced",
         "ROLE-EVIDENCE",
     ),
-    "struck-provider-heading": (
-        "gemini", "code-reviewer", "providerStem", "strikethrough",
-        "ROLE-PROVIDER-STEM",
+    "struck-adapter-heading": (
+        "local", "code-reviewer", "adapterStem", "strikethrough",
+        "ROLE-ADAPTER-STEM",
     ),
     "wrapped-contradiction": (
         "claude", "doc-writer", "requiredEvidence", "wrappedContradiction",
         "ROLE-EVIDENCE",
     ),
     "quoted-responsibility": (
-        "gemini", "code-reviewer", "responsibilities", "blockquote",
+        "local", "code-reviewer", "responsibilities", "blockquote",
         "ROLE-RESPONSIBILITY",
     ),
     "nested-quoted-output": (
@@ -181,7 +181,7 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-PROHIBITED",
     ),
     "quoted-stop": (
-        "gemini", "incident-responder", "stopConditions", "blockquote",
+        "local", "incident-responder", "stopConditions", "blockquote",
         "ROLE-STOP",
     ),
     "nested-quoted-handoff": (
@@ -193,7 +193,7 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-CAPABILITY-TIER",
     ),
     "quoted-evidence": (
-        "gemini", "observability-reviewer", "requiredEvidence", "blockquote",
+        "local", "observability-reviewer", "requiredEvidence", "blockquote",
         "ROLE-EVIDENCE",
     ),
     "indented-tilde-output": (
@@ -209,7 +209,7 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-HANDOFF",
     ),
     "not-true-claim": (
-        "gemini", "wiki-curator", "prohibitedActions", "notTrue",
+        "local", "wiki-curator", "prohibitedActions", "notTrue",
         "ROLE-PROHIBITED",
     ),
     "forward-revocation": (
@@ -221,23 +221,23 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-OUTPUT",
     ),
     "inline-code-only-capability": (
-        "gemini", "k8s-implementer", "capabilityTier", "inlineCodeOnly",
+        "local", "k8s-implementer", "capabilityTier", "inlineCodeOnly",
         "ROLE-CAPABILITY-TIER",
     ),
     "list-contained-blockquote": (
         "claude", "network-reviewer", "handoffs", "listBlockquote",
         "ROLE-HANDOFF",
     ),
-    "quoted-provider-heading": (
-        "codex", "code-reviewer", "providerStem", "blockquote",
-        "ROLE-PROVIDER-STEM",
+    "quoted-adapter-heading": (
+        "codex", "code-reviewer", "adapterStem", "blockquote",
+        "ROLE-ADAPTER-STEM",
     ),
-    "nested-quoted-provider-heading": (
-        "claude", "gitops-reviewer", "providerStem", "nestedBlockquote",
-        "ROLE-PROVIDER-STEM",
+    "nested-quoted-adapter-heading": (
+        "claude", "gitops-reviewer", "adapterStem", "nestedBlockquote",
+        "ROLE-ADAPTER-STEM",
     ),
     "unordered-list-indented-code": (
-        "gemini", "observability-reviewer", "outputs",
+        "local", "observability-reviewer", "outputs",
         "unorderedListIndentedCode", "ROLE-OUTPUT",
     ),
     "ordered-list-indented-code": (
@@ -245,7 +245,7 @@ ADVERSARIAL_SCHEMA = {
         "orderedListIndentedCode", "ROLE-EVIDENCE",
     ),
     "forward-false-revocation": (
-        "gemini", "doc-writer", "outputs", "forwardFalse",
+        "local", "doc-writer", "outputs", "forwardFalse",
         "ROLE-OUTPUT",
     ),
     "backward-not-true-revocation": (
@@ -310,7 +310,7 @@ def fail(code: str, detail: str) -> NoReturn:
 
 @dataclass(frozen=True)
 class Adapter:
-    provider: str
+    surface: str
     path: str
     path_stem: str
     declared_name: str
@@ -365,8 +365,8 @@ def validate_contract(
         location = "/".join(str(part) for part in error.absolute_path) or "<root>"
         fail("ROLE-SCHEMA", f"{location}: {error.message}")
 
-    if tuple(contract["providers"]) != PROVIDERS:
-        fail("ROLE-PROVIDERS", "provider order or membership differs")
+    if tuple(contract["adapterSurfaces"]) != ADAPTER_SURFACES:
+        fail("ROLE-ADAPTER-SURFACES", "adapter surface order or membership differs")
     if tuple(contract["categories"]) != CONTRACT_CATEGORIES:
         fail("ROLE-CATEGORIES", "semantic category order or membership differs")
 
@@ -385,7 +385,7 @@ def validate_contract(
         if role["capabilityTier"] != expected_tier:
             fail(
                 "ROLE-CAPABILITY-TIER",
-                f"{role_id} must declare provider-neutral tier {expected_tier!r}",
+                f"{role_id} must declare shared tier {expected_tier!r}",
             )
         for category in CONTRACT_CATEGORIES:
             claims = (
@@ -581,7 +581,7 @@ def _without_revoked_units(lines: list[str]) -> list[str]:
 
 
 def operative_markdown(body: str, path: str) -> str:
-    """Return only operative prose/headings from a provider Markdown body."""
+    """Return only operative prose/headings from an adapter Markdown body."""
 
     uncommented = _without_html_comments(body, path)
     without_code = _without_code_blocks(uncommented, path)
@@ -630,7 +630,7 @@ def extract_heading(body: str) -> str:
     return headings[0].strip() if len(headings) == 1 else ""
 
 
-def parse_adapter_text(provider: str, relative_path: PurePosixPath, text: str) -> Adapter:
+def parse_adapter_text(surface: str, relative_path: PurePosixPath, text: str) -> Adapter:
     suffix = relative_path.suffix
     if suffix == ".md":
         metadata, body = parse_frontmatter(text, relative_path.as_posix())
@@ -653,7 +653,7 @@ def parse_adapter_text(provider: str, relative_path: PurePosixPath, text: str) -
 
     operative_body = operative_markdown(body, relative_path.as_posix())
     return Adapter(
-        provider=provider,
+        surface=surface,
         path=relative_path.as_posix(),
         path_stem=relative_path.stem,
         declared_name=declared_name,
@@ -662,8 +662,8 @@ def parse_adapter_text(provider: str, relative_path: PurePosixPath, text: str) -
     )
 
 
-def adapter_source(root: Path, provider: str, role_id: str) -> tuple[PurePosixPath, str]:
-    directory, suffix = ADAPTER_LOCATIONS[provider]
+def adapter_source(root: Path, surface: str, role_id: str) -> tuple[PurePosixPath, str]:
+    directory, suffix = ADAPTER_LOCATIONS[surface]
     relative_path = directory / f"{role_id}{suffix}"
     try:
         text = (root / relative_path).read_text(encoding="utf-8")
@@ -672,9 +672,9 @@ def adapter_source(root: Path, provider: str, role_id: str) -> tuple[PurePosixPa
     return relative_path, text
 
 
-def parse_adapter(root: Path, provider: str, role_id: str) -> Adapter:
-    relative_path, text = adapter_source(root, provider, role_id)
-    return parse_adapter_text(provider, relative_path, text)
+def parse_adapter(root: Path, surface: str, role_id: str) -> Adapter:
+    relative_path, text = adapter_source(root, surface, role_id)
+    return parse_adapter_text(surface, relative_path, text)
 
 
 def _missing_claims(
@@ -692,7 +692,7 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
     if any(value != role_id for value in stem_values):
         diagnostics.append(
             Diagnostic(
-                "ROLE-PROVIDER-STEM",
+                "ROLE-ADAPTER-STEM",
                 adapter.path,
                 role_id,
                 "path stem, declared name, and H1 must all equal the role id",
@@ -720,8 +720,8 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
 
 def repository_adapters(root: Path) -> dict[tuple[str, str], Adapter]:
     return {
-        (provider, role_id): parse_adapter(root, provider, role_id)
-        for provider in PROVIDERS
+        (surface, role_id): parse_adapter(root, surface, role_id)
+        for surface in ADAPTER_SURFACES
         for role_id in ROLE_IDS
     }
 
@@ -731,9 +731,9 @@ def validate_repository(root: Path) -> list[Diagnostic]:
     adapters = repository_adapters(root)
     return [
         diagnostic
-        for provider in PROVIDERS
+        for surface in ADAPTER_SURFACES
         for role_id in ROLE_IDS
-        for diagnostic in validate_adapter(roles[role_id], adapters[(provider, role_id)])
+        for diagnostic in validate_adapter(roles[role_id], adapters[(surface, role_id)])
     ]
 
 
@@ -742,7 +742,7 @@ def validate_fixture(
 ) -> None:
     expected_keys = {
         "schemaVersion",
-        "providers",
+        "adapterSurfaces",
         "roles",
         "categories",
         "mutations",
@@ -751,10 +751,10 @@ def validate_fixture(
         "adversarialCases",
         "expectedCaseCount",
     }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 1:
+    if set(fixture) != expected_keys or fixture["schemaVersion"] != 2:
         fail("ROLE-FIXTURE", "fixture keys or schemaVersion differ")
-    if tuple(fixture["providers"]) != PROVIDERS:
-        fail("ROLE-FIXTURE", "fixture providers differ")
+    if tuple(fixture["adapterSurfaces"]) != ADAPTER_SURFACES:
+        fail("ROLE-FIXTURE", "fixture adapter surfaces differ")
     if tuple(fixture["roles"]) != ROLE_IDS or tuple(roles) != ROLE_IDS:
         fail("ROLE-FIXTURE", "fixture roles differ")
     if fixture["categories"] != CATEGORY_RULES:
@@ -766,7 +766,7 @@ def validate_fixture(
     if tuple(fixture["negationStates"]) != NEGATION_STATES:
         fail("ROLE-FIXTURE", "negation state vocabulary differs")
     expected_count = (
-        len(PROVIDERS) * len(ROLE_IDS) * len(CATEGORY_RULES) * 2
+        len(ADAPTER_SURFACES) * len(ROLE_IDS) * len(CATEGORY_RULES) * 2
     )
     if fixture["expectedCaseCount"] != expected_count:
         fail("ROLE-FIXTURE", f"expectedCaseCount must equal {expected_count}")
@@ -775,7 +775,7 @@ def validate_fixture(
         fail("ROLE-FIXTURE", "adversarialCases must be a list")
     actual_adversarial: dict[str, tuple[str, str, str, str, str]] = {}
     required_case_keys = {
-        "name", "provider", "role", "category", "mutation", "expectedRule"
+        "name", "adapterSurface", "role", "category", "mutation", "expectedRule"
     }
     for case in adversarial:
         if not isinstance(case, dict) or set(case) != required_case_keys:
@@ -784,7 +784,7 @@ def validate_fixture(
         if not isinstance(name, str) or name in actual_adversarial:
             fail("ROLE-FIXTURE", "adversarial case names must be unique strings")
         actual_adversarial[name] = (
-            case["provider"], case["role"], case["category"],
+            case["adapterSurface"], case["role"], case["category"],
             case["mutation"], case["expectedRule"],
         )
     if actual_adversarial != ADVERSARIAL_SCHEMA:
@@ -795,7 +795,7 @@ def category_anchor(
     role: dict[str, Any],
     category: str,
 ) -> str:
-    if category == "providerStem":
+    if category == "adapterStem":
         return f"# {role['id']}"
     claims = (
         [role["capabilityTierClaim"]]
@@ -899,13 +899,13 @@ def mutate_source(
 
 
 def validate_mutated_source(
-    provider: str,
+    surface: str,
     path: PurePosixPath,
     source: str,
     role: dict[str, Any],
 ) -> list[str]:
     try:
-        adapter = parse_adapter_text(provider, path, source)
+        adapter = parse_adapter_text(surface, path, source)
     except ContractError as exc:
         return [exc.code]
     return [diagnostic.code for diagnostic in validate_adapter(role, adapter)]
@@ -916,8 +916,8 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
     fixture = load_json(root / FIXTURE_PATH)
     validate_fixture(fixture, roles)
     sources = {
-        (provider, role_id): adapter_source(root, provider, role_id)
-        for provider in PROVIDERS
+        (surface, role_id): adapter_source(root, surface, role_id)
+        for surface in ADAPTER_SURFACES
         for role_id in ROLE_IDS
     }
     adapters = {
@@ -926,19 +926,19 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
     }
     baseline = [
         diagnostic
-        for provider in PROVIDERS
+        for surface in ADAPTER_SURFACES
         for role_id in ROLE_IDS
-        for diagnostic in validate_adapter(roles[role_id], adapters[(provider, role_id)])
+        for diagnostic in validate_adapter(roles[role_id], adapters[(surface, role_id)])
     ]
     if baseline:
         return (["baseline adapters fail: " + baseline[0].render()], 0)
 
     failures: list[str] = []
     cases = 0
-    for provider in PROVIDERS:
+    for surface in ADAPTER_SURFACES:
         for role_id in ROLE_IDS:
             role = roles[role_id]
-            path, base_source = sources[(provider, role_id)]
+            path, base_source = sources[(surface, role_id)]
             for category, expected_rule in CATEGORY_RULES.items():
                 for mutation in fixture["mutations"]:
                     cases += 1
@@ -946,24 +946,24 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                         base_source, role, category, mutation, path
                     )
                     actual_rules = validate_mutated_source(
-                        provider, path, mutated_source, role
+                        surface, path, mutated_source, role
                     )
                     if actual_rules != [expected_rule]:
                         failures.append(
-                            f"{provider}/{role_id}/{category}/{mutation}: "
+                            f"{surface}/{role_id}/{category}/{mutation}: "
                             f"expected {[expected_rule]!r}, got {actual_rules!r}"
                         )
 
     for case in fixture["adversarialCases"]:
-        provider = case["provider"]
+        surface = case["adapterSurface"]
         role_id = case["role"]
         role = roles[role_id]
-        path, base_source = sources[(provider, role_id)]
+        path, base_source = sources[(surface, role_id)]
         mutated_source = mutate_source(
             base_source, role, case["category"], case["mutation"], path
         )
         actual_rules = validate_mutated_source(
-            provider, path, mutated_source, role
+            surface, path, mutated_source, role
         )
         if actual_rules != [case["expectedRule"]]:
             failures.append(
@@ -971,10 +971,10 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                 f"{[case['expectedRule']]!r}, got {actual_rules!r}"
             )
 
-    vocabulary_provider = "gemini"
+    vocabulary_surface = "local"
     vocabulary_role = roles["code-reviewer"]
     vocabulary_path, vocabulary_source = sources[
-        (vocabulary_provider, "code-reviewer")
+        (vocabulary_surface, "code-reviewer")
     ]
     vocabulary_anchor = category_anchor(vocabulary_role, "responsibilities")
     for state in fixture["negationStates"]:
@@ -999,7 +999,7 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                 f"vocabulary-{direction}-{state}",
             )
             actual_rules = validate_mutated_source(
-                vocabulary_provider,
+                vocabulary_surface,
                 vocabulary_path,
                 mutated_source,
                 vocabulary_role,
@@ -1013,7 +1013,7 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
     raw_contract = load_json(root / CONTRACT_PATH)
     for forbidden in fixture["forbiddenCommonFields"]:
         mutated_contract = copy.deepcopy(raw_contract)
-        mutated_contract["roles"][0][forbidden] = "provider-owned"
+        mutated_contract["roles"][0][forbidden] = "adapter-owned"
         try:
             validate_contract(root, mutated_contract)
         except ContractError as exc:

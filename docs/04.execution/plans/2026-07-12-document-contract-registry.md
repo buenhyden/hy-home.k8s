@@ -3,7 +3,7 @@ title: 'Document Contract Registry Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Document Contract Registry Implementation Plan
@@ -37,7 +37,10 @@ Git, Bash, Markdown, `pre-commit`, and the repository quality gate.
 - Keep `RTK.md`, `graphify-out/**`, `.worktrees/**`, ignored files, and followed symlink targets outside the classified corpus.
 - Persist routes as exact paths or anchored regular expressions only; declaration order and first-match precedence have no meaning.
 - Keep the five-key authored baseline `title`, `type`, `status`, `owner`, `updated`; add only the existing Archive Tombstone extension.
-- README and native/control exception profiles forbid frontmatter.
+- Root provider shims and GitHub-native controls use `frontmatter-free` with
+  frontmatter `forbidden`; local-agent assets, repository runtime baselines,
+  Claude-native metadata, and native contracts use `classification-only` with
+  frontmatter `not-applicable`.
 - Keep affected-surface validator selection outside this registry; Spec 031 owns it.
 - This tranche validates registry/config and path classification. Spec 029 owns the production Markdown parser and strict authored-body semantics.
 - Do not read secret values or ignored authentication, log, token, certificate, kubeconfig, shell-history, or diagnostic content.
@@ -48,6 +51,14 @@ Git, Bash, Markdown, `pre-commit`, and the repository quality gate.
 This plan implements Spec 026 in five independently reviewable units: execution
 lineage, schema and fixtures, the registry loader/classifier, full-corpus route
 population, and compatibility-gate closure.
+
+**2026-07-14 contract correction:** The completed DCR task sequence, baseline
+433-path result, and recorded commits below remain historical evidence. The
+current registry is schema v4 / `DocumentProfileContract.v2`, has 62 profiles,
+uses mode `classification-only` for non-interpreted surfaces, and separates
+`exception/local-agent-asset`, `exception/repository-runtime-baseline`, and
+Claude-only `exception/provider-native-metadata`; `.gemini/**` intentionally
+remains uncovered.
 
 ## Context
 
@@ -137,7 +148,7 @@ class DocumentProfile:
     status_domain: tuple[str, ...]
     headings: HeadingContract
     template: PurePosixPath | None
-    mode: Literal["authored", "template", "frontmatter-free", "native", "generated", "non-target"]
+    mode: Literal["authored", "template", "frontmatter-free", "classification-only", "generated", "non-target"]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
     append_contract: AppendContract | None
@@ -206,7 +217,7 @@ frontmatter. Helper Spec profiles use the parent Spec lifecycle.
 | every other `template/*` exact form profile | source class | `template` | exact source copy | exact source `statusDomain` copy |
 | all `readme/*` profiles | `readme` | `frontmatter-free` | `forbidden` | empty |
 | provider shims and GitHub-native control Markdown | `exception` | `frontmatter-free` | `forbidden` | empty |
-| provider-native metadata and native contracts | `exception` | `native` | `not-applicable` | empty |
+| local agent assets, repository runtime baselines, Claude-native metadata, and external-schema contracts | `exception` | `classification-only` | `not-applicable` | empty |
 | generated records | `exception` | `generated` | `not-applicable` | empty |
 | declared program exclusions | `exception` | `non-target` | `not-applicable` | empty |
 
@@ -218,7 +229,7 @@ approved. Any later normalization must be a separately approved migration
 decision with corpus evidence, not an implicit registry edit.
 
 Every profile row also persists an exact `headings` object and `template`
-value. Native, generated, and non-target profiles use empty heading tuples and
+value. Classification-only, generated, and non-target profiles use empty heading tuples and
 `template: null`; authored profiles use the canonical form path established by
 Spec 027. `governance/progress-ledger` is the exact
 `docs/00.agent-governance/memory/progress.md` route, has no frontmatter or form,
@@ -621,7 +632,7 @@ Expected: compilation and commit succeed.
   finding for the required public baseline Git SHA.
 - Produces: profile classes `sdlc`, `common`, `governance`, `readme`, and
   `exception` with zero route gaps or overlaps; the independent fixed
-  `DocumentProfileContract.v1` ID/semantic digest; persistent self-test
+  current `DocumentProfileContract.v2` ID/semantic digest; persistent self-test
   assertions for exact profile and template fixture coverage; and one narrow
   `.secrets.baseline` `is_secret: false` adjudication for that public SHA.
 
@@ -650,8 +661,11 @@ global five-state vocabulary as a per-profile fallback.
 Declare six README IDs `readme/repository`, `readme/stage-index`,
 `readme/collection-index`, `readme/implementation`, `readme/snapshot-pack`, and
 `readme/workspace-staging` with forbidden frontmatter. Declare named exceptions
-for root provider shims, provider-native metadata, GitHub-native control
-Markdown, native contracts, generated records, and explicit program non-targets.
+for root provider shims, local agent assets, repository runtime baselines,
+Claude-native metadata, GitHub-native control Markdown, external-schema
+contracts, generated records, and explicit program non-targets. The completed
+2026-07-12 implementation originally emitted the v1 semantic projection; the
+2026-07-14 current contract supersedes it with v2 and schema v4.
 
 Declare `governance/progress-ledger` as the exact frontmatter-free ledger route
 with required H2 `Work Entries`, and declare `governance/progress-entry` as the

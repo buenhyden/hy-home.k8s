@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-role-semantics.schema.json",
-  "schemaVersion": 1,
-  "providers": ["gemini", "claude", "codex"],
+  "schemaVersion": 2,
+  "adapterSurfaces": ["local", "claude", "codex"],
   "categories": [
     "responsibilities",
     "outputs",

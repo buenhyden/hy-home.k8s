@@ -7,8 +7,10 @@
 This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
 It keeps gateway files thin by hosting durable rules, execution checklists,
 scope routing, provider notes, reusable memory, shared hook scripts, model
-policy, and the canonical runtime catalog used by `.claude/**`, `.codex/**`,
-and `.agents/**` provider adapters.
+policy, and the canonical runtime catalog used by Claude-native
+`.claude/agents/*.md`, Codex-native `.codex/agents/*.toml`, repository-local
+runtime baselines and shared/local `.agents/**` assets. Gemini CLI native
+`.gemini/**` adoption remains a separate `DEFER` boundary.
 
 ### Stage Readers
 
@@ -35,6 +37,17 @@ This README is primarily for:
 - Product, architecture, execution, operations, reference, archive, and template SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
+
+### Current Adapter Surface Matrix
+
+| Surface | Ownership and current meaning |
+| --- | --- |
+| `.claude/agents/*.md` | Claude native role definitions; `.claude/CLAUDE.md` is the repository-local Claude baseline. |
+| `.codex/agents/*.toml` | Codex native role definitions; `.codex/CODEX.md` is the repository-local Codex baseline. |
+| `.agents/agents/*.md` | Local/Antigravity role adapters, not Gemini CLI native roles. |
+| `.agents/{skills,workflows,output-styles}/` | Shared SSoT exposed through the tracked Claude/Codex symlink views. |
+| `.codex/hooks.json`, `.agents/hooks.json` | Context/validation wiring; the latter is local/Antigravity wiring. |
+| `.gemini/agents/**`, `.gemini/settings.json` | Gemini CLI native surfaces; absent and `DEFER`. |
 
 ## Document Index
 

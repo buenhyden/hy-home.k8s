@@ -3,7 +3,7 @@ title: 'Workspace Document Assurance Operating Model Architecture Reference Docu
 type: sdlc/ard
 status: accepted
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Workspace Document Assurance Operating Model Architecture Reference Document (ARD)
@@ -98,7 +98,7 @@ against their source rather than becoming new owners.
 ## Infrastructure & Deployment
 
 - **Runtime / Platform**: Repository-local scripts, pre-commit, GitHub Actions,
-  GitOps manifests, policy checks, and provider adapters.
+  GitOps manifests, policy checks, and agent adapter surfaces.
 - **Deployment Model**: Changes are committed in an isolated worktree and only
   affect live systems after a separately approved Git-based operator workflow.
 - **Operational Evidence**: Static rendering, manifest checks, secret scanning,
@@ -108,15 +108,17 @@ against their source rather than becoming new owners.
 ### Agent architecture requirements
 
 - **Model/Provider Strategy**: Capability tiers are canonical; provider notes
-  map Claude, Codex, and Gemini to available native models without duplicating
-  model names in every role.
+  map Claude and Codex native adapters plus the local/Antigravity adapter to
+  declared model identifiers without duplicating names in every role. Gemini
+  CLI native model resolution remains `DEFER` until `.gemini/**` runtime evidence exists.
 - **Tooling Boundary**: Agents may use repository and read-only research tools;
   remote mutation and secret access require separate authority.
 - **Memory & Context Strategy**: Durable decisions live in PRD/ARD/ADR/Spec and
   Task evidence; `_workspace` stores only ignored, temporary, non-secret support
   artifacts.
 - **Guardrail Boundary**: Shared roles define responsibility, output, prohibited
-  action, stop, and handoff semantics; native adapters preserve provider syntax.
+  action, stop, and handoff semantics; each adapter preserves its surface syntax
+  without turning local `.agents/**` files into Gemini CLI native evidence.
 - **Latency / Cost Budget**: Affected-file checks are narrow; all-files and broad
   reviewers run at defined completion gates rather than after every edit.
 

@@ -3,7 +3,7 @@ title: 'Task: Document Contract Registry'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Task: Document Contract Registry
@@ -13,6 +13,12 @@ updated: 2026-07-13
 This document tracks implementation and verification work for the document
 contract registry. It keeps tasks derived from Spec 026 and its execution Plan
 traceable while preserving repository-static evidence boundaries.
+
+**2026-07-14 contract correction:** DCR-001 through DCR-005 and their original
+counts remain completed point-in-time evidence. The current owner is registry
+schema v4 / `DocumentProfileContract.v2` with 62 profiles and the split local,
+repository-runtime-baseline, and Claude-native exception routes; mode
+`classification-only` replaces the ambiguous historical `native` mode.
 
 ## Inputs
 

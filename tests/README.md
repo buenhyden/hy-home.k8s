@@ -37,7 +37,7 @@
 ```text
 tests/
 ├── fixtures/
-│   ├── agent-role-semantics.json     # Thirty-adapter semantic mutation matrix
+│   ├── agent-role-semantics.json     # Thirty-role-adapter semantic mutation matrix
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   ├── github-actions-security.json  # Immutable Action and least-privilege cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
@@ -86,7 +86,7 @@ live readiness.
 | Cross-document compatibility | `python3 scripts/validate-links-and-owners.py --root . --mode compatibility` | Repo-static exact ledger-transition debt evidence |
 | Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
 | Agent role semantics fixture | `python3 scripts/validate-agent-role-semantics.py --self-test` | Repo-static 480-case category mutation evidence |
-| Agent role semantics repository check | `python3 scripts/validate-agent-role-semantics.py --root .` | Repo-static thirty-adapter semantic coverage |
+| Agent role semantics repository check | `python3 scripts/validate-agent-role-semantics.py --root .` | Repo-static thirty-role-adapter semantic coverage across local/Claude/Codex surfaces |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
@@ -109,9 +109,9 @@ live readiness.
 Repository quality is an orchestrator boundary: it invokes the registry,
 Markdown-profile, cross-document, affected-surface, agent-role-semantic, and
 roster-currentness validators in strict blocking mode, then runs only retained
-workspace-domain and provider-native metadata checks. Provider-neutral semantic
+workspace-domain and surface-specific metadata checks. Shared semantic
 validation does not copy model/tool/effort fields; those values and exact scope
-imports remain native adapter evidence. Report `affected`, `staged`,
+imports remain surface-specific adapter evidence. Report `affected`, `staged`,
 `all-files`, `message/manual`, `ci`, and `remote/live` through the canonical
 contract in `docs/00.agent-governance/rules/quality-standards.md`; static
 adapter PASS does not prove provider runtime consumption.
@@ -181,25 +181,28 @@ adapter PASS does not prove provider runtime consumption.
   `LEDGER-MISSING` 한 건만 허용하며 alias, glob, growth, duplicate, unknown rule을
   configuration error로 거부한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
-  `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
+  `missing-role`, `surface-mismatch`, `stale-count`, `bad-owner`,
+  `missing-current-phrase`인 사례 6개만
   허용한다. 각 이름의 mutation과 `expected_errors` 집합은 hardcoded
   per-case schema로 고정되며 self-test는 mutation 실행 전에 fixture
   semantics가 schema와 일치하는지 확인한다. 그 뒤 각 mutation을 확장하고
   repository 검증과 동일한 production `validate_contract()`를 호출해 실제
   오류 집합과 `expected_errors` 집합을 정확히 비교한다.
-- `stale-count`는 `8 local agents`, `Eight local provider adapters`, `eight
+- `stale-count`는 `8 local agents`, `Eight local role adapters`, `eight
   shared roles`, `8 role stems`의 고정된 네 variant를 각각 독립적으로
   거부한다. `bad-owner`는 canonical bootstrap label을 유지한 채 target만
   `rules/persona.md`로 바꿔 exact Markdown label/target 검사를 입증한다.
   Canonical owner link에는 일반 inline link만 인정되며 image syntax와
   leading-only 또는 trailing-only half-backtick label은 동일한 label/target을
   담아도 canonical link로 인정되지 않는다.
-- `tests/fixtures/agent-role-semantics.json`은 정확히 10개 role, Gemini/Claude/
-  Codex 3개 provider, responsibility/output/prohibition/stop/handoff/capability-
-  tier/evidence/provider-stem 8개 category, remove/replace 2개 mutation의
+  `missing-current-phrase`와 duplicate probe는 canonical roster phrase가 정확히
+  한 번이어야 한다는 cardinality 계약을 고정한다.
+- `tests/fixtures/agent-role-semantics.json`은 정확히 10개 role, local/Claude/
+  Codex 3개 adapter surface, responsibility/output/prohibition/stop/handoff/capability-
+  tier/evidence/adapter-stem 8개 category, remove/replace 2개 mutation의
   480-case Cartesian matrix를 고정한다. 모든 case는 production parser와
   validator를 사용하고 하나의 서로 다른 `ROLE-*` rule ID만 반환해야 한다.
-  Mutation은 파싱된 객체가 아니라 provider source에 적용되어 480개 모두
+  Mutation은 파싱된 객체가 아니라 adapter source에 적용되어 480개 모두
   YAML/TOML/operative-Markdown parser를 다시 통과한다. 추가 33개 adversarial
   case는 duplicate/non-mapping/non-scalar YAML, fenced/absolute-or-list-
   container-indented code, HTML comment, strikethrough, blockquote/nested/lazy
@@ -208,7 +211,7 @@ adapter PASS does not prove provider runtime consumption.
   paragraph/list-item unit 전체와 정확히 같아야 한다. `false`, `not true`,
   `invalid`, revoked 계열과 non-operative/non-applicable 상태는 단일 10-state
   vocabulary와 forward/backward 20개 production-parser probe로 동기화한다.
-  공통 계약은 provider-native `model`, `tools`, `modelReasoningEffort`를
+  공통 계약은 surface-owned `model`, `tools`, `modelReasoningEffort`를
   schema로 거부하며, operative prose에서만 whitespace를 정규화한다.
 - `tests/fixtures/validation-surfaces.json`은 요청된 tracked root별 positive
   path, validator/CI selection 집합, `../`, leading `./`, case alias, symlink
@@ -234,8 +237,8 @@ adapter PASS does not prove provider runtime consumption.
   `files`/`paths` permit only one string-list alias, with `files: []` retaining
   explicit no-files semantics. Empty objects, nulls, and mixed list items fail.
 - Roster fixture와 repository 검사는 repo-static evidence만 제공한다. Claude,
-  Codex, Gemini provider runtime을 실행하지 않으며 provider-native runtime
-  readiness를 입증할 수 없다.
+  Codex, local/Antigravity adapter runtime을 실행하지 않으며, absent인 Gemini
+  CLI native surface를 포함한 어떤 runtime readiness도 입증할 수 없다.
 - Repo-static 검증 통과는 live k3d 운영 검증 완료를 의미하지 않는다.
 - Optional tool 검증은 `kube-linter`나 `conftest`가 설치되어 실제 실행됐을 때만 해당 도구 coverage로 보고한다. 미설치 `SKIP`은 fallback 또는 syntax 검증 통과로 따로 기록한다.
 - Live/operator-owned 검증은 사람 승인 bootstrap 또는 break-glass 맥락에서만 실행하고, repo-static evidence와 섞어 보고하지 않는다.

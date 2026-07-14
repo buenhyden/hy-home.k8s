@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Observability and Network Review Agents Technical Specification
@@ -21,8 +21,10 @@ surface (`traefik/`, multiple ingress manifests, `gitops/platform/network-polici
 
 ## Strategic Boundaries & Non-goals
 
-- **In scope**: two worker agents, their three provider adapters each, the
-  harness catalog roster additions, and the Stage 03/04 governance chain.
+- **In scope**: two worker roles, each projected to Claude-native
+  `.claude/agents/*.md`, Codex-native `.codex/agents/*.toml`, and
+  local/Antigravity `.agents/agents/*.md`, plus the harness catalog roster and
+  Stage 03/04 governance chain.
 - **Out of scope**: live cluster scraping, Prometheus/Grafana query execution,
   live ingress probing, editing manifests, changing model-policy tiers, or
   altering existing agents beyond adding handoff targets.
@@ -35,9 +37,11 @@ surface (`traefik/`, multiple ingress manifests, `gitops/platform/network-polici
 - Both agents are `worker` tier and adhere to
   `docs/00.agent-governance/model-policy.md` tier identifiers.
 - Both agents import `docs/00.agent-governance/scopes/infra.md`.
-- Both agents are mirrored across `.claude/agents/*.md`,
-  `.agents/agents/*.md`, and `.codex/agents/*.toml` with aligned role, scope
-  import, guardrails, handoff, and postflight while preserving provider keys.
+- Both roles are projected across Claude-native `.claude/agents/*.md`,
+  Codex-native `.codex/agents/*.toml`, and local/Antigravity
+  `.agents/agents/*.md` with aligned role, scope import, guardrails, handoff,
+  and postflight while preserving surface-specific keys. This tracked parity
+  is not Gemini CLI native discovery or behavior evidence.
 
 ## Core Design
 
@@ -99,8 +103,9 @@ Session-scoped only. Persistent lessons go to the progress ledger.
 
 #### Evaluation
 
-Acceptance is repo-static: adapter parity across three providers, catalog
-roster rows present, and `bash scripts/validate-repo-quality-gates.sh .` PASS.
+Acceptance is repo-static: parity across the three tracked adapter surfaces,
+catalog roster rows present, and `bash scripts/validate-repo-quality-gates.sh .`
+PASS. Gemini CLI native `.gemini/**` remains absent/`DEFER`.
 
 ## Edge Cases & Error Handling
 
@@ -123,7 +128,8 @@ bash scripts/validate-repo-quality-gates.sh .
 
 ## Success Criteria & Verification Plan
 
-- Two agents exist across all three provider adapters with aligned contracts.
+- Two roles exist across all three tracked adapter surfaces with aligned
+  contracts: Claude native, Codex native, and local/Antigravity.
 - Harness catalog roster and adapter tables list both agents.
 - Repo-static validation passes and evidence is recorded in the Stage 04 task.
 

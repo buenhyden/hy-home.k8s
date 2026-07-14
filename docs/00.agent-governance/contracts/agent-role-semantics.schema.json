@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/agent-role-semantics-1.schema.json",
-  "title": "Provider-neutral agent role semantics",
+  "$id": "https://hy-home.k8s/schemas/agent-role-semantics-2.schema.json",
+  "title": "Shared agent role semantics across adapter surfaces",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "schemaVersion", "providers", "categories", "roles"],
+  "required": ["$schema", "schemaVersion", "adapterSurfaces", "categories", "roles"],
   "properties": {
     "$schema": {"const": "./agent-role-semantics.schema.json"},
-    "schemaVersion": {"const": 1},
-    "providers": {
+    "schemaVersion": {"const": 2},
+    "adapterSurfaces": {
       "type": "array",
       "prefixItems": [
-        {"const": "gemini"},
+        {"const": "local"},
         {"const": "claude"},
         {"const": "codex"}
       ],

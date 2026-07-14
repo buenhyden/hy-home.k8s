@@ -3,7 +3,7 @@ title: 'Semantic Document Validation Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Semantic Document Validation Implementation Plan
@@ -18,6 +18,11 @@ updated: 2026-07-13
 **Goal:** Replace hardcoded document-shape checks with deterministic,
 registry-driven Markdown, link, index, current-owner, and migration-ledger
 validation.
+
+**2026-07-14 registry terminology correction:** The completed SDV commands and
+fixture evidence remain unchanged. Registry schema v4 now names the
+non-interpreted mode `classification-only`; the historical `native` mode label
+is superseded and must not be treated as a provider-runtime claim.
 
 **Architecture:** Reuse the Spec 026 importable registry loader, keep Markdown
 profile validation separate from cross-document validation, and expose stable
@@ -679,8 +684,8 @@ contains `profile`, `mode`, `applicability`, `fixturePath`, `positiveSource`,
 and `negativeMutations`. Applicability is exactly one of `validate-document`,
 `append-fragment`, `classification-only`, or `excluded`. Markdown routes in
 modes `authored`, `template`, and `frontmatter-free` with declared structural
-contracts use `validate-document`. Profiles in modes `native` or `generated`
-whose frontmatter mode is `not-applicable` and whose required/allowed headings
+contracts use `validate-document`. Profiles in modes `classification-only` or
+`generated` whose frontmatter mode is `not-applicable` and whose required/allowed headings
 are both empty use `classification-only`: empty headings mean structural N/A,
 not "forbid every heading". Their positive and focused route/profile mismatch
 cases run through production `classify_path()` and inventory selection while

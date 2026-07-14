@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "baseTree": {
     "documents": [
-      {"path": ".agents/skills/example/skill.md", "profile": "exception/provider-native", "profileClass": "exception", "mode": "native", "title": "", "type": "", "status": "", "body": "# Fixture skill"},
+      {"path": ".agents/skills/example/skill.md", "profile": "exception/local-agent-asset", "profileClass": "exception", "mode": "classification-only", "title": "", "type": "", "status": "", "body": "# Fixture skill"},
       {"path": "docs/00.agent-governance/README.md", "profile": "readme/stage-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Governance\n\n## Document Index\n\n### Current Governance Authority Index\n\n| Document | Lifecycle |\n| --- | --- |\n| [`current-alpha.md`](current-alpha.md) | `active` |\n| [`current-beta.md`](current-beta.md) | `active` |\n"},
       {"path": "docs/00.agent-governance/current-alpha.md", "profile": "governance/reference", "profileClass": "governance", "mode": "authored", "title": "Current Alpha Governance", "type": "governance/reference", "status": "active", "body": "Current alpha governance authority."},
       {"path": "docs/00.agent-governance/current-beta.md", "profile": "governance/reference", "profileClass": "governance", "mode": "authored", "title": "Current Beta Governance", "type": "governance/reference", "status": "active", "body": "Current beta governance authority."},

@@ -43,7 +43,7 @@ surface domain validators owned by Spec 032.
 
 - **Component Boundary**: Path registry, selector script, pre/post edit hooks,
   pre-commit configuration, CI path filter/jobs, Stage 00 validation rules,
-  root provider shims, shared `.agents` roles, and native adapters. Within
+  root provider shims, local `.agents` roles, and Claude/Codex native adapters. Within
   workflows this Spec owns changed-path detection, selector outputs, and job
   selection only; Spec 032 owns Action identity, permissions, and protected
   domain behavior.
@@ -54,7 +54,7 @@ surface domain validators owned by Spec 032.
   in the same creation commit; validator or ledger coverage must not be weakened
   to admit an unaccounted path.
 - **Tech Stack**: JSON contract, repository scripts, pre-commit, GitHub Actions,
-  shared role fixtures, and provider-native Markdown/TOML/settings formats.
+  shared role fixtures, and surface-specific Markdown/TOML/settings formats.
 
 Validation lanes:
 
@@ -109,7 +109,7 @@ must not trigger CI; only the tracked boundary README and ignore contract do.
   `./`, case aliases, symlink traversal, and first-match precedence.
 - Provider discovery, entitlement, remote CI, and live state cannot be inferred
   from adapter files and remain separate evidence lanes.
-- A provider-native file may have different syntax while still being required
+- A surface-specific adapter file may have different syntax while still being required
   to express the same role semantics.
 
 ## Failure Modes & Fallback / Human Escalation
@@ -141,7 +141,7 @@ git diff --check
   negative local/CI selector fixtures; uncovered paths are zero.
 - **VAL-SPC-002**: `pre-commit --all-files`, message/manual stages, repository
   quality, and domain gates are described and evidenced without scope overclaim.
-- **VAL-SPC-003**: Shared and provider-native agent surfaces reject missing or
+- **VAL-SPC-003**: Shared/local and provider-native agent surfaces reject missing or
   wrong responsibility, output, prohibited action, stop, or handoff semantics.
 - **VAL-SPC-004**: Duplicate path conditions in hooks, Stage 00 prose, and CI are
   removed or checked as generated/consuming views of the canonical registry.
@@ -153,7 +153,10 @@ git diff --check
 
 ASQA-001 through ASQA-006 are complete. The Stage 00 lane/result/handoff
 contract, thin provider routing, repository quality orchestration, and
-cross-provider role semantics are aligned. Independent reviewer agent
+cross-surface role semantics are aligned. The machine owner is
+`agent-role-semantics` v2 with `adapterSurfaces = [local, claude, codex]`; this
+preserves the completed 480-case result without treating `.agents/**` as
+Gemini CLI native evidence. Independent reviewer agent
 `/root/review_adm006_adm007_conflict` approved lifecycle closure with
 `C0/H0/M0/L0`; remote CI, native provider consumption, credentials, secrets,
 and live infrastructure remain `DEFER` for their separately authorized owners.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
+  "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
   "title": "Document profile registry",
   "type": "object",
   "additionalProperties": false,
@@ -20,10 +20,10 @@
       "const": "https://json-schema.org/draft/2020-12/schema"
     },
     "$id": {
-      "const": "https://hy-home.k8s/schemas/document-profiles-3.schema.json"
+      "const": "https://hy-home.k8s/schemas/document-profiles-4.schema.json"
     },
     "schemaVersion": {
-      "const": 3
+      "const": 4
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -346,7 +346,7 @@
             "authored",
             "template",
             "frontmatter-free",
-            "native",
+            "classification-only",
             "generated",
             "non-target"
           ]

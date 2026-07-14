@@ -14,7 +14,14 @@ This Task tracks six bounded changes that establish deterministic affected-path
 validation and provider-neutral agent-role evidence. ASQA-001 starts reciprocal
 Spec, Plan, Task, and Stage-index lineage. ASQA-002 through ASQA-006 then define
 the surface registry, connect local and CI consumers, enforce ten-role semantics
-across thirty provider adapters, and close the shared QA handoff contract.
+across thirty tracked local/Claude/Codex adapters, and close the shared QA
+handoff contract.
+
+**2026-07-14 terminology correction:** ASQA-001 through ASQA-006 remain done,
+and the recorded 480/33/20 results are unchanged. Current validation describes
+thirty tracked role adapters across `local`, `claude`, and `codex` surfaces;
+historical `three providers`, `native adapters`, and `cross-provider` wording
+below is evidence terminology, not a Gemini CLI runtime claim.
 
 ## Inputs
 
@@ -24,9 +31,10 @@ across thirty provider adapters, and close the shared QA handoff contract.
   profile, index, link, and reciprocal execution-lineage validation.
 - **Path Contract Baseline**: Spec 026 owns normalized repository-relative POSIX
   exact and anchored-regex route semantics.
-- **Provider Baseline**: The Stage 00 roster contains ten shared roles and thirty
-  Claude, Codex, and Gemini adapters; provider-native model and tool metadata
-  remain with their existing owners.
+- **Adapter Baseline**: The Stage 00 roster contains ten shared roles and thirty
+  tracked adapters across `local`, `claude`, and `codex`; surface-specific
+  model/tool metadata remains with its existing owner. Gemini CLI native
+  `.gemini/**` remains absent/`DEFER`.
 
 ## Task Table
 
@@ -34,9 +42,9 @@ across thirty provider adapters, and close the shared QA handoff contract.
 | --- | --- | --- | --- | --- |
 | ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Done | GREEN lineage assertion, exact fourteen-column Task ledger row, focused strict document QA, and logical commit `0ab20d3 docs(execution): start affected surface agent qa` |
 | ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
-| ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three-provider hook payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
+| ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three tracked-wiring payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
 | ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Done | Fixture-first RED/GREEN for four push/PR range cases, exact selector job/GitHub-output parity, initial/zero-before fail-safe, 636-path contract coverage, canonical quality-gate and Action-inventory alignment, actionlint and zizmor PASS, protected-job digest equality, and exact eight-path staging; logical commit `ci(qa): select jobs from affected-surface registry` |
-| ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Done | Fixture-first RED exposed all eight unimplemented `ROLE-*` rules; GREEN validates 10 roles × 3 providers × 8 categories × remove/replace = 480 source-to-parser exact-rule mutations, 33 malformed-YAML/non-operative-Markdown adversarial cases, and 20 shared-negation-vocabulary probes, all thirty native adapters, provider-metadata exclusion, metadata/import hash invariance, roster currentness, strict document QA, full quality gate, all-files pre-commit, and exact 37-path staging; logical commit `feat(agents): enforce cross-provider role semantics` |
+| ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Done | Fixture-first RED exposed all eight unimplemented `ROLE-*` rules; GREEN validates 10 roles × 3 tracked surfaces × 8 categories × remove/replace = 480 source-to-parser exact-rule mutations, 33 malformed-YAML/non-operative-Markdown adversarial cases, and 20 shared-negation-vocabulary probes, all thirty local/Claude/Codex adapters, surface-metadata exclusion, metadata/import hash invariance, roster currentness, strict document QA, full quality gate, all-files pre-commit, and exact 37-path staging; logical commit `feat(agents): enforce cross-provider role semantics` |
 | ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Done | Full repository-static QA bundle, exact twenty-five-path staging, explicit lane limitations, and independent reviewer agent `/root/review_adm006_adm007_conflict` disposition `APPROVED FOR LIFECYCLE CLOSURE (C0/H0/M0/L0)`; rollback unit is logical commit `docs(agents): align provider qa evidence contracts` |
 
 The exact validation commands for each logical unit are:
@@ -217,8 +225,9 @@ paths. The local runner imports the validated contract, invokes approved argv
 arrays with `shell=False`, and emits deterministic command/tool/scope/
 limitation/evidence fields. Shared hooks preserve provider payload extraction,
 protected-domain warnings, formatting, lifecycle advisory/block semantics, and
-use temporary NUL files; Claude, Gemini, and Codex wiring remains native to its
-existing JSON surface. Payload paths containing C0/DEL bytes, boundary
+use temporary NUL files; Claude settings, local/Antigravity
+`.agents/hooks.json`, and Codex wiring retain their tracked JSON surface roles.
+Payload paths containing C0/DEL bytes, boundary
 whitespace, non-normalized or external paths, or any symlink component fail
 before a formatter or pre-commit command is invoked. Present scalar path aliases
 must each be non-empty strings and cannot shadow each other; the sole present
@@ -274,21 +283,21 @@ rule IDs and exited `1`. The completed provider-neutral JSON contract and schema
 own responsibility, output, prohibited action, stop condition, handoff,
 capability tier, and required evidence claims for the exact ten current roles;
 they reject provider-owned `model`, `tools`, and `modelReasoningEffort` fields.
-The production parser reads YAML frontmatter plus Markdown for Gemini and Claude
-and TOML `developer_instructions` for Codex, normalizing whitespace only. Its
-fixture executes all 480 role/provider/category/remove-or-replace combinations
-against provider source through the production YAML/TOML/Markdown parser and
+The production parser reads YAML frontmatter plus Markdown for local/Antigravity
+and Claude and TOML `developer_instructions` for Codex, normalizing whitespace
+only. Its fixture executes all 480 role/adapter/category/remove-or-replace
+combinations against adapter source through the production YAML/TOML/Markdown parser and
 requires each mutation to return exactly its distinct `ROLE-*` rule ID,
-including provider-stem failures. YAML duplicate keys, non-mapping metadata,
+including current `ROLE-ADAPTER-STEM` failures. YAML duplicate keys, non-mapping metadata,
 and non-scalar names fail closed. Thirty-three additional adversarial cases prove
 that fenced, absolute/list-container-indented, and indented-tilde code, HTML
 comments, strikethrough, blockquote/nested/lazy continuation, forward/backward
 revocation, external negation, inline-code-only claims, and quoted/nested
 headings cannot satisfy a semantic claim. Each category claim must equal a
 complete normalized paragraph/list-item unit in its owning section. The smallest
-provider-native body changes add
-topic-specific stop, bounded capability, and evidence claims while all native
-metadata and scope-import hashes remain equal to their pre-edit values. Focused
+surface-specific body changes add topic-specific stop, bounded capability, and
+evidence claims while all owned metadata and scope-import hashes remain equal
+to their pre-edit values. Focused
 semantic and roster checks, strict document checks, the full repository quality
 gate, all-files pre-commit, diff checks, and exact A4/M33 staging form the final
 repo-static evidence; provider runtime consumption, remote CI, credentials,
@@ -322,9 +331,9 @@ ASQA-006, its Spec, Plan, and Task are complete. Independent reviewer agent
   `SKIP`); `message/manual` is `DEFER` because no commit message or explicit
   manual-stage invocation exists; local `ci`
   selection and static workflow checks PASS through repository quality, while
-  remote CI and provider/native `remote/live` evidence remain `DEFER`.
-- **Limitations**: repo-static files do not prove native Claude, Codex, or
-  Gemini adapter discovery/consumption, remote GitHub execution, credentials,
+  remote CI and runtime-native `remote/live` evidence remain `DEFER`.
+- **Limitations**: repo-static files do not prove native Claude/Codex adapter
+  discovery/consumption or any Gemini CLI native implementation, remote GitHub execution, credentials,
   secrets, Kubernetes convergence, Argo CD, Vault, ESO, or cloud state. The
   first staged pre-commit launch could not create the linked-worktree Git index
   lock in the filesystem sandbox; the same command was rerun with the approved

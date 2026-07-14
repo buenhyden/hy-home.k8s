@@ -24,7 +24,7 @@ knowledge consistent without forcing every common document into an SDLC phase.
 
 ### Common Profile Handoff
 
-The v3 [Document Profile Registry](./document-profiles.json) owns the exact routes,
+The v4 [Document Profile Registry](./document-profiles.json) owns the exact routes,
 forms, headings, and metadata contracts for `readme/*`, `content/reference`,
 `content/archive-tombstone`, `governance/memory`,
 `governance/progress-ledger`, and `governance/progress-entry`. This document

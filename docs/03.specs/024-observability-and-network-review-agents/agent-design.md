@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Agent Design'
 type: sdlc/agent-design
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Observability and Network Review Agents Agent Design
@@ -17,7 +17,8 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 ## Scope & Non-goals
 
 - **Covers**: manifest-static and documentation review for observability and
-  network domains, plus provider-adapter and roster wiring.
+  network domains, plus Claude-native, Codex-native, and local/Antigravity
+  tracked adapter and roster wiring.
 - **Does Not Cover**: live metric scraping, live ingress probing, manifest
   authoring, RBAC/secret/network-isolation review (stays with
   `security-auditor`), or GitOps sync-structure review (stays with
@@ -65,8 +66,10 @@ runtime roster. Both are repository-static, review-only delegated subagents.
   GitOps-first, no-plaintext-secrets, and manifest-static boundaries.
 - **Policy Constraints**: policy stays in Stage 00 governance and is imported
   via `docs/00.agent-governance/scopes/infra.md`, not duplicated inline.
-- **Versioning Rule**: adapter bodies stay aligned across three providers;
-  changes route through this spec.
+- **Versioning Rule**: adapter bodies stay aligned across the three tracked
+  surfaces—`.claude/agents/*.md`, `.codex/agents/*.toml`, and local
+  `.agents/agents/*.md`; changes route through this spec. Gemini CLI native
+  `.gemini/**` is absent and remains outside this completed delivery.
 
 ## Context & Memory Strategy
 
@@ -96,7 +99,8 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 - **Offline Evals**: adapter parity, catalog rows, repo-static validation.
 - **Online Signals**: not applicable; no live runtime.
 - **Acceptance Thresholds**: `bash scripts/validate-repo-quality-gates.sh .`
-  PASS and three-provider adapter parity.
+  PASS and three-surface tracked-adapter parity without a Gemini CLI native
+  runtime claim.
 - **Linked Task / Eval Docs**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md)
 
 ## Observability
