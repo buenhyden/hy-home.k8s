@@ -257,7 +257,7 @@ provider-native hook, deployment, reconciliation, or live runtime observation.
 - [CI workflow](../../../../.github/workflows/ci.yml)
 - [Generate changelog workflow](../../../../.github/workflows/generate-changelog.yml)
 - [Dependabot configuration](../../../../.github/dependabot.yml)
-- [Zizmor configuration](../../../../.github/zizmor.yml)
+- [Zizmor configuration](../../../../.github/ABOUT.md)
 - [Pre-commit configuration](../../../../.pre-commit-config.yaml)
 - [Shared QA workflow](../../../../.agents/workflows/qa-cicd-workflow.md)
 - [Agentic execution rules](../../../00.agent-governance/rules/agentic.md)

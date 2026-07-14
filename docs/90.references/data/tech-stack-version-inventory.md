@@ -101,14 +101,14 @@ helm_charts:
     chart: 'argo-rollouts'
     targetRevision: '2.40.9'
 github_actions:
-  'actions/checkout': 'v7.0.0'
-  'actions/first-interaction': 'v3'
-  'actions/labeler': 'v6.1.0'
-  'actions/setup-python': 'v6.3.0'
-  'actions/stale': 'v10.3.0'
-  'actions/upload-artifact': 'v7'
-  'orhun/git-cliff-action': 'v4'
-  'pre-commit/action': 'v3.0.1'
+  'actions/checkout': '9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' # pragma: allowlist secret
+  'actions/first-interaction': '1c4688942c71f71d4f5502a26ea67c331730fa4d' # pragma: allowlist secret
+  'actions/labeler': 'f27b608878404679385c85cfa523b85ccb86e213' # pragma: allowlist secret
+  'actions/setup-python': 'ece7cb06caefa5fff74198d8649806c4678c61a1' # pragma: allowlist secret
+  'actions/stale': 'eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899' # pragma: allowlist secret
+  'actions/upload-artifact': '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # pragma: allowlist secret
+  'orhun/git-cliff-action': 'f50e11560dce63f7c33227798f90b924471a88b5' # pragma: allowlist secret
+  'pre-commit/action': '2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd' # pragma: allowlist secret
 pre_commit:
   'https://github.com/commitizen-tools/commitizen': 'v4.15.1'
   'https://github.com/pre-commit/pre-commit-hooks': 'v6.0.0'

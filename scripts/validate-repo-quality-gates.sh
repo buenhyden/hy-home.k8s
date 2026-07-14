@@ -2803,14 +2803,14 @@ codeowners_text = read_text(codeowners_path)
 if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
     fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
 
-zizmor_path = root / ".github/zizmor.yml"
-zizmor_rules = (load_yaml(zizmor_path).get("rules") or {})
-allowed_zizmor_disables = {"unpinned-uses"}
-for rule_name, rule_config in sorted(zizmor_rules.items()):
-    if isinstance(rule_config, dict) and rule_config.get("disable") is True and rule_name not in allowed_zizmor_disables:
-        fail(f"{rel(zizmor_path)} disables unsupported zizmor rule: {rule_name}")
-if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
-    fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
+action_security = subprocess.run(
+    [sys.executable, str(root / "scripts/validate-github-actions-security.py"), "--root", str(root)],
+    cwd=root,
+    text=True,
+    capture_output=True,
+)
+if action_security.returncode != 0:
+    fail("GitHub Actions security validation failed: " + action_security.stdout.strip())
 
 git_workflow_path = root / "docs/00.agent-governance/rules/git-workflow.md"
 git_workflow_text = read_text(git_workflow_path)
@@ -2969,7 +2969,7 @@ changes_steps = changes_job.get("steps") or []
 changes_checkout_steps = [
     step
     for step in changes_steps
-    if step.get("uses") == "actions/checkout@v7.0.0"
+    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
 ]
 if len(changes_checkout_steps) != 1:
     fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")

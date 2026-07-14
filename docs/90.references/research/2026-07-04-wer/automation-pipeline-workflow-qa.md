@@ -311,7 +311,7 @@ Repo-backed sources:
 - [Greeting Workflow](../../../../.github/workflows/greetings.yml)
 - [Stale Workflow](../../../../.github/workflows/stale.yml)
 - [Dependabot Config](../../../../.github/dependabot.yml)
-- [Zizmor Config](../../../../.github/zizmor.yml)
+- [Zizmor Config](../../../../.github/ABOUT.md)
 - [Pre-commit Config](../../../../.pre-commit-config.yaml)
 - [Scripts README](../../../../scripts/README.md)
 - [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)

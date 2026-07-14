@@ -320,7 +320,7 @@ files, not the external sources, establish local implementation claims.
 - [Stale workflow](../../../../.github/workflows/stale.yml)
 - [Dependabot configuration](../../../../.github/dependabot.yml)
 - [Labeler configuration](../../../../.github/labeler.yml)
-- [Zizmor configuration](../../../../.github/zizmor.yml)
+- [Zizmor configuration](../../../../.github/ABOUT.md)
 - [Pre-commit configuration](../../../../.pre-commit-config.yaml)
 - [Prettier configuration](../../../../.prettierrc.json)
 - [Prettier ignore configuration](../../../../.prettierignore)

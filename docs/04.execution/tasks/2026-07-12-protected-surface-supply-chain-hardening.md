@@ -32,7 +32,7 @@ repository-static closure evidence in dependency order.
 | --- | --- | --- | --- | --- | --- |
 | PSH-001 | Start reciprocal execution evidence | doc | Reciprocal-link assertion | platform | Done |
 | PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Done |
-| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
+| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Done |
 | PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Pending |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
@@ -102,6 +102,20 @@ cardinalities were corrected to fourteen/eight, with five checkout, three
 setup-python, and six remaining occurrences. The Action validator is not part
 of the aggregate repository quality gate until PSH-003 turns this evidence
 green; no workflow, suppression, remote dispatch, or live state changed here.
+
+PSH-003 pinned all fourteen remote `uses:` occurrences to the eight reviewed
+forty-character SHAs with same-line version comments, synchronized the Action
+inventory to those immutable identities, and preserved Dependabot's weekly
+grouped `github-actions` proposal route. All five workflows now default to
+`contents: read`; only the exact greeting, label, and stale jobs retain their
+required issue or pull-request writes. The obsolete zizmor suppression file was
+deleted, and the fail-closed Action validator now runs inside the aggregate
+repository quality gate. A pre/post structural comparison preserved the exact
+Spec 031 `changes` outputs, job IDs, `needs`, and `if` expressions. Repository-
+static Action validation, actionlint, zizmor, aggregate quality, and diff checks
+pass; official upstream tag/SHA resolution was independently reconfirmed on
+2026-07-14. No secret, remote workflow, push, merge, or live state was accessed
+or changed; remote/live evidence remains DEFER.
 
 ## Traceability
 
