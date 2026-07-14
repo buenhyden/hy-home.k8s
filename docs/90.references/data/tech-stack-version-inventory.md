@@ -3,7 +3,7 @@ title: 'Reference: Tech Stack Version Inventory'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-14
 ---
 
 # Tech Stack Version Inventory
@@ -20,7 +20,7 @@ updated: 2026-07-02
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-07-02
+- Source checked: 2026-07-14
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -132,7 +132,7 @@ pre_commit:
 ## Review and Freshness
 
 - Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-07-02.
+- Last reviewed: 2026-07-14.
 - Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Related Documents

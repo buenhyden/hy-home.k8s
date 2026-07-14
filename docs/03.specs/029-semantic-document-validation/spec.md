@@ -96,8 +96,9 @@ diagnostic: RULE_ID path expected actual owner
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --self-test
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --self-test
+python3 scripts/validate-links-and-owners.py --root . --mode strict
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
@@ -115,11 +116,13 @@ git diff --check
 
 Implementation closed through SMDV-004. The quality wrapper now delegates
 registry classification, Markdown profiles, and cross-document semantics to
-the three canonical compatibility-mode CLIs. It retains the complete
+the three canonical strict-mode CLIs. It retains the complete
 template-compatibility fixture digest/mutation proof and workspace-specific
 operations, GitOps, infrastructure, agent-runtime, CI/QA, security, and
-supply-chain checks. Compatibility remains canonical until Spec 030 ADM-007;
-repository-static PASS does not establish live cluster or provider readiness.
+supply-chain checks. Spec 030 ADM-007 completed the strict-mode transition;
+compatibility mode is retained only for historical migration evidence and is
+not the current quality-gate contract. Repository-static PASS does not
+establish live cluster or provider readiness.
 
 ## Traceability
 
