@@ -89,4 +89,16 @@ Infrastructure assumptions must match current workspace assets:
 
 ## Validation and Refresh
 
+Run `bash scripts/validate-repo-quality-gates.sh .` after changing global
+language, context, gateway, security, or taxonomy standards. Run the strict
+link/owner validator when routes change and the role-semantic plus roster checks
+when adapter parity changes. Reconcile this summary with its canonical owner
+before adding a new rule; provider-runtime and live claims require separate
+evidence.
+
 ## Related Documents
+
+- [Bootstrap Governance](bootstrap.md)
+- [Documentation Protocol](documentation-protocol.md)
+- [Agent Quality Standards](quality-standards.md)
+- [Agentic Execution Rules](agentic.md)

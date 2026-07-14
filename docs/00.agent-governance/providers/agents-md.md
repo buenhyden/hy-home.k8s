@@ -74,4 +74,22 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 
 ## Validation and Refresh
 
+Run the role-semantic validator, roster-currentness validator, and repository
+quality gate after changing the gateway or a Codex adapter:
+
+```bash
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py .
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Review this note when `AGENTS.md`, `.codex/CODEX.md`, Codex role adapters, or
+the shared JIT sequence changes. These commands prove repository configuration,
+not native Codex discovery or instruction loading.
+
 ## Related Documents
+
+- [Bootstrap Governance](../rules/bootstrap.md)
+- [Codex Provider Notes](codex.md)
+- [Local Harness Catalog](../harness-catalog.md)
+- [Subagent Protocol](../subagent-protocol.md)

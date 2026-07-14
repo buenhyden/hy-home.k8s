@@ -47,6 +47,12 @@ Run this checklist before making substantial edits.
 
 ## Current Contract
 
+Substantial work must not begin until the intake, governance route, authoritative
+inputs, change boundary, and validation evidence are explicit. Preflight may
+identify a blocker or approval need; it must not infer permission from a
+template, provider adapter, or previous task. Record unresolved constraints in
+the active Task or handoff before proceeding.
+
 ## Validation and Refresh
 
 ### 5. Execution Readiness
@@ -58,3 +64,8 @@ Run this checklist before making substantial edits.
 - [ ] If a standalone memory file will be created or updated, `docs/99.templates/templates/common/memory.template.md` has been read and a matching `progress.md` entry is planned.
 
 ## Related Documents
+
+- [Bootstrap Governance](bootstrap.md)
+- [Persona Protocol](persona.md)
+- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Agent Quality Standards](quality-standards.md)

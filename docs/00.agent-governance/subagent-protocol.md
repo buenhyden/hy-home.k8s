@@ -125,6 +125,22 @@ parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 
 ## Validation and Refresh
 
+Run both self-tests and repository checks for role semantics and roster
+currentness, followed by the aggregate repository gate:
+
+```bash
+python3 scripts/validate-agent-role-semantics.py --self-test
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py . --self-test
+python3 scripts/validate-agent-roster-currentness.py .
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Refresh this protocol whenever a shared role, provider adapter schema, tool
+boundary, capability tier, delegated handoff field, or runtime dispatch
+mechanism changes. Native discovery and delegation remain separate
+provider-runtime evidence.
+
 ## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)

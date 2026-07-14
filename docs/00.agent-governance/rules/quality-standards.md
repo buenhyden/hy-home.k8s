@@ -41,6 +41,12 @@ Quality gates for governance and execution alignment.
 
 ## Governance Context
 
+The affected-surface contract selects repository validators; this rule owns the
+meaning of their evidence and handoff vocabulary. Preflight defines expected
+lanes, postflight confirms results, and provider adapters consume the same
+terms without redefining them. CI, provider-runtime, and live evidence remain
+separate authorities.
+
 ## Current Contract
 
 ### Validation Lane Contract
@@ -111,3 +117,8 @@ runtime discovered, loaded, or enforced that adapter.
 - Diff check confirms no unintended edits outside the approved change scope.
 
 ## Related Documents
+
+- [Validation Surface Contract](../contracts/validation-surfaces.json)
+- [Harness Approval Boundaries](approval-boundaries.md)
+- [Postflight Checklist](postflight-checklist.md)
+- [Harness Implementation Map](../harness-implementation-map.md)

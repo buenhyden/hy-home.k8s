@@ -81,9 +81,30 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 
 ## Governance Context
 
+The bootstrap and Agent-first rules establish GitOps-first execution; this file
+is their decision matrix for protected surfaces. Provider-native permission
+systems may add stricter controls, but they do not replace this shared approval
+route or convert repo-static evidence into live readiness.
+
 ## Current Contract
 
+- Repository edits and deterministic local validation are the default agent
+  path within the user's stated scope.
+- Live mutation, secret-value access, remote publication, merge, and paid or
+  third-party state changes require explicit human or operator approval.
+- Approved exceptions must record scope, target, rollback, evidence, and the
+  responsible operator; absence of approval means stop at a local draft.
+- The matrix above is the owner for surface-specific decisions. Runbooks own
+  approved operational procedure, and provider settings own native enforcement.
+
 ## Validation and Refresh
+
+Run `bash scripts/validate-repo-quality-gates.sh .` and
+`bash scripts/validate-policy-gates.sh .` after changing a protected-surface
+boundary. Review the matrix whenever a workflow gains permissions, a validator
+changes failure semantics, or a new live, secret, cloud, or publication surface
+is introduced. Any unverified live condition remains `DEFER` under
+[`quality-standards.md`](quality-standards.md).
 
 ## Related Documents
 

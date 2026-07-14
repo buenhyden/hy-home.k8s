@@ -58,3 +58,8 @@ exists.
 - Relevant mitigations are reflected in runbooks or follow-up tasks.
 
 ## Related Documents
+
+- [Harness Approval Boundaries](../rules/approval-boundaries.md)
+- [Agent Quality Standards](../rules/quality-standards.md)
+- [Specifications Index](../../03.specs/README.md)
+- [Incidents Index](../../05.operations/incidents/README.md)

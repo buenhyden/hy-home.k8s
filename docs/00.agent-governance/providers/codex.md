@@ -84,4 +84,22 @@ Checked on 2026-07-06:
 
 ## Validation and Refresh
 
+Run the provider-neutral role check, roster-currentness check, and repository
+quality gate after changing Codex adapters, model metadata, or hook wiring:
+
+```bash
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py .
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Recheck the official source basis when Codex changes its `AGENTS.md`, subagent,
+sandbox, approval, or configuration contract. Repository-static PASS does not
+establish native discovery, sandbox enforcement, or event delivery.
+
 ## Related Documents
+
+- [AGENTS.md Provider Notes](agents-md.md)
+- [Bootstrap Governance](../rules/bootstrap.md)
+- [Local Harness Catalog](../harness-catalog.md)
+- [Model Selection Policy](../model-policy.md)

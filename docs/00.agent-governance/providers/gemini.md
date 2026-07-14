@@ -92,4 +92,22 @@ and output styles.
 
 ## Validation and Refresh
 
+Run the shared role-semantic and roster checks plus the repository quality gate
+after changing Gemini agents, hooks, models, or the root shim:
+
+```bash
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py .
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Refresh the official source basis when Gemini's context or agent-registry
+behavior changes. Tracked adapter and hook files provide repo-static evidence
+only; native discovery and event delivery require separate runtime evidence.
+
 ## Related Documents
+
+- [Bootstrap Governance](../rules/bootstrap.md)
+- [Local Harness Catalog](../harness-catalog.md)
+- [Model Selection Policy](../model-policy.md)
+- [Subagent Protocol](../subagent-protocol.md)

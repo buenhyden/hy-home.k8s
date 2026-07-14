@@ -103,7 +103,11 @@ This protocol defines how governance references authored docs and how language b
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.
 - The canonical `owner` value for all authored documents in this repository is `platform`. Do not use deprecated team-owner values.
-- Authored documents must keep the required template headings and must include `## Related Documents`.
+- Authored documents must keep the required template headings, including the
+  exact relationship heading selected by the registry profile. The registry
+  owns that literal for every SDLC, helper-Spec, operations, common, README,
+  reference, support, archive, and governance profile; family labels are not
+  an independent heading rule.
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
 - GitHub-native control Markdown under `.github/ABOUT.md`,
@@ -157,12 +161,22 @@ This protocol defines how governance references authored docs and how language b
 
 **R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and conforms to its registry-selected profile.
 
-**R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
+**R3 — Profile-Owned Relationships:** Every authored document must include the
+relationship section required by its selected registry profile and populate it
+with the applicable upstream and downstream links. The selected profile's
+required-heading contract is the only authority for the literal section name.
+A document without its selected section is **INCOMPLETE**.
 
 **R4 — Memory Ledger Coupling:** Repo-changing work updates the canonical progress ledger at `docs/00.agent-governance/memory/progress.md`. It is the only tracked `progress.md`; standalone memory files use `memory.template.md` and link back to their related progress entry.
 
 **R5 — Archive Separation:** Current implementation conflicts cannot be hidden with historical or superseded markers in active docs. Move the old document to `docs/98.archive` as a Tombstone and link it from the archive index only.
 
-**HALT conditions:** Missing template read → HALT. README not updated → HALT. README profile mismatch → HALT. Related Documents section absent from an authored document that requires it → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. README profile mismatch → HALT. Registry-selected relationship section absent from an authored document → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.
 
 ## Related Documents
+
+- [Document Stage Routing Rules](document-stage-routing.md)
+- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Template Routing Contract](../../99.templates/support/template-routing.md)
+- [Documentation Contract](../../99.templates/support/documentation-contract.md)
+- [Common Documentation Governance](../../99.templates/support/common-documentation-governance.md)

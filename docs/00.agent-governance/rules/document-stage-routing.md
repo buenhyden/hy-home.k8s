@@ -55,7 +55,10 @@ When a skill suggests one of these paths, reroute the output into the canonical 
   in the matched template. Headings containing placeholders or marked optional
   are guidance, not required coverage.
 - New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
-- Every newly created authored document must include `## Related Documents`.
+- Every newly created authored document must use the relationship heading
+  required by its selected registry profile. The registry owns the exact
+  literal for every SDLC, helper-Spec, operations, common, README, reference,
+  support, archive, and governance profile; do not infer it from a family name.
 - Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.
 - Agents must return the template path used and validation evidence in the handoff.
 - Provider event wiring must warn on authored stage doc paths where supported
@@ -138,8 +141,8 @@ Stage 99 owners instead of copying full governance bodies into README files.
 - README files route readers to lifecycle contract owners instead of carrying
   full governance bodies.
 - Handoff links must connect PRD, architecture, spec, plan, task, operations,
-  and archive records through `## Related Documents` or equivalent route-owned
-  link sections.
+  and archive records through the exact relationship heading owned by the
+  selected registry profile.
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 
@@ -209,6 +212,19 @@ Stage 99 owners instead of copying full governance bodies into README files.
 - Suggestions to create `docs/superpowers/specs`, `docs/superpowers/plans`, or similar parallel trees must be rejected and rerouted.
 
 ## Validation and Refresh
+
+After route or lifecycle changes, run the registry, profile, owner/link, and
+aggregate repository gates:
+
+```bash
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Refresh this summary only after the Stage 99 route owner changes; do not create
+a competing target-pattern table here.
 
 ## Related Documents
 

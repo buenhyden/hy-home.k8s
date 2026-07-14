@@ -107,6 +107,26 @@ Official basis:
 
 ## Validation Contract
 
+Changes to common-documentation routes, headings, or forms must keep the
+machine registry, template forms, README handoff inventory, and authored
+documents synchronized. Validate both the focused profile contract and the
+repository consumers:
+
+```bash
+python3 scripts/validate-document-contract-registry.py --root . --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --self-test
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+The selected registry profile owns each common document's exact relationship
+heading. A route or heading change is incomplete until its profile, canonical
+form, focused fixtures, and every current consumer agree. Repository-static
+PASS does not establish generated-output freshness or live provider state;
+record those boundaries separately when they apply.
+
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)

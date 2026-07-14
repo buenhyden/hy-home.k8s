@@ -67,3 +67,8 @@ exists.
 - Governance documents remain English-only.
 
 ## Related Documents
+
+- [Bootstrap Governance](../rules/bootstrap.md)
+- [Local Harness Catalog](../harness-catalog.md)
+- [Subagent Protocol](../subagent-protocol.md)
+- [Templates Index](../../99.templates/README.md)

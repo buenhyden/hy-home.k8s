@@ -32,7 +32,18 @@ execution requirements in English.
 
 ## Authority Boundary
 
+This matrix owns stage purpose, timing, primary persona, and completion intent.
+It does not own exact path patterns, frontmatter keys, required headings, or
+status enums; those are selected by the Stage 99 registry, routing, schema, and
+lifecycle contracts. Route ownership changes through those contracts first,
+then update this summary.
+
 ## Governance Context
+
+Bootstrap and persona routing use this matrix to choose the authoritative
+stage before authoring. Stage READMEs index current documents, while Stage 99
+support files own reusable document form. This file links those systems without
+copying their complete schemas or templates.
 
 ## Current Contract
 
@@ -79,4 +90,15 @@ Agents must check these lifecycle rules before editing authored documents:
 
 ## Validation and Refresh
 
+Run the strict document registry, Markdown profile, and link/owner validators,
+then `bash scripts/validate-repo-quality-gates.sh .`. Review this matrix when a
+stage, persona, lifecycle family, template route, or completion criterion
+changes. The Stage 99 contracts must be updated before this summary when the
+change affects document shape.
+
 ## Related Documents
+
+- [Document Stage Routing Rules](document-stage-routing.md)
+- [Stage Checklists](stage-checklists.md)
+- [Template Routing Contract](../../99.templates/support/template-routing.md)
+- [SDLC Governance](../../99.templates/support/sdlc-governance.md)

@@ -57,3 +57,8 @@ exists.
 - Cross-layer impacts are documented for backend, frontend, and infra scopes.
 
 ## Related Documents
+
+- [Persona Protocol](../rules/persona.md)
+- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Architecture Index](../../02.architecture/README.md)
+- [Specifications Index](../../03.specs/README.md)

@@ -14,7 +14,16 @@ Execution-focused checklist index by taxonomy path.
 
 ## Authority Boundary
 
+These checklists summarize execution readiness and completion by stage. They do
+not define template structure, lifecycle transitions, or approval rights;
+Stage 99 support contracts and the protected-surface approval matrix own those
+decisions. A checklist item cannot override an owning stage document.
+
 ## Governance Context
+
+Agents use this index after persona and stage selection to translate the
+authoring matrix into review questions. The active Plan and Task hold concrete
+acceptance evidence, while this file remains a reusable cross-stage checklist.
 
 ## Current Contract
 
@@ -86,4 +95,15 @@ Execution-focused checklist index by taxonomy path.
 
 ## Validation and Refresh
 
+Run `python3 scripts/validate-markdown-profiles.py --root . --mode strict`,
+`python3 scripts/validate-links-and-owners.py --root . --mode strict`, and
+`bash scripts/validate-repo-quality-gates.sh .` after checklist changes. Review
+the affected checklist whenever the stage matrix, a template completion
+contract, or evidence vocabulary changes.
+
 ## Related Documents
+
+- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Preflight Checklist](preflight-checklist.md)
+- [Postflight Checklist](postflight-checklist.md)
+- [Agent Quality Standards](quality-standards.md)

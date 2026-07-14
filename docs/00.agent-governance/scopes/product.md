@@ -55,3 +55,8 @@ exists.
 - Out-of-scope boundaries are explicit.
 
 ## Related Documents
+
+- [Persona Protocol](../rules/persona.md)
+- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Requirements Index](../../01.requirements/README.md)
+- [Execution Index](../../04.execution/README.md)

@@ -30,6 +30,13 @@ Universal entry point for all agents in `hy-home.k8s`.
 
 ## Authority Boundary
 
+This entry point may select and order canonical governance owners; it does not
+own provider-native permissions, document-profile schemas, live-cluster
+approval, or stage implementation content. Route provider behavior to
+`providers/`, document structure to Stage 99 support contracts, and protected
+actions to [`approval-boundaries.md`](approval-boundaries.md). Conflicting or
+missing authority requires human clarification before execution.
+
 ## Governance Context
 
 ### JIT Loading Sequence
@@ -61,4 +68,17 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical auth
 
 ## Validation and Refresh
 
+Run `bash scripts/validate-repo-quality-gates.sh .` after changing the JIT
+sequence, gateways, or governance routes, then run
+`python3 scripts/validate-links-and-owners.py --root . --mode strict` for owner
+and link integrity. Review bootstrap whenever a gateway, scope, provider,
+progress owner, or postflight route changes; live and provider-runtime behavior
+requires separate evidence.
+
 ## Related Documents
+
+- [Preflight Checklist](preflight-checklist.md)
+- [Persona Protocol](persona.md)
+- [Postflight Checklist](postflight-checklist.md)
+- [Harness Approval Boundaries](approval-boundaries.md)
+- [Stage Authoring Matrix](stage-authoring-matrix.md)

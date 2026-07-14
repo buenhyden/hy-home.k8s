@@ -82,4 +82,22 @@ Checked on 2026-07-06:
 
 ## Validation and Refresh
 
+Run the shared role-semantic and roster checks plus the repository quality
+gate after changing Claude settings, hooks, or agent adapters:
+
+```bash
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py .
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Refresh this note when Claude's tracked settings, native agent schema, or root
+shim changes. Native hook delivery, permission enforcement, and delegated-agent
+use require separate Claude runtime evidence.
+
 ## Related Documents
+
+- [Bootstrap Governance](../rules/bootstrap.md)
+- [Local Harness Catalog](../harness-catalog.md)
+- [Subagent Protocol](../subagent-protocol.md)
+- [Quality Standards](../rules/quality-standards.md)

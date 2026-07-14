@@ -35,9 +35,9 @@ enforcement source.
 | Deprecated operations policy template route | `policy.template.md` and `type: sdlc/policy` | Reject in active contracts |
 | Deprecated operations policy frontmatter type | `type: sdlc/policy` | Reject in active frontmatter |
 | Deprecated team-owner value | `platform` | Reject in active owner fields |
-| Deprecated README related-link heading alternatives | Required active heading: `## Related Documents` | Reject only deprecated alternatives; do not reject or remove the required active heading |
+| Deprecated README related-link heading alternatives | Relationship heading selected by the README's registry profile | Reject deprecated alternatives; preserve the exact selected heading |
 | Flat template links in active route contracts | `docs/99.templates/templates/**` links | Reject in active route contracts |
-| Copied target-path template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
+| Copied target-path template comments in authored docs | Topic-specific content under the relationship heading selected by the document profile | Reject in authored documents |
 | Copied template-use instructions in authored docs | Remove from authored docs | Reject in authored documents |
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 | GitHub-native Markdown frontmatter | Frontmatter-free `.github` control body with canonical links | Reject on `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` |

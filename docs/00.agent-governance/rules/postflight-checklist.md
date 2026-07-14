@@ -85,3 +85,8 @@ repo-static evidence only and must not be reported as native provider runtime
 consumption.
 
 ## Related Documents
+
+- [Preflight Checklist](preflight-checklist.md)
+- [Agent Quality Standards](quality-standards.md)
+- [Git Workflow](git-workflow.md)
+- [Harness Approval Boundaries](approval-boundaries.md)

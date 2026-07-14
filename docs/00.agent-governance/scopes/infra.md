@@ -68,3 +68,8 @@ exists.
 - GitOps-First: all cluster changes via PR → ArgoCD.
 
 ## Related Documents
+
+- [Harness Approval Boundaries](../rules/approval-boundaries.md)
+- [Agent Quality Standards](../rules/quality-standards.md)
+- [Operations Policies Index](../../05.operations/policies/README.md)
+- [Runbooks Index](../../05.operations/runbooks/README.md)

@@ -55,3 +55,8 @@ exists.
 - No undocumented contract drift is introduced.
 
 ## Related Documents
+
+- [Persona Protocol](../rules/persona.md)
+- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Specifications Index](../../03.specs/README.md)
+- [Requirements Index](../../01.requirements/README.md)

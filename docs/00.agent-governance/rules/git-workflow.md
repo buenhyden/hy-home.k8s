@@ -58,6 +58,11 @@ updated: 2026-07-13
 
 ## Governance Context
 
+This rule applies bootstrap approval boundaries and quality evidence to local
+Git history. It owns branch and finish behavior, while the active Task owns the
+requested scope and evidence, GitHub controls own remote branch protection, and
+the human owns merge, push, publish, discard, and history-recovery decisions.
+
 ## Current Contract
 
 ### Pull Requests
@@ -96,3 +101,8 @@ Use this sequence before presenting merge, PR, keep, or discard options.
    active workflow; do not remove host-managed workspaces.
 
 ## Related Documents
+
+- [Harness Approval Boundaries](approval-boundaries.md)
+- [Agent Quality Standards](quality-standards.md)
+- [Postflight Checklist](postflight-checklist.md)
+- [Agentic Execution Rules](agentic.md)

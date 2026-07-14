@@ -124,3 +124,8 @@ Before changing gateway, runtime, hook, role-adapter, or governance-memory files
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.
 
 ## Related Documents
+
+- [Bootstrap Governance](bootstrap.md)
+- [Harness Approval Boundaries](approval-boundaries.md)
+- [Agent Quality Standards](quality-standards.md)
+- [Local Harness Catalog](../harness-catalog.md)

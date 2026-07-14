@@ -20,6 +20,13 @@ This document defines the canonical model selection policy for agents running in
 
 ## Authority Boundary
 
+This file owns the shared tier vocabulary and reasoning-effort policy. The
+canonical provider identifiers and adapter inventory remain owned by
+[`harness-catalog.md`](harness-catalog.md), while provider-native availability,
+entitlements, and runtime enforcement remain outside repository-static
+authority. A model change that alters cost, capability, or provider support
+must be reviewed by the platform owner before the catalog and adapters change.
+
 ## Governance Context
 
 ### Source Freshness

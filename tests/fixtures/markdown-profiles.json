@@ -50,6 +50,82 @@
       ]
     }
   ],
+  "sectionBodyCases": [
+    {
+      "name": "empty-required-h2",
+      "profile": "sdlc/spec",
+      "mutation": "replace-body",
+      "heading": "Overview",
+      "body": "\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-EMPTY"
+      ]
+    },
+    {
+      "name": "comments-only-required-h2",
+      "profile": "sdlc/spec",
+      "mutation": "replace-body",
+      "heading": "Overview",
+      "body": "\n<!-- author prompt -->\n<!-- multiline author\nguidance only -->\n\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-EMPTY"
+      ]
+    },
+    {
+      "name": "fenced-payload-required-h2",
+      "profile": "sdlc/spec",
+      "mutation": "replace-body",
+      "heading": "Overview",
+      "body": "\n```text\npayload\n```\n\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "empty-fence-required-h2",
+      "profile": "sdlc/spec",
+      "mutation": "replace-body",
+      "heading": "Overview",
+      "body": "\n```text\n```\n\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-EMPTY"
+      ]
+    },
+    {
+      "name": "template-form-body-exemption",
+      "profile": "template/sdlc/spec",
+      "mutation": "replace-body",
+      "heading": "Overview",
+      "body": "\n<!-- author completes this section -->\n\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "optional-empty-h2-unchanged",
+      "profile": "readme/repository",
+      "mutation": "insert-empty-optional",
+      "heading": "Prerequisites",
+      "body": "",
+      "expectedRuleIds": []
+    }
+  ],
+  "relationshipCases": [
+    {
+      "name": "sdlc-spec-traceability",
+      "profile": "sdlc/spec",
+      "requiredHeading": "Traceability",
+      "forbiddenHeading": "Related Documents"
+    },
+    {
+      "name": "common-reference-related-documents",
+      "profile": "content/reference",
+      "requiredHeading": "Related Documents",
+      "forbiddenHeading": "Traceability"
+    },
+    {
+      "name": "readme-related-documents",
+      "profile": "readme/repository",
+      "requiredHeading": "Related Documents",
+      "forbiddenHeading": "Traceability"
+    }
+  ],
   "profileMatrix": [
     {
       "profile": "sdlc/prd",

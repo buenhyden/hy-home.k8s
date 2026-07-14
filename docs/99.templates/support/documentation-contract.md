@@ -113,6 +113,26 @@ reference, archive, memory, and progress recording.
 
 ## Authoring Rules
 
+1. Classify the target path with the [Document Profile
+   Registry](./document-profiles.json), then use the one canonical form routed
+   by [Template Routing](./template-routing.md). Do not infer a form from a
+   neighboring filename.
+2. Keep every required second-level section and replace author comments,
+   prompts, and placeholders with topic-specific content. A required section
+   with only blank lines or author-only HTML comments is incomplete in an
+   authored document; canonical template forms may retain authoring prompts.
+3. Use only the selected profile's allowed headings and frontmatter keys in
+   their declared order. The selected profile also owns the exact relationship
+   heading for every SDLC, helper-Spec, operations, common, README, reference,
+   support, archive, and governance document. Do not infer or override that
+   literal from a document-family label.
+4. Recalculate relative links from the authored target location, update the
+   owning folder index when its inventory or description changes, and route
+   shared policy back to its canonical support or Stage 00 owner.
+5. Report the selected profile, canonical form, and repository-static
+   validation evidence at handoff. Keep native-runtime, remote, and live-state
+   evidence explicitly separate from repository-static results.
+
 ## Validation Contract
 
 The minimum validation for support contract changes is:

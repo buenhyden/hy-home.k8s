@@ -24,6 +24,12 @@ Persona routing for layer-based execution.
 
 ## Authority Boundary
 
+Persona selection assigns one primary decision lens and matching scope; it
+does not transfer file ownership, approval authority, or provider permissions.
+Cross-layer work must declare each scope transition. Unmapped or conflicting
+ownership routes to the Governance Steward and, when scope would materially
+change, to the human requester.
+
 ## Governance Context
 
 ### Persona Mapping
@@ -47,6 +53,25 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical taxonom
 
 ## Current Contract
 
+- Select exactly one primary persona before non-trivial execution and load its
+  scope file after preflight.
+- Treat persona mappings as routing metadata; canonical stage documents and
+  scope ownership remain the source of implementation authority.
+- A delegated role must use an existing provider-native adapter and the
+  provider-neutral semantics contract rather than an inline replacement.
+- Re-resolve persona and scope when the work crosses a layer boundary.
+
 ## Validation and Refresh
 
+Run `bash scripts/validate-repo-quality-gates.sh .` after persona or scope-map
+changes. When a change affects delegated roles, also run
+`python3 scripts/validate-agent-role-semantics.py --root .` and
+`python3 scripts/validate-agent-roster-currentness.py .`. Review the mapping
+when a stage owner, scope file, or provider role roster changes.
+
 ## Related Documents
+
+- [Bootstrap Governance](bootstrap.md)
+- [Preflight Checklist](preflight-checklist.md)
+- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Subagent Protocol](../subagent-protocol.md)

@@ -106,8 +106,8 @@
 11. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
     새 authored 문서의 기본 `status`는 `draft`, 기본 `owner`는 `platform`이다. Status promotion은 owning Plan/Task evidence 또는 human review 후에만 수행한다.
     `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md`는 GitHub-native control Markdown이므로 frontmatter-free 예외로 유지한다.
-12. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 profile heading, placeholder, 상대 링크 규칙, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
-13. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
+12. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 profile heading, placeholder, 상대 링크 규칙, profile-selected relationship heading만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
+13. Relationship section 예시는 selected profile의 정확한 heading을 사용하고 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 14. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
 15. `examples/aws/docs/**`와 `examples/azure/docs/**`의 비-README Markdown은 example-local SDLC snapshot route로 분류하고, 문서 역할에 맞는 SDLC frontmatter와 섹션 기대값을 적용한다.
 16. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, 현재 구현과 상충하는 old PRD/ARD/ADR/Spec/Plan/Task는 `docs/98.archive` Tombstone으로 이동한다.
@@ -126,7 +126,7 @@
 
 - target pattern, placeholder naming, target-relative examples를 mapping과 일치시킨다.
 - 실제 Markdown 링크는 `docs/99.templates/` 기준으로 resolve되게 유지하고, 아직 존재하지 않는 target-relative 예시는 code literal로 둔다.
-- core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, archive routing note만 갱신한다.
+- core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, profile-selected relationship section, archive routing note만 갱신한다.
 - runtime premise 변경은 current replacement 문서, README index, archive Tombstone, 검증 게이트 순서로 반영하고 old 문서를 활성 실행계약처럼 보존하지 않는다.
 - 운영 정책은 controls/evidence를 소유하고, 실행 명령 순서와 복구 절차는 guide/runbook template로 라우팅한다.
 - stage-specific lifecycle 보강은 required headings, status/currentness notes, verification, handoff/limitations, rollout/rollback/follow-up, troubleshooting signatures처럼 기존 문서에 안전하게 추가 가능한 섹션을 우선한다.
@@ -154,7 +154,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 - 아직 존재하지 않는 optional 문서, placeholder 경로, target-relative 예시는 Markdown 링크가 아니라 backtick code literal로 남긴다.
 - 생성 문서에 템플릿 안내 주석, placeholder, target-path 주석, template-use 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
-  `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
+  `Traceability` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
 - 모든 README는 registry가 경로별로 선택한 profile의 required/allowed H2를 따른다. Deprecated related-document headings는 새 README나 정리된 README에 남기지 않는다.
 
 ### Template-Folder Mapping
@@ -211,7 +211,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<###-Numbe
 - `scripts/validate-repo-quality-gates.sh`의 structural template mapping에 같은 target pattern과 template이 있어야 한다.
 - 한 문서는 정확히 하나의 mapping, 즉 exactly one mapping에만 매칭되어야 한다.
 - 매핑된 템플릿 파일은 `docs/99.templates/`에 존재해야 한다.
-- 문서는 매핑된 템플릿의 required template headings와 `## Related Documents` 계약을 유지해야 한다.
+- 문서는 매핑된 템플릿의 required template headings와 selected profile이 소유한 relationship heading 계약을 유지해야 한다.
 
 ### Reference and Memory Rules
 

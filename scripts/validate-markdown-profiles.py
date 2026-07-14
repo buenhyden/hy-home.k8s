@@ -70,6 +70,7 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "BODY-FENCE-UNCLOSED",
         "BODY-H1",
         "BODY-H2-DUPLICATE",
+        "BODY-HEADING-EMPTY",
         "BODY-HEADING-REQUIRED",
         "BODY-HEADING-UNSUPPORTED",
         "BODY-TEMPLATE-RESIDUE",
@@ -217,6 +218,80 @@ def scan_headings(markdown: str) -> HeadingScan:
         title = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(2).strip()).strip()
         headings.append((len(match.group(1)), title))
     return HeadingScan(tuple(headings), fence_character is not None)
+
+
+def empty_required_h2_sections(
+    markdown: str, required_headings: Sequence[str]
+) -> tuple[str, ...]:
+    """Return required H2 occurrences whose authored section body is empty.
+
+    Blank lines, fence delimiters, and author-only HTML comments do not count
+    as content. Content inside a fenced block does count, while headings inside
+    that block do not open or close sections.
+    """
+
+    required = frozenset(required_headings)
+    empty: list[str] = []
+    current_heading: str | None = None
+    current_has_content = False
+    fence_character: str | None = None
+    fence_length = 0
+    in_comment = False
+    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    def close_current() -> None:
+        nonlocal current_heading, current_has_content
+        if current_heading is not None and not current_has_content:
+            empty.append(current_heading)
+        current_heading = None
+        current_has_content = False
+
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing.fullmatch(raw_line):
+                fence_character = None
+                fence_length = 0
+            elif current_heading is not None and raw_line.strip():
+                current_has_content = True
+            continue
+
+        line, in_comment = _strip_html_comments(raw_line, in_comment)
+        match = opening.match(line)
+        if match:
+            marker = match.group(1)
+            if marker[0] == "`" and "`" in match.group(2):
+                if current_heading is not None and line.strip():
+                    current_has_content = True
+                continue
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        heading_match = re.match(
+            r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line
+        )
+        if heading_match:
+            level = len(heading_match.group(1))
+            title = re.sub(
+                r"[ \t]+#+[ \t]*$", "", heading_match.group(2).strip()
+            ).strip()
+            if level <= 2:
+                close_current()
+                if level == 2 and title in required:
+                    current_heading = title
+            elif current_heading is not None:
+                current_has_content = True
+            continue
+
+        if current_heading is not None and line.strip():
+            current_has_content = True
+
+    close_current()
+    return tuple(empty)
 
 
 def _diagnostic(
@@ -397,6 +472,21 @@ def _body_diagnostics(
     missing = [heading for heading in profile.headings.required if heading not in h2]
     required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
     diagnostics.extend(_diagnostic(required_rule, path, profile, "required H2", heading) for heading in missing)
+    if profile.mode == "authored":
+        h2_counts = collections.Counter(h2)
+        diagnostics.extend(
+            _diagnostic(
+                "BODY-HEADING-EMPTY",
+                path,
+                profile,
+                "required H2 contains authored body content",
+                heading,
+            )
+            for heading in empty_required_h2_sections(
+                body, profile.headings.required
+            )
+            if h2_counts[heading] == 1
+        )
     duplicate = sorted(heading for heading, count in collections.Counter(h2).items() if count > 1)
     duplicate_rule = "README_H2_DUPLICATE" if readme else "BODY-H2-DUPLICATE"
     diagnostics.extend(_diagnostic(duplicate_rule, path, profile, "unique H2", heading) for heading in duplicate)
@@ -473,6 +563,24 @@ def _remove_first_required_h2(source: str, profile: DocumentProfile) -> str:
     heading = profile.headings.required[0]
     marker = f"\n## {heading}\n"
     return source.replace(marker, "\n", 1)
+
+
+def _replace_required_h2_body(
+    source: str, heading: str, replacement: str
+) -> str:
+    """Replace one fixture H2 body while preserving the heading itself."""
+
+    marker = f"## {heading}\n"
+    if source.count(marker) != 1:
+        raise ValueError(f"fixture must contain exactly one H2: {heading}")
+    body_start = source.index(marker) + len(marker)
+    next_heading = re.search(r"(?m)^##(?:[ \t]+|$)", source[body_start:])
+    body_end = (
+        len(source)
+        if next_heading is None
+        else body_start + next_heading.start()
+    )
+    return source[:body_start] + replacement + source[body_end:]
 
 
 def _mutation_source(
@@ -692,7 +800,14 @@ def _self_test(root: Path) -> list[str]:
 
     if fixture.get("schemaVersion") != 1:
         failures.append("fixture schemaVersion must be 1")
-    if set(fixture) != {"schemaVersion", "dateCases", "profileMatrix", "mutationCases"}:
+    if set(fixture) != {
+        "schemaVersion",
+        "dateCases",
+        "sectionBodyCases",
+        "relationshipCases",
+        "profileMatrix",
+        "mutationCases",
+    }:
         failures.append("fixture top-level keys changed")
     rows = fixture.get("profileMatrix", [])
     row_ids = [row.get("profile") for row in rows]
@@ -1011,6 +1126,138 @@ def _self_test(root: Path) -> list[str]:
                 )
 
         matrix_by_profile = {row["profile"]: row for row in rows}
+
+        section_cases = fixture.get("sectionBodyCases", [])
+        expected_section_names = (
+            "empty-required-h2",
+            "comments-only-required-h2",
+            "fenced-payload-required-h2",
+            "empty-fence-required-h2",
+            "template-form-body-exemption",
+            "optional-empty-h2-unchanged",
+        )
+        if tuple(case.get("name") for case in section_cases) != expected_section_names:
+            failures.append("focused section-body case names changed")
+        section_case_keys = {
+            "name",
+            "profile",
+            "mutation",
+            "heading",
+            "body",
+            "expectedRuleIds",
+        }
+        for case in section_cases:
+            if set(case) != section_case_keys:
+                failures.append(
+                    f"focused section-body case fields differ: {case.get('name')}"
+                )
+                continue
+            profile = profiles[case["profile"]]
+            row = matrix_by_profile[profile.profile_id]
+            path = _fixture_path(row["fixturePath"])
+            source = row["positiveSource"]
+            mutation = case["mutation"]
+            heading = case["heading"]
+            if mutation == "replace-body":
+                source = _replace_required_h2_body(
+                    source, heading, case["body"]
+                )
+            elif mutation == "insert-empty-optional":
+                if (
+                    heading not in profile.headings.allowed
+                    or heading in profile.headings.required
+                ):
+                    failures.append(
+                        f"focused optional heading is not optional: {heading}"
+                    )
+                    continue
+                relationship_heading = profile.headings.required[-1]
+                marker = f"\n## {relationship_heading}\n"
+                if source.count(marker) != 1:
+                    failures.append(
+                        "focused optional mutation lacks one relationship marker"
+                    )
+                    continue
+                source = source.replace(
+                    marker,
+                    f"\n## {heading}\n{case['body']}" + marker,
+                    1,
+                )
+            else:
+                failures.append(
+                    f"focused section-body mutation is invalid: {mutation}"
+                )
+                continue
+            _write_source(temp_root, path.as_posix(), source)
+            diagnostics = validate_document(
+                temp_root,
+                path,
+                profile,
+                "strict",
+                today=dt.date(2026, 7, 12),
+            )
+            actual_rules = _rule_ids(diagnostics)
+            if actual_rules != case["expectedRuleIds"]:
+                failures.append(
+                    f"focused section-body {case['name']}: "
+                    f"expected={case['expectedRuleIds']} actual={actual_rules}"
+                )
+            if case["name"] == "empty-required-h2":
+                empty_rows = [
+                    item
+                    for item in diagnostics
+                    if item.rule_id == "BODY-HEADING-EMPTY"
+                ]
+                if (
+                    len(empty_rows) != 1
+                    or empty_rows[0].path != path
+                    or empty_rows[0].actual != heading
+                ):
+                    failures.append(
+                        "focused empty-H2 diagnostic must expose path and "
+                        "heading without body content"
+                    )
+
+        relationship_cases = fixture.get("relationshipCases", [])
+        expected_relationship_names = (
+            "sdlc-spec-traceability",
+            "common-reference-related-documents",
+            "readme-related-documents",
+        )
+        if (
+            tuple(case.get("name") for case in relationship_cases)
+            != expected_relationship_names
+        ):
+            failures.append("focused relationship case names changed")
+        relationship_case_keys = {
+            "name",
+            "profile",
+            "requiredHeading",
+            "forbiddenHeading",
+        }
+        for case in relationship_cases:
+            if set(case) != relationship_case_keys:
+                failures.append(
+                    f"focused relationship case fields differ: {case.get('name')}"
+                )
+                continue
+            profile = profiles[case["profile"]]
+            row = matrix_by_profile[profile.profile_id]
+            h2 = [
+                title
+                for level, title in scan_headings(row["positiveSource"]).headings
+                if level == 2
+            ]
+            if (
+                case["requiredHeading"] not in h2
+                or case["forbiddenHeading"] in h2
+                or case["requiredHeading"] not in profile.headings.required
+            ):
+                failures.append(
+                    f"focused relationship {case['name']} does not follow "
+                    "the selected profile"
+                )
+
         for case in fixture.get("dateCases", []):
             profile = profiles[case["profile"]]
             base = matrix_by_profile[profile.profile_id]["positiveSource"]
@@ -1087,6 +1334,7 @@ def _self_test(root: Path) -> list[str]:
         for case in readme_fixture.get("cases", [])
         for rule in case.get("expected_rule_ids", [])
     )
+    exercised.add("BODY-HEADING-EMPTY")
     uncovered_rules = sorted(IMPLEMENTED_RULE_IDS - exercised)
     if uncovered_rules:
         failures.append(f"implemented rules lack mutations: {uncovered_rules}")

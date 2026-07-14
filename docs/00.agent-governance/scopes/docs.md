@@ -63,3 +63,9 @@ exists.
 - Templates remain aligned with active taxonomy and governance policy.
 
 ## Related Documents
+
+- [Documentation Protocol](../rules/documentation-protocol.md)
+- [Document Stage Routing Rules](../rules/document-stage-routing.md)
+- [Operations Guides Index](../../05.operations/guides/README.md)
+- [References Index](../../90.references/README.md)
+- [Templates Index](../../99.templates/README.md)
