@@ -155,6 +155,7 @@ jobs:
           bash scripts/validate-gitops-structure.sh
           bash scripts/validate-k8s-manifests.sh .
           bash scripts/check-secret-handling.sh .
+          python3 scripts/validate-vault-eso-contracts.py --root .
           bash scripts/validate-policy-gates.sh .
 
 

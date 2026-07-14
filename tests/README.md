@@ -43,6 +43,7 @@ tests/
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
 │   ├── links-and-owners.json        # Cross-document link, index, owner, and ledger cases
 │   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
+│   ├── vault-eso-contracts.json     # Exact non-secret Vault/ESO mutation cases
 │   └── document-contracts/
 │       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
 │       ├── registry-cases.json        # Document registry contract cases
@@ -95,6 +96,8 @@ live readiness.
 | GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | PSH-002 bounded RED evidence; aggregate-gate integration is deferred to PSH-003 |
 | GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus durable unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
 | GitOps identity change-set repository check | `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD` | Repo-static identity-only rows; no Argo CD prune or reconciliation claim |
+| Vault/ESO contract fixture | `python3 scripts/validate-vault-eso-contracts.py --self-test` | Repo-static exact ten-case non-secret mutation evidence |
+| Vault/ESO repository check | `python3 scripts/validate-vault-eso-contracts.py --root .` | Repo-static identity, audience, policy, local-only transport, and bootstrap process-boundary evidence; no live or secret-value claim |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -121,6 +124,11 @@ adapter PASS does not prove provider runtime consumption.
   path-only move as one `RETAIN`, and exclude `DO_NOT_EMIT_SENTINEL`, `data:`,
   `spec:`, and `stringData:`. Paths are evidence only; manifest body keys and
   values are not output or equality inputs.
+- `tests/fixtures/vault-eso-contracts.json` contains exactly ten named
+  non-secret cases. The self-test deep-copies the valid local contract,
+  applies one mutation at a time, and compares fixed diagnostics from the four
+  production validators; it does not contact Vault/ESO or read a credential,
+  secret value, ignored certificate, runtime setting, or history.
 - `tests/fixtures/github-actions-security.json`은 정확히 11개 primary case로 remote SHA,
   same-line version comment, local Action, Docker digest, workflow default,
   exact job-write allowlist, `write-all`, `unpinned-uses` suppression을 동일한

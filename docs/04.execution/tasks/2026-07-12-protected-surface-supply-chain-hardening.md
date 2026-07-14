@@ -34,7 +34,7 @@ repository-static closure evidence in dependency order.
 | PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Done |
 | PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Done |
 | PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Done |
-| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
+| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Done |
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
 
 ## Approval and Safety Boundaries
@@ -155,6 +155,51 @@ full negative renderer and temporary Git-history matrix while preserving the
 exact three fixture rows and all 91 repository identities. Fresh correction
 verification and independent re-review are required before commit; remote CI
 and live Argo CD evidence remain DEFER.
+
+PSH-005 adds an exact ten-case Vault/ESO validator and repository loader,
+marks the in-cluster HTTP store/Service/EndpointSlice boundary as local-only,
+sets the ESO identity and audience to `external-secrets/external-secrets` and
+`vault`, and hardens bootstrap secret transport. The bootstrap now requires an
+HTTPS Vault address and readable `VAULT_CA_FILE`, prompts silently through
+`/dev/tty`, sends the token header and generated Kubernetes Secret value
+through stdin, and has no noninteractive or insecure fallback. The external
+Vault operator must separately configure `bound_audiences=vault`; local-only
+HTTP is not production TLS. The exact one-subject TokenReview binding and
+six-block read/list HCL remained byte-identical.
+
+The four exact documentation batches removed active token export/inlining,
+secret-bearing insecure curl, credential argv, and password-literal examples.
+The affected-surface registry adds `vault-eso-contracts` only to the five
+bootstrap, HCL, and ESO/Vault manifest consumers while preserving every other
+path selection and all CI job outputs. `manifest-static` adds only
+`python3 scripts/validate-vault-eso-contracts.py --root .` adjacent to the
+existing secret-handling command; the workflow name, three triggers, six job
+IDs, every `needs`/`if`, and the three `changes` outputs are unchanged. The
+local harness and repository quality gate run both self-test and repository
+mode, and the script/test/GitOps/infrastructure inventories own the command and
+operator boundaries.
+
+Acceptance `PSH-005` and `VAL-PLN-005` are repo-static PASS for the ten-case
+self-test, repository mode, bootstrap/static shell syntax, exact static
+contracts, secret handling, policy fallback, 104-manifest validation,
+affected-surface self-test/repository coverage, strict Markdown/link checks,
+repository quality, actionlint, shellcheck, focused pre-commit, harness, and
+diff hygiene. Plan correction `0a3cf2f` replaced the overbroad unsafe-example
+probe with two bounded acceptance searches: the exact bootstrap plus seven
+authorized operational documents for insecure transport, environment, and
+literal-secret forms, and the seven operational documents for token-header
+argv forms. Both corrected searches return exit `1` with no output; the three
+unrelated, unauthenticated local UI probes remain outside PSH-005 scope. The
+actual working scope is the exact twenty-two authorized paths because the
+TokenReview binding and verify-only HCL remain byte-identical. The first
+independent review reported C0/H0/M4/L0 and two bounded re-reviews exposed
+remaining structural-validator bypasses. The v4 correction closes the curl
+configuration, dependency-discovery, xtrace, and sensitive-use boundaries
+with durable negative regressions; final independent re-review approved the
+staged unit at C0/H0/M0/L0. Remote CI, live Kubernetes, Argo CD, Vault, ESO,
+production TLS, and external operator evidence remain DEFER. No secret,
+credential, ignored certificate, runtime setting, shell history, live system,
+remote workflow, push, merge, or third-party state was accessed or changed.
 
 ## Traceability
 

@@ -40,8 +40,9 @@ updated: 2026-06-02
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
 - [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
-- [ ] `VAULT_TOKEN` 환경변수 설정
-- [ ] Vault unseal 상태: `curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'` → `false`
+- [ ] Vault 토큰 프롬프트를 받을 수 있는 대화형 `/dev/tty`
+- [ ] Vault HTTPS health 요청에 읽기 가능한 `VAULT_CA_FILE` 사용
+- [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
 - [ ] PostgreSQL 연결: `nc -z 172.18.0.15 15432`
 - [ ] Valkey 연결: `nc -z 172.18.0.9 6379`
 - [ ] Prometheus 연결 (Kiali용): `nc -z 172.18.0.10 9090`
@@ -49,6 +50,9 @@ updated: 2026-06-02
 - [ ] Tempo 연결 (트레이싱): `nc -z 172.18.0.12 3200`
 - [ ] Alloy OTLP 연결: `nc -z 172.18.0.11 4317`
 - [ ] Grafana 연결 (Kiali용): `nc -z 172.18.0.14 3000`
+
+`vault-backend`의 클러스터 내부 HTTP 연결은 현재 로컬 k3d 네트워크에만
+허용된 예외이며 production TLS 구성을 의미하지 않는다.
 
 ### Procedure
 
@@ -67,8 +71,13 @@ updated: 2026-06-02
 1. 기본 플랫폼 부트스트랩 실행
 
    ```bash
-   VAULT_TOKEN="<token>" bash infrastructure/bootstrap-local.sh
+   export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
+   ./infrastructure/bootstrap-local.sh
    ```
+
+   스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
+   표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고 CA 파일은
+   읽을 수 있어야 하며, 비대화형 또는 인증서 검증 생략 fallback은 없다.
 
    bootstrap 내부 단계 (`[1/11]`~`[11/11]`):
    - `[1/11]` k3d 클러스터 생성/재사용
@@ -98,7 +107,8 @@ updated: 2026-06-02
    kubectl -n headlamp get pods,ingress,svc
    kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
    kubectl -n headlamp get secret headlamp-tls
-   curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
+   curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+     -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
    ```
 
 4. Istio 가용성 확인
@@ -133,8 +143,10 @@ kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headl
 kubectl -n istio-system get deploy istiod kiali
 
 # TLS 접근
-curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+  https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+  https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 ```
 
 ## Observability and Evidence Sources

@@ -27,6 +27,8 @@ python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --m
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
+python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
@@ -2879,6 +2881,8 @@ except Exception as exc:
     ci_data = {}
 
 ci_on = workflow_on(ci_data)
+if ci_data.get("name") != "CI":
+    fail(f"{rel(ci_path)} workflow name must remain CI")
 if not isinstance(ci_on, dict):
     fail(f"{rel(ci_path)} must declare structured push and pull_request triggers")
 else:
@@ -2892,6 +2896,8 @@ else:
             fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
     if "workflow_dispatch" not in ci_on:
         fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
+    if set(ci_on) != {"push", "pull_request", "workflow_dispatch"}:
+        fail(f"{rel(ci_path)} workflow triggers must remain exact Spec 031 triggers")
 
 ci_jobs = ci_data.get("jobs") or {}
 required_ci_jobs = {
@@ -2904,6 +2910,40 @@ required_ci_jobs = {
 }
 for job_id in sorted(required_ci_jobs - set(ci_jobs)):
     fail(f"{rel(ci_path)} missing required CI job: {job_id}")
+if set(ci_jobs) != required_ci_jobs:
+    fail(f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}")
+
+expected_job_needs = {
+    "branch-policy": [],
+    "changes": [],
+    "pre-commit": ["changes"],
+    "repo-quality-static": ["changes"],
+    "manifest-static": ["changes"],
+    "ci-summary": [
+        "branch-policy",
+        "changes",
+        "pre-commit",
+        "repo-quality-static",
+        "manifest-static",
+    ],
+}
+expected_job_if = {
+    "branch-policy": "github.event_name == 'pull_request'",
+    "changes": "",
+    "pre-commit": "needs.changes.outputs.precommit == 'true'",
+    "repo-quality-static": "needs.changes.outputs.repo_quality == 'true'",
+    "manifest-static": "needs.changes.outputs.manifests == 'true'",
+    "ci-summary": "always()",
+}
+for job_id in sorted(required_ci_jobs):
+    job = ci_jobs.get(job_id) or {}
+    needs = job.get("needs") or []
+    if isinstance(needs, str):
+        needs = [needs]
+    if needs != expected_job_needs[job_id]:
+        fail(f"{rel(ci_path)} {job_id} needs must remain {expected_job_needs[job_id]}")
+    if str(job.get("if") or "") != expected_job_if[job_id]:
+        fail(f"{rel(ci_path)} {job_id} if must remain {expected_job_if[job_id]!r}")
 
 branch_policy_job = ci_jobs.get("branch-policy") or {}
 branch_policy_if = str(branch_policy_job.get("if") or "")
@@ -3055,10 +3095,36 @@ for command in [
     "bash scripts/validate-gitops-structure.sh",
     "bash scripts/validate-k8s-manifests.sh .",
     "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
     "bash scripts/validate-policy-gates.sh .",
 ]:
     if command not in manifest_static_runs:
         fail(f"{rel(ci_path)} manifest-static missing command: {command}")
+
+static_contract_steps = [
+    step for step in manifest_static_steps if step.get("name") == "Run static contract checks"
+]
+expected_static_contract_commands = [
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
+    "bash scripts/validate-policy-gates.sh .",
+]
+if len(static_contract_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one static contract step")
+else:
+    actual_static_contract_commands = [
+        line.strip()
+        for line in str(static_contract_steps[0].get("run") or "").splitlines()
+        if line.strip()
+    ]
+    if actual_static_contract_commands != expected_static_contract_commands:
+        fail(
+            f"{rel(ci_path)} manifest-static static commands must remain exact and ordered: "
+            f"{expected_static_contract_commands}"
+        )
 
 
 

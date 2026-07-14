@@ -24,6 +24,10 @@ bash scripts/validate-k8s-manifests.sh .
 echo "==> Secret handling"
 bash scripts/check-secret-handling.sh .
 
+echo "==> Vault and ESO contracts"
+python3 scripts/validate-vault-eso-contracts.py --self-test
+python3 scripts/validate-vault-eso-contracts.py --root .
+
 echo "==> Policy gates"
 bash scripts/validate-policy-gates.sh .
 

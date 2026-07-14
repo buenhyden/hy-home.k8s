@@ -106,6 +106,14 @@
       "optional": false,
       "fallback": {"status": "FAIL", "reason": "Redacted plaintext-secret scanning is required."},
       "evidenceLane": "repo-static"
+    },
+    {
+      "id": "vault-eso-contracts",
+      "argv": ["python3", "scripts/validate-vault-eso-contracts.py", "--root", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Vault and ESO safety contracts are required."},
+      "evidenceLane": "repo-static"
     }
   ],
   "ciJobs": [
@@ -239,7 +247,7 @@
     },
     {
       "id": "gitops-desired-state",
-      "routes": [{"kind": "regex", "value": "^gitops/.*$"}],
+      "routes": [{"kind": "regex", "value": "^gitops/(?!(?:platform/eso/vault-secret-store\\.yaml|platform/eso/vault-token-reviewer-binding\\.yaml|platform/external-services/vault-external\\.yaml)$).*$"}],
       "validators": ["gitops-change-set", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
       "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
@@ -248,8 +256,33 @@
     },
     {
       "id": "infrastructure",
-      "routes": [{"kind": "regex", "value": "^infrastructure/.*$"}],
+      "routes": [{"kind": "regex", "value": "^infrastructure/(?!(?:bootstrap-local\\.sh|vault/policies/eso-read\\.hcl)$).*$"}],
       "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Infrastructure changes require static contract and manifest validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "vault-eso-gitops",
+      "routes": [
+        {"kind": "exact", "value": "gitops/platform/eso/vault-secret-store.yaml"},
+        {"kind": "exact", "value": "gitops/platform/eso/vault-token-reviewer-binding.yaml"},
+        {"kind": "exact", "value": "gitops/platform/external-services/vault-external.yaml"}
+      ],
+      "validators": ["gitops-change-set", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling", "vault-eso-contracts"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "GitOps desired state requires the complete static manifest lane."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "vault-eso-infrastructure",
+      "routes": [
+        {"kind": "exact", "value": "infrastructure/bootstrap-local.sh"},
+        {"kind": "exact", "value": "infrastructure/vault/policies/eso-read.hcl"}
+      ],
+      "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling", "vault-eso-contracts"],
       "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Infrastructure changes require static contract and manifest validation."},

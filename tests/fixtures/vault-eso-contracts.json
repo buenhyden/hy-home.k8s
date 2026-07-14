@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {"name": "valid-local-http", "mutation": "none", "expected": []},
+    {"name": "http-without-local-boundary", "mutation": "remove-local-only-annotations", "expected": ["HTTP Vault transport requires local-only annotations"]},
+    {"name": "missing-audience", "mutation": "remove-vault-audience", "expected": ["Vault serviceAccountRef audiences must equal ['vault']"]},
+    {"name": "wrong-service-account", "mutation": "change-service-account", "expected": ["Vault identity must be external-secrets/external-secrets"]},
+    {"name": "broad-token-reviewer", "mutation": "add-token-reviewer-subject", "expected": ["TokenReview binding must contain exactly one subject"]},
+    {"name": "wildcard-policy", "mutation": "add-platform-wildcard", "expected": ["Vault policy must not contain wildcard platform paths"]},
+    {"name": "insecure-bootstrap", "mutation": "add-curl-insecure", "expected": ["bootstrap must not disable Vault TLS verification"]},
+    {"name": "token-in-argv", "mutation": "add-token-header-argument", "expected": ["bootstrap must not place Vault token in argv"]},
+    {"name": "secret-in-env", "mutation": "add-exported-token", "expected": ["bootstrap must not accept or export Vault token environment input"]},
+    {"name": "secret-in-kubectl-argv", "mutation": "add-from-literal-password", "expected": ["bootstrap must not place generated secret values in kubectl argv"]}
+  ]
+}

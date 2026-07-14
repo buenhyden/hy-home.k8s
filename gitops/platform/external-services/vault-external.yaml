@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: vault-external
   namespace: platform
+  annotations:
+    platform.hyhome.io/environment-scope: local-only
+    platform.hyhome.io/transport-boundary: local-only-http
 spec:
   ports:
     - name: http
@@ -15,6 +18,9 @@ kind: EndpointSlice
 metadata:
   name: vault-external-1
   namespace: platform
+  annotations:
+    platform.hyhome.io/environment-scope: local-only
+    platform.hyhome.io/transport-boundary: local-only-http
   labels:
     kubernetes.io/service-name: vault-external
 addressType: IPv4
