@@ -36,6 +36,19 @@ CURRENT_OWNER_SAMPLE_PATHS = (
     "docs/00.agent-governance/current-alpha.md",
     "docs/00.agent-governance/current-beta.md",
 )
+REFERENCE_COLLECTION_SAMPLE_PATHS = (
+    "docs/90.references/audits/README.md",
+    "docs/90.references/research/README.md",
+)
+REFERENCE_PACK_SAMPLE_PATHS = (
+    "docs/90.references/audits/2026-07-11-test/README.md",
+    "docs/90.references/research/2026-07-07-test/README.md",
+)
+REFERENCE_MEMBER_SAMPLE_PATHS = (
+    "docs/90.references/audits/2026-07-11-test/audit.md",
+    "docs/90.references/research/2026-07-07-test/accepted.md",
+    "docs/90.references/research/2026-07-07-test/active.md",
+)
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
@@ -127,6 +140,132 @@ EXPECTED_CASES = (
         "missing-governance-current-owner-state-contract",
         "remove-governance-current-owner-states",
         ("REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE",),
+    ),
+    (
+        "malformed-reference-current-packs",
+        "malform-reference-current-packs",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION",),
+    ),
+    (
+        "missing-reference-current-packs",
+        "remove-reference-current-packs",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION",),
+    ),
+    (
+        "duplicate-reference-pack-id",
+        "duplicate-reference-pack-id",
+        (
+            "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+            "REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE",
+        ),
+    ),
+    (
+        "missing-reference-pack-collection",
+        "missing-reference-pack-collection",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION",),
+    ),
+    (
+        "extra-reference-pack-collection",
+        "extra-reference-pack-collection",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION",),
+    ),
+    (
+        "misordered-reference-pack-id",
+        "reverse-reference-pack-ids",
+        (
+            "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+            "REGISTRY_REFERENCE_CURRENT_PACK_ORDER",
+        ),
+    ),
+    (
+        "invalid-reference-pack-id",
+        "invalidate-reference-pack-id",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_ID",),
+    ),
+    (
+        "parent-reference-member",
+        "parent-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PATH",),
+    ),
+    (
+        "leading-dot-reference-member",
+        "leading-dot-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PATH",),
+    ),
+    (
+        "slash-reference-member",
+        "slash-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PATH",),
+    ),
+    (
+        "control-reference-member",
+        "control-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PATH",),
+    ),
+    (
+        "normalized-alias-reference-member",
+        "normalized-alias-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PATH",),
+    ),
+    (
+        "duplicate-reference-member",
+        "duplicate-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE",),
+    ),
+    (
+        "unsorted-reference-members",
+        "reverse-reference-members",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_ORDER",),
+    ),
+    (
+        "wrong-reference-pack-state-contract",
+        "wrong-reference-pack-states",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_STATE",),
+    ),
+    (
+        "missing-reference-pack-state-contract",
+        "remove-reference-pack-states",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_STATE",),
+    ),
+    (
+        "outside-reference-profile-state",
+        "outside-reference-profile-state",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_STATE",),
+    ),
+    (
+        "missing-reference-member",
+        "missing-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_MISSING",),
+    ),
+    (
+        "untracked-reference-member",
+        "untracked-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_MISSING",),
+    ),
+    (
+        "symlink-reference-member",
+        "symlink-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_MISSING",),
+    ),
+    (
+        "non-regular-reference-member",
+        "non-regular-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_MISSING",),
+    ),
+    (
+        "wrong-profile-reference-member",
+        "wrong-profile-reference-member",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",),
+    ),
+    (
+        "wrong-profile-reference-pack-readme",
+        "wrong-profile-reference-pack-readme",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",),
+    ),
+    (
+        "wrong-profile-reference-collection-readme",
+        "wrong-profile-reference-collection-readme",
+        ("REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",),
     ),
 )
 
@@ -330,8 +469,8 @@ def _assert_document_profile_contract_mutation_proof(
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-2.schema.json",
-        "schemaVersion": 2,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
+        "schemaVersion": 3,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -385,11 +524,89 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
             },
+            {
+                "id": "content/reference",
+                "class": "common",
+                "mode": "authored",
+                "routes": [
+                    {"kind": "exact", "value": path}
+                    for path in REFERENCE_MEMBER_SAMPLE_PATHS
+                ],
+                "frontmatter": {
+                    "mode": "required",
+                    "required": ["title", "type", "status", "owner", "updated"],
+                    "allowed": ["title", "type", "status", "owner", "updated"],
+                    "order": ["title", "type", "status", "owner", "updated"],
+                },
+                "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+                "headings": {"required": [], "allowed": []},
+                "template": None,
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+            },
+            {
+                "id": "readme/collection-index",
+                "class": "readme",
+                "mode": "frontmatter-free",
+                "routes": [
+                    {"kind": "exact", "value": path}
+                    for path in REFERENCE_COLLECTION_SAMPLE_PATHS
+                ],
+                "frontmatter": {
+                    "mode": "forbidden",
+                    "required": [],
+                    "allowed": [],
+                    "order": [],
+                },
+                "statusDomain": [],
+                "headings": {"required": [], "allowed": []},
+                "template": None,
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+            },
+            {
+                "id": "readme/snapshot-pack",
+                "class": "readme",
+                "mode": "frontmatter-free",
+                "routes": [
+                    {"kind": "exact", "value": path}
+                    for path in REFERENCE_PACK_SAMPLE_PATHS
+                ],
+                "frontmatter": {
+                    "mode": "forbidden",
+                    "required": [],
+                    "allowed": [],
+                    "order": [],
+                },
+                "statusDomain": [],
+                "headings": {"required": [], "allowed": []},
+                "template": None,
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+            },
         ],
         "governanceCurrentOwners": {
             "profileId": "governance/reference",
             "allowedStates": ["active", "accepted"],
             "paths": list(CURRENT_OWNER_SAMPLE_PATHS),
+        },
+        "referenceCurrentPacks": {
+            "profileId": "content/reference",
+            "packs": [
+                {
+                    "id": "audits/2026-07-11-test",
+                    "allowedStates": ["done"],
+                    "members": ["audit.md"],
+                },
+                {
+                    "id": "research/2026-07-07-test",
+                    "allowedStates": ["active", "accepted"],
+                    "members": ["accepted.md", "active.md"],
+                },
+            ],
         },
         "programLineage": {
             "prd": "005",
@@ -514,6 +731,106 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "remove-governance-current-owner-states":
         del raw_registry["governanceCurrentOwners"]["allowedStates"]
+        return
+    packs = raw_registry["referenceCurrentPacks"]["packs"]
+    research = next(item for item in packs if item["id"].startswith("research/"))
+    if mutation == "malform-reference-current-packs":
+        raw_registry["referenceCurrentPacks"] = []
+        return
+    if mutation == "remove-reference-current-packs":
+        del raw_registry["referenceCurrentPacks"]
+        return
+    if mutation == "duplicate-reference-pack-id":
+        packs[1] = copy.deepcopy(packs[0])
+        return
+    if mutation == "missing-reference-pack-collection":
+        packs.pop()
+        return
+    if mutation == "extra-reference-pack-collection":
+        packs.append(copy.deepcopy(packs[1]))
+        packs[2]["id"] = "research/2026-07-08-extra"
+        return
+    if mutation == "reverse-reference-pack-ids":
+        packs.reverse()
+        return
+    if mutation == "invalidate-reference-pack-id":
+        research["id"] = "research/not-a-date"
+        return
+    if mutation == "parent-reference-member":
+        research["members"][0] = "../accepted.md"
+        return
+    if mutation == "leading-dot-reference-member":
+        research["members"][0] = "./accepted.md"
+        return
+    if mutation == "slash-reference-member":
+        research["members"][0] = "nested/accepted.md"
+        return
+    if mutation == "control-reference-member":
+        research["members"][0] = "accepted-\x00.md"
+        return
+    if mutation == "normalized-alias-reference-member":
+        research["members"][0] = "accepted//.md"
+        return
+    if mutation == "duplicate-reference-member":
+        research["members"].append(research["members"][0])
+        return
+    if mutation == "reverse-reference-members":
+        research["members"].reverse()
+        return
+    if mutation == "wrong-reference-pack-states":
+        research["allowedStates"].reverse()
+        return
+    if mutation == "remove-reference-pack-states":
+        del research["allowedStates"]
+        return
+    if mutation == "outside-reference-profile-state":
+        research["allowedStates"] = ["active", "unknown"]
+        return
+    if mutation == "missing-reference-member":
+        research["members"][0] = "missing.md"
+        research["members"].sort()
+        return
+    if mutation == "untracked-reference-member":
+        research["members"][0] = "untracked.md"
+        research["members"].sort()
+        return
+    if mutation == "symlink-reference-member":
+        research["members"][0] = "symlink.md"
+        research["members"].sort()
+        return
+    if mutation == "non-regular-reference-member":
+        research["members"][0] = "directory.md"
+        research["members"].sort()
+        return
+    if mutation == "wrong-profile-reference-member":
+        target = REFERENCE_MEMBER_SAMPLE_PATHS[1]
+        content_profile = next(
+            item for item in raw_registry["profiles"] if item["id"] == "content/reference"
+        )
+        content_profile["routes"] = [
+            route for route in content_profile["routes"] if route["value"] != target
+        ]
+        profile["routes"].append({"kind": "exact", "value": target})
+        return
+    if mutation == "wrong-profile-reference-pack-readme":
+        target = REFERENCE_PACK_SAMPLE_PATHS[1]
+        pack_profile = next(
+            item for item in raw_registry["profiles"] if item["id"] == "readme/snapshot-pack"
+        )
+        pack_profile["routes"] = [
+            route for route in pack_profile["routes"] if route["value"] != target
+        ]
+        profile["routes"].append({"kind": "exact", "value": target})
+        return
+    if mutation == "wrong-profile-reference-collection-readme":
+        target = REFERENCE_COLLECTION_SAMPLE_PATHS[1]
+        collection_profile = next(
+            item for item in raw_registry["profiles"] if item["id"] == "readme/collection-index"
+        )
+        collection_profile["routes"] = [
+            route for route in collection_profile["routes"] if route["value"] != target
+        ]
+        profile["routes"].append({"kind": "exact", "value": target})
         return
     raise ValueError(f"unsupported fixture mutation: {mutation}")
 
@@ -1442,7 +1759,7 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 2
+        fixture.get("schemaVersion") != 3
         or fixture.get("negativeFixtureSamplePath") != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
@@ -1458,10 +1775,24 @@ def _self_test(root: Path) -> int:
             target = fixture_root / raw_path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("# Synthetic current authority\n", encoding="utf-8")
+        for raw_path in (
+            *REFERENCE_COLLECTION_SAMPLE_PATHS,
+            *REFERENCE_PACK_SAMPLE_PATHS,
+            *REFERENCE_MEMBER_SAMPLE_PATHS,
+        ):
+            target = fixture_root / raw_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("# Synthetic reference contract\n", encoding="utf-8")
         untracked = fixture_root / "docs/00.agent-governance/current-untracked.md"
         untracked.write_text("# Untracked synthetic authority\n", encoding="utf-8")
         symlink = fixture_root / "docs/00.agent-governance/current-symlink.md"
         symlink.symlink_to("current-alpha.md")
+        research_root = fixture_root / "docs/90.references/research/2026-07-07-test"
+        (research_root / "untracked.md").write_text(
+            "# Untracked synthetic reference\n", encoding="utf-8"
+        )
+        (research_root / "symlink.md").symlink_to("accepted.md")
+        (research_root / "directory.md").mkdir()
         subprocess.run(
             ["git", "init", "--quiet"], cwd=fixture_root, check=True
         )
@@ -1472,6 +1803,10 @@ def _self_test(root: Path) -> int:
                 "--",
                 *CURRENT_OWNER_SAMPLE_PATHS,
                 "docs/00.agent-governance/current-symlink.md",
+                *REFERENCE_COLLECTION_SAMPLE_PATHS,
+                *REFERENCE_PACK_SAMPLE_PATHS,
+                *REFERENCE_MEMBER_SAMPLE_PATHS,
+                "docs/90.references/research/2026-07-07-test/symlink.md",
             ],
             cwd=fixture_root,
             check=True,

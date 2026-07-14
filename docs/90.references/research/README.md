@@ -66,9 +66,39 @@ research/
 │   ├── spec-sdlc-ci-qa-formatting.md
 │   ├── kubernetes-infrastructure-security.md
 │   ├── automation-pipeline-workflow-qa.md
+│   ├── document-type-format-and-evidence-contract.md
+│   ├── document-migration-evidence-ledger.md
 │   └── ai-agents-roster-and-gap-analysis.md
 └── README.md                            # This file
 ```
+
+### Research Pack Index
+
+| Material                                                                                        | Status      | Role                                                                                      | Authority Boundary                                                                          |
+| ----------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [README.md](./README.md)                                                                        | Index       | Research folder entry point and source-priority guide                                     | Authoritative for folder routing only; not active policy                                    |
+| [2026-07-04-wer/README.md](./2026-07-04-wer/README.md)                                          | Historical  | Dated workspace engineering research pack entry point                                     | Authoritative for dated pack routing only; not active policy                                |
+| [workspace-governance-baseline.md](./2026-07-04-wer/workspace-governance-baseline.md)           | Historical  | Durable workspace governance baseline reference                                           | Summarizes canonical governance owners; does not replace them                               |
+| [harness-and-loop-engineering.md](./2026-07-04-wer/harness-and-loop-engineering.md)             | Historical  | Harness and feedback-loop engineering reference                                           | Summarizes source-backed patterns; does not define runtime procedure                        |
+| [provider-implementation-status.md](./2026-07-04-wer/provider-implementation-status.md)         | Historical  | Provider implementation status and source ledger                                          | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
+| [spec-sdlc-ci-qa-formatting.md](./2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)                 | Historical  | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-05  | Summarizes reference material; active gates stay with canonical owners                      |
+| [kubernetes-infrastructure-security.md](./2026-07-04-wer/kubernetes-infrastructure-security.md) | Historical  | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes                |
+| [automation-pipeline-workflow-qa.md](./2026-07-04-wer/automation-pipeline-workflow-qa.md)       | Historical  | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference  | Descriptive reference only; no CI workflow or runtime changes                               |
+| [ai-agents-roster-and-gap-analysis.md](./2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)   | Historical  | Workspace agent roster snapshot, external agent-catalog market scan, and gap analysis     | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
+| [2026-07-07-wer/README.md](./2026-07-07-wer/README.md)                                          | Current pack | Refreshed workspace engineering research pack entry point                                | Authoritative for dated pack routing only; not active policy                                |
+| [workspace-governance-baseline.md](./2026-07-07-wer/workspace-governance-baseline.md)           | Included    | Durable workspace governance baseline reference (2026-07-07)                                | Summarizes canonical governance owners; does not replace them                               |
+| [harness-and-loop-engineering.md](./2026-07-07-wer/harness-and-loop-engineering.md)             | Included    | Harness and feedback-loop engineering reference (2026-07-07)                                | Summarizes source-backed patterns; does not define runtime procedure                        |
+| [provider-implementation-status.md](./2026-07-07-wer/provider-implementation-status.md)         | Included    | Provider implementation status and source ledger (2026-07-07)                               | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
+| [spec-sdlc-ci-qa-formatting.md](./2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)                 | Included    | Spec, SDLC, CI, QA, and formatting reference (2026-07-07)                                  | Summarizes reference material; active gates stay with canonical owners                      |
+| [kubernetes-infrastructure-security.md](./2026-07-07-wer/kubernetes-infrastructure-security.md) | Included    | Kubernetes, infrastructure, GitOps, secrets, and security reference (2026-07-07)            | Descriptive reference only; no live checks or active security policy changes                |
+| [automation-pipeline-workflow-qa.md](./2026-07-07-wer/automation-pipeline-workflow-qa.md)       | Included    | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence (2026-07-07) | Descriptive reference only; no CI workflow or runtime changes                               |
+| [document-type-format-and-evidence-contract.md](./2026-07-07-wer/document-type-format-and-evidence-contract.md) | Included | Document type format and evidence contract (2026-07-12) | Dated format evidence only; route, frontmatter, lifecycle, and enforcement authority remain with canonical Stage 00/99 owners |
+| [document-migration-evidence-ledger.md](./2026-07-07-wer/document-migration-evidence-ledger.md) | Included | Durable document-migration disposition and evidence ledger | Migration evidence owner only; does not replace source facts, accepted decisions, provider contracts, or runtime state |
+| [ai-agents-roster-and-gap-analysis.md](./2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)   | Included    | Workspace agent roster, agency-agents comparison, and gap-closure (2026-07-07)              | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
+
+`Current pack`, `Historical`, `Included`, and `Index` are collection roles,
+not report lifecycle values. The Current pointer is mirrored from the
+registry; report lifecycle is owned by the selected pack's `## Report Index`.
 
 Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
 inside a pack use semantic topic names only; do not use `part-*.md` or numeric
@@ -96,28 +126,6 @@ order-prefix filenames for current reports.
 - Canonical owner stages use `../../00.agent-governance/`, `../../03.specs/`, `../../04.execution/`, and `../../05.operations/`.
 - Root-level repository sources use `../../../<path>` from authored research reference files.
 - Optional or planned target paths remain code literals until the target exists.
-
-### Research Pack Index
-
-| Material                                                                                        | Status      | Role                                                                                      | Authority Boundary                                                                          |
-| ----------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [README.md](./README.md)                                                                        | Index       | Research folder entry point and source-priority guide                                     | Authoritative for folder routing only; not active policy                                    |
-| [2026-07-04-wer/README.md](./2026-07-04-wer/README.md)                                          | Historical  | Dated workspace engineering research pack entry point                                     | Authoritative for dated pack routing only; not active policy                                |
-| [workspace-governance-baseline.md](./2026-07-04-wer/workspace-governance-baseline.md)           | Historical  | Durable workspace governance baseline reference                                           | Summarizes canonical governance owners; does not replace them                               |
-| [harness-and-loop-engineering.md](./2026-07-04-wer/harness-and-loop-engineering.md)             | Historical  | Harness and feedback-loop engineering reference                                           | Summarizes source-backed patterns; does not define runtime procedure                        |
-| [provider-implementation-status.md](./2026-07-04-wer/provider-implementation-status.md)         | Historical  | Provider implementation status and source ledger                                          | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
-| [spec-sdlc-ci-qa-formatting.md](./2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)                 | Historical  | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-05  | Summarizes reference material; active gates stay with canonical owners                      |
-| [kubernetes-infrastructure-security.md](./2026-07-04-wer/kubernetes-infrastructure-security.md) | Historical  | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes                |
-| [automation-pipeline-workflow-qa.md](./2026-07-04-wer/automation-pipeline-workflow-qa.md)       | Historical  | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference  | Descriptive reference only; no CI workflow or runtime changes                               |
-| [ai-agents-roster-and-gap-analysis.md](./2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)   | Historical  | Workspace agent roster snapshot, external agent-catalog market scan, and gap analysis     | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
-| [2026-07-07-wer/README.md](./2026-07-07-wer/README.md)                                          | Current pack | Refreshed workspace engineering research pack entry point                                | Authoritative for dated pack routing only; not active policy                                |
-| [workspace-governance-baseline.md](./2026-07-07-wer/workspace-governance-baseline.md)           | Included    | Durable workspace governance baseline reference (2026-07-07)                                | Summarizes canonical governance owners; does not replace them                               |
-| [harness-and-loop-engineering.md](./2026-07-07-wer/harness-and-loop-engineering.md)             | Included    | Harness and feedback-loop engineering reference (2026-07-07)                                | Summarizes source-backed patterns; does not define runtime procedure                        |
-| [provider-implementation-status.md](./2026-07-07-wer/provider-implementation-status.md)         | Included    | Provider implementation status and source ledger (2026-07-07)                               | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
-| [spec-sdlc-ci-qa-formatting.md](./2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)                 | Included    | Spec, SDLC, CI, QA, and formatting reference (2026-07-07)                                  | Summarizes reference material; active gates stay with canonical owners                      |
-| [kubernetes-infrastructure-security.md](./2026-07-07-wer/kubernetes-infrastructure-security.md) | Included    | Kubernetes, infrastructure, GitOps, secrets, and security reference (2026-07-07)            | Descriptive reference only; no live checks or active security policy changes                |
-| [automation-pipeline-workflow-qa.md](./2026-07-07-wer/automation-pipeline-workflow-qa.md)       | Included    | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence (2026-07-07) | Descriptive reference only; no CI workflow or runtime changes                               |
-| [ai-agents-roster-and-gap-analysis.md](./2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)   | Included    | Workspace agent roster, agency-agents comparison, and gap-closure (2026-07-07)              | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
 
 ### Source Priority
 

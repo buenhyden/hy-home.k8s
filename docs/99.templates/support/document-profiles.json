@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-2.schema.json",
-  "schemaVersion": 2,
+  "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
+  "schemaVersion": 3,
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -3791,6 +3791,43 @@
       "docs/00.agent-governance/scopes/qa.md",
       "docs/00.agent-governance/scopes/security.md",
       "docs/00.agent-governance/subagent-protocol.md"
+    ]
+  },
+  "referenceCurrentPacks": {
+    "profileId": "content/reference",
+    "packs": [
+      {
+        "id": "audits/2026-07-11-weia",
+        "allowedStates": [
+          "done"
+        ],
+        "members": [
+          "ai-agents-model-routing-vibe-coding.md",
+          "ci-qa-automation-pipeline-workflow.md",
+          "governance-harness-loop-providers.md",
+          "kubernetes-infrastructure-security.md",
+          "remediation-roadmap.md",
+          "sdlc-document-lifecycle-frontmatter.md"
+        ]
+      },
+      {
+        "id": "research/2026-07-07-wer",
+        "allowedStates": [
+          "active",
+          "accepted"
+        ],
+        "members": [
+          "ai-agents-roster-and-gap-analysis.md",
+          "automation-pipeline-workflow-qa.md",
+          "document-migration-evidence-ledger.md",
+          "document-type-format-and-evidence-contract.md",
+          "harness-and-loop-engineering.md",
+          "kubernetes-infrastructure-security.md",
+          "provider-implementation-status.md",
+          "spec-sdlc-ci-qa-formatting.md",
+          "workspace-governance-baseline.md"
+        ]
+      }
     ]
   },
   "programLineage": {

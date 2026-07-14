@@ -1,7 +1,7 @@
 ---
 title: 'Audit: Integrated Remediation Roadmap'
 type: content/reference
-status: draft
+status: done
 owner: platform
 updated: 2026-07-14
 ---

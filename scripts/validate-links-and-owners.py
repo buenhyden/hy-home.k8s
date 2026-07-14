@@ -28,6 +28,10 @@ from document_contracts import (
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
+    ReferenceCurrentPack,
+    ReferenceCurrentPacks,
+    _parse_ls_files_stage_z,
+    _run_git,
     classify_path,
     diagnostic_sort_key,
     enumerate_target_markdown,
@@ -68,6 +72,16 @@ IMPLEMENTED_RULES = frozenset({
     "GOVERNANCE-INDEX-MISSING", "GOVERNANCE-INDEX-STALE",
     "GOVERNANCE-INDEX-DUPLICATE", "GOVERNANCE-INDEX-STATUS",
     "GOVERNANCE-INDEX-ORDER",
+    "REFERENCE-PACK-OWNER-UNDECLARED", "REFERENCE-PACK-OWNER-STATUS",
+    "REFERENCE-PACK-COLLECTION-MISSING", "REFERENCE-PACK-COLLECTION-STALE",
+    "REFERENCE-PACK-COLLECTION-DUPLICATE", "REFERENCE-PACK-INDEX-MISSING",
+    "REFERENCE-PACK-INDEX-STALE", "REFERENCE-PACK-INDEX-DUPLICATE",
+    "REFERENCE-PACK-INDEX-STATUS", "REFERENCE-PACK-INDEX-ORDER",
+    "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",
+    "COLLECTION-INDEX-PARSE", "COLLECTION-INDEX-TREE-MISSING",
+    "COLLECTION-INDEX-TREE-STALE", "COLLECTION-INDEX-TREE-DUPLICATE",
+    "COLLECTION-INDEX-ROW-MISSING", "COLLECTION-INDEX-ROW-STALE",
+    "COLLECTION-INDEX-ROW-DUPLICATE",
 })
 GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
 GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
@@ -118,6 +132,55 @@ DECLARED_INDEXES = (
 
 
 @dataclass(frozen=True)
+class CollectionIndex:
+    path: PurePosixPath
+    root: PurePosixPath
+    target_pattern: re.Pattern[str]
+    tree_anchor: str
+    tree_root: str
+    table_anchor: str
+    table_mode: str
+    table_includes_self: bool
+
+
+COLLECTION_INDEXES = (
+    CollectionIndex(
+        PurePosixPath("docs/90.references/research/README.md"),
+        PurePosixPath("docs/90.references/research"),
+        re.compile(
+            r"^docs/90\.references/research/(?:README\.md|"
+            r"[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/[^/]+\.md)$"
+        ),
+        "## Item Index",
+        "research/",
+        "### Research Pack Index",
+        "section",
+        True,
+    ),
+    CollectionIndex(
+        PurePosixPath("docs/90.references/research/2026-07-07-wer/README.md"),
+        PurePosixPath("docs/90.references/research/2026-07-07-wer"),
+        re.compile(r"^docs/90\.references/research/2026-07-07-wer/[^/]+\.md$"),
+        "### Structure",
+        "2026-07-07-wer/",
+        "## Report Index",
+        "section",
+        False,
+    ),
+    CollectionIndex(
+        PurePosixPath("docs/99.templates/support/README.md"),
+        PurePosixPath("docs/99.templates/support"),
+        re.compile(r"^docs/99\.templates/support/[^/]+\.(?:md|json)$"),
+        "## Item Index",
+        "support/",
+        "### Support Document Index",
+        "section",
+        False,
+    ),
+)
+
+
+@dataclass(frozen=True)
 class ProfileView:
     profile_id: str
     profile_class: str
@@ -135,6 +198,8 @@ class Context:
     adapter_targets: dict[PurePosixPath, PurePosixPath]
     governance_current_paths: tuple[PurePosixPath, ...]
     governance_current_states: tuple[str, ...]
+    reference_current_packs: ReferenceCurrentPacks
+    tracked_regular_paths: frozenset[PurePosixPath]
 
 
 class ConfigurationError(ValueError):
@@ -227,6 +292,13 @@ def _build_context(root: Path, include_paths: tuple[PurePosixPath, ...] = ()) ->
         if normalized == ".." or normalized.startswith("../") or normalized.startswith("/"):
             raise ConfigurationError(f"symlink adapter escapes repository: {adapter.as_posix()}")
         adapters[adapter] = PurePosixPath(normalized)
+    tracked_regular_paths = frozenset(
+        entry.path
+        for entry in _parse_ls_files_stage_z(
+            _run_git(root, ("ls-files", "--stage", "-z"))
+        )
+        if entry.stage == 0 and entry.mode in {"100644", "100755"}
+    )
     return Context(
         root,
         inventory.current_paths,
@@ -237,6 +309,8 @@ def _build_context(root: Path, include_paths: tuple[PurePosixPath, ...] = ()) ->
         adapters,
         registry.governance_current_owners.paths,
         registry.governance_current_owners.allowed_states,
+        registry.reference_current_packs,
+        tracked_regular_paths,
     )
 
 
@@ -355,6 +429,83 @@ def _fenced_blocks(text: str) -> tuple[str, ...]:
     return tuple(blocks)
 
 
+def _markdown_without_html_comments(text: str) -> str:
+    """Remove HTML comments outside fences while preserving line positions."""
+    output: list[str] = []
+    fence: tuple[str, int] | None = None
+    in_comment = False
+    for raw_line in text.splitlines():
+        if fence is not None:
+            output.append(raw_line)
+            marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", raw_line)
+            if marker:
+                token = marker.group(1)
+                if (
+                    token[0] == fence[0]
+                    and len(token) >= fence[1]
+                    and not marker.group(2).strip()
+                ):
+                    fence = None
+            continue
+
+        visible: list[str] = []
+        cursor = 0
+        while cursor < len(raw_line):
+            if in_comment:
+                end = raw_line.find("-->", cursor)
+                if end < 0:
+                    cursor = len(raw_line)
+                    continue
+                cursor = end + 3
+                in_comment = False
+                continue
+            start = raw_line.find("<!--", cursor)
+            if start < 0:
+                visible.append(raw_line[cursor:])
+                break
+            visible.append(raw_line[cursor:start])
+            cursor = start + 4
+            in_comment = True
+
+        line = "".join(visible)
+        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        if marker:
+            token = marker.group(1)
+            fence = (token[0], len(token))
+        output.append(line)
+    return "\n".join(output)
+
+
+def _gfm_table_cells(line: str) -> list[str]:
+    """Split one GFM table row without treating escaped pipes as delimiters."""
+    stripped = line.strip()
+    if not stripped.startswith("|"):
+        return []
+
+    def escaped(index: int) -> bool:
+        backslashes = 0
+        cursor = index - 1
+        while cursor >= 0 and stripped[cursor] == "\\":
+            backslashes += 1
+            cursor -= 1
+        return backslashes % 2 == 1
+
+    cells: list[str] = []
+    current: list[str] = []
+    for index, character in enumerate(stripped):
+        if character == "|" and not escaped(index):
+            cells.append("".join(current).strip())
+            current = []
+        else:
+            current.append(character)
+    cells.append("".join(current).strip())
+    if cells and cells[0] == "":
+        cells.pop(0)
+    if stripped.endswith("|") and not escaped(len(stripped) - 1) and cells[-1] == "":
+        cells.pop()
+    return cells
+
+
 def _exact_heading_section(text: str, heading: str) -> str | None:
     visible_lines = _visible_markdown(text).splitlines()
     raw_lines = text.splitlines()
@@ -471,6 +622,176 @@ def _index_diagnostics(context: Context) -> list[Diagnostic]:
         # A resolved row that is not even in the inventory is stale regardless of disk state.
         if any(target not in path_set and target not in actual_set for target, _ in rows):
             pass
+    return diagnostics
+
+
+_COLLECTION_TREE_LINE = re.compile(
+    r"^(?P<indent>(?:│   |    )*)(?:├── |└── )"
+    r"(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<directory>/)?"
+    r"(?:\s+#\s+.*)?$"
+)
+
+
+def _collection_tree_targets(
+    declaration: CollectionIndex, text: str
+) -> tuple[list[PurePosixPath], bool]:
+    section = _exact_heading_section(text, declaration.tree_anchor)
+    if section is None:
+        return [], False
+    comment_visible_section = _markdown_without_html_comments(section)
+    blocks = [
+        block
+        for block in _fenced_blocks(comment_visible_section)
+        if block.splitlines() and block.splitlines()[0] == declaration.tree_root
+    ]
+    if len(blocks) != 1:
+        return [], False
+    stack: list[str] = []
+    targets: list[PurePosixPath] = []
+    valid = True
+    for line in blocks[0].splitlines()[1:]:
+        if not line.strip():
+            continue
+        match = _COLLECTION_TREE_LINE.fullmatch(line)
+        if match is None:
+            valid = False
+            continue
+        indent = match.group("indent")
+        depth = len(indent) // 4
+        name = match.group("name")
+        if name in {".", ".."}:
+            valid = False
+            continue
+        if match.group("directory"):
+            if depth > len(stack):
+                valid = False
+                continue
+            stack[depth:] = [name]
+            continue
+        if depth > len(stack):
+            valid = False
+            continue
+        relative = (*stack[:depth], name)
+        target = declaration.root.joinpath(*relative)
+        if declaration.target_pattern.fullmatch(target.as_posix()) is None:
+            valid = False
+            continue
+        targets.append(target)
+    return targets, valid
+
+
+def _first_visible_table(
+    text: str,
+) -> tuple[list[str], list[list[str]]] | None:
+    lines = _visible_markdown(text).splitlines()
+    for index in range(len(lines) - 1):
+        header_line = lines[index]
+        delimiter_line = lines[index + 1]
+        if not header_line.startswith("|") or not delimiter_line.startswith("|"):
+            continue
+        header = _gfm_table_cells(header_line)
+        delimiter = _gfm_table_cells(delimiter_line)
+        if len(header) != len(delimiter) or not header:
+            continue
+        if not all(re.fullmatch(r":?-{3,}:?", cell) for cell in delimiter):
+            continue
+        rows: list[list[str]] = []
+        for row_line in lines[index + 2 :]:
+            if not row_line.strip():
+                if rows:
+                    break
+                continue
+            if not row_line.startswith("|"):
+                break
+            cells = _gfm_table_cells(row_line)
+            rows.append((cells + [""] * len(header))[: len(header)])
+        return header, rows
+    return None
+
+
+def _first_cell_target(
+    owner: PurePosixPath, cell: str
+) -> PurePosixPath | None:
+    match = re.fullmatch(r"\[[^\]\n]+\]\(([^)]+)\)", cell)
+    if match is None:
+        return None
+    raw = match.group(1).strip()
+    if "?" in raw or "#" in raw:
+        return None
+    kind, target = _local_destination(owner, raw)
+    return target if kind == "local" else None
+
+
+def _collection_table_targets(
+    declaration: CollectionIndex, text: str
+) -> tuple[list[PurePosixPath], bool]:
+    section = (
+        _after_exact_heading(text, declaration.table_anchor)
+        if declaration.table_mode == "after"
+        else _exact_heading_section(text, declaration.table_anchor)
+    )
+    if section is None:
+        return [], False
+    table = _first_visible_table(section)
+    if table is None:
+        return [], False
+    _, rows = table
+    targets: list[PurePosixPath] = []
+    for row in rows:
+        target = _first_cell_target(declaration.path, row[0])
+        if target is None:
+            return [], False
+        targets.append(target)
+    return targets, True
+
+
+def _collection_index_diagnostics(context: Context) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    for declaration in COLLECTION_INDEXES:
+        profile = context.profiles[declaration.path].profile_id
+        expected = {
+            path
+            for path in context.tracked_regular_paths
+            if declaration.target_pattern.fullmatch(path.as_posix())
+        }
+        tree, tree_valid = _collection_tree_targets(
+            declaration, context.texts[declaration.path]
+        )
+        rows, table_valid = _collection_table_targets(
+            declaration, context.texts[declaration.path]
+        )
+        expected_rows = set(expected)
+        if not declaration.table_includes_self:
+            expected_rows.discard(declaration.path)
+        if not tree_valid or not table_valid:
+            diagnostics.append(
+                _diag(
+                    "COLLECTION-INDEX-PARSE",
+                    declaration.path,
+                    profile,
+                    "one exact heading, bounded tree, and first-cell link table",
+                    "collection index grammar is missing or malformed",
+                )
+            )
+            continue
+        tree_counter = collections.Counter(tree)
+        row_counter = collections.Counter(rows)
+        for target in sorted(expected | set(tree), key=lambda item: item.as_posix()):
+            target_key = target.as_posix()
+            if target in expected and tree_counter[target] == 0:
+                diagnostics.append(_diag("COLLECTION-INDEX-TREE-MISSING", declaration.path, profile, f"target={target_key}; one tree entry", f"target={target_key}; entry is missing"))
+            if target not in expected and tree_counter[target]:
+                diagnostics.append(_diag("COLLECTION-INDEX-TREE-STALE", declaration.path, profile, f"target={target_key}; tracked canonical artifact", f"target={target_key}; stale tree entry"))
+            if tree_counter[target] > 1:
+                diagnostics.append(_diag("COLLECTION-INDEX-TREE-DUPLICATE", declaration.path, profile, f"target={target_key}; one tree entry", f"target={target_key}; {tree_counter[target]} entries"))
+        for target in sorted(expected_rows | set(rows), key=lambda item: item.as_posix()):
+            target_key = target.as_posix()
+            if target in expected_rows and row_counter[target] == 0:
+                diagnostics.append(_diag("COLLECTION-INDEX-ROW-MISSING", declaration.path, profile, f"target={target_key}; one table row", f"target={target_key}; row is missing"))
+            if target not in expected_rows and row_counter[target]:
+                diagnostics.append(_diag("COLLECTION-INDEX-ROW-STALE", declaration.path, profile, f"target={target_key}; tracked canonical artifact", f"target={target_key}; stale table row"))
+            if row_counter[target] > 1:
+                diagnostics.append(_diag("COLLECTION-INDEX-ROW-DUPLICATE", declaration.path, profile, f"target={target_key}; one table row", f"target={target_key}; {row_counter[target]} rows"))
     return diagnostics
 
 
@@ -768,6 +1089,167 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     return diagnostics
 
 
+def _reference_collection_rows(
+    context: Context, collection: str
+) -> list[PurePosixPath] | None:
+    declaration = next(
+        pack
+        for pack in context.reference_current_packs.packs
+        if pack.id.startswith(collection + "/")
+    )
+    heading = (
+        "### Research Pack Index"
+        if collection == "research"
+        else "### Audit Pack Registry"
+    )
+    expected_parent = "## Item Index"
+    text = context.texts.get(declaration.collection_readme)
+    if text is None:
+        return None
+    visible = _visible_markdown(text).splitlines()
+    matches = [index for index, line in enumerate(visible) if line == heading]
+    if len(matches) != 1:
+        return None
+    parent = next(
+        (
+            line
+            for line in reversed(visible[: matches[0]])
+            if re.match(r"^##\s", line)
+        ),
+        "",
+    )
+    if parent != expected_parent:
+        return None
+    section = _exact_heading_section(text, heading)
+    table = _first_visible_table(section or "")
+    if table is None:
+        return None
+    header, rows = table
+    role_indexes = [
+        index
+        for index, cell in enumerate(header)
+        if cell.casefold() in {"status", "pack role"}
+    ]
+    if len(role_indexes) != 1:
+        return None
+    current: list[PurePosixPath] = []
+    for row in rows:
+        if row[role_indexes[0]].casefold() != "current pack":
+            continue
+        target = _first_cell_target(declaration.collection_readme, row[0])
+        if target is None:
+            return None
+        current.append(target)
+    return current
+
+
+def _reference_pack_rows(
+    context: Context, pack_readme: PurePosixPath
+) -> list[tuple[PurePosixPath, str]] | None:
+    text = context.texts.get(pack_readme)
+    if text is None:
+        return None
+    section = _exact_heading_section(text, "## Report Index")
+    table = _first_visible_table(section or "")
+    if table is None:
+        return None
+    header, rows = table
+    lifecycle_indexes = [
+        index for index, cell in enumerate(header) if cell.casefold() == "lifecycle"
+    ]
+    if len(lifecycle_indexes) != 1:
+        return None
+    lifecycle_index = lifecycle_indexes[0]
+    parsed: list[tuple[PurePosixPath, str]] = []
+    for row in rows:
+        target = _first_cell_target(pack_readme, row[0])
+        if target is None:
+            return None
+        if (
+            target.parent != pack_readme.parent
+            or target == pack_readme
+            or target.suffix != ".md"
+        ):
+            continue
+        match = re.fullmatch(r"`([a-z][a-z0-9-]*)`", row[lifecycle_index])
+        if match is None:
+            parsed.append((target, ""))
+        else:
+            parsed.append((target, match.group(1)))
+    return parsed
+
+
+def _reference_current_pack_diagnostics(context: Context) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    for pack in context.reference_current_packs.packs:
+        collection = pack.id.split("/", 1)[0]
+        collection_profile = context.profiles[pack.collection_readme].profile_id
+        current_rows = _reference_collection_rows(context, collection)
+        if current_rows is None:
+            diagnostics.append(_diag("REFERENCE-PACK-COLLECTION-MISSING", pack.collection_readme, collection_profile, f"one Current pack row for {pack.pack_readme.as_posix()}", "heading or table is missing or malformed"))
+        else:
+            counter = collections.Counter(current_rows)
+            if counter[pack.pack_readme] == 0:
+                diagnostics.append(_diag("REFERENCE-PACK-COLLECTION-MISSING", pack.collection_readme, collection_profile, f"one Current pack row for {pack.pack_readme.as_posix()}", "declared Current row is missing"))
+            for target in sorted(set(current_rows) - {pack.pack_readme}, key=lambda item: item.as_posix()):
+                diagnostics.append(_diag("REFERENCE-PACK-COLLECTION-STALE", pack.collection_readme, collection_profile, f"Current pack target={pack.pack_readme.as_posix()}", f"Current pack target={target.as_posix()}"))
+            for target, count in sorted(counter.items(), key=lambda item: item[0].as_posix()):
+                if count > 1 or len(current_rows) > 1:
+                    diagnostics.append(_diag("REFERENCE-PACK-COLLECTION-DUPLICATE", pack.collection_readme, collection_profile, "one visible Current pack row", f"target={target.as_posix()}; total={len(current_rows)}; count={count}"))
+
+        declared_order = list(pack.member_paths)
+        declared = set(declared_order)
+        tracked = {
+            path
+            for path in context.paths
+            if path.parent == pack.pack_readme.parent
+            and path != pack.pack_readme
+            and path.suffix == ".md"
+            and context.profiles[path].profile_id
+            == context.reference_current_packs.profile_id
+            and context.profiles[path].mode == "authored"
+        }
+        for path in sorted(tracked - declared, key=lambda item: item.as_posix()):
+            diagnostics.append(_diag("REFERENCE-PACK-OWNER-UNDECLARED", path, context.profiles[path].profile_id, f"member declared in Current pack {pack.id}", "tracked direct member is undeclared"))
+        for path in declared_order:
+            profile = context.profiles.get(path)
+            if profile is None or profile.profile_id != context.reference_current_packs.profile_id or profile.mode != "authored":
+                diagnostics.append(_diag("REGISTRY_REFERENCE_CURRENT_PACK_PROFILE", path, profile.profile_id if profile else context.reference_current_packs.profile_id, f"authored {context.reference_current_packs.profile_id}", "declared member is missing or has the wrong profile"))
+                continue
+            status = str(context.metadata[path].get("status", "")).casefold()
+            if status not in pack.allowed_states:
+                diagnostics.append(_diag("REFERENCE-PACK-OWNER-STATUS", path, profile.profile_id, f"status in {list(pack.allowed_states)!r}", status or "missing"))
+
+        rows = _reference_pack_rows(context, pack.pack_readme)
+        pack_profile = context.profiles[pack.pack_readme].profile_id
+        if rows is None:
+            diagnostics.append(_diag("REFERENCE-PACK-INDEX-MISSING", pack.pack_readme, pack_profile, "one exact Report Index with one Lifecycle column", "heading or table is missing or malformed"))
+            continue
+        row_paths = [path for path, _ in rows]
+        row_counter = collections.Counter(row_paths)
+        for path in declared_order:
+            if row_counter[path] == 0:
+                diagnostics.append(_diag("REFERENCE-PACK-INDEX-MISSING", pack.pack_readme, pack_profile, f"one row for {path.as_posix()}", "declared member row is missing"))
+        for path in sorted(set(row_paths) - declared, key=lambda item: item.as_posix()):
+            diagnostics.append(_diag("REFERENCE-PACK-INDEX-STALE", pack.pack_readme, pack_profile, "registry-declared direct sibling", f"stale row for {path.as_posix()}"))
+        for path, count in sorted(row_counter.items(), key=lambda item: item[0].as_posix()):
+            if count > 1:
+                diagnostics.append(_diag("REFERENCE-PACK-INDEX-DUPLICATE", pack.pack_readme, pack_profile, f"one row for {path.as_posix()}", f"{count} rows"))
+        for path, lifecycle in rows:
+            if path not in declared:
+                continue
+            expected_status = str(context.metadata.get(path, {}).get("status", "")).casefold()
+            if lifecycle != expected_status:
+                diagnostics.append(_diag("REFERENCE-PACK-INDEX-STATUS", pack.pack_readme, pack_profile, f"{path.as_posix()} lifecycle={expected_status}", f"lifecycle={lifecycle or 'malformed'}"))
+        if (
+            len(row_paths) == len(declared_order)
+            and collections.Counter(row_paths) == collections.Counter(declared_order)
+            and row_paths != declared_order
+        ):
+            diagnostics.append(_diag("REFERENCE-PACK-INDEX-ORDER", pack.pack_readme, pack_profile, "member rows in registry order", "member row order differs"))
+    return diagnostics
+
+
 def _ledger_rows(text: str) -> tuple[tuple[str, ...] | None, list[list[str]]]:
     lines = _visible_markdown(text).splitlines()
     for index, line in enumerate(lines):
@@ -854,7 +1336,9 @@ def _apply_debt(root: Path, diagnostics: Iterable[Diagnostic], mode: str, contra
 def _raw_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
     diagnostics.extend(_index_diagnostics(context))
+    diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
+    diagnostics.extend(_reference_current_pack_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     diagnostics.extend(_ledger_diagnostics(context))
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -929,11 +1413,13 @@ def _text_rows(rows: list[tuple[str, Diagnostic]]) -> list[str]:
 def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
     if list(tree) != [
         "documents",
+        "collectionArtifacts",
         "declaredIndexes",
         "ledgerColumns",
         "symlinkAdapters",
         "governanceCurrentOwners",
         "governanceMirrorPath",
+        "referenceCurrentPacks",
     ]:
         raise ConfigurationError("fixture baseTree keys differ")
     documents = tree["documents"]
@@ -956,6 +1442,27 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         raise ConfigurationError("fixture governance mirror path differs")
     if paths != tuple(sorted(paths, key=lambda path: path.as_posix())) or len(paths) != len(set(paths)):
         raise ConfigurationError("fixture paths must be sorted and unique")
+    collection_artifacts = tuple(
+        PurePosixPath(value) for value in tree["collectionArtifacts"]
+    )
+    if collection_artifacts != tuple(
+        sorted(collection_artifacts, key=lambda path: path.as_posix())
+    ) or len(collection_artifacts) != len(set(collection_artifacts)):
+        raise ConfigurationError("fixture collection artifacts must be sorted and unique")
+    raw_reference = tree["referenceCurrentPacks"]
+    if list(raw_reference) != ["profileId", "packs"]:
+        raise ConfigurationError("fixture reference Current-pack declaration differs")
+    reference_current_packs = ReferenceCurrentPacks(
+        profile_id=raw_reference["profileId"],
+        packs=tuple(
+            ReferenceCurrentPack(
+                id=item["id"],
+                allowed_states=tuple(item["allowedStates"]),
+                members=tuple(item["members"]),
+            )
+            for item in raw_reference["packs"]
+        ),
+    )
 
     def authored(title: str, doc_type: str, status: str, body: str) -> str:
         return f"---\ntitle: {title}\ntype: {doc_type}\nstatus: {status}\nowner: platform\nupdated: 2026-07-12\n---\n\n# {title}\n\n{body}\n"
@@ -982,6 +1489,10 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         destination = root / path
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(text, encoding="utf-8")
+    for path in collection_artifacts:
+        destination = root / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text("{}\n", encoding="utf-8")
     adapter_targets: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in tree["symlinkAdapters"]:
         if list(adapter) != ["path", "target"]:
@@ -1003,13 +1514,19 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         adapter_targets,
         governance_current_paths,
         ("active", "accepted"),
+        reference_current_packs,
+        frozenset((*paths, *collection_artifacts)),
     )
 
 
 def _mutated_context(context: Context, mutation: str) -> Context:
+    paths = context.paths
+    profiles = dict(context.profiles)
     texts = dict(context.texts)
     metadata = copy.deepcopy(context.metadata)
     governance_current_paths = context.governance_current_paths
+    reference_current_packs = context.reference_current_packs
+    tracked_regular_paths = context.tracked_regular_paths
     source = PurePosixPath("docs/05.operations/guides/9999-source.md")
     if mutation == "link-broken": texts[source] += "\n[bad](./missing.md)\n"
     elif mutation == "link-absolute": texts[source] += "\n[bad](/etc/passwd)\n"
@@ -1123,16 +1640,185 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             + "\n\n| Document | Lifecycle |\n| --- | --- |\n"
             + "| [`current-alpha.md`](current-alpha.md) | `active` |\n```\n"
         )
+    elif mutation in {"reference-valid", "collection-valid", "collection-machine-json"}:
+        pass
+    elif mutation in {
+        "reference-research-draft",
+        "reference-audit-draft",
+        "reference-audit-active",
+    }:
+        target = {
+            "reference-research-draft": PurePosixPath(
+                "docs/90.references/research/2026-07-07-wer/accepted.md"
+            ),
+            "reference-audit-draft": PurePosixPath(
+                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            ),
+            "reference-audit-active": PurePosixPath(
+                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            ),
+        }[mutation]
+        status = "active" if mutation == "reference-audit-active" else "draft"
+        old_status = str(metadata[target]["status"])
+        metadata[target]["status"] = status
+        pack_readme = target.parent / "README.md"
+        texts[pack_readme] = texts[pack_readme].replace(
+            f"[{target.stem}]({target.name}) | `{old_status}` |",
+            f"[{target.stem}]({target.name}) | `{status}` |",
+        )
+    elif mutation == "reference-active-undeclared":
+        target = PurePosixPath(
+            "docs/90.references/research/2026-07-07-wer/undeclared.md"
+        )
+        paths = tuple(sorted((*paths, target), key=lambda item: item.as_posix()))
+        profiles[target] = ProfileView("content/reference", "common", "authored")
+        metadata[target] = {
+            "title": "Undeclared",
+            "type": "content/reference",
+            "status": "active",
+            "owner": "platform",
+            "updated": "2026-07-14",
+        }
+        texts[target] = "# Undeclared\n"
+        tracked_regular_paths = frozenset((*tracked_regular_paths, target))
+    elif mutation == "reference-declared-missing":
+        target = PurePosixPath(
+            "docs/90.references/research/2026-07-07-wer/accepted.md"
+        )
+        paths = tuple(path for path in paths if path != target)
+        profiles.pop(target)
+        metadata.pop(target)
+        texts.pop(target)
+        tracked_regular_paths = frozenset(
+            path for path in tracked_regular_paths if path != target
+        )
+    elif mutation.startswith("reference-collection-"):
+        owner = PurePosixPath("docs/90.references/research/README.md")
+        row = "| [current](./2026-07-07-wer/README.md) | Current pack |"
+        if mutation == "reference-collection-missing":
+            texts[owner] = texts[owner].replace(row + "\n", "")
+        elif mutation == "reference-collection-stale":
+            texts[owner] = texts[owner].replace(
+                row, "| [current](./2026-07-08-stale/README.md) | Current pack |"
+            )
+        elif mutation == "reference-collection-duplicate":
+            texts[owner] = texts[owner].replace(row, f"{row}\n{row}")
+        elif mutation == "reference-collection-wrong-parent":
+            texts[owner] = texts[owner].replace(
+                "### Research Pack Index",
+                "## Wrong Parent\n\n### Research Pack Index",
+            )
+        elif mutation == "reference-collection-fenced-lookalike":
+            texts[owner] = texts[owner].replace(
+                "### Research Pack Index", "Research Pack Index"
+            ) + "\n```markdown\n### Research Pack Index\n" + row + "\n```\n"
+    elif mutation.startswith("reference-index-"):
+        owner = PurePosixPath(
+            "docs/90.references/research/2026-07-07-wer/README.md"
+        )
+        accepted = "| [accepted](accepted.md) | `accepted` |"
+        active = "| [active](active.md) | `active` |"
+        if mutation == "reference-index-missing":
+            texts[owner] = texts[owner].replace(accepted + "\n", "")
+        elif mutation == "reference-index-malformed":
+            texts[owner] = texts[owner].replace("| Reference | Lifecycle |", "| Reference | Status |")
+        elif mutation == "reference-index-stale":
+            texts[owner] = texts[owner].replace(active, active + "\n| [ghost](ghost.md) | `active` |")
+        elif mutation == "reference-index-duplicate":
+            texts[owner] = texts[owner].replace(accepted, accepted + "\n" + accepted)
+        elif mutation == "reference-index-status":
+            texts[owner] = texts[owner].replace(accepted, "| [accepted](accepted.md) | `active` |")
+        elif mutation == "reference-index-swap":
+            texts[owner] = texts[owner].replace(accepted, "| [ghost](ghost.md) | `accepted` |")
+        elif mutation == "reference-index-order":
+            texts[owner] = texts[owner].replace(f"{accepted}\n{active}", f"{active}\n{accepted}")
+        elif mutation == "reference-index-fenced-lookalike":
+            texts[owner] = texts[owner].replace("## Report Index", "Report Index") + "\n```markdown\n## Report Index\n```\n"
+    elif mutation == "reference-wrong-profile-member":
+        target = PurePosixPath(
+            "docs/90.references/research/2026-07-07-wer/accepted.md"
+        )
+        profiles[target] = ProfileView("content/archive-tombstone", "common", "authored")
+    elif mutation.startswith("collection-"):
+        owner = PurePosixPath(
+            "docs/90.references/research/2026-07-07-wer/README.md"
+        )
+        tree_line = "├── accepted.md"
+        row = "| [accepted](accepted.md) | `accepted` |"
+        ghost_line = "├── ghost.md"
+        ghost_row = "| [ghost](ghost.md) | `accepted` |"
+        if mutation == "collection-tree-missing":
+            texts[owner] = texts[owner].replace(tree_line + "\n", "")
+        elif mutation == "collection-row-missing":
+            texts[owner] = texts[owner].replace(row + "\n", "")
+        elif mutation == "collection-tree-stale":
+            texts[owner] = texts[owner].replace(tree_line, tree_line + "\n" + ghost_line)
+        elif mutation == "collection-row-stale":
+            texts[owner] = texts[owner].replace(row, row + "\n" + ghost_row)
+        elif mutation == "collection-tree-duplicate":
+            texts[owner] = texts[owner].replace(tree_line, tree_line + "\n" + tree_line)
+        elif mutation == "collection-row-duplicate":
+            texts[owner] = texts[owner].replace(row, row + "\n" + row)
+        elif mutation == "collection-equal-count-swap":
+            texts[owner] = texts[owner].replace(tree_line, ghost_line).replace(row, ghost_row)
+        elif mutation == "collection-artifact-added":
+            target = owner.parent / "added.md"
+            paths = tuple(sorted((*paths, target), key=lambda item: item.as_posix()))
+            profiles[target] = ProfileView("content/reference", "common", "authored")
+            metadata[target] = {"title": "Added", "type": "content/reference", "status": "accepted", "owner": "platform", "updated": "2026-07-14"}
+            texts[target] = "# Added\n"
+            tracked_regular_paths = frozenset((*tracked_regular_paths, target))
+        elif mutation == "collection-artifact-removed":
+            target = owner.parent / "accepted.md"
+            paths = tuple(path for path in paths if path != target)
+            profiles.pop(target)
+            metadata.pop(target)
+            texts.pop(target)
+            tracked_regular_paths = frozenset(path for path in tracked_regular_paths if path != target)
+        elif mutation == "collection-heading-lookalike":
+            texts[owner] = texts[owner].replace("### Structure", "Structure") + "\n```markdown\n### Structure\n```\n"
+        elif mutation == "collection-tree-comment":
+            texts[owner] = texts[owner].replace(tree_line, tree_line + " # retained")
+        elif mutation == "collection-tree-comment-hidden":
+            block = "```text\n2026-07-07-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── document-migration-evidence-ledger.md\n```"
+            texts[owner] = texts[owner].replace(block, f"<!--\n{block}\n-->")
+        elif mutation == "collection-h1-status-prose":
+            variants = (
+                (
+                    owner,
+                    "| [accepted](accepted.md) | `accepted` |",
+                    "| [accepted](accepted.md) | Status: Current \\| explanatory prose |",
+                ),
+                (
+                    PurePosixPath("docs/99.templates/support/README.md"),
+                    "| [Common](./common.md) | common |",
+                    "| [Common](./common.md) |",
+                ),
+                (
+                    PurePosixPath("docs/90.references/research/README.md"),
+                    "| [active](./2026-07-07-wer/active.md) | Included |",
+                    "| [active](./2026-07-07-wer/active.md) | Included | ignored |",
+                ),
+            )
+            for target, before, after in variants:
+                if texts[target].count(before) != 1:
+                    raise ConfigurationError(
+                        "collection-h1-status-prose fixture variant is missing: "
+                        f"{target.as_posix()}"
+                    )
+                texts[target] = texts[target].replace(before, after)
     return Context(
         context.root,
-        context.paths,
+        paths,
         context.baseline_paths,
-        context.profiles,
+        profiles,
         texts,
         metadata,
         context.adapter_targets,
         governance_current_paths,
         context.governance_current_states,
+        reference_current_packs,
+        tracked_regular_paths,
     )
 
 
@@ -1167,6 +1853,8 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
                 mutated.adapter_targets,
                 mutated.governance_current_paths,
                 mutated.governance_current_states,
+                mutated.reference_current_packs,
+                mutated.tracked_regular_paths,
             )
             key, diagnostic = _owner_key(selected, plan)
             expected = "sdlc-plan|fixture|docs-01-requirements-999-fixture-md"
@@ -1183,11 +1871,21 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
         diagnostics = _ledger_diagnostics(mutated)
     elif mutation.startswith("governance"):
         diagnostics = _governance_current_owner_diagnostics(mutated)
+    elif mutation.startswith("reference"):
+        diagnostics = _reference_current_pack_diagnostics(mutated)
+    elif mutation.startswith("collection"):
+        diagnostics = _collection_index_diagnostics(mutated)
+        return [
+            item.rule_id
+            for item in sorted(diagnostics, key=diagnostic_sort_key)
+        ]
     elif mutation in {"none", "link-normalization"}:
         diagnostics = (
             _link_diagnostics(mutated)
             + _index_diagnostics(mutated)
+            + _collection_index_diagnostics(mutated)
             + _governance_current_owner_diagnostics(mutated)
+            + _reference_current_pack_diagnostics(mutated)
             + _owner_diagnostics(mutated)
             + _ledger_diagnostics(mutated)
         )
@@ -1199,7 +1897,7 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
 def _self_test(root: Path) -> list[str]:
     fixture = json.loads((root / FIXTURE_PATH).read_text(encoding="utf-8"))
     failures: list[str] = []
-    if list(fixture) != ["schemaVersion", "baseTree", "cases"] or fixture["schemaVersion"] != 1:
+    if list(fixture) != ["schemaVersion", "baseTree", "cases"] or fixture["schemaVersion"] != 2:
         return ["fixture schema differs"]
     required = {
         "valid-tree",
@@ -1230,10 +1928,56 @@ def _self_test(root: Path) -> list[str]:
         "missing-ledger-row",
         "incomplete-ledger-row",
         "unknown-ledger-path",
+        "reference-valid",
+        "reference-research-draft",
+        "reference-audit-draft",
+        "reference-audit-active",
+        "reference-active-undeclared",
+        "reference-declared-missing",
+        "reference-collection-missing",
+        "reference-collection-stale",
+        "reference-collection-duplicate",
+        "reference-collection-wrong-parent",
+        "reference-collection-fenced-lookalike",
+        "reference-index-missing",
+        "reference-index-malformed",
+        "reference-index-stale",
+        "reference-index-duplicate",
+        "reference-index-status",
+        "reference-index-equal-count-swap",
+        "reference-index-order",
+        "reference-index-fenced-lookalike",
+        "reference-wrong-profile-member",
+        "collection-valid",
+        "collection-tree-missing",
+        "collection-row-missing",
+        "collection-tree-stale",
+        "collection-row-stale",
+        "collection-tree-duplicate",
+        "collection-row-duplicate",
+        "collection-equal-count-swap",
+        "collection-artifact-added",
+        "collection-artifact-removed",
+        "collection-machine-json",
+        "collection-heading-lookalike",
+        "collection-tree-comment",
+        "collection-tree-comment-hidden",
+        "collection-h1-status-prose",
     }
     names = [case.get("name") for case in fixture["cases"]]
     if not required.issubset(names) or len(names) != len(set(names)):
         failures.append("required unique fixture cases are incomplete")
+    body_shape_probe = _first_visible_table(
+        "| Reference | Lifecycle |\n"
+        "| --- | --- |\n"
+        "| [short](short.md) |\n"
+        "| [extra](extra.md) | `active` | ignored |\n"
+    )
+    if body_shape_probe != (
+        ["Reference", "Lifecycle"],
+        [["[short](short.md)", ""], ["[extra](extra.md)", "`active`"]],
+    ):
+        failures.append("GFM body rows are not padded/truncated to the header")
     ledger_existed_before = (root / LEDGER_PATH).exists()
     with tempfile.TemporaryDirectory(prefix="smdv-cross-") as temporary:
         context = _fixture_context(Path(temporary), fixture["baseTree"])
@@ -1244,7 +1988,7 @@ def _self_test(root: Path) -> list[str]:
             if not isinstance(case["mutation"], dict) or list(case["mutation"]) != ["kind"]:
                 failures.append(f"{case.get('name')}: structured mutation differs")
                 continue
-            expected = sorted(case["expected_rule_ids"])
+            expected = case["expected_rule_ids"]
             actual = _fixture_rule_ids(context, case["mutation"]["kind"])
             if actual != expected:
                 failures.append(f"{case['name']}: expected {expected}, actual {actual}")
@@ -1423,7 +2167,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             diagnostics = (
                 _link_diagnostics(context)
                 + _index_diagnostics(context)
+                + _collection_index_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
+                + _reference_current_pack_diagnostics(context)
                 + _owner_diagnostics(context)
             )
             rows = [("FAIL", item) for item in sorted(diagnostics, key=diagnostic_sort_key)]

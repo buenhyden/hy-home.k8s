@@ -52,6 +52,10 @@ audits/
 | [2026-07-05-wea](./2026-07-05-wea/README.md) | Historical | Workspace engineering implementation audit based on the 2026-07-04 research benchmark. | Successor: [2026-07-11-weia](./2026-07-11-weia/README.md). |
 | [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |
 
+`Current pack`, `Historical`, and `Resolved` are collection roles, not report
+lifecycle values. The registry owns the single Current pointer; the selected
+pack's `## Report Index` mirrors member lifecycle from report frontmatter.
+
 ## Add and Find
 
 1. Start from the single Current pack row above.

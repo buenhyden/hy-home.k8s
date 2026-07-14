@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Spec SDLC CI QA Formatting Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Reference: Spec SDLC CI QA Formatting Research

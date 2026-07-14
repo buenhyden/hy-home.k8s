@@ -1,9 +1,9 @@
 ---
 title: 'Audit: Kubernetes Infrastructure and Security'
 type: content/reference
-status: draft
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Audit: Kubernetes Infrastructure and Security

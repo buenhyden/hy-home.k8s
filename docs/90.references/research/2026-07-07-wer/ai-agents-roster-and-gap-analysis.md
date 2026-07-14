@@ -1,9 +1,9 @@
 ---
 title: 'Reference: AI Agents Roster and Gap Analysis Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Reference: AI Agents Roster and Gap Analysis Research

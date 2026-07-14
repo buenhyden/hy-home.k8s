@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-2.schema.json",
+  "$id": "https://hy-home.k8s/schemas/document-profiles-3.schema.json",
   "title": "Document profile registry",
   "type": "object",
   "additionalProperties": false,
@@ -12,6 +12,7 @@
     "target",
     "profiles",
     "governanceCurrentOwners",
+    "referenceCurrentPacks",
     "programLineage"
   ],
   "properties": {
@@ -19,10 +20,10 @@
       "const": "https://json-schema.org/draft/2020-12/schema"
     },
     "$id": {
-      "const": "https://hy-home.k8s/schemas/document-profiles-2.schema.json"
+      "const": "https://hy-home.k8s/schemas/document-profiles-3.schema.json"
     },
     "schemaVersion": {
-      "const": 2
+      "const": 3
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -39,6 +40,9 @@
     },
     "governanceCurrentOwners": {
       "$ref": "#/$defs/governanceCurrentOwners"
+    },
+    "referenceCurrentPacks": {
+      "$ref": "#/$defs/referenceCurrentPacks"
     },
     "programLineage": {
       "$ref": "#/$defs/programLineage"
@@ -85,6 +89,59 @@
           "items": {
             "type": "string",
             "pattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!memory/).+\\.md$"
+          }
+        }
+      }
+    },
+    "referenceCurrentPacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "packs"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "content/reference"
+        },
+        "packs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/referenceCurrentPack"
+          }
+        }
+      }
+    },
+    "referenceCurrentPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "allowedStates",
+        "members"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+$"
+        },
+        "allowedStates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?!README\\.md$)[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
           }
         }
       }

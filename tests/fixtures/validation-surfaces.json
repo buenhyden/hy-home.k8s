@@ -20,6 +20,8 @@
     {"name": "traefik", "path": "traefik/traefik.yaml", "expectedSurface": "traefik"},
     {"name": "examples", "path": "examples/sample-app/deployment.yaml", "expectedSurface": "examples"},
     {"name": "authored-doc", "path": "docs/03.specs/031-affected-surface-agent-qa/spec.md", "expectedSurface": "authored-documents"},
+    {"name": "current-research-report", "path": "docs/90.references/research/2026-07-07-wer/provider-implementation-status.md", "expectedSurface": "authored-documents"},
+    {"name": "current-audit-pack", "path": "docs/90.references/audits/2026-07-11-weia/README.md", "expectedSurface": "authored-documents"},
     {"name": "generated-record", "path": "graphify-out/GRAPH_REPORT.md", "expectedSurface": "generated-tooling"},
     {"name": "root-config", "path": ".pre-commit-config.yaml", "expectedSurface": "root-config"}
   ],
@@ -81,6 +83,24 @@
       ],
       "expected": {
         "validators": ["agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "collection-index-guard",
+      "lane": "affected",
+      "paths": [
+        "docs/90.references/research/README.md",
+        "docs/90.references/research/2026-07-07-wer/README.md",
+        "docs/99.templates/support/README.md",
+        "scripts/validate-links-and-owners.py",
+        "scripts/validate-repo-quality-gates.sh",
+        "tests/fixtures/links-and-owners.json"
+      ],
+      "expected": {
+        "validators": ["document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "baseTree": {
     "documents": [
       {"path": ".agents/skills/example/skill.md", "profile": "exception/provider-native", "profileClass": "exception", "mode": "native", "title": "", "type": "", "status": "", "body": "# Fixture skill"},
@@ -16,14 +16,32 @@
       {"path": "docs/04.execution/tasks/README.md", "profile": "readme/stage-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# tasks\n\n## Item Index\n\n```text\n04.execution/tasks/\n└── 2026-07-12-fixture.md\n```\n\n### 문서 인덱스\n\n| document | description | status |\n| --- | --- | --- |\n| [`./2026-07-12-fixture.md`](./2026-07-12-fixture.md) | fixture | Active |\n"},
       {"path": "docs/05.operations/guides/9998-target file.md", "profile": "sdlc/guide", "profileClass": "sdlc", "mode": "authored", "title": "Target Guide", "type": "sdlc/guide", "status": "done", "body": "Target."},
       {"path": "docs/05.operations/guides/9999-source.md", "profile": "sdlc/guide", "profileClass": "sdlc", "mode": "authored", "title": "Source Guide", "type": "sdlc/guide", "status": "active", "body": "[inline](./9998-target%20file.md?x=1#ok)\n\n[reference][target-guide]\n[target-guide][]\n[shortcut]\n\n[adapter](../../../.claude/skills/example/skill.md)\n[adapter-root](../../../.claude/skills)\n\n[target-guide]: <./9998-target%20file.md#ok>\n[shortcut]: ./9998-target%20file.md"},
+      {"path": "docs/90.references/audits/2026-07-11-weia/README.md", "profile": "readme/snapshot-pack", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Audit pack\n\n## Report Index\n\n| Completed artifact | Lifecycle | Scope |\n| --- | --- | --- |\n| [audit](audit.md) | `done` | fixture |\n| [plan](../../../04.execution/plans/2026-07-12-fixture.md) | `active` | external row ignored |\n"},
+      {"path": "docs/90.references/audits/2026-07-11-weia/audit.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Fixture Audit", "type": "content/reference", "status": "done", "body": "Completed audit."},
+      {"path": "docs/90.references/audits/README.md", "profile": "readme/collection-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# audits\n\n## Item Index\n\n### Audit Pack Registry\n\n| Pack | Pack role |\n| --- | --- |\n| [current](./2026-07-11-weia/README.md) | Current pack |\n"},
+      {"path": "docs/90.references/research/2026-07-07-wer/README.md", "profile": "readme/snapshot-pack", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Research pack\n\n### Structure\n\n```text\n2026-07-07-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── document-migration-evidence-ledger.md\n```\n\n## Report Index\n\n| Reference | Lifecycle |\n| --- | --- |\n| [accepted](accepted.md) | `accepted` |\n| [active](active.md) | `active` |\n| [ledger](document-migration-evidence-ledger.md) | `active` |\n"},
+      {"path": "docs/90.references/research/2026-07-07-wer/accepted.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Accepted Reference", "type": "content/reference", "status": "accepted", "body": "Stable reference."},
+      {"path": "docs/90.references/research/2026-07-07-wer/active.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Active Reference", "type": "content/reference", "status": "active", "body": "Living evidence."},
       {"path": "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Document Migration Evidence Ledger", "type": "content/reference", "status": "active", "body": "@ledger"},
-      {"path": "docs/98.archive/999-fixture.md", "profile": "content/archive-tombstone", "profileClass": "common", "mode": "authored", "title": "Fixture Tombstone", "type": "content/archive-tombstone", "status": "archived", "body": "Archive fixture."}
+      {"path": "docs/90.references/research/README.md", "profile": "readme/collection-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# research\n\n## Item Index\n\n```text\nresearch/\n├── 2026-07-07-wer/\n│   ├── README.md\n│   ├── accepted.md\n│   ├── active.md\n│   └── document-migration-evidence-ledger.md\n└── README.md\n```\n\n### Research Pack Index\n\n| Material | Status |\n| --- | --- |\n| [README](./README.md) | Index |\n| [current](./2026-07-07-wer/README.md) | Current pack |\n| [accepted](./2026-07-07-wer/accepted.md) | Included |\n| [active](./2026-07-07-wer/active.md) | Included |\n| [ledger](./2026-07-07-wer/document-migration-evidence-ledger.md) | Included |\n"},
+      {"path": "docs/98.archive/999-fixture.md", "profile": "content/archive-tombstone", "profileClass": "common", "mode": "authored", "title": "Fixture Tombstone", "type": "content/archive-tombstone", "status": "archived", "body": "Archive fixture."},
+      {"path": "docs/99.templates/support/README.md", "profile": "readme/collection-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# support\n\n## Item Index\n\n```text\nsupport/\n├── README.md\n├── common.md\n├── document-profiles.json\n├── document-profiles.schema.json\n└── documentation.md\n```\n\n### Support Document Index\n\n| Document | Responsibility |\n| --- | --- |\n| [Common](./common.md) | common |\n| [Registry](./document-profiles.json) | registry |\n| [Schema](./document-profiles.schema.json) | schema |\n| [Documentation](./documentation.md) | documentation |\n"},
+      {"path": "docs/99.templates/support/common.md", "profile": "governance/template-support", "profileClass": "governance", "mode": "authored", "title": "Common Support", "type": "governance/template-support", "status": "active", "body": "Common support."},
+      {"path": "docs/99.templates/support/documentation.md", "profile": "governance/template-support", "profileClass": "governance", "mode": "authored", "title": "Documentation Support", "type": "governance/template-support", "status": "active", "body": "Documentation support."}
     ],
+    "collectionArtifacts": ["docs/99.templates/support/document-profiles.json", "docs/99.templates/support/document-profiles.schema.json"],
     "declaredIndexes": ["docs/03.specs/README.md", "docs/04.execution/plans/README.md", "docs/04.execution/tasks/README.md"],
     "ledgerColumns": ["path", "title", "profile", "owner-key", "disposition", "destination", "local-evidence", "official-sources", "observed-version", "applicability", "content-decision", "refresh-trigger", "reviewer", "result"],
     "symlinkAdapters": [{"path": ".claude/skills", "target": "../.agents/skills"}],
     "governanceCurrentOwners": ["docs/00.agent-governance/current-alpha.md", "docs/00.agent-governance/current-beta.md"],
-    "governanceMirrorPath": "docs/00.agent-governance/README.md"
+    "governanceMirrorPath": "docs/00.agent-governance/README.md",
+    "referenceCurrentPacks": {
+      "profileId": "content/reference",
+      "packs": [
+        {"id": "audits/2026-07-11-weia", "allowedStates": ["done"], "members": ["audit.md"]},
+        {"id": "research/2026-07-07-wer", "allowedStates": ["active", "accepted"], "members": ["accepted.md", "active.md", "document-migration-evidence-ledger.md"]}
+      ]
+    }
   },
   "cases": [
     {"name": "valid-tree", "tree": {"base": "baseTree"}, "mutation": {"kind": "none"}, "expected_rule_ids": []},
@@ -69,6 +87,41 @@
     {"name": "governance-index-fenced-lookalike", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-lookalike"}, "expected_rule_ids": ["GOVERNANCE-INDEX-MISSING"]},
     {"name": "missing-ledger-row", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-missing-row"}, "expected_rule_ids": ["LEDGER-MISSING"]},
     {"name": "incomplete-ledger-row", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-incomplete"}, "expected_rule_ids": ["LEDGER-INCOMPLETE"]},
-    {"name": "unknown-ledger-path", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-unknown"}, "expected_rule_ids": ["LEDGER-UNKNOWN-PATH"]}
+    {"name": "unknown-ledger-path", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-unknown"}, "expected_rule_ids": ["LEDGER-UNKNOWN-PATH"]},
+    {"name": "reference-valid", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-valid"}, "expected_rule_ids": []},
+    {"name": "reference-research-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-research-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
+    {"name": "reference-audit-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
+    {"name": "reference-audit-active", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-active"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
+    {"name": "reference-active-undeclared", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-active-undeclared"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-UNDECLARED"]},
+    {"name": "reference-declared-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-declared-missing"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-STATUS", "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]},
+    {"name": "reference-collection-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-collection-missing"}, "expected_rule_ids": ["REFERENCE-PACK-COLLECTION-MISSING"]},
+    {"name": "reference-collection-stale", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-collection-stale"}, "expected_rule_ids": ["REFERENCE-PACK-COLLECTION-MISSING", "REFERENCE-PACK-COLLECTION-STALE"]},
+    {"name": "reference-collection-duplicate", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-collection-duplicate"}, "expected_rule_ids": ["REFERENCE-PACK-COLLECTION-DUPLICATE"]},
+    {"name": "reference-collection-wrong-parent", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-collection-wrong-parent"}, "expected_rule_ids": ["REFERENCE-PACK-COLLECTION-MISSING"]},
+    {"name": "reference-collection-fenced-lookalike", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-collection-fenced-lookalike"}, "expected_rule_ids": ["REFERENCE-PACK-COLLECTION-MISSING"]},
+    {"name": "reference-index-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-missing"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-MISSING"]},
+    {"name": "reference-index-malformed", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-malformed"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-MISSING"]},
+    {"name": "reference-index-stale", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-stale"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-STALE"]},
+    {"name": "reference-index-duplicate", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-duplicate"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-DUPLICATE"]},
+    {"name": "reference-index-status", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-status"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-STATUS"]},
+    {"name": "reference-index-equal-count-swap", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-swap"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-MISSING", "REFERENCE-PACK-INDEX-STALE"]},
+    {"name": "reference-index-order", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-order"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-ORDER"]},
+    {"name": "reference-index-fenced-lookalike", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-index-fenced-lookalike"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-MISSING"]},
+    {"name": "reference-wrong-profile-member", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-wrong-profile-member"}, "expected_rule_ids": ["REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]},
+    {"name": "collection-valid", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-valid"}, "expected_rule_ids": []},
+    {"name": "collection-tree-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-tree-missing"}, "expected_rule_ids": ["COLLECTION-INDEX-TREE-MISSING"]},
+    {"name": "collection-row-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-row-missing"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-MISSING"]},
+    {"name": "collection-tree-stale", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-tree-stale"}, "expected_rule_ids": ["COLLECTION-INDEX-TREE-STALE"]},
+    {"name": "collection-row-stale", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-row-stale"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-STALE"]},
+    {"name": "collection-tree-duplicate", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-tree-duplicate"}, "expected_rule_ids": ["COLLECTION-INDEX-TREE-DUPLICATE"]},
+    {"name": "collection-row-duplicate", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-row-duplicate"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-DUPLICATE"]},
+    {"name": "collection-equal-count-swap", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-equal-count-swap"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-MISSING", "COLLECTION-INDEX-ROW-STALE", "COLLECTION-INDEX-TREE-MISSING", "COLLECTION-INDEX-TREE-STALE"]},
+    {"name": "collection-artifact-added", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-artifact-added"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-MISSING", "COLLECTION-INDEX-TREE-MISSING", "COLLECTION-INDEX-ROW-MISSING", "COLLECTION-INDEX-TREE-MISSING"]},
+    {"name": "collection-artifact-removed", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-artifact-removed"}, "expected_rule_ids": ["COLLECTION-INDEX-ROW-STALE", "COLLECTION-INDEX-TREE-STALE", "COLLECTION-INDEX-ROW-STALE", "COLLECTION-INDEX-TREE-STALE"]},
+    {"name": "collection-machine-json", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-machine-json"}, "expected_rule_ids": []},
+    {"name": "collection-heading-lookalike", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-heading-lookalike"}, "expected_rule_ids": ["COLLECTION-INDEX-PARSE"]},
+    {"name": "collection-tree-comment", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-tree-comment"}, "expected_rule_ids": []},
+    {"name": "collection-tree-comment-hidden", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-tree-comment-hidden"}, "expected_rule_ids": ["COLLECTION-INDEX-PARSE"]},
+    {"name": "collection-h1-status-prose", "tree": {"base": "baseTree"}, "mutation": {"kind": "collection-h1-status-prose"}, "expected_rule_ids": []}
   ]
 }

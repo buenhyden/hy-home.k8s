@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "negativeFixtureSamplePath": ".agents/GEMINI.md",
   "cases": [
     {
@@ -168,6 +168,132 @@
       "expected": [
         "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
       ]
+    },
+    {
+      "name": "malformed-reference-current-packs",
+      "mutation": "malform-reference-current-packs",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"]
+    },
+    {
+      "name": "missing-reference-current-packs",
+      "mutation": "remove-reference-current-packs",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"]
+    },
+    {
+      "name": "duplicate-reference-pack-id",
+      "mutation": "duplicate-reference-pack-id",
+      "expected": [
+        "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+        "REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE"
+      ]
+    },
+    {
+      "name": "missing-reference-pack-collection",
+      "mutation": "missing-reference-pack-collection",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"]
+    },
+    {
+      "name": "extra-reference-pack-collection",
+      "mutation": "extra-reference-pack-collection",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"]
+    },
+    {
+      "name": "misordered-reference-pack-id",
+      "mutation": "reverse-reference-pack-ids",
+      "expected": [
+        "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+        "REGISTRY_REFERENCE_CURRENT_PACK_ORDER"
+      ]
+    },
+    {
+      "name": "invalid-reference-pack-id",
+      "mutation": "invalidate-reference-pack-id",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_ID"]
+    },
+    {
+      "name": "parent-reference-member",
+      "mutation": "parent-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PATH"]
+    },
+    {
+      "name": "leading-dot-reference-member",
+      "mutation": "leading-dot-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PATH"]
+    },
+    {
+      "name": "slash-reference-member",
+      "mutation": "slash-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PATH"]
+    },
+    {
+      "name": "control-reference-member",
+      "mutation": "control-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PATH"]
+    },
+    {
+      "name": "normalized-alias-reference-member",
+      "mutation": "normalized-alias-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PATH"]
+    },
+    {
+      "name": "duplicate-reference-member",
+      "mutation": "duplicate-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE"]
+    },
+    {
+      "name": "unsorted-reference-members",
+      "mutation": "reverse-reference-members",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_ORDER"]
+    },
+    {
+      "name": "wrong-reference-pack-state-contract",
+      "mutation": "wrong-reference-pack-states",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_STATE"]
+    },
+    {
+      "name": "missing-reference-pack-state-contract",
+      "mutation": "remove-reference-pack-states",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_STATE"]
+    },
+    {
+      "name": "outside-reference-profile-state",
+      "mutation": "outside-reference-profile-state",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_STATE"]
+    },
+    {
+      "name": "missing-reference-member",
+      "mutation": "missing-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_MISSING"]
+    },
+    {
+      "name": "untracked-reference-member",
+      "mutation": "untracked-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_MISSING"]
+    },
+    {
+      "name": "symlink-reference-member",
+      "mutation": "symlink-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_MISSING"]
+    },
+    {
+      "name": "non-regular-reference-member",
+      "mutation": "non-regular-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_MISSING"]
+    },
+    {
+      "name": "wrong-profile-reference-member",
+      "mutation": "wrong-profile-reference-member",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]
+    },
+    {
+      "name": "wrong-profile-reference-pack-readme",
+      "mutation": "wrong-profile-reference-pack-readme",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]
+    },
+    {
+      "name": "wrong-profile-reference-collection-readme",
+      "mutation": "wrong-profile-reference-collection-readme",
+      "expected": ["REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]
     }
   ],
   "profileCoverage": [

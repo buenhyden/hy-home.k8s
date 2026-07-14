@@ -578,6 +578,8 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "traefik",
         "examples",
         "authored-doc",
+        "current-research-report",
+        "current-audit-pack",
         "generated-record",
         "root-config",
     }

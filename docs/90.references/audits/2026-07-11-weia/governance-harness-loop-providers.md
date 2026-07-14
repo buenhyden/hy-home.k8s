@@ -1,9 +1,9 @@
 ---
 title: 'Audit: Governance, Harness, Loop, and Provider Parity'
 type: content/reference
-status: draft
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Audit: Governance, Harness, Loop, and Provider Parity

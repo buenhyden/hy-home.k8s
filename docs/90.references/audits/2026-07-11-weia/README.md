@@ -94,15 +94,15 @@ All five scored reports use the shared measurement contract below. The roadmap
 normalizes their 80 actionable rows into 32 canonical findings; it does not
 rescore or replace the source reports.
 
-| Completed artifact | Scope | Applicable arithmetic | Actionable disposition |
-| --- | --- | --- | --- |
-| [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md) | Governance, harness/loop, Claude, Codex, Gemini, and common system | `45/104` (43.3%); 26 applicable; no N/A | 17 Partial/Gap rows routed to the roadmap. |
-| [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
-| [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md) | Delivery topology, QA/all-files obligations, and supply chain | `56/104` (53.8%); 26 applicable; 7 N/A | 8 Partial/Gap rows routed; consumer-free enterprise lanes remain excluded. |
-| [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
-| [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
-| [Integrated Remediation Roadmap](remediation-roadmap.md) | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
-| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
+| Completed artifact | Lifecycle | Scope | Applicable arithmetic | Actionable disposition |
+| --- | --- | --- | --- | --- |
+| [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | `done` | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
+| [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md) | `done` | Delivery topology, QA/all-files obligations, and supply chain | `56/104` (53.8%); 26 applicable; 7 N/A | 8 Partial/Gap rows routed; consumer-free enterprise lanes remain excluded. |
+| [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md) | `done` | Governance, harness/loop, Claude, Codex, Gemini, and common system | `45/104` (43.3%); 26 applicable; no N/A | 17 Partial/Gap rows routed to the roadmap. |
+| [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | `done` | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
+| [Integrated Remediation Roadmap](remediation-roadmap.md) | `done` | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
+| [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | `done` | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
+| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | `done` | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
 
 ## Refresh and Succession
 

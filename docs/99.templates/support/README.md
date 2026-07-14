@@ -46,6 +46,8 @@ Primary readers:
 support/
 ├── common-documentation-governance.md
 ├── documentation-contract.md
+├── document-profiles.json
+├── document-profiles.schema.json
 ├── frontmatter-schema.md
 ├── legacy-cleanup-rules.md
 ├── sdlc-governance.md
@@ -80,6 +82,8 @@ This README is located at `docs/99.templates/support/`.
 | Document | Responsibility |
 | --- | --- |
 | [Documentation Contract](./documentation-contract.md) | Assigns ownership across forms, support, Stage 00 governance, authored documents, and enforcement surfaces. |
+| [Document Profile Registry](./document-profiles.json) | Canonical machine contract for document classification, paths, frontmatter, lifecycle domains, headings, templates, and ownership declarations. |
+| [Document Profile Registry Schema](./document-profiles.schema.json) | JSON Schema for the canonical document-profile registry shape and allowed values. |
 | [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
 | [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
 | [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |

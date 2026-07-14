@@ -111,12 +111,42 @@ class GovernanceCurrentOwners:
 
 
 @dataclass(frozen=True)
+class ReferenceCurrentPack:
+    id: str
+    allowed_states: tuple[str, ...]
+    members: tuple[str, ...]
+
+    @property
+    def collection_readme(self) -> PurePosixPath:
+        collection = self.id.split("/", 1)[0]
+        return PurePosixPath(f"docs/90.references/{collection}/README.md")
+
+    @property
+    def pack_readme(self) -> PurePosixPath:
+        return PurePosixPath(f"docs/90.references/{self.id}/README.md")
+
+    @property
+    def member_paths(self) -> tuple[PurePosixPath, ...]:
+        return tuple(
+            PurePosixPath(f"docs/90.references/{self.id}/{member}")
+            for member in self.members
+        )
+
+
+@dataclass(frozen=True)
+class ReferenceCurrentPacks:
+    profile_id: str
+    packs: tuple[ReferenceCurrentPack, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     baseline_sha: str
     baseline_count: int
     profiles: tuple[DocumentProfile, ...]
     governance_current_owners: GovernanceCurrentOwners
+    reference_current_packs: ReferenceCurrentPacks
 
 
 @dataclass(frozen=True)
@@ -405,6 +435,30 @@ def _compile_route(value: str) -> re.Pattern[str]:
 
 def _schema_rule_id(error: Any) -> str:
     path = tuple(error.absolute_path)
+    if (
+        error.validator == "required"
+        and "referenceCurrentPacks" in error.message
+    ):
+        return "REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"
+    if path and path[0] == "referenceCurrentPacks":
+        if len(path) >= 3 and path[1] == "packs" and error.validator == "required":
+            if "allowedStates" in error.message:
+                return "REGISTRY_REFERENCE_CURRENT_PACK_STATE"
+            if "members" in error.message:
+                return "REGISTRY_REFERENCE_CURRENT_PACK_PATH"
+            if "id" in error.message:
+                return "REGISTRY_REFERENCE_CURRENT_PACK_ID"
+        if len(path) >= 4 and path[1] == "packs":
+            field = path[3]
+            if field == "id":
+                return "REGISTRY_REFERENCE_CURRENT_PACK_ID"
+            if field == "allowedStates":
+                return "REGISTRY_REFERENCE_CURRENT_PACK_STATE"
+            if field == "members":
+                if error.validator == "uniqueItems":
+                    return "REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE"
+                return "REGISTRY_REFERENCE_CURRENT_PACK_PATH"
+        return "REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"
     if path and path[0] == "governanceCurrentOwners":
         if error.validator == "required" and "allowedStates" in error.message:
             return "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
@@ -466,6 +520,14 @@ def _profile_from_mapping(raw: Mapping[str, Any]) -> DocumentProfile:
         source_profile_ids=tuple(raw["sourceProfileIds"]),
         placeholder_policy=raw["placeholderPolicy"],
         append_contract=_append_contract(raw["appendContract"]),
+    )
+
+
+def _reference_pack_from_mapping(raw: Mapping[str, Any]) -> ReferenceCurrentPack:
+    return ReferenceCurrentPack(
+        id=raw["id"],
+        allowed_states=tuple(raw["allowedStates"]),
+        members=tuple(raw["members"]),
     )
 
 
@@ -621,6 +683,137 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
         )
 
+    raw_reference_packs = raw_registry["referenceCurrentPacks"]
+    raw_packs = raw_reference_packs["packs"]
+    raw_pack_ids = [pack["id"] for pack in raw_packs]
+    normalized_pack_ids: list[str] = []
+    normalized_pack_members: list[list[str]] = []
+    derived_member_paths: list[str] = []
+    for raw_pack in raw_packs:
+        raw_id = raw_pack["id"]
+        try:
+            normalized_id = _normalize_relative_path(raw_id).as_posix()
+            normalized_pack_ids.append(normalized_id)
+            if normalized_id != raw_id or len(PurePosixPath(raw_id).parts) != 2:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_REFERENCE_CURRENT_PACK_PATH",
+                        expected="a canonical collection/date-key pack ID",
+                        actual="pack ID is not canonical",
+                    )
+                )
+        except ValueError as exc:
+            normalized_pack_ids.append(raw_id)
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_PATH",
+                    expected="a canonical collection/date-key pack ID",
+                    actual=str(exc),
+                )
+            )
+
+        members: list[str] = []
+        for raw_member in raw_pack["members"]:
+            try:
+                normalized_member = _normalize_relative_path(raw_member).as_posix()
+                members.append(normalized_member)
+                if (
+                    normalized_member != raw_member
+                    or len(PurePosixPath(raw_member).parts) != 1
+                    or raw_member == "README.md"
+                    or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*\.md", raw_member)
+                    is None
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_REFERENCE_CURRENT_PACK_PATH",
+                            expected="a canonical direct-child Markdown basename",
+                            actual="member path is not canonical",
+                        )
+                    )
+            except ValueError as exc:
+                members.append(raw_member)
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_REFERENCE_CURRENT_PACK_PATH",
+                        expected="a canonical direct-child Markdown basename",
+                        actual=str(exc),
+                    )
+                )
+        normalized_pack_members.append(members)
+        if len(members) != len(set(members)):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE",
+                    expected="unique canonical member basenames",
+                    actual="normalized members contain a duplicate",
+                )
+            )
+        if members != sorted(members):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_ORDER",
+                    expected="member basenames in ascending order",
+                    actual="members are not sorted",
+                )
+            )
+        derived_member_paths.extend(
+            f"docs/90.references/{normalized_pack_ids[-1]}/{member}"
+            for member in members
+        )
+
+    if len(raw_pack_ids) != len(set(normalized_pack_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+                expected="one unique audits pack and one unique research pack",
+                actual="pack IDs contain a duplicate",
+            )
+        )
+    collections = [pack_id.split("/", 1)[0] for pack_id in normalized_pack_ids]
+    if collections != ["audits", "research"]:
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_REFERENCE_CURRENT_PACK_ID",
+                expected="exactly one audits pack followed by one research pack",
+                actual="pack collections differ",
+            )
+        )
+    if normalized_pack_ids != sorted(normalized_pack_ids):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_REFERENCE_CURRENT_PACK_ORDER",
+                expected="pack IDs in ascending order",
+                actual="pack IDs are not sorted",
+            )
+        )
+    if len(derived_member_paths) != len(set(derived_member_paths)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_REFERENCE_CURRENT_PACK_DUPLICATE",
+                expected="unique derived member paths",
+                actual="derived paths contain a duplicate",
+            )
+        )
+
+    profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
+    reference_profile = profiles_by_id.get(raw_reference_packs["profileId"])
+    status_domain = set(reference_profile["statusDomain"]) if reference_profile else set()
+    for raw_pack in raw_packs:
+        collection = raw_pack["id"].split("/", 1)[0]
+        expected_states = ["done"] if collection == "audits" else ["active", "accepted"]
+        if (
+            raw_pack["allowedStates"] != expected_states
+            or not set(raw_pack["allowedStates"]).issubset(status_domain)
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_STATE",
+                    expected=f"{collection} allowed states {expected_states!r} within content/reference",
+                    actual="allowed-state contract differs",
+                )
+            )
+
     if diagnostics:
         raise DocumentContractError(diagnostics)
 
@@ -633,6 +826,10 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             profile_id=raw_current_owners["profileId"],
             allowed_states=tuple(raw_current_owners["allowedStates"]),
             paths=tuple(normalized_current_paths),
+        ),
+        reference_current_packs=ReferenceCurrentPacks(
+            profile_id=raw_reference_packs["profileId"],
+            packs=tuple(_reference_pack_from_mapping(pack) for pack in raw_packs),
         ),
     )
 
@@ -720,6 +917,79 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
     if current_owner_diagnostics:
         raise DocumentContractError(current_owner_diagnostics)
+
+    reference_diagnostics: list[Diagnostic] = []
+    expected_paths: dict[PurePosixPath, tuple[str, str]] = {}
+    for pack in registry.reference_current_packs.packs:
+        expected_paths[pack.collection_readme] = (
+            "readme/collection-index",
+            "frontmatter-free",
+        )
+        expected_paths[pack.pack_readme] = (
+            "readme/snapshot-pack",
+            "frontmatter-free",
+        )
+        for member_path in pack.member_paths:
+            expected_paths[member_path] = (
+                registry.reference_current_packs.profile_id,
+                "authored",
+            )
+    tracked_reference_entries: dict[PurePosixPath, list[_GitEntry]] = {}
+    for entry in _parse_ls_files_stage_z(
+        _run_git(
+            root,
+            (
+                "ls-files",
+                "--stage",
+                "-z",
+                "--",
+                *(path.as_posix() for path in sorted(expected_paths, key=str)),
+            ),
+        )
+    ):
+        tracked_reference_entries.setdefault(entry.path, []).append(entry)
+    for path, (expected_profile, expected_mode) in expected_paths.items():
+        try:
+            file_mode = _lstat_named_path(root, path)
+        except ValueError:
+            file_mode = 0
+        entries = tracked_reference_entries.get(path, [])
+        if (
+            not stat.S_ISREG(file_mode)
+            or len(entries) != 1
+            or entries[0].stage != 0
+            or not entries[0].mode.startswith("100")
+        ):
+            reference_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_MISSING",
+                    path=path,
+                    profile=expected_profile,
+                    expected="one tracked stage-0 regular file",
+                    actual="declared path is missing, untracked, or non-regular",
+                )
+            )
+            continue
+        try:
+            actual_profile = classify_path(registry, path)
+        except DocumentContractError as exc:
+            reference_diagnostics.extend(exc.diagnostics)
+            continue
+        if (
+            actual_profile.profile_id != expected_profile
+            or actual_profile.mode != expected_mode
+        ):
+            reference_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",
+                    path=path,
+                    profile=actual_profile.profile_id,
+                    expected=f"{expected_mode} {expected_profile}",
+                    actual=f"{actual_profile.mode} {actual_profile.profile_id}",
+                )
+            )
+    if reference_diagnostics:
+        raise DocumentContractError(reference_diagnostics)
     return registry
 
 

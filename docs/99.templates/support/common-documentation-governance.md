@@ -24,7 +24,7 @@ knowledge consistent without forcing every common document into an SDLC phase.
 
 ### Common Profile Handoff
 
-The v2 [Document Profile Registry](./document-profiles.json) owns the exact routes,
+The v3 [Document Profile Registry](./document-profiles.json) owns the exact routes,
 forms, headings, and metadata contracts for `readme/*`, `content/reference`,
 `content/archive-tombstone`, `governance/memory`,
 `governance/progress-ledger`, and `governance/progress-entry`. This document
@@ -32,6 +32,9 @@ owns the human rationale for navigation, reference, preservation, and durable
 agent-learning roles without becoming another profile table.
 Its `governanceCurrentOwners.paths` declaration is the sole machine-owned set
 of current Stage 00 authorities; validators derive, rather than copy, that set.
+Its required `referenceCurrentPacks` envelope is the machine SSoT for the
+selected research and audit packs, their allowed lifecycle states, and exact
+member basenames. Collection and pack READMEs are validated human mirrors.
 
 The [Document Type Format and Evidence
 Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
@@ -85,6 +88,18 @@ Official basis:
 
 ### Reference Governance
 
+The `content/reference` lifecycle has these distinct meanings:
+
+- `draft`: unreviewed or in-progress reference material.
+- `active`: a living factual, validation, or migration-evidence input.
+- `accepted`: a reviewed, stable point-in-time reference at its declared cutoff.
+- `done`: a completed dated audit or reference deliverable.
+- `archived`: material retired through a separate archive disposition.
+
+`Current pack`, `Historical`, `Resolved`, `Included`, and `Index` are
+collection roles, not frontmatter lifecycle values. Selecting a successor does
+not silently rewrite the lifecycle of an older dated artifact.
+
 - Reference documents own durable lookup facts, source boundaries, freshness
   rules, and stable external-standard snapshots.
 - Reference type values may be combined with `/` when a document deliberately
@@ -131,6 +146,7 @@ python3 scripts/validate-document-contract-registry.py --root . --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --self-test
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --self-test
 python3 scripts/validate-links-and-owners.py --root . --mode strict
 bash scripts/validate-repo-quality-gates.sh .
 ```

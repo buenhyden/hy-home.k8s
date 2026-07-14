@@ -41,7 +41,7 @@ tests/
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   ├── github-actions-security.json  # Immutable Action and least-privilege cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
-│   ├── links-and-owners.json        # Link, index, Stage 00 mirror, owner, and ledger cases
+│   ├── links-and-owners.json        # Link, stage/collection index, authority mirror, owner, and ledger cases
 │   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
 │   ├── vault-eso-contracts.json     # Exact non-secret Vault/ESO mutation cases
 │   └── document-contracts/
@@ -82,7 +82,7 @@ live readiness.
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
-| Cross-document self-test | `python3 scripts/validate-links-and-owners.py --self-test` | Repo-static link/index/Stage 00 lifecycle-mirror/owner/ledger mutation evidence |
+| Cross-document self-test | `python3 scripts/validate-links-and-owners.py --self-test` | Repo-static link, stage/collection-index, Stage 00 and Current-pack lifecycle-mirror, owner, and ledger mutation evidence |
 | Cross-document compatibility | `python3 scripts/validate-links-and-owners.py --root . --mode compatibility` | Repo-static exact ledger-transition debt evidence |
 | Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
 | Agent role semantics fixture | `python3 scripts/validate-agent-role-semantics.py --self-test` | Repo-static 480-case category mutation evidence |
@@ -168,8 +168,14 @@ adapter PASS does not prove provider runtime consumption.
   entry point를 통과한다.
 - `tests/fixtures/links-and-owners.json`은 synthetic Stage 00 current-authority
   declaration과 exact README mirror의 reciprocal lifecycle cases를 소유하며,
-  production 32-path set을 복제하지 않는다. 또한 fence 및 HTML comment 밖의 inline/reference
-  link, URL decode 경계, 선언된 세 index, owner-key 정규화·제외·중복, exact
+  production 32-path set을 복제하지 않는다. 같은 79-case schema v2 fixture는
+  Current
+  research/audit pointer, member lifecycle, accepted/active/done 상태, 누락·교체·순서·
+  fenced lookalike와 Git-derived collection tree/table add/remove/equal-count swap,
+  nested research pack, machine JSON, escaped-pipe status-prose 무관성, GFM body
+  short-row padding/extra-cell truncation과 HTML comment 안에 숨은 tree의 거부도
+  검증한다. 또한 fence 및 HTML comment 밖의 inline/reference
+  link, URL decode 경계, 선언된 세 stage index, owner-key 정규화·제외·중복, exact
   fourteen-column ledger를 production component로 검증한다. Semantic debt fixture는
   ADM-002가 ledger와 468-path self-row를 같은 commit에서 만들 때 제거하는 exact
   `LEDGER-MISSING` 한 건만 허용하며 alias, glob, growth, duplicate, unknown rule을
