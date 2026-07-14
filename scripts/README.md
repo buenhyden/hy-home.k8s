@@ -49,8 +49,8 @@ scripts/
 ├── render-platform-chart-kinds.sh    # Manual Helm chart render review for platform AppProject allow-list impact
 ├── run-validation-lane.py            # Shell-free local affected/all-files validator runner
 ├── select-affected-surfaces.py       # NUL-only path-to-validator and CI-job selector
-├── validate-agent-role-semantics.py # Provider-neutral semantic contract validation for thirty native role adapters
-├── validate-agent-roster-currentness.py # Canonical three-provider roster and catalog owner-pointer validation
+├── validate-agent-role-semantics.py # Provider-neutral semantic contract validation for thirty native/local role adapters
+├── validate-agent-roster-currentness.py # Canonical three-surface local roster and catalog owner-pointer validation
 ├── validate-affected-surfaces.py     # Affected-surface schema, fixture, and tracked-path coverage validation
 ├── validate-document-contract-registry.py # Registry v2 schema, inventory, route, and Stage 00 declaration validation
 ├── validate-gitops-change-set.py   # Identity-only GitOps object and deletion change-set review

@@ -77,10 +77,10 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
 - Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`, `archive-tombstone` -> `docs/98.archive/`.
 - Implement explicit QA and CI/static validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
-- All AI Agents (Gemini, Claude, GPT) must use the workspace-specific structured directories: `.agents/{skills,workflows,output-styles}/` for provider-neutral shared assets; `.agents/agents/*.md`, `.claude/agents/*.md`, and `.codex/agents/*.toml` for provider-native role adapters; and `hooks.json` or settings/hooks for provider event wiring. Provider-native enforcement differs; only Claude settings act as a native permission gate.
+- All AI Agents must use the workspace-specific structured directories: `.agents/{skills,workflows,output-styles}/` for provider-neutral shared assets; `.agents/agents/*.md` for local/Antigravity role adapters; and `.claude/agents/*.md` plus `.codex/agents/*.toml` for provider-native role adapters. `.agents/hooks.json` is local behavioral wiring, `.codex/hooks.json` is Codex context/validation wiring, and only Claude settings act as a native permission gate. Gemini CLI native `.gemini/agents/**` and `.gemini/settings.json` are absent and remain `DEFER`.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
 - Use `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked progress.md. Repo-changing agent work must record progress there, while standalone memory files remain allowed only under the memory template contract with a related progress entry.
-- Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned for role, scope imports, guardrails, handoff, and postflight whenever runtime contracts change; preserve provider-specific metadata keys.
+- Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned for role, scope imports, guardrails, handoff, and postflight whenever local adapter contracts change; preserve surface-specific metadata keys. This is repo-static parity, not Gemini CLI runtime parity.
 - Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
 - Agent eval completion must be based on explicit deterministic command evidence or recorded human/operator approval. Do not report eval PASS from intention, file presence, or inferred live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
 - When an agent output fails validation or repeats a mistake, repair the harness
@@ -106,7 +106,7 @@ Rules for AI Agent-first Engineering quality and safety.
 
 - Every non-trivial task must align to one persona in `rules/persona.md`.
 - If work spans layers, process one layer at a time and declare transitions.
-- If delegation is needed, use `subagent-protocol.md`, the current runtime's provider-native delegated-agent mechanism, and the local agent files instead of inline role definitions.
+- If delegation is needed, use `subagent-protocol.md`, a verified runtime delegated-agent mechanism, and the applicable native or local adapter files instead of inline role definitions. Do not infer Gemini CLI delegation from `.agents/**`.
 
 ## Validation and Refresh
 
@@ -117,8 +117,8 @@ Before changing gateway, runtime, hook, role-adapter, or governance-memory files
 - Confirm root shims stay thin: `AGENTS.md`, root `CLAUDE.md`, and root `GEMINI.md` route to canonical governance/runtime files instead of embedding duplicate policy.
 - Confirm tracked governance/runtime files under `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` remain English-only.
 - Confirm no legacy source labels from prior external harness examples remain.
-- Confirm `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` role parity stays intact while native metadata keys remain provider-specific.
-- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` and `.agents/hooks.json` are context/validation hook wiring, not equivalent permission gates.
+- Confirm `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` local adapter parity stays intact while surface-specific metadata keys remain distinct; do not report it as Gemini CLI runtime parity.
+- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is Codex context/validation wiring; `.agents/hooks.json` is local/Antigravity behavioral wiring and not Gemini CLI native configuration.
 - Confirm `.claude/*.local.md` files remain ignored local warning layers; Hookify local rules must not be treated as shared enforcement.
 - Confirm lifecycle hook semantics are described accurately: Stop/SubagentStop block only objective repo-state failures, and PreCompact remains advisory.
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.

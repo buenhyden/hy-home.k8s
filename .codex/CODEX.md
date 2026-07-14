@@ -30,7 +30,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
-- Treat `.codex/agents/*.toml`, `.agents/agents/*.md`, and `.claude/agents/*.md` as provider-native role adapters for the same local roster; keep role parity aligned without requiring identical metadata keys.
+- Treat `.codex/agents/*.toml` and `.claude/agents/*.md` as provider-native role adapters, and `.agents/agents/*.md` as the local/Antigravity adapter for the same roster; keep repo-static role parity aligned without reporting it as Gemini CLI runtime parity.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
 - `.codex/` carries Codex-native real files (`agents/*.toml`, `hooks.json`); its `skills/`, `workflows/`, and `output-styles/` are symlinks to the `.agents/` SSoT for byte-identical shared content.
 - Use `RTK.md` as cross-agent SSOT for shell commands.

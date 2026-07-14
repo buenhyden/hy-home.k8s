@@ -12,5 +12,8 @@ Thin Gemini provider shim for `hy-home.k8s`.
 - Completion checklist: `docs/00.agent-governance/rules/postflight-checklist.md`
 - Template selection: `docs/99.templates/support/template-routing.md`
 
-Tracked adapters are repo-static configuration; native Gemini discovery or
-consumption requires separate runtime evidence from the provider note.
+Tracked `.agents/**` adapters are local/Antigravity repo-static configuration,
+not Gemini CLI native surfaces. Gemini CLI reserves `.gemini/agents/**` and
+`.gemini/settings.json`; both are absent, so native discovery, event delivery,
+policy loading, and model resolution remain `DEFER` under the separately
+approved change path in the provider note.

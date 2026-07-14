@@ -66,7 +66,7 @@ Checked on 2026-07-06:
 
 ### Execution Expectations
 
-- **Symmetry**: Codex is expected to follow the same 3-provider role parity rules as Claude and Gemini while using Codex-native TOML metadata.
+- **Symmetry**: Codex follows the same three-surface local role parity rules as Claude and the local/Antigravity adapter while using Codex-native TOML metadata. This static parity does not assert Gemini CLI runtime parity.
 - **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
 - **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
 

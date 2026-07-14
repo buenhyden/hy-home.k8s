@@ -63,8 +63,10 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Agents must return the template path used and validation evidence in the handoff.
 - Provider event wiring must warn on authored stage doc paths where supported
   and run post-edit template enforcement through the repository quality gate.
-  Claude uses native settings; Codex and Gemini hook JSON remain
-  context/validation wiring and do not replace explicit validation commands.
+  Claude uses native settings; Codex hook JSON remains context/validation
+  wiring, while `.agents/hooks.json` is local/Antigravity behavioral wiring.
+  The absent `.gemini/settings.json` leaves Gemini CLI native event delivery
+  `DEFER`; none of these adapter paths replace explicit validation commands.
 - Governance docs remain English-only; human-facing READMEs remain Korean.
 - Root gateway files must stay thin and should link to rule docs instead of duplicating rule text.
 

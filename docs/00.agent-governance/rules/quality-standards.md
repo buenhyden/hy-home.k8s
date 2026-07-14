@@ -33,10 +33,11 @@ Quality gates for governance and execution alignment.
 - GitHub Actions is the provider-agnostic remote QA gate for this repository; it
   is not live deployment CD and must not be used as evidence of live runtime
   readiness without an approved live check.
-- Provider parity is validated as role parity plus evidence, not identical
-  metadata keys. Claude, Gemini, and Codex adapters must preserve role, scope,
-  guardrails, handoff, and postflight while using native metadata and
-  permission surfaces.
+- Local adapter parity is validated as role parity plus evidence, not identical
+  metadata keys. Native Claude/Codex adapters and local/Antigravity adapters
+  must preserve role, scope, guardrails, handoff, and postflight while using
+  their surface-specific metadata. This static result is not Gemini CLI native
+  discovery, policy, model, or permission evidence.
 - PR verification must state which coverage lane applies: 90% code coverage for future testable application code, or validation-matrix coverage for current infrastructure artifacts.
 
 ## Governance Context
@@ -112,7 +113,7 @@ runtime discovered, loaded, or enforced that adapter.
 - English-only check under `docs/00.agent-governance/`.
 - Root shim link checks for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
 - Affected-surface and provider-neutral role-semantic validators pass alongside
-  provider-native metadata and roster-currentness checks.
+  native/local adapter metadata and roster-currentness checks.
 - Checklist references remain valid (`preflight`, `postflight`, `stage-authoring-matrix`, `stage-checklists`).
 - Diff check confirms no unintended edits outside the approved change scope.
 

@@ -43,7 +43,7 @@ where is the evidence recorded?_
 | ------------------- | -------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------- | -------------------- |
 | Runtime roster SSOT | [`harness-catalog.md`](harness-catalog.md)                           | Agents, skills, adapters, matrices | repo-quality-static (adapter + matrix checks) | `memory/progress.md` |
 | Model tier policy   | `model-policy.md`                                                    | Supervisor/worker model tiers      | repo-quality-static                          | catalog              |
-| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Provider-native role adapters      | agent adapter checks in repo-quality-static  | catalog              |
+| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Native Claude/Codex plus local/Antigravity adapters; static parity only | agent adapter checks in repo-quality-static  | catalog              |
 | Shared assets       | `.agents/{skills,workflows,output-styles}`                           | Provider-neutral SSoT via symlinks | repo-quality-static                          | catalog              |
 
 ## Current Contract

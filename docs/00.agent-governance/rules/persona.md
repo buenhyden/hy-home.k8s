@@ -57,8 +57,9 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical taxonom
   scope file after preflight.
 - Treat persona mappings as routing metadata; canonical stage documents and
   scope ownership remain the source of implementation authority.
-- A delegated role must use an existing provider-native adapter and the
-  provider-neutral semantics contract rather than an inline replacement.
+- A delegated role must use an existing verified native or local adapter and
+  the provider-neutral semantics contract rather than an inline replacement.
+  Local `.agents/**` presence does not establish Gemini CLI native discovery.
 - Re-resolve persona and scope when the work crosses a layer boundary.
 
 ## Validation and Refresh

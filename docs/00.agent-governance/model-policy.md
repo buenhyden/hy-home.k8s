@@ -34,9 +34,10 @@ must be reviewed by the platform owner before the catalog and adapters change.
 - Last checked: 2026-07-06
 - Provider capability references were reconciled with the official source basis
   recorded in `harness-catalog.md`.
-- Claude and Gemini identifiers remain the repository-local provider baseline
-  recorded in `harness-catalog.md`; verify against provider-native docs before
-  changing those concrete IDs.
+- Claude and local/Antigravity Gemini identifiers remain the repository-local
+  baseline recorded in `harness-catalog.md`; verify provider identifiers against
+  official sources before changing those concrete IDs. Do not treat the local
+  Gemini labels as proof of Gemini CLI native model resolution.
 
 ## Current Contract
 
@@ -44,7 +45,7 @@ must be reviewed by the platform owner before the catalog and adapters change.
 
 | Provider / Environment | Planning / Supervisor Tier (High Difficulty) | Worker / Subagent Tier (Speed & Efficiency) | Reasoning / Effort Policy |
 | --- | --- | --- | --- |
-| **Gemini (Antigravity)** | `Gemini 3.1 Pro` | `Gemini 3.5 Flash` | Use the provider-native high/medium tier labels recorded in `harness-catalog.md`. |
+| **Gemini (Antigravity)** | `Gemini 3.1 Pro` | `Gemini 3.5 Flash` | Use the local adapter high/medium tier labels recorded in `harness-catalog.md`; Gemini CLI native model resolution remains `DEFER`. |
 | **Claude** | `opus 4.8` | `sonnet 4.6` / `haiku 4.5` | Use the provider-native model tier controls recorded in agent frontmatter. |
 | **Codex** | `gpt-5.5` | `gpt-5.3-codex` | `gpt-5.5`: `none`, `low`, `medium`, `high`, `xhigh`; `gpt-5.3-codex`: `low`, `medium`, `high`, `xhigh`. |
 

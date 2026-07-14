@@ -45,9 +45,8 @@ Ops scope does **not** own `gitops/` (infra scope) or `docs/00.agent-governance/
 
 Agents that import this scope: `.claude/agents/incident-responder.md`.
 
-Subagent dispatch: use the current runtime's provider-native delegated-agent
-mechanism; never inline full role definitions when a provider-local agent file
-exists.
+Subagent dispatch: follow the [Subagent Protocol](../subagent-protocol.md); never
+inline a full role definition when an applicable native or local adapter exists.
 
 ## Validation and Refresh
 

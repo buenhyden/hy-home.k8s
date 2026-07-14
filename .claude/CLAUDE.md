@@ -33,16 +33,16 @@ Start from the root Claude provider shim, then follow the governance JIT sequenc
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
 - Keep infrastructure changes repo-backed. Agents and subagents do not mutate live clusters by default; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
 - Do not write plaintext Kubernetes secrets.
-- Treat `.codex/agents/*.toml`, `.agents/agents/*.md`, and `.claude/agents/*.md` as provider-native role adapters for the same local roster; keep role parity aligned without requiring identical metadata keys.
+- Treat `.codex/agents/*.toml` and `.claude/agents/*.md` as provider-native role adapters, and `.agents/agents/*.md` as the local/Antigravity adapter for the same roster; keep repo-static role parity aligned without reporting it as Gemini CLI runtime parity.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
-- `.agents/` is the single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/skills`, `.claude/workflows`, and `.claude/output-styles` are symlinks to it so every provider stays byte-identical. Provider-specific agents are real files per provider: `.claude/agents/*.md` (Claude models + `tools:`), `.agents/agents/*.md` (Gemini), `.codex/agents/*.toml` (GPT).
+- `.agents/` is the single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/skills`, `.claude/workflows`, and `.claude/output-styles` are symlinks to it. Role adapters are real files: `.claude/agents/*.md` (Claude-native models + `tools:`), `.agents/agents/*.md` (local/Antigravity), and `.codex/agents/*.toml` (Codex-native GPT). Static stem parity is not Gemini CLI runtime parity.
 - Workspace Structures: Use `.claude/skills/`, `.claude/agents/`, `.claude/workflows/`, `.claude/output-styles/`, `docs/00.agent-governance/hooks/`, and `docs/00.agent-governance/rules/` consistently; shared structures resolve to the `.agents/` SSoT via symlinks where applicable.
 - Verification: Implement explicit QA and CI/static validation phases prior to task completion.
 - Agent eval completion follows
   `docs/00.agent-governance/rules/quality-standards.md`; report its validation
   lanes, result vocabulary, and handoff fields without copying a command matrix
   into this baseline.
-- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude enforcement stays in `.claude/settings.json`, shared scripts, and repository validators; Codex and Gemini hook JSON files are context/validation wiring, not Claude-style permission gates. Hookify local advisory files are not shared policy.
+- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude enforcement stays in `.claude/settings.json`, shared scripts, and repository validators; Codex hook JSON is context/validation wiring, while `.agents/hooks.json` is local/Antigravity behavioral wiring rather than Gemini CLI native configuration. Neither is a Claude-style permission gate. Hookify local advisory files are not shared policy.
 - Treat `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle validation surface wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
 ## Harness Four-Element Runtime Contract

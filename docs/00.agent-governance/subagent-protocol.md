@@ -30,9 +30,10 @@ coordinated in `hy-home.k8s`.
 
 Each agent declares a least-privilege tool set matched to its responsibility. The
 canonical mapping below is implemented natively in `.claude/agents/*.md` `tools:`
-frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`)
-honor the same boundary within their native capabilities and governance
-guardrails without requiring identical metadata keys.
+frontmatter. Codex `.codex/agents/*.toml` and local/Antigravity
+`.agents/agents/*.md` adapters preserve the same governance boundary without
+requiring identical metadata keys; the latter is not Gemini CLI native tool
+scoping.
 
 - `supervisor`: full toolset (orchestration and delegation).
 - Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
@@ -59,13 +60,14 @@ guardrails without requiring identical metadata keys.
 Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
 `GEMINI.md`) for gateway routing and use
 `docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
-catalog, including provider-native role adapters.
+catalog, including native Claude/Codex adapters and local/Antigravity role
+adapters.
 
 ## Current Contract
 
 ### Dispatch Rules
 
-- Dispatch subagents through the current runtime's provider-native delegated-agent mechanism. Claude uses the Task tool or explicit Agent invocation, Codex uses explicit subagent orchestration when requested by the user, and Gemini uses the available agent registry or project-local adapter workflow where supported.
+- Dispatch subagents through the current runtime's verified delegated-agent mechanism. Claude uses the Task tool or explicit Agent invocation, and Codex uses explicit subagent orchestration when requested by the user. A compatible local/Antigravity runtime may use the `.agents/**` adapter workflow; Gemini CLI native delegation remains `DEFER` because `.gemini/agents/**` and `.gemini/settings.json` are absent.
 - Never embed full role definitions inline when a provider-local agent file exists.
 - Each delegated agent must read its provider-specific local agent file (e.g., `.claude/agents/<name>.md`, `.agents/agents/<name>.md`, `.codex/agents/<name>.toml`) before starting work.
 - Each agent file must `@import` one or more matching scope files from `scopes/`.
@@ -73,31 +75,35 @@ catalog, including provider-native role adapters.
 
 ### Agent File Requirement
 
-Every delegated agent must have corresponding provider files in `.agents/agents/`,
-`.claude/agents/`, and `.codex/agents/`.
+Every local roster role must have corresponding parity files in
+`.agents/agents/`, `.claude/agents/`, and `.codex/agents/`. This is a static
+local adapter contract, not proof that all three runtimes discover the files.
 
 Claude Markdown agent files in `.claude/agents/*.md` must contain frontmatter
 with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool
 Scoping).
 
-Gemini Markdown agent files in `.agents/agents/*.md` must contain frontmatter
+Local/Antigravity Markdown agent files in `.agents/agents/*.md` must contain frontmatter
 with `name`, `description`, and `model`, and must preserve the same role, scope
 imports, guardrails, handoff, and postflight contract as the Claude source.
-Gemini files do not require Claude-style `tools:` frontmatter unless a future
-approved Gemini adapter change adds a verified native tool-scoping field.
+These local adapter files do not require Claude-style `tools:` frontmatter.
+Gemini CLI native agents are reserved for `.gemini/agents/**`; adding them or
+`.gemini/settings.json` requires a separate approved PRD/ARD/Spec/Plan/Task, or
+at minimum an approved Spec/Plan/Task.
 
 Codex agent files in `.codex/agents/*.toml` must declare `name`,
 `description`, `developer_instructions`, `model`, and `model_reasoning_effort`.
 
-All provider-native role adapters must preserve role parity: matching file
+All three tracked role surfaces must preserve local adapter parity: matching file
 stems, scope imports, Runtime Bootstrap text, Guardrails, Handoff / Escalation,
-and Postflight requirements. Native metadata keys differ by provider. This
-parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
+and Postflight requirements. Surface metadata keys differ. This parity
+relationship is validated by `scripts/validate-repo-quality-gates.sh` and does
+not establish Gemini CLI runtime parity.
 
 ### Coordination
 
-- Use the provider-native delegated-agent mechanism for work assignment and
-  status tracking.
+- Use only a verified runtime delegated-agent mechanism for work assignment and
+  status tracking; local adapter presence alone is insufficient.
 - Route all multi-agent decisions through `supervisor.md`.
 - Keep handoff artifacts in repository-approved locations only; do not create ad-hoc runtime folders unless a human requests them.
 - Scratch workspaces such as `_workspace/` are allowed only under the checked-in
@@ -119,9 +125,9 @@ parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 - `affected`, `staged`, `all-files`, `message/manual`, `ci`, and `remote/live`
   results remain distinct. A delegated agent must not promote another agent's
   repo-static result into provider-runtime, remote, or live evidence.
-- Provider-native adapter files establish a reviewable repository contract;
-  their presence does not prove that the provider discovered, loaded, or
-  enforced the adapter in the delegated session.
+- Native Claude/Codex adapters and local/Antigravity adapter files establish a
+  reviewable repository contract; their presence does not prove that a runtime
+  discovered, loaded, or enforced an adapter in the delegated session.
 
 ## Validation and Refresh
 

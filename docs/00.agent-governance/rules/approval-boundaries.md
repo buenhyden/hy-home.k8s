@@ -30,8 +30,10 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   require explicit human/operator approval before any action begins.
 - Provider hook/config surfaces are not interchangeable approval gates:
   `.claude/settings.json` owns Claude native permissions, while
-  `.agents/hooks.json` and `.codex/hooks.json` provide context/validation
-  wiring where supported.
+  `.codex/hooks.json` provides Codex context/validation wiring and
+  `.agents/hooks.json` provides local/Antigravity behavioral wiring where
+  supported. The latter is not Gemini CLI native configuration;
+  `.gemini/settings.json` is reserved and absent.
 
 ## Authority Boundary
 

@@ -119,8 +119,10 @@ This protocol defines how governance references authored docs and how language b
 - Provider event wiring must surface Template-First guidance before authored
   stage doc edits where the runtime supports it: Claude uses
   `.claude/settings.json`, Codex uses `.codex/hooks.json` context/validation
-  wiring, and Gemini uses `.agents/hooks.json` behavioral wiring. Explicit
-  validation commands remain required before handoff.
+  wiring, and local/Antigravity adapters use `.agents/hooks.json` behavioral
+  wiring. Gemini CLI native `.gemini/settings.json` is absent, so native event
+  delivery remains `DEFER`. Explicit validation commands remain required before
+  handoff.
 
 ### Drift Garbage Collection
 

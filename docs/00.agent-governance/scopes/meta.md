@@ -28,7 +28,7 @@ Persona: Governance Steward
 | `.claude/skills/**`           | meta  | Claude symlink view of shared skills            |
 | `.codex/**`                   | meta  | Codex role adapters and hook wiring             |
 
-Meta scope owns provider-native agent roster and role-adapter contract shape
+Meta scope owns native/local agent roster and role-adapter contract shape
 through `harness-catalog.md` and `subagent-protocol.md`; imported scope files
 own the domain behavior for each worker.
 
@@ -54,9 +54,8 @@ No dedicated worker subagent for meta scope. Governance steward operates
 directly, while `supervisor` imports `meta` only for routing and escalation
 control.
 
-Subagent dispatch: use the current runtime's provider-native delegated-agent
-mechanism; never inline full role definitions when a provider-local agent file
-exists.
+Subagent dispatch: follow the [Subagent Protocol](../subagent-protocol.md); never
+inline a full role definition when an applicable native or local adapter exists.
 
 ## Validation and Refresh
 
