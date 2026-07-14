@@ -8,6 +8,90 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-14 - PSH-006 protected-surface repository-static closure
+
+#### Metadata
+
+- **Date**: 2026-07-14
+- **Layer**: security, CI, GitOps, infrastructure, execution evidence
+- **Status**: complete
+- **Tags**: #psh-006 #supply-chain #gitops #vault-eso #repo-static
+
+#### Progress
+
+- Closed Spec 032, its implementation Plan, and its Task after PSH-001 through
+  PSH-006 established immutable Action identities and least-privilege workflow
+  permissions, identity-only GitOps change review, local-only Vault/ESO
+  contracts, secret-safe bootstrap boundaries, and rerunnable closure evidence.
+- Retained the source findings and recorded only repository-static remediation
+  facts for RMD-001 through RMD-003. Added RMD-014 closure evidence with the
+  focused validator and exact five workflow consumers.
+- The seven first-parent pre-closure commits are PSH-001
+  `a2aa49f200b0b6bd36fe67ee469d17a971297430`, PSH-002
+  `1a3f94cab4d9bba07b73db612e083e78fe0b4630`, PSH-003 Plan correction
+  `b26893670024b6f8e57ad7923783e573ad391d8c`, PSH-003
+  `2bce69fd6ddb850a94f886ef8906ce436a937cea`, PSH-004
+  `82679a4c977716dbb968fd37b8a901cd86e036af`, PSH-005 Plan correction
+  `0a3cf2faffb039b6c26f22b657ecd36577c47e67`, and PSH-005
+  `2b1e56775883a596be3f13fca1cabe1cb2680133`.
+- The closing commit cannot embed its own content-addressed SHA. The ignored
+  post-commit Task 6 report is the correct place to record that exact SHA; no
+  closure SHA was invented in tracked evidence.
+
+#### Evidence
+
+- `python3 scripts/validate-affected-surfaces.py --self-test` and `--root .`:
+  PASS; 21 surfaces, 652 paths, 12 validators, three CI jobs, zero uncovered or
+  ambiguous paths.
+- `python3 scripts/validate-github-actions-security.py --self-test` and
+  `--root .`: PASS.
+- `python3 scripts/validate-gitops-change-set.py --self-test`: PASS with exact
+  ADD, DELETE, and RETAIN fixture rows;
+  `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`:
+  PASS with identity-only output and no manifest values.
+- `python3 scripts/validate-vault-eso-contracts.py --self-test`: PASS for the
+  exact ten cases; `python3 scripts/validate-vault-eso-contracts.py --root .`:
+  PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` and
+  `bash scripts/validate-gitops-structure.sh`: PASS.
+- `bash scripts/validate-k8s-manifests.sh .`: PASS for YAML and the installed
+  kube-linter across 104 files. kube-linter reported version `development` and
+  ran the full lint; it was not a fallback.
+- `bash scripts/check-secret-handling.sh .`: PASS across 100 files with no
+  plaintext secret pattern. Secret-value access: none.
+- `bash scripts/validate-policy-gates.sh .`: PASS overall. `command -v conftest`
+  exited 1, so Conftest is `SKIP`; the separately reported built-in policy
+  fallback is `PASS` and is not represented as a Conftest pass.
+- `find infrastructure scripts docs/00.agent-governance/hooks -type f -name
+  '*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
+  `pre-commit run --all-files`, and `git diff --check`: PASS. Dockerfile lint
+  was a no-file `SKIP`, not a pass.
+- Whole-tranche independent review of PSH-001 through PSH-005 approved Action
+  identity/permissions, GitOps identity/deletion/redaction, Vault/ESO
+  TLS/identity/secret handling, and selector/job-routing preservation with
+  disposition C0/H0/M0/L0.
+
+#### Memory
+
+- Repository-static closure and live readiness are separate evidence lanes.
+  Local-only annotations are a tracked contract, not a network control or a
+  production TLS claim.
+- Optional-tool absence must remain `SKIP`; a built-in fallback can be `PASS`
+  only in its own row. A closing commit cannot name its own SHA.
+
+#### Safety Boundary and Handoff
+
+- Rollback to the first parent before PSH-001:
+  `05e2b7050b8d150ec46eddf731bf28283bd11c04`, or revert the seven pre-closure
+  commits newest-first and then the PSH-006 closure commit.
+- Remote GitHub execution, Argo CD prune/reconcile, Vault/ESO authentication
+  and TLS runtime, Kubernetes authorization, external Vault role application
+  with `bound_audiences=vault`, credential rotation, and live rollback rehearsal
+  remain `DEFER` under separate operator approval.
+- No secret value, credential, ignored certificate, authentication state,
+  kubeconfig, shell history, token cache, network mutation, live system, remote
+  workflow, push, publish, merge, or third-party state was read or changed.
+
 ### 2026-07-13 - ADM-007 strict document-profile cutover
 
 #### Metadata

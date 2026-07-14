@@ -1,9 +1,9 @@
 ---
 title: 'Protected Surface and Supply Chain Hardening Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Protected Surface and Supply Chain Hardening Implementation Plan
@@ -42,15 +42,15 @@ DEFER.
 
 ## Context
 
-The current workflows contain fourteen `uses:` occurrences covering eight unique
-tag references and `.github/zizmor.yml` deliberately disables
-`unpinned-uses`. GitOps validation checks structure and manifests but does not
-emit a reviewable before/after object-identity deletion set. The tracked ESO
-store uses HTTP to a local external Vault boundary, does not declare the token
-audience in `serviceAccountRef`, and the bootstrap defaults
-`VAULT_SKIP_VERIFY=true` while placing the Vault token in curl argv and the
-Valkey password in kubectl argv. These are repository-static gaps; no live
-Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
+At the pre-PSH baseline, the workflows contained fourteen `uses:` occurrences
+covering eight unique tag references, and `.github/zizmor.yml` deliberately
+disabled `unpinned-uses`. GitOps validation checked structure and manifests but
+did not emit a reviewable before/after object-identity deletion set. The tracked
+ESO store used HTTP to a local external Vault boundary without declaring the
+token audience in `serviceAccountRef`; the bootstrap defaulted
+`VAULT_SKIP_VERIFY=true` and placed the Vault token in curl argv and the Valkey
+password in kubectl argv. PSH-001 through PSH-006 closed these repository-static
+gaps. No live Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 
 ## Goals & In-Scope
 
@@ -141,14 +141,14 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 
 ## Work Breakdown
 
-| Task | Description | Primary validation | Commit |
-| --- | --- | --- | --- |
-| PSH-001 | Start reciprocal Spec/Plan/Task execution evidence | Focused lineage assertion | `docs(execution): start protected surface hardening` |
-| PSH-002 | Add the fixture-tested Action identity and permission validator | Validator self-test | `test(security): add GitHub Actions security validator` |
-| PSH-003 | Pin all eight remote Actions and harden workflow permissions | Validator repository check, actionlint, zizmor | `fix(ci): pin Actions and minimize workflow permissions` |
-| PSH-004 | Add identity-only GitOps render and deletion review | Positive/negative change-set fixtures | `feat(gitops): validate identity-only change sets` |
-| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | Vault self-test, static contracts, shell/secret checks | `fix(security): harden local Vault and ESO contracts` |
-| PSH-006 | Close lifecycle and repository-static evidence | Full QA bundle and independent review | `docs(security): close protected surface hardening evidence` |
+| Task | Description | Primary validation | Commit | Status |
+| --- | --- | --- | --- | --- |
+| PSH-001 | Start reciprocal Spec/Plan/Task execution evidence | Focused lineage assertion | `docs(execution): start protected surface hardening` | Done |
+| PSH-002 | Add the fixture-tested Action identity and permission validator | Validator self-test | `test(security): add GitHub Actions security validator` | Done |
+| PSH-003 | Pin all eight remote Actions and harden workflow permissions | Validator repository check, actionlint, zizmor | `fix(ci): pin Actions and minimize workflow permissions` | Done |
+| PSH-004 | Add identity-only GitOps render and deletion review | Positive/negative change-set fixtures | `feat(gitops): validate identity-only change sets` | Done |
+| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | Vault self-test, static contracts, shell/secret checks | `fix(security): harden local Vault and ESO contracts` | Done |
+| PSH-006 | Close lifecycle and repository-static evidence | Full QA bundle and independent review | `docs(security): close protected surface hardening evidence` | Done |
 
 ## Verification Plan
 
@@ -236,18 +236,20 @@ Expected: FAIL because the Task and reciprocal links do not exist yet.
 
 - [x] **Step 2: Create the active execution record**
 
-Set the Spec, Plan, and Task to `status: active`. Create the Task from the
-canonical Task form with this exact table:
+At Task 1 execution, set the Spec, Plan, and Task to `status: active`. The
+embedded lifecycle snapshot below is normalized at closure to the final Done
+states; commit `a2aa49f200b0b6bd36fe67ee469d17a971297430` preserves the initial
+Active/Pending transition evidence.
 
 ```markdown
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- |
 | PSH-001 | Start reciprocal execution evidence | doc | Reciprocal-link assertion | platform | Done |
-| PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Pending |
-| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
-| PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Pending |
-| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
-| PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
+| PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Done |
+| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Done |
+| PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Done |
+| PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Done |
+| PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Done |
 ```
 
 Add exact reciprocal links, add Active index rows dated `2026-07-12`, and add
@@ -1087,7 +1089,7 @@ git commit -m "fix(security): harden local Vault and ESO contracts"
   while retaining external-role, rotation, rollback rehearsal, and live checks
   as open/DEFER where they were not executed.
 
-- [ ] **Step 1: Run the failing closure assertion**
+- [x] **Step 1: Run the failing closure assertion**
 
 ```bash
 python3 - <<'PY'
@@ -1110,7 +1112,7 @@ PY
 
 Expected: FAIL while lifecycle and evidence are still active.
 
-- [ ] **Step 2: Run the complete repository-static bundle**
+- [x] **Step 2: Run the complete repository-static bundle**
 
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
@@ -1137,7 +1139,7 @@ record its tool result as SKIP and the built-in fallback separately. Remote
 GitHub execution, live Argo CD prune/reconcile, Vault/ESO authentication, TLS
 runtime, and Kubernetes authorization are recorded as DEFER.
 
-- [ ] **Step 3: Obtain one whole-tranche independent review**
+- [x] **Step 3: Obtain one whole-tranche independent review**
 
 The reviewer records:
 
@@ -1155,7 +1157,7 @@ Rollback: first-parent commit before PSH-001
 Resolve every Critical or Important finding and rerun the relevant focused
 commands before proceeding.
 
-- [ ] **Step 4: Close lifecycle and roadmap evidence**
+- [x] **Step 4: Close lifecycle and roadmap evidence**
 
 Set Spec, Plan, and Task to `status: done`; mark all six Task rows Done; update
 the three indexes. Add a roadmap subsection titled
@@ -1166,7 +1168,7 @@ Vault role application, credential rotation, live TLS/ESO authentication, and
 rollback rehearsal as follow-up/DEFER. Append one progress entry with commands,
 results, reviewer, limitations, and rollback commit.
 
-- [ ] **Step 5: Re-run closure and final quality checks**
+- [x] **Step 5: Re-run closure and final quality checks**
 
 Run the Step 1 assertion again, then:
 

@@ -1,9 +1,9 @@
 ---
 title: 'Protected Surface and Supply Chain Hardening Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-14
 ---
 
 # Protected Surface and Supply Chain Hardening Technical Specification (Spec)

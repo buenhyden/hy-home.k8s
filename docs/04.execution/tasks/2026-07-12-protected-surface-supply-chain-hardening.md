@@ -1,7 +1,7 @@
 ---
 title: 'Task: Protected Surface and Supply Chain Hardening'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-14
 ---
@@ -35,7 +35,7 @@ repository-static closure evidence in dependency order.
 | PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Done |
 | PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Done |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Done |
-| PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
+| PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Done |
 
 ## Approval and Safety Boundaries
 
@@ -74,7 +74,7 @@ repository-static closure evidence in dependency order.
 
 PSH-001 began from the expected RED state: the canonical Task path did not
 exist, so the reciprocal-lineage assertion exited 1 before inspecting links.
-GREEN requires the Spec, Plan, and Task to name one another, one Active index
+Its GREEN gate required the Spec, Plan, and Task to name one another, one Active index
 row dated 2026-07-12 for each document, the exact PSH-001 through PSH-006 table,
 one exact fourteen-column durable-ledger row, strict document conformance, the
 full repository quality gate, focused pre-commit, and exactly seven staged
@@ -92,8 +92,8 @@ required write cannot pass. Four internal non-string `uses` mutations prove
 numeric, null, mapping, and list values cannot disappear from both parser
 views; an internal quoted-local positive preserves valid quoted same-line
 behavior without changing the 11/10/21 JSON cardinalities. The fixture
-self-test passes,
-while repository mode intentionally remains RED for PSH-003 with fourteen
+self-test passed. At that tranche boundary, repository mode intentionally
+remained RED for PSH-003 with fourteen
 mutable remote occurrences, missing top-level `contents: read` defaults in
 `greetings.yml`, `labeler.yml`, and `stale.yml`, and the tracked
 `unpinned-uses` suppression: eighteen bounded findings in total. ASQA-004 had
@@ -131,9 +131,10 @@ parsed YAML. Acceptance `PSH-004` and `VAL-PLN-004` are PASS: focused boundary
 probes, exact fixture/forbidden checks, affected-surface self-test and repository
 coverage, GitOps structure, 104-manifest YAML and kube-linter validation,
 aggregate quality, actionlint, strict document checks, focused exact-path
-pre-commit, and diff checks pass. The final handoff is the exact sixteen-path
+pre-commit, and diff checks pass. The initial handoff was the exact sixteen-path
 staged set with no unstaged tracked changes and unchanged HEAD. Reviewer
-disposition is worker self-review PASS and controller review pending; rollback
+disposition at that checkpoint was worker self-review PASS with controller
+review pending; rollback
 before commit is to unstage and remove only the exact staged unit, while
 rollback after a future commit is one commit revert. No commit, remote
 workflow, secret, credential, cluster, Argo CD, Vault, ESO, publish, push,
@@ -152,9 +153,9 @@ object and verifying its first parent. All identity/path fields are validated
 before serialization, only the current `kustomize.config.k8s.io/v1beta1`
 Kustomization pair is accepted, and the tracked `--self-test` now executes the
 full negative renderer and temporary Git-history matrix while preserving the
-exact three fixture rows and all 91 repository identities. Fresh correction
-verification and independent re-review are required before commit; remote CI
-and live Argo CD evidence remain DEFER.
+exact three fixture rows and all 91 repository identities. The corrected unit
+then passed focused verification and independent re-review before commit;
+remote CI and live Argo CD evidence remain DEFER.
 
 PSH-005 adds an exact ten-case Vault/ESO validator and repository loader,
 marks the in-cluster HTTP store/Service/EndpointSlice boundary as local-only,
@@ -200,6 +201,52 @@ staged unit at C0/H0/M0/L0. Remote CI, live Kubernetes, Argo CD, Vault, ESO,
 production TLS, and external operator evidence remain DEFER. No secret,
 credential, ignored certificate, runtime setting, shell history, live system,
 remote workflow, push, merge, or third-party state was accessed or changed.
+
+### PSH-006 Repository-Static Closure Evidence
+
+The following table is the rerunnable evidence record for the completed
+PSH-001 through PSH-006 tranche. Results were captured on 2026-07-14 KST at
+PSH-005 head `2b1e56775883a596be3f13fca1cabe1cb2680133`; the PSH-006 closing commit
+cannot embed its own content-addressed SHA.
+
+| Evidence | Result | Command or boundary |
+| --- | --- | --- |
+| Affected-surface fixture | PASS | `python3 scripts/validate-affected-surfaces.py --self-test` |
+| Affected-surface repository | PASS | `python3 scripts/validate-affected-surfaces.py --root .` |
+| Action-security fixture | PASS | `python3 scripts/validate-github-actions-security.py --self-test` |
+| Action-security repository | PASS | `python3 scripts/validate-github-actions-security.py --root .` |
+| GitOps change-set fixture | PASS | `python3 scripts/validate-gitops-change-set.py --self-test`; exact one ADD, one DELETE, and one path-only RETAIN, no manifest values |
+| GitOps repository review | PASS | `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`; 91 RETAIN identity-only rows, no manifest values |
+| Vault/ESO fixture | PASS | `python3 scripts/validate-vault-eso-contracts.py --self-test`; exact 10 cases |
+| Vault/ESO repository | PASS | `python3 scripts/validate-vault-eso-contracts.py --root .` |
+| Infrastructure static contracts | PASS | `bash infrastructure/tests/verify-contracts-static.sh` |
+| GitOps structure | PASS | `bash scripts/validate-gitops-structure.sh` |
+| Kubernetes manifests | PASS | `bash scripts/validate-k8s-manifests.sh .`; YAML plus installed kube-linter across 104 files |
+| kube-linter | PASS | Installed at `/home/hy/.local/bin/kube-linter`; full 104-file lint ran, version output `development` |
+| Secret handling | PASS | `bash scripts/check-secret-handling.sh .`; 100 files, no plaintext secret pattern |
+| Policy gates | PASS | `bash scripts/validate-policy-gates.sh .` |
+| Conftest | SKIP | `command -v conftest` exited 1; Conftest was unavailable and is not represented as PASS |
+| Built-in policy fallback | PASS | Ran separately inside `bash scripts/validate-policy-gates.sh .` after the Conftest SKIP |
+| Shell syntax | PASS | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` |
+| Repository quality | PASS | `bash scripts/validate-repo-quality-gates.sh .` |
+| All-files pre-commit | PASS | `pre-commit run --all-files`; applicable hooks passed and Dockerfile lint was a no-file SKIP |
+| Diff hygiene | PASS | `git diff --check` |
+| Independent review | PASS | Whole-tranche reviewer disposition C0/H0/M0/L0 for PSH-001 through PSH-005 |
+| Secret-value access | none | No secret, credential, ignored certificate, auth state, kubeconfig, shell history, token cache, or secret value was read or emitted |
+| Rollback | PASS | First-parent commit before PSH-001: `05e2b7050b8d150ec46eddf731bf28283bd11c04`; revert PSH commits newest-first |
+| Remote/live | DEFER | Remote GitHub execution, live Argo CD prune/reconcile, Vault/ESO authentication and TLS runtime, and Kubernetes authorization were not run |
+| External Vault role | DEFER | Apply `bound_audiences=vault` through a separately approved operator change |
+| Credential rotation | DEFER | No credential was read, written, or rotated |
+| Rollback rehearsal | DEFER | No live rollback or recovery rehearsal was executed |
+
+The seven first-parent implementation commits before closure are PSH-001
+`a2aa49f200b0b6bd36fe67ee469d17a971297430`, PSH-002
+`1a3f94cab4d9bba07b73db612e083e78fe0b4630`, PSH-003 Plan correction
+`b26893670024b6f8e57ad7923783e573ad391d8c`, PSH-003
+`2bce69fd6ddb850a94f886ef8906ce436a937cea`, PSH-004
+`82679a4c977716dbb968fd37b8a901cd86e036af`, PSH-005 Plan correction
+`0a3cf2faffb039b6c26f22b657ecd36577c47e67`, and PSH-005
+`2b1e56775883a596be3f13fca1cabe1cb2680133`.
 
 ## Traceability
 
