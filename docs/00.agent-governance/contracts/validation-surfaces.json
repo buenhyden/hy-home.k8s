@@ -36,6 +36,14 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "gitops-change-set",
+      "argv": ["python3", "scripts/validate-gitops-change-set.py", "--root", ".", "--base-ref", "HEAD"],
+      "lanes": ["affected", "staged"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Identity-only GitOps change-set review is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "gitops-structure",
       "argv": ["bash", "scripts/validate-gitops-structure.sh"],
       "lanes": ["affected", "staged", "all-files", "ci"],
@@ -232,7 +240,7 @@
     {
       "id": "gitops-desired-state",
       "routes": [{"kind": "regex", "value": "^gitops/.*$"}],
-      "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "validators": ["gitops-change-set", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
       "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "GitOps desired state requires the complete static manifest lane."},

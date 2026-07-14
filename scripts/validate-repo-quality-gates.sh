@@ -25,6 +25,8 @@ python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
@@ -3002,11 +3004,53 @@ for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
         fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
 
 
+manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
+manifest_checkout_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+]
+if len(manifest_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must have exactly one pinned checkout step")
+else:
+    manifest_checkout_with = manifest_checkout_steps[0].get("with") or {}
+    if manifest_checkout_with.get("persist-credentials") is not False:
+        fail(f"{rel(ci_path)} manifest-static checkout must disable persisted credentials")
+    if manifest_checkout_with.get("fetch-depth") != 0:
+        fail(f"{rel(ci_path)} manifest-static checkout must use fetch-depth: 0")
+
+gitops_change_set_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("name") == "Review GitOps object identity and deletion set"
+]
+if len(gitops_change_set_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step")
+else:
+    gitops_change_set_step = gitops_change_set_steps[0]
+    expected_gitops_change_set_env = {
+        "BASE_REF": "${{ github.event.pull_request.base.sha || github.event.before || github.sha }}"
+    }
+    if gitops_change_set_step.get("env") != expected_gitops_change_set_env:
+        fail(
+            f"{rel(ci_path)} GitOps change-set env must equal: "
+            f"{expected_gitops_change_set_env}"
+        )
+    expected_gitops_change_set_run = (
+        'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"'
+    )
+    if str(gitops_change_set_step.get("run") or "").strip() != expected_gitops_change_set_run:
+        fail(
+            f"{rel(ci_path)} GitOps change-set command must equal: "
+            f"{expected_gitops_change_set_run}"
+        )
+
 manifest_static_runs = "\n".join(
     str(step.get("run") or "")
-    for step in (ci_jobs.get("manifest-static") or {}).get("steps") or []
+    for step in manifest_static_steps
 )
 for command in [
+    'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"',
     "bash infrastructure/tests/verify-contracts-static.sh",
     "bash scripts/validate-gitops-structure.sh",
     "bash scripts/validate-k8s-manifests.sh .",

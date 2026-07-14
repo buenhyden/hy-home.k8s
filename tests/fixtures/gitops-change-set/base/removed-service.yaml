@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: removed
+  namespace: platform
+spec:
+  selector:
+    app: removed
+  ports:
+    - port: 80

@@ -12,6 +12,9 @@ cd "$ROOT_DIR"
 echo "==> Repository quality gates"
 bash scripts/validate-repo-quality-gates.sh .
 
+echo "==> GitOps object identity and deletion set"
+python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD
+
 echo "==> GitOps structure"
 bash scripts/validate-gitops-structure.sh
 

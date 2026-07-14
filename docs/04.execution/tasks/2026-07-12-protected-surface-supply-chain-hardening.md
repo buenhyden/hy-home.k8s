@@ -3,7 +3,7 @@ title: 'Task: Protected Surface and Supply Chain Hardening'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-14
 ---
 
 # Task: Protected Surface and Supply Chain Hardening
@@ -33,7 +33,7 @@ repository-static closure evidence in dependency order.
 | PSH-001 | Start reciprocal execution evidence | doc | Reciprocal-link assertion | platform | Done |
 | PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Done |
 | PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Done |
-| PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Pending |
+| PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Done |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
 
@@ -116,6 +116,45 @@ static Action validation, actionlint, zizmor, aggregate quality, and diff checks
 pass; official upstream tag/SHA resolution was independently reconfirmed on
 2026-07-14. No secret, remote workflow, push, merge, or live state was accessed
 or changed; remote/live evidence remains DEFER.
+
+PSH-004 added an identity-only GitOps resource graph and wired it into only the
+existing `gitops/**` validator surface, `manifest-static`, the local harness,
+and the aggregate repository quality gate. The exact fixture output is one
+ADD, one DELETE, and one path-only RETAIN; the sentinel and all forbidden
+manifest body keys are absent. Local `--base-ref HEAD` comparison emitted 91
+RETAIN rows matching only the exact identity-row grammar, with empty stderr and
+no `data`, `spec`, `metadata`, or `stringData` body output. A normalized
+pre/post workflow comparison proved the name, three triggers, changes outputs,
+ordered six job IDs, every `needs` and `if`, and the complete selector step are
+unchanged; removing the one new manifest step makes the workflow equivalent as
+parsed YAML. Acceptance `PSH-004` and `VAL-PLN-004` are PASS: focused boundary
+probes, exact fixture/forbidden checks, affected-surface self-test and repository
+coverage, GitOps structure, 104-manifest YAML and kube-linter validation,
+aggregate quality, actionlint, strict document checks, focused exact-path
+pre-commit, and diff checks pass. The final handoff is the exact sixteen-path
+staged set with no unstaged tracked changes and unchanged HEAD. Reviewer
+disposition is worker self-review PASS and controller review pending; rollback
+before commit is to unstage and remove only the exact staged unit, while
+rollback after a future commit is one commit revert. No commit, remote
+workflow, secret, credential, cluster, Argo CD, Vault, ESO, publish, push,
+merge, or third-party mutation ran; CI remote and all live lanes remain DEFER.
+Residual risk is limited to remote GitHub and live Argo CD behavior, and the
+next owner is the controller/protected reviewer.
+
+The independent pre-commit review then blocked the first PSH-004 handoff on
+history checkout/base selection, serialized-token grammar, Kustomization
+dialect, and durable negative coverage. The correction keeps the exact sixteen
+paths and Spec 031 routing invariant: `manifest-static` now uses
+`fetch-depth: 0` with credentials disabled, and its base expression covers PR,
+push (including forty-zero), and workflow dispatch. Forty-zero distinguishes a
+true root from an unavailable shallow parent by inspecting the HEAD commit
+object and verifying its first parent. All identity/path fields are validated
+before serialization, only the current `kustomize.config.k8s.io/v1beta1`
+Kustomization pair is accepted, and the tracked `--self-test` now executes the
+full negative renderer and temporary Git-history matrix while preserving the
+exact three fixture rows and all 91 repository identities. Fresh correction
+verification and independent re-review are required before commit; remote CI
+and live Argo CD evidence remain DEFER.
 
 ## Traceability
 

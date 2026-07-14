@@ -172,11 +172,24 @@ reconciled back to Git and operations evidence.
 ## Validation
 
 Run the exact static checks named in the coverage matrices, including
+`python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`,
 `bash scripts/validate-gitops-structure.sh`,
 `bash scripts/validate-k8s-manifests.sh .`,
 `bash scripts/check-secret-handling.sh .`, and
 `bash scripts/validate-repo-quality-gates.sh .`. Live ArgoCD, Vault, ESO, route,
 and external-service readiness remains operator-owned evidence.
+
+GitOps change review compares immutable `apiVersion`, `kind`, `namespace`, and
+`name` identities. The source path is evidence only, so moving an unchanged
+object produces one `RETAIN`; output is limited to sorted `ADD`, `DELETE`, and
+`RETAIN` identity rows and never includes manifest `data`, `spec`,
+`stringData`, or values. This is deletion-review evidence, not proof that Argo
+CD pruned or reconciled an object. The static renderer accepts only the current
+`kustomize.config.k8s.io/v1beta1` Kustomization dialect and safe single-token
+identity/path fields. CI checks out full history and chooses the PR base SHA,
+push `before` SHA, or current SHA fallback; a forty-zero base uses an available
+HEAD parent, treats only a true root as empty, and fails closed at a shallow or
+otherwise unavailable parent.
 
 ## Operations
 
@@ -185,7 +198,7 @@ and external-service readiness remains operator-owned evidence.
 1. 플랫폼 계약은 먼저 [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)과 [Operations Policy](../docs/05.operations/policies/0001-k8s-gitops-operations-policy.md)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
 3. 변경은 feature branch와 PR review를 거쳐 `main`에 병합하고, ArgoCD가 Git 상태를 reconcile하도록 둔다.
-4. 매니페스트 변경 후 `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
+4. 매니페스트 변경 후 `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`, `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
 5. secret 값은 매니페스트에 직접 쓰지 않고 External Secrets/Vault 계약으로 연결한다.
 
 ### Current Hardening Deferrals

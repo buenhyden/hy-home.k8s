@@ -93,6 +93,8 @@ live readiness.
 | Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
 | GitHub Actions security fixture | `python3 scripts/validate-github-actions-security.py --self-test` | Repo-static exact eleven primary, ten boundary, twenty-one required-write JSON cases, plus five internal uses-shape cases |
 | GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | PSH-002 bounded RED evidence; aggregate-gate integration is deferred to PSH-003 |
+| GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus durable unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
+| GitOps identity change-set repository check | `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD` | Repo-static identity-only rows; no Argo CD prune or reconciliation claim |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -113,6 +115,12 @@ adapter PASS does not prove provider runtime consumption.
 
 ### Evidence Boundaries
 
+- `tests/fixtures/gitops-change-set/` base/head resource graphs contain one added
+  Service, one deleted Service, and the same ConfigMap identity at a moved path.
+  The self-test must emit exactly those three sorted identity rows, represent the
+  path-only move as one `RETAIN`, and exclude `DO_NOT_EMIT_SENTINEL`, `data:`,
+  `spec:`, and `stringData:`. Paths are evidence only; manifest body keys and
+  values are not output or equality inputs.
 - `tests/fixtures/github-actions-security.json`은 정확히 11개 primary case로 remote SHA,
   same-line version comment, local Action, Docker digest, workflow default,
   exact job-write allowlist, `write-all`, `unpinned-uses` suppression을 동일한
