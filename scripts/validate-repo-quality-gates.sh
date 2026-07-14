@@ -2807,6 +2807,15 @@ codeowners_text = read_text(codeowners_path)
 if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
     fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
 
+action_security_self_test = subprocess.run(
+    [sys.executable, str(root / "scripts/validate-github-actions-security.py"), "--self-test"],
+    cwd=root,
+    text=True,
+    capture_output=True,
+)
+if action_security_self_test.returncode != 0:
+    fail("GitHub Actions security self-test failed: " + action_security_self_test.stdout.strip())
+
 action_security = subprocess.run(
     [sys.executable, str(root / "scripts/validate-github-actions-security.py"), "--root", str(root)],
     cwd=root,
