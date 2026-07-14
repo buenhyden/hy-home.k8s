@@ -88,6 +88,7 @@
 | --- | --- | --- |
 | Active | 현재 제품 의도를 설명하는 PRD | 관련 ADR/Spec/Plan과 current contract 메모를 함께 확인한다. |
 | Draft | 요구사항 초안 또는 후속 설계 대기 상태 | 구현 시작 전 ARD/Spec/Plan 후속 갭을 해소한다. |
+| Done | 승인된 범위와 수용 기준을 repository-static 증적으로 종료한 PRD | 연결된 ARD/ADR/Spec/Plan/Task와 로컬 검증 증적을 함께 확인하며, remote/live/secret 검증으로 확대 해석하지 않는다. |
 | Archived | 현재 구현과 상충하거나 대체된 요구사항 기록 | 활성 stage에는 본문을 두지 않고 [`../98.archive/README.md`](../98.archive/README.md)에 Tombstone으로만 인덱싱한다. |
 
 ### 문서 인덱스
@@ -98,7 +99,7 @@
 | [`./002-argo-notifications-slack.md`](./002-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-06-04 |
 | [`./003-workspace-agent-governance-platform.md`](./003-workspace-agent-governance-platform.md) | Workspace AI Agent governance, Stage 00 canonical adapter, skill-axis routing PRD | Active current-contract backfill | ARD-0006, ADR-0013, Spec 006, Stage 00 canonical adapter Plan/Task 연결 완료. | 2026-06-01 |
 | [`./004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
-| [`./005-workspace-document-assurance-modernization.md`](./005-workspace-document-assurance-modernization.md) | Workspace document assurance modernization program PRD | Active | ARD-0008, ADR-0015/0016, Spec 026-032의 승인 설계와 순차 구현 경계를 소유한다. | 2026-07-12 |
+| [`./005-workspace-document-assurance-modernization.md`](./005-workspace-document-assurance-modernization.md) | Workspace document assurance modernization program PRD | Done | ARD-0008, ADR-0015/0016과 Spec 026–032 및 각 canonical Plan/Task의 repository-static 구현 완료 증적을 소유한다. | 2026-07-14 |
 
 ### 예시
 

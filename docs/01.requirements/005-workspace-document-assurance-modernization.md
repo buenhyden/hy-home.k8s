@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Document Assurance Modernization Product Requirements'
 type: sdlc/prd
-status: active
+status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Workspace Document Assurance Modernization Product Requirements
@@ -25,13 +25,15 @@ scripts.
 
 ## Problem Statement
 
-The Current audit shows that structural consistency is not semantic
-consistency. Canonical Stage 00 and Stage 99 contracts remain `draft`, one
-README template mixes unrelated profiles, Task authoring guidance is copied
-into authored records, duplicate AWS and Azure SDLC documents own overlapping
-scope, and CI selectors omit paths consumed by repository validators. The
-existing quality gate passes these conditions because route, profile, heading,
-and selector facts are duplicated in multiple owners.
+At program approval, the Current audit showed that structural consistency was
+not semantic consistency. Canonical Stage 00 and Stage 99 contracts remained
+`draft`, one README template mixed unrelated profiles, Task authoring guidance
+was copied into authored records, duplicate AWS and Azure SDLC documents owned
+overlapping scope, and CI selectors omitted paths consumed by repository
+validators. The quality gate then passed these conditions because route,
+profile, heading, and selector facts were duplicated in multiple owners. This
+historical baseline is retained as the problem the completed program addressed,
+not as a description of the current repository contract.
 
 ## Personas
 
@@ -118,6 +120,14 @@ and selector facts are duplicated in multiple owners.
 - **REQ-PRD-MET-09**: A type-to-source matrix covers every template family and
   every migrated current authored document has a reviewed research-ledger row
   with applicability and content-change disposition.
+
+Repository-static completion is recorded by `status: done` on Specs 026–032
+and each linked canonical Plan and Task. Together they deliver the registry,
+template and README profiles, semantic validation, authored-corpus migration,
+affected-surface QA, and protected-surface hardening required by this PRD. The
+evidence is limited to tracked repository state and local static checks; it
+does not claim remote publication, live-system readiness, secret validation,
+or external environment verification.
 
 ## Scope and Non-goals
 
