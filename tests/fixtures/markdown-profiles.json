@@ -608,10 +608,40 @@
       ]
     },
     {
-      "profile": "exception/native-contract",
+      "profile": "exception/native-contract-openapi",
       "mode": "classification-only",
       "applicability": "classification-only",
       "fixturePath": "docs/03.specs/999-fixture/contracts/openapi.yaml",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/native-contract-graphql",
+      "mode": "classification-only",
+      "applicability": "classification-only",
+      "fixturePath": "docs/03.specs/999-fixture/contracts/schema.graphql",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/native-contract-protobuf",
+      "mode": "classification-only",
+      "applicability": "classification-only",
+      "fixturePath": "docs/03.specs/999-fixture/contracts/service.proto",
       "positiveSource": "# Fixture Document\n",
       "negativeMutations": [
         {
@@ -1157,7 +1187,7 @@
       "name": "template-residue",
       "profile": "sdlc/spec",
       "path": "docs/03.specs/999-fixture/spec.md",
-      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\nUse this \u0074emplate\n",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\nUse this template\n",
       "expectedRuleIds": [
         "BODY-TEMPLATE-RESIDUE"
       ]

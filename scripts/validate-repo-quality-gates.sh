@@ -1053,38 +1053,22 @@ def normalize_markdown_target(raw_target: str) -> str:
 
 
 template_readme = read_text(root / "docs/99.templates/README.md")
-template_locations = {
-    "readme-collection-index.template.md": "templates/common/readme-collection-index.template.md",
-    "readme-implementation.template.md": "templates/common/readme-implementation.template.md",
-    "readme-repository.template.md": "templates/common/readme-repository.template.md",
-    "readme-snapshot-pack.template.md": "templates/common/readme-snapshot-pack.template.md",
-    "readme-stage-index.template.md": "templates/common/readme-stage-index.template.md",
-    "readme-workspace-staging.template.md": "templates/common/readme-workspace-staging.template.md",
-    "reference.template.md": "templates/common/reference.template.md",
-    "archive-tombstone.template.md": "templates/common/archive-tombstone.template.md",
-    "governance-reference.template.md": "templates/common/governance-reference.template.md",
-    "memory.template.md": "templates/common/memory.template.md",
-    "progress.template.md": "templates/common/progress.template.md",
-    "prd.template.md": "templates/sdlc/requirements/prd.template.md",
-    "ard.template.md": "templates/sdlc/architecture/ard.template.md",
-    "template-support.template.md": "templates/common/template-support.template.md",
-    "adr.template.md": "templates/sdlc/architecture/adr.template.md",
-    "spec.template.md": "templates/sdlc/specs/spec.template.md",
-    "api-spec.template.md": "templates/sdlc/specs/api-spec.template.md",
-    "agent-design.template.md": "templates/sdlc/specs/agent-design.template.md",
-    "data-model.template.md": "templates/sdlc/specs/data-model.template.md",
-    "tests.template.md": "templates/sdlc/specs/tests.template.md",
-    "openapi.template.yaml": "templates/sdlc/specs/openapi.template.yaml",
-    "schema.template.graphql": "templates/sdlc/specs/schema.template.graphql",
-    "service.template.proto": "templates/sdlc/specs/service.template.proto",
-    "plan.template.md": "templates/sdlc/execution/plan.template.md",
-    "task.template.md": "templates/sdlc/execution/task.template.md",
-    "guide.template.md": "templates/sdlc/operations/guide.template.md",
-    "policy.template.md": "templates/sdlc/operations/policy.template.md",
-    "runbook.template.md": "templates/sdlc/operations/runbook.template.md",
-    "incident.template.md": "templates/sdlc/operations/incident.template.md",
-    "postmortem.template.md": "templates/sdlc/operations/postmortem.template.md",
+document_registry = load_registry(root)
+registry_profiles_by_id = {
+    profile.profile_id: profile for profile in document_registry.profiles
 }
+template_locations = {}
+for profile in document_registry.profiles:
+    if profile.template is None:
+        continue
+    location = profile.template.relative_to("docs/99.templates")
+    existing = template_locations.get(profile.template.name)
+    if existing is not None and existing != location.as_posix():
+        fail(
+            "registry template basenames must be unique: "
+            f"{profile.template.name}: {existing}, {location.as_posix()}"
+        )
+    template_locations[profile.template.name] = location.as_posix()
 
 archive_reason_allowed_values = {
     "superseded",
@@ -1111,90 +1095,14 @@ template_compatibility_path = (
 )
 template_compatibility = load_json(template_compatibility_path)
 
-TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
-    "name": "TemplateCompatibilityContract.v1",
-    "semantic_sha256": (
-        "e2a7b02ed9cf31b97480a9de31128d5d1486acf01c8e556d040f4071a6083cf6"  # pragma: allowlist secret
-    ),
-}
 EXPECTED_TEMPLATE_COMPATIBILITY_KEYS = (
     "schemaVersion",
     "owner",
     "growthAllowed",
-    "baselineDebtCounts",
-    "canonicalFormCoverage",
-    "templateModeCoverage",
+    "retiredFields",
+    "behaviorCases",
 )
 RETIRED_TEMPLATE_DEBT_FIELDS = {"compatibilityDebt", "semanticDebtCaps"}
-
-
-def template_compatibility_semantic_sha256(contract: dict) -> str:
-    """Hash the complete semantic fixture projection with stable JSON encoding."""
-    payload = json.dumps(
-        contract,
-        ensure_ascii=True,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
-
-
-def template_compatibility_contract_matches(contract: dict) -> bool:
-    return (
-        template_compatibility_semantic_sha256(contract)
-        == TEMPLATE_COMPATIBILITY_CONTRACT_V1["semantic_sha256"]
-    )
-
-
-def assert_template_compatibility_mutation_proof(contract: dict) -> None:
-    """Prove retained coverage and retired debt fields remain fail-closed."""
-
-    def mutate_owner(candidate: dict) -> None:
-        candidate["owner"] = "Spec 999"
-
-    def mutate_growth_policy(candidate: dict) -> None:
-        candidate["growthAllowed"] = True
-
-    def mutate_baseline(candidate: dict) -> None:
-        candidate["baselineDebtCounts"]["profileRows"] += 1
-
-    def mutate_canonical_form(candidate: dict) -> None:
-        candidate["canonicalFormCoverage"][0]["requiredHeadings"].append(
-            "Synthetic Drift"
-        )
-
-    def mutate_template_mode(candidate: dict) -> None:
-        candidate["templateModeCoverage"][0]["placeholderPolicy"] = "drift"
-
-    def restore_compatibility_debt(candidate: dict) -> None:
-        candidate["compatibilityDebt"] = []
-
-    def restore_semantic_caps(candidate: dict) -> None:
-        candidate["semanticDebtCaps"] = {}
-
-    def restore_both_debt_fields(candidate: dict) -> None:
-        restore_compatibility_debt(candidate)
-        restore_semantic_caps(candidate)
-
-    mutations = {
-        "owner": mutate_owner,
-        "growth policy": mutate_growth_policy,
-        "baseline coverage": mutate_baseline,
-        "canonical form coverage": mutate_canonical_form,
-        "template mode coverage": mutate_template_mode,
-        "compatibilityDebt reintroduction": restore_compatibility_debt,
-        "semanticDebtCaps reintroduction": restore_semantic_caps,
-        "both retired debt fields": restore_both_debt_fields,
-    }
-    for label, mutate in mutations.items():
-        candidate = copy.deepcopy(contract)
-        mutate(candidate)
-        if template_compatibility_contract_matches(candidate):
-            fail(
-                f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} mutation proof "
-                f"accepted changed {label}"
-            )
-
 
 if tuple(template_compatibility) != EXPECTED_TEMPLATE_COMPATIBILITY_KEYS:
     fail(
@@ -1207,17 +1115,50 @@ if restored_debt_fields:
         f"{rel(template_compatibility_path)} restored retired fields: "
         f"{sorted(restored_debt_fields)}"
     )
-if not template_compatibility_contract_matches(template_compatibility):
-    fail(
-        f"{rel(template_compatibility_path)} does not match "
-        f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} semantic SHA-256"
-    )
-assert_template_compatibility_mutation_proof(template_compatibility)
-
-if template_compatibility.get("owner") != "Spec 030":
-    fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
+if template_compatibility.get("schemaVersion") != 2:
+    fail(f"{rel(template_compatibility_path)} schemaVersion must be 2")
+if template_compatibility.get("owner") != "Spec 033":
+    fail(f"{rel(template_compatibility_path)} owner must be Spec 033")
 if template_compatibility.get("growthAllowed") is not False:
     fail(f"{rel(template_compatibility_path)} must set growthAllowed=false")
+if template_compatibility.get("retiredFields") != sorted(RETIRED_TEMPLATE_DEBT_FIELDS):
+    fail(f"{rel(template_compatibility_path)} retiredFields contract differs")
+expected_behavior_cases = [
+    {
+        "name": "registry-derived-form-inventory",
+        "expectedMarkdownForms": 27,
+        "expectedNativeForms": 3,
+    },
+    {
+        "name": "retired-debt-fields-remain-absent",
+        "forbiddenFields": sorted(RETIRED_TEMPLATE_DEBT_FIELDS),
+    },
+]
+if template_compatibility.get("behaviorCases") != expected_behavior_cases:
+    fail(f"{rel(template_compatibility_path)} behaviorCases contract differs")
+physical_form_paths = {
+    pathlib.PurePosixPath(path.relative_to(root).as_posix())
+    for path in template_root.rglob("*")
+    if path.is_file() and ".template." in path.name
+}
+registry_form_paths = {
+    profile.template
+    for profile in document_registry.profiles
+    if profile.template is not None
+}
+if physical_form_paths != registry_form_paths:
+    fail(
+        "physical canonical forms must equal registry-owned template paths: "
+        f"missing={sorted(physical_form_paths - registry_form_paths, key=str)} "
+        f"extra={sorted(registry_form_paths - physical_form_paths, key=str)}"
+    )
+markdown_form_count = sum(path.suffix == ".md" for path in physical_form_paths)
+native_form_count = len(physical_form_paths) - markdown_form_count
+if (markdown_form_count, native_form_count) != (27, 3):
+    fail(
+        "registry-derived form inventory must contain 27 Markdown and three native forms: "
+        f"actual={(markdown_form_count, native_form_count)}"
+    )
 template_support_root = root / "docs/99.templates/support"
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),
@@ -1261,12 +1202,6 @@ for provider in ["aws", "azure"]:
             fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
 
 template_routing_path = template_support_root / "template-routing.md"
-document_registry = load_registry(root)
-registry_profiles_by_id = {
-    profile.profile_id: profile for profile in document_registry.profiles
-}
-
-
 def template_route_pairs(
     path: pathlib.Path,
     heading: str | tuple[str, ...],
@@ -1381,27 +1316,35 @@ expected_public_route_pairs.extend(
     registry_backed_public_route(*route) for route in public_structural_route_bridge
 )
 
-native_contract_profile = registry_profile("exception/native-contract")
-native_contract_route_bridge = (
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "docs/03.specs/999-projection/contracts/openapi.yaml", "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "docs/03.specs/999-projection/contracts/schema.graphql", "docs/99.templates/templates/sdlc/specs/schema.template.graphql"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "docs/03.specs/999-projection/contracts/service.proto", "docs/99.templates/templates/sdlc/specs/service.template.proto"),
-)
-for target_pattern, witness_path, template_path_text in native_contract_route_bridge:
+native_contract_profiles = [
+    profile
+    for profile in document_registry.profiles
+    if profile.profile_id.startswith("exception/native-contract-")
+]
+for native_contract_profile in native_contract_profiles:
+    if native_contract_profile.template is None:
+        fail(f"{native_contract_profile.profile_id} has no canonical native template")
+        continue
+    native_basename = native_contract_profile.template.name.replace(".template", "", 1)
+    target_pattern = (
+        "docs/03.specs/<###-Numbering>-<feature-id>/contracts/"
+        + native_basename
+    )
+    witness_path = "docs/03.specs/999-projection/contracts/" + native_basename
     try:
         selected = classify_path(document_registry, pathlib.PurePosixPath(witness_path))
     except DocumentContractError as exc:
         fail(f"native public route witness is unclassified: {witness_path}: {exc}")
     else:
-        if native_contract_profile is None or selected.profile_id != native_contract_profile.profile_id:
+        if selected.profile_id != native_contract_profile.profile_id:
             fail(
-                "native public route witness must select exception/native-contract: "
+                "native public route witness must select its registry profile: "
                 f"{witness_path}: actual {selected.profile_id}"
             )
     expected_public_route_pairs.append(
         (
             f"`{target_pattern}`",
-            public_template_cell(pathlib.PurePosixPath(template_path_text)),
+            public_template_cell(native_contract_profile.template),
         )
     )
 
@@ -1554,6 +1497,8 @@ for raw_relative_path in tracked_active_paths:
     if path.suffix not in active_residue_suffixes or not path.is_file() or path.is_symlink():
         continue
     if path.is_relative_to(root / "docs/99.templates/templates"):
+        continue
+    if path.is_relative_to(root / "tests/fixtures"):
         continue
     if is_historical_evidence_path(path):
         continue

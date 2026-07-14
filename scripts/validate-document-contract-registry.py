@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import json
 import re
 import shutil
@@ -72,6 +71,45 @@ EXPECTED_CASES = (
     ("overlapping-route", "add-overlapping-exact-route", ("REGISTRY_ROUTE_AMBIGUOUS",)),
     ("uncovered-route", "remove-sample-route", ("REGISTRY_ROUTE_UNCOVERED",)),
     ("missing-template", "point-to-missing-template", ("REGISTRY_TEMPLATE",)),
+    ("missing-body-contract", "remove-body-contract", ("REGISTRY_BODY_REQUIRED",)),
+    ("unknown-body-field", "add-unknown-body-field", ("REGISTRY_BODY_FIELD",)),
+    ("body-section-not-required", "change-body-section", ("REGISTRY_BODY_SECTION",)),
+    (
+        "body-status-outside-domain",
+        "add-unknown-body-status",
+        ("REGISTRY_BODY_STATUS",),
+    ),
+    ("empty-body-columns", "empty-body-columns", ("REGISTRY_BODY_COLUMNS",)),
+    (
+        "duplicate-body-columns",
+        "duplicate-body-column",
+        ("REGISTRY_BODY_COLUMNS",),
+    ),
+    (
+        "unknown-body-source-profile",
+        "unknown-body-source-profile",
+        ("REGISTRY_BODY_SOURCE_PROFILE",),
+    ),
+    (
+        "unknown-body-target-profile",
+        "unknown-body-target-profile",
+        ("REGISTRY_BODY_TARGET_PROFILE",),
+    ),
+    (
+        "template-source-body-drift",
+        "drift-template-body-contract",
+        ("REGISTRY_BODY_SOURCE_DRIFT",),
+    ),
+    (
+        "missing-native-template",
+        "add-native-with-missing-template",
+        ("REGISTRY_TEMPLATE",),
+    ),
+    (
+        "overlapping-native-route",
+        "add-overlapping-native-route",
+        ("REGISTRY_ROUTE_AMBIGUOUS",),
+    ),
     ("wrong-baseline-sha", "change-baseline-sha", ("REGISTRY_BASELINE_SHA",)),
     ("wrong-baseline-count", "change-baseline-count", ("REGISTRY_BASELINE_COUNT",)),
     (
@@ -280,91 +318,6 @@ EXPECTED_CASES = (
     ),
 )
 
-DOCUMENT_PROFILE_CONTRACT_V3 = {
-    "name": "DocumentProfileContract.v3",
-    "profile_ids": (
-        "content/archive-tombstone",
-        "content/reference",
-        "exception/generated-record",
-        "exception/github-native-control",
-        "exception/local-agent-asset",
-        "exception/native-contract",
-        "exception/program-non-target",
-        "exception/provider-native-metadata",
-        "exception/repository-runtime-baseline",
-        "exception/root-provider-shim",
-        "governance/memory",
-        "governance/progress-entry",
-        "governance/progress-ledger",
-        "governance/reference",
-        "governance/template-support",
-        "readme/collection-index",
-        "readme/implementation",
-        "readme/repository",
-        "readme/snapshot-pack",
-        "readme/stage-index",
-        "readme/workspace-staging",
-        "sdlc/adr",
-        "sdlc/agent-design",
-        "sdlc/api-spec",
-        "sdlc/ard",
-        "sdlc/data-model",
-        "sdlc/guide",
-        "sdlc/incident",
-        "sdlc/plan",
-        "sdlc/policy",
-        "sdlc/postmortem",
-        "sdlc/prd",
-        "sdlc/runbook",
-        "sdlc/spec",
-        "sdlc/task",
-        "sdlc/tests",
-        "template/content/archive-tombstone",
-        "template/content/reference",
-        "template/governance/memory",
-        "template/governance/reference",
-        "template/governance/template-support",
-        "template/readme/collection-index",
-        "template/readme/implementation",
-        "template/readme/repository",
-        "template/readme/snapshot-pack",
-        "template/readme/stage-index",
-        "template/readme/workspace-staging",
-        "template/sdlc/adr",
-        "template/sdlc/agent-design",
-        "template/sdlc/api-spec",
-        "template/sdlc/ard",
-        "template/sdlc/data-model",
-        "template/sdlc/guide",
-        "template/sdlc/incident",
-        "template/sdlc/plan",
-        "template/sdlc/policy",
-        "template/sdlc/postmortem",
-        "template/sdlc/prd",
-        "template/sdlc/runbook",
-        "template/sdlc/spec",
-        "template/sdlc/task",
-        "template/sdlc/tests",
-    ),
-    "semantic_sha256": (
-        "8dc7db8d666c31cdd1eeb20880bfee9cb07a0b3c057b1c0b350485a4ec78a2f0"  # pragma: allowlist secret
-    ),
-}
-DOCUMENT_PROFILE_CONTRACT_V3_FIELDS = (
-    "id",
-    "class",
-    "mode",
-    "frontmatter",
-    "statusDomain",
-    "headings",
-    "template",
-    "routes",
-    "sourceProfileIds",
-    "placeholderPolicy",
-    "appendContract",
-)
-
-
 def _include_path_argument(raw: str) -> PurePosixPath:
     if raw.startswith("./"):
         raise argparse.ArgumentTypeError("include path must not start with './'")
@@ -394,96 +347,33 @@ def _load_json(path: Path) -> Any:
         return json.load(handle)
 
 
-def _document_profile_contract_projection(
-    raw_registry: dict[str, Any],
-) -> list[dict[str, Any]]:
-    projection: list[dict[str, Any]] = []
-    for profile in sorted(raw_registry["profiles"], key=lambda item: item["id"]):
-        row = {
-            field: copy.deepcopy(profile[field])
-            for field in DOCUMENT_PROFILE_CONTRACT_V3_FIELDS
-        }
-        row["routes"] = sorted(
-            row["routes"], key=lambda route: (route["kind"], route["value"])
-        )
-        projection.append(row)
-    return projection
-
-
-def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
-    expected_ids = DOCUMENT_PROFILE_CONTRACT_V3["profile_ids"]
-    actual_ids = tuple(sorted(profile["id"] for profile in raw_registry["profiles"]))
-    if actual_ids != expected_ids:
-        missing = sorted(set(expected_ids) - set(actual_ids))
-        extra = sorted(set(actual_ids) - set(expected_ids))
-        raise AssertionError(
-            "DocumentProfileContract.v3 ID mismatch: "
-            f"missing={missing!r} extra={extra!r}"
-        )
-
-    canonical = json.dumps(
-        _document_profile_contract_projection(raw_registry),
-        ensure_ascii=True,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    actual_digest = hashlib.sha256(canonical).hexdigest()
-    expected_digest = DOCUMENT_PROFILE_CONTRACT_V3["semantic_sha256"]
-    if actual_digest != expected_digest:
-        raise AssertionError(
-            "DocumentProfileContract.v3 semantic digest mismatch: "
-            f"expected={expected_digest} actual={actual_digest}"
-        )
-    return len(actual_ids)
-
-
-def _assert_document_profile_contract_mutation_proof(
-    raw_registry: dict[str, Any],
-) -> None:
-    mutations = (
-        ("placeholder policy", ("placeholderPolicy",), "template-only"),
-        (
-            "authored template",
-            ("template",),
-            "docs/99.templates/templates/sdlc/specs/spec.template.md",
-        ),
-        (
-            "required headings",
-            ("headings", "required"),
-            ["Document profile contract mutation proof"],
-        ),
-    )
-    for label, path, value in mutations:
-        mutated = copy.deepcopy(raw_registry)
-        profile = next(
-            profile
-            for profile in mutated["profiles"]
-            if profile["id"] == "sdlc/prd"
-        )
-        target = profile
-        for field in path[:-1]:
-            target = target[field]
-        target[path[-1]] = value
-        try:
-            _assert_document_profile_contract(mutated)
-        except AssertionError as exc:
-            if "semantic digest mismatch" not in str(exc):
-                raise AssertionError(
-                    "DocumentProfileContract.v3 "
-                    f"{label} mutation proof failed unexpectedly"
-                ) from exc
-        else:
-            raise AssertionError(
-                "DocumentProfileContract.v3 accepted a "
-                f"{label} semantic mutation"
-            )
+def _fixture_body_contract() -> dict[str, Any]:
+    return {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+            "Requirement ID",
+            "Acceptance criterion",
+            "Downstream owner",
+        ],
+        "identifierColumns": [
+            {"column": "Requirement ID", "kind": "requirement"}
+        ],
+        "sourceLinkColumn": None,
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": ["test/sample"],
+        "reciprocalEvidence": True,
+        "allowExplicitExclusion": True,
+    }
 
 
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
-        "schemaVersion": 4,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-5.schema.json",
+        "schemaVersion": 5,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -513,6 +403,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
+                "bodyContract": None,
             },
             {
                 "id": "governance/reference",
@@ -536,6 +427,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
+                "bodyContract": None,
             },
             {
                 "id": "content/reference",
@@ -557,6 +449,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
+                "bodyContract": None,
             },
             {
                 "id": "readme/collection-index",
@@ -578,6 +471,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
+                "bodyContract": None,
             },
             {
                 "id": "readme/snapshot-pack",
@@ -599,6 +493,61 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
+                "bodyContract": None,
+            },
+            {
+                "id": "sdlc/prd",
+                "class": "sdlc",
+                "mode": "authored",
+                "routes": [
+                    {
+                        "kind": "exact",
+                        "value": "tests/fixtures/document-contracts/self-test-prd.md",
+                    }
+                ],
+                "frontmatter": {
+                    "mode": "required",
+                    "required": ["title", "type", "status", "owner", "updated"],
+                    "allowed": ["title", "type", "status", "owner", "updated"],
+                    "order": ["title", "type", "status", "owner", "updated"],
+                },
+                "statusDomain": ["draft", "active"],
+                "headings": {
+                    "required": ["Overview", "Traceability"],
+                    "allowed": ["Overview", "Traceability"],
+                },
+                "template": "tests/fixtures/document-contracts/self-test-prd.template.md",
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+                "bodyContract": _fixture_body_contract(),
+            },
+            {
+                "id": "template/sdlc/prd",
+                "class": "sdlc",
+                "mode": "template",
+                "routes": [
+                    {
+                        "kind": "exact",
+                        "value": "tests/fixtures/document-contracts/self-test-prd.template.md",
+                    }
+                ],
+                "frontmatter": {
+                    "mode": "required",
+                    "required": ["title", "type", "status", "owner", "updated"],
+                    "allowed": ["title", "type", "status", "owner", "updated"],
+                    "order": ["title", "type", "status", "owner", "updated"],
+                },
+                "statusDomain": ["draft", "active"],
+                "headings": {
+                    "required": ["Overview", "Traceability"],
+                    "allowed": ["Overview", "Traceability"],
+                },
+                "template": "tests/fixtures/document-contracts/self-test-prd.template.md",
+                "sourceProfileIds": ["sdlc/prd"],
+                "placeholderPolicy": "template-only",
+                "appendContract": None,
+                "bodyContract": _fixture_body_contract(),
             },
         ],
         "governanceCurrentOwners": {
@@ -669,6 +618,85 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "point-to-missing-template":
         profile["template"] = "docs/99.templates/templates/missing-document.md"
+        return
+    prd_profile = next(
+        candidate
+        for candidate in raw_registry["profiles"]
+        if candidate["id"] == "sdlc/prd"
+    )
+    template_profile = next(
+        candidate
+        for candidate in raw_registry["profiles"]
+        if candidate["id"] == "template/sdlc/prd"
+    )
+    if mutation == "remove-body-contract":
+        del prd_profile["bodyContract"]
+        return
+    if mutation == "add-unknown-body-field":
+        prd_profile["bodyContract"]["unknownField"] = True
+        return
+    if mutation == "change-body-section":
+        prd_profile["bodyContract"]["section"] = "Missing Section"
+        template_profile["bodyContract"]["section"] = "Missing Section"
+        return
+    if mutation == "add-unknown-body-status":
+        prd_profile["bodyContract"]["enforcedStatuses"] = ["done"]
+        template_profile["bodyContract"]["enforcedStatuses"] = ["done"]
+        return
+    if mutation == "empty-body-columns":
+        prd_profile["bodyContract"]["requiredColumns"] = []
+        return
+    if mutation == "duplicate-body-column":
+        prd_profile["bodyContract"]["requiredColumns"].append("Requirement ID")
+        return
+    if mutation == "unknown-body-source-profile":
+        prd_profile["bodyContract"]["sourceLinkColumn"] = "Requirement ID"
+        prd_profile["bodyContract"]["allowedSourceProfileIds"] = [
+            "missing/source"
+        ]
+        template_profile["bodyContract"]["sourceLinkColumn"] = "Requirement ID"
+        template_profile["bodyContract"]["allowedSourceProfileIds"] = [
+            "missing/source"
+        ]
+        return
+    if mutation == "unknown-body-target-profile":
+        prd_profile["bodyContract"]["allowedTargetProfileIds"] = [
+            "missing/target"
+        ]
+        template_profile["bodyContract"]["allowedTargetProfileIds"] = [
+            "missing/target"
+        ]
+        return
+    if mutation == "drift-template-body-contract":
+        template_profile["bodyContract"]["requiredColumns"].append("Drift")
+        return
+    if mutation == "add-native-with-missing-template":
+        native_profile = copy.deepcopy(profile)
+        native_profile["id"] = "exception/native-contract-openapi"
+        native_profile["routes"] = [
+            {
+                "kind": "regex",
+                "value": (
+                    "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/"
+                    "openapi\\.yaml$"
+                ),
+            }
+        ]
+        native_profile["template"] = (
+            "tests/fixtures/document-contracts/missing-openapi.template.yaml"
+        )
+        raw_registry["profiles"].append(native_profile)
+        return
+    if mutation == "add-overlapping-native-route":
+        native_profile = copy.deepcopy(profile)
+        native_profile["id"] = "exception/native-contract-openapi"
+        native_profile["routes"] = [
+            {"kind": "exact", "value": SAMPLE_PATH.as_posix()}
+        ]
+        native_profile["template"] = (
+            "tests/fixtures/document-contracts/self-test-prd.template.md"
+        )
+        raw_registry["profiles"].append(native_profile)
         return
     if mutation == "change-baseline-sha":
         raw_registry["baseline"]["sha"] = "0" * 40
@@ -942,14 +970,14 @@ def _assert_parser_safety() -> None:
             )
 
 
-def _tracked_template_paths(root: Path) -> tuple[PurePosixPath, ...]:
+def _tracked_form_paths(root: Path) -> tuple[PurePosixPath, ...]:
     completed = subprocess.run(
         [
             "git",
             "ls-files",
             "-z",
             "--",
-            "docs/99.templates/templates/**/*.template.md",
+            "docs/99.templates/templates",
         ],
         cwd=root,
         check=True,
@@ -958,16 +986,20 @@ def _tracked_template_paths(root: Path) -> tuple[PurePosixPath, ...]:
     )
     records = completed.stdout.split(b"\0")
     if records[-1] != b"":
-        raise AssertionError("git ls-files template inventory is not NUL terminated")
+        raise AssertionError("git ls-files form inventory is not NUL terminated")
     try:
         return tuple(
             sorted(
-                (PurePosixPath(record.decode("utf-8")) for record in records[:-1]),
+                (
+                    path
+                    for record in records[:-1]
+                    if ".template." in (path := PurePosixPath(record.decode("utf-8"))).name
+                ),
                 key=lambda path: path.as_posix(),
             )
         )
     except UnicodeDecodeError as exc:
-        raise AssertionError("git returned a non-UTF-8 template path") from exc
+        raise AssertionError("git returned a non-UTF-8 form path") from exc
 
 
 def _assert_retired_cloud_sdlc_routes_uncovered(registry: Any) -> None:
@@ -1199,69 +1231,58 @@ def _assert_positive_coverage(
     _assert_tracked_local_agent_fixture_sample(root, registry)
     _assert_adapter_surface_routes(root, raw_registry, registry)
 
-    coverage = fixture.get("profileCoverage")
-    if not isinstance(coverage, list):
-        raise AssertionError("profileCoverage must be an array")
-    coverage_ids = [row.get("profile") for row in coverage if isinstance(row, dict)]
-    if len(coverage_ids) != len(coverage):
-        raise AssertionError("profileCoverage rows must be objects")
-    if len(coverage_ids) != len(set(coverage_ids)):
-        raise AssertionError("profileCoverage must contain each profile exactly once")
-    if set(coverage_ids) != set(profiles):
-        missing = sorted(set(profiles) - set(coverage_ids))
-        extra = sorted(set(coverage_ids) - set(profiles))
-        raise AssertionError(
-            f"profileCoverage profile set mismatch: missing={missing!r} extra={extra!r}"
-        )
-    for row in coverage:
-        if set(row) != {"path", "profile"} or not all(
-            isinstance(row[key], str) and row[key] for key in ("path", "profile")
-        ):
-            raise AssertionError(f"invalid profileCoverage row: {row!r}")
-        actual = classify_path(registry, PurePosixPath(row["path"])).profile_id
-        if actual != row["profile"]:
+    routing_cases = fixture.get("routingCases")
+    if not isinstance(routing_cases, list) or len(routing_cases) != 6:
+        raise AssertionError("routingCases must contain the six independent probes")
+    routing_keys = {"path", "expectedProfile", "expectedRuleIds"}
+    for row in routing_cases:
+        if not isinstance(row, dict) or set(row) != routing_keys:
+            raise AssertionError(f"invalid routingCases row: {row!r}")
+        path = PurePosixPath(row["path"])
+        expected_profile = row["expectedProfile"]
+        expected_rules = tuple(row["expectedRuleIds"])
+        actual_profile: str | None = None
+        actual_rules: tuple[str, ...] = ()
+        try:
+            actual_profile = classify_path(registry, path).profile_id
+        except DocumentContractError as exc:
+            actual_rules = _ordered_rule_ids(exc.diagnostics)
+        if actual_profile != expected_profile or actual_rules != expected_rules:
             raise AssertionError(
-                f"{row['path']}: expected profile {row['profile']!r}, got {actual!r}"
+                f"{path}: expected profile={expected_profile!r} rules={expected_rules!r}; "
+                f"actual profile={actual_profile!r} rules={actual_rules!r}"
             )
 
-    template_coverage = fixture.get("templateCoverage")
-    if not isinstance(template_coverage, list):
-        raise AssertionError("templateCoverage must be an array")
-    if any(
-        not isinstance(row, dict)
-        or set(row) != {"path", "profile"}
-        or not all(
-            isinstance(row[key], str) and row[key]
-            for key in ("path", "profile")
-        )
-        for row in template_coverage
-    ):
-        raise AssertionError("templateCoverage rows must contain only path and profile")
-    fixture_template_paths = tuple(
+    tracked_form_paths = _tracked_form_paths(root)
+    declared_form_paths = tuple(
         sorted(
-            (PurePosixPath(row["path"]) for row in template_coverage),
+            {profile.template for profile in registry.profiles if profile.template},
             key=lambda path: path.as_posix(),
         )
     )
-    if len(fixture_template_paths) != len(set(fixture_template_paths)):
-        raise AssertionError("templateCoverage paths must be unique")
-    tracked_template_paths = _tracked_template_paths(root)
-    if fixture_template_paths != tracked_template_paths:
+    if declared_form_paths != tracked_form_paths:
         raise AssertionError(
-            "templateCoverage path set must equal tracked *.template.md inventory"
+            "registry template paths must equal the tracked canonical form inventory: "
+            f"missing={sorted(set(tracked_form_paths) - set(declared_form_paths), key=str)!r} "
+            f"extra={sorted(set(declared_form_paths) - set(tracked_form_paths), key=str)!r}"
+        )
+
+    markdown_form_paths = tuple(
+        path for path in tracked_form_paths if path.suffix == ".md"
+    )
+    native_form_paths = tuple(
+        path for path in tracked_form_paths if path.suffix != ".md"
+    )
+    if len(markdown_form_paths) != 27 or len(native_form_paths) != 3:
+        raise AssertionError(
+            "canonical form inventory must contain 27 Markdown and three native forms"
         )
 
     covered_template_profiles: set[str] = set()
     ordinary_source_less_profiles: list[str] = []
     append_profiles: set[str] = set()
-    for row in template_coverage:
-        path = PurePosixPath(row["path"])
+    for path in markdown_form_paths:
         profile = classify_path(registry, path)
-        if profile.profile_id != row["profile"]:
-            raise AssertionError(
-                f"{path}: expected template profile {row['profile']!r}, "
-                f"got {profile.profile_id!r}"
-            )
         if profile.mode != "template":
             raise AssertionError(f"{profile.profile_id}: expected template mode")
         if profile.placeholder_policy != "template-only":
@@ -1316,12 +1337,14 @@ def _assert_positive_coverage(
                 profile.frontmatter,
                 profile.status_domain,
                 profile.headings,
+                profile.body_contract,
             )
             expected = (
                 source.profile_class,
                 source.frontmatter,
                 source.status_domain,
                 source.headings,
+                source.body_contract,
             )
             if inherited != expected:
                 raise AssertionError(
@@ -1339,13 +1362,50 @@ def _assert_positive_coverage(
     }
     if covered_template_profiles != declared_template_profiles:
         raise AssertionError(
-            "templateCoverage profile set must equal declared template profiles"
+            "registry-derived Markdown forms must equal declared template profiles"
         )
     if append_profiles != {"governance/progress-entry"}:
         raise AssertionError(
             "governance/progress-entry must be the sole append-contract template"
         )
-    return len(coverage), len(template_coverage)
+
+    expected_native = {
+        "exception/native-contract-openapi": (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"
+            ),
+            "openapi.yaml",
+        ),
+        "exception/native-contract-graphql": (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/specs/schema.template.graphql"
+            ),
+            "schema.graphql",
+        ),
+        "exception/native-contract-protobuf": (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/specs/service.template.proto"
+            ),
+            "service.proto",
+        ),
+    }
+    if set(native_form_paths) != {value[0] for value in expected_native.values()}:
+        raise AssertionError("native form paths differ from the registry contract")
+    for profile_id, (template_path, basename) in expected_native.items():
+        profile = profiles.get(profile_id)
+        if (
+            profile is None
+            or profile.mode != "classification-only"
+            or profile.template != template_path
+            or len(profile.routes) != 1
+            or profile.routes[0].kind != "regex"
+            or not profile.routes[0].value.endswith(
+                re.escape(basename) + "$"
+            )
+        ):
+            raise AssertionError(f"{profile_id}: invalid native registry mapping")
+
+    return len(profiles), len(tracked_form_paths)
 
 
 def _strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
@@ -1959,20 +2019,13 @@ def _assert_readme_fixture_mutation_proofs(
 
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
-    try:
-        contract_profile_count = _assert_document_profile_contract(raw_registry)
-        _assert_document_profile_contract_mutation_proof(raw_registry)
-    except (AssertionError, KeyError, TypeError) as exc:
-        print(f"FAIL document contract registry self-test: {exc}")
-        return 1
-
     fixture = _load_json(root / FIXTURE_PATH)
     actual_contract = tuple(
         (case.get("name"), case.get("mutation"), tuple(case.get("expected", ())))
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 4
+        fixture.get("schemaVersion") != 5
         or fixture.get(LOCAL_AGENT_FIXTURE_FIELD) != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
@@ -1996,6 +2049,12 @@ def _self_test(root: Path) -> int:
             target = fixture_root / raw_path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("# Synthetic reference contract\n", encoding="utf-8")
+        fixture_template = (
+            fixture_root
+            / "tests/fixtures/document-contracts/self-test-prd.template.md"
+        )
+        fixture_template.parent.mkdir(parents=True, exist_ok=True)
+        fixture_template.write_text("# Synthetic PRD form\n", encoding="utf-8")
         untracked = fixture_root / "docs/00.agent-governance/current-untracked.md"
         untracked.write_text("# Untracked synthetic authority\n", encoding="utf-8")
         symlink = fixture_root / "docs/00.agent-governance/current-symlink.md"
@@ -2066,10 +2125,6 @@ def _self_test(root: Path) -> int:
             readme_fixture,
             inventory,
         )
-        if profile_count != contract_profile_count:
-            raise AssertionError(
-                "profileCoverage count differs from DocumentProfileContract.v3"
-            )
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry self-test: {exc}")
         return 1

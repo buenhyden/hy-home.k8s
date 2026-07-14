@@ -645,11 +645,14 @@ def _assert_retired_debt_source(
 
     if contract is None:
         contract = json.loads((root / COMPATIBILITY_PATH).read_text(encoding="utf-8"))
-    if contract.get("schemaVersion") != 1:
-        raise ValueError("template compatibility schemaVersion must be 1")
-    if contract.get("owner") != "Spec 030" or contract.get("growthAllowed") is not False:
-        raise ValueError("template compatibility contract must be Spec 030 owned and no-growth")
-    retired = {"compatibilityDebt", "semanticDebtCaps"} & set(contract)
+    retired_fields = {"compatibilityDebt", "semanticDebtCaps"}
+    if contract.get("schemaVersion") != 2:
+        raise ValueError("template compatibility schemaVersion must be 2")
+    if contract.get("owner") != "Spec 033" or contract.get("growthAllowed") is not False:
+        raise ValueError("template compatibility contract must be Spec 033 owned and no-growth")
+    if contract.get("retiredFields") != sorted(retired_fields):
+        raise ValueError("template compatibility retiredFields contract differs")
+    retired = retired_fields & set(contract)
     if retired:
         raise ValueError(
             "DEBT-SOURCE-REINTRODUCED: " + ",".join(sorted(retired))

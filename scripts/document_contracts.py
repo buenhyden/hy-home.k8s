@@ -87,6 +87,27 @@ class AppendContract:
 
 
 @dataclass(frozen=True)
+class IdentifierColumn:
+    column: str
+    kind: Literal["requirement", "criterion", "work-item"]
+
+
+@dataclass(frozen=True)
+class BodyContract:
+    section: str
+    table_heading: str
+    enforced_statuses: tuple[str, ...]
+    required_columns: tuple[str, ...]
+    identifier_columns: tuple[IdentifierColumn, ...]
+    source_link_column: str | None
+    target_link_column: str | None
+    allowed_source_profile_ids: tuple[str, ...]
+    allowed_target_profile_ids: tuple[str, ...]
+    reciprocal_evidence: bool
+    allow_explicit_exclusion: bool
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal["sdlc", "common", "governance", "readme", "exception"]
@@ -101,6 +122,7 @@ class DocumentProfile:
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
     append_contract: AppendContract | None
+    body_contract: BodyContract | None
 
 
 @dataclass(frozen=True)
@@ -435,6 +457,22 @@ def _compile_route(value: str) -> re.Pattern[str]:
 
 def _schema_rule_id(error: Any) -> str:
     path = tuple(error.absolute_path)
+    nested_errors = [error]
+    for nested_error in nested_errors:
+        nested_errors.extend(nested_error.context)
+    nested_paths = [tuple(item.absolute_path) for item in nested_errors]
+    if any("bodyContract" in nested_path for nested_path in nested_paths) or (
+        error.validator == "required" and "bodyContract" in error.message
+    ):
+        if error.validator == "required" and "bodyContract" in error.message:
+            return "REGISTRY_BODY_REQUIRED"
+        if any(item.validator == "additionalProperties" for item in nested_errors):
+            return "REGISTRY_BODY_FIELD"
+        if any("requiredColumns" in nested_path for nested_path in nested_paths):
+            return "REGISTRY_BODY_COLUMNS"
+        if any("identifierColumns" in nested_path for nested_path in nested_paths):
+            return "REGISTRY_BODY_IDENTIFIER_COLUMN"
+        return "REGISTRY_BODY_SCHEMA"
     if (
         error.validator == "required"
         and "referenceCurrentPacks" in error.message
@@ -487,6 +525,27 @@ def _append_contract(raw: Mapping[str, Any] | None) -> AppendContract | None:
     )
 
 
+def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
+    if raw is None:
+        return None
+    return BodyContract(
+        section=raw["section"],
+        table_heading=raw["tableHeading"],
+        enforced_statuses=tuple(raw["enforcedStatuses"]),
+        required_columns=tuple(raw["requiredColumns"]),
+        identifier_columns=tuple(
+            IdentifierColumn(column=item["column"], kind=item["kind"])
+            for item in raw["identifierColumns"]
+        ),
+        source_link_column=raw["sourceLinkColumn"],
+        target_link_column=raw["targetLinkColumn"],
+        allowed_source_profile_ids=tuple(raw["allowedSourceProfileIds"]),
+        allowed_target_profile_ids=tuple(raw["allowedTargetProfileIds"]),
+        reciprocal_evidence=raw["reciprocalEvidence"],
+        allow_explicit_exclusion=raw["allowExplicitExclusion"],
+    )
+
+
 def _profile_from_mapping(raw: Mapping[str, Any]) -> DocumentProfile:
     template = raw["template"]
     routes = tuple(
@@ -520,6 +579,7 @@ def _profile_from_mapping(raw: Mapping[str, Any]) -> DocumentProfile:
         source_profile_ids=tuple(raw["sourceProfileIds"]),
         placeholder_policy=raw["placeholderPolicy"],
         append_contract=_append_contract(raw["appendContract"]),
+        body_contract=_body_contract(raw["bodyContract"]),
     )
 
 
@@ -587,8 +647,134 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
         )
 
+    raw_profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
     for raw_profile in raw_profiles:
         profile_id = raw_profile["id"]
+        body_contract = raw_profile["bodyContract"]
+        if body_contract is not None:
+            required_headings = raw_profile["headings"]["required"]
+            if body_contract["section"] not in required_headings:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_SECTION",
+                        profile=profile_id,
+                        expected="bodyContract.section in headings.required",
+                        actual=body_contract["section"],
+                    )
+                )
+
+            invalid_statuses = sorted(
+                set(body_contract["enforcedStatuses"])
+                - set(raw_profile["statusDomain"])
+            )
+            if invalid_statuses:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_STATUS",
+                        profile=profile_id,
+                        expected="enforcedStatuses within statusDomain",
+                        actual=repr(invalid_statuses),
+                    )
+                )
+
+            required_columns = body_contract["requiredColumns"]
+            identifier_columns = body_contract["identifierColumns"]
+            identifier_names = [item["column"] for item in identifier_columns]
+            if (
+                len(identifier_names) != len(set(identifier_names))
+                or any(column not in required_columns for column in identifier_names)
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_IDENTIFIER_COLUMN",
+                        profile=profile_id,
+                        expected="unique identifier columns selected from requiredColumns",
+                        actual=repr(identifier_names),
+                    )
+                )
+
+            for direction in ("source", "target"):
+                link_key = f"{direction}LinkColumn"
+                allowed_key = f"allowed{direction.title()}ProfileIds"
+                link_column = body_contract[link_key]
+                allowed_ids = body_contract[allowed_key]
+                rule_id = f"REGISTRY_BODY_{direction.upper()}_PROFILE"
+                invalid_profiles = sorted(
+                    profile_id_value
+                    for profile_id_value in allowed_ids
+                    if profile_id_value not in raw_profiles_by_id
+                )
+                link_contract_valid = (
+                    (link_column is None and not allowed_ids)
+                    or (
+                        link_column in required_columns
+                        and bool(allowed_ids)
+                    )
+                )
+                if invalid_profiles or not link_contract_valid:
+                    diagnostics.append(
+                        _diagnostic(
+                            rule_id,
+                            profile=profile_id,
+                            expected=(
+                                f"{link_key} selected from requiredColumns with known "
+                                f"{allowed_key}, or both unset"
+                            ),
+                            actual=(
+                                f"column={link_column!r} unknown={invalid_profiles!r} "
+                                f"allowed={allowed_ids!r}"
+                            ),
+                        )
+                    )
+
+            if body_contract["reciprocalEvidence"] and not (
+                body_contract["sourceLinkColumn"]
+                or body_contract["targetLinkColumn"]
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_RECIPROCAL",
+                        profile=profile_id,
+                        expected="at least one linked column for reciprocal evidence",
+                        actual="no source or target link column",
+                    )
+                )
+
+        for source_profile_id in raw_profile["sourceProfileIds"]:
+            if source_profile_id not in raw_profiles_by_id:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_SOURCE_PROFILE",
+                        profile=profile_id,
+                        expected="a declared source profile ID",
+                        actual=source_profile_id,
+                    )
+                )
+
+        if (
+            raw_profile["mode"] == "template"
+            and raw_profile["appendContract"] is None
+        ):
+            source_ids = raw_profile["sourceProfileIds"]
+            if len(source_ids) != 1 or source_ids[0] not in raw_profiles_by_id:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_SOURCE_DRIFT",
+                        profile=profile_id,
+                        expected="one declared source profile for a canonical form",
+                        actual=repr(source_ids),
+                    )
+                )
+            elif body_contract != raw_profiles_by_id[source_ids[0]]["bodyContract"]:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_BODY_SOURCE_DRIFT",
+                        profile=profile_id,
+                        expected=f"bodyContract equal to {source_ids[0]}",
+                        actual="template bodyContract differs",
+                    )
+                )
+
         for raw_route in raw_profile["routes"]:
             if raw_route["kind"] == "exact":
                 try:

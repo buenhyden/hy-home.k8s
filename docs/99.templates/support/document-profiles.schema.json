@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
+  "$id": "https://hy-home.k8s/schemas/document-profiles-5.schema.json",
   "title": "Document profile registry",
   "type": "object",
   "additionalProperties": false,
@@ -20,10 +20,10 @@
       "const": "https://json-schema.org/draft/2020-12/schema"
     },
     "$id": {
-      "const": "https://hy-home.k8s/schemas/document-profiles-4.schema.json"
+      "const": "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
     },
     "schemaVersion": {
-      "const": 4
+      "const": 5
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -311,6 +311,93 @@
         }
       }
     },
+    "identifierColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "column",
+        "kind"
+      ],
+      "properties": {
+        "column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "requirement",
+            "criterion",
+            "work-item"
+          ]
+        }
+      }
+    },
+    "bodyContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section",
+        "tableHeading",
+        "enforcedStatuses",
+        "requiredColumns",
+        "identifierColumns",
+        "sourceLinkColumn",
+        "targetLinkColumn",
+        "allowedSourceProfileIds",
+        "allowedTargetProfileIds",
+        "reciprocalEvidence",
+        "allowExplicitExclusion"
+      ],
+      "properties": {
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tableHeading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enforcedStatuses": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "requiredColumns": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "identifierColumns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifierColumn"
+          }
+        },
+        "sourceLinkColumn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "targetLinkColumn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "allowedSourceProfileIds": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "allowedTargetProfileIds": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "reciprocalEvidence": {
+          "type": "boolean"
+        },
+        "allowExplicitExclusion": {
+          "type": "boolean"
+        }
+      }
+    },
     "profile": {
       "type": "object",
       "additionalProperties": false,
@@ -325,7 +412,8 @@
         "template",
         "sourceProfileIds",
         "placeholderPolicy",
-        "appendContract"
+        "appendContract",
+        "bodyContract"
       ],
       "properties": {
         "id": {
@@ -389,6 +477,16 @@
             },
             {
               "$ref": "#/$defs/appendContract"
+            }
+          ]
+        },
+        "bodyContract": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/bodyContract"
             }
           ]
         }

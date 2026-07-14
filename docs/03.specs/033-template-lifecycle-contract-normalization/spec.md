@@ -333,6 +333,20 @@ the implementation diff.
 - **Current Audit Finding**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
 - **Current Remediation Roadmap**: [Integrated Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
 
+### TLCN-002 registry evidence
+
+- **RED**: The v5 minimal registry and eleven new body/native mutations were
+  added before implementation. `validate-document-contract-registry.py
+  --root . --self-test` exited `1` because the v4 implementation returned
+  `REGISTRY_SCHEMA` for the valid v5 fixture.
+- **GREEN**: The registry self-test passes `59` mutation cases with `64`
+  profiles and `30` registry-derived forms. Strict registry validation reports
+  zero uncovered or ambiguous routes, and the repository quality gate passes.
+- **Compatibility boundary**: All production body contracts retain
+  `enforcedStatuses: []`. This commit defines and validates the contract shape
+  without enforcing semantic tables on active consumers before their planned
+  migration.
+
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-4.schema.json",
-  "schemaVersion": 4,
+  "$id": "https://hy-home.k8s/schemas/document-profiles-5.schema.json",
+  "schemaVersion": 5,
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -100,7 +100,32 @@
       "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Requirement ID",
+          "Acceptance criterion",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Requirement ID",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/ard",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/ard",
@@ -165,7 +190,34 @@
       "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Quality attribute or boundary",
+          "ADR / Spec"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "ADR / Spec",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/adr",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/adr",
@@ -230,7 +282,33 @@
       "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Decision lineage",
+          "Replacement relation",
+          "Affected Spec"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Decision lineage",
+        "targetLinkColumn": "Affected Spec",
+        "allowedSourceProfileIds": [
+          "sdlc/ard",
+          "sdlc/adr"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/spec",
@@ -303,7 +381,35 @@
       "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/api-spec",
@@ -378,7 +484,35 @@
       "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/agent-design",
@@ -455,7 +589,35 @@
       "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/data-model",
@@ -526,7 +688,35 @@
       "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/tests",
@@ -597,7 +787,35 @@
       "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/plan",
@@ -666,7 +884,37 @@
       "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Spec criterion",
+          "Work package",
+          "Expected Task"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "Spec criterion",
+        "targetLinkColumn": "Expected Task",
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/task",
@@ -729,7 +977,36 @@
       "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Criterion / work item",
+          "Result",
+          "Evidence"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Criterion / work item",
+            "kind": "work-item"
+          }
+        ],
+        "sourceLinkColumn": "Criterion / work item",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/plan",
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/guide",
@@ -794,7 +1071,31 @@
       "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Audience outcome",
+          "Operating surface"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/policy",
@@ -861,7 +1162,31 @@
       "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Control owner",
+          "Enforcement surface"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/runbook",
@@ -928,7 +1253,32 @@
       "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Trigger or control",
+          "Evidence or recovery owner"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task",
+          "sdlc/policy"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/incident",
@@ -995,7 +1345,26 @@
       "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Timeline or action",
+          "Evidence",
+          "Follow-up Task"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Follow-up Task",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "sdlc/postmortem",
@@ -1066,7 +1435,27 @@
       "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Root cause or action",
+          "Owner and due state",
+          "Follow-up Task",
+          "Feedback target"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Follow-up Task",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "content/reference",
@@ -1134,7 +1523,8 @@
       "template": "docs/99.templates/templates/common/reference.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "content/archive-tombstone",
@@ -1208,7 +1598,8 @@
       "template": "docs/99.templates/templates/common/archive-tombstone.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "governance/reference",
@@ -1272,7 +1663,8 @@
       "template": "docs/99.templates/templates/common/governance-reference.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "governance/memory",
@@ -1334,7 +1726,8 @@
       "template": "docs/99.templates/templates/common/memory.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "governance/template-support",
@@ -1398,7 +1791,8 @@
       "template": "docs/99.templates/templates/common/template-support.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "governance/progress-ledger",
@@ -1428,7 +1822,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/repository",
@@ -1469,7 +1864,8 @@
       "template": "docs/99.templates/templates/common/readme-repository.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/stage-index",
@@ -1544,7 +1940,8 @@
       "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/collection-index",
@@ -1647,7 +2044,8 @@
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/implementation",
@@ -1733,7 +2131,8 @@
       "template": "docs/99.templates/templates/common/readme-implementation.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/snapshot-pack",
@@ -1778,7 +2177,8 @@
       "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "readme/workspace-staging",
@@ -1818,7 +2218,8 @@
       "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/root-provider-shim",
@@ -1852,7 +2253,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/local-agent-asset",
@@ -1878,7 +2280,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/repository-runtime-baseline",
@@ -1908,7 +2311,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/provider-native-metadata",
@@ -1934,7 +2338,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/github-native-control",
@@ -1960,16 +2365,17 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
-      "id": "exception/native-contract",
+      "id": "exception/native-contract-openapi",
       "class": "exception",
       "mode": "classification-only",
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/(?:openapi\\.yaml|schema\\.graphql|service\\.proto)$"
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/openapi\\.yaml$"
         }
       ],
       "frontmatter": {
@@ -1983,10 +2389,65 @@
         "required": [],
         "allowed": []
       },
-      "template": null,
+      "template": "docs/99.templates/templates/sdlc/specs/openapi.template.yaml",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "exception/native-contract-graphql",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/schema\\.graphql$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/schema.template.graphql",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "exception/native-contract-protobuf",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/service\\.proto$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/service.template.proto",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/generated-record",
@@ -2012,7 +2473,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "exception/program-non-target",
@@ -2042,7 +2504,8 @@
       "template": null,
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/content/archive-tombstone",
@@ -2118,7 +2581,8 @@
         "content/archive-tombstone"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/governance/memory",
@@ -2182,7 +2646,8 @@
         "governance/memory"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/repository",
@@ -2225,7 +2690,8 @@
         "readme/repository"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/stage-index",
@@ -2266,7 +2732,8 @@
         "readme/stage-index"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/collection-index",
@@ -2307,7 +2774,8 @@
         "readme/collection-index"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/implementation",
@@ -2351,7 +2819,8 @@
         "readme/implementation"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/snapshot-pack",
@@ -2394,7 +2863,8 @@
         "readme/snapshot-pack"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/readme/workspace-staging",
@@ -2436,7 +2906,8 @@
         "readme/workspace-staging"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/content/reference",
@@ -2506,7 +2977,8 @@
         "content/reference"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/sdlc/adr",
@@ -2573,7 +3045,33 @@
         "sdlc/adr"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Decision lineage",
+          "Replacement relation",
+          "Affected Spec"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Decision lineage",
+        "targetLinkColumn": "Affected Spec",
+        "allowedSourceProfileIds": [
+          "sdlc/ard",
+          "sdlc/adr"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/ard",
@@ -2640,7 +3138,34 @@
         "sdlc/ard"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Quality attribute or boundary",
+          "ADR / Spec"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "ADR / Spec",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/adr",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/plan",
@@ -2711,7 +3236,37 @@
         "sdlc/plan"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Spec criterion",
+          "Work package",
+          "Expected Task"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "Spec criterion",
+        "targetLinkColumn": "Expected Task",
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/task",
@@ -2776,7 +3331,36 @@
         "sdlc/task"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Criterion / work item",
+          "Result",
+          "Evidence"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Criterion / work item",
+            "kind": "work-item"
+          }
+        ],
+        "sourceLinkColumn": "Criterion / work item",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/plan",
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/guide",
@@ -2843,7 +3427,31 @@
         "sdlc/guide"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Audience outcome",
+          "Operating surface"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/incident",
@@ -2912,7 +3520,26 @@
         "sdlc/incident"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Timeline or action",
+          "Evidence",
+          "Follow-up Task"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Follow-up Task",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/policy",
@@ -2981,7 +3608,31 @@
         "sdlc/policy"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Control owner",
+          "Enforcement surface"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/postmortem",
@@ -3054,7 +3705,27 @@
         "sdlc/postmortem"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Root cause or action",
+          "Owner and due state",
+          "Follow-up Task",
+          "Feedback target"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Follow-up Task",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/runbook",
@@ -3123,7 +3794,32 @@
         "sdlc/runbook"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Promoted owner",
+          "Trigger or control",
+          "Evidence or recovery owner"
+        ],
+        "identifierColumns": [],
+        "sourceLinkColumn": "Promoted owner",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/spec",
+          "sdlc/api-spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/task",
+          "sdlc/policy"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/prd",
@@ -3196,7 +3892,32 @@
         "sdlc/prd"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "Requirement ID",
+          "Acceptance criterion",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Requirement ID",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": null,
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [],
+        "allowedTargetProfileIds": [
+          "sdlc/ard",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/agent-design",
@@ -3275,7 +3996,35 @@
         "sdlc/agent-design"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/api-spec",
@@ -3352,7 +4101,35 @@
         "sdlc/api-spec"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/data-model",
@@ -3425,7 +4202,35 @@
         "sdlc/data-model"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/spec",
@@ -3500,7 +4305,35 @@
         "sdlc/spec"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "template/sdlc/tests",
@@ -3573,7 +4406,35 @@
         "sdlc/tests"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
+        "identifierColumns": [
+          {
+            "column": "PRD requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Spec criterion",
+            "kind": "criterion"
+          }
+        ],
+        "sourceLinkColumn": "PRD requirement",
+        "targetLinkColumn": null,
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
     },
     {
       "id": "governance/progress-entry",
@@ -3613,7 +4474,8 @@
           "Evidence",
           "Handoff"
         ]
-      }
+      },
+      "bodyContract": null
     },
     {
       "id": "template/governance/reference",
@@ -3679,7 +4541,8 @@
         "governance/reference"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     },
     {
       "id": "template/governance/template-support",
@@ -3745,7 +4608,8 @@
         "governance/template-support"
       ],
       "placeholderPolicy": "template-only",
-      "appendContract": null
+      "appendContract": null,
+      "bodyContract": null
     }
   ],
   "governanceCurrentOwners": {
@@ -3836,7 +4700,8 @@
       "029",
       "030",
       "031",
-      "032"
+      "032",
+      "033"
     ]
   }
 }
