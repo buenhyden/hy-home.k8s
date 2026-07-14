@@ -333,7 +333,15 @@ the implementation diff.
 - **Current Audit Finding**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
 - **Current Remediation Roadmap**: [Integrated Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
 
-### Planned execution
+### Lifecycle Traceability
 
-The approved implementation Plan and Task will use the repository's dated
-Stage 04 routes and will be linked here after the planning gate completes.
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01, REQ-PRD-FUN-02](../../01.requirements/005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-001 through VAL-TLCN-004 | Registry mutation tests, registry-derived form inventory, and focused support-owner scans |
+| [REQ-PRD-FUN-05, REQ-PRD-FUN-12](../../01.requirements/005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-005 through VAL-TLCN-009 | Five-key metadata validation, lifecycle-table fixtures, reciprocal-link validation, and historical-body diff guard |
+| [REQ-PRD-FUN-10, REQ-PRD-MET-08](../../01.requirements/005-workspace-document-assurance-modernization.md#success--acceptance-criteria) | VAL-TLCN-010 | Logical commits, independent reviews, strict repository gates, and all-files pre-commit |
+
+### Execution
+
+- [Implementation Plan](../../04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md)
+- [Execution Task](../../04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md)

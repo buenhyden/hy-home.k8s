@@ -95,6 +95,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-12-authored-document-migration.md
 ├── 2026-07-12-affected-surface-agent-qa.md
 ├── 2026-07-12-protected-surface-supply-chain-hardening.md
+├── 2026-07-14-template-lifecycle-contract-normalization.md
 └── README.md
 ```
 
@@ -171,6 +172,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
 | [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 plan for canonical affected-surface selection, local/CI parity, cross-surface role semantics, and Stage 00 QA handoff with reciprocal [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Task](../tasks/2026-07-12-affected-surface-agent-qa.md) lineage. | Done | 2026-07-14 |
 | [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 plan for immutable Action identity, least privilege, identity-only GitOps review, local-only Vault/ESO and secret-boundary hardening, and repository-static closure with reciprocal [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Task](../tasks/2026-07-12-protected-surface-supply-chain-hardening.md) lineage. | Done | 2026-07-14 |
+| [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | Active TLCN-001 through TLCN-008 plan for registry v5 body contracts, canonical form normalization, current-consumer migration, and historical-evidence preservation under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md). | Active | 2026-07-14 |
 
 ## Related Documents
 

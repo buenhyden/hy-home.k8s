@@ -96,6 +96,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-12-authored-document-migration.md
 ├── 2026-07-12-affected-surface-agent-qa.md
 ├── 2026-07-12-protected-surface-supply-chain-hardening.md
+├── 2026-07-14-template-lifecycle-contract-normalization.md
 └── README.md
 ```
 
@@ -174,6 +175,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | ADM-001 through ADM-007 execution evidence for durable inventory, authored-document normalization, cloud consolidation, and strict cutover. | Done | 2026-07-13 |
 | [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 execution evidence for reciprocal lineage, affected-surface selection, local/CI parity, cross-surface role semantics, and Stage 00 QA handoff under the parent [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Plan](../plans/2026-07-12-affected-surface-agent-qa.md). | Done | 2026-07-14 |
 | [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 execution evidence for Action identity, workflow permissions, identity-only GitOps review, Vault/ESO boundaries, full repository-static QA, independent review, and explicit remote/live `DEFER` under the parent [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Plan](../plans/2026-07-12-protected-surface-supply-chain-hardening.md). | Done | 2026-07-14 |
+| [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | Active TLCN execution record for registry-owned lifecycle contracts, normalized Stage 99 forms, current active consumer migration, strict validation, and immutable-history proof under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md) and its [Plan](../plans/2026-07-14-template-lifecycle-contract-normalization.md). | Active | 2026-07-14 |
 
 ## Related Documents
 
