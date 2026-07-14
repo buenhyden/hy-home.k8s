@@ -41,8 +41,6 @@ python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
-import copy
-import hashlib
 import json
 import os
 import pathlib
