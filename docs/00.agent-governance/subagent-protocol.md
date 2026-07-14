@@ -1,7 +1,7 @@
 ---
 title: 'Reference: Subagent Protocol'
 type: governance/reference
-status: draft
+status: active
 owner: platform
 updated: 2026-07-14
 ---

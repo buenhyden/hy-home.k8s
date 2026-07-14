@@ -1,9 +1,9 @@
 ---
 title: 'Stage Checklists'
 type: governance/reference
-status: draft
+status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Stage Checklists

@@ -38,6 +38,49 @@ This README is primarily for:
 
 ## Document Index
 
+The document-profile registry owns this exhaustive path set. Each lifecycle
+cell mirrors the target document's frontmatter and is validated for exact path,
+status, uniqueness, and order.
+
+### Current Governance Authority Index
+
+| Document | Lifecycle |
+| --- | --- |
+| [`common-governance.md`](common-governance.md) | `active` |
+| [`harness-catalog.md`](harness-catalog.md) | `active` |
+| [`harness-implementation-map.md`](harness-implementation-map.md) | `active` |
+| [`model-policy.md`](model-policy.md) | `active` |
+| [`agents-md.md`](providers/agents-md.md) | `active` |
+| [`claude.md`](providers/claude.md) | `active` |
+| [`codex.md`](providers/codex.md) | `active` |
+| [`gemini.md`](providers/gemini.md) | `active` |
+| [`agentic.md`](rules/agentic.md) | `active` |
+| [`approval-boundaries.md`](rules/approval-boundaries.md) | `active` |
+| [`bootstrap.md`](rules/bootstrap.md) | `active` |
+| [`document-stage-routing.md`](rules/document-stage-routing.md) | `active` |
+| [`documentation-protocol.md`](rules/documentation-protocol.md) | `active` |
+| [`git-workflow.md`](rules/git-workflow.md) | `active` |
+| [`persona.md`](rules/persona.md) | `active` |
+| [`postflight-checklist.md`](rules/postflight-checklist.md) | `active` |
+| [`preflight-checklist.md`](rules/preflight-checklist.md) | `active` |
+| [`quality-standards.md`](rules/quality-standards.md) | `active` |
+| [`stage-authoring-matrix.md`](rules/stage-authoring-matrix.md) | `active` |
+| [`stage-checklists.md`](rules/stage-checklists.md) | `active` |
+| [`standards.md`](rules/standards.md) | `active` |
+| [`architecture.md`](scopes/architecture.md) | `active` |
+| [`backend.md`](scopes/backend.md) | `active` |
+| [`docs.md`](scopes/docs.md) | `active` |
+| [`frontend.md`](scopes/frontend.md) | `active` |
+| [`infra.md`](scopes/infra.md) | `active` |
+| [`meta.md`](scopes/meta.md) | `active` |
+| [`ops.md`](scopes/ops.md) | `active` |
+| [`product.md`](scopes/product.md) | `active` |
+| [`qa.md`](scopes/qa.md) | `active` |
+| [`security.md`](scopes/security.md) | `active` |
+| [`subagent-protocol.md`](subagent-protocol.md) | `active` |
+
+### Directory Map
+
 Key folders in this area:
 
 - `rules/`: global policy, checklists, and documentation protocol

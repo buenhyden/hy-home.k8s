@@ -8,6 +8,7 @@ import copy
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -17,6 +18,7 @@ from document_contracts import (
     BASELINE_COUNT,
     BASELINE_SHA,
     REGISTRY_PATH,
+    SCHEMA_PATH,
     DocumentContractError,
     TargetInventory,
     classify_path,
@@ -30,6 +32,10 @@ from document_contracts import (
 
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
+CURRENT_OWNER_SAMPLE_PATHS = (
+    "docs/00.agent-governance/current-alpha.md",
+    "docs/00.agent-governance/current-beta.md",
+)
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
@@ -44,6 +50,84 @@ EXPECTED_CASES = (
     ("missing-template", "point-to-missing-template", ("REGISTRY_TEMPLATE",)),
     ("wrong-baseline-sha", "change-baseline-sha", ("REGISTRY_BASELINE_SHA",)),
     ("wrong-baseline-count", "change-baseline-count", ("REGISTRY_BASELINE_COUNT",)),
+    (
+        "malformed-governance-current-owners",
+        "malform-governance-current-owners",
+        ("REGISTRY_SCHEMA",),
+    ),
+    (
+        "missing-governance-current-owners",
+        "remove-governance-current-owners",
+        ("REGISTRY_SCHEMA",),
+    ),
+    (
+        "invalid-governance-current-owner-path",
+        "invalidate-governance-current-owner-path",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",),
+    ),
+    (
+        "noncanonical-governance-current-owner-path",
+        "double-slash-governance-current-owner-path",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",),
+    ),
+    (
+        "normalized-alias-governance-current-owner-duplicate",
+        "normalized-alias-governance-current-owner-duplicate",
+        (
+            "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",
+            "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE",
+        ),
+    ),
+    (
+        "control-character-governance-current-owner-path",
+        "nul-governance-current-owner-path",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",),
+    ),
+    (
+        "duplicate-governance-current-owner",
+        "duplicate-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE",),
+    ),
+    (
+        "unsorted-governance-current-owners",
+        "reverse-governance-current-owners",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_ORDER",),
+    ),
+    (
+        "missing-governance-current-owner",
+        "missing-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",),
+    ),
+    (
+        "untracked-governance-current-owner",
+        "untracked-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",),
+    ),
+    (
+        "symlink-governance-current-owner",
+        "symlink-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",),
+    ),
+    (
+        "wrong-profile-governance-current-owner",
+        "wrong-profile-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",),
+    ),
+    (
+        "non-authored-governance-current-owner",
+        "non-authored-governance-current-owner",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",),
+    ),
+    (
+        "wrong-governance-current-owner-state-contract",
+        "reverse-governance-current-owner-states",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE",),
+    ),
+    (
+        "missing-governance-current-owner-state-contract",
+        "remove-governance-current-owner-states",
+        ("REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE",),
+    ),
 )
 
 DOCUMENT_PROFILE_CONTRACT_V1 = {
@@ -246,8 +330,8 @@ def _assert_document_profile_contract_mutation_proof(
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-1.schema.json",
-        "schemaVersion": 1,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-2.schema.json",
+        "schemaVersion": 2,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -277,8 +361,36 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "sourceProfileIds": [],
                 "placeholderPolicy": "forbidden",
                 "appendContract": None,
-            }
+            },
+            {
+                "id": "governance/reference",
+                "class": "governance",
+                "mode": "authored",
+                "routes": [
+                    {
+                        "kind": "regex",
+                        "value": "^docs/00\\.agent-governance/.+\\.md$",
+                    }
+                ],
+                "frontmatter": {
+                    "mode": "required",
+                    "required": ["title", "type", "status", "owner", "updated"],
+                    "allowed": ["title", "type", "status", "owner", "updated"],
+                    "order": ["title", "type", "status", "owner", "updated"],
+                },
+                "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+                "headings": {"required": [], "allowed": []},
+                "template": None,
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+            },
         ],
+        "governanceCurrentOwners": {
+            "profileId": "governance/reference",
+            "allowedStates": ["active", "accepted"],
+            "paths": list(CURRENT_OWNER_SAMPLE_PATHS),
+        },
         "programLineage": {
             "prd": "005",
             "ard": "0008",
@@ -333,6 +445,75 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "change-baseline-count":
         raw_registry["baseline"]["count"] += 1
+        return
+    if mutation == "malform-governance-current-owners":
+        raw_registry["governanceCurrentOwners"] = []
+        return
+    if mutation == "remove-governance-current-owners":
+        del raw_registry["governanceCurrentOwners"]
+        return
+    if mutation == "invalidate-governance-current-owner-path":
+        raw_registry["governanceCurrentOwners"]["paths"][0] = "../escape.md"
+        return
+    if mutation == "double-slash-governance-current-owner-path":
+        raw_registry["governanceCurrentOwners"]["paths"][0] = (
+            "docs/00.agent-governance//current-alpha.md"
+        )
+        return
+    if mutation == "normalized-alias-governance-current-owner-duplicate":
+        raw_registry["governanceCurrentOwners"]["paths"].insert(
+            1, "docs/00.agent-governance//current-alpha.md"
+        )
+        return
+    if mutation == "nul-governance-current-owner-path":
+        raw_registry["governanceCurrentOwners"]["paths"][0] = (
+            "docs/00.agent-governance/current-\x00owner.md"
+        )
+        return
+    if mutation == "duplicate-governance-current-owner":
+        raw_registry["governanceCurrentOwners"]["paths"].append(
+            CURRENT_OWNER_SAMPLE_PATHS[0]
+        )
+        return
+    if mutation == "reverse-governance-current-owners":
+        raw_registry["governanceCurrentOwners"]["paths"].reverse()
+        return
+    if mutation == "missing-governance-current-owner":
+        raw_registry["governanceCurrentOwners"]["paths"][1] = (
+            "docs/00.agent-governance/current-zmissing.md"
+        )
+        return
+    if mutation == "untracked-governance-current-owner":
+        raw_registry["governanceCurrentOwners"]["paths"][1] = (
+            "docs/00.agent-governance/current-untracked.md"
+        )
+        return
+    if mutation == "symlink-governance-current-owner":
+        raw_registry["governanceCurrentOwners"]["paths"][1] = (
+            "docs/00.agent-governance/current-symlink.md"
+        )
+        return
+    if mutation == "wrong-profile-governance-current-owner":
+        governance_profile = next(
+            candidate
+            for candidate in raw_registry["profiles"]
+            if candidate["id"] == "governance/reference"
+        )
+        governance_profile["id"] = "test/wrong-governance-profile"
+        return
+    if mutation == "non-authored-governance-current-owner":
+        governance_profile = next(
+            candidate
+            for candidate in raw_registry["profiles"]
+            if candidate["id"] == "governance/reference"
+        )
+        governance_profile["mode"] = "native"
+        return
+    if mutation == "reverse-governance-current-owner-states":
+        raw_registry["governanceCurrentOwners"]["allowedStates"].reverse()
+        return
+    if mutation == "remove-governance-current-owner-states":
+        del raw_registry["governanceCurrentOwners"]["allowedStates"]
         return
     raise ValueError(f"unsupported fixture mutation: {mutation}")
 
@@ -1261,30 +1442,57 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 1
+        fixture.get("schemaVersion") != 2
         or fixture.get("negativeFixtureSamplePath") != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
         print("FAIL document contract registry self-test: fixture contract mismatch")
         return 1
 
-    for name, mutation, expected in EXPECTED_CASES:
-        mutated = _minimal_fixture_registry()
-        _mutate(mutated, mutation)
-        diagnostics = ()
-        try:
-            registry = validate_registry(root, mutated)
-        except DocumentContractError as exc:
-            diagnostics = exc.diagnostics
-        else:
-            diagnostics = classify_paths(registry, (SAMPLE_PATH,))
-        actual = _ordered_rule_ids(diagnostics)
-        if actual != expected:
-            print(
-                f"FAIL document contract registry self-test: {name}: "
-                f"expected {list(expected)!r}, got {list(actual)!r}"
-            )
-            return 1
+    with tempfile.TemporaryDirectory(prefix="document-registry-current-owner-") as tmp:
+        fixture_root = Path(tmp)
+        schema_target = fixture_root / SCHEMA_PATH
+        schema_target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(root / SCHEMA_PATH, schema_target)
+        for raw_path in CURRENT_OWNER_SAMPLE_PATHS:
+            target = fixture_root / raw_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("# Synthetic current authority\n", encoding="utf-8")
+        untracked = fixture_root / "docs/00.agent-governance/current-untracked.md"
+        untracked.write_text("# Untracked synthetic authority\n", encoding="utf-8")
+        symlink = fixture_root / "docs/00.agent-governance/current-symlink.md"
+        symlink.symlink_to("current-alpha.md")
+        subprocess.run(
+            ["git", "init", "--quiet"], cwd=fixture_root, check=True
+        )
+        subprocess.run(
+            [
+                "git",
+                "add",
+                "--",
+                *CURRENT_OWNER_SAMPLE_PATHS,
+                "docs/00.agent-governance/current-symlink.md",
+            ],
+            cwd=fixture_root,
+            check=True,
+        )
+        for name, mutation, expected in EXPECTED_CASES:
+            mutated = _minimal_fixture_registry()
+            _mutate(mutated, mutation)
+            diagnostics = ()
+            try:
+                registry = validate_registry(fixture_root, mutated)
+            except DocumentContractError as exc:
+                diagnostics = exc.diagnostics
+            else:
+                diagnostics = classify_paths(registry, (SAMPLE_PATH,))
+            actual = _ordered_rule_ids(diagnostics)
+            if actual != expected:
+                print(
+                    f"FAIL document contract registry self-test: {name}: "
+                    f"expected {list(expected)!r}, got {list(actual)!r}"
+                )
+                return 1
 
     try:
         _assert_parser_safety()
@@ -1318,7 +1526,7 @@ def _self_test(root: Path) -> int:
 
     print(
         "PASS document contract registry self-test: "
-        f"9 cases, {profile_count} profiles, {template_count} templates; "
+        f"{len(EXPECTED_CASES)} cases, {profile_count} profiles, {template_count} templates; "
         "README fixture 8/8, mutation probes passed"
     )
     return 0

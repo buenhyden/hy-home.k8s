@@ -104,11 +104,19 @@ class DocumentProfile:
 
 
 @dataclass(frozen=True)
+class GovernanceCurrentOwners:
+    profile_id: str
+    allowed_states: tuple[str, ...]
+    paths: tuple[PurePosixPath, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     baseline_sha: str
     baseline_count: int
     profiles: tuple[DocumentProfile, ...]
+    governance_current_owners: GovernanceCurrentOwners
 
 
 @dataclass(frozen=True)
@@ -167,6 +175,8 @@ def _normalize_relative_path(value: str | PurePosixPath) -> PurePosixPath:
         raise ValueError("path must not start with './'")
     if "\\" in raw:
         raise ValueError("path must use POSIX separators")
+    if any(ord(character) < 32 or ord(character) == 127 for character in raw):
+        raise ValueError("path must not contain control characters")
     path = PurePosixPath(raw)
     if path.is_absolute():
         raise ValueError("path must be repository-relative")
@@ -395,6 +405,17 @@ def _compile_route(value: str) -> re.Pattern[str]:
 
 def _schema_rule_id(error: Any) -> str:
     path = tuple(error.absolute_path)
+    if path and path[0] == "governanceCurrentOwners":
+        if error.validator == "required" and "allowedStates" in error.message:
+            return "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
+        if error.validator == "required" and "paths" in error.message:
+            return "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
+        if len(path) >= 2 and path[1] == "allowedStates":
+            return "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
+        if len(path) >= 2 and path[1] == "paths":
+            if error.validator == "uniqueItems":
+                return "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE"
+            return "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
     if len(path) >= 4 and path[-1] == "kind" and "routes" in path:
         return "REGISTRY_ROUTE_KIND"
     return "REGISTRY_SCHEMA"
@@ -558,15 +579,148 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     )
                 )
 
+    raw_current_owners = raw_registry["governanceCurrentOwners"]
+    raw_current_paths = raw_current_owners["paths"]
+    normalized_current_paths: list[PurePosixPath] = []
+    for raw_path in raw_current_paths:
+        try:
+            normalized_path = _normalize_relative_path(raw_path)
+            normalized_current_paths.append(normalized_path)
+            if normalized_path.as_posix() != raw_path:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",
+                        expected="a canonical POSIX repository-relative path",
+                        actual="declared path is not canonical",
+                    )
+                )
+        except ValueError as exc:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",
+                    expected="a normalized POSIX repository-relative path",
+                    actual=str(exc),
+                )
+            )
+
+    normalized_values = [path.as_posix() for path in normalized_current_paths]
+    if len(normalized_values) != len(set(normalized_values)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE",
+                expected="unique canonical repository-relative paths",
+                actual="normalized paths contain a duplicate",
+            )
+        )
+    if normalized_values != sorted(normalized_values):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_GOVERNANCE_CURRENT_OWNER_ORDER",
+                expected="unique paths in ascending repository-relative order",
+                actual="paths are not sorted",
+            )
+        )
+
     if diagnostics:
         raise DocumentContractError(diagnostics)
 
-    return Registry(
+    registry = Registry(
         schema_version=raw_registry["schemaVersion"],
         baseline_sha=baseline["sha"],
         baseline_count=baseline["count"],
         profiles=tuple(_profile_from_mapping(profile) for profile in raw_profiles),
+        governance_current_owners=GovernanceCurrentOwners(
+            profile_id=raw_current_owners["profileId"],
+            allowed_states=tuple(raw_current_owners["allowedStates"]),
+            paths=tuple(normalized_current_paths),
+        ),
     )
+
+    current_owner_diagnostics: list[Diagnostic] = []
+    tracked_current_owner_entries: dict[PurePosixPath, list[_GitEntry]] = {}
+    for entry in _parse_ls_files_stage_z(
+        _run_git(
+            root,
+            (
+                "ls-files",
+                "--stage",
+                "-z",
+                "--",
+                *(
+                    path.as_posix()
+                    for path in registry.governance_current_owners.paths
+                ),
+            ),
+        )
+    ):
+        tracked_current_owner_entries.setdefault(entry.path, []).append(entry)
+    for path in registry.governance_current_owners.paths:
+        try:
+            mode = _lstat_named_path(root, path)
+        except ValueError:
+            current_owner_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
+                    path=path,
+                    profile=registry.governance_current_owners.profile_id,
+                    expected="an existing regular repository file",
+                    actual="declared path is missing",
+                )
+            )
+            continue
+        if not stat.S_ISREG(mode):
+            current_owner_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
+                    path=path,
+                    profile=registry.governance_current_owners.profile_id,
+                    expected="an existing regular repository file",
+                    actual="declared path is not a regular file",
+                )
+            )
+            continue
+        tracked_entries = tracked_current_owner_entries.get(path, [])
+        if (
+            len(tracked_entries) != 1
+            or tracked_entries[0].path != path
+            or tracked_entries[0].stage != 0
+            or not tracked_entries[0].mode.startswith("100")
+        ):
+            current_owner_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
+                    path=path,
+                    profile=registry.governance_current_owners.profile_id,
+                    expected="one tracked regular repository Markdown file",
+                    actual="declared path is not a tracked regular file",
+                )
+            )
+            continue
+        try:
+            actual_profile = classify_path(registry, path)
+        except DocumentContractError as exc:
+            current_owner_diagnostics.extend(exc.diagnostics)
+            continue
+        if (
+            actual_profile.profile_id
+            != registry.governance_current_owners.profile_id
+            or actual_profile.mode != "authored"
+        ):
+            current_owner_diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
+                    path=path,
+                    profile=actual_profile.profile_id,
+                    expected=(
+                        "authored "
+                        + registry.governance_current_owners.profile_id
+                    ),
+                    actual=f"{actual_profile.mode} {actual_profile.profile_id}",
+                )
+            )
+    if current_owner_diagnostics:
+        raise DocumentContractError(current_owner_diagnostics)
+    return registry
 
 
 def load_registry(root: Path) -> Registry:

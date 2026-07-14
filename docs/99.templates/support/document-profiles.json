@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-1.schema.json",
-  "schemaVersion": 1,
+  "$id": "https://hy-home.k8s/schemas/document-profiles-2.schema.json",
+  "schemaVersion": 2,
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -3752,6 +3752,47 @@
       "appendContract": null
     }
   ],
+  "governanceCurrentOwners": {
+    "profileId": "governance/reference",
+    "allowedStates": [
+      "active",
+      "accepted"
+    ],
+    "paths": [
+      "docs/00.agent-governance/common-governance.md",
+      "docs/00.agent-governance/harness-catalog.md",
+      "docs/00.agent-governance/harness-implementation-map.md",
+      "docs/00.agent-governance/model-policy.md",
+      "docs/00.agent-governance/providers/agents-md.md",
+      "docs/00.agent-governance/providers/claude.md",
+      "docs/00.agent-governance/providers/codex.md",
+      "docs/00.agent-governance/providers/gemini.md",
+      "docs/00.agent-governance/rules/agentic.md",
+      "docs/00.agent-governance/rules/approval-boundaries.md",
+      "docs/00.agent-governance/rules/bootstrap.md",
+      "docs/00.agent-governance/rules/document-stage-routing.md",
+      "docs/00.agent-governance/rules/documentation-protocol.md",
+      "docs/00.agent-governance/rules/git-workflow.md",
+      "docs/00.agent-governance/rules/persona.md",
+      "docs/00.agent-governance/rules/postflight-checklist.md",
+      "docs/00.agent-governance/rules/preflight-checklist.md",
+      "docs/00.agent-governance/rules/quality-standards.md",
+      "docs/00.agent-governance/rules/stage-authoring-matrix.md",
+      "docs/00.agent-governance/rules/stage-checklists.md",
+      "docs/00.agent-governance/rules/standards.md",
+      "docs/00.agent-governance/scopes/architecture.md",
+      "docs/00.agent-governance/scopes/backend.md",
+      "docs/00.agent-governance/scopes/docs.md",
+      "docs/00.agent-governance/scopes/frontend.md",
+      "docs/00.agent-governance/scopes/infra.md",
+      "docs/00.agent-governance/scopes/meta.md",
+      "docs/00.agent-governance/scopes/ops.md",
+      "docs/00.agent-governance/scopes/product.md",
+      "docs/00.agent-governance/scopes/qa.md",
+      "docs/00.agent-governance/scopes/security.md",
+      "docs/00.agent-governance/subagent-protocol.md"
+    ]
+  },
   "programLineage": {
     "prd": "005",
     "ard": "0008",

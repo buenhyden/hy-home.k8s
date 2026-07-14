@@ -387,7 +387,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/00.agent-governance/rules/fixture.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: active\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",

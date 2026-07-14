@@ -1,9 +1,9 @@
 ---
 title: 'Document Stage Routing Rules (April 2026)'
 type: governance/reference
-status: draft
+status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Document Stage Routing Rules (April 2026)

@@ -3,6 +3,9 @@
   "baseTree": {
     "documents": [
       {"path": ".agents/skills/example/skill.md", "profile": "exception/provider-native", "profileClass": "exception", "mode": "native", "title": "", "type": "", "status": "", "body": "# Fixture skill"},
+      {"path": "docs/00.agent-governance/README.md", "profile": "readme/stage-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Governance\n\n## Document Index\n\n### Current Governance Authority Index\n\n| Document | Lifecycle |\n| --- | --- |\n| [`current-alpha.md`](current-alpha.md) | `active` |\n| [`current-beta.md`](current-beta.md) | `active` |\n"},
+      {"path": "docs/00.agent-governance/current-alpha.md", "profile": "governance/reference", "profileClass": "governance", "mode": "authored", "title": "Current Alpha Governance", "type": "governance/reference", "status": "active", "body": "Current alpha governance authority."},
+      {"path": "docs/00.agent-governance/current-beta.md", "profile": "governance/reference", "profileClass": "governance", "mode": "authored", "title": "Current Beta Governance", "type": "governance/reference", "status": "active", "body": "Current beta governance authority."},
       {"path": "docs/01.requirements/999-fixture.md", "profile": "sdlc/prd", "profileClass": "sdlc", "mode": "authored", "title": "Fixture Product Requirements", "type": "sdlc/prd", "status": "active", "body": "Fixture PRD."},
       {"path": "docs/03.specs/998-second/spec.md", "profile": "sdlc/spec", "profileClass": "sdlc", "mode": "authored", "title": "Second Technical Specification", "type": "sdlc/spec", "status": "active", "body": "Second Spec."},
       {"path": "docs/03.specs/999-fixture/spec.md", "profile": "sdlc/spec", "profileClass": "sdlc", "mode": "authored", "title": "Fixture Technical Specification", "type": "sdlc/spec", "status": "active", "body": "Fixture Spec."},
@@ -18,7 +21,9 @@
     ],
     "declaredIndexes": ["docs/03.specs/README.md", "docs/04.execution/plans/README.md", "docs/04.execution/tasks/README.md"],
     "ledgerColumns": ["path", "title", "profile", "owner-key", "disposition", "destination", "local-evidence", "official-sources", "observed-version", "applicability", "content-decision", "refresh-trigger", "reviewer", "result"],
-    "symlinkAdapters": [{"path": ".claude/skills", "target": "../.agents/skills"}]
+    "symlinkAdapters": [{"path": ".claude/skills", "target": "../.agents/skills"}],
+    "governanceCurrentOwners": ["docs/00.agent-governance/current-alpha.md", "docs/00.agent-governance/current-beta.md"],
+    "governanceMirrorPath": "docs/00.agent-governance/README.md"
   },
   "cases": [
     {"name": "valid-tree", "tree": {"base": "baseTree"}, "mutation": {"kind": "none"}, "expected_rule_ids": []},
@@ -44,6 +49,24 @@
     {"name": "owner-fallback-lineage", "tree": {"base": "baseTree"}, "mutation": {"kind": "owner-fallback"}, "expected_rule_ids": []},
     {"name": "owner-exclusions", "tree": {"base": "baseTree"}, "mutation": {"kind": "owner-exclusions"}, "expected_rule_ids": []},
     {"name": "owner-missing-component", "tree": {"base": "baseTree"}, "mutation": {"kind": "owner-missing"}, "expected_rule_ids": ["OWNER-KEY-MISSING"]},
+    {"name": "governance-declared-active", "tree": {"base": "baseTree"}, "mutation": {"kind": "none"}, "expected_rule_ids": []},
+    {"name": "governance-declared-accepted", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-declared-accepted"}, "expected_rule_ids": []},
+    {"name": "governance-undeclared-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-undeclared-draft"}, "expected_rule_ids": []},
+    {"name": "governance-declared-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-declared-draft"}, "expected_rule_ids": ["GOVERNANCE-OWNER-STATUS"]},
+    {"name": "governance-declared-done", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-declared-done"}, "expected_rule_ids": ["GOVERNANCE-OWNER-STATUS"]},
+    {"name": "governance-declared-archived", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-declared-archived"}, "expected_rule_ids": ["GOVERNANCE-OWNER-STATUS"]},
+    {"name": "governance-active-undeclared", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-active-undeclared"}, "expected_rule_ids": ["GOVERNANCE-OWNER-UNDECLARED"]},
+    {"name": "governance-accepted-undeclared", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-accepted-undeclared"}, "expected_rule_ids": ["GOVERNANCE-OWNER-UNDECLARED"]},
+    {"name": "governance-undeclared-done", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-undeclared-done"}, "expected_rule_ids": ["GOVERNANCE-OWNER-ROUTE"]},
+    {"name": "governance-undeclared-archived", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-undeclared-archived"}, "expected_rule_ids": ["GOVERNANCE-OWNER-ROUTE"]},
+    {"name": "governance-declared-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-declared-missing"}, "expected_rule_ids": ["REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING"]},
+    {"name": "governance-index-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-missing"}, "expected_rule_ids": ["GOVERNANCE-INDEX-MISSING"]},
+    {"name": "governance-index-stale", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-stale"}, "expected_rule_ids": ["GOVERNANCE-INDEX-STALE"]},
+    {"name": "governance-index-duplicate", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-duplicate"}, "expected_rule_ids": ["GOVERNANCE-INDEX-DUPLICATE"]},
+    {"name": "governance-index-status", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-status"}, "expected_rule_ids": ["GOVERNANCE-INDEX-STATUS"]},
+    {"name": "governance-index-equal-count-swap", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-swap"}, "expected_rule_ids": ["GOVERNANCE-INDEX-MISSING", "GOVERNANCE-INDEX-STALE"]},
+    {"name": "governance-index-order", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-order"}, "expected_rule_ids": ["GOVERNANCE-INDEX-ORDER"]},
+    {"name": "governance-index-fenced-lookalike", "tree": {"base": "baseTree"}, "mutation": {"kind": "governance-index-lookalike"}, "expected_rule_ids": ["GOVERNANCE-INDEX-MISSING"]},
     {"name": "missing-ledger-row", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-missing-row"}, "expected_rule_ids": ["LEDGER-MISSING"]},
     {"name": "incomplete-ledger-row", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-incomplete"}, "expected_rule_ids": ["LEDGER-INCOMPLETE"]},
     {"name": "unknown-ledger-path", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-unknown"}, "expected_rule_ids": ["LEDGER-UNKNOWN-PATH"]}

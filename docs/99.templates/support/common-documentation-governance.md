@@ -3,7 +3,7 @@ title: 'Common Documentation Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Common Documentation Template Governance
@@ -24,18 +24,32 @@ knowledge consistent without forcing every common document into an SDLC phase.
 
 ### Common Profile Handoff
 
-The [Document Profile Registry](./document-profiles.json) owns the exact routes,
+The v2 [Document Profile Registry](./document-profiles.json) owns the exact routes,
 forms, headings, and metadata contracts for `readme/*`, `content/reference`,
 `content/archive-tombstone`, `governance/memory`,
 `governance/progress-ledger`, and `governance/progress-entry`. This document
 owns the human rationale for navigation, reference, preservation, and durable
 agent-learning roles without becoming another profile table.
+Its `governanceCurrentOwners.paths` declaration is the sole machine-owned set
+of current Stage 00 authorities; validators derive, rather than copy, that set.
 
 The [Document Type Format and Evidence
 Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 records the external and local evidence behind these role decisions.
 
 ## Authoring Rules
+
+### Governance Reference Lifecycle
+
+Living Stage 00 policy, provider notes, rosters, maps, and scope rules use
+`active` while they remain current execution authority. Use `accepted` only
+for a reviewed, stable, non-living governance reference that is still current;
+new governance-reference documents remain `draft` until an explicit promotion
+review. A retired authority leaves the live Stage 00 route through the archive
+and replacement process rather than remaining there as `done` or `archived`.
+The registry's current-owner declaration is the machine SSoT, document
+frontmatter owns lifecycle, and the Stage 00 README is only its validated human
+mirror.
 
 ### README Governance
 

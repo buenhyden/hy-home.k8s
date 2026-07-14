@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Model Selection Policy'
 type: governance/reference
-status: draft
+status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Model Selection Policy

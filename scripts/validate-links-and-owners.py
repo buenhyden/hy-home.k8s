@@ -62,7 +62,19 @@ IMPLEMENTED_RULES = frozenset({
     "INDEX-DUPLICATE", "INDEX-STATUS", "INDEX-TREE", "OWNER-KEY-MISSING",
     "OWNER-DUPLICATE", "LEDGER-MISSING", "LEDGER-INCOMPLETE",
     "LEDGER-UNKNOWN-PATH", "DEBT-UNUSED",
+    "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
+    "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE", "GOVERNANCE-OWNER-STATUS",
+    "GOVERNANCE-OWNER-UNDECLARED", "GOVERNANCE-OWNER-ROUTE",
+    "GOVERNANCE-INDEX-MISSING", "GOVERNANCE-INDEX-STALE",
+    "GOVERNANCE-INDEX-DUPLICATE", "GOVERNANCE-INDEX-STATUS",
+    "GOVERNANCE-INDEX-ORDER",
 })
+GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
+GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
+FIXTURE_GOVERNANCE_PATHS = (
+    PurePosixPath("docs/00.agent-governance/current-alpha.md"),
+    PurePosixPath("docs/00.agent-governance/current-beta.md"),
+)
 STATUS_MAP = {"active": "active", "done": "done", "archived": "archived"}
 OWNER_EXCLUSIONS = (
     re.compile(r"^docs/90\.references/(?:research|audits)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/"),
@@ -87,11 +99,6 @@ ADM_CLOSURE_PATHS = (
         "docs/04.execution/tasks/2026-07-12-authored-document-migration.md"
     ),
 )
-POST_ADM_CLOSURE_OWNER_KEYS = 61
-POST_SMDV_CLOSURE_OWNER_KEYS = 64
-PRE_SMDV_CLOSURE_OWNER_KEYS = 67
-
-
 @dataclass(frozen=True)
 class DeclaredIndex:
     path: PurePosixPath
@@ -126,6 +133,8 @@ class Context:
     texts: dict[PurePosixPath, str]
     metadata: dict[PurePosixPath, dict[str, Any]]
     adapter_targets: dict[PurePosixPath, PurePosixPath]
+    governance_current_paths: tuple[PurePosixPath, ...]
+    governance_current_states: tuple[str, ...]
 
 
 class ConfigurationError(ValueError):
@@ -218,7 +227,17 @@ def _build_context(root: Path, include_paths: tuple[PurePosixPath, ...] = ()) ->
         if normalized == ".." or normalized.startswith("../") or normalized.startswith("/"):
             raise ConfigurationError(f"symlink adapter escapes repository: {adapter.as_posix()}")
         adapters[adapter] = PurePosixPath(normalized)
-    return Context(root, inventory.current_paths, frozenset(inventory.baseline_paths), profiles, texts, metadata, adapters)
+    return Context(
+        root,
+        inventory.current_paths,
+        frozenset(inventory.baseline_paths),
+        profiles,
+        texts,
+        metadata,
+        adapters,
+        registry.governance_current_owners.paths,
+        registry.governance_current_owners.allowed_states,
+    )
 
 
 def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[str, ...]:
@@ -537,6 +556,218 @@ def _owner_diagnostics(context: Context) -> list[Diagnostic]:
     return _owner_state(context)[1]
 
 
+def _governance_mirror_rows(
+    context: Context,
+) -> list[tuple[PurePosixPath, str]] | None:
+    readme = context.texts.get(GOVERNANCE_CURRENT_README)
+    if readme is None:
+        return None
+    visible = _visible_markdown(readme).splitlines()
+    headings = [
+        index for index, line in enumerate(visible) if line == GOVERNANCE_CURRENT_HEADING
+    ]
+    if len(headings) != 1:
+        return None
+    parent_h2 = next(
+        (
+            line
+            for line in reversed(visible[: headings[0]])
+            if re.match(r"^##\s", line)
+        ),
+        "",
+    )
+    if parent_h2 != "## Document Index":
+        return None
+    cursor = headings[0] + 1
+    while cursor < len(visible) and not visible[cursor].strip():
+        cursor += 1
+    if cursor >= len(visible) or visible[cursor] != "| Document | Lifecycle |":
+        return None
+    cursor += 1
+    if cursor >= len(visible) or visible[cursor] != "| --- | --- |":
+        return None
+    cursor += 1
+    rows: list[tuple[PurePosixPath, str]] = []
+    while cursor < len(visible):
+        line = visible[cursor]
+        if re.match(r"^#{1,3}\s", line):
+            break
+        if not line.strip():
+            cursor += 1
+            continue
+        match = re.fullmatch(
+            r"\| \[`([^`]+)`\]\(([^\s?#)]+)\) \| `([^`]+)` \|",
+            line,
+        )
+        if match is None:
+            return None
+        kind, target = _local_destination(GOVERNANCE_CURRENT_README, match.group(2))
+        if kind != "local" or target is None or match.group(1) != target.name:
+            return None
+        rows.append((target, match.group(3).casefold()))
+        cursor += 1
+    return rows
+
+
+def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    declared = set(context.governance_current_paths)
+    allowed = set(context.governance_current_states)
+    for path in context.governance_current_paths:
+        if path not in context.paths:
+            diagnostics.append(
+                _diag(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
+                    path,
+                    "governance/reference",
+                    "declared tracked governance/reference document",
+                    "declared path is missing",
+                )
+            )
+            continue
+        profile = context.profiles[path]
+        if (
+            profile.profile_id != "governance/reference"
+            or profile.mode != "authored"
+        ):
+            diagnostics.append(
+                _diag(
+                    "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
+                    path,
+                    profile.profile_id,
+                    "authored governance/reference",
+                    f"{profile.mode} {profile.profile_id}",
+                )
+            )
+            continue
+        status = str(context.metadata[path].get("status", "")).casefold()
+        if status not in allowed:
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-OWNER-STATUS",
+                    path,
+                    profile.profile_id,
+                    "active or accepted",
+                    status or "missing",
+                )
+            )
+
+    for path in context.paths:
+        profile = context.profiles[path]
+        if (
+            profile.profile_id != "governance/reference"
+            or profile.mode != "authored"
+        ):
+            continue
+        status = str(context.metadata[path].get("status", "")).casefold()
+        if status in allowed and path not in declared:
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-OWNER-UNDECLARED",
+                    path,
+                    profile.profile_id,
+                    "active or accepted Stage 00 authority declared in the registry",
+                    "current authority is undeclared",
+                )
+            )
+        elif status in {"done", "archived"} and path not in declared:
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-OWNER-ROUTE",
+                    path,
+                    profile.profile_id,
+                    "draft candidate or declared active/accepted current authority",
+                    f"undeclared {status} document in the current Stage 00 route",
+                )
+            )
+
+    mirror_rows = _governance_mirror_rows(context)
+    if mirror_rows is None:
+        diagnostics.append(
+            _diag(
+                "GOVERNANCE-INDEX-MISSING",
+                GOVERNANCE_CURRENT_README,
+                context.profiles.get(
+                    GOVERNANCE_CURRENT_README,
+                    ProfileView("readme/stage-index", "readme", "frontmatter-free"),
+                ).profile_id,
+                "one exact Current Governance Authority Index table",
+                "heading or table is missing or malformed",
+            )
+        )
+        return diagnostics
+
+    declared_order = list(context.governance_current_paths)
+    declared_set = set(declared_order)
+    row_paths = [path for path, _ in mirror_rows]
+    row_counter = collections.Counter(row_paths)
+    for path in declared_order:
+        if row_counter[path] == 0:
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-INDEX-MISSING",
+                    GOVERNANCE_CURRENT_README,
+                    "readme/stage-index",
+                    f"one row for {path.as_posix()}",
+                    "declared owner row is missing",
+                )
+            )
+    for path in sorted(set(row_paths) - declared_set, key=lambda item: item.as_posix()):
+        diagnostics.append(
+            _diag(
+                "GOVERNANCE-INDEX-STALE",
+                GOVERNANCE_CURRENT_README,
+                "readme/stage-index",
+                "registry-declared current authority row",
+                f"stale row for {path.as_posix()}",
+            )
+        )
+    for path, count in sorted(row_counter.items(), key=lambda item: item[0].as_posix()):
+        if count > 1:
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-INDEX-DUPLICATE",
+                    GOVERNANCE_CURRENT_README,
+                    "readme/stage-index",
+                    f"one row for {path.as_posix()}",
+                    f"{count} rows",
+                )
+            )
+    for path, status in mirror_rows:
+        expected_status = str(
+            context.metadata.get(path, {}).get("status", "")
+        ).casefold()
+        if (
+            path in declared_set
+            and expected_status in allowed
+            and (status not in allowed or status != expected_status)
+        ):
+            diagnostics.append(
+                _diag(
+                    "GOVERNANCE-INDEX-STATUS",
+                    GOVERNANCE_CURRENT_README,
+                    "readme/stage-index",
+                    f"{path.as_posix()} lifecycle matches active/accepted frontmatter",
+                    status or "missing",
+                )
+            )
+    if (
+        len(row_paths) == len(declared_order)
+        and collections.Counter(row_paths) == collections.Counter(declared_order)
+        and row_paths != declared_order
+    ):
+        diagnostics.append(
+            _diag(
+                "GOVERNANCE-INDEX-ORDER",
+                GOVERNANCE_CURRENT_README,
+                "readme/stage-index",
+                "rows in registry declaration order",
+                "row order differs",
+            )
+        )
+    return diagnostics
+
+
 def _ledger_rows(text: str) -> tuple[tuple[str, ...] | None, list[list[str]]]:
     lines = _visible_markdown(text).splitlines()
     for index, line in enumerate(lines):
@@ -623,6 +854,7 @@ def _apply_debt(root: Path, diagnostics: Iterable[Diagnostic], mode: str, contra
 def _raw_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
     diagnostics.extend(_index_diagnostics(context))
+    diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     diagnostics.extend(_ledger_diagnostics(context))
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -695,7 +927,14 @@ def _text_rows(rows: list[tuple[str, Diagnostic]]) -> list[str]:
 
 
 def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
-    if list(tree) != ["documents", "declaredIndexes", "ledgerColumns", "symlinkAdapters"]:
+    if list(tree) != [
+        "documents",
+        "declaredIndexes",
+        "ledgerColumns",
+        "symlinkAdapters",
+        "governanceCurrentOwners",
+        "governanceMirrorPath",
+    ]:
         raise ConfigurationError("fixture baseTree keys differ")
     documents = tree["documents"]
     if not isinstance(documents, list):
@@ -708,6 +947,13 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         raise ConfigurationError("fixture declared indexes differ")
     if tuple(tree["ledgerColumns"]) != LEDGER_COLUMNS:
         raise ConfigurationError("fixture ledger columns differ")
+    governance_current_paths = tuple(
+        PurePosixPath(value) for value in tree["governanceCurrentOwners"]
+    )
+    if governance_current_paths != FIXTURE_GOVERNANCE_PATHS:
+        raise ConfigurationError("fixture governance current-owner declaration differs")
+    if tree["governanceMirrorPath"] != GOVERNANCE_CURRENT_README.as_posix():
+        raise ConfigurationError("fixture governance mirror path differs")
     if paths != tuple(sorted(paths, key=lambda path: path.as_posix())) or len(paths) != len(set(paths)):
         raise ConfigurationError("fixture paths must be sorted and unique")
 
@@ -747,12 +993,23 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         normalized = posixpath.normpath(posixpath.join(adapter_path.parent.as_posix(), adapter["target"]))
         adapter_targets[adapter_path] = PurePosixPath(normalized)
     metadata = {path: _frontmatter(texts[path]) for path in paths}
-    return Context(root, paths, frozenset(paths), profile_map, texts, metadata, adapter_targets)
+    return Context(
+        root,
+        paths,
+        frozenset(paths),
+        profile_map,
+        texts,
+        metadata,
+        adapter_targets,
+        governance_current_paths,
+        ("active", "accepted"),
+    )
 
 
 def _mutated_context(context: Context, mutation: str) -> Context:
     texts = dict(context.texts)
     metadata = copy.deepcopy(context.metadata)
+    governance_current_paths = context.governance_current_paths
     source = PurePosixPath("docs/05.operations/guides/9999-source.md")
     if mutation == "link-broken": texts[source] += "\n[bad](./missing.md)\n"
     elif mutation == "link-absolute": texts[source] += "\n[bad](/etc/passwd)\n"
@@ -784,7 +1041,99 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[LEDGER_PATH] = "\n".join(line for line in texts[LEDGER_PATH].splitlines() if "`docs/01.requirements/999-fixture.md`" not in line)
     elif mutation == "ledger-incomplete": texts[LEDGER_PATH] = texts[LEDGER_PATH].replace("| path | title |", "| pathname | title |", 1)
     elif mutation == "ledger-unknown": texts[LEDGER_PATH] = texts[LEDGER_PATH].rstrip() + "\n| `docs/unknown.md` | Fixture | content/reference | | preserve | `docs/unknown.md` | fixture | none | 2026-07-12 | repo | retain | change | platform | reviewed |\n"
-    return Context(context.root, context.paths, context.baseline_paths, context.profiles, texts, metadata, context.adapter_targets)
+    elif mutation in {
+        "governance-declared-accepted",
+        "governance-declared-draft",
+        "governance-declared-done",
+        "governance-declared-archived",
+    }:
+        status = mutation.removeprefix("governance-declared-")
+        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = status
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            "| [`current-alpha.md`](current-alpha.md) | `active` |",
+            f"| [`current-alpha.md`](current-alpha.md) | `{status}` |",
+        )
+    elif mutation in {
+        "governance-undeclared-draft",
+        "governance-active-undeclared",
+        "governance-accepted-undeclared",
+        "governance-undeclared-done",
+        "governance-undeclared-archived",
+    }:
+        status = {
+            "governance-undeclared-draft": "draft",
+            "governance-active-undeclared": "active",
+            "governance-accepted-undeclared": "accepted",
+            "governance-undeclared-done": "done",
+            "governance-undeclared-archived": "archived",
+        }[mutation]
+        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = status
+        governance_current_paths = (FIXTURE_GOVERNANCE_PATHS[1],)
+        texts[GOVERNANCE_CURRENT_README] = "\n".join(
+            line
+            for line in texts[GOVERNANCE_CURRENT_README].splitlines()
+            if "current-alpha.md" not in line
+        )
+    elif mutation == "governance-declared-missing":
+        missing = PurePosixPath("docs/00.agent-governance/current-missing.md")
+        governance_current_paths = (missing, FIXTURE_GOVERNANCE_PATHS[1])
+        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = "draft"
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            "| [`current-alpha.md`](current-alpha.md) | `active` |",
+            "| [`current-missing.md`](current-missing.md) | `active` |",
+        )
+    elif mutation == "governance-index-missing":
+        texts[GOVERNANCE_CURRENT_README] = "\n".join(
+            line
+            for line in texts[GOVERNANCE_CURRENT_README].splitlines()
+            if "current-alpha.md" not in line
+        )
+    elif mutation == "governance-index-stale":
+        texts[GOVERNANCE_CURRENT_README] += (
+            "\n| [`current-stale.md`](current-stale.md) | `active` |\n"
+        )
+    elif mutation == "governance-index-duplicate":
+        row = "| [`current-alpha.md`](current-alpha.md) | `active` |"
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            row, f"{row}\n{row}"
+        )
+    elif mutation == "governance-index-status":
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            "| [`current-alpha.md`](current-alpha.md) | `active` |",
+            "| [`current-alpha.md`](current-alpha.md) | `accepted` |",
+        )
+    elif mutation == "governance-index-swap":
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            "| [`current-alpha.md`](current-alpha.md) | `active` |",
+            "| [`current-stale.md`](current-stale.md) | `active` |",
+        )
+    elif mutation == "governance-index-order":
+        alpha = "| [`current-alpha.md`](current-alpha.md) | `active` |"
+        beta = "| [`current-beta.md`](current-beta.md) | `active` |"
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            f"{alpha}\n{beta}", f"{beta}\n{alpha}"
+        )
+    elif mutation == "governance-index-lookalike":
+        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
+            GOVERNANCE_CURRENT_HEADING,
+            "Current Governance Authority Index",
+        ) + (
+            "\n```markdown\n"
+            + GOVERNANCE_CURRENT_HEADING
+            + "\n\n| Document | Lifecycle |\n| --- | --- |\n"
+            + "| [`current-alpha.md`](current-alpha.md) | `active` |\n```\n"
+        )
+    return Context(
+        context.root,
+        context.paths,
+        context.baseline_paths,
+        context.profiles,
+        texts,
+        metadata,
+        context.adapter_targets,
+        governance_current_paths,
+        context.governance_current_states,
+    )
 
 
 def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
@@ -808,7 +1157,17 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
             plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
             texts = dict(mutated.texts)
             texts[plan] += "\n[local-ref]: ../../README.md\n[prd-ref]: ../../01.requirements/999-fixture.md\n[spec-ref]: ../../03.specs/999-fixture/spec.md\n\n## Traceability\n\n[local][local-ref]\n[prd][prd-ref]\n[spec][spec-ref]\n"
-            selected = Context(mutated.root, mutated.paths, mutated.baseline_paths, mutated.profiles, texts, mutated.metadata, mutated.adapter_targets)
+            selected = Context(
+                mutated.root,
+                mutated.paths,
+                mutated.baseline_paths,
+                mutated.profiles,
+                texts,
+                mutated.metadata,
+                mutated.adapter_targets,
+                mutated.governance_current_paths,
+                mutated.governance_current_states,
+            )
             key, diagnostic = _owner_key(selected, plan)
             expected = "sdlc-plan|fixture|docs-01-requirements-999-fixture-md"
             return [] if diagnostic is None and key == expected else ["OWNER-KEY-MISSING"]
@@ -822,8 +1181,16 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
         diagnostics = _owner_diagnostics(mutated)
     elif mutation.startswith("ledger"):
         diagnostics = _ledger_diagnostics(mutated)
+    elif mutation.startswith("governance"):
+        diagnostics = _governance_current_owner_diagnostics(mutated)
     elif mutation in {"none", "link-normalization"}:
-        diagnostics = _link_diagnostics(mutated) + _index_diagnostics(mutated) + _owner_diagnostics(mutated) + _ledger_diagnostics(mutated)
+        diagnostics = (
+            _link_diagnostics(mutated)
+            + _index_diagnostics(mutated)
+            + _governance_current_owner_diagnostics(mutated)
+            + _owner_diagnostics(mutated)
+            + _ledger_diagnostics(mutated)
+        )
     else:
         raise ConfigurationError(f"unknown fixture mutation: {mutation}")
     return sorted(set(item.rule_id for item in diagnostics))
@@ -834,7 +1201,36 @@ def _self_test(root: Path) -> list[str]:
     failures: list[str] = []
     if list(fixture) != ["schemaVersion", "baseTree", "cases"] or fixture["schemaVersion"] != 1:
         return ["fixture schema differs"]
-    required = {"valid-tree", "broken-link", "absolute-link", "archive-bypass", "missing-index-row", "stale-index-row", "duplicate-current-owner", "missing-ledger-row", "incomplete-ledger-row", "unknown-ledger-path"}
+    required = {
+        "valid-tree",
+        "broken-link",
+        "absolute-link",
+        "archive-bypass",
+        "missing-index-row",
+        "stale-index-row",
+        "duplicate-current-owner",
+        "governance-declared-active",
+        "governance-declared-accepted",
+        "governance-undeclared-draft",
+        "governance-declared-draft",
+        "governance-declared-done",
+        "governance-declared-archived",
+        "governance-active-undeclared",
+        "governance-accepted-undeclared",
+        "governance-undeclared-done",
+        "governance-undeclared-archived",
+        "governance-declared-missing",
+        "governance-index-missing",
+        "governance-index-stale",
+        "governance-index-duplicate",
+        "governance-index-status",
+        "governance-index-equal-count-swap",
+        "governance-index-order",
+        "governance-index-fenced-lookalike",
+        "missing-ledger-row",
+        "incomplete-ledger-row",
+        "unknown-ledger-path",
+    }
     names = [case.get("name") for case in fixture["cases"]]
     if not required.issubset(names) or len(names) != len(set(names)):
         failures.append("required unique fixture cases are incomplete")
@@ -897,10 +1293,18 @@ def _self_test(root: Path) -> list[str]:
         failures.append("strict production repository diagnostics must be empty")
     owner_keys, owner_diagnostics = _owner_state(production_context)
     current_unique_keys = {key for key in owner_keys.values() if key}
-    if owner_diagnostics or len(current_unique_keys) != POST_ADM_CLOSURE_OWNER_KEYS:
+    governance_keys = [
+        owner_keys.get(path, "")
+        for path in production_context.governance_current_paths
+    ]
+    if owner_diagnostics:
+        failures.append("production current-owner state has diagnostics")
+    if (
+        any(not key for key in governance_keys)
+        or len(governance_keys) != len(set(governance_keys))
+    ):
         failures.append(
-            "production current-owner key baseline differs from "
-            f"{POST_ADM_CLOSURE_OWNER_KEYS} unique keys"
+            "declared Stage 00 current owners must have non-empty unique owner keys"
         )
 
     post_smdv_context = copy.deepcopy(production_context)
@@ -931,13 +1335,14 @@ def _self_test(root: Path) -> list[str]:
         }
         if (
             post_smdv_diagnostics
-            or len(post_smdv_unique_keys) != POST_SMDV_CLOSURE_OWNER_KEYS
             or adm_transitioned_paths != set(ADM_CLOSURE_PATHS)
             or any(not post_smdv_keys.get(path) for path in ADM_CLOSURE_PATHS)
+            or len(post_smdv_unique_keys) - len(current_unique_keys)
+            != len(ADM_CLOSURE_PATHS)
         ):
             failures.append(
-                "ADM done-status transition must remove exactly the Spec 030, "
-                "Plan 030, and Task 030 owner keys from the 64-key set"
+                "ADM done-to-active transition must change only its three paths "
+                "and add three non-empty unique owner keys"
             )
         pre_smdv_context = copy.deepcopy(post_smdv_context)
         smdv_closure_valid = True
@@ -967,13 +1372,14 @@ def _self_test(root: Path) -> list[str]:
             }
             if (
                 pre_smdv_diagnostics
-                or len(pre_smdv_unique_keys) != PRE_SMDV_CLOSURE_OWNER_KEYS
                 or smdv_transitioned_paths != set(SMDV_CLOSURE_PATHS)
                 or any(not pre_smdv_keys.get(path) for path in SMDV_CLOSURE_PATHS)
+                or len(pre_smdv_unique_keys) - len(post_smdv_unique_keys)
+                != len(SMDV_CLOSURE_PATHS)
             ):
                 failures.append(
-                    "SMDV done-status transition must remove exactly the Spec 029, "
-                    "Plan 029, and Task 029 owner keys from the 67-key preclosure set"
+                    "SMDV done-to-active transition must change only its three "
+                    "paths and add three non-empty unique owner keys"
                 )
     return failures
 
@@ -1014,7 +1420,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             "documents": len(inventory.current_paths),
         }
         if args.inventory:
-            diagnostics = _link_diagnostics(context) + _index_diagnostics(context) + _owner_diagnostics(context)
+            diagnostics = (
+                _link_diagnostics(context)
+                + _index_diagnostics(context)
+                + _governance_current_owner_diagnostics(context)
+                + _owner_diagnostics(context)
+            )
             rows = [("FAIL", item) for item in sorted(diagnostics, key=diagnostic_sort_key)]
             envelope = _envelope("inventory", counts, _inventory_documents(context), rows)
             print(json.dumps(envelope, ensure_ascii=False, separators=(",", ":")))

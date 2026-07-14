@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "negativeFixtureSamplePath": ".agents/GEMINI.md",
   "cases": [
     {
@@ -61,6 +61,112 @@
       "mutation": "change-baseline-count",
       "expected": [
         "REGISTRY_BASELINE_COUNT"
+      ]
+    },
+    {
+      "name": "malformed-governance-current-owners",
+      "mutation": "malform-governance-current-owners",
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
+    },
+    {
+      "name": "missing-governance-current-owners",
+      "mutation": "remove-governance-current-owners",
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
+    },
+    {
+      "name": "invalid-governance-current-owner-path",
+      "mutation": "invalidate-governance-current-owner-path",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
+      ]
+    },
+    {
+      "name": "noncanonical-governance-current-owner-path",
+      "mutation": "double-slash-governance-current-owner-path",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
+      ]
+    },
+    {
+      "name": "normalized-alias-governance-current-owner-duplicate",
+      "mutation": "normalized-alias-governance-current-owner-duplicate",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH",
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE"
+      ]
+    },
+    {
+      "name": "control-character-governance-current-owner-path",
+      "mutation": "nul-governance-current-owner-path",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
+      ]
+    },
+    {
+      "name": "duplicate-governance-current-owner",
+      "mutation": "duplicate-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE"
+      ]
+    },
+    {
+      "name": "unsorted-governance-current-owners",
+      "mutation": "reverse-governance-current-owners",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_ORDER"
+      ]
+    },
+    {
+      "name": "missing-governance-current-owner",
+      "mutation": "missing-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING"
+      ]
+    },
+    {
+      "name": "untracked-governance-current-owner",
+      "mutation": "untracked-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING"
+      ]
+    },
+    {
+      "name": "symlink-governance-current-owner",
+      "mutation": "symlink-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING"
+      ]
+    },
+    {
+      "name": "wrong-profile-governance-current-owner",
+      "mutation": "wrong-profile-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE"
+      ]
+    },
+    {
+      "name": "non-authored-governance-current-owner",
+      "mutation": "non-authored-governance-current-owner",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE"
+      ]
+    },
+    {
+      "name": "wrong-governance-current-owner-state-contract",
+      "mutation": "reverse-governance-current-owner-states",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
+      ]
+    },
+    {
+      "name": "missing-governance-current-owner-state-contract",
+      "mutation": "remove-governance-current-owner-states",
+      "expected": [
+        "REGISTRY_GOVERNANCE_CURRENT_OWNER_STATE"
       ]
     }
   ],
