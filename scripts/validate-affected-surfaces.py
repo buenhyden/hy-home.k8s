@@ -36,6 +36,9 @@ LANES = (
 )
 PROTECTED_LEVELS = ("none", "review", "protected")
 EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
+PATH_INPUT_VALIDATORS = frozenset(
+    ("document-contract-registry", "links-and-owners", "markdown-profiles")
+)
 SAFE_ARG = re.compile(r"^[A-Za-z0-9_./:@%+=,-]+$")
 INTERPRETER_CONTRACTS = {
     "bash": {
@@ -222,6 +225,17 @@ def validate_contract(
     surfaces = _unique_ids(contract["surfaces"], "SURFACE")
     outputs: set[str] = set()
 
+    path_input_validators = {
+        identifier
+        for identifier, validator in validators.items()
+        if validator.get("pathInput") == "include-existing-markdown"
+    }
+    if path_input_validators != PATH_INPUT_VALIDATORS:
+        fail(
+            "SURFACE-VALIDATOR-PATH-INPUT",
+            "include-existing-markdown ownership differs from the exact document validator set",
+        )
+
     for validator in validators.values():
         if any(lane not in LANES for lane in validator["lanes"]):
             fail("SURFACE-VALIDATOR-LANE", validator["id"])
@@ -405,8 +419,8 @@ def validate_ci_workflow_selector(root: Path) -> None:
         '[ "$BEFORE_SHA" != "$ZERO_SHA" ]',
         'git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null',
         '[ -z "$BASE_SHA" ]',
-        'git diff --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
-        'git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
+        'git diff --no-renames --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
+        'git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
         'git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
         "python3 scripts/select-affected-surfaces.py \\",
         "--root . \\",
@@ -430,6 +444,86 @@ def validate_ci_workflow_selector(root: Path) -> None:
         if present:
             detail.append(f"forbidden={present!r}")
         fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
+
+
+def assert_ci_rename_range_preserves_both_paths() -> None:
+    """Prove the CI range command sees both sides of a protected-path rename."""
+    with tempfile.TemporaryDirectory(prefix="affected-surface-ci-rename-") as directory:
+        root = Path(directory)
+        subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+        old_path = PurePosixPath("gitops/rename-probe.yaml")
+        new_path = PurePosixPath("docs/03.specs/999-rename-probe/spec.md")
+        old_target = root / old_path
+        old_target.parent.mkdir(parents=True, exist_ok=True)
+        old_target.write_text("kind: ConfigMap\n", encoding="utf-8")
+        subprocess.run(["git", "add", "--", old_path.as_posix()], cwd=root, check=True)
+        subprocess.run(
+            [
+                "git",
+                "-c",
+                "user.name=CI Rename Probe",
+                "-c",
+                "user.email=ci-rename-probe@example.invalid",
+                "commit",
+                "--quiet",
+                "-m",
+                "base",
+            ],
+            cwd=root,
+            check=True,
+        )
+        base = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
+        ).stdout.strip()
+        new_target = root / new_path
+        new_target.parent.mkdir(parents=True, exist_ok=True)
+        old_target.rename(new_target)
+        subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+        subprocess.run(
+            [
+                "git",
+                "-c",
+                "user.name=CI Rename Probe",
+                "-c",
+                "user.email=ci-rename-probe@example.invalid",
+                "commit",
+                "--quiet",
+                "-m",
+                "rename",
+            ],
+            cwd=root,
+            check=True,
+        )
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
+        ).stdout.strip()
+        completed = subprocess.run(
+            ["git", "diff", "--no-renames", "--name-only", "-z", base, head],
+            cwd=root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if not completed.stdout.endswith(b"\0"):
+            fail("SURFACE-SELF-TEST", "CI rename range output is not NUL terminated")
+        observed = {
+            record.decode("utf-8")
+            for record in completed.stdout.removesuffix(b"\0").split(b"\0")
+        }
+        expected = {old_path.as_posix(), new_path.as_posix()}
+        if observed != expected:
+            fail(
+                "SURFACE-SELF-TEST",
+                f"CI rename range paths differ: expected={sorted(expected)!r} actual={sorted(observed)!r}",
+            )
 
 
 def read_nul_paths(path: Path) -> list[str]:
@@ -493,6 +587,22 @@ def _mutate(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
         )
         validator["lanes"] = list(mutation["lanes"])
         return
+    if mutation["kind"] == "remove-validator-path-input":
+        validator = next(
+            row
+            for row in contract["validators"]
+            if row["id"] == mutation["validatorId"]
+        )
+        validator.pop("pathInput", None)
+        return
+    if mutation["kind"] == "add-validator-path-input":
+        validator = next(
+            row
+            for row in contract["validators"]
+            if row["id"] == mutation["validatorId"]
+        )
+        validator["pathInput"] = "include-existing-markdown"
+        return
     if mutation["kind"] == "append-validator-reference":
         surface = next(
             row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
@@ -554,7 +664,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "argvPositiveCases",
         "mutationCases",
     }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 2:
+    if set(fixture) != expected_keys or fixture["schemaVersion"] != 3:
         fail("SURFACE-FIXTURE", "fixture shape or version differs")
 
     surface_cases = fixture["surfaceCases"]
@@ -606,6 +716,10 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             "pull_request",
             "base-head",
         ),
+        "pull-request-rename-protected-to-document": (
+            "pull_request",
+            "base-head-no-renames",
+        ),
     }
     ci_range_cases = fixture["ciRangeCases"]
     observed_ci_ranges = {
@@ -628,6 +742,8 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         ".agents/agents/supervisor.md",
         "docs/99.templates/support/template-routing.md",
         ".github/workflows/ci.yml",
+        "gitops/rename-probe.yaml",
+        "docs/03.specs/999-rename-probe/spec.md",
     }
     observed_ci_paths = {
         path for case in ci_range_cases for path in case.get("paths", [])
@@ -656,6 +772,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             )
 
     validate_ci_workflow_selector(root)
+    assert_ci_rename_range_preserves_both_paths()
 
     for case in fixture["rejectionCases"]:
         try:

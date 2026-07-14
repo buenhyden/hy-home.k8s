@@ -49,6 +49,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import tempfile
 
 import yaml
 
@@ -3038,7 +3039,7 @@ if selector_step.get("uses"):
     fail(f"{rel(ci_path)} canonical selector step must not delegate to an Action")
 selector_run = str(selector_step.get("run") or "")
 for marker in [
-    "git diff --name-only -z",
+    "git diff --no-renames --name-only -z",
     "git ls-tree -r --name-only -z",
     '"$RUNNER_TEMP/changed-paths.nul"',
     "python3 scripts/select-affected-surfaces.py",
@@ -3582,6 +3583,55 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         fail(f"{rel(post_hook_path)} docs payload simulation failed:\n{detail}")
     if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
         fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
+
+    valid_existing_path = root / ".agents/GEMINI.md"
+    valid_existing_payload = json.dumps(
+        {"tool_input": {"file_path": str(valid_existing_path.relative_to(root))}}
+    )
+    valid_existing_result = subprocess.run(
+        ["bash", str(post_hook_path)],
+        cwd=root,
+        input=valid_existing_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if valid_existing_result.returncode != 0:
+        detail = "\n".join(
+            item
+            for item in [
+                valid_existing_result.stdout.strip(),
+                valid_existing_result.stderr.strip(),
+            ]
+            if item
+        )
+        fail(f"{rel(post_hook_path)} valid existing path probe failed:\n{detail}")
+    if ".agents/GEMINI.md" not in valid_existing_result.stdout:
+        fail(f"{rel(post_hook_path)} did not propagate the valid existing path")
+
+    with tempfile.TemporaryDirectory(
+        prefix="999-hook-path-input-probe-",
+        dir=root / "docs/03.specs",
+    ) as invalid_probe_directory:
+        invalid_untracked_path = pathlib.Path(invalid_probe_directory) / "api-spec.md"
+        invalid_untracked_relative_path = invalid_untracked_path.relative_to(root).as_posix()
+        invalid_untracked_path.write_text("# Invalid API Spec Probe\n", encoding="utf-8")
+        invalid_untracked_payload = json.dumps(
+            {"tool_input": {"file_path": invalid_untracked_relative_path}}
+        )
+        invalid_untracked_result = subprocess.run(
+            ["bash", str(post_hook_path)],
+            cwd=root,
+            input=invalid_untracked_payload,
+            text=True,
+            capture_output=True,
+            env=hook_env,
+        )
+        if invalid_untracked_result.returncode == 0:
+            fail(f"{rel(post_hook_path)} accepted an invalid untracked authored document")
+        invalid_output = invalid_untracked_result.stdout + invalid_untracked_result.stderr
+        if invalid_untracked_relative_path not in invalid_output:
+            fail(f"{rel(post_hook_path)} did not propagate the invalid untracked path")
 
     lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
     lifecycle_selftest_env = {

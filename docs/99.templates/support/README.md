@@ -87,7 +87,7 @@ This README is located at `docs/99.templates/support/`.
 | [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
 | [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
 | [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |
-| [Template Routing](./template-routing.md) | Owns route selection and the non-authoritative compatibility mirror required through Spec 030. |
+| [Template Routing](./template-routing.md) | Owns human-readable route selection guidance that mirrors the current machine registry. |
 | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Owns migration and removal policy for legacy keys, values, sections, and route references. |
 
 ## Related Documents

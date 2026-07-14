@@ -29,7 +29,10 @@ surface domain validators owned by Spec 032.
   path patterns to required validators and lanes and validates against the
   adjacent `validation-surfaces.schema.json`. It uses the same normalized POSIX
   exact-or-anchored-regex path semantics as Spec 026. Local and CI selection
-  must have positive and negative fixtures derived from this owner.
+  must have positive and negative fixtures derived from this owner. Contract
+  schema v2 marks the exact three document validators that receive existing
+  affected Markdown through repeated `--include-path`; untracked edited
+  documents therefore cannot escape semantic validation.
 - **Data / Interface Contract**: Validation results use PASS, SKIP, FAIL, or
   DEFER. The owning Task records scope, changed paths, acceptance IDs, commands,
   tool/version, per-lane result, limitations, reviewer, rollback, residual risk,
@@ -45,8 +48,9 @@ surface domain validators owned by Spec 032.
   pre-commit configuration, CI path filter/jobs, Stage 00 validation rules,
   root provider shims, local `.agents` roles, and Claude/Codex native adapters. Within
   workflows this Spec owns changed-path detection, selector outputs, and job
-  selection only; Spec 032 owns Action identity, permissions, and protected
-  domain behavior.
+  selection only. CI range collection disables rename detection so both the old
+  and new path select their protection domains. Spec 032 owns Action identity,
+  permissions, and protected domain behavior.
 - **Key Dependencies**: Strict document validation from Spec 029 and migrated
   paths from Spec 030. After Spec 030 strict cutover, every program-created
   authored document must add its exact fourteen-column row to the durable

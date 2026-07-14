@@ -27,7 +27,7 @@ The template system has separate surfaces:
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
 | GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 | Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
-| Example-local SDLC snapshots | `examples/aws/docs/**`, `examples/azure/docs/**` | Dated cloud migration example documents that reuse SDLC role profiles without becoming main active stage documents or provider-latest guidance. |
+| Cloud example snapshot collection | `docs/90.references/cloud-examples/**` | Durable dated AWS/Azure migration snapshots after retirement of the former `examples/{aws,azure}/docs/**` authored trees; new provider refreshes extend this reference collection through an approved lifecycle change. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 
 ## Owned Contract

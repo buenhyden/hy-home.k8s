@@ -1,6 +1,6 @@
 {
   "$schema": "./validation-surfaces.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "pathSemantics": {
     "separator": "posix",
     "matching": "exact-or-anchored-regex",
@@ -30,6 +30,7 @@
     {
       "id": "document-contract-registry",
       "argv": ["python3", "scripts/validate-document-contract-registry.py", "--root", ".", "--mode", "strict"],
+      "pathInput": "include-existing-markdown",
       "lanes": ["affected", "staged", "all-files", "ci"],
       "optional": false,
       "fallback": {"status": "FAIL", "reason": "Document path classification is required."},
@@ -70,6 +71,7 @@
     {
       "id": "links-and-owners",
       "argv": ["python3", "scripts/validate-links-and-owners.py", "--root", ".", "--mode", "strict"],
+      "pathInput": "include-existing-markdown",
       "lanes": ["affected", "staged", "all-files", "ci"],
       "optional": false,
       "fallback": {"status": "FAIL", "reason": "Cross-document ownership validation is required."},
@@ -78,6 +80,7 @@
     {
       "id": "markdown-profiles",
       "argv": ["python3", "scripts/validate-markdown-profiles.py", "--root", ".", "--mode", "strict"],
+      "pathInput": "include-existing-markdown",
       "lanes": ["affected", "staged", "all-files", "ci"],
       "optional": false,
       "fallback": {"status": "FAIL", "reason": "Authored Markdown semantics are required."},

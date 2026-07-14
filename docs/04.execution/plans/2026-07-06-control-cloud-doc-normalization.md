@@ -3,7 +3,7 @@ title: 'Control Surface and Cloud Example Documentation Normalization Implementa
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Implementation Plan
@@ -13,6 +13,12 @@ updated: 2026-07-13
 This document defines the implementation plan for normalizing active
 repository control-surface documentation and promoting AWS/Azure example docs
 to an explicit example-local SDLC snapshot route.
+
+> **2026-07-14 steady-state correction:** This Plan records the completed
+> normalization tranche. Spec 030 later retired both `examples/*/docs/**`
+> trees into `docs/90.references/cloud-examples/**`; the current registry has
+> no authored/README route for those source paths and rejects tracked
+> reintroduction. The route language below is historical execution evidence.
 
 ## Context
 

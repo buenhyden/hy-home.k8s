@@ -27,8 +27,10 @@ relocation and authored-document consolidation.
 
 Use the provider child index when looking for dated reference reports. Use the
 corresponding `examples/<provider>/` tree for executable manifests, Terraform,
-and validation assets. Add or relocate durable material only through the Spec
-030 plan so links, provenance, and successor records move together.
+and validation assets. Add or relocate durable material only through a newly
+approved lifecycle change targeting this Stage 90 collection so links,
+provenance, and successor records move together. Spec 030 remains the
+historical migration record, not a reusable authoring plan.
 
 ## Related Documents
 

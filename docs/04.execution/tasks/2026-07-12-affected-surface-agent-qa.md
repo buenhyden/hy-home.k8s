@@ -23,6 +23,12 @@ thirty tracked role adapters across `local`, `claude`, and `codex` surfaces;
 historical `three providers`, `native adapters`, and `cross-provider` wording
 below is evidence terminology, not a Gemini CLI runtime claim.
 
+**2026-07-14 path-input correction:** Validation-surface schema v2 propagates
+existing affected Markdown to the exact three document validators, including
+untracked edits. CI uses `git diff --no-renames --name-only -z`, and a fifth
+range case plus a temporary Git rename proof ensure both sides of a protected-
+to-document rename remain selected.
+
 ## Inputs
 
 - **Parent Spec**: [Affected Surface and Agent QA Technical Specification](../../03.specs/031-affected-surface-agent-qa/spec.md)
@@ -246,10 +252,10 @@ workflow. The RED self-test failed with `SURFACE-LOCAL-CI-MISMATCH` because the
 `changes` job still contained copied dorny filters and lacked canonical
 selector wiring. GREEN covers ordinary push `before..head`, initial or
 zero-`before` head-tree selection, and pull-request `base..head` cases. The
-four cases compare both exact selected job IDs and the three sorted GitHub
+five cases compare both exact selected job IDs and the three sorted GitHub
 boolean outputs while covering docs, `_workspace/README.md`, policy, GitOps,
 infrastructure, secrets, Traefik, shared agents, templates, and workflow paths.
-The workflow now writes `git diff --name-only -z` output directly to the
+The workflow now writes `git diff --no-renames --name-only -z` output directly to the
 runner-temporary NUL file and passes that file to the selector; no command
 substitution or newline decoding is used. Initial pushes and unavailable push
 base objects conservatively select the head tree, and manual dispatch selects

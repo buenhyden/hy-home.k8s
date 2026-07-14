@@ -878,7 +878,7 @@ def _self_test(root: Path) -> list[str]:
         "activePaths",
         "retiredPaths",
         "cases",
-    } or readme_fixture.get("schemaVersion") != 2:
+    } or readme_fixture.get("schemaVersion") != 3:
         failures.append("README handoff fixture must use schema-v2 retirement inventory")
     readme_names = tuple(case.get("name") for case in readme_fixture.get("cases", []))
     if readme_names != EXPECTED_README_CASES:
@@ -944,13 +944,39 @@ def _self_test(root: Path) -> list[str]:
             if not isinstance(path_text, str):
                 failures.append("README handoff path values must be strings")
                 continue
-            try:
-                selected = classify_path(registry, _fixture_path(path_text))
-            except (DocumentContractError, ValueError) as exc:
-                failures.append(f"README handoff path invalid: {exc}")
-                continue
-            if handoff.get("profile") != selected.profile_id:
-                failures.append(f"README handoff profile mismatch: {path_text}")
+            if lifecycle == "active":
+                try:
+                    selected = classify_path(registry, _fixture_path(path_text))
+                except (DocumentContractError, ValueError) as exc:
+                    failures.append(f"README handoff path invalid: {exc}")
+                    continue
+                if handoff.get("profile") != selected.profile_id:
+                    failures.append(f"README handoff profile mismatch: {path_text}")
+            else:
+                if handoff.get("profile") != "readme/snapshot-pack":
+                    failures.append(
+                        f"README retired historical profile mismatch: {path_text}"
+                    )
+                    continue
+                selected = next(
+                    profile
+                    for profile in registry.profiles
+                    if profile.profile_id == "readme/snapshot-pack"
+                )
+                try:
+                    classify_path(registry, _fixture_path(path_text))
+                except DocumentContractError as exc:
+                    if not any(
+                        diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED"
+                        for diagnostic in exc.diagnostics
+                    ):
+                        failures.append(
+                            f"README retired route rule mismatch: {path_text}"
+                        )
+                except ValueError as exc:
+                    failures.append(f"README retired path invalid: {exc}")
+                else:
+                    failures.append(f"README retired path is still routed: {path_text}")
             if handoff.get("requiredH2") != list(selected.headings.required):
                 failures.append(f"README handoff requiredH2 mismatch: {path_text}")
             if handoff.get("allowedH2") != list(selected.headings.allowed):

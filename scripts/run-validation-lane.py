@@ -11,7 +11,7 @@ import os
 import shutil
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Sequence
 
 
@@ -70,6 +70,33 @@ def observation(completed: subprocess.CompletedProcess[str]) -> str:
     )
 
 
+def validator_argv(
+    root: Path,
+    lane: str,
+    paths: Sequence[str],
+    validator: dict[str, Any],
+    contract: dict[str, Any],
+    contract_module: Any,
+) -> list[str]:
+    argv = list(validator["argv"])
+    if (
+        lane != "affected"
+        or validator.get("pathInput") != "include-existing-markdown"
+    ):
+        return argv
+
+    for raw_path in paths:
+        if not raw_path.endswith(".md"):
+            continue
+        surface = contract_module.classify_path(contract, raw_path)
+        if validator["id"] not in surface["validators"]:
+            continue
+        target = root.joinpath(*PurePosixPath(raw_path).parts)
+        if target.exists() or target.is_symlink():
+            argv.extend(("--include-path", raw_path))
+    return argv
+
+
 def run_selected(
     root: Path,
     lane: str,
@@ -111,7 +138,9 @@ def run_selected(
     failed = False
     for identifier in selected["validators"]:
         validator = validators[identifier]
-        argv = list(validator["argv"])
+        argv = validator_argv(
+            root, lane, paths, validator, contract, contract_module
+        )
         tool = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":

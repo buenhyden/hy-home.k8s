@@ -38,10 +38,10 @@ Exceptions:
   under `_workspace/**` are not authored documents.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
-- Cloud example docs under `examples/aws/docs/**` and
-  `examples/azure/docs/**` are routed as example-local SDLC snapshot
-  documents. Non-README Markdown in those trees uses the matching `sdlc/*`
-  frontmatter type for its role, while README files remain frontmatter-free.
+- Cloud example snapshots use the Stage 90 reference profiles under
+  `docs/90.references/cloud-examples/**`. The retired
+  `examples/{aws,azure}/docs/**` paths have no frontmatter profile or README
+  exception and must remain absent.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
@@ -87,9 +87,9 @@ guidance it rejected; it is evidence, not a second schema owner.
   profile explicitly allows both.
 - Do not add frontmatter to README files, ignored `_workspace/**` scratch,
   GitHub-native Markdown control files, or native machine-readable templates.
-- Add role-appropriate `sdlc/*` frontmatter to example-local cloud snapshot
-  documents under `examples/aws/docs/**` and `examples/azure/docs/**` when
-  they are non-README Markdown files.
+- Do not recreate the retired `examples/{aws,azure}/docs/**` trees. Route any
+  approved cloud snapshot refresh to `docs/90.references/cloud-examples/**`
+  with the selected Stage 90 reference profile.
 
 ## Validation Contract
 

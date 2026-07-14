@@ -41,8 +41,8 @@ enforcement source.
 | Copied template-use instructions in authored docs | Remove from authored docs | Reject in authored documents |
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 | GitHub-native Markdown frontmatter | Frontmatter-free `.github` control body with canonical links | Reject on `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` |
-| Provider-latest claims in cloud example indexes and example-local SDLC snapshot docs | Dated Cloud Example Snapshot wording, or a current approved provider refresh | Treat provider-latest claims as legacy unless backed by approved refresh evidence |
-| Missing frontmatter on non-README cloud example docs | Role-appropriate `sdlc/*` frontmatter under the example-local SDLC snapshot route | Reject after the example-local route is enabled for the target provider tree |
+| Provider-latest claims in cloud snapshot references | Dated Cloud Example Snapshot wording, or a current approved provider refresh | Treat provider-latest claims as legacy unless backed by approved refresh evidence |
+| Recreated `examples/{aws,azure}/docs/**` cloud documentation | Consolidate durable knowledge into `docs/90.references/cloud-examples/**` and remove the retired path | Reject tracked files under the retired trees; there is no authored or README route |
 | Active tracked scratch residue named or classified as backup files, auth files, token caches, shell history, local diagnostics, or secret-bearing logs | Delete, ignore as temporary non-secret scratch, or promote non-secret durable findings to the canonical docs taxonomy | Reject as active tracked scratch residue |
 
 ### Active vs Historical References

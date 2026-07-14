@@ -53,8 +53,11 @@ separate authorities.
 ### Validation Lane Contract
 
 `docs/00.agent-governance/contracts/validation-surfaces.json` owns path-to-
-validator and local/CI selection. This document owns how agents name and report
-the resulting lanes:
+validator and local/CI selection. Its affected lane passes every existing
+Markdown edit, including untracked files, to the exact document validators;
+CI and lifecycle Git ranges disable rename detection so both old and new paths
+retain their gates. This document owns how agents name and report the resulting
+lanes:
 
 - **affected**: validators selected for normalized changed paths during work.
   Evidence names the input path set and every selected validator. An empty path

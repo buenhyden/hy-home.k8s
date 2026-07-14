@@ -88,15 +88,15 @@ where is the evidence recorded?_
 
 | Surface     | Source                             | Role                                                            | Required Validation | Evidence      |
 | ----------- | ---------------------------------- | --------------------------------------------------------------- | ------------------- | ------------- |
-| CI gates    | `.github/workflows/ci.yml`         | Collect push/PR paths as NUL records, select pre-commit, repo-quality-static, and manifest-static from the affected-surface contract, then aggregate unchanged job results in ci-summary | affected-surface self-test plus actionlint; remote execution remains separate evidence | GitHub checks |
+| CI gates    | `.github/workflows/ci.yml`         | Collect push/PR paths as NUL records with rename detection disabled so old/new protection domains are retained, select pre-commit, repo-quality-static, and manifest-static from the affected-surface contract, then aggregate unchanged job results in ci-summary | affected-surface rename proof plus actionlint; remote execution remains separate evidence | GitHub checks |
 | PR contract | `.github/PULL_REQUEST_TEMPLATE.md` | Harness Impact + static/live evidence split                     | repo-quality-static | PR body       |
 
 ### Affected-Surface Selection
 
 | Surface | Source | Role | Required Validation | Evidence |
 | --- | --- | --- | --- | --- |
-| Path contract | `contracts/validation-surfaces.json`, adjacent schema | Map one normalized tracked path to exactly one surface, argv validators, lanes, CI jobs, protection, fallback, and evidence class | `python3 scripts/validate-affected-surfaces.py --root .` | Spec 031 Task |
-| Selector and fixture | `scripts/select-affected-surfaces.py`, `tests/fixtures/validation-surfaces.json` | Preserve NUL path records, compare push/PR range cases to exact CI job booleans, and emit deterministic JSON or GitHub output without shell evaluation or first-match precedence | `python3 scripts/validate-affected-surfaces.py --self-test` | Spec 031 Task |
+| Path contract | `contracts/validation-surfaces.json`, adjacent schema | Map one normalized tracked path to exactly one surface, argv validators, lanes, CI jobs, protection, fallback, evidence class, and exact affected-Markdown path-input consumers | `python3 scripts/validate-affected-surfaces.py --root .` | Spec 031 Task |
+| Selector and fixture | `scripts/select-affected-surfaces.py`, `tests/fixtures/validation-surfaces.json` | Preserve NUL path records, compare push/PR and rename range cases to exact CI job booleans, and emit deterministic JSON or GitHub output without shell evaluation or first-match precedence | `python3 scripts/validate-affected-surfaces.py --self-test` | Spec 031 Task |
 
 ### Agent Role and QA Evidence
 

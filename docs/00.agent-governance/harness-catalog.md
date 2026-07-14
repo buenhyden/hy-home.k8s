@@ -26,7 +26,7 @@ that shape the runtime contract under the shared local runtime bridge (`.claude/
 
 - Covers local runtime agents, skills, scope imports, and model allocation.
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
-- Current remediation scope adds a `wiki-curator` runtime surface for LLM Wiki
+- The current roster includes a `wiki-curator` runtime surface for LLM Wiki
   curation by explicit human request, while keeping all other new runtime
   surfaces out of scope unless this matrix records a concrete gap. External
   agency catalogs are gap-analysis lenses, not automatic roster expansion

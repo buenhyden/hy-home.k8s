@@ -49,7 +49,7 @@ Path(os.environ["CHANGED_FILE"]).write_bytes(payload)
 Path(os.environ["TRACKED_FILE"]).write_bytes(payload)
 PY
 else
-  git diff --name-only -z HEAD >"$TRACKED_FILE"
+  git diff --no-renames --name-only -z HEAD >"$TRACKED_FILE"
   git ls-files --others --exclude-standard -z >"$UNTRACKED_FILE"
   export CHANGED_FILE TRACKED_FILE UNTRACKED_FILE
   python3 - <<'PY'

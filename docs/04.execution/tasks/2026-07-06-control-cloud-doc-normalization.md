@@ -3,7 +3,7 @@ title: 'Task: Control Surface and Cloud Example Documentation Normalization'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Task: Control Surface and Cloud Example Documentation Normalization
@@ -13,6 +13,12 @@ updated: 2026-07-13
 This document tracks implementation and verification work for the control
 surface and cloud example documentation normalization effort. It keeps the
 approved spec and plan traceable to concrete commits and validation evidence.
+
+> **2026-07-14 steady-state correction:** CCDN-001 through CCDN-006 remain
+> completed historical evidence. Spec 030 subsequently consolidated the cloud
+> documentation into `docs/90.references/cloud-examples/**` and retired
+> `examples/{aws,azure}/docs/**`; `DocumentProfileContract.v3` now rejects
+> tracked reintroduction of those paths.
 
 ## Inputs
 

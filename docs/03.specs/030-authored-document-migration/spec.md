@@ -106,7 +106,9 @@ and all six stale future/current-source categories.
 The ADM-006 retirement-inventory handoff is exactly
 `scripts/validate-document-contract-registry.py`,
 `tests/fixtures/document-contracts/readme-profile-cases.json`, and
-`tests/README.md`. The fixture advances to schema version 2 with exact,
+`tests/README.md`. The ADM-006 tranche originally advanced the fixture to
+schema version 2; the current steady state is schema version 3, which also
+requires every retired path to remain uncovered. Both versions preserve exact,
 normalized, unique, and disjoint `activePaths` and `retiredPaths` collections:
 52 active README paths and 20 retired
 `examples/{aws,azure}/docs/**/README.md` paths. The active collection equals the

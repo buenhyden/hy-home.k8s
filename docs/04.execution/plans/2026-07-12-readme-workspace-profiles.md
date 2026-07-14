@@ -348,7 +348,7 @@ Expected: commit succeeds.
   `registry-cases.json`, add six rows to `templateModeCoverage`, and update the
   the then-current document-profile and template-compatibility semantic digests
   without changing authored compatibility-debt baselines. The current registry
-  projection is `DocumentProfileContract.v2`; the completed RWP counts and
+  projection is `DocumentProfileContract.v3`; the completed RWP counts and
   commands remain historical evidence.
 - Defines `--profile readme` as a family alias selecting only IDs beginning
   `readme/` whose class is `readme` and mode is `frontmatter-free`. Exact-ID

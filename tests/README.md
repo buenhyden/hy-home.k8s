@@ -91,7 +91,7 @@ live readiness.
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
 | Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
-| Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
+| Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; affected existing Markdown is passed to the exact document validators, while no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
 | GitHub Actions security fixture | `python3 scripts/validate-github-actions-security.py --self-test` | Tier A required aggregate evidence preserving exactly eleven primary, ten repository-boundary, twenty-one required-write JSON cases, plus five internal uses-shape cases |
 | GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | Tier A required aggregate evidence; `PASS` enforces immutable Action identities and least-privilege permissions |
 | GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus durable unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
@@ -149,12 +149,13 @@ adapter PASS does not prove provider runtime consumption.
   mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
   포함하지 않으며 registry/config self-test의 repo-static 입력으로만
   사용한다.
-- `tests/fixtures/document-contracts/readme-profile-cases.json` schema v2는
+- `tests/fixtures/document-contracts/readme-profile-cases.json` schema v3는
   현재 `activePaths` 52개와 ADM-006 `retiredPaths` 20개를 분리해 보존한다.
   active baseline 47개와 retired baseline 20개가 immutable baseline 67개를
   재구성하고, 나머지 active 5개는 program-created handoff다. Retired 행은
-  기존 profile/heading disposition과 `retiredBy`, provider-correct snapshot
-  destination을 유지하며, 여덟 parser 사례는 active 경로만 참조한다.
+  historical profile/heading disposition과 `retiredBy`, provider-correct
+  snapshot destination을 유지하되 현재 registry에서는 반드시 uncovered로
+  남는다. 여덟 parser 사례는 active 경로만 참조한다.
 - `tests/fixtures/document-contracts/template-compatibility.json`은 canonical form,
   template-mode inheritance, authored migration debt의 no-growth 기준을 고정한다.
   `affectedPaths`는 path/profile/rule/token을 정확히 결합하며 required
@@ -225,6 +226,10 @@ adapter PASS does not prove provider runtime consumption.
   Selector self-test는 JSON과
   GitHub output ordering, NUL termination, newline-containing record의 단일-record
   보존도 검증하며 shell parsing이나 first-match precedence를 사용하지 않는다.
+  Schema v3의 다섯 CI range case와 임시 Git rename proof는
+  `--no-renames`가 보호 경로 rename의 old/new 양끝을 모두 전달하는지
+  검증한다. Contract schema v2의 exact document-validator path input은
+  valid existing/invalid untracked Markdown PostToolUse probe로 함께 고정한다.
   Hook-consumer selection cases additionally pin `_workspace/README.md`,
   `.gitignore`, `policy/conftest/kubernetes.rego`,
   `.agents/agents/network-reviewer.md`, and the empty path set. Shared hooks

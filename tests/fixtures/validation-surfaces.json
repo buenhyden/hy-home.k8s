@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "surfaceCases": [
     {"name": "workspace-readme", "path": "_workspace/README.md", "expectedSurface": "workspace-boundary"},
     {"name": "gitignore", "path": ".gitignore", "expectedSurface": "root-config"},
@@ -220,6 +220,17 @@
         "infrastructure/tests/verify-contracts-static.sh",
         "secrets/README.md",
         "traefik/traefik.yaml"
+      ],
+      "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
+    },
+    {
+      "name": "pull-request-rename-protected-to-document",
+      "event": "pull_request",
+      "rangeKind": "base-head-no-renames",
+      "paths": [
+        "gitops/rename-probe.yaml",
+        "docs/03.specs/999-rename-probe/spec.md"
       ],
       "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
       "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
@@ -484,6 +495,24 @@
       },
       "paths": ["README.md"],
       "expectedError": "SURFACE-VALIDATOR-REFERENCE"
+    },
+    {
+      "name": "missing-document-path-input",
+      "mutation": {
+        "kind": "remove-validator-path-input",
+        "validatorId": "markdown-profiles"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-PATH-INPUT"
+    },
+    {
+      "name": "unexpected-document-path-input",
+      "mutation": {
+        "kind": "add-validator-path-input",
+        "validatorId": "repository-quality"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-PATH-INPUT"
     },
     {
       "name": "unknown-ci-job-reference",

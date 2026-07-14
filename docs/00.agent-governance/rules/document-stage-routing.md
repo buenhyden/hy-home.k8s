@@ -115,13 +115,13 @@ map.
 frontmatter-free and are not structural stage documents; durable policy must
 route back to Stage 00, Stage 05, scripts, or workflow owners.
 
-Cloud Example Snapshot material under `examples/aws/docs/**` and
-`examples/azure/docs/**` is routed as example-local SDLC snapshot
-documentation. Non-README Markdown in those trees uses the matching SDLC role
-frontmatter and section expectations, but it remains outside the main active
-`docs/01` through `docs/05` stage tree and is not provider-latest guidance.
-Future provider-refresh work must promote any scoped currentness change
-through an approved spec and support contract update.
+Cloud Example Snapshot material is authored only under
+`docs/90.references/cloud-examples/**`. The former
+`examples/{aws,azure}/docs/**` trees are retired and have no document-profile
+route; agents must not recreate them. Future provider-refresh work must promote
+the scoped currentness change through an approved lifecycle change and update
+the Stage 90 collection while leaving executable examples in their existing
+`examples/{aws,azure}/` boundaries.
 
 ### Lifecycle Pre-Edit Contract
 

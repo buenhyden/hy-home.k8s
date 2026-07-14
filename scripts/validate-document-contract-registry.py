@@ -38,6 +38,11 @@ RESERVED_GEMINI_NATIVE_SURFACE_ERROR = (
     f"{RESERVED_GEMINI_NATIVE_SURFACE_RULE}: reserved Gemini CLI native surface "
     "must remain absent from the Git index"
 )
+RETIRED_CLOUD_SDLC_SURFACE_RULE = "REGISTRY_RETIRED_CLOUD_SDLC_SURFACE"
+RETIRED_CLOUD_SDLC_SURFACE_ERROR = (
+    f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: retired cloud documentation surface "
+    "must remain absent from the Git index"
+)
 CURRENT_OWNER_SAMPLE_PATHS = (
     "docs/00.agent-governance/current-alpha.md",
     "docs/00.agent-governance/current-beta.md",
@@ -275,8 +280,8 @@ EXPECTED_CASES = (
     ),
 )
 
-DOCUMENT_PROFILE_CONTRACT_V2 = {
-    "name": "DocumentProfileContract.v2",
+DOCUMENT_PROFILE_CONTRACT_V3 = {
+    "name": "DocumentProfileContract.v3",
     "profile_ids": (
         "content/archive-tombstone",
         "content/reference",
@@ -342,10 +347,10 @@ DOCUMENT_PROFILE_CONTRACT_V2 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "68dd0d00127ede998e42c7f6a7646c0ebe8daad55e4374ec3cd618cc60262a9c"  # pragma: allowlist secret
+        "8dc7db8d666c31cdd1eeb20880bfee9cb07a0b3c057b1c0b350485a4ec78a2f0"  # pragma: allowlist secret
     ),
 }
-DOCUMENT_PROFILE_CONTRACT_V2_FIELDS = (
+DOCUMENT_PROFILE_CONTRACT_V3_FIELDS = (
     "id",
     "class",
     "mode",
@@ -396,7 +401,7 @@ def _document_profile_contract_projection(
     for profile in sorted(raw_registry["profiles"], key=lambda item: item["id"]):
         row = {
             field: copy.deepcopy(profile[field])
-            for field in DOCUMENT_PROFILE_CONTRACT_V2_FIELDS
+            for field in DOCUMENT_PROFILE_CONTRACT_V3_FIELDS
         }
         row["routes"] = sorted(
             row["routes"], key=lambda route: (route["kind"], route["value"])
@@ -406,13 +411,13 @@ def _document_profile_contract_projection(
 
 
 def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
-    expected_ids = DOCUMENT_PROFILE_CONTRACT_V2["profile_ids"]
+    expected_ids = DOCUMENT_PROFILE_CONTRACT_V3["profile_ids"]
     actual_ids = tuple(sorted(profile["id"] for profile in raw_registry["profiles"]))
     if actual_ids != expected_ids:
         missing = sorted(set(expected_ids) - set(actual_ids))
         extra = sorted(set(actual_ids) - set(expected_ids))
         raise AssertionError(
-            "DocumentProfileContract.v2 ID mismatch: "
+            "DocumentProfileContract.v3 ID mismatch: "
             f"missing={missing!r} extra={extra!r}"
         )
 
@@ -423,10 +428,10 @@ def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
         sort_keys=True,
     ).encode("utf-8")
     actual_digest = hashlib.sha256(canonical).hexdigest()
-    expected_digest = DOCUMENT_PROFILE_CONTRACT_V2["semantic_sha256"]
+    expected_digest = DOCUMENT_PROFILE_CONTRACT_V3["semantic_sha256"]
     if actual_digest != expected_digest:
         raise AssertionError(
-            "DocumentProfileContract.v2 semantic digest mismatch: "
+            "DocumentProfileContract.v3 semantic digest mismatch: "
             f"expected={expected_digest} actual={actual_digest}"
         )
     return len(actual_ids)
@@ -464,12 +469,12 @@ def _assert_document_profile_contract_mutation_proof(
         except AssertionError as exc:
             if "semantic digest mismatch" not in str(exc):
                 raise AssertionError(
-                    "DocumentProfileContract.v2 "
+                    "DocumentProfileContract.v3 "
                     f"{label} mutation proof failed unexpectedly"
                 ) from exc
         else:
             raise AssertionError(
-                "DocumentProfileContract.v2 accepted a "
+                "DocumentProfileContract.v3 accepted a "
                 f"{label} semantic mutation"
             )
 
@@ -965,32 +970,23 @@ def _tracked_template_paths(root: Path) -> tuple[PurePosixPath, ...]:
         raise AssertionError("git returned a non-UTF-8 template path") from exc
 
 
-def _assert_role_specific_spec_routes(registry: Any) -> None:
-    probes = {
-        PurePosixPath("examples/aws/docs/03.specs/contract-probe/spec.md"): "sdlc/spec",
-        PurePosixPath(
-            "examples/aws/docs/03.specs/contract-probe/api-spec.md"
-        ): "sdlc/api-spec",
-        PurePosixPath(
-            "examples/azure/docs/03.specs/contract-probe/agent-design.md"
-        ): "sdlc/agent-design",
-        PurePosixPath(
-            "examples/azure/docs/03.specs/contract-probe/data-model.md"
-        ): "sdlc/data-model",
-        PurePosixPath(
-            "examples/azure/docs/03.specs/contract-probe/tests.md"
-        ): "sdlc/tests",
-        PurePosixPath(
-            "examples/azure/docs/03.specs/2026-03-31-resource-specs.md"
-        ): "sdlc/spec",
-    }
-    for path, expected_profile in probes.items():
-        actual_profile = classify_path(registry, path).profile_id
-        if actual_profile != expected_profile:
-            raise AssertionError(
-                f"{path}: expected role-specific profile {expected_profile!r}, "
-                f"got {actual_profile!r}"
-            )
+def _assert_retired_cloud_sdlc_routes_uncovered(registry: Any) -> None:
+    probes = (
+        PurePosixPath("examples/aws/docs/01.requirements/new-cloud-prd.md"),
+        PurePosixPath("examples/azure/docs/03.specs/new-cloud-spec/spec.md"),
+        PurePosixPath("examples/aws/docs/05.operations/runbooks/new-cloud-runbook.md"),
+        PurePosixPath("examples/azure/docs/README.md"),
+    )
+    for path in probes:
+        try:
+            classify_path(registry, path)
+        except DocumentContractError as exc:
+            if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(exc.diagnostics):
+                raise AssertionError(
+                    f"{path}: retired cloud route probe returned wrong rule"
+                ) from exc
+        else:
+            raise AssertionError(f"{path}: retired cloud path must remain uncovered")
 
 
 def _assert_tracked_local_agent_fixture_sample(root: Path, registry: Any) -> None:
@@ -1074,6 +1070,67 @@ def _assert_reserved_gemini_native_surface_mutation_proofs() -> None:
                 )
 
 
+def _assert_retired_cloud_sdlc_surfaces_absent(root: Path) -> None:
+    """Reject retired cloud documentation trees using Git-index metadata only."""
+    completed = subprocess.run(
+        [
+            "git",
+            "ls-files",
+            "-z",
+            "--",
+            "examples/aws/docs",
+            "examples/azure/docs",
+        ],
+        cwd=root,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.stdout and not completed.stdout.endswith(b"\0"):
+        raise AssertionError(
+            f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: Git index inventory must be NUL terminated"
+        )
+    if completed.stdout:
+        raise AssertionError(RETIRED_CLOUD_SDLC_SURFACE_ERROR)
+
+
+def _assert_retired_cloud_sdlc_surface_mutation_proofs() -> None:
+    for retired_path in (
+        PurePosixPath("examples/aws/docs/01.requirements/new-cloud-prd.md"),
+        PurePosixPath("examples/azure/docs/03.specs/new-cloud-spec/spec.md"),
+        PurePosixPath("examples/aws/docs/05.operations/runbooks/new-cloud-runbook.md"),
+        PurePosixPath("examples/azure/docs/README.md"),
+    ):
+        with tempfile.TemporaryDirectory(
+            prefix="document-registry-retired-cloud-"
+        ) as directory:
+            fixture_root = Path(directory)
+            subprocess.run(["git", "init", "--quiet"], cwd=fixture_root, check=True)
+            target = fixture_root / retired_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("# Retired cloud path probe\n", encoding="utf-8")
+
+            _assert_retired_cloud_sdlc_surfaces_absent(fixture_root)
+            subprocess.run(
+                ["git", "add", "--", retired_path.as_posix()],
+                cwd=fixture_root,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            try:
+                _assert_retired_cloud_sdlc_surfaces_absent(fixture_root)
+            except AssertionError as exc:
+                if str(exc) != RETIRED_CLOUD_SDLC_SURFACE_ERROR:
+                    raise AssertionError(
+                        "retired cloud surface guard returned an unstable error"
+                    ) from exc
+            else:
+                raise AssertionError(
+                    "retired cloud surface guard accepted a tracked mutation"
+                )
+
+
 def _assert_adapter_surface_routes(
     root: Path, raw_registry: dict[str, Any], registry: Any
 ) -> None:
@@ -1138,7 +1195,7 @@ def _assert_positive_coverage(
 ) -> tuple[int, int]:
     registry = validate_registry(root, raw_registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
-    _assert_role_specific_spec_routes(registry)
+    _assert_retired_cloud_sdlc_routes_uncovered(registry)
     _assert_tracked_local_agent_fixture_sample(root, registry)
     _assert_adapter_surface_routes(root, raw_registry, registry)
 
@@ -1433,7 +1490,7 @@ def _assert_readme_family_contract(
     retired_rows = fixture.get("retiredPaths")
     cases = fixture.get("cases")
     if (
-        fixture.get("schemaVersion") != 2
+        fixture.get("schemaVersion") != 3
         or not isinstance(active_rows, list)
         or not isinstance(retired_rows, list)
         or not isinstance(cases, list)
@@ -1473,6 +1530,11 @@ def _assert_readme_family_contract(
         path for path in inventory.new_paths if _is_readme_path(path)
     }
     readme_profile_ids = _readme_profile_ids(registry)
+    readme_profiles = {
+        profile.profile_id: profile
+        for profile in registry.profiles
+        if profile.profile_id in readme_profile_ids
+    }
     rows_by_path: dict[PurePosixPath, dict[str, Any]] = {}
     for lifecycle, rows, expected_keys in (
         ("active", active_rows, active_keys),
@@ -1495,16 +1557,36 @@ def _assert_readme_family_contract(
             if path in rows_by_path:
                 raise AssertionError(f"duplicate README fixture path: {path}")
             rows_by_path[path] = row
-            profile = classify_path(registry, path)
-            if profile.profile_id != row["profile"]:
-                raise AssertionError(
-                    f"{path}: README fixture profile {row['profile']!r} differs "
-                    f"from registry {profile.profile_id!r}"
-                )
-            if profile.profile_id not in readme_profile_ids:
-                raise AssertionError(
-                    f"{path}: README fixture selected a non-authored profile"
-                )
+            if lifecycle == "active":
+                profile = classify_path(registry, path)
+                if profile.profile_id != row["profile"]:
+                    raise AssertionError(
+                        f"{path}: README fixture profile {row['profile']!r} differs "
+                        f"from registry {profile.profile_id!r}"
+                    )
+                if profile.profile_id not in readme_profile_ids:
+                    raise AssertionError(
+                        f"{path}: README fixture selected a non-authored profile"
+                    )
+            else:
+                if row["profile"] != "readme/snapshot-pack":
+                    raise AssertionError(
+                        f"{path}: retired README historical profile must be readme/snapshot-pack"
+                    )
+                profile = readme_profiles[row["profile"]]
+                try:
+                    classify_path(registry, path)
+                except DocumentContractError as exc:
+                    if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(
+                        exc.diagnostics
+                    ):
+                        raise AssertionError(
+                            f"{path}: retired README returned wrong route rule"
+                        ) from exc
+                else:
+                    raise AssertionError(
+                        f"{path}: retired README must remain uncovered"
+                    )
             if list(profile.headings.required) != row["requiredH2"]:
                 raise AssertionError(
                     f"{path}: README required headings differ from registry"
@@ -1962,6 +2044,7 @@ def _self_test(root: Path) -> int:
 
     try:
         _assert_reserved_gemini_native_surface_mutation_proofs()
+        _assert_retired_cloud_sdlc_surface_mutation_proofs()
         _assert_parser_safety()
         _assert_inventory_safety(root)
         profile_count, template_count = _assert_positive_coverage(
@@ -1985,7 +2068,7 @@ def _self_test(root: Path) -> int:
         )
         if profile_count != contract_profile_count:
             raise AssertionError(
-                "profileCoverage count differs from DocumentProfileContract.v2"
+                "profileCoverage count differs from DocumentProfileContract.v3"
             )
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry self-test: {exc}")
@@ -2015,6 +2098,7 @@ def main() -> int:
     try:
         registry = load_registry(root)
         _assert_reserved_gemini_native_surfaces_absent(root)
+        _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         is_readme_family = args.profile == "readme"
         if args.profile and not is_readme_family and args.profile not in profile_ids:
@@ -2062,7 +2146,7 @@ def main() -> int:
             print(
                 f"README baseline={baseline_count} active_current={selected_count} "
                 f"retired={declared_final_count - selected_count} "
-                f"declared_total={declared_final_count} schema=2 exact_set=yes "
+                f"declared_total={declared_final_count} schema=3 exact_set=yes "
                 "uncovered=0 ambiguous=0"
             )
         else:

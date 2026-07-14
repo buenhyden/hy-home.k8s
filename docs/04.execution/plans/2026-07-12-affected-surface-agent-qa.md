@@ -25,6 +25,12 @@ consume selector output rather than copying path globs, while tracked adapters
 retain surface-specific syntax and share only responsibility, output,
 prohibition, stop, handoff, capability-tier, and evidence meaning.
 
+**2026-07-14 path-input correction:** The current validation-surface contract
+is schema v2. Affected existing Markdown, including untracked edits, is passed
+to the three document validators with `--include-path`. CI range collection
+uses `--no-renames` and the self-test proves that both old and new paths of a
+protected-surface rename reach selection.
+
 **Tech Stack:** JSON Schema 2020-12, Python 3.11 standard library, Bash,
 pre-commit, GitHub Actions YAML, Markdown/TOML provider adapters, and existing
 repository-static validators.
@@ -458,7 +464,7 @@ git commit -m "refactor(hooks): drive local validation from affected surfaces"
 
 **Interfaces:**
 
-- Consumes: NUL-delimited `git diff --name-only -z` and selector GitHub output.
+- Consumes: NUL-delimited `git diff --no-renames --name-only -z` and selector GitHub output.
 - Produces: `precommit`, `repo_quality`, and `manifests` outputs for existing jobs.
 
 - [ ] **Step 1: Add durable push and pull-request range fixtures and workflow
@@ -480,7 +486,7 @@ Expected: `SURFACE-LOCAL-CI-MISMATCH` until CI selection matches the registry.
 
 Keep current jobs and every Action reference except the obsolete copied-filter
 owner removed in Step 3. In `changes`, checkout sufficient history, write
-`git diff --name-only -z` directly to
+`git diff --no-renames --name-only -z` directly to
 `$RUNNER_TEMP/changed-paths.nul`, pass that same file to the selector with
 `--delimiter nul`, and append only the selector's boolean job outputs to
 `$GITHUB_OUTPUT`. No intermediate command may decode or newline-join paths.

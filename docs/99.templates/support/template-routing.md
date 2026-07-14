@@ -43,9 +43,9 @@ and exists to help maintainers select the registry-owned form.
 
 The registry owns the exact path patterns. The lifecycle rationale remains:
 requirements and specifications carry numbered lineage, plans and tasks remain
-dated execution evidence, example-local cloud snapshots reuse SDLC roles
-without becoming active-stage owners, and README files remain navigation
-surfaces rather than governance bodies.
+dated execution evidence, retired cloud documentation remains a Stage 90
+reference snapshot rather than an authored SDLC route, and README files remain
+navigation surfaces rather than governance bodies.
 
 Exact lifecycle domains remain registry facts. Numeric lineage rationale,
 handoff links, and the active-surface duplicate rule are owned by [SDLC
@@ -110,20 +110,17 @@ Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
 headings.
 
-### Example-Local SDLC Snapshot Boundary
+### Cloud Example Snapshot Steady-State Boundary
 
-AWS and Azure cloud example docs under `examples/aws/docs/**` and
-`examples/azure/docs/**` are dated Cloud Example Snapshot material and
-example-local SDLC snapshot documents. They are not provider-latest guidance
-and they do not move into the main active `docs/01` through `docs/05` stage
-tree. Non-README Markdown in those trees uses the matching SDLC frontmatter
-role and should align section names with the closest SDLC template without
-retaining template instructions or placeholders.
+The former authored trees under `examples/aws/docs/**` and
+`examples/azure/docs/**` are retired. Their durable dated knowledge lives only
+under `docs/90.references/cloud-examples/**`; executable examples and their
+top-level entrypoints remain under `examples/{aws,azure}/`.
 
-The registry owns the exact example-local path mappings and provider coverage.
-Conceptually, non-README example documents resolve by their SDLC role, while
-example README files remain frontmatter-free navigation. That distinction lets
-examples reuse structure without claiming current provider authority.
+The registry intentionally has no authored or README route for either retired
+`examples/*/docs/**` tree, and the Git-index guard rejects reintroduction. A
+provider refresh must start with an approved lifecycle change and update the
+Stage 90 snapshot collection instead of recreating an example-local SDLC tree.
 
 ## Authoring Rules
 
@@ -139,9 +136,9 @@ Route-breaking changes must update these surfaces in the same logical unit:
 - `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
 - `scripts/validate-repo-quality-gates.sh`
 - Stage README links and authored document template references.
-- Example-local cloud snapshot README indexes and cross-links when
-  `examples/aws/docs/**` or `examples/azure/docs/**` files are normalized,
-  renamed, consolidated, or archived.
+- Stage 90 cloud snapshot collection indexes and cross-links when
+  `docs/90.references/cloud-examples/**` is refreshed or consolidated; the
+  retired `examples/{aws,azure}/docs/**` paths must remain absent.
 - GitHub-native Markdown control-surface exceptions when `.github` control
   documents are added, removed, or repurposed.
 

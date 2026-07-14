@@ -3,7 +3,7 @@ title: 'Control Surface and Cloud Example Documentation Normalization Technical 
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Technical Specification
@@ -21,6 +21,15 @@ example documents under `examples/aws/docs/**` and `examples/azure/docs/**`
 are promoted from unmanaged Cloud Example Snapshot material to an
 example-local SDLC snapshot profile with explicit frontmatter, section, and
 template expectations.
+
+> **2026-07-14 steady-state correction:** The example-local route described by
+> this completed normalization tranche was superseded by Spec 030. The
+> `examples/{aws,azure}/docs/**` trees are retired and absent; their durable
+> knowledge lives under `docs/90.references/cloud-examples/**`.
+> `DocumentProfileContract.v3` removes every authored/README route for the
+> retired trees and rejects tracked reintroduction. The remaining sections
+> preserve the point-in-time implementation contract and evidence rather than
+> a current authoring path.
 
 ## Strategic Boundaries & Non-goals
 

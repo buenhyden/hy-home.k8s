@@ -45,6 +45,7 @@
 ```text
 docs/90.references/
 ├── audits/                              # Dated implementation audit snapshots and report index
+├── cloud-examples/                      # Retired AWS/Azure documentation consolidated as dated snapshots
 ├── data/                                # Repo-backed inventories, durable catalogs, factual lookup data
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
 ├── llm-wiki/                            # LLM-readable generated Markdown link map
@@ -56,6 +57,7 @@ docs/90.references/
 
 | 문서 | Reference Type | 역할 | Freshness 기준 |
 | --- | --- | --- | --- |
+| [cloud-examples/README.md](./cloud-examples/README.md) | cloud example snapshot collection index | 퇴역한 AWS/Azure documentation tree의 dated snapshot, source coverage, provider-refresh 경계 | approved provider refresh, snapshot source/evidence 변경, collection 이동 시 |
 | [data/README.md](./data/README.md) | data reference index | repo-backed inventories, durable catalogs, factual lookup data의 범위와 라우팅 | data reference 문서 추가/이동, category role 변경 시 |
 | [data/agent-reference-index.md](./data/agent-reference-index.md) | durable-concept / data-catalog | Agent reference data의 범위와 canonical owner routing | Agent reference 문서 추가/이동, runtime roster 이동, Stage 00 routing 변경 시 |
 | [data/tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
@@ -78,14 +80,14 @@ docs/90.references/
 
 이 README의 링크 기준 위치는 `docs/90.references/`다.
 
-- 하위 reference folder는 `./audits/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`로 연결한다.
+- 하위 reference folder는 `./audits/`, `./cloud-examples/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`로 연결한다.
 - consumer stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`, `../04.execution/`, `../05.operations/`로 연결한다.
 - root-level source file은 이 README 기준으로 `../../<path>`를 사용한다.
 - 새 reference 문서 안의 링크는 최종 reference 파일 위치 기준으로 다시 계산하고, optional target은 code literal로 남긴다.
 
 ### Role and Authority Boundary
 
-`90.references`의 역할은 다음 다섯 가지다.
+`90.references`의 역할은 다음 여섯 가지다.
 
 | 역할 | 설명 | 예시 | 소유하지 않는 것 |
 | --- | --- | --- | --- |
@@ -94,6 +96,7 @@ docs/90.references/
 | External standard snapshot | 특정 날짜에 확인한 외부 공식 지원 범위를 기록한다. | EKS/AKS 지원 버전, upstream retirement notice | cloud live deployment 지침 |
 | Learning/reference roadmap | 구현 경험을 이론 학습 자료와 연결한다. | infrastructure-to-theory roadmap | 운영 runbook, incident response |
 | Dated implementation audit snapshot | 특정 날짜의 local implementation status와 repo-backed evidence를 요약한다. | workspace harness implementation audit | active policy, plans, tasks, runbooks, CI semantics, live runtime readiness |
+| Cloud example snapshot | 퇴역한 provider documentation tree의 고유 지식을 source coverage와 함께 dated reference로 보존한다. | AWS/Azure migration snapshots | provider-latest guidance, executable example ownership, live cloud deployment 절차 |
 
 권한 경계는 다음과 같다.
 
@@ -110,6 +113,7 @@ docs/90.references/
 | Folder | Role | Language Boundary |
 | --- | --- | --- |
 | `audits/` | dated implementation audit snapshot, local evidence comparison, status vocabulary, and follow-up routing | 사람용 설명은 한국어 가능, audit status, evidence boundary, and static-vs-live limitation은 영어-first |
+| `cloud-examples/` | retired AWS/Azure documentation knowledge, source coverage, and dated provider snapshot boundary | 설명은 한국어 가능, source coverage, provider freshness, and no-live-authority boundary는 영어-first |
 | `data/` | repo-backed version contracts, durable Agent reference catalog boundaries, and factual lookup tables | 사람용 설명은 한국어 가능, source-checked values, freshness triggers, and canonical owner boundaries는 영어-first |
 | `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |

@@ -54,11 +54,12 @@ population, and compatibility-gate closure.
 
 **2026-07-14 contract correction:** The completed DCR task sequence, baseline
 433-path result, and recorded commits below remain historical evidence. The
-current registry is schema v4 / `DocumentProfileContract.v2`, has 62 profiles,
+current registry is schema v4 / `DocumentProfileContract.v3`, has 62 profiles,
 uses mode `classification-only` for non-interpreted surfaces, and separates
 `exception/local-agent-asset`, `exception/repository-runtime-baseline`, and
 Claude-only `exception/provider-native-metadata`; `.gemini/**` intentionally
-remains uncovered.
+remains uncovered. It also removes the retired `examples/{aws,azure}/docs/**`
+authored/README routes and rejects tracked reintroduction.
 
 ## Context
 
@@ -632,7 +633,7 @@ Expected: compilation and commit succeed.
   finding for the required public baseline Git SHA.
 - Produces: profile classes `sdlc`, `common`, `governance`, `readme`, and
   `exception` with zero route gaps or overlaps; the independent fixed
-  current `DocumentProfileContract.v2` ID/semantic digest; persistent self-test
+  current `DocumentProfileContract.v3` ID/semantic digest; persistent self-test
   assertions for exact profile and template fixture coverage; and one narrow
   `.secrets.baseline` `is_secret: false` adjudication for that public SHA.
 
@@ -665,7 +666,7 @@ for root provider shims, local agent assets, repository runtime baselines,
 Claude-native metadata, GitHub-native control Markdown, external-schema
 contracts, generated records, and explicit program non-targets. The completed
 2026-07-12 implementation originally emitted the v1 semantic projection; the
-2026-07-14 current contract supersedes it with v2 and schema v4.
+2026-07-14 current contract supersedes it with v3 and schema v4.
 
 Declare `governance/progress-ledger` as the exact frontmatter-free ledger route
 with required H2 `Work Entries`, and declare `governance/progress-entry` as the

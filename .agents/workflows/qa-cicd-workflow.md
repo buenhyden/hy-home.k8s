@@ -22,6 +22,8 @@ Immediately after executing file modifications:
   iteration or shell command substitution. Provider payload paths must pass
   control-byte, whitespace, normalization, root, symlink, and canonical
   selector validation before any formatter or pre-commit hook receives them.
+  Existing affected Markdown, including untracked edits, is passed to the
+  exact document validators through contract-owned `--include-path` arguments.
   A present scalar alias must contain one non-empty string and cannot shadow a
   second alias; `files`/`paths` accept only one explicitly present string list.
 - **Syntax Check**: Verify that the file modification did not break markdown syntax, YAML structure, or code formatting.

@@ -68,7 +68,7 @@ jobs:
             push)
               if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "$ZERO_SHA" ] && \
                 git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
-                git diff --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+                git diff --no-renames --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
               else
                 git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
               fi
@@ -78,7 +78,7 @@ jobs:
                 echo "base SHA is required for pull-request affected-surface selection" >&2
                 exit 1
               fi
-              git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+              git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
               ;;
             workflow_dispatch)
               git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"

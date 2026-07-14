@@ -16,9 +16,11 @@ traceable while preserving repository-static evidence boundaries.
 
 **2026-07-14 contract correction:** DCR-001 through DCR-005 and their original
 counts remain completed point-in-time evidence. The current owner is registry
-schema v4 / `DocumentProfileContract.v2` with 62 profiles and the split local,
+schema v4 / `DocumentProfileContract.v3` with 62 profiles and the split local,
 repository-runtime-baseline, and Claude-native exception routes; mode
-`classification-only` replaces the ambiguous historical `native` mode.
+`classification-only` replaces the ambiguous historical `native` mode. The
+current contract also keeps the Spec-030-retired `examples/{aws,azure}/docs/**`
+trees unrouted and rejects tracked reintroduction.
 
 ## Inputs
 

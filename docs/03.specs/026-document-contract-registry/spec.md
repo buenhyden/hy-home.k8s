@@ -35,7 +35,9 @@ does not introduce universal metadata fields or a root `DESIGN.md`.
   `classification-only` means the registry classifies a path without owning or
   interpreting that file's frontmatter; it does not assert native runtime or
   provider consumption. The semantic projection is
-  `DocumentProfileContract.v2`.
+  `DocumentProfileContract.v3`. The former `examples/{aws,azure}/docs/**`
+  authored and README routes are absent, and an index-only guard rejects their
+  tracked reintroduction after Spec 030 consolidation.
 - **Governance Contract**: Stage 99 support owns the registry. Stage 00,
   templates, validators, README indexes, and CI link to or consume it and must
   not reproduce full route or lifecycle tables.
