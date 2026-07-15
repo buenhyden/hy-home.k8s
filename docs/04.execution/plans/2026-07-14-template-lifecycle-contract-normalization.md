@@ -1,9 +1,9 @@
 ---
 title: 'Template Lifecycle Contract Normalization Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Template Lifecycle Contract Normalization Implementation Plan
@@ -21,9 +21,10 @@ migrate only current active consumers while preserving completed evidence.
 
 **Architecture:** Schema v5 adds a closed `bodyContract` to each profile and
 gives each native contract format its own registry profile and template. Body
-validation is implemented and fixture-tested while production
-`enforcedStatuses` is empty; after the 37 active consumers are migrated, the
-final cutover enables enforcement for `draft` and `active` only.
+validation was fixture-tested with production enforcement empty, the 37 active
+consumers were migrated, and the production cutover now enables only `draft`
+and `active`. Independent whole-branch review reported
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
 
 **Tech Stack:** Markdown, YAML frontmatter, JSON Schema 2020-12, Python 3,
 CommonMark-aware repository parsers, Bash, pre-commit, and Git.
@@ -257,7 +258,7 @@ Expected: all validators pass and one planning commit is created.
 - Produces: `BodyContract`, `IdentifierColumn`, three native profiles, 64 total
   profiles, and registry-derived form inventory.
 
-- [ ] **Step 1: Add failing registry mutation cases**
+- [x] **Step 1: Add failing registry mutation cases**
 
 Add exact mutations for missing `bodyContract`, unknown body field, section not
 in required H2, status outside `statusDomain`, empty/duplicate columns, unknown
@@ -274,7 +275,7 @@ python3 scripts/validate-document-contract-registry.py --root . --self-test
 
 Expected: FAIL with the new v5 mutation cases unimplemented.
 
-- [ ] **Step 2: Implement the typed contract**
+- [x] **Step 2: Implement the typed contract**
 
 Add these immutable types to `scripts/document_contracts.py`:
 
@@ -304,7 +305,7 @@ Add `body_contract: BodyContract | None` to `DocumentProfile`, parse the camel
 case JSON fields in `_profile_from_mapping()`, and validate all cross-field
 invariants in `validate_registry()` with stable `REGISTRY_BODY_*` diagnostics.
 
-- [ ] **Step 3: Upgrade the JSON schema and registry**
+- [x] **Step 3: Upgrade the JSON schema and registry**
 
 Set schema `$id` to
 `https://hy-home.k8s/schemas/document-profiles-5.schema.json` and
@@ -325,7 +326,7 @@ Replace `exception/native-contract` with:
 Each profile receives one anchored route for its exact native basename. Add
 Spec `033` to `programLineage.specs`.
 
-- [ ] **Step 4: Remove frozen exhaustive owners and derive form inventory**
+- [x] **Step 4: Remove frozen exhaustive owners and derive form inventory**
 
 Delete `DOCUMENT_PROFILE_CONTRACT_V3`,
 `DOCUMENT_PROFILE_CONTRACT_V3_FIELDS`, semantic digest functions, the frozen
@@ -333,7 +334,7 @@ profile-ID tuple, and the native bridge tuple. Derive source/template parity and
 all 27 Markdown plus three native template paths from the registry. Keep
 targeted mutation cases and fail if any physical form is absent or unowned.
 
-- [ ] **Step 5: Re-run registry and aggregate gates**
+- [x] **Step 5: Re-run registry and aggregate gates**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --self-test
@@ -344,7 +345,7 @@ bash scripts/validate-repo-quality-gates.sh .
 Expected: PASS with schema v5, 64 profiles, 27 Markdown templates, and three
 native templates.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add docs/99.templates/support/document-profiles.schema.json \
@@ -379,7 +380,7 @@ git commit -m "refactor(contracts): add registry v5 body contracts"
 - Produces: human rationale and procedure with no complete route or status
   mirror.
 
-- [ ] **Step 1: Record current duplicate and stale-contract RED evidence**
+- [x] **Step 1: Record current duplicate and stale-contract RED evidence**
 
 ```bash
 rg -n 'Current Route Map|Template-Folder Mapping|examples/<provider>/docs|routed example-local' \
@@ -388,7 +389,7 @@ rg -n 'Current Route Map|Template-Folder Mapping|examples/<provider>/docs|routed
 
 Expected: matches in the two route mirrors and stale cloud support prose.
 
-- [ ] **Step 2: Consolidate support ownership**
+- [x] **Step 2: Consolidate support ownership**
 
 Remove the complete route map from `template-routing.md`, exact route/status
 copies from the other support documents, and the retired example-local claim.
@@ -396,20 +397,20 @@ Keep exact-one-profile procedure, role rationale, numbering and feedback-loop
 rationale, five-key meanings, README/common roles, and legacy cleanup in their
 single owners. Update support version references from v4 to v5.
 
-- [ ] **Step 3: Reduce Stage 99 README to navigation**
+- [x] **Step 3: Reduce Stage 99 README to navigation**
 
 Preserve its registry-required H2 profile. Delete the H3 complete mapping and
 duplicated archive/reference/lifecycle policy bodies. Keep concise form-family
 inventory, canonical support links, and the four-step workflow: classify,
 copy, replace prompts with topic evidence, validate.
 
-- [ ] **Step 4: Replace mirror assertions with registry-owner assertions**
+- [x] **Step 4: Replace mirror assertions with registry-owner assertions**
 
 Remove `template_route_pairs()` calls that require identical README and
 support tables. Retain a mutation proof that every registry-owned template path
 exists and that every physical form is owned by exactly one profile.
 
-- [ ] **Step 5: Prove the conflict is gone and commit**
+- [x] **Step 5: Prove the conflict is gone and commit**
 
 ```bash
 if rg -n 'examples/<provider>/docs|routed example-local' docs/99.templates/support; then exit 1; fi
@@ -466,7 +467,7 @@ Expected: no stale route claim or full route-map heading and all gates pass.
 - Produces: 27 Markdown forms, three native forms, and deterministic authored
   residue diagnostics.
 
-- [ ] **Step 1: Add failing starter-residue cases**
+- [x] **Step 1: Add failing starter-residue cases**
 
 Add cases for `title: '[Document Title]'`, H1 `# [Document Title]`,
 `<!-- Author prompt: replace this text -->`, the old target-path HTML marker,
@@ -480,7 +481,7 @@ python3 scripts/validate-markdown-profiles.py --root . --self-test
 
 Expected: FAIL because authored placeholder title/H1/comment cases are accepted.
 
-- [ ] **Step 2: Implement scoped placeholder checks**
+- [x] **Step 2: Implement scoped placeholder checks**
 
 Add `FM-TITLE-PLACEHOLDER`, `BODY-H1-PLACEHOLDER`, and
 `BODY-AUTHOR-PROMPT` diagnostics. Check frontmatter title and H1 for exact
@@ -488,7 +489,7 @@ starter delimiters; reject `Author prompt:`, the legacy target-path marker, and
 the retired shared paragraph only for authored profiles. Do not reject example
 syntax in fenced code.
 
-- [ ] **Step 3: Normalize every Markdown form**
+- [x] **Step 3: Normalize every Markdown form**
 
 Remove target comments and generic repeated prose. Use only short
 `<!-- Author prompt: ... -->` comments, profile H2 headings, type-specific
@@ -498,13 +499,13 @@ Guide declares how-to/tutorial/concept in body; Policy keeps controls and
 responsibilities separate from procedure; Runbook gains expected result and
 stop/escalation fields; Incident and Postmortem retain separate evidence roles.
 
-- [ ] **Step 4: Normalize native forms**
+- [x] **Step 4: Normalize native forms**
 
 Remove route and owner-document comments from OpenAPI, GraphQL, and protobuf
 forms. Retain syntactically valid native starter content and no Markdown
 frontmatter.
 
-- [ ] **Step 5: Prove forms and residue validation and commit**
+- [x] **Step 5: Prove forms and residue validation and commit**
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --self-test
@@ -541,7 +542,7 @@ git commit -m "refactor(templates): normalize canonical document forms"
   validate, no prefix retains the global final-diagnosis audit, and the default
   `registry` behavior always respects the registry value.
 
-- [ ] **Step 1: Add failing local table cases**
+- [x] **Step 1: Add failing local table cases**
 
 Add positive and negative sources for missing table, wrong H3, header order,
 duplicate header, blank required cell, invalid requirement/criterion/work-item
@@ -560,7 +561,7 @@ python3 scripts/validate-markdown-profiles.py --root . --self-test
 
 Expected: FAIL with unimplemented `BODY-CONTRACT-*` rule IDs.
 
-- [ ] **Step 2: Implement local body-contract validation**
+- [x] **Step 2: Implement local body-contract validation**
 
 Reuse fenced-code and HTML-comment aware section scanning. Find the exact H3
 inside the configured H2, parse the first GFM table, require exact columns and
@@ -570,7 +571,7 @@ shape; authored documents validate only when their status is in
 `enforced_statuses`, unless `--body-contracts audit` forces `draft|active`
 inside any supplied path prefix.
 
-- [ ] **Step 3: Add failing cross-document cases**
+- [x] **Step 3: Add failing cross-document cases**
 
 Add a positive PRD -> Spec -> Plan -> Task tree and Incident/Postmortem -> Task
 feedback tree. Add disallowed source profile, disallowed target profile,
@@ -585,7 +586,7 @@ python3 scripts/validate-links-and-owners.py --root . --self-test
 
 Expected: FAIL with unimplemented `BODY-LINK-*` diagnostics.
 
-- [ ] **Step 4: Implement cross-document contract validation**
+- [x] **Step 4: Implement cross-document contract validation**
 
 Reuse `_exact_heading_section()`, `_gfm_table_cells()`, `_extract_links()`, and
 the selected profile map. Pass the complete owning document as the definition
@@ -595,7 +596,7 @@ reciprocal evidence. Keep ordinary link existence and duplicate-current-owner
 diagnostics independent. Apply the same `--body-contracts {registry,audit}`
 and repeatable path-prefix contract to this validator.
 
-- [ ] **Step 5: Run focused and aggregate tests and commit**
+- [x] **Step 5: Run focused and aggregate tests and commit**
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --self-test
@@ -637,7 +638,7 @@ git commit -m "test(docs): validate lifecycle traceability contracts"
   still disabled.
 - Produces: 13 topic-specific tables and a corrected PRD 003 current pointer.
 
-- [ ] **Step 1: Capture the exact migration set**
+- [x] **Step 1: Capture the exact migration set**
 
 ```bash
 find docs/01.requirements docs/02.architecture docs/03.specs -type f -name '*.md' -print0 |
@@ -649,7 +650,7 @@ done | sort
 
 Expected: exactly the 13 paths listed above.
 
-- [ ] **Step 2: Add PRD and ARD lifecycle tables**
+- [x] **Step 2: Add PRD and ARD lifecycle tables**
 
 Map every existing `REQ-PRD-FUN-*` and `REQ-PRD-MET-*` ID to its existing
 acceptance text and verified downstream owner. PRD 001 maps to ARD 0004 and
@@ -659,14 +660,14 @@ Spec 006 canonical claim with `N/A — no single current Spec owns the Stage 00
 platform; completed tranches remain historical evidence`. Do not edit Spec 006
 to manufacture reciprocity.
 
-- [ ] **Step 3: Add active Spec lifecycle tables**
+- [x] **Step 3: Add active Spec lifecycle tables**
 
 Spec 004 references PRD 001, Spec 005 references PRD 002, Spec 008 references
 PRD 004, and Spec 033 references PRD 005. Spec 006 records the explicit
 repository-governance exclusion already stated in its Related inputs. Use only
 existing `VAL-*` criteria and real verification methods.
 
-- [ ] **Step 4: Validate topic fidelity**
+- [x] **Step 4: Validate topic fidelity**
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit \
@@ -684,7 +685,7 @@ rg -n '006-workspace-harness-gap-analysis/spec.md' \
 Expected: strict validators pass and the final command returns no PRD 003
 canonical Spec link.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add docs/01.requirements docs/02.architecture/requirements docs/03.specs
@@ -727,27 +728,27 @@ git commit -m "docs(sdlc): migrate current core lifecycle documents"
 - Produces: 24 topic-specific operating handoff tables with no policy/procedure
   duplication.
 
-- [ ] **Step 1: Confirm the active operations set**
+- [x] **Step 1: Confirm the active operations set**
 
 Run the top-frontmatter inventory command from Task 6 against
 `docs/05.operations`. Expected: eight Guides, seven Policies, nine Runbooks,
 and no active Incident or Postmortem record.
 
-- [ ] **Step 2: Migrate Guides and Policies**
+- [x] **Step 2: Migrate Guides and Policies**
 
 For each Guide, classify `Guide Type` as how-to, tutorial, or concept from its
 actual audience and steps, then map the existing promoted owner and operating
 surface. For each Policy, map the existing promoted owner, control owner, and
 enforcement surface. Do not copy Runbook command sequences into Policy.
 
-- [ ] **Step 3: Migrate Runbooks**
+- [x] **Step 3: Migrate Runbooks**
 
 Map promoted owner, actual trigger/control, and evidence or recovery owner.
 Retain existing commands and safety boundaries. Where a procedure table is
 introduced, use `Step`, `Action`, `Expected result`, and `Stop / escalation`.
 Do not claim live verification from repository-static evidence.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit \
@@ -775,14 +776,17 @@ git commit -m "docs(operations): migrate current operating documents"
 - Modify: `docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md`
 - Modify: `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
+- Modify: `scripts/validate-markdown-profiles.py`
+- Modify: `tests/fixtures/links-and-owners.json`
 
 **Interfaces:**
 
 - Consumes: all migrated current consumers and green fixture validation.
-- Produces: production `draft|active` enforcement, immutable-history proof,
-  audit disposition, completed execution evidence, and final handoff.
+- Produces: production `draft|active` enforcement, self-test cutover parity,
+  immutable-history proof, audit disposition, review-preparation execution
+  evidence, and final handoff.
 
-- [ ] **Step 1: Normalize and audit current execution traceability**
+- [x] **Step 1: Normalize and audit current execution traceability**
 
 Split grouped Plan criterion ranges into one `VAL-TLCN-NNN` identifier per
 row. Replace the Task's grouped criterion cell with one `TLCN-NNN` work-item
@@ -799,13 +803,15 @@ python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contr
 Expected: both scoped audit commands PASS while other unmigrated stages remain
 outside the forced audit scope.
 
-- [ ] **Step 2: Enable production status enforcement**
+- [x] **Step 2: Enable production status enforcement**
 
 Set every applicable authored SDLC `bodyContract.enforcedStatuses` to
 `["draft", "active"]`. Keep common and frontmatter-free profiles null. Ensure
-template profiles retain source-contract parity.
+template profiles retain source-contract parity. Keep general metadata/section
+self-test fixtures isolated from the dedicated body-contract suite, and update
+the registry-mode cross-document fixture to expect production enforcement.
 
-- [ ] **Step 3: Run the historical-body diff guard**
+- [x] **Step 3: Run the historical-body diff guard**
 
 ```bash
 python3 - <<'PY'
@@ -836,17 +842,18 @@ PY
 
 Expected: PASS with zero completed-body or accepted-ADR changes.
 
-- [ ] **Step 4: Record audit and execution disposition**
+- [x] **Step 4: Record review-preparation audit and execution disposition**
 
 Append a dated disposition overlay to the Current remediation roadmap without
 editing its original finding rows or observation SHA. Mark structural profile,
 placeholder, route-owner, and current-consumer body-contract gaps closed;
 record real incident/live tabletop evidence as retained because no incident was
-fabricated. Set all Task rows Done with concrete commit/evidence links, set
-Plan and Spec status Done, update indexes and ledger dispositions, and append a
-progress entry.
+fabricated. At this review-preparation step, the ledger and progress evidence
+kept the Spec, Plan, and Task `active`, TLCN-008 `In Review`, and their index
+rows `Active`. Step 6 records the later reviewer approval and final `Done`
+status/index transitions.
 
-- [ ] **Step 5: Run the full validation suite**
+- [x] **Step 5: Run the review-preparation full validation suite**
 
 ```bash
 git diff --check
@@ -859,24 +866,52 @@ python3 scripts/validate-links-and-owners.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit
 python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit
 bash scripts/validate-repo-quality-gates.sh .
-env TMPDIR=/tmp pre-commit run --all-files
+TMPDIR=/tmp rtk pre-commit run --all-files
 ```
 
-Expected: all required gates PASS. Optional tool SKIP remains distinct from
-PASS; remote and live verification remain DEFER.
+Result: all required review-preparation gates passed. The all-files run exited
+`0`; all applicable hooks passed, while the Dockerfile hook reported no files
+and was skipped. This proves readiness for independent review, not final
+closure after the reviewer-evidence and status edits. Remote and live
+verification remain `DEFER`.
 
-- [ ] **Step 6: Obtain independent whole-branch review and commit closure**
+- [x] **Step 6: Obtain approval, finalize evidence and statuses, rerun gates, and commit closure**
 
-After requirements and quality reviewers report no unresolved findings:
+Independent whole-branch review reported `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`. This closure diff records the reviewer evidence, sets the
+Spec/Plan/Task frontmatter statuses and index rows to `done`/`Done`, sets
+TLCN-008 to `Done`, and closes the ledger and progress entry. The closure
+committer must run the following validation, all-files, staged, and commit-time
+sequence on these final edits; the resulting commit records TLCN-008 but cannot
+self-reference its own SHA:
 
 ```bash
+git diff --check
+python3 scripts/validate-document-contract-registry.py --root . --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --self-test
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --self-test
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit
+python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit
+bash scripts/validate-repo-quality-gates.sh .
+TMPDIR=/tmp rtk pre-commit run --all-files
 git add docs/99.templates/support/document-profiles.json \
   docs/99.templates/support/documentation-contract.md \
   docs/99.templates/support/sdlc-governance.md \
-  docs/03.specs docs/04.execution \
+  docs/03.specs/033-template-lifecycle-contract-normalization/spec.md \
+  docs/03.specs/README.md \
+  docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md \
+  docs/04.execution/plans/README.md \
+  docs/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md \
+  docs/04.execution/tasks/README.md \
   docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md \
   docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
-  docs/00.agent-governance/memory/progress.md
+  docs/00.agent-governance/memory/progress.md \
+  scripts/validate-markdown-profiles.py \
+  tests/fixtures/links-and-owners.json
+git diff --cached --check
 git commit -m "docs(execution): close template lifecycle normalization"
 ```
 
@@ -934,9 +969,16 @@ git commit -m "docs(execution): close template lifecycle normalization"
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-TLCN-001 through VAL-TLCN-005](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-002 through TLCN-004 registry, support, and form ownership | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
-| [VAL-TLCN-006 and VAL-TLCN-007](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-005 through TLCN-007 semantic validation and active migration | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
-| [VAL-TLCN-008 through VAL-TLCN-010](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-008 history protection, audit disposition, and closure | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-001](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-002 registry routes and exact profile ownership | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-002](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-002 and TLCN-003 registry/support authority separation | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-003](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-003 Stage 99 support and stale-claim cleanup | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-004](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-004 canonical Markdown and native forms | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-005](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-002 and TLCN-004 five-key metadata and form residue | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-006](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-004 and TLCN-005 starter and semantic negative fixtures | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-007](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-006 and TLCN-007 current-consumer migration | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-008](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-006 through TLCN-008 historical-body protection | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-009](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-006 PRD 003 current-owner correction | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [VAL-TLCN-010](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-001, TLCN-005, and TLCN-008 validation and closure evidence | [Template Lifecycle Contract Normalization Task](../tasks/2026-07-14-template-lifecycle-contract-normalization.md) |
 
 ### Authorities and evidence
 

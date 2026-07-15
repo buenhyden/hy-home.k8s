@@ -57,6 +57,11 @@ The template system has separate surfaces:
 - Authored documents must contain topic-specific content. They must not retain
   template instructions, placeholders, or copied support-rule prose that is not
   specific to the document.
+- Authored SDLC documents with a registry body contract are checked in
+  production while their status is `draft` or `active`. Canonical forms retain
+  the same body contract for source parity and are always form-validated;
+  completed execution evidence and accepted decisions remain immutable history
+  outside this current-consumer enforcement window.
 - GitHub-native control Markdown must not be promoted into stage documents by
   adding frontmatter. Keep those files frontmatter-free and route durable
   policy to the owning governance, operations, script, or workflow surface.
@@ -130,6 +135,14 @@ reference, archive, memory, and progress recording.
    evidence explicitly separate from repository-static results.
 
 ## Validation Contract
+
+For an enforced authored consumer, the matched registry profile supplies the
+exact lifecycle table shape, identifier columns, allowed source and target
+profile families, reciprocal-evidence rule, and explicit-exclusion capability.
+An exclusion is evidence only when it uses the validator's reviewable `N/A —`
+form; it is not permission to omit a required table or leave a cell empty.
+Templates must remain contract-equal to their authored source profile without
+becoming a second inventory owner.
 
 The minimum validation for support contract changes is:
 

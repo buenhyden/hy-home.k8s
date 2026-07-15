@@ -1,9 +1,9 @@
 ---
 title: 'Task: Template Lifecycle Contract Normalization'
 type: sdlc/task
-status: active
+status: done
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Task: Template Lifecycle Contract Normalization
@@ -26,14 +26,14 @@ current active document migration, and repository-static evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| TLCN-001 | VAL-TLCN-001, VAL-TLCN-010 | Establish reciprocal Spec/Plan/Task execution lineage | platform | Done | Spec approval converted into an indexed executable Plan and Task | Planning commit and strict document validation |
-| TLCN-002 | VAL-TLCN-001, VAL-TLCN-002, VAL-TLCN-005 | Add schema v5, body contracts, native profiles, and history guard | platform | Queued | Not executed | Registry RED/GREEN tests and commit |
-| TLCN-003 | VAL-TLCN-002, VAL-TLCN-003 | Separate Stage 99 support and README authority | platform | Queued | Not executed | Focused conflict scans and commit |
-| TLCN-004 | VAL-TLCN-004, VAL-TLCN-005, VAL-TLCN-006 | Normalize 27 Markdown and three native forms | platform | Queued | Not executed | Template/residue tests and commit |
-| TLCN-005 | VAL-TLCN-006, VAL-TLCN-007 | Validate lifecycle tables and linked-profile semantics | platform | Queued | Not executed | Local/cross-document fixtures and commit |
-| TLCN-006 | VAL-TLCN-007, VAL-TLCN-008, VAL-TLCN-009 | Migrate 13 active Stage 01-03 consumers and correct PRD 003 | platform | Queued | Not executed | Strict core lifecycle validation and commit |
-| TLCN-007 | VAL-TLCN-007, VAL-TLCN-008 | Migrate 24 active Stage 05 consumers | platform | Queued | Not executed | Strict operations validation and commit |
-| TLCN-008 | VAL-TLCN-001 through VAL-TLCN-010 | Enable strict enforcement and close audit/execution evidence | platform | Queued | Not executed | Full gates, historical diff proof, independent review, and closure commit |
+| TLCN-001 | VAL-TLCN-001, VAL-TLCN-010 | Establish reciprocal Spec/Plan/Task execution lineage | platform | Done | Spec approval converted into an indexed executable Plan and Task. | `be6dee5`, `8a7560a`; strict document validation. |
+| TLCN-002 | VAL-TLCN-001, VAL-TLCN-002, VAL-TLCN-005 | Add schema v5, body contracts, native profiles, and history guard | platform | Done | Registry v5 and registry-derived native mapping implemented; obsolete exhaustive owners removed. | `d9d47b0`, `ff6a813`, `2d95f5a`; 59-case registry self-test. |
+| TLCN-003 | VAL-TLCN-002, VAL-TLCN-003 | Separate Stage 99 support and README authority | platform | Done | Support rationale/procedure owners separated and unowned forms rejected. | `543dc61`, `f6cb42a`; exact-one form inventory and conflict scans. |
+| TLCN-004 | VAL-TLCN-004, VAL-TLCN-005, VAL-TLCN-006 | Normalize 27 Markdown and three native forms | platform | Done | All canonical forms normalized and authored starter residue rejected. | `a7ff348`, `7bd5644`; form and mutation validation. |
+| TLCN-005 | VAL-TLCN-006, VAL-TLCN-007 | Validate lifecycle tables and linked-profile semantics | platform | Done | Local table and cross-document semantic validation implemented and parser edge cases hardened. | `5daf95b`, `5bd2d3c`, `3d0b9a7`, `5764626`, `2cad086`; both validator self-tests. |
+| TLCN-006 | VAL-TLCN-007, VAL-TLCN-008, VAL-TLCN-009 | Migrate 13 active Stage 01-03 consumers and correct PRD 003 | platform | Done | Core current consumers migrated; PRD 003 no longer claims Spec 006 as current. | `9c0994f`; scoped core Markdown and cross-document audits. |
+| TLCN-007 | VAL-TLCN-007, VAL-TLCN-008 | Migrate 24 active Stage 05 consumers | platform | Done | Operations consumers migrated with Policy/Runbook ownership and desired-state wording corrected. | `8cb3336`, `f8bb825`; scoped operations audits. |
+| TLCN-008 | VAL-TLCN-001 through VAL-TLCN-010 | Enable strict enforcement and close audit/execution evidence | platform | Done | Production `draft`/`active` enforcement is complete; independent whole-branch review reported `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | The history guard passed, and the final repository-static lane is the mandatory closure-commit gate. This closure diff and its commit record TLCN-008 but cannot self-reference the closure SHA. |
 
 ## Approval and Safety Boundaries
 
@@ -57,11 +57,19 @@ current active document migration, and repository-static evidence.
 
 ## Verification Summary
 
-Baseline commit `ac3ba71959ab2672803450588f193749f92a996e` passes registry,
-Markdown, cross-document, and repository quality gates. Targeted planning-file
-pre-commit passes with `TMPDIR=/tmp`; the worktree filesystem itself does not
-support the FIFO used by one GitOps self-test. Implementation results remain
-queued after TLCN-001.
+Baseline commit `ac3ba71959ab2672803450588f193749f92a996e` passed registry,
+Markdown, cross-document, and repository quality gates. TLCN-001 through
+TLCN-008 are complete. Production body checks enforce authored `draft`/`active`
+SDLC documents while preserving template parity; scoped/global audits and the
+historical-body guard pass. Independent whole-branch review reported
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The review-preparation
+`TMPDIR=/tmp rtk pre-commit run --all-files` completed with exit `0`: all
+applicable hooks passed and the Dockerfile hook reported no files and skipped.
+The closure committer must rerun the final repository-static lane, including
+all-files pre-commit and staged diff checks, after these status/evidence edits
+and before creating the non-self-referential closure commit. Repository-static
+evidence is the only PASS lane; remote CI, provider runtime, and live state
+remain `DEFER`.
 
 ## Traceability
 
@@ -69,7 +77,14 @@ queued after TLCN-001.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [VAL-TLCN-001 through VAL-TLCN-010](../../03.specs/033-template-lifecycle-contract-normalization/spec.md#success-criteria--verification-plan) | TLCN-001 complete; TLCN-002 through TLCN-008 queued | [Implementation Plan](../plans/2026-07-14-template-lifecycle-contract-normalization.md) |
+| [TLCN-001](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Spec, Plan, and Task execution lineage established. | Planning commits `be6dee5` and `8a7560a`; strict document validation. |
+| [TLCN-002](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Registry v5, typed body contracts, native mappings, and independent mutation coverage implemented. | Commits `d9d47b0`, `ff6a813`, and `2d95f5a`; 59-case registry self-test. |
+| [TLCN-003](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Stage 99 support and README authority separated with exact-one physical form ownership. | Commits `543dc61` and `f6cb42a`; focused ownership and stale-claim checks. |
+| [TLCN-004](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Twenty-seven Markdown and three native forms normalized; starter residue rejected. | Commits `a7ff348` and `7bd5644`; template/residue self-tests. |
+| [TLCN-005](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Lifecycle-table and linked-profile semantics implemented and hardened. | Commits `5daf95b`, `5bd2d3c`, `3d0b9a7`, `5764626`, and `2cad086`; local/cross-document self-tests. |
+| [TLCN-006](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Thirteen current Stage 01-03 consumers migrated and the false PRD 003 Spec pointer removed. | Commit `9c0994f`; scoped core lifecycle audits. |
+| [TLCN-007](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Twenty-four current operations consumers migrated with truthful desired-state boundaries. | Commits `8cb3336` and `f8bb825`; scoped operations audits. |
+| [TLCN-008](../plans/2026-07-14-template-lifecycle-contract-normalization.md#work-breakdown) | Production draft/active enforcement and closure review are complete. | `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, passing history guard, and the mandatory final repository-static closure lane; the closure commit cannot self-reference its SHA. |
 
 ### Related authority
 

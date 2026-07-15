@@ -55,6 +55,13 @@ relation. Completed execution evidence is likewise preserved; new work creates
 a new Plan or Task. Archive Tombstones preserve traceability but never become
 current operating guidance.
 
+Production body enforcement applies to authored SDLC consumers only while they
+are `draft` or `active`. Their registry-routed template profiles retain the same
+body contract for source parity and form validation. `done` execution evidence
+and `accepted` decisions are excluded from retroactive body enforcement so a
+new contract cannot manufacture historical evidence; successors carry new
+work and link back instead.
+
 ### Numbering, Handoff, and Active Surfaces
 
 New feature PRDs and Specs share a three-digit feature identifier when they
@@ -105,6 +112,10 @@ postmortems own retrospective analysis and prevention actions.
 - Required headings and body traceability checks come from the matched registry
   profile. Its canonical form and current consumers must agree with that
   contract.
+- Enforced lifecycle tables must use the profile-owned identifier and linked
+  profile families. Required links carry reciprocal evidence when the registry
+  requests it; a reasoned `N/A —` exclusion is allowed only for profiles that
+  opt into explicit exclusions.
 - Route checks must reject uncovered SDLC Markdown paths.
 - Route checks must reject paths that match more than one template.
 - Route-breaking changes must update Stage 00 routing docs, hook hints, and

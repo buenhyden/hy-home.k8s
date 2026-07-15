@@ -1144,6 +1144,13 @@ def _run_source_case(
             "strict",
             append_context=append_context,
             today=today,
+            # Matrix, metadata, section, and date fixtures are independent from
+            # the dedicated bodyContractCases below. Keep template forms always
+            # enforced while placing authored general cases outside audit scope.
+            body_contracts="audit",
+            body_contract_path_prefixes=(
+                PurePosixPath("__self_test_body_contracts_disabled__"),
+            ),
         )
     )
 
@@ -1692,6 +1699,10 @@ def _self_test(root: Path) -> list[str]:
                 profile,
                 "strict",
                 today=dt.date(2026, 7, 12),
+                body_contracts="audit",
+                body_contract_path_prefixes=(
+                    PurePosixPath("__self_test_body_contracts_disabled__"),
+                ),
             )
             actual_rules = _rule_ids(diagnostics)
             if actual_rules != case["expectedRuleIds"]:

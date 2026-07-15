@@ -10405,3 +10405,65 @@ section separating static from live evidence.
 - Next owner: Spec 032 for Action identity, permissions, and protected-domain
   repository-static hardening; remote/live work remains separately
   approval-gated.
+
+## 2026-07-15 - Template lifecycle normalization closure
+
+### Metadata
+
+- **Date**: 2026-07-15
+- **Layer**: template-governance, validation, execution
+- **Status**: done
+- **Tags**: #tlcn #template-contract #lifecycle-traceability #closure
+
+### Progress
+
+- Completed the TLCN-008 production cutover after TLCN-001 through TLCN-007
+  completed in their recorded logical commits.
+- Set all 15 authored SDLC body contracts and their 15 source-parity template
+  profiles to enforce exactly `draft` and `active`; the other 34 profiles keep
+  `bodyContract: null`.
+- Split the current Plan and Task lifecycle tables into one criterion or work
+  item per row. The pre-cutover execution audit moved from four expected
+  identifier diagnostics to zero Markdown and cross-document violations.
+- Added a dated audit disposition without changing the original finding rows or
+  observation SHA. Structural profile, placeholder, route-owner, and exact
+  current-consumer body-contract gaps are repository-statically closed;
+  RMD-010 real Incident/live tabletop evidence remains retained because no
+  incident or rehearsal was fabricated.
+- Production enforcement exposed two test-only empty-scope assumptions. The
+  general Markdown source/matrix cases are now isolated from the dedicated
+  body-contract suite while template forms remain always checked, and the
+  cross-document registry fixture now expects production enforcement.
+
+### Evidence
+
+- Registry self-test and strict mode: PASS (`59` cases, `64` profiles, `30`
+  templates; `417` tracked paths, zero uncovered or ambiguous routes).
+- Markdown-profile and links/owners self-tests: PASS after the cutover-parity
+  fixture corrections. Default strict, global audit, and scoped execution audit
+  modes: PASS with zero violations.
+- Historical-body guard against `ac3ba71959ab`: PASS (`14` changed paths in
+  the guarded stages, zero baseline `done` PRD/Spec/Plan/Task or accepted ADR
+  body violations).
+- `git diff --check`: PASS. `bash scripts/validate-repo-quality-gates.sh .`:
+  PASS (`[PASS] repository quality gates passed`).
+- `TMPDIR=/tmp rtk pre-commit run --all-files`: PASS (exit `0`; all applicable
+  hooks passed; the Dockerfile hook reported no files and was skipped).
+- Independent whole-branch review: `REQUIREMENTS COMPLIANT` and
+  `QUALITY APPROVED`.
+- Final repository-static acceptance requires the closure committer to rerun
+  the strict/self-test, global audit, quality, all-files, and staged-diff gates
+  on the final status/evidence tree and commit only on PASS; this record does
+  not preclaim those commit-time results.
+
+### Handoff
+
+- Spec, Plan, Task, their indexes, TLCN-008, and Plan Task 8 Step 6 are `done`;
+  the independent reviewer outcomes are recorded above. This closure status
+  travels in the closure commit and cannot self-reference that commit's SHA.
+- The closure committer must complete the final repository-static lane before
+  committing the exact reviewed 14-file scope.
+- Remote CI, provider runtime consumption, live Kubernetes/Argo CD/Vault/ESO,
+  secrets, push, publish, merge, and deployment remain `DEFER` or pending human
+  authorization. No such action was performed; a local main merge remains a
+  later step after final branch review.

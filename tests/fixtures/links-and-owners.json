@@ -93,7 +93,7 @@
     {"name": "broken-body-link", "mutation": "broken-link", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-BROKEN"]},
     {"name": "missing-reciprocal-evidence", "mutation": "missing-reciprocal", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-RECIPROCAL"]},
     {"name": "exclusion-without-reason", "mutation": "exclusion-without-reason", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-EXCLUSION"]},
-    {"name": "registry-empty-status-scope", "mutation": "disallowed-target-profile", "bodyContracts": "registry", "expected_rule_ids": []},
+    {"name": "registry-enforced-status-scope", "mutation": "disallowed-target-profile", "bodyContracts": "registry", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "audit-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "expected_rule_ids": []},
     {"name": "audit-matching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/05.operations", "docs/01.requirements"], "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "audit-nonmatching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/03.specs"], "expected_rule_ids": []},

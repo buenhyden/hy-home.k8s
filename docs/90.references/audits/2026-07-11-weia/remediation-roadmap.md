@@ -3,7 +3,7 @@ title: 'Audit: Integrated Remediation Roadmap'
 type: content/reference
 status: done
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Audit: Integrated Remediation Roadmap
@@ -176,6 +176,28 @@ claims:
 Rollback for the repository-static tranche is the first parent before PSH-001,
 `05e2b7050b8d150ec46eddf731bf28283bd11c04`, or newest-first reverts of the
 seven pre-closure logical commits. No live rollback was rehearsed.
+
+### 2026-07-15 template lifecycle disposition overlay
+
+This overlay records follow-up evidence without changing the original finding
+rows, priorities, scores, or audit observation SHA. [Spec
+033](../../../03.specs/033-template-lifecycle-contract-normalization/spec.md),
+its [Plan](../../../04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md),
+and its [Task](../../../04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md)
+provide the repository-static owner chain.
+
+| TLCN-owned gap | Disposition at 2026-07-15 | Evidence boundary |
+| --- | --- | --- |
+| Structural profile and canonical-form ownership | Closed for tracked routes and forms. Registry v5 is the sole exhaustive machine owner; every tracked route resolves exactly once and every physical form has one registry owner. | Registry self-test/strict mode and repository quality gate; no runtime claim. |
+| Authored placeholder and reusable prompt residue | Closed for authored consumers and canonical starters. Deterministic negative fixtures reject title/H1 placeholders, generic author residue, and incomplete semantic tables. | Markdown-profile self-test and strict mode. |
+| Route-owner and source/template parity | Closed for the TLCN surface. Stage 99 prose routes to the registry instead of mirroring its inventory, and each routed template retains its source body contract. | Registry-derived form inventory and support-owner scans. |
+| Current-consumer lifecycle body contracts | Closed for the exact current `draft`/`active` Stage 01-05 population. Topic-specific tables, identifier rules, linked profile families, reciprocal evidence, and reviewable explicit exclusions are production-enforced. | TLCN-006 `9c0994f`, TLCN-007 `8cb3336`/`f8bb825`, scoped/global semantic audits, and the `ac3ba71959ab` history guard. |
+| Incident and live tabletop readiness (RMD-010) | Retained. No incident or tabletop was fabricated, and canonical dormant Incident/Postmortem forms do not constitute operational rehearsal evidence. | A future approved Task must produce real, redacted tabletop/action-closure evidence; live execution remains `DEFER`. |
+
+The broader transition-evidence, historical-exception, provider-runtime,
+remote-CI, and live-platform findings retain their original routes unless a
+separate owner record closes them. This overlay does not convert repository-
+static PASS into provider, remote, or live readiness.
 
 ### Historical Lineage Map
 

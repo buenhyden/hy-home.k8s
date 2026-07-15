@@ -1,9 +1,9 @@
 ---
 title: 'Template Lifecycle Contract Normalization Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Template Lifecycle Contract Normalization Technical Specification (Spec)
@@ -17,9 +17,10 @@ registry-owned body traceability contracts, and migrates only current or active
 consumers whose content conflicts with the resulting contract.
 
 At baseline commit `ac3ba71959ab2672803450588f193749f92a996e`, the document
-registry, Markdown profile, link/owner, and repository quality gates pass. The
-remaining work is therefore contract consolidation and semantic assurance, not
-recovery from a currently failing route or profile migration.
+registry, Markdown profile, link/owner, and repository quality gates passed.
+All eight approved work packages are complete. Production enforcement and the
+repository-static evidence lane are established, and independent whole-branch
+review reported `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
 
 ## Strategic Boundaries & Non-goals
 
@@ -343,9 +344,29 @@ the implementation diff.
   profiles and `30` registry-derived forms. Strict registry validation reports
   zero uncovered or ambiguous routes, and the repository quality gate passes.
 - **Compatibility boundary**: All production body contracts retain
-  `enforcedStatuses: []`. This commit defines and validates the contract shape
-  without enforcing semantic tables on active consumers before their planned
-  migration.
+  `enforcedStatuses: []` at the TLCN-002 commit. That compatibility state
+  defined and validated the contract shape without enforcing semantic tables
+  before the current-consumer migration.
+
+### TLCN-008 closure
+
+- All authored SDLC body contracts and their source-parity template profiles
+  now enforce exactly `draft` and `active`; common and frontmatter-free
+  profiles retain `bodyContract: null`.
+- TLCN-006 (`9c0994f`) and TLCN-007 (`8cb3336`, `f8bb825`) migrated the exact
+  current core and operations sets. Scoped and global audits report zero body
+  or cross-document violations.
+- The historical-body guard against `ac3ba71959ab` reports zero modified
+  baseline `done` PRD/Spec/Plan/Task bodies and zero modified accepted ADR
+  bodies.
+- Repository-static self-tests, strict validators, quality gates, and all-files
+  pre-commit are the closure evidence lane. Remote CI, provider runtime, and
+  live Kubernetes/GitOps/Vault/ESO state remain `DEFER` and are not completion
+  evidence for this Spec.
+- Independent whole-branch review reported `REQUIREMENTS COMPLIANT` and
+  `QUALITY APPROVED`; TLCN-008 and this Spec are `done`. The closure status
+  travels in its own commit and therefore cannot cite that commit's SHA from
+  inside the same diff.
 
 ### Lifecycle Traceability
 

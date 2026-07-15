@@ -104,7 +104,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Requirement ID",
           "Acceptance criterion",
@@ -194,7 +197,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Upstream requirement",
           "Quality attribute or boundary",
@@ -286,7 +292,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Decision lineage",
           "Replacement relation",
@@ -385,7 +394,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -488,7 +500,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -593,7 +608,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -692,7 +710,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -791,7 +812,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -888,7 +912,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Spec criterion",
           "Work package",
@@ -981,7 +1008,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Criterion / work item",
           "Result",
@@ -1075,7 +1105,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Audience outcome",
@@ -1166,7 +1199,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Control owner",
@@ -1257,7 +1293,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Trigger or control",
@@ -1349,7 +1388,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Timeline or action",
           "Evidence",
@@ -1439,7 +1481,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Root cause or action",
           "Owner and due state",
@@ -3049,7 +3094,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Decision lineage",
           "Replacement relation",
@@ -3142,7 +3190,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Upstream requirement",
           "Quality attribute or boundary",
@@ -3240,7 +3291,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Spec criterion",
           "Work package",
@@ -3335,7 +3389,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Criterion / work item",
           "Result",
@@ -3431,7 +3488,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Audience outcome",
@@ -3524,7 +3584,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Timeline or action",
           "Evidence",
@@ -3612,7 +3675,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Control owner",
@@ -3709,7 +3775,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Root cause or action",
           "Owner and due state",
@@ -3798,7 +3867,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Promoted owner",
           "Trigger or control",
@@ -3896,7 +3968,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Requirement ID",
           "Acceptance criterion",
@@ -4000,7 +4075,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -4105,7 +4183,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -4206,7 +4287,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -4309,7 +4393,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
@@ -4410,7 +4497,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "PRD requirement",
           "Spec criterion",
