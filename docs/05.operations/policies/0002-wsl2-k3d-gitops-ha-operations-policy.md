@@ -131,3 +131,9 @@ updated: 2026-06-02
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — the local multi-node baseline and recovery controls are maintained from current architecture and runtime evidence, with no eligible upstream document carrying a reciprocal policy link | Platform Owner, with human approval for EndpointSlice break-glass and external Vault changes | k3d topology and inotify preflight, fixed external endpoints and ports, Vault authentication boundary, AppProject/NetworkPolicy restrictions, and CI static gates |

@@ -172,3 +172,9 @@ Prometheus(Docker)가 k8s 내부 ArgoCD 메트릭을 수집하기 위해 NodePor
 - [ArgoCD 메트릭 런북](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
 - [Kiali 연결 런북](../runbooks/0007-kiali-observability-connectivity-runbook.md)
 - [Service Mesh Policy](./0003-service-mesh-cert-manager-policy.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — the observability control set is promoted from current GitOps and sibling-workspace contracts, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for service/NodePort contracts; observability owner for Prometheus and Grafana configuration | Istio service-port naming, Grafana Viewer-only anonymous API boundary, reserved ArgoCD NodePorts 30082-30086, scrape targets, and owning runbooks |

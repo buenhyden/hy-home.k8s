@@ -374,3 +374,9 @@ argocd app set platform-external-services \
 - **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
 - **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
 - [`../guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | Kiali reports Prometheus, Grafana, or Tempo unreachable because endpoint, NetworkPolicy, URL, or Viewer-only API access may have drifted. | Platform operator captures Kiali logs, endpoint/IP and egress evidence; approved break-glass operator owns live EndpointSlice repair, and the observability owner persists Grafana changes in its repository. |

@@ -262,3 +262,9 @@ kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-hea
 - [Runbook](../runbooks/0009-k8s-observability-runbook.md)
 - [ArgoCD 메트릭 가이드](./0006-argocd-prometheus-grafana-guide.md)
 - [GitOps 리소스](../../../gitops/platform/monitoring)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — the monitoring bootstrap is promoted from its operations policy and recovery runbook, with no eligible upstream document carrying a reciprocal guide link | Platform engineers can connect cluster metrics, pod logs, events, and alert rules to the external observability stack while respecting operator-only reconciliation boundaries. | `monitoring` namespace, NodePorts 30090-30092, in-cluster Alloy, external Prometheus/Loki, and Grafana dashboards |

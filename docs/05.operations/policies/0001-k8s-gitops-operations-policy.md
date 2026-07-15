@@ -99,3 +99,9 @@ updated: 2026-05-21
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Runbook**: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - **Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — this steady-state policy consolidates the current architecture, Spec 008, and operating evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for GitOps and external-service controls; Security Reviewer for exceptions and secret boundaries | Vault/ESO contract validation, GitOps root path and AppProject review, external-service port contracts, NetworkPolicy review, and secret-handling gates |

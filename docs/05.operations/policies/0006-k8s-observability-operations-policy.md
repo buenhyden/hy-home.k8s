@@ -215,3 +215,9 @@ istio-system, headlamp, argo-rollouts, metallb-system, monitoring
 - [k8s 관측성 런북](../runbooks/0009-k8s-observability-runbook.md)
 - [Observability Platform Policy](./0005-observability-platform-operations-policy.md)
 - [ArgoCD 메트릭 가이드](../guides/0006-argocd-prometheus-grafana-guide.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — cluster-observability controls are promoted from deployed GitOps resources and their recovery owner, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for monitoring GitOps/AppProject changes; observability owner for Prometheus, Loki, and Alloy contracts | Reserved NodePorts 30090-30092, Alloy security/storage and labels, explicit Prometheus rule files, AppProject destinations, and the observability runbook |

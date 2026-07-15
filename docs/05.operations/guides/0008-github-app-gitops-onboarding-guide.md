@@ -415,3 +415,9 @@ kubectl get clusterissuer mkcert-ca-issuer
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
 - **AppProject**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
 - **ApplicationSet**: [`../../../gitops/clusters/local/applicationset-apps.yaml`](../../../gitops/clusters/local/applicationset-apps.yaml)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — app onboarding is promoted from the current policy and runbook plus the sample/adminer implementations, with no eligible upstream document carrying a reciprocal guide link | Home-lab operators can onboard a GitHub-hosted image through reviewed GitOps changes with Rollout analysis, mTLS, TLS ingress, and bounded optional Vault/ESO integration. | `examples/sample-app`, `gitops/workloads/<appname>`, apps ApplicationSet/AppProject, external Traefik routing, and Argo Rollouts |

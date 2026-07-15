@@ -275,3 +275,9 @@ argocd app sync platform-istiod
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
 - [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [Service Mesh and cert-manager Operations Policy](../policies/0003-service-mesh-cert-manager-policy.md) | Initial expansion or recovery of cert-manager, Headlamp, Istio, or Kiali must preserve CA-secret, namespace-injection, sync-wave, and external-router controls. | Platform operator captures ClusterIssuer, ingress/TLS, deployment, and static-contract evidence; external Traefik owner and approved break-glass operator own their bounded recovery actions. |

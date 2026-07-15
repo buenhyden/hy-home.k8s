@@ -112,3 +112,10 @@ updated: 2026-05-21
 - **Rollouts Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md)
 - **Notifications Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../04.execution/plans/2026-05-18-argo-notifications-slack.md)
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| [Argo Rollouts Progressive Delivery Spec](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
+| [Argo Notifications Slack Spec](../../03.specs/005-argo-notifications-slack/spec.md) | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |

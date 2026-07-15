@@ -72,3 +72,9 @@ LLM Wiki entrypoint, generated index, `wiki-curator` agent 사용 시점을 일�
 - **Operation**: [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Reference**: [Generated LLM WIKI Index](../../90.references/llm-wiki/wiki-index.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — LLM Wiki curation is a repository-maintenance route owned by governance, references, and the generator rather than an eligible reciprocally linked Spec or Task | Maintainers and AI-agent operators can update the deterministic owner-link map without turning generated output into policy or adding a retrieval runtime. | `scripts/generate-llm-wiki-index.sh`, LLM Wiki README and generated index, canonical owner links, and repository quality gates |

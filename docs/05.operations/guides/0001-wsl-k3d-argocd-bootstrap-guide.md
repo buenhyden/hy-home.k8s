@@ -134,3 +134,9 @@ updated: 2026-05-22
 - **Operation**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - **Runbook**: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - **Plan**: [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — this guide consolidates the current Spec 008 bootstrap contract, policy, and runbook, but no eligible upstream document carries a reciprocal guide link | Platform and GitOps operators can bootstrap a local k3d/ArgoCD platform and distinguish repository-static checks from approved runtime verification. | `infrastructure/bootstrap-local.sh`, ArgoCD root application, ESO/Vault integration, and PostgreSQL/Valkey external-service interfaces |

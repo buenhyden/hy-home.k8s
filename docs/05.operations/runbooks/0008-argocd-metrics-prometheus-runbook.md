@@ -308,3 +308,9 @@ docker exec infra-prometheus promtool check config /etc/prometheus/prometheus.ym
 - [Guide](../guides/0006-argocd-prometheus-grafana-guide.md)
 - [NodePort YAML](../../../gitops/platform/argocd/argocd-metrics-nodeport.yaml)
 - External sibling workspace path: `hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml`
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | An `argocd-*` Prometheus target or `argocd_app_info` collection fails across the reserved NodePorts 30082-30086. | Platform operator records NodePort, pod, target, and query evidence; GitOps owner restores services, while the sibling observability owner persists scrape-target or reload corrections. |

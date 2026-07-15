@@ -363,3 +363,9 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 - [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 - [ArgoCD 메트릭 런북](./0008-argocd-metrics-prometheus-runbook.md)
 - [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [k8s Observability Operations Policy](../policies/0006-k8s-observability-operations-policy.md) | Cluster metrics targets, Alloy log/event collection, alert-rule loading, or monitoring AppProject admission is degraded. | Platform operator captures NodePort, target, pod, Loki, rule-group, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner persists external Prometheus/Loki corrections. |

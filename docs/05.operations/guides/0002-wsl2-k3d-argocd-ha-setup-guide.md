@@ -262,3 +262,9 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
 - **Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — the local multi-node and Vault recovery guidance is maintained from current repository contracts, with no eligible upstream document carrying a reciprocal guide link | Developers and operators can establish the one-server/three-agent validation baseline, preserve TLS and least-privilege boundaries, and separate local runtime checks from CI evidence. | k3d multi-node configuration, ArgoCD/ESO/Vault connectivity, external EndpointSlices, ingress TLS, and local QA tooling |

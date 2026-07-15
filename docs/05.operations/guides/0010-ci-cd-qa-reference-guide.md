@@ -18,7 +18,7 @@ updated: 2026-07-04
 
 ## Guide Type
 
-- how-to
+`how-to`
 
 ## Target Audience
 
@@ -186,3 +186,9 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 - **K8s GitOps 정책**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - **HA 플랫폼 가이드**: [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Archive Index**: [`../../98.archive/README.md`](../../98.archive/README.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md) | Contributors and AI agents can choose the correct local QA command, understand GitHub-only gates, and report static evidence without implying live readiness. | pre-commit hooks, repository quality and manifest validation scripts, `.github/workflows/ci.yml`, and CI-only event/API jobs |

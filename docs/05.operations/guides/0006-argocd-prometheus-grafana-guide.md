@@ -229,3 +229,9 @@ print('수집된 앱 수:', len(d['data']['result']))
 - [Operations Policy](../policies/0005-observability-platform-operations-policy.md)
 - [Runbook](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
 - [Kiali Connectivity Runbook](../runbooks/0007-kiali-observability-connectivity-runbook.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — this cross-repository observability guide is promoted from the operations policy and runbooks, not from an eligible reciprocally linked Spec or Task | Platform engineers can expose ArgoCD component metrics through the reserved NodePorts and verify Prometheus targets and Grafana visibility. | ArgoCD metrics services on NodePorts 30082-30086, external Prometheus scrape configuration, and the ArgoCD Grafana dashboard |

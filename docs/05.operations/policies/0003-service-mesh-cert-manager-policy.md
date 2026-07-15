@@ -124,3 +124,9 @@ updated: 2026-05-21
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Policy**: [`./0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — cert-manager, Headlamp, Istio, Kiali, and Traefik controls derive from accepted architecture and current operations evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for component and namespace controls; external Traefik owner for router artifacts | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, Kiali egress limits, Headlamp contract, and reviewed external router copies |

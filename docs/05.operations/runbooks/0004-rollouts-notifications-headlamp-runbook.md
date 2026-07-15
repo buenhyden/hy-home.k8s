@@ -195,3 +195,10 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **Notifications Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
 - **Rollouts Task**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md)
 - **Notifications Task**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [Argo Rollouts Progressive Delivery Spec](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| [Argo Notifications Slack Spec](../../03.specs/005-argo-notifications-slack/spec.md) | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |

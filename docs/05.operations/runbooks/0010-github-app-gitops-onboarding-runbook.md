@@ -318,3 +318,9 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 - **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
 - [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [App GitOps Onboarding Policy](../policies/0007-app-gitops-onboarding-policy.md) | A new GitHub image must enter `gitops/workloads`, or a canary/analysis/ingress/secret integration needs bounded rollback and re-verification. | Application owner supplies image and PR evidence; Platform operator records ArgoCD, Rollout, AnalysisRun, Pod, and ingress/TLS results and owns GitOps rollback, while secret writes remain human-approved. |

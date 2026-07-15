@@ -251,3 +251,9 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Guide**: [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| N/A — the expansion procedure derives from current platform architecture and operations owners, but no eligible upstream document carries a reciprocal guide link | Platform engineers can bootstrap and verify cert-manager, Headlamp, Istio, and Kiali without treating static contracts or local exceptions as production readiness. | `bootstrap-local.sh`, cert-manager ClusterIssuer, Headlamp ingress/TLS, Istio control plane, Kiali, and external Traefik artifacts |
