@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "localAgentFixtureSamplePath": ".agents/GEMINI.md",
   "cases": [
     {
@@ -414,6 +414,139 @@
       "mutation": "wrong-profile-reference-collection-readme",
       "expected": [
         "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"
+      ]
+    },
+    {
+      "name": "duplicate-program",
+      "mutation": "duplicate-program",
+      "expected": [
+        "REGISTRY_PROGRAM_DUPLICATE"
+      ]
+    },
+    {
+      "name": "unsorted-programs",
+      "mutation": "reverse-programs",
+      "expected": [
+        "REGISTRY_PROGRAM_RELATION_ORDER"
+      ]
+    },
+    {
+      "name": "duplicate-program-member",
+      "mutation": "duplicate-program-member",
+      "expected": [
+        "REGISTRY_PROGRAM_MEMBER_DUPLICATE"
+      ]
+    },
+    {
+      "name": "overlapping-program-member",
+      "mutation": "overlap-program-member",
+      "expected": [
+        "REGISTRY_PROGRAM_MEMBER_OVERLAP"
+      ]
+    },
+    {
+      "name": "noncontiguous-program-order",
+      "mutation": "noncontiguous-program-order",
+      "expected": [
+        "REGISTRY_PROGRAM_RELATION_ORDER"
+      ]
+    },
+    {
+      "name": "unknown-program-prd",
+      "mutation": "unknown-program-prd",
+      "expected": [
+        "REGISTRY_PROGRAM_PATH"
+      ]
+    },
+    {
+      "name": "unknown-program-ard",
+      "mutation": "unknown-program-ard",
+      "expected": [
+        "REGISTRY_PROGRAM_PATH"
+      ]
+    },
+    {
+      "name": "unknown-program-adr",
+      "mutation": "unknown-program-adr",
+      "expected": [
+        "REGISTRY_PROGRAM_PATH"
+      ]
+    },
+    {
+      "name": "unknown-program-spec",
+      "mutation": "unknown-program-spec",
+      "expected": [
+        "REGISTRY_PROGRAM_PATH"
+      ]
+    },
+    {
+      "name": "program-state-drift",
+      "mutation": "program-state-drift",
+      "expected": [
+        "REGISTRY_PROGRAM_STATE"
+      ]
+    },
+    {
+      "name": "program-decision-not-accepted",
+      "mutation": "program-decision-not-accepted",
+      "expected": [
+        "REGISTRY_PROGRAM_DECISION"
+      ]
+    },
+    {
+      "name": "program-decision-missing",
+      "mutation": "program-decision-missing",
+      "expected": [
+        "REGISTRY_PROGRAM_DECISION"
+      ]
+    },
+    {
+      "name": "invalid-program-evidence-mode",
+      "mutation": "invalid-program-evidence-mode",
+      "expected": [
+        "REGISTRY_PROGRAM_EVIDENCE_MODE"
+      ]
+    },
+    {
+      "name": "program-follow-up-predates-tranche",
+      "mutation": "program-follow-up-predates-tranche",
+      "expected": [
+        "REGISTRY_PROGRAM_CHRONOLOGY"
+      ]
+    },
+    {
+      "name": "production-legacy-v5-input",
+      "mutation": "production-legacy-v5-input",
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
+    },
+    {
+      "name": "duplicate-program-spec-status-key",
+      "mutation": "duplicate-program-spec-status-key",
+      "expected": [
+        "REGISTRY_PROGRAM_STATE"
+      ]
+    },
+    {
+      "name": "duplicate-program-adr-updated-key",
+      "mutation": "duplicate-program-adr-updated-key",
+      "expected": [
+        "REGISTRY_PROGRAM_DECISION"
+      ]
+    },
+    {
+      "name": "timestamp-program-adr-updated",
+      "mutation": "timestamp-program-adr-updated",
+      "expected": [
+        "REGISTRY_PROGRAM_DECISION"
+      ]
+    },
+    {
+      "name": "misordered-follow-up-approval",
+      "mutation": "misordered-follow-up-approval",
+      "expected": [
+        "REGISTRY_PROGRAM_CHRONOLOGY"
       ]
     }
   ],

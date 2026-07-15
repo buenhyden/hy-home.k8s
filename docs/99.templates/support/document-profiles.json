@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-5.schema.json",
-  "schemaVersion": 5,
+  "$id": "https://hy-home.k8s/schemas/document-profiles-6.schema.json",
+  "schemaVersion": 6,
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -4781,17 +4781,128 @@
     ]
   },
   "programLineage": {
-    "prd": "005",
-    "ard": "0008",
-    "specs": [
-      "026",
-      "027",
-      "028",
-      "029",
-      "030",
-      "031",
-      "032",
-      "033"
+    "programs": [
+      {
+        "prd": "005",
+        "ard": "0008",
+        "tranches": [
+          {
+            "spec": "026",
+            "order": 1,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "027",
+            "order": 2,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "028",
+            "order": 3,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "029",
+            "order": 4,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "030",
+            "order": 5,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "031",
+            "order": 6,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "032",
+            "order": 7,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          }
+        ],
+        "followUps": [
+          {
+            "spec": "033",
+            "order": 1,
+            "state": "done",
+            "reason": "Post-program template lifecycle follow-up",
+            "decision": "0017",
+            "evidenceMode": "successor-record"
+          }
+        ]
+      },
+      {
+        "prd": "006",
+        "ard": "0009",
+        "tranches": [
+          {
+            "spec": "034",
+            "order": 1,
+            "state": "active",
+            "reason": "Authority and lineage foundation",
+            "decision": "0017"
+          },
+          {
+            "spec": "035",
+            "order": 2,
+            "state": "active",
+            "reason": "Document schema and lifecycle contract",
+            "decision": "0017"
+          },
+          {
+            "spec": "036",
+            "order": 3,
+            "state": "active",
+            "reason": "Archive record and workspace boundary",
+            "decision": "0017"
+          },
+          {
+            "spec": "037",
+            "order": 4,
+            "state": "active",
+            "reason": "Active corpus and execution retention",
+            "decision": "0017"
+          },
+          {
+            "spec": "038",
+            "order": 5,
+            "state": "active",
+            "reason": "Reference information architecture",
+            "decision": "0017"
+          },
+          {
+            "spec": "039",
+            "order": 6,
+            "state": "active",
+            "reason": "GitHub CI and QA evidence",
+            "decision": "0017"
+          },
+          {
+            "spec": "040",
+            "order": 7,
+            "state": "active",
+            "reason": "Contract cutover and program closure",
+            "decision": "0017"
+          }
+        ],
+        "followUps": []
+      }
     ]
   }
 }

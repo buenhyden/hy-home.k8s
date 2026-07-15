@@ -19,6 +19,7 @@ from document_contracts import (
     REGISTRY_PATH,
     SCHEMA_PATH,
     DocumentContractError,
+    Registry,
     TargetInventory,
     classify_path,
     classify_paths,
@@ -59,6 +60,90 @@ REFERENCE_MEMBER_SAMPLE_PATHS = (
     "docs/90.references/research/2026-07-07-test/accepted.md",
     "docs/90.references/research/2026-07-07-test/active.md",
 )
+LINEAGE_FIXTURE_DOCUMENTS = {
+    "docs/01.requirements/005-fixture.md": ("sdlc/prd", "done", "2026-07-12"),
+    "docs/01.requirements/006-fixture.md": ("sdlc/prd", "active", "2026-07-15"),
+    "docs/02.architecture/requirements/0008-fixture.md": (
+        "sdlc/ard",
+        "accepted",
+        "2026-07-12",
+    ),
+    "docs/02.architecture/requirements/0009-fixture.md": (
+        "sdlc/ard",
+        "active",
+        "2026-07-15",
+    ),
+    "docs/02.architecture/decisions/0015-fixture.md": (
+        "sdlc/adr",
+        "accepted",
+        "2026-07-11",
+    ),
+    "docs/02.architecture/decisions/0016-fixture.md": (
+        "sdlc/adr",
+        "accepted",
+        "2026-07-12",
+    ),
+    "docs/02.architecture/decisions/0017-fixture.md": (
+        "sdlc/adr",
+        "accepted",
+        "2026-07-15",
+    ),
+    "docs/02.architecture/decisions/0018-fixture.md": (
+        "sdlc/adr",
+        "active",
+        "2026-07-16",
+    ),
+    "docs/02.architecture/decisions/0021-fixture.md": (
+        "sdlc/adr",
+        "accepted",
+        "2026-07-17",
+    ),
+    "docs/02.architecture/decisions/0022-fixture.md": (
+        "sdlc/adr",
+        "accepted",
+        "2026-07-18",
+    ),
+    "docs/03.specs/026-fixture/spec.md": ("sdlc/spec", "done", "2026-07-12"),
+    "docs/03.specs/033-fixture/spec.md": ("sdlc/spec", "done", "2026-07-15"),
+    "docs/03.specs/034-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/035-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+}
+LINEAGE_INVALID_FIXTURE_DOCUMENTS = {
+    "docs/02.architecture/decisions/0019-fixture.md": (
+        "---\n"
+        "title: 'Synthetic duplicate updated ADR'\n"
+        "type: sdlc/adr\n"
+        "status: accepted\n"
+        "owner: platform\n"
+        "updated: 2026-07-10\n"
+        "updated: 2026-07-16\n"
+        "---\n\n"
+        "# Synthetic duplicate updated ADR\n"
+    ),
+    "docs/02.architecture/decisions/0020-fixture.md": (
+        "---\n"
+        "title: 'Synthetic timestamp ADR'\n"
+        "type: sdlc/adr\n"
+        "status: accepted\n"
+        "owner: platform\n"
+        "updated: 2026-07-16T10:00:00+00:00\n"
+        "---\n\n"
+        "# Synthetic timestamp ADR\n"
+    ),
+    "docs/03.specs/036-fixture/spec.md": (
+        "---\n"
+        "title: 'Synthetic duplicate status Spec'\n"
+        "type: sdlc/spec\n"
+        "status: done\n"
+        "status: active\n"
+        "owner: platform\n"
+        "updated: 2026-07-15\n"
+        "---\n\n"
+        "# Synthetic duplicate status Spec\n"
+    ),
+}
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
@@ -316,6 +401,81 @@ EXPECTED_CASES = (
         "wrong-profile-reference-collection-readme",
         ("REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",),
     ),
+    (
+        "duplicate-program",
+        "duplicate-program",
+        ("REGISTRY_PROGRAM_DUPLICATE",),
+    ),
+    (
+        "unsorted-programs",
+        "reverse-programs",
+        ("REGISTRY_PROGRAM_RELATION_ORDER",),
+    ),
+    (
+        "duplicate-program-member",
+        "duplicate-program-member",
+        ("REGISTRY_PROGRAM_MEMBER_DUPLICATE",),
+    ),
+    (
+        "overlapping-program-member",
+        "overlap-program-member",
+        ("REGISTRY_PROGRAM_MEMBER_OVERLAP",),
+    ),
+    (
+        "noncontiguous-program-order",
+        "noncontiguous-program-order",
+        ("REGISTRY_PROGRAM_RELATION_ORDER",),
+    ),
+    ("unknown-program-prd", "unknown-program-prd", ("REGISTRY_PROGRAM_PATH",)),
+    ("unknown-program-ard", "unknown-program-ard", ("REGISTRY_PROGRAM_PATH",)),
+    ("unknown-program-adr", "unknown-program-adr", ("REGISTRY_PROGRAM_PATH",)),
+    ("unknown-program-spec", "unknown-program-spec", ("REGISTRY_PROGRAM_PATH",)),
+    ("program-state-drift", "program-state-drift", ("REGISTRY_PROGRAM_STATE",)),
+    (
+        "program-decision-not-accepted",
+        "program-decision-not-accepted",
+        ("REGISTRY_PROGRAM_DECISION",),
+    ),
+    (
+        "program-decision-missing",
+        "program-decision-missing",
+        ("REGISTRY_PROGRAM_DECISION",),
+    ),
+    (
+        "invalid-program-evidence-mode",
+        "invalid-program-evidence-mode",
+        ("REGISTRY_PROGRAM_EVIDENCE_MODE",),
+    ),
+    (
+        "program-follow-up-predates-tranche",
+        "program-follow-up-predates-tranche",
+        ("REGISTRY_PROGRAM_CHRONOLOGY",),
+    ),
+    (
+        "production-legacy-v5-input",
+        "production-legacy-v5-input",
+        ("REGISTRY_SCHEMA",),
+    ),
+    (
+        "duplicate-program-spec-status-key",
+        "duplicate-program-spec-status-key",
+        ("REGISTRY_PROGRAM_STATE",),
+    ),
+    (
+        "duplicate-program-adr-updated-key",
+        "duplicate-program-adr-updated-key",
+        ("REGISTRY_PROGRAM_DECISION",),
+    ),
+    (
+        "timestamp-program-adr-updated",
+        "timestamp-program-adr-updated",
+        ("REGISTRY_PROGRAM_DECISION",),
+    ),
+    (
+        "misordered-follow-up-approval",
+        "misordered-follow-up-approval",
+        ("REGISTRY_PROGRAM_CHRONOLOGY",),
+    ),
 )
 
 def _include_path_argument(raw: str) -> PurePosixPath:
@@ -369,11 +529,35 @@ def _fixture_body_contract() -> dict[str, Any]:
     }
 
 
+def _fixture_lineage_profile(
+    profile_id: str, route: str, status_domain: list[str]
+) -> dict[str, Any]:
+    return {
+        "id": profile_id,
+        "class": "sdlc",
+        "mode": "authored",
+        "routes": [{"kind": "regex", "value": route}],
+        "frontmatter": {
+            "mode": "required",
+            "required": ["title", "type", "status", "owner", "updated"],
+            "allowed": ["title", "type", "status", "owner", "updated"],
+            "order": ["title", "type", "status", "owner", "updated"],
+        },
+        "statusDomain": status_domain,
+        "headings": {"required": [], "allowed": []},
+        "template": None,
+        "sourceProfileIds": [],
+        "placeholderPolicy": "forbidden",
+        "appendContract": None,
+        "bodyContract": None,
+    }
+
+
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-5.schema.json",
-        "schemaVersion": 5,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-6.schema.json",
+        "schemaVersion": 6,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -503,7 +687,11 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     {
                         "kind": "exact",
                         "value": "tests/fixtures/document-contracts/self-test-prd.md",
-                    }
+                    },
+                    {
+                        "kind": "regex",
+                        "value": "^docs/01\\.requirements/[0-9]{3}-fixture\\.md$",
+                    },
                 ],
                 "frontmatter": {
                     "mode": "required",
@@ -549,6 +737,21 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "appendContract": None,
                 "bodyContract": _fixture_body_contract(),
             },
+            _fixture_lineage_profile(
+                "sdlc/ard",
+                "^docs/02\\.architecture/requirements/[0-9]{4}-fixture\\.md$",
+                ["draft", "active", "accepted", "archived"],
+            ),
+            _fixture_lineage_profile(
+                "sdlc/adr",
+                "^docs/02\\.architecture/decisions/[0-9]{4}-fixture\\.md$",
+                ["draft", "active", "accepted", "archived"],
+            ),
+            _fixture_lineage_profile(
+                "sdlc/spec",
+                "^docs/03\\.specs/[0-9]{3}-fixture/spec\\.md$",
+                ["draft", "active", "done", "archived"],
+            ),
         ],
         "governanceCurrentOwners": {
             "profileId": "governance/reference",
@@ -571,11 +774,100 @@ def _minimal_fixture_registry() -> dict[str, Any]:
             ],
         },
         "programLineage": {
-            "prd": "005",
-            "ard": "0008",
-            "specs": ["026"],
+            "programs": [
+                {
+                    "prd": "005",
+                    "ard": "0008",
+                    "tranches": [
+                        {
+                            "spec": "026",
+                            "order": 1,
+                            "state": "done",
+                            "reason": "Original fixture tranche",
+                            "decision": "0016",
+                        }
+                    ],
+                    "followUps": [
+                        {
+                            "spec": "033",
+                            "order": 1,
+                            "state": "done",
+                            "reason": "Historical fixture follow-up",
+                            "decision": "0017",
+                            "evidenceMode": "successor-record",
+                        }
+                    ],
+                },
+                {
+                    "prd": "006",
+                    "ard": "0009",
+                    "tranches": [
+                        {
+                            "spec": "034",
+                            "order": 1,
+                            "state": "active",
+                            "reason": "Current fixture tranche",
+                            "decision": "0017",
+                        }
+                    ],
+                    "followUps": [],
+                },
+            ]
         },
     }
+
+
+def _convert_legacy_v5_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
+    """Convert the one historical v5 self-test shape; never used by production."""
+
+    legacy = raw_registry["programLineage"]
+    if (
+        raw_registry.get("schemaVersion") != 5
+        or raw_registry.get("$id")
+        != "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
+        or set(legacy) != {"prd", "ard", "specs"}
+    ):
+        raise ValueError("not the closed legacy-v5 migration fixture")
+    converted = copy.deepcopy(raw_registry)
+    converted["$id"] = (
+        "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
+    )
+    converted["schemaVersion"] = 6
+    tranches = []
+    follow_ups = []
+    for spec_id in legacy["specs"]:
+        if spec_id == "033":
+            follow_ups.append(
+                {
+                    "spec": spec_id,
+                    "order": len(follow_ups) + 1,
+                    "state": "done",
+                    "reason": "Historical fixture follow-up",
+                    "decision": "0017",
+                    "evidenceMode": "successor-record",
+                }
+            )
+        else:
+            tranches.append(
+                {
+                    "spec": spec_id,
+                    "order": len(tranches) + 1,
+                    "state": "done",
+                    "reason": "Original fixture tranche",
+                    "decision": "0016",
+                }
+            )
+    converted["programLineage"] = {
+        "programs": [
+            {
+                "prd": legacy["prd"],
+                "ard": legacy["ard"],
+                "tranches": tranches,
+                "followUps": follow_ups,
+            }
+        ]
+    }
+    return converted
 
 
 def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
@@ -871,6 +1163,102 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         ]
         profile["routes"].append({"kind": "exact", "value": target})
         return
+    programs = raw_registry["programLineage"]["programs"]
+    original = programs[0]
+    current = programs[1]
+    if mutation == "duplicate-program":
+        duplicate = copy.deepcopy(current)
+        duplicate["prd"] = original["prd"]
+        duplicate["ard"] = original["ard"]
+        duplicate["tranches"][0]["spec"] = "035"
+        programs.insert(1, duplicate)
+        return
+    if mutation == "reverse-programs":
+        programs.reverse()
+        return
+    if mutation == "duplicate-program-member":
+        duplicate = copy.deepcopy(original["tranches"][0])
+        duplicate["order"] = 2
+        original["tranches"].append(duplicate)
+        return
+    if mutation == "overlap-program-member":
+        overlap = copy.deepcopy(original["followUps"][0])
+        overlap.pop("evidenceMode")
+        overlap["order"] = 2
+        overlap["decision"] = "0016"
+        original["tranches"].append(overlap)
+        return
+    if mutation == "noncontiguous-program-order":
+        original["tranches"][0]["order"] = 2
+        return
+    if mutation == "unknown-program-prd":
+        current["prd"] = "999"
+        return
+    if mutation == "unknown-program-ard":
+        current["ard"] = "9999"
+        return
+    if mutation == "unknown-program-adr":
+        current["tranches"][0]["decision"] = "9999"
+        return
+    if mutation == "unknown-program-spec":
+        current["tranches"][0]["spec"] = "999"
+        return
+    if mutation == "program-state-drift":
+        original["tranches"][0]["state"] = "active"
+        return
+    if mutation == "program-decision-not-accepted":
+        current["tranches"][0]["decision"] = "0018"
+        return
+    if mutation == "program-decision-missing":
+        del current["tranches"][0]["decision"]
+        return
+    if mutation == "invalid-program-evidence-mode":
+        original["followUps"][0]["evidenceMode"] = "implicit"
+        return
+    if mutation == "program-follow-up-predates-tranche":
+        original["followUps"][0]["decision"] = "0015"
+        original["followUps"][0]["evidenceMode"] = "reciprocal-body"
+        return
+    if mutation == "production-legacy-v5-input":
+        raw_registry["$id"] = (
+            "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
+        )
+        raw_registry["schemaVersion"] = 5
+        raw_registry["programLineage"] = {
+            "prd": "005",
+            "ard": "0008",
+            "specs": ["026", "033"],
+        }
+        return
+    if mutation == "duplicate-program-spec-status-key":
+        current["tranches"][0]["spec"] = "036"
+        return
+    if mutation == "duplicate-program-adr-updated-key":
+        current["tranches"][0]["decision"] = "0019"
+        return
+    if mutation == "timestamp-program-adr-updated":
+        current["tranches"][0]["decision"] = "0020"
+        return
+    if mutation == "misordered-follow-up-approval":
+        current["followUps"] = [
+            {
+                "spec": "038",
+                "order": 1,
+                "state": "active",
+                "reason": "Later-approved fixture follow-up declared first",
+                "decision": "0022",
+                "evidenceMode": "reciprocal-body",
+            },
+            {
+                "spec": "039",
+                "order": 2,
+                "state": "active",
+                "reason": "Earlier-approved fixture follow-up declared second",
+                "decision": "0021",
+                "evidenceMode": "reciprocal-body",
+            },
+        ]
+        return
     raise ValueError(f"unsupported fixture mutation: {mutation}")
 
 
@@ -913,6 +1301,57 @@ def _assert_inventory_safety(root: Path) -> None:
                 ) from exc
         else:
             raise AssertionError(f"unsafe explicit include was accepted: {path}")
+
+
+def _assert_program_lineage_projection(registry: Registry) -> None:
+    actual = tuple(
+        (
+            program.prd_id,
+            program.ard_id,
+            tuple(
+                (
+                    relation.spec_id,
+                    relation.order,
+                    relation.state,
+                    relation.decision_id,
+                )
+                for relation in program.tranches
+            ),
+            tuple(
+                (
+                    relation.spec_id,
+                    relation.order,
+                    relation.state,
+                    relation.decision_id,
+                    relation.evidence_mode,
+                )
+                for relation in program.follow_ups
+            ),
+        )
+        for program in registry.program_lineage
+    )
+    expected = (
+        (
+            "005",
+            "0008",
+            tuple(
+                (f"{spec_id:03d}", order, "done", "0016")
+                for order, spec_id in enumerate(range(26, 33), 1)
+            ),
+            (("033", 1, "done", "0017", "successor-record"),),
+        ),
+        (
+            "006",
+            "0009",
+            tuple(
+                (f"{spec_id:03d}", order, "active", "0017")
+                for order, spec_id in enumerate(range(34, 41), 1)
+            ),
+            (),
+        ),
+    )
+    if actual != expected:
+        raise AssertionError("production program-lineage typed projection differs")
 
 
 def _assert_parser_safety() -> None:
@@ -2048,7 +2487,7 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 5
+        fixture.get("schemaVersion") != 6
         or fixture.get(LOCAL_AGENT_FIXTURE_FIELD) != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
@@ -2078,6 +2517,26 @@ def _self_test(root: Path) -> int:
         )
         fixture_template.parent.mkdir(parents=True, exist_ok=True)
         fixture_template.write_text("# Synthetic PRD form\n", encoding="utf-8")
+        for raw_path, (document_type, status, updated) in (
+            LINEAGE_FIXTURE_DOCUMENTS.items()
+        ):
+            target = fixture_root / raw_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(
+                "---\n"
+                f"title: 'Synthetic {raw_path}'\n"
+                f"type: {document_type}\n"
+                f"status: {status}\n"
+                "owner: platform\n"
+                f"updated: {updated}\n"
+                "---\n\n"
+                "# Synthetic lineage owner\n",
+                encoding="utf-8",
+            )
+        for raw_path, content in LINEAGE_INVALID_FIXTURE_DOCUMENTS.items():
+            target = fixture_root / raw_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
         untracked = fixture_root / "docs/00.agent-governance/current-untracked.md"
         untracked.write_text("# Untracked synthetic authority\n", encoding="utf-8")
         symlink = fixture_root / "docs/00.agent-governance/current-symlink.md"
@@ -2102,6 +2561,8 @@ def _self_test(root: Path) -> int:
                 *REFERENCE_PACK_SAMPLE_PATHS,
                 *REFERENCE_MEMBER_SAMPLE_PATHS,
                 "docs/90.references/research/2026-07-07-test/symlink.md",
+                *LINEAGE_FIXTURE_DOCUMENTS,
+                *LINEAGE_INVALID_FIXTURE_DOCUMENTS,
             ],
             cwd=fixture_root,
             check=True,
@@ -2124,6 +2585,56 @@ def _self_test(root: Path) -> int:
                 )
                 return 1
 
+        legacy = _minimal_fixture_registry()
+        legacy["$id"] = (
+            "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
+        )
+        legacy["schemaVersion"] = 5
+        legacy["programLineage"] = {
+            "prd": "005",
+            "ard": "0008",
+            "specs": ["026", "033"],
+        }
+        registry_target = fixture_root / REGISTRY_PATH
+        registry_target.parent.mkdir(parents=True, exist_ok=True)
+        registry_target.write_text(
+            json.dumps(legacy, indent=2) + "\n", encoding="utf-8"
+        )
+        try:
+            load_registry(fixture_root)
+        except DocumentContractError as exc:
+            if _ordered_rule_ids(exc.diagnostics) != ("REGISTRY_SCHEMA",):
+                print(
+                    "FAIL document contract registry self-test: "
+                    "production legacy-v5 rejection returned wrong rule"
+                )
+                return 1
+        else:
+            print(
+                "FAIL document contract registry self-test: "
+                "production loader accepted legacy-v5 input"
+            )
+            return 1
+        migrated = validate_registry(
+            fixture_root, _convert_legacy_v5_fixture(legacy)
+        )
+        if (
+            len(migrated.program_lineage) != 1
+            or tuple(
+                item.spec_id for item in migrated.program_lineage[0].tranches
+            )
+            != ("026",)
+            or tuple(
+                item.spec_id for item in migrated.program_lineage[0].follow_ups
+            )
+            != ("033",)
+        ):
+            print(
+                "FAIL document contract registry self-test: "
+                "legacy-v5 fixture conversion projection differs"
+            )
+            return 1
+
     try:
         _assert_reserved_gemini_native_surface_mutation_proofs()
         _assert_retired_cloud_sdlc_surface_mutation_proofs()
@@ -2133,6 +2644,7 @@ def _self_test(root: Path) -> int:
             root, raw_registry, fixture
         )
         registry = validate_registry(root, raw_registry)
+        _assert_program_lineage_projection(registry)
         readme_fixture = _load_json(root / README_FIXTURE_PATH)
         inventory = enumerate_target_markdown(root)
         _assert_readme_family_contract(
@@ -2155,7 +2667,7 @@ def _self_test(root: Path) -> int:
     print(
         "PASS document contract registry self-test: "
         f"{len(EXPECTED_CASES)} cases, {profile_count} profiles, {template_count} templates; "
-        "README fixture 8/8, mutation probes passed"
+        "README fixture 8/8, legacy-v5 migration fixture, mutation probes passed"
     )
     return 0
 
@@ -2212,6 +2724,7 @@ def main() -> int:
     print(
         f"baseline={len(inventory.baseline_paths)} "
         f"new={len(inventory.new_paths)} "
+        f"programs={len(registry.program_lineage)} "
         f"uncovered={uncovered_count} ambiguous={ambiguous_count}"
     )
     if diagnostics:

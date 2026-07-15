@@ -28,7 +28,7 @@ evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| ALF-001 | VAL-ALF-001 through VAL-ALF-004 | Introduce typed registry v6 program relations. | platform | Queued | Not executed | Registry fixtures, strict result, and logical commit will be recorded here. |
+| ALF-001 | VAL-ALF-001 through VAL-ALF-004 | Introduce typed registry v6 program relations. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | Initial RED: the v6 `valid-minimal` fixture failed with `REGISTRY_SCHEMA` against the v5 loader. Review RED: duplicate `status` was accepted with no diagnostic. GREEN: registry self-test passes 78 cases, including 19 lineage mutations and the isolated legacy migration proof; strict mode loads two programs with 430 classified paths, baseline 433, new 58, uncovered 0, and ambiguous 0. |
 | ALF-002 | VAL-ALF-002, VAL-ALF-004, VAL-ALF-006, VAL-ALF-007 | Enforce cross-document lineage and predecessor-gated execution; retire duplicate Stage 00 lifecycle tables. | platform | Queued | Not executed | Cross-document fixtures, Stage 00 diff, strict result, and logical commit will be recorded here. |
 | ALF-003 | VAL-ALF-005 | Add the evidence-backed Current audit disposition overlay. | platform | Queued | Not executed | Observation-row preservation, overlay links, validators, and logical commit will be recorded here. |
 | ALF-004 | VAL-ALF-001 through VAL-ALF-007 | Run full QA, independent review, and atomic lifecycle closure. | platform | Queued | Not executed | Command matrix, review verdicts, rollback parent, and closure commit will be recorded here. |
@@ -46,12 +46,30 @@ evidence.
 
 ## Verification Summary
 
-Execution has not started. The approved design baseline is `daf0636` plus
-review correction `0f67e9c`; independent design review returned
-`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The current environment has one
-known all-files limitation: `validate-gitops-change-set.py --self-test` calls
-`os.mkfifo`, which returns `Errno 95` in this filesystem and is independently
-reproducible on unchanged main. Spec 039 owns its portability remediation.
+ALF-001 is implemented and independently approved. Its test-first RED run
+failed because schema/loader v5 rejected the new closed-v6 fixture. After the
+implementation, `python3 scripts/validate-document-contract-registry.py --root
+. --self-test` passes 78 cases and the strict command passes 430 classified
+paths while exposing two typed programs. Production loading rejects v5; its
+only converter is private to the self-test migration fixture. Quality review
+then added fail-closed duplicate-key parsing, explicit ADR timestamp rejection,
+and consecutive follow-up approval-order validation. The approved design
+baseline remains `daf0636` plus review correction `0f67e9c`. The current
+environment has one known all-files limitation: `validate-gitops-change-set.py
+--self-test` calls `os.mkfifo`, which returns `Errno 95` in this filesystem and
+is independently reproducible on unchanged main. Spec 039 owns its portability
+remediation. Requirements re-review returned `REQUIREMENTS COMPLIANT`; quality
+re-review returned `QUALITY APPROVED` after the three fail-closed fixes.
+
+| ALF-001 command | Result |
+| --- | --- |
+| `python3 scripts/validate-document-contract-registry.py --root . --self-test` before implementation | RED: exit 1; `valid-minimal` expected no diagnostics and received `REGISTRY_SCHEMA`. |
+| Quality-review RED fixture run | RED: duplicate `status` expected `REGISTRY_PROGRAM_STATE` and received no diagnostic because the last YAML value was accepted. |
+| `python3 scripts/validate-document-contract-registry.py --root . --self-test` after review remediation | PASS: 78 cases, 64 profiles, 30 templates, duplicate `status`/`updated`, timestamp rejection, follow-up approval order, legacy-v5 migration fixture, and mutation probes. |
+| `python3 scripts/validate-document-contract-registry.py --root . --mode strict` | PASS: baseline 433, new 58, programs 2, uncovered 0, ambiguous 0, and 430 classified paths. |
+| Markdown-profile and cross-document self-test plus strict commands | PASS: both self-tests and both current-corpus strict integrations. |
+| `ruff check` for the two Python owners; Python AST parse; JSON parse; `git diff --check` | PASS. The optional repository-wide Ruff formatter baseline remains outside this work package; no Ruff lint or syntax issue exists in the changed Python. |
+| Changed-file pre-commit with `strict-repository-quality` skipped | PASS for affected-surface validation, JSON, EOF, line endings, whitespace, gitleaks, detect-secrets, and Markdown lint. The skipped aggregate is the already bounded FIFO limitation owned by Spec 039, not an ALF-001 PASS claim. |
 
 ## Traceability
 
@@ -59,7 +77,7 @@ reproducible on unchanged main. Spec 039 owns its portability remediation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [ALF-001](../plans/2026-07-15-authority-and-lineage-foundation.md#task-1-introduce-typed-registry-v6-program-relations) | Queued. | This Task will record registry fixture, strict validation, review, and commit evidence. |
+| [ALF-001](../plans/2026-07-15-authority-and-lineage-foundation.md#task-1-introduce-typed-registry-v6-program-relations) | Done. | Closed-v6 schema/data, `Registry.program_lineage`, duplicate-key/timestamp/approval-order review remediation, 78-case self-test, strict 430-path PASS, and independent requirements/quality approval provide repository-static evidence. |
 | [ALF-002](../plans/2026-07-15-authority-and-lineage-foundation.md#task-2-enforce-cross-document-lineage-and-execution-admission) | Queued. | This Task will record cross-document, Stage 00, review, and commit evidence. |
 | [ALF-003](../plans/2026-07-15-authority-and-lineage-foundation.md#task-3-normalize-the-current-audit-remediation-overlay) | Queued. | This Task will record observation-preservation, overlay, review, and commit evidence. |
 | [ALF-004](../plans/2026-07-15-authority-and-lineage-foundation.md#task-4-validate-and-close-the-authority-foundation) | Queued. | This Task will record full QA, review verdicts, rollback, and closure evidence. |

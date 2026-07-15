@@ -7,10 +7,12 @@ import re
 import stat
 import subprocess
 from dataclasses import dataclass
+from datetime import date, datetime
 from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from typing import Any, Literal, Mapping, NoReturn, Sequence
 
+import yaml
 from jsonschema import Draft202012Validator
 
 
@@ -162,6 +164,28 @@ class ReferenceCurrentPacks:
 
 
 @dataclass(frozen=True)
+class ProgramRelation:
+    spec_id: str
+    order: int
+    state: str
+    reason: str
+    decision_id: str
+
+
+@dataclass(frozen=True)
+class ProgramFollowUp(ProgramRelation):
+    evidence_mode: Literal["reciprocal-body", "successor-record"]
+
+
+@dataclass(frozen=True)
+class ProgramLineage:
+    prd_id: str
+    ard_id: str
+    tranches: tuple[ProgramRelation, ...]
+    follow_ups: tuple[ProgramFollowUp, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     baseline_sha: str
@@ -169,6 +193,7 @@ class Registry:
     profiles: tuple[DocumentProfile, ...]
     governance_current_owners: GovernanceCurrentOwners
     reference_current_packs: ReferenceCurrentPacks
+    program_lineage: tuple[ProgramLineage, ...]
 
 
 @dataclass(frozen=True)
@@ -193,6 +218,42 @@ class DocumentContractError(ValueError):
     def __init__(self, diagnostics: Sequence[Diagnostic]):
         self.diagnostics = tuple(diagnostics)
         super().__init__("; ".join(item.rule_id for item in self.diagnostics))
+
+
+class _UniqueKeySafeLoader(yaml.SafeLoader):
+    """YAML SafeLoader variant that rejects duplicate mapping keys."""
+
+
+def _construct_unique_mapping(
+    loader: _UniqueKeySafeLoader, node: yaml.MappingNode, deep: bool = False
+) -> dict[Any, Any]:
+    mapping: dict[Any, Any] = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        try:
+            duplicate = key in mapping
+        except TypeError as exc:
+            raise yaml.constructor.ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                "found an unhashable key",
+                key_node.start_mark,
+            ) from exc
+        if duplicate:
+            raise yaml.constructor.ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                f"found duplicate key {key!r}",
+                key_node.start_mark,
+            )
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
+
+
+_UniqueKeySafeLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    _construct_unique_mapping,
+)
 
 
 def _diagnostic(
@@ -508,6 +569,15 @@ def _schema_rule_id(error: Any) -> str:
             if error.validator == "uniqueItems":
                 return "REGISTRY_GOVERNANCE_CURRENT_OWNER_DUPLICATE"
             return "REGISTRY_GOVERNANCE_CURRENT_OWNER_PATH"
+    if path and path[0] == "programLineage":
+        messages = " ".join(item.message for item in nested_errors)
+        if "evidenceMode" in path or "evidenceMode" in messages:
+            return "REGISTRY_PROGRAM_EVIDENCE_MODE"
+        if "decision" in path or "decision" in messages:
+            return "REGISTRY_PROGRAM_DECISION"
+        if "state" in path or "state" in messages:
+            return "REGISTRY_PROGRAM_STATE"
+        return "REGISTRY_SCHEMA"
     if len(path) >= 4 and path[-1] == "kind" and "routes" in path:
         return "REGISTRY_ROUTE_KIND"
     return "REGISTRY_SCHEMA"
@@ -589,6 +659,383 @@ def _reference_pack_from_mapping(raw: Mapping[str, Any]) -> ReferenceCurrentPack
         allowed_states=tuple(raw["allowedStates"]),
         members=tuple(raw["members"]),
     )
+
+
+def _program_relation_from_mapping(raw: Mapping[str, Any]) -> ProgramRelation:
+    return ProgramRelation(
+        spec_id=raw["spec"],
+        order=raw["order"],
+        state=raw["state"],
+        reason=raw["reason"],
+        decision_id=raw["decision"],
+    )
+
+
+def _program_follow_up_from_mapping(raw: Mapping[str, Any]) -> ProgramFollowUp:
+    return ProgramFollowUp(
+        spec_id=raw["spec"],
+        order=raw["order"],
+        state=raw["state"],
+        reason=raw["reason"],
+        decision_id=raw["decision"],
+        evidence_mode=raw["evidenceMode"],
+    )
+
+
+def _program_lineage_from_mapping(raw: Mapping[str, Any]) -> ProgramLineage:
+    return ProgramLineage(
+        prd_id=raw["prd"],
+        ard_id=raw["ard"],
+        tranches=tuple(
+            _program_relation_from_mapping(item) for item in raw["tranches"]
+        ),
+        follow_ups=tuple(
+            _program_follow_up_from_mapping(item) for item in raw["followUps"]
+        ),
+    )
+
+
+def _program_structure_diagnostics(
+    raw_programs: Sequence[Mapping[str, Any]],
+) -> tuple[Diagnostic, ...]:
+    diagnostics: list[Diagnostic] = []
+    prd_ids = [program["prd"] for program in raw_programs]
+    ard_ids = [program["ard"] for program in raw_programs]
+    if len(prd_ids) != len(set(prd_ids)) or len(ard_ids) != len(set(ard_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_PROGRAM_DUPLICATE",
+                expected="unique PRD and ARD program owners",
+                actual="a PRD or ARD is declared by multiple programs",
+            )
+        )
+    if prd_ids != sorted(prd_ids, key=int):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_PROGRAM_RELATION_ORDER",
+                expected="programs sorted by numeric PRD identifier",
+                actual=repr(prd_ids),
+            )
+        )
+
+    global_members: set[str] = set()
+    for program in raw_programs:
+        tranches = program["tranches"]
+        follow_ups = program["followUps"]
+        tranche_ids = [item["spec"] for item in tranches]
+        follow_up_ids = [item["spec"] for item in follow_ups]
+        if len(tranche_ids) != len(set(tranche_ids)) or len(follow_up_ids) != len(
+            set(follow_up_ids)
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_PROGRAM_MEMBER_DUPLICATE",
+                    expected="unique Spec members within each relation collection",
+                    actual=f"PRD-{program['prd']} contains a duplicate member",
+                )
+            )
+        overlap = set(tranche_ids) & set(follow_up_ids)
+        if overlap:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_PROGRAM_MEMBER_OVERLAP",
+                    expected="disjoint original tranche and follow-up sets",
+                    actual=f"PRD-{program['prd']} overlap {sorted(overlap)!r}",
+                )
+            )
+        program_members = set(tranche_ids) | set(follow_up_ids)
+        repeated_members = global_members & program_members
+        if repeated_members:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_PROGRAM_MEMBER_DUPLICATE",
+                    expected="each Spec belongs to at most one program",
+                    actual=f"cross-program members {sorted(repeated_members)!r}",
+                )
+            )
+        global_members.update(program_members)
+
+        for relation_name, relations in (
+            ("tranches", tranches),
+            ("followUps", follow_ups),
+        ):
+            orders = [item["order"] for item in relations]
+            if orders != list(range(1, len(relations) + 1)):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_PROGRAM_RELATION_ORDER",
+                        expected=f"contiguous one-based {relation_name} order",
+                        actual=f"PRD-{program['prd']} {orders!r}",
+                    )
+                )
+
+        for follow_up in follow_ups:
+            historical_exception = (
+                program["prd"] == "005"
+                and follow_up["spec"] == "033"
+                and follow_up["decision"] == "0017"
+            )
+            expected_mode = (
+                "successor-record" if historical_exception else "reciprocal-body"
+            )
+            if follow_up["evidenceMode"] != expected_mode:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_PROGRAM_EVIDENCE_MODE",
+                        expected=f"{expected_mode} for PRD-{program['prd']} Spec-{follow_up['spec']}",
+                        actual=follow_up["evidenceMode"],
+                    )
+                )
+    return tuple(diagnostics)
+
+
+_PROGRAM_OWNER_CONTRACTS = {
+    "prd": (
+        PurePosixPath("docs/01.requirements"),
+        re.compile(r"^docs/01\.requirements/(?P<id>[0-9]{3})-[^/]+\.md$"),
+        "sdlc/prd",
+    ),
+    "ard": (
+        PurePosixPath("docs/02.architecture/requirements"),
+        re.compile(
+            r"^docs/02\.architecture/requirements/(?P<id>[0-9]{4})-[^/]+\.md$"
+        ),
+        "sdlc/ard",
+    ),
+    "adr": (
+        PurePosixPath("docs/02.architecture/decisions"),
+        re.compile(
+            r"^docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[^/]+\.md$"
+        ),
+        "sdlc/adr",
+    ),
+    "spec": (
+        PurePosixPath("docs/03.specs"),
+        re.compile(r"^docs/03\.specs/(?P<id>[0-9]{3})-[^/]+/spec\.md$"),
+        "sdlc/spec",
+    ),
+}
+
+
+def _frontmatter_metadata(root: Path, path: PurePosixPath) -> Mapping[str, Any]:
+    text = (root / path).read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        raise ValueError("missing YAML frontmatter")
+    closing = text.find("\n---\n", 4)
+    if closing < 0:
+        raise ValueError("unterminated YAML frontmatter")
+    metadata = yaml.load(text[4:closing], Loader=_UniqueKeySafeLoader)
+    if not isinstance(metadata, dict) or not all(
+        isinstance(key, str) for key in metadata
+    ):
+        raise ValueError("frontmatter must be a string-keyed mapping")
+    return metadata
+
+
+def _resolve_program_owner(
+    root: Path,
+    registry: Registry,
+    owner_kind: Literal["prd", "ard", "adr", "spec"],
+    numeric_id: str,
+) -> tuple[PurePosixPath | None, tuple[Diagnostic, ...]]:
+    directory, pattern, expected_profile = _PROGRAM_OWNER_CONTRACTS[owner_kind]
+    entries = _parse_ls_files_stage_z(
+        _run_git(
+            root,
+            ("ls-files", "--stage", "-z", "--", directory.as_posix()),
+        )
+    )
+    candidates = [
+        entry
+        for entry in entries
+        if (match := pattern.fullmatch(entry.path.as_posix())) is not None
+        and match.group("id") == numeric_id
+    ]
+    valid_candidates: list[_GitEntry] = []
+    for entry in candidates:
+        try:
+            file_mode = _lstat_named_path(root, entry.path)
+        except ValueError:
+            continue
+        if (
+            entry.stage == 0
+            and entry.mode.startswith("100")
+            and stat.S_ISREG(file_mode)
+        ):
+            valid_candidates.append(entry)
+    if len(valid_candidates) != 1:
+        return None, (
+            _diagnostic(
+                "REGISTRY_PROGRAM_PATH",
+                expected=f"one tracked regular {expected_profile} owner for {numeric_id}",
+                actual=f"found {len(valid_candidates)} owners",
+            ),
+        )
+
+    path = valid_candidates[0].path
+    try:
+        actual_profile = classify_path(registry, path)
+    except DocumentContractError:
+        actual_profile = None
+    if actual_profile is None or actual_profile.profile_id != expected_profile:
+        return None, (
+            _diagnostic(
+                "REGISTRY_PROGRAM_PATH",
+                path=path,
+                profile=(actual_profile.profile_id if actual_profile else ""),
+                expected=expected_profile,
+                actual=(actual_profile.profile_id if actual_profile else "unclassified"),
+            ),
+        )
+    return path, ()
+
+
+def _program_repository_diagnostics(
+    root: Path, registry: Registry
+) -> tuple[Diagnostic, ...]:
+    diagnostics: list[Diagnostic] = []
+    owner_cache: dict[
+        tuple[str, str], tuple[PurePosixPath | None, tuple[Diagnostic, ...]]
+    ] = {}
+    metadata_cache: dict[PurePosixPath, Mapping[str, Any] | ValueError] = {}
+    decision_keys: dict[str, tuple[date, int] | None] = {}
+
+    def owner(
+        kind: Literal["prd", "ard", "adr", "spec"], numeric_id: str
+    ) -> PurePosixPath | None:
+        cache_key = (kind, numeric_id)
+        if cache_key not in owner_cache:
+            owner_cache[cache_key] = _resolve_program_owner(
+                root, registry, kind, numeric_id
+            )
+            diagnostics.extend(owner_cache[cache_key][1])
+        path, _ = owner_cache[cache_key]
+        return path
+
+    def metadata(path: PurePosixPath) -> Mapping[str, Any] | None:
+        if path not in metadata_cache:
+            try:
+                metadata_cache[path] = _frontmatter_metadata(root, path)
+            except (OSError, UnicodeError, yaml.YAMLError, ValueError) as exc:
+                metadata_cache[path] = ValueError(str(exc))
+        result = metadata_cache[path]
+        return None if isinstance(result, ValueError) else result
+
+    def decision_key(decision_id: str) -> tuple[date, int] | None:
+        if decision_id in decision_keys:
+            return decision_keys[decision_id]
+        path = owner("adr", decision_id)
+        if path is None:
+            decision_keys[decision_id] = None
+            return None
+        decision_metadata = metadata(path)
+        if decision_metadata is None or decision_metadata.get("status") != "accepted":
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_PROGRAM_DECISION",
+                    path=path,
+                    profile="sdlc/adr",
+                    expected="an accepted governing ADR",
+                    actual=(
+                        "unreadable frontmatter"
+                        if decision_metadata is None
+                        else repr(decision_metadata.get("status"))
+                    ),
+                )
+            )
+            decision_keys[decision_id] = None
+            return None
+        raw_updated = decision_metadata.get("updated")
+        try:
+            if isinstance(raw_updated, datetime):
+                raise ValueError("timestamps are not immutable admission dates")
+            if isinstance(raw_updated, date):
+                updated = raw_updated
+            elif isinstance(raw_updated, str):
+                updated = date.fromisoformat(raw_updated)
+            else:
+                raise TypeError("updated is not an ISO date scalar")
+        except (TypeError, ValueError):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_PROGRAM_DECISION",
+                    path=path,
+                    profile="sdlc/adr",
+                    expected="accepted ADR updated as an ISO date",
+                    actual=repr(raw_updated),
+                )
+            )
+            decision_keys[decision_id] = None
+            return None
+        key = (updated, int(decision_id))
+        decision_keys[decision_id] = key
+        return key
+
+    for program in registry.program_lineage:
+        owner("prd", program.prd_id)
+        owner("ard", program.ard_id)
+        tranche_keys: list[tuple[date, int]] = []
+        follow_up_keys: list[
+            tuple[ProgramFollowUp, tuple[date, int] | None]
+        ] = []
+        for relation in (*program.tranches, *program.follow_ups):
+            spec_path = owner("spec", relation.spec_id)
+            if spec_path is not None:
+                spec_metadata = metadata(spec_path)
+                actual_state = (
+                    spec_metadata.get("status") if spec_metadata is not None else None
+                )
+                if actual_state != relation.state:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_PROGRAM_STATE",
+                            path=spec_path,
+                            profile="sdlc/spec",
+                            expected=relation.state,
+                            actual=repr(actual_state),
+                        )
+                    )
+            key = decision_key(relation.decision_id)
+            if isinstance(relation, ProgramFollowUp):
+                follow_up_keys.append((relation, key))
+            elif key is not None:
+                tranche_keys.append(key)
+        if tranche_keys:
+            latest_tranche_key = max(tranche_keys)
+            for follow_up, key in follow_up_keys:
+                if key is not None and key <= latest_tranche_key:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_PROGRAM_CHRONOLOGY",
+                            expected=(
+                                "follow-up ADR key later than every original-tranche "
+                                "ADR key"
+                            ),
+                            actual=(
+                                f"PRD-{program.prd_id} Spec-{follow_up.spec_id} "
+                                f"key={key!r} latest-tranche={latest_tranche_key!r}"
+                            ),
+                        )
+                    )
+        for (previous_follow_up, previous_key), (follow_up, key) in zip(
+            follow_up_keys, follow_up_keys[1:]
+        ):
+            if previous_key is not None and key is not None and key <= previous_key:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_PROGRAM_CHRONOLOGY",
+                        expected=(
+                            "each declared follow-up ADR key later than the "
+                            "immediately preceding follow-up ADR key"
+                        ),
+                        actual=(
+                            f"PRD-{program.prd_id} Spec-{follow_up.spec_id} "
+                            f"key={key!r} does not follow Spec-"
+                            f"{previous_follow_up.spec_id} key={previous_key!r}"
+                        ),
+                    )
+                )
+    return tuple(diagnostics)
 
 
 def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
@@ -1000,6 +1447,9 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                 )
             )
 
+    raw_programs = raw_registry["programLineage"]["programs"]
+    diagnostics.extend(_program_structure_diagnostics(raw_programs))
+
     if diagnostics:
         raise DocumentContractError(diagnostics)
 
@@ -1016,6 +1466,9 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
         reference_current_packs=ReferenceCurrentPacks(
             profile_id=raw_reference_packs["profileId"],
             packs=tuple(_reference_pack_from_mapping(pack) for pack in raw_packs),
+        ),
+        program_lineage=tuple(
+            _program_lineage_from_mapping(program) for program in raw_programs
         ),
     )
 
@@ -1176,6 +1629,9 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
     if reference_diagnostics:
         raise DocumentContractError(reference_diagnostics)
+    program_diagnostics = _program_repository_diagnostics(root, registry)
+    if program_diagnostics:
+        raise DocumentContractError(program_diagnostics)
     return registry
 
 
@@ -1188,6 +1644,19 @@ def load_registry(root: Path) -> Registry:
             "REGISTRY_SCHEMA",
             expected="a JSON object",
             actual=type(raw_registry).__name__,
+        )
+    if (
+        raw_registry.get("schemaVersion") != 6
+        or raw_registry.get("$id")
+        != "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
+    ):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="closed production registry schema v6",
+            actual=(
+                f"schemaVersion={raw_registry.get('schemaVersion')!r} "
+                f"$id={raw_registry.get('$id')!r}"
+            ),
         )
     return validate_registry(root, raw_registry)
 
