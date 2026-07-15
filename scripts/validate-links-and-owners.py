@@ -337,7 +337,9 @@ def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[s
     definition_source = _visible_markdown(definitions_text) if definitions_text is not None else visible
     definitions: dict[str, str] = {}
     for match in re.finditer(r"^ {0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))", definition_source, re.MULTILINE):
-        definitions[_normalize_reference_label(match.group(1))] = match.group(2) or match.group(3)
+        key = _normalize_reference_label(match.group(1))
+        target = match.group(2) or match.group(3)
+        definitions.setdefault(key, target)
     found: list[tuple[int, str]] = []
     inline = re.compile(r"(?<!!)\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s)]+))(?:\s+[^)]*)?\)")
     for match in inline.finditer(visible):
@@ -2214,6 +2216,26 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
             f"[{definition_labels.get(mutation, 'wrong-target')}]: "
             "../04.execution/tasks/2026-07-15-fixture.md\n"
             "[Spec reciprocal]: ../03.specs/999-fixture/spec.md\n"
+        )
+    elif mutation in {
+        "full-reference-duplicate-definition",
+        "collapsed-reference-duplicate-definition",
+        "shortcut-reference-duplicate-definition",
+    }:
+        labels = {
+            "full-reference-duplicate-definition": "[Task][Dupe   Label]",
+            "collapsed-reference-duplicate-definition": "[dupe\tlabel][]",
+            "shortcut-reference-duplicate-definition": "[dupe label]",
+        }
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "[Spec](../03.specs/999-fixture/spec.md)",
+            labels[mutation],
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n\n"
+            "[ DUPE\tLABEL ]: ../04.execution/tasks/2026-07-15-fixture.md\n"
+            "[dupe   label]: ../03.specs/999-fixture/spec.md\n"
         )
     elif mutation in {
         "blank-line-after-delimiter",

@@ -106,6 +106,9 @@
     {"name": "full-reference-whitespace-normalization", "mutation": "full-reference-whitespace-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "collapsed-reference-whitespace-normalization", "mutation": "collapsed-reference-whitespace-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "shortcut-reference-whitespace-normalization", "mutation": "shortcut-reference-whitespace-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "full-reference-first-definition-wins", "mutation": "full-reference-duplicate-definition", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "collapsed-reference-first-definition-wins", "mutation": "collapsed-reference-duplicate-definition", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "shortcut-reference-first-definition-wins", "mutation": "shortcut-reference-duplicate-definition", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "blank-line-ends-table", "mutation": "blank-line-after-delimiter", "bodyContracts": "audit", "expected_rule_ids": []},
     {"name": "html-comment-spacing-ends-table", "mutation": "html-comment-after-delimiter", "bodyContracts": "audit", "expected_rule_ids": []}
   ],
