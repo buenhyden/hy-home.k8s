@@ -7,6 +7,7 @@ import argparse
 import collections
 import contextlib
 import copy
+import dataclasses
 import datetime as dt
 import io
 import json
@@ -79,6 +80,13 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "APPEND-SECTION-LEVEL",
         "APPEND-SECTION-REQUIRED",
         "BODY-AUTHOR-PROMPT",
+        "BODY-CONTRACT-CELL",
+        "BODY-CONTRACT-COLUMNS",
+        "BODY-CONTRACT-COLUMN-DUPLICATE",
+        "BODY-CONTRACT-EXCLUSION",
+        "BODY-CONTRACT-HEADING",
+        "BODY-CONTRACT-IDENTIFIER",
+        "BODY-CONTRACT-TABLE",
         "BODY-FENCE-UNCLOSED",
         "BODY-H1",
         "BODY-H1-PLACEHOLDER",
@@ -266,6 +274,268 @@ def text_outside_fenced_code(markdown: str) -> str:
             continue
         visible.append(raw_line)
     return "\n".join(visible)
+
+
+def _visible_markdown(markdown: str) -> str:
+    """Hide fenced code and HTML comments while retaining line positions."""
+
+    visible: list[str] = []
+    fence_character: str | None = None
+    fence_length = 0
+    in_comment = False
+    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing.fullmatch(raw_line):
+                fence_character = None
+                fence_length = 0
+            visible.append("")
+            continue
+        line, in_comment = _strip_html_comments(raw_line, in_comment)
+        match = opening.match(line)
+        if match:
+            marker = match.group(1)
+            if marker[0] == "`" and "`" in match.group(2):
+                visible.append(line)
+                continue
+            fence_character = marker[0]
+            fence_length = len(marker)
+            visible.append("")
+            continue
+        visible.append(line)
+    return "\n".join(visible)
+
+
+def _gfm_table_cells(line: str) -> list[str]:
+    """Split one pipe-led GFM table row, preserving escaped pipes."""
+
+    stripped = line.strip()
+    if not stripped.startswith("|"):
+        return []
+
+    def escaped(index: int) -> bool:
+        backslashes = 0
+        cursor = index - 1
+        while cursor >= 0 and stripped[cursor] == "\\":
+            backslashes += 1
+            cursor -= 1
+        return backslashes % 2 == 1
+
+    cells: list[str] = []
+    current: list[str] = []
+    for index, character in enumerate(stripped):
+        if character == "|" and not escaped(index):
+            cells.append("".join(current).strip())
+            current = []
+        else:
+            current.append(character)
+    cells.append("".join(current).strip())
+    if cells and cells[0] == "":
+        cells.pop(0)
+    if stripped.endswith("|") and not escaped(len(stripped) - 1) and cells[-1] == "":
+        cells.pop()
+    return cells
+
+
+def _exact_heading_section(text: str, heading: str) -> str | None:
+    """Return the sole exact heading section outside comments and fences."""
+
+    visible_lines = _visible_markdown(text).splitlines()
+    raw_lines = text.splitlines()
+    matches = [index for index, line in enumerate(visible_lines) if line == heading]
+    if len(matches) != 1:
+        return None
+    start = matches[0]
+    level = len(heading) - len(heading.lstrip("#"))
+    end = len(raw_lines)
+    for index in range(start + 1, len(visible_lines)):
+        candidate = re.match(r"^(#{1,6})\s", visible_lines[index])
+        if candidate and len(candidate.group(1)) <= level:
+            end = index
+            break
+    return "\n".join(raw_lines[start + 1 : end])
+
+
+def _first_visible_table(
+    text: str,
+) -> tuple[list[str], list[list[str]]] | None:
+    """Return the first valid pipe-led GFM table outside comments and fences."""
+
+    lines = _visible_markdown(text).splitlines()
+    for index in range(len(lines) - 1):
+        if not lines[index].lstrip().startswith("|"):
+            continue
+        header = _gfm_table_cells(lines[index])
+        delimiter = _gfm_table_cells(lines[index + 1])
+        if len(header) != len(delimiter) or not header:
+            continue
+        if not all(re.fullmatch(r":?-{3,}:?", cell) for cell in delimiter):
+            continue
+        rows: list[list[str]] = []
+        for row_line in lines[index + 2 :]:
+            if not row_line.strip():
+                if rows:
+                    break
+                continue
+            if not row_line.lstrip().startswith("|"):
+                break
+            rows.append(_gfm_table_cells(row_line))
+        return header, rows
+    return None
+
+
+IDENTIFIER_PATTERNS = {
+    "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,3}$"),
+    "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
+    "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
+}
+EXPLICIT_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
+
+
+def _identifier_text(cell: str) -> str:
+    """Return a visible identifier from a plain, code, or full-link cell."""
+
+    value = cell.strip()
+    link = re.fullmatch(r"\[([^\]\n]+)\]\([^\n)]+\)", value)
+    if link:
+        value = link.group(1).strip()
+    if len(value) >= 2 and value.startswith("`") and value.endswith("`"):
+        value = value[1:-1].strip()
+    return value
+
+
+def _body_contract_is_enforced(
+    profile: DocumentProfile, status: str, body_contracts: str
+) -> bool:
+    if body_contracts not in {"registry", "audit"}:
+        raise ValueError("body_contracts must be registry or audit")
+    if profile.body_contract is None:
+        return False
+    if profile.mode == "template":
+        return True
+    if profile.mode != "authored":
+        return False
+    if body_contracts == "audit":
+        return status in {"draft", "active"}
+    return status in profile.body_contract.enforced_statuses
+
+
+def _body_contract_diagnostics(
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    body: str,
+    status: str,
+    body_contracts: str,
+) -> list[Diagnostic]:
+    """Validate one registry-owned lifecycle table deterministically."""
+
+    contract = profile.body_contract
+    if contract is None or not _body_contract_is_enforced(
+        profile, status, body_contracts
+    ):
+        return []
+    diagnostics: list[Diagnostic] = []
+    section = _exact_heading_section(body, f"## {contract.section}")
+    table_section = (
+        None
+        if section is None
+        else _exact_heading_section(section, f"### {contract.table_heading}")
+    )
+    if table_section is None:
+        return [
+            _diagnostic(
+                "BODY-CONTRACT-HEADING",
+                path,
+                profile,
+                f"one exact H3 '{contract.table_heading}' inside H2 '{contract.section}'",
+                "missing, duplicated, or at the wrong level",
+            )
+        ]
+    table = _first_visible_table(table_section)
+    if table is None or not table[1]:
+        return [
+            _diagnostic(
+                "BODY-CONTRACT-TABLE",
+                path,
+                profile,
+                "one non-empty GFM table below the contract H3",
+                "missing or malformed table",
+            )
+        ]
+    header, rows = table
+    duplicate_columns = sorted(
+        column
+        for column, count in collections.Counter(header).items()
+        if count > 1
+    )
+    if duplicate_columns:
+        return [
+            _diagnostic(
+                "BODY-CONTRACT-COLUMN-DUPLICATE",
+                path,
+                profile,
+                "unique table headers",
+                json.dumps(duplicate_columns),
+            )
+        ]
+    if tuple(header) != contract.required_columns:
+        return [
+            _diagnostic(
+                "BODY-CONTRACT-COLUMNS",
+                path,
+                profile,
+                json.dumps(contract.required_columns),
+                json.dumps(header),
+            )
+        ]
+    column_indexes = {column: index for index, column in enumerate(header)}
+    for row_index, row in enumerate(rows, start=1):
+        normalized = row + [""] * max(0, len(header) - len(row))
+        normalized = normalized[: len(header)]
+        for column_index, value in enumerate(normalized):
+            if not value.strip():
+                diagnostics.append(
+                    _diagnostic(
+                        "BODY-CONTRACT-CELL",
+                        path,
+                        profile,
+                        "every required table cell is non-empty",
+                        f"row {row_index}, column {header[column_index]}",
+                    )
+                )
+        for identifier in contract.identifier_columns:
+            value = _identifier_text(normalized[column_indexes[identifier.column]])
+            if value.startswith("N/A"):
+                if (
+                    not contract.allow_explicit_exclusion
+                    or EXPLICIT_EXCLUSION.fullmatch(value) is None
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "BODY-CONTRACT-EXCLUSION",
+                            path,
+                            profile,
+                            "N/A — followed by a reviewable reason",
+                            value,
+                        )
+                    )
+                continue
+            pattern = IDENTIFIER_PATTERNS[identifier.kind]
+            if pattern.fullmatch(value) is None:
+                diagnostics.append(
+                    _diagnostic(
+                        "BODY-CONTRACT-IDENTIFIER",
+                        path,
+                        profile,
+                        f"{identifier.kind} identifier matching {pattern.pattern}",
+                        value,
+                    )
+                )
+    return sorted(diagnostics, key=diagnostic_sort_key)
 
 
 def starter_placeholder(value: str) -> str | None:
@@ -609,6 +879,7 @@ def validate_document(
     *,
     append_context: AppendContext | None = None,
     today: dt.date | None = None,
+    body_contracts: str = "registry",
 ) -> list[Diagnostic]:
     """Validate one source using only its registry-selected profile contract."""
 
@@ -619,6 +890,19 @@ def validate_document(
     diagnostics: list[Diagnostic] = []
     body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
     diagnostics.extend(_body_diagnostics(path, profile, body, append_context))
+    status = ""
+    if profile.frontmatter.mode == "required":
+        try:
+            _, metadata, _ = extract_frontmatter(text)
+        except ContractError:
+            metadata = {}
+        value = metadata.get("status")
+        status = value if isinstance(value, str) else ""
+    diagnostics.extend(
+        _body_contract_diagnostics(
+            path, profile, body, status, body_contracts
+        )
+    )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -851,12 +1135,27 @@ def _run_source_case(
     )
 
 
+def _profile_matrix_source(
+    root: Path, row: dict[str, Any], profile: DocumentProfile
+) -> str:
+    """Use canonical template forms while retaining focused authored fixtures."""
+
+    if (
+        profile.mode == "template"
+        and profile.body_contract is not None
+        and profile.template is not None
+    ):
+        return read_repository_text(root, profile.template)
+    return row["positiveSource"]
+
+
 def _repository_diagnostics(
     root: Path,
     registry: Any,
     inventory: Any,
     *,
     today: dt.date | None,
+    body_contracts: str = "registry",
 ) -> list[Diagnostic]:
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     diagnostics: list[Diagnostic] = []
@@ -880,6 +1179,7 @@ def _repository_diagnostics(
                 "strict",
                 append_context=append_context,
                 today=today,
+                body_contracts=body_contracts,
             )
         )
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -937,6 +1237,7 @@ def _self_test(root: Path) -> list[str]:
         "dateCases",
         "sectionBodyCases",
         "relationshipCases",
+        "bodyContractCases",
         "profileMatrix",
         "mutationCases",
     }:
@@ -1242,10 +1543,11 @@ def _self_test(root: Path) -> list[str]:
                 if applicability == "append-fragment"
                 else None
             )
+            positive_source = _profile_matrix_source(root, row, profile)
             actual_rules = _run_source_case(
                 temp_root,
                 path,
-                row["positiveSource"],
+                positive_source,
                 profile,
                 append_context=context,
             )
@@ -1257,7 +1559,7 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(f"matrix row lacks a negative mutation: {profile.profile_id}")
             for mutation in row["negativeMutations"]:
                 kind = mutation["kind"]
-                source = _mutation_source(row["positiveSource"], mutation, profile)
+                source = _mutation_source(positive_source, mutation, profile)
                 mutation_context = (
                     _append_context(profiles, kind)
                     if applicability == "append-fragment"
@@ -1335,7 +1637,7 @@ def _self_test(root: Path) -> list[str]:
             profile = profiles[case["profile"]]
             row = matrix_by_profile[profile.profile_id]
             path = _fixture_path(row["fixturePath"])
-            source = row["positiveSource"]
+            source = _profile_matrix_source(root, row, profile)
             mutation = case["mutation"]
             heading = case["heading"]
             if mutation == "replace-body":
@@ -1425,7 +1727,9 @@ def _self_test(root: Path) -> list[str]:
             row = matrix_by_profile[profile.profile_id]
             h2 = [
                 title
-                for level, title in scan_headings(row["positiveSource"]).headings
+                for level, title in scan_headings(
+                    _profile_matrix_source(root, row, profile)
+                ).headings
                 if level == 2
             ]
             if (
@@ -1440,7 +1744,8 @@ def _self_test(root: Path) -> list[str]:
 
         for case in fixture.get("dateCases", []):
             profile = profiles[case["profile"]]
-            base = matrix_by_profile[profile.profile_id]["positiveSource"]
+            base_row = matrix_by_profile[profile.profile_id]
+            base = _profile_matrix_source(root, base_row, profile)
             source = re.sub(
                 r"(?m)^updated: .+$", f"updated: {case['value']}", base, count=1
             )
@@ -1455,6 +1760,65 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(
                     f"date {case['name']}: expected={case['expectedRuleIds']} actual={actual_rules}"
                 )
+
+        body_contract_case_keys = {
+            "name",
+            "profile",
+            "status",
+            "bodyContracts",
+            "enforcedStatuses",
+            "body",
+            "expectedRuleIds",
+        }
+        body_contract_validator = globals().get("_body_contract_diagnostics")
+        for case in fixture.get("bodyContractCases", []):
+            if set(case) != body_contract_case_keys:
+                failures.append(
+                    f"body-contract case fields differ: {case.get('name')}"
+                )
+                continue
+            profile = profiles[case["profile"]]
+            if profile.body_contract is None:
+                failures.append(
+                    f"body-contract case profile has no contract: {case['profile']}"
+                )
+                continue
+            selected = dataclasses.replace(
+                profile,
+                body_contract=dataclasses.replace(
+                    profile.body_contract,
+                    enforced_statuses=tuple(case["enforcedStatuses"]),
+                ),
+            )
+            if body_contract_validator is None:
+                failures.append(
+                    f"body-contract {case['name']}: BODY-CONTRACT rules are unimplemented"
+                )
+                continue
+            diagnostics = body_contract_validator(
+                PurePosixPath("docs/01.requirements/999-fixture.md"),
+                selected,
+                case["body"],
+                case["status"],
+                case["bodyContracts"],
+            )
+            actual_rules = _rule_ids(diagnostics)
+            if actual_rules != case["expectedRuleIds"]:
+                failures.append(
+                    f"body-contract {case['name']}: "
+                    f"expected={case['expectedRuleIds']} actual={actual_rules}"
+                )
+
+        try:
+            default_body_contracts = _parser().parse_args([]).body_contracts
+            audit_body_contracts = _parser().parse_args(
+                ["--body-contracts", "audit"]
+            ).body_contracts
+        except (AttributeError, SystemExit):
+            failures.append("body-contract parser modes are unimplemented")
+        else:
+            if default_body_contracts != "registry" or audit_body_contracts != "audit":
+                failures.append("body-contract parser mode defaults differ")
 
         for escape in (
             ".",
@@ -1521,6 +1885,11 @@ def _self_test(root: Path) -> list[str]:
         rule
         for case in readme_fixture.get("cases", [])
         for rule in case.get("expected_rule_ids", [])
+    )
+    exercised.update(
+        rule
+        for case in fixture.get("bodyContractCases", [])
+        for rule in case.get("expectedRuleIds", [])
     )
     exercised.add("BODY-HEADING-EMPTY")
     uncovered_rules = sorted(IMPLEMENTED_RULE_IDS - exercised)
@@ -1653,6 +2022,12 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--mode", choices=("compatibility", "strict"), default="compatibility")
     parser.add_argument("--format", choices=("text", "json"), default="text")
+    parser.add_argument(
+        "--body-contracts",
+        choices=("registry", "audit"),
+        default="registry",
+        help="respect registry status scopes or audit all draft/active body contracts",
+    )
     parser.add_argument("--include-path", action="append", default=[])
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--self-test", action="store_true")
@@ -1716,6 +2091,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     profile,
                     args.mode,
                     append_context=append_context,
+                    body_contracts=args.body_contracts,
                 )
             )
         rows = _outcome_rows(root, diagnostics, args.mode)

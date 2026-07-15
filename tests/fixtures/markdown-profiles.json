@@ -126,6 +126,161 @@
       "forbiddenHeading": "Traceability"
     }
   ],
+  "bodyContractCases": [
+    {
+      "name": "valid-requirement-table",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | [Spec](../03.specs/999-fixture/spec.md) |\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "missing-exact-h3",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Wrong Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "wrong-h3-level",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n#### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "missing-table",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\nNo table is present.\n",
+      "expectedRuleIds": ["BODY-CONTRACT-TABLE"]
+    },
+    {
+      "name": "wrong-header-order",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Acceptance criterion | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| Observable result | REQ-FIXTURE-001 | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-COLUMNS"]
+    },
+    {
+      "name": "duplicate-header",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | REQ-FIXTURE-001 | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-COLUMN-DUPLICATE"]
+    },
+    {
+      "name": "blank-required-cell",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-CELL"]
+    },
+    {
+      "name": "invalid-requirement-id",
+      "profile": "sdlc/prd",
+      "status": "active",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| requirement-1 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-IDENTIFIER"]
+    },
+    {
+      "name": "invalid-criterion-id",
+      "profile": "sdlc/spec",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | criterion-1 | Named test |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-IDENTIFIER"]
+    },
+    {
+      "name": "invalid-work-item-id",
+      "profile": "sdlc/task",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Criterion / work item | Result | Evidence |\n| --- | --- | --- |\n| task one | Observed result | Named evidence |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-IDENTIFIER"]
+    },
+    {
+      "name": "valid-explicit-exclusion",
+      "profile": "sdlc/spec",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| N/A — standalone corrective specification | VAL-FIXTURE-001 | Named test |\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "exclusion-without-reason",
+      "profile": "sdlc/spec",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| N/A | VAL-FIXTURE-001 | Named test |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-EXCLUSION"]
+    },
+    {
+      "name": "registry-empty-status-scope",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "audit-draft-status-scope",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "audit",
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "audit-active-status-scope",
+      "profile": "sdlc/prd",
+      "status": "active",
+      "bodyContracts": "audit",
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "audit-done-status-excluded",
+      "profile": "sdlc/prd",
+      "status": "done",
+      "bodyContracts": "audit",
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "fenced-and-comment-lookalikes",
+      "profile": "sdlc/prd",
+      "status": "draft",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n```markdown\n### Lifecycle Traceability\n| Wrong | Table | Here |\n| --- | --- | --- |\n```\n\n<!--\n### Lifecycle Traceability\n| Wrong | Comment | Table |\n| --- | --- | --- |\n-->\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": []
+    }
+  ],
   "profileMatrix": [
     {
       "profile": "sdlc/prd",

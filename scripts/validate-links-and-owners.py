@@ -61,6 +61,9 @@ DEBT_LITERAL = {
     "removeWhen": "ledger exists, has the exact fourteen columns, and covers the inventory once",
 }
 IMPLEMENTED_RULES = frozenset({
+    "BODY-LINK-BROKEN", "BODY-LINK-EXCLUSION", "BODY-LINK-RECIPROCAL",
+    "BODY-LINK-SOURCE", "BODY-LINK-SOURCE-PROFILE", "BODY-LINK-TARGET",
+    "BODY-LINK-TARGET-PROFILE",
     "LINK-BROKEN", "LINK-ABSOLUTE", "LINK-FILE-URI", "LINK-ESCAPE",
     "LINK-ARCHIVE-BYPASS", "INDEX-MISSING", "INDEX-STALE",
     "INDEX-DUPLICATE", "INDEX-STATUS", "INDEX-TREE", "OWNER-KEY-MISSING",
@@ -709,6 +712,172 @@ def _first_visible_table(
     return None
 
 
+BODY_LINK_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
+
+
+def _body_contract_link_is_enforced(
+    profile: DocumentProfile, status: str, body_contracts: str
+) -> bool:
+    if body_contracts not in {"registry", "audit"}:
+        raise ConfigurationError("body_contracts must be registry or audit")
+    if profile.body_contract is None or profile.mode != "authored":
+        return False
+    if body_contracts == "audit":
+        return status in {"draft", "active"}
+    return status in profile.body_contract.enforced_statuses
+
+
+def _body_contract_rows(
+    text: str, profile: DocumentProfile
+) -> list[dict[str, str]] | None:
+    """Return a shape-valid lifecycle table; local validation owns shape errors."""
+
+    contract = profile.body_contract
+    if contract is None:
+        return None
+    section = _exact_heading_section(text, f"## {contract.section}")
+    table_section = (
+        None
+        if section is None
+        else _exact_heading_section(section, f"### {contract.table_heading}")
+    )
+    if table_section is None:
+        return None
+    table = _first_visible_table(table_section)
+    if table is None or tuple(table[0]) != contract.required_columns:
+        return None
+    header, rows = table
+    if not rows:
+        return None
+    return [dict(zip(header, row, strict=True)) for row in rows]
+
+
+def _links_back_to(
+    context: Context, owner: PurePosixPath, expected: PurePosixPath
+) -> bool:
+    for raw_link in _extract_links(context.texts[owner]):
+        kind, target = _local_destination(owner, raw_link)
+        if kind in {"local", "anchor"} and target == expected:
+            return True
+    return False
+
+
+def _body_contract_link_diagnostics(
+    context: Context,
+    profiles_by_id: dict[str, DocumentProfile],
+    body_contracts: str,
+) -> list[Diagnostic]:
+    """Validate registry-owned relationship cells and reciprocal evidence."""
+
+    if body_contracts not in {"registry", "audit"}:
+        raise ConfigurationError("body_contracts must be registry or audit")
+    diagnostics: list[Diagnostic] = []
+    known_paths = set(context.paths)
+    for path in context.paths:
+        view = context.profiles[path]
+        profile = profiles_by_id.get(view.profile_id)
+        if profile is None:
+            continue
+        status_value = context.metadata[path].get("status", "")
+        status = status_value if isinstance(status_value, str) else ""
+        if not _body_contract_link_is_enforced(
+            profile, status, body_contracts
+        ):
+            continue
+        contract = profile.body_contract
+        assert contract is not None
+        rows = _body_contract_rows(context.texts[path], profile)
+        if rows is None:
+            continue
+        link_columns = (
+            ("source", contract.source_link_column, contract.allowed_source_profile_ids),
+            ("target", contract.target_link_column, contract.allowed_target_profile_ids),
+        )
+        for row_number, row in enumerate(rows, start=1):
+            for direction, column, allowed_profile_ids in link_columns:
+                if column is None:
+                    continue
+                cell = row[column].strip()
+                if cell.startswith("N/A"):
+                    if (
+                        not contract.allow_explicit_exclusion
+                        or BODY_LINK_EXCLUSION.fullmatch(cell) is None
+                    ):
+                        diagnostics.append(
+                            _diag(
+                                "BODY-LINK-EXCLUSION",
+                                path,
+                                profile.profile_id,
+                                "N/A — followed by a reviewable reason",
+                                f"row {row_number}, {column}: {cell}",
+                            )
+                        )
+                    continue
+                raw_links = _extract_links(cell)
+                if not raw_links:
+                    diagnostics.append(
+                        _diag(
+                            f"BODY-LINK-{direction.upper()}",
+                            path,
+                            profile.profile_id,
+                            f"a repository-local link or explicit exclusion in {column}",
+                            f"row {row_number}: {cell}",
+                        )
+                    )
+                    continue
+                for raw_link in raw_links:
+                    kind, target = _local_destination(path, raw_link)
+                    if kind not in {"local", "anchor"} or target not in known_paths:
+                        diagnostics.append(
+                            _diag(
+                                "BODY-LINK-BROKEN",
+                                path,
+                                profile.profile_id,
+                                "a tracked local lifecycle document",
+                                raw_link,
+                            )
+                        )
+                        continue
+                    assert target is not None
+                    target_view = context.profiles[target]
+                    if target_view.profile_id not in allowed_profile_ids:
+                        diagnostics.append(
+                            _diag(
+                                f"BODY-LINK-{direction.upper()}-PROFILE",
+                                path,
+                                profile.profile_id,
+                                json.dumps(allowed_profile_ids),
+                                target_view.profile_id,
+                            )
+                        )
+                        continue
+                    target_profile = profiles_by_id[target_view.profile_id]
+                    target_status_value = context.metadata[target].get("status", "")
+                    target_status = (
+                        target_status_value
+                        if isinstance(target_status_value, str)
+                        else ""
+                    )
+                    reciprocal_in_scope = _body_contract_link_is_enforced(
+                        target_profile, target_status, body_contracts
+                    )
+                    if (
+                        contract.reciprocal_evidence
+                        and reciprocal_in_scope
+                        and not _links_back_to(context, target, path)
+                    ):
+                        diagnostics.append(
+                            _diag(
+                                "BODY-LINK-RECIPROCAL",
+                                path,
+                                profile.profile_id,
+                                f"{target.as_posix()} links back to {path.as_posix()}",
+                                f"row {row_number}, {column}: missing reciprocal evidence",
+                            )
+                        )
+    return sorted(diagnostics, key=diagnostic_sort_key)
+
+
 def _first_cell_target(
     owner: PurePosixPath, cell: str
 ) -> PurePosixPath | None:
@@ -1333,8 +1502,17 @@ def _apply_debt(root: Path, diagnostics: Iterable[Diagnostic], mode: str, contra
     ]
 
 
-def _raw_diagnostics(context: Context) -> list[Diagnostic]:
+def _raw_diagnostics(
+    context: Context,
+    profiles_by_id: dict[str, DocumentProfile],
+    body_contracts: str = "registry",
+) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
+    diagnostics.extend(
+        _body_contract_link_diagnostics(
+            context, profiles_by_id, body_contracts
+        )
+    )
     diagnostics.extend(_index_diagnostics(context))
     diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
@@ -1344,14 +1522,20 @@ def _raw_diagnostics(context: Context) -> list[Diagnostic]:
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
-def validate_cross_document_contracts(root: Path, mode: str) -> list[Diagnostic]:
+def validate_cross_document_contracts(
+    root: Path, mode: str, body_contracts: str = "registry"
+) -> list[Diagnostic]:
     """Return deterministic raw cross-document diagnostics."""
 
     if mode not in {"compatibility", "strict"}:
         raise ConfigurationError("mode must be compatibility or strict")
     context = _build_context(root)
     _load_debt(context.root, mode=mode)
-    return _raw_diagnostics(context)
+    registry = load_registry(context.root)
+    profiles_by_id = {
+        profile.profile_id: profile for profile in registry.profiles
+    }
+    return _raw_diagnostics(context, profiles_by_id, body_contracts)
 
 
 def _inventory_documents(context: Context) -> list[dict[str, Any]]:
@@ -1822,6 +2006,123 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     )
 
 
+def _body_contract_fixture_context(
+    root: Path,
+    tree: dict[str, Any],
+    profiles_by_id: dict[str, DocumentProfile],
+) -> Context:
+    if list(tree) != ["documents"] or not isinstance(tree["documents"], list):
+        raise ConfigurationError("body-contract fixture tree differs")
+    expected_keys = ["path", "profile", "status", "body"]
+    if any(
+        not isinstance(item, dict) or list(item) != expected_keys
+        for item in tree["documents"]
+    ):
+        raise ConfigurationError("body-contract fixture document keys differ")
+    paths = tuple(PurePosixPath(item["path"]) for item in tree["documents"])
+    if paths != tuple(sorted(paths, key=lambda item: item.as_posix())):
+        raise ConfigurationError("body-contract fixture paths must be sorted")
+    profile_views: dict[PurePosixPath, ProfileView] = {}
+    texts: dict[PurePosixPath, str] = {}
+    metadata: dict[PurePosixPath, dict[str, Any]] = {}
+    for item, path in zip(tree["documents"], paths, strict=True):
+        profile = profiles_by_id[item["profile"]]
+        profile_views[path] = _profile_view(profile)
+        texts[path] = item["body"]
+        metadata[path] = {"status": item["status"]}
+    return Context(
+        root,
+        paths,
+        frozenset(),
+        profile_views,
+        texts,
+        metadata,
+        {},
+        (),
+        (),
+        ReferenceCurrentPacks("content/reference", ()),
+        frozenset(paths),
+    )
+
+
+def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
+    mutated = copy.deepcopy(context)
+    prd = PurePosixPath("docs/01.requirements/999-fixture.md")
+    spec = PurePosixPath("docs/03.specs/999-fixture/spec.md")
+    plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture.md")
+    incident = PurePosixPath(
+        "docs/05.operations/incidents/2026-07-15-INC-999.md"
+    )
+    if mutation in {"none", "feedback-positive"}:
+        return mutated
+    if mutation == "disallowed-source-profile":
+        mutated.texts[plan] = mutated.texts[plan].replace(
+            "../../03.specs/999-fixture/spec.md",
+            "../../01.requirements/999-fixture.md",
+            1,
+        )
+    elif mutation == "disallowed-target-profile":
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "../03.specs/999-fixture/spec.md",
+            "../04.execution/tasks/2026-07-15-fixture.md",
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
+        )
+    elif mutation == "missing-source-link":
+        mutated.texts[plan] = mutated.texts[plan].replace(
+            "[VAL-FIXTURE-001](../../03.specs/999-fixture/spec.md)",
+            "VAL-FIXTURE-001",
+            1,
+        )
+    elif mutation == "missing-target-link":
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "[Spec](../03.specs/999-fixture/spec.md)",
+            "Specification owner",
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
+        )
+    elif mutation == "broken-link":
+        mutated.texts[plan] = mutated.texts[plan].replace(
+            "../tasks/2026-07-15-fixture.md",
+            "../tasks/2099-01-01-missing.md",
+            1,
+        )
+        mutated.texts[plan] += (
+            "\n[Task reciprocal](../tasks/2026-07-15-fixture.md)\n"
+        )
+    elif mutation == "missing-reciprocal":
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            "[REQ-FIXTURE-001](../../01.requirements/999-fixture.md)",
+            "N/A — standalone specification",
+            1,
+        )
+    elif mutation == "exclusion-without-reason":
+        mutated.texts[incident] = mutated.texts[incident].replace(
+            "[Task](../../04.execution/tasks/2026-07-15-fixture.md)",
+            "N/A",
+            1,
+        )
+    elif mutation == "done-status":
+        mutated.metadata[prd]["status"] = "done"
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "../03.specs/999-fixture/spec.md",
+            "../04.execution/tasks/2026-07-15-fixture.md",
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
+        )
+    else:
+        raise ConfigurationError(
+            f"unknown body-contract fixture mutation: {mutation}"
+        )
+    return mutated
+
+
 def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
     mutated = _mutated_context(context, mutation)
     if mutation.startswith("link") or mutation in {"links-excluded"}:
@@ -1897,7 +2198,13 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
 def _self_test(root: Path) -> list[str]:
     fixture = json.loads((root / FIXTURE_PATH).read_text(encoding="utf-8"))
     failures: list[str] = []
-    if list(fixture) != ["schemaVersion", "baseTree", "cases"] or fixture["schemaVersion"] != 2:
+    if list(fixture) != [
+        "schemaVersion",
+        "baseTree",
+        "bodyContractTree",
+        "bodyContractCases",
+        "cases",
+    ] or fixture["schemaVersion"] != 2:
         return ["fixture schema differs"]
     required = {
         "valid-tree",
@@ -1992,6 +2299,52 @@ def _self_test(root: Path) -> list[str]:
             actual = _fixture_rule_ids(context, case["mutation"]["kind"])
             if actual != expected:
                 failures.append(f"{case['name']}: expected {expected}, actual {actual}")
+        registry = load_registry(root)
+        profiles_by_id = {
+            profile.profile_id: profile for profile in registry.profiles
+        }
+        body_context = _body_contract_fixture_context(
+            Path(temporary), fixture["bodyContractTree"], profiles_by_id
+        )
+        body_validator = globals().get("_body_contract_link_diagnostics")
+        body_case_keys = [
+            "name",
+            "mutation",
+            "bodyContracts",
+            "expected_rule_ids",
+        ]
+        for case in fixture["bodyContractCases"]:
+            if list(case) != body_case_keys:
+                failures.append(
+                    f"{case.get('name')}: body-contract case schema differs"
+                )
+                continue
+            if body_validator is None:
+                failures.append(
+                    f"{case['name']}: BODY-LINK rules are unimplemented"
+                )
+                continue
+            mutated = _mutated_body_contract_context(
+                body_context, case["mutation"]
+            )
+            diagnostics = body_validator(
+                mutated, profiles_by_id, case["bodyContracts"]
+            )
+            actual = sorted({item.rule_id for item in diagnostics})
+            if actual != case["expected_rule_ids"]:
+                failures.append(
+                    f"{case['name']}: expected {case['expected_rule_ids']}, actual {actual}"
+                )
+        try:
+            default_body_contracts = _parser().parse_args([]).body_contracts
+            audit_body_contracts = _parser().parse_args(
+                ["--body-contracts", "audit"]
+            ).body_contracts
+        except (AttributeError, SystemExit):
+            failures.append("body-contract parser modes are unimplemented")
+        else:
+            if default_body_contracts != "registry" or audit_body_contracts != "audit":
+                failures.append("body-contract parser mode defaults differ")
     if (root / LEDGER_PATH).exists() != ledger_existed_before:
         failures.append("self-test changed the repository ledger artifact")
     if (root / DEBT_PATH).exists():
@@ -2133,6 +2486,12 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--mode", choices=("compatibility", "strict"), default="compatibility")
     parser.add_argument("--format", choices=("text", "json"), default="text")
+    parser.add_argument(
+        "--body-contracts",
+        choices=("registry", "audit"),
+        default="registry",
+        help="respect registry status scopes or audit all draft/active body contracts",
+    )
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--inventory", action="store_true")
     parser.add_argument("--include-path", action="append", default=[])
@@ -2156,6 +2515,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         context = _build_context(args.root, include_paths)
+        registry = load_registry(context.root)
+        profiles_by_id = {
+            profile.profile_id: profile for profile in registry.profiles
+        }
         inventory = enumerate_target_markdown(context.root, include_paths=include_paths)
         counts = {
             "baseline": len(inventory.baseline_paths),
@@ -2166,6 +2529,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.inventory:
             diagnostics = (
                 _link_diagnostics(context)
+                + _body_contract_link_diagnostics(
+                    context, profiles_by_id, args.body_contracts
+                )
                 + _index_diagnostics(context)
                 + _collection_index_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
@@ -2176,7 +2542,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             envelope = _envelope("inventory", counts, _inventory_documents(context), rows)
             print(json.dumps(envelope, ensure_ascii=False, separators=(",", ":")))
             return int(bool(rows))
-        diagnostics = _raw_diagnostics(context)
+        diagnostics = _raw_diagnostics(
+            context, profiles_by_id, args.body_contracts
+        )
         rows = _apply_debt(context.root, diagnostics, args.mode)
         if args.format == "json":
             print(json.dumps(_envelope(args.mode, counts, [], rows), ensure_ascii=False, separators=(",", ":")))
