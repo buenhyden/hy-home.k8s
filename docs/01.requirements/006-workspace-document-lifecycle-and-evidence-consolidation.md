@@ -88,6 +88,7 @@ machine-verifiable.
 | REQ-WDLEC-010 | Align GitHub CI with affected fast lanes, full-document escalation, an always-running aggregate verdict, explicit artifact retention, and least privilege. | Must | Workflow fixtures and native linters pass with no remote-state claim. |
 | REQ-WDLEC-011 | Require logical commits, independent subagent review, full-corpus QA, and revertable migration boundaries. | Must | Commit, review, validation, and closure evidence are linked from each tranche. |
 | REQ-WDLEC-012 | Preserve protected surfaces, secret boundaries, and live-system approval constraints during all migrations. | Must | Static checks pass and remote/live work is recorded as DEFER unless separately approved. |
+| REQ-WDLEC-013 | Reconcile current Guide, Policy, Runbook, Incident, Postmortem, and helper Tests roles, frontmatter, sections, duplicate ownership, and stale semantic claims without fabricating operations evidence. | Must | Stage 05 and helper-profile audits report zero unresolved current contract conflicts or unowned exceptions. |
 
 ## Success / Acceptance Criteria
 
@@ -112,6 +113,9 @@ machine-verifiable.
 - **ACC-WDLEC-009**: Remote Actions, branch protection, live Kubernetes,
   Vault, ESO, Argo CD, and secret evidence are never inferred from local static
   PASS results.
+- **ACC-WDLEC-010**: Current operations and helper Tests documents have one
+  role-specific contract, zero duplicate current owners, zero unsupported
+  metadata or sections, and explicit exceptions for absent real incidents.
 
 ## Scope and Non-goals
 
@@ -136,6 +140,9 @@ machine-verifiable.
   and closure evidence change in the same logical commit.
 - A compatibility window is required while the old Tombstone profile and the
   full-body archive profile coexist on the implementation branch.
+- Program Specs use active to mean an approved current technical contract.
+  Active status does not authorize concurrent execution; predecessor
+  acceptance and the creation of the owning Plan and Task open each tranche.
 - Git and GitHub object retention are not substitutes for a tracked archive
   payload; secret-removal procedures remain an explicit preservation exception.
 - Current audit facts remain pinned to their observation SHA. Only remediation
@@ -161,3 +168,4 @@ machine-verifiable.
 | REQ-WDLEC-010 | ACC-WDLEC-008 | [Spec 039](../03.specs/039-github-ci-qa-evidence/spec.md) |
 | REQ-WDLEC-011 | ACC-WDLEC-008 | [Spec 040](../03.specs/040-contract-cutover-and-program-closure/spec.md) |
 | REQ-WDLEC-012 | ACC-WDLEC-009 | [Spec 040](../03.specs/040-contract-cutover-and-program-closure/spec.md) |
+| REQ-WDLEC-013 | ACC-WDLEC-010 | [Spec 035](../03.specs/035-document-schema-and-lifecycle-contract/spec.md) and [Spec 037](../03.specs/037-active-corpus-and-execution-retention/spec.md) |

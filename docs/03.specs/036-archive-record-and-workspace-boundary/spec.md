@@ -54,9 +54,20 @@ local links are recoverable in those trees.
 
 ## Data Modeling & Storage Strategy
 
-The archive envelope contains canonical metadata followed by a delimited raw
-source payload. The SHA-256 covers only payload bytes. Git blob identity and
-payload digest are checked independently.
+The archive envelope uses the versioned ArchiveEnvelope.v1 grammar. Canonical
+UTF-8/LF archive frontmatter is followed immediately by the single line
+archive marker:
+
+    <!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+
+The next byte begins the payload and every remaining byte through EOF belongs
+to it. There is no closing delimiter, so payload content cannot collide with
+the envelope grammar. The payload is copied from the Git blob, not from a
+line-ending-converted working-tree read; no byte or final newline is added.
+The SHA-256 covers exactly those remaining bytes. The full source_blob ID
+independently identifies the same payload and supplies the expected byte size.
+Only UTF-8 Markdown source blobs are admitted by this profile; a non-UTF-8
+source is BLOCKED for a separately designed binary archive format.
 
 Archive reason is one of superseded, consolidated, completed-lineage, retired,
 abandoned, or duplicate. Replacement is a current repository path only for
@@ -72,6 +83,8 @@ Plan, Task, archive index, or program closure record.
   SHA-256, link count, and proposed archive metadata.
 - Archive validator: envelope schema, payload delimiter, digest, Git object,
   mirror path, reason dependency, and immutability.
+- Envelope parser: exact v1 marker position, payload-to-EOF extraction, UTF-8
+  admission, Git blob byte equality, final-newline preservation, and digest.
 - Historical link validator: source tree plus original base path.
 - Current link validator: current working tree, with active-to-individual
   archive links rejected.
@@ -119,6 +132,9 @@ Plan, Task, archive index, or program closure record.
   dependency, and active direct-link fixtures fail.
 - **VAL-ARWB-006**: _workspace has one tracked README and no validation reads
   ignored children.
+- **VAL-ARWB-007**: ArchiveEnvelope.v1 round-trips payloads containing marker
+  text, Markdown fences, frontmatter, empty final lines, and no final newline
+  without changing any source blob byte.
 
 ## Traceability
 
@@ -138,3 +154,4 @@ Plan, Task, archive index, or program closure record.
 | [REQ-WDLEC-004](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-004 | Registry-derived form inventory and stale-route scan prove removal. |
 | [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-005 | Negative archive fixtures reject authority and integrity violations. |
 | [REQ-WDLEC-009](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-006 | Git metadata assertions verify the scratch boundary. |
+| [REQ-WDLEC-004](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-007 | Envelope parser round-trip fixtures compare extracted bytes with source blobs. |

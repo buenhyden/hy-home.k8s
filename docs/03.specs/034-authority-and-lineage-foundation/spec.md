@@ -31,8 +31,10 @@ surfaces before schema and corpus migration begins.
 - document-profiles.json remains the sole machine owner of program lineage.
 - A program has one PRD, one ARD, an ordered original tranche set, and a
   separately ordered follow-up set.
-- Spec 033 is a follow-up to the PRD-005 program; Specs 026-032 remain its
-  original tranche set.
+- Spec 033 is a historical follow-up to the PRD-005 program; Specs 026-032
+  remain its original tranche set. ADR-0017, registry data, and the mutable
+  remediation overlay provide the successor-side relation without rewriting
+  the completed Spec.
 - Specs 034-040 are the original tranche set for PRD-006 and ARD-0009.
 - Accepted and completed bodies are immutable. New decisions and registry
   relations express later facts.
@@ -80,10 +82,18 @@ Cross-document validation compares registry membership with mutable current
 documents and treats immutable accepted/completed bodies as historical
 evidence, not editable mirrors.
 
+All seven new Specs are active because their approved bodies are the current
+technical contracts. Execution remains sequential: only Spec 034 may receive
+an implementation Plan and Task initially; each successor becomes executable
+only after its predecessor acceptance and explicit Plan/Task creation.
+
 ## Edge Cases & Error Handling
 
 - A Spec cannot be both a tranche and a follow-up.
 - A completed follow-up does not reopen the original program.
+- Missing reciprocal links in a mutable or future follow-up fail. The
+  pre-decision Spec 033 exception passes only when ADR-0017, registry
+  successor-side evidence, and the remediation overlay agree.
 - A new follow-up without an accepted admission decision fails.
 - A historical body mismatch is reported through a successor decision or
   overlay, never fixed by rewriting the body.
@@ -109,14 +119,17 @@ evidence, not editable mirrors.
 ## Success Criteria & Verification Plan
 
 - **VAL-ALF-001**: Specs 026-032 are the only original PRD-005 tranches.
-- **VAL-ALF-002**: Spec 033 is a completed follow-up and appears in no original
-  tranche set.
+- **VAL-ALF-002**: Spec 033 is a completed historical follow-up, appears in no
+  original tranche set, and is covered by the explicit pre-decision
+  successor-side evidence exception.
 - **VAL-ALF-003**: Specs 034-040 form the ordered PRD-006 tranche set.
 - **VAL-ALF-004**: Duplicate, overlapping, decisionless, and unknown lineage
   fixtures fail.
 - **VAL-ALF-005**: RMD-005, RMD-009, RMD-011, RMD-013, and RMD-032 receive
   evidence-backed overlay dispositions without editing observation facts.
 - **VAL-ALF-006**: Stage 00 contains no unvalidated exact lifecycle owner table.
+- **VAL-ALF-007**: Only the dependency-ready tranche has a current execution
+  Plan/Task pair; active successor contracts do not imply concurrent execution.
 
 ## Traceability
 
@@ -136,3 +149,4 @@ evidence, not editable mirrors.
 | [REQ-WDLEC-002](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-004 | Independent negative mutations reject invalid membership. |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-005 | Current-pack overlay validation compares finding IDs with HEAD evidence. |
 | [REQ-WDLEC-001](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-006 | Duplicate-fact scans reject exact non-owner lifecycle tables. |
+| [REQ-WDLEC-011](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-007 | Plan/Task lineage fixtures enforce predecessor-gated execution admission. |

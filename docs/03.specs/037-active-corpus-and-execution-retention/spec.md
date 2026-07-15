@@ -10,19 +10,22 @@ updated: 2026-07-15
 
 ## Overview
 
-This Spec applies lifecycle-based accumulation limits to Stages 01-04 and moves
+This Spec applies lifecycle-based accumulation limits to Stages 01-04, audits
+the current Stage 05 authored corpus for semantic ownership conflicts, and moves
 eligible completed Plans and Tasks from closed lineages into full-body archive
 records. It preserves valid accepted architecture decisions and implemented
 Specs until an explicit successor removes their current authority.
 
 ## Strategic Boundaries & Non-goals
 
-- **In scope**: Stage 01-04 current-owner census, Plan/Task lineage census,
-  migration ledger, eligible execution movement, archive indexes, current
-  closure links, duplicate/stale semantic cleanup, and rollback evidence.
+- **In scope**: Stage 01-05 current-owner census; Plan/Task lineage census;
+  current Guide, Policy, Runbook, Incident, Postmortem, and helper Tests role
+  conformance; migration ledger; eligible execution movement; archive indexes;
+  current closure links; duplicate/stale semantic cleanup; and rollback
+  evidence.
 - **Non-goals**: Archiving solely by age or folder count, moving accepted ADRs,
   moving done Specs solely because they are done, renumbering, or fabricating
-  lineage for ambiguous records.
+  lineage, incidents, postmortems, or live operations evidence.
 
 ## Contracts
 
@@ -35,6 +38,9 @@ Specs until an explicit successor removes their current authority.
 - Every movement is atomic with archive creation, current index updates,
   cross-link repair, and migration-ledger evidence.
 - Ineligible documents remain in place with DEFER reason and follow-up owner.
+- Current operations documents have one role-specific owner, contain no copied
+  template prompts or policy/procedure duplication, and retain real operational
+  facts rather than synthetic completeness.
 
 ## Core Design
 
@@ -51,6 +57,13 @@ historical links in source context.
 Active stages are bounded by semantic cardinality. Folder size is reported for
 observability but never causes destruction.
 
+The Stage 05 audit compares each current Guide, Policy, and Runbook with its
+profile, canonical owner, related Spec, and current repository implementation.
+Incident and Postmortem collections may legitimately contain no authored event
+record; their templates and indexes are validated without creating a fake
+incident. Helper Tests remain feature-local specification support and never
+become the Stage 04 execution tracker.
+
 ## Data Modeling & Storage Strategy
 
 The migration ledger records original path, archive path, original type,
@@ -58,12 +71,17 @@ status, upstream Spec, program, closure evidence, current consumers, source
 commit/blob, digest, disposition, reason, replacement/index anchor, validation
 result, and rollback commit.
 
+The current-corpus audit ledger also records operations/helper profile, topic
+owner, implementation evidence, semantic conflict, disposition, and exception
+owner when no migration is required.
+
 A dry-run ledger is temporary scratch. The reviewed final ledger becomes
 durable execution evidence and is preserved with the program closure.
 
 ## Interfaces & Data Structures
 
-- Census interface: tracked Stage 01-04 files plus registry profiles and links.
+- Census interface: tracked Stage 01-05 and helper Tests files plus registry
+  profiles, semantic owners, implementation evidence, and links.
 - Eligibility interface: explicit predicates for lineage closure, authority,
   link migration, source recovery, and rollback.
 - Migration interface: one lineage batch produces archive files, index rows,
@@ -80,6 +98,8 @@ durable execution evidence and is preserved with the program closure.
 - Accepted ADRs remain in the decision log; previously archived ADRs remain one
   historical archive record and are not duplicated.
 - A broken reciprocal link blocks the affected lineage batch.
+- An empty Incident or Postmortem collection is not a gap when no real event
+  exists; fabricated event records are forbidden.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -91,7 +111,8 @@ durable execution evidence and is preserved with the program closure.
 
 ## Verification Commands
 
-- Run the Stage 01-04 ownership and lineage census.
+- Run the Stage 01-05 ownership, lineage, operations-role, and helper Tests
+  census.
 - Run migration in dry-run and check modes.
 - Validate each lineage batch before and after movement.
 - Run archive integrity, current links, indexes, strict profiles, repository
@@ -111,6 +132,9 @@ durable execution evidence and is preserved with the program closure.
   terminal status alone.
 - **VAL-ACER-006**: Current and historical link validation both report zero
   unresolved links in their respective contexts.
+- **VAL-ACER-007**: Current Stage 05 and helper Tests documents have zero
+  unsupported role overlap, copied template residue, stale current claims, or
+  unowned exceptions.
 
 ## Traceability
 
@@ -129,3 +153,4 @@ durable execution evidence and is preserved with the program closure.
 | [REQ-WDLEC-007](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-004 | Active-stage residue validation matches the reviewed ledger. |
 | [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-005 | Negative migration fixtures protect valid terminal authority. |
 | [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-006 | Dual-context link validators pass after every batch. |
+| [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-007 | Operations/helper census and negative fixtures verify role and evidence boundaries. |

@@ -45,11 +45,20 @@ transitions require the profile's evidence owner. Reverse transitions create a
 successor document rather than reopening terminal evidence. Archive has only
 the archived state.
 
+The Current document-type format and evidence matrix is refreshed before a
+role changes. Guide, Policy, Runbook, Incident, Postmortem, and helper Tests
+remain distinct: reader guidance does not own controls, policy does not copy
+commands, runbooks own protected repeatable procedures, incidents own live
+facts, postmortems own learning and actions, and helper Tests describe Spec
+verification rather than replacing execution Tasks or test code.
+
 Validation uses base-to-proposed comparison for changed status. A transition
-must be allowed and must change or cite the owning Plan, Task, ADR, closure
-record, or archive index in the same change. The validator returns a stable
-rule ID, path, profile, expected transition, observed transition, and evidence
-gap.
+must be allowed and must satisfy the registry-owned predicate for that exact
+edge. Each predicate names allowed evidence profiles and states, the
+Traceability link location, whether evidence must change in the same diff, and
+the required evidence table contract. The validator returns a stable rule ID,
+path, profile, expected transition, observed transition, base mode, and
+evidence gap.
 
 ## Data Modeling & Storage Strategy
 
@@ -69,11 +78,29 @@ rejected.
 - Frontmatter validator: key order, type, enum, pattern, required, conditional,
   and placeholder checks.
 - Transition validator: base status, proposed status, allowed edge, evidence
-  paths, and immutable-body guard.
+  profile/state, Traceability target, same-diff requirement, evidence body
+  contract, and immutable-body guard.
 - Form validator: source-profile parity plus template-only prompt allowance.
 
 GitHub issue forms, workflow YAML, CODEOWNERS, PR templates, OpenAPI, GraphQL,
 and protobuf keep native validation and do not acquire SDLC frontmatter.
+README documents remain frontmatter-free and match one route-specific README
+profile; README bodies route readers and do not absorb contract or governance
+sections.
+
+Base selection is deterministic:
+
+- staged mode compares HEAD with the Git index;
+- CI mode compares the configured pull-request merge base with the proposed
+  head;
+- explicit ref mode compares from-ref with to-ref;
+- snapshot/all-files mode validates current states but reports transition
+  history as not evaluated rather than PASS.
+
+Every allowed edge has positive evidence and missing-evidence, wrong-profile,
+wrong-state, wrong-section, unchanged-evidence, and ambiguous-base fixtures.
+Archive creation additionally requires source removal, the archive record, and
+the owning archive index change in the same diff.
 
 ## Edge Cases & Error Handling
 
@@ -113,6 +140,11 @@ and protobuf keep native validation and do not acquire SDLC frontmatter.
 - **VAL-DSLC-005**: Canonical templates match their authored source profiles
   without copying governance inventories.
 - **VAL-DSLC-006**: Native contract surfaces remain frontmatter-free.
+- **VAL-DSLC-007**: Every SDLC/common family and README profile has one
+  reviewed role/source decision, and operations/helper-role overlap fixtures
+  fail.
+- **VAL-DSLC-008**: Every lifecycle edge has one closed evidence predicate and
+  deterministic base-mode fixtures; missing or mismatched evidence fails.
 
 ## Traceability
 
@@ -131,3 +163,5 @@ and protobuf keep native validation and do not acquire SDLC frontmatter.
 | [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-004 | Negative transition fixtures reject reopen and reactivation. |
 | [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-005 | Registry-derived parity checks cover Markdown forms. |
 | [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-006 | Native linters and route exceptions verify native surfaces. |
+| [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-007 | Type/source matrix and role-overlap fixtures verify operations, helper Tests, and README boundaries. |
+| [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-008 | Edge-to-evidence and base-selection fixtures prove deterministic transition enforcement. |

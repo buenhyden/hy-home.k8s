@@ -28,9 +28,12 @@ leaving the registry unchanged makes machine lineage contradict it.
 - Record Spec 033 as a completed follow-up relation, not an eighth tranche.
 - Extend the registry lineage model with separate tranches and followUps
   collections.
-- Require a follow-up to name its program PRD, ARD, governing decision, reason,
-  status, and predecessor evidence through registry facts and reciprocal body
-  links.
+- Require a mutable or future follow-up to name its program PRD, ARD,
+  governing decision, reason, status, and predecessor evidence through registry
+  facts and reciprocal body links.
+- For Spec 033, which was completed before this decision, use this ADR,
+  registry facts, and the mutable remediation overlay as successor-side
+  evidence; do not rewrite its completed body to manufacture reciprocity.
 - Preserve historical numbering and prohibit inference that every later Spec
   sharing an upstream program is an original tranche.
 - Use this same relation model for PRD-006 and Specs 034-040.
