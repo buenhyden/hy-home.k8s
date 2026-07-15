@@ -332,9 +332,50 @@ def _normalize_reference_label(value: str) -> str:
     return re.sub(r"\s+", " ", value.strip()).casefold()
 
 
+def _mask_inline_code_spans(text: str) -> str:
+    """Mask matched CommonMark backtick spans while preserving source offsets."""
+
+    masked = list(text)
+    cursor = 0
+    while cursor < len(text):
+        if text[cursor] != "`":
+            cursor += 1
+            continue
+        opening = cursor
+        while cursor < len(text) and text[cursor] == "`":
+            cursor += 1
+        run_length = cursor - opening
+        delimiter = re.compile(
+            rf"(?<!`){re.escape('`' * run_length)}(?!`)"
+        )
+        closing = delimiter.search(text, cursor)
+        if closing is None:
+            continue
+        for index in range(opening, closing.end()):
+            if masked[index] != "\n":
+                masked[index] = " "
+        cursor = closing.end()
+    return "".join(masked)
+
+
+def _bracket_opener_is_escaped(text: str, index: int) -> bool:
+    """Return whether a bracket opener follows an odd backslash run."""
+
+    backslashes = 0
+    cursor = index - 1
+    while cursor >= 0 and text[cursor] == "\\":
+        backslashes += 1
+        cursor -= 1
+    return backslashes % 2 == 1
+
+
 def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[str, ...]:
-    visible = _visible_markdown(text)
-    definition_source = _visible_markdown(definitions_text) if definitions_text is not None else visible
+    visible = _mask_inline_code_spans(_visible_markdown(text))
+    definition_source = (
+        _mask_inline_code_spans(_visible_markdown(definitions_text))
+        if definitions_text is not None
+        else visible
+    )
     definitions: dict[str, str] = {}
     for match in re.finditer(r"^ {0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))", definition_source, re.MULTILINE):
         key = _normalize_reference_label(match.group(1))
@@ -343,14 +384,20 @@ def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[s
     found: list[tuple[int, str]] = []
     inline = re.compile(r"(?<!!)\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s)]+))(?:\s+[^)]*)?\)")
     for match in inline.finditer(visible):
+        if _bracket_opener_is_escaped(visible, match.start()):
+            continue
         found.append((match.start(), match.group(1) or match.group(2)))
     reference = re.compile(r"(?<!!)\[([^\]\n]+)\]\[([^\]\n]*)\]")
     for match in reference.finditer(visible):
+        if _bracket_opener_is_escaped(visible, match.start()):
+            continue
         key = _normalize_reference_label(match.group(2) or match.group(1))
         if key in definitions:
             found.append((match.start(), definitions[key]))
     shortcut = re.compile(r"(?<![!\]])\[([^\]\n]+)\](?![\[(])")
     for match in shortcut.finditer(visible):
+        if _bracket_opener_is_escaped(visible, match.start()):
+            continue
         if visible[match.end() :].lstrip().startswith(":"):
             continue
         key = _normalize_reference_label(match.group(1))
@@ -1764,6 +1811,54 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     elif mutation == "link-archive-bypass": texts[source] += "\n[bad](../../98.archive/999-fixture.md)\n"
     elif mutation == "link-adapter-missing": texts[source] += "\n[bad](../../../.claude/skills/missing/skill.md)\n"
     elif mutation == "links-excluded": texts[source] += "\n```md\n[bad](./missing.md)\n```\n<!-- [bad](./missing.md) -->\n"
+    elif mutation == "link-inline-code-excluded":
+        texts[source] += (
+            "\n`[inline](./missing-inline.md)`\n"
+            "``[full][missing full] [collapsed][] [shortcut]``\n"
+            "```[different](./missing-different.md)```\n"
+            "[missing full]: ./missing-full.md\n"
+            "[collapsed]: ./missing-collapsed.md\n"
+            "[shortcut]: ./missing-shortcut.md\n"
+        )
+    elif mutation == "link-odd-escaped-excluded":
+        texts[source] += (
+            "\n\\[inline](./missing-inline.md)\n"
+            "\\[full][missing full]\n"
+            "\\[collapsed][]\n"
+            "\\[shortcut]\n"
+            "[missing full]: ./missing-full.md\n"
+            "[collapsed]: ./missing-collapsed.md\n"
+            "[shortcut]: ./missing-shortcut.md\n"
+        )
+    elif mutation == "link-even-escaped-active":
+        texts[source] += (
+            "\n\\\\[inline](./missing-inline.md)\n"
+            "\\\\[full][missing full]\n"
+            "\\\\[collapsed][]\n"
+            "\\\\[shortcut]\n"
+            "[missing full]: ./missing-full.md\n"
+            "[collapsed]: ./missing-collapsed.md\n"
+            "[shortcut]: ./missing-shortcut.md\n"
+        )
+    elif mutation in {
+        "link-even-escaped-inline",
+        "link-even-escaped-full-reference",
+        "link-even-escaped-collapsed-reference",
+        "link-even-escaped-shortcut-reference",
+    }:
+        rendered = {
+            "link-even-escaped-inline": "\\\\[inline](./missing-inline.md)",
+            "link-even-escaped-full-reference": "\\\\[full][missing full]",
+            "link-even-escaped-collapsed-reference": "\\\\[collapsed][]",
+            "link-even-escaped-shortcut-reference": "\\\\[escaped shortcut]",
+        }
+        texts[source] += (
+            f"\n{rendered[mutation]}\n"
+            "[missing full]: ./missing-full.md\n"
+            "[collapsed]: ./missing-collapsed.md\n"
+            "[shortcut]: ./missing-shortcut.md\n"
+            "[escaped shortcut]: ./missing-escaped-shortcut.md\n"
+        )
     elif mutation == "link-invalid-fence-closer": texts[source] += "\n```md\n[bad](./missing.md)\n``` still-open\n[also-bad](./missing-two.md)\n```\n"
     elif mutation == "index-missing":
         path = DECLARED_INDEXES[0].path; texts[path] = "\n".join(line for line in texts[path].splitlines() if "[`./999-fixture/spec.md`]" not in line)
@@ -2236,6 +2331,44 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
             "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n\n"
             "[ DUPE\tLABEL ]: ../04.execution/tasks/2026-07-15-fixture.md\n"
             "[dupe   label]: ../03.specs/999-fixture/spec.md\n"
+        )
+    elif mutation in {
+        "inline-code-nonrendered-target",
+        "odd-escaped-nonrendered-target",
+        "even-escaped-rendered-target",
+        "even-escaped-inline-target",
+        "even-escaped-full-reference-target",
+        "even-escaped-collapsed-reference-target",
+        "even-escaped-shortcut-reference-target",
+    }:
+        labels = {
+            "inline-code-nonrendered-target": (
+                "`[Task](../04.execution/tasks/2026-07-15-fixture.md)` "
+                "``[Task][bad ref] [bad ref][]`` ```[bad ref]```"
+            ),
+            "odd-escaped-nonrendered-target": (
+                "\\[Task](../04.execution/tasks/2026-07-15-fixture.md), "
+                "\\[Task][bad ref], \\[bad ref][], \\[bad ref]"
+            ),
+            "even-escaped-rendered-target": (
+                "\\\\[Task](../04.execution/tasks/2026-07-15-fixture.md), "
+                "\\\\[Task][bad ref], \\\\[bad ref][], \\\\[bad ref]"
+            ),
+            "even-escaped-inline-target": (
+                "\\\\[Task](../04.execution/tasks/2026-07-15-fixture.md)"
+            ),
+            "even-escaped-full-reference-target": "\\\\[Task][bad ref]",
+            "even-escaped-collapsed-reference-target": "\\\\[bad ref][]",
+            "even-escaped-shortcut-reference-target": "\\\\[bad ref]",
+        }
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "[Spec](../03.specs/999-fixture/spec.md)",
+            labels[mutation],
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n\n"
+            "[bad ref]: ../04.execution/tasks/2026-07-15-fixture.md\n"
         )
     elif mutation in {
         "blank-line-after-delimiter",
