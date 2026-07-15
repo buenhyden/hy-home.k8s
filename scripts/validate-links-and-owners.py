@@ -326,26 +326,32 @@ def _build_context(root: Path, include_paths: tuple[PurePosixPath, ...] = ()) ->
     )
 
 
+def _normalize_reference_label(value: str) -> str:
+    """Normalize a CommonMark reference label for deterministic lookup."""
+
+    return re.sub(r"\s+", " ", value.strip()).casefold()
+
+
 def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[str, ...]:
     visible = _visible_markdown(text)
     definition_source = _visible_markdown(definitions_text) if definitions_text is not None else visible
     definitions: dict[str, str] = {}
     for match in re.finditer(r"^ {0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))", definition_source, re.MULTILINE):
-        definitions[match.group(1).strip().casefold()] = match.group(2) or match.group(3)
+        definitions[_normalize_reference_label(match.group(1))] = match.group(2) or match.group(3)
     found: list[tuple[int, str]] = []
     inline = re.compile(r"(?<!!)\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s)]+))(?:\s+[^)]*)?\)")
     for match in inline.finditer(visible):
         found.append((match.start(), match.group(1) or match.group(2)))
     reference = re.compile(r"(?<!!)\[([^\]\n]+)\]\[([^\]\n]*)\]")
     for match in reference.finditer(visible):
-        key = (match.group(2) or match.group(1)).strip().casefold()
+        key = _normalize_reference_label(match.group(2) or match.group(1))
         if key in definitions:
             found.append((match.start(), definitions[key]))
     shortcut = re.compile(r"(?<![!\]])\[([^\]\n]+)\](?![\[(])")
     for match in shortcut.finditer(visible):
         if visible[match.end() :].lstrip().startswith(":"):
             continue
-        key = match.group(1).strip().casefold()
+        key = _normalize_reference_label(match.group(1))
         if key in definitions:
             found.append((match.start(), definitions[key]))
     return tuple(value for _, value in sorted(found))
@@ -2181,11 +2187,22 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
         "full-reference-disallowed-target",
         "collapsed-reference-disallowed-target",
         "shortcut-reference-disallowed-target",
+        "full-reference-whitespace-target",
+        "collapsed-reference-whitespace-target",
+        "shortcut-reference-whitespace-target",
     }:
         labels = {
             "full-reference-disallowed-target": "[Task][wrong-target]",
             "collapsed-reference-disallowed-target": "[wrong-target][]",
             "shortcut-reference-disallowed-target": "[wrong-target]",
+            "full-reference-whitespace-target": "[Task][wrong   target]",
+            "collapsed-reference-whitespace-target": "[wrong\t\t target][]",
+            "shortcut-reference-whitespace-target": "[wrong\t target]",
+        }
+        definition_labels = {
+            "full-reference-whitespace-target": "wrong\t target",
+            "collapsed-reference-whitespace-target": "wrong target",
+            "shortcut-reference-whitespace-target": "wrong   target",
         }
         mutated.texts[prd] = mutated.texts[prd].replace(
             "[Spec](../03.specs/999-fixture/spec.md)",
@@ -2194,7 +2211,8 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
         )
         mutated.texts[prd] += (
             "\n[Spec reciprocal]\n\n"
-            "[wrong-target]: ../04.execution/tasks/2026-07-15-fixture.md\n"
+            f"[{definition_labels.get(mutation, 'wrong-target')}]: "
+            "../04.execution/tasks/2026-07-15-fixture.md\n"
             "[Spec reciprocal]: ../03.specs/999-fixture/spec.md\n"
         )
     elif mutation in {
