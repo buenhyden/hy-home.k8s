@@ -272,6 +272,88 @@
       "expectedRuleIds": []
     },
     {
+      "name": "audit-matching-path-prefix",
+      "profile": "sdlc/prd",
+      "path": "docs/01.requirements/999-fixture.md",
+      "status": "active",
+      "bodyContracts": "audit",
+      "pathPrefixes": ["docs/05.operations", "docs/01.requirements"],
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "audit-nonmatching-path-prefix",
+      "profile": "sdlc/prd",
+      "path": "docs/01.requirements/999-fixture.md",
+      "status": "active",
+      "bodyContracts": "audit",
+      "pathPrefixes": ["docs/05.operations"],
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "registry-prefix-does-not-force",
+      "profile": "sdlc/prd",
+      "path": "docs/01.requirements/999-fixture.md",
+      "status": "active",
+      "bodyContracts": "registry",
+      "pathPrefixes": ["docs/01.requirements"],
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "template-prefix-always-validates",
+      "profile": "template/sdlc/prd",
+      "path": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "status": "",
+      "bodyContracts": "audit",
+      "pathPrefixes": ["docs/05.operations"],
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": ["BODY-CONTRACT-HEADING"]
+    },
+    {
+      "name": "audit-prefix-done-status-excluded",
+      "profile": "sdlc/prd",
+      "path": "docs/01.requirements/999-fixture.md",
+      "status": "done",
+      "bodyContracts": "audit",
+      "pathPrefixes": ["docs/01.requirements"],
+      "enforcedStatuses": [],
+      "body": "## Traceability\n\nNo semantic table yet.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "three-space-indented-table",
+      "profile": "sdlc/prd",
+      "status": "active",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n   | Requirement ID | Acceptance criterion | Downstream owner |\n   | --- | --- | --- |\n   | REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "blank-line-ends-table",
+      "profile": "sdlc/prd",
+      "status": "active",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-TABLE"]
+    },
+    {
+      "name": "html-comment-spacing-ends-table",
+      "profile": "sdlc/prd",
+      "status": "active",
+      "bodyContracts": "registry",
+      "enforcedStatuses": ["draft", "active"],
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n<!-- spacing -->\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
+      "expectedRuleIds": ["BODY-CONTRACT-TABLE"]
+    },
+    {
       "name": "fenced-and-comment-lookalikes",
       "profile": "sdlc/prd",
       "status": "draft",

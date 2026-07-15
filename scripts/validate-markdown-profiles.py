@@ -367,7 +367,7 @@ def _first_visible_table(
 
     lines = _visible_markdown(text).splitlines()
     for index in range(len(lines) - 1):
-        if not lines[index].lstrip().startswith("|"):
+        if re.match(r"^ {0,3}\|", lines[index]) is None:
             continue
         header = _gfm_table_cells(lines[index])
         delimiter = _gfm_table_cells(lines[index + 1])
@@ -378,10 +378,8 @@ def _first_visible_table(
         rows: list[list[str]] = []
         for row_line in lines[index + 2 :]:
             if not row_line.strip():
-                if rows:
-                    break
-                continue
-            if not row_line.lstrip().startswith("|"):
+                break
+            if re.match(r"^ {0,3}\|", row_line) is None:
                 break
             rows.append(_gfm_table_cells(row_line))
         return header, rows
@@ -409,7 +407,11 @@ def _identifier_text(cell: str) -> str:
 
 
 def _body_contract_is_enforced(
-    profile: DocumentProfile, status: str, body_contracts: str
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    status: str,
+    body_contracts: str,
+    path_prefixes: tuple[PurePosixPath, ...],
 ) -> bool:
     if body_contracts not in {"registry", "audit"}:
         raise ValueError("body_contracts must be registry or audit")
@@ -420,7 +422,11 @@ def _body_contract_is_enforced(
     if profile.mode != "authored":
         return False
     if body_contracts == "audit":
-        return status in {"draft", "active"}
+        in_scope = not path_prefixes or any(
+            path == prefix or prefix in path.parents
+            for prefix in path_prefixes
+        )
+        return in_scope and status in {"draft", "active"}
     return status in profile.body_contract.enforced_statuses
 
 
@@ -430,12 +436,13 @@ def _body_contract_diagnostics(
     body: str,
     status: str,
     body_contracts: str,
+    path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     """Validate one registry-owned lifecycle table deterministically."""
 
     contract = profile.body_contract
     if contract is None or not _body_contract_is_enforced(
-        profile, status, body_contracts
+        path, profile, status, body_contracts, path_prefixes
     ):
         return []
     diagnostics: list[Diagnostic] = []
@@ -880,6 +887,7 @@ def validate_document(
     append_context: AppendContext | None = None,
     today: dt.date | None = None,
     body_contracts: str = "registry",
+    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     """Validate one source using only its registry-selected profile contract."""
 
@@ -900,7 +908,12 @@ def validate_document(
         status = value if isinstance(value, str) else ""
     diagnostics.extend(
         _body_contract_diagnostics(
-            path, profile, body, status, body_contracts
+            path,
+            profile,
+            body,
+            status,
+            body_contracts,
+            body_contract_path_prefixes,
         )
     )
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -1156,6 +1169,7 @@ def _repository_diagnostics(
     *,
     today: dt.date | None,
     body_contracts: str = "registry",
+    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     diagnostics: list[Diagnostic] = []
@@ -1180,6 +1194,7 @@ def _repository_diagnostics(
                 append_context=append_context,
                 today=today,
                 body_contracts=body_contracts,
+                body_contract_path_prefixes=body_contract_path_prefixes,
             )
         )
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -1772,7 +1787,11 @@ def _self_test(root: Path) -> list[str]:
         }
         body_contract_validator = globals().get("_body_contract_diagnostics")
         for case in fixture.get("bodyContractCases", []):
-            if set(case) != body_contract_case_keys:
+            prefix_case = "pathPrefixes" in case or "path" in case
+            expected_case_keys = body_contract_case_keys | (
+                {"path", "pathPrefixes"} if prefix_case else set()
+            )
+            if set(case) != expected_case_keys:
                 failures.append(
                     f"body-contract case fields differ: {case.get('name')}"
                 )
@@ -1795,13 +1814,27 @@ def _self_test(root: Path) -> list[str]:
                     f"body-contract {case['name']}: BODY-CONTRACT rules are unimplemented"
                 )
                 continue
-            diagnostics = body_contract_validator(
-                PurePosixPath("docs/01.requirements/999-fixture.md"),
-                selected,
-                case["body"],
-                case["status"],
-                case["bodyContracts"],
-            )
+            try:
+                diagnostics = body_contract_validator(
+                    PurePosixPath(
+                        case.get(
+                            "path", "docs/01.requirements/999-fixture.md"
+                        )
+                    ),
+                    selected,
+                    case["body"],
+                    case["status"],
+                    case["bodyContracts"],
+                    tuple(
+                        PurePosixPath(value)
+                        for value in case.get("pathPrefixes", [])
+                    ),
+                )
+            except TypeError:
+                failures.append(
+                    f"body-contract {case['name']}: path-prefix scope is unimplemented"
+                )
+                continue
             actual_rules = _rule_ids(diagnostics)
             if actual_rules != case["expectedRuleIds"]:
                 failures.append(
@@ -1814,11 +1847,53 @@ def _self_test(root: Path) -> list[str]:
             audit_body_contracts = _parser().parse_args(
                 ["--body-contracts", "audit"]
             ).body_contracts
+            default_prefixes = _parser().parse_args(
+                []
+            ).body_contract_path_prefix
+            repeated_prefixes = _parser().parse_args(
+                [
+                    "--body-contracts",
+                    "audit",
+                    "--body-contract-path-prefix",
+                    "docs/01.requirements",
+                    "--body-contract-path-prefix",
+                    "docs/03.specs",
+                ]
+            ).body_contract_path_prefix
         except (AttributeError, SystemExit):
             failures.append("body-contract parser modes are unimplemented")
         else:
             if default_body_contracts != "registry" or audit_body_contracts != "audit":
                 failures.append("body-contract parser mode defaults differ")
+            expected_prefixes = [
+                PurePosixPath("docs/01.requirements"),
+                PurePosixPath("docs/03.specs"),
+            ]
+            if default_prefixes != [] or repeated_prefixes != expected_prefixes:
+                failures.append("body-contract path-prefix parser differs")
+        for invalid_prefix in (
+            "",
+            ".",
+            "./docs/01.requirements",
+            "/docs/01.requirements",
+            "C:/docs/01.requirements",
+            "../docs/01.requirements",
+            "docs/../01.requirements",
+            "docs/01.requirements/",
+            "docs\\01.requirements",
+        ):
+            with contextlib.redirect_stderr(io.StringIO()):
+                try:
+                    _parser().parse_args(
+                        ["--body-contract-path-prefix", invalid_prefix]
+                    )
+                except SystemExit as exc:
+                    if exc.code == 2:
+                        continue
+            failures.append(
+                "body-contract parser accepted invalid path prefix: "
+                f"{invalid_prefix!r}"
+            )
 
         for escape in (
             ".",
@@ -2017,6 +2092,26 @@ def _self_test(root: Path) -> list[str]:
     return failures
 
 
+def _body_contract_path_prefix(value: str) -> PurePosixPath:
+    """Parse one normalized repository-relative body-contract scope."""
+
+    path = PurePosixPath(value)
+    if (
+        not value
+        or value == "."
+        or value != path.as_posix()
+        or value.startswith("./")
+        or path.is_absolute()
+        or re.match(r"^[A-Za-z]:[/\\]", value) is not None
+        or ".." in path.parts
+        or "\\" in value
+    ):
+        raise argparse.ArgumentTypeError(
+            "body-contract path prefix must be normalized and repository-relative"
+        )
+    return path
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
@@ -2027,6 +2122,16 @@ def _parser() -> argparse.ArgumentParser:
         choices=("registry", "audit"),
         default="registry",
         help="respect registry status scopes or audit all draft/active body contracts",
+    )
+    parser.add_argument(
+        "--body-contract-path-prefix",
+        action="append",
+        default=[],
+        type=_body_contract_path_prefix,
+        help=(
+            "limit forced audit enforcement to a repeatable normalized "
+            "repository-relative prefix"
+        ),
     )
     parser.add_argument("--include-path", action="append", default=[])
     group = parser.add_mutually_exclusive_group()
@@ -2092,6 +2197,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.mode,
                     append_context=append_context,
                     body_contracts=args.body_contracts,
+                    body_contract_path_prefixes=tuple(
+                        args.body_contract_path_prefix
+                    ),
                 )
             )
         rows = _outcome_rows(root, diagnostics, args.mode)

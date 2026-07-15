@@ -94,7 +94,17 @@
     {"name": "missing-reciprocal-evidence", "mutation": "missing-reciprocal", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-RECIPROCAL"]},
     {"name": "exclusion-without-reason", "mutation": "exclusion-without-reason", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-EXCLUSION"]},
     {"name": "registry-empty-status-scope", "mutation": "disallowed-target-profile", "bodyContracts": "registry", "expected_rule_ids": []},
-    {"name": "audit-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "expected_rule_ids": []}
+    {"name": "audit-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "expected_rule_ids": []},
+    {"name": "audit-matching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/05.operations", "docs/01.requirements"], "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "audit-nonmatching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/03.specs"], "expected_rule_ids": []},
+    {"name": "audit-prefix-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "pathPrefixes": ["docs/01.requirements"], "expected_rule_ids": []},
+    {"name": "three-space-table-disallowed-link", "mutation": "three-space-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "commented-fence-cannot-hide-table", "mutation": "commented-fence-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "full-reference-disallowed-link", "mutation": "full-reference-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "collapsed-reference-disallowed-link", "mutation": "collapsed-reference-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "shortcut-reference-disallowed-link", "mutation": "shortcut-reference-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
+    {"name": "blank-line-ends-table", "mutation": "blank-line-after-delimiter", "bodyContracts": "audit", "expected_rule_ids": []},
+    {"name": "html-comment-spacing-ends-table", "mutation": "html-comment-after-delimiter", "bodyContracts": "audit", "expected_rule_ids": []}
   ],
   "cases": [
     {"name": "valid-tree", "tree": {"base": "baseTree"}, "mutation": {"kind": "none"}, "expected_rule_ids": []},

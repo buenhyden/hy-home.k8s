@@ -521,6 +521,7 @@ git commit -m "refactor(templates): normalize canonical document forms"
 
 **Files:**
 
+- Modify: `docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md`
 - Modify: `scripts/validate-markdown-profiles.py`
 - Modify: `tests/fixtures/markdown-profiles.json`
 - Modify: `scripts/validate-links-and-owners.py`
@@ -534,7 +535,10 @@ git commit -m "refactor(templates): normalize canonical document forms"
   `_body_contract_link_diagnostics()` for linked profile and reciprocal
   semantics. Both validators accept `--body-contracts audit`; this forces
   non-null body contracts over `draft|active` consumers during migration while
-  the registry's production `enforcedStatuses` remains empty. The default
+  the registry's production `enforcedStatuses` remains empty. A repeatable
+  `--body-contract-path-prefix <repo-relative-prefix>` limits only that forced
+  audit scope to normalized repository-relative prefixes; templates always
+  validate, no prefix retains the global final-diagnosis audit, and the default
   `registry` behavior always respects the registry value.
 
 - [ ] **Step 1: Add failing local table cases**
@@ -544,7 +548,9 @@ duplicate header, blank required cell, invalid requirement/criterion/work-item
 ID, explicit exclusion, and status scope. Fixture registries set
 `enforcedStatuses: ["draft", "active"]`; production remains empty.
 Add parser cases proving `--body-contracts audit` forces `draft|active` only
-and the default mode continues to honor production `enforcedStatuses`.
+and the default mode continues to honor production `enforcedStatuses`. Add
+repeat, include, exclude, template, status, absolute path, traversal, and
+non-normalized `--body-contract-path-prefix` cases.
 
 Expected command and result:
 
@@ -558,15 +564,20 @@ Expected: FAIL with unimplemented `BODY-CONTRACT-*` rule IDs.
 
 Reuse fenced-code and HTML-comment aware section scanning. Find the exact H3
 inside the configured H2, parse the first GFM table, require exact columns and
-non-empty cells, and validate configured identifier columns. Templates always
-validate table shape; authored documents validate only when their status is in
-`enforced_statuses`, unless `--body-contracts audit` forces `draft|active`.
+non-empty cells, and validate configured identifier columns. A blank visible
+line after the delimiter ends the table. Templates always validate table
+shape; authored documents validate only when their status is in
+`enforced_statuses`, unless `--body-contracts audit` forces `draft|active`
+inside any supplied path prefix.
 
 - [ ] **Step 3: Add failing cross-document cases**
 
 Add a positive PRD -> Spec -> Plan -> Task tree and Incident/Postmortem -> Task
 feedback tree. Add disallowed source profile, disallowed target profile,
-missing reciprocal link, broken link, and exclusion-without-reason cases.
+missing reciprocal link, broken link, and exclusion-without-reason cases. Add
+0-3-space table indentation, comment-hidden fence, delimiter blank/comment
+spacing, and full/collapsed/shortcut reference-link cases that resolve their
+definitions from the full document.
 
 ```bash
 python3 scripts/validate-links-and-owners.py --root . --self-test
@@ -577,10 +588,12 @@ Expected: FAIL with unimplemented `BODY-LINK-*` diagnostics.
 - [ ] **Step 4: Implement cross-document contract validation**
 
 Reuse `_exact_heading_section()`, `_gfm_table_cells()`, `_extract_links()`, and
-the selected profile map. Validate configured source and target link columns,
-allowed profile IDs, explicit exclusions, and reciprocal evidence. Keep
-ordinary link existence and duplicate-current-owner diagnostics independent.
-Apply the same `--body-contracts {registry,audit}` contract to this validator.
+the selected profile map. Pass the complete owning document as the definition
+context when extracting links from relationship cells. Validate configured
+source and target link columns, allowed profile IDs, explicit exclusions, and
+reciprocal evidence. Keep ordinary link existence and duplicate-current-owner
+diagnostics independent. Apply the same `--body-contracts {registry,audit}`
+and repeatable path-prefix contract to this validator.
 
 - [ ] **Step 5: Run focused and aggregate tests and commit**
 
@@ -589,10 +602,9 @@ python3 scripts/validate-markdown-profiles.py --root . --self-test
 python3 scripts/validate-links-and-owners.py --root . --self-test
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit
-python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit
 bash scripts/validate-repo-quality-gates.sh .
-git add scripts/validate-markdown-profiles.py \
+git add docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md \
+  scripts/validate-markdown-profiles.py \
   tests/fixtures/markdown-profiles.json \
   scripts/validate-links-and-owners.py \
   tests/fixtures/links-and-owners.json \
@@ -657,8 +669,14 @@ existing `VAL-*` criteria and real verification methods.
 - [ ] **Step 4: Validate topic fidelity**
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit
-python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit
+python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/01.requirements \
+  --body-contract-path-prefix docs/02.architecture/requirements \
+  --body-contract-path-prefix docs/03.specs
+python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/01.requirements \
+  --body-contract-path-prefix docs/02.architecture/requirements \
+  --body-contract-path-prefix docs/03.specs
 rg -n '006-workspace-harness-gap-analysis/spec.md' \
   docs/01.requirements/003-workspace-agent-governance-platform.md
 ```
@@ -732,8 +750,10 @@ Do not claim live verification from repository-static evidence.
 - [ ] **Step 4: Validate and commit**
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit
-python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit
+python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/05.operations
+python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/05.operations
 bash scripts/validate-repo-quality-gates.sh .
 git add docs/05.operations
 git commit -m "docs(operations): migrate current operating documents"
@@ -762,13 +782,30 @@ git commit -m "docs(operations): migrate current operating documents"
 - Produces: production `draft|active` enforcement, immutable-history proof,
   audit disposition, completed execution evidence, and final handoff.
 
-- [ ] **Step 1: Enable production status enforcement**
+- [ ] **Step 1: Normalize and audit current execution traceability**
+
+Split grouped Plan criterion ranges into one `VAL-TLCN-NNN` identifier per
+row. Replace the Task's grouped criterion cell with one `TLCN-NNN` work-item
+identifier per row, preserving the corresponding result and evidence. Before
+changing production status scopes, prove the current execution set passes:
+
+```bash
+python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/04.execution
+python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts audit \
+  --body-contract-path-prefix docs/04.execution
+```
+
+Expected: both scoped audit commands PASS while other unmigrated stages remain
+outside the forced audit scope.
+
+- [ ] **Step 2: Enable production status enforcement**
 
 Set every applicable authored SDLC `bodyContract.enforcedStatuses` to
 `["draft", "active"]`. Keep common and frontmatter-free profiles null. Ensure
 template profiles retain source-contract parity.
 
-- [ ] **Step 2: Run the historical-body diff guard**
+- [ ] **Step 3: Run the historical-body diff guard**
 
 ```bash
 python3 - <<'PY'
@@ -799,7 +836,7 @@ PY
 
 Expected: PASS with zero completed-body or accepted-ADR changes.
 
-- [ ] **Step 3: Record audit and execution disposition**
+- [ ] **Step 4: Record audit and execution disposition**
 
 Append a dated disposition overlay to the Current remediation roadmap without
 editing its original finding rows or observation SHA. Mark structural profile,
@@ -809,7 +846,7 @@ fabricated. Set all Task rows Done with concrete commit/evidence links, set
 Plan and Spec status Done, update indexes and ledger dispositions, and append a
 progress entry.
 
-- [ ] **Step 4: Run the full validation suite**
+- [ ] **Step 5: Run the full validation suite**
 
 ```bash
 git diff --check
@@ -828,7 +865,7 @@ env TMPDIR=/tmp pre-commit run --all-files
 Expected: all required gates PASS. Optional tool SKIP remains distinct from
 PASS; remote and live verification remain DEFER.
 
-- [ ] **Step 5: Obtain independent whole-branch review and commit closure**
+- [ ] **Step 6: Obtain independent whole-branch review and commit closure**
 
 After requirements and quality reviewers report no unresolved findings:
 

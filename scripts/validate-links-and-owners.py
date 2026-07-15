@@ -231,38 +231,47 @@ def _visible_markdown(text: str) -> str:
     fence: tuple[str, int] | None = None
     in_comment = False
     for raw_line in text.splitlines():
-        line = raw_line
-        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
-        if marker:
-            token = marker.group(1)
-            if fence is None:
-                fence = (token[0], len(token))
-            elif token[0] == fence[0] and len(token) >= fence[1] and not marker.group(2).strip():
-                fence = None
-            output.append("")
-            continue
         if fence is not None:
+            marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", raw_line)
+            if marker:
+                token = marker.group(1)
+                if (
+                    token[0] == fence[0]
+                    and len(token) >= fence[1]
+                    and not marker.group(2).strip()
+                ):
+                    fence = None
             output.append("")
             continue
         visible: list[str] = []
         cursor = 0
-        while cursor < len(line):
+        while cursor < len(raw_line):
             if in_comment:
-                end = line.find("-->", cursor)
+                end = raw_line.find("-->", cursor)
                 if end < 0:
-                    cursor = len(line)
+                    cursor = len(raw_line)
                     continue
                 cursor = end + 3
                 in_comment = False
                 continue
-            start = line.find("<!--", cursor)
+            start = raw_line.find("<!--", cursor)
             if start < 0:
-                visible.append(line[cursor:])
+                visible.append(raw_line[cursor:])
                 break
-            visible.append(line[cursor:start])
+            visible.append(raw_line[cursor:start])
             cursor = start + 4
             in_comment = True
-        output.append("".join(visible))
+        line = "".join(visible)
+        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        if marker:
+            token = marker.group(1)
+            if token[0] == "`" and "`" in marker.group(2):
+                output.append(line)
+                continue
+            fence = (token[0], len(token))
+            output.append("")
+            continue
+        output.append(line)
     return "\n".join(output)
 
 
@@ -690,7 +699,10 @@ def _first_visible_table(
     for index in range(len(lines) - 1):
         header_line = lines[index]
         delimiter_line = lines[index + 1]
-        if not header_line.startswith("|") or not delimiter_line.startswith("|"):
+        if (
+            re.match(r"^ {0,3}\|", header_line) is None
+            or re.match(r"^ {0,3}\|", delimiter_line) is None
+        ):
             continue
         header = _gfm_table_cells(header_line)
         delimiter = _gfm_table_cells(delimiter_line)
@@ -701,10 +713,8 @@ def _first_visible_table(
         rows: list[list[str]] = []
         for row_line in lines[index + 2 :]:
             if not row_line.strip():
-                if rows:
-                    break
-                continue
-            if not row_line.startswith("|"):
+                break
+            if re.match(r"^ {0,3}\|", row_line) is None:
                 break
             cells = _gfm_table_cells(row_line)
             rows.append((cells + [""] * len(header))[: len(header)])
@@ -716,14 +726,22 @@ BODY_LINK_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
 
 
 def _body_contract_link_is_enforced(
-    profile: DocumentProfile, status: str, body_contracts: str
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    status: str,
+    body_contracts: str,
+    path_prefixes: tuple[PurePosixPath, ...],
 ) -> bool:
     if body_contracts not in {"registry", "audit"}:
         raise ConfigurationError("body_contracts must be registry or audit")
     if profile.body_contract is None or profile.mode != "authored":
         return False
     if body_contracts == "audit":
-        return status in {"draft", "active"}
+        in_scope = not path_prefixes or any(
+            path == prefix or prefix in path.parents
+            for prefix in path_prefixes
+        )
+        return in_scope and status in {"draft", "active"}
     return status in profile.body_contract.enforced_statuses
 
 
@@ -766,6 +784,7 @@ def _body_contract_link_diagnostics(
     context: Context,
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str,
+    path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     """Validate registry-owned relationship cells and reciprocal evidence."""
 
@@ -781,7 +800,7 @@ def _body_contract_link_diagnostics(
         status_value = context.metadata[path].get("status", "")
         status = status_value if isinstance(status_value, str) else ""
         if not _body_contract_link_is_enforced(
-            profile, status, body_contracts
+            path, profile, status, body_contracts, path_prefixes
         ):
             continue
         contract = profile.body_contract
@@ -813,7 +832,9 @@ def _body_contract_link_diagnostics(
                             )
                         )
                     continue
-                raw_links = _extract_links(cell)
+                raw_links = _extract_links(
+                    cell, definitions_text=context.texts[path]
+                )
                 if not raw_links:
                     diagnostics.append(
                         _diag(
@@ -859,7 +880,11 @@ def _body_contract_link_diagnostics(
                         else ""
                     )
                     reciprocal_in_scope = _body_contract_link_is_enforced(
-                        target_profile, target_status, body_contracts
+                        target,
+                        target_profile,
+                        target_status,
+                        body_contracts,
+                        path_prefixes,
                     )
                     if (
                         contract.reciprocal_evidence
@@ -1506,11 +1531,15 @@ def _raw_diagnostics(
     context: Context,
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str = "registry",
+    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
     diagnostics.extend(
         _body_contract_link_diagnostics(
-            context, profiles_by_id, body_contracts
+            context,
+            profiles_by_id,
+            body_contracts,
+            body_contract_path_prefixes,
         )
     )
     diagnostics.extend(_index_diagnostics(context))
@@ -1523,7 +1552,10 @@ def _raw_diagnostics(
 
 
 def validate_cross_document_contracts(
-    root: Path, mode: str, body_contracts: str = "registry"
+    root: Path,
+    mode: str,
+    body_contracts: str = "registry",
+    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     """Return deterministic raw cross-document diagnostics."""
 
@@ -1535,7 +1567,12 @@ def validate_cross_document_contracts(
     profiles_by_id = {
         profile.profile_id: profile for profile in registry.profiles
     }
-    return _raw_diagnostics(context, profiles_by_id, body_contracts)
+    return _raw_diagnostics(
+        context,
+        profiles_by_id,
+        body_contracts,
+        body_contract_path_prefixes,
+    )
 
 
 def _inventory_documents(context: Context) -> list[dict[str, Any]]:
@@ -2116,6 +2153,64 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
         mutated.texts[prd] += (
             "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
         )
+    elif mutation == "three-space-disallowed-target":
+        mutated.texts[prd] = mutated.texts[prd].replace("\n|", "\n   |")
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "../03.specs/999-fixture/spec.md",
+            "../04.execution/tasks/2026-07-15-fixture.md",
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
+        )
+    elif mutation == "commented-fence-disallowed-target":
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "### Lifecycle Traceability\n\n|",
+            "### Lifecycle Traceability\n\n<!--\n```markdown\n-->\n|",
+            1,
+        )
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "../03.specs/999-fixture/spec.md",
+            "../04.execution/tasks/2026-07-15-fixture.md",
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal](../03.specs/999-fixture/spec.md)\n"
+        )
+    elif mutation in {
+        "full-reference-disallowed-target",
+        "collapsed-reference-disallowed-target",
+        "shortcut-reference-disallowed-target",
+    }:
+        labels = {
+            "full-reference-disallowed-target": "[Task][wrong-target]",
+            "collapsed-reference-disallowed-target": "[wrong-target][]",
+            "shortcut-reference-disallowed-target": "[wrong-target]",
+        }
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "[Spec](../03.specs/999-fixture/spec.md)",
+            labels[mutation],
+            1,
+        )
+        mutated.texts[prd] += (
+            "\n[Spec reciprocal]\n\n"
+            "[wrong-target]: ../04.execution/tasks/2026-07-15-fixture.md\n"
+            "[Spec reciprocal]: ../03.specs/999-fixture/spec.md\n"
+        )
+    elif mutation in {
+        "blank-line-after-delimiter",
+        "html-comment-after-delimiter",
+    }:
+        spacing = (
+            "\n\n"
+            if mutation == "blank-line-after-delimiter"
+            else "\n<!-- spacing -->\n"
+        )
+        mutated.texts[prd] = mutated.texts[prd].replace(
+            "| --- | --- | --- |\n| REQ-FIXTURE-001",
+            f"| --- | --- | --- |{spacing}| REQ-FIXTURE-001",
+            1,
+        )
     else:
         raise ConfigurationError(
             f"unknown body-contract fixture mutation: {mutation}"
@@ -2314,7 +2409,10 @@ def _self_test(root: Path) -> list[str]:
             "expected_rule_ids",
         ]
         for case in fixture["bodyContractCases"]:
-            if list(case) != body_case_keys:
+            expected_case_keys = body_case_keys.copy()
+            if "pathPrefixes" in case:
+                expected_case_keys.insert(3, "pathPrefixes")
+            if list(case) != expected_case_keys:
                 failures.append(
                     f"{case.get('name')}: body-contract case schema differs"
                 )
@@ -2327,9 +2425,21 @@ def _self_test(root: Path) -> list[str]:
             mutated = _mutated_body_contract_context(
                 body_context, case["mutation"]
             )
-            diagnostics = body_validator(
-                mutated, profiles_by_id, case["bodyContracts"]
-            )
+            try:
+                diagnostics = body_validator(
+                    mutated,
+                    profiles_by_id,
+                    case["bodyContracts"],
+                    tuple(
+                        PurePosixPath(value)
+                        for value in case.get("pathPrefixes", [])
+                    ),
+                )
+            except TypeError:
+                failures.append(
+                    f"{case['name']}: path-prefix scope is unimplemented"
+                )
+                continue
             actual = sorted({item.rule_id for item in diagnostics})
             if actual != case["expected_rule_ids"]:
                 failures.append(
@@ -2340,11 +2450,53 @@ def _self_test(root: Path) -> list[str]:
             audit_body_contracts = _parser().parse_args(
                 ["--body-contracts", "audit"]
             ).body_contracts
+            default_prefixes = _parser().parse_args(
+                []
+            ).body_contract_path_prefix
+            repeated_prefixes = _parser().parse_args(
+                [
+                    "--body-contracts",
+                    "audit",
+                    "--body-contract-path-prefix",
+                    "docs/01.requirements",
+                    "--body-contract-path-prefix",
+                    "docs/03.specs",
+                ]
+            ).body_contract_path_prefix
         except (AttributeError, SystemExit):
             failures.append("body-contract parser modes are unimplemented")
         else:
             if default_body_contracts != "registry" or audit_body_contracts != "audit":
                 failures.append("body-contract parser mode defaults differ")
+            expected_prefixes = [
+                PurePosixPath("docs/01.requirements"),
+                PurePosixPath("docs/03.specs"),
+            ]
+            if default_prefixes != [] or repeated_prefixes != expected_prefixes:
+                failures.append("body-contract path-prefix parser differs")
+        for invalid_prefix in (
+            "",
+            ".",
+            "./docs/01.requirements",
+            "/docs/01.requirements",
+            "C:/docs/01.requirements",
+            "../docs/01.requirements",
+            "docs/../01.requirements",
+            "docs/01.requirements/",
+            "docs\\01.requirements",
+        ):
+            with contextlib.redirect_stderr(io.StringIO()):
+                try:
+                    _parser().parse_args(
+                        ["--body-contract-path-prefix", invalid_prefix]
+                    )
+                except SystemExit as exc:
+                    if exc.code == 2:
+                        continue
+            failures.append(
+                "body-contract parser accepted invalid path prefix: "
+                f"{invalid_prefix!r}"
+            )
     if (root / LEDGER_PATH).exists() != ledger_existed_before:
         failures.append("self-test changed the repository ledger artifact")
     if (root / DEBT_PATH).exists():
@@ -2481,6 +2633,26 @@ def _self_test(root: Path) -> list[str]:
     return failures
 
 
+def _body_contract_path_prefix(value: str) -> PurePosixPath:
+    """Parse one normalized repository-relative body-contract scope."""
+
+    path = PurePosixPath(value)
+    if (
+        not value
+        or value == "."
+        or value != path.as_posix()
+        or value.startswith("./")
+        or path.is_absolute()
+        or re.match(r"^[A-Za-z]:[/\\]", value) is not None
+        or ".." in path.parts
+        or "\\" in value
+    ):
+        raise argparse.ArgumentTypeError(
+            "body-contract path prefix must be normalized and repository-relative"
+        )
+    return path
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
@@ -2491,6 +2663,16 @@ def _parser() -> argparse.ArgumentParser:
         choices=("registry", "audit"),
         default="registry",
         help="respect registry status scopes or audit all draft/active body contracts",
+    )
+    parser.add_argument(
+        "--body-contract-path-prefix",
+        action="append",
+        default=[],
+        type=_body_contract_path_prefix,
+        help=(
+            "limit forced audit enforcement to a repeatable normalized "
+            "repository-relative prefix"
+        ),
     )
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--inventory", action="store_true")
@@ -2530,7 +2712,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             diagnostics = (
                 _link_diagnostics(context)
                 + _body_contract_link_diagnostics(
-                    context, profiles_by_id, args.body_contracts
+                    context,
+                    profiles_by_id,
+                    args.body_contracts,
+                    tuple(args.body_contract_path_prefix),
                 )
                 + _index_diagnostics(context)
                 + _collection_index_diagnostics(context)
@@ -2543,7 +2728,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(envelope, ensure_ascii=False, separators=(",", ":")))
             return int(bool(rows))
         diagnostics = _raw_diagnostics(
-            context, profiles_by_id, args.body_contracts
+            context,
+            profiles_by_id,
+            args.body_contracts,
+            tuple(args.body_contract_path_prefix),
         )
         rows = _apply_debt(context.root, diagnostics, args.mode)
         if args.format == "json":
