@@ -137,6 +137,8 @@ only after its predecessor acceptance and explicit Plan/Task creation.
 - **ARD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - **Lineage decision**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
+- **Plan**: [Authority and Lineage Foundation Implementation Plan](../../04.execution/plans/2026-07-15-authority-and-lineage-foundation.md)
+- **Task**: [Authority and Lineage Foundation Task](../../04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md)
 - **Successor**: [Spec 035](../035-document-schema-and-lifecycle-contract/spec.md)
 
 ### Lifecycle Traceability
