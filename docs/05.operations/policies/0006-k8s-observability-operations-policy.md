@@ -220,4 +220,4 @@ istio-system, headlamp, argo-rollouts, metallb-system, monitoring
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — cluster-observability controls are promoted from deployed GitOps resources and their recovery owner, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for monitoring GitOps/AppProject changes; observability owner for Prometheus, Loki, and Alloy contracts | Reserved NodePorts 30090-30092, Alloy security/storage and labels, explicit Prometheus rule files, AppProject destinations, and the observability runbook |
+| N/A — cluster-observability controls are promoted from tracked GitOps desired-state resources and their recovery owner, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for monitoring GitOps/AppProject changes; observability owner for Prometheus, Loki, and Alloy contracts | Reserved NodePorts 30090-30092, Alloy security/storage and labels, explicit Prometheus rule files, AppProject destinations, and the observability runbook |
