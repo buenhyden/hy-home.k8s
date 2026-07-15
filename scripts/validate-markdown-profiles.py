@@ -240,6 +240,7 @@ def text_outside_fenced_code(markdown: str) -> str:
     visible: list[str] = []
     fence_character: str | None = None
     fence_length = 0
+    in_comment = False
     opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
     for raw_line in markdown.splitlines():
         if fence_character is not None:
@@ -252,7 +253,8 @@ def text_outside_fenced_code(markdown: str) -> str:
                 fence_length = 0
             visible.append("")
             continue
-        match = opening.match(raw_line)
+        line, in_comment = _strip_html_comments(raw_line, in_comment)
+        match = opening.match(line)
         if match:
             marker = match.group(1)
             if marker[0] == "`" and "`" in match.group(2):
@@ -1496,6 +1498,7 @@ def _self_test(root: Path) -> list[str]:
         "placeholder-frontmatter-title",
         "placeholder-h1-title",
         "authored-author-prompt",
+        "author-prompt-after-commented-fence",
         "authored-legacy-target-marker",
         "authored-retired-shared-paragraph",
         "fenced-starter-examples-allowed",

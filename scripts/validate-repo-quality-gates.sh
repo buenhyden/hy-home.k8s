@@ -1283,6 +1283,90 @@ if (markdown_form_count, native_form_count) != (27, 3):
 def canonical_form_content_errors(
     form_sources: dict[pathlib.PurePosixPath, str],
 ) -> list[str]:
+    def html_comments_balanced(source: str) -> bool:
+        offset = 0
+        in_comment = False
+        while offset < len(source):
+            marker = "-->" if in_comment else "<!--"
+            marker_offset = source.find(marker, offset)
+            opposite = "<!--" if in_comment else "-->"
+            opposite_offset = source.find(opposite, offset)
+            if opposite_offset != -1 and (
+                marker_offset == -1 or opposite_offset < marker_offset
+            ):
+                return False
+            if marker_offset == -1:
+                break
+            in_comment = not in_comment
+            offset = marker_offset + len(marker)
+        return not in_comment
+
+    def strip_html_comments(raw_line: str, in_comment: bool) -> tuple[str, bool]:
+        visible = []
+        offset = 0
+        while offset < len(raw_line):
+            if in_comment:
+                end = raw_line.find("-->", offset)
+                if end == -1:
+                    return "".join(visible), True
+                offset = end + 3
+                in_comment = False
+                continue
+            start = raw_line.find("<!--", offset)
+            if start == -1:
+                visible.append(raw_line[offset:])
+                break
+            visible.append(raw_line[offset:start])
+            offset = start + 4
+            in_comment = True
+        return "".join(visible), in_comment
+
+    def markdown_sections(source: str, heading_level: int) -> dict[str, str]:
+        sections: dict[str, list[str]] = collections.defaultdict(list)
+        current_heading = None
+        in_comment = False
+        fence_character = None
+        fence_length = 0
+        opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+        for raw_line in source.splitlines(keepends=True):
+            if fence_character is not None:
+                closing = re.compile(
+                    rf"^ {{0,3}}{re.escape(fence_character)}"
+                    rf"{{{fence_length},}}[ \t]*(?:\r?\n)?$"
+                )
+                if closing.fullmatch(raw_line):
+                    fence_character = None
+                    fence_length = 0
+                if current_heading is not None:
+                    sections[current_heading].append(raw_line)
+                continue
+            visible, in_comment = strip_html_comments(raw_line, in_comment)
+            fence = opening.match(visible)
+            if fence:
+                marker = fence.group(1)
+                if marker[0] != "`" or "`" not in fence.group(2):
+                    fence_character = marker[0]
+                    fence_length = len(marker)
+                if current_heading is not None:
+                    sections[current_heading].append(raw_line)
+                continue
+            heading = re.match(
+                r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*?)[ \t]*(?:\r?\n)?$",
+                visible,
+            )
+            if heading and len(heading.group(1)) <= heading_level:
+                if len(heading.group(1)) == heading_level:
+                    current_heading = re.sub(
+                        r"[ \t]+##+[ \t]*$", "", heading.group(2).strip()
+                    )
+                    sections.setdefault(current_heading, [])
+                else:
+                    current_heading = None
+                continue
+            if current_heading is not None:
+                sections[current_heading].append(raw_line)
+        return {heading: "".join(lines) for heading, lines in sections.items()}
+
     errors = []
     retired_markers = (
         "Target: " + "docs/",
@@ -1291,12 +1375,18 @@ def canonical_form_content_errors(
         "Describe the topic-specific",
     )
     author_comment = re.compile(r"<!-- Author prompt: [^\n]+ -->")
+    useful_author_comment = re.compile(
+        r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
+    )
     markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
     for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
         for marker in retired_markers:
             if marker in source:
                 errors.append(f"{form_path} contains retired form residue: {marker}")
         if form_path.suffix != ".md":
+            continue
+        if not html_comments_balanced(source):
+            errors.append(f"{form_path} contains an unbalanced HTML comment")
             continue
         for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
             comment = match.group(0)
@@ -1306,10 +1396,41 @@ def canonical_form_content_errors(
 
     for profile_id, form_path in registry_form_owners:
         profile = registry_profiles_by_id[profile_id]
+        source = form_sources.get(form_path)
+        if source is None or form_path.suffix != ".md":
+            continue
+        required_section_groups = [(2, profile.headings.required, False)]
+        if profile.append_contract is not None:
+            required_section_groups.append(
+                (
+                    profile.append_contract.section_heading_level,
+                    profile.append_contract.required_sections,
+                    True,
+                )
+            )
+        for (
+            heading_level,
+            required_headings,
+            allow_structured_starter,
+        ) in required_section_groups:
+            sections = markdown_sections(source, heading_level)
+            for heading in required_headings:
+                section_body = sections.get(heading, "")
+                if allow_structured_starter and re.sub(
+                    r"<!--.*?-->", "", section_body, flags=re.DOTALL
+                ).strip():
+                    continue
+                prompts = [
+                    match.group("prompt").strip()
+                    for match in useful_author_comment.finditer(section_body)
+                ]
+                if not any(prompts):
+                    errors.append(
+                        f"{form_path} section {heading!r} must contain a useful Author prompt"
+                    )
         contract = profile.body_contract
         if contract is None:
             continue
-        source = form_sources[form_path]
         table_heading = f"### {contract.table_heading}"
         table_header = "| " + " | ".join(contract.required_columns) + " |"
         if source.count(table_heading) != 1 or source.count(table_header) != 1:
@@ -1354,6 +1475,84 @@ form_content_mutations.append(("native owner comment", native_mutation))
 for label, mutation in form_content_mutations:
     if not canonical_form_content_errors(mutation):
         fail(f"canonical form content mutation accepted {label}")
+
+prompt_profile_id, prompt_form = sorted(
+    (
+        (profile_id, form_path)
+        for profile_id, form_path in registry_form_owners
+        if form_path.suffix == ".md"
+        and registry_profiles_by_id[profile_id].headings.required
+        and registry_profiles_by_id[profile_id].body_contract is None
+    ),
+    key=lambda item: str(item[1]),
+)[0]
+prompt_heading = registry_profiles_by_id[prompt_profile_id].headings.required[0]
+prompt_match = re.search(
+    r"<!-- Author prompt: [^\n]+ -->", form_sources[prompt_form]
+)
+if prompt_match is None:
+    fail(f"canonical prompt mutation setup found no Author prompt in {prompt_form}")
+else:
+    prompt_removal_mutation = dict(form_sources)
+    prompt_removal_mutation[prompt_form] = (
+        form_sources[prompt_form][: prompt_match.start()]
+        + form_sources[prompt_form][prompt_match.end() :]
+    )
+    expected_prompt_diagnostic = (
+        f"{prompt_form} section {prompt_heading!r} must contain a useful Author prompt"
+    )
+    if expected_prompt_diagnostic not in canonical_form_content_errors(
+        prompt_removal_mutation
+    ):
+        fail(
+            "canonical form content mutation did not reject a removed Author prompt "
+            "with the stable diagnostic"
+        )
+
+    unbalanced_comment_mutation = dict(form_sources)
+    unbalanced_comment_mutation[prompt_form] = form_sources[prompt_form].replace(
+        prompt_match.group(0), prompt_match.group(0)[:-3], 1
+    )
+    expected_unbalanced_diagnostic = (
+        f"{prompt_form} contains an unbalanced HTML comment"
+    )
+    if expected_unbalanced_diagnostic not in canonical_form_content_errors(
+        unbalanced_comment_mutation
+    ):
+        fail(
+            "canonical form content mutation did not reject an unbalanced comment "
+            "with the stable diagnostic"
+        )
+
+missing_source_profile_id, missing_source_form = sorted(
+    (
+        (profile_id, form_path)
+        for profile_id, form_path in registry_form_owners
+        if form_path.suffix == ".md"
+        and registry_profiles_by_id[profile_id].body_contract is not None
+    ),
+    key=lambda item: str(item[1]),
+)[0]
+missing_source_mutation = dict(form_sources)
+missing_source_mutation.pop(missing_source_form)
+expected_missing_source_diagnostic = (
+    f"registry-owned forms are missing: {[missing_source_form]}"
+)
+missing_source_contract_errors = canonical_form_contract_errors(
+    set(missing_source_mutation),
+    registry_form_references,
+    registry_form_owners,
+)
+if missing_source_contract_errors != [expected_missing_source_diagnostic]:
+    fail(
+        "canonical form missing-source mutation did not retain the stable "
+        "ownership diagnostic"
+    )
+if canonical_form_content_errors(missing_source_mutation):
+    fail(
+        "canonical form content validation duplicated an already-reported "
+        "missing-source diagnostic"
+    )
 
 template_support_root = root / "docs/99.templates/support"
 support_stale_patterns = [

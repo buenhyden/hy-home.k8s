@@ -1283,6 +1283,15 @@
       ]
     },
     {
+      "name": "author-prompt-after-commented-fence",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n<!--\n```\n-->\n<!-- Author prompt: replace this text -->\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-AUTHOR-PROMPT"
+      ]
+    },
+    {
       "name": "authored-legacy-target-marker",
       "profile": "governance/reference",
       "path": "docs/00.agent-governance/fixture.md",
