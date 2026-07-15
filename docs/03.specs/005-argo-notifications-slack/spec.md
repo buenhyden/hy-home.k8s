@@ -187,6 +187,16 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-001 | `verify-contracts-static.sh` checks `notifications.enabled: true` in the ArgoCD Helm values. |
+| [REQ-PRD-FUN-03](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-002 | Static ConfigMap checks confirm the Slack service, event templates, triggers, and default triggers. |
+| [REQ-PRD-FUN-02](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-003 | Static contract validation checks the Vault key/property reference and target Secret key without reading credential values. |
+| [REQ-PRD-FUN-02](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-004 | `scripts/check-secret-handling.sh .` provides the zero-plaintext-credential result. |
+| [REQ-PRD-MET-03](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-005 | The operator-approved runbook checks controller readiness, ExternalSecret state, and non-secret Slack send/error evidence. |
+
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

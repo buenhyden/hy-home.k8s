@@ -504,6 +504,12 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| N/A — this repository-governance baseline predates and does not implement a single product requirement | VAL-SPC-006-059 | The existing workspace-wide P0 overlay and repository-static quality gates verify the summarized harness-gap baseline; current Stage 00 product ownership remains outside this Spec. |
+
 - **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 - **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **P3 Tasks**: [../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)

@@ -89,6 +89,22 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| Upstream requirement | Quality attribute or boundary | ADR / Spec |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01](../../01.requirements/004-current-local-gitops-platform.md) | clusters, root apps, platform 및 workloads desired-state root ownership | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-02](../../01.requirements/004-current-local-gitops-platform.md) | App-of-Apps와 ApplicationSet reconciliation 경계 | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-03](../../01.requirements/004-current-local-gitops-platform.md) | 외부 runtime과 Kubernetes Service/EndpointSlice interface의 분리 | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-04](../../01.requirements/004-current-local-gitops-platform.md) | Headlamp current UI와 archived UI history의 분리 | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-05](../../01.requirements/004-current-local-gitops-platform.md) | 현재 platform component graph의 명시적 scope | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-06](../../01.requirements/004-current-local-gitops-platform.md) | ESO/Vault reference와 secret value의 trust boundary | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-FUN-07](../../01.requirements/004-current-local-gitops-platform.md) | active current contract와 archive Tombstone의 authority boundary | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-MET-01](../../01.requirements/004-current-local-gitops-platform.md) | static contract verification이 소유하는 repo-backed evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-MET-02](../../01.requirements/004-current-local-gitops-platform.md) | root, platform, workload 구조 검증 evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-MET-03](../../01.requirements/004-current-local-gitops-platform.md) | tracked Kubernetes manifest syntax evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+| [REQ-PRD-MET-04](../../01.requirements/004-current-local-gitops-platform.md) | repository quality gate의 active/archive currentness evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/008-current-local-gitops-platform/spec.md) |
+
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
 - **Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)

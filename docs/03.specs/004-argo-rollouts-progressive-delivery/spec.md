@@ -189,6 +189,16 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-001 | `scripts/validate-gitops-structure.sh` confirms the root-owned `platform-rollouts` Application. |
+| [REQ-PRD-FUN-01](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` checks the chart repository, namespace, and platform AppProject contract. |
+| [REQ-PRD-FUN-04](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-003 | Static AppProject checks confirm the required `argoproj.io` Rollout and Analysis resource allow-list. |
+| [REQ-PRD-FUN-02](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-004 | Manifest validation checks the Dashboard ingress host and cert-manager TLS contract; the runbook owns live HTTPS evidence. |
+| [REQ-PRD-FUN-03](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-005 | Static contract verification checks controller metrics port and NodePort exposure for external Prometheus. |
+
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)

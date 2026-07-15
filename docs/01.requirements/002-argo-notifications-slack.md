@@ -86,6 +86,22 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| Requirement ID | Acceptance criterion | Downstream owner |
+| --- | --- | --- |
+| REQ-PRD-FUN-01 | ArgoCD Notifications controller가 활성화되고 운영자가 Pod 상태를 확인할 수 있다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-FUN-02 | Slack credential이 Vault에서 ESO를 거쳐 동기화되며 Git과 로그에 평문 token이 없다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-FUN-03 | ConfigMap이 배포, health, sync, Rollouts 완료 및 abort 이벤트의 template과 trigger를 정의한다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-FUN-04 | default subscriptions가 health 저하와 sync 실패 알림을 전체 앱에 적용한다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-FUN-05 | 앱 annotation으로 `on-deployed` Slack 채널 opt-in을 선언할 수 있다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-FUN-06 | notification credential bootstrap은 human-approved 외부 작업으로만 수행된다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-MET-01 | `argocd-notifications-controller` Pod가 `Running`임을 운영자가 확인할 수 있다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-MET-02 | `argocd-notifications-secret` ExternalSecret이 `Ready=True`임을 확인할 수 있다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-MET-03 | 의도적으로 발생시킨 sync 실패 이벤트가 승인된 Slack 채널에 도착한다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-MET-04 | health degraded 이벤트가 승인된 Slack 채널에 도착한다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+| REQ-PRD-MET-05 | Rollouts abort 이벤트가 승인된 Slack 채널에 도착한다. | [ARD 0005](../02.architecture/requirements/0005-argo-notifications-slack.md) and [Spec 005](../03.specs/005-argo-notifications-slack/spec.md) |
+
 - **ARD**: [`../02.architecture/requirements/0005-argo-notifications-slack.md`](../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Spec**: [`../03.specs/005-argo-notifications-slack/spec.md`](../03.specs/005-argo-notifications-slack/spec.md)
 - **Plan**: [`../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../04.execution/plans/2026-05-18-argo-notifications-slack.md)

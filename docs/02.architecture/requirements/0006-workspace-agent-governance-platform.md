@@ -130,9 +130,25 @@ The governance architecture has six layers:
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| Upstream requirement | Quality attribute or boundary | ADR / Spec |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01](../../01.requirements/003-workspace-agent-governance-platform.md) | Stage 00 canonical core와 adapter ownership boundary | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-02](../../01.requirements/003-workspace-agent-governance-platform.md) | provider-native role, repository baseline, local adapter 및 absent Gemini native surface의 분리 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-03](../../01.requirements/003-workspace-agent-governance-platform.md) | catalog 기반 skill provenance와 missing-gap 경계 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-04](../../01.requirements/003-workspace-agent-governance-platform.md) | 공통 workflow strategy lens와 provider adapter의 분리 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-05](../../01.requirements/003-workspace-agent-governance-platform.md) | Plan/Task 및 progress ledger가 소유하는 validation evidence 경계 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-06](../../01.requirements/003-workspace-agent-governance-platform.md) | Stage 99 form authority와 Stage 00 routing authority의 결합 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-FUN-07](../../01.requirements/003-workspace-agent-governance-platform.md) | GitOps-first, no-secret 및 human-approval guardrail | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-MET-01](../../01.requirements/003-workspace-agent-governance-platform.md) | governance owners와 adapter pointers의 repo-static 일관성 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-MET-02](../../01.requirements/003-workspace-agent-governance-platform.md) | Stage 01, 02, 04 current lineage와 historical tranche evidence의 분리 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-MET-03](../../01.requirements/003-workspace-agent-governance-platform.md) | thin adapter와 native/repository-local runtime claim의 분리 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-MET-04](../../01.requirements/003-workspace-agent-governance-platform.md) | repository static validation이 제공하는 current evidence boundary | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+| [REQ-PRD-MET-05](../../01.requirements/003-workspace-agent-governance-platform.md) | 별도 승인 없는 외부 documentation standard 대체 금지 경계 | [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md) |
+
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ADR**: [../decisions/0013-stage-00-canonical-adapter-model.md](../decisions/0013-stage-00-canonical-adapter-model.md)
-- **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
 - **Task**: [../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)

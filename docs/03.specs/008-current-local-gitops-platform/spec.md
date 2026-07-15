@@ -109,6 +109,15 @@ bash scripts/validate-k8s-manifests.sh .
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-PRD-MET-04](../../01.requirements/004-current-local-gitops-platform.md) | VAL-SPC-001 | `scripts/validate-repo-quality-gates.sh .` checks current active-document and archive Tombstone policy. |
+| [REQ-PRD-MET-01](../../01.requirements/004-current-local-gitops-platform.md) | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` verifies the current GitOps manifest contracts. |
+| [REQ-PRD-MET-02](../../01.requirements/004-current-local-gitops-platform.md) | VAL-SPC-003 | `scripts/validate-gitops-structure.sh` checks root Application, platform Application, and workload ApplicationSet ownership. |
+| [REQ-PRD-MET-03](../../01.requirements/004-current-local-gitops-platform.md) | VAL-SPC-004 | `scripts/validate-k8s-manifests.sh .` validates tracked Kubernetes YAML syntax. |
+
 ### Inputs
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)

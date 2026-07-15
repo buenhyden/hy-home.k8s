@@ -97,6 +97,21 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| Upstream requirement | Quality attribute or boundary | ADR / Spec |
+| --- | --- | --- |
+| [REQ-PRD-FUN-01](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | GitOps 소유의 shared controller와 dashboard 설치 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-FUN-02](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | ingress-nginx와 cert-manager를 거치는 Dashboard TLS 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-FUN-03](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | controller metrics의 외부 Prometheus 관측성 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-FUN-04](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | AppProject allow-list와 ArgoCD health 추적 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-FUN-05](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | 수동 promotion 기본값과 승인된 AnalysisTemplate 실패 안전성 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-FUN-06](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | local Traefik artifact와 cluster ingress 사이의 route 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-MET-01](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | controller Deployment 가용성의 운영 증거 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-MET-02](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | Dashboard HTTPS 응답과 진행률 표시의 live 증거 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-MET-03](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | ArgoCD Rollout health 상태의 reconciliation 증거 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-PRD-MET-04](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | repo-static gate와 runtime 확인을 분리하는 검증 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md)
