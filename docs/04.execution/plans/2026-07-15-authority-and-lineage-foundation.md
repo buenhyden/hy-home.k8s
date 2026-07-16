@@ -3,7 +3,7 @@ title: 'Authority and Lineage Foundation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-16
 ---
 
 # Authority and Lineage Foundation Implementation Plan
@@ -132,7 +132,9 @@ one tracked regular file with the expected document profile.
   and follow-ups that predate their program.
 - Enforce reciprocal mutable lineage while preserving the exact historical
   Spec 033 exception.
-- Enforce that only the first unfinished tranche has a current Plan/Task pair.
+- Enforce that only the first unfinished tranche may have a current Plan/Task
+  pair. It may have no current execution component after its predecessor closes
+  and before its own Plan/Task pair is created.
 - Replace unvalidated Stage 00 lifecycle tables with pointers to Stage 99.
 - Add evidence-backed remediation dispositions for the five named RMD findings.
 - Close Spec 034 only after complete repository-static validation and two-stage
@@ -155,7 +157,8 @@ one tracked regular file with the expected document profile.
 | ALF-001 | Introduce typed registry v6 program relations | Approved Spec 034 and active Plan/Task | Registry RED/GREEN fixtures, strict production load, and one logical commit |
 | ALF-002 | Enforce cross-document lineage and execution admission; retire duplicate Stage 00 tables | ALF-001 | Cross-document mutation fixtures and strict current-corpus PASS |
 | ALF-003 | Normalize the Current audit remediation overlay | ALF-002 | Exact five-finding overlay with repository evidence and preserved observation rows |
-| ALF-004 | Run full gates, independent review, and close the tranche | ALF-003 | Done Spec/Plan/Task, review verdicts, rollback boundary, and no admitted successor Plan/Task |
+| ALF-005 | Correct the ALF-002C atomic closure-gap execution admission contract | ALF-003 | Closure-gap and successor-planning RED/GREEN fixtures, strict current-corpus PASS, and independent review |
+| ALF-004 | Run full gates, independent review, and close the tranche | ALF-005 | Done Spec/Plan/Task, review verdicts, rollback boundary, and no admitted successor Plan/Task |
 
 ### Task 1: Introduce Typed Registry v6 Program Relations
 
@@ -396,7 +399,8 @@ mutable draft/active follow-up -> Spec links PRD, ARD, and governing ADR; mutabl
 done/accepted historical owner -> no body rewrite required
 successor-record -> only PRD-005 / Spec-033 / ADR-0017 / roadmap overlay
 dependency-ready tranche -> first tranche whose state is not done or archived
-current Plan and Task -> exactly one pair and only for dependency-ready tranche
+dependency-ready execution -> zero components before planning, or exactly one reciprocal direct-Spec Plan/Task pair
+all other original tranches and follow-ups -> zero current execution components
 Stage 00 exact lifecycle table -> rejected unless registry-generated/validated
 ```
 
@@ -630,7 +634,8 @@ hook or reused after Spec 039 fixes the portability defect.
 | ALF-001 | New v6 mutation fixtures fail before parser/schema support. | Registry self-test and strict mode pass with two programs. | Paired Task command results and logical commit. |
 | ALF-002 | State/link/admission/duplicate-authority fixtures fail. | Cross-document self-test and strict corpus pass. | Fixture names, rule IDs, Stage 00 diff, and logical commit. |
 | ALF-003 | Five original roadmap rows have no dated disposition overlay. | Overlay links exact repository evidence while original rows remain unchanged. | Baseline comparison and audit commit. |
-| ALF-004 | Spec/Plan/Task and Spec-034 relation remain active. | All closure state and indexes agree after independent approval. | Task summary, review verdicts, rollback parent, and closure commit. |
+| ALF-005 | ALF-002C RED: closing Spec 034 makes Spec 035 dependency-ready without a current pair, which the previous exact-one gate rejects. | The first unfinished original tranche accepts zero components before planning or one exact pair after planning; partial, extra, nonreciprocal, and premature successor components fail. | Eight closure-transition fixtures, stable diagnostic tuple, strict corpus result, and independent review. |
+| ALF-004 | Spec/Plan/Task and Spec-034 relation remain active; ALF-002C review is pending. | All closure state and indexes agree after ALF-002C independent approval. | Task summary, review verdicts, rollback parent, and closure commit. |
 
 ## Risks & Mitigations
 
@@ -639,7 +644,7 @@ hook or reused after Spec 039 fixes the portability defect.
 | v6 silently accepts legacy production shape | Ambiguous authority continues | Production schema is v6-only; legacy conversion is private self-test code. |
 | Numeric lookup binds the wrong document | False lineage | Require exactly one tracked regular file with profile and numeric-prefix match. |
 | Completed evidence is rewritten for reciprocity | Historical corruption | Enforce successor-record only for the exact Spec 033/ADR-0017 exception. |
-| Active successor Specs are treated as executable | Parallel unauthorized work | Compute the first unfinished tranche and reject any other current Plan/Task. |
+| Active successor Specs are treated as executable | Parallel unauthorized work | Compute the first unfinished tranche, allow its pre-planning zero-component gap, and reject any current Plan/Task for every other tranche or follow-up. |
 | Audit closure overclaims remote/live readiness | False assurance | Separate repo-static closure from provider/remote/live DEFER in every row. |
 | New gate blocks on unrelated filesystem behavior | Premature scope expansion | Record only the known FIFO failure and route its fix to Spec 039. |
 

@@ -3661,22 +3661,24 @@ def _program_execution_diagnostics(
             and tasks[0] in graph[plans[0]]
             and plans[0] in graph[tasks[0]]
         )
-        valid_ready_pair = (
-            relation == dependency_ready
-            and len(plans) == 1
-            and len(tasks) == 1
-            and direct_spec_links
-            and reciprocal_pair
+        valid_ready_state = relation == dependency_ready and (
+            not component
+            or (
+                len(plans) == 1
+                and len(tasks) == 1
+                and direct_spec_links
+                and reciprocal_pair
+            )
         )
         valid_blocked_state = relation != dependency_ready and not component
-        if valid_ready_pair or valid_blocked_state:
+        if valid_ready_state or valid_blocked_state:
             continue
         diagnostics.append(
             _diag(
                 "PROGRAM-LINEAGE-EXECUTION-GATE",
                 spec,
                 context.profiles[spec].profile_id,
-                "one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche and none for remaining original tranches or follow-ups",
+                "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
                 f"component={len(component)}, plans={len(plans)}, tasks={len(tasks)}, direct-spec={direct_spec_links}, reciprocal={reciprocal_pair}, dependency-ready-original={relation == dependency_ready}",
             )
         )
@@ -5166,6 +5168,70 @@ def _mutated_program_lineage_fixture(
         mutated.metadata[path] = {"type": profile_id, "status": "active"}
         mutated.texts[path] = body
 
+    def close_original_034() -> None:
+        nonlocal programs
+        spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
+        mutated.metadata[spec]["status"] = "done"
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            "\n[Plan](../../04.execution/plans/2026-07-15-fixture-034.md)",
+            "",
+        )
+        remove_execution_path(plan_034)
+        remove_execution_path(task_034)
+        program = programs[1]
+        first = program.tranches[0]
+        closed = ProgramRelation(
+            spec_id=first.spec_id,
+            order=first.order,
+            state="done",
+            reason=first.reason,
+            decision_id=first.decision_id,
+        )
+        programs = (
+            programs[0],
+            ProgramLineage(
+                prd_id=program.prd_id,
+                ard_id=program.ard_id,
+                tranches=(closed, *program.tranches[1:]),
+                follow_ups=program.follow_ups,
+            ),
+            *programs[2:],
+        )
+
+    def add_original_036() -> None:
+        nonlocal programs
+        spec = PurePosixPath("docs/03.specs/036-fixture/spec.md")
+        add_execution_node(
+            spec,
+            "sdlc/spec",
+            "[PRD](../../01.requirements/006-fixture.md)\n"
+            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+        )
+        prd = PurePosixPath("docs/01.requirements/006-fixture.md")
+        ard = PurePosixPath("docs/02.architecture/requirements/0009-fixture.md")
+        mutated.texts[prd] += "\n[Spec 036](../03.specs/036-fixture/spec.md)"
+        mutated.texts[ard] += "\n[Spec 036](../../03.specs/036-fixture/spec.md)"
+        program = programs[1]
+        programs = (
+            programs[0],
+            ProgramLineage(
+                prd_id=program.prd_id,
+                ard_id=program.ard_id,
+                tranches=(
+                    *program.tranches,
+                    ProgramRelation(
+                        spec_id="036",
+                        order=3,
+                        state="active",
+                        reason="Premature successor",
+                        decision_id="0017",
+                    ),
+                ),
+                follow_ups=program.follow_ups,
+            ),
+            *programs[2:],
+        )
+
     def rename_document_path(source: PurePosixPath, target: PurePosixPath) -> None:
         nonlocal paths, tracked_regular_paths
         paths = tuple(
@@ -6086,6 +6152,49 @@ def _mutated_program_lineage_fixture(
     elif mutation == "program-execution-no-pair":
         remove_execution_path(plan_034)
         remove_execution_path(task_034)
+    elif mutation == "program-execution-closure-gap":
+        close_original_034()
+    elif mutation == "program-execution-closure-planning-gate":
+        close_original_034()
+        add_execution_pair("035", "035")
+    elif mutation == "program-execution-closure-plan-only":
+        close_original_034()
+        add_execution_node(
+            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md"),
+            "sdlc/plan",
+            "[Spec](../../03.specs/035-fixture/spec.md)",
+        )
+    elif mutation == "program-execution-closure-task-only":
+        close_original_034()
+        add_execution_node(
+            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md"),
+            "sdlc/task",
+            "[Spec](../../03.specs/035-fixture/spec.md)",
+        )
+    elif mutation == "program-execution-closure-nonreciprocal":
+        close_original_034()
+        add_execution_pair("035", "035")
+        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
+        mutated.texts[plan] = mutated.texts[plan].replace(
+            "[Task](../tasks/2026-07-15-fixture-035.md)",
+            "Task pending",
+        )
+    elif mutation == "program-execution-closure-multiple":
+        close_original_034()
+        add_execution_pair("035", "035")
+        add_execution_pair("035-extra", "035")
+    elif mutation == "program-execution-closure-connected-extra":
+        close_original_034()
+        add_execution_pair("035", "035")
+        add_execution_node(
+            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035-extra.md"),
+            "sdlc/task",
+            "[Plan](../plans/2026-07-15-fixture-035.md)",
+        )
+    elif mutation == "program-execution-premature-036-pair":
+        close_original_034()
+        add_original_036()
+        add_execution_pair("036", "036")
     elif mutation == "program-execution-plan-only":
         remove_execution_path(task_034)
     elif mutation == "program-execution-task-only":
@@ -7921,7 +8030,15 @@ def _self_test(root: Path) -> list[str]:
             "program-lineage-quote-depth-reference-is-not-evidence",
             "program-lineage-same-quote-reference-soft-break-is-evidence",
             "program-lineage-blocked-successor-execution",
-            "program-lineage-ready-pair-missing",
+            "program-lineage-ready-preplanning-gap",
+            "program-lineage-successor-closure-gap",
+            "program-lineage-successor-planning-gate",
+            "program-lineage-successor-plan-only",
+            "program-lineage-successor-task-only",
+            "program-lineage-successor-nonreciprocal-pair",
+            "program-lineage-successor-multiple-pairs",
+            "program-lineage-successor-connected-extra",
+            "program-lineage-premature-third-tranche-pair",
             "program-lineage-ready-plan-only",
             "program-lineage-ready-task-only",
             "program-lineage-ready-multiple-pairs",
@@ -8730,7 +8847,7 @@ def _self_test(root: Path) -> list[str]:
                         "PROGRAM-LINEAGE-EXECUTION-GATE",
                         "docs/03.specs/034-fixture/spec.md",
                         "sdlc/spec",
-                        "one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche and none for remaining original tranches or follow-ups",
+                        "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
                         "component=3, plans=1, tasks=2, direct-spec=False, reciprocal=False, dependency-ready-original=True",
                         OWNER,
                     ),
