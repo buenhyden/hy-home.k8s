@@ -1,7 +1,7 @@
 ---
 title: 'Authority and Lineage Foundation Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-16
 ---
@@ -31,9 +31,9 @@ Git-index inspection, repository Markdown parsers, pre-commit, and Git.
 
 ### Global Constraints
 
-- Only Spec 034 has an active Plan/Task pair while it is the first unfinished
-  PRD-006 tranche; Specs 035-040 remain approved contracts without execution
-  admission.
+- Spec 034 and this reciprocal Plan/Task pair are done. Spec 035 is the first
+  unfinished PRD-006 tranche, but it has no Plan/Task pair; Specs 035-040
+  remain active design contracts without concurrent execution admission.
 - PRD-005, ARD-0008, ADR-0016, Specs 026-033, and their completed Plan/Task
   bodies are immutable historical evidence.
 - The production registry accepts only schema v6. Legacy v5 lineage input is
@@ -54,7 +54,9 @@ Git-index inspection, repository Markdown parsers, pre-commit, and Git.
 ## Context
 
 [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md)
-defines the first dependency-ready tranche of the approved PRD-006 program.
+is the completed first tranche of the approved PRD-006 program. Spec 035 is
+dependency-ready for a separately authorized planning step, with no Plan/Task
+pair created by this closure.
 Current schema v5 stores one object containing PRD `005`, ARD `0008`, and a
 flat list that incorrectly treats Spec 033 as an original tranche. The typed
 `Registry` object does not expose that object, so no production semantic check
@@ -158,7 +160,8 @@ one tracked regular file with the expected document profile.
 | ALF-002 | Enforce cross-document lineage and execution admission; retire duplicate Stage 00 tables | ALF-001 | Cross-document mutation fixtures and strict current-corpus PASS |
 | ALF-003 | Normalize the Current audit remediation overlay | ALF-002 | Exact five-finding overlay with repository evidence and preserved observation rows |
 | ALF-005 | Correct the ALF-002C atomic closure-gap execution admission contract | ALF-003 | Closure-gap and successor-planning RED/GREEN fixtures, strict current-corpus PASS, and independent review |
-| ALF-004 | Run full gates, independent review, and close the tranche | ALF-005 | Done Spec/Plan/Task, review verdicts, rollback boundary, and no admitted successor Plan/Task |
+| ALF-006 | Align the exact production projection assertion with the Spec 034 closure state | ALF-005 | Registry self-test RED/GREEN, strict PASS, independent review, and logical correction commit |
+| ALF-004 | Run full gates, independent review, and close the tranche | ALF-006 | Done Spec/Plan/Task, review verdicts, rollback boundary, and no admitted successor Plan/Task |
 
 ### Task 1: Introduce Typed Registry v6 Program Relations
 
@@ -180,7 +183,7 @@ one tracked regular file with the expected document profile.
   dataclasses; `Registry.program_lineage: tuple[ProgramLineage, ...]`; strict
   v6 diagnostics used by Task 2.
 
-- [ ] **Step 1: Add RED lineage mutation cases**
+- [x] **Step 1: Add RED lineage mutation cases**
 
 Add cases for duplicate programs, duplicate members, tranche/follow-up overlap,
 non-contiguous order, unknown PRD/ARD/ADR/Spec, wrong relation state, missing
@@ -202,7 +205,7 @@ legacy-v5 input. Expected stable rule IDs are:
 ]
 ```
 
-- [ ] **Step 2: Run the registry self-test and confirm RED**
+- [x] **Step 2: Run the registry self-test and confirm RED**
 
 Run:
 
@@ -213,7 +216,7 @@ python3 scripts/validate-document-contract-registry.py --root . --self-test
 Expected: non-zero with the first unimplemented lineage mutation or missing
 v6 typed projection; existing 59 cases remain unchanged.
 
-- [ ] **Step 3: Replace the production schema/data with the closed v6 shape**
+- [x] **Step 3: Replace the production schema/data with the closed v6 shape**
 
 Set the schema identity and version exactly as follows, require a non-empty
 `programs` array, close every object with `additionalProperties: false`, and
@@ -230,7 +233,7 @@ Populate PRD-005 with tranches 026-032 plus follow-up 033, and PRD-006 with
 tranches 034-040 plus an empty `followUps` list. Use actual document states and
 ADR-0016/ADR-0017 decision identifiers.
 
-- [ ] **Step 4: Add the typed loader and semantic checks**
+- [x] **Step 4: Add the typed loader and semantic checks**
 
 Add immutable types with these exact fields:
 
@@ -268,7 +271,7 @@ remains a separate contiguous sequence and is never inferred from Spec number.
 Expose `program_lineage` on `Registry`. Keep the legacy converter private to
 the registry self-test; `load_registry()` must reject v5 production data.
 
-- [ ] **Step 5: Run focused and strict registry checks**
+- [x] **Step 5: Run focused and strict registry checks**
 
 Run:
 
@@ -280,7 +283,7 @@ python3 scripts/validate-document-contract-registry.py --root . --mode strict
 Expected: self-test count increases by every new case; strict mode reports zero
 uncovered and zero ambiguous paths and loads two programs.
 
-- [ ] **Step 6: Document the v6 script responsibility and commit**
+- [x] **Step 6: Document the v6 script responsibility and commit**
 
 Update only the `validate-document-contract-registry.py` and
 `document_contracts.py` inventory rows in `scripts/README.md`. Record commands
@@ -309,7 +312,7 @@ git commit -m "refactor(contracts): add registry v6 program lineage"
 - Produces: `_program_lineage_diagnostics(context, program_lineage)` with stable
   `PROGRAM-LINEAGE-*` diagnostics and a duplicate-fact scan.
 
-- [ ] **Step 1: Add RED cross-document cases**
+- [x] **Step 1: Add RED cross-document cases**
 
 Extend the isolated fixture tree with PRD, ARD, accepted ADR, original Spec,
 historical follow-up, Plan, and Task records. Add cases expecting:
@@ -328,7 +331,7 @@ Positive fixtures must cover a mutable reciprocal follow-up, the exact Spec 033
 `successor-record` exception, and a single Plan/Task pair for the first
 unfinished tranche.
 
-- [ ] **Step 2: Run the cross-document self-test and confirm RED**
+- [x] **Step 2: Run the cross-document self-test and confirm RED**
 
 Run:
 
@@ -338,7 +341,7 @@ python3 scripts/validate-links-and-owners.py --root . --self-test
 
 Expected: non-zero because the new program mutation cases are not yet handled.
 
-- [ ] **Step 3: Implement deterministic relation diagnostics**
+- [x] **Step 3: Implement deterministic relation diagnostics**
 
 Import the typed `Registry`, pass it through the existing raw-diagnostic
 interface, and add lineage diagnostics before final sorting:
@@ -407,14 +410,14 @@ Stage 00 exact lifecycle table -> rejected unless registry-generated/validated
 Use normalized repository-relative paths and parsed rendered links; do not use
 substring matching or filesystem traversal outside the tracked inventory.
 
-- [ ] **Step 4: Remove duplicate Stage 00 lifecycle tables**
+- [x] **Step 4: Remove duplicate Stage 00 lifecycle tables**
 
 In both Stage 00 rule documents, replace the copied family/transition table
 with a short procedure pointing to the registry, frontmatter schema, SDLC
 governance, and template routing contract. Preserve stage-routing and pre-edit
 instructions that are unique to each document.
 
-- [ ] **Step 5: Run focused and strict cross-document checks**
+- [x] **Step 5: Run focused and strict cross-document checks**
 
 Run:
 
@@ -427,7 +430,7 @@ python3 scripts/validate-markdown-profiles.py --root . --mode strict --body-cont
 Expected: all commands exit zero; Spec 033 passes only through the named
 historical exception; no current Plan/Task points to Specs 035-040.
 
-- [ ] **Step 6: Record results and commit**
+- [x] **Step 6: Record results and commit**
 
 ```bash
 git add scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json docs/00.agent-governance/rules/stage-authoring-matrix.md docs/00.agent-governance/rules/document-stage-routing.md scripts/README.md docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md
@@ -448,7 +451,7 @@ git commit -m "test(docs): enforce program lineage admission"
 - Produces: a dated five-row remediation overlay; original observation facts
   remain byte-for-byte unchanged.
 
-- [ ] **Step 1: Capture the immutable observation-row baseline**
+- [x] **Step 1: Capture the immutable observation-row baseline**
 
 Run this byte-preserving assertion:
 
@@ -486,7 +489,7 @@ PY
 Expected: exact `PASS immutable RMD observation rows: 5/5 byte-equal`; any
 missing, reordered, or byte-changed row fails before overlay authoring.
 
-- [ ] **Step 2: Add the dated disposition overlay**
+- [x] **Step 2: Add the dated disposition overlay**
 
 Append one table with the columns `Finding`, `HEAD disposition`,
 `Repository evidence`, and `Retained boundary`. Record:
@@ -503,7 +506,7 @@ Link every disposition to its owning Spec/Plan/Task and validator. State that
 later Specs 035-040 own broader transition, CI, provider, archive, and closure
 work and that no live readiness is inferred.
 
-- [ ] **Step 3: Prove observation preservation and overlay integrity**
+- [x] **Step 3: Prove observation preservation and overlay integrity**
 
 Re-run the exact byte-preserving Python assertion from Step 1 after editing;
 it must still print `PASS immutable RMD observation rows: 5/5 byte-equal`.
@@ -518,7 +521,7 @@ git diff 15b154d43c868c8a758e2021b1d7023f462ea0f4 -- docs/90.references/audits/2
 Expected: validators pass and the diff adds only the new overlay relative to
 the original RMD rows.
 
-- [ ] **Step 4: Record results and commit**
+- [x] **Step 4: Record results and commit**
 
 ```bash
 git add docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md
@@ -540,12 +543,13 @@ git commit -m "docs(audit): reconcile current lineage dispositions"
 
 **Interfaces:**
 
-- Consumes: ALF-001 through ALF-003 commits and independent reviewer verdicts.
+- Consumes: ALF-001 through ALF-003, ALF-005, and ALF-006 commits and
+  independent reviewer verdicts.
 - Produces: done Spec/Plan/Task evidence, a done Spec-034 registry relation,
   current indexes, and an explicit gate allowing Spec 035 planning only after
   this commit.
 
-- [ ] **Step 1: Run the complete repository-static verification suite**
+- [x] **Step 1: Run the complete repository-static verification suite**
 
 Run:
 
@@ -587,7 +591,7 @@ filtered run is evidence about the remainder of the aggregate only; it is not
 reported as a canonical repository-quality PASS, and the omitted self-test
 remains DEFER until Spec 039.
 
-- [ ] **Step 2: Dispatch independent requirements and quality review**
+- [x] **Step 2: Dispatch independent requirements and quality review**
 
 The requirements reviewer checks VAL-ALF-001 through VAL-ALF-007, historical
 immutability, and the five audit dispositions. After every requirement issue is
@@ -595,14 +599,14 @@ fixed, a fresh quality reviewer checks correctness, fail-closed behavior,
 fixture quality, scope, and documentation. Required verdicts are exactly
 `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
 
-- [ ] **Step 3: Apply closure state atomically**
+- [x] **Step 3: Apply closure state atomically**
 
 Set Spec 034, this Plan, and its Task to `done`; set the PRD-006 Spec-034
 relation state to `done`; update the three indexes, ledger result/evidence, Task
 results, verification summary, review verdicts, commit list, residual risk, and
 rollback parent. Do not create the Spec 035 Plan/Task in this closure commit.
 
-- [ ] **Step 4: Re-run closure validators and commit**
+- [x] **Step 4: Re-run closure validators and commit**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
@@ -635,7 +639,8 @@ hook or reused after Spec 039 fixes the portability defect.
 | ALF-002 | State/link/admission/duplicate-authority fixtures fail. | Cross-document self-test and strict corpus pass. | Fixture names, rule IDs, Stage 00 diff, and logical commit. |
 | ALF-003 | Five original roadmap rows have no dated disposition overlay. | Overlay links exact repository evidence while original rows remain unchanged. | Baseline comparison and audit commit. |
 | ALF-005 | ALF-002C RED: closing Spec 034 makes Spec 035 dependency-ready without a current pair, which the previous exact-one gate rejects. | The first unfinished original tranche accepts zero components before planning or one exact pair after planning; partial, extra, nonreciprocal, and premature successor components fail. | Eight closure-transition fixtures, stable diagnostic tuple, strict corpus result, and independent review. |
-| ALF-004 | Spec/Plan/Task and Spec-034 relation remain active; ALF-002C review is pending. | All closure state and indexes agree after ALF-002C independent approval. | Task summary, review verdicts, rollback parent, and closure commit. |
+| ALF-006 | The Spec 034 `done` transition makes the exact production projection self-test fail because it expects Specs 034-040 to remain `active`. | The projection explicitly expects Spec 034 `done`, Specs 035-040 `active`, exact order and ADR-0017; self-test and strict mode pass. | `2b07652`, `REQUIREMENTS COMPLIANT`, and `QUALITY APPROVED`. |
+| ALF-004 | Spec/Plan/Task and Spec-034 relation were active before atomic closure. | Spec/Plan/Task, relation, indexes, and migration ledger agree on `done`; Spec 035 has no Plan/Task. | Task command matrix, review-remediation verdicts, rollback parent `2b07652`, and logical implementation commit list. |
 
 ## Risks & Mitigations
 
@@ -655,7 +660,8 @@ hook or reused after Spec 039 fixes the portability defect.
   fixture with stable diagnostics.
 - Specs 026-032 are the only original PRD-005 tranches; Spec 033 is one
   historical follow-up; Specs 034-040 are the ordered PRD-006 tranches.
-- Only Spec 034 owns a current Plan/Task while this Plan is active.
+- Spec 034 and its Plan/Task are done; Spec 035 is dependency-ready but has no
+  Plan/Task until a separate planning action creates the exact reciprocal pair.
 - The five RMD findings have dated, evidence-backed overlay dispositions and
   unchanged observation rows.
 - Stage 00 has no unvalidated exact lifecycle owner table.
@@ -677,7 +683,7 @@ hook or reused after Spec 039 fixes the portability defect.
 | --- | --- | --- |
 | [VAL-ALF-001](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-001 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
 | [VAL-ALF-002](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-001 / ALF-002 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
-| [VAL-ALF-003](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-001 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
+| [VAL-ALF-003](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-001 / ALF-006 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
 | [VAL-ALF-004](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-001 / ALF-002 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
 | [VAL-ALF-005](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-003 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |
 | [VAL-ALF-006](../../03.specs/034-authority-and-lineage-foundation/spec.md#success-criteria--verification-plan) | ALF-002 | [Authority and Lineage Foundation Task](../tasks/2026-07-15-authority-and-lineage-foundation.md) |

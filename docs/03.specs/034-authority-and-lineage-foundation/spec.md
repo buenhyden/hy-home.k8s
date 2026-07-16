@@ -1,7 +1,7 @@
 ---
 title: 'Authority and Lineage Foundation Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-15
 ---
@@ -82,10 +82,11 @@ Cross-document validation compares registry membership with mutable current
 documents and treats immutable accepted/completed bodies as historical
 evidence, not editable mirrors.
 
-All seven new Specs are active because their approved bodies are the current
-technical contracts. Execution remains sequential: only Spec 034 may receive
-an implementation Plan and Task initially; each successor becomes executable
-only after its predecessor acceptance and explicit Plan/Task creation.
+Spec 034 is done after repository-static implementation, validation, and
+review remediation. Specs 035-040 remain active design contracts, but active
+contract status does not grant execution admission. Spec 035 is now the first
+unfinished original tranche and has no Plan or Task; it becomes executable
+only after an explicit reciprocal Plan/Task pair is created.
 
 ## Edge Cases & Error Handling
 
@@ -128,8 +129,28 @@ only after its predecessor acceptance and explicit Plan/Task creation.
 - **VAL-ALF-005**: RMD-005, RMD-009, RMD-011, RMD-013, and RMD-032 receive
   evidence-backed overlay dispositions without editing observation facts.
 - **VAL-ALF-006**: Stage 00 contains no unvalidated exact lifecycle owner table.
-- **VAL-ALF-007**: Only the dependency-ready tranche has a current execution
-  Plan/Task pair; active successor contracts do not imply concurrent execution.
+- **VAL-ALF-007**: The dependency-ready tranche has zero current execution
+  components before planning or exactly one reciprocal Plan/Task pair after
+  planning; every later tranche and follow-up has zero current components.
+
+### Closure Evidence
+
+- Registry v6 declares two typed programs, keeps Specs 034-040 in PRD-006
+  order, and records Spec 034 as `done`.
+- The 78-case registry self-test, 344-case cross-document self-test, strict
+  registry/profile/link validation, and direct repository-quality aggregate
+  pass for the repository-static lane.
+- The all-files pre-commit run has no failure other than the isolated
+  `os.mkfifo` `Errno 95` result in `strict-repository-quality`; Spec 039 owns
+  that portability remediation.
+- Final whole-closure review returned `REQUIREMENTS COMPLIANT` and
+  `QUALITY APPROVED` after VAL-ALF-007 was aligned with the approved
+  zero-or-one execution-admission contract.
+- Logical implementation commits are `71caf2b`, `31f4b0c`, `b8210cc`,
+  `6ffd660`, and `2b07652`. Rollback starts from parent `2b07652`; no closure
+  commit hash is claimed inside the closure payload.
+- Spec 035 has no Plan/Task pair. Remote CI, provider runtime, secrets,
+  Kubernetes, Vault, ESO, Argo CD, and other live evidence remain `DEFER`.
 
 ## Traceability
 
