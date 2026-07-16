@@ -1343,9 +1343,14 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
         (
             "006",
             "0009",
-            tuple(
-                (f"{spec_id:03d}", order, "active", "0017")
-                for order, spec_id in enumerate(range(34, 41), 1)
+            (
+                ("034", 1, "done", "0017"),
+                ("035", 2, "active", "0017"),
+                ("036", 3, "active", "0017"),
+                ("037", 4, "active", "0017"),
+                ("038", 5, "active", "0017"),
+                ("039", 6, "active", "0017"),
+                ("040", 7, "active", "0017"),
             ),
             (),
         ),
