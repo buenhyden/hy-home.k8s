@@ -3,7 +3,7 @@ title: 'Document Schema and Lifecycle Contract Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-16
 ---
 
 # Document Schema and Lifecycle Contract Technical Specification (Spec)
@@ -11,10 +11,10 @@ updated: 2026-07-15
 ## Overview
 
 This Spec advances the registry to a closed, profile-specific schema for
-frontmatter values, ordering, lifecycle states, transitions, transition
-evidence, template parity, and full-document validation. It preserves the
-five-key baseline for ordinary Markdown and defines archive metadata as a
-single justified extension.
+frontmatter values, ordering, lifecycle states, admission, transitions,
+transition evidence, template parity, and full-document validation. It
+preserves the five-key baseline for ordinary Markdown and adds no
+archive-specific metadata.
 
 ## Strategic Boundaries & Non-goals
 
@@ -23,7 +23,8 @@ single justified extension.
   draft/active authored consumers.
 - **Non-goals**: Adding universal identifiers, relationship arrays, reviewers,
   or schema-version frontmatter; rewriting immutable evidence; converting the
-  archive corpus; changing native GitHub or API contracts into Markdown.
+  archive corpus; changing native GitHub or API contracts into Markdown;
+  bulk-normalizing operations, helper, Plan, or Task bodies.
 
 ## Contracts
 
@@ -33,7 +34,9 @@ single justified extension.
   by the selected registry profile.
 - Unknown keys and additional schema properties fail.
 - Status transitions are family-specific and compared against the base change.
-- Archive is one content/archive profile with a closed provenance extension.
+- Existing Tombstones are a baseline-only read-compatibility profile. New
+  Tombstones are rejected; Spec 036 owns the full-body content/archive route,
+  archive envelope, corpus conversion, and compatibility-profile removal.
 - Forms provide copyable shape; support documents explain rationale; neither
   duplicates the complete registry inventory.
 
@@ -63,9 +66,11 @@ evidence gap.
 ## Data Modeling & Storage Strategy
 
 Registry objects remain closed JSON Schema objects. Status graphs, conditional
-fields, archive reason dependencies, body-contract status scope, and validator
-escalation are declarative data. Exhaustive inventory checks derive from the
-registry; independent mutation fixtures do not copy the production inventory.
+fields, body-contract status scope, role decisions, transition evidence, and
+validator escalation are declarative data. Exhaustive inventory checks derive
+from the registry; independent mutation fixtures do not copy the production
+inventory. Spec 035 adds the schema capability needed by a future archive
+profile but does not introduce that route or its archive-specific values.
 
 Compatibility is explicit and temporary. The old Tombstone profile may remain
 readable until Spec 036 migrates every record, but new authored Tombstones are
@@ -83,10 +88,19 @@ rejected.
 - Form validator: source-profile parity plus template-only prompt allowance.
 
 GitHub issue forms, workflow YAML, CODEOWNERS, PR templates, OpenAPI, GraphQL,
-and protobuf keep native validation and do not acquire SDLC frontmatter.
+and protobuf keep native syntax ownership and do not acquire SDLC frontmatter.
+This tranche invokes only native validators already available in the
+repository; missing API-language toolchains remain an explicit Spec 039 DEFER.
 README documents remain frontmatter-free and match one route-specific README
 profile; README bodies route readers and do not absorb contract or governance
 sections.
+
+Creation and movement are profile-owned admission decisions. Authored profiles
+default to draft-only creation; the reciprocal execution pair may be created
+draft or active. Delete, rename, and same-path profile change are denied unless
+a later Spec adds the exact movement predicate and destination route in the
+same change. Existing Tombstone paths are a pinned readable baseline, not a
+creation or movement destination.
 
 Base selection is deterministic:
 
@@ -97,18 +111,20 @@ Base selection is deterministic:
 - snapshot/all-files mode validates current states but reports transition
   history as not evaluated rather than PASS.
 
-Every allowed edge has positive evidence and missing-evidence, wrong-profile,
+Every declared allowed edge has positive evidence and missing-evidence, wrong-profile,
 wrong-state, wrong-section, unchanged-evidence, and ambiguous-base fixtures.
-Archive creation additionally requires source removal, the archive record, and
-the owning archive index change in the same diff.
+No current authored profile declares an edge into or out of `archived` in this
+tranche. Spec 036 must add its archive edge and same-diff source-removal,
+archive-record, and archive-index predicate atomically with its new route.
 
 ## Edge Cases & Error Handling
 
 - A file with valid global status but invalid family status fails.
 - A changed status with no accessible base is reported as a comparison DEFER,
   not silently passed.
-- An archive reason requiring replacement rejects null; reasons not requiring a
-  replacement reject a path value.
+- Generic conditional-value fixtures prove the registry capability without
+  introducing archive reason or replacement keys; Spec 036 owns those exact
+  archive values and their dependencies.
 - Template placeholders are valid only in template profiles.
 - Historical payload text is excluded from active contract-residue scans.
 
@@ -152,6 +168,8 @@ the owning archive index change in the same diff.
 - **Successors**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), and [Spec 039](../039-github-ci-qa-evidence/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Plan**: [Implementation Plan](../../04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md)
+- **Task**: [Execution Task](../../04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md)
 
 ### Lifecycle Traceability
 
@@ -162,6 +180,6 @@ the owning archive index change in the same diff.
 | [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-003 | Base-to-proposed lifecycle fixtures cover each family edge. |
 | [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-004 | Negative transition fixtures reject reopen and reactivation. |
 | [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-005 | Registry-derived parity checks cover Markdown forms. |
-| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-006 | Native linters and route exceptions verify native surfaces. |
+| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-006 | Route fixtures reject SDLC frontmatter on native surfaces; available native validators remain authoritative, while CI toolchain expansion stays with Spec 039. |
 | [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-007 | Type/source matrix and role-overlap fixtures verify operations, helper Tests, and README boundaries. |
 | [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-008 | Edge-to-evidence and base-selection fixtures prove deterministic transition enforcement. |
