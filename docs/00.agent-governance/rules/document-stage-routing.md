@@ -128,14 +128,15 @@ the Stage 90 collection while leaving executable examples in their existing
 Before editing or creating lifecycle documents, agents must align with the
 Stage 99 owners instead of copying full governance bodies into README files.
 
-| Document Family | Lifecycle Transition |
-| --- | --- |
-| PRD | `draft -> active -> done | archived` |
-| ARD/ADR | `draft -> active -> accepted | archived` |
-| Spec | `draft -> active -> done | archived` |
-| Plan/Task | `draft -> active -> done | archived` |
-| Operations | `draft -> active -> accepted | archived` |
-| Archive Tombstone | `archived` only |
+Resolve the target profile and lifecycle domain from the [Document Profile
+Registry](../../99.templates/support/document-profiles.json), validate keys and
+values against the [Frontmatter
+Schema](../../99.templates/support/frontmatter-schema.md), use [SDLC
+Governance](../../99.templates/support/sdlc-governance.md) for promotion and
+historical-preservation semantics, and use [Template
+Routing](../../99.templates/support/template-routing.md) for the canonical
+path and form. This Stage 00 routing rule does not own an exact transition
+table.
 
 - Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 - Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.

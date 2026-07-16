@@ -51,14 +51,14 @@ copying their complete schemas or templates.
 
 Agents must check these lifecycle rules before editing authored documents:
 
-| Document Family | Lifecycle Transition |
-| --- | --- |
-| PRD | `draft -> active -> done | archived` |
-| ARD/ADR | `draft -> active -> accepted | archived` |
-| Spec | `draft -> active -> done | archived` |
-| Plan/Task | `draft -> active -> done | archived` |
-| Operations | `draft -> active -> accepted | archived` |
-| Archive Tombstone | `archived` only |
+Resolve the exact lifecycle domain from the [Document Profile
+Registry](../../99.templates/support/document-profiles.json), validate metadata
+against the [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md),
+apply promotion and preservation semantics from [SDLC
+Governance](../../99.templates/support/sdlc-governance.md), and select the
+canonical form through [Template
+Routing](../../99.templates/support/template-routing.md). This Stage 00 matrix
+does not publish a second transition set.
 
 - Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 - Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
