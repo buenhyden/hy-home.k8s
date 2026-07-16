@@ -199,6 +199,36 @@ remote-CI, and live-platform findings retain their original routes unless a
 separate owner record closes them. This overlay does not convert repository-
 static PASS into provider, remote, or live readiness.
 
+### 2026-07-15 authority and validation disposition overlay
+
+This dated overlay reconciles five HEAD dispositions without changing their
+observation rows, priorities, dependencies, or observation-time claims.
+`Closed` below means only that the named repository-static contract and its
+negative/positive fixtures pass at the current revision.
+
+| Finding | HEAD disposition | Repository evidence | Retained boundary |
+| --- | --- | --- | --- |
+| `RMD-005` | Closed for tested current-owner and Current-pack pointer integration. | [Spec 025](../../../03.specs/025-governance-owner-and-roster-currentness/spec.md), its [Plan](../../../04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md) and [Task](../../../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md), plus [`validate-agent-roster-currentness.py`](../../../../scripts/validate-agent-roster-currentness.py), [`validate-document-contract-registry.py`](../../../../scripts/validate-document-contract-registry.py), and [`validate-links-and-owners.py`](../../../../scripts/validate-links-and-owners.py). | Closure proves tracked pointer/currentness integration only. Broader Current-pack information architecture, freshness, and duplicate handling remain with [Spec 038](../../../03.specs/038-reference-information-architecture/spec.md); provider-native and live discovery remain `DEFER`. |
+| `RMD-009` | Closed for tracked authored-value and placeholder validation. | [Spec 033](../../../03.specs/033-template-lifecycle-contract-normalization/spec.md), its [Plan](../../../04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md) and [Task](../../../04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md), plus [`validate-markdown-profiles.py`](../../../../scripts/validate-markdown-profiles.py) and [`validate-document-contract-registry.py`](../../../../scripts/validate-document-contract-registry.py). | Current tracked authored values and starter residue are covered. Full transition comparison, archive metadata, and later profile cutover remain with [Spec 035](../../../03.specs/035-document-schema-and-lifecycle-contract/spec.md), [Spec 036](../../../03.specs/036-archive-record-and-workspace-boundary/spec.md), and [Spec 037](../../../03.specs/037-active-corpus-and-execution-retention/spec.md); historical observation bodies remain immutable. |
+| `RMD-011` | Closed for repository-static path-to-validator selection. | [Spec 031](../../../03.specs/031-affected-surface-agent-qa/spec.md), its [Plan](../../../04.execution/plans/2026-07-12-affected-surface-agent-qa.md) and [Task](../../../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md), plus [`validate-affected-surfaces.py`](../../../../scripts/validate-affected-surfaces.py). | Local selector and checked CI routing contracts pass; an unobserved remote run remains `DEFER`. Native workflow integration, aggregate verdicts, portability, and artifact evidence remain with [Spec 039](../../../03.specs/039-github-ci-qa-evidence/spec.md). |
+| `RMD-013` | Closed for repository-static AI-agent validation obligations. | [Spec 031](../../../03.specs/031-affected-surface-agent-qa/spec.md), its [Plan](../../../04.execution/plans/2026-07-12-affected-surface-agent-qa.md) and [Task](../../../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md), plus [`validate-affected-surfaces.py`](../../../../scripts/validate-affected-surfaces.py) and [`validate-repo-quality-gates.sh`](../../../../scripts/validate-repo-quality-gates.sh). | The affected/staged/all-files obligation and evidence vocabulary are repository-static. Provider delivery, entitlements, hooks, and remote execution remain independently `DEFER`; CI integration and closure evidence remain with [Spec 039](../../../03.specs/039-github-ci-qa-evidence/spec.md) and [Spec 040](../../../03.specs/040-contract-cutover-and-program-closure/spec.md). |
+| `RMD-032` | Closed for intended local-role semantic fixtures. | [Spec 031](../../../03.specs/031-affected-surface-agent-qa/spec.md), its [Plan](../../../04.execution/plans/2026-07-12-affected-surface-agent-qa.md) and [Task](../../../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md), plus [`validate-agent-role-semantics.py`](../../../../scripts/validate-agent-role-semantics.py). | Fixtures prove the intended local/Claude/Codex tracked role surfaces, not provider-native discovery or behavior. Provider canaries, model fitness, remote execution, and live readiness remain `DEFER`; final unresolved ownership is preserved by [Spec 040](../../../03.specs/040-contract-cutover-and-program-closure/spec.md). |
+
+The downstream program remains dependency-ordered: [Spec
+035](../../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
+owns schema and transition enforcement; [Spec
+036](../../../03.specs/036-archive-record-and-workspace-boundary/spec.md) and
+[Spec 037](../../../03.specs/037-active-corpus-and-execution-retention/spec.md)
+own archive and active-corpus retention; [Spec
+038](../../../03.specs/038-reference-information-architecture/spec.md) owns
+reference information architecture; [Spec
+039](../../../03.specs/039-github-ci-qa-evidence/spec.md) owns GitHub CI/QA
+evidence; and [Spec
+040](../../../03.specs/040-contract-cutover-and-program-closure/spec.md) owns
+compatibility removal and program closure. None of those routes, nor this
+overlay, infer provider, remote, Kubernetes, Vault, Argo CD, secret, or
+live-system readiness from repository-static PASS.
+
 ### Historical Lineage Map
 
 | Historical finding or roadmap item | Current canonical disposition |
