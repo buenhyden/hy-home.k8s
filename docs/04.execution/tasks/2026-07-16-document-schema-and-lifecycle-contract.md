@@ -39,9 +39,12 @@ reviews, and explicit static/live evidence boundaries.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `docs/00.agent-governance/**` only where named by the
-  Plan; `docs/03.specs/035-document-schema-and-lifecycle-contract/**` and its
-  Stage 03 index; this Plan/Task and Stage 04 indexes;
+- **Allowed Paths**:
+  `docs/00.agent-governance/rules/stage-authoring-matrix.md`,
+  `docs/00.agent-governance/rules/postflight-checklist.md`, and
+  `docs/00.agent-governance/hooks/k8s-pre-edit.sh`;
+  `docs/03.specs/035-document-schema-and-lifecycle-contract/**` and its Stage 03
+  index; this Plan/Task and Stage 04 indexes;
   `docs/05.operations/incidents/README.md`; the directly implicated Stage 90
   research ledger/pointer; `docs/99.templates/support/**` and canonical forms
   implicated by v7; `scripts/document_contracts.py`, document/lifecycle/link

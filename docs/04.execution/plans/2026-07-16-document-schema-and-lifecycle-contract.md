@@ -333,8 +333,9 @@ as DEFER instead of silently passing or failing all current documents.
 **Files:**
 
 - Modify Stage 99 support documents that name the registry version
-- Modify `docs/00.agent-governance/rules/stage-authoring-matrix.md`
-- Modify `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
+- Modify `docs/00.agent-governance/rules/stage-authoring-matrix.md`,
+  `docs/00.agent-governance/rules/postflight-checklist.md`, and
+  `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
 - Modify the canonical Runbook prompt if the role audit confirms the drift
 - Modify `docs/05.operations/incidents/README.md`
 - Modify `tests/README.md`, the affected research ledger/pointer, and validators
@@ -349,10 +350,12 @@ as DEFER instead of silently passing or failing all current documents.
   039 DEFER when no repository tool exists.
 - [ ] Add role/source overlap mutations for Guide versus Runbook, Policy versus
   Runbook, Incident versus Postmortem, and helper Tests versus execution Task.
-- [ ] Make Stage 00 say “registry-selected relationship section,” update v5
-  references to v7, correct current test counts from validator output, repair
-  the removed template-source pointer, and keep support rationale free of an
-  exact duplicated inventory.
+- [ ] Replace the four active universal `## Related Documents` requirements
+  across the Stage 00 authoring matrix, postflight R3 checklist, and pre-edit
+  hook with the relationship section selected by the registry profile; do not
+  rewrite historical memory entries. Update v5 references to v7, correct
+  current test counts from validator output, repair the removed template-source
+  pointer, and keep support rationale free of an exact duplicated inventory.
 - [ ] Remove postmortem hypothesis/root-cause ownership from the Incident README
   and make the Runbook prompt role-based rather than a closed topic list.
 - [ ] Record the 24-document operations semantic review as a Spec 037 input; do
