@@ -44,9 +44,51 @@ TARGET_ROOTS = (
     "traefik",
 )
 REGISTRY_PATH = PurePosixPath("docs/99.templates/support/document-profiles.json")
-SCHEMA_PATH = PurePosixPath(
-    "docs/99.templates/support/document-profiles.schema.json"
-)
+SCHEMA_PATH = PurePosixPath("docs/99.templates/support/document-profiles.schema.json")
+_EVIDENCE_PREDICATE_SEMANTICS = {
+    "activate-self-body": ("self-status-and-body", ("same-diff",)),
+    "activate-heading-profile": (
+        "self-status-and-body",
+        ("rendered-link", "same-diff"),
+    ),
+    "activate-execution-pair": (
+        "pair-created-or-status-changed",
+        ("rendered-link", "reciprocal-link", "same-diff"),
+    ),
+    "complete-product-program": (
+        "target-and-last-relation-changed",
+        ("program-lineage-closed", "same-diff"),
+    ),
+    "accept-architecture": (
+        "target-and-evidence-status-body-changed",
+        ("rendered-link", "reciprocal-link", "same-diff"),
+    ),
+    "accept-decision-self": (
+        "self-status-and-body",
+        ("rendered-link", "same-diff"),
+    ),
+    "complete-specification": (
+        "target-plan-task-status-changed",
+        ("rendered-link", "reciprocal-link", "same-diff"),
+    ),
+    "complete-execution-pair": (
+        "pair-status-changed",
+        (
+            "rendered-link",
+            "reciprocal-link",
+            "task-terminal-evidence",
+            "same-diff",
+        ),
+    ),
+    "accept-operated-document": (
+        "target-plan-task-status-changed",
+        ("rendered-link", "same-diff"),
+    ),
+    "terminate-reviewed-reference": (
+        "target-plan-task-status-changed",
+        ("rendered-link", "same-diff"),
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -110,6 +152,119 @@ class BodyContract:
 
 
 @dataclass(frozen=True)
+class ConstantConstraint:
+    source: Literal["literal", "profile-id"]
+    value: str | int | float | bool | None
+
+
+@dataclass(frozen=True)
+class EnumConstraint:
+    source: Literal["literal", "status-domain"]
+    values: tuple[str | int | float | bool | None, ...]
+
+
+@dataclass(frozen=True)
+class ConditionalConstraint:
+    key: str
+    operator: Literal["equals", "not-equals"]
+    value: str | int | float | bool | None
+    effect: Literal["required", "forbidden"]
+
+
+@dataclass(frozen=True)
+class KeyValueContract:
+    key: str
+    kind: Literal["string", "date", "integer", "number", "boolean"]
+    nullable: bool
+    constant: ConstantConstraint | None
+    enum: EnumConstraint | None
+    pattern: str | None
+    conditional: ConditionalConstraint | None
+
+
+@dataclass(frozen=True)
+class ValueContract:
+    contract_id: str
+    profile_ids: tuple[str, ...]
+    keys: tuple[KeyValueContract, ...]
+
+
+@dataclass(frozen=True)
+class RoleDecision:
+    role: str
+    source_profile_id: str | None
+    relationship_section: str | None
+    body_requirement: Literal["body-contract", "heading-set", "none"]
+
+
+@dataclass(frozen=True)
+class CreateAdmission:
+    mode: Literal["states", "paired", "baseline-only", "snapshot-only"]
+    states: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class AdmissionPolicy:
+    policy_id: str
+    profile_ids: tuple[str, ...]
+    create: CreateAdmission
+    delete: Literal["deny"]
+    rename: Literal["deny"]
+    profile_change: Literal["deny"]
+    baseline_paths: tuple[PurePosixPath, ...]
+
+
+@dataclass(frozen=True)
+class LifecycleEdge:
+    from_state: str
+    to_state: str
+    predicate_id: str
+
+
+@dataclass(frozen=True)
+class LifecycleContract:
+    contract_id: str
+    profile_ids: tuple[str, ...]
+    terminal_states: tuple[str, ...]
+    edges: tuple[LifecycleEdge, ...]
+
+
+@dataclass(frozen=True)
+class ProfileEdge:
+    profile_id: str
+    from_state: str
+    to_state: str
+
+
+@dataclass(frozen=True)
+class EvidenceRequirement:
+    profile_ids: tuple[str, ...]
+    states: tuple[str, ...]
+    minimum: int
+    maximum: int | None
+
+
+@dataclass(frozen=True)
+class EvidencePredicate:
+    predicate_id: str
+    profile_edges: tuple[ProfileEdge, ...]
+    evidence: tuple[EvidenceRequirement, ...]
+    relationship: Literal["self", "role-decision", "pair", "program-lineage"]
+    minimum: int
+    maximum: int | None
+    same_diff: Literal[
+        "self-status-and-body",
+        "pair-created-or-status-changed",
+        "target-and-last-relation-changed",
+        "target-and-evidence-status-body-changed",
+        "target-plan-task-status-changed",
+        "pair-status-changed",
+    ]
+    body_requirement: Literal["body-contract", "heading-set"]
+    capabilities: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal["sdlc", "common", "governance", "readme", "exception"]
@@ -119,12 +274,21 @@ class DocumentProfile:
     headings: HeadingContract
     template: PurePosixPath | None
     mode: Literal[
-        "authored", "template", "frontmatter-free", "classification-only", "generated", "non-target"
+        "authored",
+        "template",
+        "frontmatter-free",
+        "classification-only",
+        "generated",
+        "non-target",
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
     append_contract: AppendContract | None
     body_contract: BodyContract | None
+    value_contract: ValueContract
+    role_decision: RoleDecision
+    admission: AdmissionPolicy
+    lifecycle: LifecycleContract
 
 
 @dataclass(frozen=True)
@@ -194,6 +358,7 @@ class Registry:
     governance_current_owners: GovernanceCurrentOwners
     reference_current_packs: ReferenceCurrentPacks
     program_lineage: tuple[ProgramLineage, ...]
+    evidence_predicates: tuple[EvidencePredicate, ...]
 
 
 @dataclass(frozen=True)
@@ -218,6 +383,10 @@ class DocumentContractError(ValueError):
     def __init__(self, diagnostics: Sequence[Diagnostic]):
         self.diagnostics = tuple(diagnostics)
         super().__init__("; ".join(item.rule_id for item in self.diagnostics))
+
+
+class _DuplicateJSONKeyError(ValueError):
+    """Internal marker for a duplicate JSON mapping key at any depth."""
 
 
 class _UniqueKeySafeLoader(yaml.SafeLoader):
@@ -278,6 +447,35 @@ def _fail(rule_id: str, *, expected: str, actual: str) -> NoReturn:
     raise DocumentContractError(
         (_diagnostic(rule_id, expected=expected, actual=actual),)
     )
+
+
+def load_json_file(
+    path: Path, *, diagnostic_path: PurePosixPath = REGISTRY_PATH
+) -> Any:
+    """Load JSON once with duplicate mapping keys rejected at every depth."""
+
+    def reject_duplicate_keys(pairs: Sequence[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise _DuplicateJSONKeyError("duplicate JSON object key")
+            result[key] = value
+        return result
+
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle, object_pairs_hook=reject_duplicate_keys)
+    except (_DuplicateJSONKeyError, json.JSONDecodeError) as exc:
+        raise DocumentContractError(
+            (
+                _diagnostic(
+                    "REGISTRY_SCHEMA",
+                    path=diagnostic_path,
+                    expected="valid JSON with unique mapping keys at every depth",
+                    actual="JSON decoding or duplicate-key failure",
+                ),
+            )
+        ) from exc
 
 
 def _normalize_relative_path(value: str | PurePosixPath) -> PurePosixPath:
@@ -419,9 +617,13 @@ def _lstat_named_path(root: Path, path: PurePosixPath) -> int:
         try:
             mode = current.lstat().st_mode
         except FileNotFoundError as exc:
-            raise ValueError(f"included path does not exist: {path.as_posix()}") from exc
+            raise ValueError(
+                f"included path does not exist: {path.as_posix()}"
+            ) from exc
         if stat.S_ISLNK(mode):
-            raise ValueError(f"included path crosses or names a symlink: {path.as_posix()}")
+            raise ValueError(
+                f"included path crosses or names a symlink: {path.as_posix()}"
+            )
     return mode
 
 
@@ -497,9 +699,13 @@ def enumerate_target_markdown(
         if not stat.S_ISREG(mode):
             raise ValueError(f"included path is not a regular file: {path.as_posix()}")
         if path in current_symlinks:
-            raise ValueError(f"included path is indexed as a symlink: {path.as_posix()}")
+            raise ValueError(
+                f"included path is indexed as a symlink: {path.as_posix()}"
+            )
         if not _is_target_markdown(path):
-            raise ValueError(f"included path is not approved Markdown: {path.as_posix()}")
+            raise ValueError(
+                f"included path is not approved Markdown: {path.as_posix()}"
+            )
         current_paths.add(path)
 
     return TargetInventory(
@@ -522,6 +728,19 @@ def _schema_rule_id(error: Any) -> str:
     for nested_error in nested_errors:
         nested_errors.extend(nested_error.context)
     nested_paths = [tuple(item.absolute_path) for item in nested_errors]
+    if path and path[0] == "documentContracts":
+        messages = " ".join(item.message for item in nested_errors)
+        if "valueContracts" in path or "valueContracts" in messages:
+            return "REGISTRY_VALUE_CONTRACT"
+        if "roleDecisions" in path or "roleDecisions" in messages:
+            return "REGISTRY_ROLE_DECISION"
+        if "admissionPolicies" in path or "admissionPolicies" in messages:
+            return "REGISTRY_ADMISSION"
+        if "lifecycleContracts" in path or "lifecycleContracts" in messages:
+            return "REGISTRY_LIFECYCLE"
+        if "evidencePredicates" in path or "evidencePredicates" in messages:
+            return "REGISTRY_EVIDENCE_PREDICATE"
+        return "REGISTRY_SCHEMA"
     if any("bodyContract" in nested_path for nested_path in nested_paths) or (
         error.validator == "required" and "bodyContract" in error.message
     ):
@@ -534,10 +753,7 @@ def _schema_rule_id(error: Any) -> str:
         if any("identifierColumns" in nested_path for nested_path in nested_paths):
             return "REGISTRY_BODY_IDENTIFIER_COLUMN"
         return "REGISTRY_BODY_SCHEMA"
-    if (
-        error.validator == "required"
-        and "referenceCurrentPacks" in error.message
-    ):
+    if error.validator == "required" and "referenceCurrentPacks" in error.message:
         return "REGISTRY_REFERENCE_CURRENT_PACK_DECLARATION"
     if path and path[0] == "referenceCurrentPacks":
         if len(path) >= 3 and path[1] == "packs" and error.validator == "required":
@@ -616,7 +832,132 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     )
 
 
-def _profile_from_mapping(raw: Mapping[str, Any]) -> DocumentProfile:
+def _constant_constraint(raw: Mapping[str, Any] | None) -> ConstantConstraint | None:
+    if raw is None:
+        return None
+    return ConstantConstraint(source=raw["source"], value=raw["value"])
+
+
+def _enum_constraint(raw: Mapping[str, Any] | None) -> EnumConstraint | None:
+    if raw is None:
+        return None
+    return EnumConstraint(source=raw["source"], values=tuple(raw["values"]))
+
+
+def _conditional_constraint(
+    raw: Mapping[str, Any] | None,
+) -> ConditionalConstraint | None:
+    if raw is None:
+        return None
+    return ConditionalConstraint(
+        key=raw["key"],
+        operator=raw["operator"],
+        value=raw["value"],
+        effect=raw["effect"],
+    )
+
+
+def _value_contract(raw: Mapping[str, Any]) -> ValueContract:
+    return ValueContract(
+        contract_id=raw["id"],
+        profile_ids=tuple(raw["profileIds"]),
+        keys=tuple(
+            KeyValueContract(
+                key=item["key"],
+                kind=item["kind"],
+                nullable=item["nullable"],
+                constant=_constant_constraint(item["constant"]),
+                enum=_enum_constraint(item["enum"]),
+                pattern=item["pattern"],
+                conditional=_conditional_constraint(item["conditional"]),
+            )
+            for item in raw["keys"]
+        ),
+    )
+
+
+def _role_decision(
+    raw: Mapping[str, Any], *, source_profile_id: str | None = None
+) -> RoleDecision:
+    return RoleDecision(
+        role=raw["role"],
+        source_profile_id=(
+            source_profile_id
+            if source_profile_id is not None
+            else raw["sourceProfileId"]
+        ),
+        relationship_section=raw["relationshipSection"],
+        body_requirement=raw["bodyRequirement"],
+    )
+
+
+def _admission_policy(raw: Mapping[str, Any]) -> AdmissionPolicy:
+    return AdmissionPolicy(
+        policy_id=raw["id"],
+        profile_ids=tuple(raw["profileIds"]),
+        create=CreateAdmission(
+            mode=raw["create"]["mode"], states=tuple(raw["create"]["states"])
+        ),
+        delete=raw["delete"],
+        rename=raw["rename"],
+        profile_change=raw["profileChange"],
+        baseline_paths=tuple(PurePosixPath(path) for path in raw["baselinePaths"]),
+    )
+
+
+def _lifecycle_contract(raw: Mapping[str, Any]) -> LifecycleContract:
+    return LifecycleContract(
+        contract_id=raw["id"],
+        profile_ids=tuple(raw["profileIds"]),
+        terminal_states=tuple(raw["terminalStates"]),
+        edges=tuple(
+            LifecycleEdge(
+                from_state=edge["from"],
+                to_state=edge["to"],
+                predicate_id=edge["predicateId"],
+            )
+            for edge in raw["edges"]
+        ),
+    )
+
+
+def _evidence_predicate(raw: Mapping[str, Any]) -> EvidencePredicate:
+    return EvidencePredicate(
+        predicate_id=raw["id"],
+        profile_edges=tuple(
+            ProfileEdge(
+                profile_id=edge["profileId"],
+                from_state=edge["from"],
+                to_state=edge["to"],
+            )
+            for edge in raw["profileEdges"]
+        ),
+        evidence=tuple(
+            EvidenceRequirement(
+                profile_ids=tuple(item["profileIds"]),
+                states=tuple(item["states"]),
+                minimum=item["minimum"],
+                maximum=item["maximum"],
+            )
+            for item in raw["evidence"]
+        ),
+        relationship=raw["relationship"],
+        minimum=raw["cardinality"]["minimum"],
+        maximum=raw["cardinality"]["maximum"],
+        same_diff=raw["sameDiff"],
+        body_requirement=raw["bodyRequirement"],
+        capabilities=tuple(raw["capabilities"]),
+    )
+
+
+def _profile_from_mapping(
+    raw: Mapping[str, Any],
+    *,
+    value_contract: ValueContract,
+    role_decision: RoleDecision,
+    admission: AdmissionPolicy,
+    lifecycle: LifecycleContract,
+) -> DocumentProfile:
     template = raw["template"]
     routes = tuple(
         Route(
@@ -650,6 +991,10 @@ def _profile_from_mapping(raw: Mapping[str, Any]) -> DocumentProfile:
         placeholder_policy=raw["placeholderPolicy"],
         append_contract=_append_contract(raw["appendContract"]),
         body_contract=_body_contract(raw["bodyContract"]),
+        value_contract=value_contract,
+        role_decision=role_decision,
+        admission=admission,
+        lifecycle=lifecycle,
     )
 
 
@@ -797,16 +1142,12 @@ _PROGRAM_OWNER_CONTRACTS = {
     ),
     "ard": (
         PurePosixPath("docs/02.architecture/requirements"),
-        re.compile(
-            r"^docs/02\.architecture/requirements/(?P<id>[0-9]{4})-[^/]+\.md$"
-        ),
+        re.compile(r"^docs/02\.architecture/requirements/(?P<id>[0-9]{4})-[^/]+\.md$"),
         "sdlc/ard",
     ),
     "adr": (
         PurePosixPath("docs/02.architecture/decisions"),
-        re.compile(
-            r"^docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[^/]+\.md$"
-        ),
+        re.compile(r"^docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[^/]+\.md$"),
         "sdlc/adr",
     ),
     "spec": (
@@ -884,7 +1225,9 @@ def _resolve_program_owner(
                 path=path,
                 profile=(actual_profile.profile_id if actual_profile else ""),
                 expected=expected_profile,
-                actual=(actual_profile.profile_id if actual_profile else "unclassified"),
+                actual=(
+                    actual_profile.profile_id if actual_profile else "unclassified"
+                ),
             ),
         )
     return path, ()
@@ -975,9 +1318,7 @@ def _program_repository_diagnostics(
         owner("prd", program.prd_id)
         owner("ard", program.ard_id)
         tranche_keys: list[tuple[date, int]] = []
-        follow_up_keys: list[
-            tuple[ProgramFollowUp, tuple[date, int] | None]
-        ] = []
+        follow_up_keys: list[tuple[ProgramFollowUp, tuple[date, int] | None]] = []
         for relation in (*program.tranches, *program.follow_ups):
             spec_path = owner("spec", relation.spec_id)
             if spec_path is not None:
@@ -1038,12 +1379,717 @@ def _program_repository_diagnostics(
     return tuple(diagnostics)
 
 
+def _document_contract_projection(
+    root: Path,
+    raw_profiles: Sequence[Mapping[str, Any]],
+    raw_contracts: Mapping[str, Any],
+) -> tuple[
+    tuple[Diagnostic, ...],
+    dict[str, ValueContract],
+    dict[str, RoleDecision],
+    dict[str, AdmissionPolicy],
+    dict[str, LifecycleContract],
+    tuple[EvidencePredicate, ...],
+]:
+    """Validate closed v7 declarations and resolve one immutable contract per profile."""
+
+    diagnostics: list[Diagnostic] = []
+    profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
+    profile_ids = set(profiles_by_id)
+
+    def assign_groups(
+        groups: Sequence[Mapping[str, Any]], rule_id: str
+    ) -> dict[str, Mapping[str, Any]]:
+        assigned: dict[str, Mapping[str, Any]] = {}
+        for group in groups:
+            for profile_id in group["profileIds"]:
+                if profile_id not in profile_ids:
+                    diagnostics.append(
+                        _diagnostic(
+                            rule_id,
+                            profile=profile_id,
+                            expected="a declared profile ID",
+                            actual="unknown profile assignment",
+                        )
+                    )
+                if profile_id in assigned:
+                    diagnostics.append(
+                        _diagnostic(
+                            rule_id,
+                            profile=profile_id,
+                            expected="exactly one direct contract assignment",
+                            actual="duplicate contract assignment",
+                        )
+                    )
+                else:
+                    assigned[profile_id] = group
+        return assigned
+
+    value_groups = raw_contracts["valueContracts"]
+    value_ids = [item["id"] for item in value_groups]
+    if len(value_ids) != len(set(value_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_VALUE_CONTRACT",
+                expected="unique value contract IDs",
+                actual="duplicate value contract ID",
+            )
+        )
+    raw_values = assign_groups(value_groups, "REGISTRY_VALUE_CONTRACT")
+
+    raw_roles = assign_groups(raw_contracts["roleDecisions"], "REGISTRY_ROLE_DECISION")
+    for role in raw_contracts["roleDecisions"]:
+        if role["sourceProfileId"] is not None:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_ROLE_DECISION",
+                    expected="canonical decisions with null sourceProfileId; forms inherit",
+                    actual=repr(role["sourceProfileId"]),
+                )
+            )
+
+    admission_groups = raw_contracts["admissionPolicies"]
+    admission_ids = [item["id"] for item in admission_groups]
+    if len(admission_ids) != len(set(admission_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_ADMISSION",
+                expected="unique admission policy IDs",
+                actual="duplicate admission policy ID",
+            )
+        )
+    tombstone_admission_matches = [
+        item
+        for item in admission_groups
+        if "content/archive-tombstone" in item["profileIds"]
+    ]
+    if (
+        "content/archive-tombstone" in profile_ids
+        and len(tombstone_admission_matches) != 1
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_ADMISSION",
+                profile="content/archive-tombstone",
+                expected="exactly one admission policy membership",
+                actual=f"{len(tombstone_admission_matches)} matching policies",
+            )
+        )
+    elif tombstone_admission_matches:
+        tombstone_admission_raw = tombstone_admission_matches[0]
+        raw_baseline_paths = tombstone_admission_raw["baselinePaths"]
+        normalized_baseline_paths: list[str] = []
+        for raw_path in raw_baseline_paths:
+            try:
+                normalized_path = _normalize_relative_path(raw_path).as_posix()
+            except ValueError:
+                normalized_path = ""
+            normalized_baseline_paths.append(normalized_path)
+            if normalized_path != raw_path:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_TOMBSTONE_BASELINE",
+                        profile="content/archive-tombstone",
+                        expected="a canonical raw repository-relative path spelling",
+                        actual="noncanonical raw baseline path",
+                    )
+                )
+        if len(normalized_baseline_paths) != len(set(normalized_baseline_paths)):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_TOMBSTONE_BASELINE",
+                    profile="content/archive-tombstone",
+                    expected="unique normalized baseline paths",
+                    actual="raw spellings normalize to a duplicate",
+                )
+            )
+    raw_admissions = assign_groups(admission_groups, "REGISTRY_ADMISSION")
+
+    lifecycle_groups = raw_contracts["lifecycleContracts"]
+    lifecycle_ids = [item["id"] for item in lifecycle_groups]
+    if len(lifecycle_ids) != len(set(lifecycle_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_LIFECYCLE",
+                expected="unique lifecycle contract IDs",
+                actual="duplicate lifecycle contract ID",
+            )
+        )
+    raw_lifecycles = assign_groups(lifecycle_groups, "REGISTRY_LIFECYCLE")
+
+    def inherited_group(
+        profile_id: str,
+        assignments: Mapping[str, Mapping[str, Any]],
+        rule_id: str,
+    ) -> tuple[Mapping[str, Any] | None, str | None]:
+        direct = assignments.get(profile_id)
+        if direct is not None:
+            return direct, None
+        profile = profiles_by_id[profile_id]
+        source_ids = profile["sourceProfileIds"]
+        if profile["mode"] == "template" and len(source_ids) == 1:
+            source_id = source_ids[0]
+            source = assignments.get(source_id)
+            if source is not None:
+                return source, source_id
+        diagnostics.append(
+            _diagnostic(
+                rule_id,
+                profile=profile_id,
+                expected="one direct contract or one canonical template source",
+                actual="missing contract assignment",
+            )
+        )
+        return None, None
+
+    typed_values: dict[str, ValueContract] = {}
+    typed_roles: dict[str, RoleDecision] = {}
+    typed_admissions: dict[str, AdmissionPolicy] = {}
+    typed_lifecycles: dict[str, LifecycleContract] = {}
+    for profile_id, profile in profiles_by_id.items():
+        value_raw, _ = inherited_group(
+            profile_id, raw_values, "REGISTRY_VALUE_CONTRACT"
+        )
+        role_raw, role_source = inherited_group(
+            profile_id, raw_roles, "REGISTRY_ROLE_DECISION"
+        )
+        admission_raw = raw_admissions.get(profile_id)
+        lifecycle_raw = raw_lifecycles.get(profile_id)
+        if admission_raw is None:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_ADMISSION",
+                    profile=profile_id,
+                    expected="exactly one direct admission policy",
+                    actual="missing admission assignment",
+                )
+            )
+        if lifecycle_raw is None:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LIFECYCLE",
+                    profile=profile_id,
+                    expected="exactly one direct lifecycle contract",
+                    actual="missing lifecycle assignment",
+                )
+            )
+        if value_raw is not None:
+            value = _value_contract(value_raw)
+            typed_values[profile_id] = value
+            key_names = [item.key for item in value.keys]
+            expected_keys = profile["frontmatter"]["order"]
+            if key_names != expected_keys:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_VALUE_CONTRACT",
+                        profile=profile_id,
+                        expected=f"value keys in frontmatter order {expected_keys!r}",
+                        actual=repr(key_names),
+                    )
+                )
+            if len(key_names) != len(set(key_names)):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_VALUE_CONTRACT",
+                        profile=profile_id,
+                        expected="unique value-contract keys",
+                        actual="duplicate key",
+                    )
+                )
+            key_set = set(key_names)
+            for item in value.keys:
+                if (
+                    value.contract_id == "archive-tombstone-compatibility"
+                    and item.key in {"archive_reason", "replacement"}
+                    and (
+                        item.constant is not None
+                        or item.enum is not None
+                        or item.conditional is not None
+                    )
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_VALUE_CONTRACT",
+                            profile=profile_id,
+                            expected="scalar read-compatibility only before Spec 036",
+                            actual=f"archive-specific semantics on {item.key}",
+                        )
+                    )
+                if item.constant is not None and item.enum is not None:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_VALUE_CONTRACT",
+                            profile=profile_id,
+                            expected="constant or enum, not both",
+                            actual=item.key,
+                        )
+                    )
+                if item.constant is not None:
+                    if item.constant.source == "profile-id" and (
+                        item.key != "type" or item.constant.value is not None
+                    ):
+                        diagnostics.append(
+                            _diagnostic(
+                                "REGISTRY_VALUE_CONTRACT",
+                                profile=profile_id,
+                                expected="type constant sourced from profile ID with null literal",
+                                actual=item.key,
+                            )
+                        )
+                if item.enum is not None:
+                    if item.enum.source == "status-domain" and (
+                        item.key != "status" or item.enum.values
+                    ):
+                        diagnostics.append(
+                            _diagnostic(
+                                "REGISTRY_VALUE_CONTRACT",
+                                profile=profile_id,
+                                expected="status enum sourced from statusDomain with no literals",
+                                actual=item.key,
+                            )
+                        )
+                    if item.enum.source == "literal" and not item.enum.values:
+                        diagnostics.append(
+                            _diagnostic(
+                                "REGISTRY_VALUE_CONTRACT",
+                                profile=profile_id,
+                                expected="a non-empty literal enum",
+                                actual=item.key,
+                            )
+                        )
+                if item.pattern is not None:
+                    try:
+                        re.compile(item.pattern)
+                    except re.error as exc:
+                        diagnostics.append(
+                            _diagnostic(
+                                "REGISTRY_VALUE_CONTRACT",
+                                profile=profile_id,
+                                expected="a compilable value pattern",
+                                actual=str(exc),
+                            )
+                        )
+                if item.conditional is not None and (
+                    item.conditional.key not in key_set
+                    or item.conditional.key == item.key
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_VALUE_CONTRACT",
+                            profile=profile_id,
+                            expected="a condition referencing another declared key",
+                            actual=item.conditional.key,
+                        )
+                    )
+        if role_raw is not None:
+            role = _role_decision(role_raw, source_profile_id=role_source)
+            typed_roles[profile_id] = role
+            body_contract = profile["bodyContract"]
+            headings = profile["headings"]["required"]
+            valid_role = (
+                (
+                    role.body_requirement == "body-contract"
+                    and body_contract is not None
+                    and (
+                        body_contract["section"] not in headings
+                        or role.relationship_section == body_contract["section"]
+                    )
+                )
+                or (
+                    role.body_requirement == "heading-set"
+                    and body_contract is None
+                    and role.relationship_section in headings
+                )
+                or (
+                    role.body_requirement == "none"
+                    and body_contract is None
+                    and role.relationship_section is None
+                )
+            )
+            if not valid_role:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_ROLE_DECISION",
+                        profile=profile_id,
+                        expected="relationshipSection and bodyRequirement aligned to the selected profile",
+                        actual=(
+                            f"section={role.relationship_section!r} "
+                            f"body={role.body_requirement!r}"
+                        ),
+                    )
+                )
+        if admission_raw is not None:
+            admission = _admission_policy(admission_raw)
+            typed_admissions[profile_id] = admission
+            invalid_create_states = set(admission.create.states) - set(
+                profile["statusDomain"]
+            )
+            if invalid_create_states:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_ADMISSION",
+                        profile=profile_id,
+                        expected="create states within statusDomain",
+                        actual=repr(sorted(invalid_create_states)),
+                    )
+                )
+            if admission.create.mode == "states" and admission.create.states != (
+                "draft",
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_ADMISSION",
+                        profile=profile_id,
+                        expected="draft-only authored creation",
+                        actual=repr(admission.create.states),
+                    )
+                )
+            if admission.create.mode in {"baseline-only", "snapshot-only"} and (
+                admission.create.states
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_ADMISSION",
+                        profile=profile_id,
+                        expected="no admitted creation states",
+                        actual=repr(admission.create.states),
+                    )
+                )
+            admission_profiles = set(admission.profile_ids)
+            admission_shape_valid = (
+                (
+                    admission.create.mode == "states"
+                    and profile["mode"] == "authored"
+                    and profile_id
+                    not in {"sdlc/plan", "sdlc/task", "content/archive-tombstone"}
+                    and not admission.baseline_paths
+                )
+                or (
+                    admission.create.mode == "paired"
+                    and admission_profiles == {"sdlc/plan", "sdlc/task"}
+                    and admission.create.states == ("draft", "active")
+                    and not admission.baseline_paths
+                )
+                or (
+                    admission.create.mode == "baseline-only"
+                    and admission_profiles == {"content/archive-tombstone"}
+                    and profile_id == "content/archive-tombstone"
+                )
+                or (
+                    admission.create.mode == "snapshot-only"
+                    and profile["mode"] != "authored"
+                    and not admission.baseline_paths
+                )
+            )
+            if not admission_shape_valid:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_ADMISSION",
+                        profile=profile_id,
+                        expected="the closed family-specific creation and baseline shape",
+                        actual=admission.create.mode,
+                    )
+                )
+        if lifecycle_raw is not None:
+            lifecycle = _lifecycle_contract(lifecycle_raw)
+            typed_lifecycles[profile_id] = lifecycle
+            status_domain = set(profile["statusDomain"])
+            if not set(lifecycle.terminal_states).issubset(status_domain):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_LIFECYCLE",
+                        profile=profile_id,
+                        expected="terminal states within statusDomain",
+                        actual=repr(lifecycle.terminal_states),
+                    )
+                )
+            seen_edges: set[tuple[str, str]] = set()
+            for edge in lifecycle.edges:
+                key = (edge.from_state, edge.to_state)
+                if key in seen_edges:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_LIFECYCLE",
+                            profile=profile_id,
+                            expected="unique from/to lifecycle edges",
+                            actual=repr(key),
+                        )
+                    )
+                seen_edges.add(key)
+                if (
+                    edge.from_state not in status_domain
+                    or edge.to_state not in status_domain
+                    or edge.from_state == edge.to_state
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_LIFECYCLE",
+                            profile=profile_id,
+                            expected="distinct edge states within statusDomain",
+                            actual=repr(key),
+                        )
+                    )
+                if "archived" in key:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_LIFECYCLE",
+                            profile=profile_id,
+                            expected="no archive edge before Spec 036",
+                            actual=repr(key),
+                        )
+                    )
+                if edge.from_state in lifecycle.terminal_states:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_LIFECYCLE",
+                            profile=profile_id,
+                            expected="no outgoing edge from a terminal state",
+                            actual=repr(key),
+                        )
+                    )
+            if lifecycle.edges:
+                from_states = {edge.from_state for edge in lifecycle.edges}
+                sink_states = {
+                    edge.to_state
+                    for edge in lifecycle.edges
+                    if edge.to_state not in from_states
+                }
+                if set(lifecycle.terminal_states) != sink_states:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_LIFECYCLE",
+                            profile=profile_id,
+                            expected=f"terminal sink states {sorted(sink_states)!r}",
+                            actual=repr(lifecycle.terminal_states),
+                        )
+                    )
+            if "archived" in lifecycle.terminal_states and profile_id != (
+                "content/archive-tombstone"
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_LIFECYCLE",
+                        profile=profile_id,
+                        expected="archived terminal only for Tombstone compatibility",
+                        actual=repr(lifecycle.terminal_states),
+                    )
+                )
+
+    predicate_raw = raw_contracts["evidencePredicates"]
+    predicate_ids = [item["id"] for item in predicate_raw]
+    if len(predicate_ids) != len(set(predicate_ids)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_EVIDENCE_PREDICATE",
+                expected="unique evidence predicate IDs",
+                actual="duplicate predicate ID",
+            )
+        )
+    typed_predicates = tuple(_evidence_predicate(item) for item in predicate_raw)
+    expected_edges: dict[str, set[tuple[str, str, str]]] = {}
+    for profile_id, lifecycle in typed_lifecycles.items():
+        for edge in lifecycle.edges:
+            expected_edges.setdefault(edge.predicate_id, set()).add(
+                (profile_id, edge.from_state, edge.to_state)
+            )
+    actual_edges: dict[str, set[tuple[str, str, str]]] = {}
+    for predicate in typed_predicates:
+        expected_semantics = _EVIDENCE_PREDICATE_SEMANTICS.get(predicate.predicate_id)
+        if expected_semantics != (predicate.same_diff, predicate.capabilities):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    expected="the closed predicate sameDiff/capability tuple",
+                    actual=predicate.predicate_id,
+                )
+            )
+        raw_edge_count = len(predicate.profile_edges)
+        predicate_edges = {
+            (edge.profile_id, edge.from_state, edge.to_state)
+            for edge in predicate.profile_edges
+        }
+        if len(predicate_edges) != raw_edge_count:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    expected="unique production edge cases per predicate",
+                    actual=predicate.predicate_id,
+                )
+            )
+        actual_edges[predicate.predicate_id] = predicate_edges
+        if predicate.maximum is not None and predicate.maximum < predicate.minimum:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    expected="maximum cardinality greater than or equal to minimum",
+                    actual=predicate.predicate_id,
+                )
+            )
+        source_profiles = {
+            edge.profile_id
+            for edge in predicate.profile_edges
+            if edge.profile_id in profile_ids
+        }
+        for edge in predicate.profile_edges:
+            profile = profiles_by_id.get(edge.profile_id)
+            if profile is None or not {edge.from_state, edge.to_state}.issubset(
+                set(profile["statusDomain"]) if profile is not None else set()
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_EVIDENCE_PREDICATE",
+                        profile=edge.profile_id,
+                        expected="a known profile edge with declared states",
+                        actual=f"{edge.from_state}->{edge.to_state}",
+                    )
+                )
+        for item in predicate.evidence:
+            if item.maximum is not None and item.maximum < item.minimum:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_EVIDENCE_PREDICATE",
+                        expected="evidence maximum greater than or equal to minimum",
+                        actual=predicate.predicate_id,
+                    )
+                )
+            for evidence_profile_id in item.profile_ids:
+                if evidence_profile_id == "$self":
+                    domains = [
+                        set(profiles_by_id[source]["statusDomain"])
+                        for source in source_profiles
+                    ]
+                    if not domains or any(
+                        not set(item.states).issubset(domain) for domain in domains
+                    ):
+                        diagnostics.append(
+                            _diagnostic(
+                                "REGISTRY_EVIDENCE_PREDICATE",
+                                expected="$self states valid for every exact source edge",
+                                actual=predicate.predicate_id,
+                            )
+                        )
+                    continue
+                evidence_profile = profiles_by_id.get(evidence_profile_id)
+                if evidence_profile is None:
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_EVIDENCE_PREDICATE",
+                            profile=evidence_profile_id,
+                            expected="a known evidence profile",
+                            actual=predicate.predicate_id,
+                        )
+                    )
+                elif not set(item.states).issubset(
+                    set(evidence_profile["statusDomain"])
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REGISTRY_EVIDENCE_PREDICATE",
+                            profile=evidence_profile_id,
+                            expected="evidence states within profile statusDomain",
+                            actual=repr(item.states),
+                        )
+                    )
+        if any(
+            typed_roles.get(profile_id) is not None
+            and typed_roles[profile_id].body_requirement != predicate.body_requirement
+            for profile_id in source_profiles
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    expected="predicate body requirement aligned to every exact edge profile",
+                    actual=predicate.predicate_id,
+                )
+            )
+
+    all_predicate_ids = set(expected_edges) | set(actual_edges)
+    for predicate_id in sorted(all_predicate_ids):
+        if expected_edges.get(predicate_id, set()) != actual_edges.get(
+            predicate_id, set()
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    expected=(
+                        f"exact lifecycle edge set {sorted(expected_edges.get(predicate_id, set()))!r}"
+                    ),
+                    actual=repr(sorted(actual_edges.get(predicate_id, set()))),
+                )
+            )
+
+    tombstone = profiles_by_id.get("content/archive-tombstone")
+    tombstone_admission = typed_admissions.get("content/archive-tombstone")
+    if tombstone is not None and tombstone_admission is not None:
+        declared = tuple(path.as_posix() for path in tombstone_admission.baseline_paths)
+        if declared != tuple(sorted(set(declared))):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_TOMBSTONE_BASELINE",
+                    profile="content/archive-tombstone",
+                    expected="unique sorted baseline paths",
+                    actual="baseline path order or uniqueness differs",
+                )
+            )
+        tracked_entries = _parse_ls_files_stage_z(
+            _run_git(root, ("ls-files", "--stage", "-z", "--", "docs/98.archive"))
+        )
+        routes = tombstone["routes"]
+        tracked = tuple(
+            sorted(
+                entry.path.as_posix()
+                for entry in tracked_entries
+                if entry.stage == 0
+                and entry.mode.startswith("100")
+                and any(
+                    (
+                        route["kind"] == "exact"
+                        and route["value"] == entry.path.as_posix()
+                    )
+                    or (
+                        route["kind"] == "regex"
+                        and re.fullmatch(route["value"], entry.path.as_posix())
+                        is not None
+                    )
+                    for route in routes
+                )
+            )
+        )
+        if (
+            tombstone_admission.create.mode != "baseline-only"
+            or tombstone_admission.create.states
+            or declared != tracked
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_TOMBSTONE_BASELINE",
+                    profile="content/archive-tombstone",
+                    expected=f"exact tracked baseline-only set ({len(tracked)} paths)",
+                    actual=f"{len(declared)} declared paths",
+                )
+            )
+
+    return (
+        tuple(diagnostics),
+        typed_values,
+        typed_roles,
+        typed_admissions,
+        typed_lifecycles,
+        typed_predicates,
+    )
+
+
 def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
     """Validate a decoded registry and return its immutable typed form."""
 
     root = root.absolute()
-    with (root / SCHEMA_PATH).open("r", encoding="utf-8") as handle:
-        schema = json.load(handle)
+    schema = load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
+    if not isinstance(schema, dict):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="a JSON Schema object",
+            actual=type(schema).__name__,
+        )
 
     schema_errors = sorted(
         Draft202012Validator(schema).iter_errors(raw_registry),
@@ -1127,9 +2173,8 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             required_columns = body_contract["requiredColumns"]
             identifier_columns = body_contract["identifierColumns"]
             identifier_names = [item["column"] for item in identifier_columns]
-            if (
-                len(identifier_names) != len(set(identifier_names))
-                or any(column not in required_columns for column in identifier_names)
+            if len(identifier_names) != len(set(identifier_names)) or any(
+                column not in required_columns for column in identifier_names
             ):
                 diagnostics.append(
                     _diagnostic(
@@ -1151,12 +2196,8 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     for profile_id_value in allowed_ids
                     if profile_id_value not in raw_profiles_by_id
                 )
-                link_contract_valid = (
-                    (link_column is None and not allowed_ids)
-                    or (
-                        link_column in required_columns
-                        and bool(allowed_ids)
-                    )
+                link_contract_valid = (link_column is None and not allowed_ids) or (
+                    link_column in required_columns and bool(allowed_ids)
                 )
                 if invalid_profiles or not link_contract_valid:
                     diagnostics.append(
@@ -1175,8 +2216,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     )
 
             if body_contract["reciprocalEvidence"] and not (
-                body_contract["sourceLinkColumn"]
-                or body_contract["targetLinkColumn"]
+                body_contract["sourceLinkColumn"] or body_contract["targetLinkColumn"]
             ):
                 diagnostics.append(
                     _diagnostic(
@@ -1198,10 +2238,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     )
                 )
 
-        if (
-            raw_profile["mode"] == "template"
-            and raw_profile["appendContract"] is None
-        ):
+        if raw_profile["mode"] == "template" and raw_profile["appendContract"] is None:
             source_ids = raw_profile["sourceProfileIds"]
             if len(source_ids) != 1 or source_ids[0] not in raw_profiles_by_id:
                 diagnostics.append(
@@ -1431,14 +2468,15 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
 
     profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
     reference_profile = profiles_by_id.get(raw_reference_packs["profileId"])
-    status_domain = set(reference_profile["statusDomain"]) if reference_profile else set()
+    status_domain = (
+        set(reference_profile["statusDomain"]) if reference_profile else set()
+    )
     for raw_pack in raw_packs:
         collection = raw_pack["id"].split("/", 1)[0]
         expected_states = ["done"] if collection == "audits" else ["active", "accepted"]
-        if (
-            raw_pack["allowedStates"] != expected_states
-            or not set(raw_pack["allowedStates"]).issubset(status_domain)
-        ):
+        if raw_pack["allowedStates"] != expected_states or not set(
+            raw_pack["allowedStates"]
+        ).issubset(status_domain):
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_REFERENCE_CURRENT_PACK_STATE",
@@ -1449,6 +2487,17 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
 
     raw_programs = raw_registry["programLineage"]["programs"]
     diagnostics.extend(_program_structure_diagnostics(raw_programs))
+    (
+        contract_diagnostics,
+        value_contracts_by_profile,
+        roles_by_profile,
+        admissions_by_profile,
+        lifecycles_by_profile,
+        evidence_predicates,
+    ) = _document_contract_projection(
+        root, raw_profiles, raw_registry["documentContracts"]
+    )
+    diagnostics.extend(contract_diagnostics)
 
     if diagnostics:
         raise DocumentContractError(diagnostics)
@@ -1457,7 +2506,16 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
         schema_version=raw_registry["schemaVersion"],
         baseline_sha=baseline["sha"],
         baseline_count=baseline["count"],
-        profiles=tuple(_profile_from_mapping(profile) for profile in raw_profiles),
+        profiles=tuple(
+            _profile_from_mapping(
+                profile,
+                value_contract=value_contracts_by_profile[profile["id"]],
+                role_decision=roles_by_profile[profile["id"]],
+                admission=admissions_by_profile[profile["id"]],
+                lifecycle=lifecycles_by_profile[profile["id"]],
+            )
+            for profile in raw_profiles
+        ),
         governance_current_owners=GovernanceCurrentOwners(
             profile_id=raw_current_owners["profileId"],
             allowed_states=tuple(raw_current_owners["allowedStates"]),
@@ -1470,6 +2528,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
         program_lineage=tuple(
             _program_lineage_from_mapping(program) for program in raw_programs
         ),
+        evidence_predicates=evidence_predicates,
     )
 
     current_owner_diagnostics: list[Diagnostic] = []
@@ -1482,10 +2541,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                 "--stage",
                 "-z",
                 "--",
-                *(
-                    path.as_posix()
-                    for path in registry.governance_current_owners.paths
-                ),
+                *(path.as_posix() for path in registry.governance_current_owners.paths),
             ),
         )
     ):
@@ -1538,8 +2594,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             current_owner_diagnostics.extend(exc.diagnostics)
             continue
         if (
-            actual_profile.profile_id
-            != registry.governance_current_owners.profile_id
+            actual_profile.profile_id != registry.governance_current_owners.profile_id
             or actual_profile.mode != "authored"
         ):
             current_owner_diagnostics.append(
@@ -1548,8 +2603,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     path=path,
                     profile=actual_profile.profile_id,
                     expected=(
-                        "authored "
-                        + registry.governance_current_owners.profile_id
+                        "authored " + registry.governance_current_owners.profile_id
                     ),
                     actual=f"{actual_profile.mode} {actual_profile.profile_id}",
                 )
@@ -1637,8 +2691,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
 
 def load_registry(root: Path) -> Registry:
     root = root.absolute()
-    with (root / REGISTRY_PATH).open("r", encoding="utf-8") as handle:
-        raw_registry = json.load(handle)
+    raw_registry = load_json_file(root / REGISTRY_PATH)
     if not isinstance(raw_registry, dict):
         _fail(
             "REGISTRY_SCHEMA",
@@ -1646,13 +2699,13 @@ def load_registry(root: Path) -> Registry:
             actual=type(raw_registry).__name__,
         )
     if (
-        raw_registry.get("schemaVersion") != 6
+        raw_registry.get("schemaVersion") != 7
         or raw_registry.get("$id")
-        != "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
+        != "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
     ):
         _fail(
             "REGISTRY_SCHEMA",
-            expected="closed production registry schema v6",
+            expected="closed production registry schema v7",
             actual=(
                 f"schemaVersion={raw_registry.get('schemaVersion')!r} "
                 f"$id={raw_registry.get('$id')!r}"

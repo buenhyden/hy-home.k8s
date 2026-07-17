@@ -30,7 +30,7 @@ reviews, and explicit static/live evidence boundaries.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| DSLC-001 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-003, VAL-DSLC-007, VAL-DSLC-008 | Add closed registry v7 value, role, lifecycle, evidence, and compatibility schema plus typed projection. | platform | Queued | Not executed | RED/GREEN registry cases, strict load, review verdict, logical commit |
+| DSLC-001 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-003, VAL-DSLC-007, VAL-DSLC-008 | Add closed registry v7 value, role, lifecycle, evidence, and compatibility schema plus typed projection. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED archive-specific semantics and policy-ID/path-alias bypasses reproduced; GREEN 117-case registry self-test, complete literal typed projection, duplicate-key rejection, strict registry/Markdown/cross PASS; logical commit recorded after review. |
 | DSLC-002 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-005 | Enforce metadata values, template/source parity, and baseline-only Tombstone admission. | platform | Queued | Not executed | Metadata/parity/admission mutations, current-corpus result, review, commit |
 | DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Queued | Not executed | Isolated Git fixtures, lifecycle diagnostics, review, commit |
 | DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Queued | Not executed | Predicate mutation matrix, strict cross-document result, review, commit |
@@ -92,6 +92,31 @@ post-closure rollback. Independent re-review returned
 strict registry, Markdown-profile, cross-document, diff-check, and changed-file
 Markdown lint validation.
 
+DSLC-001 RED failed on the first newly declared v7 mutation because the v6
+self-test had no mutation implementation. GREEN upgrades production to closed
+registry v7, exposes immutable value/role/admission/lifecycle/evidence
+projections, checks every production edge against exactly one predicate case,
+and pins the 31 tracked Tombstones to baseline-only admission. The registry
+rejects duplicate JSON keys at root or nested depth, noncanonical Tombstone
+baseline spellings, and archive-specific value semantics before Spec 036.
+Registry self-test passes 117 cases with the complete literal
+64-profile/30-template projection, every admission/lifecycle/evidence field,
+generic private-fixture conditional semantics, and private v5/v6 migration
+proof. Strict registry validates 432 paths; strict
+Markdown reports zero violations and strict cross-document validation passes.
+No lifecycle Git comparison, metadata enforcement, evidence resolution, corpus
+rewrite, archive route, or CI change is claimed by this package.
+
+Independent review first rejected archive-specific value ownership, partial
+predicate projection, duplicate-key JSON parsing, and noncanonical Tombstone
+path aliases. Remediation removed production archive literal/conditional
+semantics, added a complete independent literal projection and schema-valid
+semantic-drift mutations, centralized duplicate-key-rejecting JSON loading,
+and checked raw Tombstone paths by exact profile membership. A second review
+found the combined policy-ID rename plus `//` alias bypass; the 117th mutation
+reproduces and closes it. Final re-review returned `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`.
+
 ## Traceability
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
@@ -102,7 +127,7 @@ Markdown lint validation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [DSLC-001](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-001-registry-v7-contract) | Queued. | Registry v7 RED/GREEN and review evidence will be recorded here. |
+| [DSLC-001](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-001-registry-v7-contract) | Done; requirements compliant and quality approved. | RED review reproductions; GREEN 117 registry cases, complete literal v7 typed projection, strict 432-path registry, Markdown zero violations, cross-document PASS, and duplicate/canonical-path guards. |
 | [DSLC-002](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-002-metadata-template-and-compatibility-enforcement) | Queued. | Metadata, parity, Tombstone admission, and current-corpus evidence will be recorded here. |
 | [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Queued. | Git base-mode and transition evidence will be recorded here. |
 | [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Queued. | Edge predicate and cross-document evidence will be recorded here. |

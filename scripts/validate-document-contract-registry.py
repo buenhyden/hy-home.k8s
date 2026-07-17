@@ -24,6 +24,7 @@ from document_contracts import (
     classify_path,
     classify_paths,
     enumerate_target_markdown,
+    load_json_file,
     load_registry,
     _parse_ls_files_stage_z,
     _parse_ls_tree_z,
@@ -145,6 +146,39 @@ LINEAGE_INVALID_FIXTURE_DOCUMENTS = {
     ),
 }
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
+EXPECTED_TOMBSTONE_BASELINE_PATHS = (
+    "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
+    "docs/98.archive/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
+    "docs/98.archive/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md",
+    "docs/98.archive/02.architecture/decisions/0001-k3d-topology-and-network.md",
+    "docs/98.archive/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md",
+    "docs/98.archive/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
+    "docs/98.archive/02.architecture/decisions/0007-kubernetes-dashboard-v3.md",
+    "docs/98.archive/02.architecture/decisions/0010-headlamp-replaces-dashboard.md",
+    "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+    "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+    "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+    "docs/98.archive/03.specs/001-wsl-k3d-argocd-platform/spec.md",
+    "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md",
+    "docs/98.archive/03.specs/003-platform-expansion/spec.md",
+    "docs/98.archive/03.specs/007-docs-governance-consistency/spec.md",
+    "docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md",
+    "docs/98.archive/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
+    "docs/98.archive/04.execution/plans/2026-03-29-platform-expansion.md",
+    "docs/98.archive/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md",
+    "docs/98.archive/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md",
+    "docs/98.archive/04.execution/plans/2026-05-28-docs-governance-consistency.md",
+    "docs/98.archive/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md",
+    "docs/98.archive/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md",
+    "docs/98.archive/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
+    "docs/98.archive/04.execution/tasks/2026-03-29-platform-expansion.md",
+    "docs/98.archive/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md",
+    "docs/98.archive/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md",
+    "docs/98.archive/04.execution/tasks/2026-05-28-docs-governance-consistency.md",
+    "docs/98.archive/04.execution/tasks/2026-05-30-governance-refactoring.md",
+    "docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md",
+    "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
+)
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
 )
@@ -476,7 +510,198 @@ EXPECTED_CASES = (
         "misordered-follow-up-approval",
         ("REGISTRY_PROGRAM_CHRONOLOGY",),
     ),
+    (
+        "unknown-document-contract-field",
+        "unknown-document-contract-field",
+        ("REGISTRY_SCHEMA",),
+    ),
+    ("missing-value-contract", "missing-value-contract", ("REGISTRY_VALUE_CONTRACT",)),
+    ("invalid-value-kind", "invalid-value-kind", ("REGISTRY_VALUE_CONTRACT",)),
+    ("invalid-value-enum", "invalid-value-enum", ("REGISTRY_VALUE_CONTRACT",)),
+    (
+        "invalid-value-constant",
+        "invalid-value-constant",
+        ("REGISTRY_VALUE_CONTRACT",),
+    ),
+    (
+        "invalid-value-pattern",
+        "invalid-value-pattern",
+        ("REGISTRY_VALUE_CONTRACT",),
+    ),
+    (
+        "invalid-value-nullability",
+        "invalid-value-nullability",
+        ("REGISTRY_VALUE_CONTRACT",),
+    ),
+    (
+        "invalid-value-condition",
+        "invalid-value-condition",
+        ("REGISTRY_VALUE_CONTRACT",),
+    ),
+    ("missing-role-decision", "missing-role-decision", ("REGISTRY_ROLE_DECISION",)),
+    (
+        "invalid-relationship-section",
+        "invalid-relationship-section",
+        ("REGISTRY_ROLE_DECISION",),
+    ),
+    (
+        "invalid-body-requirement",
+        "invalid-body-requirement",
+        ("REGISTRY_ROLE_DECISION", "REGISTRY_EVIDENCE_PREDICATE"),
+    ),
+    ("invalid-create-admission", "invalid-create-admission", ("REGISTRY_ADMISSION",)),
+    ("allow-delete", "allow-delete", ("REGISTRY_ADMISSION",)),
+    ("allow-rename", "allow-rename", ("REGISTRY_ADMISSION",)),
+    ("allow-profile-change", "allow-profile-change", ("REGISTRY_ADMISSION",)),
+    (
+        "invalid-paired-admission",
+        "invalid-paired-admission",
+        ("REGISTRY_ADMISSION",),
+    ),
+    (
+        "baseline-path-on-standard",
+        "baseline-path-on-standard",
+        ("REGISTRY_ADMISSION",),
+    ),
+    (
+        "duplicate-lifecycle-edge",
+        "duplicate-lifecycle-edge",
+        ("REGISTRY_LIFECYCLE",),
+    ),
+    ("invalid-lifecycle-state", "invalid-lifecycle-state", ("REGISTRY_LIFECYCLE",)),
+    (
+        "terminal-outgoing-edge",
+        "terminal-outgoing-edge",
+        ("REGISTRY_LIFECYCLE",),
+    ),
+    ("archived-lifecycle-edge", "archived-lifecycle-edge", ("REGISTRY_LIFECYCLE",)),
+    ("missing-terminal-state", "missing-terminal-state", ("REGISTRY_LIFECYCLE",)),
+    ("archived-terminal-state", "archived-terminal-state", ("REGISTRY_LIFECYCLE",)),
+    (
+        "unknown-evidence-profile",
+        "unknown-evidence-profile",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "unknown-evidence-state",
+        "unknown-evidence-state",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "executable-evidence-predicate",
+        "executable-evidence-predicate",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "missing-edge-predicate-case",
+        "missing-edge-predicate-case",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "duplicate-edge-predicate-case",
+        "duplicate-edge-predicate-case",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "new-tombstone-baseline-path",
+        "new-tombstone-baseline-path",
+        ("REGISTRY_TOMBSTONE_BASELINE",),
+    ),
+    (
+        "production-legacy-v6-input",
+        "production-legacy-v6-input",
+        ("REGISTRY_SCHEMA",),
+    ),
+    (
+        "archive-specific-value-semantics",
+        "archive-specific-value-semantics",
+        ("REGISTRY_VALUE_CONTRACT",),
+    ),
+    (
+        "evidence-capability-removal",
+        "evidence-capability-removal",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "evidence-same-diff-swap",
+        "evidence-same-diff-swap",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    ("duplicate-json-root-key", "duplicate-json-root-key", ("REGISTRY_SCHEMA",)),
+    (
+        "duplicate-json-nested-key",
+        "duplicate-json-nested-key",
+        ("REGISTRY_SCHEMA",),
+    ),
+    (
+        "tombstone-baseline-double-slash",
+        "tombstone-baseline-double-slash",
+        ("REGISTRY_TOMBSTONE_BASELINE",),
+    ),
+    (
+        "tombstone-baseline-dot-segment",
+        "tombstone-baseline-dot-segment",
+        ("REGISTRY_TOMBSTONE_BASELINE",),
+    ),
+    (
+        "tombstone-baseline-normalized-duplicate",
+        "tombstone-baseline-normalized-duplicate",
+        ("REGISTRY_TOMBSTONE_BASELINE",),
+    ),
+    (
+        "renamed-tombstone-policy-noncanonical-baseline",
+        "renamed-tombstone-policy-noncanonical-baseline",
+        ("REGISTRY_TOMBSTONE_BASELINE",),
+    ),
 )
+
+V7_MUTATIONS = frozenset(
+    mutation
+    for _, mutation, _ in EXPECTED_CASES
+    if mutation
+    in {
+        "unknown-document-contract-field",
+        "missing-value-contract",
+        "invalid-value-kind",
+        "invalid-value-enum",
+        "invalid-value-constant",
+        "invalid-value-pattern",
+        "invalid-value-nullability",
+        "invalid-value-condition",
+        "missing-role-decision",
+        "invalid-relationship-section",
+        "invalid-body-requirement",
+        "invalid-create-admission",
+        "allow-delete",
+        "allow-rename",
+        "allow-profile-change",
+        "invalid-paired-admission",
+        "baseline-path-on-standard",
+        "duplicate-lifecycle-edge",
+        "invalid-lifecycle-state",
+        "terminal-outgoing-edge",
+        "archived-lifecycle-edge",
+        "missing-terminal-state",
+        "archived-terminal-state",
+        "unknown-evidence-profile",
+        "unknown-evidence-state",
+        "executable-evidence-predicate",
+        "missing-edge-predicate-case",
+        "duplicate-edge-predicate-case",
+        "new-tombstone-baseline-path",
+        "production-legacy-v6-input",
+        "archive-specific-value-semantics",
+        "evidence-capability-removal",
+        "evidence-same-diff-swap",
+        "tombstone-baseline-double-slash",
+        "tombstone-baseline-dot-segment",
+        "tombstone-baseline-normalized-duplicate",
+        "renamed-tombstone-policy-noncanonical-baseline",
+    }
+)
+
+RAW_JSON_MUTATIONS = frozenset({"duplicate-json-root-key", "duplicate-json-nested-key"})
+
 
 def _include_path_argument(raw: str) -> PurePosixPath:
     if raw.startswith("./"):
@@ -503,8 +728,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _load_json(path: Path) -> Any:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+    return load_json_file(path)
 
 
 def _fixture_body_contract() -> dict[str, Any]:
@@ -517,9 +741,7 @@ def _fixture_body_contract() -> dict[str, Any]:
             "Acceptance criterion",
             "Downstream owner",
         ],
-        "identifierColumns": [
-            {"column": "Requirement ID", "kind": "requirement"}
-        ],
+        "identifierColumns": [{"column": "Requirement ID", "kind": "requirement"}],
         "sourceLinkColumn": None,
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
@@ -553,11 +775,190 @@ def _fixture_lineage_profile(
     }
 
 
+def _fixture_standard_value_keys() -> list[dict[str, Any]]:
+    return [
+        {
+            "key": "title",
+            "kind": "string",
+            "nullable": False,
+            "constant": None,
+            "enum": None,
+            "pattern": r"\S",
+            "conditional": {
+                "key": "owner",
+                "operator": "equals",
+                "value": "platform",
+                "effect": "required",
+            },
+        },
+        {
+            "key": "type",
+            "kind": "string",
+            "nullable": False,
+            "constant": {"source": "profile-id", "value": None},
+            "enum": None,
+            "pattern": None,
+            "conditional": None,
+        },
+        {
+            "key": "status",
+            "kind": "string",
+            "nullable": False,
+            "constant": None,
+            "enum": {"source": "status-domain", "values": []},
+            "pattern": None,
+            "conditional": None,
+        },
+        {
+            "key": "owner",
+            "kind": "string",
+            "nullable": False,
+            "constant": None,
+            "enum": None,
+            "pattern": r"^[a-z][a-z0-9-]*$",
+            "conditional": None,
+        },
+        {
+            "key": "updated",
+            "kind": "date",
+            "nullable": False,
+            "constant": None,
+            "enum": None,
+            "pattern": r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": None,
+        },
+    ]
+
+
+def _fixture_document_contracts() -> dict[str, Any]:
+    authored = [
+        "governance/reference",
+        "content/reference",
+        "sdlc/prd",
+        "sdlc/ard",
+        "sdlc/adr",
+        "sdlc/spec",
+    ]
+    snapshot = [
+        "test/sample",
+        "readme/collection-index",
+        "readme/snapshot-pack",
+        "template/sdlc/prd",
+    ]
+    return {
+        "valueContracts": [
+            {
+                "id": "authored-standard",
+                "profileIds": list(authored),
+                "keys": _fixture_standard_value_keys(),
+            },
+            {"id": "frontmatter-free", "profileIds": snapshot[:-1], "keys": []},
+        ],
+        "roleDecisions": [
+            {
+                "profileIds": ["sdlc/prd"],
+                "role": "product-requirement",
+                "sourceProfileId": None,
+                "relationshipSection": "Traceability",
+                "bodyRequirement": "body-contract",
+            },
+            {
+                "profileIds": [
+                    "governance/reference",
+                    "content/reference",
+                    "sdlc/ard",
+                    "sdlc/adr",
+                    "sdlc/spec",
+                ],
+                "role": "fixture-authored",
+                "sourceProfileId": None,
+                "relationshipSection": None,
+                "bodyRequirement": "none",
+            },
+            {
+                "profileIds": snapshot[:-1],
+                "role": "fixture-native",
+                "sourceProfileId": None,
+                "relationshipSection": None,
+                "bodyRequirement": "none",
+            },
+        ],
+        "admissionPolicies": [
+            {
+                "id": "authored-draft-only",
+                "profileIds": list(authored),
+                "create": {"mode": "states", "states": ["draft"]},
+                "delete": "deny",
+                "rename": "deny",
+                "profileChange": "deny",
+                "baselinePaths": [],
+            },
+            {
+                "id": "snapshot-only",
+                "profileIds": snapshot,
+                "create": {"mode": "snapshot-only", "states": []},
+                "delete": "deny",
+                "rename": "deny",
+                "profileChange": "deny",
+                "baselinePaths": [],
+            },
+        ],
+        "lifecycleContracts": [
+            {
+                "id": "fixture-prd",
+                "profileIds": ["sdlc/prd"],
+                "terminalStates": ["active"],
+                "edges": [
+                    {
+                        "from": "draft",
+                        "to": "active",
+                        "predicateId": "activate-self-body",
+                    }
+                ],
+            },
+            {
+                "id": "fixture-non-lifecycle",
+                "profileIds": [
+                    *snapshot,
+                    "governance/reference",
+                    "content/reference",
+                    "sdlc/ard",
+                    "sdlc/adr",
+                    "sdlc/spec",
+                ],
+                "terminalStates": [],
+                "edges": [],
+            },
+        ],
+        "evidencePredicates": [
+            {
+                "id": "activate-self-body",
+                "profileEdges": [
+                    {"profileId": "sdlc/prd", "from": "draft", "to": "active"}
+                ],
+                "evidence": [
+                    {
+                        "profileIds": ["$self"],
+                        "states": ["active"],
+                        "minimum": 1,
+                        "maximum": 1,
+                    }
+                ],
+                "relationship": "self",
+                "cardinality": {"minimum": 1, "maximum": 1},
+                "sameDiff": "self-status-and-body",
+                "bodyRequirement": "body-contract",
+                "capabilities": ["same-diff"],
+            }
+        ],
+    }
+
+
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-6.schema.json",
-        "schemaVersion": 6,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-7.schema.json",
+        "schemaVersion": 7,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -570,8 +971,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     {
                         "kind": "regex",
                         "value": (
-                            "^tests/fixtures/document-contracts/"
-                            "self-test-.+\\.md$"
+                            "^tests/fixtures/document-contracts/self-test-.+\\.md$"
                         ),
                     },
                 ],
@@ -773,6 +1173,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 },
             ],
         },
+        "documentContracts": _fixture_document_contracts(),
         "programLineage": {
             "programs": [
                 {
@@ -829,9 +1230,7 @@ def _convert_legacy_v5_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
     ):
         raise ValueError("not the closed legacy-v5 migration fixture")
     converted = copy.deepcopy(raw_registry)
-    converted["$id"] = (
-        "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
-    )
+    converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
     converted["schemaVersion"] = 6
     tranches = []
     follow_ups = []
@@ -870,21 +1269,44 @@ def _convert_legacy_v5_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
     return converted
 
 
+def _convert_legacy_v6_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
+    """Convert the one private v6 self-test shape; never used by production."""
+
+    if (
+        raw_registry.get("schemaVersion") != 6
+        or raw_registry.get("$id")
+        != "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
+        or "documentContracts" in raw_registry
+    ):
+        raise ValueError("not the closed legacy-v6 migration fixture")
+    converted = copy.deepcopy(raw_registry)
+    converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
+    converted["schemaVersion"] = 7
+    converted["documentContracts"] = _fixture_document_contracts()
+    return converted
+
+
 def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     profile = next(
-        profile
-        for profile in raw_registry["profiles"]
-        if any(
-            route.get("kind") == "exact"
-            and route.get("value") == SAMPLE_PATH.as_posix()
-            for route in profile["routes"]
-        )
+        (
+            profile
+            for profile in raw_registry["profiles"]
+            if any(
+                route.get("kind") == "exact"
+                and route.get("value") == SAMPLE_PATH.as_posix()
+                for route in profile["routes"]
+            )
+        ),
+        raw_registry["profiles"][0],
     )
     route = next(
-        route
-        for route in profile["routes"]
-        if route.get("kind") == "exact"
-        and route.get("value") == SAMPLE_PATH.as_posix()
+        (
+            route
+            for route in profile["routes"]
+            if route.get("kind") == "exact"
+            and route.get("value") == SAMPLE_PATH.as_posix()
+        ),
+        profile["routes"][0],
     )
     if mutation == "none":
         return
@@ -943,21 +1365,13 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "unknown-body-source-profile":
         prd_profile["bodyContract"]["sourceLinkColumn"] = "Requirement ID"
-        prd_profile["bodyContract"]["allowedSourceProfileIds"] = [
-            "missing/source"
-        ]
+        prd_profile["bodyContract"]["allowedSourceProfileIds"] = ["missing/source"]
         template_profile["bodyContract"]["sourceLinkColumn"] = "Requirement ID"
-        template_profile["bodyContract"]["allowedSourceProfileIds"] = [
-            "missing/source"
-        ]
+        template_profile["bodyContract"]["allowedSourceProfileIds"] = ["missing/source"]
         return
     if mutation == "unknown-body-target-profile":
-        prd_profile["bodyContract"]["allowedTargetProfileIds"] = [
-            "missing/target"
-        ]
-        template_profile["bodyContract"]["allowedTargetProfileIds"] = [
-            "missing/target"
-        ]
+        prd_profile["bodyContract"]["allowedTargetProfileIds"] = ["missing/target"]
+        template_profile["bodyContract"]["allowedTargetProfileIds"] = ["missing/target"]
         return
     if mutation == "drift-template-body-contract":
         template_profile["bodyContract"]["requiredColumns"].append("Drift")
@@ -979,14 +1393,36 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         ]
         native_profile["template"] = missing_form.as_posix()
         raw_registry["profiles"].append(native_profile)
+        for family in (
+            "valueContracts",
+            "roleDecisions",
+            "admissionPolicies",
+            "lifecycleContracts",
+        ):
+            group = next(
+                item
+                for item in raw_registry["documentContracts"][family]
+                if profile["id"] in item["profileIds"]
+            )
+            group["profileIds"].append(native_profile["id"])
         return
     if mutation == "add-overlapping-native-route":
         native_profile = copy.deepcopy(profile)
         native_profile["id"] = f"{profile['id']}-native-route-overlap"
-        native_profile["routes"] = [
-            {"kind": "exact", "value": SAMPLE_PATH.as_posix()}
-        ]
+        native_profile["routes"] = [{"kind": "exact", "value": SAMPLE_PATH.as_posix()}]
         raw_registry["profiles"].append(native_profile)
+        for family in (
+            "valueContracts",
+            "roleDecisions",
+            "admissionPolicies",
+            "lifecycleContracts",
+        ):
+            group = next(
+                item
+                for item in raw_registry["documentContracts"][family]
+                if profile["id"] in item["profileIds"]
+            )
+            group["profileIds"].append(native_profile["id"])
         return
     if mutation == "change-baseline-sha":
         raw_registry["baseline"]["sha"] = "0" * 40
@@ -1048,6 +1484,23 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             if candidate["id"] == "governance/reference"
         )
         governance_profile["id"] = "test/wrong-governance-profile"
+        for family in (
+            "valueContracts",
+            "roleDecisions",
+            "admissionPolicies",
+            "lifecycleContracts",
+        ):
+            group = next(
+                item
+                for item in raw_registry["documentContracts"][family]
+                if "governance/reference" in item["profileIds"]
+            )
+            group["profileIds"] = [
+                "test/wrong-governance-profile"
+                if profile_id == "governance/reference"
+                else profile_id
+                for profile_id in group["profileIds"]
+            ]
         return
     if mutation == "non-authored-governance-current-owner":
         governance_profile = next(
@@ -1056,6 +1509,18 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             if candidate["id"] == "governance/reference"
         )
         governance_profile["mode"] = "classification-only"
+        authored_admission = next(
+            item
+            for item in raw_registry["documentContracts"]["admissionPolicies"]
+            if "governance/reference" in item["profileIds"]
+        )
+        snapshot_admission = next(
+            item
+            for item in raw_registry["documentContracts"]["admissionPolicies"]
+            if item["id"] == "snapshot-only"
+        )
+        authored_admission["profileIds"].remove("governance/reference")
+        snapshot_admission["profileIds"].append("governance/reference")
         return
     if mutation == "reverse-governance-current-owner-states":
         raw_registry["governanceCurrentOwners"]["allowedStates"].reverse()
@@ -1136,7 +1601,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "wrong-profile-reference-member":
         target = REFERENCE_MEMBER_SAMPLE_PATHS[1]
         content_profile = next(
-            item for item in raw_registry["profiles"] if item["id"] == "content/reference"
+            item
+            for item in raw_registry["profiles"]
+            if item["id"] == "content/reference"
         )
         content_profile["routes"] = [
             route for route in content_profile["routes"] if route["value"] != target
@@ -1146,7 +1613,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "wrong-profile-reference-pack-readme":
         target = REFERENCE_PACK_SAMPLE_PATHS[1]
         pack_profile = next(
-            item for item in raw_registry["profiles"] if item["id"] == "readme/snapshot-pack"
+            item
+            for item in raw_registry["profiles"]
+            if item["id"] == "readme/snapshot-pack"
         )
         pack_profile["routes"] = [
             route for route in pack_profile["routes"] if route["value"] != target
@@ -1156,7 +1625,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "wrong-profile-reference-collection-readme":
         target = REFERENCE_COLLECTION_SAMPLE_PATHS[1]
         collection_profile = next(
-            item for item in raw_registry["profiles"] if item["id"] == "readme/collection-index"
+            item
+            for item in raw_registry["profiles"]
+            if item["id"] == "readme/collection-index"
         )
         collection_profile["routes"] = [
             route for route in collection_profile["routes"] if route["value"] != target
@@ -1259,6 +1730,194 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             },
         ]
         return
+    contracts = raw_registry.get("documentContracts")
+    if mutation == "unknown-document-contract-field":
+        contracts["expression"] = "allow()"
+        return
+    if mutation == "missing-value-contract":
+        group = next(
+            item
+            for item in contracts["valueContracts"]
+            if "sdlc/prd" in item["profileIds"]
+        )
+        group["profileIds"].remove("sdlc/prd")
+        return
+    value_group = next(
+        item for item in contracts["valueContracts"] if "sdlc/prd" in item["profileIds"]
+    )
+    value_keys = {item["key"]: item for item in value_group["keys"]}
+    if mutation == "invalid-value-kind":
+        value_keys["title"]["kind"] = "yaml"
+        return
+    if mutation == "invalid-value-enum":
+        value_keys["status"]["enum"]["values"] = ["draft"]
+        return
+    if mutation == "invalid-value-constant":
+        value_keys["type"]["constant"]["value"] = "sdlc/wrong"
+        return
+    if mutation == "invalid-value-pattern":
+        value_keys["title"]["pattern"] = "("
+        return
+    if mutation == "invalid-value-nullability":
+        value_keys["title"]["nullable"] = "sometimes"
+        return
+    if mutation == "invalid-value-condition":
+        value_keys["title"]["conditional"] = {
+            "key": "missing",
+            "operator": "equals",
+            "value": "x",
+            "effect": "required",
+        }
+        return
+    role = next(
+        item for item in contracts["roleDecisions"] if "sdlc/prd" in item["profileIds"]
+    )
+    if mutation == "missing-role-decision":
+        role["profileIds"].remove("sdlc/prd")
+        return
+    if mutation == "invalid-relationship-section":
+        role["relationshipSection"] = "Related Documents"
+        return
+    if mutation == "invalid-body-requirement":
+        role["bodyRequirement"] = "heading-set"
+        return
+    admission = next(
+        item
+        for item in contracts["admissionPolicies"]
+        if "sdlc/prd" in item["profileIds"]
+    )
+    if mutation == "invalid-create-admission":
+        admission["create"]["states"] = ["active"]
+        return
+    if mutation == "allow-delete":
+        admission["delete"] = "allow"
+        return
+    if mutation == "allow-rename":
+        admission["rename"] = "allow"
+        return
+    if mutation == "allow-profile-change":
+        admission["profileChange"] = "allow"
+        return
+    if mutation == "invalid-paired-admission":
+        paired = next(
+            item
+            for item in contracts["admissionPolicies"]
+            if item["id"] == "execution-reciprocal-pair"
+        )
+        admission["profileIds"].remove("sdlc/prd")
+        paired["profileIds"].append("sdlc/prd")
+        return
+    if mutation == "baseline-path-on-standard":
+        admission["baselinePaths"].append("docs/example.md")
+        return
+    lifecycle = next(
+        item
+        for item in contracts["lifecycleContracts"]
+        if "sdlc/prd" in item["profileIds"]
+    )
+    if mutation == "duplicate-lifecycle-edge":
+        lifecycle["edges"].append(copy.deepcopy(lifecycle["edges"][0]))
+        return
+    if mutation == "invalid-lifecycle-state":
+        lifecycle["edges"][0]["from"] = ""
+        return
+    if mutation in {"terminal-outgoing-edge", "archived-lifecycle-edge"}:
+        edge = (
+            {"from": "done", "to": "active", "predicateId": "activate-self-body"}
+            if mutation == "terminal-outgoing-edge"
+            else {
+                "from": "active",
+                "to": "archived",
+                "predicateId": "activate-self-body",
+            }
+        )
+        lifecycle["edges"].append(edge)
+        predicate = next(
+            item
+            for item in contracts["evidencePredicates"]
+            if item["id"] == "activate-self-body"
+        )
+        predicate["profileEdges"].append(
+            {"profileId": "sdlc/prd", "from": edge["from"], "to": edge["to"]}
+        )
+        return
+    if mutation == "missing-terminal-state":
+        lifecycle["terminalStates"] = []
+        return
+    if mutation == "archived-terminal-state":
+        lifecycle["terminalStates"].append("archived")
+        return
+    predicate = next(
+        item
+        for item in contracts["evidencePredicates"]
+        if item["id"] == "activate-self-body"
+    )
+    if mutation == "unknown-evidence-profile":
+        predicate["evidence"][0]["profileIds"] = ["sdlc/unknown"]
+        return
+    if mutation == "unknown-evidence-state":
+        predicate["evidence"][0]["states"] = ["accepted"]
+        return
+    if mutation == "executable-evidence-predicate":
+        predicate["expression"] = "document.status == 'active'"
+        return
+    if mutation == "missing-edge-predicate-case":
+        predicate["profileEdges"].pop()
+        return
+    if mutation == "duplicate-edge-predicate-case":
+        predicate["profileEdges"].append(copy.deepcopy(predicate["profileEdges"][0]))
+        return
+    if mutation == "new-tombstone-baseline-path":
+        tombstone = next(
+            item
+            for item in contracts["admissionPolicies"]
+            if "content/archive-tombstone" in item["profileIds"]
+        )
+        tombstone["baselinePaths"].append("docs/98.archive/new-tombstone.md")
+        return
+    if mutation == "production-legacy-v6-input":
+        raw_registry["$id"] = (
+            "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
+        )
+        raw_registry["schemaVersion"] = 6
+        del raw_registry["documentContracts"]
+        return
+    if mutation == "archive-specific-value-semantics":
+        archive_values = next(
+            item
+            for item in contracts["valueContracts"]
+            if item["id"] == "archive-tombstone-compatibility"
+        )
+        archive_reason = next(
+            item for item in archive_values["keys"] if item["key"] == "archive_reason"
+        )
+        archive_reason["constant"] = {"source": "literal", "value": "superseded"}
+        return
+    if mutation == "evidence-capability-removal":
+        predicate["capabilities"].remove("same-diff")
+        return
+    if mutation == "evidence-same-diff-swap":
+        predicate["sameDiff"] = "pair-status-changed"
+        return
+    tombstone = next(
+        item
+        for item in contracts["admissionPolicies"]
+        if "content/archive-tombstone" in item["profileIds"]
+    )
+    first_path = tombstone["baselinePaths"][0]
+    if mutation == "tombstone-baseline-double-slash":
+        tombstone["baselinePaths"][0] = first_path.replace("/", "//", 1)
+        return
+    if mutation == "tombstone-baseline-dot-segment":
+        tombstone["baselinePaths"][0] = first_path.replace("/", "/./", 1)
+        return
+    if mutation == "tombstone-baseline-normalized-duplicate":
+        tombstone["baselinePaths"].insert(1, first_path.replace("/", "//", 1))
+        return
+    if mutation == "renamed-tombstone-policy-noncanonical-baseline":
+        tombstone["id"] = "renamed-tombstone-baseline-only"
+        tombstone["baselinePaths"][0] = first_path.replace("/", "//", 1)
+        return
     raise ValueError(f"unsupported fixture mutation: {mutation}")
 
 
@@ -1283,7 +1942,9 @@ def _assert_inventory_safety(root: Path) -> None:
         relative = PurePosixPath(candidate.relative_to(root).as_posix())
         inventory = enumerate_target_markdown(root, include_paths=(relative,))
         if relative not in inventory.current_paths:
-            raise AssertionError("explicit untracked Markdown include was not inventoried")
+            raise AssertionError(
+                "explicit untracked Markdown include was not inventoried"
+            )
     finally:
         candidate.unlink(missing_ok=True)
 
@@ -1357,6 +2018,765 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     )
     if actual != expected:
         raise AssertionError("production program-lineage typed projection differs")
+
+
+def _assert_document_contract_projection(registry: Registry) -> None:
+    if registry.schema_version != 7 or len(registry.profiles) != 64:
+        raise AssertionError("production v7 profile projection differs")
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    expected_predicate_order = (
+        "activate-self-body",
+        "activate-heading-profile",
+        "activate-execution-pair",
+        "complete-product-program",
+        "accept-architecture",
+        "accept-decision-self",
+        "complete-specification",
+        "complete-execution-pair",
+        "accept-operated-document",
+        "terminate-reviewed-reference",
+    )
+    if (
+        tuple(predicate.predicate_id for predicate in registry.evidence_predicates)
+        != expected_predicate_order
+    ):
+        raise AssertionError("production evidence-predicate order differs")
+
+    def edges(
+        profile_ids: tuple[str, ...], from_state: str, to_state: str
+    ) -> set[tuple[str, str, str]]:
+        return {(profile_id, from_state, to_state) for profile_id in profile_ids}
+
+    specifications = (
+        "sdlc/spec",
+        "sdlc/api-spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests",
+    )
+    operations = (
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+    )
+    references = (
+        "content/reference",
+        "governance/reference",
+        "governance/memory",
+        "governance/template-support",
+    )
+    expected_edges = {
+        "activate-self-body": edges(
+            ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
+            "draft",
+            "active",
+        ),
+        "activate-heading-profile": edges(references, "draft", "active"),
+        "activate-execution-pair": edges(("sdlc/plan", "sdlc/task"), "draft", "active"),
+        "complete-product-program": edges(("sdlc/prd",), "active", "done"),
+        "accept-architecture": edges(("sdlc/ard",), "active", "accepted"),
+        "accept-decision-self": edges(("sdlc/adr",), "active", "accepted"),
+        "complete-specification": edges(specifications, "active", "done"),
+        "complete-execution-pair": edges(("sdlc/plan", "sdlc/task"), "active", "done"),
+        "accept-operated-document": edges(operations, "active", "accepted"),
+        "terminate-reviewed-reference": (
+            edges(references, "active", "accepted")
+            | edges(references, "active", "done")
+        ),
+    }
+    actual_edges = {
+        predicate.predicate_id: {
+            (edge.profile_id, edge.from_state, edge.to_state)
+            for edge in predicate.profile_edges
+        }
+        for predicate in registry.evidence_predicates
+    }
+    if actual_edges != expected_edges:
+        raise AssertionError("production exact edge/predicate projection differs")
+
+    standard_sources = (
+        "sdlc/prd",
+        "sdlc/ard",
+        "sdlc/adr",
+        "sdlc/spec",
+        "sdlc/api-spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests",
+        "sdlc/plan",
+        "sdlc/task",
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+        "content/reference",
+        "governance/reference",
+        "governance/memory",
+        "governance/template-support",
+    )
+    standard_templates = (
+        "template/content/reference",
+        "template/sdlc/adr",
+        "template/sdlc/ard",
+        "template/sdlc/plan",
+        "template/sdlc/task",
+        "template/sdlc/guide",
+        "template/sdlc/incident",
+        "template/sdlc/policy",
+        "template/sdlc/postmortem",
+        "template/sdlc/runbook",
+        "template/sdlc/prd",
+        "template/sdlc/agent-design",
+        "template/sdlc/api-spec",
+        "template/sdlc/data-model",
+        "template/sdlc/spec",
+        "template/sdlc/tests",
+        "template/governance/memory",
+        "template/governance/reference",
+        "template/governance/template-support",
+    )
+    empty_sources = (
+        "governance/progress-ledger",
+        "readme/repository",
+        "readme/stage-index",
+        "readme/collection-index",
+        "readme/implementation",
+        "readme/snapshot-pack",
+        "readme/workspace-staging",
+        "exception/root-provider-shim",
+        "exception/local-agent-asset",
+        "exception/repository-runtime-baseline",
+        "exception/provider-native-metadata",
+        "exception/github-native-control",
+        "exception/native-contract-openapi",
+        "exception/native-contract-graphql",
+        "exception/native-contract-protobuf",
+        "exception/generated-record",
+        "exception/program-non-target",
+    )
+    empty_templates = (
+        "template/readme/repository",
+        "template/readme/stage-index",
+        "template/readme/collection-index",
+        "template/readme/implementation",
+        "template/readme/snapshot-pack",
+        "template/readme/workspace-staging",
+        "governance/progress-entry",
+    )
+
+    def key_signature(item: Any) -> tuple[Any, ...]:
+        return (
+            item.key,
+            item.kind,
+            item.nullable,
+            (
+                None
+                if item.constant is None
+                else (item.constant.source, item.constant.value)
+            ),
+            (None if item.enum is None else (item.enum.source, item.enum.values)),
+            item.pattern,
+            (
+                None
+                if item.conditional is None
+                else (
+                    item.conditional.key,
+                    item.conditional.operator,
+                    item.conditional.value,
+                    item.conditional.effect,
+                )
+            ),
+        )
+
+    standard_keys = (
+        ("title", "string", False, None, None, r"\S", None),
+        ("type", "string", False, ("profile-id", None), None, None, None),
+        (
+            "status",
+            "string",
+            False,
+            None,
+            ("status-domain", ()),
+            None,
+            None,
+        ),
+        ("owner", "string", False, None, None, r"^[a-z][a-z0-9-]*$", None),
+        (
+            "updated",
+            "date",
+            False,
+            None,
+            None,
+            r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            None,
+        ),
+    )
+    archive_keys = (
+        *standard_keys[:2],
+        ("status", "string", False, ("literal", "archived"), None, None, None),
+        *standard_keys[3:],
+        ("original_path", "string", False, None, None, r"^[^/\\].+", None),
+        (
+            "archived_on",
+            "date",
+            False,
+            None,
+            None,
+            r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            None,
+        ),
+        ("archive_reason", "string", False, None, None, r"\S", None),
+        ("replacement", "string", False, None, None, r"^[^/\\].+", None),
+    )
+    expected_value_projection: dict[str, tuple[Any, ...]] = {}
+    for profile_id in (*standard_sources, *standard_templates):
+        expected_value_projection[profile_id] = (
+            "authored-standard",
+            standard_sources,
+            standard_keys,
+        )
+    for profile_id in (
+        "content/archive-tombstone",
+        "template/content/archive-tombstone",
+    ):
+        expected_value_projection[profile_id] = (
+            "archive-tombstone-compatibility",
+            ("content/archive-tombstone",),
+            archive_keys,
+        )
+    for profile_id in (*empty_sources, *empty_templates):
+        expected_value_projection[profile_id] = (
+            "frontmatter-free-or-native",
+            empty_sources,
+            (),
+        )
+    actual_value_projection = {
+        profile_id: (
+            profile.value_contract.contract_id,
+            profile.value_contract.profile_ids,
+            tuple(key_signature(item) for item in profile.value_contract.keys),
+        )
+        for profile_id, profile in profiles.items()
+    }
+    if actual_value_projection != expected_value_projection:
+        raise AssertionError("production complete value projection differs")
+
+    expected_roles: dict[str, tuple[str, str | None, str | None, str]] = {
+        "sdlc/prd": ("product-requirement", None, "Traceability", "body-contract"),
+        "sdlc/ard": ("architecture-requirement", None, "Traceability", "body-contract"),
+        "sdlc/adr": ("architecture-decision", None, "Traceability", "body-contract"),
+        "sdlc/spec": (
+            "implementation-specification",
+            None,
+            "Traceability",
+            "body-contract",
+        ),
+        "sdlc/api-spec": ("api-specification", None, "Traceability", "body-contract"),
+        "sdlc/agent-design": ("agent-design", None, "Traceability", "body-contract"),
+        "sdlc/data-model": ("data-model", None, "Traceability", "body-contract"),
+        "sdlc/tests": ("test-contract", None, "Traceability", "body-contract"),
+        "sdlc/plan": ("execution-plan", None, "Traceability", "body-contract"),
+        "sdlc/task": ("execution-task", None, "Traceability", "body-contract"),
+        "sdlc/guide": ("operator-guide", None, "Traceability", "body-contract"),
+        "sdlc/policy": ("control-policy", None, "Traceability", "body-contract"),
+        "sdlc/runbook": ("operator-runbook", None, "Traceability", "body-contract"),
+        "sdlc/incident": (
+            "incident-fact-record",
+            None,
+            "Traceability",
+            "body-contract",
+        ),
+        "sdlc/postmortem": (
+            "post-incident-analysis",
+            None,
+            "Traceability",
+            "body-contract",
+        ),
+        "content/reference": ("reference", None, "Related Documents", "heading-set"),
+        "content/archive-tombstone": (
+            "archive-tombstone-compatibility",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "governance/reference": (
+            "governance-reference",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "governance/memory": (
+            "governance-memory",
+            None,
+            "Related Progress",
+            "heading-set",
+        ),
+        "governance/template-support": (
+            "template-support",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "governance/progress-ledger": ("progress-ledger", None, None, "none"),
+        "readme/repository": (
+            "repository-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "readme/stage-index": (
+            "stage-index-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "readme/collection-index": (
+            "collection-index-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "readme/implementation": (
+            "implementation-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "readme/snapshot-pack": (
+            "snapshot-pack-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+        "readme/workspace-staging": (
+            "workspace-staging-readme",
+            None,
+            "Related Documents",
+            "heading-set",
+        ),
+    }
+    for profile_id in (
+        "exception/root-provider-shim",
+        "exception/local-agent-asset",
+        "exception/repository-runtime-baseline",
+        "exception/provider-native-metadata",
+        "exception/github-native-control",
+        "exception/generated-record",
+        "exception/program-non-target",
+    ):
+        expected_roles[profile_id] = ("native-repository-surface", None, None, "none")
+    for profile_id in (
+        "exception/native-contract-openapi",
+        "exception/native-contract-graphql",
+        "exception/native-contract-protobuf",
+    ):
+        expected_roles[profile_id] = ("native-machine-contract", None, None, "none")
+    template_sources = {
+        "template/content/archive-tombstone": "content/archive-tombstone",
+        "template/governance/memory": "governance/memory",
+        "template/readme/repository": "readme/repository",
+        "template/readme/stage-index": "readme/stage-index",
+        "template/readme/collection-index": "readme/collection-index",
+        "template/readme/implementation": "readme/implementation",
+        "template/readme/snapshot-pack": "readme/snapshot-pack",
+        "template/readme/workspace-staging": "readme/workspace-staging",
+        "template/content/reference": "content/reference",
+        "template/sdlc/adr": "sdlc/adr",
+        "template/sdlc/ard": "sdlc/ard",
+        "template/sdlc/plan": "sdlc/plan",
+        "template/sdlc/task": "sdlc/task",
+        "template/sdlc/guide": "sdlc/guide",
+        "template/sdlc/incident": "sdlc/incident",
+        "template/sdlc/policy": "sdlc/policy",
+        "template/sdlc/postmortem": "sdlc/postmortem",
+        "template/sdlc/runbook": "sdlc/runbook",
+        "template/sdlc/prd": "sdlc/prd",
+        "template/sdlc/agent-design": "sdlc/agent-design",
+        "template/sdlc/api-spec": "sdlc/api-spec",
+        "template/sdlc/data-model": "sdlc/data-model",
+        "template/sdlc/spec": "sdlc/spec",
+        "template/sdlc/tests": "sdlc/tests",
+        "governance/progress-entry": "governance/progress-ledger",
+        "template/governance/reference": "governance/reference",
+        "template/governance/template-support": "governance/template-support",
+    }
+    for template_id, source_id in template_sources.items():
+        role, _, relationship, body_requirement = expected_roles[source_id]
+        expected_roles[template_id] = (
+            role,
+            source_id,
+            relationship,
+            body_requirement,
+        )
+    actual_roles = {
+        profile_id: (
+            profile.role_decision.role,
+            profile.role_decision.source_profile_id,
+            profile.role_decision.relationship_section,
+            profile.role_decision.body_requirement,
+        )
+        for profile_id, profile in profiles.items()
+    }
+    if actual_roles != expected_roles or len(expected_roles) != 64:
+        raise AssertionError("production complete role/source projection differs")
+
+    authored_draft = tuple(
+        profile_id
+        for profile_id in standard_sources
+        if profile_id not in {"sdlc/plan", "sdlc/task"}
+    )
+    snapshot_profiles = (
+        "governance/progress-ledger",
+        "readme/repository",
+        "readme/stage-index",
+        "readme/collection-index",
+        "readme/implementation",
+        "readme/snapshot-pack",
+        "readme/workspace-staging",
+        "exception/root-provider-shim",
+        "exception/local-agent-asset",
+        "exception/repository-runtime-baseline",
+        "exception/provider-native-metadata",
+        "exception/github-native-control",
+        "exception/native-contract-openapi",
+        "exception/native-contract-graphql",
+        "exception/native-contract-protobuf",
+        "exception/generated-record",
+        "exception/program-non-target",
+        "template/content/archive-tombstone",
+        "template/governance/memory",
+        "template/readme/repository",
+        "template/readme/stage-index",
+        "template/readme/collection-index",
+        "template/readme/implementation",
+        "template/readme/snapshot-pack",
+        "template/readme/workspace-staging",
+        "template/content/reference",
+        "template/sdlc/adr",
+        "template/sdlc/ard",
+        "template/sdlc/plan",
+        "template/sdlc/task",
+        "template/sdlc/guide",
+        "template/sdlc/incident",
+        "template/sdlc/policy",
+        "template/sdlc/postmortem",
+        "template/sdlc/runbook",
+        "template/sdlc/prd",
+        "template/sdlc/agent-design",
+        "template/sdlc/api-spec",
+        "template/sdlc/data-model",
+        "template/sdlc/spec",
+        "template/sdlc/tests",
+        "governance/progress-entry",
+        "template/governance/reference",
+        "template/governance/template-support",
+    )
+
+    def admission_signature(
+        policy_id: str,
+        group: tuple[str, ...],
+        mode: str,
+        states: tuple[str, ...],
+        baseline: tuple[str, ...] = (),
+    ) -> tuple[Any, ...]:
+        return (policy_id, group, mode, states, "deny", "deny", "deny", baseline)
+
+    expected_admissions: dict[str, tuple[Any, ...]] = {}
+    for profile_id in authored_draft:
+        expected_admissions[profile_id] = admission_signature(
+            "authored-draft-only", authored_draft, "states", ("draft",)
+        )
+    for profile_id in ("sdlc/plan", "sdlc/task"):
+        expected_admissions[profile_id] = admission_signature(
+            "execution-reciprocal-pair",
+            ("sdlc/plan", "sdlc/task"),
+            "paired",
+            ("draft", "active"),
+        )
+    expected_admissions["content/archive-tombstone"] = admission_signature(
+        "tombstone-baseline-only",
+        ("content/archive-tombstone",),
+        "baseline-only",
+        (),
+        EXPECTED_TOMBSTONE_BASELINE_PATHS,
+    )
+    for profile_id in snapshot_profiles:
+        expected_admissions[profile_id] = admission_signature(
+            "snapshot-only", snapshot_profiles, "snapshot-only", ()
+        )
+    actual_admissions = {
+        profile_id: (
+            profile.admission.policy_id,
+            profile.admission.profile_ids,
+            profile.admission.create.mode,
+            profile.admission.create.states,
+            profile.admission.delete,
+            profile.admission.rename,
+            profile.admission.profile_change,
+            tuple(path.as_posix() for path in profile.admission.baseline_paths),
+        )
+        for profile_id, profile in profiles.items()
+    }
+    if actual_admissions != expected_admissions or len(expected_admissions) != 64:
+        raise AssertionError("production complete admission projection differs")
+
+    lifecycle_groups = (
+        (
+            "product",
+            ("sdlc/prd",),
+            ("done",),
+            (
+                ("draft", "active", "activate-self-body"),
+                ("active", "done", "complete-product-program"),
+            ),
+        ),
+        (
+            "architecture-requirement",
+            ("sdlc/ard",),
+            ("accepted",),
+            (
+                ("draft", "active", "activate-self-body"),
+                ("active", "accepted", "accept-architecture"),
+            ),
+        ),
+        (
+            "architecture-decision",
+            ("sdlc/adr",),
+            ("accepted",),
+            (
+                ("draft", "active", "activate-self-body"),
+                ("active", "accepted", "accept-decision-self"),
+            ),
+        ),
+        (
+            "specification",
+            specifications,
+            ("done",),
+            (
+                ("draft", "active", "activate-self-body"),
+                ("active", "done", "complete-specification"),
+            ),
+        ),
+        (
+            "execution",
+            ("sdlc/plan", "sdlc/task"),
+            ("done",),
+            (
+                ("draft", "active", "activate-execution-pair"),
+                ("active", "done", "complete-execution-pair"),
+            ),
+        ),
+        (
+            "operations",
+            operations,
+            ("accepted",),
+            (
+                ("draft", "active", "activate-self-body"),
+                ("active", "accepted", "accept-operated-document"),
+            ),
+        ),
+        (
+            "reference-governance",
+            references,
+            ("accepted", "done"),
+            (
+                ("draft", "active", "activate-heading-profile"),
+                ("active", "accepted", "terminate-reviewed-reference"),
+                ("active", "done", "terminate-reviewed-reference"),
+            ),
+        ),
+        ("tombstone-compatibility", ("content/archive-tombstone",), ("archived",), ()),
+        ("non-lifecycle", snapshot_profiles, (), ()),
+    )
+    expected_lifecycles: dict[str, tuple[Any, ...]] = {}
+    for contract_id, group, terminals, lifecycle_edges in lifecycle_groups:
+        signature = (contract_id, group, terminals, lifecycle_edges)
+        for profile_id in group:
+            expected_lifecycles[profile_id] = signature
+    actual_lifecycles = {
+        profile_id: (
+            profile.lifecycle.contract_id,
+            profile.lifecycle.profile_ids,
+            profile.lifecycle.terminal_states,
+            tuple(
+                (edge.from_state, edge.to_state, edge.predicate_id)
+                for edge in profile.lifecycle.edges
+            ),
+        )
+        for profile_id, profile in profiles.items()
+    }
+    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 64:
+        raise AssertionError("production complete lifecycle projection differs")
+
+    def edge_rows(
+        profile_ids: tuple[str, ...], from_state: str, to_state: str
+    ) -> tuple[tuple[str, str, str], ...]:
+        return tuple((profile_id, from_state, to_state) for profile_id in profile_ids)
+
+    expected_predicates = {
+        "activate-self-body": (
+            edge_rows(
+                ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
+                "draft",
+                "active",
+            ),
+            (("$self",), ("active",), 1, 1),
+            "self",
+            (1, 1),
+            "self-status-and-body",
+            "body-contract",
+            ("same-diff",),
+        ),
+        "activate-heading-profile": (
+            edge_rows(references, "draft", "active"),
+            (("$self",), ("active",), 1, 1),
+            "role-decision",
+            (1, 1),
+            "self-status-and-body",
+            "heading-set",
+            ("rendered-link", "same-diff"),
+        ),
+        "activate-execution-pair": (
+            edge_rows(("sdlc/plan", "sdlc/task"), "draft", "active"),
+            (("sdlc/plan",), ("active",), 1, 1, ("sdlc/task",), ("active",), 1, 1),
+            "pair",
+            (2, 2),
+            "pair-created-or-status-changed",
+            "body-contract",
+            ("rendered-link", "reciprocal-link", "same-diff"),
+        ),
+        "complete-product-program": (
+            edge_rows(("sdlc/prd",), "active", "done"),
+            (("sdlc/spec",), ("done",), 1, None),
+            "program-lineage",
+            (1, None),
+            "target-and-last-relation-changed",
+            "body-contract",
+            ("program-lineage-closed", "same-diff"),
+        ),
+        "accept-architecture": (
+            edge_rows(("sdlc/ard",), "active", "accepted"),
+            (("sdlc/adr",), ("accepted",), 1, None),
+            "role-decision",
+            (1, None),
+            "target-and-evidence-status-body-changed",
+            "body-contract",
+            ("rendered-link", "reciprocal-link", "same-diff"),
+        ),
+        "accept-decision-self": (
+            edge_rows(("sdlc/adr",), "active", "accepted"),
+            (("$self",), ("accepted",), 1, 1),
+            "self",
+            (1, 1),
+            "self-status-and-body",
+            "body-contract",
+            ("rendered-link", "same-diff"),
+        ),
+        "complete-specification": (
+            edge_rows(specifications, "active", "done"),
+            (("sdlc/plan",), ("done",), 1, 1, ("sdlc/task",), ("done",), 1, 1),
+            "pair",
+            (2, 2),
+            "target-plan-task-status-changed",
+            "body-contract",
+            ("rendered-link", "reciprocal-link", "same-diff"),
+        ),
+        "complete-execution-pair": (
+            edge_rows(("sdlc/plan", "sdlc/task"), "active", "done"),
+            (("sdlc/plan",), ("done",), 1, 1, ("sdlc/task",), ("done",), 1, 1),
+            "pair",
+            (2, 2),
+            "pair-status-changed",
+            "body-contract",
+            ("rendered-link", "reciprocal-link", "task-terminal-evidence", "same-diff"),
+        ),
+        "accept-operated-document": (
+            edge_rows(operations, "active", "accepted"),
+            (("sdlc/plan",), ("done",), 1, 1, ("sdlc/task",), ("done",), 1, 1),
+            "pair",
+            (2, 2),
+            "target-plan-task-status-changed",
+            "body-contract",
+            ("rendered-link", "same-diff"),
+        ),
+        "terminate-reviewed-reference": (
+            tuple(
+                (profile_id, "active", state)
+                for profile_id in references
+                for state in ("accepted", "done")
+            ),
+            (("sdlc/plan",), ("done",), 1, 1, ("sdlc/task",), ("done",), 1, 1),
+            "role-decision",
+            (2, 2),
+            "target-plan-task-status-changed",
+            "heading-set",
+            ("rendered-link", "same-diff"),
+        ),
+    }
+    actual_predicates = {
+        predicate.predicate_id: (
+            tuple(
+                (edge.profile_id, edge.from_state, edge.to_state)
+                for edge in predicate.profile_edges
+            ),
+            tuple(
+                component
+                for item in predicate.evidence
+                for component in (
+                    item.profile_ids,
+                    item.states,
+                    item.minimum,
+                    item.maximum,
+                )
+            ),
+            predicate.relationship,
+            (predicate.minimum, predicate.maximum),
+            predicate.same_diff,
+            predicate.body_requirement,
+            predicate.capabilities,
+        )
+        for predicate in registry.evidence_predicates
+    }
+    if actual_predicates != expected_predicates:
+        raise AssertionError(
+            "production complete evidence predicate projection differs"
+        )
+
+    expected_null_body_roles = {
+        "content/reference": ("Related Documents", "heading-set"),
+        "governance/reference": ("Related Documents", "heading-set"),
+        "governance/memory": ("Related Progress", "heading-set"),
+        "governance/template-support": ("Related Documents", "heading-set"),
+    }
+    actual_null_body_roles = {
+        profile_id: (
+            profiles[profile_id].role_decision.relationship_section,
+            profiles[profile_id].role_decision.body_requirement,
+        )
+        for profile_id in expected_null_body_roles
+    }
+    if actual_null_body_roles != expected_null_body_roles:
+        raise AssertionError("production null-body role decision projection differs")
+    if (
+        profiles["template/sdlc/prd"].role_decision.source_profile_id != "sdlc/prd"
+        or profiles["template/sdlc/prd"].value_contract.contract_id
+        != "authored-standard"
+        or profiles["template/sdlc/prd"].admission.create.mode != "snapshot-only"
+    ):
+        raise AssertionError("canonical form inheritance projection differs")
+    tombstone = profiles["content/archive-tombstone"].admission
+    if (
+        tombstone.create.mode != "baseline-only"
+        or tombstone.create.states
+        or len(tombstone.baseline_paths) != 31
+        or {tombstone.delete, tombstone.rename, tombstone.profile_change} != {"deny"}
+    ):
+        raise AssertionError("production Tombstone compatibility projection differs")
+    if sum(len(profile.lifecycle.edges) for profile in registry.profiles) != 42:
+        raise AssertionError("production lifecycle edge count differs")
 
 
 def _assert_parser_safety() -> None:
@@ -1435,7 +2855,8 @@ def _tracked_form_paths(root: Path) -> tuple[PurePosixPath, ...]:
                 (
                     path
                     for record in records[:-1]
-                    if ".template." in (path := PurePosixPath(record.decode("utf-8"))).name
+                    if ".template."
+                    in (path := PurePosixPath(record.decode("utf-8"))).name
                 ),
                 key=lambda path: path.as_posix(),
             )
@@ -1510,7 +2931,9 @@ def _assert_tracked_local_agent_fixture_sample(root: Path, registry: Any) -> Non
         text=True,
     )
     if completed.stdout.strip() != SAMPLE_PATH.as_posix():
-        raise AssertionError("local agent fixture sample must be one exact tracked path")
+        raise AssertionError(
+            "local agent fixture sample must be one exact tracked path"
+        )
     actual_profile = classify_path(registry, SAMPLE_PATH).profile_id
     if actual_profile != "exception/local-agent-asset":
         raise AssertionError(
@@ -1551,9 +2974,7 @@ def _assert_reserved_gemini_native_surface_mutation_proofs() -> None:
             prefix="document-registry-gemini-reserved-"
         ) as directory:
             fixture_root = Path(directory)
-            subprocess.run(
-                ["git", "init", "--quiet"], cwd=fixture_root, check=True
-            )
+            subprocess.run(["git", "init", "--quiet"], cwd=fixture_root, check=True)
             target = fixture_root / reserved_path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("{}\n", encoding="utf-8")
@@ -1665,9 +3086,13 @@ def _assert_adapter_surface_routes(
         classify_path(registry, PurePosixPath(".gemini/agents/code-reviewer.md"))
     except DocumentContractError as exc:
         if _ordered_rule_ids(exc.diagnostics) != ("REGISTRY_ROUTE_UNCOVERED",):
-            raise AssertionError(".gemini/** uncovered probe returned wrong rule") from exc
+            raise AssertionError(
+                ".gemini/** uncovered probe returned wrong rule"
+            ) from exc
     else:
-        raise AssertionError(".gemini/** must remain outside the tracked adapter contract")
+        raise AssertionError(
+            ".gemini/** must remain outside the tracked adapter contract"
+        )
 
     broad_registry = copy.deepcopy(raw_registry)
     provider_profile = next(
@@ -1681,7 +3106,9 @@ def _assert_adapter_surface_routes(
         classify_path(broad_candidate, PurePosixPath(".agents/GEMINI.md"))
     except DocumentContractError as exc:
         if "REGISTRY_ROUTE_AMBIGUOUS" not in _ordered_rule_ids(exc.diagnostics):
-            raise AssertionError("broad provider route probe returned wrong rule") from exc
+            raise AssertionError(
+                "broad provider route probe returned wrong rule"
+            ) from exc
     else:
         raise AssertionError("broad provider route must be rejected as ambiguous")
 
@@ -1691,14 +3118,27 @@ def _assert_adapter_surface_routes(
         for profile in missing_route_registry["profiles"]
         if profile["id"] != "exception/local-agent-asset"
     ]
+    for family in (
+        "valueContracts",
+        "roleDecisions",
+        "admissionPolicies",
+        "lifecycleContracts",
+    ):
+        for group in missing_route_registry["documentContracts"][family]:
+            if "exception/local-agent-asset" in group["profileIds"]:
+                group["profileIds"].remove("exception/local-agent-asset")
     try:
         missing_route_candidate = validate_registry(root, missing_route_registry)
         classify_path(missing_route_candidate, PurePosixPath(".agents/GEMINI.md"))
     except DocumentContractError as exc:
         if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(exc.diagnostics):
-            raise AssertionError("local route removal probe returned wrong rule") from exc
+            raise AssertionError(
+                "local route removal probe returned wrong rule"
+            ) from exc
     else:
-        raise AssertionError("removing the local agent route must leave tracked paths uncovered")
+        raise AssertionError(
+            "removing the local agent route must leave tracked paths uncovered"
+        )
 
 
 def _assert_positive_coverage(
@@ -1789,8 +3229,7 @@ def _assert_positive_coverage(
             append_contract = profile.append_contract
             if (
                 profile.source_profile_ids != ("governance/progress-ledger",)
-                or append_contract.parent_profile_id
-                != "governance/progress-ledger"
+                or append_contract.parent_profile_id != "governance/progress-ledger"
                 or append_contract.parent_h2 != "Work Entries"
                 or append_contract.entry_heading_level != 3
                 or append_contract.section_heading_level != 4
@@ -1837,7 +3276,9 @@ def _assert_positive_coverage(
         )
 
     declared_template_profiles = {
-        profile.profile_id for profile in registry.profiles if profile.mode == "template"
+        profile.profile_id
+        for profile in registry.profiles
+        if profile.mode == "template"
     }
     if covered_template_profiles != declared_template_profiles:
         raise AssertionError(
@@ -1973,9 +3414,7 @@ def _is_readme_path(path: PurePosixPath) -> bool:
 def _readme_inventory_exact_error(
     tracked_paths: set[PurePosixPath], declared_paths: set[PurePosixPath]
 ) -> str | None:
-    missing = sorted(
-        path.as_posix() for path in declared_paths - tracked_paths
-    )
+    missing = sorted(path.as_posix() for path in declared_paths - tracked_paths)
     extra = sorted(path.as_posix() for path in tracked_paths - declared_paths)
     if not missing and not extra:
         return None
@@ -2033,9 +3472,13 @@ def _assert_readme_family_contract(
                 raise AssertionError(f"invalid README fixture path: {raw_path!r}")
     active_order = [row["path"] for row in active_rows]
     retired_order = [row["path"] for row in retired_rows]
-    if active_order != sorted(active_order) or len(active_order) != len(set(active_order)):
+    if active_order != sorted(active_order) or len(active_order) != len(
+        set(active_order)
+    ):
         raise AssertionError("README activePaths must be sorted and unique")
-    if retired_order != sorted(retired_order) or len(retired_order) != len(set(retired_order)):
+    if retired_order != sorted(retired_order) or len(retired_order) != len(
+        set(retired_order)
+    ):
         raise AssertionError("README retiredPaths must be sorted and unique")
     if len(active_rows) != 52 or len(retired_rows) != 20:
         raise AssertionError("README fixture must contain exact active52 and retired20")
@@ -2053,9 +3496,7 @@ def _assert_readme_family_contract(
     tracked_readmes = {
         path for path in inventory.current_paths if _is_readme_path(path)
     }
-    new_readmes = {
-        path for path in inventory.new_paths if _is_readme_path(path)
-    }
+    new_readmes = {path for path in inventory.new_paths if _is_readme_path(path)}
     readme_profile_ids = _readme_profile_ids(registry)
     readme_profiles = {
         profile.profile_id: profile
@@ -2137,7 +3578,9 @@ def _assert_readme_family_contract(
                 raise AssertionError(f"{path}: README retirement owner must be ADM-006")
             destination = row["destination"]
             if not isinstance(destination, str) or not destination:
-                raise AssertionError(f"{path}: README retirement destination is invalid")
+                raise AssertionError(
+                    f"{path}: README retirement destination is invalid"
+                )
             destination_path = PurePosixPath(destination)
             if (
                 destination_path.as_posix() != destination
@@ -2153,7 +3596,9 @@ def _assert_readme_family_contract(
             elif raw_path.startswith("examples/azure/docs/"):
                 provider = "azure"
             else:
-                raise AssertionError(f"{path}: README retirement path is outside ADM-006")
+                raise AssertionError(
+                    f"{path}: README retirement path is outside ADM-006"
+                )
             expected_destination = PurePosixPath(
                 "docs/90.references/cloud-examples/"
                 f"{provider}/2026-07-12-{provider}-example-snapshot.md"
@@ -2174,7 +3619,9 @@ def _assert_readme_family_contract(
             "README activePaths must contain 47 baseline and five program-created paths"
         )
     if retired_paths - baseline_readmes:
-        raise AssertionError("README retiredPaths must belong to the immutable baseline")
+        raise AssertionError(
+            "README retiredPaths must belong to the immutable baseline"
+        )
     if active_baseline | retired_paths != baseline_readmes:
         raise AssertionError(
             "README active baseline plus retired paths must reconstruct baseline67"
@@ -2312,9 +3759,7 @@ def _assert_readme_fixture_mutation_proofs(
 
     wrong_case_semantics = copy.deepcopy(fixture)
     duplicate_h1 = next(
-        case
-        for case in wrong_case_semantics["cases"]
-        if case["name"] == "duplicate-h1"
+        case for case in wrong_case_semantics["cases"] if case["name"] == "duplicate-h1"
     )
     duplicate_h1["document"] = wrong_case_semantics["cases"][0]["document"]
     expect_rejection("changed case semantics", wrong_case_semantics)
@@ -2365,8 +3810,7 @@ def _assert_readme_fixture_mutation_proofs(
         if row["path"].startswith("examples/aws/")
     )
     aws_retired["destination"] = (
-        "docs/90.references/cloud-examples/azure/"
-        "2026-07-12-azure-example-snapshot.md"
+        "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
     )
     expect_rejection("wrong-provider retirement destination", wrong_provider)
 
@@ -2426,7 +3870,10 @@ def _assert_readme_fixture_mutation_proofs(
     retired_current_inventory = TargetInventory(
         baseline_paths=inventory.baseline_paths,
         current_paths=tuple(
-            sorted((*inventory.current_paths, retired_path), key=lambda path: path.as_posix())
+            sorted(
+                (*inventory.current_paths, retired_path),
+                key=lambda path: path.as_posix(),
+            )
         ),
         new_paths=inventory.new_paths,
         baseline_symlink_paths=inventory.baseline_symlink_paths,
@@ -2492,7 +3939,7 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 6
+        fixture.get("schemaVersion") != 7
         or fixture.get(LOCAL_AGENT_FIXTURE_FIELD) != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
@@ -2517,14 +3964,15 @@ def _self_test(root: Path) -> int:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("# Synthetic reference contract\n", encoding="utf-8")
         fixture_template = (
-            fixture_root
-            / "tests/fixtures/document-contracts/self-test-prd.template.md"
+            fixture_root / "tests/fixtures/document-contracts/self-test-prd.template.md"
         )
         fixture_template.parent.mkdir(parents=True, exist_ok=True)
         fixture_template.write_text("# Synthetic PRD form\n", encoding="utf-8")
-        for raw_path, (document_type, status, updated) in (
-            LINEAGE_FIXTURE_DOCUMENTS.items()
-        ):
+        for raw_path, (
+            document_type,
+            status,
+            updated,
+        ) in LINEAGE_FIXTURE_DOCUMENTS.items():
             target = fixture_root / raw_path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(
@@ -2552,9 +4000,7 @@ def _self_test(root: Path) -> int:
         )
         (research_root / "symlink.md").symlink_to("accepted.md")
         (research_root / "directory.md").mkdir()
-        subprocess.run(
-            ["git", "init", "--quiet"], cwd=fixture_root, check=True
-        )
+        subprocess.run(["git", "init", "--quiet"], cwd=fixture_root, check=True)
         subprocess.run(
             [
                 "git",
@@ -2573,11 +4019,39 @@ def _self_test(root: Path) -> int:
             check=True,
         )
         for name, mutation, expected in EXPECTED_CASES:
-            mutated = _minimal_fixture_registry()
+            if mutation in RAW_JSON_MUTATIONS:
+                duplicate_path = fixture_root / f"{mutation}.json"
+                duplicate_path.write_text(
+                    (
+                        '{"schemaVersion": 7, "schemaVersion": 7}\n'
+                        if mutation == "duplicate-json-root-key"
+                        else '{"outer": {"value": 1, "value": 2}}\n'
+                    ),
+                    encoding="utf-8",
+                )
+                try:
+                    _load_json(duplicate_path)
+                except DocumentContractError as exc:
+                    actual = _ordered_rule_ids(exc.diagnostics)
+                else:
+                    actual = ()
+                if actual != expected:
+                    print(
+                        f"FAIL document contract registry self-test: {name}: "
+                        f"expected {list(expected)!r}, got {list(actual)!r}"
+                    )
+                    return 1
+                continue
+            mutated = (
+                copy.deepcopy(raw_registry)
+                if mutation in V7_MUTATIONS
+                else _minimal_fixture_registry()
+            )
             _mutate(mutated, mutation)
             diagnostics = ()
             try:
-                registry = validate_registry(fixture_root, mutated)
+                validation_root = root if mutation in V7_MUTATIONS else fixture_root
+                registry = validate_registry(validation_root, mutated)
             except DocumentContractError as exc:
                 diagnostics = exc.diagnostics
             else:
@@ -2591,19 +4065,19 @@ def _self_test(root: Path) -> int:
                 return 1
 
         legacy = _minimal_fixture_registry()
-        legacy["$id"] = (
-            "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
-        )
+        legacy["$id"] = "https://hy-home.k8s/schemas/document-profiles-5.schema.json"
         legacy["schemaVersion"] = 5
+        del legacy["documentContracts"]
         legacy["programLineage"] = {
             "prd": "005",
             "ard": "0008",
             "specs": ["026", "033"],
         }
+        legacy_v6 = _convert_legacy_v5_fixture(legacy)
         registry_target = fixture_root / REGISTRY_PATH
         registry_target.parent.mkdir(parents=True, exist_ok=True)
         registry_target.write_text(
-            json.dumps(legacy, indent=2) + "\n", encoding="utf-8"
+            json.dumps(legacy_v6, indent=2) + "\n", encoding="utf-8"
         )
         try:
             load_registry(fixture_root)
@@ -2611,32 +4085,28 @@ def _self_test(root: Path) -> int:
             if _ordered_rule_ids(exc.diagnostics) != ("REGISTRY_SCHEMA",):
                 print(
                     "FAIL document contract registry self-test: "
-                    "production legacy-v5 rejection returned wrong rule"
+                    "production legacy-v6 rejection returned wrong rule"
                 )
                 return 1
         else:
             print(
                 "FAIL document contract registry self-test: "
-                "production loader accepted legacy-v5 input"
+                "production loader accepted legacy-v6 input"
             )
             return 1
         migrated = validate_registry(
-            fixture_root, _convert_legacy_v5_fixture(legacy)
+            fixture_root, _convert_legacy_v6_fixture(legacy_v6)
         )
         if (
             len(migrated.program_lineage) != 1
-            or tuple(
-                item.spec_id for item in migrated.program_lineage[0].tranches
-            )
+            or tuple(item.spec_id for item in migrated.program_lineage[0].tranches)
             != ("026",)
-            or tuple(
-                item.spec_id for item in migrated.program_lineage[0].follow_ups
-            )
+            or tuple(item.spec_id for item in migrated.program_lineage[0].follow_ups)
             != ("033",)
         ):
             print(
                 "FAIL document contract registry self-test: "
-                "legacy-v5 fixture conversion projection differs"
+                "private v5-to-v6-to-v7 fixture conversion projection differs"
             )
             return 1
 
@@ -2650,6 +4120,7 @@ def _self_test(root: Path) -> int:
         )
         registry = validate_registry(root, raw_registry)
         _assert_program_lineage_projection(registry)
+        _assert_document_contract_projection(registry)
         readme_fixture = _load_json(root / README_FIXTURE_PATH)
         inventory = enumerate_target_markdown(root)
         _assert_readme_family_contract(
@@ -2672,7 +4143,7 @@ def _self_test(root: Path) -> int:
     print(
         "PASS document contract registry self-test: "
         f"{len(EXPECTED_CASES)} cases, {profile_count} profiles, {template_count} templates; "
-        "README fixture 8/8, legacy-v5 migration fixture, mutation probes passed"
+        "README fixture 8/8, private v5/v6 migration fixture, mutation probes passed"
     )
     return 0
 
@@ -2716,12 +4187,10 @@ def main() -> int:
 
     diagnostics = classify_paths(registry, inventory.current_paths)
     uncovered_count = sum(
-        diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED"
-        for diagnostic in diagnostics
+        diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED" for diagnostic in diagnostics
     )
     ambiguous_count = sum(
-        diagnostic.rule_id == "REGISTRY_ROUTE_AMBIGUOUS"
-        for diagnostic in diagnostics
+        diagnostic.rule_id == "REGISTRY_ROUTE_AMBIGUOUS" for diagnostic in diagnostics
     )
     if diagnostics:
         for diagnostic in diagnostics:
