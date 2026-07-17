@@ -33,7 +33,7 @@ reviews, and explicit static/live evidence boundaries.
 | DSLC-001 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-003, VAL-DSLC-007, VAL-DSLC-008 | Add closed registry v7 value, role, lifecycle, evidence, and compatibility schema plus typed projection. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED archive-specific semantics and policy-ID/path-alias bypasses reproduced; GREEN 117-case registry self-test, complete literal typed projection, duplicate-key rejection, strict registry/Markdown/cross PASS; logical commit `5781ea3`. |
 | DSLC-002 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-005 | Enforce metadata values, template/source parity, and baseline-only Tombstone admission. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED seven value-contract cases returned `metadata value rules are unimplemented`; expanded 18-case GREEN covers string/integer/number/boolean/date kinds, profile/literal constants, status/literal enums, scalar patterns, denied/allowed null, equals/not-equals, required/forbidden, and absent-versus-explicit-null references without private archive semantics. Exact 31-path Tombstone compatibility plus explicit untracked include rejection, 11/11 template/source parity mutations including typed value-contract parity, and strict current-corpus/registry/cross PASS are recorded. |
 | DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Done | Implemented; final independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | Named RED failed on both missing public entrypoints and every declared fixture group. Expanded GREEN is 124 cases: 42 literal forward edges, 9 comparison priorities, 12 admission events, 35 isolated Git/ref/environment/root bases, 7 argument boundaries, 5 additive include failures, one current snapshot DEFER, and 13 fixture-closure mutations. |
-| DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Queued | Not executed | Predicate mutation matrix, strict cross-document result, review, commit |
+| DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Done | Remediated after independent rejection; final re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | GREEN is 651 cases: 42 forward edges, exact 504 edge scenarios with a full-diagnostic assertion hash, 9 comparisons, 12 admissions, 43 Git/ref/provenance bases, 7 arguments, 5 includes, one snapshot DEFER, 23 fixture mutations, and 5 review regressions. Remediation closes context-forgery, reciprocal backlink, ready-Spec state, allowed-H2, Task placeholder, and Result-column bypasses while retaining canonical CommonMark evidence and staged/index, explicit-ref, and CI provenance. |
 | DSLC-005 | VAL-DSLC-005, VAL-DSLC-006, VAL-DSLC-007 | Close native, role/source, Stage 00/99, and directly implicated consumer drift without bulk corpus rewrite. | platform | Queued | Not executed | Native/overlap fixtures, drift ledger, full static result, review, commit |
 | DSLC-006 | VAL-DSLC-001 through VAL-DSLC-008 | Run full QA, whole-tranche review, and atomic lifecycle closure. | platform | Queued | Not executed | Done lineage, command matrix, review verdicts, rollback parent, closure commit |
 
@@ -192,6 +192,49 @@ an explicit non-claim. Final independent re-review returned
 `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` after the submodule-ignore,
 nested-shape, and unhashable-enum reproductions were closed.
 
+DSLC-004 RED added a closed evidence fixture contract and failed before the
+public resolver and fixture root existed. GREEN expands the lifecycle self-test
+to 651 cases. Every one of the 42 production edges owns the same ordered 12
+scenarios: positive, missing, wrong profile, wrong state, wrong relationship
+section, unchanged, ambiguous base, body-contract mismatch, plain-text path,
+opaque Markdown, orphan, and multiple evidence. Twenty-three fixture mutations
+close missing, duplicated, reordered, null, non-string, unknown-predicate, and
+edge-projection drift.
+
+The lifecycle CLI builds complete immutable base and proposed Markdown maps
+from Git objects or the stage-zero index before it resolves evidence. It calls
+the public CommonMark-aware adapter in `validate-links-and-owners.py`; no second
+Markdown parser and no worktree fallback are introduced. Body-contract
+relationships count only rendered links from the declared source or target
+columns, heading-set relationships count only links under the exact selected
+heading, and unresolved, orphan, or multiply matching candidates produce one
+stable aggregated `LIFECYCLE-EVIDENCE` result per target. Task Evidence cells
+may directly identify an operated or referenced target without requiring an
+invented reciprocal relationship from Incident or Postmortem documents.
+
+Plan and Task evidence must be reciprocal, changed atomically where the edge
+requires it, direct to the same generic Spec, and attached to the first
+dependency-ready nonterminal original-program tranche. Isolated Git cases prove
+blocked and split-Spec rejection, base-only relationship removal, proposed-only
+relationship admission, CI proposed-tree resolution, and both directions of
+index/worktree divergence. Snapshot mode remains an explicit transition-history
+DEFER, and historical registry reloading remains outside this package.
+
+The first independent requirements and quality reviews rejected the initial
+implementation. Remediation retains every outer subject transition. Git-shaped
+variants mutate rendered evidence only; the logically impossible `$self`
+wrong-profile and wrong-state combinations mutate only the isolated pure
+interface evidence projection and are rejected by context-integrity checks.
+Every ambiguous-base variant runs through an edge-shaped CI graph, and the full
+ordered 504-case diagnostic envelope—including every `evidence_gap`—is fixed to
+one literal assertion hash. Five focused regressions close forged
+`created_paths`, missing reciprocal body evidence, unsupported root H2, the
+canonical Task evidence placeholder, and Result-column target links. A 43rd
+Git base rejects an otherwise reciprocal active Plan/Task pair when the
+proposed dependency-ready Spec status differs from the registry relation state.
+Final independent re-review returned `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED` for the exact six-file package.
+
 ## Traceability
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
@@ -205,6 +248,6 @@ nested-shape, and unhashable-enum reproductions were closed.
 | [DSLC-001](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-001-registry-v7-contract) | Done; requirements compliant and quality approved. | RED review reproductions; GREEN 117 registry cases, complete literal v7 typed projection, strict 432-path registry, Markdown zero violations, cross-document PASS, and duplicate/canonical-path guards. |
 | [DSLC-002](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-002-metadata-template-and-compatibility-enforcement) | Done; requirements compliant and quality approved. | Initial seven-case RED; exact 18-case selected v7 value matrix without private archive semantics, 31-path baseline-only admission plus explicit untracked include proof, 11/11 template/source parity mutations including typed value parity, strict current-corpus PASS, and independent review closure. |
 | [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Done; requirements compliant and quality approved. | Named entrypoint/case RED; 124-case engine/Git/CLI/fixture-closure GREEN and current snapshot exact DEFER; submodule-ignore and nested/unhashable-shape review reproductions closed by final independent re-review. |
-| [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Queued. | Edge predicate and cross-document evidence will be recorded here. |
+| [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Done; requirements compliant and quality approved. | Closed 504-scenario exact diagnostic projection, canonical CommonMark evidence adapter, context integrity, reciprocal/allowed-H2/Task-column rules, dependency-ready same-Spec-state proof, 43 Git provenance bases, 23 fixture mutations, and 5 review regressions. |
 | [DSLC-005](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-005-native-role-and-support-drift) | Queued. | Native, role, support, and consumer-drift evidence will be recorded here. |
 | [DSLC-006](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-006-closure) | Queued. | Full QA, independent reviews, and atomic closure evidence will be recorded here. |

@@ -6,9 +6,12 @@ from __future__ import annotations
 import argparse
 import copy
 import contextlib
+import hashlib
+import importlib.util
 import io
 import json
 import os
+import posixpath
 import re
 import subprocess
 import sys
@@ -16,12 +19,14 @@ import tempfile
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+from types import MappingProxyType, ModuleType
 from typing import Callable, Mapping, Sequence
 
 from document_contracts import (
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
+    DocumentProfile,
     Registry,
     classify_path,
     enumerate_target_markdown,
@@ -31,8 +36,11 @@ from document_contracts import (
 )
 from document_lifecycle import (
     LIFECYCLE_RULE_IDS,
+    SPECIFICATION_PROFILES,
     LifecycleDiagnostic,
     LifecycleDocument,
+    LifecycleEvidenceContext,
+    LifecycleEvidenceDocument,
     LifecycleRename,
     compare_lifecycle,
     document_from_text,
@@ -135,6 +143,11 @@ EXPECTED_GIT_CASE_NAMES = (
     "staged-same-path-profile-change",
     "staged-unknown-type-state",
     "staged-paired-create",
+    "staged-paired-create-blocked-spec",
+    "staged-paired-create-ready-spec-done",
+    "staged-paired-create-split-spec",
+    "staged-evidence-index-invalid-worktree-valid",
+    "staged-evidence-index-valid-worktree-invalid",
     "include-does-not-filter-violation",
     "staged-submodule-ignore-all",
     "ci-merge-base",
@@ -142,6 +155,9 @@ EXPECTED_GIT_CASE_NAMES = (
     "ci-ambiguous-merge-base",
     "explicit-ref-pass",
     "explicit-ref-fail",
+    "explicit-ref-proposed-only-evidence",
+    "explicit-ref-base-only-evidence-removed",
+    "ci-proposed-tree-evidence",
     "explicit-ref-submodule-ignore-all",
     "missing-ref",
     "ambiguous-ref",
@@ -171,7 +187,22 @@ EXPECTED_INCLUDE_CASE_NAMES = (
     "missing-blob",
 )
 EXPECTED_SNAPSHOT_CASE_NAME = "exactly-one-base-defer"
-FIXTURE_MUTATION_COUNT = 13
+FIXTURE_MUTATION_COUNT = 23
+EXPECTED_EVIDENCE_ASSERTION_SHA256 = "beb430e079bf603ebd5164666218fa178c6e27550f425c62f3fd739c31675892"  # pragma: allowlist secret
+EXPECTED_EVIDENCE_VARIANTS = (
+    "positive",
+    "missing",
+    "wrong-profile",
+    "wrong-state",
+    "wrong-relationship-section",
+    "unchanged",
+    "ambiguous-base",
+    "body-contract-mismatch",
+    "plain-text-path",
+    "opaque-markdown",
+    "orphan",
+    "multiple",
+)
 
 
 class InvocationError(ValueError):
@@ -194,6 +225,27 @@ class Change:
     @property
     def paths(self) -> tuple[PurePosixPath, ...]:
         return (self.old_path, self.path) if self.old_path is not None else (self.path,)
+
+
+_LINK_VALIDATOR_MODULE: ModuleType | None = None
+
+
+def _link_validator_module() -> ModuleType:
+    """Load the canonical CommonMark evidence adapter once by script path."""
+
+    global _LINK_VALIDATOR_MODULE
+    if _LINK_VALIDATOR_MODULE is not None:
+        return _LINK_VALIDATOR_MODULE
+    path = Path(__file__).with_name("validate-links-and-owners.py")
+    name = "_document_lifecycle_link_validator"
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise InvocationError("canonical link validator could not be loaded")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    _LINK_VALIDATOR_MODULE = module
+    return module
 
 
 def _sanitized_git_environment() -> dict[str, str]:
@@ -472,6 +524,56 @@ def _index_blob_oid(root: Path, path: PurePosixPath) -> str | None:
     return oid.decode("ascii")
 
 
+def _tree_blob_map(root: Path, commit: str) -> Mapping[PurePosixPath, str]:
+    raw = _run_git(root, ("ls-tree", "-r", "-z", "--full-tree", commit))
+    records = raw.split(b"\0")
+    if not records or records[-1] != b"":
+        raise InvocationError("Git tree inventory is not NUL terminated")
+    result: dict[PurePosixPath, str] = {}
+    for record in records[:-1]:
+        try:
+            header, raw_path = record.split(b"\t", 1)
+            mode, object_type, oid = header.split(b" ", 2)
+        except ValueError as exc:
+            raise InvocationError("malformed Git tree inventory") from exc
+        if mode not in {b"100644", b"100755"} or object_type != b"blob":
+            continue
+        path = _decode_path(raw_path)
+        if not _approved_markdown(path):
+            continue
+        value = oid.decode("ascii", errors="ignore")
+        if OBJECT_ID.fullmatch(value) is None or path in result:
+            raise InvocationError("ambiguous regular Markdown tree entry")
+        result[path] = value
+    return MappingProxyType(result)
+
+
+def _index_blob_map(root: Path) -> Mapping[PurePosixPath, str]:
+    raw = _run_git(root, ("ls-files", "--stage", "-z"))
+    records = raw.split(b"\0")
+    if not records or records[-1] != b"":
+        raise InvocationError("Git index inventory is not NUL terminated")
+    result: dict[PurePosixPath, str] = {}
+    for record in records[:-1]:
+        try:
+            header, raw_path = record.split(b"\t", 1)
+            mode, oid, stage = header.split(b" ", 2)
+        except ValueError as exc:
+            raise InvocationError("malformed Git index inventory") from exc
+        path = _decode_path(raw_path)
+        if not _approved_markdown(path):
+            continue
+        if mode not in {b"100644", b"100755"} or stage != b"0":
+            raise InvocationError(
+                f"proposed Markdown is not one stage-zero regular blob: {path}"
+            )
+        value = oid.decode("ascii", errors="ignore")
+        if OBJECT_ID.fullmatch(value) is None or path in result:
+            raise InvocationError("ambiguous regular Markdown index entry")
+        result[path] = value
+    return MappingProxyType(result)
+
+
 def _blob_text(
     root: Path,
     oid: str | None,
@@ -484,6 +586,104 @@ def _blob_text(
         return raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise InvocationError(f"document blob is not UTF-8: {path.as_posix()}") from exc
+
+
+def _snapshot_projection(
+    root: Path,
+    registry: Registry,
+    blobs: Mapping[PurePosixPath, str],
+) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
+    documents: dict[PurePosixPath, LifecycleDocument] = {}
+    texts: dict[PurePosixPath, str] = {}
+    for path in sorted(blobs, key=PurePosixPath.as_posix):
+        text = _blob_text(root, blobs[path], path)
+        assert text is not None
+        texts[path] = text
+        try:
+            documents[path] = document_from_text(registry, path, text)
+        except DocumentContractError:
+            documents[path] = LifecycleDocument(
+                path=path,
+                profile_id="unclassified",
+                status=None,
+                state_issue="no unique current registry profile",
+            )
+    return MappingProxyType(documents), MappingProxyType(texts)
+
+
+def _body_text(text: str) -> str:
+    if not text.startswith("---\n"):
+        return text
+    closing = text.find("\n---\n", 4)
+    return text if closing < 0 else text[closing + 5 :]
+
+
+def _evidence_context(
+    registry: Registry,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+) -> LifecycleEvidenceContext:
+    profile_map = {profile.profile_id: profile for profile in registry.profiles}
+    snapshot_profiles = MappingProxyType(
+        {path: document.profile_id for path, document in proposed_documents.items()}
+    )
+    adapter = _link_validator_module()
+    views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
+    for path, document in proposed_documents.items():
+        profile = profile_map.get(document.profile_id)
+        if profile is None:
+            views[path] = LifecycleEvidenceDocument(
+                document=document,
+                all_local_links=(),
+                relationship_links=(),
+                unresolved_relationship_links=(),
+                body_table_links=(),
+                relationship_section_valid=False,
+                body_contract_valid=False,
+                task_terminal_evidence_valid=False,
+            )
+            continue
+        rendered = adapter.lifecycle_markdown_evidence(
+            path, proposed_texts[path], profile, snapshot_profiles
+        )
+        views[path] = LifecycleEvidenceDocument(
+            document=document,
+            all_local_links=rendered.all_local_links,
+            relationship_links=rendered.relationship_links,
+            unresolved_relationship_links=rendered.unresolved_relationship_links,
+            body_table_links=rendered.body_table_links,
+            relationship_section_valid=rendered.relationship_section_valid,
+            body_contract_valid=rendered.body_contract_valid,
+            task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
+        )
+
+    common = set(base_documents) & set(proposed_documents)
+    status_changed = frozenset(
+        path
+        for path in common
+        if base_documents[path].profile_id != proposed_documents[path].profile_id
+        or base_documents[path].status != proposed_documents[path].status
+    )
+    body_changed = frozenset(
+        path
+        for path in common
+        if _body_text(base_texts[path]) != _body_text(proposed_texts[path])
+    )
+    created = frozenset(set(proposed_documents) - set(base_documents))
+    return LifecycleEvidenceContext(
+        base_documents=base_documents,
+        proposed_documents=MappingProxyType(views),
+        changed_paths=frozenset(
+            path
+            for path in set(base_documents) | set(proposed_documents)
+            if path not in common or base_texts.get(path) != proposed_texts.get(path)
+        ),
+        status_changed_paths=status_changed,
+        body_changed_paths=body_changed | created,
+        created_paths=created,
+    )
 
 
 def _select_changes(
@@ -578,6 +778,36 @@ def _comparison_documents(
     return base_documents, proposed_documents, tuple(renames)
 
 
+def _comparison_requires_evidence(
+    registry: Registry,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> bool:
+    profile_map = {profile.profile_id: profile for profile in registry.profiles}
+    for path in set(base_documents) & set(proposed_documents):
+        base = base_documents[path]
+        proposed = proposed_documents[path]
+        if (
+            base.profile_id != proposed.profile_id
+            or base.status is None
+            or proposed.status is None
+            or base.status == proposed.status
+        ):
+            continue
+        profile = profile_map.get(proposed.profile_id)
+        if profile is not None and any(
+            edge.from_state == base.status and edge.to_state == proposed.status
+            for edge in profile.lifecycle.edges
+        ):
+            return True
+    return any(
+        document.profile_id in {"sdlc/plan", "sdlc/task"}
+        and document.status in {"draft", "active"}
+        for path, document in proposed_documents.items()
+        if path not in base_documents
+    )
+
+
 def _evaluate_comparison(
     root: Path,
     registry: Registry,
@@ -587,17 +817,15 @@ def _evaluate_comparison(
     base_ref: str | None = None,
     to_ref: str | None = None,
     include_paths: Sequence[PurePosixPath] = (),
+    evidence_context_factory: Callable[
+        ..., LifecycleEvidenceContext
+    ] = _evidence_context,
 ) -> tuple[LifecycleDiagnostic, ...]:
     _verify_repository_root(root)
     if mode == "staged":
         base_commit = _resolve_commit(root, "HEAD", "HEAD")
-
-        def base_oid(path: PurePosixPath) -> str | None:
-            return _tree_blob_oid(root, base_commit, path)
-
-        def proposed_oid(path: PurePosixPath) -> str | None:
-            return _index_blob_oid(root, path)
-
+        base_blobs = _tree_blob_map(root, base_commit)
+        proposed_blobs = _index_blob_map(root)
         changes = _staged_changes(root)
     else:
         if mode == "ci":
@@ -612,13 +840,16 @@ def _evaluate_comparison(
         else:
             raise InvocationError(f"unsupported comparison mode: {mode}")
 
-        def base_oid(path: PurePosixPath) -> str | None:
-            return _tree_blob_oid(root, base_commit, path)
-
-        def proposed_oid(path: PurePosixPath) -> str | None:
-            return _tree_blob_oid(root, proposed_commit, path)
-
+        base_blobs = _tree_blob_map(root, base_commit)
+        proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
+
+    def base_oid(path: PurePosixPath) -> str | None:
+        return base_blobs.get(path)
+
+    def proposed_oid(path: PurePosixPath) -> str | None:
+        return proposed_blobs.get(path)
+
     selected = _select_changes(
         changes,
         include_paths,
@@ -632,12 +863,32 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
+    if not _comparison_requires_evidence(registry, base_documents, proposed_documents):
+        return compare_lifecycle(
+            registry,
+            base_documents,
+            proposed_documents,
+            renames=renames,
+            base_mode=mode,  # type: ignore[arg-type]
+        )
+    base_snapshot, base_texts = _snapshot_projection(root, registry, base_blobs)
+    proposed_snapshot, proposed_texts = _snapshot_projection(
+        root, registry, proposed_blobs
+    )
+    evidence = evidence_context_factory(
+        registry,
+        base_snapshot,
+        proposed_snapshot,
+        base_texts,
+        proposed_texts,
+    )
     return compare_lifecycle(
         registry,
         base_documents,
         proposed_documents,
         renames=renames,
         base_mode=mode,  # type: ignore[arg-type]
+        evidence_context=evidence,
     )
 
 
@@ -715,12 +966,735 @@ def _rule_ids(diagnostics: Sequence[LifecycleDiagnostic]) -> list[str]:
     return [item.rule_id for item in diagnostics]
 
 
+def _fixture_link(source: PurePosixPath, target: PurePosixPath, label: str) -> str:
+    relative = posixpath.relpath(target.as_posix(), source.parent.as_posix())
+    return f"[{label}]({relative})"
+
+
+def _opaque_fixture_link(
+    source: PurePosixPath,
+    target: PurePosixPath,
+    label: str,
+    form: int,
+) -> str:
+    link = _fixture_link(source, target, label)
+    forms = (
+        f"`{link}`",
+        f"```text\n{link}\n```",
+        f"<!-- {link} -->",
+        f'<span data-evidence="{link}">opaque</span>',
+        f"\n    {link}",
+    )
+    return forms[form % len(forms)]
+
+
+def _evidence_fixture_text(
+    profile: DocumentProfile,
+    document: LifecycleDocument,
+    snapshot_profiles: Mapping[PurePosixPath, str],
+    relationship_targets: Sequence[PurePosixPath],
+    *,
+    table_targets: Sequence[PurePosixPath] = (),
+    backlink_targets: Sequence[PurePosixPath] = (),
+    link_mode: str = "rendered",
+    opaque_form: int = 0,
+    body_mismatch: bool = False,
+    wrong_section: bool = False,
+) -> str:
+    """Build authored fixture Markdown consumed by the canonical adapter."""
+
+    def syntax(target: PurePosixPath, label: str) -> str:
+        relative = posixpath.relpath(target.as_posix(), document.path.parent.as_posix())
+        if link_mode == "plain":
+            return relative
+        if link_mode == "opaque":
+            return _opaque_fixture_link(document.path, target, label, opaque_form)
+        return _fixture_link(document.path, target, label)
+
+    sections: list[str] = []
+    relationship_heading = profile.role_decision.relationship_section
+    for heading in profile.headings.required:
+        if wrong_section and heading == relationship_heading:
+            continue
+        parts = [
+            f"## {heading}",
+            f"Fixture {document.status or 'draft'} content for {heading}.",
+        ]
+        if heading == profile.headings.required[0]:
+            parts.extend(
+                syntax(target, f"Backlink {index + 1}")
+                for index, target in enumerate(backlink_targets)
+            )
+        if profile.profile_id == "sdlc/task" and heading == "Task Table":
+            parts.append(
+                "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
+                "| --- | --- | --- | --- | --- | --- | --- |\n"
+                "| FIX-001 | VAL-FIX-001 | Verify lifecycle evidence | platform | Done | Verified current authored row | [Review log](../../../README.md) |"
+            )
+        if heading == relationship_heading:
+            if profile.body_contract is None:
+                parts.extend(
+                    syntax(target, f"Evidence {index + 1}")
+                    for index, target in enumerate(relationship_targets)
+                )
+            elif body_mismatch:
+                parts.append("### Lifecycle Traceability\n\nMalformed evidence table.")
+            else:
+                contract = profile.body_contract
+                parts.append(f"### {contract.table_heading}")
+                table_lines = [
+                    "| " + " | ".join(contract.required_columns) + " |",
+                    "| " + " | ".join("---" for _ in contract.required_columns) + " |",
+                ]
+                rows: list[list[str]] = []
+                targets = list(relationship_targets) or [None]
+                for row_number, target in enumerate(targets, start=1):
+                    row = ["fixture" for _ in contract.required_columns]
+                    for identifier in contract.identifier_columns:
+                        index = contract.required_columns.index(identifier.column)
+                        prefix = {
+                            "requirement": "REQ-FIX-",
+                            "criterion": "VAL-FIX-",
+                            "work-item": "FIX-",
+                        }[identifier.kind]
+                        row[index] = f"{prefix}{row_number:03d}"
+                    selected_column: str | None = None
+                    if target is not None:
+                        target_profile = snapshot_profiles.get(target)
+                        if (
+                            contract.source_link_column is not None
+                            and target_profile in contract.allowed_source_profile_ids
+                        ):
+                            selected_column = contract.source_link_column
+                        elif (
+                            contract.target_link_column is not None
+                            and target_profile in contract.allowed_target_profile_ids
+                        ):
+                            selected_column = contract.target_link_column
+                        elif target_profile is None:
+                            selected_column = (
+                                contract.source_link_column
+                                or contract.target_link_column
+                            )
+                    for column in (
+                        contract.source_link_column,
+                        contract.target_link_column,
+                    ):
+                        if column is None:
+                            continue
+                        index = contract.required_columns.index(column)
+                        if column == selected_column and target is not None:
+                            label = row[index]
+                            row[index] = syntax(target, label)
+                        else:
+                            row[index] = "N/A — isolated evidence fixture"
+                    if table_targets:
+                        evidence_column = next(
+                            (
+                                column
+                                for column in contract.required_columns
+                                if column.casefold() == "evidence"
+                            ),
+                            None,
+                        )
+                        if evidence_column is not None:
+                            row[contract.required_columns.index(evidence_column)] = (
+                                " ".join(
+                                    syntax(target, f"Review {index + 1}")
+                                    for index, target in enumerate(table_targets)
+                                )
+                            )
+                    rows.append(row)
+                table_lines.extend("| " + " | ".join(row) + " |" for row in rows)
+                parts.append("\n".join(table_lines))
+        sections.append("\n\n".join(parts))
+    if wrong_section:
+        links = "\n".join(
+            syntax(target, f"Wrong section {index + 1}")
+            for index, target in enumerate(relationship_targets)
+        )
+        sections.append(f"## Other Relationship\n\n{links or 'No evidence.'}")
+    status = document.status or "draft"
+    return (
+        "---\n"
+        "title: 'Lifecycle evidence fixture'\n"
+        f"type: {document.profile_id}\n"
+        f"status: {status}\n"
+        "owner: platform\n"
+        "updated: 2099-01-01\n"
+        "---\n\n"
+        "# Lifecycle evidence fixture\n\n" + "\n\n".join(sections) + "\n"
+    )
+
+
+def _evidence_target_path(
+    profile_id: str, predicate_id: str, case_index: int
+) -> PurePosixPath:
+    if predicate_id == "complete-product-program":
+        return PurePosixPath("docs/01.requirements/006-evidence-fixture.md")
+    if profile_id == "sdlc/plan":
+        return PurePosixPath(
+            f"docs/04.execution/plans/2099-01-01-edge-{case_index:02d}.md"
+        )
+    if profile_id == "sdlc/task":
+        return PurePosixPath(
+            f"docs/04.execution/tasks/2099-01-01-edge-{case_index:02d}.md"
+        )
+    return PurePosixPath(f"docs/__lifecycle_evidence__/{case_index:02d}-target.md")
+
+
+def _evidence_case_context(
+    registry: Registry,
+    case: Mapping[str, object],
+    variant: str,
+    case_index: int,
+) -> tuple[LifecycleDocument, LifecycleEvidenceContext]:
+    profile_id = str(case["profile"])
+    from_state = str(case["from"])
+    to_state = str(case["to"])
+    predicate_id = str(case["predicate"])
+    profile_map = {profile.profile_id: profile for profile in registry.profiles}
+    target_path = _evidence_target_path(profile_id, predicate_id, case_index)
+    target = LifecycleDocument(target_path, profile_id, to_state)
+    documents: dict[PurePosixPath, LifecycleDocument] = {target_path: target}
+    relationships: dict[PurePosixPath, list[PurePosixPath]] = {target_path: []}
+    table_targets: dict[PurePosixPath, list[PurePosixPath]] = {target_path: []}
+
+    def add(path: PurePosixPath, added_profile: str, status: str) -> PurePosixPath:
+        documents[path] = LifecycleDocument(path, added_profile, status)
+        relationships.setdefault(path, [])
+        table_targets.setdefault(path, [])
+        return path
+
+    def previous(status: str | None) -> str | None:
+        return {"active": "draft", "accepted": "active", "done": "active"}.get(
+            status, status
+        )
+
+    primary_evidence: list[PurePosixPath] = []
+    pair_paths: tuple[PurePosixPath, PurePosixPath] | None = None
+    spec_identity: PurePosixPath | None = None
+
+    if predicate_id == "accept-architecture":
+        adr = add(
+            PurePosixPath(
+                f"docs/02.architecture/decisions/{case_index:04d}-fixture.md"
+            ),
+            "sdlc/adr",
+            "accepted",
+        )
+        relationships[target_path].append(adr)
+        relationships[adr].append(target_path)
+        primary_evidence.append(adr)
+    elif predicate_id == "complete-product-program":
+        program = next(
+            program for program in registry.program_lineage if program.prd_id == "006"
+        )
+        relation_paths: list[PurePosixPath] = []
+        for relation in (*program.tranches, *program.follow_ups):
+            relation_path = add(
+                PurePosixPath(
+                    f"docs/03.specs/{relation.spec_id}-evidence-fixture/spec.md"
+                ),
+                "sdlc/spec",
+                "done",
+            )
+            relation_paths.append(relation_path)
+        relationships[target_path].extend(relation_paths)
+        primary_evidence.extend(relation_paths)
+    elif predicate_id in {
+        "activate-execution-pair",
+        "complete-specification",
+        "complete-execution-pair",
+        "accept-operated-document",
+        "terminate-reviewed-reference",
+    }:
+        spec_identity = (
+            target_path
+            if profile_id
+            in {
+                "sdlc/spec",
+                "sdlc/api-spec",
+                "sdlc/agent-design",
+                "sdlc/data-model",
+                "sdlc/tests",
+            }
+            else add(
+                PurePosixPath("docs/03.specs/035-evidence-fixture/spec.md")
+                if predicate_id == "activate-execution-pair"
+                else PurePosixPath(
+                    f"docs/03.specs/{900 + case_index:03d}-evidence/spec.md"
+                ),
+                "sdlc/spec",
+                "active",
+            )
+        )
+        plan = (
+            target_path
+            if profile_id == "sdlc/plan"
+            else add(
+                PurePosixPath(
+                    f"docs/04.execution/plans/2099-01-01-pair-{case_index:02d}.md"
+                ),
+                "sdlc/plan",
+                "active" if predicate_id == "activate-execution-pair" else "done",
+            )
+        )
+        task = (
+            target_path
+            if profile_id == "sdlc/task"
+            else add(
+                PurePosixPath(
+                    f"docs/04.execution/tasks/2099-01-01-pair-{case_index:02d}.md"
+                ),
+                "sdlc/task",
+                "active" if predicate_id == "activate-execution-pair" else "done",
+            )
+        )
+        relationships[plan].extend((spec_identity, task))
+        relationships[task].extend((spec_identity, plan))
+        pair_paths = (plan, task)
+        primary_evidence.extend(pair_paths)
+        if predicate_id in {"accept-operated-document", "terminate-reviewed-reference"}:
+            relationships[target_path].append(task)
+            table_targets[task].append(target_path)
+    else:
+        if predicate_id in {"activate-heading-profile", "accept-decision-self"}:
+            support_profile = "sdlc/ard" if profile_id == "sdlc/adr" else "sdlc/spec"
+            support = add(
+                PurePosixPath(
+                    f"docs/__lifecycle_evidence__/{case_index:02d}-support.md"
+                ),
+                support_profile,
+                "active",
+            )
+            relationships[target_path].append(support)
+        primary_evidence.append(target_path)
+
+    predicate_contract = next(
+        predicate
+        for predicate in registry.evidence_predicates
+        if predicate.predicate_id == predicate_id
+    )
+    if "rendered-link" in predicate_contract.capabilities and not relationships.get(
+        target_path
+    ):
+        target_profile = profile_map[profile_id]
+        allowed = ()
+        if target_profile.body_contract is not None:
+            allowed = (
+                target_profile.body_contract.allowed_source_profile_ids
+                or target_profile.body_contract.allowed_target_profile_ids
+            )
+        support_profile = allowed[0] if allowed else "sdlc/spec"
+        support = add(
+            PurePosixPath(
+                f"docs/__lifecycle_evidence__/{case_index:02d}-rendered-support.md"
+            ),
+            support_profile,
+            "active",
+        )
+        relationships[target_path].append(support)
+
+    def remove(path: PurePosixPath) -> None:
+        documents.pop(path, None)
+        relationships.pop(path, None)
+        table_targets.pop(path, None)
+
+    self_requirement = any(
+        "$self" in requirement.profile_ids
+        for requirement in predicate_contract.evidence
+    )
+
+    def mutation_evidence_path() -> PurePosixPath:
+        if self_requirement:
+            return target_path
+        if pair_paths is not None:
+            return next(
+                (path for path in pair_paths if path != target_path),
+                pair_paths[0],
+            )
+        return primary_evidence[0] if primary_evidence else target_path
+
+    if variant == "missing":
+        if pair_paths is not None:
+            plan, task = pair_paths
+            if target_path in {plan, task} or profile_id in SPECIFICATION_PROFILES:
+                relationships[plan] = [
+                    path for path in relationships[plan] if path != task
+                ]
+                relationships[task] = [
+                    path for path in relationships[task] if path != plan
+                ]
+            else:
+                relationships[target_path] = [
+                    path for path in relationships[target_path] if path != task
+                ]
+                table_targets[task] = [
+                    path for path in table_targets[task] if path != target_path
+                ]
+        elif predicate_id == "complete-product-program" and primary_evidence:
+            removed = primary_evidence[-1]
+            relationships[target_path] = [
+                path for path in relationships[target_path] if path != removed
+            ]
+        elif predicate_id == "accept-architecture" and primary_evidence:
+            removed = primary_evidence[0]
+            relationships[target_path] = [
+                path for path in relationships[target_path] if path != removed
+            ]
+        else:
+            relationships[target_path] = []
+    elif variant == "orphan":
+        removed: PurePosixPath | None = None
+        if pair_paths is not None:
+            plan, task = pair_paths
+            removable = plan if target_path == task else task
+            remove(removable)
+            removed = removable
+        elif predicate_id == "complete-product-program" and primary_evidence:
+            removed = primary_evidence[-1]
+            remove(removed)
+        elif predicate_id == "accept-architecture" and primary_evidence:
+            removed = primary_evidence[0]
+            remove(removed)
+        else:
+            missing_path = PurePosixPath(
+                f"docs/__lifecycle_evidence__/{case_index:02d}-orphan.md"
+            )
+            relationships[target_path] = [missing_path]
+    elif variant == "wrong-profile":
+        path = mutation_evidence_path()
+        current = documents.get(path)
+        if current is not None:
+            wrong_profile = (
+                "sdlc/prd" if current.profile_id == "sdlc/guide" else "sdlc/guide"
+            )
+            documents[path] = LifecycleDocument(path, wrong_profile, current.status)
+    elif variant == "wrong-state":
+        path = mutation_evidence_path()
+        current = documents.get(path)
+        if current is not None:
+            documents[path] = LifecycleDocument(path, current.profile_id, "draft")
+    elif variant == "multiple":
+        if pair_paths is not None and spec_identity is not None:
+            plan, task = pair_paths
+            if target_path == plan:
+                task_two = add(
+                    PurePosixPath(
+                        f"docs/04.execution/tasks/2099-01-02-pair-{case_index:02d}.md"
+                    ),
+                    "sdlc/task",
+                    documents[task].status or "done",
+                )
+                relationships[plan].append(task_two)
+                relationships[task_two].extend((spec_identity, plan))
+                if predicate_id in {
+                    "accept-operated-document",
+                    "terminate-reviewed-reference",
+                }:
+                    table_targets[task_two].append(target_path)
+            elif target_path == task:
+                plan_two = add(
+                    PurePosixPath(
+                        f"docs/04.execution/plans/2099-01-02-pair-{case_index:02d}.md"
+                    ),
+                    "sdlc/plan",
+                    documents[plan].status or "done",
+                )
+                relationships[task].append(plan_two)
+                relationships[plan_two].extend((spec_identity, task))
+            else:
+                plan_two = add(
+                    PurePosixPath(
+                        f"docs/04.execution/plans/2099-01-02-pair-{case_index:02d}.md"
+                    ),
+                    "sdlc/plan",
+                    documents[plan].status or "done",
+                )
+                task_two = add(
+                    PurePosixPath(
+                        f"docs/04.execution/tasks/2099-01-02-pair-{case_index:02d}.md"
+                    ),
+                    "sdlc/task",
+                    documents[task].status or "done",
+                )
+                relationships[plan_two].extend((spec_identity, task_two))
+                relationships[task_two].extend((spec_identity, plan_two))
+                if predicate_id in {
+                    "accept-operated-document",
+                    "terminate-reviewed-reference",
+                }:
+                    relationships[target_path].append(task_two)
+                    table_targets[task_two].append(target_path)
+        elif predicate_id == "complete-product-program" and primary_evidence:
+            relation = primary_evidence[0]
+            duplicate = add(
+                relation.parent.with_name(relation.parent.name + "-duplicate")
+                / "spec.md",
+                "sdlc/spec",
+                "done",
+            )
+            relationships[target_path].append(duplicate)
+        elif relationships.get(target_path):
+            relationships[target_path].append(relationships[target_path][0])
+        else:
+            target_profile = profile_map[profile_id]
+            allowed = ()
+            if target_profile.body_contract is not None:
+                allowed = (
+                    target_profile.body_contract.allowed_source_profile_ids
+                    or target_profile.body_contract.allowed_target_profile_ids
+                )
+            support_profile = allowed[0] if allowed else "sdlc/spec"
+            support = add(
+                PurePosixPath(
+                    f"docs/__lifecycle_evidence__/{case_index:02d}-duplicate.md"
+                ),
+                support_profile,
+                "active",
+            )
+            relationships[target_path].extend((support, support))
+
+    corrupt_path = target_path
+    if variant in {"plain-text-path", "opaque-markdown"} and not relationships.get(
+        corrupt_path
+    ):
+        target_profile = profile_map[profile_id]
+        allowed = ()
+        if target_profile.body_contract is not None:
+            allowed = (
+                target_profile.body_contract.allowed_source_profile_ids
+                or target_profile.body_contract.allowed_target_profile_ids
+            )
+        support_profile = allowed[0] if allowed else "sdlc/spec"
+        support = add(
+            PurePosixPath(
+                f"docs/__lifecycle_evidence__/{case_index:02d}-syntax-support.md"
+            ),
+            support_profile,
+            "active",
+        )
+        relationships.setdefault(corrupt_path, []).append(support)
+
+    backlink_targets: dict[PurePosixPath, list[PurePosixPath]] = {
+        path: [] for path in documents
+    }
+    for owner, linked_paths in relationships.items():
+        owner_document = documents.get(owner)
+        if owner_document is None:
+            continue
+        owner_profile = profile_map[owner_document.profile_id]
+        contract = owner_profile.body_contract
+        if contract is None or not contract.reciprocal_evidence:
+            continue
+        for linked_path in linked_paths:
+            if linked_path in documents:
+                backlink_targets[linked_path].append(owner)
+
+    snapshot_profiles = MappingProxyType(
+        {path: document.profile_id for path, document in documents.items()}
+    )
+    adapter = _link_validator_module()
+    views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
+    for path, document in documents.items():
+        profile = profile_map[document.profile_id]
+        mode = (
+            "plain"
+            if variant == "plain-text-path" and path == corrupt_path
+            else "opaque"
+            if variant == "opaque-markdown" and path == corrupt_path
+            else "rendered"
+        )
+        text = _evidence_fixture_text(
+            profile,
+            document,
+            snapshot_profiles,
+            relationships.get(path, ()),
+            table_targets=table_targets.get(path, ()),
+            backlink_targets=backlink_targets.get(path, ()),
+            link_mode=mode,
+            opaque_form=case_index,
+            body_mismatch=(
+                variant == "body-contract-mismatch"
+                or (variant == "missing" and predicate_contract.relationship == "self")
+            )
+            and path == corrupt_path,
+            wrong_section=(
+                variant == "wrong-relationship-section"
+                or (
+                    variant == "body-contract-mismatch"
+                    and profile.body_contract is None
+                )
+            )
+            and path == corrupt_path,
+        )
+        rendered = adapter.lifecycle_markdown_evidence(
+            path, text, profile, snapshot_profiles
+        )
+        views[path] = LifecycleEvidenceDocument(
+            document=document,
+            all_local_links=rendered.all_local_links,
+            relationship_links=rendered.relationship_links,
+            unresolved_relationship_links=rendered.unresolved_relationship_links,
+            body_table_links=rendered.body_table_links,
+            relationship_section_valid=rendered.relationship_section_valid,
+            body_contract_valid=rendered.body_contract_valid,
+            task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
+        )
+
+    base_documents = {
+        path: LifecycleDocument(path, document.profile_id, previous(document.status))
+        for path, document in documents.items()
+    }
+    base_documents[target_path] = LifecycleDocument(target_path, profile_id, from_state)
+    if predicate_id == "complete-product-program" and primary_evidence:
+        last_relation = primary_evidence[-1]
+        if last_relation in base_documents:
+            base_documents[last_relation] = LifecycleDocument(
+                last_relation, "sdlc/spec", "active"
+            )
+    body_changed = set(documents)
+    if variant == "unchanged":
+        if predicate_contract.same_diff == "self-status-and-body":
+            body_changed.discard(target_path)
+        elif predicate_contract.same_diff == "pair-created-or-status-changed":
+            assert pair_paths is not None
+            unchanged_member = next(path for path in pair_paths if path != target_path)
+            base_documents[unchanged_member] = documents[unchanged_member]
+        elif predicate_contract.same_diff == "target-and-last-relation-changed":
+            for relation in primary_evidence:
+                base_documents[relation] = documents[relation]
+        elif predicate_contract.same_diff == "target-and-evidence-status-body-changed":
+            evidence_path = primary_evidence[0]
+            base_documents[evidence_path] = documents[evidence_path]
+            body_changed.discard(evidence_path)
+        elif predicate_contract.same_diff in {
+            "target-plan-task-status-changed",
+            "pair-status-changed",
+        }:
+            assert pair_paths is not None
+            for pair_path in pair_paths:
+                if pair_path != target_path:
+                    base_documents[pair_path] = documents[pair_path]
+    projected_documents = {path: view.document for path, view in views.items()}
+    status_changed = frozenset(
+        path
+        for path in set(base_documents) & set(projected_documents)
+        if base_documents[path].profile_id != projected_documents[path].profile_id
+        or base_documents[path].status != projected_documents[path].status
+    )
+    body_changed_paths = frozenset(body_changed & set(projected_documents))
+    changed_paths = status_changed | body_changed_paths
+    return target, LifecycleEvidenceContext(
+        base_documents=MappingProxyType(base_documents),
+        proposed_documents=MappingProxyType(views),
+        changed_paths=changed_paths,
+        status_changed_paths=status_changed,
+        body_changed_paths=body_changed_paths,
+        created_paths=frozenset(),
+    )
+
+
 def _fixture_document_text(
+    path: str,
     profile_id: str,
     status: str,
     *,
     claimed_profile_id: str | None = None,
 ) -> str:
+    heading_sets = {
+        "sdlc/spec": (
+            "Overview",
+            "Strategic Boundaries & Non-goals",
+            "Contracts",
+            "Core Design",
+            "Data Modeling & Storage Strategy",
+            "Interfaces & Data Structures",
+            "Edge Cases & Error Handling",
+            "Failure Modes & Fallback / Human Escalation",
+            "Verification Commands",
+            "Success Criteria & Verification Plan",
+            "Traceability",
+        ),
+        "sdlc/plan": (
+            "Overview",
+            "Context",
+            "Goals & In-Scope",
+            "Non-Goals & Out-of-Scope",
+            "Work Breakdown",
+            "Verification Plan",
+            "Risks & Mitigations",
+            "Completion Criteria",
+            "Traceability",
+        ),
+        "sdlc/task": (
+            "Overview",
+            "Inputs",
+            "Task Table",
+            "Approval and Safety Boundaries",
+            "Verification Summary",
+            "Traceability",
+        ),
+    }
+    body_parts: list[str] = []
+    for heading in heading_sets.get(profile_id, ()):
+        body_parts.append(f"## {heading}\n\nLifecycle fixture {status} evidence.")
+        if (
+            profile_id == "sdlc/spec"
+            and "035-evidence-fixture" in path
+            and heading == "Overview"
+        ):
+            owner = PurePosixPath(path)
+            body_parts.append(
+                " ".join(
+                    (
+                        _fixture_link(
+                            owner,
+                            PurePosixPath(
+                                "docs/04.execution/plans/2099-01-01-example.md"
+                            ),
+                            "Plan backlink",
+                        ),
+                        _fixture_link(
+                            owner,
+                            PurePosixPath(
+                                "docs/04.execution/tasks/2099-01-01-example.md"
+                            ),
+                            "Task backlink",
+                        ),
+                    )
+                )
+            )
+        if profile_id == "sdlc/task" and heading == "Task Table":
+            body_parts.append(
+                "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
+                "| --- | --- | --- | --- | --- | --- | --- |\n"
+                "| FIX-001 | VAL-FIX-001 | Exercise evidence | platform | Done | Verified fixture | [Log](../../../README.md) |"
+            )
+        if heading != "Traceability":
+            continue
+        body_parts.append("### Lifecycle Traceability")
+        if profile_id == "sdlc/spec":
+            body_parts.append(
+                "| PRD requirement | Spec criterion | Verification method |\n"
+                "| --- | --- | --- |\n"
+                "| N/A — isolated lifecycle fixture | VAL-FIX-001 | Self-test |"
+            )
+        elif profile_id == "sdlc/plan":
+            body_parts.append(
+                "| Spec criterion | Work package | Expected Task |\n"
+                "| --- | --- | --- |\n"
+                "| [VAL-FIX-001](../../03.specs/035-evidence-fixture/spec.md) | FIX-001 | [Task](../tasks/2099-01-01-example.md) |"
+            )
+        elif profile_id == "sdlc/task":
+            body_parts.append(
+                "| Criterion / work item | Result | Evidence |\n"
+                "| --- | --- | --- |\n"
+                "| [FIX-001](../../03.specs/035-evidence-fixture/spec.md) | Verified | [Spec evidence](../../03.specs/035-evidence-fixture/spec.md) |\n"
+                "| [FIX-002](../plans/2099-01-01-example.md) | Verified | [Spec evidence](../../03.specs/035-evidence-fixture/spec.md) |"
+            )
+    body = "\n\n".join(body_parts)
     return (
         "---\n"
         "title: 'Lifecycle fixture'\n"
@@ -730,6 +1704,7 @@ def _fixture_document_text(
         "updated: 2099-01-01\n"
         "---\n\n"
         "# Lifecycle fixture\n"
+        f"\n{body}\n"
     )
 
 
@@ -745,6 +1720,7 @@ def _write_fixture_document(
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
         _fixture_document_text(
+            path,
             profile_id,
             status,
             claimed_profile_id=claimed_profile_id,
@@ -775,6 +1751,63 @@ def _configure_submodule_ignore_fixture(root: Path, path: str) -> None:
     _git_fixture(root, "config", "diff.ignoreSubmodules", "all")
 
 
+def _write_invalid_evidence_document(
+    root: Path, path: str, profile_id: str, status: str
+) -> None:
+    destination = root / path
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(
+        "---\n"
+        "title: 'Invalid evidence fixture'\n"
+        f"type: {profile_id}\n"
+        f"status: {status}\n"
+        "owner: platform\n"
+        "updated: 2099-01-01\n"
+        "---\n\n# Invalid evidence fixture\n",
+        encoding="utf-8",
+    )
+
+
+def _write_architecture_evidence_pair(
+    root: Path,
+    registry: Registry,
+    *,
+    ard_status: str,
+    adr_status: str,
+    linked: bool,
+) -> tuple[str, str]:
+    ard_path = PurePosixPath(
+        "docs/02.architecture/requirements/0900-evidence-fixture.md"
+    )
+    adr_path = PurePosixPath("docs/02.architecture/decisions/0900-evidence-fixture.md")
+    documents = {
+        ard_path: LifecycleDocument(ard_path, "sdlc/ard", ard_status),
+        adr_path: LifecycleDocument(adr_path, "sdlc/adr", adr_status),
+    }
+    snapshot_profiles = MappingProxyType(
+        {path: document.profile_id for path, document in documents.items()}
+    )
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    for path, document in documents.items():
+        relations = (
+            (adr_path,)
+            if linked and path == ard_path
+            else (ard_path,)
+            if linked and path == adr_path
+            else ()
+        )
+        text = _evidence_fixture_text(
+            profiles[document.profile_id],
+            document,
+            snapshot_profiles,
+            relations,
+        )
+        destination = root / path.as_posix()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(text, encoding="utf-8")
+    return ard_path.as_posix(), adr_path.as_posix()
+
+
 def _git_case(
     name: str,
     root: Path,
@@ -799,8 +1832,35 @@ def _git_case(
         "git-environment-steering",
         "staged-submodule-ignore-all",
         "explicit-ref-submodule-ignore-all",
+        "staged-evidence-index-invalid-worktree-valid",
+        "staged-evidence-index-valid-worktree-invalid",
     }:
         _write_fixture_document(root, spec_path, "sdlc/spec", "draft")
+    if name in {
+        "staged-paired-create",
+        "staged-paired-create-ready-spec-done",
+        "staged-paired-create-split-spec",
+    }:
+        _write_fixture_document(
+            root,
+            "docs/03.specs/035-evidence-fixture/spec.md",
+            "sdlc/spec",
+            "done" if name == "staged-paired-create-ready-spec-done" else "active",
+        )
+    if name == "staged-paired-create-blocked-spec":
+        _write_fixture_document(
+            root,
+            "docs/03.specs/036-blocked-fixture/spec.md",
+            "sdlc/spec",
+            "active",
+        )
+    if name == "staged-paired-create-split-spec":
+        _write_fixture_document(
+            root,
+            "docs/03.specs/036-blocked-fixture/spec.md",
+            "sdlc/spec",
+            "active",
+        )
     if name in {
         "staged-modified-unclassified-to-governed",
         "staged-modified-unclassified-to-unclassified",
@@ -924,7 +1984,10 @@ def _git_case(
         )
         _git_fixture(root, "add", "--", spec_path)
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-paired-create":
+    elif name in {
+        "staged-paired-create",
+        "staged-paired-create-ready-spec-done",
+    }:
         _write_fixture_document(
             root, "docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"
         )
@@ -932,6 +1995,45 @@ def _git_case(
             root, "docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "active"
         )
         _git_fixture(root, "add", "--all")
+        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+    elif name == "staged-paired-create-blocked-spec":
+        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
+        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
+        _write_fixture_document(root, plan_path, "sdlc/plan", "active")
+        _write_fixture_document(root, task_path, "sdlc/task", "active")
+        for path in (plan_path, task_path):
+            destination = root / path
+            destination.write_text(
+                destination.read_text(encoding="utf-8").replace(
+                    "035-evidence-fixture", "036-blocked-fixture"
+                ),
+                encoding="utf-8",
+            )
+        _git_fixture(root, "add", "--all")
+        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+    elif name == "staged-paired-create-split-spec":
+        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
+        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
+        _write_fixture_document(root, plan_path, "sdlc/plan", "active")
+        _write_fixture_document(root, task_path, "sdlc/task", "active")
+        destination = root / task_path
+        destination.write_text(
+            destination.read_text(encoding="utf-8").replace(
+                "035-evidence-fixture", "036-blocked-fixture"
+            ),
+            encoding="utf-8",
+        )
+        _git_fixture(root, "add", "--all")
+        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+    elif name == "staged-evidence-index-invalid-worktree-valid":
+        _write_invalid_evidence_document(root, spec_path, "sdlc/spec", "active")
+        _git_fixture(root, "add", "--", spec_path)
+        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
+        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+    elif name == "staged-evidence-index-valid-worktree-invalid":
+        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
+        _git_fixture(root, "add", "--", spec_path)
+        _write_invalid_evidence_document(root, spec_path, "sdlc/spec", "active")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "include-does-not-filter-violation":
         _write_fixture_document(root, spec_path, "sdlc/spec", "done")
@@ -986,6 +2088,58 @@ def _git_case(
             registry,
             mode="explicit-ref",
             from_ref=base,
+            to_ref=proposed,
+        )
+    elif name in {
+        "explicit-ref-proposed-only-evidence",
+        "explicit-ref-base-only-evidence-removed",
+    }:
+        proposed_only = name == "explicit-ref-proposed-only-evidence"
+        _write_architecture_evidence_pair(
+            root,
+            registry,
+            ard_status="active",
+            adr_status="active",
+            linked=not proposed_only,
+        )
+        base = _commit_fixture(root, "architecture evidence base")
+        _write_architecture_evidence_pair(
+            root,
+            registry,
+            ard_status="accepted",
+            adr_status="accepted",
+            linked=proposed_only,
+        )
+        proposed = _commit_fixture(root, "architecture evidence proposed")
+        diagnostics = _evaluate_comparison(
+            root,
+            registry,
+            mode="explicit-ref",
+            from_ref=base,
+            to_ref=proposed,
+        )
+    elif name == "ci-proposed-tree-evidence":
+        _write_architecture_evidence_pair(
+            root,
+            registry,
+            ard_status="active",
+            adr_status="active",
+            linked=False,
+        )
+        configured_base = _commit_fixture(root, "CI evidence base")
+        _write_architecture_evidence_pair(
+            root,
+            registry,
+            ard_status="accepted",
+            adr_status="accepted",
+            linked=True,
+        )
+        proposed = _commit_fixture(root, "CI evidence proposed")
+        diagnostics = _evaluate_comparison(
+            root,
+            registry,
+            mode="ci",
+            base_ref=configured_base,
             to_ref=proposed,
         )
     elif name == "ci-merge-base":
@@ -1044,6 +2198,13 @@ def _git_case(
             "-m",
             "merge-right",
         )
+        resolver_calls = 0
+
+        def unexpected_evidence_resolver(*args: object) -> LifecycleEvidenceContext:
+            nonlocal resolver_calls
+            resolver_calls += 1
+            raise AssertionError("evidence resolver ran before unique base selection")
+
         try:
             _evaluate_comparison(
                 root,
@@ -1051,9 +2212,14 @@ def _git_case(
                 mode="ci",
                 base_ref=merge_left,
                 to_ref=merge_right,
+                evidence_context_factory=unexpected_evidence_resolver,
             )
         except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
+            return (
+                (2, ["LIFECYCLE-BASE"])
+                if resolver_calls == 0
+                else (1, ["LIFECYCLE-EVIDENCE"])
+            )
         return 0, []
     elif name == "missing-ref":
         try:
@@ -1247,6 +2413,7 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         "gitCases",
         "argumentCases",
         "includePathCases",
+        "evidenceCases",
         "snapshotCase",
     }
     if set(fixture) != expected_root_keys:
@@ -1411,6 +2578,43 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
             if not _is_rule_id_list(case.get("expectedRuleIds")):
                 failures.append(f"admissionCases rule IDs differ: {case_name}")
 
+    evidence_cases = fixture.get("evidenceCases")
+    if not isinstance(evidence_cases, list):
+        failures.append("evidenceCases must be a list")
+    else:
+        for case in evidence_cases:
+            if not isinstance(case, dict):
+                failures.append("evidenceCases contains a non-object case")
+                continue
+            if set(case) != {
+                "name",
+                "profile",
+                "from",
+                "to",
+                "predicate",
+                "variants",
+            }:
+                failures.append(f"evidenceCases keys differ: {case.get('name')}")
+                continue
+            profile_id = case.get("profile")
+            from_state = case.get("from")
+            to_state = case.get("to")
+            predicate = case.get("predicate")
+            name = case.get("name")
+            if not all(
+                isinstance(value, str)
+                for value in (name, profile_id, from_state, to_state, predicate)
+            ):
+                failures.append("evidenceCases scalar values must be strings")
+            elif name != f"{profile_id}:{from_state}->{to_state}":
+                failures.append(f"evidenceCases name differs: {name}")
+            variants = case.get("variants")
+            if (
+                not _is_string_list(variants, nonempty=True)
+                or tuple(variants) != EXPECTED_EVIDENCE_VARIANTS
+            ):
+                failures.append(f"evidenceCases variants differ: {name}")
+
     snapshot = fixture.get("snapshotCase")
     if not isinstance(snapshot, dict):
         failures.append("snapshotCase must be an object")
@@ -1442,6 +2646,28 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         failures.append("fixture lifecycle edge projection contains duplicates")
     if sorted(fixture_projection) != sorted(production_projection):
         failures.append("fixture lifecycle edge projection differs from production")
+    evidence_projection = [
+        (case["profile"], case["from"], case["to"], case["predicate"])
+        for case in fixture["evidenceCases"]
+    ]
+    production_evidence_projection = [
+        (
+            profile.profile_id,
+            edge.from_state,
+            edge.to_state,
+            edge.predicate_id,
+        )
+        for profile in registry.profiles
+        for edge in profile.lifecycle.edges
+    ]
+    if len(evidence_projection) != len(set(evidence_projection)):
+        failures.append("fixture evidence edge projection contains duplicates")
+    if evidence_projection != production_evidence_projection:
+        failures.append("fixture evidence edge projection differs from production")
+    if len(evidence_projection) != 42 or len(registry.evidence_predicates) != 10:
+        failures.append("production evidence inventory is not 42 edges/10 predicates")
+    if len({item[0] for item in evidence_projection}) != 19:
+        failures.append("production evidence profile inventory is not 19")
     return failures
 
 
@@ -1514,10 +2740,456 @@ def _fixture_mutation_probe_failures(
     unhashable_operation["admissionCases"][0]["operation"] = {}
     probes.append(("unhashable admission operation", unhashable_operation))
 
+    missing_evidence_edge = copy.deepcopy(fixture)
+    missing_evidence_edge["evidenceCases"].pop()
+    probes.append(("missing evidence edge", missing_evidence_edge))
+
+    duplicate_evidence_edge = copy.deepcopy(fixture)
+    duplicate_evidence_edge["evidenceCases"].append(
+        copy.deepcopy(duplicate_evidence_edge["evidenceCases"][0])
+    )
+    probes.append(("duplicate evidence edge", duplicate_evidence_edge))
+
+    unknown_evidence_predicate = copy.deepcopy(fixture)
+    unknown_evidence_predicate["evidenceCases"][0]["predicate"] = "unknown"
+    probes.append(("unknown evidence predicate", unknown_evidence_predicate))
+
+    swapped_evidence_edges = copy.deepcopy(fixture)
+    (
+        swapped_evidence_edges["evidenceCases"][0],
+        swapped_evidence_edges["evidenceCases"][1],
+    ) = (
+        swapped_evidence_edges["evidenceCases"][1],
+        swapped_evidence_edges["evidenceCases"][0],
+    )
+    probes.append(("swapped evidence edges", swapped_evidence_edges))
+
+    missing_evidence_variant = copy.deepcopy(fixture)
+    missing_evidence_variant["evidenceCases"][0]["variants"].pop()
+    probes.append(("missing evidence variant", missing_evidence_variant))
+
+    extra_evidence_variant = copy.deepcopy(fixture)
+    extra_evidence_variant["evidenceCases"][0]["variants"].append("extra")
+    probes.append(("extra evidence variant", extra_evidence_variant))
+
+    reordered_evidence_variants = copy.deepcopy(fixture)
+    reordered_evidence_variants["evidenceCases"][0]["variants"].reverse()
+    probes.append(("reordered evidence variants", reordered_evidence_variants))
+
+    null_evidence_variants = copy.deepcopy(fixture)
+    null_evidence_variants["evidenceCases"][0]["variants"] = None
+    probes.append(("null evidence variants", null_evidence_variants))
+
+    non_string_evidence_variant = copy.deepcopy(fixture)
+    non_string_evidence_variant["evidenceCases"][0]["variants"][0] = []
+    probes.append(("non-string evidence variant", non_string_evidence_variant))
+
+    null_evidence_case = copy.deepcopy(fixture)
+    null_evidence_case["evidenceCases"][0] = None
+    probes.append(("null evidence case", null_evidence_case))
+
     failures: list[str] = []
     for name, candidate in probes:
         if not _fixture_contract_failures(candidate, registry):
             failures.append(f"fixture mutation accepted: {name}")
+    return failures
+
+
+EVIDENCE_REGRESSION_COUNT = 5
+
+
+def _evidence_regression_failures(
+    registry: Registry, evidence_cases: Sequence[Mapping[str, object]]
+) -> list[str]:
+    """Close the concrete bypasses reproduced by independent review."""
+
+    failures: list[str] = []
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    adapter = _link_validator_module()
+
+    def render_view(
+        document: LifecycleDocument,
+        text: str,
+        snapshot_profiles: Mapping[PurePosixPath, str],
+    ) -> LifecycleEvidenceDocument:
+        rendered = adapter.lifecycle_markdown_evidence(
+            document.path,
+            text,
+            profiles[document.profile_id],
+            snapshot_profiles,
+        )
+        return LifecycleEvidenceDocument(
+            document=document,
+            all_local_links=rendered.all_local_links,
+            relationship_links=rendered.relationship_links,
+            unresolved_relationship_links=rendered.unresolved_relationship_links,
+            body_table_links=rendered.body_table_links,
+            relationship_section_valid=rendered.relationship_section_valid,
+            body_contract_valid=rendered.body_contract_valid,
+            task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
+        )
+
+    prd_path = PurePosixPath("docs/01.requirements/999-reciprocal-fixture.md")
+    spec_path = PurePosixPath("docs/03.specs/999-reciprocal-fixture/spec.md")
+    prd = LifecycleDocument(prd_path, "sdlc/prd", "active")
+    spec = LifecycleDocument(spec_path, "sdlc/spec", "active")
+    snapshot_profiles = MappingProxyType(
+        {prd_path: prd.profile_id, spec_path: spec.profile_id}
+    )
+    prd_text = _evidence_fixture_text(
+        profiles[prd.profile_id], prd, snapshot_profiles, (spec_path,)
+    )
+    spec_without_backlink = _evidence_fixture_text(
+        profiles[spec.profile_id], spec, snapshot_profiles, ()
+    )
+    no_backlink_views = MappingProxyType(
+        {
+            prd_path: render_view(prd, prd_text, snapshot_profiles),
+            spec_path: render_view(spec, spec_without_backlink, snapshot_profiles),
+        }
+    )
+    base_documents = MappingProxyType(
+        {
+            prd_path: LifecycleDocument(prd_path, "sdlc/prd", "draft"),
+            spec_path: spec,
+        }
+    )
+    no_backlink_context = LifecycleEvidenceContext(
+        base_documents=base_documents,
+        proposed_documents=no_backlink_views,
+        changed_paths=frozenset({prd_path}),
+        status_changed_paths=frozenset({prd_path}),
+        body_changed_paths=frozenset({prd_path}),
+        created_paths=frozenset(),
+    )
+    no_backlink_actual = compare_lifecycle(
+        registry,
+        {prd_path: base_documents[prd_path]},
+        {prd_path: prd},
+        base_mode="explicit-ref",
+        evidence_context=no_backlink_context,
+    )
+    no_backlink_expected = (
+        LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-EVIDENCE",
+            path=prd_path,
+            profile="sdlc/prd",
+            expected_transition="predicate activate-self-body for draft -> active",
+            observed_transition=f"evidence paths {[prd_path.as_posix()]!r}",
+            base_mode="explicit-ref",
+            evidence_gap=(
+                f"reciprocal body evidence is missing from {spec_path.as_posix()}"
+            ),
+        ),
+    )
+    if no_backlink_actual != no_backlink_expected:
+        failures.append(f"regression reciprocal-body: {no_backlink_actual!r}")
+
+    spec_with_backlink = _evidence_fixture_text(
+        profiles[spec.profile_id],
+        spec,
+        snapshot_profiles,
+        (),
+        backlink_targets=(prd_path,),
+    )
+    forged_views = MappingProxyType(
+        {
+            prd_path: no_backlink_views[prd_path],
+            spec_path: render_view(spec, spec_with_backlink, snapshot_profiles),
+        }
+    )
+    forged_base = MappingProxyType(
+        {
+            prd_path: LifecycleDocument(prd_path, "sdlc/prd", "done"),
+            spec_path: spec,
+        }
+    )
+    forged_context = LifecycleEvidenceContext(
+        base_documents=forged_base,
+        proposed_documents=forged_views,
+        changed_paths=frozenset({prd_path}),
+        status_changed_paths=frozenset({prd_path}),
+        body_changed_paths=frozenset({prd_path}),
+        created_paths=frozenset({prd_path}),
+    )
+    forged_actual = compare_lifecycle(
+        registry,
+        {prd_path: LifecycleDocument(prd_path, "sdlc/prd", "draft")},
+        {prd_path: prd},
+        base_mode="explicit-ref",
+        evidence_context=forged_context,
+    )
+    forged_expected = (
+        LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-EVIDENCE",
+            path=prd_path,
+            profile="sdlc/prd",
+            expected_transition="predicate activate-self-body for draft -> active",
+            observed_transition=f"evidence paths {[prd_path.as_posix()]!r}",
+            base_mode="explicit-ref",
+            evidence_gap=(
+                "created-path projection differs from canonical snapshots; "
+                "base evidence projection differs from transition source"
+            ),
+        ),
+    )
+    if forged_actual != forged_expected:
+        failures.append(f"regression forged-context: {forged_actual!r}")
+
+    reference_path = PurePosixPath(
+        "docs/90.references/research/2099-01-01-heading-fixture.md"
+    )
+    support_path = PurePosixPath("docs/03.specs/998-heading-fixture/spec.md")
+    reference = LifecycleDocument(reference_path, "content/reference", "active")
+    support = LifecycleDocument(support_path, "sdlc/spec", "active")
+    heading_profiles = MappingProxyType(
+        {reference_path: reference.profile_id, support_path: support.profile_id}
+    )
+    reference_text = _evidence_fixture_text(
+        profiles[reference.profile_id],
+        reference,
+        heading_profiles,
+        (support_path,),
+    )
+    reference_text += "\n## Unsupported Lifecycle Heading\n\nRejected.\n"
+    heading_view = render_view(reference, reference_text, heading_profiles)
+    if heading_view.body_contract_valid:
+        failures.append("regression unsupported-root-h2: adapter accepted heading")
+    heading_context = LifecycleEvidenceContext(
+        base_documents=MappingProxyType(
+            {
+                reference_path: LifecycleDocument(
+                    reference_path, "content/reference", "draft"
+                ),
+                support_path: support,
+            }
+        ),
+        proposed_documents=MappingProxyType(
+            {
+                reference_path: heading_view,
+                support_path: render_view(
+                    support,
+                    _evidence_fixture_text(
+                        profiles[support.profile_id],
+                        support,
+                        heading_profiles,
+                        (),
+                    ),
+                    heading_profiles,
+                ),
+            }
+        ),
+        changed_paths=frozenset({reference_path}),
+        status_changed_paths=frozenset({reference_path}),
+        body_changed_paths=frozenset({reference_path}),
+        created_paths=frozenset(),
+    )
+    heading_actual = compare_lifecycle(
+        registry,
+        {reference_path: heading_context.base_documents[reference_path]},
+        {reference_path: reference},
+        base_mode="explicit-ref",
+        evidence_context=heading_context,
+    )
+    if (
+        len(heading_actual) != 1
+        or heading_actual[0].evidence_gap
+        != f"body contract mismatch at {reference_path.as_posix()}"
+    ):
+        failures.append(f"regression unsupported-root-h2: {heading_actual!r}")
+
+    task_path = PurePosixPath("docs/04.execution/tasks/2099-01-01-terminal.md")
+    task = LifecycleDocument(task_path, "sdlc/task", "done")
+    terminal_profiles = MappingProxyType({task_path: task.profile_id})
+    task_text = _evidence_fixture_text(
+        profiles[task.profile_id], task, terminal_profiles, ()
+    )
+    real_terminal = render_view(task, task_text, terminal_profiles)
+    placeholder_text = task_text.replace(
+        "[Review log](../../../README.md)", "Named repository evidence"
+    )
+    placeholder_terminal = render_view(task, placeholder_text, terminal_profiles)
+    if (
+        not real_terminal.task_terminal_evidence_valid
+        or placeholder_terminal.task_terminal_evidence_valid
+    ):
+        failures.append(
+            "regression task-terminal-placeholder: canonical phrase/link differs"
+        )
+
+    operated_index, operated_case = next(
+        (index, case)
+        for index, case in enumerate(evidence_cases)
+        if case["predicate"] == "accept-operated-document"
+    )
+    operated_target, operated_context = _evidence_case_context(
+        registry, operated_case, "positive", operated_index
+    )
+    operated_views = dict(operated_context.proposed_documents)
+    operated_task_path = next(
+        path
+        for path, view in operated_views.items()
+        if view.document.profile_id == "sdlc/task"
+    )
+    operated_task = operated_views[operated_task_path].document
+    operated_profiles = MappingProxyType(
+        {path: view.document.profile_id for path, view in operated_views.items()}
+    )
+    operated_relationships = operated_views[operated_task_path].relationship_links
+    task_with_evidence = _evidence_fixture_text(
+        profiles[operated_task.profile_id],
+        operated_task,
+        operated_profiles,
+        operated_relationships,
+        table_targets=(operated_target.path,),
+    )
+    evidence_link = _fixture_link(operated_task_path, operated_target.path, "Review 1")
+    result_link = _fixture_link(
+        operated_task_path, operated_target.path, "Result target"
+    )
+    task_with_result_only = task_with_evidence.replace(evidence_link, "Verified")
+    task_with_result_only = task_with_result_only.replace(
+        "| fixture | Verified |", f"| {result_link} | Verified |"
+    )
+    result_only_view = render_view(
+        operated_task, task_with_result_only, operated_profiles
+    )
+    if (
+        operated_target.path in result_only_view.body_table_links
+        or operated_target.path not in result_only_view.all_local_links
+    ):
+        failures.append("regression task-result-column: adapter projection differs")
+    operated_views[operated_task_path] = result_only_view
+    result_context = LifecycleEvidenceContext(
+        base_documents=operated_context.base_documents,
+        proposed_documents=MappingProxyType(operated_views),
+        changed_paths=operated_context.changed_paths,
+        status_changed_paths=operated_context.status_changed_paths,
+        body_changed_paths=operated_context.body_changed_paths,
+        created_paths=operated_context.created_paths,
+    )
+    result_actual = compare_lifecycle(
+        registry,
+        {
+            operated_target.path: LifecycleDocument(
+                operated_target.path,
+                operated_target.profile_id,
+                operated_case["from"],
+            )
+        },
+        {operated_target.path: operated_target},
+        base_mode="explicit-ref",
+        evidence_context=result_context,
+    )
+    if _rule_ids(result_actual) != ["LIFECYCLE-EVIDENCE"]:
+        failures.append(f"regression task-result-column: {result_actual!r}")
+
+    return failures
+
+
+def _ambiguous_base_edge_failures(
+    registry: Registry, evidence_cases: Sequence[Mapping[str, object]]
+) -> list[str]:
+    """Run an edge-shaped public CI base gate for every production edge."""
+
+    failures: list[str] = []
+    invoked_edges: list[tuple[str, str, str]] = []
+    expected_edges = [
+        (str(case["profile"]), str(case["from"]), str(case["to"]))
+        for case in evidence_cases
+    ]
+    for case_index, case in enumerate(evidence_cases):
+        with tempfile.TemporaryDirectory(
+            prefix="document-lifecycle-ambiguous-evidence-"
+        ) as directory:
+            repo = Path(directory)
+            _init_fixture_repo(repo)
+            profile_id = str(case["profile"])
+            from_state = str(case["from"])
+            to_state = str(case["to"])
+            edge = (profile_id, from_state, to_state)
+            invoked_edges.append(edge)
+            target_path = _evidence_target_path(
+                profile_id, str(case["predicate"]), case_index
+            )
+            _write_fixture_document(
+                repo, target_path.as_posix(), profile_id, from_state
+            )
+            common = _commit_fixture(repo, f"common {case['name']}")
+            base_tree = _git_fixture(repo, "rev-parse", "HEAD^{tree}")
+            left = _git_fixture(
+                repo, "commit-tree", base_tree, "-p", common, "-m", "left"
+            )
+            right = _git_fixture(
+                repo, "commit-tree", base_tree, "-p", common, "-m", "right"
+            )
+            _write_fixture_document(repo, target_path.as_posix(), profile_id, to_state)
+            _git_fixture(repo, "add", "--", target_path.as_posix())
+            proposed_tree = _git_fixture(repo, "write-tree")
+            merge_left = _git_fixture(
+                repo,
+                "commit-tree",
+                base_tree,
+                "-p",
+                left,
+                "-p",
+                right,
+                "-m",
+                "merge-left",
+            )
+            merge_right = _git_fixture(
+                repo,
+                "commit-tree",
+                proposed_tree,
+                "-p",
+                right,
+                "-p",
+                left,
+                "-m",
+                "merge-right",
+            )
+            resolver_calls = 0
+
+            def unexpected_evidence_resolver(
+                *args: object,
+            ) -> LifecycleEvidenceContext:
+                nonlocal resolver_calls
+                resolver_calls += 1
+                raise AssertionError(
+                    "evidence resolver ran before unique base selection"
+                )
+
+            try:
+                _evaluate_comparison(
+                    repo,
+                    registry,
+                    mode="ci",
+                    base_ref=merge_left,
+                    to_ref=merge_right,
+                    include_paths=(target_path,),
+                    evidence_context_factory=unexpected_evidence_resolver,
+                )
+            except InvocationError as exc:
+                if str(exc) != "CI refs do not have exactly one commit merge base":
+                    failures.append(
+                        f"evidence {case['name']}/ambiguous-base: "
+                        f"base error differs: {exc}"
+                    )
+            else:
+                failures.append(
+                    f"evidence {case['name']}/ambiguous-base: base gate passed"
+                )
+            if resolver_calls != 0:
+                failures.append(
+                    f"evidence {case['name']}/ambiguous-base: "
+                    f"resolver calls {resolver_calls}"
+                )
+    if invoked_edges != expected_edges or len(set(invoked_edges)) != 42:
+        failures.append(
+            "ambiguous-base did not invoke the exact 42 unique profile/state edges"
+        )
     return failures
 
 
@@ -1566,6 +3238,106 @@ def _run_self_test(root: Path) -> list[str]:
                         f"forward {contract['name']}/{profile_id}/{from_state}-{to_state}: rejected"
                     )
                 forward_count += 1
+
+    evidence_cases = fixture.get("evidenceCases", [])
+    failures.extend(_ambiguous_base_edge_failures(registry, evidence_cases))
+    ambiguous_edge_controls: list[str] = []
+    evidence_assertion_projection: list[dict[str, object]] = []
+    for case_index, case in enumerate(evidence_cases):
+        for variant in case["variants"]:
+            if variant == "ambiguous-base":
+                ambiguous_edge_controls.append(case["name"])
+                diagnostics = (
+                    LifecycleDiagnostic(
+                        severity="FAIL",
+                        rule_id="LIFECYCLE-BASE",
+                        path=PurePosixPath("."),
+                        profile="",
+                        expected_transition=(
+                            "valid invocation, unique commit refs, and one "
+                            "comparison base"
+                        ),
+                        observed_transition=(
+                            "CI refs do not have exactly one commit merge base"
+                        ),
+                        base_mode="ci",
+                        evidence_gap="argument or Git provenance",
+                    ),
+                )
+                target_path = _evidence_target_path(
+                    str(case["profile"]), str(case["predicate"]), case_index
+                )
+                expected_rules = ["LIFECYCLE-BASE"]
+            else:
+                target, evidence_context = _evidence_case_context(
+                    registry, case, variant, case_index
+                )
+                target_path = target.path
+                base_target = LifecycleDocument(
+                    target.path, target.profile_id, case["from"]
+                )
+                diagnostics = compare_lifecycle(
+                    registry,
+                    {target.path: base_target},
+                    {target.path: target},
+                    base_mode="explicit-ref",
+                    evidence_context=evidence_context,
+                )
+                expected_rules = [] if variant == "positive" else ["LIFECYCLE-EVIDENCE"]
+            actual_rules = _rule_ids(diagnostics)
+            if actual_rules != expected_rules:
+                failures.append(
+                    f"evidence {case['name']}/{variant}: "
+                    f"expected {expected_rules}, actual {actual_rules}"
+                )
+            if variant not in {"positive", "ambiguous-base"} and len(diagnostics) != 1:
+                failures.append(
+                    f"evidence {case['name']}/{variant}: diagnostic count differs"
+                )
+            evidence_assertion_projection.append(
+                {
+                    "case": case["name"],
+                    "profile": case["profile"],
+                    "from": case["from"],
+                    "to": case["to"],
+                    "predicate": case["predicate"],
+                    "variant": variant,
+                    "target": target_path.as_posix(),
+                    "diagnostics": [
+                        {
+                            "severity": diagnostic.severity,
+                            "ruleId": diagnostic.rule_id,
+                            "path": diagnostic.path.as_posix(),
+                            "profile": diagnostic.profile,
+                            "expectedTransition": diagnostic.expected_transition,
+                            "observedTransition": diagnostic.observed_transition,
+                            "baseMode": diagnostic.base_mode,
+                            "evidenceGap": diagnostic.evidence_gap,
+                        }
+                        for diagnostic in diagnostics
+                    ],
+                }
+            )
+    if len(ambiguous_edge_controls) != 42 or len(set(ambiguous_edge_controls)) != 42:
+        failures.append("ambiguous-base edge projection is not exactly 42 unique edges")
+    evidence_assertion_sha256 = hashlib.sha256(
+        json.dumps(
+            evidence_assertion_projection,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    if (
+        len(evidence_assertion_projection) != 504
+        or evidence_assertion_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
+    ):
+        failures.append(
+            "evidence exact assertion projection differs: "
+            f"count={len(evidence_assertion_projection)} "
+            f"sha256={evidence_assertion_sha256}"
+        )
+    failures.extend(_evidence_regression_failures(registry, evidence_cases))
 
     for case in fixture.get("comparisonCases", []):
         base = _document(*case["base"])
@@ -1713,8 +3485,10 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             len(item["profiles"]) * len(item["edges"])
             for item in fixture["forwardContracts"]
         )
+        evidence_count = sum(len(item["variants"]) for item in fixture["evidenceCases"])
         total = (
             forward_count
+            + evidence_count
             + len(fixture["comparisonCases"])
             + len(fixture["admissionCases"])
             + len(fixture["gitCases"])
@@ -1722,16 +3496,19 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + len(fixture["includePathCases"])
             + 1
             + FIXTURE_MUTATION_COUNT
+            + EVIDENCE_REGRESSION_COUNT
         )
         print(
             "PASS lifecycle self-test "
             f"({total} cases: {forward_count} forward edges, "
+            f"{evidence_count} edge evidence scenarios, "
             f"{len(fixture['comparisonCases'])} comparisons, "
             f"{len(fixture['admissionCases'])} admissions, "
             f"{len(fixture['gitCases'])} Git bases, "
             f"{len(fixture['argumentCases'])} arguments, "
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
-            f"{FIXTURE_MUTATION_COUNT} fixture mutations)"
+            f"{FIXTURE_MUTATION_COUNT} fixture mutations, "
+            f"{EVIDENCE_REGRESSION_COUNT} evidence regressions)"
         )
         return 0
     registry = load_registry(root)

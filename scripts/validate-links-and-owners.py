@@ -22,7 +22,7 @@ import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PurePosixPath
-from typing import Any, Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 from urllib.parse import unquote
 
 import yaml
@@ -275,6 +275,21 @@ class Context:
     governance_current_states: tuple[str, ...]
     reference_current_packs: ReferenceCurrentPacks
     tracked_regular_paths: frozenset[PurePosixPath]
+
+
+@dataclass(frozen=True)
+class LifecycleMarkdownEvidence:
+    """Immutable lifecycle view derived by the canonical Markdown scanner."""
+
+    path: PurePosixPath
+    all_local_links: tuple[PurePosixPath, ...]
+    relationship_links: tuple[PurePosixPath, ...]
+    unresolved_relationship_links: tuple[PurePosixPath, ...]
+    body_table_links: tuple[PurePosixPath, ...]
+    relationship_section_valid: bool
+    body_contract_valid: bool
+    body_rows: tuple[tuple[tuple[str, str], ...], ...]
+    task_terminal_evidence_valid: bool
 
 
 class ConfigurationError(ValueError):
@@ -2564,6 +2579,23 @@ def _first_visible_table(
 
 
 BODY_LINK_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
+BODY_IDENTIFIER_PATTERNS = {
+    "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,3}$"),
+    "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
+    "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
+}
+
+
+def _body_identifier_text(cell: str) -> str:
+    """Normalize the same plain, code, or full-link identifier forms."""
+
+    value = cell.strip()
+    link = re.fullmatch(r"\[([^\]\n]+)\]\([^\n)]+\)", value)
+    if link:
+        value = link.group(1).strip()
+    if len(value) >= 2 and value.startswith("`") and value.endswith("`"):
+        value = value[1:-1].strip()
+    return value
 
 
 def _body_contract_link_is_enforced(
@@ -2608,6 +2640,210 @@ def _body_contract_rows(
     if not rows:
         return None
     return [dict(zip(header, row, strict=True)) for row in rows]
+
+
+def lifecycle_markdown_evidence(
+    path: PurePosixPath,
+    text: str,
+    profile: DocumentProfile,
+    snapshot_profiles: Mapping[PurePosixPath, str],
+) -> LifecycleMarkdownEvidence:
+    """Return lifecycle evidence without reading the filesystem.
+
+    The caller owns Git provenance and passes one immutable proposed-snapshot
+    text plus the complete selected-profile projection. This adapter only
+    reuses the canonical CommonMark renderer, link extractor, heading slicer,
+    and body-table parser already owned by this validator.
+    """
+
+    def local_links(raw_links: Iterable[str]) -> tuple[PurePosixPath, ...]:
+        resolved: list[PurePosixPath] = []
+        for raw_link in raw_links:
+            kind, target = _local_destination(path, raw_link)
+            if kind in {"local", "anchor"} and target is not None:
+                resolved.append(target)
+        return tuple(resolved)
+
+    def selected_local_links(raw_links: Iterable[str]) -> tuple[PurePosixPath, ...]:
+        return tuple(
+            target for target in local_links(raw_links) if target in snapshot_profiles
+        )
+
+    all_links = local_links(_extract_links(text))
+    rendered_lines = _rendered_container_lines(text)
+    root_h2 = tuple(
+        line.text[3:].strip()
+        for line in rendered_lines
+        if line.depth == 0
+        and line.text.startswith("## ")
+        and not line.text.startswith("### ")
+    )
+    required_headings_valid = all(
+        _exact_rendered_heading_section(text, f"## {heading}") is not None
+        for heading in profile.headings.required
+    )
+    allowed_headings_valid = all(
+        heading in profile.headings.allowed for heading in root_h2
+    )
+    relationship_links: tuple[PurePosixPath, ...] = ()
+    unresolved_relationship_links: tuple[PurePosixPath, ...] = ()
+    relationship_section_valid = False
+    body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
+    body_table_links: tuple[PurePosixPath, ...] = ()
+    body_contract_valid = False
+
+    if profile.body_contract is not None:
+        contract = profile.body_contract
+        rows = _body_contract_rows(text, profile)
+        relationship_section = _exact_rendered_heading_section(
+            text, f"## {contract.section}"
+        )
+        relationship_section_valid = relationship_section is not None
+        body_contract_valid = (
+            required_headings_valid and allowed_headings_valid and rows is not None
+        )
+        collected: list[PurePosixPath] = []
+        unresolved: list[PurePosixPath] = []
+        if rows is not None:
+            body_rows = tuple(tuple(row.items()) for row in rows)
+            projection_columns = (
+                ("Evidence",)
+                if profile.profile_id == "sdlc/task"
+                and "Evidence" in contract.required_columns
+                else tuple(
+                    column
+                    for column in (
+                        contract.source_link_column,
+                        contract.target_link_column,
+                    )
+                    if column is not None
+                )
+            )
+            projected_raw_links = tuple(
+                raw_link
+                for row in rows
+                for column in projection_columns
+                for raw_link in _extract_links(row[column], definitions_text=text)
+            )
+            projected_links = local_links(projected_raw_links)
+            body_table_links = tuple(
+                target for target in projected_links if target in snapshot_profiles
+            )
+            if profile.profile_id == "sdlc/task":
+                unresolved.extend(
+                    target
+                    for target in projected_links
+                    if target not in snapshot_profiles
+                )
+            for row in rows:
+                if any(not value.strip() for value in row.values()):
+                    body_contract_valid = False
+                for identifier in contract.identifier_columns:
+                    value = _body_identifier_text(row[identifier.column])
+                    if value.startswith("N/A"):
+                        if (
+                            not contract.allow_explicit_exclusion
+                            or BODY_LINK_EXCLUSION.fullmatch(value) is None
+                        ):
+                            body_contract_valid = False
+                    elif (
+                        BODY_IDENTIFIER_PATTERNS[identifier.kind].fullmatch(value)
+                        is None
+                    ):
+                        body_contract_valid = False
+            link_columns = (
+                (contract.source_link_column, contract.allowed_source_profile_ids),
+                (contract.target_link_column, contract.allowed_target_profile_ids),
+            )
+            for row in rows:
+                for column, allowed_profiles in link_columns:
+                    if column is None:
+                        continue
+                    cell = row[column].strip()
+                    if cell.startswith("N/A"):
+                        if (
+                            not contract.allow_explicit_exclusion
+                            or BODY_LINK_EXCLUSION.fullmatch(cell) is None
+                        ):
+                            body_contract_valid = False
+                        continue
+                    raw_links = _extract_links(cell, definitions_text=text)
+                    resolved = local_links(raw_links)
+                    if not raw_links or len(resolved) != len(raw_links):
+                        body_contract_valid = False
+                        continue
+                    for target in resolved:
+                        if target not in snapshot_profiles:
+                            unresolved.append(target)
+                            body_contract_valid = False
+                        elif snapshot_profiles.get(target) not in allowed_profiles:
+                            body_contract_valid = False
+                        else:
+                            collected.append(target)
+        relationship_links = tuple(collected)
+        unresolved_relationship_links = tuple(unresolved)
+    else:
+        heading = profile.role_decision.relationship_section
+        section = (
+            _exact_rendered_heading_section(text, f"## {heading}")
+            if heading is not None
+            else None
+        )
+        relationship_section_valid = section is not None
+        if section is not None:
+            rendered_definitions = _rendered_markdown(text)
+            raw_relationship_links = local_links(
+                _extract_rendered_links(
+                    section, definitions_rendered=rendered_definitions
+                )
+            )
+            relationship_links = tuple(
+                target
+                for target in raw_relationship_links
+                if target in snapshot_profiles
+            )
+            unresolved_relationship_links = tuple(
+                target
+                for target in raw_relationship_links
+                if target not in snapshot_profiles
+            )
+        body_contract_valid = (
+            required_headings_valid and allowed_headings_valid and section is not None
+        )
+
+    task_terminal_valid = True
+    if profile.profile_id == "sdlc/task":
+        task_section = _exact_heading_section(text, "## Task Table")
+        task_table = _first_visible_table(task_section or "")
+        task_terminal_valid = False
+        if task_table is not None:
+            header, rows = task_table
+            required = {"Status", "Result", "Evidence"}
+            if required.issubset(header) and rows:
+                positions = {value: header.index(value) for value in required}
+                placeholder = re.compile(
+                    r"(?i)^(?:|pending|not executed|not recorded|named repository "
+                    r"evidence|tbd|todo|n/?a|[-—])$"
+                )
+                task_terminal_valid = all(
+                    row[positions["Status"]].strip().casefold() in {"done", "archived"}
+                    and placeholder.fullmatch(row[positions["Result"]].strip()) is None
+                    and placeholder.fullmatch(row[positions["Evidence"]].strip())
+                    is None
+                    for row in rows
+                )
+
+    return LifecycleMarkdownEvidence(
+        path=path,
+        all_local_links=all_links,
+        relationship_links=relationship_links,
+        unresolved_relationship_links=unresolved_relationship_links,
+        body_table_links=body_table_links,
+        relationship_section_valid=relationship_section_valid,
+        body_contract_valid=body_contract_valid,
+        body_rows=body_rows,
+        task_terminal_evidence_valid=task_terminal_valid,
+    )
 
 
 def _links_back_to(

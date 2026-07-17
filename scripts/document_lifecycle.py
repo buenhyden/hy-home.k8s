@@ -61,6 +61,32 @@ class LifecycleRename:
     new_path: PurePosixPath
 
 
+@dataclass(frozen=True)
+class LifecycleEvidenceDocument:
+    """One proposed-snapshot document and its canonical rendered evidence."""
+
+    document: LifecycleDocument
+    all_local_links: tuple[PurePosixPath, ...]
+    relationship_links: tuple[PurePosixPath, ...]
+    unresolved_relationship_links: tuple[PurePosixPath, ...]
+    body_table_links: tuple[PurePosixPath, ...]
+    relationship_section_valid: bool
+    body_contract_valid: bool
+    task_terminal_evidence_valid: bool
+
+
+@dataclass(frozen=True)
+class LifecycleEvidenceContext:
+    """Immutable inputs resolved from one Git base/proposed snapshot pair."""
+
+    base_documents: Mapping[PurePosixPath, LifecycleDocument]
+    proposed_documents: Mapping[PurePosixPath, LifecycleEvidenceDocument]
+    changed_paths: frozenset[PurePosixPath]
+    status_changed_paths: frozenset[PurePosixPath]
+    body_changed_paths: frozenset[PurePosixPath]
+    created_paths: frozenset[PurePosixPath]
+
+
 class _UniqueKeyLoader(yaml.SafeLoader):
     """Safe frontmatter loader that rejects duplicate mapping keys."""
 
@@ -289,6 +315,538 @@ def _create_diagnostics(
     return diagnostics
 
 
+SPECIFICATION_PROFILES = frozenset(
+    {
+        "sdlc/spec",
+        "sdlc/api-spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests",
+    }
+)
+
+
+def _predicate_for_edge(
+    registry: Registry,
+    profile_id: str,
+    from_state: str,
+    to_state: str,
+):
+    profile = _profile_by_id(registry, profile_id)
+    predicate_ids = {
+        edge.predicate_id
+        for edge in profile.lifecycle.edges
+        if edge.from_state == from_state and edge.to_state == to_state
+    }
+    if len(predicate_ids) != 1:
+        raise ValueError(
+            f"lifecycle edge does not resolve one predicate: "
+            f"{profile_id} {from_state} -> {to_state}"
+        )
+    predicate_id = next(iter(predicate_ids))
+    predicates = [
+        predicate
+        for predicate in registry.evidence_predicates
+        if predicate.predicate_id == predicate_id
+    ]
+    if len(predicates) != 1:
+        raise ValueError(f"unknown or duplicate evidence predicate: {predicate_id}")
+    return predicates[0]
+
+
+def _candidate_pair(
+    target: LifecycleDocument,
+    context: LifecycleEvidenceContext,
+    *,
+    registry: Registry | None = None,
+    require_dependency_ready: bool = False,
+) -> tuple[tuple[tuple[PurePosixPath, PurePosixPath, PurePosixPath], ...], str | None]:
+    """Resolve one reciprocal Plan/Task pair with one direct Spec identity."""
+
+    views = context.proposed_documents
+    target_view = views.get(target.path)
+    if target_view is None:
+        return (), "target is absent from the proposed snapshot"
+    task_paths = sorted(
+        (
+            path
+            for path, view in views.items()
+            if view.document.profile_id == "sdlc/task"
+            and (
+                path == target.path
+                or target.path in view.relationship_links
+                or path in target_view.relationship_links
+            )
+        ),
+        key=PurePosixPath.as_posix,
+    )
+    plan_paths = sorted(
+        (
+            path
+            for path, view in views.items()
+            if view.document.profile_id == "sdlc/plan"
+            and (
+                path == target.path
+                or target.path in view.relationship_links
+                or path in target_view.relationship_links
+                or any(task in view.relationship_links for task in task_paths)
+            )
+        ),
+        key=PurePosixPath.as_posix,
+    )
+    pairs: list[tuple[PurePosixPath, PurePosixPath, PurePosixPath]] = []
+    split_identity = False
+    for plan in plan_paths:
+        plan_view = views[plan]
+        for task in task_paths:
+            task_view = views[task]
+            if (
+                task not in plan_view.relationship_links
+                or plan not in task_view.relationship_links
+            ):
+                continue
+            plan_specs = {
+                linked
+                for linked in plan_view.relationship_links
+                if linked in views
+                and views[linked].document.profile_id in SPECIFICATION_PROFILES
+            }
+            task_specs = {
+                linked
+                for linked in task_view.relationship_links
+                if linked in views
+                and views[linked].document.profile_id in SPECIFICATION_PROFILES
+            }
+            if len(plan_specs) != 1 or len(task_specs) != 1 or plan_specs != task_specs:
+                split_identity = True
+                continue
+            spec = next(iter(plan_specs))
+            if target.profile_id in SPECIFICATION_PROFILES and spec != target.path:
+                split_identity = True
+                continue
+            if (
+                target.profile_id not in SPECIFICATION_PROFILES
+                and views[spec].document.profile_id != "sdlc/spec"
+            ):
+                split_identity = True
+                continue
+            if target.profile_id not in {
+                "sdlc/plan",
+                "sdlc/task",
+                *SPECIFICATION_PROFILES,
+            } and (
+                task not in target_view.relationship_links
+                or target.path not in task_view.body_table_links
+            ):
+                continue
+            pairs.append((plan, task, spec))
+    pairs = sorted(
+        set(pairs),
+        key=lambda item: (
+            item[0].as_posix(),
+            item[1].as_posix(),
+            item[2].as_posix(),
+        ),
+    )
+    if require_dependency_ready:
+        if registry is None:
+            raise ValueError("dependency-ready pair resolution requires the registry")
+        ready_paths: set[PurePosixPath] = set()
+        wrong_ready_state_paths: set[PurePosixPath] = set()
+        for program in registry.program_lineage:
+            ready = next(
+                (
+                    relation
+                    for relation in program.tranches
+                    if relation.state not in {"done", "archived"}
+                ),
+                None,
+            )
+            if ready is None:
+                continue
+            candidates = [
+                path
+                for path, view in views.items()
+                if view.document.profile_id == "sdlc/spec"
+                and path.name == "spec.md"
+                and path.parent.name.startswith(f"{ready.spec_id}-")
+            ]
+            if len(candidates) == 1:
+                candidate = candidates[0]
+                if views[candidate].document.status == ready.state:
+                    ready_paths.add(candidate)
+                else:
+                    wrong_ready_state_paths.add(candidate)
+        blocked = [pair for pair in pairs if pair[2] not in ready_paths]
+        pairs = [pair for pair in pairs if pair[2] in ready_paths]
+        if blocked and not pairs:
+            if any(pair[2] in wrong_ready_state_paths for pair in blocked):
+                return (), "pair Spec status does not match registry ready state"
+            return (), "pair targets a blocked successor or unknown Spec"
+    if len(pairs) == 1:
+        return tuple(pairs), None
+    if split_identity:
+        return tuple(pairs), "Plan/Task reciprocal links do not share one direct Spec"
+    return tuple(
+        pairs
+    ), f"expected one reciprocal Plan/Task pair, observed {len(pairs)}"
+
+
+def _program_evidence(
+    registry: Registry,
+    target: LifecycleDocument,
+    context: LifecycleEvidenceContext,
+) -> tuple[tuple[PurePosixPath, ...], tuple[str, ...]]:
+    views = context.proposed_documents
+    programs = [
+        program
+        for program in registry.program_lineage
+        if target.path.name.startswith(f"{program.prd_id}-")
+    ]
+    if len(programs) != 1:
+        return (), ("target does not resolve one registry program lineage",)
+    program = programs[0]
+    relation_paths: list[PurePosixPath] = []
+    gaps: list[str] = []
+    for relation in (*program.tranches, *program.follow_ups):
+        candidates = [
+            path
+            for path, view in views.items()
+            if view.document.profile_id == "sdlc/spec"
+            and len(path.parts) >= 2
+            and path.name == "spec.md"
+            and path.parent.name.startswith(f"{relation.spec_id}-")
+        ]
+        if len(candidates) != 1:
+            gaps.append(
+                f"program Spec {relation.spec_id} resolved {len(candidates)} documents"
+            )
+            continue
+        relation_path = candidates[0]
+        relation_paths.append(relation_path)
+        if views[relation_path].document.status != "done":
+            gaps.append(f"program Spec {relation.spec_id} is not done")
+    target_view = views.get(target.path)
+    linked_specs = (
+        {
+            path
+            for path in target_view.relationship_links
+            if path in views and views[path].document.profile_id == "sdlc/spec"
+        }
+        if target_view is not None
+        else set()
+    )
+    if linked_specs != set(relation_paths):
+        gaps.append("PRD relationship does not resolve the exact declared Spec set")
+    base_unfinished = [
+        path
+        for path in relation_paths
+        if path not in context.base_documents
+        or context.base_documents[path].status != "done"
+    ]
+    if not base_unfinished or base_unfinished[-1] not in context.status_changed_paths:
+        gaps.append("last unfinished program relation did not change in the same diff")
+    current_components = [
+        path
+        for path, view in views.items()
+        if view.document.profile_id in {"sdlc/plan", "sdlc/task"}
+        and view.document.status in {"draft", "active"}
+        and any(relation in view.relationship_links for relation in relation_paths)
+    ]
+    if current_components:
+        gaps.append("program retains an extra current execution component")
+    return tuple(relation_paths), tuple(gaps)
+
+
+def validate_transition_evidence(
+    registry: Registry,
+    target: LifecycleDocument,
+    from_state: str,
+    to_state: str,
+    context: LifecycleEvidenceContext,
+    *,
+    base_mode: Literal["staged", "ci", "explicit-ref"],
+    allow_created_target: bool = False,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Validate one allowed edge against registry-closed proposed evidence."""
+
+    predicate = _predicate_for_edge(registry, target.profile_id, from_state, to_state)
+    views = context.proposed_documents
+    target_view = views.get(target.path)
+    gaps: list[str] = []
+    evidence_paths: tuple[PurePosixPath, ...] = ()
+    base_paths = set(context.base_documents)
+    proposed_paths = set(views)
+    actual_created = frozenset(proposed_paths - base_paths)
+    actual_status_changed = frozenset(
+        path
+        for path in base_paths & proposed_paths
+        if context.base_documents[path].profile_id != views[path].document.profile_id
+        or context.base_documents[path].status != views[path].document.status
+    )
+    context_universe = base_paths | proposed_paths
+
+    if any(path != document.path for path, document in context.base_documents.items()):
+        gaps.append("base snapshot key differs from embedded document path")
+    if any(path != view.document.path for path, view in views.items()):
+        gaps.append("proposed snapshot key differs from embedded document path")
+    if context.created_paths != actual_created:
+        gaps.append("created-path projection differs from canonical snapshots")
+    if context.status_changed_paths != actual_status_changed:
+        gaps.append("status-change projection differs from canonical snapshots")
+    if not context.body_changed_paths.issubset(context.changed_paths):
+        gaps.append("body-change projection is outside changed paths")
+    if not actual_created.issubset(context.body_changed_paths):
+        gaps.append("created documents are absent from body-change projection")
+    if not (
+        actual_created | actual_status_changed | context.body_changed_paths
+    ).issubset(context.changed_paths):
+        gaps.append("canonical changes are absent from changed-path projection")
+    if not context.changed_paths.issubset(context_universe):
+        gaps.append("changed-path projection is outside snapshot paths")
+
+    if target_view is None:
+        gaps.append("target is absent from the proposed evidence snapshot")
+    elif target_view.document != target:
+        gaps.append("proposed evidence projection differs from transition target")
+    elif len(target_view.relationship_links) != len(
+        set(target_view.relationship_links)
+    ):
+        gaps.append("relationship contains duplicate evidence targets")
+    if target_view is not None and target_view.unresolved_relationship_links:
+        gaps.append(
+            "orphan relationship targets "
+            f"{[path.as_posix() for path in target_view.unresolved_relationship_links]!r}"
+        )
+    if (
+        target_view is not None
+        and "rendered-link" in predicate.capabilities
+        and not target_view.relationship_links
+    ):
+        gaps.append("required rendered relationship link is missing")
+    related_orphans = sorted(
+        (
+            path
+            for path, view in views.items()
+            if view.unresolved_relationship_links
+            and (
+                path == target.path
+                or target.path in view.relationship_links
+                or target.path in view.body_table_links
+            )
+        ),
+        key=PurePosixPath.as_posix,
+    )
+    if related_orphans:
+        gaps.append(
+            f"orphan evidence owners {[path.as_posix() for path in related_orphans]!r}"
+        )
+    base_target = context.base_documents.get(target.path)
+    if allow_created_target:
+        if target.path not in actual_created:
+            gaps.append("created transition target exists in the base snapshot")
+    elif (
+        target.path in actual_created
+        or base_target is None
+        or base_target.profile_id != target.profile_id
+        or base_target.status != from_state
+    ):
+        gaps.append("base evidence projection differs from transition source")
+
+    if target_view is not None:
+        owner_profile = _optional_profile_by_id(registry, target.profile_id)
+        owner_contract = (
+            owner_profile.body_contract if owner_profile is not None else None
+        )
+        if owner_contract is not None and owner_contract.reciprocal_evidence:
+            for linked_path in target_view.relationship_links:
+                linked_view = views.get(linked_path)
+                if linked_view is None:
+                    continue
+                linked_profile = _optional_profile_by_id(
+                    registry, linked_view.document.profile_id
+                )
+                linked_contract = (
+                    linked_profile.body_contract if linked_profile is not None else None
+                )
+                reciprocal_in_scope = (
+                    linked_profile is not None
+                    and linked_profile.mode == "authored"
+                    and linked_contract is not None
+                    and linked_view.document.status in linked_contract.enforced_statuses
+                )
+                if (
+                    reciprocal_in_scope
+                    and target.path not in linked_view.all_local_links
+                ):
+                    gaps.append(
+                        "reciprocal body evidence is missing from "
+                        f"{linked_path.as_posix()}"
+                    )
+
+    if target_view is None:
+        pass
+    elif predicate.relationship == "self":
+        evidence_paths = (target.path,)
+        if (
+            "rendered-link" in predicate.capabilities
+            and not target_view.relationship_links
+        ):
+            gaps.append("required rendered relationship link is missing")
+    elif predicate.relationship == "program-lineage":
+        evidence_paths, program_gaps = _program_evidence(registry, target, context)
+        gaps.extend(program_gaps)
+    elif predicate.relationship == "pair":
+        pairs, pair_gap = _candidate_pair(
+            target,
+            context,
+            registry=registry,
+            require_dependency_ready=(
+                predicate.predicate_id == "activate-execution-pair"
+            ),
+        )
+        if pair_gap is not None:
+            gaps.append(pair_gap)
+        evidence_paths = tuple(path for plan, task, _ in pairs for path in (plan, task))
+    elif predicate.predicate_id == "activate-heading-profile":
+        evidence_paths = (target.path,)
+        if not target_view.relationship_links:
+            gaps.append("required rendered relationship link is missing")
+    elif predicate.predicate_id == "accept-architecture":
+        raw_links = target_view.relationship_links
+        if len(raw_links) != len(set(raw_links)):
+            gaps.append("relationship contains duplicate evidence targets")
+        evidence_paths = tuple(
+            path
+            for path in raw_links
+            if path in views and views[path].document.profile_id == "sdlc/adr"
+        )
+        if any(
+            target.path not in views[path].relationship_links for path in evidence_paths
+        ):
+            gaps.append(
+                "architecture evidence does not link back through its relationship"
+            )
+    elif predicate.predicate_id == "terminate-reviewed-reference":
+        pairs, pair_gap = _candidate_pair(target, context)
+        if pair_gap is not None:
+            gaps.append(pair_gap)
+        evidence_paths = tuple(path for plan, task, _ in pairs for path in (plan, task))
+    else:
+        evidence_paths = tuple(target_view.relationship_links)
+
+    unique_evidence = tuple(dict.fromkeys(evidence_paths))
+    if len(unique_evidence) != len(evidence_paths):
+        gaps.append("multiply matching evidence is ambiguous")
+    evidence_paths = unique_evidence
+
+    for requirement in predicate.evidence:
+        allowed_profiles = {
+            target.profile_id if profile_id == "$self" else profile_id
+            for profile_id in requirement.profile_ids
+        }
+        matches = [
+            path
+            for path in evidence_paths
+            if path in views
+            and views[path].document.profile_id in allowed_profiles
+            and views[path].document.status in requirement.states
+        ]
+        observed_profiles = sorted(
+            {
+                views[path].document.profile_id
+                for path in evidence_paths
+                if path in views
+            }
+        )
+        if len(matches) < requirement.minimum or (
+            requirement.maximum is not None and len(matches) > requirement.maximum
+        ):
+            gaps.append(
+                "evidence requirement "
+                f"profiles={sorted(allowed_profiles)!r} states={requirement.states!r} "
+                f"expected={requirement.minimum}..{requirement.maximum!r} "
+                f"observed={len(matches)} profiles={observed_profiles!r}"
+            )
+
+    if len(evidence_paths) < predicate.minimum or (
+        predicate.maximum is not None and len(evidence_paths) > predicate.maximum
+    ):
+        gaps.append(
+            f"relationship cardinality expected {predicate.minimum}.."
+            f"{predicate.maximum!r}, observed {len(evidence_paths)}"
+        )
+
+    if target_view is not None and not target_view.relationship_section_valid:
+        gaps.append("registry relationship section is missing or ambiguous")
+
+    required_body_paths = tuple(dict.fromkeys((target.path, *evidence_paths)))
+    for path in required_body_paths:
+        view = views.get(path)
+        if view is None or not view.body_contract_valid:
+            gaps.append(f"body contract mismatch at {path.as_posix()}")
+    if "task-terminal-evidence" in predicate.capabilities:
+        for path in evidence_paths:
+            view = views.get(path)
+            if (
+                view is not None
+                and view.document.profile_id == "sdlc/task"
+                and not view.task_terminal_evidence_valid
+            ):
+                gaps.append(
+                    f"Task terminal evidence is incomplete at {path.as_posix()}"
+                )
+
+    if predicate.same_diff == "self-status-and-body":
+        if target.path not in context.status_changed_paths:
+            gaps.append("target status did not change in the same diff")
+        if target.path not in context.body_changed_paths:
+            gaps.append("target body did not change in the same diff")
+    elif predicate.same_diff == "pair-created-or-status-changed":
+        for path in evidence_paths:
+            if path not in actual_created and path not in context.status_changed_paths:
+                gaps.append(f"pair member did not change state at {path.as_posix()}")
+    elif predicate.same_diff == "target-and-last-relation-changed":
+        if target.path not in context.status_changed_paths:
+            gaps.append("program target status did not change in the same diff")
+        if target.path not in context.body_changed_paths:
+            gaps.append("program target body did not change in the same diff")
+    elif predicate.same_diff == "target-and-evidence-status-body-changed":
+        if target.path not in context.status_changed_paths:
+            gaps.append("architecture target status did not change in the same diff")
+        if not any(
+            path in context.status_changed_paths and path in context.body_changed_paths
+            for path in evidence_paths
+        ):
+            gaps.append(
+                "no architecture evidence changed status and body in the same diff"
+            )
+    elif predicate.same_diff == "target-plan-task-status-changed":
+        for path in (target.path, *evidence_paths):
+            if path not in context.status_changed_paths:
+                gaps.append(f"required status did not change at {path.as_posix()}")
+    elif predicate.same_diff == "pair-status-changed":
+        for path in evidence_paths:
+            if path not in context.status_changed_paths:
+                gaps.append(f"pair status did not change at {path.as_posix()}")
+
+    if not gaps:
+        return ()
+    return (
+        _diagnostic(
+            "LIFECYCLE-EVIDENCE",
+            path=target.path,
+            profile=target.profile_id,
+            expected=(
+                f"predicate {predicate.predicate_id} for {from_state} -> {to_state}"
+            ),
+            observed=f"evidence paths {[path.as_posix() for path in evidence_paths]!r}",
+            base_mode=base_mode,
+            evidence_gap="; ".join(dict.fromkeys(gaps)),
+        ),
+    )
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -296,12 +854,14 @@ def compare_lifecycle(
     *,
     renames: Sequence[LifecycleRename] = (),
     base_mode: Literal["staged", "ci", "explicit-ref"],
+    evidence_context: LifecycleEvidenceContext | None = None,
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare independently classified snapshots with fixed event precedence.
 
     Exact renames replace create/delete events. A same-path profile change
     replaces state/edge evaluation. Invalid state replaces edge evaluation.
-    Evidence predicates are intentionally not evaluated until DSLC-004.
+    Evidence predicates are evaluated only when the adapter supplies an
+    immutable base/proposed evidence context from the same Git comparison.
     """
 
     diagnostics: list[LifecycleDiagnostic] = []
@@ -405,6 +965,18 @@ def compare_lifecycle(
                     evidence_gap="declared forward lifecycle edge",
                 )
             )
+        elif evidence_context is not None:
+            assert base.status is not None and proposed.status is not None
+            diagnostics.extend(
+                validate_transition_evidence(
+                    registry,
+                    proposed,
+                    base.status,
+                    proposed.status,
+                    evidence_context,
+                    base_mode=base_mode,
+                )
+            )
 
     deleted_paths = set(base_documents) - consumed_base - common_paths
     for path in sorted(deleted_paths, key=PurePosixPath.as_posix):
@@ -432,7 +1004,50 @@ def compare_lifecycle(
         proposed_documents[path]
         for path in sorted(created_paths, key=PurePosixPath.as_posix)
     ]
-    diagnostics.extend(_create_diagnostics(registry, created, base_mode=base_mode))
+    creation_diagnostics = _create_diagnostics(registry, created, base_mode=base_mode)
+    diagnostics.extend(creation_diagnostics)
+    if evidence_context is not None:
+        failed_creation_paths = {item.path for item in creation_diagnostics}
+        for document in created:
+            if (
+                document.path in failed_creation_paths
+                or document.profile_id not in {"sdlc/plan", "sdlc/task"}
+                or document.status not in {"draft", "active"}
+            ):
+                continue
+            pairs, pair_gap = _candidate_pair(
+                document,
+                evidence_context,
+                registry=registry,
+                require_dependency_ready=True,
+            )
+            if pair_gap is not None:
+                diagnostics.append(
+                    _diagnostic(
+                        "LIFECYCLE-EVIDENCE",
+                        path=document.path,
+                        profile=document.profile_id,
+                        expected=(
+                            "one reciprocal Plan/Task creation pair with one "
+                            "shared direct Spec identity"
+                        ),
+                        observed=f"paired admission evidence {pairs!r}",
+                        base_mode=base_mode,
+                        evidence_gap=pair_gap,
+                    )
+                )
+            elif document.status == "active":
+                diagnostics.extend(
+                    validate_transition_evidence(
+                        registry,
+                        document,
+                        "draft",
+                        "active",
+                        evidence_context,
+                        base_mode=base_mode,
+                        allow_created_target=True,
+                    )
+                )
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 
