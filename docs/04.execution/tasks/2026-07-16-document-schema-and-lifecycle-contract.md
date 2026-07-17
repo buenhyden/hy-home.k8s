@@ -34,7 +34,7 @@ reviews, and explicit static/live evidence boundaries.
 | DSLC-002 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-005 | Enforce metadata values, template/source parity, and baseline-only Tombstone admission. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED seven value-contract cases returned `metadata value rules are unimplemented`; expanded 18-case GREEN covers string/integer/number/boolean/date kinds, profile/literal constants, status/literal enums, scalar patterns, denied/allowed null, equals/not-equals, required/forbidden, and absent-versus-explicit-null references without private archive semantics. Exact 31-path Tombstone compatibility plus explicit untracked include rejection, 11/11 template/source parity mutations including typed value-contract parity, and strict current-corpus/registry/cross PASS are recorded. |
 | DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Done | Implemented; final independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | Named RED failed on both missing public entrypoints and every declared fixture group. Expanded GREEN is 124 cases: 42 literal forward edges, 9 comparison priorities, 12 admission events, 35 isolated Git/ref/environment/root bases, 7 argument boundaries, 5 additive include failures, one current snapshot DEFER, and 13 fixture-closure mutations. |
 | DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Done | Remediated after independent rejection; final re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | GREEN is 651 cases: 42 forward edges, exact 504 edge scenarios with a full-diagnostic assertion hash, 9 comparisons, 12 admissions, 43 Git/ref/provenance bases, 7 arguments, 5 includes, one snapshot DEFER, 23 fixture mutations, and 5 review regressions. Remediation closes context-forgery, reciprocal backlink, ready-Spec state, allowed-H2, Task placeholder, and Result-column bypasses while retaining canonical CommonMark evidence and staged/index, explicit-ref, and CI provenance. |
-| DSLC-005 | VAL-DSLC-005, VAL-DSLC-006, VAL-DSLC-007 | Close native, role/source, Stage 00/99, and directly implicated consumer drift without bulk corpus rewrite. | platform | Queued | Not executed | Native/overlap fixtures, drift ledger, full static result, review, commit |
+| DSLC-005 | VAL-DSLC-005, VAL-DSLC-006, VAL-DSLC-007 | Close native, role/source, Stage 00/99, and directly implicated consumer drift without bulk corpus rewrite. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED accepted four cross-row role-label copies and exact leading SDLC blocks on native surfaces. GREEN is 121 registry cases with 64 profiles, 30 templates, parity 11/11, plus native 10/10 and a five-family Git-index integration proof. Stage 00 relationship wording, four Stage 99 v7 residues, Runbook/Incident roles, 64-row tests inventory, and six-form research pointer are corrected. Operations census is Guide 8 + Policy 7 + Runbook 9 = 24; Incident/Postmortem bodies = 0, recorded only as Spec 037 input. OpenAPI/GraphQL/protobuf syntax tooling remains Spec 039 `DEFER`. The aggregate quality script passed its registry/Markdown/cross/GitOps/Vault/affected-surface/agent-role/roster prefix, then produced no output for more than three minutes and was stopped (exit 130); it is not reported as PASS. Focused static and native-tool lanes passed. |
 | DSLC-006 | VAL-DSLC-001 through VAL-DSLC-008 | Run full QA, whole-tranche review, and atomic lifecycle closure. | platform | Queued | Not executed | Done lineage, command matrix, review verdicts, rollback parent, closure commit |
 
 ## Approval and Safety Boundaries
@@ -238,6 +238,45 @@ proposed dependency-ready Spec status differs from the registry relation state.
 Final independent re-review returned `REQUIREMENTS COMPLIANT` and
 `QUALITY APPROVED` for the exact six-file package.
 
+DSLC-005 RED proved that the registry accepted each of the four audited
+cross-row role-label copies and that the Markdown entrypoint accepted an exact
+leading five-key SDLC envelope on a native OpenAPI path. GREEN makes canonical
+role labels unique across decision rows, forbids direct template role
+assignment, and keeps legitimate same-row multi-profile roles plus sole-source
+template inheritance. Registry self-test now passes 121 cases for 64 profiles
+and 30 templates; template/source parity remains 11/11 and includes the typed
+role/source comparison.
+
+The native fixture closes exactly five families: GitHub issue form, GitHub
+workflow, OpenAPI, GraphQL, and protobuf. Five positive payloads and five
+otherwise-identical leading-SDLC-envelope negatives pass `10/10`; an isolated
+Git-index integration executes the same five positive and five negative paths
+through the production scan. GitHub YAML remains native-owned and must stay
+uncovered by the document registry. Machine-contract ownership is derived from
+the typed native role and route-selected profile. A legal YAML `---` marker,
+a non-SDLC multi-document mapping, and GraphQL/protobuf delimiter comments are
+not rejected. This package does not claim OpenAPI, GraphQL, or protobuf syntax
+validation; unavailable syntax tooling remains a Spec 039 `DEFER`.
+
+Direct drift remediation replaces four Stage 00 universal relationship
+requirements with registry-selected wording, updates the four active Stage 99
+v5 residues to closed v7 wording, makes the Runbook author prompt role-based,
+and keeps hypothesis/root-cause analysis out of the Incident Record role. The
+tests inventory now states the exact 64-row breakdown (55 validate-document,
+7 classification-only, 1 append-fragment, 1 excluded), with native `10/10`
+reported separately, and the research ledger points to all six current README
+forms. The read-only Spec 037 census is Guide 8 + Policy 7 + Runbook 9 = 24 and
+Incident/Postmortem bodies = 0; no operations corpus body was rewritten.
+Independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
+DSLC-005 is complete; DSLC-006 has not started.
+
+Focused registry, Markdown, lifecycle, cross-document, Ruff, Python compile,
+JSON, diff, YAML, GitHub workflow, security, Markdown, secret, and shell gates
+pass. The repository-quality aggregate passed its registry, Markdown,
+cross-document, GitOps identity, Vault/ESO, affected-surface, agent-role, and
+roster prefix, then emitted nothing for more than three minutes. It was stopped
+with exit 130 and is not claimed as a full PASS; no FIFO diagnostic was emitted.
+
 ## Traceability
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
@@ -252,5 +291,5 @@ Final independent re-review returned `REQUIREMENTS COMPLIANT` and
 | [DSLC-002](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-002-metadata-template-and-compatibility-enforcement) | Done; requirements compliant and quality approved. | Initial seven-case RED; exact 18-case selected v7 value matrix without private archive semantics, 31-path baseline-only admission plus explicit untracked include proof, 11/11 template/source parity mutations including typed value parity, strict current-corpus PASS, and independent review closure. |
 | [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Done; requirements compliant and quality approved. | Named entrypoint/case RED; 124-case engine/Git/CLI/fixture-closure GREEN and current snapshot exact DEFER; submodule-ignore and nested/unhashable-shape review reproductions closed by final independent re-review. |
 | [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Done; requirements compliant and quality approved. | Closed 504-scenario exact diagnostic projection, canonical CommonMark evidence adapter, context integrity, reciprocal/allowed-H2/Task-column rules, dependency-ready same-Spec-state proof, 43 Git provenance bases, 23 fixture mutations, and 5 review regressions. |
-| [DSLC-005](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-005-native-role-and-support-drift) | Queued. | Native, role, support, and consumer-drift evidence will be recorded here. |
+| [DSLC-005](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-005-native-role-and-support-drift) | Done; requirements compliant and quality approved. | RED role/native acceptance; GREEN 121 registry cases, parity 11/11, native 10/10 plus Git-index integration, direct Stage 00/99/Incident/Runbook/tests/research drift remediation, the Spec 037 operations census, and independent review closure. |
 | [DSLC-006](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-006-closure) | Queued. | Full QA, independent reviews, and atomic closure evidence will be recorded here. |

@@ -233,7 +233,7 @@ for path in paths:
                         f"Editing authored documentation `{path}`.",
                         "- Template-First is mandatory: confirm the route in `docs/99.templates/support/template-routing.md`; use `docs/99.templates/README.md` as the inventory summary.",
                         route_line,
-                        "- New authored docs must keep `status: draft`, required template headings, and `## Related Documents`.",
+                        "- New authored docs must keep `status: draft`, required template headings, and the registry-selected relationship section.",
                         "- Folder-level adds, moves, or removals require the owning `README.md` to be updated in the same change.",
                         "- The PostToolUse hook will run documentation template enforcement.",
                     ]

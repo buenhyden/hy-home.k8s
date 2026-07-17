@@ -743,6 +743,26 @@
       "name": "renamed-tombstone-policy-noncanonical-baseline",
       "mutation": "renamed-tombstone-policy-noncanonical-baseline",
       "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
+    },
+    {
+      "name": "guide-role-copied-to-runbook",
+      "mutation": "guide-role-copied-to-runbook",
+      "expected": ["REGISTRY_ROLE_DECISION"]
+    },
+    {
+      "name": "policy-role-copied-to-runbook",
+      "mutation": "policy-role-copied-to-runbook",
+      "expected": ["REGISTRY_ROLE_DECISION"]
+    },
+    {
+      "name": "incident-role-copied-to-postmortem",
+      "mutation": "incident-role-copied-to-postmortem",
+      "expected": ["REGISTRY_ROLE_DECISION"]
+    },
+    {
+      "name": "tests-role-copied-to-task",
+      "mutation": "tests-role-copied-to-task",
+      "expected": ["REGISTRY_ROLE_DECISION"]
     }
   ],
   "routingCases": [

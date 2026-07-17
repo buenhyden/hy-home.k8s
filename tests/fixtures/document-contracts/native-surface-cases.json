@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "families": [
+    {
+      "id": "github-issue-form",
+      "path": ".github/ISSUE_TEMPLATE/native-fixture.yml",
+      "ownership": "github-native",
+      "expectedProfile": null,
+      "positiveSource": "---\nname: Native fixture\ndescription: Fixture-only issue form\nbody: []\n",
+      "negativeSource": "---\ntitle: 'Native issue fixture'\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-17\n---\n---\nname: Native fixture\ndescription: Fixture-only issue form\nbody: []\n"
+    },
+    {
+      "id": "github-workflow",
+      "path": ".github/workflows/native-fixture.yml",
+      "ownership": "github-native",
+      "expectedProfile": null,
+      "positiveSource": "---\nname: Native fixture\non: workflow_dispatch\njobs: {}\n",
+      "negativeSource": "---\ntitle: 'Native workflow fixture'\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-17\n---\n---\nname: Native fixture\non: workflow_dispatch\njobs: {}\n"
+    },
+    {
+      "id": "openapi",
+      "path": "docs/03.specs/999-native-fixture/contracts/openapi.yaml",
+      "ownership": "registry-profile",
+      "expectedProfile": "exception/native-contract-openapi",
+      "positiveSource": "---\nopenapi: 3.1.0\ninfo:\n  title: Native fixture\n  version: 1.0.0\npaths: {}\n",
+      "negativeSource": "---\ntitle: 'Native OpenAPI fixture'\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-17\n---\n---\nopenapi: 3.1.0\ninfo:\n  title: Native fixture\n  version: 1.0.0\npaths: {}\n"
+    },
+    {
+      "id": "graphql",
+      "path": "docs/03.specs/999-native-fixture/contracts/schema.graphql",
+      "ownership": "registry-profile",
+      "expectedProfile": "exception/native-contract-graphql",
+      "positiveSource": "# --- is a GraphQL comment, not frontmatter\ntype Query { health: String! }\nschema { query: Query }\n",
+      "negativeSource": "---\ntitle: 'Native GraphQL fixture'\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-17\n---\n# --- is a GraphQL comment, not frontmatter\ntype Query { health: String! }\nschema { query: Query }\n"
+    },
+    {
+      "id": "protobuf",
+      "path": "docs/03.specs/999-native-fixture/contracts/service.proto",
+      "ownership": "registry-profile",
+      "expectedProfile": "exception/native-contract-protobuf",
+      "positiveSource": "// --- is a protobuf comment, not frontmatter\nsyntax = \"proto3\";\npackage fixture;\nmessage HealthRequest {}\n",
+      "negativeSource": "---\ntitle: 'Native protobuf fixture'\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-17\n---\n// --- is a protobuf comment, not frontmatter\nsyntax = \"proto3\";\npackage fixture;\nmessage HealthRequest {}\n"
+    }
+  ]
+}

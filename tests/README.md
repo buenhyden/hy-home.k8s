@@ -45,6 +45,7 @@ tests/
 │   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
 │   ├── vault-eso-contracts.json     # Exact non-secret Vault/ESO mutation cases
 │   └── document-contracts/
+│       ├── native-surface-cases.json  # Five native families and exact SDLC-envelope negatives
 │       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
 │       ├── registry-cases.json        # Document registry contract cases
 │       ├── semantic-compatibility-debt.json # Exact Spec 030 ledger transition debt
@@ -162,11 +163,17 @@ adapter PASS does not prove provider runtime consumption.
   89/247, residue 188/410, delimiter 24, unsupported 175/617/400 distinct
   tokens, duplicate 1, required-residue overlap 51, union 266을 초과하거나
   사용되지 않은 record을 남기면 실패한다.
-- `tests/fixtures/markdown-profiles.json`은 60개 registry profile의 applicability를
-  `validate-document`, `append-fragment`, `classification-only`, `excluded`로
-  정확히 구분한다. Fixed `2026-07-12` 기준일, leap-day,
+- `tests/fixtures/markdown-profiles.json`은 registry의 정확한 64개 행을
+  `validate-document` 55개, `classification-only` 7개,
+  `append-fragment` 1개, `excluded` 1개로 구분한다. Fixed `2026-07-12`
+  기준일, leap-day,
   template placeholder, append context, stable rule-ID mutation은 모두 production
   entry point를 통과한다.
+- `tests/fixtures/document-contracts/native-surface-cases.json`은 GitHub issue
+  form, workflow, OpenAPI, GraphQL, protobuf의 정확한 5개 family와 positive
+  5개/leading SDLC five-key negative 5개를 별도의 `10/10` 경계로 검증한다.
+  이 수는 64-row profile applicability에 더하지 않으며, native syntax
+  toolchain coverage나 하나의 합산 case total로 보고하지 않는다.
 - `tests/fixtures/links-and-owners.json`은 synthetic Stage 00 current-authority
   declaration과 exact README mirror의 reciprocal lifecycle cases를 소유하며,
   production 32-path set을 복제하지 않는다. 같은 79-case schema v2 fixture는

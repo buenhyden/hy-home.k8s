@@ -39,7 +39,7 @@ Incident Record 파일명은 반드시 incident 폴더명과 동일한
 
 ### In Scope
 
-- Incident Record: 영향, 타임라인, 가설, 대응, 증거, 후속 액션
+- Incident Record: 영향, 타임라인, 관찰된 사실, 대응, 증거, 후속 액션
 - Postmortem: 근본 원인, 기여 요인, 감지 공백, 재발 방지 액션
 - 관련 Runbook, Operation, ADR, Spec 링크
 
@@ -84,7 +84,8 @@ Incident Record 파일명은 반드시 incident 폴더명과 동일한
 - Impact
 - Affected Systems / Routes
 - Timeline
-- Root Cause 또는 Current Hypothesis
+- Current Conditions / Observations (Incident Record)
+- Root Cause / Contributing Factors (Postmortem only)
 - Immediate Remediation
 - Follow-up Actions
 - Related Specs / ADRs / Runbooks / Policies

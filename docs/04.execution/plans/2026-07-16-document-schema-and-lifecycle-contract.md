@@ -342,25 +342,25 @@ as DEFER instead of silently passing or failing all current documents.
   or fixtures needed for native and role proof
 - Update the paired Task
 
-- [ ] Add frontmatter-free native-shaped issue/workflow/OpenAPI/GraphQL/protobuf
+- [x] Add frontmatter-free native-shaped issue/workflow/OpenAPI/GraphQL/protobuf
   route fixtures and a leading-SDLC-frontmatter negative fixture for each
   governed native family. Run `check-yaml`, the repository GitHub workflow
   validator, `actionlint`, and `zizmor` where they are authoritative and
   available; record OpenAPI, GraphQL, and protobuf syntax validation as Spec
   039 DEFER when no repository tool exists.
-- [ ] Add role/source overlap mutations for Guide versus Runbook, Policy versus
+- [x] Add role/source overlap mutations for Guide versus Runbook, Policy versus
   Runbook, Incident versus Postmortem, and helper Tests versus execution Task.
-- [ ] Replace the four active universal `## Related Documents` requirements
+- [x] Replace the four active universal `## Related Documents` requirements
   across the Stage 00 authoring matrix, postflight R3 checklist, and pre-edit
   hook with the relationship section selected by the registry profile; do not
   rewrite historical memory entries. Update v5 references to v7, correct
   current test counts from validator output, repair the removed template-source
   pointer, and keep support rationale free of an exact duplicated inventory.
-- [ ] Remove postmortem hypothesis/root-cause ownership from the Incident README
+- [x] Remove postmortem hypothesis/root-cause ownership from the Incident README
   and make the Runbook prompt role-based rather than a closed topic list.
-- [ ] Record the 24-document operations semantic review as a Spec 037 input; do
+- [x] Record the 24-document operations semantic review as a Spec 037 input; do
   not rewrite that corpus in this package.
-- [ ] Run focused and full static validation, review, and commit DSLC-005.
+- [x] Run focused and full static validation, review, and commit DSLC-005.
 
 ### DSLC-006: Closure
 

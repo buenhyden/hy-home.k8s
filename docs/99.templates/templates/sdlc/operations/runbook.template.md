@@ -14,7 +14,7 @@ updated: YYYY-MM-DD
 
 ## Runbook Type
 
-<!-- Author prompt: classify the procedure as diagnostic, recovery, maintenance, or verification. -->
+<!-- Author prompt: identify the operator role, its owned decision boundary, required authority, and why this repeatable procedure belongs in a runbook rather than a policy or guide. -->
 
 ## When to Use
 

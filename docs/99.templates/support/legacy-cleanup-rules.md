@@ -19,7 +19,7 @@ evidence can remain only when it is clearly dated and not an active contract.
 Legacy cleanup keeps active documentation from presenting old paths, duplicate
 roles, or obsolete sections as current rules.
 
-The v5 [Document Profile Registry](./document-profiles.json) owns current
+The closed v7 [Document Profile Registry](./document-profiles.json) owns current
 machine values. This document is the single support owner for the migration and
 removal policy used to identify and dispose of legacy representations. The [Document Type Format and Evidence
 Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)

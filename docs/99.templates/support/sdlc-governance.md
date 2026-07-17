@@ -25,7 +25,7 @@ route.
 
 ### SDLC Profile Handoff
 
-The v5 [Document Profile Registry](./document-profiles.json) is the sole
+The closed v7 [Document Profile Registry](./document-profiles.json) is the sole
 machine owner of SDLC routes, templates, headings, frontmatter, lifecycle
 domains, and body traceability contracts. Authors select the exact profile
 from the target path instead of consulting a copied profile list. This document

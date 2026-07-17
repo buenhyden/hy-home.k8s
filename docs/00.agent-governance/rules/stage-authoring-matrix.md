@@ -15,8 +15,8 @@ Canonical authoring matrix for the current docs taxonomy.
 All authored stage documents must use the matching template from
 `docs/99.templates/support/template-routing.md` before writing. New authored
 documents start with `status: draft`, keep the required template headings, and
-include `## Related Documents`. README entrypoints resolve through the document
-profile registry and use the selected profile's form and heading contract.
+include the relationship section selected by the document profile registry.
+README entrypoints use the selected profile's form and heading contract.
 This matrix summarizes stage responsibility and timing; exact target patterns
 and template paths remain owned by the template routing support contract and
 the Templates README.
@@ -66,8 +66,8 @@ does not publish a second transition set.
 - README files route readers to lifecycle contract owners instead of carrying
   full governance bodies.
 - Handoff links must connect PRD, architecture, spec, plan, task, operations,
-  and archive records through `## Related Documents` or equivalent route-owned
-  link sections.
+  and archive records through the relationship section selected by each
+  route-owned profile.
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 

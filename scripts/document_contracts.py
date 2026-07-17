@@ -637,6 +637,12 @@ def read_repository_text(root: Path, path: PurePosixPath) -> str:
     return (root.absolute() / normalized).read_text(encoding="utf-8")
 
 
+def is_ignored_repository_path(root: Path, path: PurePosixPath) -> bool:
+    """Return Git's ignore decision for one normalized repository path."""
+
+    return _is_ignored(root.absolute(), _normalize_relative_path(path))
+
+
 def diagnostic_sort_key(diagnostic: Diagnostic) -> tuple[str, str, str, str]:
     """Return the stable cross-validator diagnostic ordering contract."""
 
@@ -715,6 +721,43 @@ def enumerate_target_markdown(
         baseline_symlink_paths=_sorted_paths(baseline_symlinks),
         current_symlink_paths=_sorted_paths(current_symlinks),
     )
+
+
+def enumerate_tracked_regular_paths(
+    root: Path,
+    *,
+    pathspecs: Sequence[str],
+) -> tuple[PurePosixPath, ...]:
+    """Return one closed Git-index inventory for the supplied pathspecs.
+
+    The caller owns the semantic path selection. This helper retains only
+    stage-zero regular blobs and fails closed on conflicts, symlinks,
+    submodules, or duplicate index entries in the selected surface.
+    """
+
+    if not pathspecs or any(
+        not isinstance(item, str) or not item for item in pathspecs
+    ):
+        raise ValueError("tracked regular inventory requires non-empty pathspecs")
+    entries = _parse_ls_files_stage_z(
+        _run_git(root.absolute(), ("ls-files", "--stage", "-z", "--", *pathspecs))
+    )
+    grouped: dict[PurePosixPath, list[_GitEntry]] = {}
+    for entry in entries:
+        grouped.setdefault(entry.path, []).append(entry)
+    paths: set[PurePosixPath] = set()
+    for path, selected in grouped.items():
+        if (
+            len(selected) != 1
+            or selected[0].stage != 0
+            or not selected[0].mode.startswith("100")
+        ):
+            raise ValueError(
+                "tracked native surface is not one stage-zero regular blob: "
+                f"{path.as_posix()}"
+            )
+        paths.add(path)
+    return _sorted_paths(paths)
 
 
 @lru_cache(maxsize=None)
@@ -1437,8 +1480,35 @@ def _document_contract_projection(
         )
     raw_values = assign_groups(value_groups, "REGISTRY_VALUE_CONTRACT")
 
-    raw_roles = assign_groups(raw_contracts["roleDecisions"], "REGISTRY_ROLE_DECISION")
-    for role in raw_contracts["roleDecisions"]:
+    role_groups = raw_contracts["roleDecisions"]
+    role_labels = [item["role"] for item in role_groups]
+    if len(role_labels) != len(set(role_labels)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_ROLE_DECISION",
+                expected="one distinct role label per canonical decision row",
+                actual="role label copied across canonical decision rows",
+            )
+        )
+    for role_group in role_groups:
+        assigned_profiles = [
+            profiles_by_id[profile_id]
+            for profile_id in role_group["profileIds"]
+            if profile_id in profiles_by_id
+        ]
+        if any(profile["mode"] == "template" for profile in assigned_profiles):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_ROLE_DECISION",
+                    expected=(
+                        "templates inherit the role decision from their sole "
+                        "canonical source profile"
+                    ),
+                    actual="template has a direct role-decision assignment",
+                )
+            )
+    raw_roles = assign_groups(role_groups, "REGISTRY_ROLE_DECISION")
+    for role in role_groups:
         if role["sourceProfileId"] is not None:
             diagnostics.append(
                 _diagnostic(

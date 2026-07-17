@@ -22,7 +22,7 @@ Declaration order is never precedence.
 
 ## Owned Contract
 
-The v5 [Document Profile Registry](./document-profiles.json) is the sole owner
+The closed v7 [Document Profile Registry](./document-profiles.json) is the sole owner
 of exact and anchored-regex routes, profile identities, headings, metadata,
 canonical forms, exceptions, and body contracts. This support document owns
 only the selection procedure, rationale, examples, and change boundary. It does

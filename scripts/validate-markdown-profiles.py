@@ -13,6 +13,7 @@ import io
 import json
 import math
 import re
+import subprocess
 import sys
 import tempfile
 from dataclasses import dataclass
@@ -32,7 +33,9 @@ from document_contracts import (
     EnumConstraint,
     classify_path,
     diagnostic_sort_key,
+    enumerate_tracked_regular_paths,
     enumerate_target_markdown,
+    is_ignored_repository_path,
     load_registry,
     read_repository_text,
     validate_registry,
@@ -42,6 +45,47 @@ from document_contracts import (
 FIXTURE_PATH = Path("tests/fixtures/markdown-profiles.json")
 README_FIXTURE_PATH = Path(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
+)
+NATIVE_FIXTURE_PATH = Path(
+    "tests/fixtures/document-contracts/native-surface-cases.json"
+)
+NATIVE_FAMILY_CONTRACT = (
+    (
+        "github-issue-form",
+        ".github/ISSUE_TEMPLATE/native-fixture.yml",
+        "github-native",
+        None,
+    ),
+    (
+        "github-workflow",
+        ".github/workflows/native-fixture.yml",
+        "github-native",
+        None,
+    ),
+    (
+        "openapi",
+        "docs/03.specs/999-native-fixture/contracts/openapi.yaml",
+        "registry-profile",
+        "exception/native-contract-openapi",
+    ),
+    (
+        "graphql",
+        "docs/03.specs/999-native-fixture/contracts/schema.graphql",
+        "registry-profile",
+        "exception/native-contract-graphql",
+    ),
+    (
+        "protobuf",
+        "docs/03.specs/999-native-fixture/contracts/service.proto",
+        "registry-profile",
+        "exception/native-contract-protobuf",
+    ),
+)
+SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
+NATIVE_TRACKED_PATHSPECS = (
+    ".github/ISSUE_TEMPLATE",
+    ".github/workflows",
+    "docs/03.specs",
 )
 EXPECTED_README_CASES = (
     "valid-profile",
@@ -187,6 +231,161 @@ def extract_frontmatter(text: str) -> tuple[list[str], dict[str, object], str]:
     if not all(isinstance(key, str) for key in data):
         raise ContractError("FM-KEYSET", "frontmatter keys must be strings")
     return list(data.keys()), data, text[closing + 5 :]
+
+
+def _has_exact_leading_sdlc_frontmatter(text: str) -> bool:
+    """Recognize only the canonical five-line SDLC metadata envelope.
+
+    Native syntax remains owned by its native toolchain. A leading YAML
+    document marker without this exact envelope is not Markdown frontmatter.
+    """
+
+    try:
+        keys, metadata, _ = extract_frontmatter(text)
+    except ContractError:
+        return False
+    document_type = metadata.get("type")
+    return (
+        tuple(keys) == SDLC_FRONTMATTER_KEYS
+        and isinstance(document_type, str)
+        and re.fullmatch(r"sdlc/[a-z][a-z0-9-]*", document_type) is not None
+    )
+
+
+def _native_surface_owner(
+    registry: Any,
+    path: PurePosixPath,
+) -> tuple[str, DocumentProfile | None] | None:
+    """Select native ownership without claiming GitHub YAML in the registry."""
+
+    parts = path.parts
+    if (
+        len(parts) == 3
+        and parts[:2]
+        in {
+            (".github", "ISSUE_TEMPLATE"),
+            (".github", "workflows"),
+        }
+        and path.suffix in {".yml", ".yaml"}
+    ):
+        try:
+            selected = classify_path(registry, path)
+        except DocumentContractError as exc:
+            if _rule_ids(exc.diagnostics) == ["REGISTRY_ROUTE_UNCOVERED"]:
+                return "github-native", None
+            raise ValueError(
+                f"GitHub-native ownership is ambiguous: {path.as_posix()}"
+            ) from exc
+        raise ValueError(
+            "GitHub-native surface was claimed by document profile "
+            f"{selected.profile_id}: {path.as_posix()}"
+        )
+    try:
+        profile = classify_path(registry, path)
+    except DocumentContractError:
+        return None
+    role = profile.role_decision
+    if (
+        profile.mode == "classification-only"
+        and profile.frontmatter.mode == "not-applicable"
+        and role.role == "native-machine-contract"
+        and role.body_requirement == "none"
+    ):
+        return "registry-profile", profile
+    return None
+
+
+def _is_native_candidate_path(registry: Any, path: PurePosixPath) -> bool:
+    parts = path.parts
+    if (
+        len(parts) == 3
+        and parts[:2]
+        in {
+            (".github", "ISSUE_TEMPLATE"),
+            (".github", "workflows"),
+        }
+        and path.suffix in {".yml", ".yaml"}
+    ):
+        return True
+    native_basenames = {
+        profile.template.name.replace(".template.", ".")
+        for profile in registry.profiles
+        if profile.template is not None
+        and profile.role_decision.role == "native-machine-contract"
+    }
+    return (
+        len(parts) >= 2
+        and parts[0] == "docs"
+        and parts[1] == "03.specs"
+        and path.name in native_basenames
+    )
+
+
+def _native_surface_diagnostics(
+    root: Path,
+    registry: Any,
+    *,
+    include_paths: tuple[PurePosixPath, ...] = (),
+) -> list[Diagnostic]:
+    """Reject an SDLC envelope on tracked or explicitly included native files."""
+
+    indexed_paths = set(
+        enumerate_tracked_regular_paths(root, pathspecs=NATIVE_TRACKED_PATHSPECS)
+    )
+    paths: set[PurePosixPath] = set()
+    for path in indexed_paths:
+        if not _is_native_candidate_path(registry, path):
+            continue
+        if _native_surface_owner(registry, path) is None:
+            raise ValueError(
+                f"tracked native path lacks an ownership contract: {path.as_posix()}"
+            )
+        paths.add(path)
+    for requested in include_paths:
+        path = _fixture_path(requested.as_posix())
+        if _native_surface_owner(registry, path) is None:
+            raise ValueError(
+                f"included path is not a governed native surface: {path.as_posix()}"
+            )
+        if is_ignored_repository_path(root, path):
+            raise ValueError(f"included path is ignored: {path.as_posix()}")
+        read_repository_text(root, path)
+        paths.add(path)
+
+    diagnostics: list[Diagnostic] = []
+    for path in sorted(paths, key=lambda item: item.as_posix()):
+        selection = _native_surface_owner(registry, path)
+        if selection is None:
+            raise ValueError(f"native ownership disappeared: {path.as_posix()}")
+        owner, profile = selection
+        source = read_repository_text(root, path)
+        if not _has_exact_leading_sdlc_frontmatter(source):
+            continue
+        if profile is None:
+            diagnostics.append(
+                Diagnostic(
+                    rule_id="FM-FORBIDDEN",
+                    path=path,
+                    profile=owner,
+                    expected=(
+                        "GitHub-native YAML without the five-key SDLC "
+                        "frontmatter envelope"
+                    ),
+                    actual="exact leading SDLC five-key block",
+                    owner=OWNER,
+                )
+            )
+        else:
+            diagnostics.append(
+                _diagnostic(
+                    "FM-FORBIDDEN",
+                    path,
+                    profile,
+                    "native syntax without the five-key SDLC frontmatter envelope",
+                    "exact leading SDLC five-key block",
+                )
+            )
+    return diagnostics
 
 
 @dataclass(frozen=True)
@@ -885,6 +1084,16 @@ def _frontmatter_body(
 ) -> str:
     contract = profile.frontmatter
     if contract.mode == "not-applicable":
+        if _has_exact_leading_sdlc_frontmatter(text):
+            diagnostics.append(
+                _diagnostic(
+                    "FM-FORBIDDEN",
+                    path,
+                    profile,
+                    "native syntax without the five-key SDLC frontmatter envelope",
+                    "exact leading SDLC five-key block",
+                )
+            )
         return text
     if contract.mode == "forbidden":
         if text.startswith("---\n"):
@@ -1567,6 +1776,220 @@ def _classification_route_mutation_registry(
     return validate_registry(root, mutated)
 
 
+def _native_fixture_failures(
+    root: Path,
+    registry: Any,
+    fixture: object,
+) -> tuple[list[str], int]:
+    """Validate the closed five-family native ownership/frontmatter matrix."""
+
+    failures: list[str] = []
+    if not isinstance(fixture, dict) or set(fixture) != {
+        "schemaVersion",
+        "families",
+    }:
+        return ["native fixture top-level contract differs"], 0
+    if fixture.get("schemaVersion") != 1:
+        failures.append("native fixture schemaVersion must be 1")
+    families = fixture.get("families")
+    if not isinstance(families, list) or len(families) != 5:
+        return failures + ["native fixture must contain exactly five families"], 0
+
+    expected_fields = {
+        "id",
+        "path",
+        "ownership",
+        "expectedProfile",
+        "positiveSource",
+        "negativeSource",
+    }
+    expected_by_id = {row[0]: row for row in NATIVE_FAMILY_CONTRACT}
+    ids = [row.get("id") if isinstance(row, dict) else None for row in families]
+    expected_ids = [row[0] for row in NATIVE_FAMILY_CONTRACT]
+    if ids != expected_ids or len(ids) != len(set(ids)):
+        failures.append("native fixture family IDs/order differ")
+
+    executed = 0
+    with tempfile.TemporaryDirectory(prefix="native-surface-self-test-") as directory:
+        temp_root = Path(directory)
+        for row in families:
+            if not isinstance(row, dict) or set(row) != expected_fields:
+                failures.append(f"native fixture family fields differ: {row!r}")
+                continue
+            family_id = row["id"]
+            expected = expected_by_id.get(family_id)
+            if expected is None:
+                failures.append(f"unknown native fixture family: {family_id!r}")
+                continue
+            _, expected_path, expected_ownership, expected_profile = expected
+            if (
+                row["path"],
+                row["ownership"],
+                row["expectedProfile"],
+            ) != (expected_path, expected_ownership, expected_profile):
+                failures.append(f"native fixture ownership/route differs: {family_id}")
+                continue
+            if not isinstance(row["positiveSource"], str) or not isinstance(
+                row["negativeSource"], str
+            ):
+                failures.append(f"native fixture sources must be strings: {family_id}")
+                continue
+            try:
+                path = _fixture_path(row["path"])
+            except ValueError as exc:
+                failures.append(f"native fixture path invalid: {exc}")
+                continue
+
+            selected: DocumentProfile | None = None
+            if expected_profile is None:
+                try:
+                    classify_path(registry, path)
+                except DocumentContractError as exc:
+                    if _rule_ids(exc.diagnostics) != ["REGISTRY_ROUTE_UNCOVERED"]:
+                        failures.append(
+                            f"native GitHub ownership rule differs: {family_id}"
+                        )
+                else:
+                    failures.append(
+                        f"native GitHub surface was claimed by the document registry: {family_id}"
+                    )
+            else:
+                try:
+                    selected = classify_path(registry, path)
+                except DocumentContractError as exc:
+                    failures.append(
+                        f"native registry route failed {family_id}: {_rule_ids(exc.diagnostics)}"
+                    )
+                else:
+                    if selected.profile_id != expected_profile:
+                        failures.append(
+                            f"native registry profile differs {family_id}: {selected.profile_id}"
+                        )
+
+            negative = row["negativeSource"]
+            positive = row["positiveSource"]
+            if not _has_exact_leading_sdlc_frontmatter(negative):
+                failures.append(
+                    f"native negative lacks exact five-key envelope: {family_id}"
+                )
+            elif negative.split("\n---\n", 1)[1] != positive:
+                failures.append(f"native negative changes native payload: {family_id}")
+
+            for polarity, source, expected_rules in (
+                ("positive", positive, []),
+                ("negative", negative, ["FM-FORBIDDEN"]),
+            ):
+                if selected is None:
+                    actual_rules = (
+                        ["FM-FORBIDDEN"]
+                        if _has_exact_leading_sdlc_frontmatter(source)
+                        else []
+                    )
+                else:
+                    _write_source(temp_root, path.as_posix(), source)
+                    actual_rules = _rule_ids(
+                        validate_document(temp_root, path, selected, "strict")
+                    )
+                executed += 1
+                if actual_rules != expected_rules:
+                    failures.append(
+                        f"native {family_id}/{polarity}: "
+                        f"expected={expected_rules} actual={actual_rules}"
+                    )
+    return failures, executed
+
+
+def _native_fixture_mutation_failures(
+    root: Path,
+    registry: Any,
+    fixture: dict[str, Any],
+) -> list[str]:
+    """Prove the fixture cannot lose cardinality, ownership, or polarity."""
+
+    mutations: list[tuple[str, dict[str, Any]]] = []
+    mutated = copy.deepcopy(fixture)
+    mutated["schemaVersion"] = 2
+    mutations.append(("schema-version", mutated))
+    mutated = copy.deepcopy(fixture)
+    mutated["families"].pop()
+    mutations.append(("missing-family", mutated))
+    mutated = copy.deepcopy(fixture)
+    mutated["families"][1]["id"] = mutated["families"][0]["id"]
+    mutations.append(("duplicate-family", mutated))
+    mutated = copy.deepcopy(fixture)
+    mutated["families"][0]["ownership"] = "registry-profile"
+    mutations.append(("ownership-copy", mutated))
+    mutated = copy.deepcopy(fixture)
+    mutated["families"][2]["expectedProfile"] = "exception/native-contract-graphql"
+    mutations.append(("profile-copy", mutated))
+    mutated = copy.deepcopy(fixture)
+    mutated["families"][4]["negativeSource"] = mutated["families"][4]["positiveSource"]
+    mutations.append(("negative-envelope-removal", mutated))
+
+    failures: list[str] = []
+    for name, candidate in mutations:
+        candidate_failures, _ = _native_fixture_failures(root, registry, candidate)
+        if not candidate_failures:
+            failures.append(f"native fixture mutation was accepted: {name}")
+    return failures
+
+
+def _native_index_integration_failures(
+    registry: Any,
+    fixture: dict[str, Any],
+) -> list[str]:
+    """Exercise all five fixture families through the production Git scan."""
+
+    failures: list[str] = []
+    with tempfile.TemporaryDirectory(prefix="native-index-self-test-") as directory:
+        temp_root = Path(directory)
+        subprocess.run(
+            ["git", "init", "--quiet"],
+            cwd=temp_root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        paths: list[str] = []
+        for row in fixture["families"]:
+            _write_source(temp_root, row["path"], row["positiveSource"])
+            paths.append(row["path"])
+        subprocess.run(
+            ["git", "add", "--", *paths],
+            cwd=temp_root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        try:
+            positive = _native_surface_diagnostics(temp_root, registry)
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            failures.append(f"native positive Git-index scan failed: {exc}")
+            return failures
+        if positive:
+            failures.append("native positive Git-index scan returned diagnostics")
+
+        for row in fixture["families"]:
+            _write_source(temp_root, row["path"], row["negativeSource"])
+        try:
+            negative = _native_surface_diagnostics(temp_root, registry)
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            failures.append(f"native negative Git-index scan failed: {exc}")
+            return failures
+        expected_paths = sorted(paths)
+        actual_paths = [item.path.as_posix() for item in negative]
+        if (
+            len(negative) != 5
+            or actual_paths != expected_paths
+            or any(item.rule_id != "FM-FORBIDDEN" for item in negative)
+        ):
+            failures.append(
+                "native negative Git-index scan must return five ordered "
+                "FM-FORBIDDEN diagnostics"
+            )
+    return failures
+
+
 def _self_test(root: Path) -> list[str]:
     raw_registry = json.loads((root / REGISTRY_PATH).read_text(encoding="utf-8"))
     registry = load_registry(root)
@@ -1576,7 +1999,47 @@ def _self_test(root: Path) -> list[str]:
     readme_fixture = json.loads(
         (root / README_FIXTURE_PATH).read_text(encoding="utf-8")
     )
+    native_fixture = json.loads(
+        (root / NATIVE_FIXTURE_PATH).read_text(encoding="utf-8")
+    )
     failures: list[str] = []
+
+    native_failures, native_case_count = _native_fixture_failures(
+        root, registry, native_fixture
+    )
+    failures.extend(native_failures)
+    if native_case_count != 10:
+        failures.append(
+            f"native fixture must execute exactly 10 cases, got {native_case_count}"
+        )
+    failures.extend(_native_fixture_mutation_failures(root, registry, native_fixture))
+    failures.extend(_native_index_integration_failures(registry, native_fixture))
+    native_lookalikes = (
+        "---\nname: legal YAML document marker\n",
+        (
+            "---\n"
+            "title: Native YAML mapping\n"
+            "type: native/openapi\n"
+            "status: enabled\n"
+            "owner: platform\n"
+            "updated: 2026-07-17\n"
+            "---\n"
+            "openapi: 3.1.0\n"
+        ),
+        "# --- is a GraphQL comment\ntype Query { health: String! }\n",
+        '// --- is a protobuf comment\nsyntax = "proto3";\n',
+    )
+    if any(_has_exact_leading_sdlc_frontmatter(item) for item in native_lookalikes):
+        failures.append("native legal-marker/comment lookalike was rejected")
+    try:
+        current_native_diagnostics = _native_surface_diagnostics(root, registry)
+    except (OSError, ValueError) as exc:
+        failures.append(f"tracked native inventory failed: {exc}")
+    else:
+        if current_native_diagnostics:
+            failures.append(
+                "tracked native inventory contains a leading SDLC frontmatter block"
+            )
 
     if fixture.get("schemaVersion") != 2:
         failures.append("fixture schemaVersion must be 2")
@@ -2763,11 +3226,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                 for failure in failures:
                     print(f"FAIL SELF-TEST {failure}")
                 return 1
-            print("PASS markdown profile self-test")
+            print("PASS markdown profile self-test; native surfaces 10/10")
             return 0
         registry = load_registry(root)
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
-        inventory = enumerate_target_markdown(root, include_paths=include_paths)
+        native_include_paths = tuple(
+            path
+            for path in include_paths
+            if _native_surface_owner(registry, path) is not None
+        )
+        markdown_include_paths = tuple(
+            path for path in include_paths if path not in native_include_paths
+        )
+        inventory = enumerate_target_markdown(
+            root, include_paths=markdown_include_paths
+        )
         if args.inventory:
             payload = {
                 "schemaVersion": 1,
@@ -2789,6 +3262,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             return 0
         diagnostics: list[Diagnostic] = []
+        diagnostics.extend(
+            _native_surface_diagnostics(
+                root,
+                registry,
+                include_paths=native_include_paths,
+            )
+        )
         profiles = {profile.profile_id: profile for profile in registry.profiles}
         diagnostics.extend(
             _baseline_admission_diagnostics(registry, inventory.current_paths)

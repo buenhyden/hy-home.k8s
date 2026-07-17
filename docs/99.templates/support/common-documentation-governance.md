@@ -24,7 +24,7 @@ knowledge consistent without forcing every common document into an SDLC phase.
 
 ### Common Profile Handoff
 
-The v5 [Document Profile Registry](./document-profiles.json) owns exact routes,
+The closed v7 [Document Profile Registry](./document-profiles.json) owns exact routes,
 forms, headings, metadata, and body contracts for all common-documentation
 profiles. This document owns the human rationale for navigation, reference,
 preservation, and durable agent-learning roles without becoming another

@@ -656,6 +656,26 @@ EXPECTED_CASES = (
         "renamed-tombstone-policy-noncanonical-baseline",
         ("REGISTRY_TOMBSTONE_BASELINE",),
     ),
+    (
+        "guide-role-copied-to-runbook",
+        "guide-role-copied-to-runbook",
+        ("REGISTRY_ROLE_DECISION",),
+    ),
+    (
+        "policy-role-copied-to-runbook",
+        "policy-role-copied-to-runbook",
+        ("REGISTRY_ROLE_DECISION",),
+    ),
+    (
+        "incident-role-copied-to-postmortem",
+        "incident-role-copied-to-postmortem",
+        ("REGISTRY_ROLE_DECISION",),
+    ),
+    (
+        "tests-role-copied-to-task",
+        "tests-role-copied-to-task",
+        ("REGISTRY_ROLE_DECISION",),
+    ),
 )
 
 V7_MUTATIONS = frozenset(
@@ -700,6 +720,10 @@ V7_MUTATIONS = frozenset(
         "tombstone-baseline-dot-segment",
         "tombstone-baseline-normalized-duplicate",
         "renamed-tombstone-policy-noncanonical-baseline",
+        "guide-role-copied-to-runbook",
+        "policy-role-copied-to-runbook",
+        "incident-role-copied-to-postmortem",
+        "tests-role-copied-to-task",
     }
 )
 
@@ -1744,6 +1768,29 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             if "sdlc/prd" in item["profileIds"]
         )
         group["profileIds"].remove("sdlc/prd")
+        return
+    role_copy_profiles = {
+        "guide-role-copied-to-runbook": ("sdlc/guide", "sdlc/runbook"),
+        "policy-role-copied-to-runbook": ("sdlc/policy", "sdlc/runbook"),
+        "incident-role-copied-to-postmortem": (
+            "sdlc/incident",
+            "sdlc/postmortem",
+        ),
+        "tests-role-copied-to-task": ("sdlc/tests", "sdlc/task"),
+    }
+    if mutation in role_copy_profiles:
+        source_profile, target_profile = role_copy_profiles[mutation]
+        source = next(
+            item
+            for item in contracts["roleDecisions"]
+            if source_profile in item["profileIds"]
+        )
+        target = next(
+            item
+            for item in contracts["roleDecisions"]
+            if target_profile in item["profileIds"]
+        )
+        target["role"] = source["role"]
         return
     value_group = next(
         item for item in contracts["valueContracts"] if "sdlc/prd" in item["profileIds"]
@@ -3186,6 +3233,22 @@ def _assert_template_source_parity(registry: Any) -> None:
             ("body", profile.body_contract, source.body_contract),
             ("value-contract", profile.value_contract, source.value_contract),
         )
+        role_actual = (
+            profile.role_decision.role,
+            profile.role_decision.source_profile_id,
+            profile.role_decision.relationship_section,
+            profile.role_decision.body_requirement,
+        )
+        role_expected = (
+            source.role_decision.role,
+            source_id,
+            source.role_decision.relationship_section,
+            source.role_decision.body_requirement,
+        )
+        if role_actual != role_expected:
+            raise AssertionError(
+                f"{profile.profile_id}: template/source role-decision parity differs"
+            )
         for label, actual, expected in comparisons:
             if actual != expected:
                 raise AssertionError(
@@ -3268,6 +3331,30 @@ def _assert_template_source_mutation_proofs(
                 f"expected {case['expectedSignal']!r}, got {signal!r}"
             )
     return len(cases)
+
+
+def _assert_role_inheritance_mutation_proof(
+    root: Path, raw_registry: dict[str, Any]
+) -> None:
+    """Reject a template that bypasses its canonical source role decision."""
+
+    mutated = copy.deepcopy(raw_registry)
+    runbook_role = next(
+        item
+        for item in mutated["documentContracts"]["roleDecisions"]
+        if "sdlc/runbook" in item["profileIds"]
+    )
+    runbook_role["profileIds"].append("template/sdlc/guide")
+    try:
+        validate_registry(root, mutated)
+    except DocumentContractError as exc:
+        actual = _ordered_rule_ids(exc.diagnostics)
+    else:
+        actual = ()
+    if actual != ("REGISTRY_ROLE_DECISION",):
+        raise AssertionError(
+            "direct template role assignment must return REGISTRY_ROLE_DECISION"
+        )
 
 
 def _assert_positive_coverage(
@@ -4246,6 +4333,7 @@ def _self_test(root: Path) -> int:
         _assert_parser_safety()
         _assert_inventory_safety(root)
         parity_case_count = _assert_template_source_mutation_proofs(root, raw_registry)
+        _assert_role_inheritance_mutation_proof(root, raw_registry)
         profile_count, template_count = _assert_positive_coverage(
             root, raw_registry, fixture
         )
