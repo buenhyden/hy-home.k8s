@@ -1,9 +1,9 @@
 ---
 title: 'Document Schema and Lifecycle Contract Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-16
+updated: 2026-07-17
 ---
 
 # Document Schema and Lifecycle Contract Implementation Plan
@@ -250,16 +250,16 @@ as DEFER instead of silently passing or failing all current documents.
 - Modify `scripts/README.md`
 - Update the paired Task
 
-- [ ] Add RED schema and semantic mutations for unknown fields, missing fields,
+- [x] Add RED schema and semantic mutations for unknown fields, missing fields,
   invalid kind/enum/constant/pattern/null/conditional data, duplicate edges,
   invalid states, terminal outgoing edges, archived edges, unknown evidence
   profiles/states, executable predicates, invalid role decisions, creation,
   deletion, rename, same-path profile change, and new Tombstone admission.
-- [ ] Upgrade the production schema/data to v7 and reject v6 in production.
-- [ ] Add typed immutable value, role, lifecycle, edge, and evidence projection.
-- [ ] Keep any v6 converter private to self-test code and assert the exact v7
+- [x] Upgrade the production schema/data to v7 and reject v6 in production.
+- [x] Add typed immutable value, role, lifecycle, edge, and evidence projection.
+- [x] Keep any v6 converter private to self-test code and assert the exact v7
   production projection rather than comparing production data with itself.
-- [ ] Run strict registry and current profile validation, request requirements
+- [x] Run strict registry and current profile validation, request requirements
   and quality review, remediate, and commit DSLC-001.
 
 ### DSLC-002: Metadata, template, and compatibility enforcement
@@ -271,15 +271,15 @@ as DEFER instead of silently passing or failing all current documents.
 - Modify canonical forms only where the v7 source tuple requires it
 - Update the paired Task
 
-- [ ] Add RED fixtures for unsupported keys, order, scalar kind, enum, constant,
+- [x] Add RED fixtures for unsupported keys, order, scalar kind, enum, constant,
   pattern, null, conditional value, owner/title/date, and placeholder policy.
-- [ ] Add independent template drift fixtures for frontmatter, order, status,
+- [x] Add independent template drift fixtures for frontmatter, order, status,
   headings, class, body contract, source cardinality, missing source, duplicate
   source, and unknown source.
-- [ ] Pin the 31 tracked Tombstone paths as readable compatibility and reject an
+- [x] Pin the 31 tracked Tombstone paths as readable compatibility and reject an
   added or renamed Tombstone independently of worktree noise.
-- [ ] Implement registry-derived validation without hard-coded type inventories.
-- [ ] Run strict current-corpus validation, review, and commit DSLC-002.
+- [x] Implement registry-derived validation without hard-coded type inventories.
+- [x] Run strict current-corpus validation, review, and commit DSLC-002.
 
 ### DSLC-003: Base and transition engine
 
@@ -293,18 +293,18 @@ as DEFER instead of silently passing or failing all current documents.
 - Modify `scripts/README.md`
 - Update the paired Task
 
-- [ ] Write RED fixtures proving that staged mode reads `HEAD:path` versus
+- [x] Write RED fixtures proving that staged mode reads `HEAD:path` versus
   `:path`, ignores an unstaged worktree edit, and handles add/delete/rename
   without guessing identity.
-- [ ] Write RED CI merge-base and explicit-ref fixtures for exact CLI flags,
+- [x] Write RED CI merge-base and explicit-ref fixtures for exact CLI flags,
   resolvable refs, missing/ambiguous/non-commit refs, invalid flag
   combinations, exit `0/1/2`, and snapshot-only DEFER output.
-- [ ] Write RED lifecycle fixtures for each forward edge, skipped edge, reverse
+- [x] Write RED lifecycle fixtures for each forward edge, skipped edge, reverse
   edge, terminal reopen, archive reactivation, cross-profile move, and
   snapshot `DEFER`.
-- [ ] Implement one comparison interface and a lifecycle-specific diagnostic
+- [x] Implement one comparison interface and a lifecycle-specific diagnostic
   result without breaking existing diagnostic consumers.
-- [ ] Run current snapshot validation, isolated Git fixtures, review, and commit
+- [x] Run current snapshot validation, isolated Git fixtures, review, and commit
   DSLC-003.
 
 ### DSLC-004: Transition evidence
@@ -315,17 +315,17 @@ as DEFER instead of silently passing or failing all current documents.
 - Add or modify focused link/lifecycle fixtures
 - Update `scripts/README.md` and the paired Task
 
-- [ ] Derive and run positive and negative fixtures for every production edge,
+- [x] Derive and run positive and negative fixtures for every production edge,
   not only every predicate family: missing,
   wrong profile, wrong state, wrong relationship section, unchanged evidence,
   ambiguous base, body-contract mismatch, plain-text path, and opaque Markdown.
-- [ ] Resolve evidence through selected profiles and rendered links, reuse the
+- [x] Resolve evidence through selected profiles and rendered links, reuse the
   existing CommonMark-aware extractor, and avoid a second Markdown parser.
-- [ ] Require same-diff evidence from the proposed snapshot and reject orphan
+- [x] Require same-diff evidence from the proposed snapshot and reject orphan
   or multiply matching evidence deterministically.
-- [ ] Preserve Plan/Task atomic-pair and program-lineage admission checks from
+- [x] Preserve Plan/Task atomic-pair and program-lineage admission checks from
   Spec 034.
-- [ ] Run strict link/owner, lifecycle, and current-corpus validation, review,
+- [x] Run strict link/owner, lifecycle, and current-corpus validation, review,
   and commit DSLC-004.
 
 ### DSLC-005: Native, role, and support drift
@@ -369,19 +369,23 @@ as DEFER instead of silently passing or failing all current documents.
 - Modify Spec 035, this Plan, its Task, Stage 03/04 indexes, the program
   relation state, and migration ledger rows in one closure commit
 
-- [ ] Prepare and stage the atomic proposal that sets Spec/Plan/Task and the
-  Spec 035 registry relation to done, updates indexes and ledger rows, and
-  leaves Spec 036 with zero Plan/Task.
-- [ ] Run lifecycle `--mode staged`, every focused self-test, strict
-  current-corpus validator, and `bash scripts/validate-repo-quality-gates.sh .`
-  against that staged proposal.
-- [ ] Run `pre-commit run --all-files`; preserve an independently reproduced
-  FIFO `Errno 95` as Spec 039-owned DEFER only if every other hook passes.
-- [ ] Request independent requirements and quality review of the staged atomic
-  closure and remediate every in-scope finding before commit.
-- [ ] Commit DSLC-006, then run post-commit strict validators, lifecycle
-  `--mode snapshot` with explicit DEFER, and clean-tree confirmation. Record
-  the rollback parent and logical commit range in the Task.
+- [x] Prepare the exact atomic proposal that sets Spec/Plan/Task and the Spec
+  035 registry relation to done, updates indexes and ledger rows, and records
+  Spec 036 as dependency-ready with zero Plan/Task.
+- [x] Stage exactly the eight closure files and pass staged lifecycle, registry
+  121, lifecycle 651, strict Markdown/profile, and cross-document validation.
+- [x] Complete repository-quality aggregate, YAML, GitHub security, actionlint,
+  and zizmor validation with PASS results.
+- [x] Run `pre-commit run --all-files`; retain the isolated filesystem's sole
+  `os.mkfifo` `Errno 95` failure as Spec 039 portability scope after every
+  other hook passes.
+- [x] Complete independent requirements review, correct all three stale ledger
+  boundaries to `b3fd537`, and obtain `REQUIREMENTS COMPLIANT` on re-review;
+  remediate the subsequent evidence, fixture-wording, and successor-set quality
+  findings and obtain `QUALITY APPROVED` on re-review.
+- [x] Record rollback parent `b3fd537`, the completed package range, and the
+  required post-commit strict/snapshot/clean-tree checks without inventing the
+  not-yet-created closure commit hash.
 
 ## Verification Plan
 
@@ -441,9 +445,9 @@ instead of reopening them. Each Task row records its commit and parent.
 - Operations/helper bulk consolidation and execution retention remain explicit
   Spec 037 inputs; CI/FIFO work remains an explicit Spec 039 input.
 - Spec 035, this Plan, its Task, registry relation, indexes, and migration
-  ledger close atomically only after the staged closure passes lifecycle
-  validation and whole-tranche review; post-commit strict/snapshot verification
-  confirms the committed state.
+  ledger form one atomic closure. The staged change has passed lifecycle and
+  independent requirements/quality review; the closure commit remains, while
+  post-commit strict/snapshot verification must confirm the committed state.
 - Static results make no remote, provider-runtime, Kubernetes, Vault, ESO,
   Argo CD, or secret-readiness claim.
 
@@ -454,18 +458,19 @@ instead of reopening them. Each Task row records its commit and parent.
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - **Predecessor**: [Completed Spec 034 Plan](./2026-07-15-authority-and-lineage-foundation.md)
-- **Successor boundary**: Specs 036, 037, and 039 remain unplanned downstream
-  tranches in the PRD-006 registry lineage.
+- **Successor boundary**: Specs 036, 037, 038, 039, and 040 are the remaining
+  original active tranches in the PRD-006 registry lineage. Spec 036 is the
+  dependency-ready successor and has no Plan or Task.
 
 ### Lifecycle Traceability
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
 | [VAL-DSLC-001](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-001, DSLC-002 | [DSLC-001 and DSLC-002 registry/profile evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-002](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-001, DSLC-002 | [Closed value and metadata mutation evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-003](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-001, DSLC-003 | [Graph and deterministic comparison evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-004](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-003, DSLC-004 | [Reverse/reopen/archive rejection evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-005](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-002, DSLC-005 | [Template/source parity evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-006](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-005 | [Native route and frontmatter-free evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-007](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-001, DSLC-005 | [Role/source decision and overlap evidence](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
-| [VAL-DSLC-008](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md#success-criteria--verification-plan) | DSLC-001, DSLC-003, DSLC-004 | [Edge predicate, base mode, and evidence-gap diagnostics](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md#task-table) |
+| N/A — VAL-DSLC-002 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-001, DSLC-002 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-003 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-001, DSLC-003 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-004 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-003, DSLC-004 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-005 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-002, DSLC-005 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-006 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-005 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-007 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-001, DSLC-005 | N/A — the paired Task is linked in VAL-DSLC-001 |
+| N/A — VAL-DSLC-008 shares the Spec 035 source linked in VAL-DSLC-001 | DSLC-001, DSLC-003, DSLC-004 | N/A — the paired Task is linked in VAL-DSLC-001 |

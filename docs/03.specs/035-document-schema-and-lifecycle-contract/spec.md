@@ -1,9 +1,9 @@
 ---
 title: 'Document Schema and Lifecycle Contract Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-16
+updated: 2026-07-17
 ---
 
 # Document Schema and Lifecycle Contract Technical Specification (Spec)
@@ -15,6 +15,18 @@ frontmatter values, ordering, lifecycle states, admission, transitions,
 transition evidence, template parity, and full-document validation. It
 preserves the five-key baseline for ordinary Markdown and adds no
 archive-specific metadata.
+
+DSLC-001 through DSLC-005 implemented the registry, metadata, lifecycle,
+evidence, role/source, template, and native-surface contracts in independently
+reviewed logical packages. DSLC-006 stages their terminal Spec/Plan/Task and
+program-relation closure as one exact eight-file change. Staged lifecycle and
+repository QA have completed, and remediated independent requirements and
+quality reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`;
+the closure commit and post-commit verification remain open until their actual
+results exist. The
+independently approved `b3fd537` rollover correction keeps the registry and
+lifecycle self-tests valid as the dependency-ready tranche moves from Spec 035
+to Spec 036.
 
 ## Strategic Boundaries & Non-goals
 
@@ -162,10 +174,25 @@ archive-record, and archive-index predicate atomically with its new route.
 - **VAL-DSLC-008**: Every lifecycle edge has one closed evidence predicate and
   deterministic base-mode fixtures; missing or mismatched evidence fails.
 
+### Closure Evidence
+
+The exact eight-file staged change passes lifecycle validation. Registry 121,
+lifecycle 651, Markdown-profile, cross-document, YAML, GitHub Actions security,
+actionlint, zizmor, and the repository-quality aggregate pass. All-files
+pre-commit passes every hook except the isolated filesystem's reproducible
+`os.mkfifo` `Errno 95`, which remains Spec 039 portability scope. The first
+independent closure requirements review found stale ledger rollback boundaries;
+after all three rows were corrected to `b3fd537` and
+`3aa25dc^..b3fd537`, re-review returned `REQUIREMENTS COMPLIANT`. The closure
+quality review then required current QA evidence, precise future-ready fixture
+wording, and the complete 036–040 successor set; after remediation, re-review
+returned `QUALITY APPROVED`. The closure commit and its post-commit
+strict/snapshot/clean-tree checks are intentionally not pre-claimed.
+
 ## Traceability
 
 - **Predecessor**: [Spec 034](../034-authority-and-lineage-foundation/spec.md)
-- **Successors**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), and [Spec 039](../039-github-ci-qa-evidence/spec.md)
+- **Successors**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md), [Spec 037](../037-active-corpus-and-execution-retention/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), [Spec 039](../039-github-ci-qa-evidence/spec.md), and [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Implementation Plan](../../04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md)
@@ -176,10 +203,10 @@ archive-record, and archive-index predicate atomically with its new route.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-WDLEC-001](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-001 | Strict registry selection reports zero uncovered or ambiguous paths. |
-| [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-002 | Frontmatter mutation fixtures cover closed metadata contracts. |
-| [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-003 | Base-to-proposed lifecycle fixtures cover each family edge. |
-| [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-004 | Negative transition fixtures reject reopen and reactivation. |
-| [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-005 | Registry-derived parity checks cover Markdown forms. |
-| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-006 | Route fixtures reject SDLC frontmatter on native surfaces; available native validators remain authoritative, while CI toolchain expansion stays with Spec 039. |
-| [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-007 | Type/source matrix and role-overlap fixtures verify operations, helper Tests, and README boundaries. |
-| [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-008 | Edge-to-evidence and base-selection fixtures prove deterministic transition enforcement. |
+| N/A — VAL-DSLC-002 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-002 | Frontmatter mutation fixtures cover closed metadata contracts. |
+| N/A — VAL-DSLC-003 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-003 | Base-to-proposed lifecycle fixtures cover each family edge. |
+| N/A — VAL-DSLC-004 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-004 | Negative transition fixtures reject reopen and reactivation. |
+| N/A — VAL-DSLC-005 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-005 | Registry-derived parity checks cover Markdown forms. |
+| N/A — VAL-DSLC-006 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-006 | Route fixtures reject SDLC frontmatter on native surfaces; available native validators remain authoritative, while CI toolchain expansion stays with Spec 039. |
+| N/A — VAL-DSLC-007 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-007 | Type/source matrix and role-overlap fixtures verify operations, helper Tests, and README boundaries. |
+| N/A — VAL-DSLC-008 shares the PRD-006 source linked in VAL-DSLC-001 | VAL-DSLC-008 | Edge-to-evidence and base-selection fixtures prove deterministic transition enforcement. |

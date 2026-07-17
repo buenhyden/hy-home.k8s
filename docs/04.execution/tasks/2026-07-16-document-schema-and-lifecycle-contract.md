@@ -1,7 +1,7 @@
 ---
 title: 'Task: Document Schema and Lifecycle Contract'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-17
 ---
@@ -35,7 +35,7 @@ reviews, and explicit static/live evidence boundaries.
 | DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Done | Implemented; final independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | Named RED failed on both missing public entrypoints and every declared fixture group. Expanded GREEN is 124 cases: 42 literal forward edges, 9 comparison priorities, 12 admission events, 35 isolated Git/ref/environment/root bases, 7 argument boundaries, 5 additive include failures, one current snapshot DEFER, and 13 fixture-closure mutations. |
 | DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Done | Remediated after independent rejection; final re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | GREEN is 651 cases: 42 forward edges, exact 504 edge scenarios with a full-diagnostic assertion hash, 9 comparisons, 12 admissions, 43 Git/ref/provenance bases, 7 arguments, 5 includes, one snapshot DEFER, 23 fixture mutations, and 5 review regressions. Remediation closes context-forgery, reciprocal backlink, ready-Spec state, allowed-H2, Task placeholder, and Result-column bypasses while retaining canonical CommonMark evidence and staged/index, explicit-ref, and CI provenance. |
 | DSLC-005 | VAL-DSLC-005, VAL-DSLC-006, VAL-DSLC-007 | Close native, role/source, Stage 00/99, and directly implicated consumer drift without bulk corpus rewrite. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED accepted four cross-row role-label copies and exact leading SDLC blocks on native surfaces. GREEN is 121 registry cases with 64 profiles, 30 templates, parity 11/11, plus native 10/10 and a five-family Git-index integration proof. Stage 00 relationship wording, four Stage 99 v7 residues, Runbook/Incident roles, 64-row tests inventory, and six-form research pointer are corrected. Operations census is Guide 8 + Policy 7 + Runbook 9 = 24; Incident/Postmortem bodies = 0, recorded only as Spec 037 input. OpenAPI/GraphQL/protobuf syntax tooling remains Spec 039 `DEFER`. The aggregate quality script passed its registry/Markdown/cross/GitOps/Vault/affected-surface/agent-role/roster prefix, then produced no output for more than three minutes and was stopped (exit 130); it is not reported as PASS. Focused static and native-tool lanes passed. |
-| DSLC-006 | VAL-DSLC-001 through VAL-DSLC-008 | Run full QA, whole-tranche review, and atomic lifecycle closure. | platform | Queued | Not executed | Done lineage, command matrix, review verdicts, rollback parent, closure commit |
+| DSLC-006 | VAL-DSLC-001 through VAL-DSLC-008 | Stage and review the atomic lifecycle closure. | platform | Done | Exact eight-file closure is staged; root QA passes; remediated independent reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The closure commit and post-commit checks remain. | Staged lifecycle, registry 121, lifecycle 651, Markdown, cross-document, native, and repository aggregate gates pass. All-files pre-commit has one isolated `os.mkfifo` `Errno 95` failure owned by Spec 039 and every other hook passes. Rollover correction `b3fd537` executes ready-035/ready-036 proofs and guards future 037+ scheduling without claiming a virtual 037 run. Independently approved package commits are `5781ea3`, `5bfaa9e`, `e3a1ccf`, `35e4135`, `858a604`, and `b3fd537`; planning/scope commits are `3aa25dc` and `7d181df`; rollback parent is `b3fd537`; pre-closure range is `3aa25dc^..b3fd537`. No closure commit hash is claimed. |
 
 ## Approval and Safety Boundaries
 
@@ -268,14 +268,37 @@ reported separately, and the research ledger points to all six current README
 forms. The read-only Spec 037 census is Guide 8 + Policy 7 + Runbook 9 = 24 and
 Incident/Postmortem bodies = 0; no operations corpus body was rewritten.
 Independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
-DSLC-005 is complete; DSLC-006 has not started.
+DSLC-005 is complete. DSLC-006 owns an exact eight-file staged closure:
+Spec 035, its Plan and Task, the three current indexes, the registry relation,
+and the three existing 14-column migration-ledger rows. Spec 036 remains the
+first dependency-ready active tranche with no Plan or Task. The staged change
+records rollback parent `b3fd537` and pre-closure range
+`3aa25dc^..b3fd537`. Staged lifecycle and full QA pass. The first independent
+requirements review found stale ledger boundaries; all three rows were fixed
+and re-review returned `REQUIREMENTS COMPLIANT`. Quality-review findings are
+closed, and re-review returned `QUALITY APPROVED`; the closure commit and
+post-commit checks remain unclaimed.
 
-Focused registry, Markdown, lifecycle, cross-document, Ruff, Python compile,
-JSON, diff, YAML, GitHub workflow, security, Markdown, secret, and shell gates
-pass. The repository-quality aggregate passed its registry, Markdown,
-cross-document, GitOps identity, Vault/ESO, affected-surface, agent-role, and
-roster prefix, then emitted nothing for more than three minutes. It was stopped
-with exit 130 and is not claimed as a full PASS; no FIFO diagnostic was emitted.
+The initial terminal proposal reproduced two state-coupled self-test defects:
+the registry projection fixed Spec 035 as `active`, and execution-pair fixtures
+continued to target Spec 035 after Spec 036 became dependency-ready. Commit
+`b3fd537` separated immutable lineage identity from the contiguous state
+contract and derived ready/blocked fixture identities from the registry. Fresh
+independent review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`;
+registry 121 and lifecycle 651 pass with the unchanged raw 504-case SHA. The
+self-test executes the ready-035 and ready-036 states and ensures future 037+
+current states retain both fixed proofs; it does not claim an executed virtual
+037 registry. Staged validation and the repository aggregate now pass. The
+closure commit and post-commit checks remain root-owned work.
+
+Focused registry, Markdown, lifecycle, cross-document, JSON, diff, YAML,
+GitHub workflow, security, Markdown, secret, and shell gates pass. The exact
+repository-quality aggregate completed with PASS; its earlier exit 130 was an
+operator interruption during the long nested hook simulation and is superseded
+by the completed run. All-files pre-commit passes every hook except
+`strict-repository-quality`, whose GitOps fixture reproduces `os.mkfifo`
+`Errno 95` on the isolated filesystem. That portability failure remains Spec
+039 scope and is not reclassified as PASS.
 
 ## Traceability
 
@@ -288,8 +311,8 @@ with exit 130 and is not claimed as a full PASS; no FIFO diagnostic was emitted.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [DSLC-001](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-001-registry-v7-contract) | Done; requirements compliant and quality approved. | RED review reproductions; GREEN 117 registry cases, complete literal v7 typed projection, strict 432-path registry, Markdown zero violations, cross-document PASS, and duplicate/canonical-path guards. |
-| [DSLC-002](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-002-metadata-template-and-compatibility-enforcement) | Done; requirements compliant and quality approved. | Initial seven-case RED; exact 18-case selected v7 value matrix without private archive semantics, 31-path baseline-only admission plus explicit untracked include proof, 11/11 template/source parity mutations including typed value parity, strict current-corpus PASS, and independent review closure. |
-| [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Done; requirements compliant and quality approved. | Named entrypoint/case RED; 124-case engine/Git/CLI/fixture-closure GREEN and current snapshot exact DEFER; submodule-ignore and nested/unhashable-shape review reproductions closed by final independent re-review. |
-| [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Done; requirements compliant and quality approved. | Closed 504-scenario exact diagnostic projection, canonical CommonMark evidence adapter, context integrity, reciprocal/allowed-H2/Task-column rules, dependency-ready same-Spec-state proof, 43 Git provenance bases, 23 fixture mutations, and 5 review regressions. |
-| [DSLC-005](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-005-native-role-and-support-drift) | Done; requirements compliant and quality approved. | RED role/native acceptance; GREEN 121 registry cases, parity 11/11, native 10/10 plus Git-index integration, direct Stage 00/99/Incident/Runbook/tests/research drift remediation, the Spec 037 operations census, and independent review closure. |
-| [DSLC-006](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-006-closure) | Queued. | Full QA, independent reviews, and atomic closure evidence will be recorded here. |
+| [DSLC-002](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) | Done; requirements compliant and quality approved. | Initial seven-case RED; exact 18-case selected v7 value matrix without private archive semantics, 31-path baseline-only admission plus explicit untracked include proof, 11/11 template/source parity mutations including typed value parity, strict current-corpus PASS, and independent review closure. |
+| N/A — DSLC-003 shares the Plan linked in DSLC-001 | Done; requirements compliant and quality approved. | Named entrypoint/case RED; 124-case engine/Git/CLI/fixture-closure GREEN and current snapshot exact DEFER; submodule-ignore and nested/unhashable-shape review reproductions closed by final independent re-review. |
+| N/A — DSLC-004 shares the Plan linked in DSLC-001 | Done; requirements compliant and quality approved. | Closed 504-scenario exact diagnostic projection, canonical CommonMark evidence adapter, context integrity, reciprocal/allowed-H2/Task-column rules, dependency-ready same-Spec-state proof, 43 Git provenance bases, 23 fixture mutations, and 5 review regressions. |
+| N/A — DSLC-005 shares the Plan linked in DSLC-001 | Done; requirements compliant and quality approved. | RED role/native acceptance; GREEN 121 registry cases, parity 11/11, native 10/10 plus Git-index integration, direct Stage 00/99/Incident/Runbook/tests/research drift remediation, the Spec 037 operations census, and independent review closure. |
+| N/A — DSLC-006 shares the Plan linked in DSLC-001 | Exact closure staged; requirements compliant; quality approved. | Exact eight-file closure set, staged lifecycle and aggregate PASS, all-files FIFO boundary isolated to Spec 039, Spec 036 zero-Plan/Task boundary, rollover correction `b3fd537`, rollback parent `b3fd537`, and pre-closure range `3aa25dc^..b3fd537`; no closure commit hash or post-commit result is claimed. |

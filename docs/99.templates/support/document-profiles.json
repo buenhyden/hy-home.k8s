@@ -4956,7 +4956,7 @@
           {
             "spec": "035",
             "order": 2,
-            "state": "active",
+            "state": "done",
             "reason": "Document schema and lifecycle contract",
             "decision": "0017"
           },
