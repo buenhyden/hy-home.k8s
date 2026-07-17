@@ -32,7 +32,7 @@ reviews, and explicit static/live evidence boundaries.
 | --- | --- | --- | --- | --- | --- | --- |
 | DSLC-001 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-003, VAL-DSLC-007, VAL-DSLC-008 | Add closed registry v7 value, role, lifecycle, evidence, and compatibility schema plus typed projection. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED archive-specific semantics and policy-ID/path-alias bypasses reproduced; GREEN 117-case registry self-test, complete literal typed projection, duplicate-key rejection, strict registry/Markdown/cross PASS; logical commit `5781ea3`. |
 | DSLC-002 | VAL-DSLC-001, VAL-DSLC-002, VAL-DSLC-005 | Enforce metadata values, template/source parity, and baseline-only Tombstone admission. | platform | Done | Implemented; independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | RED seven value-contract cases returned `metadata value rules are unimplemented`; expanded 18-case GREEN covers string/integer/number/boolean/date kinds, profile/literal constants, status/literal enums, scalar patterns, denied/allowed null, equals/not-equals, required/forbidden, and absent-versus-explicit-null references without private archive semantics. Exact 31-path Tombstone compatibility plus explicit untracked include rejection, 11/11 template/source parity mutations including typed value-contract parity, and strict current-corpus/registry/cross PASS are recorded. |
-| DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Queued | Not executed | Isolated Git fixtures, lifecycle diagnostics, review, commit |
+| DSLC-003 | VAL-DSLC-003, VAL-DSLC-004, VAL-DSLC-008 | Implement exact staged, CI, explicit-ref, and snapshot comparison modes and transition graph validation. | platform | Done | Implemented; final independent re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. | Named RED failed on both missing public entrypoints and every declared fixture group. Expanded GREEN is 124 cases: 42 literal forward edges, 9 comparison priorities, 12 admission events, 35 isolated Git/ref/environment/root bases, 7 argument boundaries, 5 additive include failures, one current snapshot DEFER, and 13 fixture-closure mutations. |
 | DSLC-004 | VAL-DSLC-004, VAL-DSLC-008 | Enforce edge-specific rendered-link, state, same-diff, and body-contract evidence. | platform | Queued | Not executed | Predicate mutation matrix, strict cross-document result, review, commit |
 | DSLC-005 | VAL-DSLC-005, VAL-DSLC-006, VAL-DSLC-007 | Close native, role/source, Stage 00/99, and directly implicated consumer drift without bulk corpus rewrite. | platform | Queued | Not executed | Native/overlap fixtures, drift ledger, full static result, review, commit |
 | DSLC-006 | VAL-DSLC-001 through VAL-DSLC-008 | Run full QA, whole-tranche review, and atomic lifecycle closure. | platform | Queued | Not executed | Done lineage, command matrix, review verdicts, rollback parent, closure commit |
@@ -140,6 +140,58 @@ self-tests, strict registry, strict Markdown, and strict cross-document
 validation pass. Independent re-review returned `REQUIREMENTS COMPLIANT` and
 `QUALITY APPROVED`; the logical DSLC-002 commit records this evidence.
 
+DSLC-003 RED named both absent public entrypoints and every literal forward,
+comparison, admission, Git, argument, include, and snapshot case before the
+engine existed. GREEN adds an immutable pure comparison interface plus a
+public CLI for staged HEAD/index, explicit CI merge-base, explicit refs, and
+filesystem snapshot modes. Event priority is exact rename, same-path profile
+change, invalid state, then edge; exact renames emit one event, while a
+content-changing rename stays delete plus create. Plan/Task creation requires
+exactly one of each in the same allowed state and proposal; rendered reciprocal
+links and direct-Spec identity remain DSLC-004 evidence scope.
+
+The first independent review returned `NOT COMPLIANT` and `QUALITY REJECTED`
+for unclassified add/delete/modified gaps, inherited Git-environment steering,
+fixture closure, and peeled non-commit refs. The second requirements review
+returned `COMPLIANT`, while its paired quality review rejected submodule-ignore
+steering and unchecked nested fixture shapes. The remediated 124-case self-test
+expands all 42 literal profile edges and uses isolated temp Git repositories
+for HEAD/index/worktree divergence; governed and unclassified add/delete,
+same-path modification, exact rename, and content-changing rename; real
+same-path type-claim change; unknown type claim; additive include
+non-filtering; unique, disconnected, and criss-cross CI bases; and explicit
+refs. Exact `R100` remains one rename event before profile selection, while
+modified governed-to-unclassified, unclassified-to-governed, and
+unclassified-to-unclassified paths remain deterministic delete/create events.
+
+Every inherited `GIT_*` variable is removed for subprocesses and imported
+registry/inventory calls, then fixed noninteractive identity/config variables
+are installed only for the validation scope and the caller environment is
+restored. Git commands disable replacements, graft steering, external diff,
+text conversion, hooks, and fsmonitor; exact rename detection has an unlimited
+limit and `--ignore-submodules=none` overrides local and tracked
+submodule-ignore policy. Staged and explicit-ref fixtures replace a governed
+Markdown blob with a gitlink under `ignore=all` and prove exit `2` with
+`LIFECYCLE-BASE`, never a clean result. Repository identity must resolve to the
+requested non-bare worktree.
+Direct refs must resolve to commits without implicit peeling: raw trees, blobs,
+and annotated tags fail with exit `2`, while a lightweight tag pointing
+directly to a commit passes. Fixture schema, ordered cases, stable rule IDs,
+and the exact unique production-edge projection are closed. Every nested
+profiles/edges/document/status/rule/argv/exit/base-mode/include/snapshot shape
+is validated before execution; thirteen private mutations cover removed
+families/cases, duplicates, unknown names, null base/documents, malformed
+status/exit/member values, unhashable base-mode/operation values, and a
+non-object list member. All argument/provenance failures return exit `2` with
+the complete stable diagnostic envelope; lifecycle violations return `1`.
+Current repository snapshot returns exit `0` with exactly one
+`LIFECYCLE-BASE-DEFER` and never claims transition PASS. Both ref snapshots are
+classified with the current v7 registry; the pure interface independently
+accepts base/proposed profile IDs, while historical registry reloading remains
+an explicit non-claim. Final independent re-review returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` after the submodule-ignore,
+nested-shape, and unhashable-enum reproductions were closed.
+
 ## Traceability
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
@@ -152,7 +204,7 @@ validation pass. Independent re-review returned `REQUIREMENTS COMPLIANT` and
 | --- | --- | --- |
 | [DSLC-001](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-001-registry-v7-contract) | Done; requirements compliant and quality approved. | RED review reproductions; GREEN 117 registry cases, complete literal v7 typed projection, strict 432-path registry, Markdown zero violations, cross-document PASS, and duplicate/canonical-path guards. |
 | [DSLC-002](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-002-metadata-template-and-compatibility-enforcement) | Done; requirements compliant and quality approved. | Initial seven-case RED; exact 18-case selected v7 value matrix without private archive semantics, 31-path baseline-only admission plus explicit untracked include proof, 11/11 template/source parity mutations including typed value parity, strict current-corpus PASS, and independent review closure. |
-| [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Queued. | Git base-mode and transition evidence will be recorded here. |
+| [DSLC-003](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-003-base-and-transition-engine) | Done; requirements compliant and quality approved. | Named entrypoint/case RED; 124-case engine/Git/CLI/fixture-closure GREEN and current snapshot exact DEFER; submodule-ignore and nested/unhashable-shape review reproductions closed by final independent re-review. |
 | [DSLC-004](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-004-transition-evidence) | Queued. | Edge predicate and cross-document evidence will be recorded here. |
 | [DSLC-005](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-005-native-role-and-support-drift) | Queued. | Native, role, support, and consumer-drift evidence will be recorded here. |
 | [DSLC-006](../plans/2026-07-16-document-schema-and-lifecycle-contract.md#dslc-006-closure) | Queued. | Full QA, independent reviews, and atomic closure evidence will be recorded here. |

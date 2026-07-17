@@ -1,0 +1,309 @@
+{
+  "schemaVersion": 1,
+  "requiredEntrypoints": [
+    "scripts/document_lifecycle.py",
+    "scripts/validate-document-lifecycle.py"
+  ],
+  "ruleIds": [
+    "LIFECYCLE-CREATE",
+    "LIFECYCLE-DELETE",
+    "LIFECYCLE-RENAME",
+    "LIFECYCLE-PROFILE-CHANGE",
+    "LIFECYCLE-STATE",
+    "LIFECYCLE-EDGE",
+    "LIFECYCLE-EVIDENCE",
+    "LIFECYCLE-BASE",
+    "LIFECYCLE-BASE-DEFER"
+  ],
+  "forwardContracts": [
+    {
+      "name": "product",
+      "profiles": ["sdlc/prd"],
+      "edges": [
+        ["draft", "active"],
+        ["active", "done"]
+      ]
+    },
+    {
+      "name": "architecture-requirement",
+      "profiles": ["sdlc/ard"],
+      "edges": [
+        ["draft", "active"],
+        ["active", "accepted"]
+      ]
+    },
+    {
+      "name": "architecture-decision",
+      "profiles": ["sdlc/adr"],
+      "edges": [
+        ["draft", "active"],
+        ["active", "accepted"]
+      ]
+    },
+    {
+      "name": "specification",
+      "profiles": [
+        "sdlc/spec",
+        "sdlc/api-spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests"
+      ],
+      "edges": [
+        ["draft", "active"],
+        ["active", "done"]
+      ]
+    },
+    {
+      "name": "execution",
+      "profiles": ["sdlc/plan", "sdlc/task"],
+      "edges": [
+        ["draft", "active"],
+        ["active", "done"]
+      ]
+    },
+    {
+      "name": "operations",
+      "profiles": [
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem"
+      ],
+      "edges": [
+        ["draft", "active"],
+        ["active", "accepted"]
+      ]
+    },
+    {
+      "name": "reference-governance",
+      "profiles": [
+        "content/reference",
+        "governance/reference",
+        "governance/memory",
+        "governance/template-support"
+      ],
+      "edges": [
+        ["draft", "active"],
+        ["active", "accepted"],
+        ["active", "done"]
+      ]
+    }
+  ],
+  "comparisonCases": [
+    {
+      "name": "unchanged-valid-state",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "skipped-edge",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "done"],
+      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+    },
+    {
+      "name": "reverse-edge",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
+      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+    },
+    {
+      "name": "terminal-reopen",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "done"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+    },
+    {
+      "name": "archive-reactivation",
+      "base": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive-tombstone", "archived"],
+      "proposed": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive-tombstone", "active"],
+      "expectedRuleIds": ["LIFECYCLE-STATE"]
+    },
+    {
+      "name": "same-path-profile-change",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/guide", "active"],
+      "expectedRuleIds": ["LIFECYCLE-PROFILE-CHANGE"]
+    },
+    {
+      "name": "same-path-unclassified-state",
+      "base": ["docs/__unclassified__/example.md", "unclassified", null],
+      "proposed": ["docs/__unclassified__/example.md", "unclassified", null],
+      "expectedRuleIds": ["LIFECYCLE-STATE"]
+    },
+    {
+      "name": "invalid-base-state",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "accepted"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "expectedRuleIds": ["LIFECYCLE-STATE"]
+    },
+    {
+      "name": "missing-proposed-state",
+      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", null],
+      "expectedRuleIds": ["LIFECYCLE-STATE"]
+    }
+  ],
+  "admissionCases": [
+    {
+      "name": "draft-create-allowed",
+      "documents": [
+        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"]
+      ],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "active-create-denied",
+      "documents": [
+        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+    },
+    {
+      "name": "unclassified-create-denied",
+      "documents": [
+        ["docs/__unclassified__/new.md", "unclassified", null]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+    },
+    {
+      "name": "unclassified-delete-denied",
+      "operation": "delete",
+      "documents": [
+        ["docs/__unclassified__/old.md", "unclassified", null]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-DELETE"]
+    },
+    {
+      "name": "paired-draft-create-allowed",
+      "documents": [
+        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "draft"],
+        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "draft"]
+      ],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "paired-active-create-allowed",
+      "documents": [
+        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"],
+        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "active"]
+      ],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "paired-orphan-create-denied",
+      "documents": [
+        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "draft"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+    },
+    {
+      "name": "paired-state-mismatch-denied",
+      "documents": [
+        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"],
+        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "draft"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-CREATE"]
+    },
+    {
+      "name": "multiple-pairs-create-denied",
+      "documents": [
+        ["docs/04.execution/plans/2099-01-01-example-a.md", "sdlc/plan", "draft"],
+        ["docs/04.execution/tasks/2099-01-01-example-a.md", "sdlc/task", "draft"],
+        ["docs/04.execution/plans/2099-01-01-example-b.md", "sdlc/plan", "draft"],
+        ["docs/04.execution/tasks/2099-01-01-example-b.md", "sdlc/task", "draft"]
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-CREATE"
+      ]
+    },
+    {
+      "name": "snapshot-only-create-denied",
+      "documents": [
+        ["docs/03.specs/README.md", "readme/stage-index", null]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+    },
+    {
+      "name": "delete-denied",
+      "operation": "delete",
+      "documents": [
+        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-DELETE"]
+    },
+    {
+      "name": "exact-rename-single-event",
+      "operation": "rename",
+      "documents": [
+        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
+        ["docs/03.specs/901-example/spec.md", "sdlc/spec", "draft"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-RENAME"]
+    }
+  ],
+  "gitCases": [
+    {"name": "staged-head-index-worktree-pass", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "staged-head-index-worktree-fail", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
+    {"name": "staged-add", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "staged-delete", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE"]},
+    {"name": "staged-exact-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
+    {"name": "staged-modified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE", "LIFECYCLE-CREATE"]},
+    {"name": "staged-modified-governed-to-unclassified", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE", "LIFECYCLE-CREATE"]},
+    {"name": "staged-modified-unclassified-to-governed", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-DELETE"]},
+    {"name": "staged-modified-unclassified-to-unclassified", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-DELETE"]},
+    {"name": "staged-governed-to-unclassified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
+    {"name": "staged-unclassified-to-unclassified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
+    {"name": "staged-unclassified-add", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE"]},
+    {"name": "staged-unclassified-delete", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE"]},
+    {"name": "staged-unclassified-modify", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-STATE"]},
+    {"name": "staged-same-path-profile-change", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-PROFILE-CHANGE"]},
+    {"name": "staged-unknown-type-state", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-STATE"]},
+    {"name": "staged-paired-create", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "include-does-not-filter-violation", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
+    {"name": "staged-submodule-ignore-all", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "ci-merge-base", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "ci-no-merge-base", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "ci-ambiguous-merge-base", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "explicit-ref-pass", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "explicit-ref-fail", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
+    {"name": "explicit-ref-submodule-ignore-all", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "missing-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "ambiguous-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "raw-tree-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "raw-blob-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "annotated-tag-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "lightweight-commit-tag-pass", "expectedExit": 0, "expectedRuleIds": []},
+    {"name": "git-environment-steering", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
+    {"name": "non-worktree-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "wrong-worktree-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
+    {"name": "bare-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]}
+  ],
+  "argumentCases": [
+    {"name": "staged-forbids-refs", "argv": ["--mode", "staged", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "staged"},
+    {"name": "ci-requires-base", "argv": ["--mode", "ci", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "ci"},
+    {"name": "ci-requires-to", "argv": ["--mode", "ci", "--base-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "ci"},
+    {"name": "explicit-requires-from", "argv": ["--mode", "explicit-ref", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "explicit-ref"},
+    {"name": "explicit-requires-to", "argv": ["--mode", "explicit-ref", "--from-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "explicit-ref"},
+    {"name": "snapshot-forbids-refs", "argv": ["--mode", "snapshot", "--from-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "snapshot"},
+    {"name": "invalid-mode", "argv": ["--mode", "invalid"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "unknown"}
+  ],
+  "includePathCases": [
+    {"name": "duplicate", "values": ["docs/README.md", "docs/README.md"], "expectedExit": 2},
+    {"name": "noncanonical", "values": ["./docs/README.md"], "expectedExit": 2},
+    {"name": "parent", "values": ["docs/../README.md"], "expectedExit": 2},
+    {"name": "non-target", "values": ["pyproject.toml"], "expectedExit": 2},
+    {"name": "missing-blob", "values": ["docs/03.specs/999-missing/spec.md"], "expectedExit": 2}
+  ],
+  "snapshotCase": {
+    "name": "exactly-one-base-defer",
+    "expectedExit": 0,
+    "expectedRuleIds": ["LIFECYCLE-BASE-DEFER"]
+  }
+}
