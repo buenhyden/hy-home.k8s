@@ -44,6 +44,9 @@ RETIRED_CLOUD_SDLC_SURFACE_ERROR = (
     f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: retired cloud documentation surface "
     "must remain absent from the Git index"
 )
+TEMPLATE_SOURCE_PARITY_PATH = Path(
+    "tests/fixtures/document-contracts/template-source-parity.json"
+)
 CURRENT_OWNER_SAMPLE_PATHS = (
     "docs/00.agent-governance/current-alpha.md",
     "docs/00.agent-governance/current-beta.md",
@@ -3141,11 +3144,138 @@ def _assert_adapter_surface_routes(
         )
 
 
+def _assert_template_source_parity(registry: Any) -> None:
+    """Require every ordinary Markdown form to equal its canonical source."""
+
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    for profile in registry.profiles:
+        if profile.mode != "template" or profile.append_contract is not None:
+            continue
+        if len(profile.source_profile_ids) != 1:
+            raise AssertionError(
+                f"{profile.profile_id}: template/source cardinality differs"
+            )
+        source_id = profile.source_profile_ids[0]
+        source = profiles.get(source_id)
+        if source is None:
+            raise AssertionError(
+                f"{profile.profile_id}: template/source profile is unknown"
+            )
+        comparisons = (
+            (
+                "frontmatter",
+                (
+                    profile.frontmatter.mode,
+                    profile.frontmatter.required,
+                    profile.frontmatter.allowed,
+                ),
+                (
+                    source.frontmatter.mode,
+                    source.frontmatter.required,
+                    source.frontmatter.allowed,
+                ),
+            ),
+            (
+                "frontmatter-order",
+                profile.frontmatter.order,
+                source.frontmatter.order,
+            ),
+            ("status", profile.status_domain, source.status_domain),
+            ("headings", profile.headings, source.headings),
+            ("class", profile.profile_class, source.profile_class),
+            ("body", profile.body_contract, source.body_contract),
+            ("value-contract", profile.value_contract, source.value_contract),
+        )
+        for label, actual, expected in comparisons:
+            if actual != expected:
+                raise AssertionError(
+                    f"{profile.profile_id}: template/source {label} parity differs"
+                )
+
+
+def _assert_template_source_mutation_proofs(
+    root: Path, raw_registry: dict[str, Any]
+) -> int:
+    """Exercise each independent form/source parity failure surface."""
+
+    fixture = _load_json(root / TEMPLATE_SOURCE_PARITY_PATH)
+    cases = fixture.get("cases")
+    if (
+        fixture.get("schemaVersion") != 1
+        or not isinstance(cases, list)
+        or len(cases) != 11
+    ):
+        raise AssertionError("template/source parity fixture schema differs")
+    expected_keys = {"name", "mutation", "expectedSignal"}
+    names = [case.get("name") for case in cases]
+    if len(names) != len(set(names)):
+        raise AssertionError("template/source parity case names are not unique")
+
+    for case in cases:
+        if not isinstance(case, dict) or set(case) != expected_keys:
+            raise AssertionError(f"invalid template/source parity case: {case!r}")
+        mutated = copy.deepcopy(raw_registry)
+        profile = next(
+            item for item in mutated["profiles"] if item["id"] == "template/sdlc/prd"
+        )
+        mutation = case["mutation"]
+        if mutation == "frontmatter":
+            profile["frontmatter"]["allowed"].append("legacy")
+        elif mutation == "order":
+            profile["frontmatter"]["order"][0:2] = ["type", "title"]
+        elif mutation == "status":
+            profile["statusDomain"].append("legacy")
+        elif mutation == "headings":
+            profile["headings"]["allowed"].append("Legacy")
+        elif mutation == "class":
+            profile["class"] = "common"
+        elif mutation == "body":
+            profile["bodyContract"]["allowExplicitExclusion"] = False
+        elif mutation == "value-contract":
+            standard = next(
+                item
+                for item in mutated["documentContracts"]["valueContracts"]
+                if "sdlc/prd" in item["profileIds"]
+            )
+            drift = copy.deepcopy(standard)
+            drift["id"] = "template-prd-value-drift"
+            drift["profileIds"] = ["template/sdlc/prd"]
+            owner = next(item for item in drift["keys"] if item["key"] == "owner")
+            owner["pattern"] = "^platform$"
+            mutated["documentContracts"]["valueContracts"].append(drift)
+        elif mutation == "source-cardinality":
+            profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/spec"]
+        elif mutation == "missing-source":
+            profile["sourceProfileIds"] = []
+        elif mutation == "duplicate-source":
+            profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/prd"]
+        elif mutation == "unknown-source":
+            profile["sourceProfileIds"] = ["sdlc/unknown"]
+        else:
+            raise AssertionError(f"unknown template/source parity mutation: {mutation}")
+
+        signal = ""
+        try:
+            candidate = validate_registry(root, mutated)
+            _assert_template_source_parity(candidate)
+        except DocumentContractError as exc:
+            signal = ",".join(_ordered_rule_ids(exc.diagnostics))
+        except AssertionError as exc:
+            signal = str(exc)
+        if case["expectedSignal"] not in signal:
+            raise AssertionError(
+                f"template/source parity {case['name']}: "
+                f"expected {case['expectedSignal']!r}, got {signal!r}"
+            )
+    return len(cases)
+
+
 def _assert_positive_coverage(
     root: Path, raw_registry: dict[str, Any], fixture: dict[str, Any]
 ) -> tuple[int, int]:
     registry = validate_registry(root, raw_registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
+    _assert_template_source_parity(registry)
     _assert_retired_cloud_sdlc_routes_uncovered(registry)
     _assert_tracked_local_agent_fixture_sample(root, registry)
     _assert_adapter_surface_routes(root, raw_registry, registry)
@@ -4115,6 +4245,7 @@ def _self_test(root: Path) -> int:
         _assert_retired_cloud_sdlc_surface_mutation_proofs()
         _assert_parser_safety()
         _assert_inventory_safety(root)
+        parity_case_count = _assert_template_source_mutation_proofs(root, raw_registry)
         profile_count, template_count = _assert_positive_coverage(
             root, raw_registry, fixture
         )
@@ -4143,7 +4274,8 @@ def _self_test(root: Path) -> int:
     print(
         "PASS document contract registry self-test: "
         f"{len(EXPECTED_CASES)} cases, {profile_count} profiles, {template_count} templates; "
-        "README fixture 8/8, private v5/v6 migration fixture, mutation probes passed"
+        f"template/source parity {parity_case_count}/11, README fixture 8/8, "
+        "private v5/v6 migration fixture, mutation probes passed"
     )
     return 0
 
@@ -4163,6 +4295,7 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
+        _assert_template_source_parity(registry)
         _assert_reserved_gemini_native_surfaces_absent(root)
         _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}

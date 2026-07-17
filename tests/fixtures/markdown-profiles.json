@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "dateCases": [
     {
       "name": "authored-previous-day",
@@ -1349,6 +1349,321 @@
       ]
     }
   ],
+  "admissionCases": [
+    {
+      "name": "existing-tombstone-readable",
+      "path": "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "copied-tombstone-rejected",
+      "path": "docs/98.archive/copied-tombstone.md",
+      "expectedRuleIds": [
+        "FM-BASELINE-ADMISSION"
+      ]
+    },
+    {
+      "name": "renamed-tombstone-rejected",
+      "path": "docs/98.archive/renamed-tombstone.md",
+      "expectedRuleIds": [
+        "FM-BASELINE-ADMISSION"
+      ]
+    }
+  ],
+  "valueContractCases": [
+    {
+      "name": "production-string-kind",
+      "profile": "content/archive-tombstone",
+      "key": "original_path",
+      "present": true,
+      "yamlValue": "true",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-VALUE-KIND"
+      ]
+    },
+    {
+      "name": "production-status-domain-enum",
+      "profile": "sdlc/spec",
+      "key": "status",
+      "present": true,
+      "yamlValue": "invalid",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-STATUS"
+      ]
+    },
+    {
+      "name": "production-profile-id-constant",
+      "profile": "sdlc/spec",
+      "key": "type",
+      "present": true,
+      "yamlValue": "sdlc/plan",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-TYPE"
+      ]
+    },
+    {
+      "name": "production-path-pattern",
+      "profile": "content/archive-tombstone",
+      "key": "replacement",
+      "present": true,
+      "yamlValue": "/absolute/replacement.md",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-VALUE-PATTERN"
+      ]
+    },
+    {
+      "name": "production-non-null",
+      "profile": "content/archive-tombstone",
+      "key": "original_path",
+      "present": true,
+      "yamlValue": "null",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-VALUE-NULL"
+      ]
+    },
+    {
+      "name": "private-literal-enum",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "platform",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "enum": {
+            "source": "literal",
+            "values": [
+              "operator"
+            ]
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-ENUM"
+      ]
+    },
+    {
+      "name": "private-literal-constant",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "platform",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "constant": {
+            "source": "literal",
+            "value": "operator"
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-CONSTANT"
+      ]
+    },
+    {
+      "name": "private-forbidden-equals-condition",
+      "profile": "sdlc/spec",
+      "key": "title",
+      "present": true,
+      "yamlValue": "Fixture Document",
+      "contractMutations": [
+        {
+          "key": "title",
+          "conditional": {
+            "key": "owner",
+            "operator": "equals",
+            "value": "platform",
+            "effect": "forbidden"
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-CONDITIONAL"
+      ]
+    },
+    {
+      "name": "production-owner-pattern",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "Platform Team",
+      "contractMutations": [],
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "private-integer-kind-rejects-number",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "7.5",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "kind": "integer"
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "private-number-kind-rejects-boolean",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "true",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "kind": "number"
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "private-boolean-kind-rejects-integer",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "7",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "kind": "boolean"
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "private-number-pattern-is-not-ignored",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "7.5",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "kind": "number",
+          "pattern": "^[0-9]+$"
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "private-nullable-allows-null",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "null",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "nullable": true
+        }
+      ],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "private-required-condition",
+      "profile": "sdlc/spec",
+      "key": "title",
+      "present": false,
+      "yamlValue": "Fixture Document",
+      "contractMutations": [
+        {
+          "key": "title",
+          "conditional": {
+            "key": "owner",
+            "operator": "equals",
+            "value": "platform",
+            "effect": "required"
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-CONDITIONAL"
+      ]
+    },
+    {
+      "name": "private-not-equals-condition",
+      "profile": "sdlc/spec",
+      "key": "title",
+      "present": true,
+      "yamlValue": "Fixture Document",
+      "contractMutations": [
+        {
+          "key": "title",
+          "conditional": {
+            "key": "owner",
+            "operator": "not-equals",
+            "value": "operator",
+            "effect": "forbidden"
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-CONDITIONAL"
+      ]
+    },
+    {
+      "name": "private-absent-reference-does-not-match",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": false,
+      "yamlValue": "platform",
+      "contractMutations": [
+        {
+          "key": "title",
+          "conditional": {
+            "key": "owner",
+            "operator": "not-equals",
+            "value": "platform",
+            "effect": "forbidden"
+          }
+        }
+      ],
+      "expectedRuleIds": []
+    },
+    {
+      "name": "private-explicit-null-reference-matches",
+      "profile": "sdlc/spec",
+      "key": "owner",
+      "present": true,
+      "yamlValue": "null",
+      "contractMutations": [
+        {
+          "key": "owner",
+          "nullable": true
+        },
+        {
+          "key": "title",
+          "conditional": {
+            "key": "owner",
+            "operator": "equals",
+            "value": null,
+            "effect": "forbidden"
+          }
+        }
+      ],
+      "expectedRuleIds": [
+        "FM-VALUE-CONDITIONAL"
+      ]
+    }
+  ],
   "mutationCases": [
     {
       "name": "valid-spec",
@@ -1469,7 +1784,7 @@
       "name": "wrong-owner",
       "profile": "sdlc/spec",
       "path": "docs/03.specs/999-fixture/spec.md",
-      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: other\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: Platform Team\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "expectedRuleIds": [
         "FM-OWNER"
       ]

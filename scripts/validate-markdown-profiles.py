@@ -11,6 +11,7 @@ import dataclasses
 import datetime as dt
 import io
 import json
+import math
 import re
 import sys
 import tempfile
@@ -22,10 +23,13 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from document_contracts import (
+    ConditionalConstraint,
+    ConstantConstraint,
     REGISTRY_PATH,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
+    EnumConstraint,
     classify_path,
     diagnostic_sort_key,
     enumerate_target_markdown,
@@ -60,9 +64,7 @@ GENERIC_RESIDUE = (
     "Use this template",
     "Replace every placeholder with researched, topic-specific content.",
 )
-STARTER_PLACEHOLDER = re.compile(
-    r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}"
-)
+STARTER_PLACEHOLDER = re.compile(r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}")
 TOKEN_BEARING_DEBT_RULES = frozenset(
     {
         "BODY-H2-DUPLICATE",
@@ -98,6 +100,7 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-DATE",
         "FM-DELIMITER",
         "FM-DUPLICATE-KEY",
+        "FM-BASELINE-ADMISSION",
         "FM-FORBIDDEN",
         "FM-FUTURE-DATE",
         "FM-KEY-ORDER",
@@ -107,6 +110,12 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-TITLE",
         "FM-TITLE-PLACEHOLDER",
         "FM-TYPE",
+        "FM-VALUE-CONDITIONAL",
+        "FM-VALUE-CONSTANT",
+        "FM-VALUE-ENUM",
+        "FM-VALUE-KIND",
+        "FM-VALUE-NULL",
+        "FM-VALUE-PATTERN",
         "README_FENCE",
         "README_FRONTMATTER",
         "README_H1",
@@ -423,8 +432,7 @@ def _body_contract_is_enforced(
         return False
     if body_contracts == "audit":
         in_scope = not path_prefixes or any(
-            path == prefix or prefix in path.parents
-            for prefix in path_prefixes
+            path == prefix or prefix in path.parents for prefix in path_prefixes
         )
         return in_scope and status in {"draft", "active"}
     return status in profile.body_contract.enforced_statuses
@@ -475,9 +483,7 @@ def _body_contract_diagnostics(
         ]
     header, rows = table
     duplicate_columns = sorted(
-        column
-        for column, count in collections.Counter(header).items()
-        if count > 1
+        column for column, count in collections.Counter(header).items() if count > 1
     )
     if duplicate_columns:
         return [
@@ -603,9 +609,7 @@ def empty_required_h2_sections(
             fence_length = len(marker)
             continue
 
-        heading_match = re.match(
-            r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line
-        )
+        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
         if heading_match:
             level = len(heading_match.group(1))
             title = re.sub(
@@ -667,13 +671,209 @@ def _validate_date(
         parsed = dt.date.fromisoformat(text or "")
     except ValueError:
         diagnostics.append(
-            _diagnostic("FM-DATE", path, profile, f"{key} is an ISO calendar date", text or type(value).__name__)
+            _diagnostic(
+                "FM-DATE",
+                path,
+                profile,
+                f"{key} is an ISO calendar date",
+                text or type(value).__name__,
+            )
         )
         return
     if profile.mode == "authored" and parsed > today:
         diagnostics.append(
-            _diagnostic("FM-FUTURE-DATE", path, profile, f"{key} is not future-dated", parsed.isoformat())
+            _diagnostic(
+                "FM-FUTURE-DATE",
+                path,
+                profile,
+                f"{key} is not future-dated",
+                parsed.isoformat(),
+            )
         )
+
+
+def _same_scalar(left: object, right: object) -> bool:
+    """Compare JSON/YAML scalars without equating booleans and integers."""
+
+    return type(left) is type(right) and left == right
+
+
+def _matches_value_kind(value: object, kind: str) -> bool:
+    """Return whether one parsed YAML scalar satisfies the registry kind."""
+
+    if kind == "string":
+        return isinstance(value, str)
+    if kind == "date":
+        return isinstance(value, (str, dt.date)) and not isinstance(value, dt.datetime)
+    if kind == "integer":
+        return isinstance(value, int) and not isinstance(value, bool)
+    if kind == "number":
+        return (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and (not isinstance(value, float) or math.isfinite(value))
+        )
+    if kind == "boolean":
+        return isinstance(value, bool)
+    return False
+
+
+def _value_pattern_text(value: object) -> str:
+    """Render one non-null contract scalar to canonical pattern text."""
+
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dt.date) and not isinstance(value, dt.datetime):
+        return value.isoformat()
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+def _value_rule_id(key: str, constraint: str) -> str:
+    """Preserve established key diagnostics while covering generic v7 keys."""
+
+    if key == "title" and constraint in {"kind", "null", "pattern"}:
+        return "FM-TITLE"
+    if key == "type":
+        return "FM-TYPE"
+    if key == "status":
+        return "FM-STATUS"
+    if key == "owner" and constraint in {"kind", "null", "pattern"}:
+        return "FM-OWNER"
+    if key in {"updated", "archived_on"} and constraint in {
+        "kind",
+        "null",
+        "pattern",
+    }:
+        return "FM-DATE"
+    return f"FM-VALUE-{constraint.upper()}"
+
+
+def _value_contract_diagnostics(
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    data: dict[str, object],
+    today: dt.date,
+) -> list[Diagnostic]:
+    """Validate frontmatter scalars from the selected registry v7 contract."""
+
+    diagnostics: list[Diagnostic] = []
+    for contract in profile.value_contract.keys:
+        conditional = contract.conditional
+        if conditional is not None:
+            reference_present = conditional.key in data
+            reference = data.get(conditional.key)
+            equals = reference_present and _same_scalar(reference, conditional.value)
+            condition_matches = reference_present and (
+                equals if conditional.operator == "equals" else not equals
+            )
+            if condition_matches:
+                present = contract.key in data
+                violates = (conditional.effect == "required" and not present) or (
+                    conditional.effect == "forbidden" and present
+                )
+                if violates:
+                    diagnostics.append(
+                        _diagnostic(
+                            "FM-VALUE-CONDITIONAL",
+                            path,
+                            profile,
+                            (
+                                f"{contract.key} is {conditional.effect} when "
+                                f"{conditional.key} {conditional.operator} "
+                                f"{conditional.value!r}"
+                            ),
+                            "present" if present else "missing",
+                        )
+                    )
+
+        if contract.key not in data:
+            continue
+        value = data[contract.key]
+        if value is None:
+            if not contract.nullable:
+                diagnostics.append(
+                    _diagnostic(
+                        _value_rule_id(contract.key, "null"),
+                        path,
+                        profile,
+                        f"{contract.key} is non-null",
+                        "null",
+                    )
+                )
+            continue
+        if not _matches_value_kind(value, contract.kind):
+            diagnostics.append(
+                _diagnostic(
+                    _value_rule_id(contract.key, "kind"),
+                    path,
+                    profile,
+                    f"{contract.key} has {contract.kind} kind",
+                    type(value).__name__,
+                )
+            )
+            continue
+
+        date_placeholder = (
+            profile.mode == "template"
+            and contract.kind == "date"
+            and value == "YYYY-MM-DD"
+        )
+        if contract.kind == "date":
+            _validate_date(diagnostics, path, profile, contract.key, value, today)
+        if date_placeholder:
+            continue
+
+        constant = contract.constant
+        if constant is not None:
+            expected = (
+                _expected_type(profile)
+                if constant.source == "profile-id"
+                else constant.value
+            )
+            if not _same_scalar(value, expected):
+                diagnostics.append(
+                    _diagnostic(
+                        _value_rule_id(contract.key, "constant"),
+                        path,
+                        profile,
+                        repr(expected),
+                        repr(value),
+                    )
+                )
+
+        enumeration = contract.enum
+        if enumeration is not None:
+            allowed = (
+                profile.status_domain
+                if enumeration.source == "status-domain"
+                else enumeration.values
+            )
+            if not any(_same_scalar(value, item) for item in allowed):
+                diagnostics.append(
+                    _diagnostic(
+                        _value_rule_id(contract.key, "enum"),
+                        path,
+                        profile,
+                        repr(allowed),
+                        repr(value),
+                    )
+                )
+
+        pattern_text = _value_pattern_text(value)
+        if (
+            contract.pattern is not None
+            and re.search(contract.pattern, pattern_text) is None
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    _value_rule_id(contract.key, "pattern"),
+                    path,
+                    profile,
+                    f"{contract.key} matches {contract.pattern!r}",
+                    repr(pattern_text),
+                )
+            )
+    return diagnostics
 
 
 def _frontmatter_body(
@@ -688,8 +888,16 @@ def _frontmatter_body(
         return text
     if contract.mode == "forbidden":
         if text.startswith("---\n"):
-            rule = "README_FRONTMATTER" if profile.profile_class == "readme" else "FM-FORBIDDEN"
-            diagnostics.append(_diagnostic(rule, path, profile, "frontmatter is forbidden", "frontmatter"))
+            rule = (
+                "README_FRONTMATTER"
+                if profile.profile_class == "readme"
+                else "FM-FORBIDDEN"
+            )
+            diagnostics.append(
+                _diagnostic(
+                    rule, path, profile, "frontmatter is forbidden", "frontmatter"
+                )
+            )
             try:
                 _, _, body = extract_frontmatter(text)
                 return body
@@ -699,7 +907,15 @@ def _frontmatter_body(
     try:
         keys, data, body = extract_frontmatter(text)
     except ContractError as exc:
-        diagnostics.append(_diagnostic(exc.rule_id, path, profile, exc.detail, "frontmatter" if exc.rule_id == "FM-DELIMITER" else exc.detail))
+        diagnostics.append(
+            _diagnostic(
+                exc.rule_id,
+                path,
+                profile,
+                exc.detail,
+                "frontmatter" if exc.rule_id == "FM-DELIMITER" else exc.detail,
+            )
+        )
         return text
 
     required = tuple(contract.required)
@@ -708,23 +924,27 @@ def _frontmatter_body(
     extra = [key for key in keys if key not in allowed]
     if missing or extra:
         diagnostics.append(
-            _diagnostic("FM-KEYSET", path, profile, json.dumps({"required": required, "allowed": allowed}), json.dumps({"missing": missing, "extra": extra}))
+            _diagnostic(
+                "FM-KEYSET",
+                path,
+                profile,
+                json.dumps({"required": required, "allowed": allowed}),
+                json.dumps({"missing": missing, "extra": extra}),
+            )
         )
     elif tuple(keys) != contract.order:
         diagnostics.append(
-            _diagnostic("FM-KEY-ORDER", path, profile, json.dumps(contract.order), json.dumps(keys))
+            _diagnostic(
+                "FM-KEY-ORDER",
+                path,
+                profile,
+                json.dumps(contract.order),
+                json.dumps(keys),
+            )
         )
 
-    expected_type = _expected_type(profile)
-    if "type" in data and data["type"] != expected_type:
-        diagnostics.append(_diagnostic("FM-TYPE", path, profile, expected_type, str(data["type"])))
-    if "status" in data and data["status"] not in profile.status_domain:
-        diagnostics.append(_diagnostic("FM-STATUS", path, profile, json.dumps(profile.status_domain), str(data["status"])))
-    if "owner" in data and data["owner"] != "platform":
-        diagnostics.append(_diagnostic("FM-OWNER", path, profile, "platform", str(data["owner"])))
-    if "title" in data and (not isinstance(data["title"], str) or not data["title"].strip()):
-        diagnostics.append(_diagnostic("FM-TITLE", path, profile, "a non-empty string", type(data["title"]).__name__ if not isinstance(data["title"], str) else "empty"))
-    elif (
+    diagnostics.extend(_value_contract_diagnostics(path, profile, data, today))
+    if (
         "title" in data
         and profile.placeholder_policy == "forbidden"
         and isinstance(data["title"], str)
@@ -738,12 +958,6 @@ def _frontmatter_body(
                 "a topic-specific title without starter delimiters",
                 placeholder,
             )
-        )
-    if "updated" in data:
-        _validate_date(diagnostics, path, profile, "updated", data["updated"], today)
-    if "archived_on" in data:
-        _validate_date(
-            diagnostics, path, profile, "archived_on", data["archived_on"], today
         )
     return body
 
@@ -759,21 +973,53 @@ def _append_diagnostics(
     if contract is None:
         return diagnostics
     if append_context is None:
-        diagnostics.append(_diagnostic("APPEND-CONTEXT", path, profile, "an explicit parent context", "missing"))
+        diagnostics.append(
+            _diagnostic(
+                "APPEND-CONTEXT", path, profile, "an explicit parent context", "missing"
+            )
+        )
     else:
         if append_context.parent_profile.profile_id != contract.parent_profile_id:
-            diagnostics.append(_diagnostic("APPEND-PARENT-PROFILE", path, profile, contract.parent_profile_id, append_context.parent_profile.profile_id))
+            diagnostics.append(
+                _diagnostic(
+                    "APPEND-PARENT-PROFILE",
+                    path,
+                    profile,
+                    contract.parent_profile_id,
+                    append_context.parent_profile.profile_id,
+                )
+            )
         if append_context.parent_h2 != contract.parent_h2:
-            diagnostics.append(_diagnostic("APPEND-PARENT-H2", path, profile, contract.parent_h2, append_context.parent_h2))
+            diagnostics.append(
+                _diagnostic(
+                    "APPEND-PARENT-H2",
+                    path,
+                    profile,
+                    contract.parent_h2,
+                    append_context.parent_h2,
+                )
+            )
     h3 = [
         title
         for level, title in scan.headings
         if level == contract.entry_heading_level
         and title not in contract.required_sections
     ]
-    h4 = [title for level, title in scan.headings if level == contract.section_heading_level]
+    h4 = [
+        title
+        for level, title in scan.headings
+        if level == contract.section_heading_level
+    ]
     if len(h3) != 1:
-        diagnostics.append(_diagnostic("APPEND-ENTRY-LEVEL", path, profile, "exactly one H3 entry heading", json.dumps(h3)))
+        diagnostics.append(
+            _diagnostic(
+                "APPEND-ENTRY-LEVEL",
+                path,
+                profile,
+                "exactly one H3 entry heading",
+                json.dumps(h3),
+            )
+        )
     seen_any_level = {title for _, title in scan.headings}
     missing = [
         section
@@ -781,10 +1027,25 @@ def _append_diagnostics(
         if section not in h4 and section not in seen_any_level
     ]
     if missing:
-        diagnostics.extend(_diagnostic("APPEND-SECTION-REQUIRED", path, profile, "required H4 section", section) for section in missing)
-    wrong_levels = [title for level, title in scan.headings if title in contract.required_sections and level != contract.section_heading_level]
+        diagnostics.extend(
+            _diagnostic(
+                "APPEND-SECTION-REQUIRED", path, profile, "required H4 section", section
+            )
+            for section in missing
+        )
+    wrong_levels = [
+        title
+        for level, title in scan.headings
+        if title in contract.required_sections
+        and level != contract.section_heading_level
+    ]
     if wrong_levels:
-        diagnostics.extend(_diagnostic("APPEND-SECTION-LEVEL", path, profile, "required sections use H4", title) for title in wrong_levels)
+        diagnostics.extend(
+            _diagnostic(
+                "APPEND-SECTION-LEVEL", path, profile, "required sections use H4", title
+            )
+            for title in wrong_levels
+        )
     return diagnostics
 
 
@@ -800,22 +1061,38 @@ def _body_diagnostics(
     if profile.append_contract is not None:
         diagnostics = _append_diagnostics(path, profile, scan, append_context)
         if scan.unclosed_fence:
-            diagnostics.append(_diagnostic("BODY-FENCE-UNCLOSED", path, profile, "all fenced blocks are closed", "unclosed"))
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-FENCE-UNCLOSED",
+                    path,
+                    profile,
+                    "all fenced blocks are closed",
+                    "unclosed",
+                )
+            )
         return diagnostics
-    if profile.frontmatter.mode == "not-applicable" and not profile.headings.required and not profile.headings.allowed:
+    if (
+        profile.frontmatter.mode == "not-applicable"
+        and not profile.headings.required
+        and not profile.headings.allowed
+    ):
         return []
     readme = profile.profile_class == "readme"
     diagnostics: list[Diagnostic] = []
     if scan.unclosed_fence:
         rule = "README_FENCE" if readme else "BODY-FENCE-UNCLOSED"
-        diagnostics.append(_diagnostic(rule, path, profile, "all fenced blocks are closed", "unclosed"))
+        diagnostics.append(
+            _diagnostic(rule, path, profile, "all fenced blocks are closed", "unclosed")
+        )
     if not profile.headings.required and not profile.headings.allowed:
         return diagnostics
     h1 = [title for level, title in scan.headings if level == 1]
     h2 = [title for level, title in scan.headings if level == 2]
     if len(h1) != 1:
         rule = "README_H1" if readme else "BODY-H1"
-        diagnostics.append(_diagnostic(rule, path, profile, "exactly one H1", json.dumps(h1)))
+        diagnostics.append(
+            _diagnostic(rule, path, profile, "exactly one H1", json.dumps(h1))
+        )
     elif (
         profile.placeholder_policy == "forbidden"
         and (placeholder := starter_placeholder(h1[0])) is not None
@@ -831,7 +1108,10 @@ def _body_diagnostics(
         )
     missing = [heading for heading in profile.headings.required if heading not in h2]
     required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
-    diagnostics.extend(_diagnostic(required_rule, path, profile, "required H2", heading) for heading in missing)
+    diagnostics.extend(
+        _diagnostic(required_rule, path, profile, "required H2", heading)
+        for heading in missing
+    )
     if profile.mode == "authored":
         h2_counts = collections.Counter(h2)
         diagnostics.extend(
@@ -842,17 +1122,24 @@ def _body_diagnostics(
                 "required H2 contains authored body content",
                 heading,
             )
-            for heading in empty_required_h2_sections(
-                body, profile.headings.required
-            )
+            for heading in empty_required_h2_sections(body, profile.headings.required)
             if h2_counts[heading] == 1
         )
-    duplicate = sorted(heading for heading, count in collections.Counter(h2).items() if count > 1)
+    duplicate = sorted(
+        heading for heading, count in collections.Counter(h2).items() if count > 1
+    )
     duplicate_rule = "README_H2_DUPLICATE" if readme else "BODY-H2-DUPLICATE"
-    diagnostics.extend(_diagnostic(duplicate_rule, path, profile, "unique H2", heading) for heading in duplicate)
+    diagnostics.extend(
+        _diagnostic(duplicate_rule, path, profile, "unique H2", heading)
+        for heading in duplicate
+    )
     represented = set(profile.headings.allowed)
     unsupported_rule = "README_H2_UNSUPPORTED" if readme else "BODY-HEADING-UNSUPPORTED"
-    diagnostics.extend(_diagnostic(unsupported_rule, path, profile, "allowed H2", heading) for heading in h2 if heading not in represented)
+    diagnostics.extend(
+        _diagnostic(unsupported_rule, path, profile, "allowed H2", heading)
+        for heading in h2
+        if heading not in represented
+    )
     if profile.placeholder_policy == "forbidden":
         residue_source = text_outside_fenced_code(body)
         for _ in AUTHOR_PROMPT_COMMENT.finditer(residue_source):
@@ -867,7 +1154,15 @@ def _body_diagnostics(
             )
         for marker in GENERIC_RESIDUE:
             for _ in range(residue_source.count(marker)):
-                diagnostics.append(_diagnostic("BODY-TEMPLATE-RESIDUE", path, profile, "authored content without legacy/template residue", marker))
+                diagnostics.append(
+                    _diagnostic(
+                        "BODY-TEMPLATE-RESIDUE",
+                        path,
+                        profile,
+                        "authored content without legacy/template residue",
+                        marker,
+                    )
+                )
     return diagnostics
 
 
@@ -956,9 +1251,7 @@ def _remove_first_required_h2(source: str, profile: DocumentProfile) -> str:
     return source.replace(marker, "\n", 1)
 
 
-def _replace_required_h2_body(
-    source: str, heading: str, replacement: str
-) -> str:
+def _replace_required_h2_body(source: str, heading: str, replacement: str) -> str:
     """Replace one fixture H2 body while preserving the heading itself."""
 
     marker = f"## {heading}\n"
@@ -967,9 +1260,7 @@ def _replace_required_h2_body(
     body_start = source.index(marker) + len(marker)
     next_heading = re.search(r"(?m)^##(?:[ \t]+|$)", source[body_start:])
     body_end = (
-        len(source)
-        if next_heading is None
-        else body_start + next_heading.start()
+        len(source) if next_heading is None else body_start + next_heading.start()
     )
     return source[:body_start] + replacement + source[body_end:]
 
@@ -1002,7 +1293,9 @@ def _append_context(
     if mutation_kind == "append-missing-context":
         return None
     parent = registry_profiles["governance/progress-ledger"]
-    parent_h2 = "Wrong Parent" if mutation_kind == "append-wrong-parent-h2" else "Work Entries"
+    parent_h2 = (
+        "Wrong Parent" if mutation_kind == "append-wrong-parent-h2" else "Work Entries"
+    )
     if mutation_kind == "append-wrong-parent-profile":
         parent = registry_profiles["governance/reference"]
     return AppendContext(
@@ -1037,15 +1330,18 @@ def _assert_retired_debt_source(
     retired_fields = {"compatibilityDebt", "semanticDebtCaps"}
     if contract.get("schemaVersion") != 2:
         raise ValueError("template compatibility schemaVersion must be 2")
-    if contract.get("owner") != "Spec 033" or contract.get("growthAllowed") is not False:
-        raise ValueError("template compatibility contract must be Spec 033 owned and no-growth")
+    if (
+        contract.get("owner") != "Spec 033"
+        or contract.get("growthAllowed") is not False
+    ):
+        raise ValueError(
+            "template compatibility contract must be Spec 033 owned and no-growth"
+        )
     if contract.get("retiredFields") != sorted(retired_fields):
         raise ValueError("template compatibility retiredFields contract differs")
     retired = retired_fields & set(contract)
     if retired:
-        raise ValueError(
-            "DEBT-SOURCE-REINTRODUCED: " + ",".join(sorted(retired))
-        )
+        raise ValueError("DEBT-SOURCE-REINTRODUCED: " + ",".join(sorted(retired)))
     if mode == "compatibility":
         raise ValueError(
             "DEBT-SOURCE-MISSING: compatibilityDebt and semanticDebtCaps are retired"
@@ -1102,16 +1398,18 @@ def _result_object(mode: str, rows: Sequence[ResultRow]) -> dict[str, Any]:
     }
 
 
-def _emit_results(
-    mode: str, output_format: str, rows: Sequence[ResultRow]
-) -> None:
+def _emit_results(mode: str, output_format: str, rows: Sequence[ResultRow]) -> None:
     if output_format == "json":
-        print(json.dumps(_result_object(mode, rows), ensure_ascii=False, separators=(",", ":")))
+        print(
+            json.dumps(
+                _result_object(mode, rows), ensure_ascii=False, separators=(",", ":")
+            )
+        )
         return
     if not rows:
         print(
             'PASS SUMMARY . - expected="no violations" actual="0" '
-            f'owner={json.dumps(OWNER)}'
+            f"owner={json.dumps(OWNER)}"
         )
         return
     for row in rows:
@@ -1180,6 +1478,9 @@ def _repository_diagnostics(
 ) -> list[Diagnostic]:
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     diagnostics: list[Diagnostic] = []
+    diagnostics.extend(
+        _baseline_admission_diagnostics(registry, inventory.current_paths)
+    )
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         append_context = None
@@ -1207,6 +1508,31 @@ def _repository_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
+def _baseline_admission_diagnostics(
+    registry: Any, paths: Sequence[PurePosixPath]
+) -> list[Diagnostic]:
+    """Reject paths outside a selected baseline-only admission contract."""
+
+    diagnostics: list[Diagnostic] = []
+    for path in paths:
+        profile = classify_path(registry, path)
+        admission = profile.admission
+        if (
+            admission.create.mode == "baseline-only"
+            and path not in admission.baseline_paths
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "FM-BASELINE-ADMISSION",
+                    path,
+                    profile,
+                    (f"an exact path in baseline-only policy {admission.policy_id}"),
+                    path.as_posix(),
+                )
+            )
+    return sorted(diagnostics, key=diagnostic_sort_key)
+
+
 def _classification_route_mutation_registry(
     root: Path,
     raw_registry: dict[str, Any],
@@ -1215,11 +1541,11 @@ def _classification_route_mutation_registry(
 ) -> Any:
     mutated = copy.deepcopy(raw_registry)
     try:
-        profile = next(
-            item for item in mutated["profiles"] if item["id"] == profile_id
-        )
+        profile = next(item for item in mutated["profiles"] if item["id"] == profile_id)
     except StopIteration as exc:
-        raise ContractError(f"unknown classification-only profile: {profile_id}") from exc
+        raise ContractError(
+            f"unknown classification-only profile: {profile_id}"
+        ) from exc
 
     path_text = fixture_path.as_posix()
     mutation_count = 0
@@ -1252,14 +1578,16 @@ def _self_test(root: Path) -> list[str]:
     )
     failures: list[str] = []
 
-    if fixture.get("schemaVersion") != 1:
-        failures.append("fixture schemaVersion must be 1")
+    if fixture.get("schemaVersion") != 2:
+        failures.append("fixture schemaVersion must be 2")
     if set(fixture) != {
         "schemaVersion",
         "dateCases",
         "sectionBodyCases",
         "relationshipCases",
         "bodyContractCases",
+        "admissionCases",
+        "valueContractCases",
         "profileMatrix",
         "mutationCases",
     }:
@@ -1291,13 +1619,19 @@ def _self_test(root: Path) -> list[str]:
     if actual_date_cases != expected_date_cases:
         failures.append("dateCases must preserve the exact seven-case contract")
 
-    if set(readme_fixture) != {
-        "schemaVersion",
-        "activePaths",
-        "retiredPaths",
-        "cases",
-    } or readme_fixture.get("schemaVersion") != 3:
-        failures.append("README handoff fixture must use schema-v2 retirement inventory")
+    if (
+        set(readme_fixture)
+        != {
+            "schemaVersion",
+            "activePaths",
+            "retiredPaths",
+            "cases",
+        }
+        or readme_fixture.get("schemaVersion") != 3
+    ):
+        failures.append(
+            "README handoff fixture must use schema-v2 retirement inventory"
+        )
     readme_names = tuple(case.get("name") for case in readme_fixture.get("cases", []))
     if readme_names != EXPECTED_README_CASES:
         failures.append("README handoff case names changed")
@@ -1320,9 +1654,7 @@ def _self_test(root: Path) -> list[str]:
     if set(readme_paths) & set(retired_readme_paths):
         failures.append("README activePaths and retiredPaths must be disjoint")
     readme_by_path = {row.get("path"): row for row in readme_path_rows}
-    retired_readme_by_path = {
-        row.get("path"): row for row in retired_readme_rows
-    }
+    retired_readme_by_path = {row.get("path"): row for row in retired_readme_rows}
     inventory_readmes = {
         path.as_posix()
         for path in inventory.current_paths
@@ -1333,9 +1665,7 @@ def _self_test(root: Path) -> list[str]:
     if set(readme_paths) != inventory_readmes:
         failures.append("README activePaths must equal the production inventory set")
     baseline_readmes = {
-        path.as_posix()
-        for path in inventory.baseline_paths
-        if path.name == "README.md"
+        path.as_posix() for path in inventory.baseline_paths if path.name == "README.md"
     }
     active_baseline = set(readme_paths) & baseline_readmes
     active_program_created = set(readme_paths) - baseline_readmes
@@ -1357,7 +1687,9 @@ def _self_test(root: Path) -> list[str]:
     ):
         for path_text, handoff in handoffs.items():
             if set(handoff) != expected_keys:
-                failures.append(f"README {lifecycle} handoff row fields differ: {path_text}")
+                failures.append(
+                    f"README {lifecycle} handoff row fields differ: {path_text}"
+                )
                 continue
             if not isinstance(path_text, str):
                 failures.append("README handoff path values must be strings")
@@ -1404,7 +1736,9 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(f"README handoff new disposition mismatch: {path_text}")
             if lifecycle == "active":
                 if not (root / path_text).is_file():
-                    failures.append(f"README active handoff path is absent: {path_text}")
+                    failures.append(
+                        f"README active handoff path is absent: {path_text}"
+                    )
                 continue
             if handoff.get("retiredBy") != "ADM-006":
                 failures.append(f"README retired handoff owner mismatch: {path_text}")
@@ -1413,16 +1747,22 @@ def _self_test(root: Path) -> list[str]:
             elif path_text.startswith("examples/azure/docs/"):
                 provider = "azure"
             else:
-                failures.append(f"README retired handoff provider mismatch: {path_text}")
+                failures.append(
+                    f"README retired handoff provider mismatch: {path_text}"
+                )
                 continue
             expected_destination = (
                 f"docs/90.references/cloud-examples/{provider}/"
                 f"2026-07-12-{provider}-example-snapshot.md"
             )
             if handoff.get("destination") != expected_destination:
-                failures.append(f"README retired handoff destination mismatch: {path_text}")
+                failures.append(
+                    f"README retired handoff destination mismatch: {path_text}"
+                )
             elif not (root / expected_destination).is_file():
-                failures.append(f"README retired handoff destination is absent: {path_text}")
+                failures.append(
+                    f"README retired handoff destination is absent: {path_text}"
+                )
             if (root / path_text).exists() or path_text in inventory_readmes:
                 failures.append(f"README retired handoff remains current: {path_text}")
 
@@ -1443,7 +1783,9 @@ def _self_test(root: Path) -> list[str]:
                 "positiveSource",
                 "negativeMutations",
             }
-            expected_fields = required_fields | ({"reason"} if row.get("applicability") == "excluded" else set())
+            expected_fields = required_fields | (
+                {"reason"} if row.get("applicability") == "excluded" else set()
+            )
             if set(row) != expected_fields:
                 failures.append(f"matrix row is incomplete: {row.get('profile')}")
                 continue
@@ -1470,12 +1812,23 @@ def _self_test(root: Path) -> list[str]:
             ):
                 failures.append(f"invalid validate-document mode: {profile.profile_id}")
             if applicability == "classification-only" and (
-                profile.mode not in {"classification-only", "generated"} or not structural_na
+                profile.mode not in {"classification-only", "generated"}
+                or not structural_na
             ):
-                failures.append(f"invalid classification-only mode: {profile.profile_id}")
-            if applicability == "append-fragment" and profile.profile_id != "governance/progress-entry":
-                failures.append(f"invalid append-fragment profile: {profile.profile_id}")
-            if profile.profile_id == "governance/progress-entry" and applicability != "append-fragment":
+                failures.append(
+                    f"invalid classification-only mode: {profile.profile_id}"
+                )
+            if (
+                applicability == "append-fragment"
+                and profile.profile_id != "governance/progress-entry"
+            ):
+                failures.append(
+                    f"invalid append-fragment profile: {profile.profile_id}"
+                )
+            if (
+                profile.profile_id == "governance/progress-entry"
+                and applicability != "append-fragment"
+            ):
                 failures.append("governance/progress-entry must be append-fragment")
             try:
                 fixture_path = _fixture_path(row["fixturePath"])
@@ -1507,7 +1860,8 @@ def _self_test(root: Path) -> list[str]:
                 selected_inventory_paths = [
                     candidate
                     for candidate in inventory.current_paths
-                    if classify_path(registry, candidate).profile_id == profile.profile_id
+                    if classify_path(registry, candidate).profile_id
+                    == profile.profile_id
                 ]
                 if path.suffix == ".md" and not selected_inventory_paths:
                     failures.append(
@@ -1578,7 +1932,9 @@ def _self_test(root: Path) -> list[str]:
                     f"matrix positive {profile.profile_id}: expected=[] actual={actual_rules}"
                 )
             if not row["negativeMutations"]:
-                failures.append(f"matrix row lacks a negative mutation: {profile.profile_id}")
+                failures.append(
+                    f"matrix row lacks a negative mutation: {profile.profile_id}"
+                )
             for mutation in row["negativeMutations"]:
                 kind = mutation["kind"]
                 source = _mutation_source(positive_source, mutation, profile)
@@ -1621,15 +1977,85 @@ def _self_test(root: Path) -> list[str]:
             profile = classify_path(registry, path)
             if handoff.get("profile") != profile.profile_id:
                 failures.append(f"README case profile differs from paths table: {path}")
-            actual_rules = _run_source_case(
-                temp_root, path, case["document"], profile
-            )
+            actual_rules = _run_source_case(temp_root, path, case["document"], profile)
             if actual_rules != case["expected_rule_ids"]:
                 failures.append(
                     f"README handoff {case['name']}: expected={case['expected_rule_ids']} actual={actual_rules}"
                 )
 
         matrix_by_profile = {row["profile"]: row for row in rows}
+
+        admission_cases = fixture.get("admissionCases", [])
+        expected_admission_names = (
+            "existing-tombstone-readable",
+            "copied-tombstone-rejected",
+            "renamed-tombstone-rejected",
+        )
+        if (
+            tuple(case.get("name") for case in admission_cases)
+            != expected_admission_names
+        ):
+            failures.append("focused admission case names changed")
+        admission_case_keys = {"name", "path", "expectedRuleIds"}
+        for case in admission_cases:
+            if set(case) != admission_case_keys:
+                failures.append(f"admission case fields differ: {case.get('name')}")
+                continue
+            path = _fixture_path(case["path"])
+            actual_rules = _rule_ids(_baseline_admission_diagnostics(registry, (path,)))
+            if actual_rules != case["expectedRuleIds"]:
+                failures.append(
+                    f"admission {case['name']}: "
+                    f"expected={case['expectedRuleIds']} actual={actual_rules}"
+                )
+
+        tombstone_profile = profiles["content/archive-tombstone"]
+        tombstone_baseline = tombstone_profile.admission.baseline_paths
+        if len(tombstone_baseline) != 31 or _baseline_admission_diagnostics(
+            registry, tombstone_baseline
+        ):
+            failures.append(
+                "all 31 exact Tombstone baseline paths must remain readable"
+            )
+        include_probe = PurePosixPath(
+            "docs/98.archive/__markdown-profile-admission-self-test__.md"
+        )
+        include_target = root / include_probe
+        if include_target.exists():
+            failures.append("Tombstone admission include probe already exists")
+        else:
+            include_target.write_text(
+                read_repository_text(root, tombstone_baseline[0]),
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            try:
+                with (
+                    contextlib.redirect_stdout(stdout),
+                    contextlib.redirect_stderr(stderr),
+                ):
+                    include_result = main(
+                        [
+                            "--root",
+                            str(root),
+                            "--mode",
+                            "strict",
+                            "--include-path",
+                            include_probe.as_posix(),
+                        ]
+                    )
+            finally:
+                include_target.unlink(missing_ok=True)
+            expected_probe = f"FAIL FM-BASELINE-ADMISSION {include_probe.as_posix()} "
+            if (
+                include_result != 1
+                or expected_probe not in stdout.getvalue()
+                or stderr.getvalue()
+            ):
+                failures.append(
+                    "explicit untracked Tombstone include did not fail closed"
+                )
 
         section_cases = fixture.get("sectionBodyCases", [])
         expected_section_names = (
@@ -1663,9 +2089,7 @@ def _self_test(root: Path) -> list[str]:
             mutation = case["mutation"]
             heading = case["heading"]
             if mutation == "replace-body":
-                source = _replace_required_h2_body(
-                    source, heading, case["body"]
-                )
+                source = _replace_required_h2_body(source, heading, case["body"])
             elif mutation == "insert-empty-optional":
                 if (
                     heading not in profile.headings.allowed
@@ -1688,9 +2112,7 @@ def _self_test(root: Path) -> list[str]:
                     1,
                 )
             else:
-                failures.append(
-                    f"focused section-body mutation is invalid: {mutation}"
-                )
+                failures.append(f"focused section-body mutation is invalid: {mutation}")
                 continue
             _write_source(temp_root, path.as_posix(), source)
             diagnostics = validate_document(
@@ -1712,9 +2134,7 @@ def _self_test(root: Path) -> list[str]:
                 )
             if case["name"] == "empty-required-h2":
                 empty_rows = [
-                    item
-                    for item in diagnostics
-                    if item.rule_id == "BODY-HEADING-EMPTY"
+                    item for item in diagnostics if item.rule_id == "BODY-HEADING-EMPTY"
                 ]
                 if (
                     len(empty_rows) != 1
@@ -1787,6 +2207,184 @@ def _self_test(root: Path) -> list[str]:
                     f"date {case['name']}: expected={case['expectedRuleIds']} actual={actual_rules}"
                 )
 
+        value_case_keys = {
+            "name",
+            "profile",
+            "key",
+            "present",
+            "yamlValue",
+            "contractMutations",
+            "expectedRuleIds",
+        }
+        expected_value_case_names = (
+            "production-string-kind",
+            "production-status-domain-enum",
+            "production-profile-id-constant",
+            "production-path-pattern",
+            "production-non-null",
+            "private-literal-enum",
+            "private-literal-constant",
+            "private-forbidden-equals-condition",
+            "production-owner-pattern",
+            "private-integer-kind-rejects-number",
+            "private-number-kind-rejects-boolean",
+            "private-boolean-kind-rejects-integer",
+            "private-number-pattern-is-not-ignored",
+            "private-nullable-allows-null",
+            "private-required-condition",
+            "private-not-equals-condition",
+            "private-absent-reference-does-not-match",
+            "private-explicit-null-reference-matches",
+        )
+        if (
+            tuple(case.get("name") for case in fixture.get("valueContractCases", []))
+            != expected_value_case_names
+        ):
+            failures.append("focused value-contract case names changed")
+        value_contract_validator = globals().get("_value_contract_diagnostics")
+        for case in fixture.get("valueContractCases", []):
+            if set(case) != value_case_keys:
+                failures.append(
+                    f"value-contract case fields differ: {case.get('name')}"
+                )
+                continue
+            profile = profiles[case["profile"]]
+            row = matrix_by_profile[profile.profile_id]
+            source = _profile_matrix_source(root, row, profile)
+            key = case["key"]
+            if not isinstance(case["present"], bool):
+                failures.append(
+                    f"value-contract {case['name']}: present must be boolean"
+                )
+                continue
+            if case["present"]:
+                source, substitutions = re.subn(
+                    rf"(?m)^{re.escape(key)}: .+$",
+                    f"{key}: {case['yamlValue']}",
+                    source,
+                    count=1,
+                )
+            else:
+                source, substitutions = re.subn(
+                    rf"(?m)^{re.escape(key)}: .+\n",
+                    "",
+                    source,
+                    count=1,
+                )
+            if substitutions != 1:
+                failures.append(f"value-contract {case['name']}: fixture key is absent")
+                continue
+            selected = profile
+            mutations = case["contractMutations"]
+            if not isinstance(mutations, list) or any(
+                not isinstance(mutation, dict) for mutation in mutations
+            ):
+                failures.append(
+                    f"value-contract {case['name']}: mutations must be an object list"
+                )
+                continue
+            mutation_keys = [mutation.get("key") for mutation in mutations]
+            if any(not isinstance(value, str) for value in mutation_keys):
+                failures.append(
+                    f"value-contract {case['name']}: mutation key must be a string"
+                )
+                continue
+            if len(mutation_keys) != len(set(mutation_keys)):
+                failures.append(
+                    f"value-contract {case['name']}: mutation keys must be unique"
+                )
+                continue
+            if mutations:
+                mutations_by_key = {mutation["key"]: mutation for mutation in mutations}
+                mutated_keys = []
+                for item in profile.value_contract.keys:
+                    mutation = mutations_by_key.get(item.key)
+                    if mutation is None:
+                        mutated_keys.append(item)
+                        continue
+                    allowed_mutation_keys = {
+                        "key",
+                        "kind",
+                        "nullable",
+                        "constant",
+                        "enum",
+                        "pattern",
+                        "conditional",
+                    }
+                    if (
+                        not set(mutation).issubset(allowed_mutation_keys)
+                        or len(mutation) < 2
+                    ):
+                        failures.append(
+                            f"value-contract {case['name']}: invalid mutation fields"
+                        )
+                        mutated_keys.append(item)
+                        continue
+                    changes: dict[str, object] = {}
+                    for field in ("kind", "nullable", "pattern"):
+                        if field in mutation:
+                            changes[field] = mutation[field]
+                    if "constant" in mutation:
+                        raw_constant = mutation["constant"]
+                        changes["constant"] = ConstantConstraint(
+                            source=raw_constant["source"],
+                            value=raw_constant["value"],
+                        )
+                    if "enum" in mutation:
+                        raw_enum = mutation["enum"]
+                        changes["enum"] = EnumConstraint(
+                            source=raw_enum["source"],
+                            values=tuple(raw_enum["values"]),
+                        )
+                    if "conditional" in mutation:
+                        conditional = mutation["conditional"]
+                        changes["conditional"] = ConditionalConstraint(
+                            key=conditional["key"],
+                            operator=conditional["operator"],
+                            value=conditional["value"],
+                            effect=conditional["effect"],
+                        )
+                    mutated_keys.append(dataclasses.replace(item, **changes))
+                if set(mutations_by_key) - {
+                    item.key for item in profile.value_contract.keys
+                }:
+                    failures.append(
+                        f"value-contract {case['name']}: mutation key is unknown"
+                    )
+                    continue
+                selected = dataclasses.replace(
+                    profile,
+                    value_contract=dataclasses.replace(
+                        profile.value_contract, keys=tuple(mutated_keys)
+                    ),
+                )
+            if value_contract_validator is None:
+                failures.append(
+                    f"value-contract {case['name']}: metadata value rules are unimplemented"
+                )
+                continue
+            _write_source(temp_root, row["fixturePath"], source)
+            try:
+                _, metadata, _ = extract_frontmatter(source)
+            except ContractError as exc:
+                failures.append(
+                    f"value-contract {case['name']}: fixture parse failed: {exc}"
+                )
+                continue
+            actual_rules = _rule_ids(
+                value_contract_validator(
+                    _fixture_path(row["fixturePath"]),
+                    selected,
+                    metadata,
+                    dt.date(2026, 7, 12),
+                )
+            )
+            if actual_rules != case["expectedRuleIds"]:
+                failures.append(
+                    f"value-contract {case['name']}: "
+                    f"expected={case['expectedRuleIds']} actual={actual_rules}"
+                )
+
         body_contract_case_keys = {
             "name",
             "profile",
@@ -1803,9 +2401,7 @@ def _self_test(root: Path) -> list[str]:
                 {"path", "pathPrefixes"} if prefix_case else set()
             )
             if set(case) != expected_case_keys:
-                failures.append(
-                    f"body-contract case fields differ: {case.get('name')}"
-                )
+                failures.append(f"body-contract case fields differ: {case.get('name')}")
                 continue
             profile = profiles[case["profile"]]
             if profile.body_contract is None:
@@ -1828,17 +2424,14 @@ def _self_test(root: Path) -> list[str]:
             try:
                 diagnostics = body_contract_validator(
                     PurePosixPath(
-                        case.get(
-                            "path", "docs/01.requirements/999-fixture.md"
-                        )
+                        case.get("path", "docs/01.requirements/999-fixture.md")
                     ),
                     selected,
                     case["body"],
                     case["status"],
                     case["bodyContracts"],
                     tuple(
-                        PurePosixPath(value)
-                        for value in case.get("pathPrefixes", [])
+                        PurePosixPath(value) for value in case.get("pathPrefixes", [])
                     ),
                 )
             except TypeError:
@@ -1855,22 +2448,24 @@ def _self_test(root: Path) -> list[str]:
 
         try:
             default_body_contracts = _parser().parse_args([]).body_contracts
-            audit_body_contracts = _parser().parse_args(
-                ["--body-contracts", "audit"]
-            ).body_contracts
-            default_prefixes = _parser().parse_args(
-                []
-            ).body_contract_path_prefix
-            repeated_prefixes = _parser().parse_args(
-                [
-                    "--body-contracts",
-                    "audit",
-                    "--body-contract-path-prefix",
-                    "docs/01.requirements",
-                    "--body-contract-path-prefix",
-                    "docs/03.specs",
-                ]
-            ).body_contract_path_prefix
+            audit_body_contracts = (
+                _parser().parse_args(["--body-contracts", "audit"]).body_contracts
+            )
+            default_prefixes = _parser().parse_args([]).body_contract_path_prefix
+            repeated_prefixes = (
+                _parser()
+                .parse_args(
+                    [
+                        "--body-contracts",
+                        "audit",
+                        "--body-contract-path-prefix",
+                        "docs/01.requirements",
+                        "--body-contract-path-prefix",
+                        "docs/03.specs",
+                    ]
+                )
+                .body_contract_path_prefix
+            )
         except (AttributeError, SystemExit):
             failures.append("body-contract parser modes are unimplemented")
         else:
@@ -1902,8 +2497,7 @@ def _self_test(root: Path) -> list[str]:
                     if exc.code == 2:
                         continue
             failures.append(
-                "body-contract parser accepted invalid path prefix: "
-                f"{invalid_prefix!r}"
+                f"body-contract parser accepted invalid path prefix: {invalid_prefix!r}"
             )
 
         for escape in (
@@ -1969,6 +2563,16 @@ def _self_test(root: Path) -> list[str]:
     )
     exercised.update(
         rule
+        for case in fixture.get("admissionCases", [])
+        for rule in case.get("expectedRuleIds", [])
+    )
+    exercised.update(
+        rule
+        for case in fixture.get("valueContractCases", [])
+        for rule in case.get("expectedRuleIds", [])
+    )
+    exercised.update(
+        rule
         for case in readme_fixture.get("cases", [])
         for rule in case.get("expected_rule_ids", [])
     )
@@ -1991,9 +2595,7 @@ def _self_test(root: Path) -> list[str]:
     if production_diagnostics:
         failures.append("retired-source production diagnostics must be empty")
 
-    base_contract = json.loads(
-        (root / COMPATIBILITY_PATH).read_text(encoding="utf-8")
-    )
+    base_contract = json.loads((root / COMPATIBILITY_PATH).read_text(encoding="utf-8"))
     retired_fields = {"compatibilityDebt", "semanticDebtCaps"}
     if retired_fields & set(base_contract):
         failures.append("retired template debt source is still present")
@@ -2056,9 +2658,7 @@ def _self_test(root: Path) -> list[str]:
     for label, values in reintroduced_fields:
         candidate = copy.deepcopy(base_contract)
         candidate.update(values)
-        expect_config_rejection(
-            label, candidate, modes=("strict", "compatibility")
-        )
+        expect_config_rejection(label, candidate, modes=("strict", "compatibility"))
 
     wrong_owner = copy.deepcopy(base_contract)
     wrong_owner["owner"] = "Spec 999"
@@ -2126,7 +2726,9 @@ def _body_contract_path_prefix(value: str) -> PurePosixPath:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--mode", choices=("compatibility", "strict"), default="compatibility")
+    parser.add_argument(
+        "--mode", choices=("compatibility", "strict"), default="compatibility"
+    )
     parser.add_argument("--format", choices=("text", "json"), default="text")
     parser.add_argument(
         "--body-contracts",
@@ -2188,6 +2790,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
         diagnostics: list[Diagnostic] = []
         profiles = {profile.profile_id: profile for profile in registry.profiles}
+        diagnostics.extend(
+            _baseline_admission_diagnostics(registry, inventory.current_paths)
+        )
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
             append_context = None
@@ -2208,9 +2813,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.mode,
                     append_context=append_context,
                     body_contracts=args.body_contracts,
-                    body_contract_path_prefixes=tuple(
-                        args.body_contract_path_prefix
-                    ),
+                    body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
                 )
             )
         rows = _outcome_rows(root, diagnostics, args.mode)

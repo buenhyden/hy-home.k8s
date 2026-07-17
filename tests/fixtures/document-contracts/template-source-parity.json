@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "name": "frontmatter-drift",
+      "mutation": "frontmatter",
+      "expectedSignal": "template/source frontmatter parity differs"
+    },
+    {
+      "name": "frontmatter-order-drift",
+      "mutation": "order",
+      "expectedSignal": "REGISTRY_VALUE_CONTRACT"
+    },
+    {
+      "name": "status-domain-drift",
+      "mutation": "status",
+      "expectedSignal": "template/source status parity differs"
+    },
+    {
+      "name": "heading-drift",
+      "mutation": "headings",
+      "expectedSignal": "template/source headings parity differs"
+    },
+    {
+      "name": "class-drift",
+      "mutation": "class",
+      "expectedSignal": "template/source class parity differs"
+    },
+    {
+      "name": "body-contract-drift",
+      "mutation": "body",
+      "expectedSignal": "REGISTRY_BODY_SOURCE_DRIFT"
+    },
+    {
+      "name": "value-contract-drift",
+      "mutation": "value-contract",
+      "expectedSignal": "template/source value-contract parity differs"
+    },
+    {
+      "name": "multiple-source-cardinality",
+      "mutation": "source-cardinality",
+      "expectedSignal": "REGISTRY_BODY_SOURCE_DRIFT"
+    },
+    {
+      "name": "missing-source",
+      "mutation": "missing-source",
+      "expectedSignal": "REGISTRY_BODY_SOURCE_DRIFT"
+    },
+    {
+      "name": "duplicate-source",
+      "mutation": "duplicate-source",
+      "expectedSignal": "REGISTRY_SCHEMA"
+    },
+    {
+      "name": "unknown-source",
+      "mutation": "unknown-source",
+      "expectedSignal": "REGISTRY_SOURCE_PROFILE"
+    }
+  ]
+}
