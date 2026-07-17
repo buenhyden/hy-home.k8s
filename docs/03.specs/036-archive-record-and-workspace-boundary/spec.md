@@ -3,7 +3,7 @@ title: 'Archive Record and Workspace Boundary Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-18
 ---
 
 # Archive Record and Workspace Boundary Technical Specification (Spec)
@@ -143,6 +143,8 @@ Plan, Task, archive index, or program closure record.
 - **Archive decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Plan**: [Archive Record and Workspace Boundary Implementation Plan](../../04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md)
+- **Task**: [Archive Record and Workspace Boundary Task](../../04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md)
 
 ### Lifecycle Traceability
 

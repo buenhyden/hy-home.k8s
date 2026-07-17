@@ -99,6 +99,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-14-template-lifecycle-contract-normalization.md
 ├── 2026-07-15-authority-and-lineage-foundation.md
 ├── 2026-07-16-document-schema-and-lifecycle-contract.md
+├── 2026-07-17-archive-record-and-workspace-boundary.md
 └── README.md
 ```
 
@@ -179,7 +180,8 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 execution evidence for Action identity, workflow permissions, identity-only GitOps review, Vault/ESO boundaries, full repository-static QA, independent review, and explicit remote/live `DEFER` under the parent [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Plan](../plans/2026-07-12-protected-surface-supply-chain-hardening.md). | Done | 2026-07-14 |
 | [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | TLCN-001 through TLCN-008 and the independent whole-branch closure review are Done under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md) and its [Plan](../plans/2026-07-14-template-lifecycle-contract-normalization.md). | Done | 2026-07-15 |
 | [`./2026-07-15-authority-and-lineage-foundation.md`](./2026-07-15-authority-and-lineage-foundation.md) | Completed ALF-001 through ALF-006 evidence owner for registry v6 lineage, execution admission, Current audit disposition, and [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md) closure under its [Plan](../plans/2026-07-15-authority-and-lineage-foundation.md). | Done | 2026-07-15 |
-| [`./2026-07-16-document-schema-and-lifecycle-contract.md`](./2026-07-16-document-schema-and-lifecycle-contract.md) | Completed and independently reviewed DSLC-001 through DSLC-006 staged closure and package evidence for [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) under its reciprocal [Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md). Spec 036 remains dependency-ready with no Plan/Task. | Done | 2026-07-17 |
+| [`./2026-07-16-document-schema-and-lifecycle-contract.md`](./2026-07-16-document-schema-and-lifecycle-contract.md) | Completed and independently reviewed DSLC-001 through DSLC-006 closure evidence for [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) under its reciprocal [Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md). Successor Spec 036 now has one active reciprocal Plan/Task pair. | Done | 2026-07-17 |
+| [`./2026-07-17-archive-record-and-workspace-boundary.md`](./2026-07-17-archive-record-and-workspace-boundary.md) | Independently reviewed active ARWB-001 through ARWB-005 execution and evidence ledger for [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md), paired with its reciprocal [Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md). | Active | 2026-07-18 |
 
 ## Related Documents
 
