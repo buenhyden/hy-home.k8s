@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from dataclasses import replace
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -2015,7 +2016,7 @@ def _assert_inventory_safety(root: Path) -> None:
 
 
 def _assert_program_lineage_projection(registry: Registry) -> None:
-    actual = tuple(
+    immutable_actual = tuple(
         (
             program.prd_id,
             program.ard_id,
@@ -2023,7 +2024,6 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
                 (
                     relation.spec_id,
                     relation.order,
-                    relation.state,
                     relation.decision_id,
                 )
                 for relation in program.tranches
@@ -2032,7 +2032,6 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
                 (
                     relation.spec_id,
                     relation.order,
-                    relation.state,
                     relation.decision_id,
                     relation.evidence_mode,
                 )
@@ -2041,33 +2040,110 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
         )
         for program in registry.program_lineage
     )
-    expected = (
+    immutable_expected = (
         (
             "005",
             "0008",
             tuple(
-                (f"{spec_id:03d}", order, "done", "0016")
+                (f"{spec_id:03d}", order, "0016")
                 for order, spec_id in enumerate(range(26, 33), 1)
             ),
-            (("033", 1, "done", "0017", "successor-record"),),
+            (("033", 1, "0017", "successor-record"),),
         ),
         (
             "006",
             "0009",
             (
-                ("034", 1, "done", "0017"),
-                ("035", 2, "active", "0017"),
-                ("036", 3, "active", "0017"),
-                ("037", 4, "active", "0017"),
-                ("038", 5, "active", "0017"),
-                ("039", 6, "active", "0017"),
-                ("040", 7, "active", "0017"),
+                ("034", 1, "0017"),
+                ("035", 2, "0017"),
+                ("036", 3, "0017"),
+                ("037", 4, "0017"),
+                ("038", 5, "0017"),
+                ("039", 6, "0017"),
+                ("040", 7, "0017"),
             ),
             (),
         ),
     )
-    if actual != expected:
-        raise AssertionError("production program-lineage typed projection differs")
+    if immutable_actual != immutable_expected:
+        raise AssertionError("production program-lineage immutable projection differs")
+
+    def assert_state_contract(candidate: Registry) -> None:
+        for program in candidate.program_lineage:
+            states = tuple(relation.state for relation in program.tranches)
+            completed = tuple(state == "done" for state in states)
+            if states and completed != tuple(
+                index < sum(completed) for index in range(len(states))
+            ):
+                raise AssertionError(
+                    f"PRD-{program.prd_id} original tranche is not one "
+                    "contiguous done prefix followed by an active suffix"
+                )
+            if any(state not in {"done", "active"} for state in states):
+                raise AssertionError(
+                    f"PRD-{program.prd_id} original tranche state domain differs"
+                )
+        historical = next(
+            program for program in candidate.program_lineage if program.prd_id == "005"
+        )
+        if any(relation.state != "done" for relation in historical.tranches):
+            raise AssertionError("PRD-005 historical original tranche is not terminal")
+        if any(relation.state != "done" for relation in historical.follow_ups):
+            raise AssertionError("PRD-005 historical follow-up is not terminal")
+
+    # Keep mutable relation state separate from immutable lineage identity.
+    # Cross-document strict validation owns current Spec-to-relation parity;
+    # this self-test owns the typed registry's contiguous state invariant and
+    # both first-unfinished positions used by the current rollover.
+    assert_state_contract(registry)
+    current = next(
+        program for program in registry.program_lineage if program.prd_id == "006"
+    )
+    for ready_spec_id in ("035", "036"):
+        ready_order = next(
+            relation.order
+            for relation in current.tranches
+            if relation.spec_id == ready_spec_id
+        )
+        candidate_program = replace(
+            current,
+            tranches=tuple(
+                replace(
+                    relation,
+                    state="done" if relation.order < ready_order else "active",
+                )
+                for relation in current.tranches
+            ),
+        )
+        candidate = replace(
+            registry,
+            program_lineage=tuple(
+                candidate_program if program.prd_id == "006" else program
+                for program in registry.program_lineage
+            ),
+        )
+        assert_state_contract(candidate)
+
+    invalid_program = replace(
+        current,
+        tranches=tuple(
+            replace(relation, state="done" if relation.order in {1, 3} else "active")
+            for relation in current.tranches
+        ),
+    )
+    invalid_candidate = replace(
+        registry,
+        program_lineage=tuple(
+            invalid_program if program.prd_id == "006" else program
+            for program in registry.program_lineage
+        ),
+    )
+    try:
+        assert_state_contract(invalid_candidate)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("noncontiguous original-tranche state mutation accepted")
 
 
 def _assert_document_contract_projection(registry: Registry) -> None:

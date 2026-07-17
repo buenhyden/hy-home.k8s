@@ -17,7 +17,7 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
 from typing import Callable, Mapping, Sequence
@@ -203,6 +203,73 @@ EXPECTED_EVIDENCE_VARIANTS = (
     "orphan",
     "multiple",
 )
+
+
+def _dependency_ready_tranche_window(
+    registry: Registry,
+) -> tuple[str, str, str | None]:
+    """Return the current original-tranche ready identity, state, and successor."""
+
+    programs = [
+        program for program in registry.program_lineage if program.prd_id == "006"
+    ]
+    if len(programs) != 1:
+        raise ValueError("PRD-006 does not resolve one program lineage")
+    program = programs[0]
+    completed_count = sum(relation.state == "done" for relation in program.tranches)
+    expected_states = tuple(
+        "done" if index < completed_count else "active"
+        for index in range(len(program.tranches))
+    )
+    actual_states = tuple(relation.state for relation in program.tranches)
+    if actual_states != expected_states:
+        raise ValueError(
+            "PRD-006 original tranche is not one contiguous done prefix "
+            "followed by an active suffix"
+        )
+    if completed_count == len(program.tranches):
+        raise ValueError("PRD-006 has no dependency-ready original tranche")
+    ready = program.tranches[completed_count]
+    blocked = (
+        program.tranches[completed_count + 1]
+        if completed_count + 1 < len(program.tranches)
+        else None
+    )
+    return ready.spec_id, ready.state, blocked.spec_id if blocked is not None else None
+
+
+def _execution_spec_fixture_path(spec_id: str) -> PurePosixPath:
+    return PurePosixPath(f"docs/03.specs/{spec_id}-evidence-fixture/spec.md")
+
+
+def _registry_with_ready_spec(registry: Registry, ready_spec_id: str) -> Registry:
+    """Build an isolated typed registry at one supported rollover boundary."""
+
+    program = next(
+        program for program in registry.program_lineage if program.prd_id == "006"
+    )
+    ready_order = next(
+        relation.order
+        for relation in program.tranches
+        if relation.spec_id == ready_spec_id
+    )
+    candidate_program = replace(
+        program,
+        tranches=tuple(
+            replace(
+                relation,
+                state="done" if relation.order < ready_order else "active",
+            )
+            for relation in program.tranches
+        ),
+    )
+    return replace(
+        registry,
+        program_lineage=tuple(
+            candidate_program if item.prd_id == "006" else item
+            for item in registry.program_lineage
+        ),
+    )
 
 
 class InvocationError(ValueError):
@@ -1209,6 +1276,7 @@ def _evidence_case_context(
         "accept-operated-document",
         "terminate-reviewed-reference",
     }:
+        ready_spec_id, ready_spec_state, _ = _dependency_ready_tranche_window(registry)
         spec_identity = (
             target_path
             if profile_id
@@ -1220,13 +1288,15 @@ def _evidence_case_context(
                 "sdlc/tests",
             }
             else add(
-                PurePosixPath("docs/03.specs/035-evidence-fixture/spec.md")
+                _execution_spec_fixture_path(ready_spec_id)
                 if predicate_id == "activate-execution-pair"
                 else PurePosixPath(
                     f"docs/03.specs/{900 + case_index:03d}-evidence/spec.md"
                 ),
                 "sdlc/spec",
-                "active",
+                ready_spec_state
+                if predicate_id == "activate-execution-pair"
+                else "active",
             )
         )
         plan = (
@@ -1602,7 +1672,11 @@ def _fixture_document_text(
     status: str,
     *,
     claimed_profile_id: str | None = None,
+    execution_spec_path: PurePosixPath | None = None,
 ) -> str:
+    execution_spec = execution_spec_path or PurePosixPath(
+        "docs/03.specs/900-lifecycle-fixture/spec.md"
+    )
     heading_sets = {
         "sdlc/spec": (
             "Overview",
@@ -1642,7 +1716,7 @@ def _fixture_document_text(
         body_parts.append(f"## {heading}\n\nLifecycle fixture {status} evidence.")
         if (
             profile_id == "sdlc/spec"
-            and "035-evidence-fixture" in path
+            and PurePosixPath(path) == execution_spec
             and heading == "Overview"
         ):
             owner = PurePosixPath(path)
@@ -1685,14 +1759,17 @@ def _fixture_document_text(
             body_parts.append(
                 "| Spec criterion | Work package | Expected Task |\n"
                 "| --- | --- | --- |\n"
-                "| [VAL-FIX-001](../../03.specs/035-evidence-fixture/spec.md) | FIX-001 | [Task](../tasks/2099-01-01-example.md) |"
+                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](../tasks/2099-01-01-example.md) |"
             )
         elif profile_id == "sdlc/task":
+            spec_link = _fixture_link(
+                PurePosixPath(path), execution_spec, "Spec evidence"
+            )
             body_parts.append(
                 "| Criterion / work item | Result | Evidence |\n"
                 "| --- | --- | --- |\n"
-                "| [FIX-001](../../03.specs/035-evidence-fixture/spec.md) | Verified | [Spec evidence](../../03.specs/035-evidence-fixture/spec.md) |\n"
-                "| [FIX-002](../plans/2099-01-01-example.md) | Verified | [Spec evidence](../../03.specs/035-evidence-fixture/spec.md) |"
+                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'FIX-001')} | Verified | {spec_link} |\n"
+                f"| [FIX-002](../plans/2099-01-01-example.md) | Verified | {spec_link} |"
             )
     body = "\n\n".join(body_parts)
     return (
@@ -1715,6 +1792,7 @@ def _write_fixture_document(
     status: str,
     *,
     claimed_profile_id: str | None = None,
+    execution_spec_path: PurePosixPath | None = None,
 ) -> None:
     target = root / path
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -1724,6 +1802,7 @@ def _write_fixture_document(
             profile_id,
             status,
             claimed_profile_id=claimed_profile_id,
+            execution_spec_path=execution_spec_path,
         ),
         encoding="utf-8",
     )
@@ -1815,6 +1894,15 @@ def _git_case(
     contract_root: Path,
 ) -> tuple[int, list[str]]:
     spec_path = "docs/03.specs/900-example/spec.md"
+    ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(
+        registry
+    )
+    ready_spec_path = _execution_spec_fixture_path(ready_spec_id)
+    blocked_spec_path = (
+        _execution_spec_fixture_path(blocked_spec_id)
+        if blocked_spec_id is not None
+        else None
+    )
     if name in {
         "staged-head-index-worktree-pass",
         "staged-head-index-worktree-fail",
@@ -1843,23 +1931,32 @@ def _git_case(
     }:
         _write_fixture_document(
             root,
-            "docs/03.specs/035-evidence-fixture/spec.md",
+            ready_spec_path.as_posix(),
             "sdlc/spec",
-            "done" if name == "staged-paired-create-ready-spec-done" else "active",
+            "done"
+            if name == "staged-paired-create-ready-spec-done"
+            else ready_spec_state,
+            execution_spec_path=ready_spec_path,
         )
     if name == "staged-paired-create-blocked-spec":
+        if blocked_spec_path is None:
+            raise ValueError("blocked-pair fixture requires one successor tranche")
         _write_fixture_document(
             root,
-            "docs/03.specs/036-blocked-fixture/spec.md",
+            blocked_spec_path.as_posix(),
             "sdlc/spec",
             "active",
+            execution_spec_path=blocked_spec_path,
         )
     if name == "staged-paired-create-split-spec":
+        if blocked_spec_path is None:
+            raise ValueError("split-pair fixture requires one successor tranche")
         _write_fixture_document(
             root,
-            "docs/03.specs/036-blocked-fixture/spec.md",
+            blocked_spec_path.as_posix(),
             "sdlc/spec",
             "active",
+            execution_spec_path=blocked_spec_path,
         )
     if name in {
         "staged-modified-unclassified-to-governed",
@@ -1989,39 +2086,58 @@ def _git_case(
         "staged-paired-create-ready-spec-done",
     }:
         _write_fixture_document(
-            root, "docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"
+            root,
+            "docs/04.execution/plans/2099-01-01-example.md",
+            "sdlc/plan",
+            "active",
+            execution_spec_path=ready_spec_path,
         )
         _write_fixture_document(
-            root, "docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "active"
+            root,
+            "docs/04.execution/tasks/2099-01-01-example.md",
+            "sdlc/task",
+            "active",
+            execution_spec_path=ready_spec_path,
         )
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-paired-create-blocked-spec":
         plan_path = "docs/04.execution/plans/2099-01-01-example.md"
         task_path = "docs/04.execution/tasks/2099-01-01-example.md"
-        _write_fixture_document(root, plan_path, "sdlc/plan", "active")
-        _write_fixture_document(root, task_path, "sdlc/task", "active")
-        for path in (plan_path, task_path):
-            destination = root / path
-            destination.write_text(
-                destination.read_text(encoding="utf-8").replace(
-                    "035-evidence-fixture", "036-blocked-fixture"
-                ),
-                encoding="utf-8",
-            )
+        assert blocked_spec_path is not None
+        _write_fixture_document(
+            root,
+            plan_path,
+            "sdlc/plan",
+            "active",
+            execution_spec_path=blocked_spec_path,
+        )
+        _write_fixture_document(
+            root,
+            task_path,
+            "sdlc/task",
+            "active",
+            execution_spec_path=blocked_spec_path,
+        )
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-paired-create-split-spec":
         plan_path = "docs/04.execution/plans/2099-01-01-example.md"
         task_path = "docs/04.execution/tasks/2099-01-01-example.md"
-        _write_fixture_document(root, plan_path, "sdlc/plan", "active")
-        _write_fixture_document(root, task_path, "sdlc/task", "active")
-        destination = root / task_path
-        destination.write_text(
-            destination.read_text(encoding="utf-8").replace(
-                "035-evidence-fixture", "036-blocked-fixture"
-            ),
-            encoding="utf-8",
+        assert blocked_spec_path is not None
+        _write_fixture_document(
+            root,
+            plan_path,
+            "sdlc/plan",
+            "active",
+            execution_spec_path=ready_spec_path,
+        )
+        _write_fixture_document(
+            root,
+            task_path,
+            "sdlc/task",
+            "active",
+            execution_spec_path=blocked_spec_path,
         )
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
@@ -3193,6 +3309,105 @@ def _ambiguous_base_edge_failures(
     return failures
 
 
+def _evidence_assertion_run(
+    registry: Registry,
+    evidence_cases: Sequence[Mapping[str, object]],
+) -> tuple[list[dict[str, object]], list[str], list[str]]:
+    """Build the exact 504-case diagnostic projection for one lineage state."""
+
+    projection: list[dict[str, object]] = []
+    ambiguous_controls: list[str] = []
+    failures: list[str] = []
+    for case_index, case in enumerate(evidence_cases):
+        for variant_value in case["variants"]:
+            variant = str(variant_value)
+            if variant == "ambiguous-base":
+                ambiguous_controls.append(str(case["name"]))
+                diagnostics = (
+                    LifecycleDiagnostic(
+                        severity="FAIL",
+                        rule_id="LIFECYCLE-BASE",
+                        path=PurePosixPath("."),
+                        profile="",
+                        expected_transition=(
+                            "valid invocation, unique commit refs, and one "
+                            "comparison base"
+                        ),
+                        observed_transition=(
+                            "CI refs do not have exactly one commit merge base"
+                        ),
+                        base_mode="ci",
+                        evidence_gap="argument or Git provenance",
+                    ),
+                )
+                target_path = _evidence_target_path(
+                    str(case["profile"]), str(case["predicate"]), case_index
+                )
+                expected_rules = ["LIFECYCLE-BASE"]
+            else:
+                target, evidence_context = _evidence_case_context(
+                    registry, case, variant, case_index
+                )
+                target_path = target.path
+                base_target = LifecycleDocument(
+                    target.path, target.profile_id, str(case["from"])
+                )
+                diagnostics = compare_lifecycle(
+                    registry,
+                    {target.path: base_target},
+                    {target.path: target},
+                    base_mode="explicit-ref",
+                    evidence_context=evidence_context,
+                )
+                expected_rules = [] if variant == "positive" else ["LIFECYCLE-EVIDENCE"]
+            actual_rules = _rule_ids(diagnostics)
+            if actual_rules != expected_rules:
+                failures.append(
+                    f"evidence {case['name']}/{variant}: "
+                    f"expected {expected_rules}, actual {actual_rules}"
+                )
+            if variant not in {"positive", "ambiguous-base"} and len(diagnostics) != 1:
+                failures.append(
+                    f"evidence {case['name']}/{variant}: diagnostic count differs"
+                )
+            projection.append(
+                {
+                    "case": case["name"],
+                    "profile": case["profile"],
+                    "from": case["from"],
+                    "to": case["to"],
+                    "predicate": case["predicate"],
+                    "variant": variant,
+                    "target": target_path.as_posix(),
+                    "diagnostics": [
+                        {
+                            "severity": diagnostic.severity,
+                            "ruleId": diagnostic.rule_id,
+                            "path": diagnostic.path.as_posix(),
+                            "profile": diagnostic.profile,
+                            "expectedTransition": diagnostic.expected_transition,
+                            "observedTransition": diagnostic.observed_transition,
+                            "baseMode": diagnostic.base_mode,
+                            "evidenceGap": diagnostic.evidence_gap,
+                        }
+                        for diagnostic in diagnostics
+                    ],
+                }
+            )
+    return projection, ambiguous_controls, failures
+
+
+def _evidence_assertion_sha256(projection: Sequence[Mapping[str, object]]) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            projection,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+
+
 def _run_self_test(root: Path) -> list[str]:
     failures: list[str] = []
     fixture = load_json_file(root / FIXTURE_PATH, diagnostic_path=FIXTURE_PATH)
@@ -3241,93 +3456,17 @@ def _run_self_test(root: Path) -> list[str]:
 
     evidence_cases = fixture.get("evidenceCases", [])
     failures.extend(_ambiguous_base_edge_failures(registry, evidence_cases))
-    ambiguous_edge_controls: list[str] = []
-    evidence_assertion_projection: list[dict[str, object]] = []
-    for case_index, case in enumerate(evidence_cases):
-        for variant in case["variants"]:
-            if variant == "ambiguous-base":
-                ambiguous_edge_controls.append(case["name"])
-                diagnostics = (
-                    LifecycleDiagnostic(
-                        severity="FAIL",
-                        rule_id="LIFECYCLE-BASE",
-                        path=PurePosixPath("."),
-                        profile="",
-                        expected_transition=(
-                            "valid invocation, unique commit refs, and one "
-                            "comparison base"
-                        ),
-                        observed_transition=(
-                            "CI refs do not have exactly one commit merge base"
-                        ),
-                        base_mode="ci",
-                        evidence_gap="argument or Git provenance",
-                    ),
-                )
-                target_path = _evidence_target_path(
-                    str(case["profile"]), str(case["predicate"]), case_index
-                )
-                expected_rules = ["LIFECYCLE-BASE"]
-            else:
-                target, evidence_context = _evidence_case_context(
-                    registry, case, variant, case_index
-                )
-                target_path = target.path
-                base_target = LifecycleDocument(
-                    target.path, target.profile_id, case["from"]
-                )
-                diagnostics = compare_lifecycle(
-                    registry,
-                    {target.path: base_target},
-                    {target.path: target},
-                    base_mode="explicit-ref",
-                    evidence_context=evidence_context,
-                )
-                expected_rules = [] if variant == "positive" else ["LIFECYCLE-EVIDENCE"]
-            actual_rules = _rule_ids(diagnostics)
-            if actual_rules != expected_rules:
-                failures.append(
-                    f"evidence {case['name']}/{variant}: "
-                    f"expected {expected_rules}, actual {actual_rules}"
-                )
-            if variant not in {"positive", "ambiguous-base"} and len(diagnostics) != 1:
-                failures.append(
-                    f"evidence {case['name']}/{variant}: diagnostic count differs"
-                )
-            evidence_assertion_projection.append(
-                {
-                    "case": case["name"],
-                    "profile": case["profile"],
-                    "from": case["from"],
-                    "to": case["to"],
-                    "predicate": case["predicate"],
-                    "variant": variant,
-                    "target": target_path.as_posix(),
-                    "diagnostics": [
-                        {
-                            "severity": diagnostic.severity,
-                            "ruleId": diagnostic.rule_id,
-                            "path": diagnostic.path.as_posix(),
-                            "profile": diagnostic.profile,
-                            "expectedTransition": diagnostic.expected_transition,
-                            "observedTransition": diagnostic.observed_transition,
-                            "baseMode": diagnostic.base_mode,
-                            "evidenceGap": diagnostic.evidence_gap,
-                        }
-                        for diagnostic in diagnostics
-                    ],
-                }
-            )
+    (
+        evidence_assertion_projection,
+        ambiguous_edge_controls,
+        evidence_assertion_failures,
+    ) = _evidence_assertion_run(registry, evidence_cases)
+    failures.extend(evidence_assertion_failures)
     if len(ambiguous_edge_controls) != 42 or len(set(ambiguous_edge_controls)) != 42:
         failures.append("ambiguous-base edge projection is not exactly 42 unique edges")
-    evidence_assertion_sha256 = hashlib.sha256(
-        json.dumps(
-            evidence_assertion_projection,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
-    ).hexdigest()
+    evidence_assertion_sha256 = _evidence_assertion_sha256(
+        evidence_assertion_projection
+    )
     if (
         len(evidence_assertion_projection) != 504
         or evidence_assertion_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
@@ -3337,6 +3476,63 @@ def _run_self_test(root: Path) -> list[str]:
             f"count={len(evidence_assertion_projection)} "
             f"sha256={evidence_assertion_sha256}"
         )
+
+    current_ready_spec_id, current_ready_state, _ = _dependency_ready_tranche_window(
+        registry
+    )
+    if current_ready_state != "active":
+        failures.append("current dependency-ready original tranche is not active")
+    # The main projection above and named staged-paired-create case below prove
+    # the current boundary.  Fixed 035/036 proofs that are not current still
+    # run; after production advances to 037 or later, both fixed proofs run.
+    fixed_proof_ids = {"035", "036"} - {current_ready_spec_id}
+    for ready_spec_id in sorted(fixed_proof_ids):
+        rollover_registry = _registry_with_ready_spec(registry, ready_spec_id)
+        actual_ready_spec_id, actual_ready_state, _ = _dependency_ready_tranche_window(
+            rollover_registry
+        )
+        if (actual_ready_spec_id, actual_ready_state) != (ready_spec_id, "active"):
+            failures.append(
+                f"rollover {ready_spec_id}: dependency-ready projection differs"
+            )
+            continue
+        (
+            rollover_projection,
+            rollover_controls,
+            rollover_failures,
+        ) = _evidence_assertion_run(rollover_registry, evidence_cases)
+        if rollover_failures:
+            failures.extend(
+                f"rollover {ready_spec_id}: {failure}" for failure in rollover_failures
+            )
+        rollover_sha256 = _evidence_assertion_sha256(rollover_projection)
+        if (
+            len(rollover_projection) != 504
+            or rollover_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
+            or len(rollover_controls) != 42
+            or len(set(rollover_controls)) != 42
+        ):
+            failures.append(
+                f"rollover {ready_spec_id}: evidence exact assertion projection "
+                f"differs: count={len(rollover_projection)} sha256={rollover_sha256}"
+            )
+        with tempfile.TemporaryDirectory(
+            prefix=f"document-lifecycle-rollover-{ready_spec_id}-"
+        ) as directory:
+            repo = Path(directory)
+            _init_fixture_repo(repo)
+            try:
+                pair_exit, pair_rules = _git_case(
+                    "staged-paired-create", repo, rollover_registry, root
+                )
+            except (InvocationError, OSError, ValueError) as exc:
+                failures.append(f"rollover {ready_spec_id}: paired create error {exc}")
+            else:
+                if pair_exit != 0 or pair_rules:
+                    failures.append(
+                        f"rollover {ready_spec_id}: paired create differs "
+                        f"exit={pair_exit} rules={pair_rules}"
+                    )
     failures.extend(_evidence_regression_failures(registry, evidence_cases))
 
     for case in fixture.get("comparisonCases", []):
