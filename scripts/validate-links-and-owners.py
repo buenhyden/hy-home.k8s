@@ -9325,6 +9325,14 @@ def _self_test(root: Path) -> list[str]:
                 "docs/98.archive/04.execution/tasks/"
                 "2026-07-15-authority-and-lineage-foundation.md"
             ),
+            PurePosixPath(
+                "docs/98.archive/04.execution/plans/"
+                "2026-07-16-document-schema-and-lifecycle-contract.md"
+            ),
+            PurePosixPath(
+                "docs/98.archive/04.execution/tasks/"
+                "2026-07-16-document-schema-and-lifecycle-contract.md"
+            ),
         )
         if (root / path).is_file()
     )

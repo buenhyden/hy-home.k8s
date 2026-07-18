@@ -437,7 +437,7 @@ the contents or safety of ignored `_workspace` scratch. Those lanes remain
 
 - **Spec**: [Archive Record and Workspace Boundary](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)
 - **Plan**: [Archive Record and Workspace Boundary Implementation Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md)
-- **Predecessor Task**: [Document Schema and Lifecycle Contract Task](./2026-07-16-document-schema-and-lifecycle-contract.md)
+- **Predecessor execution history**: [Archive Index](../../98.archive/README.md#document-index)
 - **Decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 
 ### Lifecycle Traceability

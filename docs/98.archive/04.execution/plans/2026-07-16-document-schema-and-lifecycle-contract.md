@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Document Schema and Lifecycle Contract Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "156f5954d0be9985d1c730380892d079163d33f4"
+content_sha256: "21196dd188f3d5400b65ccd8b8d837f7209a6f34b901d2082a5c9d0de5db1d9d"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Document Schema and Lifecycle Contract Implementation Plan'
 type: sdlc/plan
 status: done
@@ -457,7 +473,7 @@ instead of reopening them. Each Task row records its commit and parent.
 - **Task**: [Execution Task](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Predecessor**: [Completed Spec 034 execution history](../../98.archive/README.md#document-index)
+- **Predecessor**: [Completed Spec 034 Plan](./2026-07-15-authority-and-lineage-foundation.md)
 - **Successor boundary**: Specs 036, 037, 038, 039, and 040 are the remaining
   original active tranches in the PRD-006 registry lineage. Spec 036 is the
   dependency-ready successor and has no Plan or Task.

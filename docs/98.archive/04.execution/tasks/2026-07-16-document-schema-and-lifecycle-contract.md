@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Document Schema and Lifecycle Contract"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "cfc97978ee1217ff34b7bc823a2da172098e2209"
+content_sha256: "2e3ad60792196d7918e7909f9bb8e275194f0100922cd1f767cf779f906d7b08"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Document Schema and Lifecycle Contract'
 type: sdlc/task
 status: done
@@ -304,7 +320,7 @@ by the completed run. All-files pre-commit passes every hook except
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
 - **Plan**: [Implementation Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md)
-- **Predecessor Task**: [Spec 034 execution history](../../98.archive/README.md#document-index)
+- **Predecessor Task**: [Spec 034 execution evidence](./2026-07-15-authority-and-lineage-foundation.md)
 
 ### Lifecycle Traceability
 

@@ -195,8 +195,7 @@ strict/snapshot/clean-tree checks are intentionally not pre-claimed.
 - **Successors**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md), [Spec 037](../037-active-corpus-and-execution-retention/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), [Spec 039](../039-github-ci-qa-evidence/spec.md), and [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Plan**: [Implementation Plan](../../04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md)
-- **Task**: [Execution Task](../../04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md)
+- **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 
