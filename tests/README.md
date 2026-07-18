@@ -36,6 +36,7 @@
 
 ```text
 tests/
+├── test_archive_recovery.py           # ARWB-001 isolated Git-object and ArchiveEnvelope.v1 fixture tests
 ├── fixtures/
 │   ├── agent-role-semantics.json     # Thirty-role-adapter semantic mutation matrix
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
@@ -80,6 +81,7 @@ live readiness.
 
 | Area | Command | Evidence class |
 | --- | --- | --- |
+| Archive recovery/envelope fixture | `python3 -m unittest tests/test_archive_recovery.py` | Repo-static private-fixture evidence for SHA-1/SHA-256 Git identity, literal canonical paths, deterministic bounded Git execution, stable non-disclosing errors and representations, raw blob bytes, UTF-8 admission, duplicate-key rejection, byte-identical canonical frontmatter, metadata dependency, marker/payload-to-EOF grammar, final-newline preservation, collision safety, and worktree-byte substitution rejection; not production archive authority or corpus evidence |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
@@ -118,6 +120,20 @@ contract in `docs/00.agent-governance/rules/quality-standards.md`; static
 adapter PASS does not prove provider runtime consumption.
 
 ### Evidence Boundaries
+
+- `tests/test_archive_recovery.py` creates only temporary isolated Git
+  repositories. Its fifteen cases recover committed SHA-1 and SHA-256 blob
+  bytes through Git objects, mutate a worktree control without accepting those
+  bytes, and cover missing/full-versus-abbreviated object IDs, wrong paths,
+  non-UTF-8 input, noncanonical raw paths including DEL, literal metacharacter
+  filenames, metadata reason/replacement dependencies, duplicate frontmatter
+  keys, noncanonical CRLF/spacing serialization, exact v1 marker placement,
+  payload collision text, final-newline states, payload-free representations,
+  isolated hostile Git state, bounded subprocesses, and stable root/startup/
+  timeout/object-format errors. Its inline-link count is explicitly a bounded
+  candidate metric, not historical resolution evidence. The test does not read
+  or migrate `docs/98.archive`, activate a registry/form/predicate, inspect
+  ignored `_workspace` children, or claim the 31-record/202-link corpus proof.
 
 - `tests/fixtures/gitops-change-set/` base/head resource graphs contain one added
   Service, one deleted Service, and the same ConfigMap identity at a moved path.
