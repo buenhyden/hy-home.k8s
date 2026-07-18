@@ -21,9 +21,10 @@ only workspace boundary in independently reviewed logical packages. ARWB-005
 now records their terminal Spec/Plan/Task and program-relation transition as
 one exact eight-file staged proposal. Local staged closure QA is repository-
 static only. Fresh independent whole-tranche reviews returned
-`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. The closure
-commit and post-commit verification remain pending and are not claimed. Spec 037 remains
-active and dependency-ready with no Plan or Task created or linked.
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. Closure
+commit `855fa78` and post-commit explicit-ref lifecycle, strict registry,
+snapshot-DEFER, and clean-tree checks passed. Spec 037 remains active and
+dependency-ready with no Plan or Task created or linked.
 
 ## Strategic Boundaries & Non-goals
 
@@ -159,10 +160,13 @@ ARWB-003 registry proof to committed cutover `787b28f` through closed Git-object
 resolution; its independent reviews returned `REQUIREMENTS COMPLIANT` and
 `QUALITY APPROVED`. Planning commit `04a4d32`, rollback parent `4ccc616`, and
 bounded pre-closure range `04a4d32^..4ccc616` are recorded without inventing a
-closure commit. Fresh independent whole-tranche reviews returned
-`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. Closure
-commit creation and post-commit strict/snapshot/clean-tree checks remain
-pending.
+closure commit before it existed. Fresh independent whole-tranche reviews
+returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings.
+Closure commit `855fa78` was then created. Post-commit explicit-ref lifecycle
+validation for `4ccc616..HEAD` passed; strict registry passed with 434 paths;
+snapshot mode returned the expected comparison-history `DEFER`; and the
+worktree was clean. Remote, live, provider, and ignored-scratch evidence remain
+unclaimed.
 
 ## Traceability
 

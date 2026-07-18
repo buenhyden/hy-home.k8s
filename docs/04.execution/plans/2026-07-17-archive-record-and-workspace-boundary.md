@@ -31,18 +31,19 @@ secret classification, and detailed anchor maps; remediation re-review returned
 `QUALITY APPROVED`.
 
 ARWB-001 through ARWB-004 are committed as `6b9b9cd`, `f8a54dd`, `787b28f`,
-and `87ff444` after their package reviews. ARWB-005 is complete as an exact
-eight-file staged closure proposal and local QA handoff, not as a committed or
-post-commit result. Fresh independent whole-tranche reviews returned
-`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. The closure
-commit remains uncreated and post-commit results remain unclaimed. Planning commit
-`04a4d32` and package commits `6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444`
-precede remediation commit `4ccc616`, which binds the historical ARWB-003
-registry proof to committed cutover `787b28f` through closed Git-object
-resolution. Its reviews returned `REQUIREMENTS COMPLIANT` and
-`QUALITY APPROVED`. Rollback parent `4ccc616` and pre-closure range
-`04a4d32^..4ccc616` bound the proposal; Spec 037 remains active,
-dependency-ready, and unplanned with no Plan or Task.
+and `87ff444` after their package reviews. ARWB-005 completed the exact
+eight-file staged closure proposal and local QA handoff, then closure commit
+`855fa78` recorded that proposal. Fresh independent whole-tranche reviews
+returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings.
+Post-commit explicit-ref lifecycle, strict registry, snapshot-DEFER, and
+clean-tree checks passed. Planning commit `04a4d32` and package commits
+`6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444` precede remediation commit
+`4ccc616`, which binds the historical ARWB-003 registry proof to committed
+cutover `787b28f` through closed Git-object resolution. Its reviews returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. Rollback parent `4ccc616`,
+pre-closure range `04a4d32^..4ccc616`, and closure commit `855fa78` bound the
+completed repository-static tranche; Spec 037 remains active, dependency-ready,
+and unplanned with no Plan or Task.
 
 ## Context
 
@@ -261,12 +262,13 @@ reviewed provenance correction instead of hiding the mismatch.
   and active direct archive links fail closed.
 - `_workspace/README.md` is the only tracked workspace member and no validator
   reads ignored child content.
-- Spec/Plan/Task, registry relation, indexes, and ledger form one exact staged
-  closure proposal after full local QA. Fresh independent whole-tranche review
-  returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings;
-  the closure commit remains uncreated and post-commit validation unclaimed.
-  Spec 037 remains active, dependency-ready, and unplanned
-  with no Plan or Task created or linked.
+- Spec/Plan/Task, registry relation, indexes, and ledger formed one exact
+  staged closure proposal after full local QA. Fresh independent whole-tranche
+  review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no
+  findings; closure commit `855fa78` and post-commit explicit-ref lifecycle,
+  strict registry, snapshot-DEFER, and clean-tree checks are recorded. Spec 037
+  remains active, dependency-ready, and unplanned with no Plan or Task created
+  or linked.
 - Remote, provider, Kubernetes, Vault, ESO, Argo CD, secret, and ignored local
   state remain outside the evidence claim.
 
