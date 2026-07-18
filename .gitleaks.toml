@@ -3,8 +3,22 @@ title = "hy-home.k8s gitleaks config"
 [extend]
 useDefault = true
 
-[allowlist]
+[[allowlists]]
 description = "Allow the detect-secrets baseline artifact tracked in this repository"
 paths = [
   '''^\.secrets\.baseline$''',
 ]
+
+[[rules]]
+id = "generic-api-key"
+
+  [[rules.allowlists]]
+  description = "Allow only the three ACER census pairKey lines that trigger this rule"
+  condition = "AND"
+  paths = [
+    '''(?:^|/)docs/90\.references/data/active-corpus-retention-census\.json$''',
+  ]
+  regexTarget = "line"
+  regexes = [
+    '''"pairKey": "(2026-06-02-phase-1-decision-follow-up|2026-06-02-phase-3-protected-surface-hardening|2026-07-12-protected-surface-supply-chain-hardening)"''',
+  ]

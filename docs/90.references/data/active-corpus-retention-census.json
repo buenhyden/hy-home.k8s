@@ -1,0 +1,5504 @@
+{
+  "$schema": "active-corpus-retention-census.v1",
+  "schemaVersion": 1,
+  "observedAt": "2026-07-18",
+  "candidateBaseline": {
+    "candidateBaselineCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+    "frozenCounts": {
+      "plan": 51,
+      "task": 53,
+      "total": 104
+    },
+    "deltaCounts": {
+      "plan": 3,
+      "task": 3,
+      "total": 6
+    },
+    "candidateCounts": {
+      "plan": 54,
+      "task": 56,
+      "total": 110
+    },
+    "pairCounts": {
+      "paired": 53,
+      "plan-only": 1,
+      "task-only": 3
+    },
+    "deltaPaths": [
+      "docs/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md",
+      "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
+      "docs/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+      "docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md",
+      "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
+      "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+    ],
+    "entries": [
+      {
+        "path": "docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "880cabb52403c845cc70dcc8faa0832c59e917d2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-09-github-qa-ci-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "4cd4f523066f95b1da96347e969f6c17acd74c3b",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-09-scripts-inventory-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "d694cf8ad98cfdecc4458711b80870a994627a09",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-10-agent-first-harness-llm-wiki-hooks",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-17-template-crosslink-fix.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "91c09f8c4c86075457afab1e3def1563168c00f2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-17-template-crosslink-fix",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-18-argo-notifications-slack.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "21e6715c4a498d2ff4a1345c819832ce6fecf847",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-18-argo-notifications-slack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/005-argo-notifications-slack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "649dbc7c7855fe21417a7d1be2b06af83beb6e3f",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-18-argo-rollouts-progressive-delivery",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "ecfbd62fdb3c3b309d5c33a2f7121653daed7007",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-22-docs-governance-full-ab-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "c56ac084f816f13ea4639ac4d72fd95ff3ef71bd",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-22-workspace-purpose-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "85fda4b0bfa9e8c0fce44e86c47940c15e605dad",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-24-p3-gitops-secret-runtime-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "300511ac8713c7375160da63e4e49434895279fe",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-28-workspace-skill-expansion",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-30-antigravity-governance.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "11d7e8ffbfc070f1171528801e24a92a3846ecee",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-30-antigravity-governance",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "fb9b36acb658a3da6138ca9a38fb1498e215e05d",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-31-codex-governance-harness-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "b2361a40d1f6801c66d6bbd6593ade2767896be2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-01-claude-agent-surface-restoration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "e634d30634a93be522e103d0253d4da1b8287f4a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-01-stage-00-canonical-adapter-redesign",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "cb8034796a86468b7dcfd0445878c036b08d23b9",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-current-implementation-docs-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/008-current-local-gitops-platform/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "0808dd5335ed2ce7214c88d8136e88980ce48106",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-docs-01-05-current-implementation-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/008-current-local-gitops-platform/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "2f4727b9cf9fdfc5e5747c56ae05df739e3a6369",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-1-decision-follow-up",
+        "pairState": "plan-only",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "938d0fefb395302791b84bf129cd96b8a4dcda42",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-2-governance-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "fc658162ea8dd68121f3bf545066aea41c90ad2c",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-3-protected-surface-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "7edc0d44b45c8c3a833e6091b130b8366654d0d3",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-4-eso-vault-runtime-diagnosis",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/008-current-local-gitops-platform/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "81a32fa2b246a0597d0d3c0029a87a68ce6e620e",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-stage-00-codex-harness-coverage-reconciliation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-04-harness-four-element-alignment.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "4f0bd42ca8acb9571cec1d64070cbc25c7d321b9",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-04-harness-four-element-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "e5e1f7a51a8dc8b6307e9f5a1bad13ace5a201a0",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-05-harness-governance-v2-overlay",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "1a8687fb514129345c03f26a9d683d13102e608a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-02-workspace-harness-implementation-audit-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-02-workspace-harness-research-pack.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "882e120b7761b939182f2ff3255732ebf0cae539",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-02-workspace-harness-research-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/009-workspace-harness-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-03-template-contract-governance-migration.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "f15a615ccf3d4e6abbbb8b0db6d59c1aabf5da59",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-template-contract-governance-migration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/011-template-contract-governance-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "a3f32dccfc72c502fe08d6dc68c182116101c5cf",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-template-governance-audit-enhancement",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/012-template-governance-audit-enhancement/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "584a2dfe5a8dbbfd7a96f3218b5f2a63608e12d3",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-workspace-document-governance-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "2f1d375e728484d63b3101b1026cecb2ca1beba5",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-active-control-surface-governance-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
+          "docs/03.specs/015-agent-governance-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "1b258f47c7dde2d5021a5fcf4521dbdb325634e8",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-agent-governance-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/015-agent-governance-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "aa80cd65ac445c76654e452e2b1e3cd77482d051",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-workspace-document-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
+          "docs/03.specs/014-workspace-document-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "526a50b5b5adebda6a0181e66ae58cf937504cb5",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-workspace-engineering-research-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+          "docs/03.specs/009-workspace-harness-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "8b90152112e8f5e71c5c56d71fcde7290fedab1a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-template-path-numbering-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/019-template-path-numbering-contract/spec.md",
+          "docs/03.specs/019-template-path-numbering-contract/spec.md",
+          "docs/03.specs/019-template-path-numbering-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "16495309dded68bfb73166b379f93da8f4b54f2c",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-workspace-contract-governance-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/020-workspace-contract-governance-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "ceb6cecd0909fcae2cd8136070e937d1da72e53b",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-workspace-engineering-implementation-audit-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+          "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "1e4f3c6cbbcea106f290c718dc9c494f3e965f5e",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-control-cloud-doc-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/022-control-cloud-doc-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-06-observability-and-network-review-agents.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "37042ecb1c15eebcd8392be2380e953cfdc1c93a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-observability-and-network-review-agents",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/024-observability-and-network-review-agents/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "dafb3b2bdbb2c879a879451ebe86ab3728cf503d",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-sdlc-lifecycle-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/021-sdlc-lifecycle-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "954561b167989cc23c0fe2fd27afc1326e3bc42d",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-stage03-04-repo-static-gap-closure",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
+          "docs/03.specs/021-sdlc-lifecycle-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "4c59e58b5f867bcf9fef6d8d768a616fac911e11",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-07-workspace-engineering-research-pack-refresh",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "415d1e437267183c8fef473abd2075dbe4b725fe",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-10-current-research-pack-fact-first-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "f52d22ba5fbdd583eb80bf42c96001fa7d604214",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-11-governance-owner-and-roster-currentness",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "31d23d7351decd451b397879003cb0ca1e2a98a3",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-11-workspace-engineering-research-audit-integration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "1651035982a6f676d3b45e6b6fe047f955f60cd2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-affected-surface-agent-qa",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+          "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-authored-document-migration.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "076fa27fbc6d7971864dcd3932e5d19bc0dbdece",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-authored-document-migration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/030-authored-document-migration/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md",
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-document-contract-registry.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "483a2aaad49d6e44a3a74e9f6e751ea585d8027a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-document-contract-registry",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "7aa4c02b8d08a534a26c83c1d0c76194c548cdd0",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-protected-surface-supply-chain-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "a0b6e799cb494da32b8851771d515f9fc3dbe5a2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-readme-workspace-profiles",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md",
+          "docs/03.specs/028-readme-workspace-profiles/spec.md",
+          "docs/03.specs/029-semantic-document-validation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-semantic-document-validation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "fdf30984c633ea28309f6304dedcce668e6a28d2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-semantic-document-validation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/029-semantic-document-validation/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-12-template-contract-consolidation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "040f915d5e34a0afa7f8c3888883c855c749746c",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-template-contract-consolidation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "3a49ac07d7d2808e63a8550f67786d69a451c6df",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-14-template-lifecycle-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 11,
+        "bodySpecLinks": [
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "c14a7a4d3abc4222311e942fbdd082083a5ee5ba",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-15-authority-and-lineage-foundation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 9,
+        "bodySpecLinks": [
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "156f5954d0be9985d1c730380892d079163d33f4",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-16-document-schema-and-lifecycle-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+        "kind": "plan",
+        "status": "done",
+        "sourceBlob": "01f31e78e6a74491211b2c4d65282fa992af28ee",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-17-archive-record-and-workspace-boundary",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 9,
+        "bodySpecLinks": [
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "753d9a303e96872db4fa7cc61f76579be0b9d335",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-09-github-qa-ci-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "e9e877c1ed798291ba19d9b5d6de22c6f0f2c6d0",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-09-scripts-inventory-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "8a7d96e4366032c9a01db54d10f3f9409f723cb5",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-10-agent-first-harness-llm-wiki-hooks",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "c919eb4be8b0ef0ae7369d81b22438d9744c705d",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-17-template-crosslink-fix",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "f0b0c39721a1c0c5085cd964ba73d8bb45d8ed4d",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-18-argo-notifications-slack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/005-argo-notifications-slack/spec.md",
+          "docs/03.specs/005-argo-notifications-slack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "e83bd32fbe95aecb2b35cfb5bda1abec655a918e",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-18-argo-rollouts-progressive-delivery",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md",
+          "docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "0f179f89fdf26a3e7f1773a8191c07e6ab55af0b",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-22-docs-governance-full-ab-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "f2c2b2e71690a7866de7f335206667d69cebc409",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-22-workspace-purpose-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "3fda0e49de70f8e22822d9027423ebc856a0f68c",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-24-p3-gitops-secret-runtime-remediation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "d5d8609a7f55185612eab74d5d88e68e6bfec0d5",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-28-workspace-skill-expansion",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-30-antigravity-governance.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "1b2d77a150da136d345204778971ac8ef923840b",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-30-antigravity-governance",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "938c9529841aba3db547e8c8edf5ae6159fc6019",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-05-31-codex-governance-harness-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "301d6cb244e02ae0de5c16fd8e2f971724e6cbe0",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-01-claude-agent-surface-restoration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "8802040e54ab15c36d35236136d5837e53fd764a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-01-stage-00-canonical-adapter-redesign",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "1ffbfb66742d091181072af36b15543d1a13a633",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-current-implementation-docs-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/008-current-local-gitops-platform/spec.md",
+          "docs/03.specs/008-current-local-gitops-platform/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "0909d20ec4155abdc78eca91306b1644ebaf12ac",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-docs-01-05-current-implementation-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/008-current-local-gitops-platform/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/008-current-local-gitops-platform/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "fb0d232fbc8f775e56b25fcc0b249a3fd34dadc9",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-1-governance-alignment-audit",
+        "pairState": "task-only",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "b8d913a09f90914117e7b0d2f425719a2e382724",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-2-governance-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "1066735341581b2e8b09f215f1e4e384d4903c56",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-3-protected-surface-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "71456f9d4dae7ce3baa7552a22a861aa6d560da3",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-phase-4-eso-vault-runtime-diagnosis",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "b3f6ff060d23368f79edeee125bb6e647b3e1089",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-02-stage-00-codex-harness-coverage-reconciliation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-04-harness-four-element-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "fbfc89141ed54114a8fd5c1c2e7ab32c4c2c67e4",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-04-harness-four-element-alignment",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "b6c37f6f3b6e4f0e011143a18be62cde50d9772c",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-05-harness-connective-layer-risk-closure",
+        "pairState": "task-only",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "8f9962f3798e3addc74eb66429c378dbf75e871e",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-05-harness-governance-v2-overlay",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-06-05-language-boundary-alignment.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "3bd8b1e5116c70d7a5ec98d3e615bbd2f11ebcf2",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-06-05-language-boundary-alignment",
+        "pairState": "task-only",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "e0ecaca0a67aa5ad3ed164619f6865a05ac1a641",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-02-workspace-harness-implementation-audit-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "f7373e69792631ce32b91aa6f4912293437899df",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-02-workspace-harness-research-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-03-template-contract-governance-migration.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "db6b27b7f648e5dddb2c2b8959841f8c5060049f",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-template-contract-governance-migration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/011-template-contract-governance-migration/spec.md",
+          "docs/03.specs/011-template-contract-governance-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "91b59cc6d2e79168b1b43adf584b842f6a595e7a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-template-governance-audit-enhancement",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/012-template-governance-audit-enhancement/spec.md",
+          "docs/03.specs/012-template-governance-audit-enhancement/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "87eae0323da8751a2c9c37c36432235d85ffcb1a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-03-workspace-document-governance-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "c0e12316db5749488aa62e96b5495518674e43eb",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-active-control-surface-governance-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
+          "docs/03.specs/016-active-control-surface-governance-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "20bdfffcdfa11a8bb1b556d60fd2204b342f77b6",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-agent-governance-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/015-agent-governance-contract-normalization/spec.md",
+          "docs/03.specs/015-agent-governance-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "a8fc50984c630a674ad0f6547291d81fbba24ce1",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-workspace-document-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
+          "docs/03.specs/014-workspace-document-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "caf30b8efb5803976d93b35f2a0394178d559811",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-04-workspace-engineering-research-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "878832cd3f1226faba9716233c90f3c021cb8886",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-template-path-numbering-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/019-template-path-numbering-contract/spec.md",
+          "docs/03.specs/019-template-path-numbering-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "1ede33f1772a28e41bde1cac6b9db23d1b3dc19a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-workspace-contract-governance-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/020-workspace-contract-governance-normalization/spec.md",
+          "docs/03.specs/020-workspace-contract-governance-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "1f01ff863ebb2970e66b592995f6d28dc8b52d42",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-05-workspace-engineering-implementation-audit-pack",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 6,
+        "bodySpecLinks": [
+          "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
+          "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "docs/03.specs/009-workspace-harness-research-pack/spec.md",
+          "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md",
+          "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "0ad5a7e855999cd10c1a9228efb38b5e3f5fcaeb",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-control-cloud-doc-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
+          "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
+          "docs/03.specs/016-active-control-surface-governance-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "9eb5aa290e7eca26c1af5a028f9afb0946be8521",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-observability-and-network-review-agents",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/024-observability-and-network-review-agents/spec.md",
+          "docs/03.specs/024-observability-and-network-review-agents/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "c404a5e7879c4fe77942a645e7f81d0168b75810",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-sdlc-lifecycle-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/021-sdlc-lifecycle-contract/spec.md",
+          "docs/03.specs/021-sdlc-lifecycle-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "d79563c1c21a1e900924eb52230d6efd642bb7b3",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-06-stage03-04-repo-static-gap-closure",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
+          "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "94d5476d447fded9221a197061bfeee87762f67f",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-07-workspace-engineering-research-pack-refresh",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "8f6ed18da6ed3e61bbe3b953bb69e3e908891940",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-10-current-research-pack-fact-first-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+          "docs/03.specs/017-workspace-engineering-research-pack/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "751677388aa966bb531fe5ee728a56e46348f866",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-11-governance-owner-and-roster-currentness",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md",
+          "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "0ea56174ab3493c44c813c9440b43c467b7f647a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-11-workspace-engineering-research-audit-integration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 0,
+        "bodySpecLinks": [],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "7f8293bcd152aaaafcbeee15d4a77109c56e140a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-affected-surface-agent-qa",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+          "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-authored-document-migration.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "20d2b41abddf1958d51707d98a9ac2c9eb3d8912",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-authored-document-migration",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/030-authored-document-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-document-contract-registry.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "8e7af6c52b872a1c5eebce5d4c4248fb4b7c51dd",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-document-contract-registry",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "9ac89d688982348333ee89f304a938cf6fab96c5",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-protected-surface-supply-chain-hardening",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+          "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+          "docs/03.specs/031-affected-surface-agent-qa/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "6f93c3f447d11fdcdd367acd20a494ada7c61166",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-readme-workspace-profiles",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 10,
+        "bodySpecLinks": [
+          "docs/03.specs/028-readme-workspace-profiles/spec.md",
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md",
+          "docs/03.specs/029-semantic-document-validation/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md",
+          "docs/03.specs/028-readme-workspace-profiles/spec.md",
+          "docs/03.specs/026-document-contract-registry/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md",
+          "docs/03.specs/029-semantic-document-validation/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "c401c4ee2b9b999c588252beec041b1dd5ba0de6",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-semantic-document-validation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/029-semantic-document-validation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "2bf829458ed4981d0cf6d1793aa5ffe7ac0f3ae0",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-12-template-contract-consolidation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/027-template-contract-consolidation/spec.md",
+          "docs/03.specs/027-template-contract-consolidation/spec.md",
+          "docs/03.specs/028-readme-workspace-profiles/spec.md",
+          "docs/03.specs/030-authored-document-migration/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "424658d865205523f066de87428b96c2aee9926a",
+        "baselineSegment": "frozen",
+        "pairKey": "2026-07-14-template-lifecycle-contract-normalization",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 2,
+        "bodySpecLinks": [
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+          "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "3fce80a5341f550437be73b48467e17e3206fc75",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-15-authority-and-lineage-foundation",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 1,
+        "bodySpecLinks": [
+          "docs/03.specs/034-authority-and-lineage-foundation/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "cfc97978ee1217ff34b7bc823a2da172098e2209",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-16-document-schema-and-lifecycle-contract",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 4,
+        "bodySpecLinks": [
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+          "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
+        "kind": "task",
+        "status": "done",
+        "sourceBlob": "e40edd14c8bef4983907a75d7cc7b823412163e6",
+        "baselineSegment": "delta",
+        "pairKey": "2026-07-17-archive-record-and-workspace-boundary",
+        "pairState": "paired",
+        "ledgerRowPresent": true,
+        "bodySpecLinkCount": 3,
+        "bodySpecLinks": [
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+          "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        ],
+        "eligibilityEvidence": {
+          "upstreamSpec": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "program": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "currentOwner": {
+            "state": "unknown",
+            "value": null,
+            "refreshTrigger": "ACER-002"
+          },
+          "reciprocalLinks": {
+            "state": "pending",
+            "paths": [],
+            "refreshTrigger": "ACER-002"
+          },
+          "closure": {
+            "state": "unknown",
+            "references": [],
+            "refreshTrigger": "ACER-002"
+          }
+        },
+        "disposition": "DEFER",
+        "reason": "eligibility-evidence-pending",
+        "owner": "platform",
+        "refreshTrigger": "ACER-002"
+      }
+    ]
+  },
+  "activation": {
+    "activationCommit": "9e2ec37f483145b322cf68a2f6e697dcf4fb80e1",
+    "proposedCounts": {
+      "plan": 55,
+      "task": 57,
+      "total": 112
+    },
+    "activeControls": [
+      {
+        "path": "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md",
+        "kind": "plan",
+        "status": "active",
+        "sourceBlob": "ab9c82b58364bd4db4597cb0a002ceaaf46e2b3f",
+        "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+        "pairState": "paired",
+        "disposition": "retain",
+        "reason": "active-execution-control",
+        "owner": "platform",
+        "refreshTrigger": "Spec037 closure",
+        "candidateEligible": false
+      },
+      {
+        "path": "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+        "kind": "task",
+        "status": "active",
+        "sourceBlob": "c7a0a440c5fa61b1b3853fa4e5753dc294e1d979",
+        "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+        "pairState": "paired",
+        "disposition": "retain",
+        "reason": "active-execution-control",
+        "owner": "platform",
+        "refreshTrigger": "Spec037 closure",
+        "candidateEligible": false
+      }
+    ],
+    "stage05": {
+      "counts": {
+        "guide": 8,
+        "policy": 7,
+        "runbook": 9,
+        "incident": 0,
+        "postmortem": 0,
+        "total": 24
+      },
+      "entries": [
+        {
+          "path": "docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "82a71c089c4577dd5ed3fe0b4626b179a4b2bd95",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "2e83e1337232f84eac7e1de7e729d57d2a2bbfde",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "2e9a2c9505a526a4f2c5595ffaa58be4cd480ca0",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0006-argocd-prometheus-grafana-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "d82c9144926441d9f522e0f3b561462add3d0b0d",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0007-k8s-observability-bootstrap-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "39ca96d68a6bf4b9586fef34abadc118f9eca6b9",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "80359711603864b6a497b901eb4d902b62f02499",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "9f2e80194377f37e7d16c8131349794dcb122b75",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+          "kind": "guide",
+          "status": "active",
+          "sourceBlob": "bd90747bfa3f5c532ca98d7efaa0f7f99412cff8",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "937dd8d8071d022e31436a68a04f65428968e6ac",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "e5aaca611184ac096c65a115ab8e1f460697e147",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "2893769c0a4adf1055d28c5d1c52157f621d3fe9",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "15c95090994401fa0b772f3fa780fb63035b1f19",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "a3a9e781746e6bcffafb788be32cb436eb20e336",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0006-k8s-observability-operations-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "d843e408661a02563e353f79f98eb8e040440a96",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+          "kind": "policy",
+          "status": "active",
+          "sourceBlob": "1809a98d79b0931539d4d327a9fb4d1bffe62424",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "55551e0b3a8f035233e0d25f65d27a083356fa3c",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "67126ec67a774c4d8a7c25c2fc507fd2076347aa",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "f68093309393c209de79214ff14eb34d660a73e4",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "1c6085dd10afc65b57551ebe45d341f61107fba7",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "73f3240818db032a1b7d108d3af867b2afe62dfc",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "d61489f675ea11d979fa62e654f58e404c3633cb",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "6eb25ff537b7a56695cc02841b7116f9df1d9d63",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "c898ab53198f283a88016c8f5440a914610885af",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        },
+        {
+          "path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+          "kind": "runbook",
+          "status": "active",
+          "sourceBlob": "c3faec2b7ca6f2dcdba83daa68181a4d611a4765",
+          "auditState": "pending",
+          "auditOwner": "platform",
+          "refreshTrigger": "ACER-004"
+        }
+      ]
+    },
+    "helperTests": {
+      "observationBoundary": {
+        "kind": "pinned-activation-input",
+        "source": "activation.activationCommit",
+        "worktreeInference": false
+      },
+      "counts": {
+        "python": 8,
+        "json": 14,
+        "yaml": 6,
+        "readme": 1,
+        "total": 29
+      },
+      "proposalDelta": {
+        "counts": {
+          "python": 1,
+          "json": 0,
+          "yaml": 0,
+          "readme": 0,
+          "total": 1
+        },
+        "entries": [
+          {
+            "path": "tests/test_active_corpus_retention.py",
+            "kind": "python"
+          }
+        ]
+      },
+      "proposedCounts": {
+        "python": 9,
+        "json": 14,
+        "yaml": 6,
+        "readme": 1,
+        "total": 30
+      },
+      "role": "support-only",
+      "executionTracker": false,
+      "auditState": "pending",
+      "auditOwner": "platform",
+      "refreshTrigger": "ACER-004",
+      "entries": [
+        {
+          "path": "tests/README.md",
+          "kind": "readme",
+          "sourceBlob": "3e071ddbda39633e3c77c746096dbd7989344d2e"
+        },
+        {
+          "path": "tests/fixtures/agent-role-semantics.json",
+          "kind": "json",
+          "sourceBlob": "0c66e93cf7777c0ada269761812cf22a1e928c4a"
+        },
+        {
+          "path": "tests/fixtures/agent-roster-currentness.json",
+          "kind": "json",
+          "sourceBlob": "420759d17efc0e2458a1d073a1fc69b44702590c"
+        },
+        {
+          "path": "tests/fixtures/document-contracts/native-surface-cases.json",
+          "kind": "json",
+          "sourceBlob": "8beb7ff8b5105e2b009bca8306ff95090680093b"
+        },
+        {
+          "path": "tests/fixtures/document-contracts/readme-profile-cases.json",
+          "kind": "json",
+          "sourceBlob": "68da84da23f82fbda5c19d36e8b3739d4f743ba6"
+        },
+        {
+          "path": "tests/fixtures/document-contracts/registry-cases.json",
+          "kind": "json",
+          "sourceBlob": "79f6c1f4bcb94f29fed5757cae368893d04f92b8"
+        },
+        {
+          "path": "tests/fixtures/document-contracts/template-compatibility.json",
+          "kind": "json",
+          "sourceBlob": "fc2acb47479fa68568f0d84ac7bbedf05085bc97"
+        },
+        {
+          "path": "tests/fixtures/document-contracts/template-source-parity.json",
+          "kind": "json",
+          "sourceBlob": "400447958765805b76fbdbaed7ce6417e41ffc6b"
+        },
+        {
+          "path": "tests/fixtures/document-lifecycle.json",
+          "kind": "json",
+          "sourceBlob": "c93885facf93a50dee6f4a2c25e7b1c15cdfbb7a"
+        },
+        {
+          "path": "tests/fixtures/github-actions-security.json",
+          "kind": "json",
+          "sourceBlob": "273b256f56a390ae2d7b230b3712d2c81d0ccc90"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/base/kustomization.yaml",
+          "kind": "yaml",
+          "sourceBlob": "a0edacb514a7514b97efbe4b7ebf671efc77e2d0"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/base/removed-service.yaml",
+          "kind": "yaml",
+          "sourceBlob": "d8791bcf8acd00d4fc76648c43e645d0e30c4aee"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/base/retained-configmap.yaml",
+          "kind": "yaml",
+          "sourceBlob": "0bdd02a24a8b61770d097010b4cc30ef2c0bdfa9"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/cases.json",
+          "kind": "json",
+          "sourceBlob": "9e7523579d14860dec2edad1475dc3ccbb380e01"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/head/added-service.yaml",
+          "kind": "yaml",
+          "sourceBlob": "3940ec4c76010e37cd3c38ad1ad8b9335fbc778e"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/head/kustomization.yaml",
+          "kind": "yaml",
+          "sourceBlob": "f59cb62d014c828ea88bf64a3b4580c88f30c4ee"
+        },
+        {
+          "path": "tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml",
+          "kind": "yaml",
+          "sourceBlob": "0bdd02a24a8b61770d097010b4cc30ef2c0bdfa9"
+        },
+        {
+          "path": "tests/fixtures/links-and-owners.json",
+          "kind": "json",
+          "sourceBlob": "c1926a4f8878e011201b493a5c4b2cd0d2b13e00"
+        },
+        {
+          "path": "tests/fixtures/markdown-profiles.json",
+          "kind": "json",
+          "sourceBlob": "a0d72bdd4e3df160d2893dc4a8c1e5fc0d3d5ac3"
+        },
+        {
+          "path": "tests/fixtures/validation-surfaces.json",
+          "kind": "json",
+          "sourceBlob": "73733ba32b7994b69c61d08b5a908397e67bf89a"
+        },
+        {
+          "path": "tests/fixtures/vault-eso-contracts.json",
+          "kind": "json",
+          "sourceBlob": "04471a898c1d3078239dcfe1c6c75a7ba3415610"
+        },
+        {
+          "path": "tests/test_archive_cutover.py",
+          "kind": "python",
+          "sourceBlob": "75f884b8886a3cbf23e542a1c98512b1755171b6"
+        },
+        {
+          "path": "tests/test_archive_recovery.py",
+          "kind": "python",
+          "sourceBlob": "73370cacd116d1f8c27af8a92b20c664a97599ce"
+        },
+        {
+          "path": "tests/test_archive_validation.py",
+          "kind": "python",
+          "sourceBlob": "e59831903e3248e6943879366e3b05141ee79bd6"
+        },
+        {
+          "path": "tests/test_document_lifecycle_archive_cutover.py",
+          "kind": "python",
+          "sourceBlob": "e58dca0a0647163bddb0e720e10ca3eda29da640"
+        },
+        {
+          "path": "tests/test_post_validate_runner_result.py",
+          "kind": "python",
+          "sourceBlob": "d04c042c6e62dc6ef1a44954fa9a6c943392ec34"
+        },
+        {
+          "path": "tests/test_provider_post_validate_hook.py",
+          "kind": "python",
+          "sourceBlob": "c831bd5cedd1f7e3f61dff784134417660a20cb5"
+        },
+        {
+          "path": "tests/test_run_validation_lane.py",
+          "kind": "python",
+          "sourceBlob": "408e82b05a1e086e3074a3d75acfe444dcdaa6b8"
+        },
+        {
+          "path": "tests/test_workspace_boundary.py",
+          "kind": "python",
+          "sourceBlob": "cd8a089cf4b68d4d7c3798262c3aacf401c7d877"
+        }
+      ]
+    }
+  },
+  "methodologySources": [
+    {
+      "authority": "Kubernetes SIG Architecture",
+      "title": "Kubernetes Enhancement Proposals README",
+      "url": "https://github.com/kubernetes/enhancements/blob/master/keps/README.md",
+      "observedAt": "2026-07-18",
+      "use": "lifecycle-state-and-ownership-method"
+    },
+    {
+      "authority": "U.S. National Archives and Records Administration",
+      "title": "Guidance on Managing Web Records",
+      "url": "https://www.archives.gov/records-mgmt/policy/managing-web-records-index.html",
+      "observedAt": "2026-07-18",
+      "use": "records-disposition-and-retention-method"
+    },
+    {
+      "authority": "Git",
+      "title": "git-reflog",
+      "url": "https://git-scm.com/docs/git-reflog",
+      "observedAt": "2026-07-18",
+      "use": "local-reference-recovery-boundary"
+    },
+    {
+      "authority": "Git",
+      "title": "git-gc",
+      "url": "https://git-scm.com/docs/git-gc",
+      "observedAt": "2026-07-18",
+      "use": "object-retention-boundary"
+    }
+  ]
+}

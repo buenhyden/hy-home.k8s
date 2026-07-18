@@ -46,6 +46,7 @@ stage로 라우팅한다.
 
 ```text
 data/
+├── active-corpus-retention-census.json # ACER-001 immutable corpus census and dispositions
 ├── agent-reference-index.md          # Durable Agent reference catalog boundary
 ├── tech-stack-version-inventory.md   # Repo-backed version contracts and cloud snapshots
 └── README.md                         # This file
@@ -73,12 +74,16 @@ data/
 
 | Document | Reference Type | Role | Freshness Trigger |
 | --- | --- | --- | --- |
+| [Active Corpus Retention Census](./active-corpus-retention-census.json) | repo-backed immutable census / external-method snapshot | Exact 110 candidate rows, Spec 037 controls, Stage 05, pinned 29-file helper input, exact one-test proposal delta, proposed 30-file helper counts, owned ACER-001 dispositions, explicit unresolved upstream/program/owner/link/closure evidence axes, and canonical safe row paths with value-free diagnostics; neither helper count substitutes for ACER-004 recomputation, and body-Spec links are non-authoritative observations | ACER-002 eligibility evidence, Spec 037 closure, ACER-004 then-current role audit, pinned commit/object drift, proposal delta, or methodology-source change |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
 ### Authority Boundary
 
 - `data/` owns factual lookup data and source-checked reference inventories.
+- `active-corpus-retention-census.json` is immutable ACER-001 input evidence;
+  it does not authorize archive migration, infer current worktree state, or
+  promote any row to `eligible`.
 - `docs/00.agent-governance/**` owns agent runtime truth, provider behavior,
   hooks, permissions, model routing, and execution rules.
 - `docs/03.specs/**/agent-design.md` owns feature-local Agent designs.

@@ -59,6 +59,7 @@ docs/90.references/
 | --- | --- | --- | --- |
 | [cloud-examples/README.md](./cloud-examples/README.md) | cloud example snapshot collection index | 퇴역한 AWS/Azure documentation tree의 dated snapshot, source coverage, provider-refresh 경계 | approved provider refresh, snapshot source/evidence 변경, collection 이동 시 |
 | [data/README.md](./data/README.md) | data reference index | repo-backed inventories, durable catalogs, factual lookup data의 범위와 라우팅 | data reference 문서 추가/이동, category role 변경 시 |
+| [data/active-corpus-retention-census.json](./data/active-corpus-retention-census.json) | repo-backed immutable census / external-method snapshot | ACER-001의 110-row candidate, active controls, Stage 05, helper Tests, and owned DEFER evidence | ACER-002/004 evidence, Spec 037 closure, pinned Git-object drift, or source-method change |
 | [data/agent-reference-index.md](./data/agent-reference-index.md) | durable-concept / data-catalog | Agent reference data의 범위와 canonical owner routing | Agent reference 문서 추가/이동, runtime roster 이동, Stage 00 routing 변경 시 |
 | [data/tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
 | [llm-wiki/README.md](./llm-wiki/README.md) | durable-concept / faq | LLM WIKI boundary and canonical owner link map | docs/examples taxonomy, Agent governance routing, or version inventory path 변경 시 |

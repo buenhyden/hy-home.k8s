@@ -57,10 +57,11 @@ repos:
         args:
           - '--baseline'
           - '.secrets.baseline'
-          # ArchiveEnvelope Git/SHA identities are integrity metadata. Exact
-          # recovered payloads remain covered by gitleaks and archive_cutover.
+          # ArchiveEnvelope and ACER census Git/SHA identities are integrity
+          # metadata. Exact payloads remain covered by gitleaks and the
+          # domain validators; only canonical identity-only lines are ignored.
           - '--exclude-lines'
-          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$'
+          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$'
         exclude: '^(.*/tests/.*|graphify-out/.*)$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
