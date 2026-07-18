@@ -12,6 +12,9 @@ BASE_REGISTRY_BLOB_OID = (
 PROPOSED_REGISTRY_BLOB_OID = (
     "ed62f1792ba60e9be95d0d93b75d43654df3456f"  # pragma: allowlist secret
 )
+CUTOVER_PROPOSED_COMMIT = (
+    "787b28fe1f2b1fff16d59936ed2a411e04d25db5"  # pragma: allowlist secret
+)
 BASE_REGISTRY_VERSION = 7
 PROPOSED_REGISTRY_VERSION = 8
 BASE_REGISTRY_ID = "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
