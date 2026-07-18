@@ -13,11 +13,11 @@
   },
   "archiveIndex": "docs/98.archive/README.md#document-index",
   "counts": {
-    "batches": 3,
-    "records": 6,
-    "archiveRecords": 37,
-    "historicalLinksAdded": 73,
-    "historicalLinks": 275
+    "batches": 4,
+    "records": 8,
+    "archiveRecords": 39,
+    "historicalLinksAdded": 105,
+    "historicalLinks": 307
   },
   "batches": [
     {
@@ -178,6 +178,61 @@
           "payloadBytes": 8415,
           "payloadSha256": "717c445c3b51db3ef286f342ad3a997063285fc170afe214af306cc0d8d48381",
           "historicalLinks": 17,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        }
+      ]
+    },
+    {
+      "sequence": 4,
+      "batchId": "ACER-003-004",
+      "pairKey": "2026-07-15-authority-and-lineage-foundation",
+      "status": "complete",
+      "completedOn": "2026-07-18",
+      "upstreamSpec": "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+      "program": {
+        "prd": "006",
+        "ard": "0009",
+        "lineage": "tranche"
+      },
+      "currentClosureOwner": "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+      "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+      "rollbackParentCommit": "fdb65db785a4518836ddf22a102b30eb7c9c1d61",
+      "repairedConsumers": [
+        "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+        "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+      ],
+      "validationResult": "PASS",
+      "records": [
+        {
+          "kind": "plan",
+          "originalPath": "docs/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md",
+          "archivePath": "docs/98.archive/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md",
+          "originalType": "plan",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "c14a7a4d3abc4222311e942fbdd082083a5ee5ba",
+          "payloadBytes": 33025,
+          "payloadSha256": "43a07c1318b49fe164ea037861ff70f0bbeaf8ef551b8d2c772571bdb85a119b",
+          "historicalLinks": 20,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        },
+        {
+          "kind": "task",
+          "originalPath": "docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md",
+          "archivePath": "docs/98.archive/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md",
+          "originalType": "task",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "3fce80a5341f550437be73b48467e17e3206fc75",
+          "payloadBytes": 75610,
+          "payloadSha256": "2b7ec0fe9c45dd0cf4b6e1fb62e472659dd09345eb444fb795f07427b161561b",
+          "historicalLinks": 12,
           "archiveReason": "completed-lineage",
           "replacement": null,
           "validationResult": "PASS"

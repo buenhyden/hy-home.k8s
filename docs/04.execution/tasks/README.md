@@ -94,7 +94,6 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-12-readme-workspace-profiles.md
 ├── 2026-07-12-semantic-document-validation.md
 ├── 2026-07-12-authored-document-migration.md
-├── 2026-07-15-authority-and-lineage-foundation.md
 ├── 2026-07-16-document-schema-and-lifecycle-contract.md
 ├── 2026-07-17-archive-record-and-workspace-boundary.md
 ├── 2026-07-18-active-corpus-and-execution-retention.md
@@ -174,7 +173,6 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 evidence for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | ADM-001 through ADM-007 execution evidence for durable inventory, authored-document normalization, cloud consolidation, and strict cutover. | Done | 2026-07-13 |
-| [`./2026-07-15-authority-and-lineage-foundation.md`](./2026-07-15-authority-and-lineage-foundation.md) | Completed ALF-001 through ALF-006 evidence owner for registry v6 lineage, execution admission, Current audit disposition, and [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md) closure under its [Plan](../plans/2026-07-15-authority-and-lineage-foundation.md). | Done | 2026-07-15 |
 | [`./2026-07-16-document-schema-and-lifecycle-contract.md`](./2026-07-16-document-schema-and-lifecycle-contract.md) | Completed and independently reviewed DSLC-001 through DSLC-006 closure evidence for [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) under its reciprocal [Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md). Successor Spec 036 now has one active reciprocal Plan/Task pair. | Done | 2026-07-17 |
 | [`./2026-07-17-archive-record-and-workspace-boundary.md`](./2026-07-17-archive-record-and-workspace-boundary.md) | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)의 ARWB-001부터 ARWB-005까지 독립 검토·논리 commit·closure를 reciprocal [Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md)에 맞춰 기록한다. Closure commit `855fa78`과 postflight corrections `cdac53c`, `a12aedf`까지 확정했다. | Done | 2026-07-18 |
 | [`./2026-07-18-active-corpus-and-execution-retention.md`](./2026-07-18-active-corpus-and-execution-retention.md) | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)과 reciprocal [Plan](../plans/2026-07-18-active-corpus-and-execution-retention.md)에 따라 ACER-001부터 ACER-006까지 census, eligibility/residue, lineage archive batch, Stage 05/helper Tests audit, cardinality, QA·closure 증거를 추적한다. Activation review는 `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, findings none이며 모든 package는 Queued다. | Active | 2026-07-18 |

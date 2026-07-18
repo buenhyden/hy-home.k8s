@@ -304,7 +304,7 @@ by the completed run. All-files pre-commit passes every hook except
 
 - **Spec**: [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md)
 - **Plan**: [Implementation Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md)
-- **Predecessor Task**: [Spec 034 execution evidence](./2026-07-15-authority-and-lineage-foundation.md)
+- **Predecessor Task**: [Spec 034 execution history](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 

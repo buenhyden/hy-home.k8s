@@ -457,7 +457,7 @@ instead of reopening them. Each Task row records its commit and parent.
 - **Task**: [Execution Task](../tasks/2026-07-16-document-schema-and-lifecycle-contract.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Predecessor**: [Completed Spec 034 Plan](./2026-07-15-authority-and-lineage-foundation.md)
+- **Predecessor**: [Completed Spec 034 execution history](../../98.archive/README.md#document-index)
 - **Successor boundary**: Specs 036, 037, 038, 039, and 040 are the remaining
   original active tranches in the PRD-006 registry lineage. Spec 036 is the
   dependency-ready successor and has no Plan or Task.

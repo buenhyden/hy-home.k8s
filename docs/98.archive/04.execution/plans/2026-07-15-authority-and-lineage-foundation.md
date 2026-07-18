@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Authority and Lineage Foundation Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "c14a7a4d3abc4222311e942fbdd082083a5ee5ba"
+content_sha256: "43a07c1318b49fe164ea037861ff70f0bbeaf8ef551b8d2c772571bdb85a119b"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Authority and Lineage Foundation Implementation Plan'
 type: sdlc/plan
 status: done

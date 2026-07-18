@@ -179,15 +179,15 @@ adapter PASS does not prove provider runtime consumption.
   ignored `_workspace` children.
 
 - `tests/test_active_corpus_migrations.py` imports the ACER-003 closed validator
-  and proves the first three eligible-prefix batches as exactly three complete
-  pairs/six records. Ten focused methods plus the exact twenty-case self-test
-  cover partial/skipped/reordered batches, explicit first/second prior-prefix
-  drift, source residue, payload drift, the exact three-parent rollback chain,
+  and proves the first four eligible-prefix batches as exactly four complete
+  pairs/eight records. Eleven focused methods plus the exact twenty-four-case self-test
+  cover partial/skipped/reordered batches, explicit first/second/third prior-prefix
+  drift, source residue, payload drift, the exact four-parent rollback chain,
   index drift, current direct archive links, duplicate originals, rogue archive
   additions, unsafe paths, hostile Git steering, and forbidden self-referential
-  batch commits. The production result is 37 aggregate archive records, 275
-  historical links, six secret-clean new payloads, five repaired consumers in
-  batch 3, and eight unique repaired consumers across all batches.
+  batch commits. The production result is 39 aggregate archive records, 307
+  historical links, eight secret-clean new payloads, six repaired consumers in
+  batch 4, and eleven unique repaired consumers across all batches.
 
 - `tests/test_workspace_boundary.py` passes synthetic NUL-delimited index bytes
   through the production parser and creates only isolated temporary Git

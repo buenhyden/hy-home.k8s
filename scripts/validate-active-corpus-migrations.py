@@ -62,10 +62,11 @@ ELIGIBILITY_EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # prag
 FIRST_ROLLBACK_PARENT = "90d496e4e96c172785eb23071173a7751e688fd1"  # pragma: allowlist secret
 SECOND_ROLLBACK_PARENT = "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: allowlist secret
 THIRD_ROLLBACK_PARENT = "22ad025ed7beb0725095d1ab413a2d5c49f8561c"  # pragma: allowlist secret
-TWO_BATCH_PREFIX_SHA256 = (
-    "07a94683e8980ab6c7a39e183826fe8c56cc0ff3a3d173327935eafead478364"  # pragma: allowlist secret
+FOURTH_ROLLBACK_PARENT = "fdb65db785a4518836ddf22a102b30eb7c9c1d61"  # pragma: allowlist secret
+THREE_BATCH_PREFIX_SHA256 = (
+    "4269561e827a7a78f0d511d7db829aec72ed806fec831a3030e04f7dab70a27b"  # pragma: allowlist secret
 )
-ACCEPTED_BATCHES = 3
+ACCEPTED_BATCHES = 4
 BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
 GIT_EXECUTABLE = "/usr/bin/git"
@@ -84,14 +85,18 @@ REQUIRED_SELF_TEST_CASES = {
     "skipped-first-eligible-batch",
     "skipped-second-eligible-batch",
     "skipped-third-eligible-batch",
+    "skipped-fourth-eligible-batch",
     "reordered-eligible-batches",
     "prior-batch-evidence-drift",
     "prior-second-batch-drift",
+    "prior-third-batch-drift",
+    "partial-fourth-pair",
     "source-still-current",
     "archive-payload-byte-drift",
     "wrong-first-rollback-parent",
     "wrong-second-rollback-parent",
     "wrong-third-rollback-parent",
+    "wrong-fourth-rollback-parent",
     "missing-index-row",
     "duplicate-index-row",
     "direct-current-link",
@@ -176,15 +181,25 @@ THIRD_REPAIRED_CONSUMERS = (
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
     "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
 )
+FOURTH_REPAIRED_CONSUMERS = (
+    "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+    "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
+    "docs/04.execution/plans/README.md",
+    "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
+    "docs/04.execution/tasks/README.md",
+    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+)
 REPAIRED_CONSUMERS_BY_SEQUENCE = (
     FIRST_REPAIRED_CONSUMERS,
     SECOND_REPAIRED_CONSUMERS,
     THIRD_REPAIRED_CONSUMERS,
+    FOURTH_REPAIRED_CONSUMERS,
 )
 ROLLBACK_PARENTS = (
     FIRST_ROLLBACK_PARENT,
     SECOND_ROLLBACK_PARENT,
     THIRD_ROLLBACK_PARENT,
+    FOURTH_ROLLBACK_PARENT,
 )
 
 INDEX_COLUMNS = (
@@ -563,9 +578,9 @@ def validate_ledger_document(
         repaired_total += len(canonical_repaired)
 
     prior_prefix_canonical = json.dumps(
-        batches[:2], sort_keys=True, separators=(",", ":")
+        batches[:3], sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
-    if hashlib.sha256(prior_prefix_canonical).hexdigest() != TWO_BATCH_PREFIX_SHA256:
+    if hashlib.sha256(prior_prefix_canonical).hexdigest() != THREE_BATCH_PREFIX_SHA256:
         _fail("MIGRATION-PRIOR-BATCH-DRIFT")
 
     expected_counts = {
@@ -1012,6 +1027,11 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-PAIR",
     )
     ledger_case(
+        "partial-fourth-pair",
+        lambda value: value["batches"][3]["records"].pop(),
+        "MIGRATION-PAIR",
+    )
+    ledger_case(
         "skipped-first-eligible-batch",
         lambda value: value["batches"][0].__setitem__(
             "pairKey", "2026-07-12-protected-surface-supply-chain-hardening"  # gitleaks:allow
@@ -1033,6 +1053,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-ELIGIBLE-PREFIX",
     )
     ledger_case(
+        "skipped-fourth-eligible-batch",
+        lambda value: value["batches"][3].__setitem__(
+            "pairKey", "2026-07-16-document-schema-and-lifecycle-contract"
+        ),
+        "MIGRATION-ELIGIBLE-PREFIX",
+    )
+    ledger_case(
         "reordered-eligible-batches",
         lambda value: value["batches"].reverse(),
         "MIGRATION-ELIGIBLE-PREFIX",
@@ -1047,6 +1074,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     ledger_case(
         "prior-second-batch-drift",
         lambda value: value["batches"][1].__setitem__(
+            "completedOn", "2026-07-17"
+        ),
+        "MIGRATION-PRIOR-BATCH-DRIFT",
+    )
+    ledger_case(
+        "prior-third-batch-drift",
+        lambda value: value["batches"][2].__setitem__(
             "completedOn", "2026-07-17"
         ),
         "MIGRATION-PRIOR-BATCH-DRIFT",
@@ -1073,15 +1107,22 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
+        "wrong-fourth-rollback-parent",
+        lambda value: value["batches"][3].__setitem__(
+            "rollbackParentCommit", "0" * 40
+        ),
+        "MIGRATION-ROLLBACK",
+    )
+    ledger_case(
         "duplicate-original-owner",
-        lambda value: value["batches"][1]["records"][1].__setitem__(
-            "originalPath", value["batches"][1]["records"][0]["originalPath"]
+        lambda value: value["batches"][3]["records"][1].__setitem__(
+            "originalPath", value["batches"][3]["records"][0]["originalPath"]
         ),
         "MIGRATION-DUPLICATE-ORIGINAL",
     )
     ledger_case(
         "self-referential-batch-commit",
-        lambda value: value["batches"][1].__setitem__("batchCommit", "0" * 40),
+        lambda value: value["batches"][3].__setitem__("batchCommit", "0" * 40),
         "MIGRATION-SCHEMA",
     )
 
@@ -1096,7 +1137,11 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
 
     rows = _record_rows(document)
     try:
-        _validate_source_absence(root, rows, is_regular=lambda _root, _path: True)
+        _validate_source_absence(
+            root,
+            rows,
+            is_regular=lambda _root, path: path == rows[-1]["originalPath"],
+        )
     except MigrationError as error:
         if error.code != "MIGRATION-SOURCE-STILL-CURRENT":
             _fail("MIGRATION-SELF-TEST")
@@ -1104,7 +1149,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         _fail("MIGRATION-SELF-TEST")
     executed.add("source-still-current")
 
-    drift_row = rows[2]
+    drift_row = rows[6]
     original_content = (root / str(drift_row["archivePath"])).read_bytes()
     drifted = original_content[:-1] + bytes([original_content[-1] ^ 1])
     try:
@@ -1163,7 +1208,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         path="docs/current.md",
         markdown=(
             "[history](98.archive/04.execution/plans/"
-            "2026-07-12-affected-surface-agent-qa.md)\n"
+            "2026-07-15-authority-and-lineage-foundation.md)\n"
         ),
         profile="content/reference",
         status="active",

@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Authority and Lineage Foundation"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "3fce80a5341f550437be73b48467e17e3206fc75"
+content_sha256: "2b7ec0fe9c45dd0cf4b6e1fb62e472659dd09345eb444fb795f07427b161561b"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Authority and Lineage Foundation'
 type: sdlc/task
 status: done
