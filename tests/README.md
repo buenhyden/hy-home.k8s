@@ -90,6 +90,7 @@ live readiness.
 | Archive validation fixture | `python3 -m unittest tests/test_archive_validation.py` | Repo-static import-only evidence for metadata order/type, Git blob and digest identity, payload mutation, mirrored path, source-tree-only historical links, current-tree confusion rejection, inventory-independent archive reactivation, active direct individual-archive links, duplicate `original_path` authority, archive immutability, finite current status/profile and exact public input contracts, private verified canonical CommonMark loading/return-shape checks, and payload-free diagnostics; not production archive authority or 31/202 corpus evidence |
 | Archive cutover regression | `python3 -m unittest tests/test_archive_cutover.py` | Production worktree snapshot evidence that the cutover is atomic and emits named `ARCHIVE-CUTOVER-INCOMPLETE` diagnostics for any partial state; the GREEN snapshot proves 31 records, 202 historical links, 31 secret-clean exact Git-blob payloads, registry v8/template authority, manifest closure, and current index-only routing without displaying payload or secret matches |
 | Archive lifecycle cutover regression | `python3 -m unittest tests/test_document_lifecycle_archive_cutover.py`; `python3 scripts/validate-document-lifecycle.py --root . --self-test`; `python3 scripts/validate-document-lifecycle.py --root . --mode staged` | Eleven focused methods and thirteen closed self-test fixtures admit only the exact base `f8a54dd` staged/CI v7-to-v8 transition containing the pinned base/proposed registry blobs, all 31 same-path archive profile conversions, and the retired/new template pair. Partial, extra, wrong-base, wrong-registry-OID, missing-pair, registry drift, unrelated-profile, snapshot, and explicit-ref projections remain fail-closed without payload or secret scanning. |
+| Workspace boundary regression | `python3 -m unittest tests/test_workspace_boundary.py`; `python3 scripts/validate-workspace-boundary.py --self-test`; `python3 scripts/validate-workspace-boundary.py --root .` | Sixteen focused methods plus the isolated self-test prove exact stage-zero `100644` README and root-ignore cardinality; full SHA-1/SHA-256 root-ignore OIDs; bounded immutable blob retrieval; extra/force-added, symlink/gitlink/nonregular/conflict, malformed-index, startup, and timeout rejection; and stable path-only diagnostics. Two hostile ignored-child policies and one divergent worktree-root policy prove only the staged root blob controls probe ignored/README unignored results. Four actual-repository index/object queries precede three isolated-context init/ignore queries; no actual-worktree `check-ignore` runs. Actual-path traversal/open/stat sentinels allow only isolated policy evaluation. |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
@@ -169,6 +170,19 @@ adapter PASS does not prove provider runtime consumption.
   suppresses classifier stdout/stderr, never includes payload bytes in report
   objects, and inventories tracked/untracked `docs` paths without traversing
   ignored `_workspace` children.
+
+- `tests/test_workspace_boundary.py` passes synthetic NUL-delimited index bytes
+  through the production parser and creates only isolated temporary Git
+  repositories for tracked, force-added, missing, and symlink states. It pins
+  four exact actual-repository Git index/object argv tuples and three isolated
+  init/ignore tuples under a closed `shell=False` runner. Full SHA-1/SHA-256
+  IDs, size and exact-blob bounds, malformed, conflict, nonregular, mode,
+  ignore, startup, and timeout failures are covered. Two hostile cases create
+  an ignored `_workspace/.gitignore`: one cannot hide a wrong root policy and
+  one cannot override a correct root policy. Actual-root traversal/open/stat
+  sentinels permit the temporary context but reject the real `_workspace` tree
+  and worktree root `.gitignore`. Neither the test nor validator uses actual-
+  worktree `check-ignore`; only the staged root ignore blob is authoritative.
 
 - `tests/fixtures/gitops-change-set/` base/head resource graphs contain one added
   Service, one deleted Service, and the same ConfigMap identity at a moved path.

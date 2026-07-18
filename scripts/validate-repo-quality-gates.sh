@@ -40,6 +40,8 @@ python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --root "$ROOT_DIR"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
@@ -607,45 +609,6 @@ for tracked_path in sorted(tracked):
         fail(f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}")
     if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
         fail(f"tracked temporary or backup-style file name is not allowed: {tracked_path}")
-
-workspace_readme_rel = "_workspace/README.md"
-if workspace_readme_rel not in tracked:
-    fail("_workspace/README.md is required as the tracked workspace staging contract")
-
-workspace_scratch_ignore_check = subprocess.run(
-    ["git", "check-ignore", "-q", "_workspace/probe.log"],
-    cwd=root,
-)
-if workspace_scratch_ignore_check.returncode == 1:
-    fail(".gitignore must ignore _workspace/* scratch artifacts")
-elif workspace_scratch_ignore_check.returncode not in {0, 1}:
-    fail("git check-ignore failed while validating _workspace scratch ignore contract")
-
-workspace_readme_ignore_check = subprocess.run(
-    ["git", "check-ignore", "-q", workspace_readme_rel],
-    cwd=root,
-)
-if workspace_readme_ignore_check.returncode == 0:
-    fail(".gitignore must unignore _workspace/README.md")
-elif workspace_readme_ignore_check.returncode not in {0, 1}:
-    fail("git check-ignore failed while validating _workspace README unignore contract")
-
-workspace_tracked_paths = sorted(
-    tracked_path
-    for tracked_path in tracked
-    if tracked_path == "_workspace" or tracked_path.startswith("_workspace/")
-)
-for tracked_path in workspace_tracked_paths:
-    if tracked_path != workspace_readme_rel:
-        fail(f"_workspace may track only README.md; remove or promote: {tracked_path}")
-
-workspace_prohibited_path_pattern = re.compile(
-    r"(token|secret|credential|auth|history|kubeconfig|ssh|password|diagnostic|profile|cache)",
-    re.IGNORECASE,
-)
-for tracked_path in workspace_tracked_paths:
-    if workspace_prohibited_path_pattern.search(tracked_path):
-        fail(f"_workspace tracked path contains prohibited secret-risk wording: {tracked_path}")
 
 requirements_stage = root / "docs/01.requirements"
 if requirements_stage.exists():
