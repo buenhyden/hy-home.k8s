@@ -35,8 +35,8 @@ and `87ff444` after their package reviews. ARWB-005 completed the exact
 eight-file staged closure proposal and local QA handoff, then closure commit
 `855fa78` recorded that proposal. Fresh independent whole-tranche reviews
 returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings.
-Post-commit explicit-ref lifecycle, strict registry, snapshot-DEFER, and
-clean-tree checks passed. Planning commit `04a4d32` and package commits
+Post-commit explicit-ref lifecycle `4ccc616..855fa78`, strict registry,
+snapshot-DEFER, and clean-tree checks passed. Planning commit `04a4d32` and package commits
 `6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444` precede remediation commit
 `4ccc616`, which binds the historical ARWB-003 registry proof to committed
 cutover `787b28f` through closed Git-object resolution. Its reviews returned
@@ -216,8 +216,9 @@ operator workflow; this Plan and its validators do not require or inspect it.
   independent closure reviews returned `REQUIREMENTS COMPLIANT` and
   `QUALITY APPROVED` with no findings.
 - [x] Record the local command matrix, package history, rollback parent
-  `4ccc616`, and exact staged proposal. The closure commit and post-commit
-  strict/snapshot/clean-tree results remain pending and unclaimed.
+  `4ccc616`, exact staged proposal, closure commit `855fa78`, and post-commit
+  explicit-ref lifecycle `4ccc616..855fa78`, strict registry, snapshot-DEFER,
+  and clean-tree results.
 
 ## Verification Plan
 
@@ -265,8 +266,9 @@ reviewed provenance correction instead of hiding the mismatch.
 - Spec/Plan/Task, registry relation, indexes, and ledger formed one exact
   staged closure proposal after full local QA. Fresh independent whole-tranche
   review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no
-  findings; closure commit `855fa78` and post-commit explicit-ref lifecycle,
-  strict registry, snapshot-DEFER, and clean-tree checks are recorded. Spec 037
+  findings; closure commit `855fa78` and post-commit explicit-ref lifecycle
+  `4ccc616..855fa78`, strict registry, snapshot-DEFER, and clean-tree checks are
+  recorded. Spec 037
   remains active, dependency-ready, and unplanned with no Plan or Task created
   or linked.
 - Remote, provider, Kubernetes, Vault, ESO, Argo CD, secret, and ignored local

@@ -22,8 +22,9 @@ now records their terminal Spec/Plan/Task and program-relation transition as
 one exact eight-file staged proposal. Local staged closure QA is repository-
 static only. Fresh independent whole-tranche reviews returned
 `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. Closure
-commit `855fa78` and post-commit explicit-ref lifecycle, strict registry,
-snapshot-DEFER, and clean-tree checks passed. Spec 037 remains active and
+commit `855fa78` and post-commit explicit-ref lifecycle
+`4ccc616..855fa78`, strict registry, snapshot-DEFER, and clean-tree checks
+passed. Spec 037 remains active and
 dependency-ready with no Plan or Task created or linked.
 
 ## Strategic Boundaries & Non-goals
@@ -163,7 +164,7 @@ bounded pre-closure range `04a4d32^..4ccc616` are recorded without inventing a
 closure commit before it existed. Fresh independent whole-tranche reviews
 returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings.
 Closure commit `855fa78` was then created. Post-commit explicit-ref lifecycle
-validation for `4ccc616..HEAD` passed; strict registry passed with 434 paths;
+validation for `4ccc616..855fa78` passed; strict registry passed with 434 paths;
 snapshot mode returned the expected comparison-history `DEFER`; and the
 worktree was clean. Remote, live, provider, and ignored-scratch evidence remain
 unclaimed.
