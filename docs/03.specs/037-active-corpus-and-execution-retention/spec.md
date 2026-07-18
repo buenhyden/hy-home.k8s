@@ -3,7 +3,7 @@ title: 'Active Corpus and Execution Retention Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-18
 ---
 
 # Active Corpus and Execution Retention Technical Specification (Spec)
@@ -15,6 +15,13 @@ the current Stage 05 authored corpus for semantic ownership conflicts, and moves
 eligible completed Plans and Tasks from closed lineages into full-body archive
 records. It preserves valid accepted architecture decisions and implemented
 Specs until an explicit successor removes their current authority.
+
+The reciprocal implementation [Plan](../../04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md)
+and [Task](../../04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md)
+activate six dependency-ordered packages from baseline
+`a12aedfb71ccabd329dabc83bd2863474d1126b0`. Predecessor closure commit
+`855fa78` and postflight corrections `cdac53c` and `a12aedf` are planning
+inputs, not results of this tranche.
 
 ## Strategic Boundaries & Non-goals
 
@@ -44,8 +51,14 @@ Specs until an explicit successor removes their current authority.
 
 ## Core Design
 
-The migration begins with all 51 Plans and 53 Tasks. Each record is joined to
-its upstream Spec, program, current-owner status, reciprocal link set, and
+The parent `a12aedf` activation input contains 54 Plans and 56 Tasks, or 110
+records. The frozen design baseline contains 51 Plans and 53 Tasks (104
+records); the six-record delta is the three later reciprocal pairs for Specs
+034, 035, and 036. The staged Spec 037 pair raises the proposed authored corpus
+to 55 Plans and 57 Tasks (112 records); those two active control documents are
+retained outside the pre-activation migration candidate set. ACER-001
+reconciles the 104+6 candidate set before eligibility. Each candidate is joined
+to its upstream Spec, program, current-owner status, reciprocal link set, and
 closure evidence. The classifier produces eligible, retain, or DEFER; there is
 no default eligible state.
 
@@ -57,12 +70,14 @@ historical links in source context.
 Active stages are bounded by semantic cardinality. Folder size is reported for
 observability but never causes destruction.
 
-The Stage 05 audit compares each current Guide, Policy, and Runbook with its
+The Stage 05 activation input contains 24 authored records: eight Guides,
+seven Policies, and nine Runbooks. The audit compares each record with its
 profile, canonical owner, related Spec, and current repository implementation.
-Incident and Postmortem collections may legitimately contain no authored event
-record; their templates and indexes are validated without creating a fake
-incident. Helper Tests remain feature-local specification support and never
-become the Stage 04 execution tracker.
+There are zero real authored Incident records and zero real authored
+Postmortem records; their templates and indexes are validated without creating
+a fake event. The prior helper Tests inventory is only an input and must be
+recomputed before it supports any PASS. Helper Tests remain feature-local
+specification support and never become the Stage 04 execution tracker.
 
 ## Data Modeling & Storage Strategy
 
@@ -82,6 +97,9 @@ durable execution evidence and is preserved with the program closure.
 
 - Census interface: tracked Stage 01-05 and helper Tests files plus registry
   profiles, semantic owners, implementation evidence, and links.
+- Delta interface: the frozen 104-record Stage 04 baseline and six later
+  records must join exactly to the parent 110-record activation input; the new
+  active Spec 037 pair remains a separately retained execution control.
 - Eligibility interface: explicit predicates for lineage closure, authority,
   link migration, source recovery, and rollback.
 - Migration interface: one lineage batch produces archive files, index rows,
@@ -117,11 +135,15 @@ durable execution evidence and is preserved with the program closure.
 - Validate each lineage batch before and after movement.
 - Run archive integrity, current links, indexes, strict profiles, repository
   quality, and all-files pre-commit.
+- Run staged lifecycle admission for the exact reciprocal Spec 037 Plan/Task
+  activation before beginning ACER-001.
 
 ## Success Criteria & Verification Plan
 
-- **VAL-ACER-001**: All 104 baseline Plan/Task records receive an explicit
-  eligible, retain, or DEFER disposition.
+- **VAL-ACER-001**: All 104 baseline Plan/Task records and the six later
+  Plan/Task records reconcile to the parent 110-record activation input and
+  receive an explicit eligible, retain, or DEFER disposition; the active Spec
+  037 pair remains current and outside migration eligibility.
 - **VAL-ACER-002**: Every eligible closed-lineage record moves with verified
   payload provenance and rollback metadata.
 - **VAL-ACER-003**: Duplicate current owners and excess active Plan/Task owners
@@ -136,12 +158,33 @@ durable execution evidence and is preserved with the program closure.
   unsupported role overlap, copied template residue, stale current claims, or
   unowned exceptions.
 
+### Activation Evidence
+
+The activation proposal starts from exact parent `a12aedf`. The required
+Plan-only staged RED exits 1 with `LIFECYCLE-CREATE`, observing `Plan count 1,
+Task count 0`. The complete proposal adds one active reciprocal Plan/Task pair,
+updates the three indexes, and updates the three 14-column migration-ledger
+records without changing the already-active registry relation. It records the
+parent 54-Plan/56-Task activation inventory, the proposed 55-Plan/57-Task
+corpus, and the 104+6 candidate census obligation; no row is claimed eligible
+before ACER-001. Specs 038 and 040 remain unplanned, and Spec 039 retains
+CI/FIFO ownership.
+
+Fresh independent activation requirements review returned
+`REQUIREMENTS COMPLIANT`; activation quality review returned
+`QUALITY APPROVED`; findings were none. These verdicts approve only the
+planning activation proposal. ACER-001 through ACER-006 remain Queued, and no
+census disposition, migration, helper-role, closure, remote, or live result is
+claimed.
+
 ## Traceability
 
 - **Predecessor**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md)
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Plan**: [Active Corpus and Execution Retention Implementation Plan](../../04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md)
+- **Task**: [Active Corpus and Execution Retention Task](../../04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md)
 
 ### Lifecycle Traceability
 

@@ -100,6 +100,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-15-authority-and-lineage-foundation.md
 ├── 2026-07-16-document-schema-and-lifecycle-contract.md
 ├── 2026-07-17-archive-record-and-workspace-boundary.md
+├── 2026-07-18-active-corpus-and-execution-retention.md
 └── README.md
 ```
 
@@ -181,7 +182,8 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | TLCN-001 through TLCN-008 and the independent whole-branch closure review are Done under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md) and its [Plan](../plans/2026-07-14-template-lifecycle-contract-normalization.md). | Done | 2026-07-15 |
 | [`./2026-07-15-authority-and-lineage-foundation.md`](./2026-07-15-authority-and-lineage-foundation.md) | Completed ALF-001 through ALF-006 evidence owner for registry v6 lineage, execution admission, Current audit disposition, and [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md) closure under its [Plan](../plans/2026-07-15-authority-and-lineage-foundation.md). | Done | 2026-07-15 |
 | [`./2026-07-16-document-schema-and-lifecycle-contract.md`](./2026-07-16-document-schema-and-lifecycle-contract.md) | Completed and independently reviewed DSLC-001 through DSLC-006 closure evidence for [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) under its reciprocal [Plan](../plans/2026-07-16-document-schema-and-lifecycle-contract.md). Successor Spec 036 now has one active reciprocal Plan/Task pair. | Done | 2026-07-17 |
-| [`./2026-07-17-archive-record-and-workspace-boundary.md`](./2026-07-17-archive-record-and-workspace-boundary.md) | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)의 ARWB-001부터 ARWB-004까지 독립 검토·commit 증거와 reciprocal [Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md)에 맞춘 ARWB-005 exact staged closure·로컬 QA 증거를 기록한다. 독립 whole-tranche closure 검토는 `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, findings 없음으로 끝났고 closure commit/post-commit 결과만 아직 미확정이다. | Done | 2026-07-18 |
+| [`./2026-07-17-archive-record-and-workspace-boundary.md`](./2026-07-17-archive-record-and-workspace-boundary.md) | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)의 ARWB-001부터 ARWB-005까지 독립 검토·논리 commit·closure를 reciprocal [Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md)에 맞춰 기록한다. Closure commit `855fa78`과 postflight corrections `cdac53c`, `a12aedf`까지 확정했다. | Done | 2026-07-18 |
+| [`./2026-07-18-active-corpus-and-execution-retention.md`](./2026-07-18-active-corpus-and-execution-retention.md) | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)과 reciprocal [Plan](../plans/2026-07-18-active-corpus-and-execution-retention.md)에 따라 ACER-001부터 ACER-006까지 census, eligibility/residue, lineage archive batch, Stage 05/helper Tests audit, cardinality, QA·closure 증거를 추적한다. Activation review는 `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, findings none이며 모든 package는 Queued다. | Active | 2026-07-18 |
 
 ## Related Documents
 
