@@ -93,7 +93,6 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-12-readme-workspace-profiles.md
 ├── 2026-07-12-semantic-document-validation.md
 ├── 2026-07-12-authored-document-migration.md
-├── 2026-07-12-protected-surface-supply-chain-hardening.md
 ├── 2026-07-14-template-lifecycle-contract-normalization.md
 ├── 2026-07-15-authority-and-lineage-foundation.md
 ├── 2026-07-16-document-schema-and-lifecycle-contract.md
@@ -173,7 +172,6 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 plan for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, migration-ledger, and reciprocal execution-lineage validation plan. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
-| [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 plan for immutable Action identity, least privilege, identity-only GitOps review, local-only Vault/ESO and secret-boundary hardening, and repository-static closure with reciprocal [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Task](../tasks/2026-07-12-protected-surface-supply-chain-hardening.md) lineage. | Done | 2026-07-14 |
 | [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | TLCN-001 through TLCN-008, production cutover, and independent whole-branch closure review are complete under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md). | Done | 2026-07-15 |
 | [`./2026-07-15-authority-and-lineage-foundation.md`](./2026-07-15-authority-and-lineage-foundation.md) | Completed ALF-001 through ALF-006 plan for registry v6 program lineage, predecessor-gated execution, Current audit dispositions, and Spec 034 closure. | Done | 2026-07-15 |
 | [`./2026-07-16-document-schema-and-lifecycle-contract.md`](./2026-07-16-document-schema-and-lifecycle-contract.md) | Completed and independently reviewed DSLC-001 through DSLC-006 plan for registry v7 values, role decisions, lifecycle comparison, evidence predicates, template/native parity, bounded drift remediation, and Spec 035 closure. Successor Spec 036 now has one active reciprocal Plan/Task pair. | Done | 2026-07-17 |

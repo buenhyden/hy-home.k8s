@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
+import json
 import os
 import pathlib
 import unittest
@@ -24,7 +26,7 @@ def load_validator():
 
 
 class ActiveCorpusMigrationTests(unittest.TestCase):
-    def test_first_atomic_batch_is_complete_and_additive(self) -> None:
+    def test_first_two_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
 
         counts = validator.validate_active_corpus_migrations(ROOT)
@@ -32,15 +34,15 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(
             counts,
             {
-                "batches": 1,
-                "records": 2,
+                "batches": 2,
+                "records": 4,
                 "baseRecords": 31,
-                "archiveRecords": 33,
+                "archiveRecords": 35,
                 "baseHistoricalLinks": 202,
-                "addedHistoricalLinks": 16,
-                "historicalLinks": 218,
-                "secretClean": 2,
-                "repairedConsumers": 6,
+                "addedHistoricalLinks": 31,
+                "historicalLinks": 233,
+                "secretClean": 4,
+                "repairedConsumers": 7,
             },
         )
 
@@ -53,20 +55,50 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(
             executed,
             {
-                "partial-pair",
-                "wrong-eligible-batch",
-                "reordered-eligible-batch",
+                "partial-second-pair",
+                "skipped-first-eligible-batch",
+                "skipped-second-eligible-batch",
+                "reordered-eligible-batches",
+                "prior-batch-evidence-drift",
                 "source-still-current",
                 "archive-payload-byte-drift",
-                "wrong-rollback-parent",
+                "wrong-first-rollback-parent",
+                "wrong-second-rollback-parent",
                 "missing-index-row",
-                "extra-index-row",
+                "duplicate-index-row",
                 "direct-current-link",
                 "duplicate-original-owner",
+                "rogue-extra-archive",
                 "unsafe-path",
                 "hostile-git-steering",
                 "self-referential-batch-commit",
             },
+        )
+
+    def test_committed_first_batch_semantics_remain_stable(self) -> None:
+        validator = load_validator()
+        _eligibility, migration = validator.load_documents(ROOT)
+        canonical = json.dumps(
+            migration["batches"][0], sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+
+        self.assertEqual(
+            hashlib.sha256(canonical).hexdigest(),
+            "6c984f882f245fb40c02e0d5875064bd899cac2d94194c3a99fc2fca26961a70",  # pragma: allowlist secret
+        )
+
+    def test_wrong_second_rollback_parent_fails_closed(self) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+        mutated = copy.deepcopy(migration)
+        mutated["batches"][1]["rollbackParentCommit"] = "0" * 40
+
+        with self.assertRaises(validator.MigrationError) as raised:
+            validator.validate_ledger_document(mutated, eligibility)
+
+        self.assertEqual(
+            str(raised.exception),
+            "MIGRATION-ROLLBACK docs/90.references/data/active-corpus-migration-results.json",
         )
 
     def test_ledger_is_closed_and_forbids_a_batch_commit_identity(self) -> None:

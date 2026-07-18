@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Protected Surface and Supply Chain Hardening Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "7aa4c02b8d08a534a26c83c1d0c76194c548cdd0"
+content_sha256: "df5a5f4569fa33996700514ec50364b358d89a1d45f1d7de86da19fb386aa4e8"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Protected Surface and Supply Chain Hardening Implementation Plan'
 type: sdlc/plan
 status: done

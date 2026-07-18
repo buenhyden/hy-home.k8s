@@ -154,8 +154,7 @@ git diff --check
 
 ### Delivery and References
 
-- **Implementation Plan**: [Protected Surface and Supply Chain Hardening Implementation Plan](../../04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md)
-- **Execution Task**: [Protected Surface and Supply Chain Hardening Task](../../04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md)
+- **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 - **GitHub Actions Security**: [Secure use reference](https://docs.github.com/en/actions/reference/security/secure-use)
 - **GitOps Principles**: [OpenGitOps](https://opengitops.dev/)
 - **ESO Security**: [External Secrets security best practices](https://external-secrets.io/v2.0.0/guides/security-best-practices/)

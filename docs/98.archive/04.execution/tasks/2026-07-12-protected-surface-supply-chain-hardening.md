@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Protected Surface and Supply Chain Hardening"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "9ac89d688982348333ee89f304a938cf6fab96c5"
+content_sha256: "a10f56bf7501369e79969f10417a8380670614e3cc15112bd8b5b551c6d3a46f"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Protected Surface and Supply Chain Hardening'
 type: sdlc/task
 status: done

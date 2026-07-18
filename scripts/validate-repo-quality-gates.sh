@@ -30,7 +30,9 @@ if [[ -f "$ROOT_DIR/docs/99.templates/templates/common/archive-record.template.m
 fi
 for archive_candidate in \
     docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md \
-    docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md; do
+    docs/98.archive/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
+    docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md \
+    docs/98.archive/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md; do
     if [[ -f "$ROOT_DIR/$archive_candidate" ]]; then
         DOCUMENT_INCLUDE_ARGS+=(--include-path "$archive_candidate")
     fi

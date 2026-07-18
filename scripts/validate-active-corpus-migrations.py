@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import posixpath
@@ -59,6 +60,11 @@ CANDIDATE_SOURCE_COMMIT = "a12aedfb71ccabd329dabc83bd2863474d1126b0"  # pragma: 
 ELIGIBILITY_CONTENT_COMMIT = "414905ce4219a6c98088115485b37ad084e2951a"  # pragma: allowlist secret
 ELIGIBILITY_EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlist secret
 FIRST_ROLLBACK_PARENT = "90d496e4e96c172785eb23071173a7751e688fd1"  # pragma: allowlist secret
+SECOND_ROLLBACK_PARENT = "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: allowlist secret
+FIRST_BATCH_SEMANTIC_SHA256 = (
+    "6c984f882f245fb40c02e0d5875064bd899cac2d94194c3a99fc2fca26961a70"  # pragma: allowlist secret
+)
+ACCEPTED_BATCHES = 2
 BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
 GIT_EXECUTABLE = "/usr/bin/git"
@@ -73,16 +79,20 @@ MARKER = re.compile(
 )
 
 REQUIRED_SELF_TEST_CASES = {
-    "partial-pair",
-    "wrong-eligible-batch",
-    "reordered-eligible-batch",
+    "partial-second-pair",
+    "skipped-first-eligible-batch",
+    "skipped-second-eligible-batch",
+    "reordered-eligible-batches",
+    "prior-batch-evidence-drift",
     "source-still-current",
     "archive-payload-byte-drift",
-    "wrong-rollback-parent",
+    "wrong-first-rollback-parent",
+    "wrong-second-rollback-parent",
     "missing-index-row",
-    "extra-index-row",
+    "duplicate-index-row",
     "direct-current-link",
     "duplicate-original-owner",
+    "rogue-extra-archive",
     "unsafe-path",
     "hostile-git-steering",
     "self-referential-batch-commit",
@@ -146,6 +156,22 @@ FIRST_REPAIRED_CONSUMERS = (
     "docs/04.execution/tasks/README.md",
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
     "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+)
+SECOND_REPAIRED_CONSUMERS = (
+    "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+    "docs/03.specs/README.md",
+    "docs/04.execution/plans/README.md",
+    "docs/04.execution/tasks/README.md",
+    "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+)
+REPAIRED_CONSUMERS_BY_SEQUENCE = (
+    FIRST_REPAIRED_CONSUMERS,
+    SECOND_REPAIRED_CONSUMERS,
+)
+ROLLBACK_PARENTS = (
+    FIRST_ROLLBACK_PARENT,
+    SECOND_ROLLBACK_PARENT,
 )
 
 INDEX_COLUMNS = (
@@ -393,7 +419,7 @@ def _spec_path(pair_key: str, spec: str) -> str:
 def validate_ledger_document(
     document: Mapping[str, Any], eligibility: Mapping[str, Any]
 ) -> dict[str, int]:
-    """Validate the closed result schema and deterministic eligible prefix."""
+    """Validate the closed result schema and exact reviewed eligible prefix."""
 
     top = _exact_keys(document, TOP_KEYS, "MIGRATION-SCHEMA")
     if (
@@ -416,8 +442,8 @@ def validate_ledger_document(
         _fail("MIGRATION-BASE")
     counts = _exact_keys(top["counts"], COUNT_KEYS, "MIGRATION-SCHEMA")
     batches = _exact_list(top["batches"], "MIGRATION-SCHEMA")
-    if not batches:
-        _fail("MIGRATION-EMPTY")
+    if len(batches) != ACCEPTED_BATCHES:
+        _fail("MIGRATION-ELIGIBLE-PREFIX")
 
     eligible_order = _eligible_pairs(eligibility)
     eligible_rows = _eligibility_rows(eligibility)
@@ -445,7 +471,7 @@ def validate_ledger_document(
         rollback = batch["rollbackParentCommit"]
         if not isinstance(rollback, str) or FULL_OID.fullmatch(rollback) is None:
             _fail("MIGRATION-ROLLBACK")
-        if offset == 1 and rollback != FIRST_ROLLBACK_PARENT:
+        if rollback != ROLLBACK_PARENTS[offset - 1]:
             _fail("MIGRATION-ROLLBACK")
 
         program = _exact_keys(batch["program"], PROGRAM_KEYS, "MIGRATION-SCHEMA")
@@ -518,10 +544,16 @@ def validate_ledger_document(
         if (
             not canonical_repaired
             or tuple(sorted(set(canonical_repaired))) != canonical_repaired
-            or (offset == 1 and canonical_repaired != FIRST_REPAIRED_CONSUMERS)
+            or canonical_repaired != REPAIRED_CONSUMERS_BY_SEQUENCE[offset - 1]
         ):
             _fail("MIGRATION-CONSUMERS")
         repaired_total += len(canonical_repaired)
+
+    first_batch_canonical = json.dumps(
+        batches[0], sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    if hashlib.sha256(first_batch_canonical).hexdigest() != FIRST_BATCH_SEMANTIC_SHA256:
+        _fail("MIGRATION-PRIOR-BATCH-DRIFT")
 
     expected_counts = {
         "batches": len(batches),
@@ -733,6 +765,20 @@ def _git_paths(root: Path) -> tuple[str, ...]:
     return paths
 
 
+def _validate_archive_inventory(
+    paths: Sequence[str], individual_paths: frozenset[str]
+) -> None:
+    actual = frozenset(
+        path
+        for path in paths
+        if path.startswith("docs/98.archive/")
+        and path.endswith(".md")
+        and path != ARCHIVE_INDEX_PATH
+    )
+    if actual != individual_paths:
+        _fail("MIGRATION-ROGUE-ARCHIVE", ARCHIVE_INDEX_PATH)
+
+
 def _current_documents(
     root: Path,
     individual_paths: frozenset[str],
@@ -896,6 +942,8 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
     individual_paths = frozenset(EXPECTED_ARCHIVE_PATHS) | frozenset(
         str(row["archivePath"]) for row in rows
     )
+    current_paths = set(_git_paths(root))
+    _validate_archive_inventory(tuple(current_paths), individual_paths)
     with _closed_git_environment():
         current_report = validate_current_archive_authority(
             _current_documents(root, individual_paths),
@@ -910,7 +958,6 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
         for batch in document["batches"]
         for path in batch["repairedConsumers"]
     }
-    current_paths = set(_git_paths(root))
     if not repaired <= current_paths:
         _fail("MIGRATION-CONSUMERS")
 
@@ -947,39 +994,60 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         executed.add(name)
 
     ledger_case(
-        "partial-pair",
-        lambda value: value["batches"][0]["records"].pop(),
+        "partial-second-pair",
+        lambda value: value["batches"][1]["records"].pop(),
         "MIGRATION-PAIR",
     )
     ledger_case(
-        "wrong-eligible-batch",
+        "skipped-first-eligible-batch",
         lambda value: value["batches"][0].__setitem__(
             "pairKey", "2026-07-12-protected-surface-supply-chain-hardening"  # gitleaks:allow
         ),
         "MIGRATION-ELIGIBLE-PREFIX",
     )
     ledger_case(
-        "reordered-eligible-batch",
-        lambda value: value["batches"][0].__setitem__("sequence", 2),
-        "MIGRATION-SEQUENCE",
+        "skipped-second-eligible-batch",
+        lambda value: value["batches"][1].__setitem__(
+            "pairKey", "2026-07-14-template-lifecycle-contract-normalization"
+        ),
+        "MIGRATION-ELIGIBLE-PREFIX",
     )
     ledger_case(
-        "wrong-rollback-parent",
+        "reordered-eligible-batches",
+        lambda value: value["batches"].reverse(),
+        "MIGRATION-ELIGIBLE-PREFIX",
+    )
+    ledger_case(
+        "prior-batch-evidence-drift",
+        lambda value: value["batches"][0].__setitem__(
+            "completedOn", "2026-07-17"
+        ),
+        "MIGRATION-PRIOR-BATCH-DRIFT",
+    )
+    ledger_case(
+        "wrong-first-rollback-parent",
         lambda value: value["batches"][0].__setitem__(
             "rollbackParentCommit", "0" * 40
         ),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
+        "wrong-second-rollback-parent",
+        lambda value: value["batches"][1].__setitem__(
+            "rollbackParentCommit", "0" * 40
+        ),
+        "MIGRATION-ROLLBACK",
+    )
+    ledger_case(
         "duplicate-original-owner",
-        lambda value: value["batches"][0]["records"][1].__setitem__(
-            "originalPath", value["batches"][0]["records"][0]["originalPath"]
+        lambda value: value["batches"][1]["records"][1].__setitem__(
+            "originalPath", value["batches"][1]["records"][0]["originalPath"]
         ),
         "MIGRATION-DUPLICATE-ORIGINAL",
     )
     ledger_case(
         "self-referential-batch-commit",
-        lambda value: value["batches"][0].__setitem__("batchCommit", "0" * 40),
+        lambda value: value["batches"][1].__setitem__("batchCommit", "0" * 40),
         "MIGRATION-SCHEMA",
     )
 
@@ -1002,11 +1070,11 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         _fail("MIGRATION-SELF-TEST")
     executed.add("source-still-current")
 
-    first_row = rows[0]
-    original_content = (root / str(first_row["archivePath"])).read_bytes()
+    drift_row = rows[2]
+    original_content = (root / str(drift_row["archivePath"])).read_bytes()
     drifted = original_content[:-1] + bytes([original_content[-1] ^ 1])
     try:
-        _validate_archive_payload(root, first_row, drifted)
+        _validate_archive_payload(root, drift_row, drifted)
     except MigrationError as error:
         if error.code != "MIGRATION-ARCHIVE-PAYLOAD":
             _fail("MIGRATION-SELF-TEST")
@@ -1015,6 +1083,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     executed.add("archive-payload-byte-drift")
 
     index_text = (root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
+    first_row = rows[0]
     additive_line = next(
         line
         for line in index_text.splitlines(keepends=True)
@@ -1024,18 +1093,37 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     for name, candidate in (
         ("missing-index-row", index_text.replace(additive_line, "", 1)),
         (
-            "extra-index-row",
+            "duplicate-index-row",
             index_text.replace(additive_line, additive_line + additive_line, 1),
         ),
     ):
         try:
             _validate_index(candidate, document)
         except MigrationError as error:
-            if error.code not in {"MIGRATION-INDEX-STRUCTURE", "MIGRATION-INDEX-SET", "MIGRATION-INDEX-MARKER"}:
+            if error.code not in {
+                "MIGRATION-INDEX-STRUCTURE",
+                "MIGRATION-INDEX-SET",
+                "MIGRATION-INDEX-MARKER",
+            }:
                 _fail("MIGRATION-SELF-TEST")
         else:
             _fail("MIGRATION-SELF-TEST")
         executed.add(name)
+
+    individual_paths = frozenset(EXPECTED_ARCHIVE_PATHS) | frozenset(
+        str(row["archivePath"]) for row in rows
+    )
+    try:
+        _validate_archive_inventory(
+            (*individual_paths, "docs/98.archive/04.execution/plans/rogue-extra.md"),
+            individual_paths,
+        )
+    except MigrationError as error:
+        if error.code != "MIGRATION-ROGUE-ARCHIVE":
+            _fail("MIGRATION-SELF-TEST")
+    else:
+        _fail("MIGRATION-SELF-TEST")
+    executed.add("rogue-extra-archive")
 
     direct = CurrentMarkdownDocument(
         path="docs/current.md",

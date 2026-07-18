@@ -95,7 +95,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertEqual(
             completed.stdout,
-            "PASS archive cutover records=33 historical_links=218 secret_clean=33\n",
+            "PASS archive cutover records=35 historical_links=233 secret_clean=35\n",
         )
         self.assertEqual(completed.stderr, "")
 
@@ -116,8 +116,8 @@ class ArchiveCutoverTest(unittest.TestCase):
             archive_cutover.EXPECTED_HISTORICAL_LINKS,
         )
         self.assertEqual(archive_cutover.EXPECTED_HISTORICAL_LINKS, 202)
-        self.assertEqual(len(rows), 33)
-        self.assertEqual(sum(row.historical_links for row in rows.values()), 218)
+        self.assertEqual(len(rows), 35)
+        self.assertEqual(sum(row.historical_links for row in rows.values()), 233)
 
     def test_partial_projection_emits_named_red_without_payload(self) -> None:
         report = archive_cutover.CutoverReport(
@@ -156,7 +156,7 @@ class ArchiveCutoverTest(unittest.TestCase):
             text = original_read_text(path, *args, **kwargs)
             if path.resolve() == index_path:
                 return text.replace(
-                    "<!-- archive-manifest:v1 records=33 historical-links=218 -->",
+                    "<!-- archive-manifest:v1 records=35 historical-links=233 -->",
                     "",
                 )
             return text

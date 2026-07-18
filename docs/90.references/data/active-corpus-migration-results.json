@@ -13,11 +13,11 @@
   },
   "archiveIndex": "docs/98.archive/README.md#document-index",
   "counts": {
-    "batches": 1,
-    "records": 2,
-    "archiveRecords": 33,
-    "historicalLinksAdded": 16,
-    "historicalLinks": 218
+    "batches": 2,
+    "records": 4,
+    "archiveRecords": 35,
+    "historicalLinksAdded": 31,
+    "historicalLinks": 233
   },
   "batches": [
     {
@@ -69,6 +69,61 @@
           "payloadBytes": 23460,
           "payloadSha256": "fe8c79bc62deda32ff9f91a005f4aa879179fcc6548c57d43a351a424a507017",
           "historicalLinks": 10,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "batchId": "ACER-003-002",
+      "pairKey": "2026-07-12-protected-surface-supply-chain-hardening",
+      "status": "complete",
+      "completedOn": "2026-07-18",
+      "upstreamSpec": "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+      "program": {
+        "prd": "005",
+        "ard": "0008",
+        "lineage": "tranche"
+      },
+      "currentClosureOwner": "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+      "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+      "rollbackParentCommit": "b390d54cab5c4b94960878f8d7f4fd887d18a132",
+      "repairedConsumers": [
+        "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+        "docs/03.specs/README.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+      ],
+      "validationResult": "PASS",
+      "records": [
+        {
+          "kind": "plan",
+          "originalPath": "docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md",
+          "archivePath": "docs/98.archive/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md",
+          "originalType": "plan",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "7aa4c02b8d08a534a26c83c1d0c76194c548cdd0",
+          "payloadBytes": 59438,
+          "payloadSha256": "df5a5f4569fa33996700514ec50364b358d89a1d45f1d7de86da19fb386aa4e8",
+          "historicalLinks": 7,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        },
+        {
+          "kind": "task",
+          "originalPath": "docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md",
+          "archivePath": "docs/98.archive/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md",
+          "originalType": "task",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "9ac89d688982348333ee89f304a938cf6fab96c5",
+          "payloadBytes": 17762,
+          "payloadSha256": "a10f56bf7501369e79969f10417a8380670614e3cc15112bd8b5b551c6d3a46f",
+          "historicalLinks": 8,
           "archiveReason": "completed-lineage",
           "replacement": null,
           "validationResult": "PASS"

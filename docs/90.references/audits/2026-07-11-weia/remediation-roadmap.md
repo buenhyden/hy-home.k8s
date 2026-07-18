@@ -133,9 +133,9 @@ finding, priority, score, or live/provider evidence boundary.
 ### RMD-014 closure evidence
 
 The repository-static protected-surface tranche is closed by
-[Spec 032](../../../03.specs/032-protected-surface-supply-chain-hardening/spec.md),
-its [implementation Plan](../../../04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md),
-and its [evidence Task](../../../04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md).
+[Spec 032](../../../03.specs/032-protected-surface-supply-chain-hardening/spec.md).
+Its completed Plan and Task history remains available through the
+[Archive Index](../../../98.archive/README.md#document-index).
 The fail-closed
 [`validate-github-actions-security.py`](../../../../scripts/validate-github-actions-security.py)
 guardrail verifies the five current workflows:
