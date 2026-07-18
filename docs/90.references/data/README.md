@@ -47,6 +47,7 @@ stage로 라우팅한다.
 ```text
 data/
 ├── active-corpus-retention-census.json # ACER-001 immutable corpus census and dispositions
+├── active-corpus-eligibility-ledger.json # ACER-002 pinned dry-run eligibility ledger
 ├── agent-reference-index.md          # Durable Agent reference catalog boundary
 ├── tech-stack-version-inventory.md   # Repo-backed version contracts and cloud snapshots
 └── README.md                         # This file
@@ -75,6 +76,7 @@ data/
 | Document | Reference Type | Role | Freshness Trigger |
 | --- | --- | --- | --- |
 | [Active Corpus Retention Census](./active-corpus-retention-census.json) | repo-backed immutable census / external-method snapshot | Exact 110 candidate rows, Spec 037 controls, Stage 05, pinned 29-file helper input, exact one-test proposal delta, proposed 30-file helper counts, owned ACER-001 dispositions, explicit unresolved upstream/program/owner/link/closure evidence axes, and canonical safe row paths with value-free diagnostics; neither helper count substitutes for ACER-004 recomputation, and body-Spec links are non-authoritative observations | ACER-002 eligibility evidence, Spec 037 closure, ACER-004 then-current role audit, pinned commit/object drift, proposal delta, or methodology-source change |
+| [Active Corpus Eligibility Ledger](./active-corpus-eligibility-ledger.json) | repo-backed dry-run ledger | Exact pinned 110 candidate identities, 12 complete lineage pairs eligible only for a future ACER-003 atomic cutover, 98 owned `DEFER` rows, and two retained Spec 037 controls; it records route, consumer, recovery, and no-cutover evidence without moving a file | ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
@@ -84,6 +86,8 @@ data/
 - `active-corpus-retention-census.json` is immutable ACER-001 input evidence;
   it does not authorize archive migration, infer current worktree state, or
   promote any row to `eligible`.
+- `active-corpus-eligibility-ledger.json` is ACER-002 dry-run evidence only;
+  its eligibility result does not create an archive payload, index row, or migration.
 - `docs/00.agent-governance/**` owns agent runtime truth, provider behavior,
   hooks, permissions, model routing, and execution rules.
 - `docs/03.specs/**/agent-design.md` owns feature-local Agent designs.

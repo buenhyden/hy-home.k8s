@@ -22,3 +22,14 @@ id = "generic-api-key"
   regexes = [
     '''"pairKey": "(2026-06-02-phase-1-decision-follow-up|2026-06-02-phase-3-protected-surface-hardening|2026-07-12-protected-surface-supply-chain-hardening)"''',
   ]
+
+  [[rules.allowlists]]
+  description = "Allow only ACER-002 ledger pairKey false positives at the exact data path"
+  condition = "AND"
+  paths = [
+    '''(?:^|/)docs/90\.references/data/active-corpus-eligibility-ledger\.json$''',
+  ]
+  regexTarget = "line"
+  regexes = [
+    '''"pairKey": "(2026-06-02-phase-1-decision-follow-up|2026-06-02-phase-3-protected-surface-hardening|2026-07-12-protected-surface-supply-chain-hardening)"''',
+  ]
