@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Affected Surface and Agent QA"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "7f8293bcd152aaaafcbeee15d4a77109c56e140a"
+content_sha256: "fe8c79bc62deda32ff9f91a005f4aa879179fcc6548c57d43a351a424a507017"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Affected Surface and Agent QA'
 type: sdlc/task
 status: done

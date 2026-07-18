@@ -9,6 +9,7 @@ printed or retained in the report.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import posixpath
@@ -19,6 +20,7 @@ import subprocess
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from types import ModuleType
 from typing import Sequence
 
 import yaml
@@ -62,6 +64,7 @@ else:
 
 
 EXPECTED_HISTORICAL_LINKS = 202
+MIGRATION_RESULTS_PATH = "docs/90.references/data/active-corpus-migration-results.json"
 FIRST_SOURCE_COMMIT = (
     "5e0221525450dbdacb585e6c98ade3f060ddc827"  # pragma: allowlist secret
 )
@@ -159,7 +162,7 @@ class ArchiveIndexRow:
     source_blob: str
     content_sha256: str
     historical_links: int
-    replacement: str
+    replacement: str | None
     reason: str
 
 
@@ -320,6 +323,10 @@ _INDEX_HEADER = "| " + " | ".join(_INDEX_COLUMNS) + " |"
 _INDEX_SEPARATOR = "| --- | --- | --- | --- | --- | --- | ---: | --- | --- |"
 _MARKDOWN_LINK = re.compile(r"\[`(?P<label>[^`]+)`\]\((?P<target>[^)]+)\)")
 _CODE_CELL = re.compile(r"`(?P<value>[^`]+)`")
+_INDEX_MANIFEST = re.compile(
+    r"<!-- archive-manifest:v1 records=(?P<records>\d+) "
+    r"historical-links=(?P<links>\d+) -->"
+)
 
 
 def _index_target(target: str) -> str | None:
@@ -340,29 +347,81 @@ def _replacement_target(label: str, target: str) -> str | None:
     return normalized
 
 
+@lru_cache(maxsize=1)
+def _load_migration_validator() -> ModuleType:
+    """Load the additive ACER validator from its canonical CLI module."""
+
+    path = Path(__file__).resolve(strict=True).with_name(
+        "validate-active-corpus-migrations.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "_archive_cutover_active_corpus_migrations", path
+    )
+    if spec is None or spec.loader is None:
+        raise RuntimeError("migration validator is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    if Path(str(getattr(module, "__file__", ""))).resolve(strict=True) != path:
+        raise RuntimeError("migration validator is unavailable")
+    return module
+
+
+def _migration_projection(
+    root: Path,
+) -> tuple[dict[str, dict[str, object]], dict[str, int]]:
+    """Return only records admitted by the closed eligible-prefix ledger."""
+
+    module = _load_migration_validator()
+    eligibility, document = module.load_documents(root)
+    counts = module.validate_ledger_document(document, eligibility)
+    rows: dict[str, dict[str, object]] = {}
+    for batch in document["batches"]:
+        for row in batch["records"]:
+            projected = dict(row)
+            projected["_currentClosureOwner"] = batch["currentClosureOwner"]
+            projected["_archiveNavigationBoundary"] = batch[
+                "archiveNavigationBoundary"
+            ]
+            rows[str(row["archivePath"])] = projected
+    if len(rows) != counts["records"]:
+        raise RuntimeError("migration validator returned an invalid projection")
+    return rows, dict(counts)
+
+
 def _parse_index_row(line: str) -> ArchiveIndexRow | None:
     cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
     if len(cells) != len(_INDEX_COLUMNS):
         return None
     record_match = _MARKDOWN_LINK.fullmatch(cells[0])
-    replacement_match = _MARKDOWN_LINK.fullmatch(cells[7])
     code_matches = tuple(_CODE_CELL.fullmatch(cells[index]) for index in range(1, 6))
     reason_match = _CODE_CELL.fullmatch(cells[8])
     if (
         record_match is None
-        or replacement_match is None
         or any(match is None for match in code_matches)
         or reason_match is None
         or not cells[6].isdigit()
     ):
         return None
     archive_path = _index_target(record_match.group("target"))
-    replacement = _replacement_target(
-        replacement_match.group("label"), replacement_match.group("target")
-    )
+    reason = reason_match.group("value")
+    if cells[7] == "`null`":
+        replacement = None
+        if reason != "completed-lineage":
+            return None
+    else:
+        replacement_match = _MARKDOWN_LINK.fullmatch(cells[7])
+        if replacement_match is None or reason not in {
+            "superseded",
+            "consolidated",
+            "duplicate",
+        }:
+            return None
+        replacement = _replacement_target(
+            replacement_match.group("label"), replacement_match.group("target")
+        )
     if (
         archive_path is None
-        or replacement is None
+        or (reason != "completed-lineage" and replacement is None)
         or record_match.group("label") != archive_path.removeprefix("docs/98.archive/")
     ):
         return None
@@ -376,7 +435,7 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
         content_sha256=values[4],
         historical_links=int(cells[6]),
         replacement=replacement,
-        reason=reason_match.group("value"),
+        reason=reason,
     )
 
 
@@ -401,7 +460,7 @@ def _parse_archive_index(
         raw_rows.append(line)
     manifest_end = header_offset + 2 + len(raw_rows)
     rows: dict[str, ArchiveIndexRow] = {}
-    structure_failure = len(raw_rows) != EXPECTED_ARCHIVE_RECORDS or any(
+    structure_failure = not raw_rows or any(
         line.startswith("|")
         for offset, line in enumerate(lines)
         if not header_offset <= offset < manifest_end
@@ -412,8 +471,6 @@ def _parse_archive_index(
             structure_failure = True
             continue
         rows[row.archive_path] = row
-    if frozenset(rows) != frozenset(EXPECTED_ARCHIVE_PATHS):
-        structure_failure = True
     return rows, structure_failure
 
 
@@ -484,9 +541,25 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             secret_clean_count=0,
         )
     diagnostics: list[CutoverDiagnostic] = list(_finite_cutover_base_diagnostics(root))
-    expected_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
+    try:
+        migration_rows, migration_counts = _migration_projection(root)
+    except Exception:
+        migration_rows = {}
+        migration_counts = {
+            "records": 0,
+            "historicalLinksAdded": 0,
+        }
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-LEDGER", MIGRATION_RESULTS_PATH)
+        )
+    base_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
+    expected_paths = base_paths | frozenset(migration_rows)
+    expected_records = EXPECTED_ARCHIVE_RECORDS + migration_counts["records"]
+    expected_historical_links = (
+        EXPECTED_HISTORICAL_LINKS + migration_counts["historicalLinksAdded"]
+    )
     present_paths = frozenset(
-        path for path in EXPECTED_ARCHIVE_PATHS if _regular_file(root, path)
+        path for path in expected_paths if _regular_file(root, path)
     )
     if present_paths != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
@@ -494,7 +567,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     records: list[ArchiveRecord] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
     secret_clean_count = 0
-    for archive_path in EXPECTED_ARCHIVE_PATHS:
+    for archive_path in sorted(expected_paths):
         if archive_path not in present_paths:
             continue
         try:
@@ -504,9 +577,15 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             diagnostics.append(_diagnostic("ARCHIVE-ENVELOPE-INVALID", archive_path))
             continue
         original_path = parsed.metadata.get("original_path")
-        if not isinstance(original_path, str) or parsed.metadata.get(
-            "source_commit"
-        ) != _source_commit(original_path):
+        expected_source_commit = (
+            migration_rows[archive_path].get("sourceCommit")
+            if archive_path in migration_rows
+            else _source_commit(str(original_path))
+        )
+        if (
+            not isinstance(original_path, str)
+            or parsed.metadata.get("source_commit") != expected_source_commit
+        ):
             diagnostics.append(_diagnostic("ARCHIVE-SOURCE-OWNERSHIP", archive_path))
             continue
         secret_diagnostic = _secret_classifier(root, archive_path, parsed.payload)
@@ -531,10 +610,21 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         _diagnostic(item.code, item.path) for item in archive_report.diagnostics
     )
     if (
-        len(records) != EXPECTED_ARCHIVE_RECORDS
-        or archive_report.historical_link_count != EXPECTED_HISTORICAL_LINKS
+        len(records) != expected_records
+        or archive_report.historical_link_count != expected_historical_links
     ):
         diagnostics.append(_diagnostic("ARCHIVE-EVIDENCE-COUNT", ARCHIVE_INDEX))
+    base_report = validate_archive_records(
+        root,
+        tuple(record for record in records if record.path in base_paths),
+    )
+    if (
+        not base_report.valid
+        or len(tuple(record for record in records if record.path in base_paths))
+        != EXPECTED_ARCHIVE_RECORDS
+        or base_report.historical_link_count != EXPECTED_HISTORICAL_LINKS
+    ):
+        diagnostics.append(_diagnostic("ARCHIVE-FINITE-BASE", ARCHIVE_INDEX))
 
     original_paths = [row[1].get("original_path") for row in metadata_rows]
     if len(original_paths) != len(set(original_paths)):
@@ -548,8 +638,26 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             diagnostics.append(
                 _diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", archive_path)
             )
-        if not isinstance(replacement, str) or not _regular_file(root, replacement):
-            diagnostics.append(_diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path))
+        reason = metadata.get("archive_reason")
+        if reason == "completed-lineage":
+            migration = migration_rows.get(archive_path)
+            if (
+                replacement is not None
+                or migration is None
+                or not _regular_file(
+                    root,
+                    str(migration.get("_currentClosureOwner", "<invalid-path>")),
+                )
+                or migration.get("_archiveNavigationBoundary")
+                != f"{ARCHIVE_INDEX}#document-index"
+            ):
+                diagnostics.append(
+                    _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
+                )
+        elif not isinstance(replacement, str) or not _regular_file(root, replacement):
+            diagnostics.append(
+                _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
+            )
 
     registry_path = root / "docs/99.templates/support/document-profiles.json"
     try:
@@ -587,13 +695,19 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
-    if (
-        index_text.count("<!-- archive-manifest:v1 records=31 historical-links=202 -->")
-        != 1
-    ):
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
     index_rows, index_structure_failure = _parse_archive_index(index_text)
-    if index_structure_failure:
+    index_links = sum(row.historical_links for row in index_rows.values())
+    markers = tuple(_INDEX_MANIFEST.finditer(index_text))
+    marker_valid = (
+        len(markers) == 1
+        and int(markers[0].group("records")) == len(index_rows)
+        and int(markers[0].group("links")) == index_links
+        and len(index_rows) == expected_records
+        and index_links == expected_historical_links
+    )
+    if not marker_valid:
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
+    if index_structure_failure or frozenset(index_rows) != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX))
     for archive_path, metadata, link_count in metadata_rows:
         index_row = index_rows.get(archive_path)
@@ -605,7 +719,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             source_blob=str(metadata.get("source_blob")),
             content_sha256=str(metadata.get("content_sha256")),
             historical_links=link_count,
-            replacement=str(metadata.get("replacement")),
+            replacement=metadata.get("replacement")
+            if isinstance(metadata.get("replacement"), str)
+            else None,
             reason=str(metadata.get("archive_reason")),
         )
         if index_row != expected_row:

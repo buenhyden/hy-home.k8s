@@ -94,7 +94,6 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-12-readme-workspace-profiles.md
 ├── 2026-07-12-semantic-document-validation.md
 ├── 2026-07-12-authored-document-migration.md
-├── 2026-07-12-affected-surface-agent-qa.md
 ├── 2026-07-12-protected-surface-supply-chain-hardening.md
 ├── 2026-07-14-template-lifecycle-contract-normalization.md
 ├── 2026-07-15-authority-and-lineage-foundation.md
@@ -177,7 +176,6 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 evidence for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | ADM-001 through ADM-007 execution evidence for durable inventory, authored-document normalization, cloud consolidation, and strict cutover. | Done | 2026-07-13 |
-| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 execution evidence for reciprocal lineage, affected-surface selection, local/CI parity, cross-surface role semantics, and Stage 00 QA handoff under the parent [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Plan](../plans/2026-07-12-affected-surface-agent-qa.md). | Done | 2026-07-14 |
 | [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 execution evidence for Action identity, workflow permissions, identity-only GitOps review, Vault/ESO boundaries, full repository-static QA, independent review, and explicit remote/live `DEFER` under the parent [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Plan](../plans/2026-07-12-protected-surface-supply-chain-hardening.md). | Done | 2026-07-14 |
 | [`./2026-07-14-template-lifecycle-contract-normalization.md`](./2026-07-14-template-lifecycle-contract-normalization.md) | TLCN-001 through TLCN-008 and the independent whole-branch closure review are Done under [Spec 033](../../03.specs/033-template-lifecycle-contract-normalization/spec.md) and its [Plan](../plans/2026-07-14-template-lifecycle-contract-normalization.md). | Done | 2026-07-15 |
 | [`./2026-07-15-authority-and-lineage-foundation.md`](./2026-07-15-authority-and-lineage-foundation.md) | Completed ALF-001 through ALF-006 evidence owner for registry v6 lineage, execution admission, Current audit disposition, and [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md) closure under its [Plan](../plans/2026-07-15-authority-and-lineage-foundation.md). | Done | 2026-07-15 |

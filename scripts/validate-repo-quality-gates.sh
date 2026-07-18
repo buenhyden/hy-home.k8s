@@ -28,6 +28,13 @@ if [[ -f "$ROOT_DIR/docs/99.templates/templates/common/archive-record.template.m
         docs/99.templates/templates/common/archive-record.template.md
     )
 fi
+for archive_candidate in \
+    docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md \
+    docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md; do
+    if [[ -f "$ROOT_DIR/$archive_candidate" ]]; then
+        DOCUMENT_INCLUDE_ARGS+=(--include-path "$archive_candidate")
+    fi
+done
 
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict "${DOCUMENT_INCLUDE_ARGS[@]}"
@@ -46,6 +53,8 @@ python3 "$ROOT_DIR/scripts/validate-active-corpus-retention.py" --root "$ROOT_DI
 python3 "$ROOT_DIR/scripts/validate-active-corpus-retention.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-active-corpus-eligibility.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-active-corpus-eligibility.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-active-corpus-migrations.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-active-corpus-migrations.py" --root "$ROOT_DIR"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"

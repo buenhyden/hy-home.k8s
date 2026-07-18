@@ -177,8 +177,8 @@ and live infrastructure remain `DEFER` for their separately authorized owners.
 
 ### Delivery and References
 
-- **Implementation Plan**: [Affected Surface and Agent QA Implementation Plan](../../04.execution/plans/2026-07-12-affected-surface-agent-qa.md)
-- **Execution Task**: [Affected Surface and Agent QA Task](../../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md)
+- **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
+- **Current closure authority**: this Spec retains the implemented ASQA contract; archived Plan/Task payloads are historical evidence only.
 - **Next Spec**: [Protected Surface and Supply Chain Hardening](../032-protected-surface-supply-chain-hardening/spec.md)
 - **pre-commit Semantics**: [pre-commit documentation](https://pre-commit.com/)
 - **Agent Governance**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)

@@ -62,7 +62,7 @@ repos:
           # domain validators; only canonical identity-only lines are ignored.
           - '--exclude-lines'
           - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$'
-        exclude: '^(.*/tests/.*|graphify-out/.*|docs/90\.references/data/active-corpus-eligibility-ledger\.json)$'
+        exclude: '^(.*/tests/.*|graphify-out/.*|docs/90\.references/data/active-corpus-(eligibility-ledger|migration-results)\.json)$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.22.1 # 또는 최신 릴리스

@@ -1,0 +1,79 @@
+{
+  "$schema": "active-corpus-migration-results.v1",
+  "schemaVersion": 1,
+  "ownerSpec": "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+  "censusInput": "docs/90.references/data/active-corpus-retention-census.json",
+  "eligibilityInput": "docs/90.references/data/active-corpus-eligibility-ledger.json",
+  "candidateSourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+  "eligibilityEvidenceSnapshotCommit": "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6",
+  "archiveBase": {
+    "proof": "ARWB-003",
+    "records": 31,
+    "historicalLinks": 202
+  },
+  "archiveIndex": "docs/98.archive/README.md#document-index",
+  "counts": {
+    "batches": 1,
+    "records": 2,
+    "archiveRecords": 33,
+    "historicalLinksAdded": 16,
+    "historicalLinks": 218
+  },
+  "batches": [
+    {
+      "sequence": 1,
+      "batchId": "ACER-003-001",
+      "pairKey": "2026-07-12-affected-surface-agent-qa",
+      "status": "complete",
+      "completedOn": "2026-07-18",
+      "upstreamSpec": "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+      "program": {
+        "prd": "005",
+        "ard": "0008",
+        "lineage": "tranche"
+      },
+      "currentClosureOwner": "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+      "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+      "rollbackParentCommit": "90d496e4e96c172785eb23071173a7751e688fd1",
+      "repairedConsumers": [
+        "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        "docs/03.specs/README.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+      ],
+      "validationResult": "PASS",
+      "records": [
+        {
+          "kind": "plan",
+          "originalPath": "docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md",
+          "archivePath": "docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md",
+          "originalType": "plan",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "1651035982a6f676d3b45e6b6fe047f955f60cd2",
+          "payloadBytes": 32887,
+          "payloadSha256": "114c1657b29b2a65ec7fe2bdbe80560141e72ccf75bc72c49d1e8bca739d55f2",
+          "historicalLinks": 6,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        },
+        {
+          "kind": "task",
+          "originalPath": "docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md",
+          "archivePath": "docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md",
+          "originalType": "task",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "7f8293bcd152aaaafcbeee15d4a77109c56e140a",
+          "payloadBytes": 23460,
+          "payloadSha256": "fe8c79bc62deda32ff9f91a005f4aa879179fcc6548c57d43a351a424a507017",
+          "historicalLinks": 10,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        }
+      ]
+    }
+  ]
+}

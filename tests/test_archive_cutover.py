@@ -95,9 +95,29 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertEqual(
             completed.stdout,
-            "PASS archive cutover records=31 historical_links=202 secret_clean=31\n",
+            "PASS archive cutover records=33 historical_links=218 secret_clean=33\n",
         )
         self.assertEqual(completed.stderr, "")
+
+    def test_finite_base_proof_remains_exact_inside_the_aggregate(self) -> None:
+        text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
+
+        rows, structure_failure = archive_cutover._parse_archive_index(text)
+        base_rows = {
+            path: rows[path]
+            for path in archive_cutover.EXPECTED_ARCHIVE_PATHS
+            if path in rows
+        }
+
+        self.assertFalse(structure_failure)
+        self.assertEqual(len(base_rows), 31)
+        self.assertEqual(
+            sum(row.historical_links for row in base_rows.values()),
+            archive_cutover.EXPECTED_HISTORICAL_LINKS,
+        )
+        self.assertEqual(archive_cutover.EXPECTED_HISTORICAL_LINKS, 202)
+        self.assertEqual(len(rows), 33)
+        self.assertEqual(sum(row.historical_links for row in rows.values()), 218)
 
     def test_partial_projection_emits_named_red_without_payload(self) -> None:
         report = archive_cutover.CutoverReport(
@@ -136,7 +156,7 @@ class ArchiveCutoverTest(unittest.TestCase):
             text = original_read_text(path, *args, **kwargs)
             if path.resolve() == index_path:
                 return text.replace(
-                    "<!-- archive-manifest:v1 records=31 historical-links=202 -->",
+                    "<!-- archive-manifest:v1 records=33 historical-links=218 -->",
                     "",
                 )
             return text

@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Affected Surface and Agent QA Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "1651035982a6f676d3b45e6b6fe047f955f60cd2"
+content_sha256: "114c1657b29b2a65ec7fe2bdbe80560141e72ccf75bc72c49d1e8bca739d55f2"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Affected Surface and Agent QA Implementation Plan'
 type: sdlc/plan
 status: done
