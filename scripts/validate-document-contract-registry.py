@@ -150,39 +150,6 @@ LINEAGE_INVALID_FIXTURE_DOCUMENTS = {
     ),
 }
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
-EXPECTED_TOMBSTONE_BASELINE_PATHS = (
-    "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
-    "docs/98.archive/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-    "docs/98.archive/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md",
-    "docs/98.archive/02.architecture/decisions/0001-k3d-topology-and-network.md",
-    "docs/98.archive/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md",
-    "docs/98.archive/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
-    "docs/98.archive/02.architecture/decisions/0007-kubernetes-dashboard-v3.md",
-    "docs/98.archive/02.architecture/decisions/0010-headlamp-replaces-dashboard.md",
-    "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
-    "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
-    "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
-    "docs/98.archive/03.specs/001-wsl-k3d-argocd-platform/spec.md",
-    "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md",
-    "docs/98.archive/03.specs/003-platform-expansion/spec.md",
-    "docs/98.archive/03.specs/007-docs-governance-consistency/spec.md",
-    "docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md",
-    "docs/98.archive/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-    "docs/98.archive/04.execution/plans/2026-03-29-platform-expansion.md",
-    "docs/98.archive/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md",
-    "docs/98.archive/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md",
-    "docs/98.archive/04.execution/plans/2026-05-28-docs-governance-consistency.md",
-    "docs/98.archive/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md",
-    "docs/98.archive/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md",
-    "docs/98.archive/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-    "docs/98.archive/04.execution/tasks/2026-03-29-platform-expansion.md",
-    "docs/98.archive/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md",
-    "docs/98.archive/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md",
-    "docs/98.archive/04.execution/tasks/2026-05-28-docs-governance-consistency.md",
-    "docs/98.archive/04.execution/tasks/2026-05-30-governance-refactoring.md",
-    "docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md",
-    "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
-)
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
 )
@@ -554,6 +521,21 @@ EXPECTED_CASES = (
         ("REGISTRY_ROLE_DECISION", "REGISTRY_EVIDENCE_PREDICATE"),
     ),
     ("invalid-create-admission", "invalid-create-admission", ("REGISTRY_ADMISSION",)),
+    (
+        "archive-admission-predicate-missing",
+        "archive-admission-predicate-missing",
+        ("REGISTRY_ADMISSION",),
+    ),
+    (
+        "archive-evidence-capability-drift",
+        "archive-evidence-capability-drift",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
+    (
+        "archive-evidence-shape-drift",
+        "archive-evidence-shape-drift",
+        ("REGISTRY_EVIDENCE_PREDICATE",),
+    ),
     ("allow-delete", "allow-delete", ("REGISTRY_ADMISSION",)),
     ("allow-rename", "allow-rename", ("REGISTRY_ADMISSION",)),
     ("allow-profile-change", "allow-profile-change", ("REGISTRY_ADMISSION",)),
@@ -607,18 +589,13 @@ EXPECTED_CASES = (
         ("REGISTRY_EVIDENCE_PREDICATE",),
     ),
     (
-        "new-tombstone-baseline-path",
-        "new-tombstone-baseline-path",
-        ("REGISTRY_TOMBSTONE_BASELINE",),
-    ),
-    (
         "production-legacy-v6-input",
         "production-legacy-v6-input",
         ("REGISTRY_SCHEMA",),
     ),
     (
-        "archive-specific-value-semantics",
-        "archive-specific-value-semantics",
+        "archive-conflicting-value-semantics",
+        "archive-conflicting-value-semantics",
         ("REGISTRY_VALUE_CONTRACT",),
     ),
     (
@@ -636,26 +613,6 @@ EXPECTED_CASES = (
         "duplicate-json-nested-key",
         "duplicate-json-nested-key",
         ("REGISTRY_SCHEMA",),
-    ),
-    (
-        "tombstone-baseline-double-slash",
-        "tombstone-baseline-double-slash",
-        ("REGISTRY_TOMBSTONE_BASELINE",),
-    ),
-    (
-        "tombstone-baseline-dot-segment",
-        "tombstone-baseline-dot-segment",
-        ("REGISTRY_TOMBSTONE_BASELINE",),
-    ),
-    (
-        "tombstone-baseline-normalized-duplicate",
-        "tombstone-baseline-normalized-duplicate",
-        ("REGISTRY_TOMBSTONE_BASELINE",),
-    ),
-    (
-        "renamed-tombstone-policy-noncanonical-baseline",
-        "renamed-tombstone-policy-noncanonical-baseline",
-        ("REGISTRY_TOMBSTONE_BASELINE",),
     ),
     (
         "guide-role-copied-to-runbook",
@@ -679,7 +636,7 @@ EXPECTED_CASES = (
     ),
 )
 
-V7_MUTATIONS = frozenset(
+V8_MUTATIONS = frozenset(
     mutation
     for _, mutation, _ in EXPECTED_CASES
     if mutation
@@ -696,6 +653,9 @@ V7_MUTATIONS = frozenset(
         "invalid-relationship-section",
         "invalid-body-requirement",
         "invalid-create-admission",
+        "archive-admission-predicate-missing",
+        "archive-evidence-capability-drift",
+        "archive-evidence-shape-drift",
         "allow-delete",
         "allow-rename",
         "allow-profile-change",
@@ -712,15 +672,10 @@ V7_MUTATIONS = frozenset(
         "executable-evidence-predicate",
         "missing-edge-predicate-case",
         "duplicate-edge-predicate-case",
-        "new-tombstone-baseline-path",
         "production-legacy-v6-input",
-        "archive-specific-value-semantics",
+        "archive-conflicting-value-semantics",
         "evidence-capability-removal",
         "evidence-same-diff-swap",
-        "tombstone-baseline-double-slash",
-        "tombstone-baseline-dot-segment",
-        "tombstone-baseline-normalized-duplicate",
-        "renamed-tombstone-policy-noncanonical-baseline",
         "guide-role-copied-to-runbook",
         "policy-role-copied-to-runbook",
         "incident-role-copied-to-postmortem",
@@ -915,7 +870,11 @@ def _fixture_document_contracts() -> dict[str, Any]:
             {
                 "id": "authored-draft-only",
                 "profileIds": list(authored),
-                "create": {"mode": "states", "states": ["draft"]},
+                "create": {
+                    "mode": "states",
+                    "states": ["draft"],
+                    "evidencePredicateId": None,
+                },
                 "delete": "deny",
                 "rename": "deny",
                 "profileChange": "deny",
@@ -924,7 +883,11 @@ def _fixture_document_contracts() -> dict[str, Any]:
             {
                 "id": "snapshot-only",
                 "profileIds": snapshot,
-                "create": {"mode": "snapshot-only", "states": []},
+                "create": {
+                    "mode": "snapshot-only",
+                    "states": [],
+                    "evidencePredicateId": None,
+                },
                 "delete": "deny",
                 "rename": "deny",
                 "profileChange": "deny",
@@ -985,8 +948,8 @@ def _fixture_document_contracts() -> dict[str, Any]:
 def _minimal_fixture_registry() -> dict[str, Any]:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://hy-home.k8s/schemas/document-profiles-7.schema.json",
-        "schemaVersion": 7,
+        "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
+        "schemaVersion": 8,
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -1308,8 +1271,8 @@ def _convert_legacy_v6_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
     ):
         raise ValueError("not the closed legacy-v6 migration fixture")
     converted = copy.deepcopy(raw_registry)
-    converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
-    converted["schemaVersion"] = 7
+    converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
+    converted["schemaVersion"] = 8
     converted["documentContracts"] = _fixture_document_contracts()
     return converted
 
@@ -1840,6 +1803,28 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "invalid-create-admission":
         admission["create"]["states"] = ["active"]
         return
+    if mutation == "archive-admission-predicate-missing":
+        archive_admission = next(
+            item
+            for item in contracts["admissionPolicies"]
+            if item["id"] == "archive-envelope-only"
+        )
+        archive_admission["create"]["evidencePredicateId"] = None
+        return
+    if mutation in {
+        "archive-evidence-capability-drift",
+        "archive-evidence-shape-drift",
+    }:
+        archive_predicate = next(
+            item
+            for item in contracts["evidencePredicates"]
+            if item["id"] == "archive-source-removal"
+        )
+        if mutation == "archive-evidence-capability-drift":
+            archive_predicate["capabilities"].remove("source-removal")
+        else:
+            archive_predicate["relationship"] = "self"
+        return
     if mutation == "allow-delete":
         admission["delete"] = "allow"
         return
@@ -1918,14 +1903,6 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "duplicate-edge-predicate-case":
         predicate["profileEdges"].append(copy.deepcopy(predicate["profileEdges"][0]))
         return
-    if mutation == "new-tombstone-baseline-path":
-        tombstone = next(
-            item
-            for item in contracts["admissionPolicies"]
-            if "content/archive-tombstone" in item["profileIds"]
-        )
-        tombstone["baselinePaths"].append("docs/98.archive/new-tombstone.md")
-        return
     if mutation == "production-legacy-v6-input":
         raw_registry["$id"] = (
             "https://hy-home.k8s/schemas/document-profiles-6.schema.json"
@@ -1933,11 +1910,11 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         raw_registry["schemaVersion"] = 6
         del raw_registry["documentContracts"]
         return
-    if mutation == "archive-specific-value-semantics":
+    if mutation == "archive-conflicting-value-semantics":
         archive_values = next(
             item
             for item in contracts["valueContracts"]
-            if item["id"] == "archive-tombstone-compatibility"
+            if item["id"] == "archive-record"
         )
         archive_reason = next(
             item for item in archive_values["keys"] if item["key"] == "archive_reason"
@@ -1949,25 +1926,6 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "evidence-same-diff-swap":
         predicate["sameDiff"] = "pair-status-changed"
-        return
-    tombstone = next(
-        item
-        for item in contracts["admissionPolicies"]
-        if "content/archive-tombstone" in item["profileIds"]
-    )
-    first_path = tombstone["baselinePaths"][0]
-    if mutation == "tombstone-baseline-double-slash":
-        tombstone["baselinePaths"][0] = first_path.replace("/", "//", 1)
-        return
-    if mutation == "tombstone-baseline-dot-segment":
-        tombstone["baselinePaths"][0] = first_path.replace("/", "/./", 1)
-        return
-    if mutation == "tombstone-baseline-normalized-duplicate":
-        tombstone["baselinePaths"].insert(1, first_path.replace("/", "//", 1))
-        return
-    if mutation == "renamed-tombstone-policy-noncanonical-baseline":
-        tombstone["id"] = "renamed-tombstone-baseline-only"
-        tombstone["baselinePaths"][0] = first_path.replace("/", "//", 1)
         return
     raise ValueError(f"unsupported fixture mutation: {mutation}")
 
@@ -2147,10 +2105,11 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
 
 
 def _assert_document_contract_projection(registry: Registry) -> None:
-    if registry.schema_version != 7 or len(registry.profiles) != 64:
-        raise AssertionError("production v7 profile projection differs")
+    if registry.schema_version != 8 or len(registry.profiles) != 64:
+        raise AssertionError("production v8 profile projection differs")
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     expected_predicate_order = (
+        "archive-source-removal",
         "activate-self-body",
         "activate-heading-profile",
         "activate-execution-pair",
@@ -2194,6 +2153,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "governance/template-support",
     )
     expected_edges = {
+        "archive-source-removal": set(),
         "activate-self-body": edges(
             ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
             "draft",
@@ -2344,6 +2304,15 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         *standard_keys[:2],
         ("status", "string", False, ("literal", "archived"), None, None, None),
         *standard_keys[3:],
+        (
+            "original_type",
+            "string",
+            False,
+            None,
+            None,
+            r"^[a-z][a-z0-9-]*(?:/[a-z0-9-]+)?$",
+            None,
+        ),
         ("original_path", "string", False, None, None, r"^[^/\\].+", None),
         (
             "archived_on",
@@ -2354,8 +2323,53 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
             None,
         ),
-        ("archive_reason", "string", False, None, None, r"\S", None),
-        ("replacement", "string", False, None, None, r"^[^/\\].+", None),
+        (
+            "archive_reason",
+            "string",
+            False,
+            None,
+            (
+                "literal",
+                (
+                    "superseded",
+                    "consolidated",
+                    "completed-lineage",
+                    "retired",
+                    "abandoned",
+                    "duplicate",
+                ),
+            ),
+            None,
+            None,
+        ),
+        ("replacement", "string", True, None, None, r"^[^/\\].+", None),
+        (
+            "source_commit",
+            "string",
+            False,
+            None,
+            None,
+            r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            None,
+        ),
+        (
+            "source_blob",
+            "string",
+            False,
+            None,
+            None,
+            r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            None,
+        ),
+        (
+            "content_sha256",
+            "string",
+            False,
+            None,
+            None,
+            r"^[0-9a-f]{64}$",
+            None,
+        ),
     )
     expected_value_projection: dict[str, tuple[Any, ...]] = {}
     for profile_id in (*standard_sources, *standard_templates):
@@ -2365,12 +2379,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             standard_keys,
         )
     for profile_id in (
-        "content/archive-tombstone",
-        "template/content/archive-tombstone",
+        "content/archive",
+        "template/content/archive",
     ):
         expected_value_projection[profile_id] = (
-            "archive-tombstone-compatibility",
-            ("content/archive-tombstone",),
+            "archive-record",
+            ("content/archive",),
             archive_keys,
         )
     for profile_id in (*empty_sources, *empty_templates):
@@ -2422,11 +2436,11 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             "body-contract",
         ),
         "content/reference": ("reference", None, "Related Documents", "heading-set"),
-        "content/archive-tombstone": (
-            "archive-tombstone-compatibility",
+        "content/archive": (
+            "archive-record",
             None,
-            "Related Documents",
-            "heading-set",
+            None,
+            "none",
         ),
         "governance/reference": (
             "governance-reference",
@@ -2501,7 +2515,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     ):
         expected_roles[profile_id] = ("native-machine-contract", None, None, "none")
     template_sources = {
-        "template/content/archive-tombstone": "content/archive-tombstone",
+        "template/content/archive": "content/archive",
         "template/governance/memory": "governance/memory",
         "template/readme/repository": "readme/repository",
         "template/readme/stage-index": "readme/stage-index",
@@ -2572,7 +2586,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/native-contract-protobuf",
         "exception/generated-record",
         "exception/program-non-target",
-        "template/content/archive-tombstone",
+        "template/content/archive",
         "template/governance/memory",
         "template/readme/repository",
         "template/readme/stage-index",
@@ -2622,12 +2636,11 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             "paired",
             ("draft", "active"),
         )
-    expected_admissions["content/archive-tombstone"] = admission_signature(
-        "tombstone-baseline-only",
-        ("content/archive-tombstone",),
-        "baseline-only",
-        (),
-        EXPECTED_TOMBSTONE_BASELINE_PATHS,
+    expected_admissions["content/archive"] = admission_signature(
+        "archive-envelope-only",
+        ("content/archive",),
+        "archive-envelope",
+        ("archived",),
     )
     for profile_id in snapshot_profiles:
         expected_admissions[profile_id] = admission_signature(
@@ -2714,7 +2727,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
                 ("active", "done", "terminate-reviewed-reference"),
             ),
         ),
-        ("tombstone-compatibility", ("content/archive-tombstone",), ("archived",), ()),
+        ("archive-record", ("content/archive",), ("archived",), ()),
         ("non-lifecycle", snapshot_profiles, (), ()),
     )
     expected_lifecycles: dict[str, tuple[Any, ...]] = {}
@@ -2743,6 +2756,15 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         return tuple((profile_id, from_state, to_state) for profile_id in profile_ids)
 
     expected_predicates = {
+        "archive-source-removal": (
+            (),
+            (),
+            "archive-source",
+            (1, 1),
+            "source-removed-and-mirror-created",
+            "none",
+            ("archive-envelope", "same-diff", "source-removal"),
+        ),
         "activate-self-body": (
             edge_rows(
                 ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
@@ -2873,6 +2895,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
 
     expected_null_body_roles = {
         "content/reference": ("Related Documents", "heading-set"),
+        "content/archive": (None, "none"),
         "governance/reference": ("Related Documents", "heading-set"),
         "governance/memory": ("Related Progress", "heading-set"),
         "governance/template-support": ("Related Documents", "heading-set"),
@@ -2893,14 +2916,14 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         or profiles["template/sdlc/prd"].admission.create.mode != "snapshot-only"
     ):
         raise AssertionError("canonical form inheritance projection differs")
-    tombstone = profiles["content/archive-tombstone"].admission
+    archive = profiles["content/archive"].admission
     if (
-        tombstone.create.mode != "baseline-only"
-        or tombstone.create.states
-        or len(tombstone.baseline_paths) != 31
-        or {tombstone.delete, tombstone.rename, tombstone.profile_change} != {"deny"}
+        archive.create.mode != "archive-envelope"
+        or archive.create.states != ("archived",)
+        or archive.baseline_paths
+        or {archive.delete, archive.rename, archive.profile_change} != {"deny"}
     ):
-        raise AssertionError("production Tombstone compatibility projection differs")
+        raise AssertionError("production archive envelope admission projection differs")
     if sum(len(profile.lifecycle.edges) for profile in registry.profiles) != 42:
         raise AssertionError("production lifecycle edge count differs")
 
@@ -2958,37 +2981,20 @@ def _assert_parser_safety() -> None:
             )
 
 
-def _tracked_form_paths(root: Path) -> tuple[PurePosixPath, ...]:
-    completed = subprocess.run(
-        [
-            "git",
-            "ls-files",
-            "-z",
-            "--",
-            "docs/99.templates/templates",
-        ],
-        cwd=root,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    records = completed.stdout.split(b"\0")
-    if records[-1] != b"":
-        raise AssertionError("git ls-files form inventory is not NUL terminated")
-    try:
-        return tuple(
-            sorted(
-                (
-                    path
-                    for record in records[:-1]
-                    if ".template."
-                    in (path := PurePosixPath(record.decode("utf-8"))).name
-                ),
-                key=lambda path: path.as_posix(),
-            )
+def _current_form_paths(root: Path) -> tuple[PurePosixPath, ...]:
+    """Inventory the complete proposed worktree form snapshot."""
+
+    forms_root = root / "docs/99.templates/templates"
+    return tuple(
+        sorted(
+            (
+                PurePosixPath(path.relative_to(root).as_posix())
+                for path in forms_root.rglob("*")
+                if path.is_file() and ".template." in path.name
+            ),
+            key=lambda path: path.as_posix(),
         )
-    except UnicodeDecodeError as exc:
-        raise AssertionError("git returned a non-UTF-8 form path") from exc
+    )
 
 
 def _assert_native_form_profiles(
@@ -3465,25 +3471,25 @@ def _assert_positive_coverage(
                 f"actual profile={actual_profile!r} rules={actual_rules!r}"
             )
 
-    tracked_form_paths = _tracked_form_paths(root)
+    current_form_paths = _current_form_paths(root)
     declared_form_paths = tuple(
         sorted(
             {profile.template for profile in registry.profiles if profile.template},
             key=lambda path: path.as_posix(),
         )
     )
-    if declared_form_paths != tracked_form_paths:
+    if declared_form_paths != current_form_paths:
         raise AssertionError(
-            "registry template paths must equal the tracked canonical form inventory: "
-            f"missing={sorted(set(tracked_form_paths) - set(declared_form_paths), key=str)!r} "
-            f"extra={sorted(set(declared_form_paths) - set(tracked_form_paths), key=str)!r}"
+            "registry template paths must equal the current canonical form inventory: "
+            f"missing={sorted(set(current_form_paths) - set(declared_form_paths), key=str)!r} "
+            f"extra={sorted(set(declared_form_paths) - set(current_form_paths), key=str)!r}"
         )
 
     markdown_form_paths = tuple(
-        path for path in tracked_form_paths if path.suffix == ".md"
+        path for path in current_form_paths if path.suffix == ".md"
     )
     native_form_paths = tuple(
-        path for path in tracked_form_paths if path.suffix != ".md"
+        path for path in current_form_paths if path.suffix != ".md"
     )
     if len(markdown_form_paths) != 27 or len(native_form_paths) != 3:
         raise AssertionError(
@@ -3606,7 +3612,7 @@ def _assert_positive_coverage(
     else:
         raise AssertionError("native route/template drift mutation was accepted")
 
-    return len(profiles), len(tracked_form_paths)
+    return len(profiles), len(current_form_paths)
 
 
 def _strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
@@ -4232,7 +4238,7 @@ def _self_test(root: Path) -> int:
         for case in fixture.get("cases", ())
     )
     if (
-        fixture.get("schemaVersion") != 7
+        fixture.get("schemaVersion") != 8
         or fixture.get(LOCAL_AGENT_FIXTURE_FIELD) != SAMPLE_PATH.as_posix()
         or actual_contract != EXPECTED_CASES
     ):
@@ -4316,7 +4322,7 @@ def _self_test(root: Path) -> int:
                 duplicate_path = fixture_root / f"{mutation}.json"
                 duplicate_path.write_text(
                     (
-                        '{"schemaVersion": 7, "schemaVersion": 7}\n'
+                        '{"schemaVersion": 8, "schemaVersion": 8}\n'
                         if mutation == "duplicate-json-root-key"
                         else '{"outer": {"value": 1, "value": 2}}\n'
                     ),
@@ -4337,13 +4343,13 @@ def _self_test(root: Path) -> int:
                 continue
             mutated = (
                 copy.deepcopy(raw_registry)
-                if mutation in V7_MUTATIONS
+                if mutation in V8_MUTATIONS
                 else _minimal_fixture_registry()
             )
             _mutate(mutated, mutation)
             diagnostics = ()
             try:
-                validation_root = root if mutation in V7_MUTATIONS else fixture_root
+                validation_root = root if mutation in V8_MUTATIONS else fixture_root
                 registry = validate_registry(validation_root, mutated)
             except DocumentContractError as exc:
                 diagnostics = exc.diagnostics
@@ -4399,7 +4405,7 @@ def _self_test(root: Path) -> int:
         ):
             print(
                 "FAIL document contract registry self-test: "
-                "private v5-to-v6-to-v7 fixture conversion projection differs"
+                "private v5-to-v6-to-v8 fixture conversion projection differs"
             )
             return 1
 

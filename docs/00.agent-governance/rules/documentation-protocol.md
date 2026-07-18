@@ -60,7 +60,7 @@ This protocol defines how governance references authored docs and how language b
 ### Traceability Rules
 
 - Every governance change should keep clear links to the canonical docs taxonomy (`01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `98.archive`, `99.templates`).
-- Active documents must link old archived content only through `docs/98.archive/README.md`; direct links to Tombstones belong only in the archive index.
+- Active documents must link old archived content only through `docs/98.archive/README.md`; direct links to archive records belong only in the archive index.
 - Postmortems belong at `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
@@ -95,7 +95,7 @@ This protocol defines how governance references authored docs and how language b
 - README files are entrypoints and must not hold duplicated policy bodies.
   They route readers to the canonical support, governance, operations,
   workflow, validator, GitOps, policy-as-code, or manifest owner.
-- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
+- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Record documents must use their stage-specific templates from `docs/99.templates/`.
 - Protected-surface Task records use the canonical Task form's [Approval and
   Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries);
   do not create a second Task starter.
@@ -114,8 +114,8 @@ This protocol defines how governance references authored docs and how language b
   `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` is
   frontmatter-free and mirrors canonical owners instead of becoming authored
   stage documentation.
-- `docs/98.archive` documents must be metadata-only Tombstones and must not preserve old full bodies.
-- `docs/99.templates/templates/common/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
+- `docs/98.archive` documents must be immutable, non-current ArchiveEnvelope.v1 records that preserve exact source Git blob bytes and closed provenance metadata.
+- `docs/99.templates/templates/common/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-record.template.md`.
 - Provider event wiring must surface Template-First guidance before authored
   stage doc edits where the runtime supports it: Claude uses
   `.claude/settings.json`, Codex uses `.codex/hooks.json` context/validation
@@ -171,7 +171,7 @@ A document without its selected section is **INCOMPLETE**.
 
 **R4 — Memory Ledger Coupling:** Repo-changing work updates the canonical progress ledger at `docs/00.agent-governance/memory/progress.md`. It is the only tracked `progress.md`; standalone memory files use `memory.template.md` and link back to their related progress entry.
 
-**R5 — Archive Separation:** Current implementation conflicts cannot be hidden with historical or superseded markers in active docs. Move the old document to `docs/98.archive` as a Tombstone and link it from the archive index only.
+**R5 — Archive Separation:** Current implementation conflicts cannot be hidden with historical or superseded markers in active docs. Move the old document to `docs/98.archive` as an archive record and link it from the archive index only.
 
 **HALT conditions:** Missing template read → HALT. README not updated → HALT. README profile mismatch → HALT. Registry-selected relationship section absent from an authored document → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.
 

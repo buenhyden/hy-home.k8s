@@ -22,12 +22,30 @@ from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
 from typing import Callable, Mapping, Sequence
 
+from archive_cutover_manifest import (
+    ARCHIVE_PROFILE,
+    ARCHIVE_TEMPLATE,
+    ARCHIVE_TEMPLATE_PROFILE,
+    BASE_REGISTRY_BLOB_OID,
+    BASE_REGISTRY_ID,
+    BASE_REGISTRY_VERSION,
+    CUTOVER_BASE_COMMIT,
+    EXPECTED_ARCHIVE_PATHS,
+    LEGACY_ARCHIVE_PROFILE,
+    LEGACY_ARCHIVE_TEMPLATE,
+    LEGACY_ARCHIVE_TEMPLATE_PROFILE,
+    PROPOSED_REGISTRY_ID,
+    PROPOSED_REGISTRY_BLOB_OID,
+    PROPOSED_REGISTRY_VERSION,
+)
 from document_contracts import (
+    REGISTRY_PATH,
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
     DocumentProfile,
     Registry,
+    Route,
     classify_path,
     enumerate_target_markdown,
     load_json_file,
@@ -91,6 +109,221 @@ EXPECTED_RULE_IDS = (
     "LIFECYCLE-BASE",
     "LIFECYCLE-BASE-DEFER",
 )
+
+
+def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
+    profiles = raw_registry.get("profiles")
+    if not isinstance(profiles, list):
+        return frozenset()
+    return frozenset(
+        profile["id"]
+        for profile in profiles
+        if isinstance(profile, dict) and isinstance(profile.get("id"), str)
+    )
+
+
+def finite_archive_cutover_paths(
+    *,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_registry: Mapping[str, object],
+    proposed_registry: Mapping[str, object],
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[PurePosixPath]:
+    """Return only the exact finite ARWB-003 events admitted for consumption."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != CUTOVER_BASE_COMMIT
+        or base_registry_oid != BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+    if (
+        base_registry.get("schemaVersion") != BASE_REGISTRY_VERSION
+        or base_registry.get("$id") != BASE_REGISTRY_ID
+        or proposed_registry.get("schemaVersion") != PROPOSED_REGISTRY_VERSION
+        or proposed_registry.get("$id") != PROPOSED_REGISTRY_ID
+    ):
+        return frozenset()
+
+    base_profile_ids = _registry_profile_ids(base_registry)
+    proposed_profile_ids = _registry_profile_ids(proposed_registry)
+    if (
+        not {LEGACY_ARCHIVE_PROFILE, LEGACY_ARCHIVE_TEMPLATE_PROFILE}
+        <= base_profile_ids
+        or {ARCHIVE_PROFILE, ARCHIVE_TEMPLATE_PROFILE} & base_profile_ids
+        or not {ARCHIVE_PROFILE, ARCHIVE_TEMPLATE_PROFILE} <= proposed_profile_ids
+        or {
+            LEGACY_ARCHIVE_PROFILE,
+            LEGACY_ARCHIVE_TEMPLATE_PROFILE,
+        }
+        & proposed_profile_ids
+    ):
+        return frozenset()
+
+    expected_records = frozenset(PurePosixPath(path) for path in EXPECTED_ARCHIVE_PATHS)
+    common_paths = set(base_documents) & set(proposed_documents)
+    profile_changes = frozenset(
+        path
+        for path in common_paths
+        if base_documents[path].profile_id != proposed_documents[path].profile_id
+    )
+    if profile_changes != expected_records:
+        return frozenset()
+    for path in expected_records:
+        base = base_documents[path]
+        proposed = proposed_documents[path]
+        if (
+            base.profile_id != LEGACY_ARCHIVE_PROFILE
+            or base.status != "archived"
+            or base.state_issue is not None
+            or proposed.profile_id != ARCHIVE_PROFILE
+            or proposed.status != "archived"
+            or proposed.state_issue is not None
+        ):
+            return frozenset()
+
+    legacy_template = PurePosixPath(LEGACY_ARCHIVE_TEMPLATE)
+    archive_template = PurePosixPath(ARCHIVE_TEMPLATE)
+    if (
+        base_documents.get(legacy_template)
+        != LifecycleDocument(
+            legacy_template,
+            LEGACY_ARCHIVE_TEMPLATE_PROFILE,
+            None,
+        )
+        or legacy_template in proposed_documents
+        or proposed_documents.get(archive_template)
+        != LifecycleDocument(
+            archive_template,
+            ARCHIVE_TEMPLATE_PROFILE,
+            None,
+        )
+        or archive_template in base_documents
+    ):
+        return frozenset()
+
+    if (
+        frozenset(
+            path
+            for path, document in base_documents.items()
+            if document.profile_id == LEGACY_ARCHIVE_PROFILE
+        )
+        != expected_records
+        or frozenset(
+            path
+            for path, document in proposed_documents.items()
+            if document.profile_id == ARCHIVE_PROFILE
+        )
+        != expected_records
+        or frozenset(
+            path
+            for path, document in base_documents.items()
+            if document.profile_id == LEGACY_ARCHIVE_TEMPLATE_PROFILE
+        )
+        != {legacy_template}
+        or frozenset(
+            path
+            for path, document in proposed_documents.items()
+            if document.profile_id == ARCHIVE_TEMPLATE_PROFILE
+        )
+        != {archive_template}
+    ):
+        return frozenset()
+    return expected_records | {legacy_template, archive_template}
+
+
+def _archive_cutover_fixture_inputs(
+    mode: str,
+    mutation: str,
+) -> dict[str, object]:
+    expected_records = tuple(PurePosixPath(path) for path in EXPECTED_ARCHIVE_PATHS)
+    legacy_template = PurePosixPath(LEGACY_ARCHIVE_TEMPLATE)
+    archive_template = PurePosixPath(ARCHIVE_TEMPLATE)
+    base_documents = {
+        path: LifecycleDocument(path, LEGACY_ARCHIVE_PROFILE, "archived")
+        for path in expected_records
+    }
+    proposed_documents = {
+        path: LifecycleDocument(path, ARCHIVE_PROFILE, "archived")
+        for path in expected_records
+    }
+    base_documents[legacy_template] = LifecycleDocument(
+        legacy_template,
+        LEGACY_ARCHIVE_TEMPLATE_PROFILE,
+        None,
+    )
+    proposed_documents[archive_template] = LifecycleDocument(
+        archive_template,
+        ARCHIVE_TEMPLATE_PROFILE,
+        None,
+    )
+    base_registry: dict[str, object] = {
+        "$id": BASE_REGISTRY_ID,
+        "schemaVersion": BASE_REGISTRY_VERSION,
+        "profiles": [
+            {"id": LEGACY_ARCHIVE_PROFILE},
+            {"id": LEGACY_ARCHIVE_TEMPLATE_PROFILE},
+        ],
+    }
+    proposed_registry: dict[str, object] = {
+        "$id": PROPOSED_REGISTRY_ID,
+        "schemaVersion": PROPOSED_REGISTRY_VERSION,
+        "profiles": [
+            {"id": ARCHIVE_PROFILE},
+            {"id": ARCHIVE_TEMPLATE_PROFILE},
+        ],
+    }
+    base_commit = CUTOVER_BASE_COMMIT
+    base_registry_oid = BASE_REGISTRY_BLOB_OID
+    proposed_registry_oid = PROPOSED_REGISTRY_BLOB_OID
+    if mutation == "partial":
+        proposed_documents.pop(expected_records[0])
+    elif mutation == "extra":
+        extra = PurePosixPath("docs/98.archive/03.specs/999-extra/spec.md")
+        base_documents[extra] = LifecycleDocument(
+            extra, LEGACY_ARCHIVE_PROFILE, "archived"
+        )
+        proposed_documents[extra] = LifecycleDocument(
+            extra, ARCHIVE_PROFILE, "archived"
+        )
+    elif mutation == "wrong-base":
+        base_commit = "0" * 40
+    elif mutation == "wrong-base-registry-oid":
+        base_registry_oid = "0" * 40
+    elif mutation == "proposed-policy-drift":
+        proposed_registry["unrelatedPolicy"] = {"mode": "changed"}
+        proposed_registry_oid = "f" * 40
+    elif mutation == "missing-template":
+        proposed_documents.pop(archive_template)
+    elif mutation == "wrong-registry-version":
+        proposed_registry["schemaVersion"] = PROPOSED_REGISTRY_VERSION + 1
+    elif mutation == "missing-registry-profile":
+        proposed_registry["profiles"] = [{"id": ARCHIVE_PROFILE}]
+    elif mutation == "unrelated-profile-change":
+        unrelated = PurePosixPath("docs/03.specs/999-unrelated/spec.md")
+        base_documents[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
+        proposed_documents[unrelated] = LifecycleDocument(
+            unrelated, "sdlc/guide", "active"
+        )
+    elif mutation != "exact":
+        raise ValueError(f"unknown archive cutover fixture mutation: {mutation}")
+    return {
+        "mode": mode,
+        "base_commit": base_commit,
+        "base_registry_oid": base_registry_oid,
+        "proposed_registry_oid": proposed_registry_oid,
+        "base_registry": base_registry,
+        "proposed_registry": proposed_registry,
+        "base_documents": base_documents,
+        "proposed_documents": proposed_documents,
+    }
+
+
 EXPECTED_FORWARD_CASE_NAMES = (
     "product",
     "architecture-requirement",
@@ -113,6 +346,7 @@ EXPECTED_COMPARISON_CASE_NAMES = (
 )
 EXPECTED_ADMISSION_CASE_NAMES = (
     "draft-create-allowed",
+    "archive-envelope-create-without-evidence-denied",
     "active-create-denied",
     "unclassified-create-denied",
     "unclassified-delete-denied",
@@ -187,7 +421,36 @@ EXPECTED_INCLUDE_CASE_NAMES = (
     "missing-blob",
 )
 EXPECTED_SNAPSHOT_CASE_NAME = "exactly-one-base-defer"
-FIXTURE_MUTATION_COUNT = 23
+EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES = (
+    "exact-staged",
+    "exact-ci",
+    "partial-record-set",
+    "extra-record",
+    "wrong-base",
+    "wrong-base-registry-oid",
+    "proposed-policy-drift",
+    "missing-template-pair",
+    "wrong-registry-version",
+    "missing-registry-profile-pair",
+    "unrelated-profile-change",
+    "snapshot-not-admitted",
+    "explicit-ref-not-admitted",
+)
+EXPECTED_ARCHIVE_CUTOVER_MUTATIONS = frozenset(
+    {
+        "exact",
+        "partial",
+        "extra",
+        "wrong-base",
+        "wrong-base-registry-oid",
+        "proposed-policy-drift",
+        "missing-template",
+        "wrong-registry-version",
+        "missing-registry-profile",
+        "unrelated-profile-change",
+    }
+)
+FIXTURE_MUTATION_COUNT = 24
 EXPECTED_EVIDENCE_ASSERTION_SHA256 = "beb430e079bf603ebd5164666218fa178c6e27550f425c62f3fd739c31675892"  # pragma: allowlist secret
 EXPECTED_EVIDENCE_VARIANTS = (
     "positive",
@@ -655,6 +918,94 @@ def _blob_text(
         raise InvocationError(f"document blob is not UTF-8: {path.as_posix()}") from exc
 
 
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise InvocationError("registry blob contains a duplicate JSON key")
+        result[key] = value
+    return result
+
+
+def _registry_blob(
+    root: Path,
+    oid: str | None,
+) -> Mapping[str, object]:
+    text = _blob_text(root, oid, REGISTRY_PATH)
+    if text is None:
+        raise InvocationError("comparison snapshot lacks the document registry")
+    try:
+        loaded = json.loads(text, object_pairs_hook=_unique_json_object)
+    except (json.JSONDecodeError, InvocationError) as exc:
+        raise InvocationError("comparison registry blob is invalid JSON") from exc
+    if not isinstance(loaded, dict):
+        raise InvocationError("comparison registry blob is not an object")
+    return MappingProxyType(loaded)
+
+
+def _classification_registry(
+    current_registry: Registry,
+    raw_registry: Mapping[str, object],
+) -> Registry:
+    """Project snapshot-owned routes and IDs onto immutable lifecycle profiles."""
+
+    raw_profiles = raw_registry.get("profiles")
+    schema_version = raw_registry.get("schemaVersion")
+    if not isinstance(raw_profiles, list) or type(schema_version) is not int:
+        raise InvocationError("comparison registry profile projection is malformed")
+    current_profiles = {
+        profile.profile_id: profile for profile in current_registry.profiles
+    }
+    aliases = {
+        LEGACY_ARCHIVE_PROFILE: ARCHIVE_PROFILE,
+        LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
+    }
+    projected: list[DocumentProfile] = []
+    for raw_profile in raw_profiles:
+        if not isinstance(raw_profile, dict):
+            raise InvocationError("comparison registry contains a non-object profile")
+        profile_id = raw_profile.get("id")
+        raw_routes = raw_profile.get("routes")
+        raw_status_domain = raw_profile.get("statusDomain")
+        raw_mode = raw_profile.get("mode")
+        if (
+            not isinstance(profile_id, str)
+            or not isinstance(raw_routes, list)
+            or not isinstance(raw_status_domain, list)
+            or not all(isinstance(state, str) for state in raw_status_domain)
+            or not isinstance(raw_mode, str)
+        ):
+            raise InvocationError("comparison registry profile shape is malformed")
+        source = current_profiles.get(aliases.get(profile_id, profile_id))
+        if source is None:
+            raise InvocationError(
+                "comparison registry profile has no current lifecycle projection"
+            )
+        routes: list[Route] = []
+        for raw_route in raw_routes:
+            if not isinstance(raw_route, dict):
+                raise InvocationError("comparison registry route is malformed")
+            kind = raw_route.get("kind")
+            value = raw_route.get("value")
+            if kind not in {"exact", "regex"} or not isinstance(value, str):
+                raise InvocationError("comparison registry route is malformed")
+            routes.append(Route(kind=kind, value=value))  # type: ignore[arg-type]
+        projected.append(
+            replace(
+                source,
+                profile_id=profile_id,
+                routes=tuple(routes),
+                status_domain=tuple(raw_status_domain),
+                mode=raw_mode,  # type: ignore[arg-type]
+            )
+        )
+    return replace(
+        current_registry,
+        schema_version=schema_version,
+        profiles=tuple(projected),
+    )
+
+
 def _snapshot_projection(
     root: Path,
     registry: Registry,
@@ -782,7 +1133,8 @@ def _select_changes(
 
 def _comparison_documents(
     root: Path,
-    registry: Registry,
+    base_registry: Registry,
+    proposed_registry: Registry,
     changes: Sequence[Change],
     *,
     base_oid: Callable[[PurePosixPath], str | None],
@@ -797,6 +1149,7 @@ def _comparison_documents(
     renames: list[LifecycleRename] = []
 
     def load(
+        registry: Registry,
         path: PurePosixPath,
         oid: str | None,
     ) -> LifecycleDocument | None:
@@ -816,26 +1169,26 @@ def _comparison_documents(
     for change in changes:
         if change.kind == "R":
             assert change.old_path is not None
-            base = load(change.old_path, base_oid(change.old_path))
-            proposed = load(change.path, proposed_oid(change.path))
+            base = load(base_registry, change.old_path, base_oid(change.old_path))
+            proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError("exact rename lacks a base or proposed blob")
             base_documents[change.old_path] = base
             proposed_documents[change.path] = proposed
             renames.append(LifecycleRename(change.old_path, change.path))
         elif change.kind == "A":
-            proposed = load(change.path, proposed_oid(change.path))
+            proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if proposed is None:
                 raise InvocationError(f"added path lacks proposed blob: {change.path}")
             proposed_documents[change.path] = proposed
         elif change.kind == "D":
-            base = load(change.path, base_oid(change.path))
+            base = load(base_registry, change.path, base_oid(change.path))
             if base is None:
                 raise InvocationError(f"deleted path lacks base blob: {change.path}")
             base_documents[change.path] = base
         else:
-            base = load(change.path, base_oid(change.path))
-            proposed = load(change.path, proposed_oid(change.path))
+            base = load(base_registry, change.path, base_oid(change.path))
+            proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError(
                     f"modified path lacks one comparison blob: {change.path}"
@@ -889,11 +1242,13 @@ def _evaluate_comparison(
     ] = _evidence_context,
 ) -> tuple[LifecycleDiagnostic, ...]:
     _verify_repository_root(root)
+    proposed_commit: str | None = None
     if mode == "staged":
         base_commit = _resolve_commit(root, "HEAD", "HEAD")
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _index_blob_map(root)
         changes = _staged_changes(root)
+        proposed_registry_oid = _index_blob_oid(root, REGISTRY_PATH)
     else:
         if mode == "ci":
             assert base_ref is not None and to_ref is not None
@@ -910,6 +1265,15 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
+        proposed_registry_oid = _tree_blob_oid(root, proposed_commit, REGISTRY_PATH)
+
+    base_registry_oid = _tree_blob_oid(root, base_commit, REGISTRY_PATH)
+    base_registry_raw = _registry_blob(root, base_registry_oid)
+    proposed_registry_raw = _registry_blob(root, proposed_registry_oid)
+    base_classification_registry = _classification_registry(registry, base_registry_raw)
+    proposed_classification_registry = _classification_registry(
+        registry, proposed_registry_raw
+    )
 
     def base_oid(path: PurePosixPath) -> str | None:
         return base_blobs.get(path)
@@ -925,37 +1289,68 @@ def _evaluate_comparison(
     )
     base_documents, proposed_documents, renames = _comparison_documents(
         root,
-        registry,
+        base_classification_registry,
+        proposed_classification_registry,
         selected,
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
-    if not _comparison_requires_evidence(registry, base_documents, proposed_documents):
-        return compare_lifecycle(
-            registry,
-            base_documents,
-            proposed_documents,
-            renames=renames,
-            base_mode=mode,  # type: ignore[arg-type]
+    consumed_paths = finite_archive_cutover_paths(
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_registry=base_registry_raw,
+        proposed_registry=proposed_registry_raw,
+        base_documents=base_documents,
+        proposed_documents=proposed_documents,
+    )
+
+    def consume_finite_cutover(
+        diagnostics: Sequence[LifecycleDiagnostic],
+    ) -> tuple[LifecycleDiagnostic, ...]:
+        return tuple(
+            diagnostic
+            for diagnostic in diagnostics
+            if diagnostic.path not in consumed_paths
         )
-    base_snapshot, base_texts = _snapshot_projection(root, registry, base_blobs)
+
+    if not _comparison_requires_evidence(
+        proposed_classification_registry,
+        base_documents,
+        proposed_documents,
+    ):
+        return consume_finite_cutover(
+            compare_lifecycle(
+                proposed_classification_registry,
+                base_documents,
+                proposed_documents,
+                renames=renames,
+                base_mode=mode,  # type: ignore[arg-type]
+            )
+        )
+    base_snapshot, base_texts = _snapshot_projection(
+        root, base_classification_registry, base_blobs
+    )
     proposed_snapshot, proposed_texts = _snapshot_projection(
-        root, registry, proposed_blobs
+        root, proposed_classification_registry, proposed_blobs
     )
     evidence = evidence_context_factory(
-        registry,
+        proposed_classification_registry,
         base_snapshot,
         proposed_snapshot,
         base_texts,
         proposed_texts,
     )
-    return compare_lifecycle(
-        registry,
-        base_documents,
-        proposed_documents,
-        renames=renames,
-        base_mode=mode,  # type: ignore[arg-type]
-        evidence_context=evidence,
+    return consume_finite_cutover(
+        compare_lifecycle(
+            proposed_classification_registry,
+            base_documents,
+            proposed_documents,
+            renames=renames,
+            base_mode=mode,  # type: ignore[arg-type]
+            evidence_context=evidence,
+        )
     )
 
 
@@ -1893,6 +2288,9 @@ def _git_case(
     registry: Registry,
     contract_root: Path,
 ) -> tuple[int, list[str]]:
+    fixture_registry = root / REGISTRY_PATH
+    fixture_registry.parent.mkdir(parents=True, exist_ok=True)
+    fixture_registry.write_bytes((contract_root / REGISTRY_PATH).read_bytes())
     spec_path = "docs/03.specs/900-example/spec.md"
     ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(
         registry
@@ -2530,6 +2928,7 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         "argumentCases",
         "includePathCases",
         "evidenceCases",
+        "archiveCutoverCases",
         "snapshotCase",
     }
     if set(fixture) != expected_root_keys:
@@ -2581,6 +2980,11 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
             "includePathCases",
             EXPECTED_INCLUDE_CASE_NAMES,
             {"name", "values", "expectedExit"},
+        ),
+        (
+            "archiveCutoverCases",
+            EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES,
+            {"name", "mode", "mutation", "expectedAdmittedCount"},
         ),
     )
     for group_name, expected_names, expected_keys in group_contracts:
@@ -2655,6 +3059,20 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                     failures.append(f"includePathCases values differ: {case_name}")
                 if not _is_exit_code(case.get("expectedExit")):
                     failures.append(f"includePathCases exit differs: {case_name}")
+            elif group_name == "archiveCutoverCases":
+                if case.get("mode") not in {
+                    "staged",
+                    "ci",
+                    "snapshot",
+                    "explicit-ref",
+                }:
+                    failures.append(f"archiveCutoverCases mode differs: {case_name}")
+                if case.get("mutation") not in EXPECTED_ARCHIVE_CUTOVER_MUTATIONS:
+                    failures.append(
+                        f"archiveCutoverCases mutation differs: {case_name}"
+                    )
+                if case.get("expectedAdmittedCount") not in {0, 33}:
+                    failures.append(f"archiveCutoverCases count differs: {case_name}")
 
     admission_cases = fixture.get("admissionCases")
     if not isinstance(admission_cases, list):
@@ -2780,8 +3198,8 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         failures.append("fixture evidence edge projection contains duplicates")
     if evidence_projection != production_evidence_projection:
         failures.append("fixture evidence edge projection differs from production")
-    if len(evidence_projection) != 42 or len(registry.evidence_predicates) != 10:
-        failures.append("production evidence inventory is not 42 edges/10 predicates")
+    if len(evidence_projection) != 42 or len(registry.evidence_predicates) != 11:
+        failures.append("production evidence inventory is not 42 edges/11 predicates")
     if len({item[0] for item in evidence_projection}) != 19:
         failures.append("production evidence profile inventory is not 19")
     return failures
@@ -2815,6 +3233,14 @@ def _fixture_mutation_probe_failures(
         if case["name"] != "active-create-denied"
     ]
     probes.append(("missing active create denial", missing_active_create))
+
+    missing_archive_cutover = copy.deepcopy(fixture)
+    missing_archive_cutover["archiveCutoverCases"] = [
+        case
+        for case in missing_archive_cutover["archiveCutoverCases"]
+        if case["name"] != "partial-record-set"
+    ]
+    probes.append(("missing archive cutover denial", missing_archive_cutover))
 
     duplicate_case = copy.deepcopy(fixture)
     duplicate_case["gitCases"].append(copy.deepcopy(duplicate_case["gitCases"][0]))
@@ -3535,6 +3961,16 @@ def _run_self_test(root: Path) -> list[str]:
                     )
     failures.extend(_evidence_regression_failures(registry, evidence_cases))
 
+    for case in fixture.get("archiveCutoverCases", []):
+        admitted = finite_archive_cutover_paths(
+            **_archive_cutover_fixture_inputs(case["mode"], case["mutation"])
+        )
+        if len(admitted) != case["expectedAdmittedCount"]:
+            failures.append(
+                f"archive cutover {case['name']}: expected admitted count "
+                f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
     for case in fixture.get("comparisonCases", []):
         base = _document(*case["base"])
         proposed = _document(*case["proposed"])
@@ -3690,6 +4126,7 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + len(fixture["gitCases"])
             + len(fixture["argumentCases"])
             + len(fixture["includePathCases"])
+            + len(fixture["archiveCutoverCases"])
             + 1
             + FIXTURE_MUTATION_COUNT
             + EVIDENCE_REGRESSION_COUNT
@@ -3703,6 +4140,7 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             f"{len(fixture['gitCases'])} Git bases, "
             f"{len(fixture['argumentCases'])} arguments, "
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
+            f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
             f"{FIXTURE_MUTATION_COUNT} fixture mutations, "
             f"{EVIDENCE_REGRESSION_COUNT} evidence regressions)"
         )

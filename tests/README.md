@@ -36,6 +36,10 @@
 
 ```text
 tests/
+├── test_archive_cutover.py            # ARWB-003 production snapshot atomic-cutover regression test
+├── test_document_lifecycle_archive_cutover.py # Finite staged/CI archive lifecycle admission regression
+├── test_post_validate_runner_result.py # Exact post-validate runner-log cardinality regression
+├── test_provider_post_validate_hook.py # Closed provider entry and hostile payload integration regression
 ├── test_archive_recovery.py           # ARWB-001 isolated Git-object and ArchiveEnvelope.v1 fixture tests
 ├── test_archive_validation.py         # ARWB-002 isolated archive/history/current-authority validator tests
 ├── fixtures/
@@ -84,6 +88,8 @@ live readiness.
 | --- | --- | --- |
 | Archive recovery/envelope fixture | `python3 -m unittest tests/test_archive_recovery.py` | Repo-static private-fixture evidence for SHA-1/SHA-256 Git identity, literal canonical paths, deterministic bounded Git execution, stable non-disclosing errors and representations, raw blob bytes, UTF-8 admission, duplicate-key rejection, byte-identical canonical frontmatter, metadata dependency, marker/payload-to-EOF grammar, final-newline preservation, collision safety, and worktree-byte substitution rejection; not production archive authority or corpus evidence |
 | Archive validation fixture | `python3 -m unittest tests/test_archive_validation.py` | Repo-static import-only evidence for metadata order/type, Git blob and digest identity, payload mutation, mirrored path, source-tree-only historical links, current-tree confusion rejection, inventory-independent archive reactivation, active direct individual-archive links, duplicate `original_path` authority, archive immutability, finite current status/profile and exact public input contracts, private verified canonical CommonMark loading/return-shape checks, and payload-free diagnostics; not production archive authority or 31/202 corpus evidence |
+| Archive cutover regression | `python3 -m unittest tests/test_archive_cutover.py` | Production worktree snapshot evidence that the cutover is atomic and emits named `ARCHIVE-CUTOVER-INCOMPLETE` diagnostics for any partial state; the GREEN snapshot proves 31 records, 202 historical links, 31 secret-clean exact Git-blob payloads, registry v8/template authority, manifest closure, and current index-only routing without displaying payload or secret matches |
+| Archive lifecycle cutover regression | `python3 -m unittest tests/test_document_lifecycle_archive_cutover.py`; `python3 scripts/validate-document-lifecycle.py --root . --self-test`; `python3 scripts/validate-document-lifecycle.py --root . --mode staged` | Eleven focused methods and thirteen closed self-test fixtures admit only the exact base `f8a54dd` staged/CI v7-to-v8 transition containing the pinned base/proposed registry blobs, all 31 same-path archive profile conversions, and the retired/new template pair. Partial, extra, wrong-base, wrong-registry-OID, missing-pair, registry drift, unrelated-profile, snapshot, and explicit-ref projections remain fail-closed without payload or secret scanning. |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
@@ -96,7 +102,7 @@ live readiness.
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
 | Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
-| Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; affected existing Markdown is passed to the exact document validators, while no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
+| Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul`; `python3 -m unittest tests/test_run_validation_lane.py tests/test_post_validate_runner_result.py tests/test_provider_post_validate_hook.py` | Repo-static shell-free execution of contract-selected argv under a closed startup environment and fixed absolute tool search path. Fifteen production-isolation, marker-cardinality, hostile PATH/BASH_ENV/PYTHONPATH, pure selector/runner, hook-log, and actual provider-entry regressions prove caller state cannot forge success. Claude, Codex, and Gemini commands execute the production hook in a bounded fixture: valid manifest/docs payloads preserve all 7/4 validators and existing Markdown path arguments, while malformed JSON fails closed. |
 | GitHub Actions security fixture | `python3 scripts/validate-github-actions-security.py --self-test` | Tier A required aggregate evidence preserving exactly eleven primary, ten repository-boundary, twenty-one required-write JSON cases, plus five internal uses-shape cases |
 | GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | Tier A required aggregate evidence; `PASS` enforces immutable Action identities and least-privilege permissions |
 | GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus durable unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
@@ -149,7 +155,20 @@ adapter PASS does not prove provider runtime consumption.
   predictable module cache is ignored. Payload-derived Markdown/link and caller
   values are absent from representations and diagnostics. It does
   not enumerate or modify `docs/98.archive`, activate a route/form/predicate,
-  retire Tombstones, or inspect ignored `_workspace` children.
+  activate production archive authority or inspect ignored `_workspace` children.
+
+- `tests/test_archive_cutover.py` invokes the local/manual ARWB-003 validator on
+  the repository snapshot and exercises bounded partial projections. The
+  expanded cases cover the closed 31-record, 202-link, and 31-secret-clean
+  GREEN; named RED output; complete structured manifest and external-table
+  rejection; recovery-grade hostile Git isolation; stable root, registry,
+  startup, and timeout diagnostics; stale retired role; direct current link;
+  duplicate original owner; and missing replacement. Repeated partial
+  projections stub only the already-proven secret-classifier call while still
+  exercising production envelope/provenance/history logic. The validator
+  suppresses classifier stdout/stderr, never includes payload bytes in report
+  objects, and inventories tracked/untracked `docs` paths without traversing
+  ignored `_workspace` children.
 
 - `tests/fixtures/gitops-change-set/` base/head resource graphs contain one added
   Service, one deleted Service, and the same ConfigMap identity at a moved path.

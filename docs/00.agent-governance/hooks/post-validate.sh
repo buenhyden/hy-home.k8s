@@ -3,15 +3,21 @@
 # Runs at PostToolUse for Write|Edit|MultiEdit.
 set -euo pipefail
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:?CLAUDE_PROJECT_DIR is required}"
 INPUT_FILE="$(mktemp)"
 PATHS_FILE="$(mktemp --suffix=.nul)"
 RUNNER_LOG="$(mktemp)"
 trap 'rm -f "$INPUT_FILE" "$PATHS_FILE" "$RUNNER_LOG"' EXIT
 cat >"$INPUT_FILE"
-export PROJECT_DIR INPUT_FILE PATHS_FILE CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}"
+CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
 
-python3 - <<'PY'
+if ! /usr/bin/env -i \
+  HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin \
+  PROJECT_DIR="$PROJECT_DIR" INPUT_FILE="$INPUT_FILE" PATHS_FILE="$PATHS_FILE" \
+  CLAUDE_TOOL_INPUT_FILE_PATH="$CLAUDE_TOOL_INPUT_FILE_PATH" \
+  CLAUDE_TOOL_INPUT="$CLAUDE_TOOL_INPUT" \
+  /usr/bin/python3 -I - <<'PY'
 import json
 import os
 import sys
@@ -121,8 +127,13 @@ Path(os.environ["PATHS_FILE"]).write_bytes(
     b"".join(path.encode("utf-8") + b"\0" for path in paths)
 )
 PY
+then
+  exit 2
+fi
 
-if ! python3 "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
+if ! /usr/bin/env -i \
+  HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin \
+  /usr/bin/python3 -I "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
   --root "$PROJECT_DIR" --lane affected --paths-file "$PATHS_FILE" \
   --delimiter nul --format json >"$RUNNER_LOG" 2>&1; then
   printf '[hook] FAIL affected-surface path validation\n' >&2
@@ -281,12 +292,33 @@ if [[ "${#DOCKER_STYLE_FILES[@]}" -gt 0 ]]; then
   run_style_check "Dockerfile style" hadolint-docker "${DOCKER_STYLE_FILES[@]}"
 fi
 
-if python3 scripts/run-validation-lane.py --root . --lane affected \
-  --paths-file "$PATHS_FILE" --delimiter nul >"$RUNNER_LOG" 2>&1; then
+runner_rc=0
+/usr/bin/env -i \
+  GIT_TERMINAL_PROMPT=0 HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+  NO_COLOR=1 PATH=/usr/bin:/bin \
+  PYTHONNOUSERSITE=1 TZ=UTC \
+  /usr/bin/python3 -I scripts/run-validation-lane.py --root . --lane affected \
+  --paths-file "$PATHS_FILE" --delimiter nul >"$RUNNER_LOG" 2>&1 || runner_rc=$?
+
+if [[ "$runner_rc" -eq 0 ]]; then
   cat "$RUNNER_LOG"
   grep -Fq '[PASS] k8s-manifests ' "$RUNNER_LOG" && printf '[hook] PASS Kubernetes manifests\n'
   grep -Fq '[PASS] secret-handling ' "$RUNNER_LOG" && printf '[hook] PASS secret handling\n'
-  if grep -Fq '[PASS] repository-quality ' "$RUNNER_LOG"; then
+  repository_quality_pass=0
+  if [[ "$run_repo_quality" -eq 1 ]]; then
+    if /usr/bin/env -i \
+      HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin \
+      PYTHONNOUSERSITE=1 TZ=UTC \
+      /usr/bin/python3 -I \
+      docs/00.agent-governance/hooks/post-validate-runner-result.py \
+      --log "$RUNNER_LOG" --identifier repository-quality; then
+      repository_quality_pass=1
+    else
+      printf '[hook] FAIL repository quality result evidence\n' >&2
+      failure=1
+    fi
+  fi
+  if [[ "$repository_quality_pass" -eq 1 ]]; then
     if [[ "$run_docs_template" -eq 1 ]]; then
       printf '[hook] PASS documentation template enforcement\n'
     elif [[ "$run_repo_quality" -eq 1 ]]; then

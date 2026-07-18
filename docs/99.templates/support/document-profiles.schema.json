@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/document-profiles-7.schema.json",
+  "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
   "title": "Document profile registry",
   "type": "object",
   "additionalProperties": false,
@@ -21,10 +21,10 @@
       "const": "https://json-schema.org/draft/2020-12/schema"
     },
     "$id": {
-      "const": "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
+      "const": "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
     },
     "schemaVersion": {
-      "const": 7
+      "const": 8
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -460,10 +460,14 @@
     "createAdmission": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mode", "states"],
+      "required": ["mode", "states", "evidencePredicateId"],
       "properties": {
-        "mode": { "enum": ["states", "paired", "baseline-only", "snapshot-only"] },
-        "states": { "$ref": "#/$defs/stringArray" }
+        "mode": { "enum": ["states", "paired", "archive-envelope", "snapshot-only"] },
+        "states": { "$ref": "#/$defs/stringArray" },
+        "evidencePredicateId": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
       }
     },
     "admissionPolicy": {
@@ -539,16 +543,14 @@
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
         "profileEdges": {
           "type": "array",
-          "minItems": 1,
           "uniqueItems": true,
           "items": { "$ref": "#/$defs/profileEdge" }
         },
         "evidence": {
           "type": "array",
-          "minItems": 1,
           "items": { "$ref": "#/$defs/evidenceRequirement" }
         },
-        "relationship": { "enum": ["self", "role-decision", "pair", "program-lineage"] },
+        "relationship": { "enum": ["self", "role-decision", "pair", "program-lineage", "archive-source"] },
         "cardinality": {
           "type": "object",
           "additionalProperties": false,
@@ -562,17 +564,19 @@
           "enum": [
             "self-status-and-body", "pair-created-or-status-changed",
             "target-and-last-relation-changed", "target-and-evidence-status-body-changed",
-            "target-plan-task-status-changed", "pair-status-changed"
+            "target-plan-task-status-changed", "pair-status-changed",
+            "source-removed-and-mirror-created"
           ]
         },
-        "bodyRequirement": { "enum": ["body-contract", "heading-set"] },
+        "bodyRequirement": { "enum": ["body-contract", "heading-set", "none"] },
         "capabilities": {
           "type": "array",
           "uniqueItems": true,
           "items": {
             "enum": [
               "rendered-link", "reciprocal-link", "program-lineage-closed",
-              "task-terminal-evidence", "same-diff"
+              "task-terminal-evidence", "same-diff", "archive-envelope",
+              "source-removal"
             ]
           }
         }

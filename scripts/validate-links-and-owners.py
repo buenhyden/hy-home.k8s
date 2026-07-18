@@ -2191,6 +2191,11 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     for source in context.paths:
         profile = context.profiles[source].profile_id
+        if profile == "content/archive":
+            # ArchiveEnvelope.v1 payload links are historical evidence. Their
+            # authority is resolved against source_commit/original_path by the
+            # archive validator, never against the current worktree.
+            continue
         for raw in _extract_links(context.texts[source]):
             kind, target = _local_destination(source, raw)
             if kind in {"external", "anchor"}:
@@ -2936,7 +2941,7 @@ PROGRAM_LIFECYCLE_AUTHORITY = {
     "spec": "draft -> active -> done | archived",
     "plan/task": "draft -> active -> done | archived",
     "operations": "draft -> active -> accepted | archived",
-    "archive tombstone": "archived only",
+    "archive record": "archived only",
 }
 
 
@@ -4303,7 +4308,7 @@ def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     status = str(context.metadata[path].get("status", "")).casefold()
     if profile.mode != "authored" or profile.profile_class in {"readme", "exception"}:
         return False
-    if profile.profile_id == "content/archive-tombstone" or status not in {
+    if profile.profile_id == "content/archive" or status not in {
         "active",
         "accepted",
     }:
@@ -5071,12 +5076,13 @@ def validate_cross_document_contracts(
     mode: str,
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
+    include_paths: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     """Return deterministic raw cross-document diagnostics."""
 
     if mode not in {"compatibility", "strict"}:
         raise ConfigurationError("mode must be compatibility or strict")
-    context = _build_context(root)
+    context = _build_context(root, include_paths=include_paths)
     _load_debt(context.root, mode=mode)
     registry = load_registry(context.root)
     profiles_by_id = {profile.profile_id: profile for profile in registry.profiles}
@@ -6940,7 +6946,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Tombstone | `archived` only"
+            "Archive Record | `archived` only"
         )
         indented = "\n".join(f"         {line}" for line in table.splitlines())
         mutated.texts[stage_zero] += f"\n\n123.\n{indented}"
@@ -6954,7 +6960,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Tombstone | `archived` only"
+            "Archive Record | `archived` only"
         )
         indented = "\n".join(f"         {line}" for line in table.splitlines())
         mutated.texts[stage_zero] += f"\n\n123.    \n{indented}"
@@ -6968,7 +6974,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Tombstone | `archived` only"
+            "Archive Record | `archived` only"
         )
         indented = "\n".join(f"    {line}" for line in table.splitlines())
         mutated.texts[stage_zero] += f"\n\n***\n{indented}"
@@ -6985,7 +6991,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`",
             "Plan/Task | `draft -> active -> done \\| archived`",
             "Operations | `draft -> active -> accepted \\| archived`",
-            "Archive Tombstone | `archived` only",
+            "Archive Record | `archived` only",
         ]
         if mutation == "program-lazy-quote-pseudo-authority":
             table = "> paragraph\n" + "\n".join(rows)
@@ -7026,7 +7032,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`",
             "Plan/Task | `draft -> active -> done \\| archived`",
             "Operations | `draft -> active -> accepted \\| archived`",
-            "Archive Tombstone | `archived` only",
+            "Archive Record | `archived` only",
         ]
         definitions = ""
         if mutation == "program-duplicate-authority-leading":
@@ -7059,7 +7065,7 @@ def _mutated_program_lineage_fixture(
                 "platform | `draft -> active -> done \\| archived` | Spec | current",
                 "platform | `draft -> active -> done \\| archived` | Plan/Task | current",
                 "platform | `draft -> active -> accepted \\| archived` | Operations | current",
-                "platform | `archived` only | Archive Tombstone | current",
+                "platform | `archived` only | Archive Record | current",
             ]
         elif mutation == "program-invalid-authority-link-garbage":
             rows[2] = (
@@ -7105,7 +7111,7 @@ def _mutated_program_lineage_fixture(
             "| Spec | `draft -> active -> done \\| archived` |\n"
             "| Plan/Task | `draft -> active -> done \\| archived` |\n"
             "| Operations | `draft -> active -> accepted \\| archived` |\n"
-            "| Archive Tombstone | `archived` only |"
+            "| Archive Record | `archived` only |"
         )
         mutated.texts[stage_zero] += (
             f"\n\n```markdown\n{table}\n```\n\n<!--\n{table}\n-->"
@@ -7120,7 +7126,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Tombstone | `archived` only"
+            "Archive Record | `archived` only"
         )
         quoted = "\n".join(f"> > {line}" for line in table.splitlines())
         mutated.texts[stage_zero] += f"\n\n> > ```markdown\n{quoted}\n> > ```"
@@ -7137,7 +7143,7 @@ def _mutated_program_lineage_fixture(
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Tombstone | `archived` only"
+            "Archive Record | `archived` only"
         )
         quoted = "\n".join(f"> > {line}" for line in table.splitlines())
         if mutation == "program-nonrendered-authority-outer-fence-nested":
@@ -7538,9 +7544,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             )
     elif mutation == "reference-wrong-profile-member":
         target = PurePosixPath("docs/90.references/research/2026-07-07-wer/accepted.md")
-        profiles[target] = ProfileView(
-            "content/archive-tombstone", "common", "authored"
-        )
+        profiles[target] = ProfileView("content/archive", "common", "authored")
     elif mutation.startswith("collection-"):
         owner = PurePosixPath("docs/90.references/research/2026-07-07-wer/README.md")
         tree_line = "├── accepted.md"
@@ -9291,8 +9295,21 @@ def _self_test(root: Path) -> list[str]:
         failures.append("retired semantic debt CLI boundary differs")
     if (root / DEBT_PATH).exists():
         failures.append("retired semantic debt source was recreated")
-    production_context = _build_context(root)
-    production = validate_cross_document_contracts(root, "strict")
+    proposed_forms = tuple(
+        path
+        for path in (
+            PurePosixPath(
+                "docs/99.templates/templates/common/archive-record.template.md"
+            ),
+        )
+        if (root / path).is_file()
+    )
+    production_context = _build_context(root, include_paths=proposed_forms)
+    production = validate_cross_document_contracts(
+        root,
+        "strict",
+        include_paths=proposed_forms,
+    )
     if production:
         failures.append("strict production repository diagnostics must be empty")
     owner_keys, owner_diagnostics = _owner_state(production_context)

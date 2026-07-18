@@ -60,7 +60,7 @@ Historical references include:
 
 - Dated progress ledger entries.
 - Old completed plan or task evidence that records a past drift.
-- Archive Tombstones.
+- Archive records.
 
 Historical references may remain only when they are explicitly dated and cannot
 be mistaken for current instructions. When a dated audit finding has been

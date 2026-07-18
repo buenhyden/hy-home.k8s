@@ -180,7 +180,7 @@ def authored_doc_template(path: str) -> str:
         if path.startswith("docs/90.references/"):
             return "docs/99.templates/templates/common/reference.template.md"
         if path.startswith("docs/98.archive/"):
-            return "docs/99.templates/templates/common/archive-tombstone.template.md"
+            return "docs/99.templates/templates/common/archive-record.template.md"
         return "classify via docs/99.templates/support/template-routing.md before writing"
     return ""
 

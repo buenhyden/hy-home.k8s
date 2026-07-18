@@ -75,7 +75,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Convert user intent into explicit success criteria, affected paths, validation commands, and known limitations.
 - Keep implementation GitOps-first: repository change -> review -> ArgoCD reconciliation.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
-- Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`, `archive-tombstone` -> `docs/98.archive/`.
+- Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`, `archive-record` -> `docs/98.archive/`.
 - Implement explicit QA and CI/static validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
 - All AI Agents must use the workspace-specific structured directories: `.agents/{skills,workflows,output-styles}/` for provider-neutral shared assets; `.agents/agents/*.md` for local/Antigravity role adapters; and `.claude/agents/*.md` plus `.codex/agents/*.toml` for provider-native role adapters. `.agents/hooks.json` is local behavioral wiring, `.codex/hooks.json` is Codex context/validation wiring, and only Claude settings act as a native permission gate. Gemini CLI native `.gemini/agents/**` and `.gemini/settings.json` are absent and remain `DEFER`.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
@@ -94,7 +94,7 @@ Rules for AI Agent-first Engineering quality and safety.
   current repo evidence, not by preserving contradictory active contracts.
 - Remove temporary files, debug-only code, unused imports, and disallowed
   scratch naming (`temp_`, `_new`, `_old`, `_backup`) before handoff.
-- Use `docs/98.archive` Tombstones for obsolete active-stage documents only
+- Use `docs/98.archive` archive records for obsolete active-stage documents only
   after a current replacement and index path exist.
 - Add deterministic validator coverage for recurring drift classes whenever the
   check can be expressed without live cluster mutation or secret inspection.

@@ -144,7 +144,6 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-DATE",
         "FM-DELIMITER",
         "FM-DUPLICATE-KEY",
-        "FM-BASELINE-ADMISSION",
         "FM-FORBIDDEN",
         "FM-FUTURE-DATE",
         "FM-KEY-ORDER",
@@ -1687,9 +1686,6 @@ def _repository_diagnostics(
 ) -> list[Diagnostic]:
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     diagnostics: list[Diagnostic] = []
-    diagnostics.extend(
-        _baseline_admission_diagnostics(registry, inventory.current_paths)
-    )
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         append_context = None
@@ -1714,31 +1710,6 @@ def _repository_diagnostics(
                 body_contract_path_prefixes=body_contract_path_prefixes,
             )
         )
-    return sorted(diagnostics, key=diagnostic_sort_key)
-
-
-def _baseline_admission_diagnostics(
-    registry: Any, paths: Sequence[PurePosixPath]
-) -> list[Diagnostic]:
-    """Reject paths outside a selected baseline-only admission contract."""
-
-    diagnostics: list[Diagnostic] = []
-    for path in paths:
-        profile = classify_path(registry, path)
-        admission = profile.admission
-        if (
-            admission.create.mode == "baseline-only"
-            and path not in admission.baseline_paths
-        ):
-            diagnostics.append(
-                _diagnostic(
-                    "FM-BASELINE-ADMISSION",
-                    path,
-                    profile,
-                    (f"an exact path in baseline-only policy {admission.policy_id}"),
-                    path.as_posix(),
-                )
-            )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -2448,77 +2419,8 @@ def _self_test(root: Path) -> list[str]:
 
         matrix_by_profile = {row["profile"]: row for row in rows}
 
-        admission_cases = fixture.get("admissionCases", [])
-        expected_admission_names = (
-            "existing-tombstone-readable",
-            "copied-tombstone-rejected",
-            "renamed-tombstone-rejected",
-        )
-        if (
-            tuple(case.get("name") for case in admission_cases)
-            != expected_admission_names
-        ):
-            failures.append("focused admission case names changed")
-        admission_case_keys = {"name", "path", "expectedRuleIds"}
-        for case in admission_cases:
-            if set(case) != admission_case_keys:
-                failures.append(f"admission case fields differ: {case.get('name')}")
-                continue
-            path = _fixture_path(case["path"])
-            actual_rules = _rule_ids(_baseline_admission_diagnostics(registry, (path,)))
-            if actual_rules != case["expectedRuleIds"]:
-                failures.append(
-                    f"admission {case['name']}: "
-                    f"expected={case['expectedRuleIds']} actual={actual_rules}"
-                )
-
-        tombstone_profile = profiles["content/archive-tombstone"]
-        tombstone_baseline = tombstone_profile.admission.baseline_paths
-        if len(tombstone_baseline) != 31 or _baseline_admission_diagnostics(
-            registry, tombstone_baseline
-        ):
-            failures.append(
-                "all 31 exact Tombstone baseline paths must remain readable"
-            )
-        include_probe = PurePosixPath(
-            "docs/98.archive/__markdown-profile-admission-self-test__.md"
-        )
-        include_target = root / include_probe
-        if include_target.exists():
-            failures.append("Tombstone admission include probe already exists")
-        else:
-            include_target.write_text(
-                read_repository_text(root, tombstone_baseline[0]),
-                encoding="utf-8",
-            )
-            stdout = io.StringIO()
-            stderr = io.StringIO()
-            try:
-                with (
-                    contextlib.redirect_stdout(stdout),
-                    contextlib.redirect_stderr(stderr),
-                ):
-                    include_result = main(
-                        [
-                            "--root",
-                            str(root),
-                            "--mode",
-                            "strict",
-                            "--include-path",
-                            include_probe.as_posix(),
-                        ]
-                    )
-            finally:
-                include_target.unlink(missing_ok=True)
-            expected_probe = f"FAIL FM-BASELINE-ADMISSION {include_probe.as_posix()} "
-            if (
-                include_result != 1
-                or expected_probe not in stdout.getvalue()
-                or stderr.getvalue()
-            ):
-                failures.append(
-                    "explicit untracked Tombstone include did not fail closed"
-                )
+        if fixture.get("admissionCases", []):
+            failures.append("retired compatibility admission cases remain")
 
         section_cases = fixture.get("sectionBodyCases", [])
         expected_section_names = (
@@ -3270,9 +3172,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         profiles = {profile.profile_id: profile for profile in registry.profiles}
-        diagnostics.extend(
-            _baseline_admission_diagnostics(registry, inventory.current_paths)
-        )
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
             append_context = None

@@ -20,7 +20,7 @@ Persona: Technical Writer
 | ----------------------- | ----- | ------------------------------- |
 | `docs/05.operations/guides/**`     | docs  | Bootstrap and onboarding guides |
 | `docs/90.references/**` | docs  | Reference documents             |
-| `docs/98.archive/**` | docs  | Archive Tombstone index and metadata-only old document Tombstones |
+| `docs/98.archive/**` | docs  | Full-body Archive Record corpus and index-only current navigation |
 | `docs/99.templates/**`  | docs  | Document templates              |
 | `README.md`             | docs  | Root README (Korean)            |
 | `docs/README.md`        | docs  | Docs index README (Korean)      |

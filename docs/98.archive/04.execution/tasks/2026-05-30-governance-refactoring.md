@@ -1,50 +1,85 @@
 ---
-title: 'Archive Tombstone: Governance Refactoring Task'
-type: content/archive-tombstone
-status: archived
-owner: platform
-updated: 2026-06-02
-original_path: docs/04.execution/tasks/2026-05-30-governance-refactoring.md
-archived_on: 2026-06-02
-archive_reason: superseded
-replacement: docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md
+title: "Archive Record: Governance Refactoring Task"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-06-02"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-05-30-governance-refactoring.md"
+archived_on: "2026-06-02"
+archive_reason: "superseded"
+replacement: "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md"
+source_commit: "5e0221525450dbdacb585e6c98ade3f060ddc827"
+source_blob: "ee7eb5c1408caffcfa66771fba342b76153ca616"
+content_sha256: "4a2899884df777aa3bea65ad015d18af727bce9d4f740b440ffa58d43181eb9f"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
+title: 'Governance Refactoring Task'
+type: task
+status: superseded
+owner: 'platform'
+updated: 2026-06-01
 ---
 
-# Archive Tombstone: Governance Refactoring Task
 
-## Overview
+# Governance Refactoring Task
 
-이 문서는 현재 구현과 맞지 않는 old 문서를 archive로 이동했음을 기록하는 Tombstone이다.
-원문 본문은 보존하지 않으며, 현재 구현 기준은 아래 replacement 문서가 소유한다.
+---
 
-## Original Document
+## Overview (KR)
 
-- Original path: `docs/04.execution/tasks/2026-05-30-governance-refactoring.md`
-- Original title: Governance Refactoring Task
-- Original type: task
+[2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md) 계획에 따른 실제 실행 추적.
 
-## Archive Decision
+## Inputs
 
-- Archived on: 2026-06-02
-- Reason: Superseded-only governance task replaced by the Stage 00 canonical adapter redesign task.
-- Currentness rule: The old body is intentionally not retained because active stages must reflect current repo-backed implementation.
+- **Parent Spec**: N/A. Historical governance refactoring slice.
+- **Parent Plan**: [../plans/2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md)
 
-## Current Replacement
+## Context
 
-- Current owner document: [docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
-- Current active index: [tasks](../../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
+Stage 00 기반 거버넌스의 파편화를 방지하고, 템플릿 계약 준수를 위함.
 
-## Current Implementation Evidence
+2026-06-01 update: this task is superseded by
+[2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md).
+The remaining work is tracked there with task-level validation evidence. This
+document remains as historical context for the original 2026-05-30 slice.
 
-- `bash infrastructure/tests/verify-contracts-static.sh`
-- `bash scripts/validate-gitops-structure.sh`
-- `bash scripts/validate-k8s-manifests.sh .`
-- `bash scripts/validate-repo-quality-gates.sh .`
+## Objective
 
-## Archive Index
+1. 템플릿 매핑 복구 (`policy.template.md` 신설)
+2. ARD 파일명 일괄 변경 (`YYYY-MM-DD` -> `0001-`)
+3. 모델 정책 갱신 (Legacy 분리 및 공식 모델 지정)
+4. 플랫폼 하네스 중복 텍스트 제거
 
-- [Archive README](../../README.md)
+## Task Table
+
+- `[ ]` TSK-001: `policy.template.md`를 `policy.template.md`로 이름 변경 및 템플릿 내부 내용 수정.
+- `[ ]` TSK-002: `docs/99.templates/README.md`에서 매핑 갱신.
+- `[ ]` TSK-003: `docs/02.architecture/requirements/` 내부의 파일들을 `0001-` 형식으로 리네임.
+- `[ ]` TSK-004: ARD 리네임에 따른 기존 링크(`docs/01.requirements/` 등) 업데이트.
+- `[ ]` TSK-005: `docs/00.agent-governance/model-policy.md` 내용 수정.
+- `[ ]` TSK-006: `.agents/GEMINI.md`, `.claude/CLAUDE.md`, `.codex/CODEX.md` 텍스트 슬림화/어댑터화.
+
+## Suggested Types
+
+- `doc`
+- `guardrail`
+- `test`
+
+## Working Rules
+
+- Historical evidence is preserved here.
+- Current execution continues in the superseding 2026-06-01 canonical adapter task.
+- Do not use this task as the active implementation contract.
+
+## Verification Summary
+
+| TSK | Code / Output | Notes |
+| --- | ------------- | ----- |
+|     |               |       |
 
 ## Related Documents
 
-- [Current replacement](../../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
+- **Plan**: [../plans/2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md)
+- **Superseding Task**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)

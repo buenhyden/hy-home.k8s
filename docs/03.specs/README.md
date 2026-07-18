@@ -11,7 +11,7 @@
 서비스, API, 데이터 모델, Agent 설계, 검증 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
 
 Spec은 실행 기준을 소유하는 문서다.
-활성 Spec은 현재 repo-backed 구현과 일치해야 하며, 구현과 상충하는 old Spec은 중앙 archive Tombstone으로 이동한다.
+활성 Spec은 현재 repo-backed 구현과 일치해야 하며, 구현과 상충하는 old Spec은 provenance가 검증된 full-body Archive Record로 이동한다.
 
 ### Stage Readers
 
@@ -126,7 +126,7 @@ Spec은 실행 기준을 소유하는 문서다.
 2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
 4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
-5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 `../98.archive/README.md`의 Tombstone 인덱스로 분리한다.
+5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 full-body Archive Record로 보존하며 `../98.archive/README.md`의 중앙 인덱스로만 분리한다.
 
 ### Relative Link Rules
 
@@ -182,7 +182,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./033-template-lifecycle-contract-normalization/spec.md`](./033-template-lifecycle-contract-normalization/spec.md)           | Template lifecycle contract normalization specification                       | Done | Stage 99 form/support/registry 분리, 현재 문서 body contract migration, production cutover와 독립 whole-branch closure review를 완료한 명세다. | 2026-07-15 |
 | [`./034-authority-and-lineage-foundation/spec.md`](./034-authority-and-lineage-foundation/spec.md) | Authority and lineage foundation specification | Done | Spec 033 follow-up 관계, 새 program lineage, Current audit overlay, Stage 00/99 권위 경계를 정규화하고 repository-static 폐쇄 증거를 기록했다. | 2026-07-15 |
 | [`./035-document-schema-and-lifecycle-contract/spec.md`](./035-document-schema-and-lifecycle-contract/spec.md) | Document schema and lifecycle contract specification | Done | 유형별 폐쇄형 metadata, 상태 전이, 증거, template/source role, native-surface 계약과 결정적 검증을 완료했다. | 2026-07-17 |
-| [`./036-archive-record-and-workspace-boundary/spec.md`](./036-archive-record-and-workspace-boundary/spec.md) | Archive record and workspace boundary specification | Active | Spec 035 완료 뒤 첫 dependency-ready tranche로, 독립 검토를 통과한 reciprocal [Plan](../04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md)과 [Task](../04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md)에 따라 31개 Tombstone full-body archive와 `_workspace` 경계를 실행한다. | 2026-07-18 |
+| [`./036-archive-record-and-workspace-boundary/spec.md`](./036-archive-record-and-workspace-boundary/spec.md) | Archive record and workspace boundary specification | Active | Spec 035 완료 뒤 첫 dependency-ready tranche로, 독립 검토를 통과한 reciprocal [Plan](../04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md)과 [Task](../04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md)에 따라 31개 full-body Archive Record와 `_workspace` 경계를 실행한다. | 2026-07-18 |
 | [`./037-active-corpus-and-execution-retention/spec.md`](./037-active-corpus-and-execution-retention/spec.md) | Active corpus and execution retention specification | Active | 종료 lineage의 eligible Plan/Task를 archive하고 active-stage 누적을 제한한다. | 2026-07-15 |
 | [`./038-reference-information-architecture/spec.md`](./038-reference-information-architecture/spec.md) | Reference information architecture specification | Active | Stage 90 Current/Historical/generated/source freshness와 중복 소유권을 정리한다. | 2026-07-15 |
 | [`./039-github-ci-qa-evidence/spec.md`](./039-github-ci-qa-evidence/spec.md) | GitHub CI and QA evidence specification | Active | affected/all-files QA, aggregate verdict, artifact retention, FIFO portability 경계를 정리한다. | 2026-07-15 |

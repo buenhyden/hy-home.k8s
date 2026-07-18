@@ -103,7 +103,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh",
+            "command": "/usr/bin/env -i HOME=\"$HOME\" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin CLAUDE_PROJECT_DIR=\"$CLAUDE_PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=claude /usr/bin/bash --noprofile --norc \"$CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
             "timeout": 60
           }
         ]

@@ -52,7 +52,7 @@ retirement preserves lineage instead of rewriting historical evidence.
 Accepted architecture decisions are append-only decision evidence. A changed
 decision is represented by a successor ADR and an explicit replacement
 relation. Completed execution evidence is likewise preserved; new work creates
-a new Plan or Task. Archive Tombstones preserve traceability but never become
+a new Plan or Task. Archive records preserve traceability but never become
 current operating guidance.
 
 Production body enforcement applies to authored SDLC consumers only while they
@@ -75,7 +75,7 @@ and specs, architecture documents link upstream PRDs and downstream specs,
 specs link upstream inputs and downstream plan/task evidence, plans link the
 spec they execute and expected task evidence, tasks link the parent plan/spec
 and validation evidence, operations documents link the promoted spec, task,
-incident, or policy owner, and archive tombstones link the original and
+incident, or policy owner, and archive records link the original and
 replacement or current location.
 
 Active-surface duplicate rule: stages 01 through 04 must not keep multiple

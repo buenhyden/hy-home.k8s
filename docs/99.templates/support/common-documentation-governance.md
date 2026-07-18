@@ -12,7 +12,7 @@ updated: 2026-07-15
 
 This document defines the governance contract for common documentation
 templates. Common templates are not tied to a single SDLC stage. They support
-repository navigation, durable reference material, archive Tombstones, and
+repository navigation, durable reference material, archive records, and
 agent memory or progress records.
 
 ## Purpose
@@ -101,18 +101,26 @@ older dated artifact.
 - Reference documents must not duplicate active requirements, decisions,
   specs, plans, tasks, policies, or runbooks.
 - `reference.template.md` must not contain archive policy wording. Archive
-  policy belongs to archive governance and Tombstone templates.
+  policy belongs to archive governance and archive record templates.
 
 ### Archive Governance
 
-- Archive Tombstones are metadata-only.
+- Archive records preserve exact original Git blob bytes in an immutable,
+  non-current ArchiveEnvelope.v1.
 - Active docs link to archive content through the archive index, not directly
-  to individual Tombstones.
-- Tombstones preserve original path, archived date, reason, replacement, and
-  evidence. They must not preserve the old full body.
-- Tombstones and archive index rows are historical evidence, not current
+  to individual archive records.
+- Archive records preserve original type/path, archive date/reason,
+  replacement, source commit/blob, payload SHA-256, and the complete original body.
+- Archive records and archive index rows are historical evidence, not current
   operating guidance; the current replacement owns active requirements,
   implementation contracts, and procedures.
+- Generic Markdown style checks exclude immutable archive record files because
+  their payload is exact recovered source, while the current archive index
+  remains linted. Generic entropy scanning excludes only the canonical
+  `source_commit`, `source_blob`, and `content_sha256` integrity lines at their
+  exact lengths. Gitleaks classification of recovered payload bytes plus the
+  archive envelope, provenance, digest, and immutability validators remain the
+  authoritative fail-closed security and integrity gates.
 
 ### Memory and Progress Governance
 

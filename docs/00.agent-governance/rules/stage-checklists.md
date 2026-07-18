@@ -89,8 +89,9 @@ acceptance evidence, while this file remains a reusable cross-stage checklist.
 ### `98.archive`
 
 - [ ] Original docs subpath is mirrored under `docs/98.archive/`.
-- [ ] Tombstone body contains metadata only and no old full body text.
-- [ ] Current replacement and implementation evidence are linked.
+- [ ] ArchiveEnvelope.v1 contains the exact original Git blob bytes through EOF.
+- [ ] Source commit/blob, SHA-256, archive reason, and current replacement validate.
+- [ ] Historical links resolve in the source tree and the record is indexed.
 - [ ] Active docs link archive content only through `docs/98.archive/README.md`.
 
 ## Validation and Refresh

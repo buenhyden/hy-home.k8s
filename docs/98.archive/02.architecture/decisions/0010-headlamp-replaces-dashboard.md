@@ -1,50 +1,77 @@
 ---
-title: 'Archive Tombstone: ADR-0010: Headlamp Replaces Kubernetes Dashboard'
-type: content/archive-tombstone
-status: archived
+title: "Archive Record: ADR-0010: Headlamp Replaces Kubernetes Dashboard"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-06-02"
+original_type: "adr"
+original_path: "docs/02.architecture/decisions/0010-headlamp-replaces-dashboard.md"
+archived_on: "2026-06-02"
+archive_reason: "superseded"
+replacement: "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md"
+source_commit: "5e0221525450dbdacb585e6c98ade3f060ddc827"
+source_blob: "97ed0e3ea6a200942fc11d97d67da133069ed048"
+content_sha256: "b08ec274a09d2134208b3594482f5a4f197ce7afe5bde5e4289c363b063177ee"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
+title: 'ADR-0010: Headlamp Replaces Kubernetes Dashboard'
+type: adr
+status: accepted
 owner: platform
-updated: 2026-06-02
-original_path: docs/02.architecture/decisions/0010-headlamp-replaces-dashboard.md
-archived_on: 2026-06-02
-archive_reason: superseded
-replacement: docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md
+updated: 2026-05-21
 ---
 
-# Archive Tombstone: ADR-0010: Headlamp Replaces Kubernetes Dashboard
+# ADR-0010: Headlamp Replaces Kubernetes Dashboard
 
-## Overview
+## Overview (KR)
 
-이 문서는 현재 구현과 맞지 않는 old 문서를 archive로 이동했음을 기록하는 Tombstone이다.
-원문 본문은 보존하지 않으며, 현재 구현 기준은 아래 replacement 문서가 소유한다.
+Kubernetes Dashboard v3을 제거하고 Headlamp으로 교체한다.
+Headlamp는 더 가벼운 RBAC 기반 인증, 플러그인 확장, 단순한 배포 구조를 제공한다.
 
-## Original Document
+## Context
 
-- Original path: `docs/02.architecture/decisions/0010-headlamp-replaces-dashboard.md`
-- Original title: ADR-0010: Headlamp Replaces Kubernetes Dashboard
-- Original type: adr
+K8s Dashboard v3는 Kong Gateway를 내부 의존성으로 포함하고 있어 리소스 소비가 크다.
+또한 helm chart repository(`kubernetes.github.io/dashboard`)가 비활성화되어 `404 Not Found`가 발생했다.
+Headlamp는 CNCF 프로젝트로, 경량 단일 컨테이너 구성과 ServiceAccount Token 인증을 사용한다.
 
-## Archive Decision
+## Decision
 
-- Archived on: 2026-06-02
-- Reason: Replacement decision folded into the current local platform contract so active docs do not carry removed UI terms.
-- Currentness rule: The old body is intentionally not retained because active stages must reflect current repo-backed implementation.
+- Kubernetes Dashboard (`platform-dashboard-app.yaml`, `platform-dashboard-config-app.yaml`)를 제거한다.
+- Headlamp v0.41.0을 `headlamp` namespace에 설치한다 (chart: `kubernetes-sigs.github.io/headlamp/`).
+- `headlamp.127.0.0.1.nip.io`로 ingress-nginx + Traefik 라우팅을 구성한다.
+- cert-manager `mkcert-ca-issuer`로 TLS를 자동 발급한다.
 
-## Current Replacement
+## Explicit Non-goals
 
-- Current owner document: [docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- Current active index: [decisions](../../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- Headlamp 플러그인 개발
+- 멀티클러스터 Headlamp 연결
+- OIDC 인증 (로컬 플랫폼은 ServiceAccount Token 방식)
 
-## Current Implementation Evidence
+## Consequences
 
-- `bash infrastructure/tests/verify-contracts-static.sh`
-- `bash scripts/validate-gitops-structure.sh`
-- `bash scripts/validate-k8s-manifests.sh .`
-- `bash scripts/validate-repo-quality-gates.sh .`
+- `kubernetes-dashboard` namespace 및 관련 RBAC 제거
+- AppProject `sourceRepos`에서 dashboard repo 제거, headlamp repo 추가
+- 외부 Traefik artifact `headlamp-k3d.yaml` 필요 (별도 Traefik 레포 적용)
+- Vault/ESO 시크릿 변경 없음
 
-## Archive Index
+## Alternatives
 
-- [Archive README](../../README.md)
+| 옵션                  | 평가                                                          |
+| --------------------- | ------------------------------------------------------------- |
+| K8s Dashboard v3 유지 | chart repo 비활성화, Kong 의존성으로 리소스 과다, 유지 어려움 |
+| Headlamp              | CNCF 프로젝트, 경량, 단순 SA 토큰 인증, 플러그인 확장 가능    |
+| Octant                | 개발 중단됨                                                   |
+
+## Status
+
+Accepted — 2026-03-30
 
 ## Related Documents
 
-- [Current replacement](../../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ARD**: [`../requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)
+- **Task**: [`../../04.execution/tasks/2026-03-29-platform-expansion.md`](../../04.execution/tasks/2026-03-29-platform-expansion.md)
+- **Superseded ADR**: [`./0007-kubernetes-dashboard-v3.md`](./0007-kubernetes-dashboard-v3.md)

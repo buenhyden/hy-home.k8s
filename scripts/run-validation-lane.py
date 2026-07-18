@@ -16,11 +16,22 @@ from typing import Any, Sequence
 
 
 LOCAL_LANES = ("affected", "all-files")
+TRUSTED_SEARCH_DIRECTORIES = (
+    "/usr/local/sbin",
+    "/usr/local/bin",
+    "/usr/sbin",
+    "/usr/bin",
+    "/sbin",
+    "/bin",
+)
+QUALITY_SUCCESS_MARKER = "[PASS] repository quality gates passed"
 
 
 def load_contract_module():
     module_path = Path(__file__).with_name("validate-affected-surfaces.py")
-    spec = importlib.util.spec_from_file_location("affected_surface_contract", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "affected_surface_contract", module_path
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load affected-surface contract from {module_path}")
     module = importlib.util.module_from_spec(spec)
@@ -70,6 +81,42 @@ def observation(completed: subprocess.CompletedProcess[str]) -> str:
     )
 
 
+def trusted_search_path() -> str:
+    """Build one fixed absolute PATH without caller-controlled search entries."""
+
+    directories: list[str] = []
+    for raw_path in TRUSTED_SEARCH_DIRECTORIES:
+        try:
+            resolved = Path(raw_path).resolve(strict=True)
+        except OSError:
+            continue
+        value = resolved.as_posix()
+        if resolved.is_dir() and value not in directories:
+            directories.append(value)
+    return os.pathsep.join(directories)
+
+
+def closed_subprocess_environment() -> dict[str, str]:
+    """Return the complete validator environment; ambient startup state is absent."""
+
+    return {
+        "GIT_TERMINAL_PROMPT": "0",
+        "HOME": "/nonexistent",
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "NO_COLOR": "1",
+        "PATH": trusted_search_path(),
+        "PYTHONNOUSERSITE": "1",
+        "TZ": "UTC",
+    }
+
+
+def exact_success_marker_count(stdout: str, marker: str) -> int:
+    """Count exact complete success-marker lines without exposing child output."""
+
+    return sum(line == marker for line in stdout.splitlines())
+
+
 def validator_argv(
     root: Path,
     lane: str,
@@ -79,13 +126,15 @@ def validator_argv(
     contract_module: Any,
 ) -> list[str]:
     argv = list(validator["argv"])
-    if (
-        lane != "affected"
-        or validator.get("pathInput") != "include-existing-markdown"
-    ):
+    if lane != "affected" or validator.get("pathInput") != "include-existing-markdown":
         return argv
 
-    for raw_path in paths:
+    include_candidates = list(paths)
+    archive_form = "docs/99.templates/templates/common/archive-record.template.md"
+    if (root / archive_form).is_file() and archive_form not in include_candidates:
+        include_candidates.append(archive_form)
+
+    for raw_path in include_candidates:
         if not raw_path.endswith(".md"):
             continue
         surface = contract_module.classify_path(contract, raw_path)
@@ -136,12 +185,11 @@ def run_selected(
         return 0
 
     failed = False
+    subprocess_environment = closed_subprocess_environment()
     for identifier in selected["validators"]:
         validator = validators[identifier]
-        argv = validator_argv(
-            root, lane, paths, validator, contract, contract_module
-        )
-        tool = argv[0]
+        argv = validator_argv(root, lane, paths, validator, contract, contract_module)
+        tool_token = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":
             print(
@@ -149,7 +197,7 @@ def run_selected(
                     "DEFER",
                     identifier,
                     command=argv,
-                    tool=tool,
+                    tool=tool_token,
                     scope=scope,
                     limitation="remote/live commands are never executed by the local runner",
                     evidence=evidence,
@@ -157,7 +205,8 @@ def run_selected(
             )
             continue
 
-        if shutil.which(tool) is None:
+        resolved_tool = shutil.which(tool_token, path=subprocess_environment["PATH"])
+        if resolved_tool is None:
             fallback = validator["fallback"]
             if validator["optional"]:
                 print(
@@ -165,7 +214,7 @@ def run_selected(
                         "SKIP",
                         identifier,
                         command=argv,
-                        tool=tool,
+                        tool=tool_token,
                         scope=scope,
                         limitation="optional tool unavailable",
                         evidence=evidence,
@@ -188,7 +237,7 @@ def run_selected(
                     "FAIL",
                     identifier,
                     command=argv,
-                    tool=tool,
+                    tool=tool_token,
                     scope=scope,
                     limitation=f"required tool unavailable; fallback: {fallback['reason']}",
                     evidence=evidence,
@@ -197,17 +246,30 @@ def run_selected(
             failed = True
             continue
 
-        environment = os.environ.copy()
-        environment["HY_HOME_K8S_SKIP_HOOK_SIMULATION"] = "1"
+        tool = Path(resolved_tool).resolve(strict=True).as_posix()
+        argv[0] = tool
+
         completed = subprocess.run(
             argv,
             cwd=root,
             text=True,
             capture_output=True,
             shell=False,
-            env=environment,
+            env=subprocess_environment,
         )
-        status = "PASS" if completed.returncode == 0 else "FAIL"
+        marker = QUALITY_SUCCESS_MARKER if identifier == "repository-quality" else None
+        marker_count = (
+            exact_success_marker_count(completed.stdout, marker)
+            if marker is not None
+            else None
+        )
+        passed = completed.returncode == 0 and (
+            marker_count == 1 if marker is not None else True
+        )
+        status = "PASS" if passed else "FAIL"
+        limitation = observation(completed)
+        if marker_count is not None:
+            limitation += f";success_marker_count={marker_count}"
         print(
             result_line(
                 status,
@@ -215,11 +277,11 @@ def run_selected(
                 command=argv,
                 tool=tool,
                 scope=scope,
-                limitation=observation(completed),
+                limitation=limitation,
                 evidence=evidence,
             )
         )
-        failed = failed or completed.returncode != 0
+        failed = failed or not passed
     return 1 if failed else 0
 
 

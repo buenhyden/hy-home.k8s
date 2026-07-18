@@ -72,10 +72,10 @@ guidance it rejected; it is evidence, not a second schema owner.
 - `owner` is `platform` for repository-authored documents.
 - `updated` uses an ISO calendar date.
 - Do not quote scalar `owner` values when the value is the canonical owner.
-- Archive Tombstones carry the registry-defined traceability extension because
+- Archive records carry the registry-defined traceability extension because
   archive identity and replacement routing are metadata concerns, not body
   prose. Exact extension keys and allowed values come only from the
-  `content/archive-tombstone` profile.
+  `content/archive` profile.
 
 ### Legacy Boundary
 
@@ -91,7 +91,7 @@ has exactly one frontmatter profile. The gate rejects:
 - Missing required keys.
 - Unsupported keys for the profile.
 - Unsupported `type`, `status`, or `owner` values.
-- Unsupported `archive_reason` values on Archive Tombstones.
+- Unsupported `archive_reason` values on Archive records.
 - Frontmatter on README files when not required.
 - Frontmatter or authored-document treatment for ignored `_workspace/**`
   scratch files.

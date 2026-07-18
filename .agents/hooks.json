@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
+            "command": "/usr/bin/env -i HOME=\"$HOME\" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin GEMINI_PROJECT_DIR=\"$GEMINI_PROJECT_DIR\" CLAUDE_PROJECT_DIR=\"$GEMINI_PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini /usr/bin/bash --noprofile --norc \"$GEMINI_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
             "timeout": 60
           }
         ]

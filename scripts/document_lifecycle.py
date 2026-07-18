@@ -51,6 +51,7 @@ class LifecycleDocument:
     profile_id: str
     status: str | None
     state_issue: str | None = None
+    original_path: PurePosixPath | None = None
 
 
 @dataclass(frozen=True)
@@ -182,7 +183,12 @@ def _optional_profile_by_id(
 
 
 def _stateful(profile: DocumentProfile) -> bool:
-    return profile.admission.create.mode in {"states", "paired", "baseline-only"}
+    return profile.admission.create.mode in {
+        "states",
+        "paired",
+        "baseline-only",
+        "archive-envelope",
+    }
 
 
 def _state_diagnostic(
@@ -243,7 +249,7 @@ def _create_diagnostics(
             continue
         admission = profile.admission
         observed = f"absent -> {document.status or 'not-applicable'}"
-        if admission.create.mode == "states":
+        if admission.create.mode in {"states", "archive-envelope"}:
             if document.status not in admission.create.states:
                 diagnostics.append(
                     _diagnostic(
@@ -313,6 +319,79 @@ def _create_diagnostics(
                 )
             )
     return diagnostics
+
+
+def _mirrored_archive_path(original_path: PurePosixPath) -> PurePosixPath | None:
+    if (
+        original_path.is_absolute()
+        or not original_path.parts
+        or original_path.parts[0] != "docs"
+        or ".." in original_path.parts
+        or original_path.parts[1:2] == ("98.archive",)
+    ):
+        return None
+    return PurePosixPath("docs/98.archive", *original_path.parts[1:])
+
+
+def _archive_creation_evidence(
+    registry: Registry,
+    created: Sequence[LifecycleDocument],
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    evidence_context: LifecycleEvidenceContext | None,
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[list[LifecycleDiagnostic], set[PurePosixPath]]:
+    diagnostics: list[LifecycleDiagnostic] = []
+    admitted_source_removals: set[PurePosixPath] = set()
+    for document in created:
+        if document.profile_id != "content/archive":
+            continue
+        profile = _optional_profile_by_id(registry, document.profile_id)
+        gaps: list[str] = []
+        original_path = document.original_path
+        expected_archive_path = (
+            _mirrored_archive_path(original_path) if original_path is not None else None
+        )
+        if (
+            profile is None
+            or profile.admission.create.evidence_predicate_id
+            != "archive-source-removal"
+        ):
+            gaps.append("registry archive creation predicate is unavailable")
+        if original_path is None:
+            gaps.append("archive original_path evidence is missing")
+        elif expected_archive_path != document.path:
+            gaps.append("archive path does not mirror original_path")
+        elif original_path not in base_documents:
+            gaps.append("original source is absent from the comparison base")
+        elif original_path in proposed_documents:
+            gaps.append("original source remains in the proposed snapshot")
+        if evidence_context is None:
+            gaps.append("same-diff archive evidence context is unavailable")
+        elif original_path is not None:
+            if original_path not in evidence_context.changed_paths:
+                gaps.append("original source removal is absent from the same diff")
+            if document.path not in evidence_context.created_paths:
+                gaps.append("mirrored archive creation is absent from the same diff")
+        if gaps:
+            diagnostics.append(
+                _diagnostic(
+                    "LIFECYCLE-EVIDENCE",
+                    path=document.path,
+                    profile=document.profile_id,
+                    expected=(
+                        "predicate archive-source-removal for one source removal "
+                        "and mirrored content/archive creation"
+                    ),
+                    observed=f"absent -> {document.status or 'not-applicable'}",
+                    base_mode=base_mode,
+                    evidence_gap="; ".join(gaps),
+                )
+            )
+        elif original_path is not None:
+            admitted_source_removals.add(original_path)
+    return diagnostics, admitted_source_removals
 
 
 SPECIFICATION_PROFILES = frozenset(
@@ -978,7 +1057,26 @@ def compare_lifecycle(
                 )
             )
 
-    deleted_paths = set(base_documents) - consumed_base - common_paths
+    created_paths = set(proposed_documents) - consumed_proposed - common_paths
+    created = [
+        proposed_documents[path]
+        for path in sorted(created_paths, key=PurePosixPath.as_posix)
+    ]
+    creation_diagnostics = _create_diagnostics(registry, created, base_mode=base_mode)
+    diagnostics.extend(creation_diagnostics)
+    archive_evidence_diagnostics, admitted_source_removals = _archive_creation_evidence(
+        registry,
+        created,
+        base_documents,
+        proposed_documents,
+        evidence_context,
+        base_mode=base_mode,
+    )
+    diagnostics.extend(archive_evidence_diagnostics)
+
+    deleted_paths = (
+        set(base_documents) - consumed_base - common_paths - admitted_source_removals
+    )
     for path in sorted(deleted_paths, key=PurePosixPath.as_posix):
         document = base_documents[path]
         profile = _optional_profile_by_id(registry, document.profile_id)
@@ -999,13 +1097,6 @@ def compare_lifecycle(
             )
         )
 
-    created_paths = set(proposed_documents) - consumed_proposed - common_paths
-    created = [
-        proposed_documents[path]
-        for path in sorted(created_paths, key=PurePosixPath.as_posix)
-    ]
-    creation_diagnostics = _create_diagnostics(registry, created, base_mode=base_mode)
-    diagnostics.extend(creation_diagnostics)
     if evidence_context is not None:
         failed_creation_paths = {item.path for item in creation_diagnostics}
         for document in created:
@@ -1154,9 +1245,22 @@ def document_from_text(
             status=None,
             state_issue="frontmatter status is missing or not a string",
         )
+    original_path: PurePosixPath | None = None
+    if profile_id == "content/archive":
+        raw_original_path = metadata.get("original_path")
+        if isinstance(raw_original_path, str):
+            candidate = PurePosixPath(raw_original_path)
+            if (
+                candidate.as_posix() == raw_original_path
+                and _mirrored_archive_path(candidate) is not None
+            ):
+                original_path = candidate
+        if original_path is None:
+            profile_issue = "archive original_path is missing or noncanonical"
     return LifecycleDocument(
         path=path,
         profile_id=profile_id,
         status=status,
         state_issue=profile_issue,
+        original_path=original_path,
     )

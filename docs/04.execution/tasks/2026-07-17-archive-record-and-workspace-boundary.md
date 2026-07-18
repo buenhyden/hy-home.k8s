@@ -16,7 +16,8 @@ implementation under Spec 036; it does not assert that recovery, archive
 conversion, source-link validation, workspace enforcement, or closure has run.
 
 The activation baseline is `04cb3a6`; ARWB-001 was committed as `6b9b9cd` from
-parent `04a4d32`, and ARWB-002 now executes from that commit. Every
+parent `04a4d32`, ARWB-002 was committed as `f8a54dd` from parent `6b9b9cd`,
+and ARWB-003 now executes from that commit. Every
 implementation package must retain its named RED, GREEN command result, independent
 requirements and quality verdict, logical commit, and parent before the next
 package begins.
@@ -37,8 +38,8 @@ package begins.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | ARWB-001 | VAL-ARWB-001, VAL-ARWB-002, VAL-ARWB-004, VAL-ARWB-007 | Define exact Git-object recovery and ArchiveEnvelope.v1 parser/schema capability without activating production archive authority. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: missing private module. Requirements RED: ten tests with five expected failures. Quality RED: fifteen tests with two failures and three errors. GREEN: 15/15 plus Ruff/compile and strict document gates. Independent verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Logical commit: `6b9b9cd`; commit parent: `04a4d32`; no production authority or workspace guard changed. |
-| ARWB-002 | VAL-ARWB-002, VAL-ARWB-003, VAL-ARWB-005, VAL-ARWB-007 | Implement fail-closed archive, provenance, integrity, historical-link, current-authority, and immutability validation. | platform | In Progress | Focused implementation and independent reviews complete; the logical commit remains pending. | Initial RED: missing module, then 14 cases with nine failures. Quality RED: 22 cases with 17 failures and 13 errors. GREEN: 22/22 focused and 37/37 ARWB regression, canonical link self-test, Ruff/compile, strict document gates, Markdownlint, and diff check. Verdicts: `REQUIREMENTS COMPLIANT`, initial `QUALITY CHANGES REQUIRED`, final `QUALITY APPROVED`. Parent: `6b9b9cd`. |
-| ARWB-003 | VAL-ARWB-001 through VAL-ARWB-005 | Atomically activate production archive authority, migrate 31 records, prove 202 links, cut index/current authority, and retire the Tombstone role. | platform | Queued | Not executed. | `ARCHIVE-CUTOVER-INCOMPLETE` RED, redacted secret-classifier result, 31/31 blob/digest and 202/202 link proof, production route/form/predicates, complete index, zero direct current links, retired Tombstone role, reviews, one logical commit and parent. |
+| ARWB-002 | VAL-ARWB-002, VAL-ARWB-003, VAL-ARWB-005, VAL-ARWB-007 | Implement fail-closed archive, provenance, integrity, historical-link, current-authority, and immutability validation. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: missing module, then 14 cases with nine failures. Quality RED: 22 cases with 17 failures and 13 errors. GREEN: 22/22 focused and 37/37 ARWB regression, canonical link self-test, Ruff/compile, strict document gates, Markdownlint, and diff check. Verdicts: `REQUIREMENTS COMPLIANT`, initial `QUALITY CHANGES REQUIRED`, final `QUALITY APPROVED`. Logical commit: `f8a54dd`; parent: `6b9b9cd`. |
+| ARWB-003 | VAL-ARWB-001 through VAL-ARWB-005 | Atomically activate production archive authority, migrate 31 records, prove 202 links, cut index/current authority, and retire the duplicate archive role. | platform | In Progress | Atomic proposed-snapshot implementation and local validation are complete; only the logical commit is pending. | Named RED: `ARCHIVE-CUTOVER-INCOMPLETE`. GREEN: manual cutover `records=31 historical_links=202 secret_clean=31`; combined archive suite 57/57; exact finite-admission regression 11/11; dedicated runner/hook/provider result 15/15; registry v8, Markdown, cross-document, lifecycle 666-case self-test, Ruff, and cutover-excluding aggregate evidence recorded below. Secret classification used exit 17, integer timeout 10, suppressed stdout/stderr, and returned source=31 pass=31 detected=0 error=0. Final verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. |
 | ARWB-004 | VAL-ARWB-006 | Enforce `_workspace` as one tracked README plus unread ignored scratch using Git metadata only. | platform | Queued | Not executed. | Isolated tracked/ignored mutation fixtures, production index proof, no-traversal review, logical commit and parent. |
 | ARWB-005 | VAL-ARWB-001 through VAL-ARWB-007 | Reproduce incomplete closure, run full QA, obtain whole-tranche review, and close Spec 036 atomically. | platform | Queued | Not executed. | Lifecycle incomplete-closure RED, full command matrix, review verdicts, closure proposal, rollback boundary, logical commit and post-commit checks. |
 
@@ -197,8 +198,137 @@ strict cross-document validation, changed-document Markdownlint, and
 `git diff --check` pass. This is import-only repository-static evidence; it
 does not activate a production archive route/form/predicate, inspect or migrate
 the 31-record corpus, claim the 202-link proof, retire Tombstones, or inspect
-ignored `_workspace` children. The logical commit from parent `6b9b9cd` remains
-pending.
+ignored `_workspace` children. The logical commit is `f8a54dd` from parent
+`6b9b9cd`.
+
+ARWB-003 began with the named production RED
+`ARCHIVE-CUTOVER-INCOMPLETE`. The atomic cutover then replaced the exact 31
+mirrored records with canonical ArchiveEnvelope.v1 frontmatter, marker, and
+payload-to-EOF bytes. Twenty-six records recover from source commit
+`5e0221525450dbdacb585e6c98ade3f060ddc827`; five recover from
+`82f0e1922d9748a88b1487a32a59629ba523f408`. The production validator proves
+31 unique original paths, exact full commit/blob identities, payload SHA-256,
+31 replacements, 202 source-commit historical links, a complete 31-row index
+manifest, zero direct current links to individual records, and the single
+`content/archive`/`template/content/archive` authority in registry v8.
+
+Secret classification streamed each exact recovered Git-blob payload to
+`gitleaks` with detection exit 17 and integer timeout 10 while suppressing
+stdout and stderr. The redacted aggregate is `source=31 pass=31 detected=0
+error=0`; no payload, match, or secret value was printed or retained in
+diagnostics. The canonical template is now `archive-record.template.md`; the
+old form/profile and metadata-only production gate are absent. Current
+navigation routes through `docs/98.archive/README.md`, including all 31 Current
+research-ledger destinations.
+
+Local GREEN evidence is: explicit local/manual production cutover
+`records=31 historical_links=202 secret_clean=31`; combined ARWB suite 57/57;
+registry self-test 119 cases and strict 434-path classification; Markdown
+self-test and strict zero violations; cross-document self-test and strict
+PASS; lifecycle self-test 666 cases; Ruff check and format PASS. The default
+repository-quality aggregate completed within its 600-second bound with exit 0
+and `[PASS] repository quality gates passed`; that aggregate intentionally does
+not invoke the full-history/`gitleaks` cutover proof. Production post-validate
+always runs the real affected lane and has no self-test or required-validator
+skip. Dedicated pure selector/runner tests execute all 7 manifest and 4 docs
+validators without recursively invoking the production hook. Validator
+subprocesses use a closed startup environment, absolute trusted tool resolution,
+and exact repository-quality body marker proof; the production hook uses
+`/usr/bin/python3 -I` and independently requires one PASS result line.
+The archive index parser rejects missing, duplicate, extra, column-swapped, and
+cross-row digest-swapped evidence, while the finite base admission proves the
+exact 31 legacy-record conversions without restoring their retired authority.
+ARWB-003 executes from parent `f8a54dd`; CI integration remains a Spec 039
+follow-up and is not changed by this package.
+
+After the initial independent verdicts, the required staged lifecycle command
+exposed 33 failures: 31 legacy-to-current archive profile changes and the
+retired/new template delete-create pair. A focused eight-case RED proved the
+finite admission was absent. A later exact-identity review added three expected
+RED failures showing that version/profile identifiers alone still admitted a
+different registry. The remediation classifies base and proposed documents with
+their own immutable registry Git blobs and admits only the exact `f8a54dd`
+registry-v7-to-v8 staged/CI cutover manifest. It pins base registry blob
+`0d9347c8ffa84ba313d0d70b42efb331d6e468c1` and proposed registry blob
+`ed62f1792ba60e9be95d0d93b75d43654df3456f`. Exact GREEN evidence is 11/11
+focused cases, staged lifecycle exit 0, and the 666-case lifecycle self-test;
+partial, extra, wrong-base, wrong-registry-OID, missing-pair, registry drift,
+unrelated-profile, snapshot, and explicit-ref variants remain denied. The
+lifecycle adapter does not invoke the archive payload or secret-classification
+path.
+
+The initial independent review returned `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`. After exact registry-identity remediation, repeat
+requirements review again returned `REQUIREMENTS COMPLIANT` and final quality
+re-review returned `QUALITY APPROVED`; only the ARWB-003 logical commit remains
+before this row may become Done. No ignored `_workspace` child was opened or
+traversed.
+
+The final staged pre-commit exposed two generic-tool false positives rather
+than archive-content defects: entropy scanning treated canonical Git/SHA
+integrity fields as secrets, and Markdownlint treated immutable recovered
+payload headings as current document style. The remediation excludes only the
+exact-length `source_commit`, `source_blob`, and `content_sha256` metadata lines
+from detect-secrets, marks the five source-code Git object constants with the
+tool's inline false-positive pragma, and excludes only archive record
+subdirectories from Markdownlint while retaining lint on the archive index.
+Gitleaks still scans the staged corpus, and `archive_cutover.py` still classifies
+all 31 exact recovered payloads and proves their provenance and digest. Focused
+detect-secrets and Markdownlint hooks pass with no payload mutation. Independent
+boundary re-review returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
+
+The latest ARWB-003 requirements review returned `NOT COMPLIANT` for archive
+creation without same-diff source removal, an unstructured index-membership
+check, ARWB-003 CI workflow coupling, and a fast hook self-test that did not
+execute all affected validators. Six remediation tests produced eight expected
+RED outcomes (five failures and three errors). GREEN now binds archive creation
+to its removed source in the same proposed diff, validates every field of the
+31-row archive index with fail-closed cardinality and row identity, admits only
+the exact finite 31-record legacy conversion at parent `f8a54dd`, leaves
+`.github/workflows/ci.yml` unchanged, and executes every affected validator
+in production. Recursive aggregate testing is isolated in the dedicated pure
+runner entrypoint. Repeat requirements review returned
+`REQUIREMENTS COMPLIANT`.
+
+A repeat review then isolated a bounded-runner context defect, and the quality
+review required complete removal rather than a stronger caller-provided token.
+The final RED was six failures and six errors across production isolation,
+aggregate boundary, external index tables, hostile Git state, and stable
+failure diagnostics. GREEN removes all production self-test/skip variables,
+keeps the unchanged CI workflow free of the manual cutover dependency, rejects
+every table outside the canonical 31-row manifest, applies recovery-grade Git
+isolation to inventory and finite-base calls, and converts invalid root,
+registry, startup, timeout, and Git failures to fixed payload-free diagnostics.
+Repeat review confirmed those boundaries before the later runner and provider
+entry hardening findings were remediated.
+
+The final quality follow-up produced five focused RED failures: a caller PATH
+could shadow `bash`, `BASH_ENV` could suppress the real aggregate body, a zero
+exit without the body marker or with duplicate markers passed, validator tools
+remained relative, and the production hook lacked an isolated runner/result
+gate. GREEN is 12/12 dedicated runner and hook-result tests. Validators now use
+a closed startup environment and fixed absolute tool resolution; repository
+quality requires exactly one body success marker. Production post-validate uses
+`/usr/bin/python3 -I` in an empty environment and independently requires one
+PASS result. Actual manifest and docs hook runs returned exact 7/7 and 4/4 PASS
+status maps. Repeat review confirmed the child-runner boundary and then required
+the provider entry hardening recorded next.
+
+The provider-entry P1 follow-up produced fourteen RED failures across three
+test methods: all three provider commands retained ambient shell startup state,
+six valid docs/manifest executions returned forged empty success, three
+malformed payloads returned zero, the hostile fake shell ran, and production
+Python/project-root entries were not closed. GREEN is 15/15 combined
+runner/result/provider tests. Claude, Codex, and Gemini PostToolUse commands now
+use exact `/usr/bin/env -i` entries, fixed `/usr/bin:/bin`, provider-owned project
+variables, and `/usr/bin/bash --noprofile --norc`; every direct production
+Python entry uses `/usr/bin/python3 -I` in an explicit environment. Bounded
+hostile integration preserves the 4/4 docs and 7/7 manifest selections for all
+providers and rejects malformed JSON with exit 2. Actual-worktree Claude docs
+and Codex manifest commands exited zero with one repository-quality marker;
+the Gemini malformed command exited 2 with `HOOK-PAYLOAD-JSON`.
+Final independent quality review returned `QUALITY APPROVED` with no blocking
+finding.
 
 Independent requirements review first returned `NOT COMPLIANT` for split
 cutover commits, stale successor projections, and missing ARWB-003/005 RED
@@ -224,8 +354,8 @@ the contents or safety of ignored `_workspace` scratch. Those lanes remain
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [ARWB-001](../plans/2026-07-17-archive-record-and-workspace-boundary.md#arwb-001-recovery-and-envelope-contract) | Done. | Initial, requirements-remediation, and quality-remediation RED evidence is recorded above; the private recovery/envelope suite passes 15/15 with `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. Logical commit `6b9b9cd`, parent `04a4d32`. |
-| [ARWB-002](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) | In Progress. | Missing-module/nine-failure RED and quality-remediation 17-failure/13-error RED are recorded above; focused 22/22 and combined 37/37 GREEN pass. Verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; the logical commit from parent `6b9b9cd` remains pending. |
-| N/A — ARWB-003 shares the Plan linked in ARWB-001 | Queued. | Atomic cutover RED, exact 31/31 payload, 202/202 source-link, index/current-authority, and Tombstone retirement evidence will be recorded here. |
+| [ARWB-002](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) | Done. | Missing-module/nine-failure RED and quality-remediation 17-failure/13-error RED are recorded above; focused 22/22 and combined 37/37 GREEN pass. Verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; logical commit `f8a54dd`, parent `6b9b9cd`. |
+| N/A — ARWB-003 shares the Plan linked in ARWB-001 | In Progress. | Named cutover RED and local GREEN are recorded: exact 31/31 payload, 202/202 source links, index-only current navigation, registry v8 archive-movement predicate, secret-clean 31/31, combined 57/57 archive tests, finite-admission regression 11/11, dedicated runner/hook/provider result 15/15, and deterministic validator gates. Final verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; only the logical commit remains. |
 | N/A — ARWB-004 shares the Plan linked in ARWB-001 | Queued. | Git-metadata-only workspace fixture and no-read review evidence will be recorded here. |
 | N/A — ARWB-005 shares the Plan linked in ARWB-001 | Queued. | Incomplete-closure RED, full QA, whole-tranche verdicts, rollback, closure commit, and post-commit checks will be recorded here. |
 

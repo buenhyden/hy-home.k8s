@@ -37,7 +37,7 @@ Primary readers:
 ```text
 templates/
 ├── common/
-│   ├── archive-tombstone.template.md
+│   ├── archive-record.template.md
 │   ├── governance-reference.template.md
 │   ├── memory.template.md
 │   ├── progress.template.md

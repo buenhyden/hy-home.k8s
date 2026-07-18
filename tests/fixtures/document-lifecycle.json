@@ -118,8 +118,8 @@
     },
     {
       "name": "archive-reactivation",
-      "base": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive-tombstone", "archived"],
-      "proposed": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive-tombstone", "active"],
+      "base": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "archived"],
+      "proposed": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "active"],
       "expectedRuleIds": ["LIFECYCLE-STATE"]
     },
     {
@@ -154,6 +154,13 @@
         ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"]
       ],
       "expectedRuleIds": []
+    },
+    {
+      "name": "archive-envelope-create-without-evidence-denied",
+      "documents": [
+        ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "archived"]
+      ],
+      "expectedRuleIds": ["LIFECYCLE-EVIDENCE"]
     },
     {
       "name": "active-create-denied",
@@ -352,6 +359,21 @@
     {"name": "governance/template-support:draft->active", "profile": "governance/template-support", "from": "draft", "to": "active", "predicate": "activate-heading-profile", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
     {"name": "governance/template-support:active->accepted", "profile": "governance/template-support", "from": "active", "to": "accepted", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
     {"name": "governance/template-support:active->done", "profile": "governance/template-support", "from": "active", "to": "done", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]}
+  ],
+  "archiveCutoverCases": [
+    {"name": "exact-staged", "mode": "staged", "mutation": "exact", "expectedAdmittedCount": 33},
+    {"name": "exact-ci", "mode": "ci", "mutation": "exact", "expectedAdmittedCount": 33},
+    {"name": "partial-record-set", "mode": "staged", "mutation": "partial", "expectedAdmittedCount": 0},
+    {"name": "extra-record", "mode": "staged", "mutation": "extra", "expectedAdmittedCount": 0},
+    {"name": "wrong-base", "mode": "staged", "mutation": "wrong-base", "expectedAdmittedCount": 0},
+    {"name": "wrong-base-registry-oid", "mode": "staged", "mutation": "wrong-base-registry-oid", "expectedAdmittedCount": 0},
+    {"name": "proposed-policy-drift", "mode": "staged", "mutation": "proposed-policy-drift", "expectedAdmittedCount": 0},
+    {"name": "missing-template-pair", "mode": "staged", "mutation": "missing-template", "expectedAdmittedCount": 0},
+    {"name": "wrong-registry-version", "mode": "staged", "mutation": "wrong-registry-version", "expectedAdmittedCount": 0},
+    {"name": "missing-registry-profile-pair", "mode": "staged", "mutation": "missing-registry-profile", "expectedAdmittedCount": 0},
+    {"name": "unrelated-profile-change", "mode": "staged", "mutation": "unrelated-profile-change", "expectedAdmittedCount": 0},
+    {"name": "snapshot-not-admitted", "mode": "snapshot", "mutation": "exact", "expectedAdmittedCount": 0},
+    {"name": "explicit-ref-not-admitted", "mode": "explicit-ref", "mutation": "exact", "expectedAdmittedCount": 0}
   ],
   "snapshotCase": {
     "name": "exactly-one-base-defer",

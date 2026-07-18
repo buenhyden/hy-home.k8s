@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "localAgentFixtureSamplePath": ".agents/GEMINI.md",
   "cases": [
     {
@@ -552,217 +552,290 @@
     {
       "name": "unknown-document-contract-field",
       "mutation": "unknown-document-contract-field",
-      "expected": ["REGISTRY_SCHEMA"]
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
     },
     {
       "name": "missing-value-contract",
       "mutation": "missing-value-contract",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-kind",
       "mutation": "invalid-value-kind",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-enum",
       "mutation": "invalid-value-enum",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-constant",
       "mutation": "invalid-value-constant",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-pattern",
       "mutation": "invalid-value-pattern",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-nullability",
       "mutation": "invalid-value-nullability",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "invalid-value-condition",
       "mutation": "invalid-value-condition",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "missing-role-decision",
       "mutation": "missing-role-decision",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     },
     {
       "name": "invalid-relationship-section",
       "mutation": "invalid-relationship-section",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     },
     {
       "name": "invalid-body-requirement",
       "mutation": "invalid-body-requirement",
-      "expected": ["REGISTRY_ROLE_DECISION", "REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION",
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "invalid-create-admission",
       "mutation": "invalid-create-admission",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
+    },
+    {
+      "name": "archive-admission-predicate-missing",
+      "mutation": "archive-admission-predicate-missing",
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
+    },
+    {
+      "name": "archive-evidence-capability-drift",
+      "mutation": "archive-evidence-capability-drift",
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
+    },
+    {
+      "name": "archive-evidence-shape-drift",
+      "mutation": "archive-evidence-shape-drift",
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "allow-delete",
       "mutation": "allow-delete",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
     },
     {
       "name": "allow-rename",
       "mutation": "allow-rename",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
     },
     {
       "name": "allow-profile-change",
       "mutation": "allow-profile-change",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
     },
     {
       "name": "invalid-paired-admission",
       "mutation": "invalid-paired-admission",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
     },
     {
       "name": "baseline-path-on-standard",
       "mutation": "baseline-path-on-standard",
-      "expected": ["REGISTRY_ADMISSION"]
+      "expected": [
+        "REGISTRY_ADMISSION"
+      ]
     },
     {
       "name": "duplicate-lifecycle-edge",
       "mutation": "duplicate-lifecycle-edge",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "invalid-lifecycle-state",
       "mutation": "invalid-lifecycle-state",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "terminal-outgoing-edge",
       "mutation": "terminal-outgoing-edge",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "archived-lifecycle-edge",
       "mutation": "archived-lifecycle-edge",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "missing-terminal-state",
       "mutation": "missing-terminal-state",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "archived-terminal-state",
       "mutation": "archived-terminal-state",
-      "expected": ["REGISTRY_LIFECYCLE"]
+      "expected": [
+        "REGISTRY_LIFECYCLE"
+      ]
     },
     {
       "name": "unknown-evidence-profile",
       "mutation": "unknown-evidence-profile",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "unknown-evidence-state",
       "mutation": "unknown-evidence-state",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "executable-evidence-predicate",
       "mutation": "executable-evidence-predicate",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "missing-edge-predicate-case",
       "mutation": "missing-edge-predicate-case",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "duplicate-edge-predicate-case",
       "mutation": "duplicate-edge-predicate-case",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
-    },
-    {
-      "name": "new-tombstone-baseline-path",
-      "mutation": "new-tombstone-baseline-path",
-      "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "production-legacy-v6-input",
       "mutation": "production-legacy-v6-input",
-      "expected": ["REGISTRY_SCHEMA"]
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
     },
     {
-      "name": "archive-specific-value-semantics",
-      "mutation": "archive-specific-value-semantics",
-      "expected": ["REGISTRY_VALUE_CONTRACT"]
+      "name": "archive-conflicting-value-semantics",
+      "mutation": "archive-conflicting-value-semantics",
+      "expected": [
+        "REGISTRY_VALUE_CONTRACT"
+      ]
     },
     {
       "name": "evidence-capability-removal",
       "mutation": "evidence-capability-removal",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "evidence-same-diff-swap",
       "mutation": "evidence-same-diff-swap",
-      "expected": ["REGISTRY_EVIDENCE_PREDICATE"]
+      "expected": [
+        "REGISTRY_EVIDENCE_PREDICATE"
+      ]
     },
     {
       "name": "duplicate-json-root-key",
       "mutation": "duplicate-json-root-key",
-      "expected": ["REGISTRY_SCHEMA"]
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
     },
     {
       "name": "duplicate-json-nested-key",
       "mutation": "duplicate-json-nested-key",
-      "expected": ["REGISTRY_SCHEMA"]
-    },
-    {
-      "name": "tombstone-baseline-double-slash",
-      "mutation": "tombstone-baseline-double-slash",
-      "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
-    },
-    {
-      "name": "tombstone-baseline-dot-segment",
-      "mutation": "tombstone-baseline-dot-segment",
-      "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
-    },
-    {
-      "name": "tombstone-baseline-normalized-duplicate",
-      "mutation": "tombstone-baseline-normalized-duplicate",
-      "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
-    },
-    {
-      "name": "renamed-tombstone-policy-noncanonical-baseline",
-      "mutation": "renamed-tombstone-policy-noncanonical-baseline",
-      "expected": ["REGISTRY_TOMBSTONE_BASELINE"]
+      "expected": [
+        "REGISTRY_SCHEMA"
+      ]
     },
     {
       "name": "guide-role-copied-to-runbook",
       "mutation": "guide-role-copied-to-runbook",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     },
     {
       "name": "policy-role-copied-to-runbook",
       "mutation": "policy-role-copied-to-runbook",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     },
     {
       "name": "incident-role-copied-to-postmortem",
       "mutation": "incident-role-copied-to-postmortem",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     },
     {
       "name": "tests-role-copied-to-task",
       "mutation": "tests-role-copied-to-task",
-      "expected": ["REGISTRY_ROLE_DECISION"]
+      "expected": [
+        "REGISTRY_ROLE_DECISION"
+      ]
     }
   ],
   "routingCases": [

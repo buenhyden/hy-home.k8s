@@ -12,7 +12,7 @@
 
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
-정적 검증 스크립트가 우선한다. 현재 구현과 상충하는 old decision/requirement 문서는 활성 stage에 보존하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 Tombstone 인덱스로만 연결한다.
+정적 검증 스크립트가 우선한다. 현재 구현과 상충하는 old decision/requirement 문서는 활성 stage에 보존하지 않고 full-body Archive Record로 보존하며 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스로만 연결한다.
 
 ### Reader Route
 
@@ -60,7 +60,7 @@
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `requirements/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
 3. ARD target은 `docs/02.architecture/requirements/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
-4. 현재 구현과 상충하는 old ARD/ADR은 bulk note로 보존하지 않고 중앙 archive Tombstone으로 이동한다.
+4. 현재 구현과 상충하는 old ARD/ADR은 bulk note로 보존하지 않고 provenance가 검증된 Archive Record로 이동한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 

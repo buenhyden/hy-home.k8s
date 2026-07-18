@@ -21,17 +21,29 @@ if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
   exit 1
 fi
 
+DOCUMENT_INCLUDE_ARGS=()
+if [[ -f "$ROOT_DIR/docs/99.templates/templates/common/archive-record.template.md" ]]; then
+    DOCUMENT_INCLUDE_ARGS+=(
+        --include-path
+        docs/99.templates/templates/common/archive-record.template.md
+    )
+fi
+
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
-python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict
-python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict --body-contracts registry
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict "${DOCUMENT_INCLUDE_ARGS[@]}"
+python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict --body-contracts registry "${DOCUMENT_INCLUDE_ARGS[@]}"
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --self-test
-python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict --body-contracts registry
+python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict --body-contracts registry "${DOCUMENT_INCLUDE_ARGS[@]}"
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
+python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.py"
+python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
+python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
+python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_document_lifecycle_archive_cutover.py"
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
 
@@ -1065,15 +1077,6 @@ for profile in document_registry.profiles:
         )
     template_locations[profile.template.name] = location.as_posix()
 
-archive_reason_allowed_values = {
-    "superseded",
-    "duplicate",
-    "obsolete",
-    "migrated",
-    "historical-baseline",
-}
-
-
 def template_path(template_name: str) -> pathlib.Path:
     location = template_locations.get(template_name)
     if not location:
@@ -1379,6 +1382,9 @@ def canonical_form_content_errors(
         r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
     )
     markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
+    archive_envelope_marker = (
+        "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
+    )
     for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
         for marker in retired_markers:
             if marker in source:
@@ -1390,7 +1396,7 @@ def canonical_form_content_errors(
             continue
         for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
             comment = match.group(0)
-            if comment == markdownlint_directive or author_comment.fullmatch(comment):
+            if comment in {markdownlint_directive, archive_envelope_marker} or author_comment.fullmatch(comment):
                 continue
             errors.append(f"{form_path} contains a non-author form comment")
 
@@ -1475,6 +1481,24 @@ form_content_mutations.append(("native owner comment", native_mutation))
 for label, mutation in form_content_mutations:
     if not canonical_form_content_errors(mutation):
         fail(f"canonical form content mutation accepted {label}")
+
+archive_record_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/common/archive-record.template.md"
+)
+archive_marker_mutation = dict(form_sources)
+archive_marker_mutation[archive_record_form] = archive_marker_mutation[
+    archive_record_form
+].replace("archive-envelope:v1", "archive-envelope:v2", 1)
+expected_archive_marker_diagnostic = (
+    f"{archive_record_form} contains a non-author form comment"
+)
+if expected_archive_marker_diagnostic not in canonical_form_content_errors(
+    archive_marker_mutation
+):
+    fail(
+        "canonical form content mutation did not reject a drifted archive "
+        "envelope marker with the stable diagnostic"
+    )
 
 prompt_profile_id, prompt_form = sorted(
     (
@@ -1708,65 +1732,6 @@ for glob_pattern in english_first_stage_globs:
         for line_number, line in enumerate(read_text(path).splitlines(), start=1):
             if hangul_pattern.search(line):
                 fail(f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact")
-
-archive_root = root / "docs/98.archive"
-archive_required_phrases = [
-    "type: content/archive-tombstone",
-    "status: archived",
-    "Original path:",
-    "Archived on:",
-    "Currentness rule:",
-    "Current owner document:",
-    "Current Implementation Evidence",
-    "Archive README",
-]
-for tombstone in sorted(archive_root.rglob("*.md")):
-    if tombstone.name == "README.md":
-        continue
-    metadata = load_markdown_frontmatter(tombstone)
-    archive_reason = str(metadata.get("archive_reason", "")).strip()
-    if archive_reason not in archive_reason_allowed_values:
-        fail(f"{rel(tombstone)} archive_reason is unsupported: {archive_reason or '<empty>'}")
-    original_path = str(metadata.get("original_path", "")).strip()
-    replacement = str(metadata.get("replacement", "")).strip()
-    if not original_path.startswith("docs/") or original_path.startswith("docs/98.archive/"):
-        fail(f"{rel(tombstone)} original_path must point to the original non-archive docs path")
-    if replacement != "none" and not replacement.startswith("docs/"):
-        fail(f"{rel(tombstone)} replacement must be docs/... or none")
-    text = read_text(tombstone)
-    for phrase in archive_required_phrases:
-        if phrase not in text:
-            fail(f"{rel(tombstone)} missing archive Tombstone phrase: {phrase}")
-    if len(text.splitlines()) > 90:
-        fail(f"{rel(tombstone)} must be metadata-only Tombstone, not a preserved old body")
-    old_body_headings = [
-        "## Requirements",
-        "## Functional Requirements",
-        "## Non-Functional Requirements",
-        "## Work Breakdown",
-        "## Tasks",
-        "## Implementation Status",
-        "## Verification",
-    ]
-    for heading in old_body_headings:
-        if heading in text and heading not in {"## Verification"}:
-            fail(f"{rel(tombstone)} appears to preserve old body heading: {heading}")
-
-archive_readme_text = read_text(archive_root / "README.md")
-for phrase in [
-    "docs/01-05",
-    "### 01.requirements",
-    "### 02.architecture",
-    "### 03.specs",
-    "### 04.execution",
-    "### 05.operations",
-    "05.operations/guides",
-    "05.operations/policies",
-    "05.operations/runbooks",
-    "05.operations/incidents",
-]:
-    if phrase not in archive_readme_text:
-        fail(f"docs/98.archive/README.md missing archive index phrase: {phrase}")
 
 operations_stage_path = root / "docs/05.operations"
 allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
@@ -2659,6 +2624,52 @@ agent_section_headings = [
     "Agent Execution Notes",
     "Agent Harness Requirements",
 ]
+
+
+def current_agent_language_scan_text(tracked_path: str, source: str) -> str:
+    """Return current-document text while preserving archived payload bytes."""
+    if (
+        tracked_path.startswith("docs/98.archive/")
+        and tracked_path != "docs/98.archive/README.md"
+    ):
+        archive_marker = (
+            "<!-- archive-envelope:v1 payload=rest-of-file "
+            "encoding=git-blob-bytes -->"
+        )
+        marker_offset = source.find(archive_marker)
+        if marker_offset != -1:
+            return source[:marker_offset]
+    return source
+
+
+archive_language_probe = (
+    "---\ntitle: Archive probe\n---\n"
+    "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->\n"
+    "## AI Agent Requirements\n보존 페이로드\n"
+)
+if re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/98.archive/probe.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation included immutable payload bytes")
+if not re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/98.archive/README.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation excluded the current archive index")
+if not re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/03.specs/probe/spec.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation excluded a current SDLC document")
+
+
 for tracked_path in sorted(tracked):
     if not tracked_path.startswith("docs/") or not tracked_path.endswith(".md"):
         continue
@@ -2667,7 +2678,7 @@ for tracked_path in sorted(tracked):
     path = root / tracked_path
     if not path.is_file():
         continue
-    text = read_text(path)
+    text = current_agent_language_scan_text(tracked_path, read_text(path))
     for heading in agent_section_headings:
         match = re.search(rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE)
         if not match:
@@ -3621,8 +3632,73 @@ def hook_command(data: dict, event_name: str, matcher: str, script_name: str) ->
     return ""
 
 
-if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
-    hook_env = {**os.environ, "CLAUDE_PROJECT_DIR": str(root)}
+provider_post_validate_contracts = [
+    (
+        ".claude/settings.json",
+        claude_settings.get("hooks", {}),
+        "claude",
+        "CLAUDE_PROJECT_DIR",
+    ),
+    (
+        ".codex/hooks.json",
+        codex_hooks,
+        "codex",
+        "CODEX_PROJECT_DIR",
+    ),
+    (
+        ".agents/hooks.json",
+        gemini_hooks,
+        "gemini",
+        "GEMINI_PROJECT_DIR",
+    ),
+]
+for config_name, hooks, provider, project_variable in provider_post_validate_contracts:
+    project_assignments = (
+        f'{project_variable}="${project_variable}" '
+        if provider == "claude"
+        else (
+            f'{project_variable}="${project_variable}" '
+            f'CLAUDE_PROJECT_DIR="${project_variable}" '
+        )
+    )
+    expected_command = (
+        '/usr/bin/env -i HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 '
+        "PATH=/usr/bin:/bin "
+        f"{project_assignments}"
+        f"HY_HOME_K8S_HOOK_PROVIDER={provider} "
+        "/usr/bin/bash --noprofile --norc "
+        f'"${project_variable}/docs/00.agent-governance/hooks/post-validate.sh"'
+    )
+    actual_command = hook_command(
+        hooks,
+        "PostToolUse",
+        "Write|Edit|MultiEdit",
+        "post-validate.sh",
+    )
+    if actual_command != expected_command:
+        fail(f"{config_name} PostToolUse must use the exact closed provider entry")
+
+post_validate_hook_text = read_text(
+    root / "docs/00.agent-governance/hooks/post-validate.sh"
+)
+if re.search(r"(?m)^\s*(?:if ! )?python3\b", post_validate_hook_text):
+    fail("post-validate.sh contains a bare production python3 entry")
+if post_validate_hook_text.count("/usr/bin/python3 -I") != 4:
+    fail("post-validate.sh must isolate all four production Python entries")
+if post_validate_hook_text.count("/usr/bin/env -i") < 4:
+    fail("post-validate.sh must close every production Python environment")
+if "git rev-parse" in post_validate_hook_text:
+    fail("post-validate.sh must not derive project authority from ambient Git state")
+
+
+# Pre-edit and lifecycle hook simulations are unconditional. Post-validate
+# selector and runner behavior is exercised through the dedicated pure test
+# entrypoint above so the production hook always executes its real affected lane.
+if True:
+    hook_env = {
+        **os.environ,
+        "CLAUDE_PROJECT_DIR": str(root),
+    }
     manifest_hook_payload = json.dumps(
         {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
     )
@@ -3662,96 +3738,6 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     ]:
         if phrase not in docs_pre_hook_result.stdout:
             fail(f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}")
-
-    post_hook_path = root / "docs/00.agent-governance/hooks/post-validate.sh"
-    post_hook_result = subprocess.run(
-        ["bash", str(post_hook_path)],
-        cwd=root,
-        input=manifest_hook_payload,
-        text=True,
-        capture_output=True,
-        env=hook_env,
-    )
-    if post_hook_result.returncode != 0:
-        detail = "\n".join(
-            item
-            for item in [post_hook_result.stdout.strip(), post_hook_result.stderr.strip()]
-            if item
-        )
-        fail(f"{rel(post_hook_path)} manifest payload simulation failed:\n{detail}")
-    for phrase in [
-        "[hook] PASS Kubernetes manifests",
-        "[hook] PASS secret handling",
-    ]:
-        if phrase not in post_hook_result.stdout:
-            fail(f"{rel(post_hook_path)} manifest payload simulation missing output phrase: {phrase}")
-
-    docs_post_hook_result = subprocess.run(
-        ["bash", str(post_hook_path)],
-        cwd=root,
-        input=docs_hook_payload,
-        text=True,
-        capture_output=True,
-        env=hook_env,
-    )
-    if docs_post_hook_result.returncode != 0:
-        detail = "\n".join(
-            item
-            for item in [docs_post_hook_result.stdout.strip(), docs_post_hook_result.stderr.strip()]
-            if item
-        )
-        fail(f"{rel(post_hook_path)} docs payload simulation failed:\n{detail}")
-    if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
-        fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
-
-    valid_existing_path = root / ".agents/GEMINI.md"
-    valid_existing_payload = json.dumps(
-        {"tool_input": {"file_path": str(valid_existing_path.relative_to(root))}}
-    )
-    valid_existing_result = subprocess.run(
-        ["bash", str(post_hook_path)],
-        cwd=root,
-        input=valid_existing_payload,
-        text=True,
-        capture_output=True,
-        env=hook_env,
-    )
-    if valid_existing_result.returncode != 0:
-        detail = "\n".join(
-            item
-            for item in [
-                valid_existing_result.stdout.strip(),
-                valid_existing_result.stderr.strip(),
-            ]
-            if item
-        )
-        fail(f"{rel(post_hook_path)} valid existing path probe failed:\n{detail}")
-    if ".agents/GEMINI.md" not in valid_existing_result.stdout:
-        fail(f"{rel(post_hook_path)} did not propagate the valid existing path")
-
-    with tempfile.TemporaryDirectory(
-        prefix="999-hook-path-input-probe-",
-        dir=root / "docs/03.specs",
-    ) as invalid_probe_directory:
-        invalid_untracked_path = pathlib.Path(invalid_probe_directory) / "api-spec.md"
-        invalid_untracked_relative_path = invalid_untracked_path.relative_to(root).as_posix()
-        invalid_untracked_path.write_text("# Invalid API Spec Probe\n", encoding="utf-8")
-        invalid_untracked_payload = json.dumps(
-            {"tool_input": {"file_path": invalid_untracked_relative_path}}
-        )
-        invalid_untracked_result = subprocess.run(
-            ["bash", str(post_hook_path)],
-            cwd=root,
-            input=invalid_untracked_payload,
-            text=True,
-            capture_output=True,
-            env=hook_env,
-        )
-        if invalid_untracked_result.returncode == 0:
-            fail(f"{rel(post_hook_path)} accepted an invalid untracked authored document")
-        invalid_output = invalid_untracked_result.stdout + invalid_untracked_result.stderr
-        if invalid_untracked_relative_path not in invalid_output:
-            fail(f"{rel(post_hook_path)} did not propagate the invalid untracked path")
 
     lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
     lifecycle_selftest_env = {
@@ -3870,50 +3856,6 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
             fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse payload simulation failed: {codex_docs_pre_result.stderr.strip()}")
         if "documentation template enforcement" not in codex_docs_pre_result.stdout:
             fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse simulation missing template enforcement warning")
-
-    codex_post_command = hook_command(codex_hooks, "PostToolUse", "Write|Edit|MultiEdit", "post-validate.sh")
-    if not codex_post_command:
-        fail(f"{rel(codex_hooks_path)} missing Codex PostToolUse edit hook command")
-    else:
-        codex_post_result = subprocess.run(
-            ["bash", "-lc", codex_post_command],
-            cwd=root,
-            input=manifest_hook_payload,
-            text=True,
-            capture_output=True,
-            env=codex_hook_env,
-        )
-        if codex_post_result.returncode != 0:
-            detail = "\n".join(
-                item
-                for item in [codex_post_result.stdout.strip(), codex_post_result.stderr.strip()]
-                if item
-            )
-            fail(f"{rel(codex_hooks_path)} Codex PostToolUse payload simulation failed:\n{detail}")
-        for phrase in [
-            "[hook] PASS Kubernetes manifests",
-            "[hook] PASS secret handling",
-        ]:
-            if phrase not in codex_post_result.stdout:
-                fail(f"{rel(codex_hooks_path)} Codex PostToolUse simulation missing output phrase: {phrase}")
-
-        codex_docs_post_result = subprocess.run(
-            ["bash", "-lc", codex_post_command],
-            cwd=root,
-            input=docs_hook_payload,
-            text=True,
-            capture_output=True,
-            env=codex_hook_env,
-        )
-        if codex_docs_post_result.returncode != 0:
-            detail = "\n".join(
-                item
-                for item in [codex_docs_post_result.stdout.strip(), codex_docs_post_result.stderr.strip()]
-                if item
-            )
-            fail(f"{rel(codex_hooks_path)} Codex docs PostToolUse payload simulation failed:\n{detail}")
-        if "[hook] PASS documentation template enforcement" not in codex_docs_post_result.stdout:
-            fail(f"{rel(codex_hooks_path)} Codex docs PostToolUse simulation missing template enforcement output")
 
     for lifecycle_event, lifecycle_matcher in [
         ("Stop", "*"),

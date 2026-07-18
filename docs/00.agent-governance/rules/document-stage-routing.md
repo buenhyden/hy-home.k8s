@@ -164,7 +164,7 @@ table.
 | Incident record and postmortem | `docs/05.operations/incidents/` | Template Routing Contract | Use for facts, timelines, mitigations, RCA, and post-incident learning. |
 | Durable reference | `docs/90.references/` | Template Routing Contract | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
 | Generated LLM Wiki index | `docs/90.references/llm-wiki/wiki-index.md` | Generator contract and Template Routing Contract | Use only as a generated canonical-owner link map. |
-| Archive Tombstone | `docs/98.archive/` | Template Routing Contract | Use only for metadata-only Tombstones of old docs moved out of active stages. |
+| Archive Record | `docs/98.archive/` | Template Routing Contract | Use for immutable, non-current ArchiveEnvelope.v1 records of old docs moved out of active stages. |
 | Governance memory | `docs/00.agent-governance/memory/` | Template Routing Contract | Use for reusable agent governance lessons and repo-changing progress entries. |
 
 ### Routing Decision Rules
@@ -188,12 +188,14 @@ table.
 - Use `docs/98.archive/` only when an old active-stage document under `docs/01.requirements` through `docs/05.operations` conflicts with current repo-backed implementation, is deprecated-only, or is superseded-only.
 - Mirror the original docs subpath under `docs/98.archive/<original-docs-subpath>`.
 - For `docs/05.operations`, preserve the operations bucket mirror under `docs/98.archive/05.operations/{guides,policies,runbooks,incidents}`.
-- Replace the moved document body with a Tombstone created from `docs/99.templates/templates/common/archive-tombstone.template.md`; do not preserve the old body text.
-- Tombstones must preserve archive traceability metadata defined by
+- Create an archive record from `docs/99.templates/templates/common/archive-record.template.md` in the mirrored path and append the exact source Git blob bytes after the v1 marker without newline normalization.
+- Archive records must preserve the full original body and archive provenance metadata defined by
   `docs/99.templates/support/frontmatter-schema.md` and
-  `docs/99.templates/templates/common/archive-tombstone.template.md`.
+  `docs/99.templates/templates/common/archive-record.template.md`.
 - Active docs may link archive content only through `docs/98.archive/README.md`.
 - Current replacement coverage must exist before moving a document that owned still-current scope.
+- Source removal, archive creation, index membership, secret classification,
+  digest identity, and historical-link evidence must pass as one atomic cutover.
 
 ### Named Skill Handling
 

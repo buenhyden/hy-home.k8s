@@ -46,6 +46,10 @@ TARGET_ROOTS = (
 REGISTRY_PATH = PurePosixPath("docs/99.templates/support/document-profiles.json")
 SCHEMA_PATH = PurePosixPath("docs/99.templates/support/document-profiles.schema.json")
 _EVIDENCE_PREDICATE_SEMANTICS = {
+    "archive-source-removal": (
+        "source-removed-and-mirror-created",
+        ("archive-envelope", "same-diff", "source-removal"),
+    ),
     "activate-self-body": ("self-status-and-body", ("same-diff",)),
     "activate-heading-profile": (
         "self-status-and-body",
@@ -199,8 +203,9 @@ class RoleDecision:
 
 @dataclass(frozen=True)
 class CreateAdmission:
-    mode: Literal["states", "paired", "baseline-only", "snapshot-only"]
+    mode: Literal["states", "paired", "archive-envelope", "snapshot-only"]
     states: tuple[str, ...]
+    evidence_predicate_id: str | None
 
 
 @dataclass(frozen=True)
@@ -249,7 +254,9 @@ class EvidencePredicate:
     predicate_id: str
     profile_edges: tuple[ProfileEdge, ...]
     evidence: tuple[EvidenceRequirement, ...]
-    relationship: Literal["self", "role-decision", "pair", "program-lineage"]
+    relationship: Literal[
+        "self", "role-decision", "pair", "program-lineage", "archive-source"
+    ]
     minimum: int
     maximum: int | None
     same_diff: Literal[
@@ -259,8 +266,9 @@ class EvidencePredicate:
         "target-and-evidence-status-body-changed",
         "target-plan-task-status-changed",
         "pair-status-changed",
+        "source-removed-and-mirror-created",
     ]
-    body_requirement: Literal["body-contract", "heading-set"]
+    body_requirement: Literal["body-contract", "heading-set", "none"]
     capabilities: tuple[str, ...]
 
 
@@ -677,11 +685,16 @@ def enumerate_target_markdown(
             "baseline Markdown inventory count mismatch: "
             f"expected {BASELINE_COUNT}, actual {len(baseline_paths)}"
         )
-    current_paths = {
-        entry.path
-        for entry in current_entries
-        if entry.mode.startswith("100") and _is_target_markdown(entry.path)
-    }
+    current_paths: set[PurePosixPath] = set()
+    for entry in current_entries:
+        if not entry.mode.startswith("100") or not _is_target_markdown(entry.path):
+            continue
+        try:
+            mode = _lstat_named_path(root, entry.path)
+        except ValueError:
+            continue
+        if stat.S_ISREG(mode):
+            current_paths.add(entry.path)
     baseline_symlinks = {
         entry.path
         for entry in baseline_entries
@@ -939,7 +952,9 @@ def _admission_policy(raw: Mapping[str, Any]) -> AdmissionPolicy:
         policy_id=raw["id"],
         profile_ids=tuple(raw["profileIds"]),
         create=CreateAdmission(
-            mode=raw["create"]["mode"], states=tuple(raw["create"]["states"])
+            mode=raw["create"]["mode"],
+            states=tuple(raw["create"]["states"]),
+            evidence_predicate_id=raw["create"]["evidencePredicateId"],
         ),
         delete=raw["delete"],
         rename=raw["rename"],
@@ -1434,7 +1449,7 @@ def _document_contract_projection(
     dict[str, LifecycleContract],
     tuple[EvidencePredicate, ...],
 ]:
-    """Validate closed v7 declarations and resolve one immutable contract per profile."""
+    """Validate closed v8 declarations and resolve one immutable contract per profile."""
 
     diagnostics: list[Diagnostic] = []
     profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
@@ -1528,51 +1543,18 @@ def _document_contract_projection(
                 actual="duplicate admission policy ID",
             )
         )
-    tombstone_admission_matches = [
-        item
-        for item in admission_groups
-        if "content/archive-tombstone" in item["profileIds"]
+    archive_admission_matches = [
+        item for item in admission_groups if "content/archive" in item["profileIds"]
     ]
-    if (
-        "content/archive-tombstone" in profile_ids
-        and len(tombstone_admission_matches) != 1
-    ):
+    if "content/archive" in profile_ids and len(archive_admission_matches) != 1:
         diagnostics.append(
             _diagnostic(
                 "REGISTRY_ADMISSION",
-                profile="content/archive-tombstone",
+                profile="content/archive",
                 expected="exactly one admission policy membership",
-                actual=f"{len(tombstone_admission_matches)} matching policies",
+                actual=f"{len(archive_admission_matches)} matching policies",
             )
         )
-    elif tombstone_admission_matches:
-        tombstone_admission_raw = tombstone_admission_matches[0]
-        raw_baseline_paths = tombstone_admission_raw["baselinePaths"]
-        normalized_baseline_paths: list[str] = []
-        for raw_path in raw_baseline_paths:
-            try:
-                normalized_path = _normalize_relative_path(raw_path).as_posix()
-            except ValueError:
-                normalized_path = ""
-            normalized_baseline_paths.append(normalized_path)
-            if normalized_path != raw_path:
-                diagnostics.append(
-                    _diagnostic(
-                        "REGISTRY_TOMBSTONE_BASELINE",
-                        profile="content/archive-tombstone",
-                        expected="a canonical raw repository-relative path spelling",
-                        actual="noncanonical raw baseline path",
-                    )
-                )
-        if len(normalized_baseline_paths) != len(set(normalized_baseline_paths)):
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_TOMBSTONE_BASELINE",
-                    profile="content/archive-tombstone",
-                    expected="unique normalized baseline paths",
-                    actual="raw spellings normalize to a duplicate",
-                )
-            )
     raw_admissions = assign_groups(admission_groups, "REGISTRY_ADMISSION")
 
     lifecycle_groups = raw_contracts["lifecycleContracts"]
@@ -1668,23 +1650,6 @@ def _document_contract_projection(
                 )
             key_set = set(key_names)
             for item in value.keys:
-                if (
-                    value.contract_id == "archive-tombstone-compatibility"
-                    and item.key in {"archive_reason", "replacement"}
-                    and (
-                        item.constant is not None
-                        or item.enum is not None
-                        or item.conditional is not None
-                    )
-                ):
-                    diagnostics.append(
-                        _diagnostic(
-                            "REGISTRY_VALUE_CONTRACT",
-                            profile=profile_id,
-                            expected="scalar read-compatibility only before Spec 036",
-                            actual=f"archive-specific semantics on {item.key}",
-                        )
-                    )
                 if item.constant is not None and item.enum is not None:
                     diagnostics.append(
                         _diagnostic(
@@ -1814,9 +1779,7 @@ def _document_contract_projection(
                         actual=repr(admission.create.states),
                     )
                 )
-            if admission.create.mode in {"baseline-only", "snapshot-only"} and (
-                admission.create.states
-            ):
+            if admission.create.mode == "snapshot-only" and (admission.create.states):
                 diagnostics.append(
                     _diagnostic(
                         "REGISTRY_ADMISSION",
@@ -1830,24 +1793,30 @@ def _document_contract_projection(
                 (
                     admission.create.mode == "states"
                     and profile["mode"] == "authored"
-                    and profile_id
-                    not in {"sdlc/plan", "sdlc/task", "content/archive-tombstone"}
+                    and profile_id not in {"sdlc/plan", "sdlc/task", "content/archive"}
+                    and admission.create.evidence_predicate_id is None
                     and not admission.baseline_paths
                 )
                 or (
                     admission.create.mode == "paired"
                     and admission_profiles == {"sdlc/plan", "sdlc/task"}
                     and admission.create.states == ("draft", "active")
+                    and admission.create.evidence_predicate_id is None
                     and not admission.baseline_paths
                 )
                 or (
-                    admission.create.mode == "baseline-only"
-                    and admission_profiles == {"content/archive-tombstone"}
-                    and profile_id == "content/archive-tombstone"
+                    admission.create.mode == "archive-envelope"
+                    and admission_profiles == {"content/archive"}
+                    and profile_id == "content/archive"
+                    and admission.create.states == ("archived",)
+                    and admission.create.evidence_predicate_id
+                    == "archive-source-removal"
+                    and not admission.baseline_paths
                 )
                 or (
                     admission.create.mode == "snapshot-only"
                     and profile["mode"] != "authored"
+                    and admission.create.evidence_predicate_id is None
                     and not admission.baseline_paths
                 )
             )
@@ -1933,14 +1902,15 @@ def _document_contract_projection(
                             actual=repr(lifecycle.terminal_states),
                         )
                     )
-            if "archived" in lifecycle.terminal_states and profile_id != (
-                "content/archive-tombstone"
+            if (
+                "archived" in lifecycle.terminal_states
+                and profile_id != "content/archive"
             ):
                 diagnostics.append(
                     _diagnostic(
                         "REGISTRY_LIFECYCLE",
                         profile=profile_id,
-                        expected="archived terminal only for Tombstone compatibility",
+                        expected="archived terminal only for immutable archive records",
                         actual=repr(lifecycle.terminal_states),
                     )
                 )
@@ -2088,54 +2058,53 @@ def _document_contract_projection(
                 )
             )
 
-    tombstone = profiles_by_id.get("content/archive-tombstone")
-    tombstone_admission = typed_admissions.get("content/archive-tombstone")
-    if tombstone is not None and tombstone_admission is not None:
-        declared = tuple(path.as_posix() for path in tombstone_admission.baseline_paths)
-        if declared != tuple(sorted(set(declared))):
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_TOMBSTONE_BASELINE",
-                    profile="content/archive-tombstone",
-                    expected="unique sorted baseline paths",
-                    actual="baseline path order or uniqueness differs",
-                )
-            )
-        tracked_entries = _parse_ls_files_stage_z(
-            _run_git(root, ("ls-files", "--stage", "-z", "--", "docs/98.archive"))
-        )
-        routes = tombstone["routes"]
-        tracked = tuple(
-            sorted(
-                entry.path.as_posix()
-                for entry in tracked_entries
-                if entry.stage == 0
-                and entry.mode.startswith("100")
-                and any(
-                    (
-                        route["kind"] == "exact"
-                        and route["value"] == entry.path.as_posix()
-                    )
-                    or (
-                        route["kind"] == "regex"
-                        and re.fullmatch(route["value"], entry.path.as_posix())
-                        is not None
-                    )
-                    for route in routes
-                )
+    archive_admission = typed_admissions.get("content/archive")
+    archive_predicates = tuple(
+        predicate
+        for predicate in typed_predicates
+        if predicate.predicate_id == "archive-source-removal"
+    )
+    if archive_admission is not None and (
+        archive_admission.create.mode != "archive-envelope"
+        or archive_admission.create.states != ("archived",)
+        or archive_admission.create.evidence_predicate_id != "archive-source-removal"
+        or archive_admission.baseline_paths
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_ADMISSION",
+                profile="content/archive",
+                expected="archive-envelope creation in archived state without compatibility baselines",
+                actual=archive_admission.create.mode,
             )
         )
+    if "content/archive" not in profile_ids:
+        pass
+    elif len(archive_predicates) != 1:
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_EVIDENCE_PREDICATE",
+                profile="content/archive",
+                expected="one archive-source-removal creation predicate",
+                actual=str(len(archive_predicates)),
+            )
+        )
+    else:
+        archive_predicate = archive_predicates[0]
         if (
-            tombstone_admission.create.mode != "baseline-only"
-            or tombstone_admission.create.states
-            or declared != tracked
+            archive_predicate.profile_edges
+            or archive_predicate.evidence
+            or archive_predicate.relationship != "archive-source"
+            or archive_predicate.minimum != 1
+            or archive_predicate.maximum != 1
+            or archive_predicate.body_requirement != "none"
         ):
             diagnostics.append(
                 _diagnostic(
-                    "REGISTRY_TOMBSTONE_BASELINE",
-                    profile="content/archive-tombstone",
-                    expected=f"exact tracked baseline-only set ({len(tracked)} paths)",
-                    actual=f"{len(declared)} declared paths",
+                    "REGISTRY_EVIDENCE_PREDICATE",
+                    profile="content/archive",
+                    expected="the closed archive source-removal predicate shape",
+                    actual=archive_predicate.predicate_id,
                 )
             )
 
@@ -2769,13 +2738,13 @@ def load_registry(root: Path) -> Registry:
             actual=type(raw_registry).__name__,
         )
     if (
-        raw_registry.get("schemaVersion") != 7
+        raw_registry.get("schemaVersion") != 8
         or raw_registry.get("$id")
-        != "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
+        != "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
     ):
         _fail(
             "REGISTRY_SCHEMA",
-            expected="closed production registry schema v7",
+            expected="closed production registry schema v8",
             actual=(
                 f"schemaVersion={raw_registry.get('schemaVersion')!r} "
                 f"$id={raw_registry.get('$id')!r}"

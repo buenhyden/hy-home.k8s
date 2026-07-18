@@ -56,7 +56,6 @@ CURRENT_MARKDOWN_PROFILES = frozenset(
         "sdlc/postmortem",
         "content/reference",
         "content/archive",
-        "content/archive-tombstone",
         "governance/reference",
         "governance/memory",
         "governance/template-support",

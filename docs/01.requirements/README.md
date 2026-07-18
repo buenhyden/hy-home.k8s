@@ -57,7 +57,7 @@
 4. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
 5. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
 6. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함하고, `AI Agent Requirements` 섹션은 영어로 작성한다.
-7. 현재 구현과 상충하는 old/superseded PRD는 `../98.archive/README.md`에만 인덱싱하고, 활성 PRD는 archive Tombstone에 직접 연결하지 않는다.
+7. 현재 구현과 상충하는 old/superseded PRD는 full-body Archive Record로 보존하되 `../98.archive/README.md`에만 인덱싱하고, 활성 PRD는 개별 record에 직접 연결하지 않는다.
 
 ### Relative Link Rules
 
@@ -74,14 +74,14 @@
 - Spec은 PRD 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 - 후속 ARD/Spec/Plan이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 PRD의 `Related Documents`에 후속 갭으로 표시한다.
-- 현재 구현과 맞지 않는 old 실행계약은 활성 PRD에 보존하지 않고 중앙 archive Tombstone으로 이동한다.
+- 현재 구현과 맞지 않는 old 실행계약은 활성 PRD에 보존하지 않고 provenance가 검증된 Archive Record로 이동한다.
 
 ### 요구사항 읽는 순서
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, downstream ARD/ADR/Spec/Plan과 구현 증적을 함께 확인한다.
 3. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
-4. 과거 문서가 필요한 경우 활성 문서에서 Tombstone으로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해서만 확인한다.
+4. 과거 문서가 필요한 경우 활성 문서에서 개별 Archive Record로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해서만 확인한다.
 
 ### 상태 해석
 
@@ -90,7 +90,7 @@
 | Active | 현재 제품 의도를 설명하는 PRD | 관련 ADR/Spec/Plan과 current contract 메모를 함께 확인한다. |
 | Draft | 요구사항 초안 또는 후속 설계 대기 상태 | 구현 시작 전 ARD/Spec/Plan 후속 갭을 해소한다. |
 | Done | 승인된 범위와 수용 기준을 repository-static 증적으로 종료한 PRD | 연결된 ARD/ADR/Spec/Plan/Task와 로컬 검증 증적을 함께 확인하며, remote/live/secret 검증으로 확대 해석하지 않는다. |
-| Archived | 현재 구현과 상충하거나 대체된 요구사항 기록 | 활성 stage에는 본문을 두지 않고 [`../98.archive/README.md`](../98.archive/README.md)에 Tombstone으로만 인덱싱한다. |
+| Archived | 현재 구현과 상충하거나 대체된 요구사항 기록 | 활성 stage에는 본문을 두지 않고 full-body Archive Record를 [`../98.archive/README.md`](../98.archive/README.md)에만 인덱싱한다. |
 
 ### 문서 인덱스
 

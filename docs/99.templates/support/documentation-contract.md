@@ -97,7 +97,7 @@ reference, archive, memory, and progress recording.
 | Contract Family | Support Owner | Template Family |
 | --- | --- | --- |
 | SDLC documentation | [SDLC Governance](./sdlc-governance.md) | PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook, Incident, Postmortem, API/Data/Test/Agent helper forms. |
-| Common documentation | [Common Documentation Governance](./common-documentation-governance.md) | README, Reference, Archive Tombstone, Memory, Progress. |
+| Common documentation | [Common Documentation Governance](./common-documentation-governance.md) | README, Reference, Archive Record, Memory, Progress. |
 | Frontmatter and profile schema | [Frontmatter Schema](./frontmatter-schema.md) | Applies to Markdown template families and explicitly excludes native machine-readable contracts. |
 | Routing and path selection | [Template Routing](./template-routing.md) | Explains how one registry profile selects one template form. |
 | Legacy cleanup | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Removes old keys, sections, values, and routes from active contracts. |

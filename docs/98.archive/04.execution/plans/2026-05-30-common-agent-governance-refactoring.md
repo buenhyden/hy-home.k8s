@@ -1,50 +1,104 @@
 ---
-title: 'Archive Tombstone: Common Agent Governance Refactoring Plan'
-type: content/archive-tombstone
-status: archived
-owner: platform
-updated: 2026-06-02
-original_path: docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md
-archived_on: 2026-06-02
-archive_reason: superseded
-replacement: docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md
+title: "Archive Record: Common Agent Governance Refactoring Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-06-02"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md"
+archived_on: "2026-06-02"
+archive_reason: "superseded"
+replacement: "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md"
+source_commit: "5e0221525450dbdacb585e6c98ade3f060ddc827"
+source_blob: "eb48fc7b1be63a0c36a127c8d2a69de62c0d889d"
+content_sha256: "433a38d2ade68c92f8e0413d4769dfa0a2b37e33aca0118198bc7f83ea247efc"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
+title: 'Common Agent Governance Refactoring Plan'
+type: plan
+status: superseded
+owner: 'platform'
+updated: 2026-06-01
 ---
 
-# Archive Tombstone: Common Agent Governance Refactoring Plan
 
-## Overview
+# Common Agent Governance Refactoring Plan
 
-이 문서는 현재 구현과 맞지 않는 old 문서를 archive로 이동했음을 기록하는 Tombstone이다.
-원문 본문은 보존하지 않으며, 현재 구현 기준은 아래 replacement 문서가 소유한다.
+>
+> Rules:
+>
+> - Every active plan must include explicit verification criteria.
+> - Plan explains execution order, risk control, and rollout strategy.
+> - Use relative links only, calculated from the final authored document location.
 
-## Original Document
+---
 
-- Original path: `docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md`
-- Original title: Common Agent Governance Refactoring Plan
-- Original type: plan
+## Overview (KR)
 
-## Archive Decision
+이 문서는 워크스페이스 내 AI 에이전트 거버넌스(Stage 00)를 일관되게 정비하기 위한 실행 계획서다. 템플릿 계약 위반(ARD 네이밍, Policy 템플릿 부재)을 수정하고, 공식 2026-05-29 모델(Gemini 3.1 Pro 등) 기준을 모델 정책에 확립하며, 플랫폼별 하네스가 공통 문서를 중복 없이 참조하도록 재구성한다.
 
-- Archived on: 2026-06-02
-- Reason: Superseded-only governance plan replaced by the Stage 00 canonical adapter redesign plan.
-- Currentness rule: The old body is intentionally not retained because active stages must reflect current repo-backed implementation.
+## Context
 
-## Current Replacement
+각 에이전트(Claude, GPT, Gemini) 플랫폼의 구조가 파편화되는 것을 방지하고, 템플릿과 실제 산출물 간의 불일치를 해소하기 위함이다.
 
-- Current owner document: [docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
-- Current active index: [plans](../../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
+2026-06-01 update: this plan is superseded by
+[2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md).
+The newer plan preserves the remaining intent but splits the work into
+canonical ownership, provider adapter, hook/QA, model policy, template
+lifecycle, branch completion, local toolchain, and traceability change units.
+Historical evidence remains here; do not use this plan as the current execution
+contract.
 
-## Current Implementation Evidence
+## Goals & In-Scope
 
-- `bash infrastructure/tests/verify-contracts-static.sh`
-- `bash scripts/validate-gitops-structure.sh`
-- `bash scripts/validate-k8s-manifests.sh .`
-- `bash scripts/validate-repo-quality-gates.sh .`
+- **Goals**:
+  - 모든 템플릿(policy.template.md 포함)이 README.md 매핑과 실제 파일 구조와 100% 일치하도록 보장한다.
+  - ARD 파일명을 템플릿 규약(####-<system-or-domain>.md)에 맞춘다.
+  - 모델 정책을 2026-05-29 기준 공식 최신 모델로 고정한다.
+- **In Scope**:
+  - `docs/99.templates/` 내 파일 이름 변경 및 README 갱신
+  - `docs/02.architecture/requirements/` 파일명 리팩터링
+  - `docs/00.agent-governance/model-policy.md` 업데이트
+  - 플랫폼 하네스(`.agents/GEMINI.md`, `.claude/CLAUDE.md`, `.codex/CODEX.md`)의 어댑터-레퍼런스 구조 갱신
 
-## Archive Index
+## Non-Goals & Out-of-Scope
 
-- [Archive README](../../README.md)
+- **Non-goals**:
+  - 기존 작성된 설계 문서들의 내부 로직이나 내용 자체의 큰 수정 (파일명 갱신 및 템플릿 갱신 제외)
+- **Out of Scope**:
+  - Kubernetes 매니페스트 자체 기능 변경
+  - 외부 연동 시스템의 스크립트 리팩터링
+
+## Work Breakdown
+
+| Task    | Description | Files / Docs Affected | Target REQ | Validation Criteria |
+| ------- | ----------- | --------------------- | ---------- | ------------------- |
+| PLN-001 | 템플릿 계약 일치화 | `docs/99.templates/*` | PRD-GOV-02 | README와 파일명이 일치하고, policy 템플릿이 존재함 |
+| PLN-002 | ARD 파일 리네임 | `docs/02.architecture/requirements/*.md` | PRD-GOV-04 | 모든 ARD가 `0001-*.md` 형태로 네이밍됨 |
+| PLN-003 | 모델 정책 확정 | `docs/00.agent-governance/model-policy.md` | PRD-GOV-01 | 최신 모델명 확정 및 레거시 삭제 |
+| PLN-004 | 플랫폼 하네스 어댑터 확인 | `.agents/`, `.claude/`, `.codex/` | PRD-GOV-03 | 각 마크다운이 중복 없이 SSoT를 참조함 |
+
+## Verification Plan
+
+| ID          | Level      | Description | Command / How to Run | Pass Criteria |
+| ----------- | ---------- | ----------- | -------------------- | ------------- |
+| VAL-PLN-001 | Structural | Template mapping | `scripts/validate-repo-quality-gates.sh .` | Structural template mapping errors = 0 |
+
+## Risks & Mitigations
+
+| Risk   | Impact | Mitigation   |
+| ------ | ------ | ------------ |
+| ARD 파일명 갱신 시 기존 문서의 내부 참조 링크 깨짐 | Medium | 일괄 리네임 시 `grep`을 통해 기존 링크들을 함께 업데이트한다. |
+
+## Completion Criteria
+
+- [ ] Scoped work completed
+- [ ] Verification passed
+- [ ] Required docs updated
+- [x] Superseded by the 2026-06-01 canonical adapter redesign plan.
 
 ## Related Documents
 
-- [Current replacement](../../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
+- **Tasks**: [../tasks/2026-05-30-governance-refactoring.md](../tasks/2026-05-30-governance-refactoring.md)
+- **Superseding Plan**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)

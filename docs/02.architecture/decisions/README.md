@@ -57,7 +57,7 @@
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. 현재 구현과 상충하는 superseded/deprecated-only 결정은 `../../98.archive/README.md`에 Tombstone으로 이동한다.
+3. 현재 구현과 상충하는 superseded/deprecated-only 결정은 full-body Archive Record로 보존하고 `../../98.archive/README.md`에만 인덱싱한다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
@@ -86,7 +86,7 @@
 | [`./0015-declarative-document-contract-registry.md`](./0015-declarative-document-contract-registry.md) | Declarative document contract registry 결정 | Accepted | Route, profile, lifecycle, section, README 예외의 단일 machine-readable owner를 선택한다. |
 | [`./0016-program-to-tranche-document-lineage.md`](./0016-program-to-tranche-document-lineage.md) | Program-to-tranche document lineage 결정 | Accepted | PRD 005와 Spec 026-032의 명시적 one-program-to-many-tranche 계보 및 번호 예외를 정의한다. |
 | [`./0017-program-follow-up-lineage-semantics.md`](./0017-program-follow-up-lineage-semantics.md) | Original tranche와 program follow-up 계보 분리 결정 | Accepted | ADR-0016의 seven-tranche 사실을 보존하면서 Spec 033과 이후 follow-up의 별도 관계를 정의한다. |
-| [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Accepted | metadata-only Tombstone을 단일 content/archive envelope와 immutable source payload로 대체한다. |
+| [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Accepted | 이전 metadata-only archive 표면을 단일 `content/archive` envelope와 immutable source payload로 대체한다. |
 
 ## Related Documents
 

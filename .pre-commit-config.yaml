@@ -54,7 +54,13 @@ repos:
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
+        args:
+          - '--baseline'
+          - '.secrets.baseline'
+          # ArchiveEnvelope Git/SHA identities are integrity metadata. Exact
+          # recovered payloads remain covered by gitleaks and archive_cutover.
+          - '--exclude-lines'
+          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$'
         exclude: '^(.*/tests/.*|graphify-out/.*)$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2

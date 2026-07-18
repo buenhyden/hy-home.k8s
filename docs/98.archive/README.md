@@ -1,144 +1,94 @@
 # 98.archive
 
-> 현재 구현과 상충되는 old `docs/01-05` 문서의 Tombstone을 보관하는 중앙 archive stage다.
+> 현재 구현 권한에서 제거된 `docs/01-05` 문서의 전체 원문과 provenance를 보존하는 비현재 archive stage다.
 
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
 ## Overview
 
-`98.archive/`는 active 문서 stage에서 제거된 old 문서의 Tombstone만 보관한다.
-원문 본문은 보존하지 않고, 원래 경로, archive 날짜, archive 사유, 현재 대체 문서, 구현 증거만 남긴다.
-Archive Reason과 Tombstone 링크는 historical evidence이며, 현재 운영 계약은
-Current Replacement 문서가 소유한다.
-`docs/98.archive/05.operations/guides`, `docs/98.archive/05.operations/policies`,
-`docs/98.archive/05.operations/runbooks`, `docs/98.archive/05.operations/incidents`
-mirror는 operations bucket 구조를 그대로 보존한다.
+`98.archive/`는 원래 경로를 mirror한 31개의 immutable `content/archive` record를 보관한다. 각 record는 canonical ArchiveEnvelope.v1 metadata 뒤에 source Git blob bytes를 EOF까지 그대로 포함한다. Archive record는 historical evidence이며 현재 요구사항·설계·실행·운영 권한이 아니다. 현재 문서는 개별 record가 아니라 이 index만 참조한다.
 
-### Stage Readers
-
-이 README의 주요 독자:
-
-- Platform Engineers
-- Documentation Writers
-- Architecture Reviewers
-- AI Agents
+<!-- archive-manifest:v1 records=31 historical-links=202 -->
 
 ## Stage Contract
 
 ### In Scope
 
-- `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`에서 제거된 old 문서 Tombstone
-- 원래 docs 하위 경로를 보존하는 mirror layout
-- Tombstone frontmatter에 `original_path`, `archived_on`, `archive_reason`,
-  `replacement`를 남기는 traceability metadata
-- active 문서가 archive를 직접 참조하지 않도록 하는 Index Only 연결
-- Tombstone을 현재 desired-state 입력이 아닌 historical evidence로 해석하는 경계
+- `docs/01.requirements`부터 `docs/05.operations`까지에서 제거된 원문의 mirrored full-body record
+- `original_path`, `original_type`, archive decision, source commit/blob, SHA-256 provenance
+- source commit과 original path를 기준으로 해석하는 historical rendered links
+- index-only current navigation과 immutable payload 검증
 
 ### Out of Scope
 
-- 현재 요구사항, 아키텍처, 명세, 계획, 작업 증적의 정본
-- 원문 historical body 보관
-- reference 문서나 외부 표준 snapshot
+- 현재 SDLC 또는 operations authority
+- historical link를 현재 경로로 다시 쓰는 작업
+- secret-bearing history의 일반 보존
+- metadata 또는 payload를 조용히 수정하는 provenance repair
+
+ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing delimiter는 없으며 validator는 Git blob identity, payload byte count, final newline, SHA-256, mirror path, replacement dependency를 함께 확인한다.
 
 ## Document Index
 
-```text
-98.archive/
-├── 01.requirements/
-├── 02.architecture/
-│   ├── requirements/
-│   └── decisions/
-├── 03.specs/
-├── 04.execution/
-│   ├── plans/
-│   └── tasks/
-├── 05.operations/
-│   ├── guides/
-│   ├── policies/
-│   ├── runbooks/
-│   └── incidents/
-└── README.md
-```
+아래 manifest는 31개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다.
+
+| Archive Record | Original Path | Original Type | Source Commit | Source Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |
+| --- | --- | --- | --- | --- | --- | ---: | --- | --- |
+| [`01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](./01.requirements/2026-03-27-wsl-k3d-argocd-platform.md) | `docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md` | `prd` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `9b453b87ae9a6a005c019a61da4924f3e91622ef` | `b5a0300136b39fd1d712586b3b25699f07becfb0c98e58166f8b852d0faf6b81` | 7 | [`docs/01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | `superseded` |
+| [`01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | `docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | `prd` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `e0c5d1be8946798106f3e65ffd380096e2329fb2` | `50c643fd33eb0f1761c70eb1a1249e2493273f4533131927e85f37b5a993d343` | 4 | [`docs/01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | `superseded` |
+| [`01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](./01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md) | `docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md` | `prd` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `a84a9e9938ede202a2e83b9deea51edc059f03b8` | `8e05ad6d3a4b45fc098ad159008b48764144cb412bd37686596660844b74bb34` | 10 | [`docs/01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | `superseded` |
+| [`02.architecture/decisions/0001-k3d-topology-and-network.md`](./02.architecture/decisions/0001-k3d-topology-and-network.md) | `docs/02.architecture/decisions/0001-k3d-topology-and-network.md` | `adr` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `1a18548c491852b8e18b4466fffd50a05f5360a9` | `532c0e570c33fd0931f6573ffb63f3f65d733499808488b5c69983488002628f` | 8 | [`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | `superseded` |
+| [`02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md`](./02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md) | `docs/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md` | `adr` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `894105d51d7d031ce38c8016b7708b4750600adf` | `01e4ad60363dc2d5bf73bf0e9c16b5d2f682f11698ac2f8966bc7fe30bfbdd84` | 5 | [`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | `superseded` |
+| [`02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | `docs/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md` | `adr` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `d35eaa0000d43cb887742a7d6173aafc4683a699` | `0226cbc4888c2f3dc6897739ba4d9b2e1c2b88c7f918ac72a7adfdb8bc1f19ab` | 6 | [`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | `superseded` |
+| [`02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](./02.architecture/decisions/0007-kubernetes-dashboard-v3.md) | `docs/02.architecture/decisions/0007-kubernetes-dashboard-v3.md` | `adr` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `7c7b4acb5bd68a08b415ca35683392acd701f9b5` | `a62c757f7566a601d0a948c4ecf17aa96b980346724436cba8d5eedd58835964` | 7 | [`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | `superseded` |
+| [`02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](./02.architecture/decisions/0010-headlamp-replaces-dashboard.md) | `docs/02.architecture/decisions/0010-headlamp-replaces-dashboard.md` | `adr` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `97ed0e3ea6a200942fc11d97d67da133069ed048` | `b08ec274a09d2134208b3594482f5a4f197ce7afe5bde5e4289c363b063177ee` | 6 | [`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | `superseded` |
+| [`02.architecture/requirements/0001-wsl-k3d-argocd-platform.md`](./02.architecture/requirements/0001-wsl-k3d-argocd-platform.md) | `docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md` | `ard` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `9001b10b9657396fe85d6d7b98112dcc6b310e4f` | `cbf08950c2da952a6ca7feaa122085700c5984c5b177a97d90277f3fcca4b44b` | 7 | [`docs/02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | `superseded` |
+| [`02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](./02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md) | `docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md` | `ard` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `37857c69bd334b3acc59705a701233a303c2bcb2` | `4a0902cee5048f2192e16c3688e9bf1e992e60fde4fe3865abb1fcd45767f59f` | 4 | [`docs/02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | `superseded` |
+| [`02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](./02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md) | `docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md` | `ard` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `4d38947d216e84dfc9430f4f632966292b602017` | `dfc0cd13ede805828a19909b2e525648c892dea9fc25d505d7becf8c27acd6b2` | 9 | [`docs/02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | `superseded` |
+| [`03.specs/001-wsl-k3d-argocd-platform/spec.md`](./03.specs/001-wsl-k3d-argocd-platform/spec.md) | `docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | `spec` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `814a42d68c3fe7f78cd6bf274ef08dfe662bb159` | `eb482d1d5ebb3815746815f3dc868ff1669d79b9a1effca53fd7347f55447298` | 15 | [`docs/03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | `superseded` |
+| [`03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](./03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md) | `docs/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md` | `spec` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `fc790ba116e35498a0527032c4c060600e087ac9` | `14eefadf9959c8f9d57167cdcffe41c02ac648c9389fa3a24ce50ad399f7b72d` | 10 | [`docs/03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | `superseded` |
+| [`03.specs/003-platform-expansion/spec.md`](./03.specs/003-platform-expansion/spec.md) | `docs/03.specs/003-platform-expansion/spec.md` | `spec` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `6d92ef1b7606fd20aeedd20cb5bb99c6a40d1dda` | `3363c2f0db122199ddf518fa144fbfdac036a1921df0042c2852055a55179d3b` | 21 | [`docs/03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | `superseded` |
+| [`03.specs/007-docs-governance-consistency/spec.md`](./03.specs/007-docs-governance-consistency/spec.md) | `docs/03.specs/007-docs-governance-consistency/spec.md` | `spec` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `cc803905127970c28fbb343ee69d71c27e0184f4` | `2143740f6a4c670976992e99e7ca8b35cc49e252912916991840b4a862dcfcbb` | 2 | [`docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](./04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md) | `docs/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `8db9882b469c51fbb58d481a6164a80c0f4e75bc` | `aa9bdb444aa5c303c5cf74c4b703a547f9619da257f6f28a2dcb25015154fdd7` | 8 | [`docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | `docs/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `3450ddecac7ab38ae4bf3b624b156e64be51eddb` | `26e5be09b3cef20f7e649903e5a6f2ea4fb6f09cd30cd36142df5000c127b9e7` | 5 | [`docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-03-29-platform-expansion.md`](./04.execution/plans/2026-03-29-platform-expansion.md) | `docs/04.execution/plans/2026-03-29-platform-expansion.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `f81c8ce65d053ccfad8484bb1bfa62688575c2b3` | `edca0f420efeae56236a356d966ed1219e811b641ca7d6b9be0f8d735be3c2fe` | 10 | [`docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-05-09-k3d-agent-first-remediation.md`](./04.execution/plans/2026-05-09-k3d-agent-first-remediation.md) | `docs/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `824e8aa7899cae6ac02a4b43901eb2c55aa44a9d` | `bd0b22c7e2478a0241d38c0f2d397ca4c5ec654d7b1b1724334aa524166d3cfe` | 4 | [`docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-05-22-spec-execution-implementation-audit.md`](./04.execution/plans/2026-05-22-spec-execution-implementation-audit.md) | `docs/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `bf5d10a42fb6ace7c00161da043ce400b6a3aa7b` | `6efde4774c2b45df4202e50d18527b511a7fe64153085a8cff9559f8a1c33a2c` | 5 | [`docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-05-28-docs-governance-consistency.md`](./04.execution/plans/2026-05-28-docs-governance-consistency.md) | `docs/04.execution/plans/2026-05-28-docs-governance-consistency.md` | `plan` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `99eb74600c857f167d3a2039a5eb1d703e526c1e` | `9f514a16610d15be56e341d83422b01ab2ffa0ccfe3e28afac3bff4990de32a1` | 0 | [`docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md) | `superseded` |
+| [`04.execution/plans/2026-05-30-common-agent-governance-refactoring.md`](./04.execution/plans/2026-05-30-common-agent-governance-refactoring.md) | `docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md` | `plan` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `eb48fc7b1be63a0c36a127c8d2a69de62c0d889d` | `433a38d2ade68c92f8e0413d4769dfa0a2b37e33aca0118198bc7f83ea247efc` | 3 | [`docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md`](../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md) | `superseded` |
+| [`04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md`](./04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md) | `docs/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `0b0efb10a3004872b82e97416020583e5cf218a9` | `f29a80b9977dfb4c4d20f93ef3f1836653a6218c46c9b2c8ae48131f0a594b19` | 5 | [`docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | `docs/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `d036035ed36db2e96589ddf2dd0c274aecee8604` | `f4e50b57627cbc6447901966e35a612c732fa7b42b8f5751bb10c12f1d1cda81` | 6 | [`docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-03-29-platform-expansion.md`](./04.execution/tasks/2026-03-29-platform-expansion.md) | `docs/04.execution/tasks/2026-03-29-platform-expansion.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `27b5e717804e7275b7c2781c510f90813dfd7a5a` | `faf5a03e097505fd28d0619e8fc38b644ded8543956c483aa23d44fd0696c25c` | 6 | [`docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md`](./04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md) | `docs/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `5595d5862a64788458aa4f76cbd29e50d901a341` | `719930125589b28a7f38b31b989ef0119cdeede71091debec6732ce4b74750c0` | 4 | [`docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md`](./04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md) | `docs/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `5229231fef51f56543ba7dc34165f43187a62bb7` | `546bb24bdef31bd6372f34f4e0b0c2762ceb377682408a517246d7facb6bdcd5` | 8 | [`docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-05-28-docs-governance-consistency.md`](./04.execution/tasks/2026-05-28-docs-governance-consistency.md) | `docs/04.execution/tasks/2026-05-28-docs-governance-consistency.md` | `task` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `57f33dc9795241693291476609b134c796468ec0` | `9896e4734a798ed0b9af5b37f0597d455ca6e9e9418ad916067cce95f24f5df3` | 0 | [`docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md) | `superseded` |
+| [`04.execution/tasks/2026-05-30-governance-refactoring.md`](./04.execution/tasks/2026-05-30-governance-refactoring.md) | `docs/04.execution/tasks/2026-05-30-governance-refactoring.md` | `task` | `5e0221525450dbdacb585e6c98ade3f060ddc827` | `ee7eb5c1408caffcfa66771fba342b76153ca616` | `4a2899884df777aa3bea65ad015d18af727bce9d4f740b440ffa58d43181eb9f` | 5 | [`docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md`](../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md) | `superseded` |
+| [`05.operations/guides/0004-headlamp-auth-oidc-guide.md`](./05.operations/guides/0004-headlamp-auth-oidc-guide.md) | `docs/05.operations/guides/0004-headlamp-auth-oidc-guide.md` | `guide` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `5786ac6cb75eb9c86b34bd7d61c1866ec1f693bc` | `a114a4c6632776de96eff8630fd5e672cccb31ffe425332198e7d5a96a427e65` | 4 | [`docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) | `superseded` |
+| [`05.operations/runbooks/0005-headlamp-keycloak-runbook.md`](./05.operations/runbooks/0005-headlamp-keycloak-runbook.md) | `docs/05.operations/runbooks/0005-headlamp-keycloak-runbook.md` | `runbook` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `53f410d549871d7b952c7f3fc0d3d745ac3fcebb` | `6befadcc168a6f3bef3c414ab27b6be88f93f7e9f26f8b3ee747f9993d3ad535` | 8 | [`docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) | `superseded` |
+
+검증 합계: archive records `31/31`, historical rendered local links `202/202`, first source commit records `26`, second source commit records `5`.
 
 ## Authoring Workflow
 
-1. active 문서가 현재 구현과 상충하고 본문 재작성보다 제거가 맞으면 원래 docs 하위 경로를 `98.archive/` 아래에 mirror한다.
-2. archive로 이동한 문서는 `../99.templates/templates/common/archive-tombstone.template.md` 구조의 Tombstone으로 교체한다.
-3. Tombstone frontmatter에는 원본 경로, archive 날짜, archive 사유, current replacement를 남긴다.
-4. Tombstone에는 원문 본문을 남기지 않는다. 전체 원문 snapshot은 별도 승인된 예외 규칙이 있을 때만 허용한다.
-5. active 문서와 README는 이 archive README만 Index Only로 연결하고, 개별 Tombstone을 직접 current input으로 사용하지 않는다.
-6. 현재 구현 범위가 줄어들지 않도록 대체 PRD/ARD/ADR/Spec/Plan/Task 또는 현재 구현 README를 먼저 확정한다.
+1. 현재 authority와 replacement를 먼저 확정하고 원본 경로 제거와 mirrored archive record 생성을 하나의 proposed snapshot으로 준비한다.
+2. 원본은 working-tree text가 아니라 full source commit의 Git blob bytes로 복구한다.
+3. 복구 blob을 stdout/stderr 비공개, 완전 redaction, 전용 detection exit code로 secret classifier에 통과시킨다. 탐지 또는 도구 오류는 fail-closed다.
+4. Canonical archive form의 metadata를 채우고 marker 직후 exact blob bytes를 append한다. Payload의 줄바꿈과 final newline은 변경하지 않는다.
+5. Production cutover validator로 31/31 envelope, source object, digest, unique original owner, replacement, 202/202 historical links, index membership, current direct-link 부재를 확인한다.
+6. 생성 후 record mutation·deletion·reactivation은 거부한다. 필요한 metadata repair는 별도 provenance repair 결정과 증거를 요구한다.
 
 ### Relative Link Rules
 
-이 README의 링크 기준 위치는 `docs/98.archive/`다.
-
-- active stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`, `../04.execution/`, `../05.operations/`로 연결한다.
-- template stage는 `../99.templates/`로 연결한다.
-- tombstone 파일 내부 링크는 각 mirror 위치 기준으로 다시 계산한다.
-
-### Archive Index
-
-### 01.requirements
-
-| Original Path | Tombstone | Current Replacement | Archive Reason |
-| --- | --- | --- | --- |
-| `docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md` | [`01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](./01.requirements/2026-03-27-wsl-k3d-argocd-platform.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Old baseline PRD replaced by current repo-backed platform baseline. |
-| `docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | [`01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Old endpoint/bootstrap requirement replaced by current `172.18.x` GitOps contract. |
-| `docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md` | [`01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](./01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Mixed current/old expansion PRD replaced by current platform baseline. |
-
-### 02.architecture
-
-| Original Path | Tombstone | Current Replacement | Archive Reason |
-| --- | --- | --- | --- |
-| `docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md` | [`02.architecture/requirements/0001-wsl-k3d-argocd-platform.md`](./02.architecture/requirements/0001-wsl-k3d-argocd-platform.md) | [`../02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | Old reference architecture replaced by current ARD. |
-| `docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md` | [`02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](./02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md) | [`../02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | Old HA architecture replaced by current ARD. |
-| `docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md` | [`02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](./02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md) | [`../02.architecture/requirements/0007-current-local-gitops-platform.md`](../02.architecture/requirements/0007-current-local-gitops-platform.md) | Old expansion architecture replaced by current ARD. |
-| `docs/02.architecture/decisions/0001-k3d-topology-and-network.md` | [`02.architecture/decisions/0001-k3d-topology-and-network.md`](./02.architecture/decisions/0001-k3d-topology-and-network.md) | [`../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | Old network decision replaced by current local platform contract. |
-| `docs/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md` | [`02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md`](./02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md) | [`../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | Old external service endpoint decision replaced by current contract. |
-| `docs/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md` | [`02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | [`../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | Old HA endpoint decision replaced by current contract. |
-| `docs/02.architecture/decisions/0007-kubernetes-dashboard-v3.md` | [`02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](./02.architecture/decisions/0007-kubernetes-dashboard-v3.md) | [`../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | Removed cluster UI decision replaced by current Headlamp contract. |
-| `docs/02.architecture/decisions/0010-headlamp-replaces-dashboard.md` | [`02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](./02.architecture/decisions/0010-headlamp-replaces-dashboard.md) | [`../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md) | Replacement ADR folded into current platform contract to keep active docs free of old UI terms. |
-
-### 03.specs
-
-| Original Path | Tombstone | Current Replacement | Archive Reason |
-| --- | --- | --- | --- |
-| `docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | [`03.specs/001-wsl-k3d-argocd-platform/spec.md`](./03.specs/001-wsl-k3d-argocd-platform/spec.md) | [`../03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | Old baseline spec replaced by current spec. |
-| `docs/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md` | [`03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](./03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md) | [`../03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | Old HA spec replaced by current spec. |
-| `docs/03.specs/003-platform-expansion/spec.md` | [`03.specs/003-platform-expansion/spec.md`](./03.specs/003-platform-expansion/spec.md) | [`../03.specs/008-current-local-gitops-platform/spec.md`](../03.specs/008-current-local-gitops-platform/spec.md) | Mixed old/current expansion spec replaced by current spec. |
-| `docs/03.specs/007-docs-governance-consistency/spec.md` | [`03.specs/007-docs-governance-consistency/spec.md`](./03.specs/007-docs-governance-consistency/spec.md) | [`../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md) | Completed governance cleanup snapshot with old hook path contract; replaced by current 01-05 alignment evidence. |
-
-### 04.execution
-
-| Original Path | Tombstone | Current Replacement | Archive Reason |
-| --- | --- | --- | --- |
-| `docs/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md` | [`04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](./04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md) | [`../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | Old execution evidence replaced by current cleanup plan. |
-| `docs/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | [`04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | [`../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | Old execution evidence replaced by current cleanup plan. |
-| `docs/04.execution/plans/2026-03-29-platform-expansion.md` | [`04.execution/plans/2026-03-29-platform-expansion.md`](./04.execution/plans/2026-03-29-platform-expansion.md) | [`../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | Old expansion execution evidence replaced by current cleanup plan. |
-| `docs/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md` | [`04.execution/plans/2026-05-09-k3d-agent-first-remediation.md`](./04.execution/plans/2026-05-09-k3d-agent-first-remediation.md) | [`../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | Old remediation plan used historical-contract separation that is no longer active policy. |
-| `docs/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md` | [`04.execution/plans/2026-05-22-spec-execution-implementation-audit.md`](./04.execution/plans/2026-05-22-spec-execution-implementation-audit.md) | [`../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md) | Old audit evidence replaced by current cleanup evidence. |
-| `docs/04.execution/plans/2026-05-28-docs-governance-consistency.md` | [`04.execution/plans/2026-05-28-docs-governance-consistency.md`](./04.execution/plans/2026-05-28-docs-governance-consistency.md) | [`../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md) | Completed governance cleanup snapshot superseded by current 01-05 alignment plan. |
-| `docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md` | [`04.execution/plans/2026-05-30-common-agent-governance-refactoring.md`](./04.execution/plans/2026-05-30-common-agent-governance-refactoring.md) | [`../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md`](../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md) | Superseded-only governance plan. |
-| `docs/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md` | [`04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md`](./04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md) | [`../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | Old execution evidence replaced by current cleanup task. |
-| `docs/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | [`04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | [`../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | Old execution evidence replaced by current cleanup task. |
-| `docs/04.execution/tasks/2026-03-29-platform-expansion.md` | [`04.execution/tasks/2026-03-29-platform-expansion.md`](./04.execution/tasks/2026-03-29-platform-expansion.md) | [`../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | Old expansion evidence replaced by current cleanup task. |
-| `docs/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md` | [`04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md`](./04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md) | [`../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | Old remediation task used historical-contract separation that is no longer active policy. |
-| `docs/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md` | [`04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md`](./04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md) | [`../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md`](../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md) | Old audit evidence replaced by current cleanup evidence. |
-| `docs/04.execution/tasks/2026-05-28-docs-governance-consistency.md` | [`04.execution/tasks/2026-05-28-docs-governance-consistency.md`](./04.execution/tasks/2026-05-28-docs-governance-consistency.md) | [`../04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md`](../04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md) | Completed governance cleanup snapshot superseded by current 01-05 alignment task. |
-| `docs/04.execution/tasks/2026-05-30-governance-refactoring.md` | [`04.execution/tasks/2026-05-30-governance-refactoring.md`](./04.execution/tasks/2026-05-30-governance-refactoring.md) | [`../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md`](../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md) | Superseded-only governance task. |
-
-### 05.operations
-
-| Original Path | Tombstone | Current Replacement | Archive Reason |
-| --- | --- | --- | --- |
-| `docs/05.operations/guides/0004-headlamp-auth-oidc-guide.md` | [`05.operations/guides/0004-headlamp-auth-oidc-guide.md`](./05.operations/guides/0004-headlamp-auth-oidc-guide.md) | [`../05.operations/guides/README.md`](../05.operations/guides/README.md) | Headlamp OIDC guide referenced missing desired-state files and secret contract; current repo owns Headlamp through chart/ingress/TLS runbook and ADR-0014. |
-| `docs/05.operations/runbooks/0005-headlamp-keycloak-runbook.md` | [`05.operations/runbooks/0005-headlamp-keycloak-runbook.md`](./05.operations/runbooks/0005-headlamp-keycloak-runbook.md) | [`../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) | Headlamp Keycloak/OIDC runtime desired state is not present in GitOps SSoT; current operations use the Headlamp chart/ingress/TLS runbook. |
+- Payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다.
+- Historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
+- Current 문서는 `docs/98.archive/README.md`만 참조한다.
+- 이 index만 개별 record를 inventory link로 열거할 수 있다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
-- [Templates README](../99.templates/README.md)
-- [Archive Tombstone Template](../99.templates/templates/common/archive-tombstone.template.md)
+- [Archive Record Decision](../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+- [Archive Record Template](../99.templates/templates/common/archive-record.template.md)
+- [Template Routing Contract](../99.templates/support/template-routing.md)
