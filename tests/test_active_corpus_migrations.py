@@ -15,6 +15,61 @@ from unittest import mock
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VALIDATOR = ROOT / "scripts" / "validate-active-corpus-migrations.py"
 
+PROPOSED_THIRD_BATCH = {
+    "sequence": 3,
+    "batchId": "ACER-003-003",
+    "pairKey": "2026-07-14-template-lifecycle-contract-normalization",
+    "status": "complete",
+    "completedOn": "2026-07-18",
+    "upstreamSpec": "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+    "program": {
+        "prd": "005",
+        "ard": "0008",
+        "lineage": "follow-up",
+    },
+    "currentClosureOwner": "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+    "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+    "rollbackParentCommit": "22ad025ed7beb0725095d1ab413a2d5c49f8561c",  # pragma: allowlist secret
+    "repairedConsumers": [
+        "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    ],
+    "validationResult": "PASS",
+    "records": [
+        {
+            "kind": "plan",
+            "originalPath": "docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
+            "archivePath": "docs/98.archive/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
+            "originalType": "plan",
+            "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",  # pragma: allowlist secret
+            "sourceBlob": "3a49ac07d7d2808e63a8550f67786d69a451c6df",  # pragma: allowlist secret
+            "payloadBytes": 51960,
+            "payloadSha256": "102ffdabc9e0b839c449f00dd511355bd857ce49f8c423ffd8cfcef8491ffdcc",  # pragma: allowlist secret
+            "historicalLinks": 25,
+            "archiveReason": "completed-lineage",
+            "replacement": None,
+            "validationResult": "PASS",
+        },
+        {
+            "kind": "task",
+            "originalPath": "docs/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
+            "archivePath": "docs/98.archive/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
+            "originalType": "task",
+            "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",  # pragma: allowlist secret
+            "sourceBlob": "424658d865205523f066de87428b96c2aee9926a",  # pragma: allowlist secret
+            "payloadBytes": 8415,
+            "payloadSha256": "717c445c3b51db3ef286f342ad3a997063285fc170afe214af306cc0d8d48381",  # pragma: allowlist secret
+            "historicalLinks": 17,
+            "archiveReason": "completed-lineage",
+            "replacement": None,
+            "validationResult": "PASS",
+        },
+    ],
+}
+
 
 def load_validator():
     spec = importlib.util.spec_from_file_location("active_corpus_migrations", VALIDATOR)
@@ -26,7 +81,7 @@ def load_validator():
 
 
 class ActiveCorpusMigrationTests(unittest.TestCase):
-    def test_first_two_atomic_batches_are_complete_and_additive(self) -> None:
+    def test_first_three_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
 
         counts = validator.validate_active_corpus_migrations(ROOT)
@@ -34,15 +89,43 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(
             counts,
             {
-                "batches": 2,
-                "records": 4,
+                "batches": 3,
+                "records": 6,
                 "baseRecords": 31,
-                "archiveRecords": 35,
+                "archiveRecords": 37,
                 "baseHistoricalLinks": 202,
-                "addedHistoricalLinks": 31,
-                "historicalLinks": 233,
-                "secretClean": 4,
-                "repairedConsumers": 7,
+                "addedHistoricalLinks": 73,
+                "historicalLinks": 275,
+                "secretClean": 6,
+                "repairedConsumers": 8,
+            },
+        )
+
+    def test_exact_proposed_third_prefix_is_accepted(self) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+        proposed = copy.deepcopy(migration)
+        proposed["batches"] = [
+            *copy.deepcopy(migration["batches"][:2]),
+            copy.deepcopy(PROPOSED_THIRD_BATCH),
+        ]
+        proposed["counts"] = {
+            "batches": 3,
+            "records": 6,
+            "archiveRecords": 37,
+            "historicalLinksAdded": 73,
+            "historicalLinks": 275,
+        }
+
+        self.assertEqual(
+            validator.validate_ledger_document(proposed, eligibility),
+            {
+                "batches": 3,
+                "records": 6,
+                "archiveRecords": 37,
+                "historicalLinksAdded": 73,
+                "historicalLinks": 275,
+                "repairedConsumers": 17,
             },
         )
 
@@ -58,12 +141,15 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "partial-second-pair",
                 "skipped-first-eligible-batch",
                 "skipped-second-eligible-batch",
+                "skipped-third-eligible-batch",
                 "reordered-eligible-batches",
                 "prior-batch-evidence-drift",
+                "prior-second-batch-drift",
                 "source-still-current",
                 "archive-payload-byte-drift",
                 "wrong-first-rollback-parent",
                 "wrong-second-rollback-parent",
+                "wrong-third-rollback-parent",
                 "missing-index-row",
                 "duplicate-index-row",
                 "direct-current-link",
@@ -75,16 +161,16 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             },
         )
 
-    def test_committed_first_batch_semantics_remain_stable(self) -> None:
+    def test_committed_two_batch_prefix_semantics_remain_stable(self) -> None:
         validator = load_validator()
         _eligibility, migration = validator.load_documents(ROOT)
         canonical = json.dumps(
-            migration["batches"][0], sort_keys=True, separators=(",", ":")
+            migration["batches"][:2], sort_keys=True, separators=(",", ":")
         ).encode("utf-8")
 
         self.assertEqual(
             hashlib.sha256(canonical).hexdigest(),
-            "6c984f882f245fb40c02e0d5875064bd899cac2d94194c3a99fc2fca26961a70",  # pragma: allowlist secret
+            "07a94683e8980ab6c7a39e183826fe8c56cc0ff3a3d173327935eafead478364",  # pragma: allowlist secret
         )
 
     def test_wrong_second_rollback_parent_fails_closed(self) -> None:
@@ -92,6 +178,20 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         eligibility, migration = validator.load_documents(ROOT)
         mutated = copy.deepcopy(migration)
         mutated["batches"][1]["rollbackParentCommit"] = "0" * 40
+
+        with self.assertRaises(validator.MigrationError) as raised:
+            validator.validate_ledger_document(mutated, eligibility)
+
+        self.assertEqual(
+            str(raised.exception),
+            "MIGRATION-ROLLBACK docs/90.references/data/active-corpus-migration-results.json",
+        )
+
+    def test_wrong_third_rollback_parent_fails_closed(self) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+        mutated = copy.deepcopy(migration)
+        mutated["batches"][2]["rollbackParentCommit"] = "0" * 40
 
         with self.assertRaises(validator.MigrationError) as raised:
             validator.validate_ledger_document(mutated, eligibility)

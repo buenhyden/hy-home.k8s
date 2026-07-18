@@ -386,5 +386,4 @@ the implementation diff.
 
 ### Execution
 
-- [Implementation Plan](../../04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md)
-- [Execution Task](../../04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md)
+- [Completed execution history](../../98.archive/README.md#document-index)

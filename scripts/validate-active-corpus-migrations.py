@@ -61,10 +61,11 @@ ELIGIBILITY_CONTENT_COMMIT = "414905ce4219a6c98088115485b37ad084e2951a"  # pragm
 ELIGIBILITY_EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlist secret
 FIRST_ROLLBACK_PARENT = "90d496e4e96c172785eb23071173a7751e688fd1"  # pragma: allowlist secret
 SECOND_ROLLBACK_PARENT = "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: allowlist secret
-FIRST_BATCH_SEMANTIC_SHA256 = (
-    "6c984f882f245fb40c02e0d5875064bd899cac2d94194c3a99fc2fca26961a70"  # pragma: allowlist secret
+THIRD_ROLLBACK_PARENT = "22ad025ed7beb0725095d1ab413a2d5c49f8561c"  # pragma: allowlist secret
+TWO_BATCH_PREFIX_SHA256 = (
+    "07a94683e8980ab6c7a39e183826fe8c56cc0ff3a3d173327935eafead478364"  # pragma: allowlist secret
 )
-ACCEPTED_BATCHES = 2
+ACCEPTED_BATCHES = 3
 BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
 GIT_EXECUTABLE = "/usr/bin/git"
@@ -82,12 +83,15 @@ REQUIRED_SELF_TEST_CASES = {
     "partial-second-pair",
     "skipped-first-eligible-batch",
     "skipped-second-eligible-batch",
+    "skipped-third-eligible-batch",
     "reordered-eligible-batches",
     "prior-batch-evidence-drift",
+    "prior-second-batch-drift",
     "source-still-current",
     "archive-payload-byte-drift",
     "wrong-first-rollback-parent",
     "wrong-second-rollback-parent",
+    "wrong-third-rollback-parent",
     "missing-index-row",
     "duplicate-index-row",
     "direct-current-link",
@@ -165,13 +169,22 @@ SECOND_REPAIRED_CONSUMERS = (
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
     "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
 )
+THIRD_REPAIRED_CONSUMERS = (
+    "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+    "docs/04.execution/plans/README.md",
+    "docs/04.execution/tasks/README.md",
+    "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+)
 REPAIRED_CONSUMERS_BY_SEQUENCE = (
     FIRST_REPAIRED_CONSUMERS,
     SECOND_REPAIRED_CONSUMERS,
+    THIRD_REPAIRED_CONSUMERS,
 )
 ROLLBACK_PARENTS = (
     FIRST_ROLLBACK_PARENT,
     SECOND_ROLLBACK_PARENT,
+    THIRD_ROLLBACK_PARENT,
 )
 
 INDEX_COLUMNS = (
@@ -549,10 +562,10 @@ def validate_ledger_document(
             _fail("MIGRATION-CONSUMERS")
         repaired_total += len(canonical_repaired)
 
-    first_batch_canonical = json.dumps(
-        batches[0], sort_keys=True, separators=(",", ":")
+    prior_prefix_canonical = json.dumps(
+        batches[:2], sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
-    if hashlib.sha256(first_batch_canonical).hexdigest() != FIRST_BATCH_SEMANTIC_SHA256:
+    if hashlib.sha256(prior_prefix_canonical).hexdigest() != TWO_BATCH_PREFIX_SHA256:
         _fail("MIGRATION-PRIOR-BATCH-DRIFT")
 
     expected_counts = {
@@ -1013,6 +1026,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-ELIGIBLE-PREFIX",
     )
     ledger_case(
+        "skipped-third-eligible-batch",
+        lambda value: value["batches"][2].__setitem__(
+            "pairKey", "2026-07-15-authority-and-lineage-foundation"
+        ),
+        "MIGRATION-ELIGIBLE-PREFIX",
+    )
+    ledger_case(
         "reordered-eligible-batches",
         lambda value: value["batches"].reverse(),
         "MIGRATION-ELIGIBLE-PREFIX",
@@ -1020,6 +1040,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     ledger_case(
         "prior-batch-evidence-drift",
         lambda value: value["batches"][0].__setitem__(
+            "completedOn", "2026-07-17"
+        ),
+        "MIGRATION-PRIOR-BATCH-DRIFT",
+    )
+    ledger_case(
+        "prior-second-batch-drift",
+        lambda value: value["batches"][1].__setitem__(
             "completedOn", "2026-07-17"
         ),
         "MIGRATION-PRIOR-BATCH-DRIFT",
@@ -1034,6 +1061,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     ledger_case(
         "wrong-second-rollback-parent",
         lambda value: value["batches"][1].__setitem__(
+            "rollbackParentCommit", "0" * 40
+        ),
+        "MIGRATION-ROLLBACK",
+    )
+    ledger_case(
+        "wrong-third-rollback-parent",
+        lambda value: value["batches"][2].__setitem__(
             "rollbackParentCommit", "0" * 40
         ),
         "MIGRATION-ROLLBACK",

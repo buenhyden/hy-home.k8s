@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Template Lifecycle Contract Normalization Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "3a49ac07d7d2808e63a8550f67786d69a451c6df"
+content_sha256: "102ffdabc9e0b839c449f00dd511355bd857ce49f8c423ffd8cfcef8491ffdcc"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Template Lifecycle Contract Normalization Implementation Plan'
 type: sdlc/plan
 status: done

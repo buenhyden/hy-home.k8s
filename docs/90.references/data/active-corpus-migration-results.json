@@ -13,11 +13,11 @@
   },
   "archiveIndex": "docs/98.archive/README.md#document-index",
   "counts": {
-    "batches": 2,
-    "records": 4,
-    "archiveRecords": 35,
-    "historicalLinksAdded": 31,
-    "historicalLinks": 233
+    "batches": 3,
+    "records": 6,
+    "archiveRecords": 37,
+    "historicalLinksAdded": 73,
+    "historicalLinks": 275
   },
   "batches": [
     {
@@ -124,6 +124,60 @@
           "payloadBytes": 17762,
           "payloadSha256": "a10f56bf7501369e79969f10417a8380670614e3cc15112bd8b5b551c6d3a46f",
           "historicalLinks": 8,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "batchId": "ACER-003-003",
+      "pairKey": "2026-07-14-template-lifecycle-contract-normalization",
+      "status": "complete",
+      "completedOn": "2026-07-18",
+      "upstreamSpec": "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+      "program": {
+        "prd": "005",
+        "ard": "0008",
+        "lineage": "follow-up"
+      },
+      "currentClosureOwner": "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+      "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+      "rollbackParentCommit": "22ad025ed7beb0725095d1ab413a2d5c49f8561c",
+      "repairedConsumers": [
+        "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+      ],
+      "validationResult": "PASS",
+      "records": [
+        {
+          "kind": "plan",
+          "originalPath": "docs/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
+          "archivePath": "docs/98.archive/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
+          "originalType": "plan",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "3a49ac07d7d2808e63a8550f67786d69a451c6df",
+          "payloadBytes": 51960,
+          "payloadSha256": "102ffdabc9e0b839c449f00dd511355bd857ce49f8c423ffd8cfcef8491ffdcc",
+          "historicalLinks": 25,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        },
+        {
+          "kind": "task",
+          "originalPath": "docs/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
+          "archivePath": "docs/98.archive/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
+          "originalType": "task",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "424658d865205523f066de87428b96c2aee9926a",
+          "payloadBytes": 8415,
+          "payloadSha256": "717c445c3b51db3ef286f342ad3a997063285fc170afe214af306cc0d8d48381",
+          "historicalLinks": 17,
           "archiveReason": "completed-lineage",
           "replacement": null,
           "validationResult": "PASS"

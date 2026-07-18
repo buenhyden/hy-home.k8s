@@ -31,8 +31,10 @@ fi
 for archive_candidate in \
     docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md \
     docs/98.archive/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
+    docs/98.archive/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md \
     docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md \
-    docs/98.archive/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md; do
+    docs/98.archive/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md \
+    docs/98.archive/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md; do
     if [[ -f "$ROOT_DIR/$archive_candidate" ]]; then
         DOCUMENT_INCLUDE_ARGS+=(--include-path "$archive_candidate")
     fi

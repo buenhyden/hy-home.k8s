@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Template Lifecycle Contract Normalization"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "424658d865205523f066de87428b96c2aee9926a"
+content_sha256: "717c445c3b51db3ef286f342ad3a997063285fc170afe214af306cc0d8d48381"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Template Lifecycle Contract Normalization'
 type: sdlc/task
 status: done
