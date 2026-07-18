@@ -15,8 +15,9 @@ ARWB-001 through ARWB-005. The active record authorizes planning and bounded
 implementation under Spec 036; it does not assert that recovery, archive
 conversion, source-link validation, workspace enforcement, or closure has run.
 
-The activation baseline and rollback parent are `04cb3a6`. Every implementation
-package must retain its named RED, GREEN command result, independent
+The activation baseline is `04cb3a6`; ARWB-001 was committed as `6b9b9cd` from
+parent `04a4d32`, and ARWB-002 now executes from that commit. Every
+implementation package must retain its named RED, GREEN command result, independent
 requirements and quality verdict, logical commit, and parent before the next
 package begins.
 
@@ -35,8 +36,8 @@ package begins.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| ARWB-001 | VAL-ARWB-001, VAL-ARWB-002, VAL-ARWB-004, VAL-ARWB-007 | Define exact Git-object recovery and ArchiveEnvelope.v1 parser/schema capability without activating production archive authority. | platform | In Progress | Focused implementation and independent reviews complete; the logical commit remains pending. | Initial RED: missing private module. Requirements RED: ten tests with five expected failures. Quality RED: fifteen tests with two failures and three errors. GREEN: 15/15 plus Ruff/compile and strict document gates. Independent verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Commit parent: `04a4d32`; no production authority or workspace guard changed. |
-| ARWB-002 | VAL-ARWB-002, VAL-ARWB-003, VAL-ARWB-005, VAL-ARWB-007 | Implement fail-closed archive, provenance, integrity, historical-link, current-authority, and immutability validation. | platform | Queued | Not executed. | Stable diagnostic matrix, focused self-tests, strict current-corpus results, independent reviews, logical commit and parent. |
+| ARWB-001 | VAL-ARWB-001, VAL-ARWB-002, VAL-ARWB-004, VAL-ARWB-007 | Define exact Git-object recovery and ArchiveEnvelope.v1 parser/schema capability without activating production archive authority. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: missing private module. Requirements RED: ten tests with five expected failures. Quality RED: fifteen tests with two failures and three errors. GREEN: 15/15 plus Ruff/compile and strict document gates. Independent verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Logical commit: `6b9b9cd`; commit parent: `04a4d32`; no production authority or workspace guard changed. |
+| ARWB-002 | VAL-ARWB-002, VAL-ARWB-003, VAL-ARWB-005, VAL-ARWB-007 | Implement fail-closed archive, provenance, integrity, historical-link, current-authority, and immutability validation. | platform | In Progress | Focused implementation and independent reviews complete; the logical commit remains pending. | Initial RED: missing module, then 14 cases with nine failures. Quality RED: 22 cases with 17 failures and 13 errors. GREEN: 22/22 focused and 37/37 ARWB regression, canonical link self-test, Ruff/compile, strict document gates, Markdownlint, and diff check. Verdicts: `REQUIREMENTS COMPLIANT`, initial `QUALITY CHANGES REQUIRED`, final `QUALITY APPROVED`. Parent: `6b9b9cd`. |
 | ARWB-003 | VAL-ARWB-001 through VAL-ARWB-005 | Atomically activate production archive authority, migrate 31 records, prove 202 links, cut index/current authority, and retire the Tombstone role. | platform | Queued | Not executed. | `ARCHIVE-CUTOVER-INCOMPLETE` RED, redacted secret-classifier result, 31/31 blob/digest and 202/202 link proof, production route/form/predicates, complete index, zero direct current links, retired Tombstone role, reviews, one logical commit and parent. |
 | ARWB-004 | VAL-ARWB-006 | Enforce `_workspace` as one tracked README plus unread ignored scratch using Git metadata only. | platform | Queued | Not executed. | Isolated tracked/ignored mutation fixtures, production index proof, no-traversal review, logical commit and parent. |
 | ARWB-005 | VAL-ARWB-001 through VAL-ARWB-007 | Reproduce incomplete closure, run full QA, obtain whole-tranche review, and close Spec 036 atomically. | platform | Queued | Not executed. | Lifecycle incomplete-closure RED, full command matrix, review verdicts, closure proposal, rollback boundary, logical commit and post-commit checks. |
@@ -134,10 +135,10 @@ payload-to-EOF collision safety, final-newline preservation, and rejection of
 worktree-byte substitution. It also proves literal metacharacter paths,
 global/system/graft/replace/lazy-fetch isolation, bounded Git subprocesses,
 payload-free representations, and stable non-disclosing process/root/object-
-format failures. Quality re-review returned `QUALITY APPROVED`. The logical
-ARWB-001 commit, the
-31-record/202-link corpus proof, and all later packages remain pending, so the
-Task and Spec stay active.
+format failures. Quality re-review returned `QUALITY APPROVED`. ARWB-001 was
+committed as `6b9b9cd` from parent `04a4d32`. The 31-record/202-link corpus
+proof and ARWB-002 through ARWB-005 remain pending, so the Task and Spec stay
+active.
 
 Post-implementation focused evidence is repository-static: the same unit-test
 command passes `15/15`; `ruff check`, `ruff format --check`, and
@@ -148,10 +149,56 @@ zero violations; strict cross-document validation reports valid; changed-file
 Markdownlint and whitespace/final-newline checks pass. This is focused
 repository-static evidence, not the canonical affected runner. Affected,
 staged, all-files, message/manual, CI, and remote/live lanes are not claimed by
-this uncommitted package. The logical commit remains pending from parent
-`04a4d32`; rollback is the bounded removal of the
-private module/test, both README inventory updates, and this ARWB-001 evidence
-update before any later package consumes the capability.
+the ARWB-001 package. Its logical commit is `6b9b9cd` from parent `04a4d32`;
+rollback before later-package consumption is the bounded revert of that commit.
+
+ARWB-002 began with `python3 -m unittest tests/test_archive_validation.py`
+failing because the import-only validator module did not exist. After the
+immutable interfaces were introduced as empty skeletons, the named 14-case RED
+ran with nine expected failures covering metadata order/type, blob/digest and
+payload mutation, wrong mirror, source-tree miss despite current-tree
+existence, archive reactivation, active direct individual-archive navigation,
+duplicate `original_path` authority, and archive mutation/deletion. The minimal
+implementation now parses the ARWB-001 envelope, recovers provenance from full
+Git objects, checks sanitized literal source-tree paths, and imports the
+filesystem-free canonical CommonMark adapter from
+`validate-links-and-owners.py` by fixed script path. Current authority consumes
+only passed frozen Markdown/profile inputs; immutability consumes passed base
+and proposed byte mappings. Payload, Markdown, and resolved target values are
+excluded from representations and diagnostics.
+
+Independent requirements review returned `REQUIREMENTS COMPLIANT`. Initial
+quality review returned `QUALITY CHANGES REQUIRED` because current authority
+did not close its inventory/status/profile inputs, the predictable dynamic
+module cache and adapter return were trusted, malformed public containers could
+raise or fail open, and the completed requirements verdict was not recorded.
+The expanded 22-case quality RED ran with 17 failures and 13 errors, including
+raw `KeyError`, `TypeError`, and `AttributeError` paths. Remediation now
+materializes exact record/document sequences and archive mappings before sort
+or dereference; validates every inventory member, mapping key/value, canonical
+path, and finite current status/profile; and treats every active/accepted path
+below `docs/98.archive` except the exact index as reactivated independently of
+caller inventory. The fixed canonical adapter path is loaded under a private
+unique verified module identity rather than a predictable cache entry. Import,
+call, sequence, link-kind, and target-shape failures collapse to one stable
+payload-free diagnostic.
+
+A residual quality pass caught the empty-parts `.` path and invalid repository-
+root boundary. The final patch rejects those values before adapter or Git use,
+prevalidates mixed record fields before sorting, and fixes the same empty-path
+rule in the public rendered-link adapter. The final quality re-review returned
+`QUALITY APPROVED`.
+
+The focused ARWB-002 suite passes 22/22 and the combined ARWB-001/002 suite
+passes 37/37. The canonical cross-document self-test passes; Ruff check and
+format, Python compile, strict registry (`434` paths, `baseline=433`, `new=62`,
+two programs, zero uncovered/ambiguous), strict Markdown (zero violations),
+strict cross-document validation, changed-document Markdownlint, and
+`git diff --check` pass. This is import-only repository-static evidence; it
+does not activate a production archive route/form/predicate, inspect or migrate
+the 31-record corpus, claim the 202-link proof, retire Tombstones, or inspect
+ignored `_workspace` children. The logical commit from parent `6b9b9cd` remains
+pending.
 
 Independent requirements review first returned `NOT COMPLIANT` for split
 cutover commits, stale successor projections, and missing ARWB-003/005 RED
@@ -176,8 +223,8 @@ the contents or safety of ignored `_workspace` scratch. Those lanes remain
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [ARWB-001](../plans/2026-07-17-archive-record-and-workspace-boundary.md#arwb-001-recovery-and-envelope-contract) | In Progress. | Initial, requirements-remediation, and quality-remediation RED evidence is recorded above; the private recovery/envelope suite passes 15/15 with `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The logical commit from parent `04a4d32` remains pending. |
-| [ARWB-002](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) | Queued. | Archive validator diagnostic matrix, reviews, commit, and parent will be recorded here. |
+| [ARWB-001](../plans/2026-07-17-archive-record-and-workspace-boundary.md#arwb-001-recovery-and-envelope-contract) | Done. | Initial, requirements-remediation, and quality-remediation RED evidence is recorded above; the private recovery/envelope suite passes 15/15 with `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. Logical commit `6b9b9cd`, parent `04a4d32`. |
+| [ARWB-002](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) | In Progress. | Missing-module/nine-failure RED and quality-remediation 17-failure/13-error RED are recorded above; focused 22/22 and combined 37/37 GREEN pass. Verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; the logical commit from parent `6b9b9cd` remains pending. |
 | N/A — ARWB-003 shares the Plan linked in ARWB-001 | Queued. | Atomic cutover RED, exact 31/31 payload, 202/202 source-link, index/current-authority, and Tombstone retirement evidence will be recorded here. |
 | N/A — ARWB-004 shares the Plan linked in ARWB-001 | Queued. | Git-metadata-only workspace fixture and no-read review evidence will be recorded here. |
 | N/A — ARWB-005 shares the Plan linked in ARWB-001 | Queued. | Incomplete-closure RED, full QA, whole-tranche verdicts, rollback, closure commit, and post-commit checks will be recorded here. |

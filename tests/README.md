@@ -37,6 +37,7 @@
 ```text
 tests/
 ├── test_archive_recovery.py           # ARWB-001 isolated Git-object and ArchiveEnvelope.v1 fixture tests
+├── test_archive_validation.py         # ARWB-002 isolated archive/history/current-authority validator tests
 ├── fixtures/
 │   ├── agent-role-semantics.json     # Thirty-role-adapter semantic mutation matrix
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
@@ -82,6 +83,7 @@ live readiness.
 | Area | Command | Evidence class |
 | --- | --- | --- |
 | Archive recovery/envelope fixture | `python3 -m unittest tests/test_archive_recovery.py` | Repo-static private-fixture evidence for SHA-1/SHA-256 Git identity, literal canonical paths, deterministic bounded Git execution, stable non-disclosing errors and representations, raw blob bytes, UTF-8 admission, duplicate-key rejection, byte-identical canonical frontmatter, metadata dependency, marker/payload-to-EOF grammar, final-newline preservation, collision safety, and worktree-byte substitution rejection; not production archive authority or corpus evidence |
+| Archive validation fixture | `python3 -m unittest tests/test_archive_validation.py` | Repo-static import-only evidence for metadata order/type, Git blob and digest identity, payload mutation, mirrored path, source-tree-only historical links, current-tree confusion rejection, inventory-independent archive reactivation, active direct individual-archive links, duplicate `original_path` authority, archive immutability, finite current status/profile and exact public input contracts, private verified canonical CommonMark loading/return-shape checks, and payload-free diagnostics; not production archive authority or 31/202 corpus evidence |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
@@ -134,6 +136,20 @@ adapter PASS does not prove provider runtime consumption.
   candidate metric, not historical resolution evidence. The test does not read
   or migrate `docs/98.archive`, activate a registry/form/predicate, inspect
   ignored `_workspace` children, or claim the 31-record/202-link corpus proof.
+
+- `tests/test_archive_validation.py` creates only temporary isolated Git
+  repositories and passes immutable archive/current-document inputs directly to
+  the import-only ARWB-002 interfaces. Its twenty-two cases prove canonical
+  envelope/provenance/integrity checks, literal source-commit link existence,
+  canonical rendered CommonMark reuse, mirror and unique-authority rules,
+  reactivation/current-direct-link rejection, and mutation/deletion rejection.
+  A current-worktree-only target remains a historical miss. Malformed sequence,
+  mapping, inventory, status, profile, path, adapter import/call, and adapter
+  return-shape inputs fail with fixed value-free diagnostics; a poisoned
+  predictable module cache is ignored. Payload-derived Markdown/link and caller
+  values are absent from representations and diagnostics. It does
+  not enumerate or modify `docs/98.archive`, activate a route/form/predicate,
+  retire Tombstones, or inspect ignored `_workspace` children.
 
 - `tests/fixtures/gitops-change-set/` base/head resource graphs contain one added
   Service, one deleted Service, and the same ConfigMap identity at a moved path.

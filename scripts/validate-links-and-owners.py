@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, field as dataclass_field
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Any, Iterable, Mapping, Sequence
@@ -920,6 +920,20 @@ class MarkdownLink:
     end: int
     label: str
     target: str
+
+
+@dataclass(frozen=True)
+class RenderedLocalLink:
+    """Filesystem-free resolution from the canonical rendered Markdown parser.
+
+    Payload-derived target values are intentionally excluded from the default
+    representation so importing validators cannot disclose document content in
+    logs or exception rendering.
+    """
+
+    kind: str
+    raw_target: str = dataclass_field(repr=False)
+    target: PurePosixPath | None = dataclass_field(repr=False)
 
 
 @dataclass(frozen=True)
@@ -2101,6 +2115,48 @@ def _local_destination(
     if normalized == ".." or normalized.startswith("../"):
         return "LINK-ESCAPE", None
     return "local", PurePosixPath(normalized)
+
+
+def rendered_local_links(
+    markdown: str,
+    source_path: str | PurePosixPath,
+) -> tuple[RenderedLocalLink, ...]:
+    """Resolve rendered Markdown links without consulting the filesystem.
+
+    This is the narrow public adapter for validators that need the canonical
+    CommonMark renderer and local-destination semantics but own a different
+    storage context, such as an immutable Git source tree.  Callers decide how
+    a resolved local path exists; this function never opens or stats it.
+    """
+
+    if not isinstance(markdown, str):
+        raise TypeError("markdown must be text")
+    raw_source = (
+        source_path.as_posix()
+        if isinstance(source_path, PurePosixPath)
+        else source_path
+    )
+    if not isinstance(raw_source, str) or not raw_source:
+        raise ValueError("source_path must be a repository-relative POSIX path")
+    source = PurePosixPath(raw_source)
+    if (
+        not source.parts
+        or source.is_absolute()
+        or source.as_posix() != raw_source
+        or "." in source.parts
+        or ".." in source.parts
+        or "\\" in raw_source
+        or any(ord(character) < 32 or ord(character) == 127 for character in raw_source)
+    ):
+        raise ValueError(
+            "source_path must be a canonical repository-relative POSIX path"
+        )
+
+    return tuple(
+        RenderedLocalLink(kind=kind, raw_target=raw, target=target)
+        for raw in _extract_links(markdown)
+        for kind, target in (_local_destination(source, raw),)
+    )
 
 
 def _path_exists_without_dereference(
