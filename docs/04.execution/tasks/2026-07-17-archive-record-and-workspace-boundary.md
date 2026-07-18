@@ -1,7 +1,7 @@
 ---
 title: 'Task: Archive Record and Workspace Boundary'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-18
 ---
@@ -10,18 +10,23 @@ updated: 2026-07-18
 
 ## Overview
 
-This Task is the execution, verification, review, and rollback ledger for
-ARWB-001 through ARWB-005. The active record authorizes planning and bounded
-implementation under Spec 036; it does not assert that recovery, archive
-conversion, source-link validation, workspace enforcement, or closure has run.
+This Task is the terminal staged execution, verification, review, and rollback
+ledger for ARWB-001 through ARWB-005. It records the completed implementation
+packages, the exact eight-file ARWB-005 closure proposal, and fresh independent
+whole-tranche verdicts `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no
+findings. It does not claim a closure commit, post-commit verification,
+remote/live readiness, or any inspection of ignored scratch.
 
-The activation baseline is `04cb3a6`; ARWB-001 was committed as `6b9b9cd` from
-parent `04a4d32`, ARWB-002 was committed as `f8a54dd` from parent `6b9b9cd`,
-and ARWB-003 was committed as `787b28f` from parent `f8a54dd`. ARWB-004 now
-executes from `787b28f`. Every
-implementation package must retain its named RED, GREEN command result, independent
-requirements and quality verdict, logical commit, and parent before the next
-package begins.
+Planning commit `04a4d32` activated the reciprocal Spec 036 Plan/Task pair.
+ARWB-001 was committed as `6b9b9cd` from parent `04a4d32`, ARWB-002 as
+`f8a54dd` from parent `6b9b9cd`, ARWB-003 as `787b28f` from parent `f8a54dd`,
+and ARWB-004 as `87ff444` from parent `787b28f`. The bounded pre-closure range
+extends through prerequisite remediation commit `4ccc616` from parent
+`87ff444`. That remediation binds the historical ARWB-003 registry proof to
+committed cutover `787b28f` through closed Git-object resolution and received
+`REQUIREMENTS COMPLIANT` plus `QUALITY APPROVED`. The range is
+`04a4d32^..4ccc616`, and rollback parent for the uncommitted closure proposal
+is `4ccc616`.
 
 ## Inputs
 
@@ -41,8 +46,8 @@ package begins.
 | ARWB-001 | VAL-ARWB-001, VAL-ARWB-002, VAL-ARWB-004, VAL-ARWB-007 | Define exact Git-object recovery and ArchiveEnvelope.v1 parser/schema capability without activating production archive authority. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: missing private module. Requirements RED: ten tests with five expected failures. Quality RED: fifteen tests with two failures and three errors. GREEN: 15/15 plus Ruff/compile and strict document gates. Independent verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Logical commit: `6b9b9cd`; commit parent: `04a4d32`; no production authority or workspace guard changed. |
 | ARWB-002 | VAL-ARWB-002, VAL-ARWB-003, VAL-ARWB-005, VAL-ARWB-007 | Implement fail-closed archive, provenance, integrity, historical-link, current-authority, and immutability validation. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: missing module, then 14 cases with nine failures. Quality RED: 22 cases with 17 failures and 13 errors. GREEN: 22/22 focused and 37/37 ARWB regression, canonical link self-test, Ruff/compile, strict document gates, Markdownlint, and diff check. Verdicts: `REQUIREMENTS COMPLIANT`, initial `QUALITY CHANGES REQUIRED`, final `QUALITY APPROVED`. Logical commit: `f8a54dd`; parent: `6b9b9cd`. |
 | ARWB-003 | VAL-ARWB-001 through VAL-ARWB-005 | Atomically activate production archive authority, migrate 31 records, prove 202 links, cut index/current authority, and retire the duplicate archive role. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Named RED: `ARCHIVE-CUTOVER-INCOMPLETE`. GREEN: manual cutover `records=31 historical_links=202 secret_clean=31`; combined archive suite 57/57; exact finite-admission regression 11/11; dedicated runner/hook/provider result 15/15; registry v8, Markdown, cross-document, lifecycle 666-case self-test, Ruff, and cutover-excluding aggregate evidence recorded below. Secret classification used exit 17, integer timeout 10, suppressed stdout/stderr, and returned source=31 pass=31 detected=0 error=0. Final verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Logical commit: `787b28f`; parent: `f8a54dd`. |
-| ARWB-004 | VAL-ARWB-006 | Enforce `_workspace` as one tracked README plus unread ignored scratch using Git metadata only. | platform | In Progress | Quality-review remediation, local repository-static validation, and repeat independent review are complete; only the logical commit remains pending. | Initial RED: focused unittest failed because the production validator was absent. Initial GREEN: 10/10. Quality review: `QUALITY CHANGES REQUIRED` because actual-worktree `check-ignore` admitted ignored-child authority. Remediation RED: one failure and one error across the two hostile-child cases. Remediation GREEN: 16/16 focused methods, isolated self-test, production metadata/object proof, repository aggregate, Ruff check/format, Python compile, Bash syntax, strict Markdown/link, and diff check pass. Final verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`; logical commit from parent `787b28f` remains pending. |
-| ARWB-005 | VAL-ARWB-001 through VAL-ARWB-007 | Reproduce incomplete closure, run full QA, obtain whole-tranche review, and close Spec 036 atomically. | platform | Queued | Not executed. | Lifecycle incomplete-closure RED, full command matrix, review verdicts, closure proposal, rollback boundary, logical commit and post-commit checks. |
+| ARWB-004 | VAL-ARWB-006 | Enforce `_workspace` as one tracked README plus unread ignored scratch using Git metadata only. | platform | Done | Focused implementation, independent reviews, and logical commit complete. | Initial RED: focused unittest failed because the production validator was absent. Initial GREEN: 10/10. Quality review: `QUALITY CHANGES REQUIRED` because actual-worktree `check-ignore` admitted ignored-child authority. Remediation RED: one failure and one error across the two hostile-child cases. Remediation GREEN: 16/16 focused methods, isolated self-test, production metadata/object proof, repository aggregate, Ruff check/format, Python compile, Bash syntax, strict Markdown/link, and diff check pass. Final verdicts: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`. Logical commit: `87ff444`; parent: `787b28f`. |
+| ARWB-005 | VAL-ARWB-001 through VAL-ARWB-007 | Reproduce incomplete closure, run full local QA, and prepare Spec 036's atomic lifecycle closure for independent review. | platform | Done | Exact eight-file closure proposal, local repository-static QA, and independent whole-tranche requirements/quality reviews complete; closure commit remains pending. | Spec-only staged RED exited 2 with `LIFECYCLE-BASE` observing `REGISTRY_PROGRAM_STATE`. Prerequisite remediation `4ccc616` received `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, after which the complete proposal passes staged lifecycle, focused 87/87, and the direct aggregate. Fresh whole-tranche closure reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. All-files pre-commit records `strict-repository-quality` as `SKIP` because the separately run aggregate is PASS and the hook's Spec 039 FIFO boundary remains isolated. Package commits: `6b9b9cd`, `f8a54dd`, `787b28f`, `87ff444`; planning commit: `04a4d32`; rollback parent: `4ccc616`; pre-closure range: `04a4d32^..4ccc616`. No closure commit or post-commit result is claimed. |
 
 ## Approval and Safety Boundaries
 
@@ -73,11 +78,14 @@ package begins.
   a detection marks the record `BLOCKED` and stops envelope creation. Agents
   and logs must not display secret-bearing history. Never inspect ignored
   scratch to search for secrets or evidence.
-- **Rollback Plan**: Before closure, revert newest ARWB commit first and remove
-  consumers before the archive contract. After terminal closure, stage one
+- **Rollback Plan**: Before the uncreated closure commit, discard or replace
+  the exact eight-file staged proposal, leaving parent `4ccc616` unchanged. For
+  full-tranche rollback, revert newest ARWB commit first and remove consumers
+  before the archive contract. After terminal closure, stage one
   complete ARWB-005-through-ARWB-001 reverse patch, validate the restored
   compatible state only after the full patch is assembled, and create one
-  atomic rollback commit. Baseline parent is `04cb3a6`.
+  atomic rollback commit. Planning commit is `04a4d32`, current rollback parent
+  is `4ccc616`, and the pre-closure range is `04a4d32^..4ccc616`.
 - **Evidence Location**: This Task, logical Git commits, exact archive/index
   records, focused fixtures, and durable tracked migration evidence. Ignored
   scratch and dry-run logs are never closure evidence.
@@ -89,23 +97,23 @@ query the Git index and ignore rules for an explicit non-created probe path.
 
 ## Verification Summary
 
-Planning activation begins from repository baseline `04cb3a6`, after Spec 035
+Planning activation began from repository baseline `04cb3a6`, after Spec 035
 closed and made Spec 036 the first unfinished PRD-006 tranche. The approved
 Spec and ADR record a 31-record recovery inventory and 202 historical links,
-but ARWB has not rerun or claimed those results. No archive payload, registry
-route, form, validator, index, current link, or workspace guard is changed by
-this activation package.
+but that activation package had not rerun or claimed those results. No archive
+payload, registry route, form, validator, index, current link, or workspace
+guard was changed by the activation package.
 
-The reciprocal active Plan/Task pair is the only current execution component
-for Spec 036. Spec 037 remains active as a design contract with no Plan/Task.
-Focused activation checks cover exact route admission, five-key frontmatter,
+The reciprocal active Plan/Task pair was the only current execution component
+for Spec 036 at activation. Spec 037 remained active as a design contract with
+no Plan/Task. Focused activation checks covered exact route admission, five-key frontmatter,
 canonical body contracts, reciprocal rendered links, stage-index membership,
 three 14-column ledger records, and whitespace integrity. Long repository
 aggregate and all-files lanes are deferred until implementation or closure and
 are not represented as planning PASS evidence.
 
-The focused activation run passes with both untracked execution files supplied
-as explicit candidates: strict registry classifies 434 paths across two
+The focused activation run passed with both then-untracked execution files
+supplied as explicit candidates: strict registry classified 434 paths across two
 programs (`baseline=433`, `new=62`, uncovered 0, ambiguous 0), strict Markdown
 reports zero violations, strict cross-document validation accepts the sole
 Spec 036 reciprocal pair, changed-file Markdownlint passes, and
@@ -139,8 +147,8 @@ global/system/graft/replace/lazy-fetch isolation, bounded Git subprocesses,
 payload-free representations, and stable non-disclosing process/root/object-
 format failures. Quality re-review returned `QUALITY APPROVED`. ARWB-001 was
 committed as `6b9b9cd` from parent `04a4d32`. The 31-record/202-link corpus
-proof and ARWB-002 through ARWB-005 remain pending, so the Task and Spec stay
-active.
+proof and ARWB-002 through ARWB-005 remained pending at that package boundary,
+so the Task and Spec stayed active.
 
 Post-implementation focused evidence is repository-static: the same unit-test
 command passes `15/15`; `ruff check`, `ruff format --check`, and
@@ -370,8 +378,52 @@ walked, globbed, statted, opened, read, or hashed. The repository aggregate
 exits zero with its exact PASS marker; Ruff check/format, Python compile, Bash
 syntax, strict Markdown/link, and diff check also pass. Repeat requirements
 review returned `REQUIREMENTS COMPLIANT` and repeat quality review returned
-`QUALITY APPROVED`. The logical commit from parent `787b28f` remains pending,
-so ARWB-004 stays In Progress.
+`QUALITY APPROVED`. Logical commit `87ff444` from parent `787b28f` makes the
+ARWB-004 row Done.
+
+ARWB-005 then reproduced the required partial staged lifecycle RED by changing
+only Spec 036 from `active` to `done`. The validator exited `2` with the exact
+`LIFECYCLE-BASE` diagnostic whose observed value is
+`REGISTRY_PROGRAM_STATE`. The completed proposal changes exactly eight files:
+the Spec/Plan/Task, their three indexes, the registry program-lineage state,
+and the three existing migration-ledger rows. Spec 037 remains active and
+dependency-ready with no Plan or Task created or linked.
+
+After converting the six repeated lifecycle-table PRD links to the same
+single-link/N/A pattern used by the completed Spec 035 closure, the complete
+proposal passes staged lifecycle. Registry self-test passes 119 cases with 64
+profiles, 30 templates, parity 11/11, and README fixtures 8/8; strict registry
+passes 434 paths with `baseline=433`, `new=63`, and zero uncovered or ambiguous
+paths. Lifecycle self-test passes all 666 cases. Strict Markdown reports zero
+violations, strict cross-document validation passes, manual cutover reports
+`records=31 historical_links=202 secret_clean=31`, and workspace self-test plus
+production validation pass without reading ignored children.
+
+The first full focused closure command correctly exposed that the ARWB-003
+registry assertion compared its pinned proposed blob with the mutable current
+worktree. Prerequisite remediation `4ccc616` instead binds that historical OID
+to committed cutover `787b28f` through absolute `/usr/bin/git`, a closed
+environment, replacement-object denial, bounded execution, commit-type and
+path validation, plus stable fail-closed errors. Its focused RED/GREEN expands
+the finite-cutover regression from 11 to 14 methods. Independent remediation
+reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; these are
+distinct from the later whole-tranche ARWB-005 closure reviews.
+
+Final focused evidence passes 87/87: 14 finite archive-lifecycle cutover, 57
+archive recovery/validation/cutover, and 16 workspace-boundary methods. The
+direct repository aggregate passes with its exact final PASS marker. All-files
+pre-commit runs with `SKIP=strict-repository-quality`: that one hook is
+explicitly `SKIP` because the aggregate is proven separately and the hook's
+isolated GitOps fixture still encounters the Spec 039-owned `os.mkfifo`
+`Errno 95` boundary. Dockerfile lint is a separate no-file `SKIP`; every other
+applicable hook, including JSON, Markdownlint, secrets, shell, workflow,
+zizmor, and Kubernetes lint, passes. Independent whole-tranche reviews returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. No closure
+commit hash, post-commit strict result, lifecycle snapshot result, or clean-tree
+result is claimed. Package commits are `6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444`;
+prerequisite remediation is `4ccc616`; planning commit is `04a4d32`, rollback
+parent is `4ccc616`, and the bounded pre-closure range is
+`04a4d32^..4ccc616`.
 
 Repository-static evidence cannot establish remote object retention, GitHub
 configuration, provider delivery, live Kubernetes/Vault/ESO/Argo CD state, or
@@ -392,8 +444,8 @@ the contents or safety of ignored `_workspace` scratch. Those lanes remain
 | [ARWB-001](../plans/2026-07-17-archive-record-and-workspace-boundary.md#arwb-001-recovery-and-envelope-contract) | Done. | Initial, requirements-remediation, and quality-remediation RED evidence is recorded above; the private recovery/envelope suite passes 15/15 with `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. Logical commit `6b9b9cd`, parent `04a4d32`. |
 | [ARWB-002](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) | Done. | Missing-module/nine-failure RED and quality-remediation 17-failure/13-error RED are recorded above; focused 22/22 and combined 37/37 GREEN pass. Verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; logical commit `f8a54dd`, parent `6b9b9cd`. |
 | N/A — ARWB-003 shares the Plan linked in ARWB-001 | Done. | Named cutover RED and local GREEN are recorded: exact 31/31 payload, 202/202 source links, index-only current navigation, registry v8 archive-movement predicate, secret-clean 31/31, combined 57/57 archive tests, finite-admission regression 11/11, dedicated runner/hook/provider result 15/15, and deterministic validator gates. Final verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; logical commit `787b28f`, parent `f8a54dd`. |
-| N/A — ARWB-004 shares the Plan linked in ARWB-001 | In Progress. | Missing-validator RED, initial 10/10 GREEN, `QUALITY CHANGES REQUIRED`, two-case hostile-child RED (one failure, one error), and remediation 16/16 GREEN are recorded. Staged root-ignore object authority, isolated ignore evaluation, actual-path no-read sentinels, aggregate, Ruff/format/compile, Bash syntax, strict Markdown/link, and diff check pass. Final verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; only the logical commit remains. |
-| N/A — ARWB-005 shares the Plan linked in ARWB-001 | Queued. | Incomplete-closure RED, full QA, whole-tranche verdicts, rollback, closure commit, and post-commit checks will be recorded here. |
+| N/A — ARWB-004 shares the Plan linked in ARWB-001 | Done. | Missing-validator RED, initial 10/10 GREEN, `QUALITY CHANGES REQUIRED`, two-case hostile-child RED (one failure, one error), and remediation 16/16 GREEN are recorded. Staged root-ignore object authority, isolated ignore evaluation, actual-path no-read sentinels, aggregate, Ruff/format/compile, Bash syntax, strict Markdown/link, and diff check pass. Final verdicts are `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; logical commit `87ff444`, parent `787b28f`. |
+| N/A — ARWB-005 shares the Plan linked in ARWB-001 | Exact closure staged; requirements compliant; quality approved. | Spec-only staged RED observed `REGISTRY_PROGRAM_STATE`; remediation `4ccc616` received `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; staged lifecycle, self-tests, strict document gates, manual cutover, workspace proof, focused 87/87, and direct aggregate pass. Fresh whole-tranche closure reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. All-files pre-commit records strict aggregate as `SKIP` for the Spec 039 FIFO boundary while all other applicable hooks pass. Package commits `6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444`; planning commit `04a4d32`; rollback parent `4ccc616`; pre-closure range `04a4d32^..4ccc616`. No closure commit hash or post-commit result is claimed. |
 
 The lifecycle table renders the Plan and Spec relationship targets once to
 preserve exact activation cardinality. The package-level anchors below provide

@@ -6296,7 +6296,7 @@
           {
             "spec": "036",
             "order": 3,
-            "state": "active",
+            "state": "done",
             "reason": "Archive record and workspace boundary",
             "decision": "0017"
           },

@@ -1,7 +1,7 @@
 ---
 title: 'Archive Record and Workspace Boundary Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-18
 ---
@@ -29,6 +29,20 @@ RED diagnostics, re-review returned `REQUIREMENTS COMPLIANT`. Independent
 quality review then required fixture-only ARWB-001 authority, non-disclosing
 secret classification, and detailed anchor maps; remediation re-review returned
 `QUALITY APPROVED`.
+
+ARWB-001 through ARWB-004 are committed as `6b9b9cd`, `f8a54dd`, `787b28f`,
+and `87ff444` after their package reviews. ARWB-005 is complete as an exact
+eight-file staged closure proposal and local QA handoff, not as a committed or
+post-commit result. Fresh independent whole-tranche reviews returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. The closure
+commit remains uncreated and post-commit results remain unclaimed. Planning commit
+`04a4d32` and package commits `6b9b9cd`, `f8a54dd`, `787b28f`, and `87ff444`
+precede remediation commit `4ccc616`, which binds the historical ARWB-003
+registry proof to committed cutover `787b28f` through closed Git-object
+resolution. Its reviews returned `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`. Rollback parent `4ccc616` and pre-closure range
+`04a4d32^..4ccc616` bound the proposal; Spec 037 remains active,
+dependency-ready, and unplanned with no Plan or Task.
 
 ## Context
 
@@ -78,8 +92,10 @@ operator workflow; this Plan and its validators do not require or inspect it.
   active direct links to individual archive records.
 - Enforce `_workspace` through tracked-index and ignore metadata only, with no
   read of ignored local content.
-- Close Spec 036 only after focused/full static QA, independent requirements
-  and quality review, and an atomic lifecycle proposal.
+- Prepare Spec 036's exact atomic lifecycle proposal only after focused/full
+  static QA. Require fresh independent whole-tranche requirements and quality
+  review before the closure commit; those reviews are now approved with no
+  findings. Do not pre-claim post-commit results.
 
 ## Non-Goals & Out-of-Scope
 
@@ -107,61 +123,61 @@ operator workflow; this Plan and its validators do not require or inspect it.
 
 ### ARWB-001: Recovery and envelope contract
 
-- [ ] Add RED fixtures for missing/ambiguous Git objects, wrong original path,
+- [x] Add RED fixtures for missing/ambiguous Git objects, wrong original path,
   malformed or misplaced v1 marker, payload collision text, final-newline
   changes, non-UTF-8 input, invalid reason/replacement pairs, and worktree-byte
   substitution.
-- [ ] Define one recovery result containing original path, source commit, full
+- [x] Define one recovery result containing original path, source commit, full
   blob ID, byte count, SHA-256, historical-link count, and proposed mirrored
   archive path. Git blob bytes, never a converted worktree read, are canonical.
-- [ ] Define the ArchiveEnvelope.v1 metadata schema, recovery/parser interfaces,
+- [x] Define the ArchiveEnvelope.v1 metadata schema, recovery/parser interfaces,
   and private fixture capabilities without activating a production archive
   route, canonical form, admission rule, evidence predicate, or Tombstone
   retirement.
-- [ ] Run the focused RED/GREEN suite, strict registry/Markdown checks, request
+- [x] Run the focused RED/GREEN suite, strict registry/Markdown checks, request
   requirements review then quality review, remediate, and commit ARWB-001.
 
 ### ARWB-002: Archive validators
 
-- [ ] Add RED cases for metadata/order/type errors, blob or digest mismatch,
+- [x] Add RED cases for metadata/order/type errors, blob or digest mismatch,
   payload mutation, wrong mirror, source-tree miss, current-tree confusion,
   archive reactivation, active direct link, and duplicate archive authority.
-- [ ] Implement a fail-closed archive parser and validator with stable
+- [x] Implement a fail-closed archive parser and validator with stable
   diagnostics for envelope, provenance, integrity, historical-link, current
   authority, and immutability failures.
-- [ ] Reuse the canonical rendered-link interface for current Markdown and a
+- [x] Reuse the canonical rendered-link interface for current Markdown and a
   source-commit/original-path resolver for payload links; do not rewrite
   historical destinations or create a second Markdown authority.
-- [ ] Run focused fixtures and strict current-corpus checks, obtain independent
+- [x] Run focused fixtures and strict current-corpus checks, obtain independent
   requirements and quality approval, and commit ARWB-002.
 
 ### ARWB-003: Atomic corpus and authority cutover
 
-- [ ] Add a RED proposed-snapshot fixture that admits a full-body record while
+- [x] Add a RED proposed-snapshot fixture that admits a full-body record while
   retaining the Tombstone route/form or incomplete index/current-link state;
   require a stable `ARCHIVE-CUTOVER-INCOMPLETE` diagnostic before migration.
-- [ ] Run a read-only recovery preflight directly from Git objects and require
+- [x] Run a read-only recovery preflight directly from Git objects and require
   exactly 31 unique source records with no missing, duplicate, ambiguous, or
   secret-bearing ordinary-workflow admission. A validator may stream tracked
   blob bytes in memory only through a secret classifier with redacted
   diagnostics; it must never print a payload, match, or value, and a detection
   blocks envelope creation.
-- [ ] Produce one archive envelope plus exact source payload at every mirrored
+- [x] Produce one archive envelope plus exact source payload at every mirrored
   path. Verify blob bytes, byte count, final-newline behavior, and SHA-256 for
   each proposed record before replacing any compatibility form.
-- [ ] Prove 31/31 archive records and 202/202 historical local links against
+- [x] Prove 31/31 archive records and 202/202 historical local links against
   their source trees. Any mismatch blocks the entire migration package.
-- [ ] Add RED inventory checks for incomplete archive-index membership, stale
+- [x] Add RED inventory checks for incomplete archive-index membership, stale
   Tombstone language/form/profile, active direct links to individual records,
   duplicate original-path ownership, and missing current replacement targets.
-- [ ] Activate the production `content/archive` profile, canonical form,
+- [x] Activate the production `content/archive` profile, canonical form,
   value/admission/evidence predicates, and source-removal/archive-creation
   rules only in this complete proposed cutover snapshot.
-- [ ] Update the archive index and only directly implicated current consumers
+- [x] Update the archive index and only directly implicated current consumers
   so current navigation targets the index. Preserve payload text unchanged.
-- [ ] Remove the retired Tombstone form/profile and prove the full-body archive
+- [x] Remove the retired Tombstone form/profile and prove the full-body archive
   route is the only archival role after all 31 records are admitted.
-- [ ] Record a durable tracked manifest in the owning Task/index evidence. Run
+- [x] Record a durable tracked manifest in the owning Task/index evidence. Run
   registry, Markdown, link/owner, archive, and stale-route checks against the
   complete proposed snapshot, obtain independent requirements and quality
   approval, and commit the records, index, current links, predicates, and
@@ -169,34 +185,38 @@ operator workflow; this Plan and its validators do not require or inspect it.
 
 ### ARWB-004: `_workspace` Git-metadata guard
 
-- [ ] Add isolated RED fixtures for an extra tracked child, force-added ignored
+- [x] Add isolated RED fixtures for an extra tracked child, force-added ignored
   child, symlink or non-regular tracked member, absent README, and a validator
   attempt to enumerate or open ignored children.
-- [ ] Implement the production check using tracked Git index entries plus
+- [x] Implement the production check using tracked Git index entries plus
   explicit ignore-rule queries only. The validator must not use filesystem
   walking, directory listing, globs, recursive hashing, or content reads below
   `_workspace/`.
-- [ ] Prove `git ls-files _workspace` yields only `_workspace/README.md` and an
+- [x] Prove `git ls-files _workspace` yields only `_workspace/README.md` and an
   explicit scratch probe path is ignored without creating or opening it.
-- [ ] Run isolated and production metadata checks, obtain independent
+- [x] Run isolated and production metadata checks, obtain independent
   requirements and quality approval, and commit ARWB-004.
 
 ### ARWB-005: Validation and lifecycle closure
 
-- [ ] Add a RED staged fixture that marks Spec 036 done while its Plan, Task,
+- [x] Reproduce the RED staged proposal that marks only Spec 036 done while its
+  Plan, Task,
   registry relation, indexes, or ledger remain active/missing; require the
   exact lifecycle evidence/cardinality failure before closure.
-- [ ] Prepare the atomic closure proposal for Spec 036, this Plan/Task, the
+- [x] Prepare the atomic closure proposal for Spec 036, this Plan/Task, the
   program relation, three indexes, and three migration-ledger rows; leave Spec
   037 with no Plan/Task.
-- [ ] Run recovery/archive/workspace self-tests, 31/202 corpus verification,
+- [x] Run recovery/archive/workspace self-tests, 31/202 corpus verification,
   strict registry/Markdown/link/lifecycle lanes, and the repository aggregate.
-- [ ] Run all-files pre-commit. A FIFO `Errno 95` may remain Spec 039 `DEFER`
+- [x] Run the applicable all-files pre-commit boundary and record its actual
+  result. A FIFO `Errno 95` may remain Spec 039 `DEFER`
   only if independently reproduced and every other hook passes.
-- [ ] Obtain fresh whole-tranche requirements and quality approval, record the
-  command matrix and rollback parent, and create one logical closure commit.
-- [ ] Run post-commit strict checks, lifecycle snapshot with explicit history
-  `DEFER`, and clean-tree confirmation without claiming remote/live readiness.
+- [x] Obtain fresh whole-tranche requirements and quality approval. The
+  independent closure reviews returned `REQUIREMENTS COMPLIANT` and
+  `QUALITY APPROVED` with no findings.
+- [x] Record the local command matrix, package history, rollback parent
+  `4ccc616`, and exact staged proposal. The closure commit and post-commit
+  strict/snapshot/clean-tree results remain pending and unclaimed.
 
 ## Verification Plan
 
@@ -241,8 +261,12 @@ reviewed provenance correction instead of hiding the mismatch.
   and active direct archive links fail closed.
 - `_workspace/README.md` is the only tracked workspace member and no validator
   reads ignored child content.
-- Spec/Plan/Task and registry relation close atomically after full QA and
-  independent whole-tranche approval; Spec 037 remains unplanned.
+- Spec/Plan/Task, registry relation, indexes, and ledger form one exact staged
+  closure proposal after full local QA. Fresh independent whole-tranche review
+  returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings;
+  the closure commit remains uncreated and post-commit validation unclaimed.
+  Spec 037 remains active, dependency-ready, and unplanned
+  with no Plan or Task created or linked.
 - Remote, provider, Kubernetes, Vault, ESO, Argo CD, secret, and ignored local
   state remain outside the evidence claim.
 
