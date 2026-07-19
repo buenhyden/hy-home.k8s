@@ -13,11 +13,11 @@
   },
   "archiveIndex": "docs/98.archive/README.md#document-index",
   "counts": {
-    "batches": 5,
-    "records": 10,
-    "archiveRecords": 41,
-    "historicalLinksAdded": 127,
-    "historicalLinks": 329
+    "batches": 6,
+    "records": 12,
+    "archiveRecords": 43,
+    "historicalLinksAdded": 160,
+    "historicalLinks": 362
   },
   "batches": [
     {
@@ -287,6 +287,61 @@
           "payloadBytes": 26367,
           "payloadSha256": "2e3ad60792196d7918e7909f9bb8e275194f0100922cd1f767cf779f906d7b08",
           "historicalLinks": 14,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "batchId": "ACER-003-006",
+      "pairKey": "2026-07-17-archive-record-and-workspace-boundary",
+      "status": "complete",
+      "completedOn": "2026-07-18",
+      "upstreamSpec": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+      "program": {
+        "prd": "006",
+        "ard": "0009",
+        "lineage": "tranche"
+      },
+      "currentClosureOwner": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+      "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+      "rollbackParentCommit": "420f8a582dee69f3c0902026b49667af803a96c1",
+      "repairedConsumers": [
+        "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+        "docs/03.specs/README.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+      ],
+      "validationResult": "PASS",
+      "records": [
+        {
+          "kind": "plan",
+          "originalPath": "docs/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+          "archivePath": "docs/98.archive/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+          "originalType": "plan",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "01f31e78e6a74491211b2c4d65282fa992af28ee",
+          "payloadBytes": 21539,
+          "payloadSha256": "dff92c9051c654604c46e40fe8188d068c6f4d7eacb83877b485eb6925312b23",
+          "historicalLinks": 14,
+          "archiveReason": "completed-lineage",
+          "replacement": null,
+          "validationResult": "PASS"
+        },
+        {
+          "kind": "task",
+          "originalPath": "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
+          "archivePath": "docs/98.archive/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
+          "originalType": "task",
+          "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",
+          "sourceBlob": "e40edd14c8bef4983907a75d7cc7b823412163e6",
+          "payloadBytes": 36397,
+          "payloadSha256": "f3badfc88f43281138d82ace386316e0d3f69bbc5a31ea9ea210f9b6597524fb",
+          "historicalLinks": 19,
           "archiveReason": "completed-lineage",
           "replacement": null,
           "validationResult": "PASS"

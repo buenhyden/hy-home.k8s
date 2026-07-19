@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Task: Archive Record and Workspace Boundary"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "task"
+original_path: "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "e40edd14c8bef4983907a75d7cc7b823412163e6"
+content_sha256: "f3badfc88f43281138d82ace386316e0d3f69bbc5a31ea9ea210f9b6597524fb"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Task: Archive Record and Workspace Boundary'
 type: sdlc/task
 status: done
@@ -437,7 +453,7 @@ the contents or safety of ignored `_workspace` scratch. Those lanes remain
 
 - **Spec**: [Archive Record and Workspace Boundary](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)
 - **Plan**: [Archive Record and Workspace Boundary Implementation Plan](../plans/2026-07-17-archive-record-and-workspace-boundary.md)
-- **Predecessor execution history**: [Archive Index](../../98.archive/README.md#document-index)
+- **Predecessor Task**: [Document Schema and Lifecycle Contract Task](./2026-07-16-document-schema-and-lifecycle-contract.md)
 - **Decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 
 ### Lifecycle Traceability

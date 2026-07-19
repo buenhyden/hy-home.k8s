@@ -70,6 +70,58 @@ PROPOSED_FIFTH_BATCH = {
     ],
 }
 
+PROPOSED_SIXTH_BATCH = {
+    "sequence": 6,
+    "batchId": "ACER-003-006",
+    "pairKey": "2026-07-17-archive-record-and-workspace-boundary",
+    "status": "complete",
+    "completedOn": "2026-07-18",
+    "upstreamSpec": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+    "program": {"prd": "006", "ard": "0009", "lineage": "tranche"},
+    "currentClosureOwner": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+    "archiveNavigationBoundary": "docs/98.archive/README.md#document-index",
+    "rollbackParentCommit": "420f8a582dee69f3c0902026b49667af803a96c1",  # pragma: allowlist secret
+    "repairedConsumers": [
+        "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+        "docs/03.specs/README.md",
+        "docs/04.execution/plans/README.md",
+        "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+        "docs/04.execution/tasks/README.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    ],
+    "validationResult": "PASS",
+    "records": [
+        {
+            "kind": "plan",
+            "originalPath": "docs/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+            "archivePath": "docs/98.archive/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
+            "originalType": "plan",
+            "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",  # pragma: allowlist secret
+            "sourceBlob": "01f31e78e6a74491211b2c4d65282fa992af28ee",  # pragma: allowlist secret
+            "payloadBytes": 21539,
+            "payloadSha256": "dff92c9051c654604c46e40fe8188d068c6f4d7eacb83877b485eb6925312b23",  # pragma: allowlist secret
+            "historicalLinks": 14,
+            "archiveReason": "completed-lineage",
+            "replacement": None,
+            "validationResult": "PASS",
+        },
+        {
+            "kind": "task",
+            "originalPath": "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
+            "archivePath": "docs/98.archive/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
+            "originalType": "task",
+            "sourceCommit": "a12aedfb71ccabd329dabc83bd2863474d1126b0",  # pragma: allowlist secret
+            "sourceBlob": "e40edd14c8bef4983907a75d7cc7b823412163e6",  # pragma: allowlist secret
+            "payloadBytes": 36397,
+            "payloadSha256": "f3badfc88f43281138d82ace386316e0d3f69bbc5a31ea9ea210f9b6597524fb",  # pragma: allowlist secret
+            "historicalLinks": 19,
+            "archiveReason": "completed-lineage",
+            "replacement": None,
+            "validationResult": "PASS",
+        },
+    ],
+}
+
 
 def load_validator():
     spec = importlib.util.spec_from_file_location("active_corpus_migrations", VALIDATOR)
@@ -81,7 +133,7 @@ def load_validator():
 
 
 class ActiveCorpusMigrationTests(unittest.TestCase):
-    def test_first_five_atomic_batches_are_complete_and_additive(self) -> None:
+    def test_all_six_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
 
         counts = validator.validate_active_corpus_migrations(ROOT)
@@ -89,40 +141,41 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(
             counts,
             {
-                "batches": 5,
-                "records": 10,
+                "batches": 6,
+                "records": 12,
                 "baseRecords": 31,
-                "archiveRecords": 41,
+                "archiveRecords": 43,
                 "baseHistoricalLinks": 202,
-                "addedHistoricalLinks": 127,
-                "historicalLinks": 329,
-                "secretClean": 10,
-                "repairedConsumers": 13,
+                "addedHistoricalLinks": 160,
+                "historicalLinks": 362,
+                "secretClean": 12,
+                "repairedConsumers": 15,
             },
         )
 
     def test_staged_consumer_retirement_is_closed_to_migrated_originals(self) -> None:
         validator = load_validator()
         _eligibility, migration = validator.load_documents(ROOT)
-        retired_by_batch_five = {
+        retired_repaired_by_batch_six = {
             "docs/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
             "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
+            "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
         }
-        staged_paths = set(validator._git_paths(ROOT)) - retired_by_batch_five
+        staged_paths = set(validator._git_paths(ROOT)) - retired_repaired_by_batch_six
 
         repaired = validator._validate_repaired_consumer_inventory(
             migration, staged_paths
         )
 
-        self.assertTrue(retired_by_batch_five <= repaired)
+        self.assertTrue(retired_repaired_by_batch_six <= repaired)
         migrated_originals = {
             str(row["originalPath"])
             for row in validator._record_rows(migration)
         }
-        self.assertTrue(retired_by_batch_five <= migrated_originals)
+        self.assertTrue(retired_repaired_by_batch_six <= migrated_originals)
 
         missing_current = staged_paths - {
-            "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+            "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
         }
         with self.assertRaises(validator.MigrationError) as missing:
             validator._validate_repaired_consumer_inventory(
@@ -134,7 +187,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         )
 
         rogue = copy.deepcopy(migration)
-        rogue["batches"][4]["repairedConsumers"].append(
+        rogue["batches"][5]["repairedConsumers"].append(
             "docs/04.execution/tasks/rogue-missing-consumer.md"
         )
         with self.assertRaises(validator.MigrationError) as raised:
@@ -145,7 +198,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             "MIGRATION-CONSUMERS docs/90.references/data/active-corpus-migration-results.json",
         )
 
-    def test_exact_proposed_fifth_prefix_is_accepted(self) -> None:
+    def test_incomplete_five_batch_prefix_is_rejected(self) -> None:
         validator = load_validator()
         eligibility, migration = validator.load_documents(ROOT)
         proposed = copy.deepcopy(migration)
@@ -161,15 +214,38 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             "historicalLinks": 329,
         }
 
+        with self.assertRaises(validator.MigrationError) as raised:
+            validator.validate_ledger_document(proposed, eligibility)
+        self.assertEqual(
+            str(raised.exception),
+            "MIGRATION-ELIGIBLE-PREFIX docs/90.references/data/active-corpus-migration-results.json",
+        )
+
+    def test_exact_proposed_sixth_prefix_is_accepted(self) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+        proposed = copy.deepcopy(migration)
+        proposed["batches"] = [
+            *copy.deepcopy(migration["batches"][:5]),
+            copy.deepcopy(PROPOSED_SIXTH_BATCH),
+        ]
+        proposed["counts"] = {
+            "batches": 6,
+            "records": 12,
+            "archiveRecords": 43,
+            "historicalLinksAdded": 160,
+            "historicalLinks": 362,
+        }
+
         self.assertEqual(
             validator.validate_ledger_document(proposed, eligibility),
             {
-                "batches": 5,
-                "records": 10,
-                "archiveRecords": 41,
-                "historicalLinksAdded": 127,
-                "historicalLinks": 329,
-                "repairedConsumers": 28,
+                "batches": 6,
+                "records": 12,
+                "archiveRecords": 43,
+                "historicalLinksAdded": 160,
+                "historicalLinks": 362,
+                "repairedConsumers": 34,
             },
         )
 
@@ -188,13 +264,16 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "skipped-third-eligible-batch",
                 "skipped-fourth-eligible-batch",
                 "skipped-fifth-eligible-batch",
+                "skipped-sixth-eligible-batch",
                 "reordered-eligible-batches",
                 "prior-batch-evidence-drift",
                 "prior-second-batch-drift",
                 "prior-third-batch-drift",
                 "prior-fourth-batch-drift",
+                "prior-fifth-batch-drift",
                 "partial-fourth-pair",
                 "partial-fifth-pair",
+                "partial-sixth-pair",
                 "source-still-current",
                 "archive-payload-byte-drift",
                 "wrong-first-rollback-parent",
@@ -202,6 +281,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "wrong-third-rollback-parent",
                 "wrong-fourth-rollback-parent",
                 "wrong-fifth-rollback-parent",
+                "wrong-sixth-rollback-parent",
                 "missing-index-row",
                 "duplicate-index-row",
                 "direct-current-link",
@@ -213,16 +293,16 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             },
         )
 
-    def test_committed_four_batch_prefix_semantics_remain_stable(self) -> None:
+    def test_committed_five_batch_prefix_semantics_remain_stable(self) -> None:
         validator = load_validator()
         _eligibility, migration = validator.load_documents(ROOT)
         canonical = json.dumps(
-            migration["batches"][:4], sort_keys=True, separators=(",", ":")
+            migration["batches"][:5], sort_keys=True, separators=(",", ":")
         ).encode("utf-8")
 
         self.assertEqual(
             hashlib.sha256(canonical).hexdigest(),
-            "94c5f43069ccc2847aa53b2d8aa8e7e9ebc89eadee5327530ba17ef5547b7abe",  # pragma: allowlist secret
+            "5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b",  # pragma: allowlist secret
         )
 
     def test_wrong_second_rollback_parent_fails_closed(self) -> None:
@@ -271,18 +351,21 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         validator = load_validator()
         eligibility, migration = validator.load_documents(ROOT)
         proposed = copy.deepcopy(migration)
-        proposed["batches"] = [
-            *copy.deepcopy(migration["batches"][:4]),
-            copy.deepcopy(PROPOSED_FIFTH_BATCH),
-        ]
-        proposed["counts"] = {
-            "batches": 5,
-            "records": 10,
-            "archiveRecords": 41,
-            "historicalLinksAdded": 127,
-            "historicalLinks": 329,
-        }
         proposed["batches"][4]["rollbackParentCommit"] = "0" * 40
+
+        with self.assertRaises(validator.MigrationError) as raised:
+            validator.validate_ledger_document(proposed, eligibility)
+
+        self.assertEqual(
+            str(raised.exception),
+            "MIGRATION-ROLLBACK docs/90.references/data/active-corpus-migration-results.json",
+        )
+
+    def test_wrong_sixth_rollback_parent_fails_closed(self) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+        proposed = copy.deepcopy(migration)
+        proposed["batches"][5]["rollbackParentCommit"] = "0" * 40
 
         with self.assertRaises(validator.MigrationError) as raised:
             validator.validate_ledger_document(proposed, eligibility)

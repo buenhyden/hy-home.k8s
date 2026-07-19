@@ -93,7 +93,6 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-12-readme-workspace-profiles.md
 ├── 2026-07-12-semantic-document-validation.md
 ├── 2026-07-12-authored-document-migration.md
-├── 2026-07-17-archive-record-and-workspace-boundary.md
 ├── 2026-07-18-active-corpus-and-execution-retention.md
 └── README.md
 ```
@@ -169,7 +168,6 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 plan for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, migration-ledger, and reciprocal execution-lineage validation plan. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
-| [`./2026-07-17-archive-record-and-workspace-boundary.md`](./2026-07-17-archive-record-and-workspace-boundary.md) | ARWB-001 through ARWB-005의 독립 검토, 논리 commit, 정확한 closure를 완료했다. [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)의 closure commit `855fa78`과 postflight corrections `cdac53c`, `a12aedf`를 기록하며 후속 Spec 037 실행 pair의 parent를 확정한다. | Done | 2026-07-18 |
 | [`./2026-07-18-active-corpus-and-execution-retention.md`](./2026-07-18-active-corpus-and-execution-retention.md) | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)의 parent 54 Plan/56 Task candidate inventory와 proposed 55/57 active control, frozen 104+six delta census, fail-closed eligibility/residue, per-lineage archive migration, Stage 05/helper Tests role audit, cardinality closure를 여섯 package로 실행하는 reciprocal Plan이다. Activation review는 `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, findings none이며 구현 결과는 아직 주장하지 않는다. | Active | 2026-07-18 |
 
 ## Related Documents

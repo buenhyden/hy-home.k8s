@@ -64,10 +64,11 @@ SECOND_ROLLBACK_PARENT = "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: a
 THIRD_ROLLBACK_PARENT = "22ad025ed7beb0725095d1ab413a2d5c49f8561c"  # pragma: allowlist secret
 FOURTH_ROLLBACK_PARENT = "fdb65db785a4518836ddf22a102b30eb7c9c1d61"  # pragma: allowlist secret
 FIFTH_ROLLBACK_PARENT = "4de4c3e9ddb44949157399a1c71de788511d8a56"  # pragma: allowlist secret
-FOUR_BATCH_PREFIX_SHA256 = (
-    "94c5f43069ccc2847aa53b2d8aa8e7e9ebc89eadee5327530ba17ef5547b7abe"  # pragma: allowlist secret
+SIXTH_ROLLBACK_PARENT = "420f8a582dee69f3c0902026b49667af803a96c1"  # pragma: allowlist secret
+FIVE_BATCH_PREFIX_SHA256 = (
+    "5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b"  # pragma: allowlist secret
 )
-ACCEPTED_BATCHES = 5
+ACCEPTED_BATCHES = 6
 BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
 GIT_EXECUTABLE = "/usr/bin/git"
@@ -88,13 +89,16 @@ REQUIRED_SELF_TEST_CASES = {
     "skipped-third-eligible-batch",
     "skipped-fourth-eligible-batch",
     "skipped-fifth-eligible-batch",
+    "skipped-sixth-eligible-batch",
     "reordered-eligible-batches",
     "prior-batch-evidence-drift",
     "prior-second-batch-drift",
     "prior-third-batch-drift",
     "prior-fourth-batch-drift",
+    "prior-fifth-batch-drift",
     "partial-fourth-pair",
     "partial-fifth-pair",
+    "partial-sixth-pair",
     "source-still-current",
     "archive-payload-byte-drift",
     "wrong-first-rollback-parent",
@@ -102,6 +106,7 @@ REQUIRED_SELF_TEST_CASES = {
     "wrong-third-rollback-parent",
     "wrong-fourth-rollback-parent",
     "wrong-fifth-rollback-parent",
+    "wrong-sixth-rollback-parent",
     "missing-index-row",
     "duplicate-index-row",
     "direct-current-link",
@@ -201,12 +206,21 @@ FIFTH_REPAIRED_CONSUMERS = (
     "docs/04.execution/tasks/README.md",
     "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
 )
+SIXTH_REPAIRED_CONSUMERS = (
+    "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+    "docs/03.specs/README.md",
+    "docs/04.execution/plans/README.md",
+    "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+    "docs/04.execution/tasks/README.md",
+    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+)
 REPAIRED_CONSUMERS_BY_SEQUENCE = (
     FIRST_REPAIRED_CONSUMERS,
     SECOND_REPAIRED_CONSUMERS,
     THIRD_REPAIRED_CONSUMERS,
     FOURTH_REPAIRED_CONSUMERS,
     FIFTH_REPAIRED_CONSUMERS,
+    SIXTH_REPAIRED_CONSUMERS,
 )
 ROLLBACK_PARENTS = (
     FIRST_ROLLBACK_PARENT,
@@ -214,6 +228,7 @@ ROLLBACK_PARENTS = (
     THIRD_ROLLBACK_PARENT,
     FOURTH_ROLLBACK_PARENT,
     FIFTH_ROLLBACK_PARENT,
+    SIXTH_ROLLBACK_PARENT,
 )
 
 INDEX_COLUMNS = (
@@ -592,9 +607,9 @@ def validate_ledger_document(
         repaired_total += len(canonical_repaired)
 
     prior_prefix_canonical = json.dumps(
-        batches[:4], sort_keys=True, separators=(",", ":")
+        batches[:5], sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
-    if hashlib.sha256(prior_prefix_canonical).hexdigest() != FOUR_BATCH_PREFIX_SHA256:
+    if hashlib.sha256(prior_prefix_canonical).hexdigest() != FIVE_BATCH_PREFIX_SHA256:
         _fail("MIGRATION-PRIOR-BATCH-DRIFT")
 
     expected_counts = {
@@ -1063,6 +1078,11 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-PAIR",
     )
     ledger_case(
+        "partial-sixth-pair",
+        lambda value: value["batches"][5]["records"].pop(),
+        "MIGRATION-PAIR",
+    )
+    ledger_case(
         "skipped-first-eligible-batch",
         lambda value: value["batches"][0].__setitem__(
             "pairKey", "2026-07-12-protected-surface-supply-chain-hardening"  # gitleaks:allow
@@ -1098,6 +1118,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-ELIGIBLE-PREFIX",
     )
     ledger_case(
+        "skipped-sixth-eligible-batch",
+        lambda value: value["batches"][5].__setitem__(
+            "pairKey", "2026-07-16-document-schema-and-lifecycle-contract"
+        ),
+        "MIGRATION-ELIGIBLE-PREFIX",
+    )
+    ledger_case(
         "reordered-eligible-batches",
         lambda value: value["batches"].reverse(),
         "MIGRATION-ELIGIBLE-PREFIX",
@@ -1126,6 +1153,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     ledger_case(
         "prior-fourth-batch-drift",
         lambda value: value["batches"][3].__setitem__(
+            "completedOn", "2026-07-17"
+        ),
+        "MIGRATION-PRIOR-BATCH-DRIFT",
+    )
+    ledger_case(
+        "prior-fifth-batch-drift",
+        lambda value: value["batches"][4].__setitem__(
             "completedOn", "2026-07-17"
         ),
         "MIGRATION-PRIOR-BATCH-DRIFT",
@@ -1166,15 +1200,22 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
+        "wrong-sixth-rollback-parent",
+        lambda value: value["batches"][5].__setitem__(
+            "rollbackParentCommit", "0" * 40
+        ),
+        "MIGRATION-ROLLBACK",
+    )
+    ledger_case(
         "duplicate-original-owner",
-        lambda value: value["batches"][4]["records"][1].__setitem__(
-            "originalPath", value["batches"][4]["records"][0]["originalPath"]
+        lambda value: value["batches"][5]["records"][1].__setitem__(
+            "originalPath", value["batches"][5]["records"][0]["originalPath"]
         ),
         "MIGRATION-DUPLICATE-ORIGINAL",
     )
     ledger_case(
         "self-referential-batch-commit",
-        lambda value: value["batches"][4].__setitem__("batchCommit", "0" * 40),
+        lambda value: value["batches"][5].__setitem__("batchCommit", "0" * 40),
         "MIGRATION-SCHEMA",
     )
 

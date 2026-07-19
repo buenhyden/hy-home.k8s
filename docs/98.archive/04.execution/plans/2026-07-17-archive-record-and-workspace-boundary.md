@@ -1,4 +1,20 @@
 ---
+title: "Archive Record: Archive Record and Workspace Boundary Implementation Plan"
+type: "content/archive"
+status: "archived"
+owner: "platform"
+updated: "2026-07-18"
+original_type: "plan"
+original_path: "docs/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md"
+archived_on: "2026-07-18"
+archive_reason: "completed-lineage"
+replacement: null
+source_commit: "a12aedfb71ccabd329dabc83bd2863474d1126b0"
+source_blob: "01f31e78e6a74491211b2c4d65282fa992af28ee"
+content_sha256: "dff92c9051c654604c46e40fe8188d068c6f4d7eacb83877b485eb6925312b23"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: 'Archive Record and Workspace Boundary Implementation Plan'
 type: sdlc/plan
 status: done
