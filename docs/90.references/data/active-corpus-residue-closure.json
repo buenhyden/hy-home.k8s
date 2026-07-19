@@ -2716,7 +2716,7 @@
       "profile": "sdlc/task",
       "status": "active",
       "objectMode": "index-stage-zero",
-      "objectId": "git:sha1:df968ae9b67a0e65056b9fe0d64203ab0bc86256",
+      "objectId": "git:sha1:e2b646684decc540cf42e82880c1dd23637750d9",
       "sourceDisposition": "retain",
       "sourceReason": "active-spec-037-control",
       "sourceOwner": "platform",
