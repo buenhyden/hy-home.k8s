@@ -414,7 +414,17 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         if not RESIDUE_VALIDATOR_PATH.is_file():
             return
         cls.validator = load_residue_validator()
-        cls.ledger = cls.validator.load_ledger(REPOSITORY_ROOT)
+        try:
+            cls.ledger = cls.validator.load_ledger(REPOSITORY_ROOT)
+        except cls.validator.ClosureError as error:
+            if error.code != "CLOSURE-WORKTREE-INDEX-DRIFT":
+                raise
+            cls.ledger = cls.validator._load_json_bytes(
+                cls.validator._read_descriptor_bytes(
+                    str(REPOSITORY_ROOT), cls.validator.LEDGER_PATH
+                ),
+                cls.validator.LEDGER_PATH,
+            )
         cls.observed = {
             key: copy.deepcopy(cls.ledger[key])
             for key in (
@@ -446,14 +456,14 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         expected = {
             "migratedClosed": 12,
             "currentRows": 100,
-            "defer": 98,
-            "retain": 2,
+            "defer": 100,
+            "retain": 0,
             "pairKeys": 52,
             "completePairs": 48,
             "planOnly": 1,
             "taskOnly": 3,
             "acceptedAdrs": 13,
-            "doneSpecs": 28,
+            "doneSpecs": 29,
             "findings": 0,
         }
         try:
@@ -464,7 +474,12 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
             self.assertIn(
                 error.path,
-                {self.validator.AGGREGATE_PATH, self.validator.EXECUTION_TASK},
+                {
+                    *self.validator.CONTROL_PATHS,
+                    self.validator.OWNER_SPEC,
+                    self.validator.EXECUTION_PLAN,
+                    self.validator.EXECUTION_TASK,
+                },
             )
         else:
             self.assertEqual(counts, expected)
@@ -490,6 +505,57 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 )
         self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
         self.assertEqual(raised.exception.path, path)
+
+    def test_terminal_owner_paths_require_stage_zero_index(self) -> None:
+        cases = (
+            (self.validator.SPEC_ROOT, self.validator.OWNER_SPEC),
+            (self.validator.PLAN_ROOT, self.validator.EXECUTION_PLAN),
+            (self.validator.TASK_ROOT, self.validator.EXECUTION_TASK),
+        )
+        for scope, missing in cases:
+            with self.subTest(missing=missing):
+
+                def runner(_root: str, arguments: tuple[str, ...]):
+                    if arguments[1:6] == (
+                        "-z",
+                        "--cached",
+                        "--others",
+                        "--exclude-standard",
+                        "--",
+                    ):
+                        payload = f"{missing}\0".encode()
+                    else:
+                        payload = b""
+                    return subprocess.CompletedProcess(arguments, 0, payload, b"")
+
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._inventory(str(REPOSITORY_ROOT), scope, runner)
+                self.assertEqual(raised.exception.code, "CLOSURE-OWNER-INVENTORY")
+                self.assertEqual(raised.exception.path, missing)
+
+    def test_control_paths_require_stage_zero_index(self) -> None:
+        listed = "\0".join(self.validator.CONTROL_PATHS).encode() + b"\0"
+        for missing in self.validator.CONTROL_PATHS:
+            with self.subTest(missing=missing):
+                present = [
+                    path for path in self.validator.CONTROL_PATHS if path != missing
+                ]
+                staged = b"".join(
+                    (
+                        f"{'100755' if path == self.validator.AGGREGATE_PATH else '100644'} "
+                        f"{'a' * 40} 0\t{path}\0"
+                    ).encode()
+                    for path in present
+                )
+
+                def runner(_root: str, arguments: tuple[str, ...]):
+                    payload = listed if "--others" in arguments else staged
+                    return subprocess.CompletedProcess(arguments, 0, payload, b"")
+
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._control_inventory(str(REPOSITORY_ROOT), runner)
+                self.assertEqual(raised.exception.code, "CLOSURE-CONTROL-INVENTORY")
+                self.assertEqual(raised.exception.path, missing)
 
     def test_tracked_aggregate_entrypoint_requires_index_equality(self) -> None:
         script_oid = "a" * 40
@@ -529,20 +595,131 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
         self.assertEqual(raised.exception.path, self.validator.AGGREGATE_PATH)
 
-    def test_ledger_prebinds_final_task_worktree_blob_for_parent_staging(self) -> None:
-        payload = self.validator._read_descriptor_bytes(
-            str(REPOSITORY_ROOT), self.validator.EXECUTION_TASK
+    def test_ledger_prebinds_terminal_lineage_worktree_blobs_for_parent_staging(
+        self,
+    ) -> None:
+        rows = {
+            row["path"]: row
+            for row in (
+                *self.ledger["currentRows"],
+                *self.ledger["authorityGuards"]["doneSpecs"],
+            )
+        }
+        for path in (
+            self.validator.OWNER_SPEC,
+            self.validator.EXECUTION_PLAN,
+            self.validator.EXECUTION_TASK,
+        ):
+            payload = self.validator._read_descriptor_bytes(str(REPOSITORY_ROOT), path)
+            object_id = hashlib.sha1(
+                f"blob {len(payload)}\0".encode("ascii") + payload
+            ).hexdigest()
+            self.assertEqual(rows[path]["objectMode"], "index-stage-zero")
+            self.assertEqual(rows[path]["objectId"], f"git:sha1:{object_id}")
+
+    def test_terminal_spec037_controls_become_owned_defer_without_source_rewrite(
+        self,
+    ) -> None:
+        plan_path = (
+            "docs/04.execution/plans/"
+            "2026-07-18-active-corpus-and-execution-retention.md"
         )
-        object_id = hashlib.sha1(
-            f"blob {len(payload)}\0".encode("ascii") + payload
-        ).hexdigest()
-        task_row = next(
-            row
-            for row in self.ledger["currentRows"]
-            if row["path"] == self.validator.EXECUTION_TASK
+        task_path = self.validator.EXECUTION_TASK
+        payloads = {
+            plan_path: b"---\ntype: sdlc/plan\nstatus: done\nowner: platform\n---\n",
+            task_path: b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n",
+        }
+        controls = [
+            {
+                "path": path,
+                "kind": kind,
+                "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+                "disposition": "retain",
+                "reason": "active-spec-037-control",
+                "owner": "platform",
+                "refreshTrigger": "Spec037 closure",
+            }
+            for path, kind in ((plan_path, "plan"), (task_path, "task"))
+        ]
+
+        rows = self.validator._build_current_rows(
+            [plan_path],
+            [task_path],
+            {},
+            payloads,
+            {"candidateRows": [], "controls": controls},
         )
-        self.assertEqual(task_row["objectMode"], "index-stage-zero")
-        self.assertEqual(task_row["objectId"], f"git:sha1:{object_id}")
+
+        self.assertEqual(len(rows), 2)
+        for row in rows:
+            self.assertEqual(row["status"], "done")
+            self.assertEqual(row["sourceDisposition"], "retain")
+            self.assertEqual(row["sourceReason"], "active-spec-037-control")
+            self.assertEqual(row["sourceOwner"], "platform")
+            self.assertEqual(row["sourceRefreshTrigger"], "Spec037 closure")
+            self.assertEqual(row["disposition"], "DEFER")
+            self.assertEqual(row["owner"], "platform")
+            self.assertEqual(row["reason"], self.validator.TERMINAL_CONTROL_REASON)
+            self.assertEqual(
+                row["currentEvidenceRole"],
+                self.validator.TERMINAL_CONTROL_EVIDENCE_ROLE,
+            )
+            self.assertEqual(
+                row["successorRefreshTrigger"],
+                self.validator.TERMINAL_CONTROL_REFRESH_TRIGGER,
+            )
+            self.assertNotIn("currentAuthority", row)
+            self.assertNotIn("closureTrigger", row)
+
+    def test_partial_or_incorrect_terminal_control_state_fails(self) -> None:
+        plan_path = (
+            "docs/04.execution/plans/"
+            "2026-07-18-active-corpus-and-execution-retention.md"
+        )
+        task_path = self.validator.EXECUTION_TASK
+        controls = [
+            {
+                "path": path,
+                "kind": kind,
+                "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+                "disposition": "retain",
+                "reason": "active-spec-037-control",
+                "owner": "platform",
+                "refreshTrigger": "Spec037 closure",
+            }
+            for path, kind in ((plan_path, "plan"), (task_path, "task"))
+        ]
+        payloads = {
+            plan_path: b"---\ntype: sdlc/plan\nstatus: done\nowner: platform\n---\n",
+            task_path: b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+        }
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator._build_current_rows(
+                [plan_path],
+                [task_path],
+                {},
+                payloads,
+                {"candidateRows": [], "controls": controls},
+            )
+        self.assertEqual(raised.exception.code, "CLOSURE-CONTROL-STATUS")
+
+    def test_terminal_pair_and_done_spec_guard_match_exact_counts(self) -> None:
+        terminal_paths = {
+            self.validator.EXECUTION_PLAN,
+            self.validator.EXECUTION_TASK,
+        }
+        terminal_rows = [
+            row for row in self.ledger["currentRows"] if row["path"] in terminal_paths
+        ]
+        self.assertEqual(len(terminal_rows), 2)
+        self.assertTrue(all(row["disposition"] == "DEFER" for row in terminal_rows))
+        self.assertEqual(self.ledger["counts"]["currentDefer"], 100)
+        self.assertEqual(self.ledger["counts"]["currentRetain"], 0)
+        self.assertEqual(self.ledger["counts"]["doneSpecs"], 29)
+        self.assertIn(
+            self.validator.OWNER_SPEC,
+            {row["path"] for row in self.ledger["authorityGuards"]["doneSpecs"]},
+        )
 
     def test_missing_bounded_defer_field_fails(self) -> None:
         fixture = self.fixture()

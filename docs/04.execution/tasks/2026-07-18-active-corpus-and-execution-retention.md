@@ -1,7 +1,7 @@
 ---
 title: 'Task: Active Corpus and Execution Retention'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-19
 ---
@@ -11,8 +11,9 @@ updated: 2026-07-19
 ## Overview
 
 This Task is the execution, verification, review, and rollback ledger for
-ACER-001 through ACER-006. It activates the reciprocal Spec 037 execution pair
-from repository baseline `a12aedfb71ccabd329dabc83bd2863474d1126b0`.
+ACER-001 through ACER-006. At activation it tracked the reciprocal Spec 037
+execution pair from repository baseline
+`a12aedfb71ccabd329dabc83bd2863474d1126b0`.
 ACER-001 is complete in content logical commit `46b79fc`; ACER-002 is complete
 in content logical commit `414905c`. ACER-003 is complete with independently
 approved atomic lineage commits `28b42e7`, `9c18910`, `96176a9`, `20cb1ca`,
@@ -20,14 +21,18 @@ approved atomic lineage commits `28b42e7`, `9c18910`, `96176a9`, `20cb1ca`,
 implementation is complete in content logical commit `a646df1` with final
 independent approval and clean-tree postflight. ACER-005 local implementation
 is complete in content logical commit `ba4a470` with final independent approval,
-scanner-clean applicable pre-commit, and clean-tree postflight. ACER-006 remains
-Queued.
-Produced evidence is recorded below.
+scanner-clean applicable pre-commit, and clean-tree postflight. ACER-006 is Done
+for this terminal staged-closure proposal after focused RED/GREEN and exact
+descriptor-backed object preparation. Exact local stage-zero assembly, staged
+QA, and fresh closure reviews are now observed below. The closure commit and
+clean-tree post-commit/postflight do not yet exist and remain pending and
+unclaimed.
 
 The parent `a12aedf` activation input records 54 authored Plans plus 56 authored
-Tasks, for 110 candidates. This staged reciprocal pair raises the proposed
-corpus to 55 Plans and 57 Tasks (112 records) and remains a separately retained
-active control. ACER-001 must reconcile the frozen 104-record baseline with the
+Tasks, for 110 candidates. The reciprocal pair originally raised the proposed
+corpus to 55 Plans and 57 Tasks (112 records). It is now a complete terminal
+Stage 04 pair retained as owned `DEFER` evidence, not active execution authority.
+ACER-001 reconciled the frozen 104-record baseline with the
 six later records created for Specs 034 through 036. No candidate is eligible
 merely because it is terminal, old, or counted. The prior Stage 05 input is 24
 authored records (eight Guides, seven Policies, and nine Runbooks), with zero
@@ -54,7 +59,7 @@ inventory is an input to recompute rather than activation PASS evidence.
 | ACER-003 | VAL-ACER-002, VAL-ACER-006 | Migrate eligible execution records in atomic per-lineage full-body archive batches. | platform | Done | Batches `ACER-003-001` through `ACER-003-006` migrated the complete six-pair eligible corpus in independently approved logical commits `28b42e7`, `9c18910`, `96176a9`, `20cb1ca`, `52d4c2b`, and `24abe70`. | The committed five-batch canonical prefix retains SHA-256 `5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b`. Batch 6 RED proved the old five-batch validator rejects the proposed sixth prefix with `MIGRATION-ELIGIBLE-PREFIX`. GREEN and clean-tree postflight pass 15 focused migration tests plus 11 validation-lane tests, the exact 32-case self-test, production migration `6/12/43/362/12/15`, generic archive recovery and validation 37 tests, full archive cutover regression 21 tests in 431.734 seconds, production archive `43/362/43`, strict registry/Markdown/cross-document validation, and the repository aggregate. Applicable changed-path pre-commit passed after the direct aggregate independently passed; hardcoded-secret and detect-secrets hooks passed and scanner configuration remained unchanged. The staged-retirement regression admits historical repaired consumers only when they remain current or are exact `originalPath` members of the validated migration ledger, while missing non-migrated and rogue consumers fail closed. Requirements review was `REQUIREMENTS COMPLIANT`; quality review was `QUALITY APPROVED`; findings were none. The sixth rollback parent is `420f8a582dee69f3c0902026b49667af803a96c1`; six batch-6 consumers are repaired without changing the successor Spec 037 Plan, WEIA, or generic Stage 90 index. The Plan payload is 21,539 bytes with SHA-256 `dff92c9051c654604c46e40fe8188d068c6f4d7eacb83877b485eb6925312b23` and 14 historical links; the Task payload is 36,397 bytes with SHA-256 `f3badfc88f43281138d82ace386316e0d3f69bbc5a31ea9ea210f9b6597524fb` and 19 links. Remote/live, CI/FIFO, and ignored-workspace evidence remain unclaimed. The archive proof separately preserves the immutable 31-record/202-link base. This Task evidence update commit is not identified or claimed. |
 | ACER-004 | VAL-ACER-007 | Audit Stage 05 and helper Tests roles and apply only bounded evidence-backed remediation. | platform | Done | Content logical commit `a646df1` preserves the exact 24-record Stage 05 corpus (8 Guides, 7 Policies, 9 Runbooks, 0 Incidents, 0 Postmortems), records the exact 33-file helper corpus (12 Python, 14 JSON, 6 YAML, 1 README), and repairs only the stale `tests/README.md` inventory by adding twelve missing rows and removing one absent legacy row. Final requirements review was `REQUIREMENTS COMPLIANT`; final quality review was `QUALITY APPROVED`; findings were none. This Task evidence update commit is not identified or claimed. | Initial RED: the focused target was absent. Review-driven RED/GREEN closed discarded index OIDs, README tracker semantics, descriptor-reopen TOCTOU, and non-README helper read bypass. Final staged and clean-tree postflight pass 29 focused tests, the 27-case isolated self-test, production `stage05=24 types=8/7/9/0/0 helpers=33 formats=12/14/6/1 findings=0`, strict registry for 436 paths, Markdown zero, valid cross-document checks, and the repository aggregate. Applicable pre-commit passes hardcoded-secret, detect-secrets, Markdownlint, ShellCheck, and shfmt; the Spec 039-owned duplicate strict hook is skipped only after direct aggregate proof. All tracked Stage 05/helper/ledger/validator/aggregate bytes are bound to stage-zero index OIDs through bounded `cat-file` plus descriptor-based `O_NOFOLLOW` reads; proposed helpers use the same bounded descriptor path. Every helper crosses the authoritative read boundary, while README alone receives tracker/residue/current-claim scans, so intentional Python/JSON negative strings remain accepted. No Stage 05 authored document, synthetic event, CI/FIFO, scanner configuration, remote/live state, existing ledger, or ignored-workspace content changed. |
 | ACER-005 | VAL-ACER-003 through VAL-ACER-007 | Close retain/DEFER rows and enforce active owner, execution cardinality, and residue rules. | platform | Done | Content logical commit `ba4a470` adds the durable v1 closure record and fail-closed validator without rewriting reviewed inputs. It translates exactly 12 historical `eligible` rows to `migrated-closed`, preserves all 98 current `DEFER` rows with bounded authority fields, retains only the two active Spec 037 controls, and records 100 Stage 04 rows (49 Plans/51 Tasks), 52 lineage identities (48 complete, one Plan-only, three Task-only), four owned partial `DEFER` rows, 13 accepted ADR guards, 28 done-Spec guards, and zero findings. Final requirements review was `REQUIREMENTS COMPLIANT`; final quality review was `QUALITY APPROVED`; findings were none. This two-path evidence update changes only this Task and its exact-OID closure-ledger row; its commit is not identified or claimed. | RED/GREEN closed absent targets, tracked descriptor/index drift, canonical draft-ADR rejection, and seven gitleaks false positives. The final closure schema uses exactly 164 `lineageId` fields while immutable source ledgers retain `pairKey`; it contains no Unicode workaround and leaves `.gitleaks.toml`, `.secrets.baseline`, source ledgers, and protected surfaces unchanged. Staged and clean-tree postflight pass the 60-test module with 22 ACER-005 methods, 17 self-test cases, production `migrated=12 current=100 dispositions=98/2 pairs=52:48/1/3 guards=13/28 findings=0`, ACER-004 dependency `24/33/0`, strict registry for 436 paths, Markdown zero, valid cross-document checks, and the repository aggregate. Applicable pre-commit passes gitleaks, detect-secrets, Markdownlint, ShellCheck, shfmt, affected-surface, JSON, and hygiene hooks; only the duplicate Spec 039-owned strict hook is skipped after direct aggregate proof. All tracked source, inventory, authority, control, ledger, validator, and aggregate bytes remain bounded to stage-zero OIDs plus no-follow descriptor equality; proposed files remain descriptor-only. Remote/live and CI/FIFO results remain unclaimed. |
-| ACER-006 | VAL-ACER-001 through VAL-ACER-007 | Run full repository-static QA and independent review, prepare atomic lifecycle closure, commit, and record postflight. | platform | Queued | Not executed. | Requires staged lifecycle, strict registry/Markdown/cross-document, archive/residue/census gates, aggregate, applicable pre-commit, fresh requirements/quality verdicts, closure commit, and explicit postflight. |
+| ACER-006 | VAL-ACER-001 through VAL-ACER-007 | Run full repository-static QA and independent review, prepare atomic lifecycle closure, commit, and record postflight. | platform | Done | Exact local staged closure proposal passed repository-static QA and remediated independent requirements/quality review. The closure commit and clean-tree post-commit/postflight do not yet exist and remain pending and unclaimed. | Focused 65 PASS; residue self-test 19 PASS; production `migrated=12 current=100 dispositions=100/0 pairs=52:48/1/3 guards=13/29 findings=0` PASS; staged lifecycle PASS; strict registry 436 PASS; strict Markdown violations 0 PASS; strict links PASS; archive cutover `43/362/43` PASS; direct aggregate PASS; changed-file pre-commit PASS with the duplicate strict hook skipped only after direct aggregate proof; cached diff check PASS. Initial `/root/acer006_requirements_review` returned `REQUIREMENTS CHANGES REQUIRED`; stale migration rows, mandatory stage-zero binding, and the validator docstring were remediated, after which `/root/acer006_requirements_rereview` returned `REQUIREMENTS COMPLIANT`, findings none. Initial `/root/acer006_quality_review` returned `QUALITY CHANGES REQUIRED`; stale Spec/Plan active-control current authority was remediated, after which `/root/acer006_quality_rereview` returned `QUALITY APPROVED`, blocking findings none. Its only minor finding was the ignored report's stale Spec OID, now corrected. Raw all-files pre-commit failed only in the strict internal GitOps self-test at `os.mkfifo` `Errno 95`; every other hook passed, and `SKIP=strict-repository-quality pre-commit run --all-files` passed. FIFO remediation and CI success remain Spec 039-owned `DEFER`; remote/live PASS is unclaimed. |
 
 ## Approval and Safety Boundaries
 
@@ -139,8 +144,10 @@ postflight evidence in `24abe70`. No eligible batch remains. ACER-004 local
 implementation is committed in `a646df1` with final independent approval and
 clean-tree postflight. ACER-005 is committed in `ba4a470` with final
 independent approval, scanner-clean applicable pre-commit, and clean-tree
-postflight. ACER-006 remains Queued. No
-tranche closure, remote, live, or CI/FIFO result is claimed.
+postflight. ACER-006 now has an exact local terminal staged-closure proposal
+with repository-static QA PASS, remediated `REQUIREMENTS COMPLIANT`, and
+remediated `QUALITY APPROVED`. The closure commit and clean-tree post-commit do
+not yet exist. Remote/live and CI/FIFO PASS results remain unclaimed.
 
 ACER-005 began with a focused target-existence RED: the new method executed and
 failed because the residue validator and closure ledger did not exist. The
@@ -239,9 +246,12 @@ remain non-authoritative inputs only. ACER-002 owns evidence-backed resolution
 before any disposition may change from `DEFER`.
 
 Predecessor closure commit `855fa78` and postflight commits `cdac53c` and
-`a12aedf` are inputs only. ACER implementation and migration results, current
-helper Tests disposition, remote/live state, CI/FIFO remediation, and ignored
-scratch content remain unclaimed.
+`a12aedf` are inputs only. At activation, ACER implementation and migration
+results plus the current helper Tests disposition were unclaimed; ACER-001
+through ACER-005 later recorded those package results, including ACER-004
+`24/33/0`. The ACER-006 closure commit, clean-tree post-commit/postflight,
+remote/live state, and CI/FIFO remediation remain unclaimed. Ignored scratch
+content was not inspected.
 
 ## Traceability
 
@@ -258,7 +268,7 @@ scratch content remain unclaimed.
 | N/A — ACER-003 shares the Plan linked in ACER-001 | Done. | Batches `ACER-003-001` through `ACER-003-006` retain independently approved exact evidence in logical commits `28b42e7`, `9c18910`, `96176a9`, `20cb1ca`, `52d4c2b`, and `24abe70`; the first five form the pinned SHA-256 prefix `5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b`. Batch 6 removes the Spec 036 Plan/Task pair, preserves both payloads byte-for-byte in completed-lineage envelopes, repairs six Markdown consumers, and records rollback parent `420f8a582dee69f3c0902026b49667af803a96c1`. Fifteen focused migration tests plus eleven validation-lane tests, the exact 32-case self-test, production `6/12/43/362/12/15`, archive aggregate `43/362/43`, generic archive suites, the 21-test cutover regression, strict registry/Markdown/cross-document lanes, applicable changed-path pre-commit/scanners, and the clean-tree repository aggregate pass while retaining the immutable `31/202` base proof and unchanged scanner configuration. The staged-retirement regression admits only repaired consumers that remain current or are exact validated migration originals and rejects missing non-migrated and rogue consumers. Requirements review was `REQUIREMENTS COMPLIANT`; quality review was `QUALITY APPROVED`; findings were none. No eligible migration batch remains. This Task evidence update commit is not identified or claimed. |
 | N/A — ACER-004 shares the Plan linked in ACER-001 | Done. | Content logical commit `a646df1` records the closed role-audit ledger, fail-closed validator, exact Tests inventory, and aggregate integration. Final requirements review was `REQUIREMENTS COMPLIANT`; final quality review was `QUALITY APPROVED`; findings were none. Clean-tree postflight passes 29 focused tests, 27 self-test cases, production 24/33/0 counts, strict registry/Markdown/cross-document validation, and the repository aggregate. Review-driven regressions reject staged/worktree drift, unsafe or nonregular helpers, README tracker promotion, and descriptor path replacement while preserving fixture-body negative cases. Stage 05 authored records and existing ledgers are unchanged; only the stale Tests README inventory is remediated. This Task evidence update commit is not identified or claimed. |
 | N/A — ACER-005 shares the Plan linked in ACER-001 | Done. | Content logical commit `ba4a470` closes exactly 12 migrated rows, bounds all 98 current `DEFER` rows, retains only the active Spec 037 pair, records exact 48/1/3 lineage cardinality, guards 13 accepted ADRs and 28 done Specs, and preserves the ACER-004 24/33/0 dependency. Focused RED/GREEN closed tracked drift, draft-ADR scope, and scanner false positives without changing scanner configuration, baseline, or source ledgers. Final staged and clean-tree checks pass 60 focused tests, 17 self-test cases, exact production counts, strict document gates, applicable pre-commit including gitleaks/detect-secrets, and the repository aggregate. Requirements review was `REQUIREMENTS COMPLIANT`; quality review was `QUALITY APPROVED`; findings were none. This two-path evidence update changes only the Task and its exact-OID closure-ledger row and does not identify its own commit. |
-| N/A — ACER-006 shares the Plan linked in ACER-001 | Queued. | Whole-tranche QA, independent review, atomic closure, commit, and postflight are pending. |
+| N/A — ACER-006 shares the Plan linked in ACER-001 | Done. | Exact local staged QA passed focused 65, residue self-test 19, production `12/100/100/0/52/48/1/3/13/29/0`, lifecycle, strict registry/Markdown/links, archive `43/362/43`, aggregate, changed-file pre-commit, and cached diff gates. Requirements changes were remediated and re-reviewed `REQUIREMENTS COMPLIANT`; quality changes were remediated and re-reviewed `QUALITY APPROVED`, with no blocking findings. Raw all-files remains bounded only by the Spec 039-owned FIFO `Errno 95`, while the strict-skip rerun passed. The closure commit and clean-tree post-commit/postflight remain pending and unclaimed; remote/live and CI/FIFO PASS are unclaimed. |
 
 The lifecycle table renders the Plan relationship once. Package-level text
 provides the remaining navigation without inventing duplicate reciprocal

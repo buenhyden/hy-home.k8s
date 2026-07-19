@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the ACER-005 residual closure and cardinality record."""
+"""Validate the ACER-006 terminal residue, cardinality, and lifecycle closure."""
 
 from __future__ import annotations
 
@@ -25,6 +25,9 @@ LEDGER_PATH = "docs/90.references/data/active-corpus-residue-closure.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-residue-closure.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
+EXECUTION_PLAN = (
+    "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
+)
 EXECUTION_TASK = (
     "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
 )
@@ -55,11 +58,20 @@ INVENTORY_ROOTS = (
     ARCHIVE_PLAN_ROOT,
     ARCHIVE_TASK_ROOT,
 )
+MANDATORY_OWNER_PATHS = {
+    SPEC_ROOT: frozenset({OWNER_SPEC}),
+    PLAN_ROOT: frozenset({EXECUTION_PLAN}),
+    TASK_ROOT: frozenset({EXECUTION_TASK}),
+}
 
 DEFER_AUTHORITY = "current-execution-record-pending-exact-eligibility-evidence"
 DEFER_CLOSURE_REASON = "migration-blocked-by-explicit-missing-evidence"
 DEFER_TRIGGER = "exact-upstream-evidence-change"
-CONTROL_AUTHORITY = "active-spec-037-execution-control"
+TERMINAL_CONTROL_REASON = (
+    "terminal-spec-037-lineage-awaiting-successor-migration-evidence"
+)
+TERMINAL_CONTROL_EVIDENCE_ROLE = "terminal-stage-04-closure-evidence"
+TERMINAL_CONTROL_REFRESH_TRIGGER = "exact-successor-migration-evidence-change"
 ADR_AUTHORITY = "accepted-decision-record"
 SPEC_AUTHORITY = "current-done-specification"
 AUTHORITY_REASON = "terminal-status-alone-is-not-an-archive-predicate"
@@ -82,8 +94,8 @@ EXPECTED_COUNTS = {
     "currentStage04": 100,
     "currentPlans": 49,
     "currentTasks": 51,
-    "currentDefer": 98,
-    "currentRetain": 2,
+    "currentDefer": 100,
+    "currentRetain": 0,
     "activeEligible": 0,
     "pairKeys": 52,
     "completePairs": 48,
@@ -92,7 +104,7 @@ EXPECTED_COUNTS = {
     "duplicateSameKind": 0,
     "partialOwnedDefer": 4,
     "acceptedAdrs": 13,
-    "doneSpecs": 28,
+    "doneSpecs": 29,
     "migratedAdrOrSpec": 0,
     "stage05Authored": 24,
     "helperTests": 33,
@@ -477,6 +489,10 @@ def _inventory(
     )
     if not set(modes).issubset(paths):
         raise ClosureError("CLOSURE-INVENTORY-DRIFT", scope)
+    required = MANDATORY_OWNER_PATHS.get(scope, frozenset())
+    missing = required - set(modes)
+    if missing:
+        raise ClosureError("CLOSURE-OWNER-INVENTORY", sorted(missing)[0])
     return paths, modes
 
 
@@ -514,7 +530,10 @@ def _control_inventory(root: str, runner: GitRunner) -> dict[str, str]:
         _git(root, ("ls-files", "-z", "--stage", "--", *CONTROL_PATHS), runner),
         allowed_paths=allowed,
     )
-    if not set(index).issubset(allowed):
+    missing = allowed - set(index)
+    if missing:
+        raise ClosureError("CLOSURE-CONTROL-INVENTORY", sorted(missing)[0])
+    if set(index) != allowed:
         raise ClosureError("CLOSURE-CONTROL-INVENTORY", ".git")
     return index
 
@@ -631,7 +650,7 @@ def _build_current_rows(
             )
         else:
             source = control_by_path[path]
-            if metadata.get("status") != "active":
+            if metadata.get("status") != "done":
                 raise ClosureError("CLOSURE-CONTROL-STATUS", path)
             if (
                 source.get("kind") != kind
@@ -647,17 +666,19 @@ def _build_current_rows(
                     "kind": kind,
                     "lineageId": source.get("pairKey"),
                     "profile": metadata.get("type"),
-                    "status": "active",
+                    "status": "done",
                     **identity,
                     "sourceDisposition": "retain",
                     "sourceReason": source.get("reason"),
                     "sourceOwner": source.get("owner"),
                     "sourceRefreshTrigger": source.get("refreshTrigger"),
-                    "disposition": "retain",
+                    "missingAxes": ["successor-migration-evidence"],
+                    "residueClass": "terminal-owned-defer",
+                    "disposition": "DEFER",
                     "owner": "platform",
-                    "reason": "active-spec-037-control",
-                    "currentAuthority": CONTROL_AUTHORITY,
-                    "closureTrigger": "Spec037 closure",
+                    "reason": TERMINAL_CONTROL_REASON,
+                    "currentEvidenceRole": TERMINAL_CONTROL_EVIDENCE_ROLE,
+                    "successorRefreshTrigger": TERMINAL_CONTROL_REFRESH_TRIGGER,
                 }
             )
     return entries
@@ -976,7 +997,11 @@ def build_observed(
         row.get("residueClass") for row in current if row["disposition"] == "DEFER"
     )
     if residue_counts != Counter(
-        {"deferred-evidence": 88, "resolved-partial-evidence": 10}
+        {
+            "deferred-evidence": 88,
+            "resolved-partial-evidence": 10,
+            "terminal-owned-defer": 2,
+        }
     ):
         raise ClosureError("CLOSURE-RESIDUE-CLASS")
     counts = {
@@ -1120,31 +1145,42 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
     _ordered_unique_paths(current, "CLOSURE-CURRENT")
     if any(row.get("disposition") == "eligible" for row in current):
         raise ClosureError("CLOSURE-ACTIVE-ELIGIBLE")
-    if any(row.get("disposition") not in {"DEFER", "retain"} for row in current):
+    if any(row.get("disposition") != "DEFER" for row in current):
         raise ClosureError("CLOSURE-CURRENT-DISPOSITION")
     for row in current:
-        if row.get("disposition") == "DEFER" and (
-            row.get("sourceDisposition") != "DEFER"
-            or not row.get("sourceReason")
-            or row.get("sourceOwner") != "platform"
-            or not row.get("sourceRefreshTrigger")
-            or not row.get("missingAxes")
-            or row.get("residueClass")
-            not in {"deferred-evidence", "resolved-partial-evidence"}
-            or row.get("closureReason") != DEFER_CLOSURE_REASON
-            or row.get("postClosureRefreshTrigger") != DEFER_TRIGGER
-            or row.get("currentAuthority") != DEFER_AUTHORITY
-            or row.get("owner") != "platform"
-        ):
+        if row.get("sourceDisposition") == "DEFER":
+            if (
+                not row.get("sourceReason")
+                or row.get("sourceOwner") != "platform"
+                or not row.get("sourceRefreshTrigger")
+                or not row.get("missingAxes")
+                or row.get("residueClass")
+                not in {"deferred-evidence", "resolved-partial-evidence"}
+                or row.get("closureReason") != DEFER_CLOSURE_REASON
+                or row.get("postClosureRefreshTrigger") != DEFER_TRIGGER
+                or row.get("currentAuthority") != DEFER_AUTHORITY
+                or row.get("owner") != "platform"
+            ):
+                raise ClosureError("CLOSURE-CURRENT-FIELDS", row.get("path"))
+        elif row.get("sourceDisposition") == "retain":
+            if (
+                row.get("status") != "done"
+                or row.get("sourceReason") != "active-spec-037-control"
+                or row.get("sourceOwner") != "platform"
+                or row.get("sourceRefreshTrigger") != "Spec037 closure"
+                or row.get("missingAxes") != ["successor-migration-evidence"]
+                or row.get("residueClass") != "terminal-owned-defer"
+                or row.get("owner") != "platform"
+                or row.get("reason") != TERMINAL_CONTROL_REASON
+                or row.get("currentEvidenceRole") != TERMINAL_CONTROL_EVIDENCE_ROLE
+                or row.get("successorRefreshTrigger")
+                != TERMINAL_CONTROL_REFRESH_TRIGGER
+                or "currentAuthority" in row
+                or "closureTrigger" in row
+            ):
+                raise ClosureError("CLOSURE-CONTROL-FIELDS", row.get("path"))
+        else:
             raise ClosureError("CLOSURE-CURRENT-FIELDS", row.get("path"))
-        if row.get("disposition") == "retain" and (
-            row.get("status") != "active"
-            or row.get("owner") != "platform"
-            or row.get("reason") != "active-spec-037-control"
-            or row.get("currentAuthority") != CONTROL_AUTHORITY
-            or row.get("closureTrigger") != "Spec037 closure"
-        ):
-            raise ClosureError("CLOSURE-CONTROL-FIELDS", row.get("path"))
     if current != expected["currentRows"]:
         raise ClosureError("CLOSURE-CURRENT-DRIFT")
 
@@ -1287,7 +1323,7 @@ def validate_active_corpus_residue_closure(
 def _self_test_observed() -> dict[str, Any]:
     current: list[dict[str, Any]] = []
     for index in range(48):
-        disposition = "retain" if index == 47 else "DEFER"
+        source_disposition = "retain" if index == 47 else "DEFER"
         for kind, collection in (("plan", "plans"), ("task", "tasks")):
             path = f"docs/04.execution/{collection}/fixture-{index:02d}.md"
             common = {
@@ -1295,21 +1331,21 @@ def _self_test_observed() -> dict[str, Any]:
                 "kind": kind,
                 "lineageId": f"fixture-{index:02d}",
                 "profile": f"sdlc/{kind}",
-                "status": "active" if disposition == "retain" else "done",
+                "status": "done",
                 "objectMode": "index-stage-zero",
                 "objectId": _git_identity("0" * 40),
-                "sourceDisposition": disposition,
+                "sourceDisposition": source_disposition,
                 "sourceReason": "active-spec-037-control"
-                if disposition == "retain"
+                if source_disposition == "retain"
                 else "missing-evidence",
                 "sourceOwner": "platform",
                 "sourceRefreshTrigger": "Spec037 closure"
-                if disposition == "retain"
+                if source_disposition == "retain"
                 else "ACER-005-or-exact-upstream-evidence-change",
-                "disposition": disposition,
+                "disposition": "DEFER",
                 "owner": "platform",
             }
-            if disposition == "DEFER":
+            if source_disposition == "DEFER":
                 common.update(
                     {
                         "missingAxes": ["axis"],
@@ -1322,9 +1358,11 @@ def _self_test_observed() -> dict[str, Any]:
             else:
                 common.update(
                     {
-                        "reason": "active-spec-037-control",
-                        "currentAuthority": CONTROL_AUTHORITY,
-                        "closureTrigger": "Spec037 closure",
+                        "missingAxes": ["successor-migration-evidence"],
+                        "residueClass": "terminal-owned-defer",
+                        "reason": TERMINAL_CONTROL_REASON,
+                        "currentEvidenceRole": TERMINAL_CONTROL_EVIDENCE_ROLE,
+                        "successorRefreshTrigger": TERMINAL_CONTROL_REFRESH_TRIGGER,
                     }
                 )
             current.append(common)
@@ -1425,7 +1463,7 @@ def _self_test_observed() -> dict[str, Any]:
         "pairCardinality": pairs,
         "authorityGuards": {
             "acceptedAdrs": guards(13, "adr"),
-            "doneSpecs": guards(28, "spec"),
+            "doneSpecs": guards(29, "spec"),
         },
         "acer004Dependency": {
             "path": SOURCE_PATHS[3],
@@ -1464,6 +1502,22 @@ def run_self_test() -> int:
         (
             "CLOSURE-CURRENT-FIELDS",
             lambda item: item["currentRows"][0].__setitem__("closureReason", ""),
+        ),
+        (
+            "CLOSURE-CONTROL-FIELDS",
+            lambda item: next(
+                row
+                for row in item["currentRows"]
+                if row["sourceDisposition"] == "retain"
+            ).__setitem__("currentEvidenceRole", ""),
+        ),
+        (
+            "CLOSURE-CONTROL-FIELDS",
+            lambda item: next(
+                row
+                for row in item["currentRows"]
+                if row["sourceDisposition"] == "retain"
+            ).__setitem__("status", "active"),
         ),
         ("CLOSURE-MIGRATION-STALE", lambda item: item["migratedClosed"].pop()),
         (

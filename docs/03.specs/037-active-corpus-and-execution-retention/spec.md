@@ -1,9 +1,9 @@
 ---
 title: 'Active Corpus and Execution Retention Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-18
+updated: 2026-07-19
 ---
 
 # Active Corpus and Execution Retention Technical Specification (Spec)
@@ -16,12 +16,12 @@ eligible completed Plans and Tasks from closed lineages into full-body archive
 records. It preserves valid accepted architecture decisions and implemented
 Specs until an explicit successor removes their current authority.
 
-The reciprocal implementation [Plan](../../04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md)
-and [Task](../../04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md)
-activate six dependency-ordered packages from baseline
-`a12aedfb71ccabd329dabc83bd2863474d1126b0`. Predecessor closure commit
-`855fa78` and postflight corrections `cdac53c` and `a12aedf` are planning
-inputs, not results of this tranche.
+The reciprocal implementation Plan and Task record the completed ACER-001
+through ACER-005 packages and this ACER-006
+terminal staged-closure proposal. The proposal converts the reciprocal pair
+from active execution control to terminal Stage 04 evidence while preserving
+an owned `DEFER` until exact successor migration evidence exists. The closure
+commit and clean-tree post-commit verification are pending and unclaimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -54,10 +54,13 @@ inputs, not results of this tranche.
 The parent `a12aedf` activation input contains 54 Plans and 56 Tasks, or 110
 records. The frozen design baseline contains 51 Plans and 53 Tasks (104
 records); the six-record delta is the three later reciprocal pairs for Specs
-034, 035, and 036. The staged Spec 037 pair raises the proposed authored corpus
-to 55 Plans and 57 Tasks (112 records); those two active control documents are
-retained outside the pre-activation migration candidate set. ACER-001
-reconciles the 104+6 candidate set before eligibility. Each candidate is joined
+034, 035, and 036. At activation, the staged Spec 037 pair raised the proposed
+authored corpus to 55 Plans and 57 Tasks (112 records); those two documents were
+separate active controls outside the pre-activation migration candidate set.
+ACER-001 reconciled the 104+6 candidate set before eligibility. In the current
+terminal state, the Spec, Plan, and Task are done; the reciprocal pair remains
+as terminal owned `DEFER` evidence with no active execution authority until an
+exact successor migration evidence change. Each candidate is joined
 to its upstream Spec, program, current-owner status, reciprocal link set, and
 closure evidence. The classifier produces eligible, retain, or DEFER; there is
 no default eligible state.
@@ -98,8 +101,11 @@ durable execution evidence and is preserved with the program closure.
 - Census interface: tracked Stage 01-05 and helper Tests files plus registry
   profiles, semantic owners, implementation evidence, and links.
 - Delta interface: the frozen 104-record Stage 04 baseline and six later
-  records must join exactly to the parent 110-record activation input; the new
-  active Spec 037 pair remains a separately retained execution control.
+  records joined exactly to the parent 110-record activation input; at
+  activation, the new Spec 037 pair was a separately retained execution
+  control. It is now terminal owned `DEFER` evidence with reason
+  `terminal-spec-037-lineage-awaiting-successor-migration-evidence` and refresh
+  trigger `exact-successor-migration-evidence-change`, not active authority.
 - Eligibility interface: explicit predicates for lineage closure, authority,
   link migration, source recovery, and rollback.
 - Migration interface: one lineage batch produces archive files, index rows,
@@ -141,9 +147,11 @@ durable execution evidence and is preserved with the program closure.
 ## Success Criteria & Verification Plan
 
 - **VAL-ACER-001**: All 104 baseline Plan/Task records and the six later
-  Plan/Task records reconcile to the parent 110-record activation input and
-  receive an explicit eligible, retain, or DEFER disposition; the active Spec
-  037 pair remains current and outside migration eligibility.
+  Plan/Task records reconciled to the parent 110-record activation input and
+  received an explicit eligible, retain, or DEFER disposition; the Spec 037
+  pair was the separate active control at that observation boundary. The
+  terminal pair remains current only as owned `DEFER` evidence, has no active
+  execution authority, and refreshes on exact successor migration evidence.
 - **VAL-ACER-002**: Every eligible closed-lineage record moves with verified
   payload provenance and rollback metadata.
 - **VAL-ACER-003**: Duplicate current owners and excess active Plan/Task owners
@@ -170,12 +178,28 @@ corpus, and the 104+6 candidate census obligation; no row is claimed eligible
 before ACER-001. Specs 038 and 040 remain unplanned, and Spec 039 retains
 CI/FIFO ownership.
 
-Fresh independent activation requirements review returned
-`REQUIREMENTS COMPLIANT`; activation quality review returned
-`QUALITY APPROVED`; findings were none. These verdicts approve only the
-planning activation proposal. ACER-001 through ACER-006 remain Queued, and no
-census disposition, migration, helper-role, closure, remote, or live result is
-claimed.
+ACER-001 through ACER-005 completed their reviewed repository-static packages.
+ACER-006 staged the terminal lifecycle and residue-control proposal with exact
+`100` current Stage 04 rows, `49` Plans, `51` Tasks, `52` lineages in exact
+`48/1/3` cardinality, `100` current `DEFER`, zero current `retain`, four partial
+owned `DEFER`, `13` accepted-ADR guards, `29` done-Spec guards including this
+Spec, and eight empty finding arrays. The immutable control-source facts remain
+`retain` / `active-spec-037-control` / `platform` / `Spec037 closure`; only the
+current terminal evidence role changes. Observed staged QA passed the 65-test
+focused module, 19-case residue self-test, exact production counts, staged
+lifecycle, strict 436-path registry, zero-violation Markdown, strict links,
+`43/362/43` archive cutover, direct repository aggregate, changed-file
+pre-commit, and cached diff check. Initial independent requirements and quality
+reviews each required changes; their remediations were re-reviewed by
+`/root/acer006_requirements_rereview` as `REQUIREMENTS COMPLIANT` and
+`/root/acer006_quality_rereview` as `QUALITY APPROVED`, with no blocking
+findings. Raw all-files pre-commit failed only at the Spec 039-owned strict
+GitOps FIFO self-test (`os.mkfifo` `Errno 95`); the run with the already-proven
+duplicate strict hook skipped passed. No FIFO or CI remediation is claimed.
+The closure commit and clean-tree post-commit/postflight do not yet exist and
+remain pending and unclaimed. Specs 038, 039, and 040 remain active, Spec 039
+retains CI/FIFO ownership, and Spec 040 remains the final integrator.
+Remote/live and CI/FIFO PASS results are unclaimed.
 
 ## Traceability
 
@@ -191,9 +215,9 @@ claimed.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-001 | The census ledger covers the complete baseline execution set. |
-| [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-002 | Per-lineage migration results verify archive and rollback data. |
-| [REQ-WDLEC-007](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-003 | Current-owner and lineage cardinality fixtures pass. |
-| [REQ-WDLEC-007](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-004 | Active-stage residue validation matches the reviewed ledger. |
-| [REQ-WDLEC-005](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-005 | Negative migration fixtures protect valid terminal authority. |
-| [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-006 | Dual-context link validators pass after every batch. |
-| [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-007 | Operations/helper census and negative fixtures verify role and evidence boundaries. |
+| N/A — REQ-WDLEC-006 / VAL-ACER-002 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-002 | Per-lineage migration results verify archive and rollback data. |
+| N/A — REQ-WDLEC-007 / VAL-ACER-003 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-003 | Current-owner and lineage cardinality fixtures pass. |
+| N/A — REQ-WDLEC-007 / VAL-ACER-004 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-004 | Active-stage residue validation matches the reviewed ledger. |
+| N/A — REQ-WDLEC-005 / VAL-ACER-005 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-005 | Negative migration fixtures protect valid terminal authority. |
+| N/A — REQ-WDLEC-006 / VAL-ACER-006 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-006 | Dual-context link validators pass after every batch. |
+| N/A — REQ-WDLEC-013 / VAL-ACER-007 shares the PRD-006 source linked in VAL-ACER-001 | VAL-ACER-007 | Operations/helper census and negative fixtures verify role and evidence boundaries. |

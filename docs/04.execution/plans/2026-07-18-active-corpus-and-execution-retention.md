@@ -1,16 +1,16 @@
 ---
 title: 'Active Corpus and Execution Retention Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-18
+updated: 2026-07-19
 ---
 
 # Active Corpus and Execution Retention Implementation Plan
 
 ## Overview
 
-This Plan executes Spec 037 in six dependency-ordered packages. It replaces
+This Plan records Spec 037 execution in six dependency-ordered packages. It replaces
 folder-size assumptions with a closed census and disposition contract, moves
 only eligible closed-lineage execution records into full-body archive records,
 and audits Stage 05 and helper Tests for role ownership without fabricating
@@ -25,20 +25,33 @@ Task as archive-eligible, move a record, or claim a validator result.
 
 Fresh independent planning-activation reviews returned exact verdicts
 `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, with no findings. Those
-verdicts approve this active execution decomposition only; they do not promote
-ACER-001 through ACER-006 or pre-claim implementation, migration, helper-role,
-closure, remote, or live evidence.
+verdicts approved the original active execution decomposition only. ACER-001
+through ACER-005 later completed with the reviewed evidence recorded in the
+reciprocal Task. ACER-006 now records the terminal staged-closure proposal: the
+Plan/Task pair is done and retained as owned Stage 04 `DEFER` evidence until
+exact successor migration evidence exists. Exact local staged QA passed the
+focused, residue, lifecycle, strict document, archive, aggregate,
+changed-file pre-commit, and cached diff gates. Initial independent
+requirements and quality reviews required changes; the remediated proposal
+then received `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no blocking
+findings. Raw all-files pre-commit remains bounded by the Spec 039-owned
+`os.mkfifo` `Errno 95`; no FIFO or CI success is claimed. The closure commit and
+clean-tree post-commit/postflight do not yet exist and remain pending and
+unclaimed.
 
 ## Context
 
 The parent `a12aedf` activation input is 54 Plans plus 56 Tasks, for 110
 documents. The frozen Spec 037 design baseline covers 104 records (51 Plans
 plus 53 Tasks). Six later records are the three reciprocal Plan/Task pairs
-created for Specs 034, 035, and 036. This staged activation pair raises the
-proposed corpus to 55 Plans plus 57 Tasks, or 112 documents. ACER-001 must
-reconcile the 104-record baseline and six-record delta in one closed census
-before any candidate can become eligible; the new active Spec 037 pair is a
-retained execution control, not a migration candidate.
+created for Specs 034, 035, and 036. At activation, this staged pair raised the
+proposed corpus to 55 Plans plus 57 Tasks, or 112 documents. ACER-001 reconciled
+the 104-record baseline and six-record delta in one closed census before any
+candidate became eligible; the new Spec 037 pair was then a retained active
+control, not a migration candidate. The current done pair is terminal owned
+`DEFER` evidence with no active execution authority. Its reason is
+`terminal-spec-037-lineage-awaiting-successor-migration-evidence`, and its
+refresh trigger is `exact-successor-migration-evidence-change`.
 
 The prior Stage 05 input contains 24 authored documents: eight Guides, seven
 Policies, and nine Runbooks. There are zero real authored Incident records and
@@ -57,8 +70,9 @@ owns CI integration and the known all-files FIFO portability boundary. Specs
 
 - Produce a closed 110-record pre-activation Stage 04 candidate census that
   reconciles the frozen 104 baseline with the six later execution records and
-  gives every row an owned `eligible`, `retain`, or `DEFER` disposition; retain
-  the active Spec 037 pair separately.
+  gives every row an owned `eligible`, `retain`, or `DEFER` disposition; record
+  that the Spec 037 pair was the separate active control at activation, then
+  preserve its done records as terminal owned `DEFER` without active authority.
 - Implement fail-closed eligibility and active-residue validation, including
   explicit closure, current-consumer, source-recovery, link, rollback, and
   exception evidence predicates.
@@ -100,7 +114,7 @@ owns CI integration and the known all-files FIFO portability boundary. Specs
 
 | Lane | Focused evidence | Required result |
 | --- | --- | --- |
-| Inventory | Closed Stage 04/05/helper census and delta reconciliation | Parent 54 Plans plus 56 Tasks equals 110 and 104 baseline plus six delta equals that candidate set; the active pair yields proposed 55/57; Stage 05 input is 8/7/9 with zero real Incident/Postmortem records |
+| Inventory | Closed Stage 04/05/helper census and delta reconciliation | Parent 54 Plans plus 56 Tasks equals 110 and 104 baseline plus six delta equals that candidate set; at activation the separate control pair yielded proposed 55/57, and it is now terminal owned `DEFER`; Stage 05 input is 8/7/9 with zero real Incident/Postmortem records |
 | Eligibility | Predicate and hostile negative fixtures | No default eligible state; age/count/terminal-only, ambiguous lineage, current consumption, missing source, broken links, or missing rollback proof fail closed |
 | Migration | Dry run, per-lineage batch check, and archive integrity | Source removal and full-body archive creation, index/link repair, ledger evidence, provenance, digest, historical links, and rollback are atomic |
 | Residue | Active-stage cardinality and ledger join | No unexplained eligible residue; every retain/DEFER record has a bounded reason, owner, and refresh trigger |
@@ -112,7 +126,7 @@ owns CI integration and the known all-files FIFO portability boundary. Specs
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| Frozen baseline is mistaken for the activation input | Six valid records are omitted or the active control pair is misclassified | Require exact 104+6 reconciliation to the parent 110 candidate records and separately retain the proposed active pair. |
+| Frozen baseline is mistaken for the activation input | Six valid records are omitted or the activation control pair is misclassified | Require exact 104+6 reconciliation to the parent 110 candidate records, preserve the pair's separate activation role as historical evidence, and retain its current done records only as terminal owned `DEFER`. |
 | Done is treated as disposable | Current authority or execution facts are lost | Join lineage closure, current consumers, source recovery, links, and rollback evidence; default to retain/DEFER. |
 | Large migration obscures causality | Review and rollback become unsafe | Migrate only atomic per-lineage batches with an independently reviewed logical commit. |
 | Operations completeness is fabricated | False incident or postmortem evidence enters the corpus | Treat zero real events as valid and forbid placeholder event creation. |
@@ -128,9 +142,12 @@ than forcing a migration. The activation proposal can be reversed to parent
 
 ## Completion Criteria
 
-- The 104-record frozen baseline and six-record delta reconcile exactly to the
+- The 104-record frozen baseline and six-record delta reconciled exactly to the
   parent 54-Plan/56-Task activation input, with no unclassified candidate; the
-  proposed 55-Plan/57-Task corpus retains this active pair separately.
+  observed activation proposal reached 55 Plans/57 Tasks and retained the pair
+  separately. The current done pair is terminal owned `DEFER`, carries no
+  active execution authority, and remains until exact successor migration
+  evidence changes.
 - Every eligible record has migrated by atomic lineage batch with full-body
   provenance, current-link repair, durable evidence, and rollback metadata.
 - Accepted ADRs and still-current done Specs remain protected from
@@ -140,8 +157,11 @@ than forcing a migration. The activation proposal can be reversed to parent
   Postmortem exists.
 - Active execution cardinality and residue checks pass, or each retained/DEFER
   exception has an explicit reason, owner, and refresh trigger.
-- ACER-001 through ACER-006 have RED/GREEN, independent review, logical commit,
-  repository-static QA, and atomic lifecycle closure evidence.
+- ACER-001 through ACER-005 have RED/GREEN, independent review, logical commit,
+  and repository-static QA evidence. ACER-006 has observed staged local QA,
+  remediated requirements compliance, and remediated quality approval. The
+  closure commit and clean-tree post-commit/postflight remain explicit pending
+  gates.
 - CI/FIFO work, remote/live state, provider delivery, secrets, and ignored
   scratch remain unclaimed and outside the tranche.
 

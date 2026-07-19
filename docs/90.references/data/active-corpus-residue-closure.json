@@ -47,8 +47,8 @@
     "currentStage04": 100,
     "currentPlans": 49,
     "currentTasks": 51,
-    "currentDefer": 98,
-    "currentRetain": 2,
+    "currentDefer": 100,
+    "currentRetain": 0,
     "activeEligible": 0,
     "pairKeys": 52,
     "completePairs": 48,
@@ -57,7 +57,7 @@
     "duplicateSameKind": 0,
     "partialOwnedDefer": 4,
     "acceptedAdrs": 13,
-    "doneSpecs": 28,
+    "doneSpecs": 29,
     "migratedAdrOrSpec": 0,
     "stage05Authored": 24,
     "helperTests": 33,
@@ -1493,18 +1493,22 @@
       "kind": "plan",
       "lineageId": "2026-07-18-active-corpus-and-execution-retention",
       "profile": "sdlc/plan",
-      "status": "active",
+      "status": "done",
       "objectMode": "index-stage-zero",
-      "objectId": "git:sha1:ab9c82b58364bd4db4597cb0a002ceaaf46e2b3f",
+      "objectId": "git:sha1:17239713fa464e7b0a69f9f00ba6b4303ba7792a",
       "sourceDisposition": "retain",
       "sourceReason": "active-spec-037-control",
       "sourceOwner": "platform",
       "sourceRefreshTrigger": "Spec037 closure",
-      "disposition": "retain",
+      "missingAxes": [
+        "successor-migration-evidence"
+      ],
+      "residueClass": "terminal-owned-defer",
+      "disposition": "DEFER",
       "owner": "platform",
-      "reason": "active-spec-037-control",
-      "currentAuthority": "active-spec-037-execution-control",
-      "closureTrigger": "Spec037 closure"
+      "reason": "terminal-spec-037-lineage-awaiting-successor-migration-evidence",
+      "currentEvidenceRole": "terminal-stage-04-closure-evidence",
+      "successorRefreshTrigger": "exact-successor-migration-evidence-change"
     },
     {
       "path": "docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
@@ -2714,18 +2718,22 @@
       "kind": "task",
       "lineageId": "2026-07-18-active-corpus-and-execution-retention",
       "profile": "sdlc/task",
-      "status": "active",
+      "status": "done",
       "objectMode": "index-stage-zero",
-      "objectId": "git:sha1:e2b646684decc540cf42e82880c1dd23637750d9",
+      "objectId": "git:sha1:1a963421c74989c0f6f0d3c851bf228ebbb84184",
       "sourceDisposition": "retain",
       "sourceReason": "active-spec-037-control",
       "sourceOwner": "platform",
       "sourceRefreshTrigger": "Spec037 closure",
-      "disposition": "retain",
+      "missingAxes": [
+        "successor-migration-evidence"
+      ],
+      "residueClass": "terminal-owned-defer",
+      "disposition": "DEFER",
       "owner": "platform",
-      "reason": "active-spec-037-control",
-      "currentAuthority": "active-spec-037-execution-control",
-      "closureTrigger": "Spec037 closure"
+      "reason": "terminal-spec-037-lineage-awaiting-successor-migration-evidence",
+      "currentEvidenceRole": "terminal-stage-04-closure-evidence",
+      "successorRefreshTrigger": "exact-successor-migration-evidence-change"
     }
   ],
   "pairCardinality": [
@@ -3193,7 +3201,7 @@
       "state": "complete",
       "planPath": "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md",
       "taskPath": "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
-      "disposition": "retain",
+      "disposition": "DEFER",
       "owner": "platform",
       "partialEvidence": null
     }
@@ -3689,6 +3697,18 @@
         "owner": "platform",
         "objectMode": "index-stage-zero",
         "objectId": "git:sha1:8a29acda9a5224b3355785588b96e8965f6518cd",
+        "disposition": "retain",
+        "reason": "terminal-status-alone-is-not-an-archive-predicate",
+        "currentAuthority": "current-done-specification",
+        "refreshTrigger": "done-spec-authority-or-evidence-change"
+      },
+      {
+        "path": "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+        "profile": "sdlc/spec",
+        "status": "done",
+        "owner": "platform",
+        "objectMode": "index-stage-zero",
+        "objectId": "git:sha1:2a7d70651235611ac9cadd514caa256bfd5e756a",
         "disposition": "retain",
         "reason": "terminal-status-alone-is-not-an-archive-predicate",
         "currentAuthority": "current-done-specification",
