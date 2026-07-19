@@ -1,0 +1,376 @@
+{
+  "$schema": "active-corpus-role-audit.v1",
+  "observedAt": "2026-07-19",
+  "authority": {
+    "activationCommit": "2ab01b05f0e3f91368b10cc2c30046050f081a6b",
+    "ownerSpec": "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+    "owner": "platform",
+    "evidenceClass": "repository-static-role-audit"
+  },
+  "inventoryBoundary": {
+    "gitReference": null,
+    "trackedAndProposed": true,
+    "ignoredWorkspaceRead": false,
+    "liveRuntimeClaim": false,
+    "executionTracker": "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
+  },
+  "stage05": {
+    "parentCounts": {
+      "total": 24,
+      "guide": 8,
+      "policy": 7,
+      "runbook": 9,
+      "incident": 0,
+      "postmortem": 0
+    },
+    "finalCounts": {
+      "total": 24,
+      "guide": 8,
+      "policy": 7,
+      "runbook": 9,
+      "incident": 0,
+      "postmortem": 0
+    },
+    "entries": [
+      {
+        "path": "docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0006-argocd-prometheus-grafana-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0007-k8s-observability-bootstrap-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+        "kind": "guide",
+        "profile": "sdlc/guide",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Guide Type", "Target Audience", "Prerequisites"]
+      },
+      {
+        "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0006-k8s-observability-operations-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+        "kind": "policy",
+        "profile": "sdlc/policy",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Policy Scope", "Applies To", "Controls"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      },
+      {
+        "path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+        "kind": "runbook",
+        "profile": "sdlc/runbook",
+        "status": "active",
+        "owner": "platform",
+        "role": "authored-operation",
+        "requiredSections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"]
+      }
+    ]
+  },
+  "helperTests": {
+    "parentCounts": {
+      "total": 32,
+      "python": 11,
+      "json": 14,
+      "yaml": 6,
+      "readme": 1
+    },
+    "proposalDelta": {
+      "add": [
+        {
+          "path": "tests/test_active_corpus_role_audit.py",
+          "format": "python",
+          "role": "regression-test"
+        }
+      ],
+      "remove": []
+    },
+    "finalCounts": {
+      "total": 33,
+      "python": 12,
+      "json": 14,
+      "yaml": 6,
+      "readme": 1
+    },
+    "executionTracker": false,
+    "entries": [
+      {"path": "tests/README.md", "format": "readme", "role": "validation-evidence-boundary"},
+      {"path": "tests/fixtures/agent-role-semantics.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/agent-roster-currentness.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-contracts/native-surface-cases.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-contracts/readme-profile-cases.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-contracts/registry-cases.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-contracts/template-compatibility.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-contracts/template-source-parity.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/document-lifecycle.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/github-actions-security.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/base/kustomization.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/base/removed-service.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/base/retained-configmap.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/cases.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/head/added-service.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/head/kustomization.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml", "format": "yaml", "role": "manifest-fixture"},
+      {"path": "tests/fixtures/links-and-owners.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/markdown-profiles.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/validation-surfaces.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/vault-eso-contracts.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/test_active_corpus_eligibility.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_active_corpus_migrations.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_active_corpus_retention.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_active_corpus_role_audit.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_archive_cutover.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_archive_recovery.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_archive_validation.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_document_lifecycle_archive_cutover.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_post_validate_runner_result.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_provider_post_validate_hook.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_run_validation_lane.py", "format": "python", "role": "regression-test"},
+      {"path": "tests/test_workspace_boundary.py", "format": "python", "role": "regression-test"}
+    ]
+  },
+  "readmeRemediation": {
+    "path": "tests/README.md",
+    "addedInventoryRows": [
+      "tests/fixtures/document-contracts/template-source-parity.json",
+      "tests/fixtures/document-lifecycle.json",
+      "tests/fixtures/gitops-change-set/base/kustomization.yaml",
+      "tests/fixtures/gitops-change-set/base/removed-service.yaml",
+      "tests/fixtures/gitops-change-set/base/retained-configmap.yaml",
+      "tests/fixtures/gitops-change-set/cases.json",
+      "tests/fixtures/gitops-change-set/head/added-service.yaml",
+      "tests/fixtures/gitops-change-set/head/kustomization.yaml",
+      "tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml",
+      "tests/test_active_corpus_role_audit.py",
+      "tests/test_run_validation_lane.py",
+      "tests/test_workspace_boundary.py"
+    ],
+    "removedInventoryRows": [
+      "tests/fixtures/document-contracts/semantic-compatibility-debt.json"
+    ],
+    "finalInventory": [
+      "tests/README.md",
+      "tests/fixtures/agent-role-semantics.json",
+      "tests/fixtures/agent-roster-currentness.json",
+      "tests/fixtures/document-contracts/native-surface-cases.json",
+      "tests/fixtures/document-contracts/readme-profile-cases.json",
+      "tests/fixtures/document-contracts/registry-cases.json",
+      "tests/fixtures/document-contracts/template-compatibility.json",
+      "tests/fixtures/document-contracts/template-source-parity.json",
+      "tests/fixtures/document-lifecycle.json",
+      "tests/fixtures/github-actions-security.json",
+      "tests/fixtures/gitops-change-set/base/kustomization.yaml",
+      "tests/fixtures/gitops-change-set/base/removed-service.yaml",
+      "tests/fixtures/gitops-change-set/base/retained-configmap.yaml",
+      "tests/fixtures/gitops-change-set/cases.json",
+      "tests/fixtures/gitops-change-set/head/added-service.yaml",
+      "tests/fixtures/gitops-change-set/head/kustomization.yaml",
+      "tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml",
+      "tests/fixtures/links-and-owners.json",
+      "tests/fixtures/markdown-profiles.json",
+      "tests/fixtures/validation-surfaces.json",
+      "tests/fixtures/vault-eso-contracts.json",
+      "tests/test_active_corpus_eligibility.py",
+      "tests/test_active_corpus_migrations.py",
+      "tests/test_active_corpus_retention.py",
+      "tests/test_active_corpus_role_audit.py",
+      "tests/test_archive_cutover.py",
+      "tests/test_archive_recovery.py",
+      "tests/test_archive_validation.py",
+      "tests/test_document_lifecycle_archive_cutover.py",
+      "tests/test_post_validate_runner_result.py",
+      "tests/test_provider_post_validate_hook.py",
+      "tests/test_run_validation_lane.py",
+      "tests/test_workspace_boundary.py"
+    ]
+  },
+  "findings": {
+    "roleOverlap": [],
+    "copiedTemplateResidue": [],
+    "staleCurrentClaim": [],
+    "unownedException": []
+  }
+}

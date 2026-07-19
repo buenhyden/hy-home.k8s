@@ -49,6 +49,7 @@ data/
 ├── active-corpus-retention-census.json # ACER-001 immutable corpus census and dispositions
 ├── active-corpus-eligibility-ledger.json # ACER-002 pinned dry-run eligibility ledger
 ├── active-corpus-migration-results.json # ACER-003 closed atomic migration results
+├── active-corpus-role-audit.json # ACER-004 Stage 05 and helper role audit
 ├── agent-reference-index.md          # Durable Agent reference catalog boundary
 ├── tech-stack-version-inventory.md   # Repo-backed version contracts and cloud snapshots
 └── README.md                         # This file
@@ -79,6 +80,7 @@ data/
 | [Active Corpus Retention Census](./active-corpus-retention-census.json) | repo-backed immutable census / external-method snapshot | Exact 110 candidate rows, Spec 037 controls, Stage 05, pinned 29-file helper input, exact one-test proposal delta, proposed 30-file helper counts, owned ACER-001 dispositions, explicit unresolved upstream/program/owner/link/closure evidence axes, and canonical safe row paths with value-free diagnostics; neither helper count substitutes for ACER-004 recomputation, and body-Spec links are non-authoritative observations | ACER-002 eligibility evidence, Spec 037 closure, ACER-004 then-current role audit, pinned commit/object drift, proposal delta, or methodology-source change |
 | [Active Corpus Eligibility Ledger](./active-corpus-eligibility-ledger.json) | repo-backed dry-run ledger | Exact pinned 110 candidate identities, 12 complete lineage pairs eligible only for a future ACER-003 atomic cutover, 98 owned `DEFER` rows, and two retained Spec 037 controls; it records route, consumer, recovery, and no-cutover evidence without moving a file | ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change |
 | [Active Corpus Migration Results](./active-corpus-migration-results.json) | repo-backed closed migration-result ledger | Exact complete six-pair deterministic eligible-prefix ACER-003 corpus, twelve Plan/Task records, immutable 31/202 archive base plus 160 additive historical links, exact source/archive identities, repaired current-or-migrated-original consumers, pinned committed five-batch prefix, Spec/program closure owners, archive navigation boundary, validation results, and the exact rollback-parent chain without a self-referential batch commit | Archive/index drift, consumer repair, validation result, or rollback-parent change |
+| [Active Corpus Role Audit](./active-corpus-role-audit.json) | repo-backed closed role-audit ledger | ACER-004 exact 24-record Stage 05 authored corpus, 33-file proposed helper corpus, profile/status/owner/section and helper role boundaries, exact README inventory remediation, and zero final findings | Stage 05 authored-record change, helper inventory change, README structure drift, or Spec 037 closure |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
@@ -94,6 +96,10 @@ data/
   authority. It joins the immutable census and eligibility inputs, admits only
   a complete deterministic eligible prefix, and records current cutover state
   without rewriting either reviewed input snapshot.
+- `active-corpus-role-audit.json` is ACER-004 repository-static evidence. It
+  preserves real operation records, treats empty Incident/Postmortem
+  collections as valid, and does not promote `tests/**` to execution tracking
+  or claim live/runtime state.
 - `docs/00.agent-governance/**` owns agent runtime truth, provider behavior,
   hooks, permissions, model routing, and execution rules.
 - `docs/03.specs/**/agent-design.md` owns feature-local Agent designs.

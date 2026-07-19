@@ -35,31 +35,39 @@
 ## Structure
 
 ```text
-tests/
-├── test_active_corpus_retention.py    # ACER-001 pinned census and hostile-boundary regression
-├── test_active_corpus_eligibility.py  # ACER-002 pinned dry-run eligibility regression
-├── test_archive_cutover.py            # ARWB-003 production snapshot atomic-cutover regression test
-├── test_active_corpus_migrations.py   # ACER-003 closed prefix, exact archive, index, and consumer regression
-├── test_document_lifecycle_archive_cutover.py # Finite staged/CI archive lifecycle admission regression
-├── test_post_validate_runner_result.py # Exact post-validate runner-log cardinality regression
-├── test_provider_post_validate_hook.py # Closed provider entry and hostile payload integration regression
-├── test_archive_recovery.py           # ARWB-001 isolated Git-object and ArchiveEnvelope.v1 fixture tests
-├── test_archive_validation.py         # ARWB-002 isolated archive/history/current-authority validator tests
-├── fixtures/
-│   ├── agent-role-semantics.json     # Thirty-role-adapter semantic mutation matrix
-│   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
-│   ├── github-actions-security.json  # Immutable Action and least-privilege cases
-│   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
-│   ├── links-and-owners.json        # Link, stage/collection index, authority mirror, owner, and ledger cases
-│   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
-│   ├── vault-eso-contracts.json     # Exact non-secret Vault/ESO mutation cases
-│   └── document-contracts/
-│       ├── native-surface-cases.json  # Five native families and exact SDLC-envelope negatives
-│       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
-│       ├── registry-cases.json        # Document registry contract cases
-│       ├── semantic-compatibility-debt.json # Exact Spec 030 ledger transition debt
-│       └── template-compatibility.json # Canonical template and migration-debt contract
-└── README.md                         # This file
+tests/README.md
+tests/fixtures/agent-role-semantics.json
+tests/fixtures/agent-roster-currentness.json
+tests/fixtures/document-contracts/native-surface-cases.json
+tests/fixtures/document-contracts/readme-profile-cases.json
+tests/fixtures/document-contracts/registry-cases.json
+tests/fixtures/document-contracts/template-compatibility.json
+tests/fixtures/document-contracts/template-source-parity.json
+tests/fixtures/document-lifecycle.json
+tests/fixtures/github-actions-security.json
+tests/fixtures/gitops-change-set/base/kustomization.yaml
+tests/fixtures/gitops-change-set/base/removed-service.yaml
+tests/fixtures/gitops-change-set/base/retained-configmap.yaml
+tests/fixtures/gitops-change-set/cases.json
+tests/fixtures/gitops-change-set/head/added-service.yaml
+tests/fixtures/gitops-change-set/head/kustomization.yaml
+tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml
+tests/fixtures/links-and-owners.json
+tests/fixtures/markdown-profiles.json
+tests/fixtures/validation-surfaces.json
+tests/fixtures/vault-eso-contracts.json
+tests/test_active_corpus_eligibility.py
+tests/test_active_corpus_migrations.py
+tests/test_active_corpus_retention.py
+tests/test_active_corpus_role_audit.py
+tests/test_archive_cutover.py
+tests/test_archive_recovery.py
+tests/test_archive_validation.py
+tests/test_document_lifecycle_archive_cutover.py
+tests/test_post_validate_runner_result.py
+tests/test_provider_post_validate_hook.py
+tests/test_run_validation_lane.py
+tests/test_workspace_boundary.py
 ```
 
 ## Configuration Boundary
@@ -97,6 +105,7 @@ live readiness.
 | Workspace boundary regression | `python3 -m unittest tests/test_workspace_boundary.py`; `python3 scripts/validate-workspace-boundary.py --self-test`; `python3 scripts/validate-workspace-boundary.py --root .` | Sixteen focused methods plus the isolated self-test prove exact stage-zero `100644` README and root-ignore cardinality; full SHA-1/SHA-256 root-ignore OIDs; bounded immutable blob retrieval; extra/force-added, symlink/gitlink/nonregular/conflict, malformed-index, startup, and timeout rejection; and stable path-only diagnostics. Two hostile ignored-child policies and one divergent worktree-root policy prove only the staged root blob controls probe ignored/README unignored results. Four actual-repository index/object queries precede three isolated-context init/ignore queries; no actual-worktree `check-ignore` runs. Actual-path traversal/open/stat sentinels allow only isolated policy evaluation. |
 | Active corpus retention regression | `python3 -m unittest tests/test_active_corpus_retention.py`; `python3 scripts/validate-active-corpus-retention.py --root . --self-test`; `python3 scripts/validate-active-corpus-retention.py --root .` | Thirty-eight focused methods plus the 27-case closed self-test prove the exact 110-row immutable candidate census, six-row delta, pair cardinality, source blobs/statuses, ledger and non-authoritative Spec-link evidence, explicit unresolved eligibility axes, two retained active controls, 24-record Stage 05 input, the pinned 29-file helper input, exact one-test proposal delta, proposed 30-file helper counts, and four dated official-method sources. Missing/extra/duplicate rows, premature eligibility or lineage inference, unowned DEFER, synthetic events, helper tracker promotion, helper observation/delta/proposed-count drift, unsafe candidate/control/Stage 05/helper paths, non-string diagnostic payloads, parent-relative paths, schema/count/control/source drift, wrong commit/blob/tree object, hostile Git steering, and ignored-workspace access fail closed with single-line value-free diagnostics. |
 | Active corpus eligibility regression | `python3 -m unittest tests/test_active_corpus_eligibility.py`; `python3 scripts/validate-active-corpus-eligibility.py --root . --self-test`; `python3 scripts/validate-active-corpus-eligibility.py --root .` | Focused contract checks plus closed self-tests prove the 110-row pinned join, 12 eligible rows across the exact six complete pairs, 98 owned `DEFER` rows, retained Spec 037 controls, canonical archive routing, rollback readiness without a claimed cutover, and value-free path rejection. |
+| Active corpus role audit regression | `python3 -m unittest tests/test_active_corpus_role_audit.py`; `python3 scripts/validate-active-corpus-role-audit.py --root . --self-test`; `python3 scripts/validate-active-corpus-role-audit.py --root .` | Repo-static ACER-004 evidence for the exact 24-record Stage 05 corpus (8 Guides, 7 Policies, 9 Runbooks, no synthetic Incident/Postmortem), the proposed 33-file helper corpus (12 Python, 14 JSON, 6 YAML, 1 README), authored-operation section boundaries, all-helper index-OID/worktree or proposed descriptor admission, actual helper README-only non-tracker semantics, exact README inventory closure, and zero role/residue/current-claim/ownership findings. |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
@@ -189,6 +198,25 @@ adapter PASS does not prove provider runtime consumption.
   historical links, twelve secret-clean new payloads, six repaired consumers in
   batch 6, and fifteen unique repaired current-or-migrated-original consumers
   across all batches.
+
+- `tests/test_active_corpus_role_audit.py` imports the ACER-004 validator and
+  treats `tests/**` as repository-static validation support, never a second
+  Stage 04 execution tracker. Its production check derives tracked plus
+  proposed nonignored inventories without `HEAD`; tracked inputs are recovered
+  from exact index OIDs and must equal descriptor-bound `O_NOFOLLOW` worktree
+  bytes, while untracked proposals use the descriptor reader directly. The
+  focused tests prove validator/aggregate self-attestation, staged/worktree
+  divergence rejection, path-replacement binding, symlink/FIFO rejection, and
+  actual README frontmatter/Task/status-table tracker rejection. Exact
+  production-path Git fixtures additionally prove a non-README tracked helper
+  drift and an unsafe untracked helper proposal fail through `build_observed`.
+  Every helper crosses the read boundary, while semantic scans exclude
+  intentional JSON fixture and Python assertion strings. The isolated
+  self-test and focused negatives also reject missing, extra, duplicate,
+  unsafe, unordered, malformed, synthetic-event, copied-prompt,
+  stale-live-claim, and unowned-finding states. Empty Incident and Postmortem
+  collections remain valid until a real event exists, and no runtime or
+  live-readiness result is inferred.
 
 - `tests/test_workspace_boundary.py` passes synthetic NUL-delimited index bytes
   through the production parser and creates only isolated temporary Git
