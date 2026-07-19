@@ -27,7 +27,7 @@ Fresh independent planning-activation reviews returned exact verdicts
 `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, with no findings. Those
 verdicts approved the original active execution decomposition only. ACER-001
 through ACER-005 later completed with the reviewed evidence recorded in the
-reciprocal Task. ACER-006 now records the terminal staged-closure proposal: the
+reciprocal Task. ACER-006 now records the committed terminal closure: the
 Plan/Task pair is done and retained as owned Stage 04 `DEFER` evidence until
 exact successor migration evidence exists. Exact local staged QA passed the
 focused, residue, lifecycle, strict document, archive, aggregate,
@@ -35,9 +35,11 @@ changed-file pre-commit, and cached diff gates. Initial independent
 requirements and quality reviews required changes; the remediated proposal
 then received `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no blocking
 findings. Raw all-files pre-commit remains bounded by the Spec 039-owned
-`os.mkfifo` `Errno 95`; no FIFO or CI success is claimed. The closure commit and
-clean-tree post-commit/postflight do not yet exist and remain pending and
-unclaimed.
+`os.mkfifo` `Errno 95`; no FIFO or CI success is claimed. Closure content
+commit `cfabc50681008cf0991c004f07efa17516eeed3c`, clean status, and clean-tree
+postflight are observed. Final staged terminal reviewers returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings. This
+evidence-update commit is unidentified and unclaimed.
 
 ## Context
 
@@ -159,9 +161,10 @@ than forcing a migration. The activation proposal can be reversed to parent
   exception has an explicit reason, owner, and refresh trigger.
 - ACER-001 through ACER-005 have RED/GREEN, independent review, logical commit,
   and repository-static QA evidence. ACER-006 has observed staged local QA,
-  remediated requirements compliance, and remediated quality approval. The
-  closure commit and clean-tree post-commit/postflight remain explicit pending
-  gates.
+  remediated requirements compliance, remediated quality approval, closure
+  content commit `cfabc50681008cf0991c004f07efa17516eeed3c`, clean status, and
+  clean-tree postflight PASS. The evidence-update commit remains unidentified
+  and unclaimed.
 - CI/FIFO work, remote/live state, provider delivery, secrets, and ignored
   scratch remain unclaimed and outside the tranche.
 

@@ -17,11 +17,13 @@ records. It preserves valid accepted architecture decisions and implemented
 Specs until an explicit successor removes their current authority.
 
 The reciprocal implementation Plan and Task record the completed ACER-001
-through ACER-005 packages and this ACER-006
-terminal staged-closure proposal. The proposal converts the reciprocal pair
+through ACER-005 packages and the committed ACER-006 terminal closure. The
+closure converts the reciprocal pair
 from active execution control to terminal Stage 04 evidence while preserving
-an owned `DEFER` until exact successor migration evidence exists. The closure
-commit and clean-tree post-commit verification are pending and unclaimed.
+an owned `DEFER` until exact successor migration evidence exists. Closure
+content commit `cfabc50681008cf0991c004f07efa17516eeed3c` and its clean-tree
+postflight are observed. This evidence-update commit is unidentified and
+unclaimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -196,9 +198,17 @@ reviews each required changes; their remediations were re-reviewed by
 findings. Raw all-files pre-commit failed only at the Spec 039-owned strict
 GitOps FIFO self-test (`os.mkfifo` `Errno 95`); the run with the already-proven
 duplicate strict hook skipped passed. No FIFO or CI remediation is claimed.
-The closure commit and clean-tree post-commit/postflight do not yet exist and
-remain pending and unclaimed. Specs 038, 039, and 040 remain active, Spec 039
-retains CI/FIFO ownership, and Spec 040 remains the final integrator.
+Closure content commit `cfabc50681008cf0991c004f07efa17516eeed3c` is observed
+with clean status and clean-tree postflight PASS: explicit-ref lifecycle over
+`ce7fbdaf18b2ddc701ffbad441589af0b82f5c9d..cfabc50681008cf0991c004f07efa17516eeed3c`,
+focused 65, residue self-test 19, production
+`12/100/100/0/52:48/1/3/13/29/0`, strict registry 436, strict Markdown zero,
+strict links, archive cutover `43/362/43`, and the full repository aggregate.
+Final staged closure reviews by `/root/acer006_terminal_requirements_review`
+and `/root/acer006_terminal_quality_review` returned `REQUIREMENTS COMPLIANT`
+and `QUALITY APPROVED`, respectively, with no findings. This evidence-update
+commit is unidentified and unclaimed. Specs 038, 039, and 040 remain active,
+Spec 039 retains CI/FIFO ownership, and Spec 040 remains the final integrator.
 Remote/live and CI/FIFO PASS results are unclaimed.
 
 ## Traceability

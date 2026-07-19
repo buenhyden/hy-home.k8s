@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-19 - ACER-006 terminal lifecycle closure
+
+#### Metadata
+
+- **Date**: 2026-07-19
+- **Layer**: documentation lifecycle, execution retention, closure evidence
+- **Status**: complete
+- **Tags**: #acer-006 #spec-037 #lifecycle #postflight #repo-static
+
+#### Progress
+
+- Closed Spec 037 and its reciprocal Plan/Task pair as terminal Stage 04
+  evidence. The pair remains an owned `DEFER`, without active execution
+  authority, until exact successor migration evidence exists.
+- Closure content commit
+  `cfabc50681008cf0991c004f07efa17516eeed3c` was observed with clean status.
+  This evidence-update commit cannot identify its own content-addressed SHA and
+  remains unidentified and unclaimed.
+- Specs 038, 039, and 040 remain active and unplanned. Spec 039 retains the
+  CI/FIFO portability boundary, and Spec 040 remains the final integrator.
+
+#### Evidence
+
+- Final staged reviews by `/root/acer006_terminal_requirements_review` and
+  `/root/acer006_terminal_quality_review` returned exact verdicts
+  `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, respectively, with no
+  findings.
+- Clean-tree postflight passed explicit-ref lifecycle over
+  `ce7fbdaf18b2ddc701ffbad441589af0b82f5c9d..cfabc50681008cf0991c004f07efa17516eeed3c`,
+  focused 65, residue self-test 19, production
+  `12/100/100/0/52:48/1/3/13/29/0`, strict registry 436, strict Markdown zero,
+  strict links, archive cutover `43/362/43`, and the full repository aggregate.
+- Changed-file applicable pre-commit passed. Its duplicate strict hook was
+  skipped only after direct aggregate proof. Raw all-files pre-commit failed
+  only in the strict internal GitOps self-test at `os.mkfifo` `Errno 95`; every
+  other hook passed, and the all-files rerun with
+  `SKIP=strict-repository-quality` passed.
+
+#### Memory
+
+- A closure content commit can be named by a later evidence update, but the
+  evidence-update commit cannot truthfully embed its own future SHA.
+- Terminal execution evidence may remain current as an owned `DEFER` without
+  retaining active execution authority.
+
+#### Safety Boundary and Handoff
+
+- Remote/live readiness and CI/FIFO PASS remain unclaimed. No FIFO remediation
+  or ignored-workspace evidence is claimed.
+- Roll back the closure content with a scoped revert of
+  `cfabc50681008cf0991c004f07efa17516eeed3c`; revert this evidence update
+  separately once its commit identity exists.
+
 ### 2026-07-14 - PSH-006 protected-surface repository-static closure
 
 #### Metadata
