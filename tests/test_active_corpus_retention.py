@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import builtins
 import copy
+import hashlib
 import importlib.util
 import io
+import json
 import os
 import subprocess
 import sys
@@ -16,6 +18,16 @@ from unittest import mock
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-active-corpus-retention.py"
 AGGREGATE_PATH = REPOSITORY_ROOT / "scripts" / "validate-repo-quality-gates.sh"
+RESIDUE_VALIDATOR_PATH = (
+    REPOSITORY_ROOT / "scripts" / "validate-active-corpus-residue-closure.py"
+)
+RESIDUE_LEDGER_PATH = (
+    REPOSITORY_ROOT
+    / "docs"
+    / "90.references"
+    / "data"
+    / "active-corpus-residue-closure.json"
+)
 
 
 def load_validator():
@@ -24,6 +36,20 @@ def load_validator():
     )
     if specification is None or specification.loader is None:
         raise AssertionError("active corpus retention validator could not be loaded")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def load_residue_validator():
+    specification = importlib.util.spec_from_file_location(
+        "active_corpus_residue_closure_test_target", RESIDUE_VALIDATOR_PATH
+    )
+    if specification is None or specification.loader is None:
+        raise AssertionError(
+            "active corpus residue closure validator could not be loaded"
+        )
     module = importlib.util.module_from_spec(specification)
     sys.modules[specification.name] = module
     specification.loader.exec_module(module)
@@ -380,6 +406,351 @@ class ActiveCorpusRetentionContractTests(unittest.TestCase):
             'python3 "$ROOT_DIR/scripts/validate-active-corpus-retention.py" --root "$ROOT_DIR"',
             text,
         )
+
+
+class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not RESIDUE_VALIDATOR_PATH.is_file():
+            return
+        cls.validator = load_residue_validator()
+        cls.ledger = cls.validator.load_ledger(REPOSITORY_ROOT)
+        cls.observed = {
+            key: copy.deepcopy(cls.ledger[key])
+            for key in (
+                "sourceLedgers",
+                "counts",
+                "migratedClosed",
+                "currentRows",
+                "pairCardinality",
+                "authorityGuards",
+                "acer004Dependency",
+            )
+        }
+
+    def fixture(self):
+        return copy.deepcopy(self.ledger)
+
+    def assert_closure_error(self, fixture, code: str) -> None:
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator.validate_ledger(fixture, self.observed)
+        self.assertEqual(raised.exception.code, code)
+        self.assertEqual(str(raised.exception).splitlines(), [str(raised.exception)])
+
+    def test_required_validator_and_ledger_targets_exist(self) -> None:
+        self.assertTrue(RESIDUE_VALIDATOR_PATH.is_file())
+        self.assertTrue(RESIDUE_LEDGER_PATH.is_file())
+
+    def test_production_closure_matches_exact_repository_state(self) -> None:
+        self.validator.validate_ledger(self.ledger, self.observed)
+        expected = {
+            "migratedClosed": 12,
+            "currentRows": 100,
+            "defer": 98,
+            "retain": 2,
+            "pairKeys": 52,
+            "completePairs": 48,
+            "planOnly": 1,
+            "taskOnly": 3,
+            "acceptedAdrs": 13,
+            "doneSpecs": 28,
+            "findings": 0,
+        }
+        try:
+            counts = self.validator.validate_active_corpus_residue_closure(
+                REPOSITORY_ROOT
+            )
+        except self.validator.ClosureError as error:
+            self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+            self.assertIn(
+                error.path,
+                {self.validator.AGGREGATE_PATH, self.validator.EXECUTION_TASK},
+            )
+        else:
+            self.assertEqual(counts, expected)
+
+    def test_tracked_inventory_requires_descriptor_and_index_equality(self) -> None:
+        path = "docs/04.execution/plans/tracked.md"
+        oid = "a" * 40
+
+        def runner(_root: str, arguments: tuple[str, ...]):
+            payload = {
+                ("cat-file", "-t", oid): b"blob\n",
+                ("cat-file", "-s", oid): b"5\n",
+                ("cat-file", "blob", oid): b"index",
+            }[arguments]
+            return subprocess.CompletedProcess(arguments, 0, payload, b"")
+
+        with mock.patch.object(
+            self.validator, "_read_descriptor_bytes", return_value=b"worktree"
+        ):
+            with self.assertRaises(self.validator.ClosureError) as raised:
+                self.validator._proposed_or_index_bytes(
+                    str(REPOSITORY_ROOT), path, {path: oid}, runner
+                )
+        self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+        self.assertEqual(raised.exception.path, path)
+
+    def test_tracked_aggregate_entrypoint_requires_index_equality(self) -> None:
+        script_oid = "a" * 40
+        aggregate_oid = "b" * 40
+        script = b"#!/usr/bin/env python3\n"
+        aggregate = (
+            b'python3 "$ROOT_DIR/scripts/validate-active-corpus-residue-closure.py" '
+            b'--root "$ROOT_DIR" --self-test\n'
+            b'python3 "$ROOT_DIR/scripts/validate-active-corpus-residue-closure.py" '
+            b'--root "$ROOT_DIR"\n'
+        )
+
+        def descriptor(_root: str, path: str) -> bytes:
+            return script if path == self.validator.SCRIPT_PATH else aggregate
+
+        def staged(_root: str, _oid: str, path: str, _runner) -> bytes:
+            return (
+                script if path == self.validator.SCRIPT_PATH else b"staged aggregate\n"
+            )
+
+        with (
+            mock.patch.object(
+                self.validator,
+                "_control_inventory",
+                return_value={
+                    self.validator.SCRIPT_PATH: script_oid,
+                    self.validator.AGGREGATE_PATH: aggregate_oid,
+                },
+            ),
+            mock.patch.object(
+                self.validator, "_read_descriptor_bytes", side_effect=descriptor
+            ),
+            mock.patch.object(self.validator, "_index_blob", side_effect=staged),
+        ):
+            with self.assertRaises(self.validator.ClosureError) as raised:
+                self.validator.verify_entrypoints(REPOSITORY_ROOT)
+        self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+        self.assertEqual(raised.exception.path, self.validator.AGGREGATE_PATH)
+
+    def test_ledger_prebinds_final_task_worktree_blob_for_parent_staging(self) -> None:
+        payload = self.validator._read_descriptor_bytes(
+            str(REPOSITORY_ROOT), self.validator.EXECUTION_TASK
+        )
+        object_id = hashlib.sha1(
+            f"blob {len(payload)}\0".encode("ascii") + payload
+        ).hexdigest()
+        task_row = next(
+            row
+            for row in self.ledger["currentRows"]
+            if row["path"] == self.validator.EXECUTION_TASK
+        )
+        self.assertEqual(task_row["objectMode"], "index-stage-zero")
+        self.assertEqual(task_row["objectId"], f"git:sha1:{object_id}")
+
+    def test_missing_bounded_defer_field_fails(self) -> None:
+        fixture = self.fixture()
+        row = next(
+            row for row in fixture["currentRows"] if row["disposition"] == "DEFER"
+        )
+        row["closureReason"] = ""
+        self.assert_closure_error(fixture, "CLOSURE-CURRENT-FIELDS")
+
+    def test_active_eligible_row_fails(self) -> None:
+        fixture = self.fixture()
+        fixture["currentRows"][0]["disposition"] = "eligible"
+        self.assert_closure_error(fixture, "CLOSURE-ACTIVE-ELIGIBLE")
+
+    def test_duplicate_current_owner_fails(self) -> None:
+        fixture = self.fixture()
+        fixture["currentRows"].append(copy.deepcopy(fixture["currentRows"][0]))
+        self.assert_closure_error(fixture, "CLOSURE-CURRENT-DUPLICATE")
+
+    def test_partial_pair_must_be_explicit_owned_defer(self) -> None:
+        fixture = self.fixture()
+        pair = next(
+            row for row in fixture["pairCardinality"] if row["state"] != "complete"
+        )
+        pair["disposition"] = "retain"
+        self.assert_closure_error(fixture, "CLOSURE-PAIR-PARTIAL")
+
+    def test_stale_unjoined_eligible_row_fails(self) -> None:
+        fixture = self.fixture()
+        fixture["migratedClosed"].pop()
+        self.assert_closure_error(fixture, "CLOSURE-MIGRATION-STALE")
+
+    def test_reintroduced_migrated_source_fails(self) -> None:
+        fixture = self.fixture()
+        fixture["migratedClosed"][0]["currentSourcePresent"] = True
+        self.assert_closure_error(fixture, "CLOSURE-MIGRATION-SOURCE")
+
+    def test_authority_guard_cannot_move_terminal_record(self) -> None:
+        fixture = self.fixture()
+        fixture["authorityGuards"]["acceptedAdrs"][0]["disposition"] = "migrated-closed"
+        self.assert_closure_error(fixture, "CLOSURE-AUTHORITY-GUARD")
+
+    def test_draft_adr_is_admissible_but_not_an_authority_guard(self) -> None:
+        draft_path = "docs/02.architecture/decisions/9998-draft.md"
+        accepted_path = "docs/02.architecture/decisions/9999-accepted.md"
+        payloads = {
+            draft_path: (
+                b"---\ntype: sdlc/adr\nstatus: draft\nowner: platform\n---\n# Draft\n"
+            ),
+            accepted_path: (
+                b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
+                b"# Accepted\n"
+            ),
+        }
+        index = {draft_path: "a" * 40, accepted_path: "b" * 40}
+
+        guards = self.validator._authority_entries(
+            [draft_path, accepted_path], index, payloads, kind="adr"
+        )
+
+        self.assertEqual(len(guards), 1)
+        self.assertEqual(guards[0]["path"], accepted_path)
+        self.assertEqual(guards[0]["status"], "accepted")
+        self.assertEqual(guards[0]["currentAuthority"], self.validator.ADR_AUTHORITY)
+
+    def test_closure_schema_normalizes_pair_keys_to_lineage_ids(self) -> None:
+        raw = RESIDUE_LEDGER_PATH.read_text(encoding="utf-8")
+        self.assertNotIn('"pairKey":', raw)
+        self.assertNotIn("\\u002d", raw)
+        parsed = json.loads(raw)
+        closure_rows = [
+            row
+            for collection in ("migratedClosed", "currentRows", "pairCardinality")
+            for row in parsed[collection]
+        ]
+        self.assertEqual(len(closure_rows), 12 + 100 + 52)
+        self.assertTrue(all("pairKey" not in row for row in closure_rows))
+        self.assertTrue(
+            all(isinstance(row.get("lineageId"), str) for row in closure_rows)
+        )
+
+        eligibility_path = (
+            REPOSITORY_ROOT
+            / "docs"
+            / "90.references"
+            / "data"
+            / "active-corpus-eligibility-ledger.json"
+        )
+        eligibility = json.loads(eligibility_path.read_text(encoding="utf-8"))
+        eligible_by_path = {
+            row["path"]: row["pairKey"]
+            for row in eligibility["candidateRows"]
+            if row["disposition"] == "eligible"
+        }
+        current_by_path = {
+            row["path"]: row["pairKey"]
+            for row in eligibility["candidateRows"]
+            if row["disposition"] == "DEFER"
+        }
+        current_by_path.update(
+            {row["path"]: row["pairKey"] for row in eligibility["controls"]}
+        )
+
+        self.assertEqual(
+            {row["path"]: row["lineageId"] for row in parsed["migratedClosed"]},
+            eligible_by_path,
+        )
+        self.assertEqual(
+            {row["path"]: row["lineageId"] for row in parsed["currentRows"]},
+            current_by_path,
+        )
+        self.assertEqual(
+            [row["lineageId"] for row in parsed["pairCardinality"]],
+            sorted(set(current_by_path.values())),
+        )
+        self.validator.validate_ledger(parsed, self.observed)
+
+    def test_nonempty_finding_fails(self) -> None:
+        fixture = self.fixture()
+        fixture["findings"]["unexplainedResidue"].append({"path": "docs/x.md"})
+        self.assert_closure_error(fixture, "CLOSURE-FINDINGS")
+
+    def test_duplicate_json_key_fails(self) -> None:
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator._reject_duplicate_pairs([("a", 1), ("a", 2)])
+        self.assertEqual(raised.exception.code, "CLOSURE-JSON-DUPLICATE")
+
+    def test_git_runner_is_literal_bounded_and_ignores_hostile_environment(
+        self,
+    ) -> None:
+        query = ("cat-file", "-t", self.validator.FIXED_INPUT_COMMIT)
+        completed = subprocess.CompletedProcess(query, 0, b"commit\n", b"")
+        hostile = {
+            "GIT_DIR": "/attacker/git",
+            "GIT_WORK_TREE": "/attacker/tree",
+            "GIT_OBJECT_DIRECTORY": "/attacker/objects",
+            "GIT_REPLACE_REF_BASE": "refs/evil/",
+        }
+        with mock.patch.dict(os.environ, hostile, clear=False):
+            with mock.patch.object(
+                self.validator.subprocess, "run", return_value=completed
+            ) as invoked:
+                self.validator._run_git(str(REPOSITORY_ROOT), query)
+        arguments, keyword = invoked.call_args
+        self.assertEqual(arguments[0][0], "/usr/bin/git")
+        self.assertEqual(keyword["env"], self.validator.CLOSED_GIT_ENVIRONMENT)
+        self.assertFalse(set(hostile) & set(keyword["env"]))
+        self.assertIs(keyword["shell"], False)
+        self.assertEqual(keyword["timeout"], 10)
+
+    def test_malformed_git_nul_and_mode_data_fail_closed(self) -> None:
+        with self.assertRaises(self.validator.ClosureError) as nul_error:
+            self.validator._parse_nul_paths(
+                b"docs/04.execution/plans/x.md", "docs/04.execution/plans"
+            )
+        self.assertEqual(nul_error.exception.code, "CLOSURE-GIT-MALFORMED")
+        with self.assertRaises(self.validator.ClosureError) as mode_error:
+            self.validator._parse_modes(b"120000 deadbeef 0\tdocs/x\0")
+        self.assertEqual(mode_error.exception.code, "CLOSURE-GIT-MALFORMED")
+
+    def test_unsafe_path_diagnostic_is_value_free(self) -> None:
+        hostile = "../outside\nFORGED PASS"
+        error = self.validator.ClosureError("CLOSURE-PATH", hostile)
+        self.assertEqual(str(error), f"CLOSURE-PATH {self.validator.LEDGER_PATH}")
+        self.assertNotIn(hostile, str(error))
+
+    def test_production_queries_never_use_head_or_walk_ignored_paths(self) -> None:
+        calls: list[tuple[str, ...]] = []
+
+        def recording(root: str, arguments: tuple[str, ...]):
+            calls.append(arguments)
+            return self.validator._run_git(root, arguments)
+
+        try:
+            observed = self.validator.build_observed(REPOSITORY_ROOT, recording)
+        except self.validator.ClosureError as error:
+            self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+        else:
+            self.assertEqual(observed, self.observed)
+        self.assertTrue(calls)
+        self.assertFalse(any("HEAD" in argument for call in calls for argument in call))
+        self.assertFalse(
+            any("_workspace" in argument for call in calls for argument in call)
+        )
+        self.assertTrue(all(call[0] in {"ls-files", "cat-file"} for call in calls))
+
+    def test_ignored_workspace_descriptor_sentinel(self) -> None:
+        original_open = self.validator.os.open
+
+        def guarded_open(value, *args, **kwargs):
+            path = os.fspath(value)
+            if path == "_workspace" or f"{os.sep}_workspace{os.sep}" in path:
+                raise AssertionError("ignored workspace access attempted")
+            return original_open(value, *args, **kwargs)
+
+        with mock.patch.object(self.validator.os, "open", guarded_open):
+            try:
+                self.validator.validate_active_corpus_residue_closure(REPOSITORY_ROOT)
+            except self.validator.ClosureError as error:
+                self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+
+    def test_aggregate_invokes_residue_self_test_and_production_once(self) -> None:
+        text = AGGREGATE_PATH.read_text(encoding="utf-8")
+        for command in (
+            'python3 "$ROOT_DIR/scripts/validate-active-corpus-residue-closure.py" --root "$ROOT_DIR" --self-test',
+            'python3 "$ROOT_DIR/scripts/validate-active-corpus-residue-closure.py" --root "$ROOT_DIR"',
+        ):
+            self.assertEqual(text.splitlines().count(command), 1)
 
 
 if __name__ == "__main__":
