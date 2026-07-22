@@ -57,10 +57,44 @@ exists.
 Registry current-pack entries, folder indexes, and generated-output checks
 provide one discoverable currentness path. Historical and Resolved packs keep
 their bodies and observation SHAs. Current closure changes only remediation
-overlays. The reference IA contract names Current pack IDs and pinned commits
-only; member paths and comparison digests are derived from the registry at
-validation time. Fact-bearing pack READMEs remain protected outside exact
+overlays. Schema version 2 keeps `snapshotGuard.sourceCommit` exclusively for
+the five Historical/Resolved audit packs and Historical research pack
+`research/2026-07-04-wer`. A required top-level `currentPackBaselines` map is
+keyed exactly by the live registry's Current pack IDs and pins each pack to an
+anchored `git-sha1:` commit. The initial audit and research pins are the
+reviewed RIA-001 head
+`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`.
+
+The contract never supplies Current member paths, per-member digests, or
+pointers. Before deriving any Current path or digest, validation requires the
+baseline commit's registry `profileId`, pack IDs, member lists, and
+`allowedStates` to equal the proposed registry exactly and requires each
+registry-derived pack README and member to be an available tracked regular file
+at both sides. Fact-bearing pack READMEs remain protected outside exact
 table-cell or link-destination navigation projections.
+
+Top-level `baselineTransitions` and `baselineSettlements` provide the only
+bounded way to advance a Current baseline. Normally the transition array is
+empty and it may contain at most one open record. An open transition is not a
+baseline, member, path, digest-list, or pointer authority: it is the one-shot
+`ria-007-postflight-ledger` authorization for the registry-derived
+`document-migration-evidence-ledger` member of one Current pack, from the
+active map pin to one exact SHA-256 and byte length no greater than 2 MB. All
+other Current members and the registry must still equal the old baseline.
+Historical targets, arbitrary paths or digest lists, `HEAD`, revision
+expressions, self-references, detached candidates, and reused transitions are
+invalid. Terminal validation with `--require-settled-baselines` fails while a
+transition remains open.
+
+A settlement-only commit changes no protected content, advances the affected
+map value to the literal preceding transition commit, removes the open record,
+and appends a durable settlement proof naming that literal commit. Through the
+same fixed Git object reader, validation reads the named commit's exact contract
+and blobs and proves that it contained the matching open transition, retained
+the prior baseline and registry, contained the exact target bytes, and left all
+non-target members unchanged. Direct baseline jumps, missing or mismatched
+proof, clearing without proof, and transition-ID reuse fail closed with
+`RIA-TRANSITION`.
 
 Duplicate analysis compares normalized scope, authority claim, source coverage,
 generation owner, and current state. It consolidates only duplicate current
@@ -82,9 +116,10 @@ arbitrary universal expiration date.
 
 ## Interfaces & Data Structures
 
-- Current-pack validator: profile, pack ID, registry-derived members and
-  digests, states, observation SHA, protected README projection, index row, and
-  unique Current pointer.
+- Current-pack validator: schema-v2 exact baseline map, profile, pack ID,
+  registry-derived README/members and digests, states, observation SHA,
+  protected README projection, index row, unique Current pointer, and durable
+  transition/settlement chain.
 - Source-ledger validator: source URL, checked date, adopted/rejected scope, and
   refresh trigger.
 - Generated-output validator: generator path, input roots, output path, and
@@ -103,6 +138,9 @@ arbitrary universal expiration date.
   contract, never PASS.
 - Learning content may overlap a technical topic but cannot own operational
   instructions.
+- A Current baseline cannot advance merely because proposed bytes are valid;
+  only the one-member open-transition commit followed by its contract-only
+  settlement proof can advance it.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -112,10 +150,15 @@ arbitrary universal expiration date.
   mark its currentness limitation.
 - If a generator is unavailable, validate the tracked contract statically and
   record the missing execution separately.
+- If a baseline transition is open, non-terminal validation may verify its
+  exact candidate while terminal validation fails until settlement; no hidden
+  or detached candidate commit is accepted.
 
 ## Verification Commands
 
 - Run Current-pack, member, index, and observation-SHA checks.
+- Run schema-v2 baseline-map, registry-equivalence, transition, settlement,
+  and terminal `--require-settled-baselines` checks.
 - Run reference profile, source/freshness, and duplicate-owner validation.
 - Regenerate llm-wiki and require no diff.
 - Run link, repository quality, Markdown, and all-files pre-commit checks.
@@ -127,7 +170,8 @@ arbitrary universal expiration date.
 - **VAL-RIA-001**: Audit and research Current pointers are unique and complete.
 - **VAL-RIA-002**: Historical and Resolved observation bodies remain unchanged.
 - **VAL-RIA-003**: HEAD closure updates only the remediation overlay and
-  affected indexes.
+  affected indexes, or uses the one-shot ledger transition and durable
+  settlement proof without weakening any other Current member.
 - **VAL-RIA-004**: Data references name source evidence and refresh triggers.
 - **VAL-RIA-005**: Generated wiki output has one generator and zero drift.
 - **VAL-RIA-006**: Duplicate Current owners, generated/manual duplicates, and
@@ -161,7 +205,15 @@ schema/parser, immediate parent `fdc86ee`, and fixed-argv bounded Git object
 reader findings. Final focused re-reviews returned `REQUIREMENTS COMPLIANT`
 and `QUALITY APPROVED` with no findings. Activation commit and postflight
 remain pending.
-RIA-001 through RIA-007 are Queued. The proposal does not alter Current pack
+RIA-001 through RIA-007 remain at their currently governed Task states. Before
+RIA-002 RED or implementation began, preflight at reviewed RIA-001 head
+`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` proved the original single
+`8fb9821497aaa93d9ed5fc1a69b60c628b047b47` baseline impossible for Current
+research: activation commit `cb0c1f6` changed the protected migration ledger's
+inventory boundary from 444 to 446 outside every allowed projection. No
+RIA-002 RED, implementation, review, or result occurred. This design correction
+therefore separates Historical snapshot evidence from Current baselines and
+adds the bounded transition/settlement chain; it does not alter Current pack
 membership, observation bodies, CI/FIFO, provider, remote, live, credential,
 secret, or ignored-workspace state.
 
@@ -181,7 +233,7 @@ secret, or ignored-workspace state.
 | --- | --- | --- |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-001 | Registry and index checks enforce unique Current packs. |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-003 | Finding-disposition fixtures restrict mutable overlay paths. |
+| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-003 | Overlay fixtures restrict mutable projections; transition/settlement fixtures prove the one-member durable baseline chain. |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-004 | Reference body-contract checks verify source and freshness fields. |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-005 | Generator no-diff validation protects the wiki index. |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-006 | Duplicate and policy-residue fixtures fail. |

@@ -20,14 +20,18 @@ Architecture contract that protects dated observations, permits only declared
 Current remediation overlays, proves source/freshness and generated ownership,
 and rejects duplicate Current or policy owners under `docs/90.references/`.
 
-**Architecture:** Keep `referenceCurrentPacks` in
+**Architecture:** Require schema version 2 and keep `referenceCurrentPacks` in
 `docs/99.templates/support/document-profiles.json` as the sole owner of Current
 pack identity, membership, lifecycle, and pointer mirrors. Add a separate
-closed-schema Stage 90 contract that references those pack IDs and owns only
-immutable observation baselines, overlay mutability, data evidence/freshness,
-generator relations, and duplicate-owner rules. A focused Python validator
-loads tracked regular files without following symlinks, emits stable rule IDs,
-and is integrated into the repository aggregate after hostile fixtures pass.
+closed-schema Stage 90 contract whose exact `currentPackBaselines` keys mirror
+those pack IDs and whose values pin committed comparison authority without
+copying members, paths, digests, states, or pointers. Historical snapshot
+authority remains separate. One-shot transition and durable settlement records
+advance a Current baseline only through an exact protected-member candidate
+commit and a following contract-only settlement. A focused Python validator
+loads tracked regular files and fixed Git objects without following symlinks,
+emits stable rule IDs, and is integrated into the repository aggregate after
+hostile fixtures pass.
 
 **Tech Stack:** Python 3 standard library, the repository's installed
 `jsonschema` package with `Draft202012Validator`, `unittest`, Git object reads,
@@ -61,10 +65,33 @@ authority. Missing controls are historical/Resolved observation-byte guards,
 Current overlay-only mutation, data source/freshness evidence, an explicit
 generator/input/output/check relation, and normalized duplicate-owner checks.
 
+RIA-002 preflight stopped before any RED or implementation. The original
+contract would have compared every Current member to evidence baseline
+`8fb9821497aaa93d9ed5fc1a69b60c628b047b47`, but activation commit `cb0c1f6`
+changed the Current research migration ledger's inventory boundary from 444 to
+446 outside every declared projection. The reviewed RIA-001 head
+`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` is therefore the initial Current
+audit and research baseline; `8fb9821` remains exclusively Historical snapshot
+authority. RIA-002 stays Queued and unexecuted until this correction is
+implemented test-first.
+
 ### Global Constraints
 
 - Preserve `docs/99.templates/support/document-profiles.json#referenceCurrentPacks`
   as the only Current-pack pointer and member authority.
+- Require schema version 2. Keep `snapshotGuard.sourceCommit` exclusive to the
+  five Historical/Resolved audit packs and `research/2026-07-04-wer`; require
+  `currentPackBaselines` keys to equal the live Current registry IDs exactly
+  and initialize both values to `git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`.
+- Forbid contract-supplied Current paths, member lists, per-member digests,
+  lifecycle states, and pointers. Before deriving paths or digests, require
+  baseline/proposed equality for registry `profileId`, pack IDs, members, and
+  `allowedStates`, plus tracked regular-file availability for every derived
+  pack README and member.
+- Permit at most one open `baselineTransitions` record and require terminal
+  `--require-settled-baselines` validation to reject it. A transition and its
+  durable `baselineSettlements` proof never become registry, baseline, member,
+  or general digest authority.
 - Do not rewrite dated Historical, Resolved, or Current observation facts to
   make later implementation appear complete.
 - Permit Current closure changes only in the declared remediation overlay and
@@ -93,8 +120,8 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 | Path | Responsibility |
 | --- | --- |
-| `docs/90.references/data/reference-information-architecture.schema.json` | Closed JSON Schema for derived immutable guards, section/cell projection rules, source/freshness records, generator relations, and pair-scoped duplicate exceptions. |
-| `docs/90.references/data/reference-information-architecture.json` | Repo-local Spec 038 contract instance; references Current pack IDs and pinned commits without repeating their members, paths, digests, or pointers. |
+| `docs/90.references/data/reference-information-architecture.schema.json` | Closed schema-v2 contract for separate Historical guards, exact Current baseline map, one-shot transitions, durable settlements, section/cell projection rules, source/freshness records, generator relations, and pair-scoped duplicate exceptions. |
+| `docs/90.references/data/reference-information-architecture.json` | Repo-local Spec 038 contract instance; pins exact Current pack IDs by map key and commits by value without repeating members, paths, digests, states, or pointers. |
 | `scripts/reference_information_architecture.py` | Pure parsing, normalization, digest, Git-object, and finding functions shared by CLI and tests. |
 | `scripts/validate-reference-information-architecture.py` | Thin CLI with `--root`, `--contract`, and `--self-test`; prints stable rule IDs and returns 0/1/2. |
 | `tests/test_reference_information_architecture.py` | Focused positive, hostile, and regression tests for all six Spec criteria and input boundaries. |
@@ -113,6 +140,10 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
   `referenceCurrentPacks`; permit only the remediation overlay and exact
   declared section/cell navigation projections while preserving fact-bearing
   README prose, snapshot SHA, scores, scope, and observation fields.
+- Advance the Current research baseline for RIA-007 ledger evidence only through
+  one exact open transition commit followed by a contract-only durable
+  settlement; keep every non-target Current member and the registry equal to
+  the prior baseline.
 - Require repo-backed data assets to name evidence, an observed/check date,
   non-empty adopted and rejected scope, and a non-empty refresh trigger without
   expanding universal frontmatter.
@@ -144,12 +175,12 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 | --- | --- | --- | --- | --- |
 | RIA-000 | Atomic reciprocal planning activation | None | Plan-only lifecycle RED observed at evidence baseline `8fb9821`; reviewed prerequisite head `fdc86ee` exists | Exact seven-file staged lifecycle GREEN, complete commit-level QA, independent planning re-reviews, rollback parent `fdc86ee`, and activation commit |
 | RIA-001 | Closed reference contract, safe loader, and diagnostic interface | RIA-000 | Reviewed activation commit exists | Draft 2020-12 schema/instance validation, contract negative fixtures, focused CLI self-test, complete commit gate, and reviewed logical commit |
-| RIA-002 | Audit/research immutability and projection-bounded Current overlay guard | RIA-001 | Pinned source contract loads without findings | Historical/Resolved/Current mutation fixtures fail; exact overlay and navigation projections pass; complete commit gate and review pass |
+| RIA-002 | Audit/research immutability, Current baseline, transition, settlement, and projection-bounded overlay guard | RIA-001 | Design-correction preflight records the `8fb9821` versus `cb0c1f6` Current-ledger blocker; no RED or implementation has run | Schema-v2, Historical/Resolved/Current, registry-equivalence, transition/settlement, fixed-Git-runner, and projection fixtures pass; production transitions are empty; complete commit gate and review pass |
 | RIA-003 | Data source, adopted/rejected scope, and freshness validation | RIA-002 | Observation guards are GREEN | Missing/invalid evidence, scope, date, and trigger fixtures fail; production data inventory passes the complete commit gate and review |
 | RIA-004 | Generated ownership and zero-drift validation | RIA-003 | Source/freshness relation is GREEN | Generator collision, command, input/output, stale byte, and owner-link fixtures fail; production generator relation passes the complete commit gate and review |
 | RIA-005 | Duplicate Current/generated/manual/policy-owner validation | RIA-004 | Generated relation is GREEN | Duplicate claims/copies and exception-reuse fixtures fail; production Stage 90 has zero findings after the complete commit gate and review |
 | RIA-006 | Aggregate integration and command inventories | RIA-005 | All focused production validation is clean | Aggregate invocation RED/GREEN, repository QA, complete commit gate, independent review, and logical integration commit |
-| RIA-007 | Independent whole-tranche review and atomic lifecycle closure | RIA-006 | Aggregate integration commit is reviewed | Full/all-files QA, terminal requirements and quality approval, logical closure/evidence commits, and clean-tree postflight |
+| RIA-007 | Independent whole-tranche review, atomic lifecycle closure, postflight transition, and settlement | RIA-006 | Aggregate integration commit is reviewed | C1 six-file closure, C2 eight-file postflight evidence with one open ledger transition, C3 contract-only settlement, terminal settled-baseline PASS, and clean status |
 
 ### Task 0: RIA-000 — Atomic reciprocal planning activation
 
@@ -297,12 +328,13 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 - [ ] **Step 4: Implement CLI self-test and the production contract skeleton.**
   `--self-test` runs the fixture matrix without reading the production corpus;
-  normal mode validates the contract instance. The instance references the two
-  registry pack IDs but does not copy their member lists, report paths,
+  normal mode validates the contract instance. The v1 bootstrap references the
+  two registry pack IDs but does not copy their member lists, report paths,
   per-member digests, or Current pointers. Current paths and comparison digests
   are derived at validation time and must equal the registry membership
   exactly. CLI self-test must exercise the accepted encoded commit and every
-  malformed-prefix case through the same production parser.
+  malformed-prefix case through the same production parser. RIA-002 replaces
+  this bootstrap Current shape with required schema version 2.
 
 - [ ] **Step 5: Run GREEN and contract checks.** Run:
 
@@ -328,11 +360,14 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 **Files:**
 
+- Modify: `docs/90.references/data/reference-information-architecture.schema.json`
 - Modify: `docs/90.references/data/reference-information-architecture.json`
 - Modify: `scripts/reference_information_architecture.py`
 - Modify: `tests/test_reference_information_architecture.py`
+- Modify: `tests/fixtures/reference-information-architecture/minimal-valid.json`
 - Create: `tests/fixtures/reference-information-architecture/snapshot-mutation.json`
 - Create: `tests/fixtures/reference-information-architecture/overlay-mutation.json`
+- Modify: `docs/90.references/data/README.md`
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/90.references/audits/2026-07-11-weia/README.md`
 - Modify: `docs/90.references/research/README.md`
@@ -340,44 +375,94 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 **Interfaces:**
 
-- Consumes: validated RIA-001 contract plus exact Git commit and blob reads.
+- Consumes: validated RIA-001 contract, schema version 2, live
+  `referenceCurrentPacks`, and exact Git commit/blob reads.
 - Produces: `validate_snapshot_guards(...)` and
-  `validate_overlay_guards(...)`; each returns ordered `Finding` values and
-  compares tracked regular-file bytes or exact parsed table/link projections
-  only to declared committed baselines. Current members and comparison digests
-  are derived from the registry and may not be supplied by the contract.
+  `validate_overlay_guards(...)`, and `validate_baseline_transitions(...)`;
+  each returns ordered `Finding` values and compares tracked regular-file bytes
+  or exact parsed table/link projections only to declared committed authority.
+  Current members, README paths, states, and comparison digests are derived
+  from an exactly equal baseline/proposed registry and may not be supplied by
+  the contract.
 
-- [ ] **Step 1: Add RED tests for immutable observation bodies.** Create fixture
+- [ ] **Step 1: Add schema-v2 and exact-baseline RED tests.** Require
+  `schemaVersion: 2`; reject the v1 `snapshotGuard.currentPackIds` shape and any
+  Current path, member list, digest map/list, state, or pointer duplication.
+  Require `currentPackBaselines` keys to equal the live registry Current IDs
+  exactly, with anchored commit values and no missing, extra, or stale key. For
+  each distinct baseline, require exact proposed/baseline equality of registry
+  `profileId`, ordered pack IDs, `members`, and `allowedStates`, then require the
+  registry-derived pack README and every member to be an available tracked
+  regular file before deriving paths or SHA-256 values. Prove the original
+  `8fb9821` Current research baseline fails on the ledger's 444-to-446 protected
+  change and that `15bba3d` passes. Add stable `RIA-TRANSITION` diagnostics and
+  require value-free path/rule facts without contract or blob bodies.
+
+- [ ] **Step 2: Add immutable-body and projection RED tests.** Create fixture
   repositories where a Historical/Resolved audit report, Historical research
-  report, or fact-bearing pack README differs by one protected byte from its
-  source blob; a protected file is missing; the source ref is not a commit; or
-  runtime-derived SHA-256 differs. Expect `RIA-SNAPSHOT` in deterministic path
-  order. Reject contract-supplied Current member paths or per-member digests.
-  Exercise the RIA-001 encoded-commit parser and reject a bare/invalid/repeated
-  prefix before any Git subprocess call. Add closed-runner fixtures for a
-  missing executable result, non-zero exit, timeout, malformed or multiple
-  `ls-tree` records, mismatched path, non-blob/symlink mode, oversized blob,
-  short/extra blob bytes, inherited hostile Git environment, shell use, and
-  argv outside the exact allowlist.
+  report, Current member, or fact-bearing pack README differs by one protected
+  byte; a protected file is missing; the source ref is not a commit; or a
+  runtime-derived SHA-256 differs. Expect deterministic `RIA-SNAPSHOT` or
+  `RIA-OVERLAY`. Keep `snapshotGuard.sourceCommit` exclusively for audit packs
+  `audits/2026-05-24-whga`, `audits/2026-07-02-whia`,
+  `audits/2026-07-03-wdgh`, `audits/2026-07-04-wdcn`,
+  `audits/2026-07-05-wea`, and research pack `research/2026-07-04-wer`.
+  Accept only the complete remediation-roadmap body; `Audit Pack Registry`
+  `Pack role` and `Successor / resolution` cells; `Research Pack Index`
+  `Status` cells; Current audit `Report Index` `Lifecycle` and
+  `Actionable disposition` cells; Current research `Report Index` `Lifecycle`
+  cells; and one exact `navigationReplacement` destination with unchanged
+  visible text. Reject whole-file README mutability, globs, undeclared cells,
+  and reusable exceptions.
 
-- [ ] **Step 2: Add RED tests for overlay-only and navigation projections.** Pin
-  Current pack observation commits; derive their members from the registry;
-  mutate a protected report, snapshot SHA, score, scope, arithmetic cell, or
-  fact-bearing README prose and expect `RIA-OVERLAY`. Accept only the complete
-  remediation-roadmap body; `Audit Pack Registry` `Pack role` and
-  `Successor / resolution` cells; `Research Pack Index` `Status` cells;
-  Current audit `Report Index` `Lifecycle` and `Actionable disposition` cells;
-  Current research `Report Index` `Lifecycle` cells; and an exact
-  `navigationReplacement` record that changes one declared link destination
-  without changing visible text. Reject whole-file README mutability, globs,
-  undeclared columns/sections, and reusable navigation exceptions.
+- [ ] **Step 3: Add transition and settlement RED tests.** Define an open
+  transition as this exact closed record shape:
 
-- [ ] **Step 3: Run RED.** Run
-  `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_snapshot_mutation tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_current_overlay_boundary -v`.
-  Expect failures because the guard functions are absent.
+  ```json
+  {
+    "id": "ria-007-postflight-ledger",
+    "packId": "research/2026-07-07-wer",
+    "fromCommit": "git-sha1:<active-map-pin>",
+    "subject": "document-migration-evidence-ledger",
+    "targetSha256": "<64-lowercase-hex>",
+    "targetByteLength": 1,
+    "reason": "<non-empty bounded reason>"
+  }
+  ```
 
-- [ ] **Step 4: Implement committed-baseline and projection comparison.** Pass
-  `snapshotGuard.sourceCommit` through `parse_git_sha1()` and give Git only its
+  The schema permits zero or one record, requires `fromCommit` to equal that
+  pack's active map pin, derives the exact member path from registry membership
+  and the constant subject, caps the target at `2_000_000` bytes, and gives the
+  record no baseline, member, path, pointer, revision, or general digest-list
+  authority. Reject Historical targets, `HEAD`/revision expressions,
+  self-reference, an arbitrary subject/path, wrong digest/size/bytes, missing or
+  non-member target, registry drift, any non-target Current change, multiple or
+  stale transitions, and reuse of a settled transition ID. Require
+  `--require-settled-baselines` to fail with `RIA-TRANSITION` while open.
+
+  A durable settlement record repeats the exact transition `id`, `packId`,
+  `fromCommit`, constant `subject`, target digest, target length, and reason,
+  and adds literal anchored `transitionCommit`. Reject direct baseline changes,
+  a cleared transition without proof, missing/mismatched proof, a settlement
+  whose map value is not that literal transition commit, or a proof naming a
+  commit whose exact contract did not contain the matching open transition.
+  Through fixed Git reads, prove the named transition commit retained the prior
+  baseline and equal registry, contained the exact target bytes, and left all
+  non-targets unchanged. Settlement records remain append-only and durable.
+
+- [ ] **Step 4: Run the named RED selectors.** Run focused tests for schema-v2
+  map equality, `8fb9821` failure versus `15bba3d` success, snapshot mutation,
+  Current overlay bounds, the open-transition matrix, direct baseline jump, and
+  settlement proof chain. Include the production fixed-runner hostile matrix:
+  malformed/repeated commit prefixes before subprocess, missing executable,
+  non-zero exit, timeout, output caps, malformed/multiple `ls-tree` records,
+  path/mode/type/OID mismatch, oversized/non-canonical size, short/extra blob,
+  inherited hostile Git environment, shell use, and argv outside the allowlist.
+  Expect failures because v2 baseline/transition validation is absent. Record
+  no implementation result from the earlier preflight blocker.
+
+- [ ] **Step 5: Implement the fixed Git runner and baseline comparison.** Pass
+  every contract commit through `parse_git_sha1()` and give Git only the
   returned 40-hex OID. Set `GIT_EXECUTABLE = "/usr/bin/git"`, `shell=False`, a
   10-second timeout, and a newly constructed closed environment with
   `HOME=/nonexistent`, `PATH=/usr/bin:/bin`, `LANG=C`, `LC_ALL=C`,
@@ -401,31 +486,43 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
   than `2_000_000`; cap metadata stdout at 65,536 bytes and every stderr at
   16,384 bytes; read no blob until its size passes; cap blob stdout at the
   declared size; kill the process on timeout or cap overflow; and require
-  returned blob length to equal the declared size. Treat timeout, non-zero
-  exit, overflow, malformed/extra output, type,
-  mode, path, size, or length mismatch as value-free `RIA-SNAPSHOT`; never use
-  `HEAD`, revision expressions, a shell, or lazy/network fetch. Derive Current
-  paths from exact registry membership, derive every comparison digest, and
-  compare proposed tracked regular files. For README projections, mask only the
-  exact declared table cells or one link destination before byte comparison;
-  all remaining bytes stay protected. Do not infer a baseline from worktree
-  bytes and do not exempt a whole README.
+  returned blob length to equal the declared size. Treat missing executable,
+  timeout, non-zero exit, output overflow, malformed/multiple tree records,
+  mismatched path, non-blob/symlink mode, malformed OID, non-canonical or
+  oversized size, and short/extra bytes as value-free findings; never use
+  `HEAD`, revision expressions, a shell, inherited hostile Git variables, or
+  lazy/network fetch. Exercise the complete hostile matrix through the
+  production runner. Compare registries first, derive Current paths/digests
+  second, then compare exact proposed tracked regular files. Mask only declared
+  cells or one link destination; never infer a baseline from worktree bytes.
 
-- [ ] **Step 5: Populate production guards without member duplication.** Pin
-  snapshot evidence baseline
-  `git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; reference the five Historical/Resolved audit
-  pack IDs and Historical research pack `research/2026-07-04-wer`, and reference
-  Current audit/research pack IDs only. Derive all direct tracked Markdown
-  members and SHA-256 values from the pinned commit and Current registry at
-  validation time. Declare the exact overlay/table/link projections from Step 2
-  and no mutable README path.
+- [ ] **Step 6: Implement one-shot transition and durable settlement checks.**
+  Validate exact candidate bytes while the active map remains at its old pin.
+  Keep the registry and every non-target Current member old-baseline exact.
+  Normal validation may accept the one open transition; terminal
+  `--require-settled-baselines` may not. For settlement, require the current
+  contract to change no protected content, set only the affected map value to
+  literal `transitionCommit`, remove the open record, and append its matching
+  proof. Read that commit's contract, registry, target, and non-target blobs
+  through the fixed runner. No hidden or detached candidate commit is allowed.
 
-- [ ] **Step 6: Run focused and production GREEN.** Run the full unit module,
-  CLI self-test, production CLI, strict document registry, strict Markdown,
-  and strict cross-link validation. Expect zero snapshot/overlay findings and
-  no changes to protected observation files.
+- [ ] **Step 7: Populate production guards without member duplication.** Keep
+  Historical source commit
+  `git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47` only for the five named
+  audit packs and `research/2026-07-04-wer`. Set the exact two-key Current map
+  to `git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`, leave production
+  `baselineTransitions` and `baselineSettlements` empty, and declare only the
+  Step 2 projections. Derive all Current READMEs, members, paths, states, and
+  digests; declare no mutable README path.
 
-- [ ] **Step 7: Run the RIA-002 commit gate, review, and commit.** Run pre-commit
+- [ ] **Step 8: Run focused and production GREEN.** Run the full unit module,
+  CLI self-test, normal production CLI, production CLI with
+  `--require-settled-baselines`, Draft 2020-12 schema/instance validation,
+  strict document registry, strict Markdown, and strict cross-links. Expect
+  zero snapshot/overlay/transition findings, exact production map equality,
+  empty production transitions, and no protected observation changes.
+
+- [ ] **Step 9: Run the RIA-002 commit gate, review, and commit.** Run pre-commit
   for the RIA-002 files, full all-files pre-commit, formatter-diff inspection,
   affected-hook rerun, and both diff checks. After fresh requirements and
   quality approval and any required rerun, commit with
@@ -644,30 +741,31 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 **Files:**
 
-- Modify: `docs/03.specs/038-reference-information-architecture/spec.md`
-- Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/2026-07-22-reference-information-architecture.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-22-reference-information-architecture.md`
-- Modify: `docs/04.execution/tasks/README.md`
-- Modify: `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
+- C1 lifecycle closure modifies exactly: Spec 038 and its index, this Plan and
+  its index, and the reciprocal Task and its index. The ledger is untouched.
+- C2 postflight evidence modifies exactly the same six lifecycle paths plus
+  `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
+  and `docs/90.references/data/reference-information-architecture.json`.
+- C3 settlement modifies exactly
+  `docs/90.references/data/reference-information-architecture.json`.
 
 **Interfaces:**
 
 - Consumes: reviewed activation and RIA-001 through RIA-006 commits.
 - Produces: exact Task results, atomic `active -> done` Spec/Plan/Task proposal,
-  closure commit, explicit-ref postflight, and a separately gated evidence-only
-  commit whose own identity is never self-claimed.
+  six-file closure commit C1, explicit-ref postflight, eight-file evidence and
+  open-transition commit C2, and contract-only settlement commit C3. No commit
+  claims its own content-addressed identity.
 
 - [ ] **Step 1: Prepare terminal evidence without pre-claiming commits.** Mark
   each RIA row Done only with exact observed test/review/commit evidence; update
-  Spec/Plan/Task and all three indexes in one staged lifecycle proposal; update
-  the two migration-ledger rows and inventory/freshness counts. Keep closure
-  and evidence-update commit identities explicitly unidentified until observed.
+  Spec/Plan/Task and all three indexes in one staged lifecycle proposal. Do not
+  change the migration ledger or contract in C1. Keep C1, C2, and C3 identities
+  explicitly unidentified until each preceding commit is observed.
 
 - [ ] **Step 2: Run terminal repository QA.** Run focused tests, production
   reference validation, generator no-diff, registry self-test/strict, staged
-  lifecycle, strict Markdown/links, aggregate QA, exact seven-file pre-commit,
+  lifecycle, strict Markdown/links, aggregate QA, exact six-file pre-commit,
   `env TMPDIR=/tmp pre-commit run --all-files`, formatter-diff inspection,
   affected-hook reruns, and both diff checks. Require observed PASS; a skipped
   strict hook cannot substitute for closure evidence.
@@ -679,43 +777,71 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 - [ ] **Step 4: Run the closure commit gate and commit.** Re-run the exact
   changed-file and all-files gates after the final review, inspect formatter
-  diffs, rerun affected hooks, require both diff checks, then commit the seven
-  lifecycle paths with
+  diffs, rerun affected hooks, require both diff checks, then commit the exact
+  six lifecycle paths with
   `docs(sdlc): close reference information architecture tranche`.
+  The ledger remains byte-identical in C1.
 
 - [ ] **Step 5: Verify clean-tree postflight.** Run explicit-ref lifecycle from
-  the activation commit to the closure commit, focused/production/generator,
+  the activation commit to C1, focused/production/generator,
   strict document, aggregate, all-files pre-commit, `git diff --check`, and
   clean status. Record only directly observed outcomes.
 
-- [ ] **Step 6: Prepare and gate the postflight evidence update.** Add the
-  observed closure commit and postflight results to Spec/Plan/Task/index/ledger
-  without identifying the evidence-update commit. Run exact changed-file and
-  all-files pre-commit, inspect formatter diffs, rerun affected hooks, require
-  both diff checks, and obtain task-scoped requirements/quality approval.
+- [ ] **Step 6: Prepare the exact C2 postflight transition.** Add the observed
+  C1 identity and postflight results to the six lifecycle docs/indexes, update
+  the migration ledger and its inventory/freshness evidence, and add exactly one
+  `ria-007-postflight-ledger` transition to the contract. The transition keeps
+  the research baseline at its active pin, names the registry-derived ledger
+  subject, and commits the exact proposed ledger SHA-256 and byte length. All
+  other Current members and registry bytes remain old-baseline exact. C2 changes
+  exactly eight files; it contains no C2 SHA and makes no self-claim.
 
-- [ ] **Step 7: Commit the evidence update.** Commit with
-  `docs(sdlc): record reference architecture postflight`, rerun strict document
-  and aggregate checks, and require clean status. Record no remote/live PASS.
+- [ ] **Step 7: Gate and commit C2.** Run focused transition tests, normal
+  production validation, and prove terminal `--require-settled-baselines`
+  intentionally fails only for the open transition. Run staged lifecycle,
+  strict documents, aggregate, exact eight-file pre-commit, all-files
+  pre-commit, formatter/status inspection, affected-hook reruns, and both diff
+  checks. Obtain task-scoped requirements/quality approval, then commit with
+  `docs(sdlc): record reference architecture postflight`. Re-run normal
+  production validation and require clean status; do not claim remote/live PASS.
+
+- [ ] **Step 8: Prepare and commit C3 baseline settlement.** Modify only the
+  contract: set the research `currentPackBaselines` value to literal C2, remove
+  the open transition, and append its durable settlement proof with literal
+  `transitionCommit` C2. Change no registry, ledger, lifecycle, README, or other
+  protected content. The validator must read C2's contract and blobs through the
+  fixed runner and prove the matching transition, prior baseline/registry
+  equality, exact target bytes, and unchanged non-targets. Run focused direct-
+  jump/settlement/reuse tests, normal and `--require-settled-baselines`
+  production validation, exact contract-only pre-commit, all-files pre-commit,
+  formatter/status inspection, affected-hook reruns, and both diff checks; then
+  commit the reviewed settlement and require clean status.
+
+- [ ] **Step 9: Verify terminal settlement postflight.** Run explicit-ref
+  lifecycle and all focused/production/generator/strict/aggregate/all-files
+  gates against C3. Require empty open transitions, a durable settlement chain,
+  terminal `--require-settled-baselines` PASS, and clean status. Rollback is
+  C3, then C2, then C1; never roll C2 back while retaining C3's baseline proof.
 
 ## Verification Plan
 
 | Spec criterion | Deterministic evidence | Required result |
 | --- | --- | --- |
-| VAL-RIA-001 | Existing Current-pack registry/link self-tests plus focused pack-reference fixtures | Exactly one audit and one research Current pointer; contract references but does not duplicate pack authority |
-| VAL-RIA-002 | Pinned source/blob/digest fixtures and production observation guards | Historical/Resolved audit and Historical research observation bodies, including fact-bearing README bytes outside projections, equal committed baseline |
-| VAL-RIA-003 | Current protected-body and exact table/link projection fixtures | Only the remediation overlay and declared navigation cells/link destinations can change; snapshot facts remain protected |
+| VAL-RIA-001 | Schema-v2 exact baseline-map, registry equality, Current-pack registry/link, and pack-reference fixtures | Exactly one audit and one research Current pointer; map keys equal registry IDs; contract does not duplicate pack authority |
+| VAL-RIA-002 | Historical source plus per-Current-pack fixed Git/blob/digest fixtures and production observation guards | Historical/Resolved bodies equal `8fb9821`; Current registry/README/member/state authority equals its map pin; `8fb9821` fails and `15bba3d` passes the known ledger case |
+| VAL-RIA-003 | Current projection, open-transition, target/non-target, direct-jump, and settlement-chain fixtures | Only declared projections or the exact one-shot ledger candidate can change; C3 proves C2 and terminal settled validation passes |
 | VAL-RIA-004 | Data asset URL/date/adopted/rejected-scope/trigger fixtures and production contract | Every governed data asset has repo evidence, checked source, adopted and rejected scope, and refresh trigger |
 | VAL-RIA-005 | Generator ownership fixtures and `generate-llm-wiki-index.sh --check` | One generator relation and zero output drift |
 | VAL-RIA-006 | Current-claim, generated/manual, and normalized policy-copy fixtures | Zero duplicate owners or copied active policy/procedure paragraphs |
-| Repository closure | Strict registry/Markdown/links/lifecycle, aggregate, all-files pre-commit, diff, independent review | All repository-static lanes PASS and live/remote lanes remain accurately bounded |
+| Repository closure | Strict registry/Markdown/links/lifecycle, aggregate, all-files pre-commit, diff, independent review, and `--require-settled-baselines` | C1/C2/C3 chain is durable, production transitions are empty at terminal state, all repository-static lanes PASS, and live/remote lanes remain accurately bounded |
 
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| New contract duplicates Current-pack authority | Two sources disagree about members, paths, digests, or pointers | Reference registry pack IDs and pinned commits only; derive Current members and digests at validation time and forbid those fields in the schema |
+| New contract duplicates Current-pack authority | Two sources disagree about members, states, paths, digests, or pointers | Require exact map-key/registry equality, pin commits only, derive Current members/digests after baseline/proposed registry equality, and forbid duplicated fields |
 | Worktree bytes become their own baseline | Existing drift is blessed silently | Pin a committed source, verify object type and declared digest, and read exact Git objects |
+| Baseline advances without durable evidence | Protected Current bytes can be silently blessed | Allow one exact member transition, require C2 candidate bytes plus unchanged non-targets, and settle only through a C3 proof that reads literal C2 |
 | Overlay rule permits broad mutation | Observation facts can be rewritten as closure evidence | Permit the exact remediation body and table-cell/link-destination projections only; reject whole README paths, globs, undeclared sections, and fact-cell changes |
 | Paragraph-copy scan produces noise | Valid analysis is blocked or broad allowlists appear | Normalize visible paragraphs, use a 160-character minimum, classify structural/link-only text, and bind every exception to one canonical/reference path pair, digest, role, and reason |
 | Generator check becomes arbitrary execution | Contract data can run commands | Map one exact check string to a fixed argv; never invoke through a shell |
@@ -724,8 +850,8 @@ generator/input/output/check relation, and normalized duplicate-owner checks.
 
 Rollback is newest-first by reviewed logical commit. Before RIA-007 terminal
 closure, revert only the failing package and its exact contract/index changes.
-After closure, revert the evidence-update commit first, then closure, then
-RIA-006 through RIA-001, and the seven-file activation commit last. Preserve
+After closure, revert C3, then C2, then C1, then RIA-006 through RIA-001, and
+the seven-file activation commit last. Preserve
 reviewed prerequisite commits `5ed6de6` and `fdc86ee` unless their own active
 control contract is separately shown to regress. Never remove a guard before
 restoring the observation, generator, or owner relation it protects.
@@ -739,10 +865,12 @@ restoring the observation, generator, or owner relation it protects.
 - All six Spec 038 criteria pass in focused production validation, with stable
   diagnostics and hostile fixtures covering negative boundaries.
 - Current audit/research identity remains owned only by the existing registry;
-  no parallel member or pointer source exists.
+  the exact baseline-map keys mirror it and no parallel member, state, path,
+  digest, or pointer source exists.
 - Historical/Resolved audit, Historical research, and protected Current
   observation bytes match pinned committed baselines; only declared
-  overlay/navigation projections remain mutable.
+  overlay/navigation projections or the one-shot RIA-007 ledger transition are
+  mutable.
 - Every governed data asset has repo evidence, source URL, checked date,
   adopted/rejected scope, and refresh trigger; the generated wiki has one owner
   and zero drift.
@@ -750,7 +878,8 @@ restoring the observation, generator, or owner relation it protects.
   paragraphs are zero or represented only by verified pair-scoped structural
   exceptions.
 - Strict document, reference, aggregate, all-files pre-commit, diff, and
-  independent whole-tranche reviews pass; worktree status is clean.
+  independent whole-tranche reviews pass; the C1/C2/C3 chain is proven,
+  terminal settled-baseline validation passes, and worktree status is clean.
 - Spec 038, this Plan, its Task, indexes, registry relation, and migration
   ledger agree on terminal state without activating Spec 039 or PRD-003.
 

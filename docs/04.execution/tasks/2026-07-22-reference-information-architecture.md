@@ -27,6 +27,16 @@ freshness evidence, generator relations, and duplicate-owner rules. It does
 not authorize observation rewriting, CI/FIFO work, live checks, ignored
 scratch inspection, or Specs 039-046 activation.
 
+RIA-002 design preflight at reviewed RIA-001 head
+`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` found that the original
+`8fb9821497aaa93d9ed5fc1a69b60c628b047b47` Current baseline could not pass:
+activation commit `cb0c1f6` changed the protected research migration ledger's
+inventory boundary from 444 to 446 outside all allowed projections. Work
+stopped before RIA-002 RED or implementation. This correction requires schema
+version 2, separate Historical and Current baselines, and a one-shot
+transition/durable-settlement chain; it records no implementation or review
+result.
+
 ## Inputs
 
 - [Reference Information Architecture Implementation Plan](../plans/2026-07-22-reference-information-architecture.md)
@@ -45,12 +55,12 @@ scratch inspection, or Specs 039-046 activation.
 | --- | --- | --- | --- | --- | --- | --- |
 | RIA-000 | Activation gate | Commit the exact seven-file reciprocal Plan/Task activation with staged lifecycle, complete per-commit QA, independent planning re-reviews, evidence baseline `8fb9821`, and rollback parent `fdc86ee`. | platform | In Progress | Plan-only RED, focused GREEN, reviewed active-control prerequisite, full activation QA, requirements compliance, and quality approval observed; activation commit and postflight remain pending. | RED: `LIFECYCLE-CREATE`, Plan 1/Task 0. GREEN: staged lifecycle PASS, registry self-test 119, strict inventory 446, Markdown 0, links valid, active controls 2/1, changed/all-files pre-commit, Markdownlint, and both diff checks PASS. Final re-reviews: `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, findings none. |
 | RIA-001 | VAL-RIA-001 | Add the closed Draft 2020-12 reference schema/contract, safe loader, stable diagnostics, CLI self-test, and hostile boundary fixtures without duplicating Current member paths, digests, or pointers. | platform | Queued | Not executed. | Must begin with missing-target and malformed-contract RED cases, then pass focused unit, `Draft202012Validator` schema/instance, CLI self-test, production skeleton, complete commit gate, and review. |
-| RIA-002 | VAL-RIA-002, VAL-RIA-003 | Protect Historical/Resolved audits, Historical research, and registry-derived Current members while allowing only the remediation body and exact table/link navigation projections. | platform | Queued | Not executed. | Must reject one-byte protected drift, fact-bearing README changes, member/digest duplication, invalid source objects, broad mutability, and exception reuse. |
+| RIA-002 | VAL-RIA-002, VAL-RIA-003 | Implement schema-v2 separate Historical/Current baselines, exact registry-derived Current protection, bounded overlay projections, and the one-shot ledger transition/durable settlement chain. | platform | Queued | Not executed. | Preflight only: `8fb9821` fails the Current ledger changed by `cb0c1f6` from 444 to 446 outside projections; `15bba3d` is the corrected initial Current baseline. No RED, implementation, or RIA-002 review occurred. Required tests cover exact map/registry equality, fixed Git hostility, duplication rejection, open/stale/multiple/target/non-target transitions, direct jumps, settlement proof, and empty production transitions. |
 | RIA-003 | VAL-RIA-004 | Enforce repo evidence, HTTPS source, checked date, adopted/rejected scope, and refresh trigger for every current data asset. | platform | Queued | Not executed. | Named source-ledger RED selectors, production data inventory, complete commit gate, and task review are required. |
 | RIA-004 | VAL-RIA-005 | Enforce one fixed-argv generator/input/output/check relation and zero LLM Wiki drift. | platform | Queued | Not executed. | Named generator relation/command/drift RED selectors, direct no-diff, complete commit gate, and task review are required. |
 | RIA-005 | VAL-RIA-001, VAL-RIA-006 | Reject duplicate Current and generated/manual owners plus normalized active-policy copies, with only exact pair-scoped structural exceptions. | platform | Queued | Not executed. | Named duplicate/copy/exception-reuse RED selectors, zero production findings, complete commit gate, and task review are required. |
 | RIA-006 | VAL-RIA-001 through VAL-RIA-006 | Integrate self-test-before-production validation into repository aggregate QA and command inventories. | platform | Queued | Not executed. | Exact aggregate invocation RED/GREEN, full aggregate, complete commit gate, independent review, and logical integration commit are required. |
-| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Run full/all-files QA and independent whole-tranche review, close Spec/Plan/Task atomically, then record clean-tree postflight in a separately gated evidence commit. | platform | Queued | Not executed. | Requires focused/production/generator, strict documents/lifecycle, aggregate, all-files, formatter/diff review, exact verdicts, closure commit, explicit-ref postflight, evidence-update gate, and clean status. |
+| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Run full/all-files QA and independent whole-tranche review, then close through C1 six-file lifecycle closure, C2 eight-file postflight ledger transition, and C3 contract-only settlement. | platform | Queued | Not executed. | Requires exact verdicts and gates, C1 postflight with ledger untouched, C2 open transition with no self-claim, C3 proof naming literal C2, terminal `--require-settled-baselines`, rollback C3 -> C2 -> C1, and clean status. |
 
 ## Approval and Safety Boundaries
 
@@ -72,7 +82,8 @@ scratch inspection, or Specs 039-046 activation.
 - **Static Validation**: Focused unit/self-test/production reference checks,
   generated LLM Wiki no-diff, strict registry/Markdown/cross-document and
   staged lifecycle checks, repository aggregate, all-files pre-commit,
-  formatter-diff review, and `git diff --check`.
+  formatter-diff review, `git diff --check`, and terminal
+  `--require-settled-baselines` validation.
 - **Live Validation**: `DEFER`. Repository-static results do not prove provider,
   GitHub-hosted, Kubernetes, Vault, ESO, Argo CD, credential, or live state.
 - **Secret / Vault Handling**: Do not open or print secret values. Diagnostics
@@ -80,8 +91,9 @@ scratch inspection, or Specs 039-046 activation.
   ignored scratch is never an evidence source.
 - **Rollback Plan**: Reverse newest reviewed logical commit first. Before
   closure, revert the failing RIA package only. After closure, revert the
-  evidence-update commit, closure, then RIA-006 through RIA-001 and activation
-  last; restore each protected owner relation before removing its guard.
+  contract-only C3 settlement, eight-file C2 transition/postflight evidence,
+  six-file C1 closure, then RIA-006 through RIA-001 and activation last; restore
+  each protected owner relation before removing its guard.
 - **Evidence Location**: This Task, reviewed logical commits, the Stage 90
   reference IA contract, focused tests/fixtures, aggregate results, and terminal
   lifecycle records. Temporary output and subagent scratch are not closure
@@ -135,6 +147,15 @@ LLM Wiki no-diff check are reusable baseline controls only; they do not prove
 the missing immutability, overlay, source/freshness, generator-relation, or
 duplicate-owner criteria.
 
+RIA-002 preflight additionally proved a design blocker, not a RED result. The
+single `8fb9821` pin predates activation commit `cb0c1f6`, whose protected
+Current research ledger update changed 444 inventory rows to 446 outside the
+overlay model. The corrected design retains `8fb9821` only for five
+Historical/Resolved audit packs and `research/2026-07-04-wer`; exact Current map
+keys pin both live packs to `15bba3d`, and future ledger advancement requires
+the reviewed open-transition/settlement chain. RIA-002 remains Queued and no
+implementation, test, review, commit, remote, or live result is claimed.
+
 ## Traceability
 
 - **Plan**: [Reference Information Architecture Implementation Plan](../plans/2026-07-22-reference-information-architecture.md)
@@ -147,9 +168,9 @@ duplicate-owner criteria.
 | --- | --- | --- |
 | [RIA-000](../plans/2026-07-22-reference-information-architecture.md#task-0-ria-000--atomic-reciprocal-planning-activation) | In Progress. | Plan-only lifecycle RED, focused activation GREEN, reviewed active-control prerequisite, `active_controls=2/1`, changed/all-files QA PASS, requirements compliance, and quality approval are observed; commit and postflight are pending. |
 | [RIA-001](../../03.specs/038-reference-information-architecture/spec.md#success-criteria--verification-plan) | Queued. | Closed contract, loader, CLI, and hostile boundary fixtures are not implemented. |
-| N/A — RIA-002 shares the Plan linked in RIA-000 | Queued. | Audit/research observation and exact overlay/navigation projection guards are not implemented. |
+| N/A — RIA-002 shares the Plan linked in RIA-000 | Queued. | Preflight blocker recorded (`8fb9821` versus `cb0c1f6`, ledger 444 -> 446); schema-v2 baselines, guards, transition, settlement, RED/GREEN, and review are not implemented. |
 | N/A — RIA-003 shares the Plan linked in RIA-000 | Queued. | Source/scope/freshness validation is not implemented. |
 | N/A — RIA-004 shares the Plan linked in RIA-000 | Queued. | Generated ownership and no-diff validation are not implemented. |
 | N/A — RIA-005 shares the Plan linked in RIA-000 | Queued. | Duplicate Current/generated/manual/policy-owner validation is not implemented. |
 | N/A — RIA-006 shares the Plan linked in RIA-000 | Queued. | Aggregate integration and command inventory changes are not implemented. |
-| N/A — RIA-007 shares the Plan linked in RIA-000 | Queued. | Whole-tranche review, atomic closure, postflight, and evidence update are pending. |
+| N/A — RIA-007 shares the Plan linked in RIA-000 | Queued. | Whole-tranche review and the C1 six-file closure, C2 eight-file transition evidence, and C3 contract-only settlement are pending. |
