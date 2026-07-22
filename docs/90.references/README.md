@@ -110,6 +110,7 @@ docs/90.references/
 - `90.references/data/tech-stack-version-inventory.md`의 버전 값은 실제 repo manifest/config와 함께 유지될 때만 기준값으로 취급한다.
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
 - Audit snapshot은 checked-date 기준 implementation evidence를 요약할 뿐이며 active policy, plans, tasks, runbooks, CI semantics, live runtime readiness를 소유하지 않는다.
+- Reference Information Architecture 검사는 registry와 collection index의 단일 Current owner를 대조하고, generated output과 Current manual owner의 충돌을 거부하며, Stage 00 governance 또는 Stage 05 policy/runbook에서 Current pack으로 복사된 160자 이상의 normalized visible paragraph를 차단한다. 구조적 예외는 source path, reference path, paragraph digest, role, reason이 모두 일치하는 한 쌍에만 적용된다.
 
 ### Reference Folder Roles
 

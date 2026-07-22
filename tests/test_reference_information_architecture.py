@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
+import tracemalloc
 import unittest
 from contextlib import redirect_stderr
 from io import StringIO
@@ -57,6 +59,14 @@ SOURCE_FRESHNESS = (
 GENERATOR_COLLISION = (
     REPOSITORY_ROOT
     / "tests/fixtures/reference-information-architecture/generator-collision.json"
+)
+CURRENT_OWNER = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/current-owner.json"
+)
+POLICY_COPY = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/policy-copy.json"
 )
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
@@ -180,6 +190,88 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         path = Path("scripts/generate-llm-wiki-index.sh")
         (root / path).write_bytes(payload)
         self._git_in(root, "add", "--", path.as_posix())
+
+    def _duplicate_repository(
+        self,
+        *,
+        audit_index: str | None = None,
+        extra_current_members: dict[str, str] | None = None,
+    ) -> tuple[Path, dict[str, object], dict[str, object], dict[str, object]]:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        owners = json.loads(CURRENT_OWNER.read_text(encoding="utf-8"))
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        extra_current_members = extra_current_members or {}
+        audit_members = [
+            "stage00-copy.md",
+            "policy-copy.md",
+            *(
+                Path(path).name
+                for path in extra_current_members
+                if "/audits/2026-07-11-weia/" in path
+            ),
+        ]
+        research_members = [
+            "runbook-copy.md",
+            *(
+                Path(path).name
+                for path in extra_current_members
+                if "/research/2026-07-07-wer/" in path
+            ),
+        ]
+        payloads = {
+            "docs/99.templates/support/document-profiles.json": json.dumps(
+                {
+                    "referenceCurrentPacks": {
+                        "profileId": "content/reference",
+                        "packs": [
+                            {
+                                "id": "audits/2026-07-11-weia",
+                                "members": audit_members,
+                                "allowedStates": ["done"],
+                            },
+                            {
+                                "id": "research/2026-07-07-wer",
+                                "members": research_members,
+                                "allowedStates": ["active", "accepted"],
+                            },
+                        ],
+                    }
+                },
+                indent=2,
+            )
+            + "\n",
+            "docs/90.references/audits/README.md": audit_index
+            if audit_index is not None
+            else owners["auditIndex"],
+            "docs/90.references/research/README.md": owners["researchIndex"],
+            "docs/90.references/audits/2026-07-11-weia/README.md": "# Audit pack\n",
+            "docs/90.references/research/2026-07-07-wer/README.md": "# Research pack\n",
+            copies["stage00"]["canonicalPath"]: copies["stage00"][
+                "canonicalParagraph"
+            ]
+            + "\n",
+            copies["stage00"]["referencePath"]: "No copied policy text.\n",
+            copies["policy"]["canonicalPath"]: copies["policy"][
+                "canonicalParagraph"
+            ]
+            + "\n",
+            copies["policy"]["referencePath"]: "No copied policy text.\n",
+            copies["runbook"]["canonicalPath"]: copies["runbook"][
+                "canonicalParagraph"
+            ]
+            + "\n",
+            copies["runbook"]["referencePath"]: "No copied runbook text.\n",
+            **extra_current_members,
+        }
+        for relative, payload in payloads.items():
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(payload, encoding="utf-8")
+        self._git_in(root, "init", "--quiet")
+        self._git_in(root, "add", "--", *sorted(payloads))
+        return root, self._minimal_contract(), owners, copies
 
     def _assert_generator_failure(
         self, findings: list[ria.Finding], *secret_values: str
@@ -1142,6 +1234,1346 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 root, self._generator_contract([stale_owner])
             )
         )
+
+    def test_duplicate_current_and_generated_manual_owners_fail(self) -> None:
+        root, contract, owners, _copies = self._duplicate_repository()
+        self.assertEqual(ria.validate_duplicate_rules(root, contract), [])
+
+        self._git_in(
+            root,
+            "-c",
+            "user.name=RIA Fixture",
+            "-c",
+            "user.email=ria-fixture@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "fixture baseline",
+        )
+        commit_oid = self._git_in(root, "rev-parse", "HEAD").decode().strip()
+        audit_index_path = root / "docs/90.references/audits/README.md"
+        audit_index_path.write_text(owners["duplicateAuditIndex"], encoding="utf-8")
+        self._git_in(root, "add", "--", "docs/90.references/audits/README.md")
+        self.assertTrue(ria.validate_duplicate_rules(root, contract))
+        self.assertEqual(
+            ria.validate_duplicate_rules(
+                root, contract, proposed_commit=f"git-sha1:{commit_oid}"
+            ),
+            [],
+        )
+        audit_index_path.write_text(owners["auditIndex"], encoding="utf-8")
+        self.assertTrue(ria.validate_duplicate_rules(root, contract))
+
+        root, contract, _owners, _copies = self._duplicate_repository(
+            audit_index=owners["duplicateAuditIndex"]
+        )
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertTrue(findings)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-DUPLICATE"})
+        self.assertIn(
+            "docs/90.references/audits/README.md",
+            {finding.path for finding in findings},
+        )
+
+        duplicate_heading = (
+            owners["auditIndex"]
+            + "\n### Audit Pack Registry\n\n"
+            + "| Pack | Pack role |\n| --- | --- |\n"
+            + "| [rogue](./2026-07-12-weia/README.md) | Current pack |\n"
+        )
+        root, contract, _owners, _copies = self._duplicate_repository(
+            audit_index=duplicate_heading
+        )
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertIn(
+            "docs/90.references/audits/README.md",
+            {finding.path for finding in findings},
+        )
+
+        output_path = owners["manualGeneratedOutputPath"]
+        root, contract, _owners, _copies = self._duplicate_repository(
+            extra_current_members={output_path: "# Manually authored current report\n"}
+        )
+        contract["generatedAssets"] = [
+            {
+                "id": "manual-generated-collision",
+                "generatorPath": "scripts/generate-llm-wiki-index.sh",
+                "inputRoots": ["docs/90.references/llm-wiki/README.md"],
+                "outputPath": output_path,
+                "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+                "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md",
+            }
+        ]
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertIn(output_path, {finding.path for finding in findings})
+
+    def test_duplicate_rules_require_one_current_owner_per_collection(self) -> None:
+        for collection, second_pack in (
+            ("audits", "2026-07-12-weia"),
+            ("research", "2026-07-08-wer"),
+        ):
+            with self.subTest(collection=collection):
+                root, contract, owners, _copies = self._duplicate_repository()
+                registry_path = root / ria.REGISTRY_PATH
+                registry = json.loads(registry_path.read_text(encoding="utf-8"))
+                registry["referenceCurrentPacks"]["packs"].append(
+                    {
+                        "id": f"{collection}/{second_pack}",
+                        "members": [],
+                        "allowedStates": ["active"],
+                    }
+                )
+                registry_path.write_text(
+                    json.dumps(registry, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                second_readme = (
+                    root
+                    / "docs/90.references"
+                    / collection
+                    / second_pack
+                    / "README.md"
+                )
+                second_readme.parent.mkdir(parents=True)
+                second_readme.write_text("# Second Current pack\n", encoding="utf-8")
+                if collection == "audits":
+                    index_path = root / "docs/90.references/audits/README.md"
+                    index_path.write_text(
+                        owners["duplicateAuditIndex"], encoding="utf-8"
+                    )
+                else:
+                    index_path = root / "docs/90.references/research/README.md"
+                    index_path.write_text(
+                        owners["researchIndex"]
+                        + (
+                            "| [2026-07-08-wer/README.md]"
+                            "(./2026-07-08-wer/README.md) | Current pack |\n"
+                        ),
+                        encoding="utf-8",
+                    )
+                self._git_in(
+                    root,
+                    "add",
+                    "--",
+                    ria.REGISTRY_PATH.as_posix(),
+                    index_path.relative_to(root).as_posix(),
+                    second_readme.relative_to(root).as_posix(),
+                )
+
+                findings = ria.validate_duplicate_rules(root, contract)
+                self.assertTrue(findings)
+                self.assertEqual(
+                    {finding.rule_id for finding in findings},
+                    {"RIA-DUPLICATE"},
+                )
+
+    def test_policy_paragraph_copy_fails(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        ignored_path = (
+            "docs/90.references/research/2026-07-07-wer/ignored-structures.md"
+        )
+        short_path = "docs/90.references/research/2026-07-07-wer/short-copy.md"
+        copied = copies["stage00"]["canonicalParagraph"]
+        ignored = (
+            f"# {copied}\n\n"
+            f"```text\n{copied}\n```\n\n"
+            f"<!-- {copied} -->\n\n"
+            f"<pre>\n{copied}\n</pre>\n\n"
+            f"| {copied} | Route |\n| --- | --- |\n\n"
+            "- [Policy](../../../../00.agent-governance/README.md)\n"
+            "- [Runbook](../../../../05.operations/runbooks/README.md)\n\n"
+            f"> This file is generated; do not edit. {copied}\n\n"
+            f"    {copied}\n"
+        )
+        short = "x" * 159
+        root, contract, _owners, copies = self._duplicate_repository(
+            extra_current_members={
+                ignored_path: ignored,
+                short_path: short + "\n",
+            }
+        )
+        short_source = root / "docs/00.agent-governance/rules/short-policy.md"
+        short_source.parent.mkdir(parents=True, exist_ok=True)
+        short_source.write_text(short + "\n", encoding="utf-8")
+        self._git_in(
+            root,
+            "add",
+            "--",
+            "docs/00.agent-governance/rules/short-policy.md",
+        )
+        for family in ("stage00", "policy", "runbook"):
+            (root / copies[family]["referencePath"]).write_text(
+                copies[family]["referenceParagraph"] + "\n", encoding="utf-8"
+            )
+            self._git_in(root, "add", "--", copies[family]["referencePath"])
+
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertEqual(
+            {finding.path for finding in findings},
+            {
+                copies["stage00"]["referencePath"],
+                copies["policy"]["referencePath"],
+                copies["runbook"]["referencePath"],
+            },
+        )
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-DUPLICATE"})
+        self.assertNotIn(ignored_path, {finding.path for finding in findings})
+        self.assertNotIn(short_path, {finding.path for finding in findings})
+
+        list_path = "docs/90.references/audits/2026-07-11-weia/list-copy.md"
+        source_prefix, source_suffix = copies["stage00"]["canonicalParagraph"].split(
+            " retain", 1
+        )
+        reference_prefix, reference_suffix = copies["stage00"][
+            "referenceParagraph"
+        ].split(" retain", 1)
+        root, contract, _owners, _copies = self._duplicate_repository(
+            extra_current_members={
+                list_path: (
+                    "- This reference-only parent supplies unrelated dated analysis.\n"
+                    f"  - {reference_prefix}\n"
+                    f"    retain{reference_suffix}\n"
+                    "  - This reference-only sibling records a different observation.\n"
+                )
+            }
+        )
+        list_source = root / "docs/00.agent-governance/rules/list-policy.md"
+        list_source.write_text(
+            "- This canonical-only parent supplies a different routing rule.\n"
+            f"  - {source_prefix}\n"
+            f"    retain{source_suffix}\n"
+            "  - This canonical-only sibling records another policy rule.\n",
+            encoding="utf-8",
+        )
+        self._git_in(
+            root,
+            "add",
+            "--",
+            "docs/00.agent-governance/rules/list-policy.md",
+        )
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertIn(list_path, {finding.path for finding in findings})
+        diagnostics = "\n".join(
+            f"{finding.rule_id} {finding.path} {finding.message}"
+            for finding in findings
+        )
+        self.assertNotIn(copies["stage00"]["canonicalParagraph"], diagnostics)
+        self.assertNotIn(copies["stage00"]["referenceParagraph"], diagnostics)
+
+        started = time.monotonic()
+        normalized = ria._markdown_visible_text("[" * 8_000 + "x" * 160)  # noqa: SLF001
+        elapsed = time.monotonic() - started
+        self.assertTrue(normalized.endswith("x" * 160))
+        self.assertLess(elapsed, 1.0)
+
+    def test_duplicate_parser_normalization_edges_fail_closed(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        policy = copies["policy"]
+        policy_reference = policy["referenceParagraph"]
+        paths = {
+            "html": "docs/90.references/audits/2026-07-11-weia/html-copy.md",
+            "link-label": (
+                "docs/90.references/audits/2026-07-11-weia/link-label-copy.md"
+            ),
+            "table-cell": (
+                "docs/90.references/audits/2026-07-11-weia/table-cell-copy.md"
+            ),
+            "pipe-table": (
+                "docs/90.references/audits/2026-07-11-weia/pipe-table-copy.md"
+            ),
+            "invisible": "docs/90.references/audits/2026-07-11-weia/invisible-copy.md",
+            "blockquote-code": (
+                "docs/90.references/audits/2026-07-11-weia/blockquote-code.md"
+            ),
+            "pure-links": "docs/90.references/audits/2026-07-11-weia/pure-links.md",
+        }
+        root, contract, _owners, _copies = self._duplicate_repository(
+            extra_current_members={
+                paths["html"]: f"<span>{policy_reference}</span>\n",
+                paths["link-label"]: (
+                    policy_reference.replace(
+                        "documented rollback boundary",
+                        "[documented **rollback** boundary](../rollback.md)",
+                    )
+                    + "\n"
+                ),
+                paths["table-cell"]: (
+                    f"| Context | Copy |\n| --- | --- |\n"
+                    f"| Route | {policy_reference} |\n"
+                ),
+                paths["pipe-table"]: (
+                    f"Context | Copy\n--- | ---\nRoute | {policy_reference}\n"
+                ),
+                paths["invisible"]: (
+                    policy_reference.replace("rollback", "roll\u200bback") + "\n"
+                ),
+                paths["blockquote-code"]: f">     {policy_reference}\n",
+                paths["pure-links"]: (
+                    "- [Policy][policy]\n"
+                    "- [Guide](../folder/(nested)/guide.md)\n\n"
+                    "[policy]: ../../../../05.operations/policies/README.md\n"
+                ),
+            }
+        )
+
+        findings = ria.validate_duplicate_rules(root, contract)
+        finding_paths = {finding.path for finding in findings}
+        self.assertTrue(
+            {
+                paths["html"],
+                paths["link-label"],
+                paths["table-cell"],
+                paths["pipe-table"],
+                paths["invisible"],
+            }.issubset(finding_paths)
+        )
+        self.assertNotIn(paths["blockquote-code"], finding_paths)
+        self.assertNotIn(paths["pure-links"], finding_paths)
+
+        started = time.monotonic()
+        paragraphs = ria._visible_paragraphs(  # noqa: SLF001
+            ("[" * 32_000 + "x" * 160).encode("utf-8")
+        )
+        elapsed = time.monotonic() - started
+        self.assertEqual(len(paragraphs), 1)
+        self.assertLess(elapsed, 1.0)
+
+        started = time.monotonic()
+        ria._visible_paragraphs(("<" * 200_000).encode("utf-8"))  # noqa: SLF001
+        self.assertLess(time.monotonic() - started, 1.0)
+        self.assertNotEqual(
+            ria._markdown_visible_text("\\a" * 160),  # noqa: SLF001
+            ria._markdown_visible_text("a" * 160),  # noqa: SLF001
+        )
+        self.assertNotEqual(
+            ria._markdown_visible_text("`*x*`" * 80),  # noqa: SLF001
+            ria._markdown_visible_text("**x**" * 80),  # noqa: SLF001
+        )
+
+    def test_structural_exception_is_pair_scoped(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        structural = copies["structural"]
+        members = {
+            structural["referencePath"]: structural["referenceParagraph"] + "\n",
+            structural["secondReferencePath"]: "No copied structural text.\n",
+        }
+        root, contract, _owners, _copies = self._duplicate_repository(
+            extra_current_members=members
+        )
+        source = root / structural["canonicalPath"]
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(structural["canonicalParagraph"] + "\n", encoding="utf-8")
+        self._git_in(root, "add", "--", structural["canonicalPath"])
+        exception = {
+            "canonicalOwnerPath": structural["canonicalPath"],
+            "referencePath": structural["referencePath"],
+            "paragraphSha256": hashlib.sha256(
+                structural["normalizedVisible"].encode("utf-8")
+            ).hexdigest(),
+            "structuralRole": "navigation",
+            "reason": "Exact canonical-owner navigation repeated for routing",
+        }
+        contract["duplicateRules"]["structuralExceptions"] = [exception]
+        self.assertEqual(ria.validate_duplicate_rules(root, contract), [])
+
+        mutations = {
+            "wrong-source": {
+                **exception,
+                "canonicalOwnerPath": "docs/00.agent-governance/README.md",
+            },
+            "wrong-destination": {
+                **exception,
+                "referencePath": structural["secondReferencePath"],
+            },
+            "wrong-digest": {**exception, "paragraphSha256": "b" * 64},
+            "wrong-role": {**exception, "structuralRole": "prose"},
+            "unknown-role": {**exception, "structuralRole": "unknown"},
+            "blank-reason": {**exception, "reason": ""},
+        }
+        for name, mutation in mutations.items():
+            with self.subTest(name=name):
+                changed = json.loads(json.dumps(contract))
+                changed["duplicateRules"]["structuralExceptions"] = [mutation]
+                self.assertTrue(ria.validate_duplicate_rules(root, changed))
+
+        duplicate = json.loads(json.dumps(contract))
+        duplicate["duplicateRules"]["structuralExceptions"] = [exception, exception]
+        self.assertTrue(ria.validate_duplicate_rules(root, duplicate))
+
+        blanket = json.loads(json.dumps(contract))
+        blanket["duplicateRules"]["paragraphSha256s"] = [
+            exception["paragraphSha256"]
+        ]
+        self.assertTrue(ria.validate_duplicate_rules(root, blanket))
+
+        (root / structural["referencePath"]).write_text(
+            "No copied structural text.\n", encoding="utf-8"
+        )
+        self._git_in(root, "add", "--", structural["referencePath"])
+        self.assertTrue(ria.validate_duplicate_rules(root, contract))
+
+        (root / structural["referencePath"]).write_text(
+            structural["referenceParagraph"] + "\n", encoding="utf-8"
+        )
+        (root / structural["secondReferencePath"]).write_text(
+            structural["referenceParagraph"] + "\n", encoding="utf-8"
+        )
+        self._git_in(
+            root,
+            "add",
+            "--",
+            structural["referencePath"],
+            structural["secondReferencePath"],
+        )
+        findings = ria.validate_duplicate_rules(root, contract)
+        self.assertEqual(
+            {finding.path for finding in findings},
+            {structural["secondReferencePath"]},
+        )
+
+    def test_policy_parser_preserves_visible_structures(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        prefix, suffix = paragraph.split(" verification", 1)
+        flat_item = f"- {paragraph}\n"
+        continued_item = f"- {prefix}\n    verification{suffix}\n"
+        quoted_continued_item = f"> - {prefix}\n>     verification{suffix}\n"
+        ordinary_continuation = f"{prefix}\n    verification{suffix}\n"
+        quoted_continuation = f"> {prefix}\n>     verification{suffix}\n"
+        self.assertEqual(
+            ria._visible_paragraphs(flat_item.encode()),  # noqa: SLF001
+            ria._visible_paragraphs(continued_item.encode()),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(flat_item.encode()),  # noqa: SLF001
+            ria._visible_paragraphs(quoted_continued_item.encode()),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._visible_paragraphs((paragraph + "\n").encode()),  # noqa: SLF001
+            ria._visible_paragraphs(ordinary_continuation.encode()),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._visible_paragraphs((paragraph + "\n").encode()),  # noqa: SLF001
+            ria._visible_paragraphs(quoted_continuation.encode()),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(f">     {paragraph}\n".encode()),  # noqa: SLF001
+            (),
+        )
+
+        plain = ria._visible_paragraphs((paragraph + "\n").encode())  # noqa: SLF001
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"<span>{paragraph}</span>\n".encode()
+            ),
+            plain,
+        )
+        for tag in (
+            "script",
+            "style",
+            "pre",
+            "textarea",
+            "div",
+            "section",
+            "article",
+        ):
+            with self.subTest(raw_html=tag):
+                self.assertEqual(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        f"<{tag}>\n{paragraph}\n</{tag}>\n".encode()
+                    ),
+                    (),
+                )
+
+        linked = paragraph.replace(
+            "documented rollback boundary",
+            "[documented **rollback** boundary]"
+            "(https://example.invalid/policy_(current))",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(linked),  # noqa: SLF001
+            ria._markdown_visible_text(paragraph),  # noqa: SLF001
+        )
+        long_label = "Canonical owner navigation " + "route " * 35
+        pure_navigation = (
+            f"- [{long_label}][policy-owner]\n"
+            f"- [{long_label}](https://example.invalid/a_(nested))\n"
+            f"\n[policy-owner]: https://example.invalid/policy\n"
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(pure_navigation.encode()),  # noqa: SLF001
+            (),
+        )
+
+        expected_cell = plain[0].digest
+        for bordered in (False, True):
+            with self.subTest(bordered=bordered):
+                def row(first: str, second: str) -> str:
+                    body = f"{first} | {second}"
+                    return f"| {body} |" if bordered else body
+
+                source_table = (
+                    row("Policy", "Note")
+                    + "\n"
+                    + row("---", "---")
+                    + "\n"
+                    + row(
+                        copies["policy"]["canonicalParagraph"],
+                        "source-only sibling",
+                    )
+                    + "\n"
+                )
+                reference_table = (
+                    row("Policy", "Note")
+                    + "\n"
+                    + row("---", "---")
+                    + "\n"
+                    + row(
+                        copies["policy"]["referenceParagraph"],
+                        "reference-only sibling",
+                    )
+                    + "\n"
+                )
+                source_digests = {
+                    item.digest
+                    for item in ria._visible_paragraphs(  # noqa: SLF001
+                        source_table.encode()
+                    )
+                }
+                reference_digests = {
+                    item.digest
+                    for item in ria._visible_paragraphs(  # noqa: SLF001
+                        reference_table.encode()
+                    )
+                }
+                self.assertIn(expected_cell, source_digests)
+                self.assertIn(expected_cell, reference_digests)
+
+        left = "leftword " * 14
+        right = "rightword " * 13
+        expected_pipe = ria._visible_paragraphs(  # noqa: SLF001
+            f"{left}| {right}\n".encode()
+        )[0].digest
+        for separator in (r"\|", "`|`"):
+            with self.subTest(table_separator=separator):
+                table = (
+                    "Policy | Note\n"
+                    "--- | ---\n"
+                    f"{left}{separator} {right} | short context\n"
+                )
+                self.assertIn(
+                    expected_pipe,
+                    {
+                        item.digest
+                        for item in ria._visible_paragraphs(  # noqa: SLF001
+                            table.encode()
+                        )
+                    },
+                )
+
+        obfuscated = paragraph.replace("platform", "plat\u200bform")
+        self.assertEqual(
+            ria._markdown_visible_text(obfuscated),  # noqa: SLF001
+            ria._markdown_visible_text(paragraph),  # noqa: SLF001
+        )
+        self.assertNotEqual(
+            ria._markdown_visible_text(r"policy\name"),  # noqa: SLF001
+            ria._markdown_visible_text("policyname"),  # noqa: SLF001
+        )
+        self.assertNotEqual(
+            ria._markdown_visible_text("`**rollback**`"),  # noqa: SLF001
+            ria._markdown_visible_text("**rollback**"),  # noqa: SLF001
+        )
+
+    def test_policy_parser_preserves_commonmark_line_boundaries(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        prefix, suffix = paragraph.split(" verification", 1)
+        plain = ria._visible_paragraphs((paragraph + "\n").encode())  # noqa: SLF001
+
+        for separator in ("\n", "  \n", "\\\n"):
+            with self.subTest(line_break=repr(separator)):
+                wrapped = f"{prefix}{separator}verification{suffix}\n"
+                self.assertEqual(
+                    ria._visible_paragraphs(wrapped.encode()),  # noqa: SLF001
+                    plain,
+                )
+        for separated_container in (
+            f"{prefix}\n>     verification{suffix}\n",
+            f"> {prefix}\n    verification{suffix}\n",
+        ):
+            with self.subTest(container_boundary=separated_container[:8]):
+                self.assertEqual(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        separated_container.encode()
+                    ),
+                    (),
+                )
+
+    def test_policy_parser_preserves_literal_emphasis_characters(self) -> None:
+        self.assertEqual(
+            ria._markdown_visible_text("policy_name"),  # noqa: SLF001
+            ria._markdown_visible_text(r"policy\_name"),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("policy*name"),  # noqa: SLF001
+            ria._markdown_visible_text(r"policy\*name"),  # noqa: SLF001
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("*policy* **owner** ~~retired~~"),  # noqa: SLF001
+            "policy owner retired",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("policy~name"),  # noqa: SLF001
+            "policy~name",
+        )
+        for source, expected in (
+            ("*a**a*", "a**a"),
+            ("*a***a*", "a*a"),
+            ("**a*a**", "a*a"),
+        ):
+            with self.subTest(delimiter_rule=source):
+                self.assertEqual(
+                    ria._markdown_visible_text(source),  # noqa: SLF001
+                    expected,
+                )
+
+    def test_policy_parser_keeps_emphasis_within_link_labels(self) -> None:
+        for source, expected in (
+            ("*[policy*](https://example.invalid/policy)", "*policy*"),
+            ("[**_*](https://example.invalid/policy)", "**_*"),
+            ("[*a_**](https://example.invalid/policy)", "a_*"),
+        ):
+            with self.subTest(source=source):
+                self.assertEqual(
+                    ria._markdown_visible_text(source),  # noqa: SLF001
+                    expected,
+                )
+
+    def test_policy_parser_decodes_only_commonmark_character_references(
+        self,
+    ) -> None:
+        self.assertEqual(
+            ria._markdown_visible_text("&copy; &#169; &#xA9;"),  # noqa: SLF001
+            "© © ©",
+        )
+        self.assertNotEqual(
+            ria._markdown_visible_text("&copy &#169 &#xA9"),  # noqa: SLF001
+            "© © ©",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("`&amp;`"),  # noqa: SLF001
+            ria._markdown_visible_text("&amp;amp;"),  # noqa: SLF001
+        )
+
+    def test_policy_parser_requires_resolved_reference_links(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        unresolved = f"- [{paragraph}]\n"
+        missing_full = f"- [{paragraph}][missing]\n"
+        missing_collapsed = f"- [{paragraph}][]\n"
+        for document in (unresolved, missing_full, missing_collapsed):
+            with self.subTest(unresolved=document[-12:]):
+                self.assertTrue(
+                    ria._visible_paragraphs(document.encode())  # noqa: SLF001
+                )
+        resolved = (
+            f"- [{paragraph}][policy]\n\n"
+            "[policy]: https://example.invalid/policy\n"
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(resolved.encode()),  # noqa: SLF001
+            (),
+        )
+        for reference, definition in (
+            (r"policy\]", r"policy\]"),
+            ("p&p", "P&amp;P"),
+        ):
+            with self.subTest(resolved_reference=reference):
+                document = (
+                    f"- [{paragraph}][{reference}]\n\n"
+                    f"[{definition}]: https://example.invalid/policy\n"
+                )
+                self.assertEqual(
+                    ria._visible_paragraphs(document.encode()),  # noqa: SLF001
+                    (),
+                )
+        fenced_definition = (
+            f"- [{paragraph}][policy]\n\n"
+            "```\n[policy]: https://example.invalid/policy\n```\n"
+        )
+        self.assertTrue(
+            ria._visible_paragraphs(fenced_definition.encode())  # noqa: SLF001
+        )
+
+    def test_policy_parser_requires_complete_link_target_grammar(self) -> None:
+        for link in (
+            r"[policy](foo bar)",
+            r"[policy](foo\ bar)",
+            '[policy](foo "unterminated)',
+        ):
+            with self.subTest(invalid_inline_link=link):
+                self.assertFalse(
+                    ria._pure_link_list((link,), frozenset())  # noqa: SLF001
+                )
+
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        cases = (
+            (
+                "invalid-nested-destination",
+                f"- [{paragraph}][policy]\n\n[policy]: foo(bar\n",
+                True,
+            ),
+            (
+                "valid-multiline-destination",
+                (
+                    f"- [{paragraph}][policy]\n\n"
+                    "[policy]:\n  https://example.invalid/policy\n"
+                ),
+                False,
+            ),
+        )
+        for name, document, visible in cases:
+            with self.subTest(reference_definition=name):
+                self.assertEqual(
+                    bool(
+                        ria._visible_paragraphs(  # noqa: SLF001
+                            document.encode()
+                        )
+                    ),
+                    visible,
+                )
+
+    def test_policy_parser_handles_quoted_html_and_email_autolinks(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        plain = ria._visible_paragraphs((paragraph + "\n").encode())  # noqa: SLF001
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f'<span title=">">{paragraph}</span>\n'.encode()
+            ),
+            plain,
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("<operator@example.com>"),  # noqa: SLF001
+            "operator@example.com",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text("<o'connor@example.com>"),  # noqa: SLF001
+            "o'connor@example.com",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                "<https://example.invalid/operator's-guide>"
+            ),
+            "https://example.invalid/operator's-guide",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                "[operator@example.com](mailto:operator@example.com)"
+            ),
+            "operator@example.com",
+        )
+
+    def test_policy_parser_preserves_fence_and_raw_html_boundaries(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        invalid_close = f"```\nignored\n``` trailing\n{paragraph}\n"
+        self.assertEqual(
+            ria._visible_paragraphs(invalid_close.encode()),  # noqa: SLF001
+            (),
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"<!--\n-->{paragraph}\n".encode()
+            ),
+            (),
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                ria._mask_markdown_comments("visible <!-- hidden --> text")
+            ),
+            "visible text",
+        )
+        for raw_block in (
+            f"<?target\n{paragraph}\n?>\n",
+            f"<!DECLARATION\n{paragraph}\n>\n",
+            f"<![CDATA[\n{paragraph}\n]]>\n",
+            f"<span>\n{paragraph}\n</span>\n",
+            f"<custom-element>\n{paragraph}\n</custom-element>\n",
+        ):
+            with self.subTest(raw_block=raw_block.splitlines()[0]):
+                self.assertEqual(
+                    ria._visible_paragraphs(raw_block.encode()),  # noqa: SLF001
+                    (),
+                )
+
+    def test_policy_parser_rejects_backticks_in_fence_info(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        document = (
+            "``` invalid`\n"
+            "```\n"
+            "[policy]: https://example.invalid/policy\n"
+            "```\n"
+            f"- [{paragraph}][policy]\n"
+            "```\n"
+        )
+        self.assertTrue(
+            ria._visible_paragraphs(document.encode())  # noqa: SLF001
+        )
+
+    def test_policy_parser_preserves_comment_literals_in_code_spans(self) -> None:
+        masked = ria._mask_markdown_comments(  # noqa: SLF001
+            "`<!-- visible policy literal -->`"
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(masked),  # noqa: SLF001
+            "<!-- visible policy literal -->",
+        )
+
+    def test_policy_parser_does_not_pair_links_across_code_spans(self) -> None:
+        manufactured_link = "[policy `](u`)"
+        self.assertFalse(
+            ria._pure_link_list(  # noqa: SLF001
+                (manufactured_link,),
+                frozenset(),
+            )
+        )
+
+    def test_policy_parser_comments_respect_code_blocks(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        documents = (
+            ("tilde-fence", f"~~~\n<!--\n~~~\n{paragraph}\n"),
+            ("indented-code", f"    <!--\n\n{paragraph}\n"),
+        )
+        for name, document in documents:
+            with self.subTest(code_block=name):
+                self.assertTrue(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        document.encode()
+                    )
+                )
+
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"<!--\n-->{paragraph}\n".encode()
+            ),
+            (),
+        )
+
+    def test_policy_parser_uses_commonmark_line_and_space_rules(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        non_line_endings = (
+            "\v",
+            "\f",
+            "\x1c",
+            "\x1d",
+            "\x1e",
+            "\x85",
+            "\u2028",
+            "\u2029",
+        )
+        for separator in non_line_endings:
+            with self.subTest(non_line_ending=hex(ord(separator))):
+                document = (
+                    f"- [{paragraph}][policy]{separator}{separator}"
+                    "[policy]: https://example.invalid/policy\n"
+                )
+                self.assertTrue(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        document.encode()
+                    )
+                )
+
+        non_link_whitespace = ("\v", "\f", "\x1c", "\x1d", "\x1e")
+        for separator in non_link_whitespace:
+            with self.subTest(non_link_whitespace=hex(ord(separator))):
+                self.assertFalse(
+                    ria._pure_link_list(  # noqa: SLF001
+                        (f'[policy](target{separator}"title")',),
+                        frozenset(),
+                    )
+                )
+
+    def test_policy_parser_rejects_nested_reference_labels(self) -> None:
+        with self.subTest(surface="definition"):
+            self.assertIsNone(
+                ria._parse_reference_definition("[a[b]]: u")  # noqa: SLF001
+            )
+        with self.subTest(surface="reference-suffix"):
+            self.assertFalse(
+                ria._pure_link_list(  # noqa: SLF001
+                    ("[policy][a[b]]",),
+                    frozenset({"a[b]"}),
+                )
+            )
+
+        self.assertEqual(
+            ria._parse_reference_definition(  # noqa: SLF001
+                r"[a\[b\]]: u"
+            ),
+            "a[b]",
+        )
+        self.assertTrue(
+            ria._pure_link_list(  # noqa: SLF001
+                (r"[policy][a\[b\]]",),
+                frozenset({"a[b]"}),
+            )
+        )
+
+    def test_policy_parser_does_not_pair_links_across_opaque_tokens(
+        self,
+    ) -> None:
+        manufactured_links = (
+            '[policy <span title="](u">)',
+            "[policy <https://example.invalid/](u>)",
+        )
+        for source in manufactured_links:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    ria._pure_link_list((source,), frozenset())  # noqa: SLF001
+                )
+
+    def test_policy_parser_comments_respect_list_code_blocks(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        documents = (
+            ("unordered-tilde", f"- ~~~\n  <!--\n  ~~~\n\n{paragraph}\n"),
+            ("unordered-backtick", f"- ```\n  <!--\n  ```\n\n{paragraph}\n"),
+            ("unordered-indented", f"- item\n\n      <!--\n\n{paragraph}\n"),
+            ("ordered-tilde", f"1. ~~~\n   <!--\n   ~~~\n\n{paragraph}\n"),
+            ("ordered-backtick", f"1. ```\n   <!--\n   ```\n\n{paragraph}\n"),
+            ("ordered-indented", f"1. item\n\n       <!--\n\n{paragraph}\n"),
+            (
+                "quote-list-tilde",
+                f"> - ~~~\n>   <!--\n>   ~~~\n\n{paragraph}\n",
+            ),
+            (
+                "quote-list-backtick",
+                f"> - ```\n>   <!--\n>   ```\n\n{paragraph}\n",
+            ),
+            (
+                "quote-list-indented",
+                f"> - item\n>\n>       <!--\n\n{paragraph}\n",
+            ),
+        )
+        for name, document in documents:
+            with self.subTest(list_code=name):
+                self.assertTrue(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        document.encode()
+                    )
+                )
+
+    def test_policy_parser_preserves_invalid_inline_comments(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        invalid_inline = (
+            f"prefix <!-- unclosed {paragraph}\n",
+            f"prefix <!-- invalid -- {paragraph} -->\n",
+            f"prefix <!-- invalid {paragraph}--->\n",
+        )
+        for document in invalid_inline:
+            with self.subTest(invalid_inline=document[:32]):
+                self.assertTrue(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        document.encode()
+                    )
+                )
+
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"prefix <!-- {paragraph} --> tail\n".encode()
+            ),
+            (),
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"<!--\n{paragraph}\n".encode()
+            ),
+            (),
+        )
+
+    def test_policy_parser_excludes_only_single_non_image_links(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        cases = (
+            ("image", f"![{paragraph}](https://example.invalid/image)"),
+            ("nested", "[outer [inner](https://example.invalid/i)](u)"),
+            ("multiple", "[one](u), [two](v)"),
+        )
+        for name, source in cases:
+            with self.subTest(non_navigation=name):
+                self.assertFalse(
+                    ria._pure_link_list((source,), frozenset())  # noqa: SLF001
+                )
+
+        self.assertTrue(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"- ![{paragraph}](https://example.invalid/image)\n".encode()
+            )
+        )
+        self.assertTrue(
+            ria._pure_link_list(  # noqa: SLF001
+                ("[policy](https://example.invalid/policy)",),
+                frozenset(),
+            )
+        )
+
+    def test_policy_parser_removes_only_curated_format_controls(self) -> None:
+        removable = (
+            "\u061c",
+            "\u200e",
+            "\u202a",
+            "\u202e",
+            "\u2061",
+            "\u2063",
+            "\u2066",
+            "\u2069",
+            "\U000e0001",
+        )
+        for control in removable:
+            with self.subTest(removable=hex(ord(control))):
+                self.assertEqual(
+                    ria._markdown_visible_text(  # noqa: SLF001
+                        f"roll{control}back"
+                    ),
+                    "rollback",
+                )
+
+        for significant in ("\u200c", "\u200d"):
+            with self.subTest(significant=hex(ord(significant))):
+                self.assertNotEqual(
+                    ria._markdown_visible_text(  # noqa: SLF001
+                        f"roll{significant}back"
+                    ),
+                    "rollback",
+                )
+        self.assertNotEqual(
+            ria._markdown_visible_text("❤\ufe0f"),  # noqa: SLF001
+            ria._markdown_visible_text("❤"),  # noqa: SLF001
+        )
+
+    def test_policy_parser_applies_ordered_list_interruption_rules(self) -> None:
+        first = "policy ownership remains explicit " * 3
+        continuation = "continued verification remains reviewable " * 3
+        self.assertGreater(len(first + continuation), 160)
+        self.assertTrue(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"{first}\n2. {continuation}\n".encode()
+            )
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"{first}\n1. {continuation}\n".encode()
+            ),
+            (),
+        )
+
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        self.assertTrue(
+            ria._visible_paragraphs(  # noqa: SLF001
+                f"short\n\n2. {paragraph}\n".encode()
+            )
+        )
+
+    def test_angle_token_storage_is_compact_at_blob_boundary(self) -> None:
+        token_count = 450_000
+        payload = "<i>x" * token_count
+        payload += "x" * (ria.MAX_BLOB_BYTES - len(payload))
+        self.assertEqual(len(payload), ria.MAX_BLOB_BYTES)
+
+        tracemalloc.start()
+        started = time.monotonic()
+        try:
+            tokens = ria._inline_angle_tokens(payload)  # noqa: SLF001
+            intervals = ria._inline_opaque_intervals(  # noqa: SLF001
+                payload,
+                angle_tokens=tokens,
+            )
+            _current, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        elapsed = time.monotonic() - started
+
+        self.assertEqual(len(tokens), token_count)
+        self.assertEqual(len(intervals), token_count)
+        self.assertLess(peak, 48_000_000)
+        self.assertLess(elapsed, 12.0)
+
+    def test_policy_parser_preserves_zero_width_inline_comment_semantics(
+        self,
+    ) -> None:
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                ria._mask_markdown_comments(  # noqa: SLF001
+                    "roll<!-- hidden -->back"
+                )
+            ),
+            "rollback",
+        )
+        for source in (
+            "roll <!-- hidden -->back",
+            "roll<!-- hidden --> back",
+            "roll <!-- hidden --> back",
+        ):
+            with self.subTest(source=source):
+                self.assertEqual(
+                    ria._markdown_visible_text(  # noqa: SLF001
+                        ria._mask_markdown_comments(source)  # noqa: SLF001
+                    ),
+                    "roll back",
+                )
+
+    def test_policy_parser_preserves_multiline_zero_width_comment_semantics(
+        self,
+    ) -> None:
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                ria._mask_markdown_comments(  # noqa: SLF001
+                    "roll<!--\n-->back"
+                )
+            ),
+            "rollback",
+        )
+        self.assertEqual(
+            ria._markdown_visible_text(  # noqa: SLF001
+                ria._mask_markdown_comments(  # noqa: SLF001
+                    "roll <!--\n--> back"
+                )
+            ),
+            "roll back",
+        )
+
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        commented = paragraph.replace("rollback", "roll<!--\n-->back")
+        plain_digest = ria._visible_paragraphs(  # noqa: SLF001
+            (paragraph + "\n").encode("utf-8")
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                (commented + "\n").encode("utf-8")
+            ),
+            plain_digest,
+        )
+
+        block_comment = f"<!--\n{paragraph}\n-->\n{paragraph}\n"
+        self.assertEqual(
+            ria._visible_paragraphs(  # noqa: SLF001
+                block_comment.encode("utf-8")
+            ),
+            plain_digest,
+        )
+
+    def test_policy_parser_preserves_noninterrupting_ordered_marker_text(
+        self,
+    ) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        document = f"This context remains in the open paragraph.\n2. {paragraph}\n"
+        visible = ria._markdown_visible_text(document.rstrip("\n"))  # noqa: SLF001
+        expected = ria.VisibleParagraph(
+            hashlib.sha256(visible.encode("utf-8")).hexdigest(),
+            "prose",
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(document.encode("utf-8")),  # noqa: SLF001
+            (expected,),
+        )
+
+    def test_policy_parser_hides_multiline_reference_titles(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+        title = "t" * 180
+        valid = (
+            f"- [{paragraph}][policy]\n\n"
+            "[policy]: https://example.invalid/policy\n"
+            f'  "{title}"\n'
+        )
+        self.assertEqual(
+            ria._visible_paragraphs(valid.encode("utf-8")),  # noqa: SLF001
+            (),
+        )
+        for malformed_title in (
+            f'  "{title}\n',
+            f"  '{title}\"\n",
+        ):
+            with self.subTest(malformed_title=malformed_title[-4:]):
+                malformed = (
+                    f"- [{paragraph}][policy]\n\n"
+                    "[policy]: https://example.invalid/policy\n"
+                    + malformed_title
+                )
+                self.assertTrue(
+                    ria._visible_paragraphs(  # noqa: SLF001
+                        malformed.encode("utf-8")
+                    )
+                )
+
+    def test_backtick_run_storage_is_compact_at_blob_boundary(self) -> None:
+        token_count = 1_000_000
+        payload = "`x" * token_count
+        self.assertEqual(len(payload), ria.MAX_BLOB_BYTES)
+
+        tracemalloc.start()
+        started = time.monotonic()
+        try:
+            run_lengths, next_backtick = ria._backtick_runs(  # noqa: SLF001
+                payload
+            )
+            _current, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        elapsed = time.monotonic() - started
+
+        middle = token_count
+        last = len(payload) - 2
+        self.assertEqual(len(run_lengths), token_count)
+        self.assertEqual(run_lengths.get(0), 1)
+        self.assertEqual(run_lengths.get(middle), 1)
+        self.assertEqual(run_lengths.get(last), 1)
+        self.assertEqual(next_backtick.get(0), 2)
+        self.assertEqual(next_backtick.get(middle), middle + 2)
+        self.assertIsNone(next_backtick.get(last))
+        self.assertLess(peak, 48_000_000)
+        self.assertNotIsInstance(run_lengths, dict)
+        self.assertNotIsInstance(next_backtick, dict)
+        self.assertLess(elapsed, 12.0)
+
+    def test_policy_parser_preserves_joiner_semantics(self) -> None:
+        self.assertEqual(
+            ria._markdown_visible_text("roll\u200bback"),  # noqa: SLF001
+            ria._markdown_visible_text("rollback"),  # noqa: SLF001
+        )
+        self.assertNotEqual(
+            ria._markdown_visible_text("👩\u200d💻"),  # noqa: SLF001
+            ria._markdown_visible_text("👩💻"),  # noqa: SLF001
+        )
+
+    def test_policy_parser_and_duplicate_matching_are_bounded(self) -> None:
+        copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
+        paragraph = copies["policy"]["canonicalParagraph"]
+
+        class CountingString(str):
+            find_calls = 0
+
+            def find(
+                self,
+                sub: str,
+                start: int = 0,
+                end: int | None = None,
+            ) -> int:
+                self.find_calls += 1
+                return super().find(
+                    sub,
+                    start,
+                    len(self) if end is None else end,
+                )
+
+        counted_angles = CountingString("<a" * 2_048 + ">" + paragraph)
+        ria._markdown_visible_text(counted_angles)  # noqa: SLF001
+        self.assertLessEqual(counted_angles.find_calls, 1)
+
+        counted_ticks = CountingString("`" * 2_048 + paragraph)
+        ria._markdown_visible_text(counted_ticks)  # noqa: SLF001
+        self.assertLessEqual(counted_ticks.find_calls, 1)
+
+        started = time.monotonic()
+        ria._markdown_visible_text("*_*_" * 30_000)  # noqa: SLF001
+        self.assertLess(time.monotonic() - started, 1.5)
+
+        deeply_nested_label = "[" * 1_200 + paragraph + "]" * 1_200
+        normalized_nested = ria._markdown_visible_text(  # noqa: SLF001
+            deeply_nested_label
+        )
+        self.assertEqual(normalized_nested.count("["), 1_200)
+        self.assertEqual(normalized_nested.count("]"), 1_200)
+        self.assertIn(
+            ria._markdown_visible_text(paragraph),  # noqa: SLF001
+            normalized_nested,
+        )
+
+        started = time.monotonic()
+        bracket_paragraphs = ria._visible_paragraphs(  # noqa: SLF001
+            ("[" * 32_000 + paragraph).encode()
+        )
+        bracket_elapsed = time.monotonic() - started
+        self.assertTrue(bracket_paragraphs)
+        self.assertLess(bracket_elapsed, 1.0)
+
+        started = time.monotonic()
+        angle_paragraphs = ria._visible_paragraphs(  # noqa: SLF001
+            ("<" * 1_000_000 + paragraph).encode()
+        )
+        angle_elapsed = time.monotonic() - started
+        self.assertTrue(angle_paragraphs)
+        self.assertLess(angle_elapsed, 4.0)
+
+        started = time.monotonic()
+        shared_closer = ria._visible_paragraphs(  # noqa: SLF001
+            (("<a" * 320_000) + ">" + paragraph).encode()
+        )
+        shared_closer_elapsed = time.monotonic() - started
+        self.assertTrue(shared_closer)
+        self.assertLess(shared_closer_elapsed, 2.0)
+
+        root, contract, _owners, copies = self._duplicate_repository()
+        repetitions = 350
+        source_path = root / copies["stage00"]["canonicalPath"]
+        source_path.write_text(
+            (copies["stage00"]["canonicalParagraph"] + "\n\n") * repetitions,
+            encoding="utf-8",
+        )
+        reference_path = root / copies["stage00"]["referencePath"]
+        reference_path.write_text(
+            (copies["stage00"]["referenceParagraph"] + "\n\n") * repetitions,
+            encoding="utf-8",
+        )
+        self._git_in(
+            root,
+            "add",
+            "--",
+            copies["stage00"]["canonicalPath"],
+            copies["stage00"]["referencePath"],
+        )
+        started = time.monotonic()
+        findings = ria.validate_duplicate_rules(root, contract)
+        duplicate_elapsed = time.monotonic() - started
+        self.assertIn(
+            copies["stage00"]["referencePath"],
+            {finding.path for finding in findings},
+        )
+        self.assertLess(duplicate_elapsed, 1.5)
+
+    def test_emphasis_storage_is_compact_at_blob_boundary(self) -> None:
+        marker_count = 400_000
+        payload = "*a" * marker_count
+        payload += "x" * (ria.MAX_BLOB_BYTES - len(payload))
+        self.assertEqual(len(payload), ria.MAX_BLOB_BYTES)
+
+        started = time.monotonic()
+        mask = ria._emphasis_marker_positions(  # noqa: SLF001
+            payload,
+            reference_labels=frozenset(),
+            square_pairs={},
+            parenthesis_pairs={},
+            angle_closers={},
+            autolink_closers={},
+            run_lengths={},
+            next_backtick={},
+        )
+        elapsed = time.monotonic() - started
+        self.assertIsInstance(mask, bytearray)
+        self.assertEqual(len(mask), len(payload))
+        self.assertEqual(sum(mask), marker_count)
+        self.assertFalse(hasattr(ria, "_EmphasisDelimiter"))
+        self.assertLess(elapsed, 8.0)
 
     def test_data_asset_text_fields_reject_controls_and_preserve_unicode(
         self,

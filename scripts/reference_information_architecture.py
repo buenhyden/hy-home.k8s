@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from array import array
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date
+from html import unescape
+from html.entities import html5
 import hashlib
 import json
 import os
@@ -16,6 +20,7 @@ import tempfile
 import time
 from types import MappingProxyType
 from typing import Callable, Mapping, Sequence
+import unicodedata
 from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
@@ -29,6 +34,7 @@ CANONICAL_SCHEMA_PATH = Path(
 )
 DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
+REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
@@ -139,6 +145,43 @@ CLOSED_GENERATOR_ENVIRONMENT = {
     "TMPDIR": "/tmp",
 }
 
+DUPLICATE_CANONICAL_OWNER_ROOTS = (
+    Path("docs/00.agent-governance"),
+    Path("docs/05.operations/policies"),
+    Path("docs/05.operations/runbooks"),
+)
+DUPLICATE_RULE_FIELDS = frozenset(
+    {"canonicalOwnerRoots", "minimumParagraphCharacters", "structuralExceptions"}
+)
+STRUCTURAL_EXCEPTION_FIELDS = frozenset(
+    {
+        "canonicalOwnerPath",
+        "referencePath",
+        "paragraphSha256",
+        "structuralRole",
+        "reason",
+    }
+)
+STRUCTURAL_ROLES = frozenset({"navigation"})
+DUPLICATE_MINIMUM_PARAGRAPH_CHARACTERS = 160
+CURRENT_INDEX_SPECS: Mapping[str, tuple[Path, str, str]] = MappingProxyType(
+    {
+        "audits": (
+            Path("docs/90.references/audits/README.md"),
+            "Audit Pack Registry",
+            "Pack role",
+        ),
+        "research": (
+            Path("docs/90.references/research/README.md"),
+            "Research Pack Index",
+            "Status",
+        ),
+    }
+)
+DUPLICATE_TREE_INVENTORY_ROOTS = frozenset(
+    {DATA_ASSET_ROOT, *DUPLICATE_CANONICAL_OWNER_ROOTS}
+)
+
 RIA_RULE_IDS = frozenset(
     {
         "RIA-CONTRACT",
@@ -239,6 +282,12 @@ class GeneratedAssetRelation:
     output_path: Path
     check_command: str
     canonical_owner_path: Path
+
+
+@dataclass(frozen=True)
+class VisibleParagraph:
+    digest: str
+    role: str
 
 
 def _reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -422,7 +471,8 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         len(arguments) == 6
         and arguments[:3] == ("ls-tree", "-rz", "--full-tree")
         and OID_PATTERN.fullmatch(arguments[3]) is not None
-        and arguments[4:] == ("--", DATA_ASSET_ROOT.as_posix())
+        and arguments[4] == "--"
+        and Path(arguments[5]) in DUPLICATE_TREE_INVENTORY_ROOTS
     ):
         return True
     if arguments == ("rev-parse", "--verify", "HEAD"):
@@ -1276,6 +1326,94 @@ def _tracked_data_asset_paths(
     return {path for path in paths if path != DATA_ASSET_README}
 
 
+def _inventory_path_under(
+    payload: bytes, inventory_root: Path, *, field: str
+) -> Path:
+    try:
+        decoded = payload.decode("utf-8", "strict")
+        path = parse_repository_path(decoded, field=field)
+    except (UnicodeDecodeError, ContractError) as error:
+        raise _GitError("tracked inventory path is invalid") from error
+    if inventory_root not in path.parents:
+        raise _GitError("tracked inventory escaped its fixed root")
+    return path
+
+
+def _parse_regular_inventory(
+    payload: bytes, inventory_root: Path, *, committed: bool
+) -> tuple[Path, ...]:
+    records = payload.split(b"\0")
+    if not records or records[-1] != b"":
+        raise _GitError("tracked inventory is not NUL terminated")
+    paths: list[Path] = []
+    seen: set[Path] = set()
+    for record in records[:-1]:
+        if committed:
+            match = re.fullmatch(
+                rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", record
+            )
+            if match is None:
+                raise _GitError("tracked tree inventory is malformed")
+            mode, object_type, _oid, returned_path = match.groups()
+            if mode not in {b"100644", b"100755"} or object_type != b"blob":
+                raise _GitError("tracked tree inventory includes nonregular data")
+        else:
+            match = re.fullmatch(
+                rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", record
+            )
+            if match is None:
+                raise _GitError("tracked index inventory is malformed")
+            mode, _oid, stage, returned_path = match.groups()
+            if mode not in {b"100644", b"100755"} or stage != b"0":
+                raise _GitError("tracked index inventory includes nonregular data")
+        path = _inventory_path_under(
+            returned_path,
+            inventory_root,
+            field="duplicateRules.canonicalOwnerRoots",
+        )
+        if path in seen:
+            raise _GitError("tracked inventory includes a duplicate path")
+        seen.add(path)
+        paths.append(path)
+    return tuple(sorted(paths))
+
+
+def _tracked_markdown_paths(
+    root: Path,
+    inventory_root: Path,
+    *,
+    commit_oid: str | None,
+    runner: GitRunner | None,
+) -> tuple[Path, ...]:
+    if inventory_root not in DUPLICATE_CANONICAL_OWNER_ROOTS:
+        raise _GitError("duplicate inventory root is outside the fixed set")
+    if commit_oid is None:
+        payload = _git(
+            root,
+            ("ls-files", "-z", "--stage", "--", inventory_root.as_posix()),
+            runner=runner,
+        )
+        paths = _parse_regular_inventory(
+            payload, inventory_root, committed=False
+        )
+    else:
+        _require_commit(root, commit_oid, runner)
+        payload = _git(
+            root,
+            (
+                "ls-tree",
+                "-rz",
+                "--full-tree",
+                commit_oid,
+                "--",
+                inventory_root.as_posix(),
+            ),
+            runner=runner,
+        )
+        paths = _parse_regular_inventory(payload, inventory_root, committed=True)
+    return tuple(path for path in paths if path.suffix == ".md")
+
+
 def validate_data_assets(
     root: Path,
     contract: Mapping[str, object],
@@ -1957,6 +2095,2234 @@ def validate_proposed_registry_authority(
     return []
 
 
+def _code_span_intervals(
+    value: str,
+    *,
+    run_lengths: Mapping[int, int] | None = None,
+    next_backtick: Mapping[int, int] | None = None,
+) -> tuple[tuple[int, int], ...]:
+    if run_lengths is None or next_backtick is None:
+        run_lengths, next_backtick = _backtick_runs(value)
+    if not run_lengths:
+        return ()
+    intervals: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(value):
+        run_length = run_lengths.get(cursor)
+        if run_length is None:
+            cursor += 1
+            continue
+        closing = next_backtick.get(cursor)
+        if closing is None:
+            cursor += run_length
+            continue
+        intervals.append((cursor, closing + run_length))
+        cursor = closing + run_length
+    return tuple(intervals)
+
+
+COMMONMARK_LINE_ENDING_PATTERN = re.compile(r"\r\n|\r|\n")
+
+
+def _commonmark_splitlines(text: str) -> list[str]:
+    if not text:
+        return []
+    lines = COMMONMARK_LINE_ENDING_PATTERN.split(text)
+    if lines[-1] == "" and text.endswith(("\r", "\n")):
+        lines.pop()
+    return lines
+
+
+def _commonmark_line_spans(text: str) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    start = 0
+    for ending in COMMONMARK_LINE_ENDING_PATTERN.finditer(text):
+        spans.append((start, ending.start()))
+        start = ending.end()
+    if start < len(text):
+        spans.append((start, len(text)))
+    return tuple(spans)
+
+
+def _list_container_content(line: str) -> tuple[str, int] | None:
+    match = re.match(
+        r"^[ ]{0,3}(?:[-+*]|[0-9]{1,9}[.)])[ \t]+(?P<content>.*)$",
+        line,
+    )
+    if match is None:
+        return None
+    return match.group("content"), match.start("content")
+
+
+def _code_block_intervals(text: str) -> tuple[tuple[int, int], ...]:
+    intervals: list[tuple[int, int]] = []
+    fenced_character: str | None = None
+    fenced_length = 0
+    fenced_list_indent: int | None = None
+    fenced_blockquote_depth: int | None = None
+    list_indent: int | None = None
+    list_blockquote_depth: int | None = None
+    paragraph_open = False
+    paragraph_scope: tuple[int, int | None] | None = None
+
+    for start, end in _commonmark_line_spans(text):
+        line = text[start:end]
+        container_line, blockquote_depth = _blockquote_container(line)
+        stripped = container_line.strip()
+        if fenced_character is not None:
+            intervals.append((start, end))
+            semantic_line = container_line
+            if (
+                fenced_list_indent is not None
+                and blockquote_depth == fenced_blockquote_depth
+                and len(container_line) - len(container_line.lstrip(" "))
+                >= fenced_list_indent
+            ):
+                semantic_line = container_line[fenced_list_indent:]
+            candidate = semantic_line.lstrip(" ")
+            indentation = len(semantic_line) - len(candidate)
+            run = len(candidate) - len(candidate.lstrip(fenced_character))
+            if (
+                indentation <= 3
+                and run >= fenced_length
+                and not candidate[run:].strip()
+            ):
+                fenced_character = None
+                fenced_length = 0
+                fenced_list_indent = None
+                fenced_blockquote_depth = None
+            continue
+
+        list_item = _list_container_content(container_line)
+        semantic_line = container_line
+        if list_item is not None:
+            semantic_line, list_indent = list_item
+            list_blockquote_depth = blockquote_depth
+        elif (
+            list_indent is not None
+            and blockquote_depth == list_blockquote_depth
+        ):
+            leading_spaces = len(container_line) - len(container_line.lstrip(" "))
+            if not stripped:
+                semantic_line = ""
+            elif leading_spaces >= list_indent:
+                semantic_line = container_line[list_indent:]
+            else:
+                list_indent = None
+                list_blockquote_depth = None
+        else:
+            list_indent = None
+            list_blockquote_depth = None
+
+        scope = (blockquote_depth, list_indent)
+        if paragraph_open and scope != paragraph_scope:
+            paragraph_open = False
+            paragraph_scope = None
+        opening_fence = _fence_opening(semantic_line)
+        if opening_fence is not None:
+            intervals.append((start, end))
+            fenced_character, fenced_length = opening_fence
+            fenced_list_indent = list_indent
+            fenced_blockquote_depth = blockquote_depth
+            paragraph_open = False
+            paragraph_scope = None
+            continue
+        if not semantic_line.strip():
+            paragraph_open = False
+            paragraph_scope = None
+            continue
+        if semantic_line.startswith(("    ", "\t")) and not paragraph_open:
+            intervals.append((start, end))
+            continue
+        if re.match(r"^[ ]{0,3}#{1,6}(?:[ \t]|$)", semantic_line):
+            paragraph_open = False
+            paragraph_scope = None
+            continue
+        paragraph_open = True
+        paragraph_scope = scope
+    return tuple(intervals)
+
+
+def _inline_code_intervals_outside_blocks(
+    text: str, block_intervals: Sequence[tuple[int, int]]
+) -> tuple[tuple[int, int], ...]:
+    intervals: list[tuple[int, int]] = []
+    cursor = 0
+    for start, end in block_intervals:
+        if cursor < start:
+            intervals.extend(
+                (cursor + opening, cursor + closing)
+                for opening, closing in _code_span_intervals(text[cursor:start])
+            )
+        cursor = max(cursor, end)
+    if cursor < len(text):
+        intervals.extend(
+            (cursor + opening, cursor + closing)
+            for opening, closing in _code_span_intervals(text[cursor:])
+        )
+    return tuple(intervals)
+
+
+def _mask_block_intervals(
+    text: str, intervals: Sequence[tuple[int, int]]
+) -> str:
+    if not intervals:
+        return text
+    output: list[str] = []
+    cursor = 0
+    for start, end in intervals:
+        output.append(text[cursor:start])
+        output.append(
+            "".join(
+                character if character in {"\r", "\n"} else " "
+                for character in text[start:end]
+            )
+        )
+        cursor = end
+    output.append(text[cursor:])
+    return "".join(output)
+
+
+def _valid_inline_comment_end(text: str, opening: int) -> int | None:
+    body_start = opening + len("<!--")
+    if text.startswith((">", "->"), body_start):
+        return None
+    closing = text.find("-->", body_start)
+    if closing < 0:
+        return None
+    body = text[body_start:closing]
+    if "--" in body or body.endswith("-"):
+        return None
+    return closing + len("-->")
+
+
+def _mask_markdown_comments(text: str) -> str:
+    output: list[str] = []
+    cursor = 0
+    block_intervals = _code_block_intervals(text)
+    code_spans = tuple(
+        sorted(
+            (
+                *block_intervals,
+                *_inline_code_intervals_outside_blocks(text, block_intervals),
+            )
+        )
+    )
+    span_index = 0
+    while cursor < len(text):
+        opening = text.find("<!--", cursor)
+        if opening < 0:
+            output.append(text[cursor:])
+            break
+        while (
+            span_index < len(code_spans)
+            and code_spans[span_index][1] <= opening
+        ):
+            span_index += 1
+        if (
+            span_index < len(code_spans)
+            and code_spans[span_index][0] <= opening < code_spans[span_index][1]
+        ):
+            preserved_end = opening + len("<!--")
+            output.append(text[cursor:preserved_end])
+            cursor = preserved_end
+            continue
+        line_start = max(
+            text.rfind("\n", 0, opening),
+            text.rfind("\r", 0, opening),
+        ) + 1
+        container_prefix, _depth = _blockquote_container(
+            text[line_start:opening]
+        )
+        block_comment = (
+            len(container_prefix) <= 3
+            and container_prefix.strip(" ") == ""
+        )
+        if block_comment:
+            closing = text.find("-->", opening + 4)
+            end = len(text) if closing < 0 else closing + 3
+        else:
+            end = _valid_inline_comment_end(text, opening)
+            if end is None:
+                preserved_end = opening + len("<!--")
+                output.append(text[cursor:preserved_end])
+                cursor = preserved_end
+                continue
+            closing = end - len("-->")
+        output.append(text[cursor:opening])
+        if block_comment and closing >= 0:
+            line_end = COMMONMARK_LINE_ENDING_PATTERN.search(text, end)
+            end = len(text) if line_end is None else line_end.start()
+        mask = " " if block_comment else "\u2060"
+        output.append(
+            "".join(
+                character
+                if block_comment and character in {"\r", "\n"}
+                else mask
+                for character in text[opening:end]
+            )
+        )
+        cursor = end
+    return _mask_block_intervals("".join(output), block_intervals)
+
+
+def _blockquote_container(line: str) -> tuple[str, int]:
+    value = line
+    depth = 0
+    while True:
+        candidate = value.lstrip(" ")
+        removed = len(value) - len(candidate)
+        if removed <= 3 and candidate.startswith(">"):
+            value = candidate[1:]
+            depth += 1
+            if value.startswith(" "):
+                value = value[1:]
+            continue
+        break
+    return value, depth
+
+
+def _strip_blockquote_container(line: str) -> str:
+    return _blockquote_container(line)[0]
+
+
+def _strip_markdown_container(
+    line: str, *, strip_list_marker: bool = True
+) -> str:
+    value = _strip_blockquote_container(line)
+    if not strip_list_marker:
+        return value
+    match = re.match(r"^[ ]*(?:[-+*]|[0-9]{1,9}[.)])[ \t]+", value)
+    return value[match.end() :] if match is not None else value
+
+
+def _list_item_start(
+    line: str,
+    *,
+    nested: bool,
+    interrupting_paragraph: bool,
+) -> bool:
+    value = _strip_blockquote_container(line)
+    match = re.match(
+        r"^(?P<indent>[ ]*)(?P<marker>[-+*]|[0-9]{1,9}[.)])[ \t]+",
+        value,
+    )
+    if match is None or not (len(match.group("indent")) <= 3 or nested):
+        return False
+    marker = match.group("marker")
+    if (
+        interrupting_paragraph
+        and marker[0].isdigit()
+        and int(marker[:-1]) != 1
+    ):
+        return False
+    return True
+
+
+class _CompactIntervals:
+    __slots__ = ("ends", "starts")
+
+    def __init__(self, starts: array | None = None, ends: array | None = None):
+        self.starts = array("I") if starts is None else starts
+        self.ends = array("I") if ends is None else ends
+
+    def __len__(self) -> int:
+        return len(self.starts)
+
+    def __getitem__(self, index: int) -> tuple[int, int]:
+        return self.starts[index], self.ends[index]
+
+
+class _CompactCloserMap:
+    __slots__ = ("_cursor", "_ends", "_last_key", "_starts")
+
+    def __init__(self, starts: array, ends: array):
+        self._starts = starts
+        self._ends = ends
+        self._cursor = 0
+        self._last_key = -1
+
+    def __len__(self) -> int:
+        return len(self._starts)
+
+    def get(
+        self, key: int, default: int | None = None
+    ) -> int | None:
+        if key < self._last_key:
+            self._cursor = 0
+        self._last_key = key
+        while (
+            self._cursor < len(self._starts)
+            and self._starts[self._cursor] < key
+        ):
+            self._cursor += 1
+        if (
+            self._cursor < len(self._starts)
+            and self._starts[self._cursor] == key
+            and self._ends[self._cursor] >= 0
+        ):
+            return self._ends[self._cursor]
+        return default
+
+
+class _InlineAngleTokens:
+    __slots__ = ("autolink_ends", "html_ends", "starts")
+
+    def __init__(self) -> None:
+        self.starts = array("I")
+        self.html_ends = array("i")
+        self.autolink_ends = array("i")
+
+    def __len__(self) -> int:
+        return len(self.starts)
+
+    def html_closers(self) -> _CompactCloserMap:
+        return _CompactCloserMap(self.starts, self.html_ends)
+
+    def autolink_closers(self) -> _CompactCloserMap:
+        return _CompactCloserMap(self.starts, self.autolink_ends)
+
+
+def _inline_angle_tokens(value: str) -> _InlineAngleTokens:
+    tokens = _InlineAngleTokens()
+    starts = tokens.starts
+    html_ends = tokens.html_ends
+    autolink_ends = tokens.autolink_ends
+    record = 0
+    html_record = -1
+    autolink_record = -1
+    quote: str | None = None
+    for index, character in enumerate(value):
+        if character == "<":
+            starts.append(index)
+            html_ends.append(-1)
+            autolink_ends.append(-1)
+            autolink_record = record
+            if html_record < 0 or quote is None:
+                html_record = record
+            record += 1
+            continue
+        if character == ">":
+            if autolink_record >= 0:
+                autolink_ends[autolink_record] = index
+                autolink_record = -1
+            if html_record >= 0 and quote is None:
+                html_ends[html_record] = index
+                html_record = -1
+            continue
+        if html_record < 0:
+            continue
+        if quote is not None:
+            if character == quote:
+                quote = None
+        elif character in {'"', "'"}:
+            quote = character
+    return tokens
+
+
+def _append_compact_interval(
+    starts: array,
+    ends: array,
+    start: int,
+    end: int,
+) -> None:
+    if starts and start <= ends[-1]:
+        ends[-1] = max(ends[-1], end)
+        return
+    starts.append(start)
+    ends.append(end)
+
+
+def _inline_opaque_intervals(
+    value: str,
+    *,
+    run_lengths: Mapping[int, int] | None = None,
+    next_backtick: Mapping[int, int] | None = None,
+    angle_tokens: _InlineAngleTokens | None = None,
+) -> _CompactIntervals:
+    code_spans = _code_span_intervals(
+        value,
+        run_lengths=run_lengths,
+        next_backtick=next_backtick,
+    )
+    tokens = _inline_angle_tokens(value) if angle_tokens is None else angle_tokens
+    starts = array("I")
+    ends = array("I")
+    code_index = 0
+    active_code_end = -1
+    for token_index, opening in enumerate(tokens.starts):
+        while (
+            code_index < len(code_spans)
+            and code_spans[code_index][0] <= opening
+        ):
+            code_start, code_end = code_spans[code_index]
+            _append_compact_interval(starts, ends, code_start, code_end)
+            active_code_end = max(active_code_end, code_end)
+            code_index += 1
+        if opening < active_code_end:
+            continue
+        autolink_closing = tokens.autolink_ends[token_index]
+        if autolink_closing >= 0 and _consume_autolink(
+            value,
+            opening,
+            closing=autolink_closing,
+        ) is not None:
+            _append_compact_interval(
+                starts,
+                ends,
+                opening,
+                autolink_closing + 1,
+            )
+            continue
+        html_closing = tokens.html_ends[token_index]
+        if html_closing >= 0 and _inline_html_tag(value, opening, html_closing):
+            _append_compact_interval(
+                starts,
+                ends,
+                opening,
+                html_closing + 1,
+            )
+    while code_index < len(code_spans):
+        code_start, code_end = code_spans[code_index]
+        _append_compact_interval(starts, ends, code_start, code_end)
+        code_index += 1
+    return _CompactIntervals(starts, ends)
+
+
+def _paired_delimiters(
+    value: str,
+    opening: str,
+    closing: str,
+    *,
+    opaque_spans: Sequence[tuple[int, int]] | _CompactIntervals | None = None,
+) -> dict[int, int]:
+    if opening not in value or closing not in value:
+        return {}
+    stack: list[int] = []
+    pairs: dict[int, int] = {}
+    escaped = False
+    owned_spans = (
+        _inline_opaque_intervals(value)
+        if opaque_spans is None
+        else opaque_spans
+    )
+    owned_starts = (
+        owned_spans.starts if isinstance(owned_spans, _CompactIntervals) else None
+    )
+    owned_ends = (
+        owned_spans.ends if isinstance(owned_spans, _CompactIntervals) else None
+    )
+    span_index = 0
+    for index, character in enumerate(value):
+        span_start = (
+            owned_starts[span_index]
+            if owned_starts is not None and span_index < len(owned_starts)
+            else owned_spans[span_index][0]
+            if span_index < len(owned_spans)
+            else -1
+        )
+        span_end = (
+            owned_ends[span_index]
+            if owned_ends is not None and span_index < len(owned_ends)
+            else owned_spans[span_index][1]
+            if span_index < len(owned_spans)
+            else -1
+        )
+        while (
+            span_index < len(owned_spans)
+            and span_end <= index
+        ):
+            span_index += 1
+            span_start = (
+                owned_starts[span_index]
+                if owned_starts is not None and span_index < len(owned_starts)
+                else owned_spans[span_index][0]
+                if span_index < len(owned_spans)
+                else -1
+            )
+            span_end = (
+                owned_ends[span_index]
+                if owned_ends is not None and span_index < len(owned_ends)
+                else owned_spans[span_index][1]
+                if span_index < len(owned_spans)
+                else -1
+            )
+        if (
+            span_index < len(owned_spans)
+            and span_start <= index < span_end
+        ):
+            escaped = False
+            continue
+        if not escaped:
+            if character == opening:
+                stack.append(index)
+            elif character == closing and stack:
+                pairs[stack.pop()] = index
+        if character == "\\":
+            escaped = not escaped
+        else:
+            escaped = False
+    return pairs
+
+
+ASCII_PUNCTUATION = frozenset(r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~""")
+
+COMMONMARK_LINK_WHITESPACE = frozenset({" ", "\t", "\r", "\n"})
+
+INVISIBLE_OBFUSCATION_CHARACTERS = frozenset(
+    {"\u00ad", "\u200b", "\u2060", "\ufeff"}
+)
+
+NON_RENDERING_FORMAT_CONTROL_RANGES = (
+    (0x061C, 0x061C),
+    (0x180E, 0x180E),
+    (0x200E, 0x200F),
+    (0x202A, 0x202E),
+    (0x2061, 0x2064),
+    (0x2066, 0x206F),
+    (0xE0001, 0xE0001),
+    (0xE0020, 0xE007F),
+)
+
+CHARACTER_REFERENCE_PATTERN = re.compile(
+    r"&(?:#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});"
+)
+
+URI_AUTOLINK_PATTERN = re.compile(
+    r"[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\x00-\x20]*"
+)
+
+EMAIL_AUTOLINK_PATTERN = re.compile(
+    r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@"
+    r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"
+    r"(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*"
+)
+
+BLOCK_HTML_TAGS = frozenset(
+    {
+        "address",
+        "article",
+        "aside",
+        "base",
+        "basefont",
+        "blockquote",
+        "body",
+        "caption",
+        "center",
+        "col",
+        "colgroup",
+        "dd",
+        "details",
+        "dialog",
+        "dir",
+        "div",
+        "dl",
+        "dt",
+        "fieldset",
+        "figcaption",
+        "figure",
+        "footer",
+        "form",
+        "frame",
+        "frameset",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "head",
+        "header",
+        "hr",
+        "html",
+        "iframe",
+        "legend",
+        "li",
+        "link",
+        "main",
+        "menu",
+        "menuitem",
+        "nav",
+        "noframes",
+        "ol",
+        "optgroup",
+        "option",
+        "p",
+        "param",
+        "pre",
+        "script",
+        "search",
+        "section",
+        "style",
+        "summary",
+        "table",
+        "tbody",
+        "td",
+        "tfoot",
+        "th",
+        "thead",
+        "title",
+        "tr",
+        "track",
+        "ul",
+        "textarea",
+    }
+)
+
+EXPLICIT_RAW_HTML_CLOSERS = {
+    "script": "</script>",
+    "style": "</style>",
+    "pre": "</pre>",
+    "textarea": "</textarea>",
+}
+
+
+def _strip_commonmark_link_whitespace(value: str) -> str:
+    start = 0
+    end = len(value)
+    while start < end and value[start] in COMMONMARK_LINK_WHITESPACE:
+        start += 1
+    while end > start and value[end - 1] in COMMONMARK_LINK_WHITESPACE:
+        end -= 1
+    return value[start:end]
+
+
+def _ascii_control(character: str) -> bool:
+    codepoint = ord(character)
+    return codepoint < 0x20 or codepoint == 0x7F
+
+
+def _valid_link_target(value: str, *, allow_empty_destination: bool) -> bool:
+    candidate = _strip_commonmark_link_whitespace(value)
+    if not candidate:
+        return allow_empty_destination
+    if "\n\n" in candidate or "\r\r" in candidate:
+        return False
+
+    cursor = 0
+    if candidate.startswith("<"):
+        cursor = 1
+        destination_closed = False
+        while cursor < len(candidate):
+            character = candidate[cursor]
+            if (
+                character == "\\"
+                and cursor + 1 < len(candidate)
+                and candidate[cursor + 1] in ASCII_PUNCTUATION
+            ):
+                cursor += 2
+                continue
+            if character == ">":
+                cursor += 1
+                destination_closed = True
+                break
+            if character in {"<", "\n", "\r"}:
+                return False
+            cursor += 1
+        if not destination_closed:
+            return False
+    else:
+        depth = 0
+        while cursor < len(candidate):
+            character = candidate[cursor]
+            if character in COMMONMARK_LINK_WHITESPACE:
+                break
+            if (
+                character == "\\"
+                and cursor + 1 < len(candidate)
+                and candidate[cursor + 1] in ASCII_PUNCTUATION
+            ):
+                cursor += 2
+                continue
+            if character == "<" or _ascii_control(character):
+                return False
+            if character == "(":
+                depth += 1
+            elif character == ")":
+                if depth == 0:
+                    return False
+                depth -= 1
+            cursor += 1
+        if depth != 0 or (cursor == 0 and not allow_empty_destination):
+            return False
+
+    if cursor == len(candidate):
+        return True
+    if candidate[cursor] not in COMMONMARK_LINK_WHITESPACE:
+        return False
+    tail = _strip_commonmark_link_whitespace(candidate[cursor:])
+    if len(tail) < 2:
+        return False
+    opener = tail[0]
+    closer = {"\"": "\"", "'": "'", "(": ")"}.get(opener)
+    if closer is None or tail[-1] != closer:
+        return False
+    body = tail[1:-1]
+    cursor = 0
+    while cursor < len(body):
+        character = body[cursor]
+        if (
+            character == "\\"
+            and cursor + 1 < len(body)
+            and body[cursor + 1] in ASCII_PUNCTUATION
+        ):
+            cursor += 2
+            continue
+        if character == closer or (
+            opener == "(" and character == "("
+        ):
+            return False
+        cursor += 1
+    return True
+
+
+def _consume_markdown_link(
+    value: str,
+    cursor: int,
+    *,
+    limit: int,
+    reference_labels: frozenset[str],
+    square_pairs: Mapping[int, int],
+    parenthesis_pairs: Mapping[int, int],
+) -> tuple[int, int, int] | None:
+    image = value.startswith("![", cursor)
+    if not image and value[cursor] != "[":
+        return None
+    opening = cursor + 1 if image else cursor
+    closing = square_pairs.get(opening)
+    if closing is None or closing >= limit:
+        return None
+    suffix = closing + 1
+    consumed = suffix
+    if suffix < limit and value[suffix] == "(":
+        destination_end = parenthesis_pairs.get(suffix)
+        if destination_end is None or destination_end >= limit:
+            return None
+        if not _valid_link_target(
+            value[suffix + 1 : destination_end],
+            allow_empty_destination=True,
+        ):
+            return None
+        consumed = destination_end + 1
+    elif suffix < limit and value[suffix] == "[":
+        reference_end = _reference_label_closing(
+            value,
+            suffix,
+            limit=limit,
+            allow_empty=True,
+        )
+        if reference_end is None:
+            return None
+        reference = value[suffix + 1 : reference_end]
+        if not reference:
+            reference = value[opening + 1 : closing]
+            if not _valid_reference_label_content(
+                reference,
+                allow_empty=False,
+            ):
+                return None
+        if _normalize_reference_label(reference) not in reference_labels:
+            return None
+        consumed = reference_end + 1
+    else:
+        reference = value[opening + 1 : closing]
+        if (
+            not _valid_reference_label_content(reference, allow_empty=False)
+            or _normalize_reference_label(reference) not in reference_labels
+        ):
+            return None
+    return opening + 1, closing, consumed
+
+
+def _consume_autolink(
+    value: str, cursor: int, *, closing: int
+) -> tuple[str, int] | None:
+    if closing < 0 or closing >= len(value) or value[closing] != ">":
+        return None
+    candidate = value[cursor + 1 : closing]
+    if (
+        URI_AUTOLINK_PATTERN.fullmatch(candidate) is None
+        and EMAIL_AUTOLINK_PATTERN.fullmatch(candidate) is None
+    ):
+        return None
+    return candidate, closing + 1
+
+
+def _inline_html_tag(value: str, cursor: int, closing: int) -> bool:
+    if closing < 0 or closing >= len(value) or value[closing] != ">":
+        return False
+    candidate = value[cursor + 1 : closing]
+    if candidate.startswith("/"):
+        return (
+            re.fullmatch(r"/[A-Za-z][A-Za-z0-9-]*[ \t\n]*", candidate)
+            is not None
+        )
+    return (
+        re.fullmatch(
+            r"[A-Za-z][A-Za-z0-9-]*"
+            r"(?:[ \t\n]+[A-Za-z_:][A-Za-z0-9_.:-]*"
+            r"(?:[ \t\n]*=[ \t\n]*"
+            r"(?:[^ \t\n\"'=<>`]+|'[^']*'|\"[^\"]*\"))?)*"
+            r"[ \t\n]*/?",
+            candidate,
+        )
+        is not None
+    )
+
+
+def _consume_character_reference(
+    value: str, cursor: int, limit: int
+) -> tuple[str, int] | None:
+    match = CHARACTER_REFERENCE_PATTERN.match(value, cursor, limit)
+    if match is None:
+        return None
+    token = match.group(0)
+    if not token.startswith("&#") and token[1:] not in html5:
+        return None
+    return unescape(token), match.end()
+
+
+def _normalize_reference_label(value: str) -> str:
+    output: list[str] = []
+    cursor = 0
+    while cursor < len(value):
+        if (
+            value[cursor] == "\\"
+            and cursor + 1 < len(value)
+            and value[cursor + 1] in ASCII_PUNCTUATION
+        ):
+            output.append(value[cursor + 1])
+            cursor += 2
+            continue
+        reference = _consume_character_reference(value, cursor, len(value))
+        if reference is not None:
+            decoded, cursor = reference
+            output.append(decoded)
+            continue
+        output.append(value[cursor])
+        cursor += 1
+    return " ".join(
+        unicodedata.normalize("NFKC", "".join(output)).casefold().split()
+    )
+
+
+def _reference_label_closing(
+    value: str,
+    opening: int,
+    *,
+    limit: int,
+    allow_empty: bool,
+) -> int | None:
+    if opening >= limit or value[opening] != "[":
+        return None
+    cursor = opening + 1
+    while cursor < limit:
+        character = value[cursor]
+        if (
+            character == "\\"
+            and cursor + 1 < limit
+            and value[cursor + 1] in ASCII_PUNCTUATION
+        ):
+            cursor += 2
+            continue
+        if character == "[":
+            return None
+        if character == "]":
+            raw_length = cursor - opening - 1
+            if raw_length > 999 or (raw_length == 0 and not allow_empty):
+                return None
+            return cursor
+        cursor += 1
+    return None
+
+
+def _valid_reference_label_content(value: str, *, allow_empty: bool) -> bool:
+    wrapped = f"[{value}]"
+    closing = _reference_label_closing(
+        wrapped,
+        0,
+        limit=len(wrapped),
+        allow_empty=allow_empty,
+    )
+    return closing == len(wrapped) - 1
+
+
+def _parse_reference_definition(value: str) -> str | None:
+    candidate = value.lstrip(" ")
+    if len(value) - len(candidate) > 3 or not candidate.startswith("["):
+        return None
+    closing = _reference_label_closing(
+        candidate,
+        0,
+        limit=len(candidate),
+        allow_empty=False,
+    )
+    if (
+        closing is None
+        or closing + 1 >= len(candidate)
+        or candidate[closing + 1] != ":"
+    ):
+        return None
+    raw_label = candidate[1:closing]
+    if not raw_label or len(raw_label) > 999:
+        return None
+    remainder = _strip_commonmark_link_whitespace(candidate[closing + 2 :])
+    if not _valid_link_target(
+        remainder,
+        allow_empty_destination=False,
+    ):
+        return None
+    label = _normalize_reference_label(raw_label)
+    return label or None
+
+
+def _backtick_runs(
+    value: str,
+) -> tuple[_CompactCloserMap, _CompactCloserMap]:
+    starts = array("I")
+    run_lengths = array("I")
+    next_same_length = array("i")
+    previous: dict[int, int] = {}
+    cursor = 0
+    while cursor < len(value):
+        if value[cursor] != "`":
+            cursor += 1
+            continue
+        end = cursor + 1
+        while end < len(value) and value[end] == "`":
+            end += 1
+        run_length = end - cursor
+        record = len(starts)
+        starts.append(cursor)
+        run_lengths.append(run_length)
+        next_same_length.append(-1)
+        opening_record = previous.get(run_length)
+        if opening_record is not None:
+            next_same_length[opening_record] = cursor
+        previous[run_length] = record
+        cursor = end
+    return (
+        _CompactCloserMap(starts, run_lengths),
+        _CompactCloserMap(starts, next_same_length),
+    )
+
+
+def _emphasis_marker_positions(
+    value: str,
+    *,
+    reference_labels: frozenset[str],
+    square_pairs: Mapping[int, int],
+    parenthesis_pairs: Mapping[int, int],
+    angle_closers: _CompactCloserMap,
+    autolink_closers: _CompactCloserMap,
+    run_lengths: Mapping[int, int],
+    next_backtick: Mapping[int, int],
+) -> bytearray:
+    if not any(marker in value for marker in ("*", "_", "~")):
+        return bytearray(len(value))
+    escaped = bytearray(len(value))
+    backslashes = 0
+    for index, character in enumerate(value):
+        if character == "\\":
+            backslashes += 1
+            continue
+        escaped[index] = backslashes % 2
+        backslashes = 0
+
+    destination_ends: dict[int, int] = {}
+    for opening, closing in square_pairs.items():
+        suffix = closing + 1
+        if suffix < len(value) and value[suffix] == "(":
+            destination = parenthesis_pairs.get(suffix)
+            if destination is not None and _valid_link_target(
+                value[suffix + 1 : destination],
+                allow_empty_destination=True,
+            ):
+                destination_ends[suffix] = destination + 1
+        elif suffix < len(value) and value[suffix] == "[":
+            reference_end = square_pairs.get(suffix)
+            if reference_end is not None:
+                reference = value[suffix + 1 : reference_end] or value[
+                    opening + 1 : closing
+                ]
+                if _normalize_reference_label(reference) in reference_labels:
+                    destination_ends[suffix] = reference_end + 1
+
+    def punctuation(character: str | None) -> bool:
+        return bool(
+            character is not None
+            and (
+                character in ASCII_PUNCTUATION
+                or unicodedata.category(character)[0] in {"P", "S"}
+            )
+        )
+
+    delimiter_markers = bytearray()
+    delimiter_starts = array("I")
+    delimiter_widths = bytearray()
+    delimiter_run_lengths = array("I")
+    delimiter_flags = bytearray()
+    delimiter_scopes = array("i")
+    delimiter_ends = array("i")
+    scope_stack: list[int] = []
+    scope_closings: dict[int, int] = {}
+    scope_ends: dict[int, int] = {}
+    cursor = 0
+    while cursor < len(value):
+        closing_scope = scope_closings.get(cursor)
+        if closing_scope is not None:
+            if scope_stack and scope_stack[-1] == closing_scope:
+                scope_stack.pop()
+            else:
+                scope_stack.clear()
+        destination_end = destination_ends.get(cursor)
+        if destination_end is not None:
+            cursor = destination_end
+            continue
+        if value[cursor] == "[":
+            link = _consume_markdown_link(
+                value,
+                cursor,
+                limit=len(value),
+                reference_labels=reference_labels,
+                square_pairs=square_pairs,
+                parenthesis_pairs=parenthesis_pairs,
+            )
+            if link is not None:
+                scope_stack.append(cursor)
+                scope_closings[link[1]] = cursor
+                scope_ends[cursor] = link[1]
+        if value[cursor] == "`":
+            run = run_lengths.get(cursor, 1)
+            closing = next_backtick.get(cursor)
+            cursor = closing + run if closing is not None else cursor + run
+            continue
+        if value[cursor] == "<":
+            autolink = _consume_autolink(
+                value,
+                cursor,
+                closing=autolink_closers.get(cursor, -1),
+            )
+            if autolink is not None:
+                cursor = autolink[1]
+                continue
+            html_closing = angle_closers.get(cursor, -1)
+            if _inline_html_tag(value, cursor, html_closing):
+                cursor = html_closing + 1
+                continue
+        marker = value[cursor]
+        if marker not in {"*", "_", "~"} or escaped[cursor]:
+            cursor += 1
+            continue
+        end = cursor + 1
+        while end < len(value) and value[end] == marker and not escaped[end]:
+            end += 1
+        run_length = end - cursor
+        scope = scope_stack[-1] if scope_stack else -1
+        previous = value[cursor - 1] if cursor > 0 else None
+        following = (
+            None
+            if scope >= 0 and end == scope_ends[scope]
+            else value[end] if end < len(value) else None
+        )
+        previous_whitespace = previous is None or previous.isspace()
+        following_whitespace = following is None or following.isspace()
+        previous_punctuation = punctuation(previous)
+        following_punctuation = punctuation(following)
+        left_flanking = not following_whitespace and (
+            not following_punctuation
+            or previous_whitespace
+            or previous_punctuation
+        )
+        right_flanking = not previous_whitespace and (
+            not previous_punctuation
+            or following_whitespace
+            or following_punctuation
+        )
+        can_open = left_flanking
+        can_close = right_flanking
+        if marker == "_":
+            can_open = left_flanking and (
+                not right_flanking or previous_punctuation
+            )
+            can_close = right_flanking and (
+                not left_flanking or following_punctuation
+            )
+        if can_open or can_close:
+            flags = (1 if can_open else 0) | (2 if can_close else 0)
+            if marker in {"*", "_"}:
+                for offset in range(run_length):
+                    delimiter_markers.append(ord(marker))
+                    delimiter_starts.append(cursor + offset)
+                    delimiter_widths.append(1)
+                    delimiter_run_lengths.append(run_length)
+                    delimiter_flags.append(flags)
+                    delimiter_scopes.append(scope)
+                    delimiter_ends.append(-1)
+            elif run_length >= 2:
+                first = run_length % 2
+                for offset in range(first, run_length, 2):
+                    delimiter_markers.append(ord(marker))
+                    delimiter_starts.append(cursor + offset)
+                    delimiter_widths.append(2)
+                    delimiter_run_lengths.append(0)
+                    delimiter_flags.append(flags)
+                    delimiter_scopes.append(scope)
+                    delimiter_ends.append(-1)
+        cursor = end
+
+    openers_bottom: dict[tuple[int, int], list[int]] = {}
+    header_index = 0
+    last_marker_end = -2
+    jumps = array("I")
+    for closer_index in range(len(delimiter_starts)):
+        jumps.append(0)
+        if (
+            delimiter_markers[header_index] != delimiter_markers[closer_index]
+            or last_marker_end != delimiter_starts[closer_index]
+        ):
+            header_index = closer_index
+        last_marker_end = (
+            delimiter_starts[closer_index]
+            + delimiter_widths[closer_index]
+        )
+        if not delimiter_flags[closer_index] & 2:
+            continue
+        bottom_key = (
+            delimiter_markers[closer_index],
+            delimiter_scopes[closer_index],
+        )
+        bottoms = openers_bottom.setdefault(bottom_key, [-1] * 6)
+        closer_can_open = bool(delimiter_flags[closer_index] & 1)
+        closer_run_length = delimiter_run_lengths[closer_index]
+        bottom_slot = (
+            (3 if closer_can_open else 0) + closer_run_length % 3
+        )
+        minimum_opener = bottoms[bottom_slot]
+        opener_index = header_index - jumps[header_index] - 1
+        new_minimum = opener_index
+        while opener_index > minimum_opener:
+            if (
+                delimiter_markers[opener_index]
+                == delimiter_markers[closer_index]
+                and delimiter_scopes[opener_index]
+                == delimiter_scopes[closer_index]
+                and delimiter_flags[opener_index] & 1
+                and delimiter_ends[opener_index] < 0
+            ):
+                opener_run_length = delimiter_run_lengths[opener_index]
+                odd_match = (
+                    (
+                        bool(delimiter_flags[opener_index] & 2)
+                        or closer_can_open
+                    )
+                    and (opener_run_length + closer_run_length) % 3 == 0
+                    and (
+                        opener_run_length % 3 != 0
+                        or closer_run_length % 3 != 0
+                    )
+                )
+                if not odd_match:
+                    last_jump = (
+                        jumps[opener_index - 1] + 1
+                        if opener_index > 0
+                        and not delimiter_flags[opener_index - 1] & 1
+                        else 0
+                    )
+                    jumps[closer_index] = closer_index - opener_index + last_jump
+                    jumps[opener_index] = last_jump
+                    delimiter_flags[closer_index] &= ~1
+                    delimiter_ends[opener_index] = closer_index
+                    delimiter_flags[opener_index] &= ~2
+                    new_minimum = -1
+                    last_marker_end = -2
+                    break
+            opener_index -= jumps[opener_index] + 1
+        if new_minimum != -1:
+            bottoms[bottom_slot] = new_minimum
+
+    markers = bytearray(len(value))
+    for opener_index, closer_index in enumerate(delimiter_ends):
+        if closer_index < 0:
+            continue
+        opener_start = delimiter_starts[opener_index]
+        opener_width = delimiter_widths[opener_index]
+        closer_start = delimiter_starts[closer_index]
+        closer_width = delimiter_widths[closer_index]
+        markers[opener_start : opener_start + opener_width] = b"\x01" * opener_width
+        markers[closer_start : closer_start + closer_width] = b"\x01" * closer_width
+    return markers
+
+
+def _strip_invisible_characters(value: str) -> str:
+    output: list[str] = []
+    for character in value:
+        codepoint = ord(character)
+        if 0x20 <= codepoint <= 0x7E:
+            output.append(character)
+            continue
+        if character in INVISIBLE_OBFUSCATION_CHARACTERS or any(
+            start <= codepoint <= end
+            for start, end in NON_RENDERING_FORMAT_CONTROL_RANGES
+        ):
+            continue
+        category = unicodedata.category(character)
+        if category == "Cc" and not character.isspace():
+            continue
+        output.append(character)
+    return "".join(output)
+
+
+def _markdown_visible_text(
+    value: str, reference_labels: frozenset[str] = frozenset()
+) -> str:
+    output: list[str] = []
+    length = len(value)
+    run_lengths, next_backtick = _backtick_runs(value)
+    angle_tokens = _inline_angle_tokens(value)
+    angle_closers = angle_tokens.html_closers()
+    autolink_closers = angle_tokens.autolink_closers()
+    opaque_spans = _inline_opaque_intervals(
+        value,
+        run_lengths=run_lengths,
+        next_backtick=next_backtick,
+        angle_tokens=angle_tokens,
+    )
+    square_pairs = _paired_delimiters(
+        value,
+        "[",
+        "]",
+        opaque_spans=opaque_spans,
+    )
+    parenthesis_pairs = _paired_delimiters(
+        value,
+        "(",
+        ")",
+        opaque_spans=opaque_spans,
+    )
+    emphasis_markers = _emphasis_marker_positions(
+        value,
+        reference_labels=reference_labels,
+        square_pairs=square_pairs,
+        parenthesis_pairs=parenthesis_pairs,
+        angle_closers=angle_closers,
+        autolink_closers=autolink_closers,
+        run_lengths=run_lengths,
+        next_backtick=next_backtick,
+    )
+    segments = [(0, length)]
+    while segments:
+        cursor, limit = segments.pop()
+        while cursor < limit:
+            link = _consume_markdown_link(
+                value,
+                cursor,
+                limit=limit,
+                reference_labels=reference_labels,
+                square_pairs=square_pairs,
+                parenthesis_pairs=parenthesis_pairs,
+            )
+            if link is not None:
+                label_start, label_end, consumed = link
+                if consumed < limit:
+                    segments.append((consumed, limit))
+                cursor, limit = label_start, label_end
+                continue
+            autolink_angle = autolink_closers.get(cursor, -1)
+            if autolink_angle >= limit:
+                autolink_angle = -1
+            autolink = _consume_autolink(
+                value, cursor, closing=autolink_angle
+            )
+            if autolink is not None:
+                label, consumed = autolink
+                output.append(label)
+                cursor = consumed
+                continue
+            character = value[cursor]
+            if character == "`":
+                run = run_lengths.get(cursor, 1)
+                closing = next_backtick.get(cursor)
+                if closing is not None and closing < limit:
+                    code = value[cursor + run : closing].replace("\n", " ")
+                    output.append(" ".join(code.split()))
+                    cursor = closing + run
+                    continue
+                output.append("`" * run)
+                cursor += run
+                continue
+            if (
+                character == "\\"
+                and cursor + 1 < limit
+                and value[cursor + 1] in ASCII_PUNCTUATION
+            ):
+                output.append(value[cursor + 1])
+                cursor += 2
+                continue
+            if character == "\\" and cursor + 1 < limit and value[cursor + 1] == "\n":
+                output.append(" ")
+                cursor += 2
+                continue
+            reference = _consume_character_reference(value, cursor, limit)
+            if reference is not None:
+                decoded, cursor = reference
+                output.append(decoded)
+                continue
+            html_angle = angle_closers.get(cursor, -1)
+            if html_angle >= limit:
+                html_angle = -1
+            if character == "<" and _inline_html_tag(value, cursor, html_angle):
+                cursor = html_angle + 1
+                continue
+            if not emphasis_markers[cursor]:
+                output.append(character)
+            cursor += 1
+    normalized = unicodedata.normalize("NFKC", "".join(output)).casefold()
+    normalized = _strip_invisible_characters(normalized)
+    return " ".join(normalized.split())
+
+
+def _table_cells(line: str) -> tuple[str, ...] | None:
+    stripped = line.strip()
+    run_lengths, next_backtick = _backtick_runs(stripped)
+    cells: list[str] = []
+    cell: list[str] = []
+    cursor = 0
+    separators = 0
+    while cursor < len(stripped):
+        character = stripped[cursor]
+        if character == "\\" and cursor + 1 < len(stripped):
+            cell.extend(stripped[cursor : cursor + 2])
+            cursor += 2
+            continue
+        if character == "`":
+            run = run_lengths.get(cursor, 1)
+            closing = next_backtick.get(cursor)
+            if closing is not None:
+                cell.append(stripped[cursor : closing + run])
+                cursor = closing + run
+                continue
+            cell.append("`" * run)
+            cursor += run
+            continue
+        if character == "|":
+            cells.append("".join(cell).strip())
+            cell.clear()
+            separators += 1
+            cursor += 1
+            continue
+        cell.append(character)
+        cursor += 1
+    if separators == 0:
+        return None
+    cells.append("".join(cell).strip())
+    if cells and cells[0] == "":
+        cells.pop(0)
+    if cells and cells[-1] == "":
+        cells.pop()
+    return tuple(cells)
+
+
+def _table_delimiter(cells: tuple[str, ...] | None) -> bool:
+    return bool(
+        cells
+        and all(re.fullmatch(r":?-{3,}:?", cell) is not None for cell in cells)
+    )
+
+
+def _fence_opening(line: str) -> tuple[str, int] | None:
+    candidate = line.lstrip(" ")
+    indentation = len(line) - len(candidate)
+    if indentation > 3 or not candidate or candidate[0] not in {"`", "~"}:
+        return None
+    marker = candidate[0]
+    run_length = len(candidate) - len(candidate.lstrip(marker))
+    if run_length < 3:
+        return None
+    if marker == "`" and "`" in candidate[run_length:]:
+        return None
+    return marker, run_length
+
+
+def _pure_link_list(
+    lines: Sequence[str],
+    reference_labels: frozenset[str],
+    *,
+    strip_list_marker: bool = True,
+) -> bool:
+    if not lines:
+        return False
+    for line in lines:
+        candidate = _strip_markdown_container(
+            line,
+            strip_list_marker=strip_list_marker,
+        ).strip()
+        if not candidate or candidate.startswith("!["):
+            return False
+        if candidate.startswith("<"):
+            tokens = _inline_angle_tokens(candidate)
+            autolink = _consume_autolink(
+                candidate,
+                0,
+                closing=tokens.autolink_closers().get(0, -1),
+            )
+            if autolink is None or autolink[1] != len(candidate):
+                return False
+            continue
+        if not candidate.startswith("["):
+            return False
+        run_lengths, next_backtick = _backtick_runs(candidate)
+        angle_tokens = _inline_angle_tokens(candidate)
+        opaque_spans = _inline_opaque_intervals(
+            candidate,
+            run_lengths=run_lengths,
+            next_backtick=next_backtick,
+            angle_tokens=angle_tokens,
+        )
+        square_pairs = _paired_delimiters(
+            candidate,
+            "[",
+            "]",
+            opaque_spans=opaque_spans,
+        )
+        parenthesis_pairs = _paired_delimiters(
+            candidate,
+            "(",
+            ")",
+            opaque_spans=opaque_spans,
+        )
+        link = _consume_markdown_link(
+            candidate,
+            0,
+            limit=len(candidate),
+            reference_labels=reference_labels,
+            square_pairs=square_pairs,
+            parenthesis_pairs=parenthesis_pairs,
+        )
+        if link is not None:
+            label = candidate[link[0] : link[1]]
+            if (
+                link[2] != len(candidate)
+                or not _valid_reference_label_content(
+                    label,
+                    allow_empty=False,
+                )
+            ):
+                return False
+            continue
+        return False
+    return True
+
+
+def _raw_html_block_start(
+    stripped: str, *, paragraph_open: bool
+) -> tuple[str, str | None] | None:
+    lowered = stripped.casefold()
+    explicit = re.match(
+        r"^<(?P<tag>script|style|pre|textarea)(?=[\t />]|$)",
+        lowered,
+    )
+    if explicit is not None:
+        return "closer", EXPLICIT_RAW_HTML_CLOSERS[explicit.group("tag")]
+    if stripped.startswith("<?"):
+        return "closer", "?>"
+    if stripped.startswith("<![CDATA["):
+        return "closer", "]]>"
+    if re.match(r"^<![A-Z]", stripped) is not None:
+        return "closer", ">"
+
+    tag = re.match(
+        r"^</?(?P<tag>[A-Za-z][A-Za-z0-9-]*)(?=[\t />]|$)",
+        stripped,
+    )
+    if tag is not None and tag.group("tag").casefold() in BLOCK_HTML_TAGS:
+        return "blank", None
+    if paragraph_open:
+        return None
+    if ">" not in stripped:
+        return None
+    closing = _inline_angle_tokens(stripped).html_closers().get(0, -1)
+    if closing == len(stripped) - 1 and _inline_html_tag(stripped, 0, closing):
+        return "blank", None
+    return None
+
+
+def _reference_definitions(
+    lines: Sequence[str], *, frontmatter_end: int
+) -> tuple[frozenset[str], frozenset[int]]:
+    labels: set[str] = set()
+    definition_lines: set[int] = set()
+    fenced_character: str | None = None
+    fenced_length = 0
+    raw_closer: str | None = None
+    raw_until_blank = False
+    paragraph_open = False
+    paragraph_depth: int | None = None
+
+    for index in range(frontmatter_end, len(lines)):
+        container_line, blockquote_depth = _blockquote_container(lines[index])
+        stripped = container_line.strip()
+        if paragraph_open and blockquote_depth != paragraph_depth:
+            paragraph_open = False
+            paragraph_depth = None
+        if fenced_character is not None:
+            candidate = container_line.lstrip(" ")
+            indentation = len(container_line) - len(candidate)
+            run = len(candidate) - len(candidate.lstrip(fenced_character))
+            if (
+                indentation <= 3
+                and run >= fenced_length
+                and not candidate[run:].strip()
+            ):
+                fenced_character = None
+                fenced_length = 0
+            continue
+        if raw_closer is not None:
+            if raw_closer in stripped.casefold():
+                raw_closer = None
+            continue
+        if raw_until_blank:
+            if not stripped:
+                raw_until_blank = False
+            continue
+        if not stripped:
+            paragraph_open = False
+            paragraph_depth = None
+            continue
+        opening_fence = _fence_opening(container_line)
+        if opening_fence is not None:
+            fenced_character, fenced_length = opening_fence
+            paragraph_open = False
+            paragraph_depth = None
+            continue
+        raw_start = _raw_html_block_start(
+            stripped, paragraph_open=paragraph_open
+        )
+        if raw_start is not None:
+            mode, closer = raw_start
+            paragraph_open = False
+            paragraph_depth = None
+            if mode == "blank":
+                raw_until_blank = True
+            elif closer is not None and closer.casefold() not in stripped.casefold():
+                raw_closer = closer.casefold()
+            continue
+        if container_line.startswith(("    ", "\t")) and not paragraph_open:
+            continue
+        if index in definition_lines:
+            paragraph_open = False
+            paragraph_depth = None
+            continue
+        definition = _strip_markdown_container(container_line)
+        label = _parse_reference_definition(definition)
+        if not paragraph_open and index + 1 < len(lines):
+            continuation, continuation_depth = _blockquote_container(
+                lines[index + 1]
+            )
+            continuation_text = continuation.lstrip(" ")
+            continuation_indent = len(continuation) - len(continuation_text)
+            if (
+                continuation_depth == blockquote_depth
+                and 1 <= continuation_indent <= 3
+                and continuation_text
+            ):
+                continued_label = _parse_reference_definition(
+                    definition + "\n" + continuation
+                )
+                destination_continuation = (
+                    label is None
+                    and re.fullmatch(
+                        r"[ ]{0,3}\[[^\n]+\]:[ \t]*",
+                        definition,
+                    )
+                    is not None
+                )
+                title_continuation = (
+                    label is not None and continued_label == label
+                )
+                if continued_label is not None and (
+                    destination_continuation or title_continuation
+                ):
+                    label = continued_label
+                    definition_lines.add(index + 1)
+        if not paragraph_open and label is not None:
+            labels.add(label)
+            definition_lines.add(index)
+            continue
+        if re.match(r"^[ ]{0,3}#{1,6}(?:[ \t]|$)", container_line):
+            paragraph_open = False
+            paragraph_depth = None
+            continue
+        paragraph_open = True
+        paragraph_depth = blockquote_depth
+    return frozenset(labels), frozenset(definition_lines)
+
+
+def _visible_paragraphs(payload: bytes) -> tuple[VisibleParagraph, ...]:
+    try:
+        text = payload.decode("utf-8", "strict")
+    except UnicodeDecodeError as error:
+        raise _GitError("Markdown is not UTF-8") from error
+    lines = _commonmark_splitlines(_mask_markdown_comments(text))
+    index = 0
+    if lines and lines[0].strip() == "---":
+        closing = next(
+            (
+                position
+                for position in range(1, len(lines))
+                if lines[position].strip() == "---"
+            ),
+            None,
+        )
+        if closing is not None:
+            index = closing + 1
+    reference_labels, definition_lines = _reference_definitions(
+        lines, frontmatter_end=index
+    )
+    paragraphs: list[VisibleParagraph] = []
+    buffered: list[str] = []
+    buffered_list_item = False
+    buffered_depth: int | None = None
+    fenced_character: str | None = None
+    fenced_length = 0
+    raw_closer: str | None = None
+    raw_until_blank = False
+
+    def flush() -> None:
+        nonlocal buffered_depth, buffered_list_item
+        list_item = buffered_list_item
+        buffered_list_item = False
+        buffered_depth = None
+        if not buffered:
+            return
+        raw_lines = tuple(buffered)
+        buffered.clear()
+        if _pure_link_list(
+            raw_lines,
+            reference_labels,
+            strip_list_marker=list_item,
+        ):
+            return
+        raw = "\n".join(
+            _strip_markdown_container(
+                line,
+                strip_list_marker=list_item,
+            )
+            for line in raw_lines
+        )
+        visible = _markdown_visible_text(raw, reference_labels)
+        if len(visible) < DUPLICATE_MINIMUM_PARAGRAPH_CHARACTERS:
+            return
+        if visible.startswith(
+            (
+                "generated by ",
+                "this file is generated",
+                "this document is generated",
+                "automatically generated",
+                "do not edit this generated",
+            )
+        ):
+            return
+        role = (
+            "navigation"
+            if ("[" in raw and visible.startswith(("see ", "refer to ")))
+            else "prose"
+        )
+        paragraphs.append(
+            VisibleParagraph(hashlib.sha256(visible.encode("utf-8")).hexdigest(), role)
+        )
+
+    while index < len(lines):
+        line = lines[index]
+        container_line, blockquote_depth = _blockquote_container(line)
+        stripped = container_line.strip()
+        if fenced_character is not None:
+            candidate = container_line.lstrip(" ")
+            indentation = len(container_line) - len(candidate)
+            run = len(candidate) - len(candidate.lstrip(fenced_character))
+            if (
+                indentation <= 3
+                and run >= fenced_length
+                and not candidate[run:].strip()
+            ):
+                fenced_character = None
+                fenced_length = 0
+            index += 1
+            continue
+        if raw_closer is not None:
+            if raw_closer in stripped.casefold():
+                raw_closer = None
+            index += 1
+            continue
+        if raw_until_blank:
+            if not stripped:
+                raw_until_blank = False
+            index += 1
+            continue
+        if buffered and blockquote_depth != buffered_depth:
+            flush()
+        if index in definition_lines:
+            flush()
+            index += 1
+            continue
+        opening_fence = _fence_opening(container_line)
+        if opening_fence is not None:
+            flush()
+            fenced_character, fenced_length = opening_fence
+            index += 1
+            continue
+        raw_start = _raw_html_block_start(
+            stripped, paragraph_open=bool(buffered)
+        )
+        if raw_start is not None:
+            flush()
+            mode, closer = raw_start
+            if mode == "blank":
+                raw_until_blank = True
+            elif closer is not None and closer.casefold() not in stripped.casefold():
+                raw_closer = closer.casefold()
+            index += 1
+            continue
+        if not stripped:
+            flush()
+            index += 1
+            continue
+        if _list_item_start(
+            line,
+            nested=buffered_list_item,
+            interrupting_paragraph=bool(buffered and not buffered_list_item),
+        ):
+            flush()
+            buffered.append(line)
+            buffered_list_item = True
+            buffered_depth = blockquote_depth
+            index += 1
+            continue
+        if container_line.startswith(("    ", "\t")):
+            if buffered:
+                buffered.append(line)
+            else:
+                flush()
+            index += 1
+            continue
+        if re.match(r"^[ ]{0,3}#{1,6}(?:[ \t]|$)", container_line):
+            flush()
+            index += 1
+            continue
+        if buffered and re.fullmatch(
+            r"[ ]{0,3}(?:=+|-+)[ \t]*", container_line
+        ):
+            buffered.clear()
+            buffered_list_item = False
+            buffered_depth = None
+            index += 1
+            continue
+        cells = _table_cells(container_line)
+        next_cells = (
+            _table_cells(_strip_blockquote_container(lines[index + 1]))
+            if index + 1 < len(lines)
+            else None
+        )
+        if cells is not None and _table_delimiter(next_cells):
+            flush()
+            index += 2
+            while index < len(lines):
+                row = _table_cells(_strip_blockquote_container(lines[index]))
+                if row is None:
+                    break
+                for cell in row:
+                    buffered.append(cell)
+                    buffered_depth = blockquote_depth
+                    flush()
+                index += 1
+            continue
+        if not buffered:
+            buffered_depth = blockquote_depth
+        buffered.append(line)
+        index += 1
+    flush()
+    return tuple(paragraphs)
+
+
+def _current_index_claims(
+    payload: bytes,
+    index_path: Path,
+    heading: str,
+    role_header: str,
+) -> tuple[Path, ...]:
+    try:
+        lines = payload.decode("utf-8", "strict").splitlines()
+    except UnicodeDecodeError as error:
+        raise _GitError("Current index is not UTF-8") from error
+    heading_indices = tuple(
+        index
+        for index, line in enumerate(lines)
+        if re.fullmatch(rf"###?[ \t]+{re.escape(heading)}[ \t]*", line)
+        is not None
+    )
+    if len(heading_indices) != 1:
+        raise _GitError("Current index heading authority is not unique")
+    heading_index = heading_indices[0]
+    section_end = next(
+        (
+            index
+            for index in range(heading_index + 1, len(lines))
+            if re.match(r"^#{1,6}(?:[ \t]|$)", lines[index]) is not None
+        ),
+        len(lines),
+    )
+    table_indices = tuple(
+        index
+        for index in range(
+            heading_index + 1, max(heading_index + 1, section_end - 1)
+        )
+        if _table_cells(lines[index]) is not None
+        and _table_delimiter(_table_cells(lines[index + 1]))
+    )
+    if len(table_indices) != 1:
+        raise _GitError("Current index table authority is not unique")
+    table_index = table_indices[0]
+    header = _table_cells(lines[table_index])
+    delimiter = _table_cells(lines[table_index + 1])
+    if (
+        header is None
+        or not _table_delimiter(delimiter)
+        or len(header) != len(delimiter or ())
+    ):
+        raise _GitError("Current index table is malformed")
+    normalized_header = tuple(_markdown_visible_text(cell) for cell in header)
+    normalized_role = _markdown_visible_text(role_header)
+    if normalized_header.count(normalized_role) != 1:
+        raise _GitError("Current role column is unavailable")
+    role_index = normalized_header.index(normalized_role)
+    claims: list[Path] = []
+    for row_line in lines[table_index + 2 : section_end]:
+        row = _table_cells(row_line)
+        if row is None:
+            break
+        if len(row) != len(header):
+            raise _GitError("Current index row width differs")
+        if _markdown_visible_text(row[role_index]) != "current pack":
+            continue
+        matches = list(_MARKDOWN_LINK_PATTERN.finditer(row[0]))
+        if len(matches) != 1:
+            raise _GitError("Current claim identity is malformed")
+        resolved = _resolve_markdown_destination(index_path, matches[0].group(1))
+        if resolved is None:
+            raise _GitError("Current claim path is invalid")
+        claims.append(resolved)
+    return tuple(claims)
+
+
+def validate_duplicate_rules(
+    root: Path,
+    contract: Mapping[str, object],
+    *,
+    proposed_commit: object | None = None,
+    runner: GitRunner | None = None,
+) -> list[Finding]:
+    """Reject duplicate Current, generator, and active-policy ownership."""
+
+    findings: list[Finding] = []
+    rules = contract.get("duplicateRules")
+    if not isinstance(rules, Mapping) or set(rules) != DUPLICATE_RULE_FIELDS:
+        return [
+            Finding(
+                "RIA-DUPLICATE",
+                "duplicateRules",
+                "duplicate rule fields are not closed",
+            )
+        ]
+    roots = rules.get("canonicalOwnerRoots")
+    expected_roots = [path.as_posix() for path in DUPLICATE_CANONICAL_OWNER_ROOTS]
+    if roots != expected_roots:
+        findings.append(
+            Finding(
+                "RIA-DUPLICATE",
+                "duplicateRules.canonicalOwnerRoots",
+                "canonical owner roots do not match the fixed source set",
+            )
+        )
+    threshold = rules.get("minimumParagraphCharacters")
+    if threshold != DUPLICATE_MINIMUM_PARAGRAPH_CHARACTERS:
+        findings.append(
+            Finding(
+                "RIA-DUPLICATE",
+                "duplicateRules.minimumParagraphCharacters",
+                "paragraph threshold does not match the fixed boundary",
+            )
+        )
+    raw_exceptions = rules.get("structuralExceptions")
+    if not isinstance(raw_exceptions, list):
+        findings.append(
+            Finding(
+                "RIA-DUPLICATE",
+                "duplicateRules.structuralExceptions",
+                "structural exceptions must be an array",
+            )
+        )
+        raw_exceptions = []
+    if findings:
+        return sorted(set(findings))
+
+    commit_oid: str | None = None
+    if proposed_commit is not None:
+        try:
+            commit_oid = parse_git_sha1(proposed_commit, field="--commit")
+        except ContractError:
+            return [
+                Finding(
+                    "RIA-DUPLICATE",
+                    "--commit",
+                    "duplicate authority commit is unavailable",
+                )
+            ]
+    root = root.absolute()
+    try:
+        registry_payload = _proposed_path(root, REGISTRY_PATH, commit_oid, runner)
+        registry = _registry_projection(
+            _decode_json_bytes(registry_payload, field=REGISTRY_PATH.as_posix())
+        )
+    except (ContractError, _GitError):
+        return [
+            Finding(
+                "RIA-DUPLICATE",
+                REGISTRY_PATH.as_posix(),
+                "Current owner registry is unavailable",
+            )
+        ]
+
+    manual_paths = set(registry.paths)
+    for collection, (index_path, heading, role_header) in CURRENT_INDEX_SPECS.items():
+        expected = tuple(
+            pack.readme_path
+            for pack in registry.packs
+            if pack.pack_id.split("/", 1)[0] == collection
+        )
+        if len(expected) != 1:
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    index_path.as_posix(),
+                    "Current owner collection is not singular",
+                )
+            )
+        try:
+            index_payload = _proposed_path(root, index_path, commit_oid, runner)
+            observed = _current_index_claims(
+                index_payload, index_path, heading, role_header
+            )
+        except (ContractError, _GitError):
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    index_path.as_posix(),
+                    "Current owner mirror is unavailable",
+                )
+            )
+            continue
+        if observed != expected:
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    index_path.as_posix(),
+                    "Current owner mirror differs from the registry",
+                )
+            )
+
+    generated_assets = contract.get("generatedAssets")
+    if not isinstance(generated_assets, list):
+        findings.append(
+            Finding(
+                "RIA-DUPLICATE",
+                "generatedAssets",
+                "generated owner relations are unavailable",
+            )
+        )
+    else:
+        for index, asset in enumerate(generated_assets):
+            if not isinstance(asset, Mapping):
+                findings.append(
+                    Finding(
+                        "RIA-DUPLICATE",
+                        f"generatedAssets[{index}]",
+                        "generated owner relation is malformed",
+                    )
+                )
+                continue
+            try:
+                output = parse_repository_path(
+                    asset.get("outputPath"),
+                    field=f"generatedAssets[{index}].outputPath",
+                )
+            except ContractError:
+                findings.append(
+                    Finding(
+                        "RIA-DUPLICATE",
+                        f"generatedAssets[{index}].outputPath",
+                        "generated output path is invalid",
+                    )
+                )
+                continue
+            if output in manual_paths:
+                findings.append(
+                    Finding(
+                        "RIA-DUPLICATE",
+                        output.as_posix(),
+                        "generated output conflicts with a manual Current owner",
+                    )
+                )
+
+    source_paths: set[Path] = set()
+    try:
+        for owner_root in DUPLICATE_CANONICAL_OWNER_ROOTS:
+            source_paths.update(
+                _tracked_markdown_paths(
+                    root, owner_root, commit_oid=commit_oid, runner=runner
+                )
+            )
+    except (ContractError, _GitError):
+        findings.append(
+            Finding(
+                "RIA-DUPLICATE",
+                "duplicateRules.canonicalOwnerRoots",
+                "canonical owner inventory is unavailable",
+            )
+        )
+        return sorted(set(findings))
+
+    exceptions: list[tuple[Path, Path, str, str]] = []
+    seen_exceptions: set[tuple[Path, Path, str, str]] = set()
+    for index, exception in enumerate(raw_exceptions):
+        field = f"duplicateRules.structuralExceptions[{index}]"
+        if (
+            not isinstance(exception, Mapping)
+            or set(exception) != STRUCTURAL_EXCEPTION_FIELDS
+        ):
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    field,
+                    "structural exception fields are not closed",
+                )
+            )
+            continue
+        try:
+            canonical = parse_repository_path(
+                exception.get("canonicalOwnerPath"),
+                field=f"{field}.canonicalOwnerPath",
+            )
+            reference = parse_repository_path(
+                exception.get("referencePath"),
+                field=f"{field}.referencePath",
+            )
+        except ContractError:
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    field,
+                    "structural exception path is invalid",
+                )
+            )
+            continue
+        digest = exception.get("paragraphSha256")
+        role = exception.get("structuralRole")
+        reason = exception.get("reason")
+        if (
+            not isinstance(digest, str)
+            or SHA256_PATTERN.fullmatch(digest) is None
+            or role not in STRUCTURAL_ROLES
+            or not _closed_single_line_text(reason)
+            or not isinstance(reason, str)
+            or len(reason) > 512
+            or canonical not in source_paths
+            or reference not in manual_paths
+        ):
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    reference.as_posix(),
+                    "structural exception is invalid",
+                )
+            )
+            continue
+        key = (canonical, reference, digest, role)
+        if key in seen_exceptions:
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    reference.as_posix(),
+                    "structural exception is duplicated",
+                )
+            )
+            continue
+        seen_exceptions.add(key)
+        exceptions.append(key)
+    if findings and not source_paths:
+        return sorted(set(findings))
+
+    source_paragraphs: dict[str, list[tuple[Path, str]]] = {}
+    reference_paragraphs: dict[str, list[tuple[Path, str]]] = {}
+    for paths, target in (
+        (source_paths, source_paragraphs),
+        (manual_paths, reference_paragraphs),
+    ):
+        for path in sorted(paths):
+            try:
+                payload = _proposed_path(root, path, commit_oid, runner)
+                paragraphs = _visible_paragraphs(payload)
+            except (ContractError, _GitError):
+                findings.append(
+                    Finding(
+                        "RIA-DUPLICATE",
+                        path.as_posix(),
+                        "duplicate comparison input is unavailable",
+                    )
+                )
+                continue
+            for paragraph in paragraphs:
+                target.setdefault(paragraph.digest, []).append((path, paragraph.role))
+
+    used: set[tuple[Path, Path, str, str]] = set()
+    exception_set = set(exceptions)
+    for digest in sorted(source_paragraphs.keys() & reference_paragraphs.keys()):
+        sources = source_paragraphs[digest]
+        references = reference_paragraphs[digest]
+        source_counts = Counter(sources)
+        reference_counts = Counter(references)
+        for (canonical, canonical_role), source_count in source_counts.items():
+            for (
+                reference,
+                reference_role,
+            ), reference_count in reference_counts.items():
+                key = (canonical, reference, digest, reference_role)
+                if (
+                    key in exception_set
+                    and canonical_role == reference_role
+                    and source_count == 1
+                    and reference_count == 1
+                ):
+                    used.add(key)
+                    continue
+                findings.append(
+                    Finding(
+                        "RIA-DUPLICATE",
+                        reference.as_posix(),
+                        f"duplicates canonical owner {canonical.as_posix()}",
+                    )
+                )
+    for exception in exceptions:
+        if exception not in used:
+            findings.append(
+                Finding(
+                    "RIA-DUPLICATE",
+                    exception[1].as_posix(),
+                    "structural exception has no exact duplicate occurrence",
+                )
+            )
+    return sorted(set(findings))
+
+
 def _links_in_section(text: str, heading: str, pack_root: Path) -> tuple[Path, ...]:
     heading_match = re.search(
         rf"(?m)^##[ \t]+{re.escape(heading)}[ \t]*$", text
@@ -2624,6 +4990,9 @@ def validate_reference_architecture(
         *validate_generated_assets(
             root, contract, proposed_commit=commit, runner=runner
         ),
+        *validate_duplicate_rules(
+            root, contract, proposed_commit=commit, runner=runner
+        ),
         *validate_baseline_transitions(
             root,
             contract,
@@ -2661,8 +5030,10 @@ def _self_test_contract() -> dict[str, object]:
         "dataAssets": [],
         "generatedAssets": [],
         "duplicateRules": {
-            "canonicalOwnerRoots": ["docs/00.agent-governance"],
-            "minimumParagraphCharacters": 1,
+            "canonicalOwnerRoots": [
+                path.as_posix() for path in DUPLICATE_CANONICAL_OWNER_ROOTS
+            ],
+            "minimumParagraphCharacters": DUPLICATE_MINIMUM_PARAGRAPH_CHARACTERS,
             "structuralExceptions": [],
         },
     }
