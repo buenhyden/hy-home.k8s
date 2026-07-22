@@ -14,6 +14,7 @@ import stat
 import subprocess
 import tempfile
 import time
+from types import MappingProxyType
 from typing import Callable, Mapping, Sequence
 from urllib.parse import urlsplit
 
@@ -84,6 +85,59 @@ DATA_ASSET_FIELDS = frozenset(
 SOURCE_RECORD_FIELDS = frozenset(
     {"url", "checkedOn", "adoptedScope", "rejectedScope"}
 )
+GENERATED_ASSET_FIELDS = frozenset(
+    {
+        "id",
+        "generatorPath",
+        "inputRoots",
+        "outputPath",
+        "checkCommand",
+        "canonicalOwnerPath",
+    }
+)
+GENERATOR_CHECK_COMMAND = "bash scripts/generate-llm-wiki-index.sh --check"
+GENERATOR_EXECUTABLE = "/usr/bin/bash"
+GENERATOR_RELATION_ID = "llm-wiki-index"
+GENERATOR_PATH = Path("scripts/generate-llm-wiki-index.sh")
+GENERATOR_INPUT_ROOTS = (
+    Path("docs/90.references/llm-wiki/README.md"),
+    Path("docs/00.agent-governance/README.md"),
+    Path("docs/00.agent-governance/harness-catalog.md"),
+    Path("docs/00.agent-governance/rules/document-stage-routing.md"),
+    Path("docs/README.md"),
+    Path("scripts/README.md"),
+)
+GENERATOR_OUTPUT_PATH = Path("docs/90.references/llm-wiki/wiki-index.md")
+GENERATOR_CANONICAL_OWNER_PATH = Path("docs/90.references/llm-wiki/README.md")
+GENERATOR_RELATIONS: Mapping[
+    str,
+    tuple[tuple[str, ...], str, Path, tuple[Path, ...], Path, Path],
+] = MappingProxyType(
+    {
+        GENERATOR_CHECK_COMMAND: (
+            (
+                GENERATOR_EXECUTABLE,
+                GENERATOR_PATH.as_posix(),
+                "--check",
+            ),
+            GENERATOR_RELATION_ID,
+            GENERATOR_PATH,
+            GENERATOR_INPUT_ROOTS,
+            GENERATOR_OUTPUT_PATH,
+            GENERATOR_CANONICAL_OWNER_PATH,
+        )
+    }
+)
+GENERATOR_TIMEOUT_SECONDS = 10
+GENERATOR_STDOUT_BYTES = MAX_METADATA_BYTES
+GENERATOR_STDERR_BYTES = MAX_STDERR_BYTES
+CLOSED_GENERATOR_ENVIRONMENT = {
+    "HOME": "/nonexistent",
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "TMPDIR": "/tmp",
+}
 
 RIA_RULE_IDS = frozenset(
     {
@@ -116,6 +170,14 @@ class ContractError(ValueError):
 
 class _GitError(RuntimeError):
     """A value-free fixed Git runner failure."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(message)
+
+
+class _GeneratorError(RuntimeError):
+    """A value-free fixed generator process failure."""
 
     def __init__(self, message: str) -> None:
         self.message = message
@@ -167,6 +229,16 @@ class ValidationContext:
     baseline_bytes: Mapping[tuple[str, Path], bytes]
     baseline_oids: Mapping[str, str]
     proposed_commit_oid: str | None
+
+
+@dataclass(frozen=True)
+class GeneratedAssetRelation:
+    relation_id: str
+    generator_path: Path
+    input_roots: tuple[Path, ...]
+    output_path: Path
+    check_command: str
+    canonical_owner_path: Path
 
 
 def _reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -490,6 +562,124 @@ def _run_git(root: Path, arguments: tuple[str, ...], stdout_limit: int = MAX_MET
     if returncode != 0:
         raise _GitError("Git command failed")
     return bytes(buffers["stdout"])
+
+
+def _run_generator_check(root: Path, check_command: object) -> None:
+    """Run the one mapped generator check with bounded, discarded output."""
+
+    if not isinstance(check_command, str):
+        raise _GeneratorError("generator command is not mapped")
+    relation = GENERATOR_RELATIONS.get(check_command)
+    if relation is None:
+        raise _GeneratorError("generator command is not mapped")
+    arguments = relation[0]
+    try:
+        process = subprocess.Popen(
+            list(arguments),
+            cwd=root.absolute(),
+            env=CLOSED_GENERATOR_ENVIRONMENT,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=False,
+        )
+    except OSError as error:
+        raise _GeneratorError("generator executable is unavailable") from error
+    assert process.stdout is not None and process.stderr is not None
+
+    def stop() -> None:
+        try:
+            running = process.poll() is None
+        except OSError:
+            running = True
+        if running:
+            try:
+                process.kill()
+            except OSError:
+                pass
+        try:
+            process.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            try:
+                process.kill()
+            except OSError:
+                pass
+            try:
+                process.wait(timeout=1)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+        except OSError:
+            pass
+
+    deadline = time.monotonic() + GENERATOR_TIMEOUT_SECONDS
+    buffers = {"stdout": bytearray(), "stderr": bytearray()}
+    limits = {
+        "stdout": GENERATOR_STDOUT_BYTES,
+        "stderr": GENERATOR_STDERR_BYTES,
+    }
+    selector: selectors.BaseSelector | None = None
+    try:
+        selector = selectors.DefaultSelector()
+        for name, stream in (("stdout", process.stdout), ("stderr", process.stderr)):
+            os.set_blocking(stream.fileno(), False)
+            selector.register(stream, selectors.EVENT_READ, name)
+        while selector.get_map():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise _GeneratorError("generator command timed out")
+            try:
+                events = selector.select(timeout=min(remaining, 0.1))
+            except BlockingIOError:
+                continue
+            if not events:
+                continue
+            for key, _mask in events:
+                name = key.data
+                stream = key.fileobj
+                try:
+                    chunk = os.read(
+                        stream.fileno(),
+                        min(65_536, limits[name] - len(buffers[name]) + 1),
+                    )
+                except BlockingIOError:
+                    continue
+                except OSError as error:
+                    raise _GeneratorError("generator pipe read failed") from error
+                if not chunk:
+                    selector.unregister(stream)
+                    continue
+                buffers[name].extend(chunk)
+                if len(buffers[name]) > limits[name]:
+                    raise _GeneratorError("generator output exceeded its bound")
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise _GeneratorError("generator command timed out")
+        try:
+            returncode = process.wait(timeout=remaining)
+        except subprocess.TimeoutExpired as error:
+            raise _GeneratorError("generator command timed out") from error
+    except _GeneratorError:
+        stop()
+        raise
+    except OSError as error:
+        stop()
+        raise _GeneratorError("generator pipe operation failed") from error
+    except BaseException:
+        stop()
+        raise
+    finally:
+        if selector is not None:
+            try:
+                selector.close()
+            except OSError:
+                pass
+        for stream in (process.stdout, process.stderr):
+            try:
+                stream.close()
+            except OSError:
+                pass
+    if returncode != 0:
+        raise _GeneratorError("generator command failed")
 
 
 def _git(
@@ -1322,6 +1512,318 @@ def validate_data_assets(
     return sorted(set(findings))
 
 
+_MARKDOWN_LINK_PATTERN = re.compile(r"!?\[[^\]\r\n]*\]\(([^)\r\n]+)\)")
+
+
+def _resolve_markdown_destination(output_path: Path, raw: str) -> Path | None:
+    destination = raw.strip()
+    if destination.startswith("<"):
+        closing = destination.find(">")
+        if closing < 0:
+            return None
+        destination = destination[1:closing]
+    else:
+        destination = destination.split(maxsplit=1)[0]
+    if not destination or destination.startswith(("/", "#", "//")):
+        return None
+    parsed = urlsplit(destination)
+    if parsed.scheme or parsed.netloc or parsed.path.startswith("/"):
+        return None
+    components = list(output_path.parent.parts)
+    for component in parsed.path.split("/"):
+        if component in {"", "."}:
+            continue
+        if component == "..":
+            if not components:
+                return None
+            components.pop()
+            continue
+        if re.fullmatch(r"[A-Za-z0-9._-]+", component) is None:
+            return None
+        components.append(component)
+    if not components:
+        return None
+    candidate = Path(*components)
+    try:
+        return parse_repository_path(candidate.as_posix(), field="generated.ownerLink")
+    except ContractError:
+        return None
+
+
+def _output_links_to_owner(
+    output_path: Path, output: bytes, canonical_owner_path: Path
+) -> bool:
+    try:
+        text = output.decode("utf-8", "strict")
+    except UnicodeDecodeError:
+        return False
+    return any(
+        _resolve_markdown_destination(output_path, match.group(1))
+        == canonical_owner_path
+        for match in _MARKDOWN_LINK_PATTERN.finditer(text)
+    )
+
+
+def validate_generated_assets(
+    root: Path,
+    contract: Mapping[str, object],
+    *,
+    proposed_commit: object | None = None,
+    runner: GitRunner | None = None,
+) -> list[Finding]:
+    """Validate closed generator ownership and current-tree zero drift.
+
+    Named-commit mode proves only the declared relation's committed regular
+    blobs and owner link. It deliberately does not attribute a current
+    worktree process result to that historical commit.
+    """
+
+    findings: list[Finding] = []
+    assets = contract.get("generatedAssets")
+    if not isinstance(assets, list) or not assets:
+        return [
+            Finding(
+                "RIA-GENERATOR",
+                "generatedAssets",
+                "generator relation must be a non-empty array",
+            )
+        ]
+
+    relations: list[GeneratedAssetRelation] = []
+    seen_ids: set[str] = set()
+    seen_outputs: set[Path] = set()
+    for index, asset in enumerate(assets):
+        field = f"generatedAssets[{index}]"
+        if not isinstance(asset, Mapping):
+            findings.append(
+                Finding("RIA-GENERATOR", field, "generator relation must be an object")
+            )
+            continue
+        if set(asset) != GENERATED_ASSET_FIELDS:
+            findings.append(
+                Finding("RIA-GENERATOR", field, "generator relation fields are not closed")
+            )
+
+        relation_id = asset.get("id")
+        if (
+            not isinstance(relation_id, str)
+            or re.fullmatch(r"[a-z][a-z0-9-]*", relation_id) is None
+            or relation_id in seen_ids
+        ):
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    f"{field}.id",
+                    "generator identity is invalid or duplicated",
+                )
+            )
+        else:
+            seen_ids.add(relation_id)
+
+        parsed_paths: dict[str, Path] = {}
+        for key in ("generatorPath", "outputPath", "canonicalOwnerPath"):
+            try:
+                parsed_paths[key] = parse_repository_path(
+                    asset.get(key), field=f"{field}.{key}"
+                )
+            except ContractError:
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        f"{field}.{key}",
+                        "generator relation path is invalid",
+                    )
+                )
+
+        raw_inputs = asset.get("inputRoots")
+        inputs: list[Path] = []
+        if not isinstance(raw_inputs, list) or not raw_inputs:
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    f"{field}.inputRoots",
+                    "generator inputs must be a non-empty array",
+                )
+            )
+        else:
+            for input_index, value in enumerate(raw_inputs):
+                input_field = f"{field}.inputRoots[{input_index}]"
+                try:
+                    inputs.append(parse_repository_path(value, field=input_field))
+                except ContractError:
+                    findings.append(
+                        Finding(
+                            "RIA-GENERATOR",
+                            input_field,
+                            "generator input path is invalid",
+                        )
+                    )
+            if len(set(inputs)) != len(inputs):
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        f"{field}.inputRoots",
+                        "generator input paths are duplicated",
+                    )
+                )
+
+        check_command = asset.get("checkCommand")
+        mapped_relation = (
+            GENERATOR_RELATIONS.get(check_command)
+            if isinstance(check_command, str)
+            else None
+        )
+        if mapped_relation is None:
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    f"{field}.checkCommand",
+                    "generator command is outside the fixed mapping",
+                )
+            )
+
+        generator_path = parsed_paths.get("generatorPath")
+        output_path = parsed_paths.get("outputPath")
+        canonical_owner_path = parsed_paths.get("canonicalOwnerPath")
+        if generator_path is not None and output_path is not None:
+            if generator_path == output_path:
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        output_path.as_posix(),
+                        "generator and output identities overlap",
+                    )
+                )
+            if output_path in seen_outputs:
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        output_path.as_posix(),
+                        "generated output has multiple owners",
+                    )
+                )
+            seen_outputs.add(output_path)
+            if output_path in inputs or output_path == canonical_owner_path:
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        output_path.as_posix(),
+                        "generated output overlaps its owner or inputs",
+                    )
+                )
+            if mapped_relation is not None and (
+                relation_id != mapped_relation[1]
+                or generator_path != mapped_relation[2]
+                or tuple(inputs) != mapped_relation[3]
+                or output_path != mapped_relation[4]
+                or canonical_owner_path != mapped_relation[5]
+            ):
+                findings.append(
+                    Finding(
+                        "RIA-GENERATOR",
+                        output_path.as_posix(),
+                        "generator relation does not match the fixed command",
+                    )
+                )
+
+        if (
+            isinstance(relation_id, str)
+            and re.fullmatch(r"[a-z][a-z0-9-]*", relation_id) is not None
+            and generator_path is not None
+            and output_path is not None
+            and canonical_owner_path is not None
+            and inputs
+            and len(set(inputs)) == len(inputs)
+            and isinstance(check_command, str)
+            and mapped_relation is not None
+        ):
+            relations.append(
+                GeneratedAssetRelation(
+                    relation_id,
+                    generator_path,
+                    tuple(inputs),
+                    output_path,
+                    check_command,
+                    canonical_owner_path,
+                )
+            )
+
+    if findings:
+        return sorted(set(findings))
+
+    commit_oid: str | None = None
+    if proposed_commit is not None:
+        try:
+            commit_oid = parse_git_sha1(proposed_commit, field="--commit")
+        except ContractError:
+            return [
+                Finding(
+                    "RIA-GENERATOR",
+                    "--commit",
+                    "generator relation authority is unavailable",
+                )
+            ]
+
+    root = root.absolute()
+    authoritative: dict[Path, bytes] = {}
+    paths = {
+        path
+        for relation in relations
+        for path in (
+            relation.generator_path,
+            *relation.input_roots,
+            relation.output_path,
+            relation.canonical_owner_path,
+        )
+    }
+    for path in sorted(paths):
+        try:
+            authoritative[path] = (
+                read_proposed_regular_file(root, path, runner)
+                if commit_oid is None
+                else _read_commit_path(root, commit_oid, path, runner)
+            )
+        except (ContractError, _GitError):
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    path.as_posix(),
+                    "tracked generator relation path is unavailable",
+                )
+            )
+
+    if findings:
+        return sorted(set(findings))
+    for relation in relations:
+        if not _output_links_to_owner(
+            relation.output_path,
+            authoritative[relation.output_path],
+            relation.canonical_owner_path,
+        ):
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    relation.output_path.as_posix(),
+                    "generated output has no current canonical-owner link",
+                )
+            )
+    if findings or commit_oid is not None:
+        return sorted(set(findings))
+
+    for relation in relations:
+        try:
+            _run_generator_check(root, relation.check_command)
+        except _GeneratorError:
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    relation.output_path.as_posix(),
+                    "generated output check failed",
+                )
+            )
+    return sorted(set(findings))
+
+
 def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
     root = value.get("referenceCurrentPacks")
     if not isinstance(root, Mapping):
@@ -2117,6 +2619,9 @@ def validate_reference_architecture(
         *validate_snapshot_guards(root, contract, proposed_commit=commit, runner=runner),
         *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
         *validate_data_assets(
+            root, contract, proposed_commit=commit, runner=runner
+        ),
+        *validate_generated_assets(
             root, contract, proposed_commit=commit, runner=runner
         ),
         *validate_baseline_transitions(

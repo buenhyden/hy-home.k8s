@@ -54,6 +54,10 @@ SOURCE_FRESHNESS = (
     REPOSITORY_ROOT
     / "tests/fixtures/reference-information-architecture/source-freshness.json"
 )
+GENERATOR_COLLISION = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/generator-collision.json"
+)
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
 
@@ -137,6 +141,55 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 "--",
                 "docs/90.references/data/source-ledger-fixture.json",
             )
+
+    def _generator_fixture(self) -> dict[str, object]:
+        return json.loads(GENERATOR_COLLISION.read_text(encoding="utf-8"))
+
+    def _generator_contract(
+        self, relations: list[dict[str, object]]
+    ) -> dict[str, object]:
+        contract = self._minimal_contract()
+        contract["generatedAssets"] = relations
+        return contract
+
+    def _generator_repository(self) -> Path:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        paths = (
+            Path("scripts/generate-llm-wiki-index.sh"),
+            Path("docs/90.references/llm-wiki/README.md"),
+            Path("docs/90.references/llm-wiki/wiki-index.md"),
+            Path("docs/00.agent-governance/README.md"),
+            Path("docs/00.agent-governance/harness-catalog.md"),
+            Path("docs/00.agent-governance/rules/document-stage-routing.md"),
+            Path("docs/README.md"),
+            Path("scripts/README.md"),
+            Path("docs/90.references/README.md"),
+            Path("docs/90.references/data/README.md"),
+        )
+        for path in paths:
+            destination = root / path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes((REPOSITORY_ROOT / path).read_bytes())
+        self._git_in(root, "init", "--quiet")
+        self._git_in(root, "add", "--", *(path.as_posix() for path in paths))
+        return root
+
+    def _replace_generator(self, root: Path, payload: bytes) -> None:
+        path = Path("scripts/generate-llm-wiki-index.sh")
+        (root / path).write_bytes(payload)
+        self._git_in(root, "add", "--", path.as_posix())
+
+    def _assert_generator_failure(
+        self, findings: list[ria.Finding], *secret_values: str
+    ) -> None:
+        self.assertTrue(findings)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-GENERATOR"})
+        rendered = repr(findings)
+        for value in secret_values:
+            if value:
+                self.assertNotIn(value, rendered)
 
     @staticmethod
     def _git_in(
@@ -884,6 +937,210 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(
             ria.validate_data_assets(self.root, self._source_contract()),
             [],
+        )
+
+    def test_generator_requires_unique_owner_relation(self) -> None:
+        fixture = self._generator_fixture()
+        duplicate = fixture["duplicateOwnerRelations"]
+        identity = fixture["generatorOutputIdentity"]
+        assert isinstance(duplicate, list) and isinstance(identity, dict)
+
+        root = self._generator_repository()
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract(duplicate))
+        )
+
+        root = self._generator_repository()
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract([identity]))
+        )
+
+        relation = dict(fixture["validRelation"])
+        relation["executable"] = "/tmp/contract-controlled"
+        root = self._generator_repository()
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract([relation])),
+            "/tmp/contract-controlled",
+        )
+
+        relation = dict(fixture["validRelation"])
+        relation["id"] = "alternate-wiki-index"
+        root = self._generator_repository()
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract([relation]))
+        )
+
+        for owner in (
+            "docs/README.md",
+            "docs/00.agent-governance/README.md",
+            "scripts/README.md",
+        ):
+            with self.subTest(case="wrong-linked-owner", owner=owner):
+                relation = dict(fixture["validRelation"])
+                relation["canonicalOwnerPath"] = owner
+                root = self._generator_repository()
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        root, self._generator_contract([relation])
+                    )
+                )
+
+        expected_inputs = list(fixture["validRelation"]["inputRoots"])
+        input_mutations = (
+            ("arbitrary", ["docs/README.md"]),
+            ("missing", []),
+            (
+                "extra",
+                [*expected_inputs, "docs/90.references/data/README.md"],
+            ),
+            ("reordered", list(reversed(expected_inputs))),
+            ("duplicate", [*expected_inputs, expected_inputs[0]]),
+        )
+        for name, input_roots in input_mutations:
+            with self.subTest(case="input-relation", mutation=name):
+                relation = dict(fixture["validRelation"])
+                relation["inputRoots"] = input_roots
+                root = self._generator_repository()
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        root, self._generator_contract([relation])
+                    )
+                )
+
+        for path in (
+            "scripts/generate-llm-wiki-index.sh",
+            "docs/90.references/llm-wiki/README.md",
+            "docs/90.references/llm-wiki/wiki-index.md",
+        ):
+            with self.subTest(case="untracked", path=path):
+                root = self._generator_repository()
+                self._git_in(root, "rm", "--cached", "--quiet", "--", path)
+                relation = dict(fixture["validRelation"])
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        root, self._generator_contract([relation])
+                    )
+                )
+
+        output = Path("docs/90.references/llm-wiki/wiki-index.md")
+        for kind in ("directory", "symlink", "fifo"):
+            with self.subTest(case="nonregular-output", kind=kind):
+                root = self._generator_repository()
+                target = root / output
+                target.unlink()
+                if kind == "directory":
+                    target.mkdir()
+                elif kind == "symlink":
+                    target.symlink_to("README.md")
+                else:
+                    os.mkfifo(target)
+                relation = dict(fixture["validRelation"])
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        root, self._generator_contract([relation])
+                    )
+                )
+
+    def test_generator_rejects_unmapped_command_and_stale_output(self) -> None:
+        fixture = self._generator_fixture()
+        unmapped = fixture["unmappedCommand"]
+        assert isinstance(unmapped, dict)
+        root = self._generator_repository()
+        marker = root / "docs/90.references/llm-wiki/command-injection"
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract([unmapped])),
+            "command-injection",
+        )
+        self.assertFalse(marker.exists())
+
+        root = self._generator_repository()
+        output = root / "docs/90.references/llm-wiki/wiki-index.md"
+        output.write_bytes(output.read_bytes() + b"\nSENSITIVE-STALE-BYTES\n")
+        self._git_in(
+            root,
+            "add",
+            "--",
+            "docs/90.references/llm-wiki/wiki-index.md",
+        )
+        relation = dict(fixture["validRelation"])
+        self._assert_generator_failure(
+            ria.validate_generated_assets(root, self._generator_contract([relation])),
+            "SENSITIVE-STALE-BYTES",
+        )
+
+        process_cases = (
+            (
+                "timeout",
+                b"#!/usr/bin/env bash\nsleep 1\n",
+                "GENERATOR_TIMEOUT_SECONDS",
+                0.05,
+                "",
+            ),
+            (
+                "stdout-overflow",
+                b"#!/usr/bin/env bash\nprintf 'SENSITIVE-STDOUT-OVERFLOW'\n",
+                "GENERATOR_STDOUT_BYTES",
+                8,
+                "SENSITIVE-STDOUT-OVERFLOW",
+            ),
+            (
+                "stderr-overflow",
+                b"#!/usr/bin/env bash\nprintf 'SENSITIVE-STDERR-OVERFLOW' >&2\n",
+                "GENERATOR_STDERR_BYTES",
+                8,
+                "SENSITIVE-STDERR-OVERFLOW",
+            ),
+        )
+        for name, payload, setting, limit, secret in process_cases:
+            with self.subTest(case=name):
+                root = self._generator_repository()
+                self._replace_generator(root, payload)
+                relation = dict(fixture["validRelation"])
+                with mock.patch.object(ria, setting, limit):
+                    findings = ria.validate_generated_assets(
+                        root, self._generator_contract([relation])
+                    )
+                self._assert_generator_failure(findings, secret)
+
+    def test_generator_accepts_llm_wiki_relation(self) -> None:
+        fixture = self._generator_fixture()
+        relation = fixture["validRelation"]
+        assert isinstance(relation, dict)
+        root = self._generator_repository()
+        real_popen = subprocess.Popen
+        with mock.patch.object(ria.subprocess, "Popen", wraps=real_popen) as popen:
+            self.assertEqual(
+                ria.validate_generated_assets(
+                    root, self._generator_contract([dict(relation)])
+                ),
+                [],
+            )
+        expected_argv = [
+            "/usr/bin/bash",
+            "scripts/generate-llm-wiki-index.sh",
+            "--check",
+        ]
+        generator_calls = [
+            call
+            for call in popen.call_args_list
+            if call.args and call.args[0] == expected_argv
+        ]
+        self.assertEqual(len(generator_calls), 1)
+        invocation = generator_calls[0]
+        self.assertEqual(invocation.kwargs["cwd"], root.absolute())
+        self.assertEqual(invocation.kwargs["env"], ria.CLOSED_GENERATOR_ENVIRONMENT)
+        self.assertIs(invocation.kwargs["stdin"], subprocess.DEVNULL)
+        self.assertIs(invocation.kwargs["stdout"], subprocess.PIPE)
+        self.assertIs(invocation.kwargs["stderr"], subprocess.PIPE)
+        self.assertIs(invocation.kwargs["shell"], False)
+
+        root = self._generator_repository()
+        stale_owner = dict(relation)
+        stale_owner["canonicalOwnerPath"] = "docs/90.references/data/README.md"
+        self._assert_generator_failure(
+            ria.validate_generated_assets(
+                root, self._generator_contract([stale_owner])
+            )
         )
 
     def test_data_asset_text_fields_reject_controls_and_preserve_unicode(

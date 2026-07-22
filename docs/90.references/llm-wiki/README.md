@@ -19,6 +19,16 @@ This README does not define policy or procedure. It points agents and humans to 
 
 정책, 절차, 실행 명령, runtime roster, 운영 runbook 본문은 이 문서에 복제하지 않는다. 각 항목의 정본은 아래 `Definitions / Facts`와 `Related Documents`에 연결된 canonical 문서가 소유한다.
 
+The Current generated-ownership relation has one canonical owner and one
+deterministic check:
+
+- Canonical owner: `docs/90.references/llm-wiki/README.md`
+- Declared inputs, in contract order: this README, the Agent Governance Hub,
+  Harness Catalog, Document Stage Routing Rules, Docs README, and Scripts README
+- Generator: `scripts/generate-llm-wiki-index.sh`
+- Output: `docs/90.references/llm-wiki/wiki-index.md`
+- Check: `bash scripts/generate-llm-wiki-index.sh --check`
+
 ### Collection Readers
 
 이 README의 주요 독자:

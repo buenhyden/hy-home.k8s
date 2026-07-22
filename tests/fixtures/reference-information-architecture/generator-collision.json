@@ -1,0 +1,79 @@
+{
+  "validRelation": {
+    "id": "llm-wiki-index",
+    "generatorPath": "scripts/generate-llm-wiki-index.sh",
+    "inputRoots": [
+      "docs/90.references/llm-wiki/README.md",
+      "docs/00.agent-governance/README.md",
+      "docs/00.agent-governance/harness-catalog.md",
+      "docs/00.agent-governance/rules/document-stage-routing.md",
+      "docs/README.md",
+      "scripts/README.md"
+    ],
+    "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+    "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+    "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+  },
+  "duplicateOwnerRelations": [
+    {
+      "id": "llm-wiki-index",
+      "generatorPath": "scripts/generate-llm-wiki-index.sh",
+      "inputRoots": [
+        "docs/90.references/llm-wiki/README.md",
+        "docs/00.agent-governance/README.md",
+        "docs/00.agent-governance/harness-catalog.md",
+        "docs/00.agent-governance/rules/document-stage-routing.md",
+        "docs/README.md",
+        "scripts/README.md"
+      ],
+      "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+      "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+      "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+    },
+    {
+      "id": "second-wiki-owner",
+      "generatorPath": "scripts/generate-llm-wiki-index.sh",
+      "inputRoots": [
+        "docs/90.references/llm-wiki/README.md",
+        "docs/00.agent-governance/README.md",
+        "docs/00.agent-governance/harness-catalog.md",
+        "docs/00.agent-governance/rules/document-stage-routing.md",
+        "docs/README.md",
+        "scripts/README.md"
+      ],
+      "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+      "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+      "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+    }
+  ],
+  "generatorOutputIdentity": {
+    "id": "llm-wiki-index",
+    "generatorPath": "docs/90.references/llm-wiki/wiki-index.md",
+    "inputRoots": [
+      "docs/90.references/llm-wiki/README.md",
+      "docs/00.agent-governance/README.md",
+      "docs/00.agent-governance/harness-catalog.md",
+      "docs/00.agent-governance/rules/document-stage-routing.md",
+      "docs/README.md",
+      "scripts/README.md"
+    ],
+    "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+    "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+    "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+  },
+  "unmappedCommand": {
+    "id": "llm-wiki-index",
+    "generatorPath": "scripts/generate-llm-wiki-index.sh",
+    "inputRoots": [
+      "docs/90.references/llm-wiki/README.md",
+      "docs/00.agent-governance/README.md",
+      "docs/00.agent-governance/harness-catalog.md",
+      "docs/00.agent-governance/rules/document-stage-routing.md",
+      "docs/README.md",
+      "scripts/README.md"
+    ],
+    "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+    "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check; /usr/bin/touch docs/90.references/llm-wiki/command-injection",
+    "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+  }
+}

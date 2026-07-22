@@ -311,7 +311,23 @@
       ]
     }
   ],
-  "generatedAssets": [],
+  "generatedAssets": [
+    {
+      "id": "llm-wiki-index",
+      "generatorPath": "scripts/generate-llm-wiki-index.sh",
+      "inputRoots": [
+        "docs/90.references/llm-wiki/README.md",
+        "docs/00.agent-governance/README.md",
+        "docs/00.agent-governance/harness-catalog.md",
+        "docs/00.agent-governance/rules/document-stage-routing.md",
+        "docs/README.md",
+        "scripts/README.md"
+      ],
+      "outputPath": "docs/90.references/llm-wiki/wiki-index.md",
+      "checkCommand": "bash scripts/generate-llm-wiki-index.sh --check",
+      "canonicalOwnerPath": "docs/90.references/llm-wiki/README.md"
+    }
+  ],
   "duplicateRules": {
     "canonicalOwnerRoots": [
       "docs/00.agent-governance",
