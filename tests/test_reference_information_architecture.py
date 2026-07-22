@@ -50,6 +50,10 @@ OVERLAY_MUTATION = (
     REPOSITORY_ROOT
     / "tests/fixtures/reference-information-architecture/overlay-mutation.json"
 )
+SOURCE_FRESHNESS = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/source-freshness.json"
+)
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
 
@@ -112,6 +116,27 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+
+    def _source_contract(self) -> dict[str, object]:
+        fixture = json.loads(SOURCE_FRESHNESS.read_text(encoding="utf-8"))
+        contract = self._minimal_contract()
+        contract["evidenceCutoff"] = fixture["evidenceCutoff"]
+        contract["dataAssets"] = [fixture["dataAsset"]]
+        return contract
+
+    def _write_source_evidence(self, *, tracked: bool) -> None:
+        path = self.root / "docs/90.references/data/source-ledger-fixture.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("{}\n", encoding="utf-8")
+        if not (self.root / ".git").exists():
+            self._git_in(self.root, "init", "--quiet")
+        if tracked:
+            self._git_in(
+                self.root,
+                "add",
+                "--",
+                "docs/90.references/data/source-ledger-fixture.json",
+            )
 
     @staticmethod
     def _git_in(
@@ -787,6 +812,288 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         dot_segment_contract["currentPackRegistry"] = "docs/../registry.json"
         self.assertTrue(
             list(Draft202012Validator(schema).iter_errors(dot_segment_contract))
+        )
+
+    def test_data_asset_requires_source_scope_date_and_trigger(self) -> None:
+        self._write_source_evidence(tracked=True)
+        mutations = (
+            ("missing-url", lambda asset, source: source.pop("url")),
+            (
+                "non-https-url",
+                lambda asset, source: source.update(
+                    {"url": "http://example.invalid/source"}
+                ),
+            ),
+            ("invalid-date", lambda asset, source: source.update({"checkedOn": "2026-02-30"})),
+            ("empty-adopted", lambda asset, source: source.update({"adoptedScope": []})),
+            ("empty-rejected", lambda asset, source: source.update({"rejectedScope": []})),
+            ("empty-trigger", lambda asset, source: asset.update({"refreshTrigger": ""})),
+            ("unknown-asset-field", lambda asset, source: asset.update({"authority": "invented"})),
+            ("unknown-source-field", lambda asset, source: source.update({"status": "PASS"})),
+            ("duplicate-source", lambda asset, source: asset["sources"].append(dict(source))),
+        )
+        for name, mutate in mutations:
+            with self.subTest(case=name):
+                contract = self._source_contract()
+                asset = contract["dataAssets"][0]
+                source = asset["sources"][0]
+                mutate(asset, source)
+                findings = ria.validate_data_assets(self.root, contract)
+                self.assertTrue(findings)
+                self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+        with self.subTest(case="missing-asset"):
+            contract = self._source_contract()
+            contract["dataAssets"][0]["repositoryEvidence"] = [
+                "docs/90.references/data/missing-source-ledger-fixture.json"
+            ]
+            findings = ria.validate_data_assets(self.root, contract)
+            self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+        with self.subTest(case="empty-ledger"):
+            contract = self._source_contract()
+            contract["dataAssets"] = []
+            findings = ria.validate_data_assets(self.root, contract)
+            self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+    def test_data_asset_rejects_after_cutoff_and_untracked_evidence(self) -> None:
+        self._write_source_evidence(tracked=True)
+        contract = self._source_contract()
+        contract["dataAssets"][0]["sources"][0]["checkedOn"] = "2026-07-23"
+        findings = ria.validate_data_assets(self.root, contract)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+        contract = self._source_contract()
+        contract["evidenceCutoff"] = "2026-02-30"
+        findings = ria.validate_data_assets(self.root, contract)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+        self._git_in(
+            self.root,
+            "rm",
+            "--cached",
+            "--quiet",
+            "--",
+            "docs/90.references/data/source-ledger-fixture.json",
+        )
+        findings = ria.validate_data_assets(self.root, self._source_contract())
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+    def test_data_asset_accepts_closed_source_ledger(self) -> None:
+        self._write_source_evidence(tracked=True)
+        self.assertEqual(
+            ria.validate_data_assets(self.root, self._source_contract()),
+            [],
+        )
+
+    def test_data_asset_text_fields_reject_controls_and_preserve_unicode(
+        self,
+    ) -> None:
+        self._write_source_evidence(tracked=True)
+        representative_controls = (
+            "\0",
+            "\t",
+            "\n",
+            "\r",
+            "\x1f",
+            "\x7f",
+            "\x80",
+        )
+        for field in ("refreshTrigger", "adoptedScope", "rejectedScope"):
+            for control in representative_controls:
+                with self.subTest(field=field, codepoint=ord(control)):
+                    contract = self._source_contract()
+                    asset = contract["dataAssets"][0]
+                    if field == "refreshTrigger":
+                        asset[field] = f"before{control}after"
+                    else:
+                        asset["sources"][0][field] = [f"before{control}after"]
+                    findings = ria.validate_data_assets(self.root, contract)
+                    self.assertEqual(
+                        {finding.rule_id for finding in findings},
+                        {"RIA-SOURCE"},
+                    )
+                    self.assertNotIn(f"before{control}after", repr(findings))
+
+        for codepoint in (*range(0x20), *range(0x7F, 0xA0)):
+            with self.subTest(predicate_codepoint=codepoint):
+                self.assertFalse(
+                    ria._closed_single_line_text(  # noqa: SLF001
+                        f"before{chr(codepoint)}after"
+                    )
+                )
+        self.assertTrue(
+            ria._closed_single_line_text("정상적인 한국어 범위")  # noqa: SLF001
+        )
+
+        contract = self._source_contract()
+        asset = contract["dataAssets"][0]
+        asset["refreshTrigger"] = "저장소 또는 공식 소스 범위 변경"
+        asset["sources"][0]["adoptedScope"] = ["채택한 정상 범위"]
+        asset["sources"][0]["rejectedScope"] = ["제외한 정상 범위"]
+        self.assertEqual(ria.validate_data_assets(self.root, contract), [])
+
+    def test_production_source_ledger_covers_each_tracked_data_asset(self) -> None:
+        contract = ria._decode_json_bytes(  # noqa: SLF001
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_bytes(),
+            field=ria.DEFAULT_CONTRACT_PATH.as_posix(),
+        )
+        listed = self._git_in(
+            REPOSITORY_ROOT,
+            "ls-files",
+            "-z",
+            "--",
+            "docs/90.references/data",
+        ).split(b"\0")
+        expected = {
+            path.decode("utf-8")
+            for path in listed
+            if path and path != b"docs/90.references/data/README.md"
+        }
+        observed: set[str] = set()
+        for asset in contract["dataAssets"]:
+            evidence = asset["repositoryEvidence"]
+            self.assertEqual(len(evidence), 1)
+            observed.add(evidence[0])
+        self.assertEqual(observed, expected)
+
+        contract["dataAssets"] = [
+            asset
+            for asset in contract["dataAssets"]
+            if asset["id"] != "tech-stack-version-inventory"
+        ]
+        findings = ria.validate_data_assets(REPOSITORY_ROOT, contract)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+        contract = ria._decode_json_bytes(  # noqa: SLF001
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_bytes(),
+            field=ria.DEFAULT_CONTRACT_PATH.as_posix(),
+        )
+        contract["dataAssets"][0]["repositoryEvidence"].append(
+            "docs/90.references/README.md"
+        )
+        findings = ria.validate_data_assets(REPOSITORY_ROOT, contract)
+        self.assertEqual({finding.rule_id for finding in findings}, {"RIA-SOURCE"})
+
+    def test_data_asset_inventory_records_are_closed_and_bounded(self) -> None:
+        oid = b"a" * 40
+        valid_index = (
+            b"100644 "
+            + oid
+            + b" 0\tdocs/90.references/data/asset.json\0"
+        )
+        valid_tree = (
+            b"100644 blob "
+            + oid
+            + b"\tdocs/90.references/data/asset.json\0"
+        )
+        self.assertEqual(
+            ria._parse_index_listing(valid_index),  # noqa: SLF001
+            (Path("docs/90.references/data/asset.json"),),
+        )
+        self.assertEqual(
+            ria._parse_tree_listing(valid_tree),  # noqa: SLF001
+            (Path("docs/90.references/data/asset.json"),),
+        )
+        hostile_index = (
+            valid_index.removesuffix(b"\0"),
+            b"not-an-index-record\0",
+            b"120000 " + oid + b" 0\tdocs/90.references/data/asset.json\0",
+            b"100644 " + oid + b" 2\tdocs/90.references/data/asset.json\0",
+            valid_index + valid_index,
+            b"100644 " + oid + b" 0\tdocs/90.references/outside.json\0",
+        )
+        for payload in hostile_index:
+            with self.subTest(kind="index", payload=payload[:16]):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._parse_index_listing(payload)  # noqa: SLF001
+        hostile_tree = (
+            valid_tree.removesuffix(b"\0"),
+            b"not-a-tree-record\0",
+            b"120000 blob " + oid + b"\tdocs/90.references/data/asset.json\0",
+            b"100644 tree " + oid + b"\tdocs/90.references/data/asset.json\0",
+            valid_tree + valid_tree,
+            b"100644 blob " + oid + b"\tdocs/90.references/outside.json\0",
+        )
+        for payload in hostile_tree:
+            with self.subTest(kind="tree", payload=payload[:16]):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._parse_tree_listing(payload)  # noqa: SLF001
+        self.assertTrue(
+            ria._git_arguments_allowed(  # noqa: SLF001
+                (
+                    "ls-tree",
+                    "-rz",
+                    "--full-tree",
+                    "a" * 40,
+                    "--",
+                    "docs/90.references/data",
+                )
+            )
+        )
+        self.assertFalse(
+            ria._git_arguments_allowed(  # noqa: SLF001
+                (
+                    "ls-tree",
+                    "-rz",
+                    "--full-tree",
+                    "a" * 40,
+                    "--",
+                    "docs/90.references/research",
+                )
+            )
+        )
+
+        calls: list[tuple[str, ...]] = []
+
+        def index_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, limit
+            calls.append(arguments)
+            return valid_index
+
+        self.assertEqual(
+            ria._tracked_data_asset_paths(  # noqa: SLF001
+                self.root, commit_oid=None, runner=index_runner
+            ),
+            {Path("docs/90.references/data/asset.json")},
+        )
+        self.assertEqual(
+            calls,
+            [("ls-files", "-z", "--stage", "--", "docs/90.references/data")],
+        )
+
+        calls.clear()
+
+        def tree_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, limit
+            calls.append(arguments)
+            if arguments == ("cat-file", "-t", "a" * 40):
+                return b"commit\n"
+            return valid_tree
+
+        self.assertEqual(
+            ria._tracked_data_asset_paths(  # noqa: SLF001
+                self.root, commit_oid="a" * 40, runner=tree_runner
+            ),
+            {Path("docs/90.references/data/asset.json")},
+        )
+        self.assertEqual(
+            calls,
+            [
+                ("cat-file", "-t", "a" * 40),
+                (
+                    "ls-tree",
+                    "-rz",
+                    "--full-tree",
+                    "a" * 40,
+                    "--",
+                    "docs/90.references/data",
+                ),
+            ],
         )
 
     def test_special_file_replacement_after_lstat_fails_closed_without_blocking(

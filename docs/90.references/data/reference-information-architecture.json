@@ -58,7 +58,259 @@
       }
     }
   ],
-  "dataAssets": [],
+  "dataAssets": [
+    {
+      "id": "active-corpus-retention-census",
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-retention-census.json"
+      ],
+      "refreshTrigger": "ACER-002 eligibility evidence, Spec 037 closure, ACER-004 role evidence, pinned object drift, proposal delta, or methodology-source change",
+      "sources": [
+        {
+          "url": "https://github.com/kubernetes/enhancements/blob/master/keps/README.md",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Structured lifecycle records with explicit metadata, status, reviewers, and historical traceability"
+          ],
+          "rejectedScope": [
+            "Kubernetes enhancement status as authority for any local document disposition"
+          ]
+        },
+        {
+          "url": "https://www.archives.gov/records-mgmt/policy/managing-web-records-index.html",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Explicit retention and disposition factors for trustworthy repository records"
+          ],
+          "rejectedScope": [
+            "Federal records-law applicability or archive authorization for this repository"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "active-corpus-eligibility-ledger",
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-eligibility-ledger.json"
+      ],
+      "refreshTrigger": "ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change",
+      "sources": [
+        {
+          "url": "https://git-scm.com/docs/git-ls-files",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Index-backed tracked-path, object, mode, and stage evidence used by the dry-run ledger"
+          ],
+          "rejectedScope": [
+            "Eligibility, ownership, migration approval, or live repository state beyond the pinned evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "active-corpus-migration-results",
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-migration-results.json"
+      ],
+      "refreshTrigger": "Archive or index drift, consumer repair, validation-result change, or rollback-parent change",
+      "sources": [
+        {
+          "url": "https://git-scm.com/docs/git-mv",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Tracked path movement and index-update mechanics considered by the migration ledger"
+          ],
+          "rejectedScope": [
+            "Proof that a local migration batch, consumer repair, rollback, remote job, or CI run succeeded"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "active-corpus-role-audit",
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-role-audit.json"
+      ],
+      "refreshTrigger": "Stage 05 authored-record change, frozen helper drift, post-closure manifest drift, README safety drift, or Spec 037 closure",
+      "sources": [
+        {
+          "url": "https://git-scm.com/docs/git-ls-files",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Tracked index identity, regular-file mode, and stage evidence for the audited helper corpus"
+          ],
+          "rejectedScope": [
+            "Semantic role assignment, README membership, test execution, or live runtime behavior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "active-corpus-residue-closure",
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-residue-closure.json"
+      ],
+      "refreshTrigger": "Successor migration evidence, Plan or Task inventory, migration result, ADR or Spec authority, ACER-004 input, link evidence, or closure result changes",
+      "sources": [
+        {
+          "url": "https://www.archives.gov/records-mgmt/policy/managing-web-records-index.html",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Separation of retained records, disposition rationale, and preservation evidence"
+          ],
+          "rejectedScope": [
+            "Federal retention schedules or authority to close, retain, or archive a local SDLC record"
+          ]
+        },
+        {
+          "url": "https://git-scm.com/docs/git-ls-files",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Exact tracked-path and stage evidence for the residue inventory boundary"
+          ],
+          "rejectedScope": [
+            "Successor completion, semantic closure, cross-link validity, or remote execution status"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agent-reference-index",
+      "repositoryEvidence": [
+        "docs/90.references/data/agent-reference-index.md"
+      ],
+      "refreshTrigger": "Agent reference addition, provider adapter change, runtime roster movement, or Stage 00 routing change",
+      "sources": [
+        {
+          "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Codex project-instruction discovery and scoped AGENTS.md context"
+          ],
+          "rejectedScope": [
+            "Current local Codex runtime, model, tool, permission, or provider-parity claims"
+          ]
+        },
+        {
+          "url": "https://code.claude.com/docs/en/memory",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Claude Code project-memory hierarchy and CLAUDE.md instruction context"
+          ],
+          "rejectedScope": [
+            "Current local Claude installation, hook, runtime, model, or execution evidence"
+          ]
+        },
+        {
+          "url": "https://geminicli.com/docs/cli/gemini-md/",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Gemini CLI context hierarchy and GEMINI.md instruction discovery"
+          ],
+          "rejectedScope": [
+            "Current local Gemini installation, runtime, model, tool, or execution evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reference-information-architecture-contract",
+      "repositoryEvidence": [
+        "docs/90.references/data/reference-information-architecture.json"
+      ],
+      "refreshTrigger": "Current-pack registry, protected observation bytes, declared projection, source ledger, generated relation, duplicate rule, or baseline-state change",
+      "sources": [
+        {
+          "url": "https://json-schema.org/draft/2020-12/json-schema-validation",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Closed structural assertions for required fields, arrays, strings, and additional-property rejection"
+          ],
+          "rejectedScope": [
+            "Repository semantics, Git authority, calendar-date comparison, URL reachability, or live state"
+          ]
+        },
+        {
+          "url": "https://git-scm.com/docs/git-ls-files",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Exact stage-zero index identity and blob evidence for proposed repository files"
+          ],
+          "rejectedScope": [
+            "Remote branch, CI, deployment, or live-environment status"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reference-information-architecture-schema",
+      "repositoryEvidence": [
+        "docs/90.references/data/reference-information-architecture.schema.json"
+      ],
+      "refreshTrigger": "Contract field, Draft 2020-12 vocabulary, projection, source-ledger, generator, duplicate, fixed-runner, or baseline-FSM change",
+      "sources": [
+        {
+          "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Draft 2020-12 schema resources, vocabularies, identifiers, references, and applicator semantics"
+          ],
+          "rejectedScope": [
+            "Application-specific source freshness, Git object safety, or authority semantics"
+          ]
+        },
+        {
+          "url": "https://json-schema.org/draft/2020-12/json-schema-validation",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Draft 2020-12 validation assertions and explicit application-level semantic validation boundary"
+          ],
+          "rejectedScope": [
+            "Remote URL existence checks, live source status, or automatic format-assertion behavior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tech-stack-version-inventory",
+      "repositoryEvidence": [
+        "docs/90.references/data/tech-stack-version-inventory.md"
+      ],
+      "refreshTrigger": "Manifest or config version change, GitHub Actions or pre-commit pin change, cloud example target change, or official support-range change",
+      "sources": [
+        {
+          "url": "https://kubernetes.io/releases/",
+          "checkedOn": "2026-07-22",
+          "adoptedScope": [
+            "Upstream supported-release branches, patch awareness, and end-of-life boundaries"
+          ],
+          "rejectedScope": [
+            "Automatic local k3s, chart, cloud-cluster, or dependency upgrade authorization"
+          ]
+        },
+        {
+          "url": "https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html",
+          "checkedOn": "2026-07-14",
+          "adoptedScope": [
+            "AWS EKS Kubernetes support-range context for the repository example snapshot"
+          ],
+          "rejectedScope": [
+            "Live AWS account state, deployed EKS version, or upgrade approval"
+          ]
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions",
+          "checkedOn": "2026-07-14",
+          "adoptedScope": [
+            "Azure AKS Kubernetes support-range context for the repository example snapshot"
+          ],
+          "rejectedScope": [
+            "Live Azure subscription state, deployed AKS version, or upgrade approval"
+          ]
+        }
+      ]
+    }
+  ],
   "generatedAssets": [],
   "duplicateRules": {
     "canonicalOwnerRoots": [

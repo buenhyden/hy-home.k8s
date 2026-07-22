@@ -42,6 +42,22 @@ stage로 라우팅한다.
 - Live upgrade procedures or deployment approvals.
 - Research analysis, audit reports, learning roadmaps, or generated wiki maps.
 
+### Source Ledger Contract
+
+[`reference-information-architecture.json`](./reference-information-architecture.json)
+records one source-ledger entry for every tracked data asset in this directory
+other than this routing README. Each entry names the exact repository evidence,
+a non-empty refresh trigger, and closed source records with an official HTTPS
+URL, strict `checkedOn` date, adopted scope, and rejected scope.
+
+`checkedOn` proves only that the cited source and stated scope were inspected by
+that date. It does not prove current URL availability, remote execution, CI, or
+live environment state. The offline validator performs no network request;
+instead it bounds source dates by the contract `evidenceCutoff` and verifies
+repository evidence through the exact stage-zero index blob plus no-follow
+worktree boundary. Refresh remains event-driven rather than an invented common
+expiry interval, and external sources do not inherit local policy authority.
+
 ## Item Index
 
 ```text
@@ -83,16 +99,18 @@ data/
 | [Active Corpus Retention Census](./active-corpus-retention-census.json) | repo-backed immutable census / external-method snapshot | Exact 110 candidate rows, Spec 037 controls, Stage 05, pinned 29-file helper input, exact one-test proposal delta, proposed 30-file helper counts, owned ACER-001 dispositions, explicit unresolved upstream/program/owner/link/closure evidence axes, and canonical safe row paths with value-free diagnostics; neither helper count substitutes for ACER-004 recomputation, and body-Spec links are non-authoritative observations | ACER-002 eligibility evidence, Spec 037 closure, ACER-004 then-current role audit, pinned commit/object drift, proposal delta, or methodology-source change |
 | [Active Corpus Eligibility Ledger](./active-corpus-eligibility-ledger.json) | repo-backed dry-run ledger | Exact pinned 110 candidate identities, 12 complete lineage pairs eligible only for a future ACER-003 atomic cutover, 98 owned `DEFER` rows, and two retained Spec 037 controls; it records route, consumer, recovery, and no-cutover evidence without moving a file | ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change |
 | [Active Corpus Migration Results](./active-corpus-migration-results.json) | repo-backed closed migration-result ledger | Exact complete six-pair deterministic eligible-prefix ACER-003 corpus, twelve Plan/Task records, immutable 31/202 archive base plus 160 additive historical links, exact source/archive identities, repaired current-or-migrated-original consumers, pinned committed five-batch prefix, Spec/program closure owners, archive navigation boundary, validation results, and the exact rollback-parent chain without a self-referential batch commit | Archive/index drift, consumer repair, validation result, or rollback-parent change |
-| [Active Corpus Role Audit](./active-corpus-role-audit.json) | repo-backed closed role-audit ledger | ACER-004 exact 24-record Stage 05 corpus and frozen 33-helper ledger, including exact paths, formats, roles, remediation inventory, and zero findings; exactly four manifested RIA identities form the separate post-closure partition without rewriting this ledger or downstream ACER counts | Stage 05 authored-record change, frozen helper drift, post-closure identity/role manifest drift, current helper/README safety drift, or Spec 037 closure |
+| [Active Corpus Role Audit](./active-corpus-role-audit.json) | repo-backed closed role-audit ledger | ACER-004 exact 24-record Stage 05 corpus and frozen 33-helper ledger, including exact paths, formats, roles, remediation inventory, and zero findings; exactly five manifested RIA identities form the separate post-closure partition without rewriting this ledger or downstream ACER counts | Stage 05 authored-record change, frozen helper drift, post-closure identity/role manifest drift, current helper/README safety drift, or Spec 037 closure |
 | [Active Corpus Residue Closure](./active-corpus-residue-closure.json) | repo-backed closed post-cutover ledger | ACER-006 preserves immutable reviewed inputs while recording 12 migrated-closed rows, 100 current Stage 04 `DEFER`/0 `retain`, exact 52-key 48/1/3 cardinality, 13 accepted ADR and 29 done-Spec guards, the ACER-004 24/33/0 dependency, and eight empty finding classes | Exact successor migration evidence, current Plan/Task inventory or authority, migration/archive result, ADR/Spec authority, ACER-004 input, strict link evidence, closure commit, or post-commit result change |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
-| [Reference Information Architecture Contract](./reference-information-architecture.json) | closed repository-static contract | Pins the exact registry-derived Current pack IDs to committed baselines and owns immutable Historical guards, bounded Current projections, and a one-shot transition/settlement FSM; it does not copy Current members, paths, digests, states, or pointers | Current-pack registry, protected observation bytes, declared projection, or baseline-state change |
-| [Reference Information Architecture Schema](./reference-information-architecture.schema.json) | Draft 2020-12 schema | Closed schema-v2 form for Historical source guards, exact Current baseline pins, bounded projections, and transition/settlement records; the validator rejects duplicate JSON keys, revision steering, and unsafe file/Git boundaries before semantic checks | Contract-field, fixed-runner, projection, or baseline-FSM change |
+| [Reference Information Architecture Contract](./reference-information-architecture.json) | closed repository-static contract | Pins the exact registry-derived Current pack IDs to committed baselines and owns immutable Historical guards, bounded Current projections, the offline source ledger, and a one-shot transition/settlement FSM; it does not copy Current members, paths, digests, states, or pointers | Current-pack registry, protected observation bytes, declared projection, source-ledger relation, or baseline-state change |
+| [Reference Information Architecture Schema](./reference-information-architecture.schema.json) | Draft 2020-12 schema | Closed schema-v2 form for Historical guards, exact Current baseline pins, bounded projections, source/scope/freshness records, and transition/settlement records; the validator adds strict calendar, HTTPS, duplicate, and safe repository-evidence semantics without network access | Contract field, source-ledger shape, fixed runner, projection, or baseline-FSM change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
 ### Authority Boundary
 
 - `data/` owns factual lookup data and source-checked reference inventories.
+- The RIA source ledger owns source/scope/freshness metadata for this category,
+  not the policy or runtime authority of any cited source or repository asset.
 - `active-corpus-retention-census.json` is immutable ACER-001 input evidence;
   it does not authorize archive migration, infer current worktree state, or
   promote any row to `eligible`.
@@ -105,8 +123,9 @@ data/
 - `active-corpus-role-audit.json` is ACER-004 repository-static evidence. It
   preserves real operation records, treats empty Incident/Postmortem
   collections as valid, and freezes the reviewed 33-helper corpus and README
-  remediation. The validator separately reports the current 37-helper corpus
-  as 33 frozen plus four exact manifested RIA helpers. A supported extension or
+  remediation. The validator separately reports the current 38-helper corpus
+  as 33 frozen plus five exact manifested RIA helpers, with the canonical
+  13/18/6/1 format split. A supported extension or
   sorted `tests/README.md` row cannot create another post-closure role; every
   admitted helper also remains an authoritative safe regular read and exact
   README member. Neither partition claims live/runtime state.

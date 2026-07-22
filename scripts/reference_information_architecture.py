@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 import hashlib
 import json
 import os
@@ -14,6 +15,7 @@ import subprocess
 import tempfile
 import time
 from typing import Callable, Mapping, Sequence
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
 
@@ -24,6 +26,8 @@ DEFAULT_CONTRACT_PATH = Path(
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
+DATA_ASSET_ROOT = Path("docs/90.references/data")
+DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
@@ -74,6 +78,12 @@ RESEARCH_PACK_ID = "research/2026-07-07-wer"
 TRANSITION_ID = "ria-007-postflight-ledger"
 TRANSITION_SUBJECT = "document-migration-evidence-ledger"
 TRANSITION_MEMBER = "document-migration-evidence-ledger.md"
+DATA_ASSET_FIELDS = frozenset(
+    {"id", "repositoryEvidence", "refreshTrigger", "sources"}
+)
+SOURCE_RECORD_FIELDS = frozenset(
+    {"url", "checkedOn", "adoptedScope", "rejectedScope"}
+)
 
 RIA_RULE_IDS = frozenset(
     {
@@ -334,6 +344,13 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         and OID_PATTERN.fullmatch(arguments[3]) is not None
         and arguments[4] == "--"
         and _safe_git_path(arguments[5])
+    ):
+        return True
+    if (
+        len(arguments) == 6
+        and arguments[:3] == ("ls-tree", "-rz", "--full-tree")
+        and OID_PATTERN.fullmatch(arguments[3]) is not None
+        and arguments[4:] == ("--", DATA_ASSET_ROOT.as_posix())
     ):
         return True
     if arguments == ("rev-parse", "--verify", "HEAD"):
@@ -922,6 +939,387 @@ def load_contract_at_commit(
     _validate_schema_at_commit(root, oid, contract, relative, runner)
     _validate_contract_boundaries(contract)
     return contract
+
+
+def _strict_date(value: object) -> date | None:
+    if not isinstance(value, str) or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is None:
+        return None
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError:
+        return None
+    return parsed if parsed.isoformat() == value else None
+
+
+def _closed_https_url(value: object) -> bool:
+    if (
+        not isinstance(value, str)
+        or not value.isascii()
+        or re.search(r"[\\\x00-\x20\x7f-\x9f]", value) is not None
+    ):
+        return False
+    try:
+        parsed = urlsplit(value)
+        port = parsed.port
+    except ValueError:
+        return False
+    del port
+    return bool(
+        parsed.scheme == "https"
+        and value.startswith("https://")
+        and parsed.netloc
+        and parsed.hostname
+        and parsed.username is None
+        and parsed.password is None
+    )
+
+
+def _closed_single_line_text(value: object) -> bool:
+    if not isinstance(value, str) or not value or value != value.strip():
+        return False
+    return all(
+        not (
+            ord(character) < 0x20
+            or 0x7F <= ord(character) <= 0x9F
+            or character in {"\u2028", "\u2029"}
+        )
+        for character in value
+    )
+
+
+def _closed_nonempty_strings(value: object) -> bool:
+    return bool(
+        isinstance(value, list)
+        and value
+        and all(_closed_single_line_text(item) for item in value)
+        and len(set(value)) == len(value)
+    )
+
+
+def _inventory_path(payload: bytes, *, field: str) -> Path:
+    try:
+        decoded = payload.decode("utf-8", "strict")
+        path = parse_repository_path(decoded, field=field)
+    except (UnicodeDecodeError, ContractError) as error:
+        raise _GitError("data asset inventory path is invalid") from error
+    if DATA_ASSET_ROOT not in path.parents:
+        raise _GitError("data asset inventory escaped its fixed root")
+    return path
+
+
+def _parse_index_listing(payload: bytes) -> tuple[Path, ...]:
+    records = payload.split(b"\0")
+    if not records or records[-1] != b"":
+        raise _GitError("index listing is not NUL terminated")
+    paths: list[Path] = []
+    seen: set[Path] = set()
+    for record in records[:-1]:
+        match = re.fullmatch(
+            rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", record
+        )
+        if match is None:
+            raise _GitError("index listing is malformed")
+        mode, _oid, stage, returned_path = match.groups()
+        if mode not in {b"100644", b"100755"} or stage != b"0":
+            raise _GitError("index listing includes nonregular or unmerged data")
+        path = _inventory_path(returned_path, field="dataAssets.repositoryEvidence")
+        if path in seen:
+            raise _GitError("index listing includes a duplicate path")
+        seen.add(path)
+        paths.append(path)
+    return tuple(sorted(paths))
+
+
+def _parse_tree_listing(payload: bytes) -> tuple[Path, ...]:
+    records = payload.split(b"\0")
+    if not records or records[-1] != b"":
+        raise _GitError("tree listing is not NUL terminated")
+    paths: list[Path] = []
+    seen: set[Path] = set()
+    for record in records[:-1]:
+        match = re.fullmatch(
+            rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", record
+        )
+        if match is None:
+            raise _GitError("tree listing is malformed")
+        mode, object_type, _oid, returned_path = match.groups()
+        if mode not in {b"100644", b"100755"} or object_type != b"blob":
+            raise _GitError("tree listing includes nonregular data")
+        path = _inventory_path(returned_path, field="dataAssets.repositoryEvidence")
+        if path in seen:
+            raise _GitError("tree listing includes a duplicate path")
+        seen.add(path)
+        paths.append(path)
+    return tuple(sorted(paths))
+
+
+def _tracked_data_asset_paths(
+    root: Path,
+    *,
+    commit_oid: str | None,
+    runner: GitRunner | None,
+) -> set[Path]:
+    if commit_oid is None:
+        paths = _parse_index_listing(
+            _git(
+                root,
+                ("ls-files", "-z", "--stage", "--", DATA_ASSET_ROOT.as_posix()),
+                runner=runner,
+            )
+        )
+    else:
+        _require_commit(root, commit_oid, runner)
+        paths = _parse_tree_listing(
+            _git(
+                root,
+                (
+                    "ls-tree",
+                    "-rz",
+                    "--full-tree",
+                    commit_oid,
+                    "--",
+                    DATA_ASSET_ROOT.as_posix(),
+                ),
+                runner=runner,
+            )
+        )
+    return {path for path in paths if path != DATA_ASSET_README}
+
+
+def validate_data_assets(
+    root: Path,
+    contract: Mapping[str, object],
+    *,
+    proposed_commit: object | None = None,
+    runner: GitRunner | None = None,
+) -> list[Finding]:
+    """Validate the closed, offline source ledger and exact repo evidence."""
+
+    findings: list[Finding] = []
+    cutoff = _strict_date(contract.get("evidenceCutoff"))
+    if cutoff is None:
+        findings.append(
+            Finding("RIA-SOURCE", "evidenceCutoff", "cutoff is not a strict calendar date")
+        )
+
+    assets = contract.get("dataAssets")
+    if not isinstance(assets, list):
+        return sorted(
+            {
+                *findings,
+                Finding("RIA-SOURCE", "dataAssets", "source ledger must be an array"),
+            }
+        )
+
+    commit_oid: str | None = None
+    if proposed_commit is not None:
+        try:
+            commit_oid = parse_git_sha1(proposed_commit, field="--commit")
+        except ContractError:
+            return sorted(
+                {
+                    *findings,
+                    Finding("RIA-SOURCE", "--commit", "source evidence authority is unavailable"),
+                }
+            )
+
+    try:
+        expected_evidence = _tracked_data_asset_paths(
+            root.absolute(), commit_oid=commit_oid, runner=runner
+        )
+    except (ContractError, _GitError):
+        return sorted(
+            {
+                *findings,
+                Finding(
+                    "RIA-SOURCE",
+                    DATA_ASSET_ROOT.as_posix(),
+                    "tracked data asset inventory is unavailable",
+                ),
+            }
+        )
+
+    seen_ids: set[str] = set()
+    seen_evidence: set[Path] = set()
+    for asset_index, asset in enumerate(assets):
+        asset_field = f"dataAssets[{asset_index}]"
+        if not isinstance(asset, Mapping):
+            findings.append(
+                Finding("RIA-SOURCE", asset_field, "asset record must be an object")
+            )
+            continue
+        if set(asset) != DATA_ASSET_FIELDS:
+            findings.append(
+                Finding("RIA-SOURCE", asset_field, "asset record fields are not closed")
+            )
+
+        asset_id = asset.get("id")
+        if (
+            not isinstance(asset_id, str)
+            or re.fullmatch(r"[a-z][a-z0-9-]*", asset_id) is None
+            or asset_id in seen_ids
+        ):
+            findings.append(
+                Finding(
+                    "RIA-SOURCE",
+                    f"{asset_field}.id",
+                    "asset identity is invalid or duplicated",
+                )
+            )
+        else:
+            seen_ids.add(asset_id)
+
+        trigger = asset.get("refreshTrigger")
+        if not _closed_single_line_text(trigger):
+            findings.append(
+                Finding(
+                    "RIA-SOURCE",
+                    f"{asset_field}.refreshTrigger",
+                    "refresh trigger must be closed single-line text",
+                )
+            )
+
+        evidence = asset.get("repositoryEvidence")
+        if not isinstance(evidence, list) or not evidence:
+            findings.append(
+                Finding(
+                    "RIA-SOURCE",
+                    f"{asset_field}.repositoryEvidence",
+                    "repository evidence must be non-empty",
+                )
+            )
+        else:
+            if len(evidence) != 1:
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{asset_field}.repositoryEvidence",
+                        "asset must own exactly one repository evidence path",
+                    )
+                )
+            local_evidence: set[Path] = set()
+            for evidence_index, value in enumerate(evidence):
+                field = f"{asset_field}.repositoryEvidence[{evidence_index}]"
+                try:
+                    path = parse_repository_path(value, field=field)
+                except ContractError:
+                    findings.append(
+                        Finding("RIA-SOURCE", field, "repository evidence path is invalid")
+                    )
+                    continue
+                if path in local_evidence or path in seen_evidence:
+                    findings.append(
+                        Finding("RIA-SOURCE", field, "repository evidence path is duplicated")
+                    )
+                    continue
+                local_evidence.add(path)
+                seen_evidence.add(path)
+                try:
+                    if commit_oid is None:
+                        read_proposed_regular_file(root.absolute(), path, runner)
+                    else:
+                        _read_commit_path(root.absolute(), commit_oid, path, runner)
+                except (ContractError, _GitError):
+                    findings.append(
+                        Finding(
+                            "RIA-SOURCE",
+                            path.as_posix(),
+                            "tracked repository evidence is unavailable",
+                        )
+                    )
+
+        sources = asset.get("sources")
+        if not isinstance(sources, list) or not sources:
+            findings.append(
+                Finding("RIA-SOURCE", f"{asset_field}.sources", "source records must be non-empty")
+            )
+            continue
+        seen_sources: set[str] = set()
+        for source_index, source in enumerate(sources):
+            source_field = f"{asset_field}.sources[{source_index}]"
+            if not isinstance(source, Mapping):
+                findings.append(
+                    Finding("RIA-SOURCE", source_field, "source record must be an object")
+                )
+                continue
+            if set(source) != SOURCE_RECORD_FIELDS:
+                findings.append(
+                    Finding("RIA-SOURCE", source_field, "source record fields are not closed")
+                )
+            try:
+                identity = json.dumps(
+                    dict(source), sort_keys=True, separators=(",", ":"), ensure_ascii=True
+                )
+            except (TypeError, ValueError):
+                identity = ""
+            if not identity or identity in seen_sources:
+                findings.append(
+                    Finding("RIA-SOURCE", source_field, "source record is invalid or duplicated")
+                )
+            else:
+                seen_sources.add(identity)
+
+            if not _closed_https_url(source.get("url")):
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{source_field}.url",
+                        "source URL must use closed HTTPS syntax",
+                    )
+                )
+            checked_on = _strict_date(source.get("checkedOn"))
+            if checked_on is None:
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{source_field}.checkedOn",
+                        "source date is not a strict calendar date",
+                    )
+                )
+            elif cutoff is not None and checked_on > cutoff:
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{source_field}.checkedOn",
+                        "source date exceeds the evidence cutoff",
+                    )
+                )
+            adopted = source.get("adoptedScope")
+            rejected = source.get("rejectedScope")
+            if not _closed_nonempty_strings(adopted):
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{source_field}.adoptedScope",
+                        "adopted scope must be closed non-empty text",
+                    )
+                )
+            if not _closed_nonempty_strings(rejected):
+                findings.append(
+                    Finding(
+                        "RIA-SOURCE",
+                        f"{source_field}.rejectedScope",
+                        "rejected scope must be closed non-empty text",
+                    )
+                )
+            if (
+                isinstance(adopted, list)
+                and isinstance(rejected, list)
+                and set(item for item in adopted if isinstance(item, str))
+                & set(item for item in rejected if isinstance(item, str))
+            ):
+                findings.append(
+                    Finding("RIA-SOURCE", source_field, "adopted and rejected scopes overlap")
+                )
+    if seen_evidence != expected_evidence:
+        findings.append(
+            Finding(
+                "RIA-SOURCE",
+                DATA_ASSET_ROOT.as_posix(),
+                "source ledger and tracked data asset inventory differ",
+            )
+        )
+    return sorted(set(findings))
 
 
 def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
@@ -1718,6 +2116,9 @@ def validate_reference_architecture(
     findings = [
         *validate_snapshot_guards(root, contract, proposed_commit=commit, runner=runner),
         *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
+        *validate_data_assets(
+            root, contract, proposed_commit=commit, runner=runner
+        ),
         *validate_baseline_transitions(
             root,
             contract,
