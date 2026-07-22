@@ -52,6 +52,8 @@ data/
 ├── active-corpus-role-audit.json # ACER-004 Stage 05 and helper role audit
 ├── active-corpus-residue-closure.json # ACER-006 terminal closure evidence, cardinality, and authority guards
 ├── agent-reference-index.md          # Durable Agent reference catalog boundary
+├── reference-information-architecture.json # RIA closed reference architecture contract
+├── reference-information-architecture.schema.json # RIA Draft 2020-12 schema
 ├── tech-stack-version-inventory.md   # Repo-backed version contracts and cloud snapshots
 └── README.md                         # This file
 ```
@@ -84,6 +86,8 @@ data/
 | [Active Corpus Role Audit](./active-corpus-role-audit.json) | repo-backed closed role-audit ledger | ACER-004 exact 24-record Stage 05 authored corpus, 33-file proposed helper corpus, profile/status/owner/section and helper role boundaries, exact README inventory remediation, and zero final findings | Stage 05 authored-record change, helper inventory change, README structure drift, or Spec 037 closure |
 | [Active Corpus Residue Closure](./active-corpus-residue-closure.json) | repo-backed closed post-cutover ledger | ACER-006 preserves immutable reviewed inputs while recording 12 migrated-closed rows, 100 current Stage 04 `DEFER`/0 `retain`, exact 52-key 48/1/3 cardinality, 13 accepted ADR and 29 done-Spec guards, the ACER-004 24/33/0 dependency, and eight empty finding classes | Exact successor migration evidence, current Plan/Task inventory or authority, migration/archive result, ADR/Spec authority, ACER-004 input, strict link evidence, closure commit, or post-commit result change |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
+| [Reference Information Architecture Contract](./reference-information-architecture.json) | closed repository-static contract | References Current pack IDs from the document-profile registry and owns immutable-reference guards, bounded mutable projections, source/freshness records, generated ownership, and duplicate-owner rules; it does not copy Current members, paths, digests, or pointers | Current-pack registry, declared reference evidence, generated relation, or duplicate-owner rule change |
+| [Reference Information Architecture Schema](./reference-information-architecture.schema.json) | Draft 2020-12 schema | Closed form for the Reference Information Architecture contract; the validator rejects duplicate JSON keys and unsafe file boundaries before semantic checks | Contract-field or safety-boundary change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
 ### Authority Boundary

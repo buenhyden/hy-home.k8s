@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/reference-information-architecture.schema.json",
+  "title": "Reference Information Architecture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "evidenceCutoff", "currentPackRegistry", "snapshotGuard", "mutableIndexProjections", "dataAssets", "generatedAssets", "duplicateRules"],
+  "properties": {
+    "$schema": {"const": "./reference-information-architecture.schema.json"},
+    "schemaVersion": {"const": 1},
+    "evidenceCutoff": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "currentPackRegistry": {"$ref": "#/$defs/path"},
+    "snapshotGuard": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceCommit", "historicalPackIds", "currentPackIds"],
+      "properties": {
+        "sourceCommit": {"type": "string", "pattern": "^git-sha1:[0-9a-f]{40}$"},
+        "historicalPackIds": {"$ref": "#/$defs/packIds"},
+        "currentPackIds": {"$ref": "#/$defs/packIds"}
+      }
+    },
+    "mutableIndexProjections": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": false, "required": ["path"], "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sections": {"$ref": "#/$defs/nonEmptyStrings"},
+        "columns": {"$ref": "#/$defs/nonEmptyStrings"},
+        "navigationReplacement": {"type": "object", "additionalProperties": false, "required": ["visibleText", "destination"], "properties": {
+          "visibleText": {"type": "string", "minLength": 1}, "destination": {"$ref": "#/$defs/path"}
+        }}
+      }}
+    },
+    "dataAssets": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": false, "required": ["id", "repositoryEvidence", "refreshTrigger", "sources"], "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "repositoryEvidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "refreshTrigger": {"type": "string", "minLength": 1},
+        "sources": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["url", "checkedOn", "adoptedScope", "rejectedScope"], "properties": {
+          "url": {"type": "string", "pattern": "^https://[^\\s]+$"}, "checkedOn": {"$ref": "#/$defs/date"},
+          "adoptedScope": {"$ref": "#/$defs/nonEmptyStrings"}, "rejectedScope": {"$ref": "#/$defs/nonEmptyStrings"}
+        }}}
+      }}
+    },
+    "generatedAssets": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": false, "required": ["id", "generatorPath", "inputRoots", "outputPath", "checkCommand", "canonicalOwnerPath"], "properties": {
+        "id": {"$ref": "#/$defs/id"}, "generatorPath": {"$ref": "#/$defs/path"},
+        "inputRoots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "outputPath": {"$ref": "#/$defs/path"}, "checkCommand": {"type": "string", "minLength": 1},
+        "canonicalOwnerPath": {"$ref": "#/$defs/path"}
+      }}
+    },
+    "duplicateRules": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonicalOwnerRoots", "minimumParagraphCharacters", "structuralExceptions"],
+      "properties": {
+        "canonicalOwnerRoots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "minimumParagraphCharacters": {"type": "integer", "minimum": 1},
+        "structuralExceptions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["canonicalOwnerPath", "referencePath", "paragraphSha256", "structuralRole", "reason"], "properties": {
+          "canonicalOwnerPath": {"$ref": "#/$defs/path"}, "referencePath": {"$ref": "#/$defs/path"},
+          "paragraphSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "structuralRole": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}
+        }}}
+      }
+    }
+  },
+  "$defs": {
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "packIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$"}},
+    "nonEmptyStrings": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?:docs|scripts|tests)(?:/[A-Za-z0-9._-]+)+$"}
+  }
+}
