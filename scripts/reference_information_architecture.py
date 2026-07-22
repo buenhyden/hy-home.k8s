@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator
 
 
 DEFAULT_CONTRACT_PATH = Path("docs/90.references/data/reference-information-architecture.json")
+CANONICAL_SCHEMA_PATH = Path("docs/90.references/data/reference-information-architecture.schema.json")
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
 PACK_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$")
@@ -261,7 +262,6 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
     guard = contract.get("snapshotGuard")
     if not isinstance(guard, dict):
         raise ContractError("RIA-CONTRACT", "snapshotGuard", "must be an object")
-    _unique_strings(guard.get("historicalPackIds"), field="snapshotGuard.historicalPackIds")
     historical_pack_ids = _unique_strings(guard.get("historicalPackIds"), field="snapshotGuard.historicalPackIds")
     current_pack_ids = _unique_strings(guard.get("currentPackIds"), field="snapshotGuard.currentPackIds")
     if set(historical_pack_ids) & set(current_pack_ids):
@@ -333,27 +333,65 @@ def validate_reference_architecture(root: Path, contract: Mapping[str, object]) 
     return []
 
 
-_SELF_TEST_SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "additionalProperties": False,
-    "required": ["$schema", "schemaVersion", "currentPackRegistry", "snapshotGuard", "mutableIndexProjections", "dataAssets", "generatedAssets", "duplicateRules"],
-    "properties": {
-        "$schema": {"const": "./reference-information-architecture.schema.json"},
-        "schemaVersion": {"const": 1},
-        "currentPackRegistry": {"type": "string"},
-        "snapshotGuard": {"type": "object", "required": ["sourceCommit", "historicalPackIds", "currentPackIds"]},
-        "mutableIndexProjections": {"type": "array"}, "dataAssets": {"type": "array"},
-        "generatedAssets": {"type": "array"}, "duplicateRules": {"type": "object"}
-    },
-}
+def _canonical_schema_bytes() -> bytes:
+    """Read the canonical schema through the same no-follow boundary as contracts."""
+
+    repository_root = Path(__file__).resolve().parents[1]
+    return _read_regular_file(repository_root, CANONICAL_SCHEMA_PATH, field="self-test.schema")
+
+
+def _self_test_asset() -> dict[str, object]:
+    return {
+        "id": "asset",
+        "repositoryEvidence": ["docs/90.references/data/README.md"],
+        "refreshTrigger": "contract change",
+        "sources": [
+            {
+                "url": "https://example.invalid/source",
+                "checkedOn": "2026-07-22",
+                "adoptedScope": ["contract"],
+                "rejectedScope": ["runtime"],
+            }
+        ],
+    }
+
+
+def _self_test_generated(output_path: str) -> dict[str, object]:
+    return {
+        "id": "generated",
+        "generatorPath": "scripts/generate.py",
+        "inputRoots": ["docs/90.references"],
+        "outputPath": output_path,
+        "checkCommand": "bash scripts/generate.py --check",
+        "canonicalOwnerPath": "docs/90.references/README.md",
+    }
+
+
+def _self_test_exception() -> dict[str, object]:
+    return {
+        "canonicalOwnerPath": "docs/00.agent-governance/README.md",
+        "referencePath": "docs/90.references/README.md",
+        "paragraphSha256": "a" * 64,
+        "structuralRole": "navigation",
+        "reason": "bounded structural copy",
+    }
 
 
 def run_self_test() -> None:
-    """Exercise the loader/validator against an isolated temporary repository."""
+    """Exercise the production loader/validator in an isolated repository."""
 
     accepted = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
-    rejected = ("8fb9821497aaa93d9ed5fc1a69b60c628b047b47", "git-sha1:", "git-sha1:git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47", "git-sha1:8FB9821497AAA93D9ED5FC1A69B60C628B047B47", "git-sha1:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", "git-sha1:" + "a" * 64, accepted + " trailing", " " + accepted, accepted + " ")
+    rejected = (
+        "8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
+        "git-sha1:",
+        "git-sha1:git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
+        "git-sha1:8FB9821497AAA93D9ED5FC1A69B60C628B047B47",
+        "git-sha1:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+        "git-sha1:" + "a" * 64,
+        accepted + " trailing",
+        " " + accepted,
+        accepted + " ",
+    )
     if parse_git_sha1(accepted) != accepted.removeprefix("git-sha1:"):
         raise AssertionError("accepted SHA-1 was rejected")
     for value in rejected:
@@ -362,6 +400,7 @@ def run_self_test() -> None:
         except ContractError:
             continue
         raise AssertionError("malformed SHA-1 was accepted")
+
     with tempfile.TemporaryDirectory() as temporary_directory:
         root = Path(temporary_directory)
         contract_path = root / DEFAULT_CONTRACT_PATH
@@ -369,9 +408,33 @@ def run_self_test() -> None:
         registry_path = root / "docs/99.templates/support/document-profiles.json"
         contract_path.parent.mkdir(parents=True)
         registry_path.parent.mkdir(parents=True)
-        contract = {"$schema": "./reference-information-architecture.schema.json", "schemaVersion": 1, "currentPackRegistry": "docs/99.templates/support/document-profiles.json", "snapshotGuard": {"sourceCommit": accepted, "historicalPackIds": [], "currentPackIds": ["audits/a", "research/b"]}, "mutableIndexProjections": [], "dataAssets": [], "generatedAssets": [], "duplicateRules": {"canonicalOwnerRoots": ["docs/00.agent-governance"], "minimumParagraphCharacters": 1, "structuralExceptions": []}}
-        schema_path.write_text(json.dumps(_SELF_TEST_SCHEMA), encoding="utf-8")
-        registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": [{"id": "audits/a"}, {"id": "research/b"}]}}), encoding="utf-8")
+        schema_path.write_bytes(_canonical_schema_bytes())
+
+        contract: dict[str, object] = {
+            "$schema": "./reference-information-architecture.schema.json",
+            "schemaVersion": 1,
+            "evidenceCutoff": "2026-07-22",
+            "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
+            "snapshotGuard": {
+                "sourceCommit": accepted,
+                "historicalPackIds": [],
+                "currentPackIds": ["audits/a", "research/b"],
+            },
+            "mutableIndexProjections": [],
+            "dataAssets": [],
+            "generatedAssets": [],
+            "duplicateRules": {
+                "canonicalOwnerRoots": ["docs/00.agent-governance"],
+                "minimumParagraphCharacters": 1,
+                "structuralExceptions": [],
+            },
+        }
+
+        def write_registry(packs: object) -> None:
+            registry_path.write_text(
+                json.dumps({"referenceCurrentPacks": {"packs": packs}}),
+                encoding="utf-8",
+            )
 
         def write_contract(value: object) -> None:
             contract_path.write_text(json.dumps(value), encoding="utf-8")
@@ -386,36 +449,150 @@ def run_self_test() -> None:
                 return
             raise AssertionError("invalid isolated probe was accepted")
 
+        write_registry([{"id": "audits/a"}, {"id": "research/b"}])
         write_contract(contract)
         if validate_reference_architecture(root, load_contract(root, contract_path)):
             raise AssertionError("accepted isolated contract produced findings")
-        contract_path.write_text('{"schemaVersion":1,"schemaVersion":1}', encoding="utf-8")
+
+        contract_path.write_text(
+            '{"schemaVersion":1,"schemaVersion":1}', encoding="utf-8"
+        )
         try:
             load_contract(root, contract_path)
         except ContractError:
             pass
         else:
             raise AssertionError("duplicate key was accepted")
+
+        nested_guard = dict(contract["snapshotGuard"])
+        nested_guard["unknown"] = True
+        incomplete = dict(contract)
+        incomplete.pop("evidenceCutoff")
+        cardinality = dict(contract)
+        cardinality["duplicateRules"] = {
+            **contract["duplicateRules"],
+            "canonicalOwnerRoots": [],
+        }
         for mutation in (
-            {**contract, "unknown": True}, {**contract, "schemaVersion": 2},
+            {**contract, "unknown": True},
+            {**contract, "schemaVersion": 2},
+            {**contract, "snapshotGuard": nested_guard},
+            incomplete,
+            cardinality,
             {**contract, "currentPackRegistry": "docs/../unsafe.json"},
-            {**contract, "snapshotGuard": {**contract["snapshotGuard"], "currentPackIds": ["audits/a"]}},
+            {
+                **contract,
+                "mutableIndexProjections": [{"path": "docs/../mutable.md"}],
+            },
+            {
+                **contract,
+                "mutableIndexProjections": [
+                    {
+                        "path": "docs/90.references/README.md",
+                        "navigationReplacement": {
+                            "visibleText": "Current",
+                            "destination": "docs/../target.md",
+                        },
+                    }
+                ],
+            },
+            {
+                **contract,
+                "dataAssets": [
+                    {
+                        **_self_test_asset(),
+                        "repositoryEvidence": ["docs/../evidence.md"],
+                    }
+                ],
+            },
+            {
+                **contract,
+                "generatedAssets": [
+                    {
+                        **_self_test_generated("docs/90.references/data/output.md"),
+                        "generatorPath": "scripts/../generator.py",
+                    }
+                ],
+            },
+            {
+                **contract,
+                "generatedAssets": [
+                    {
+                        **_self_test_generated("docs/90.references/data/output.md"),
+                        "inputRoots": ["docs/../inputs"],
+                    }
+                ],
+            },
+            {
+                **contract,
+                "generatedAssets": [
+                    _self_test_generated("docs/../output.md")
+                ],
+            },
+            {
+                **contract,
+                "generatedAssets": [
+                    _self_test_generated("docs/90.references/data/output.md"),
+                    {
+                        **_self_test_generated("docs/90.references/data/output.md"),
+                        "id": "generated-second",
+                    },
+                ],
+            },
+            {
+                **contract,
+                "generatedAssets": [
+                    {
+                        **_self_test_generated("docs/90.references/data/output.md"),
+                        "canonicalOwnerPath": "docs/../owner.md",
+                    }
+                ],
+            },
+            {
+                **contract,
+                "duplicateRules": {
+                    **contract["duplicateRules"],
+                    "canonicalOwnerRoots": ["docs/../owner"],
+                },
+            },
+            {
+                **contract,
+                "duplicateRules": {
+                    **contract["duplicateRules"],
+                    "structuralExceptions": [
+                        {
+                            **_self_test_exception(),
+                            "referencePath": "docs/../reference.md",
+                        }
+                    ],
+                },
+            },
+            {
+                **contract,
+                "snapshotGuard": {
+                    **contract["snapshotGuard"],
+                    "currentPackIds": ["audits/a"],
+                },
+            },
         ):
             expect_error(mutation, validate=True)
+
         for packs in ([{}], [{"id": "audits/a"}, {"id": "audits/a"}]):
+            write_registry(packs)
             write_contract(contract)
-            registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": packs}}), encoding="utf-8")
             try:
                 validate_reference_architecture(root, load_contract(root, contract_path))
             except ContractError:
                 pass
             else:
                 raise AssertionError("malformed registry was accepted")
+
+        write_registry([{"id": "audits/a"}, {"id": "research/b"}])
         registry_path.unlink()
         registry_path.mkdir()
         expect_error(contract, validate=True)
         registry_path.rmdir()
-        registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": [{"id": "audits/a"}, {"id": "research/b"}]}}), encoding="utf-8")
+        write_registry([{"id": "audits/a"}, {"id": "research/b"}])
         link_path = contract_path.with_name("contract-link.json")
         link_path.symlink_to(contract_path)
         try:

@@ -19,7 +19,8 @@ from reference_information_architecture import (
 def _self_test() -> int:
     try:
         run_self_test()
-    except (AssertionError, ContractError):
+    except (AssertionError, ContractError, OSError):
+        print("RIA-CONTRACT self-test: isolated input failure", file=sys.stderr)
         return 2
     print("Reference information architecture self-test: PASS")
     return 0

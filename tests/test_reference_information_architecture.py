@@ -9,6 +9,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
+import importlib.util
 from unittest import mock
 
 from jsonschema import Draft202012Validator
@@ -17,6 +20,8 @@ from jsonschema import Draft202012Validator
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = REPOSITORY_ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
+
+import reference_information_architecture as ria  # noqa: E402
 
 from reference_information_architecture import (  # noqa: E402
     ContractError,
@@ -36,6 +41,14 @@ SCHEMA = (
     / "docs/90.references/data/reference-information-architecture.schema.json"
 )
 CLI = REPOSITORY_ROOT / "scripts/validate-reference-information-architecture.py"
+
+
+def _load_cli_module():
+    specification = importlib.util.spec_from_file_location("ria_cli", CLI)
+    assert specification is not None and specification.loader is not None
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
 
 
 class ReferenceInformationArchitectureTests(unittest.TestCase):
@@ -313,6 +326,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             nonlocal replaced
             if path == registry.name and not replaced:
                 replaced = True
+                required_flags = os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
+                if flags & required_flags != required_flags:
+                    raise AssertionError("FIFO open did not use all safe flags")
                 registry.unlink()
                 os.mkfifo(registry)
             return original_open(path, flags, *args, **kwargs)
@@ -321,6 +337,23 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
                 validate_reference_architecture(self.root, self._load())
         self.assertTrue(replaced)
+
+    def test_self_test_uses_canonical_schema_and_full_contract_shape(self) -> None:
+        self.assertFalse(hasattr(ria, "_SELF_TEST_SCHEMA"))
+        self.assertEqual(
+            ria._canonical_schema_bytes(),  # noqa: SLF001
+            SCHEMA.read_bytes(),
+        )
+        ria.run_self_test()
+
+    def test_cli_self_test_io_failure_is_payload_safe_exit_two(self) -> None:
+        cli = _load_cli_module()
+        captured = StringIO()
+        with mock.patch.object(cli, "run_self_test", side_effect=OSError("secret-path/token")):
+            with redirect_stderr(captured):
+                self.assertEqual(cli._self_test(), 2)  # noqa: SLF001
+        self.assertIn("RIA-CONTRACT", captured.getvalue())
+        self.assertNotIn("secret-path", captured.getvalue())
 
     def test_snapshot_commit_parser_accepts_only_the_encoded_lowercase_sha1(self) -> None:
         accepted = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
