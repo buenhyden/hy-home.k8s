@@ -8,6 +8,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import stat
+import tempfile
 from typing import Mapping
 
 from jsonschema import Draft202012Validator
@@ -16,6 +17,18 @@ from jsonschema import Draft202012Validator
 DEFAULT_CONTRACT_PATH = Path("docs/90.references/data/reference-information-architecture.json")
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
+PACK_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$")
+RIA_RULE_IDS = frozenset(
+    {
+        "RIA-CONTRACT",
+        "RIA-BOUNDARY",
+        "RIA-SNAPSHOT",
+        "RIA-OVERLAY",
+        "RIA-SOURCE",
+        "RIA-GENERATOR",
+        "RIA-DUPLICATE",
+    }
+)
 
 
 @dataclass(frozen=True, order=True)
@@ -78,7 +91,9 @@ def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
     if not stat.S_ISDIR(root_stat.st_mode) or stat.S_ISLNK(root_stat.st_mode):
         raise ContractError("RIA-BOUNDARY", field, "repository root is not a directory")
     try:
-        directory_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        directory_fd = os.open(
+            root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+        )
     except OSError as error:
         raise ContractError("RIA-BOUNDARY", field, "repository root cannot be opened") from error
     try:
@@ -87,7 +102,9 @@ def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
             if not stat.S_ISDIR(component_stat.st_mode) or stat.S_ISLNK(component_stat.st_mode):
                 raise ContractError("RIA-BOUNDARY", field, "path contains a non-directory")
             next_fd = os.open(
-                component, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory_fd
+                component,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=directory_fd,
             )
             os.close(directory_fd)
             directory_fd = next_fd
@@ -95,7 +112,11 @@ def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
         file_stat = os.lstat(filename, dir_fd=directory_fd)
         if not stat.S_ISREG(file_stat.st_mode) or stat.S_ISLNK(file_stat.st_mode):
             raise ContractError("RIA-BOUNDARY", field, "path is not a regular file")
-        file_fd = os.open(filename, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=directory_fd)
+        file_fd = os.open(
+            filename,
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC,
+            dir_fd=directory_fd,
+        )
         try:
             if not stat.S_ISREG(os.fstat(file_fd).st_mode):
                 raise ContractError("RIA-BOUNDARY", field, "opened path is not regular")
@@ -173,6 +194,66 @@ def _unique_strings(value: object, *, field: str) -> list[str]:
     return value
 
 
+def _validate_path_fields(contract: Mapping[str, object]) -> None:
+    """Apply path semantics before schema validation to every path-bearing field."""
+
+    parse_repository_path(contract.get("currentPackRegistry"), field="currentPackRegistry")
+    projections = contract.get("mutableIndexProjections")
+    if isinstance(projections, list):
+        for index, projection in enumerate(projections):
+            if not isinstance(projection, Mapping):
+                continue
+            parse_repository_path(
+                projection.get("path"), field=f"mutableIndexProjections[{index}].path"
+            )
+            replacement = projection.get("navigationReplacement")
+            if isinstance(replacement, Mapping):
+                parse_repository_path(
+                    replacement.get("destination"),
+                    field=f"mutableIndexProjections[{index}].navigationReplacement.destination",
+                )
+    data_assets = contract.get("dataAssets")
+    if isinstance(data_assets, list):
+        for index, asset in enumerate(data_assets):
+            if not isinstance(asset, Mapping) or not isinstance(asset.get("repositoryEvidence"), list):
+                continue
+            for evidence_index, path in enumerate(asset["repositoryEvidence"]):
+                parse_repository_path(
+                    path, field=f"dataAssets[{index}].repositoryEvidence[{evidence_index}]"
+                )
+    generated_assets = contract.get("generatedAssets")
+    if isinstance(generated_assets, list):
+        for index, asset in enumerate(generated_assets):
+            if not isinstance(asset, Mapping):
+                continue
+            for key in ("generatorPath", "outputPath", "canonicalOwnerPath"):
+                if key in asset:
+                    parse_repository_path(asset.get(key), field=f"generatedAssets[{index}].{key}")
+            input_roots = asset.get("inputRoots")
+            if isinstance(input_roots, list):
+                for root_index, path in enumerate(input_roots):
+                    parse_repository_path(
+                        path, field=f"generatedAssets[{index}].inputRoots[{root_index}]"
+                    )
+    duplicate_rules = contract.get("duplicateRules")
+    if not isinstance(duplicate_rules, Mapping):
+        return
+    roots = duplicate_rules.get("canonicalOwnerRoots")
+    if isinstance(roots, list):
+        for index, path in enumerate(roots):
+            parse_repository_path(path, field=f"duplicateRules.canonicalOwnerRoots[{index}]")
+    exceptions = duplicate_rules.get("structuralExceptions")
+    if isinstance(exceptions, list):
+        for index, exception in enumerate(exceptions):
+            if not isinstance(exception, Mapping):
+                continue
+            for key in ("canonicalOwnerPath", "referencePath"):
+                if key in exception:
+                    parse_repository_path(
+                        exception.get(key), field=f"duplicateRules.structuralExceptions[{index}].{key}"
+                    )
+
+
 def _validate_contract_boundaries(contract: dict[str, object]) -> None:
     registry_path = parse_repository_path(contract.get("currentPackRegistry"), field="currentPackRegistry")
     if registry_path != Path("docs/99.templates/support/document-profiles.json"):
@@ -181,7 +262,10 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
     if not isinstance(guard, dict):
         raise ContractError("RIA-CONTRACT", "snapshotGuard", "must be an object")
     _unique_strings(guard.get("historicalPackIds"), field="snapshotGuard.historicalPackIds")
-    _unique_strings(guard.get("currentPackIds"), field="snapshotGuard.currentPackIds")
+    historical_pack_ids = _unique_strings(guard.get("historicalPackIds"), field="snapshotGuard.historicalPackIds")
+    current_pack_ids = _unique_strings(guard.get("currentPackIds"), field="snapshotGuard.currentPackIds")
+    if set(historical_pack_ids) & set(current_pack_ids):
+        raise ContractError("RIA-CONTRACT", "snapshotGuard", "historical and Current pack IDs overlap")
     parse_git_sha1(guard.get("sourceCommit"))
     projections = contract.get("mutableIndexProjections")
     generated_assets = contract.get("generatedAssets")
@@ -207,7 +291,7 @@ def load_contract(root: Path, contract_path: Path) -> dict[str, object]:
     root = root.absolute()
     relative_contract_path = _path_under_root(root, contract_path, field="contract")
     contract = _load_json(root, relative_contract_path, field="contract")
-    parse_repository_path(contract.get("currentPackRegistry"), field="currentPackRegistry")
+    _validate_path_fields(contract)
     snapshot_guard = contract.get("snapshotGuard")
     if isinstance(snapshot_guard, dict):
         parse_git_sha1(snapshot_guard.get("sourceCommit"))
@@ -224,16 +308,118 @@ def validate_reference_architecture(root: Path, contract: Mapping[str, object]) 
     packs_root = registry.get("referenceCurrentPacks")
     if not isinstance(packs_root, dict) or not isinstance(packs_root.get("packs"), list):
         raise ContractError("RIA-CONTRACT", "currentPackRegistry", "Current pack registry is malformed")
-    registry_ids = {
-        pack.get("id") for pack in packs_root["packs"] if isinstance(pack, dict) and isinstance(pack.get("id"), str)
-    }
+    registry_ids: set[str] = set()
+    for index, pack in enumerate(packs_root["packs"]):
+        if not isinstance(pack, dict):
+            raise ContractError("RIA-CONTRACT", f"currentPackRegistry.packs[{index}]", "pack must be an object")
+        pack_id = pack.get("id")
+        if not isinstance(pack_id, str) or PACK_ID_PATTERN.fullmatch(pack_id) is None:
+            raise ContractError("RIA-CONTRACT", f"currentPackRegistry.packs[{index}].id", "pack ID is invalid")
+        if pack_id in registry_ids:
+            raise ContractError("RIA-CONTRACT", "currentPackRegistry.packs", "contains duplicate pack IDs")
+        registry_ids.add(pack_id)
     guard = contract.get("snapshotGuard")
     if not isinstance(guard, Mapping):
         raise ContractError("RIA-CONTRACT", "snapshotGuard", "must be an object")
     current_pack_ids = _unique_strings(guard.get("currentPackIds"), field="snapshotGuard.currentPackIds")
-    findings = [
-        Finding("RIA-CONTRACT", f"snapshotGuard.currentPackIds[{index}]", "referenced Current pack is absent from the registry")
-        for index, pack_id in enumerate(current_pack_ids)
-        if pack_id not in registry_ids
-    ]
-    return sorted(findings)
+    if set(current_pack_ids) != registry_ids:
+        return [
+            Finding(
+                "RIA-CONTRACT",
+                "snapshotGuard.currentPackIds",
+                "Current pack IDs must exactly equal the registry set",
+            )
+        ]
+    return []
+
+
+_SELF_TEST_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["$schema", "schemaVersion", "currentPackRegistry", "snapshotGuard", "mutableIndexProjections", "dataAssets", "generatedAssets", "duplicateRules"],
+    "properties": {
+        "$schema": {"const": "./reference-information-architecture.schema.json"},
+        "schemaVersion": {"const": 1},
+        "currentPackRegistry": {"type": "string"},
+        "snapshotGuard": {"type": "object", "required": ["sourceCommit", "historicalPackIds", "currentPackIds"]},
+        "mutableIndexProjections": {"type": "array"}, "dataAssets": {"type": "array"},
+        "generatedAssets": {"type": "array"}, "duplicateRules": {"type": "object"}
+    },
+}
+
+
+def run_self_test() -> None:
+    """Exercise the loader/validator against an isolated temporary repository."""
+
+    accepted = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
+    rejected = ("8fb9821497aaa93d9ed5fc1a69b60c628b047b47", "git-sha1:", "git-sha1:git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47", "git-sha1:8FB9821497AAA93D9ED5FC1A69B60C628B047B47", "git-sha1:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", "git-sha1:" + "a" * 64, accepted + " trailing", " " + accepted, accepted + " ")
+    if parse_git_sha1(accepted) != accepted.removeprefix("git-sha1:"):
+        raise AssertionError("accepted SHA-1 was rejected")
+    for value in rejected:
+        try:
+            parse_git_sha1(value)
+        except ContractError:
+            continue
+        raise AssertionError("malformed SHA-1 was accepted")
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        root = Path(temporary_directory)
+        contract_path = root / DEFAULT_CONTRACT_PATH
+        schema_path = contract_path.with_name("reference-information-architecture.schema.json")
+        registry_path = root / "docs/99.templates/support/document-profiles.json"
+        contract_path.parent.mkdir(parents=True)
+        registry_path.parent.mkdir(parents=True)
+        contract = {"$schema": "./reference-information-architecture.schema.json", "schemaVersion": 1, "currentPackRegistry": "docs/99.templates/support/document-profiles.json", "snapshotGuard": {"sourceCommit": accepted, "historicalPackIds": [], "currentPackIds": ["audits/a", "research/b"]}, "mutableIndexProjections": [], "dataAssets": [], "generatedAssets": [], "duplicateRules": {"canonicalOwnerRoots": ["docs/00.agent-governance"], "minimumParagraphCharacters": 1, "structuralExceptions": []}}
+        schema_path.write_text(json.dumps(_SELF_TEST_SCHEMA), encoding="utf-8")
+        registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": [{"id": "audits/a"}, {"id": "research/b"}]}}), encoding="utf-8")
+
+        def write_contract(value: object) -> None:
+            contract_path.write_text(json.dumps(value), encoding="utf-8")
+
+        def expect_error(value: object, *, validate: bool = False) -> None:
+            write_contract(value)
+            try:
+                loaded = load_contract(root, contract_path)
+                if validate and validate_reference_architecture(root, loaded):
+                    return
+            except ContractError:
+                return
+            raise AssertionError("invalid isolated probe was accepted")
+
+        write_contract(contract)
+        if validate_reference_architecture(root, load_contract(root, contract_path)):
+            raise AssertionError("accepted isolated contract produced findings")
+        contract_path.write_text('{"schemaVersion":1,"schemaVersion":1}', encoding="utf-8")
+        try:
+            load_contract(root, contract_path)
+        except ContractError:
+            pass
+        else:
+            raise AssertionError("duplicate key was accepted")
+        for mutation in (
+            {**contract, "unknown": True}, {**contract, "schemaVersion": 2},
+            {**contract, "currentPackRegistry": "docs/../unsafe.json"},
+            {**contract, "snapshotGuard": {**contract["snapshotGuard"], "currentPackIds": ["audits/a"]}},
+        ):
+            expect_error(mutation, validate=True)
+        for packs in ([{}], [{"id": "audits/a"}, {"id": "audits/a"}]):
+            write_contract(contract)
+            registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": packs}}), encoding="utf-8")
+            try:
+                validate_reference_architecture(root, load_contract(root, contract_path))
+            except ContractError:
+                pass
+            else:
+                raise AssertionError("malformed registry was accepted")
+        registry_path.unlink()
+        registry_path.mkdir()
+        expect_error(contract, validate=True)
+        registry_path.rmdir()
+        registry_path.write_text(json.dumps({"referenceCurrentPacks": {"packs": [{"id": "audits/a"}, {"id": "research/b"}]}}), encoding="utf-8")
+        link_path = contract_path.with_name("contract-link.json")
+        link_path.symlink_to(contract_path)
+        try:
+            load_contract(root, link_path)
+        except ContractError:
+            return
+        raise AssertionError("symlink contract was accepted")

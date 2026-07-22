@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
+
+from jsonschema import Draft202012Validator
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +20,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from reference_information_architecture import (  # noqa: E402
     ContractError,
+    RIA_RULE_IDS,
     load_contract,
     parse_git_sha1,
     validate_reference_architecture,
@@ -81,6 +86,43 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def _load(self) -> dict[str, object]:
         return load_contract(self.root, self.contract_path)
 
+    @staticmethod
+    def _asset() -> dict[str, object]:
+        return {
+            "id": "asset",
+            "repositoryEvidence": ["docs/90.references/data/README.md"],
+            "refreshTrigger": "contract changes",
+            "sources": [
+                {
+                    "url": "https://example.invalid/source",
+                    "checkedOn": "2026-07-22",
+                    "adoptedScope": ["contract"],
+                    "rejectedScope": ["runtime"],
+                }
+            ],
+        }
+
+    @staticmethod
+    def _generated(asset_id: str, output_path: str) -> dict[str, object]:
+        return {
+            "id": asset_id,
+            "generatorPath": "scripts/generate.py",
+            "inputRoots": ["docs/90.references"],
+            "outputPath": output_path,
+            "checkCommand": "bash scripts/generate.py --check",
+            "canonicalOwnerPath": "docs/90.references/README.md",
+        }
+
+    @staticmethod
+    def _structural_exception() -> dict[str, object]:
+        return {
+            "canonicalOwnerPath": "docs/00.agent-governance/README.md",
+            "referencePath": "docs/90.references/README.md",
+            "paragraphSha256": "a" * 64,
+            "structuralRole": "navigation",
+            "reason": "bounded structural copy",
+        }
+
     def test_minimal_contract_loads_and_references_registered_current_packs(self) -> None:
         contract = self._minimal_contract()
         snapshot_guard = contract["snapshotGuard"]
@@ -144,8 +186,8 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
         duplicate_output = self._minimal_contract()
         duplicate_output["generatedAssets"] = [
-            {"id": "first", "outputPath": "docs/90.references/data/first.md"},
-            {"id": "second", "outputPath": "docs/90.references/data/first.md"},
+            self._generated("first", "docs/90.references/data/first.md"),
+            self._generated("second", "docs/90.references/data/first.md"),
         ]
         cases.append(("output", duplicate_output))
 
@@ -186,6 +228,100 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual([finding.rule_id for finding in findings], ["RIA-CONTRACT"])
         self.assertIn("currentPackIds", findings[0].path)
 
+    def test_every_path_family_uses_semantic_boundary_validation(self) -> None:
+        mutations = []
+
+        mutations.append(("registry", lambda contract: contract.update({"currentPackRegistry": "docs/../registry.json"})))
+        mutations.append(("mutable", lambda contract: contract.update({"mutableIndexProjections": [{"path": "docs/../mutable.md"}]})))
+        mutations.append(("navigation", lambda contract: contract.update({"mutableIndexProjections": [{"path": "docs/90.references/README.md", "navigationReplacement": {"visibleText": "Current", "destination": "docs/../target.md"}}]})))
+        mutations.append(("evidence", lambda contract: contract.update({"dataAssets": [{**self._asset(), "repositoryEvidence": ["docs/../evidence.md"]}]})))
+        mutations.append(("generator", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "generatorPath": "scripts/../generator.py"}]})))
+        mutations.append(("inputs", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "inputRoots": ["docs/../inputs"]}]})))
+        mutations.append(("output", lambda contract: contract.update({"generatedAssets": [self._generated("generated", "docs/../output.md")]})))
+        mutations.append(("owner", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "canonicalOwnerPath": "docs/../owner.md"}]})))
+        mutations.append(("roots", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "canonicalOwnerRoots": ["docs/../owner"]}})))
+        mutations.append(("exception-owner", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "structuralExceptions": [{**self._structural_exception(), "canonicalOwnerPath": "docs/../owner.md"}]}})))
+        mutations.append(("exception-reference", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "structuralExceptions": [{**self._structural_exception(), "referencePath": "docs/../reference.md"}]}})))
+
+        for name, mutate in mutations:
+            with self.subTest(name=name):
+                contract = self._minimal_contract()
+                mutate(contract)
+                self._write_contract(contract)
+                with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
+                    self._load()
+
+    def test_registry_is_closed_exact_and_roles_are_disjoint(self) -> None:
+        contract = self._minimal_contract()
+        guard = contract["snapshotGuard"]
+        assert isinstance(guard, dict)
+        guard["currentPackIds"] = ["audits/2026-07-11-weia"]
+        self._write_contract(contract)
+        findings = validate_reference_architecture(self.root, self._load())
+        self.assertEqual([finding.rule_id for finding in findings], ["RIA-CONTRACT"])
+
+        for name, packs in (
+            ("missing-id", [{}]),
+            ("malformed", ["audits/2026-07-11-weia"]),
+            ("duplicate", [{"id": "audits/2026-07-11-weia"}] * 2),
+        ):
+            with self.subTest(name=name):
+                self._write_registry([])
+                registry = self.root / "docs/99.templates/support/document-profiles.json"
+                registry.write_text(json.dumps({"referenceCurrentPacks": {"packs": packs}}), encoding="utf-8")
+                with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+                    validate_reference_architecture(self.root, self._load())
+
+        contract = self._minimal_contract()
+        guard = contract["snapshotGuard"]
+        assert isinstance(guard, dict)
+        guard["historicalPackIds"] = ["audits/2026-07-11-weia"]
+        guard["currentPackIds"] = ["audits/2026-07-11-weia"]
+        self._write_contract(contract)
+        with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+            self._load()
+
+    def test_rule_vocabulary_and_nonempty_scope_schema_are_closed(self) -> None:
+        self.assertIsInstance(RIA_RULE_IDS, frozenset)
+        self.assertEqual(
+            RIA_RULE_IDS,
+            frozenset({"RIA-CONTRACT", "RIA-BOUNDARY", "RIA-SNAPSHOT", "RIA-OVERLAY", "RIA-SOURCE", "RIA-GENERATOR", "RIA-DUPLICATE"}),
+        )
+        contract = self._minimal_contract()
+        asset = self._asset()
+        source = asset["sources"]
+        assert isinstance(source, list) and isinstance(source[0], dict)
+        source[0]["adoptedScope"] = []
+        contract["dataAssets"] = [asset]
+        self._write_contract(contract)
+        with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+            self._load()
+
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        dot_segment_contract = self._minimal_contract()
+        dot_segment_contract["currentPackRegistry"] = "docs/../registry.json"
+        self.assertTrue(
+            list(Draft202012Validator(schema).iter_errors(dot_segment_contract))
+        )
+
+    def test_special_file_replacement_after_lstat_fails_closed_without_blocking(self) -> None:
+        registry = self.root / "docs/99.templates/support/document-profiles.json"
+        original_open = os.open
+        replaced = False
+
+        def replace_before_open(path: object, flags: int, *args: object, **kwargs: object) -> int:
+            nonlocal replaced
+            if path == registry.name and not replaced:
+                replaced = True
+                registry.unlink()
+                os.mkfifo(registry)
+            return original_open(path, flags, *args, **kwargs)
+
+        with mock.patch("reference_information_architecture.os.open", side_effect=replace_before_open):
+            with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
+                validate_reference_architecture(self.root, self._load())
+        self.assertTrue(replaced)
+
     def test_snapshot_commit_parser_accepts_only_the_encoded_lowercase_sha1(self) -> None:
         accepted = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
         rejected = (
@@ -224,6 +360,32 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
         self.assertEqual(self_test.returncode, 0, self_test.stderr)
         self.assertEqual(production.returncode, 0, production.stderr)
+
+    def test_cli_exit_contract_and_payload_safe_diagnostics(self) -> None:
+        contract = self._minimal_contract()
+        guard = contract["snapshotGuard"]
+        assert isinstance(guard, dict)
+        guard["currentPackIds"] = [
+            "audits/2026-07-11-weia",
+            "research/2026-07-07-wer",
+        ]
+        self._write_contract(contract)
+        clean = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        self.assertEqual(clean.returncode, 0, clean.stderr)
+
+        guard["currentPackIds"] = ["research/not-registered"]
+        self._write_contract(contract)
+        findings = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        self.assertEqual(findings.returncode, 1)
+        self.assertIn("RIA-CONTRACT", findings.stdout)
+        self.assertNotIn("not-registered", findings.stdout + findings.stderr)
+
+        contract["currentPackRegistry"] = "/unsafe/secret-value"
+        self._write_contract(contract)
+        malformed = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        self.assertEqual(malformed.returncode, 2)
+        self.assertIn("RIA-BOUNDARY", malformed.stderr)
+        self.assertNotIn("secret-value", malformed.stdout + malformed.stderr)
 
 
 if __name__ == "__main__":
