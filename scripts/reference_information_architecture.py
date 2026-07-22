@@ -32,6 +32,9 @@ PACK_ID_PATTERN = re.compile(
     r"^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$"
 )
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+REPOSITORY_PATH_PATTERN = re.compile(
+    r"^(?:docs|scripts|tests)(?:/(?!\.{1,2}(?:/|$))[A-Za-z0-9._-]+)+$"
+)
 
 GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 10
@@ -185,6 +188,10 @@ def parse_repository_path(value: object, *, field: str) -> Path:
 
     if not isinstance(value, str) or not value:
         raise ContractError("RIA-BOUNDARY", field, "path must be a non-empty string")
+    if REPOSITORY_PATH_PATTERN.fullmatch(value) is None:
+        raise ContractError(
+            "RIA-BOUNDARY", field, "path contains characters outside the closed grammar"
+        )
     if "\\" in value or value.startswith("/"):
         raise ContractError("RIA-BOUNDARY", field, "path must be relative POSIX")
     parts = value.split("/")
@@ -331,6 +338,15 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         return True
     if arguments == ("rev-parse", "--verify", "HEAD"):
         return True
+    if (
+        len(arguments) == 8
+        and arguments[:5]
+        == ("diff-tree", "--no-commit-id", "--name-status", "-z", "--no-renames")
+        and OID_PATTERN.fullmatch(arguments[5]) is not None
+        and OID_PATTERN.fullmatch(arguments[6]) is not None
+        and arguments[7:] == ("--",)
+    ):
+        return True
     return bool(
         len(arguments) == 7
         and arguments[:5]
@@ -360,56 +376,93 @@ def _run_git(root: Path, arguments: tuple[str, ...], stdout_limit: int = MAX_MET
     assert process.stdout is not None and process.stderr is not None
 
     def stop() -> None:
-        if process.poll() is None:
-            process.kill()
+        try:
+            running = process.poll() is None
+        except OSError:
+            running = True
+        if running:
+            try:
+                process.kill()
+            except OSError:
+                pass
         try:
             process.wait(timeout=1)
         except subprocess.TimeoutExpired:
+            try:
+                process.kill()
+            except OSError:
+                pass
+            try:
+                process.wait(timeout=1)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+        except OSError:
             pass
 
     deadline = time.monotonic() + GIT_TIMEOUT_SECONDS
     buffers = {"stdout": bytearray(), "stderr": bytearray()}
     limits = {"stdout": stdout_limit, "stderr": MAX_STDERR_BYTES}
-    selector = selectors.DefaultSelector()
+    selector: selectors.BaseSelector | None = None
     try:
+        selector = selectors.DefaultSelector()
         for name, stream in (("stdout", process.stdout), ("stderr", process.stderr)):
             os.set_blocking(stream.fileno(), False)
             selector.register(stream, selectors.EVENT_READ, name)
         while selector.get_map():
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                stop()
                 raise _GitError("Git command timed out")
-            events = selector.select(timeout=min(remaining, 0.1))
+            try:
+                events = selector.select(timeout=min(remaining, 0.1))
+            except BlockingIOError:
+                continue
             if not events:
                 continue
             for key, _mask in events:
                 name = key.data
                 stream = key.fileobj
-                chunk = os.read(
-                    stream.fileno(),
-                    min(65_536, limits[name] - len(buffers[name]) + 1),
-                )
+                try:
+                    chunk = os.read(
+                        stream.fileno(),
+                        min(65_536, limits[name] - len(buffers[name]) + 1),
+                    )
+                except BlockingIOError:
+                    continue
+                except OSError as error:
+                    raise _GitError("Git pipe read failed") from error
                 if not chunk:
                     selector.unregister(stream)
                     continue
                 buffers[name].extend(chunk)
                 if len(buffers[name]) > limits[name]:
-                    stop()
                     raise _GitError("Git output exceeded its bound")
         remaining = deadline - time.monotonic()
         if remaining <= 0:
-            stop()
             raise _GitError("Git command timed out")
         try:
             returncode = process.wait(timeout=remaining)
         except subprocess.TimeoutExpired as error:
-            stop()
             raise _GitError("Git command timed out") from error
+    except _GitError:
+        stop()
+        raise
+    except OSError as error:
+        stop()
+        raise _GitError("Git pipe operation failed") from error
+    except BaseException:
+        stop()
+        raise
     finally:
-        selector.close()
-        process.stdout.close()
-        process.stderr.close()
+        if selector is not None:
+            try:
+                selector.close()
+            except OSError:
+                pass
+        for stream in (process.stdout, process.stderr):
+            try:
+                stream.close()
+            except OSError:
+                pass
     if returncode != 0:
         raise _GitError("Git command failed")
     return bytes(buffers["stdout"])
@@ -573,14 +626,11 @@ def _commit_parents(root: Path, oid: str, runner: GitRunner | None = None) -> tu
     return tuple(parents)
 
 
-def _validate_schema(root: Path, contract: dict[str, object], contract_path: Path) -> None:
+def _validate_schema_document(
+    contract: dict[str, object], schema: dict[str, object]
+) -> None:
     if contract.get("$schema") != "./reference-information-architecture.schema.json":
         raise ContractError("RIA-CONTRACT", "$schema", "schema reference is not canonical")
-    schema = _load_json(
-        root,
-        contract_path.with_name("reference-information-architecture.schema.json"),
-        field="$schema",
-    )
     try:
         Draft202012Validator.check_schema(schema)
         errors = sorted(
@@ -594,6 +644,37 @@ def _validate_schema(root: Path, contract: dict[str, object], contract_path: Pat
         raise ContractError(
             "RIA-CONTRACT", location, "contract does not match closed schema"
         )
+
+
+def _validate_schema(root: Path, contract: dict[str, object], contract_path: Path) -> None:
+    schema = _load_json(
+        root,
+        contract_path.with_name("reference-information-architecture.schema.json"),
+        field="$schema",
+    )
+    _validate_schema_document(contract, schema)
+
+
+def _validate_schema_at_commit(
+    root: Path,
+    commit_oid: str,
+    contract: dict[str, object],
+    contract_path: Path,
+    runner: GitRunner | None,
+) -> None:
+    if contract.get("$schema") != "./reference-information-architecture.schema.json":
+        raise ContractError("RIA-CONTRACT", "$schema", "schema reference is not canonical")
+    schema_path = contract_path.with_name(
+        "reference-information-architecture.schema.json"
+    )
+    try:
+        payload = _read_commit_path(root, commit_oid, schema_path, runner)
+    except _GitError as error:
+        raise ContractError(
+            "RIA-CONTRACT", "$schema", "named schema authority is unavailable"
+        ) from error
+    schema = _decode_json_bytes(payload, field="$schema")
+    _validate_schema_document(contract, schema)
 
 
 def _unique_strings(value: object, *, field: str) -> list[str]:
@@ -797,7 +878,7 @@ def load_contract_at_commit(
         raise ContractError("RIA-TRANSITION", relative.as_posix(), error.message) from error
     contract = _decode_json_bytes(payload, field="contract")
     _validate_path_fields(contract)
-    _validate_schema(root, contract, relative)
+    _validate_schema_at_commit(root, oid, contract, relative, runner)
     _validate_contract_boundaries(contract)
     return contract
 
@@ -1112,12 +1193,25 @@ def _navigation_mask(text: str, path: Path, visible: str, destination: str) -> s
 
 
 def _projection_mask(payload: bytes, path: Path, projection: Mapping[str, object]) -> bytes:
-    if projection.get("completeBody") is True:
-        return b"<RIA-COMPLETE-BODY>"
     try:
         text = payload.decode("utf-8", "strict")
     except UnicodeDecodeError as error:
         raise _GitError("projected Markdown is not UTF-8") from error
+    if projection.get("completeBody") is True:
+        lines = payload.splitlines(keepends=True)
+        if not lines or lines[0] not in {b"---\n", b"---\r\n"}:
+            raise _GitError("projected Markdown frontmatter is malformed")
+        closing = next(
+            (
+                index
+                for index, line in enumerate(lines[1:], start=1)
+                if line in {b"---\n", b"---\r\n"}
+            ),
+            None,
+        )
+        if closing is None:
+            raise _GitError("projected Markdown frontmatter is malformed")
+        return b"".join(lines[: closing + 1]) + b"<RIA-COMPLETE-BODY>"
     table = projection.get("table")
     if isinstance(table, Mapping):
         section = table.get("section")
@@ -1194,6 +1288,7 @@ def validate_overlay_guards(
                     or SHA256_PATTERN.fullmatch(digest) is None
                     or length != len(proposed)
                     or hashlib.sha256(proposed).hexdigest() != digest
+                    or proposed == baseline
                 ):
                     findings.append(Finding("RIA-OVERLAY", path.as_posix(), "transition target bytes differ"))
                 continue
@@ -1346,7 +1441,9 @@ def _settlement_proof(
             field=DEFAULT_CONTRACT_PATH.as_posix(),
         )
         _validate_path_fields(c2_contract)
-        _validate_schema(root, c2_contract, DEFAULT_CONTRACT_PATH)
+        _validate_schema_at_commit(
+            root, c2_oid, c2_contract, DEFAULT_CONTRACT_PATH, runner
+        )
         _validate_contract_boundaries(c2_contract)
         if not _matching_open_contract(settlement, c2_contract, contract):
             raise _GitError("transition contract does not match settlement")
@@ -1367,6 +1464,9 @@ def _settlement_proof(
         root_oid = parse_git_sha1(
             CURRENT_ROOT_COMMIT, field="currentPackBaselines.root"
         )
+        root_target = _read_commit_path(root, root_oid, target_path, runner)
+        if target == root_target:
+            raise _GitError("transition target is unchanged")
         for pack in root_registry.packs:
             for path in (pack.readme_path, *pack.member_paths):
                 if path == target_path:
@@ -1457,6 +1557,24 @@ def validate_explicit_commit_lineage(
         c2_oid = parse_git_sha1(settlement.get("transitionCommit"), field="baselineSettlements.transitionCommit")
         if _commit_parents(root, c3_oid, runner) != (c2_oid,):
             raise _GitError("C3 does not have exactly parent C2")
+        rows = _parse_diff_index(
+            _git(
+                root,
+                (
+                    "diff-tree",
+                    "--no-commit-id",
+                    "--name-status",
+                    "-z",
+                    "--no-renames",
+                    c2_oid,
+                    c3_oid,
+                    "--",
+                ),
+                runner=runner,
+            )
+        )
+        if rows != (("M", DEFAULT_CONTRACT_PATH.as_posix()),):
+            raise _GitError("C3 changes paths outside the contract")
     except (ContractError, _GitError):
         return [Finding("RIA-TRANSITION", "--commit", "explicit settlement lineage is invalid")]
     return []
@@ -1505,6 +1623,8 @@ def validate_baseline_transitions(
             if (
                 len(target) != transition.get("targetByteLength")
                 or hashlib.sha256(target).hexdigest() != transition.get("targetSha256")
+                or target
+                == context.baseline_bytes[(CURRENT_ROOT_COMMIT, target_path)]
             ):
                 findings.append(Finding("RIA-TRANSITION", target_path.as_posix(), "transition target bytes differ"))
     elif state == "settled":

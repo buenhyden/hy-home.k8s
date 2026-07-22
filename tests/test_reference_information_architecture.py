@@ -236,6 +236,120 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
                     self._load()
 
+    def test_repository_paths_reject_unsafe_bytes_before_git(self) -> None:
+        hostile_paths = (
+            "docs/line\nfeed.md",
+            "docs/nul\0byte.md",
+            "docs/control\x1fbyte.md",
+            "docs/delete\x7fbyte.md",
+            "docs/c1\x80byte.md",
+            "docs/non-ascii-한글.md",
+        )
+        for hostile in hostile_paths:
+            with self.subTest(path=repr(hostile)):
+                with self.assertRaises(ContractError) as captured:
+                    ria.parse_repository_path(hostile, field="contract.path")
+                self.assertEqual(captured.exception.finding.path, "contract.path")
+                self.assertNotIn(hostile, str(captured.exception))
+                with mock.patch.object(ria.subprocess, "Popen") as popen:
+                    with self.assertRaises(ContractError):
+                        ria._run_git(  # noqa: SLF001
+                            self.root,
+                            ("ls-files", "-z", "--stage", "--", hostile),
+                        )
+                popen.assert_not_called()
+
+                registry = {
+                    "referenceCurrentPacks": {
+                        "profileId": "reference-current-pack",
+                        "packs": [
+                            {
+                                "id": "research/2026-07-07-wer",
+                                "members": [hostile.removeprefix("docs/")],
+                                "allowedStates": ["active"],
+                            }
+                        ],
+                    }
+                }
+                with self.assertRaises(ContractError) as registry_error:
+                    ria._registry_projection(registry)  # noqa: SLF001
+                self.assertNotIn(hostile, str(registry_error.exception))
+
+    def test_named_contract_uses_schema_from_the_same_commit(self) -> None:
+        commit_oid = "c" * 40
+        contract_oid = "1" * 40
+        schema_oid = "2" * 40
+        contract_payload = json.dumps(self._minimal_contract()).encode()
+        rejecting_schema = json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "not": {},
+            }
+        ).encode()
+
+        def commit_runner(
+            schema_payload: bytes,
+            schema_mode: str = "100644",
+            schema_size: int | None = None,
+        ):
+            payloads = {contract_oid: contract_payload, schema_oid: schema_payload}
+
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments == ("cat-file", "-t", commit_oid):
+                    return b"commit\n"
+                if arguments[:3] == ("ls-tree", "-z", "--full-tree"):
+                    path = Path(arguments[5])
+                    if path == ria.DEFAULT_CONTRACT_PATH:
+                        oid, mode = contract_oid, "100644"
+                    elif path == ria.CANONICAL_SCHEMA_PATH:
+                        oid, mode = schema_oid, schema_mode
+                    else:
+                        raise AssertionError(path)
+                    return f"{mode} blob {oid}\t{path.as_posix()}\0".encode()
+                oid = arguments[2]
+                if arguments[:2] == ("cat-file", "-t"):
+                    return b"blob\n"
+                if arguments[:2] == ("cat-file", "-s"):
+                    if oid == schema_oid and schema_size is not None:
+                        return f"{schema_size}\n".encode()
+                    return f"{len(payloads[oid])}\n".encode()
+                if arguments[:2] == ("cat-file", "blob"):
+                    return payloads[oid]
+                raise AssertionError(arguments)
+
+            return runner
+
+        self.assertEqual(
+            ria.load_contract_at_commit(
+                self.root,
+                "git-sha1:" + commit_oid,
+                runner=commit_runner(SCHEMA.read_bytes()),
+            ),
+            self._minimal_contract(),
+        )
+        cases = (
+            (rejecting_schema, "100644", None),
+            (b"{", "100644", None),
+            (SCHEMA.read_bytes(), "120000", None),
+            (SCHEMA.read_bytes(), "100644", ria.MAX_BLOB_BYTES + 1),
+        )
+        for schema_payload, schema_mode, schema_size in cases:
+            with self.subTest(
+                schema_mode=schema_mode,
+                size=schema_size if schema_size is not None else len(schema_payload),
+            ):
+                with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+                    ria.load_contract_at_commit(
+                        self.root,
+                        "git-sha1:" + commit_oid,
+                        runner=commit_runner(
+                            schema_payload, schema_mode, schema_size
+                        ),
+                    )
+
     def test_duplicate_pack_ids_output_paths_and_mutable_paths_fail_closed(
         self,
     ) -> None:
@@ -838,6 +952,32 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 wrong_section, Path(projection["path"]), projection
             )
 
+    def test_complete_body_projection_preserves_frontmatter(self) -> None:
+        projection = {
+            "path": "docs/90.references/audits/2026-07-11-weia/README.md",
+            "completeBody": True,
+        }
+        path = Path(projection["path"])
+        baseline = b"---\ntitle: Audit\nstatus: done\n---\n# Baseline body\n"
+        body_change = b"---\ntitle: Audit\nstatus: done\n---\n# Rewritten body\n"
+        metadata_change = b"---\ntitle: Audit\nstatus: active\n---\n# Baseline body\n"
+        self.assertEqual(
+            ria._projection_mask(baseline, path, projection),  # noqa: SLF001
+            ria._projection_mask(body_change, path, projection),  # noqa: SLF001
+        )
+        self.assertNotEqual(
+            ria._projection_mask(baseline, path, projection),  # noqa: SLF001
+            ria._projection_mask(metadata_change, path, projection),  # noqa: SLF001
+        )
+        for malformed in (
+            b"# Missing frontmatter\n",
+            b"---\ntitle: Missing closing delimiter\n",
+            b"--- \ntitle: Malformed opening delimiter\n---\nbody\n",
+        ):
+            with self.subTest(payload=malformed):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._projection_mask(malformed, path, projection)  # noqa: SLF001
+
     def test_open_transition_matrix_is_closed(self) -> None:
         contract = self._minimal_contract()
         contract["baselineTransitions"] = [self._transition()]
@@ -852,9 +992,12 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
         context = ria.ValidationContext(
             ria.RegistryProjection("content/reference", (research,)),
-            {target_path: b"x"},
+            {target_path: b"x", research.readme_path: b"readme"},
             {},
-            {},
+            {
+                (ROOT_BASELINE, target_path): b"root target",
+                (ROOT_BASELINE, research.readme_path): b"readme",
+            },
             {},
             None,
         )
@@ -879,6 +1022,31 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     )
                 ],
                 ["RIA-TRANSITION"],
+            )
+        no_op = ria.ValidationContext(
+            context.proposed_registry,
+            context.proposed_bytes,
+            context.baseline_registries,
+            {**context.baseline_bytes, (ROOT_BASELINE, target_path): b"x"},
+            context.baseline_oids,
+            context.proposed_commit_oid,
+        )
+        with mock.patch.object(ria, "_build_context", return_value=no_op):
+            self.assertEqual(
+                [
+                    finding.rule_id
+                    for finding in ria.validate_baseline_transitions(
+                        self.root, contract
+                    )
+                ],
+                ["RIA-TRANSITION"],
+            )
+            self.assertEqual(
+                [
+                    finding.rule_id
+                    for finding in ria.validate_overlay_guards(self.root, contract)
+                ],
+                ["RIA-OVERLAY"],
             )
         nonmember = ria.ValidationContext(
             ria.RegistryProjection(
@@ -980,17 +1148,19 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria.DEFAULT_CONTRACT_PATH: json.dumps(
                 open_contract, separators=(",", ":")
             ).encode(),
+            ria.CANONICAL_SCHEMA_PATH: SCHEMA.read_bytes(),
             ria.REGISTRY_PATH: registry_payload,
             transition_path: target,
             **{path: baseline_bytes[(ROOT_BASELINE, path)] for path in non_targets},
         }
+        root_payloads = {**payloads, transition_path: b"immutable root target"}
 
         def proof_runner(current_payloads: dict[Path, bytes]):
             by_oid: dict[str, bytes] = {}
             by_commit_path: dict[tuple[str, Path], str] = {}
             trees = (
                 (c2, current_payloads),
-                (ROOT_BASELINE.removeprefix("git-sha1:"), payloads),
+                (ROOT_BASELINE.removeprefix("git-sha1:"), root_payloads),
             )
             index = 0
             for commit_oid, tree_payloads in trees:
@@ -1034,6 +1204,35 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 self.root, contract, context, proof_runner(dict(payloads))
             ),
             [],
+        )
+        no_op_root = root_payloads[transition_path]
+        no_op_contract = self._settled_contract("git-sha1:" + c2, no_op_root)
+        no_op_payloads = dict(payloads)
+        no_op_open = self._minimal_contract()
+        no_op_open["baselineTransitions"] = [self._transition(no_op_root)]
+        no_op_payloads[ria.DEFAULT_CONTRACT_PATH] = json.dumps(
+            no_op_open, separators=(",", ":")
+        ).encode()
+        no_op_payloads[transition_path] = no_op_root
+        no_op_context = ria.ValidationContext(
+            registry,
+            {transition_path: no_op_root},
+            context.baseline_registries,
+            context.baseline_bytes,
+            context.baseline_oids,
+            None,
+        )
+        self.assertEqual(
+            [
+                finding.rule_id
+                for finding in ria._settlement_proof(  # noqa: SLF001
+                    self.root,
+                    no_op_contract,
+                    no_op_context,
+                    proof_runner(no_op_payloads),
+                )
+            ],
+            ["RIA-TRANSITION"],
         )
         changed_contract = json.loads(json.dumps(contract))
         changed_contract["evidenceCutoff"] = "2026-07-23"
@@ -1079,6 +1278,33 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(ria.MAX_BLOB_BYTES, 2_000_000)
         self.assertNotIn("GIT_DIR", ria.CLOSED_GIT_ENVIRONMENT)
         self.assertEqual(ria.CLOSED_GIT_ENVIRONMENT["GIT_NO_LAZY_FETCH"], "1")
+        self.assertTrue(
+            ria._git_arguments_allowed(  # noqa: SLF001
+                (
+                    "diff-tree",
+                    "--no-commit-id",
+                    "--name-status",
+                    "-z",
+                    "--no-renames",
+                    "b" * 40,
+                    "c" * 40,
+                    "--",
+                )
+            )
+        )
+        self.assertFalse(
+            ria._git_arguments_allowed(  # noqa: SLF001
+                (
+                    "diff-tree",
+                    "--name-status",
+                    "-z",
+                    "--no-renames",
+                    "b" * 40,
+                    "c" * 40,
+                    "--",
+                )
+            )
+        )
         with self.assertRaises(ContractError):
             ria._run_git(REPOSITORY_ROOT, ("show", "HEAD"))  # noqa: SLF001
 
@@ -1125,6 +1351,84 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 ria._run_git(  # noqa: SLF001
                     self.root, ("rev-parse", "--verify", "HEAD")
                 )
+
+    def test_fixed_git_runner_retries_nonblocking_reads_and_reaps_on_oserror(
+        self,
+    ) -> None:
+        stdout = mock.Mock()
+        stdout.fileno.return_value = 10
+        stderr = mock.Mock()
+        stderr.fileno.return_value = 11
+        process = mock.Mock(stdout=stdout, stderr=stderr)
+        process.wait.return_value = 0
+        stdout_key = mock.Mock(data="stdout", fileobj=stdout)
+        stderr_key = mock.Mock(data="stderr", fileobj=stderr)
+        selector = mock.Mock()
+        selector.get_map.side_effect = ({1: stdout}, {1: stdout}, {2: stderr}, {})
+        selector.select.side_effect = (
+            [(stdout_key, ria.selectors.EVENT_READ)],
+            [(stdout_key, ria.selectors.EVENT_READ)],
+            [(stderr_key, ria.selectors.EVENT_READ)],
+        )
+        with mock.patch.object(ria.subprocess, "Popen", return_value=process), mock.patch.object(
+            ria.selectors, "DefaultSelector", return_value=selector
+        ), mock.patch.object(ria.os, "set_blocking"), mock.patch.object(
+            ria.os, "read", side_effect=(BlockingIOError(), b"", b"")
+        ):
+            self.assertEqual(
+                ria._run_git(  # noqa: SLF001
+                    self.root, ("rev-parse", "--verify", "HEAD")
+                ),
+                b"",
+            )
+
+        failing_stdout = mock.Mock()
+        failing_stdout.fileno.return_value = 12
+        failing_stderr = mock.Mock()
+        failing_stderr.fileno.return_value = 13
+        failing_process = mock.Mock(stdout=failing_stdout, stderr=failing_stderr)
+        failing_process.poll.return_value = None
+        failing_process.wait.return_value = -9
+        failing_key = mock.Mock(data="stdout", fileobj=failing_stdout)
+        failing_selector = mock.Mock()
+        failing_selector.get_map.return_value = {1: failing_stdout}
+        failing_selector.select.return_value = [
+            (failing_key, ria.selectors.EVENT_READ)
+        ]
+        with mock.patch.object(
+            ria.subprocess, "Popen", return_value=failing_process
+        ), mock.patch.object(
+            ria.selectors, "DefaultSelector", return_value=failing_selector
+        ), mock.patch.object(ria.os, "set_blocking"), mock.patch.object(
+            ria.os, "read", side_effect=OSError("hostile payload")
+        ):
+            with self.assertRaisesRegex(ria._GitError, "read failed"):  # noqa: SLF001
+                ria._run_git(  # noqa: SLF001
+                    self.root, ("rev-parse", "--verify", "HEAD")
+                )
+        failing_process.kill.assert_called_once_with()
+        failing_process.wait.assert_called()
+
+        selector_failure_process = mock.Mock(
+            stdout=mock.Mock(), stderr=mock.Mock()
+        )
+        selector_failure_process.poll.return_value = None
+        selector_failure_process.wait.return_value = -9
+        with mock.patch.object(
+            ria.subprocess, "Popen", return_value=selector_failure_process
+        ), mock.patch.object(
+            ria.selectors,
+            "DefaultSelector",
+            side_effect=OSError("selector unavailable"),
+        ):
+            with self.assertRaisesRegex(
+                ria._GitError, "operation failed"  # noqa: SLF001
+            ):
+                ria._run_git(  # noqa: SLF001
+                    self.root, ("rev-parse", "--verify", "HEAD")
+                )
+        selector_failure_process.kill.assert_called_once_with()
+        selector_failure_process.wait.assert_called()
 
     def test_tree_blob_and_size_hostile_matrix(self) -> None:
         oid = "a" * 40
@@ -1263,7 +1567,10 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         c3 = "c" * 40
         contract = self._settled_contract("git-sha1:" + c2)
 
-        def explicit_runner(parents: tuple[str, ...]):
+        def explicit_runner(
+            parents: tuple[str, ...],
+            rows: bytes = b"M\0docs/90.references/data/reference-information-architecture.json\0",
+        ):
             def runner(
                 root: Path, arguments: tuple[str, ...], limit: int
             ) -> bytes:
@@ -1273,6 +1580,8 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 if arguments == ("cat-file", "commit", c3):
                     headers = [f"tree {'d' * 40}", *[f"parent {p}" for p in parents]]
                     return ("\n".join(headers) + "\n\nmessage\n").encode()
+                if arguments[0] == "diff-tree":
+                    return rows
                 raise AssertionError(arguments)
 
             return runner
@@ -1294,6 +1603,23 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 self.assertEqual(
                     [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
                 )
+        extra_tree_change = explicit_runner(
+            (c2,),
+            b"M\0docs/90.references/data/reference-information-architecture.json\0"
+            b"M\0docs/other.md\0",
+        )
+        self.assertEqual(
+            [
+                finding.rule_id
+                for finding in ria.validate_explicit_commit_lineage(
+                    self.root,
+                    contract,
+                    "git-sha1:" + c3,
+                    runner=extra_tree_change,
+                )
+            ],
+            ["RIA-TRANSITION"],
+        )
 
         def staged_runner(
             head: str, rows: bytes = b"M\0docs/90.references/data/reference-information-architecture.json\0"
