@@ -157,6 +157,10 @@ FROZEN_HELPER_PATHS = (
     "tests/test_workspace_boundary.py",
 )
 POST_CLOSURE_HELPER_MANIFEST = {
+    "tests/fixtures/reference-information-architecture/current-owner.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/reference-information-architecture/generator-collision.json": (
         "json",
         "closed-fixture",
@@ -166,6 +170,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "closed-fixture",
     ),
     "tests/fixtures/reference-information-architecture/overlay-mutation.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/fixtures/reference-information-architecture/policy-copy.json": (
         "json",
         "closed-fixture",
     ),

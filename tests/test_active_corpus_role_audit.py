@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 39,
+                "helpers": 41,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 6,
+                "postClosureHelpers": 8,
                 "python": 13,
-                "json": 19,
+                "json": 21,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,14 +179,53 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 39)
+        self.assertEqual(len(actual), 41)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
+
+    def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
+        self.assertEqual(
+            self.validator.POST_CLOSURE_HELPER_MANIFEST,
+            {
+                "tests/fixtures/reference-information-architecture/current-owner.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/generator-collision.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/minimal-valid.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/overlay-mutation.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/policy-copy.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/snapshot-mutation.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/source-freshness.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/test_reference_information_architecture.py": (
+                    "python",
+                    "regression-test",
+                ),
+            },
+        )
 
     def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 6})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 8})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -202,6 +241,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             post_closure,
             [
                 {
+                    "path": "tests/fixtures/reference-information-architecture/current-owner.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
                     "path": "tests/fixtures/reference-information-architecture/generator-collision.json",
                     "format": "json",
                     "role": "closed-fixture",
@@ -213,6 +257,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/fixtures/reference-information-architecture/overlay-mutation.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/reference-information-architecture/policy-copy.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -396,43 +445,46 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION")
 
     def test_unmanifested_ria_fixture_fails_production_build(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            self.write_git_corpus(root)
-            hostile_path = (
-                "tests/fixtures/reference-information-architecture/unmanifested.json"
-            )
-            hostile = root / hostile_path
-            hostile.write_text("{}\n", encoding="utf-8")
-            readme = root / "tests/README.md"
-            inventory = sorted(
-                [
-                    *self.validator._readme_inventory(
-                        readme.read_text(encoding="utf-8")
-                    ),
-                    hostile_path,
-                ]
-            )
-            readme.write_text(
-                "# tests\n\n## Structure\n\n```text\n"
-                + "\n".join(inventory)
-                + "\n```\n",
-                encoding="utf-8",
-            )
-            subprocess.run(
-                [
-                    self.validator.GIT_EXECUTABLE,
-                    "add",
-                    "--",
-                    hostile_path,
-                    "tests/README.md",
-                ],
-                cwd=root,
-                check=True,
-            )
-            with self.assertRaises(self.validator.RoleAuditError) as raised:
-                self.validator.build_observed(root)
-            self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION")
+        for name in ("current-owner-copy.json", "policy-copy-2.json"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                self.write_git_corpus(root)
+                hostile_path = (
+                    "tests/fixtures/reference-information-architecture/" + name
+                )
+                hostile = root / hostile_path
+                hostile.write_text("{}\n", encoding="utf-8")
+                readme = root / "tests/README.md"
+                inventory = sorted(
+                    [
+                        *self.validator._readme_inventory(
+                            readme.read_text(encoding="utf-8")
+                        ),
+                        hostile_path,
+                    ]
+                )
+                readme.write_text(
+                    "# tests\n\n## Structure\n\n```text\n"
+                    + "\n".join(inventory)
+                    + "\n```\n",
+                    encoding="utf-8",
+                )
+                subprocess.run(
+                    [
+                        self.validator.GIT_EXECUTABLE,
+                        "add",
+                        "--",
+                        hostile_path,
+                        "tests/README.md",
+                    ],
+                    cwd=root,
+                    check=True,
+                )
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator.build_observed(root)
+                self.assertEqual(
+                    raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION"
+                )
 
     def test_helper_tracker_promotion_fails(self) -> None:
         fixture = self.fixture()
