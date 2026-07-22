@@ -115,6 +115,7 @@ GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 10
 MAX_FILE_BYTES = 2_000_000
 SAFE_PATH = re.compile(r"[A-Za-z0-9._@+/-]+\Z")
+ACTIVE_CONTROL_LINEAGE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._@+-]*\Z")
 FULL_OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 MODE_RECORD = re.compile(
     rb"(?P<mode>[0-9]{6}) (?P<oid>[0-9a-f]{40}|[0-9a-f]{64}) "
@@ -595,8 +596,9 @@ def _build_current_rows(
     control_by_path = {
         row.get("path"): row for row in controls if isinstance(row, Mapping)
     }
-    paths = sorted([*plan_paths, *task_paths])
-    if set(paths) != set(defer_by_path) | set(control_by_path):
+    frozen_paths = set(defer_by_path) | set(control_by_path)
+    paths = sorted(frozen_paths)
+    if not frozen_paths.issubset(set(plan_paths) | set(task_paths)):
         raise ClosureError("CLOSURE-CURRENT-RESIDUE")
     entries: list[dict[str, Any]] = []
     for path in paths:
@@ -682,6 +684,83 @@ def _build_current_rows(
                 }
             )
     return entries
+
+
+def _active_control_lineage(path: str, kind: str) -> str:
+    scope = PLAN_ROOT if kind == "plan" else TASK_ROOT
+    prefix = f"{scope}/"
+    if not path.startswith(prefix) or not path.endswith(".md"):
+        raise ClosureError("CLOSURE-ACTIVE-CONTROL-LINEAGE", path)
+    lineage = path[len(prefix) : -len(".md")]
+    if ACTIVE_CONTROL_LINEAGE.fullmatch(lineage) is None:
+        raise ClosureError("CLOSURE-ACTIVE-CONTROL-LINEAGE", path)
+    return lineage
+
+
+def _build_active_control_rows(
+    plan_paths: Sequence[str],
+    task_paths: Sequence[str],
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for kind, paths in (("plan", plan_paths), ("task", task_paths)):
+        for path in paths:
+            payload = payloads[path]
+            metadata = _frontmatter(_decode_text(payload, path), path)
+            if (
+                metadata.get("type") != f"sdlc/{kind}"
+                or metadata.get("owner") != "platform"
+            ):
+                raise ClosureError("CLOSURE-ACTIVE-CONTROL-AUTHORITY", path)
+            if metadata.get("status") != "active":
+                raise ClosureError("CLOSURE-ACTIVE-CONTROL-STATUS", path)
+            entries.append(
+                {
+                    "path": path,
+                    "kind": kind,
+                    "lineageId": _active_control_lineage(path, kind),
+                    "profile": metadata.get("type"),
+                    "status": "active",
+                    "owner": "platform",
+                    **_object_identity(path, index, payload),
+                }
+            )
+    return sorted(entries, key=lambda row: str(row["path"]))
+
+
+def _build_active_control_pairs(
+    active: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    grouped: dict[str, dict[str, Mapping[str, Any]]] = defaultdict(dict)
+    for row in active:
+        lineage = row.get("lineageId")
+        kind = row.get("kind")
+        if (
+            not isinstance(lineage, str)
+            or ACTIVE_CONTROL_LINEAGE.fullmatch(lineage) is None
+            or kind not in {"plan", "task"}
+        ):
+            raise ClosureError("CLOSURE-ACTIVE-CONTROL-LINEAGE", row.get("path"))
+        if kind in grouped[lineage]:
+            raise ClosureError("CLOSURE-ACTIVE-CONTROL-DUPLICATE", row.get("path"))
+        grouped[lineage][str(kind)] = row
+    pairs: list[dict[str, Any]] = []
+    for lineage, members in sorted(grouped.items()):
+        if set(members) != {"plan", "task"}:
+            member = next(iter(members.values()))
+            raise ClosureError("CLOSURE-ACTIVE-CONTROL-PAIR", member.get("path"))
+        pairs.append(
+            {
+                "lineageId": lineage,
+                "state": "complete",
+                "planPath": members["plan"]["path"],
+                "taskPath": members["task"]["path"],
+                "owner": "platform",
+                "status": "active",
+            }
+        )
+    return pairs
 
 
 def _build_pairs(current: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -936,6 +1015,14 @@ def build_observed(
         eligibility,
     )
     pairs = _build_pairs(current)
+    frozen_paths = {row["path"] for row in current}
+    active_controls = _build_active_control_rows(
+        [path for path in plan_paths if path not in frozen_paths],
+        [path for path in task_paths if path not in frozen_paths],
+        combined_index,
+        inventory_payloads,
+    )
+    active_control_pairs = _build_active_control_pairs(active_controls)
     archive_paths = {
         path
         for scope in (ARCHIVE_PLAN_ROOT, ARCHIVE_TASK_ROOT)
@@ -1016,8 +1103,8 @@ def build_observed(
         ),
         "migratedClosed": len(migrated),
         "currentStage04": len(current),
-        "currentPlans": len(plan_paths),
-        "currentTasks": len(task_paths),
+        "currentPlans": len([row for row in current if row["kind"] == "plan"]),
+        "currentTasks": len([row for row in current if row["kind"] == "task"]),
         "currentDefer": disposition_counts["DEFER"],
         "currentRetain": disposition_counts["retain"],
         "activeEligible": status_dispositions[("active", "eligible")],
@@ -1048,6 +1135,8 @@ def build_observed(
         "migratedClosed": migrated,
         "currentRows": current,
         "pairCardinality": pairs,
+        "activeControlRows": active_controls,
+        "activeControlPairCardinality": active_control_pairs,
         "authorityGuards": {
             "acceptedAdrs": accepted_adrs,
             "doneSpecs": done_specs,
@@ -1317,6 +1406,8 @@ def validate_active_corpus_residue_closure(
         "acceptedAdrs": counts["acceptedAdrs"],
         "doneSpecs": counts["doneSpecs"],
         "findings": counts["findings"],
+        "activeControlRows": len(observed["activeControlRows"]),
+        "activeControlPairs": len(observed["activeControlPairCardinality"]),
     }
 
 
@@ -1594,6 +1685,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"current={counts['currentRows']} "
                 f"dispositions={counts['defer']}/{counts['retain']} "
                 f"pairs={counts['pairKeys']}:{counts['completePairs']}/{counts['planOnly']}/{counts['taskOnly']} "
+                f"active_controls={counts['activeControlRows']}/{counts['activeControlPairs']} "
                 f"guards={counts['acceptedAdrs']}/{counts['doneSpecs']} "
                 f"findings={counts['findings']}"
             )

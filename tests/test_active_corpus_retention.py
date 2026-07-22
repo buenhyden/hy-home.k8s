@@ -437,6 +437,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "acer004Dependency",
             )
         }
+        cls.observed.update(
+            {"activeControlRows": [], "activeControlPairCardinality": []}
+        )
 
     def fixture(self):
         return copy.deepcopy(self.ledger)
@@ -465,6 +468,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "acceptedAdrs": 13,
             "doneSpecs": 29,
             "findings": 0,
+            "activeControlRows": 0,
+            "activeControlPairs": 0,
         }
         try:
             counts = self.validator.validate_active_corpus_residue_closure(
@@ -702,6 +707,181 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 {"candidateRows": [], "controls": controls},
             )
         self.assertEqual(raised.exception.code, "CLOSURE-CONTROL-STATUS")
+
+    def test_post_closure_active_pair_is_admitted_outside_frozen_rows(self) -> None:
+        plan_path = self.validator.EXECUTION_PLAN
+        task_path = self.validator.EXECUTION_TASK
+        active_plan = "docs/04.execution/plans/2099-01-01-active-control.md"
+        active_task = "docs/04.execution/tasks/2099-01-01-active-control.md"
+        controls = [
+            {
+                "path": path,
+                "kind": kind,
+                "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+                "disposition": "retain",
+                "reason": "active-spec-037-control",
+                "owner": "platform",
+                "refreshTrigger": "Spec037 closure",
+            }
+            for path, kind in ((plan_path, "plan"), (task_path, "task"))
+        ]
+        payloads = {
+            plan_path: b"---\ntype: sdlc/plan\nstatus: done\nowner: platform\n---\n",
+            task_path: b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n",
+            active_plan: b"---\ntype: sdlc/plan\nstatus: active\nowner: platform\n---\n",
+            active_task: b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+        }
+
+        frozen_rows = self.validator._build_current_rows(
+            [plan_path, active_plan],
+            [task_path, active_task],
+            {},
+            payloads,
+            {"candidateRows": [], "controls": controls},
+        )
+        active_rows = self.validator._build_active_control_rows(
+            [active_plan], [active_task], {}, payloads
+        )
+        active_pairs = self.validator._build_active_control_pairs(active_rows)
+
+        self.assertEqual(len(frozen_rows), 2)
+        self.assertTrue(all(row["status"] == "done" for row in frozen_rows))
+        self.assertEqual(
+            [row["lineageId"] for row in active_rows],
+            ["2099-01-01-active-control", "2099-01-01-active-control"],
+        )
+        self.assertEqual(len(active_pairs), 1)
+        self.assertEqual(active_pairs[0]["state"], "complete")
+
+    def test_post_closure_active_controls_fail_closed_when_malformed(self) -> None:
+        plan_path = "docs/04.execution/plans/2099-01-01-active-control.md"
+        task_path = "docs/04.execution/tasks/2099-01-01-active-control.md"
+        cases = (
+            (
+                "done",
+                plan_path,
+                task_path,
+                b"---\ntype: sdlc/plan\nstatus: done\nowner: platform\n---\n",
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                "CLOSURE-ACTIVE-CONTROL-STATUS",
+            ),
+            (
+                "draft",
+                plan_path,
+                task_path,
+                b"---\ntype: sdlc/plan\nstatus: draft\nowner: platform\n---\n",
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                "CLOSURE-ACTIVE-CONTROL-STATUS",
+            ),
+            (
+                "wrong-owner",
+                plan_path,
+                task_path,
+                b"---\ntype: sdlc/plan\nstatus: active\nowner: product\n---\n",
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                "CLOSURE-ACTIVE-CONTROL-AUTHORITY",
+            ),
+            (
+                "wrong-type",
+                plan_path,
+                task_path,
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                "CLOSURE-ACTIVE-CONTROL-AUTHORITY",
+            ),
+            (
+                "malformed-lineage",
+                "docs/04.execution/plans/.md",
+                "docs/04.execution/tasks/.md",
+                b"---\ntype: sdlc/plan\nstatus: active\nowner: platform\n---\n",
+                b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+                "CLOSURE-ACTIVE-CONTROL-LINEAGE",
+            ),
+        )
+        for _name, plan, task, plan_payload, task_payload, code in cases:
+            with self.subTest(case=_name):
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._build_active_control_rows(
+                        [plan], [task], {}, {plan: plan_payload, task: task_payload}
+                    )
+                self.assertEqual(raised.exception.code, code)
+
+    def test_post_closure_active_controls_require_one_complete_pair(self) -> None:
+        plan_path = "docs/04.execution/plans/2099-01-01-active-control.md"
+        task_path = "docs/04.execution/tasks/2099-01-01-active-control.md"
+        payloads = {
+            plan_path: b"---\ntype: sdlc/plan\nstatus: active\nowner: platform\n---\n",
+            task_path: b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
+        }
+        rows = self.validator._build_active_control_rows(
+            [plan_path], [], {}, payloads
+        )
+        with self.assertRaises(self.validator.ClosureError) as incomplete:
+            self.validator._build_active_control_pairs(rows)
+        self.assertEqual(incomplete.exception.code, "CLOSURE-ACTIVE-CONTROL-PAIR")
+
+        duplicate = self.validator._build_active_control_rows(
+            [plan_path, plan_path], [task_path], {}, payloads
+        )
+        with self.assertRaises(self.validator.ClosureError) as duplicated:
+            self.validator._build_active_control_pairs(duplicate)
+        self.assertEqual(duplicated.exception.code, "CLOSURE-ACTIVE-CONTROL-DUPLICATE")
+
+    def test_frozen_terminal_path_cannot_be_promoted_to_active(self) -> None:
+        plan_path = self.validator.EXECUTION_PLAN
+        task_path = self.validator.EXECUTION_TASK
+        controls = [
+            {
+                "path": path,
+                "kind": kind,
+                "pairKey": "2026-07-18-active-corpus-and-execution-retention",
+                "disposition": "retain",
+                "reason": "active-spec-037-control",
+                "owner": "platform",
+                "refreshTrigger": "Spec037 closure",
+            }
+            for path, kind in ((plan_path, "plan"), (task_path, "task"))
+        ]
+        payloads = {
+            plan_path: b"---\ntype: sdlc/plan\nstatus: active\nowner: platform\n---\n",
+            task_path: b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n",
+        }
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator._build_current_rows(
+                [plan_path],
+                [task_path],
+                {},
+                payloads,
+                {"candidateRows": [], "controls": controls},
+            )
+        self.assertEqual(raised.exception.code, "CLOSURE-CONTROL-STATUS")
+
+    def test_production_and_cli_report_active_control_counts_separately(self) -> None:
+        observed = copy.deepcopy(self.observed)
+        observed["activeControlRows"] = [
+            {"path": "docs/04.execution/plans/2099-01-01-active-control.md"},
+            {"path": "docs/04.execution/tasks/2099-01-01-active-control.md"},
+        ]
+        observed["activeControlPairCardinality"] = [{"lineageId": "active"}]
+        with (
+            mock.patch.object(self.validator, "verify_entrypoints", return_value={}),
+            mock.patch.object(self.validator, "build_observed", return_value=observed),
+            mock.patch.object(self.validator, "load_ledger", return_value=self.ledger),
+            mock.patch.object(self.validator, "validate_ledger"),
+        ):
+            counts = self.validator.validate_active_corpus_residue_closure(
+                REPOSITORY_ROOT
+            )
+            self.assertEqual(counts["activeControlRows"], 2)
+            self.assertEqual(counts["activeControlPairs"], 1)
+            stdout = io.StringIO()
+            with redirect_stderr(io.StringIO()), mock.patch.object(
+                self.validator,
+                "validate_active_corpus_residue_closure",
+                return_value=counts,
+            ), mock.patch("sys.stdout", stdout):
+                self.assertEqual(self.validator.main(["--root", "."]), 0)
+        self.assertIn("active_controls=2/1", stdout.getvalue())
 
     def test_terminal_pair_and_done_spec_guard_match_exact_counts(self) -> None:
         terminal_paths = {
