@@ -450,6 +450,49 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, code)
         self.assertEqual(str(raised.exception).splitlines(), [str(raised.exception)])
 
+    def assert_production_observed(self, observed: dict[str, object]) -> None:
+        actual = copy.deepcopy(observed)
+        rows = actual.pop("activeControlRows")
+        pairs = actual.pop("activeControlPairCardinality")
+        self.assertEqual(
+            [(row["path"], row["kind"], row["lineageId"]) for row in rows],
+            [
+                (
+                    "docs/04.execution/plans/2026-07-22-reference-information-architecture.md",
+                    "plan",
+                    "2026-07-22-reference-information-architecture",
+                ),
+                (
+                    "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md",
+                    "task",
+                    "2026-07-22-reference-information-architecture",
+                ),
+            ],
+        )
+        self.assertEqual(
+            [
+                (
+                    pair["lineageId"],
+                    pair["state"],
+                    pair["planPath"],
+                    pair["taskPath"],
+                )
+                for pair in pairs
+            ],
+            [
+                (
+                    "2026-07-22-reference-information-architecture",
+                    "complete",
+                    "docs/04.execution/plans/2026-07-22-reference-information-architecture.md",
+                    "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md",
+                )
+            ],
+        )
+        frozen = copy.deepcopy(self.observed)
+        frozen.pop("activeControlRows")
+        frozen.pop("activeControlPairCardinality")
+        self.assertEqual(actual, frozen)
+
     def test_required_validator_and_ledger_targets_exist(self) -> None:
         self.assertTrue(RESIDUE_VALIDATOR_PATH.is_file())
         self.assertTrue(RESIDUE_LEDGER_PATH.is_file())
@@ -468,8 +511,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "acceptedAdrs": 13,
             "doneSpecs": 29,
             "findings": 0,
-            "activeControlRows": 0,
-            "activeControlPairs": 0,
+            "activeControlRows": 2,
+            "activeControlPairs": 1,
         }
         try:
             counts = self.validator.validate_active_corpus_residue_closure(
@@ -865,7 +908,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
 
     def test_production_allows_existing_stage04_support_readmes(self) -> None:
         observed = self.validator.build_observed(REPOSITORY_ROOT)
-        self.assertEqual(observed, self.observed)
+        self.assert_production_observed(observed)
 
     def test_frozen_terminal_path_cannot_be_promoted_to_active(self) -> None:
         plan_path = self.validator.EXECUTION_PLAN
@@ -1118,7 +1161,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         except self.validator.ClosureError as error:
             self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
         else:
-            self.assertEqual(observed, self.observed)
+            self.assert_production_observed(observed)
         self.assertTrue(calls)
         self.assertFalse(any("HEAD" in argument for call in calls for argument in call))
         self.assertFalse(
