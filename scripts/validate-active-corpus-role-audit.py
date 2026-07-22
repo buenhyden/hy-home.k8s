@@ -169,6 +169,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/reference-information-architecture/source-freshness.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/test_reference_information_architecture.py": (
         "python",
         "regression-test",

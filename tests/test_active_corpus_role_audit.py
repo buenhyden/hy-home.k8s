@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 37,
+                "helpers": 38,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 4,
+                "postClosureHelpers": 5,
                 "python": 13,
-                "json": 17,
+                "json": 18,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,14 +179,19 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 37)
+        self.assertEqual(len(actual), 38)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 4})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 5})
+        self.assertEqual(
+            self.ledger["helperTests"]["entries"],
+            self.validator._expected_frozen_helper_entries(),
+        )
+        self.assertEqual(len(self.validator.FROZEN_HELPER_PATHS), 33)
         frozen_paths = set(self.validator.FROZEN_HELPER_PATHS)
         post_closure = [
             entry
@@ -208,6 +213,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/fixtures/reference-information-architecture/snapshot-mutation.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/reference-information-architecture/source-freshness.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
