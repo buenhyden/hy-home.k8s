@@ -179,11 +179,27 @@ class ArchiveRecoveryTest(unittest.TestCase):
         self,
     ) -> None:
         self.assertEqual(tuple(self.metadata()), ARCHIVE_METADATA_KEYS)
-        validate_archive_metadata(self.metadata())
+        replacement = validate_archive_metadata(self.metadata())
+        self.assertIsInstance(
+            replacement,
+            archive_recovery.ArchiveReplacementReference,
+        )
+        self.assertEqual(
+            replacement.path,
+            "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+        )
 
         invalid_cases = (
             ("unsupported reason", {"archive_reason": "other"}),
             ("required replacement absent", {"replacement": None}),
+            (
+                "archive replacement forbidden",
+                {
+                    "replacement": (
+                        "docs/98.archive/03.specs/900-fixture/replacement.md"
+                    )
+                },
+            ),
             (
                 "replacement forbidden",
                 {"archive_reason": "retired", "replacement": self.original_path},

@@ -3,7 +3,7 @@ title: 'ADR-0018: Full-body Archive Record and Retention'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-19
 ---
 
 # ADR-0018: Full-body Archive Record and Retention
@@ -30,6 +30,12 @@ links, so the repository can migrate without invented reconstruction.
   canonical archive envelope.
 - Record original_type, original_path, archived_on, archive_reason,
   replacement, source_commit, source_blob, and content_sha256.
+- Treat envelope replacement as immutable archive-time provenance. The archive
+  index alone owns later current-replacement evolution and may select only a
+  stage-zero regular index entry whose exact bounded Git-blob bytes parse as a
+  registry-classified authored document in a current state; worktree bytes,
+  another archive, template, missing, unselected, draft, or archived target
+  are not current authority.
 - Resolve payload links against source_commit and original_path, not the
   current mirrored archive location.
 - Permit only the finite reasons superseded, consolidated, completed-lineage,
@@ -58,7 +64,8 @@ links, so the repository can migrate without invented reconstruction.
 - Archive files grow, but the active working set can shrink without losing
   evidence.
 - Metadata corrections require an explicit provenance-repair process; ordinary
-  replacement evolution belongs in the archive index.
+  replacement evolution belongs only in the archive index and never requires
+  envelope/index replacement equality.
 
 ## Alternatives
 

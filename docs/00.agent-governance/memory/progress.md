@@ -8,6 +8,45 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-19 - Archive immutability and current-replacement authority repair
+
+#### Metadata
+
+- **Date**: 2026-07-19
+- **Layer**: backend, architecture, documentation lifecycle
+- **Status**: in-progress
+- **Tags**: #archive #lifecycle #spec-036 #adr-0018 #repo-static
+
+#### Progress
+
+- Connected exact ArchiveEnvelope blob immutability to staged, CI, and
+  explicit-ref lifecycle comparisons while preserving source-removal plus new
+  archive creation admission and snapshot `DEFER` semantics.
+- Separated immutable envelope replacement provenance from index-only current
+  replacement evolution. Index targets now fail closed unless they are
+  stage-zero regular index objects whose exact bounded Git-blob bytes parse as
+  registry-selected authored documents in `active`, `accepted`, or `done`
+  state; worktree bytes cannot substitute for the indexed authority.
+- Added typed archive-time replacement evidence and rejected archive-to-archive
+  metadata before a recovery caller can treat it as current authority.
+
+#### Memory
+
+- Payload digests prove internal envelope consistency but do not replace an
+  exact base/proposed Git-blob comparison for immutable records.
+- Historical provenance and current navigation are separate authorities; an
+  immutable envelope must not be rewritten merely to match a changing index.
+
+#### Evidence
+
+- RED and GREEN commands plus full validation-lane results are recorded in
+  `.superpowers/sdd/task-whole-branch-archive-fix-report.md`.
+
+#### Handoff
+
+- Complete repository-static validation, independent parent review, and
+  no-stage/no-commit handoff. Remote/live evidence remains `DEFER`.
+
 ### 2026-07-19 - ACER-006 terminal lifecycle closure
 
 #### Metadata

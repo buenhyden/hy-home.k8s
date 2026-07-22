@@ -65,6 +65,7 @@ from document_lifecycle import (
     lifecycle_diagnostic_sort_key,
     validate_snapshot_documents,
 )
+from archive_validation import validate_archive_immutability
 
 
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-lifecycle.json")
@@ -911,11 +912,61 @@ def _blob_text(
 ) -> str | None:
     if oid is None:
         return None
-    raw = _run_git(root, ("cat-file", "blob", oid))
+    raw = _blob_bytes(root, oid)
     try:
         return raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise InvocationError(f"document blob is not UTF-8: {path.as_posix()}") from exc
+
+
+def _blob_bytes(root: Path, oid: str) -> bytes:
+    """Read one exact Git blob without decoding or worktree substitution."""
+
+    return _run_git(root, ("cat-file", "blob", oid))
+
+
+def _archive_immutability_diagnostics(
+    root: Path,
+    base_registry: Registry,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+    *,
+    mode: str,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Compare exact bytes for every base-selected ArchiveEnvelope record."""
+
+    baseline: dict[str, bytes] = {}
+    proposed: dict[str, bytes] = {}
+    for path, oid in base_blobs.items():
+        try:
+            profile = classify_path(base_registry, path)
+        except DocumentContractError:
+            continue
+        if profile.profile_id != ARCHIVE_PROFILE:
+            continue
+        canonical = path.as_posix()
+        baseline[canonical] = _blob_bytes(root, oid)
+        proposed_oid = proposed_blobs.get(path)
+        if proposed_oid is not None:
+            proposed[canonical] = _blob_bytes(root, proposed_oid)
+    report = validate_archive_immutability(baseline, proposed)
+    return tuple(
+        LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-EVIDENCE",
+            path=PurePosixPath(item.path),
+            profile=ARCHIVE_PROFILE,
+            expected_transition="existing archive record Git blob bytes remain identical",
+            observed_transition=(
+                "existing archive record deleted"
+                if item.code == "ARCHIVE-IMMUTABLE-DELETION"
+                else "existing archive record bytes changed"
+            ),
+            base_mode=mode,  # type: ignore[arg-type]
+            evidence_gap=f"archive immutability rule {item.code}",
+        )
+        for item in report.diagnostics
+    )
 
 
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -1204,6 +1255,11 @@ def _comparison_requires_evidence(
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
 ) -> bool:
     profile_map = {profile.profile_id: profile for profile in registry.profiles}
+    if any(
+        document.profile_id == ARCHIVE_PROFILE and path not in base_documents
+        for path, document in proposed_documents.items()
+    ):
+        return True
     for path in set(base_documents) & set(proposed_documents):
         base = base_documents[path]
         proposed = proposed_documents[path]
@@ -1274,6 +1330,16 @@ def _evaluate_comparison(
     proposed_classification_registry = _classification_registry(
         registry, proposed_registry_raw
     )
+
+    immutability_diagnostics = _archive_immutability_diagnostics(
+        root,
+        base_classification_registry,
+        base_blobs,
+        proposed_blobs,
+        mode=mode,
+    )
+    if immutability_diagnostics:
+        return immutability_diagnostics
 
     def base_oid(path: PurePosixPath) -> str | None:
         return base_blobs.get(path)

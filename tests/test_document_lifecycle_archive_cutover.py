@@ -37,6 +37,7 @@ from archive_cutover import (  # noqa: E402
     EXPECTED_ARCHIVE_PATHS,
 )
 import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
+from document_contracts import load_registry  # noqa: E402
 from document_lifecycle import LifecycleDocument  # noqa: E402
 
 
@@ -330,6 +331,162 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
     def test_snapshot_or_explicit_ref_mode_is_not_admitted(self):
         self.assertFalse(self._admit(mode="snapshot"))
         self.assertFalse(self._admit(mode="explicit-ref"))
+
+
+class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
+    original_path = "docs/03.specs/900-fixture/spec.md"
+    archive_path = "docs/98.archive/03.specs/900-fixture/spec.md"
+
+    @staticmethod
+    def _git(root: Path, *arguments: str) -> str:
+        completed = subprocess.run(
+            ["git", *arguments],
+            cwd=root,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        if completed.returncode != 0:
+            raise AssertionError(completed.stderr)
+        return completed.stdout.strip()
+
+    @classmethod
+    def _archive_bytes(cls) -> bytes:
+        return (
+            b"---\n"
+            b'title: "Archive fixture"\n'
+            b'type: "content/archive"\n'
+            b'status: "archived"\n'
+            b'owner: "platform"\n'
+            b'updated: "2026-07-19"\n'
+            b'original_type: "sdlc/spec"\n'
+            + f'original_path: "{cls.original_path}"\n'.encode()
+            + b'archived_on: "2026-07-19"\n'
+            + b'archive_reason: "superseded"\n'
+            + b'replacement: "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"\n'
+            + b'source_commit: "0000000000000000000000000000000000000000"\n'
+            + b'source_blob: "1111111111111111111111111111111111111111"\n'
+            + b'content_sha256: "2222222222222222222222222222222222222222222222222222222222222222"\n'
+            + b"---\n"
+            + b"<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->\n"
+            + b"# Historical payload\n"
+        )
+
+    @staticmethod
+    def _source_bytes() -> bytes:
+        return (
+            b"---\n"
+            b'title: "Source fixture"\n'
+            b'type: "sdlc/spec"\n'
+            b'status: "done"\n'
+            b'owner: "platform"\n'
+            b'updated: "2026-07-19"\n'
+            b"---\n\n"
+            b"# Source fixture\n"
+        )
+
+    def _repository(
+        self, *, archived: bool
+    ) -> tuple[tempfile.TemporaryDirectory, Path, str]:
+        temporary = tempfile.TemporaryDirectory(prefix="lifecycle-archive-bytes-")
+        root = Path(temporary.name)
+        self._git(root, "init", "--quiet")
+        self._git(root, "config", "user.email", "fixture@example.invalid")
+        self._git(root, "config", "user.name", "Lifecycle Archive Fixture")
+        registry_path = root / REGISTRY_PATH
+        registry_path.parent.mkdir(parents=True, exist_ok=True)
+        registry_path.write_bytes((ROOT / REGISTRY_PATH).read_bytes())
+        document_path = root / (self.archive_path if archived else self.original_path)
+        document_path.parent.mkdir(parents=True, exist_ok=True)
+        document_path.write_bytes(
+            self._archive_bytes() if archived else self._source_bytes()
+        )
+        self._git(
+            root, "add", "--", REGISTRY_PATH, document_path.relative_to(root).as_posix()
+        )
+        self._git(root, "commit", "--quiet", "-m", "base")
+        return temporary, root, self._git(root, "rev-parse", "HEAD")
+
+    def _mutate_archive(self, root: Path, mutation: str) -> None:
+        path = root / self.archive_path
+        content = path.read_bytes()
+        if mutation == "metadata":
+            content = content.replace(b'owner: "platform"', b'owner: "security"', 1)
+        elif mutation == "payload":
+            content = content.replace(
+                b"# Historical payload\n", b"# Historical payload!\n", 1
+            )
+        else:  # pragma: no cover - test helper boundary
+            raise AssertionError(mutation)
+        path.write_bytes(content)
+        self._git(root, "add", "--", self.archive_path)
+
+    def _create_archive(self, root: Path) -> None:
+        (root / self.original_path).unlink()
+        archive = root / self.archive_path
+        archive.parent.mkdir(parents=True, exist_ok=True)
+        archive.write_bytes(self._archive_bytes())
+        self._git(root, "add", "-A", "--", "docs")
+
+    def test_staged_rejects_metadata_and_payload_byte_mutation(self) -> None:
+        registry = load_registry(ROOT)
+        for mutation in ("metadata", "payload"):
+            with self.subTest(mutation=mutation):
+                temporary, root, _base = self._repository(archived=True)
+                with temporary:
+                    self._mutate_archive(root, mutation)
+                    diagnostics = VALIDATOR._evaluate_comparison(
+                        root,
+                        registry,
+                        mode="staged",
+                    )
+                self.assertEqual(
+                    [(item.rule_id, item.path.as_posix()) for item in diagnostics],
+                    [("LIFECYCLE-EVIDENCE", self.archive_path)],
+                )
+
+    def test_explicit_ref_rejects_metadata_and_payload_byte_mutation(self) -> None:
+        registry = load_registry(ROOT)
+        for mutation in ("metadata", "payload"):
+            with self.subTest(mutation=mutation):
+                temporary, root, base = self._repository(archived=True)
+                with temporary:
+                    self._mutate_archive(root, mutation)
+                    self._git(root, "commit", "--quiet", "-m", "mutation")
+                    proposed = self._git(root, "rev-parse", "HEAD")
+                    diagnostics = VALIDATOR._evaluate_comparison(
+                        root,
+                        registry,
+                        mode="explicit-ref",
+                        from_ref=base,
+                        to_ref=proposed,
+                    )
+                self.assertEqual(
+                    [(item.rule_id, item.path.as_posix()) for item in diagnostics],
+                    [("LIFECYCLE-EVIDENCE", self.archive_path)],
+                )
+
+    def test_staged_and_explicit_ref_allow_new_archive_creation_contract(self) -> None:
+        registry = load_registry(ROOT)
+        for mode in ("staged", "explicit-ref"):
+            with self.subTest(mode=mode):
+                temporary, root, base = self._repository(archived=False)
+                with temporary:
+                    self._create_archive(root)
+                    kwargs: dict[str, object] = {"mode": mode}
+                    if mode == "explicit-ref":
+                        self._git(root, "commit", "--quiet", "-m", "archive")
+                        kwargs.update(
+                            from_ref=base,
+                            to_ref=self._git(root, "rev-parse", "HEAD"),
+                        )
+                    diagnostics = VALIDATOR._evaluate_comparison(
+                        root,
+                        registry,
+                        **kwargs,
+                    )
+                self.assertEqual(diagnostics, ())
 
 
 if __name__ == "__main__":

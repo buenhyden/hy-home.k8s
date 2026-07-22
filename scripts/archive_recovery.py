@@ -117,11 +117,19 @@ class RecoveryResult:
 
 
 @dataclass(frozen=True)
+class ArchiveReplacementReference:
+    """Canonical archive-time replacement requiring caller-owned authority proof."""
+
+    path: str
+
+
+@dataclass(frozen=True)
 class ParsedArchiveEnvelope:
     """Parsed ArchiveEnvelope.v1 metadata and byte-preserved payload."""
 
     metadata: dict[str, object]
     payload: bytes = field(repr=False)
+    replacement_reference: ArchiveReplacementReference | None
 
 
 def _error(code: str, detail: str) -> ArchiveContractError:
@@ -431,8 +439,10 @@ def _require_date(metadata: Mapping[str, object], key: str) -> str:
     return value
 
 
-def validate_archive_metadata(metadata: Mapping[str, object]) -> None:
-    """Validate the closed fixture-only ArchiveEnvelope.v1 metadata schema."""
+def validate_archive_metadata(
+    metadata: Mapping[str, object],
+) -> ArchiveReplacementReference | None:
+    """Validate metadata and return typed archive-time replacement evidence."""
 
     if not isinstance(metadata, Mapping):
         raise _error("ARCHIVE-METADATA-TYPE", "metadata must be a mapping")
@@ -459,8 +469,19 @@ def validate_archive_metadata(metadata: Mapping[str, object]) -> None:
     if reason not in ARCHIVE_REASONS:
         raise _error("ARCHIVE-METADATA-REASON", "archive_reason is unsupported")
     replacement = metadata["replacement"]
+    replacement_reference: ArchiveReplacementReference | None = None
     if reason in REPLACEMENT_REQUIRED_REASONS:
-        _require_repository_path(replacement, field="replacement")
+        canonical_replacement = _require_repository_path(
+            replacement, field="replacement"
+        )
+        if PurePosixPath(canonical_replacement).is_relative_to(
+            PurePosixPath("docs/98.archive")
+        ):
+            raise _error(
+                "ARCHIVE-METADATA-REPLACEMENT",
+                "replacement must not name an archive record",
+            )
+        replacement_reference = ArchiveReplacementReference(canonical_replacement)
     elif replacement is not None:
         raise _error(
             "ARCHIVE-METADATA-REPLACEMENT",
@@ -483,6 +504,7 @@ def validate_archive_metadata(metadata: Mapping[str, object]) -> None:
         raise _error(
             "ARCHIVE-METADATA-DIGEST", "content_sha256 must be lowercase SHA-256"
         )
+    return replacement_reference
 
 
 def _metadata_bytes(metadata: Mapping[str, object]) -> bytes:
@@ -571,7 +593,7 @@ def parse_archive_envelope(
     if not isinstance(loaded, dict):
         raise _error("ARCHIVE-METADATA-TYPE", "frontmatter must be one mapping")
     metadata = dict(loaded)
-    validate_archive_metadata(metadata)
+    replacement_reference = validate_archive_metadata(metadata)
     if _metadata_bytes(metadata) != frontmatter_bytes:
         raise _error(
             "ARCHIVE-FRONTMATTER-NONCANONICAL",
@@ -603,4 +625,8 @@ def parse_archive_envelope(
                 "payload differs from recovered Git blob bytes",
             )
 
-    return ParsedArchiveEnvelope(metadata=metadata, payload=payload)
+    return ParsedArchiveEnvelope(
+        metadata=metadata,
+        payload=payload,
+        replacement_reference=replacement_reference,
+    )

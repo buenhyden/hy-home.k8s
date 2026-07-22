@@ -19,9 +19,9 @@ import stat
 import subprocess
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
-from types import ModuleType
-from typing import Sequence
+from pathlib import Path, PurePosixPath
+from types import MappingProxyType, ModuleType
+from typing import Mapping, Sequence
 
 import yaml
 
@@ -37,6 +37,13 @@ if __package__:
         ArchiveContractError,
         parse_archive_envelope,
     )
+    from scripts.document_contracts import (
+        DocumentContractError,
+        Registry,
+        classify_path,
+        load_registry,
+    )
+    from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
         ArchiveRecord,
         CurrentMarkdownDocument,
@@ -55,6 +62,13 @@ else:
         ArchiveContractError,
         parse_archive_envelope,
     )
+    from document_contracts import (  # type: ignore[no-redef]
+        DocumentContractError,
+        Registry,
+        classify_path,
+        load_registry,
+    )
+    from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
         ArchiveRecord,
         CurrentMarkdownDocument,
@@ -73,10 +87,13 @@ SECOND_SOURCE_COMMIT = (
 )
 ARCHIVE_TEMPLATE_PROFILE = "template/content/archive"
 ARCHIVE_INDEX = "docs/98.archive/README.md"
+CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
 SECRET_TIMEOUT_SECONDS = 10
+MAX_REPLACEMENT_BLOB_BYTES = 2_000_000
 _RETIRED_WORD = "tomb" + "stone"
 _RETIRED_PROFILE_TOKEN = "archive-" + _RETIRED_WORD
+_FULL_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 
 SECOND_SOURCE_ORIGINAL_PATHS = frozenset(
     {
@@ -239,6 +256,114 @@ def _git_paths(root: Path) -> tuple[str, ...]:
         raise RuntimeError("tracked document inventory is malformed") from exc
 
 
+def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
+    """Return stage-zero regular docs paths and exact index blob identities."""
+
+    try:
+        completed = subprocess.run(
+            [
+                "git",
+                "--no-replace-objects",
+                "--literal-pathspecs",
+                "-C",
+                str(root),
+                "ls-files",
+                "--stage",
+                "-z",
+                "--",
+                "docs",
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            check=False,
+            timeout=SECRET_TIMEOUT_SECONDS,
+            env=_safe_git_environment(),
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        raise RuntimeError(
+            "tracked regular document inventory is unavailable"
+        ) from None
+    if completed.returncode != 0 or not completed.stdout.endswith(b"\0"):
+        raise RuntimeError("tracked regular document inventory is unavailable")
+    blobs: dict[str, str] = {}
+    try:
+        for record in completed.stdout.split(b"\0")[:-1]:
+            if not record:
+                continue
+            header, raw_path = record.split(b"\t", 1)
+            mode, object_id, stage = header.split(b" ", 2)
+            path = raw_path.decode("utf-8")
+            pure_path = PurePosixPath(path)
+            if (
+                not path.startswith("docs/")
+                or "\\" in path
+                or any(
+                    ord(character) < 32 or ord(character) == 127 for character in path
+                )
+                or pure_path.is_absolute()
+                or any(part in {".", ".."} for part in pure_path.parts)
+                or pure_path.as_posix() != path
+                or _FULL_OBJECT_ID.fullmatch(object_id.decode("ascii", errors="strict"))
+                is None
+            ):
+                raise ValueError
+            if mode in {b"100644", b"100755"} and stage == b"0":
+                if path in blobs:
+                    raise ValueError
+                blobs[path] = object_id.decode("ascii")
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise RuntimeError("tracked regular document inventory is malformed") from exc
+    return MappingProxyType(blobs)
+
+
+def _index_blob_bytes(root: Path, object_id: str) -> bytes:
+    """Read one bounded exact index blob without worktree substitution."""
+
+    if _FULL_OBJECT_ID.fullmatch(object_id) is None:
+        raise RuntimeError("replacement target blob is unavailable")
+
+    def run_cat_file(mode: str) -> bytes:
+        try:
+            completed = subprocess.run(
+                [
+                    "git",
+                    "--no-replace-objects",
+                    "--literal-pathspecs",
+                    "-C",
+                    str(root),
+                    "cat-file",
+                    mode,
+                    object_id,
+                ],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                check=False,
+                timeout=SECRET_TIMEOUT_SECONDS,
+                env=_safe_git_environment(),
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            raise RuntimeError("replacement target blob is unavailable") from None
+        if (
+            not isinstance(completed, subprocess.CompletedProcess)
+            or completed.returncode != 0
+            or not isinstance(completed.stdout, bytes)
+        ):
+            raise RuntimeError("replacement target blob is unavailable")
+        return completed.stdout
+
+    raw_size = run_cat_file("-s")
+    if re.fullmatch(rb"(?:0|[1-9][0-9]*)\n", raw_size) is None:
+        raise RuntimeError("replacement target blob is unavailable")
+    size = int(raw_size)
+    if size > MAX_REPLACEMENT_BLOB_BYTES:
+        raise RuntimeError("replacement target blob is unavailable")
+    content = run_cat_file("blob")
+    if len(content) != size:
+        raise RuntimeError("replacement target blob is unavailable")
+    return content
+
+
 def _regular_file(root: Path, raw_path: str) -> bool:
     try:
         mode = (root / raw_path).lstat().st_mode
@@ -339,7 +464,7 @@ def _index_target(target: str) -> str | None:
 
 
 def _replacement_target(label: str, target: str) -> str | None:
-    if not target.startswith("../"):
+    if not target.startswith(("../", "./")):
         return None
     normalized = posixpath.normpath(posixpath.join("docs/98.archive", target))
     if normalized != label or not normalized.startswith("docs/"):
@@ -347,12 +472,58 @@ def _replacement_target(label: str, target: str) -> str | None:
     return normalized
 
 
+def _replacement_target_diagnostic(
+    root: Path,
+    registry: Registry,
+    target: str,
+    tracked_regular_blobs: Mapping[str, str],
+) -> str | None:
+    """Validate one index-owned current replacement without trusting neighbors."""
+
+    path = PurePosixPath(target)
+    if (
+        not target.startswith("docs/")
+        or "\\" in target
+        or any(ord(character) < 32 or ord(character) == 127 for character in target)
+        or path.is_absolute()
+        or any(part in {".", ".."} for part in path.parts)
+        or path.as_posix() != target
+    ):
+        return "ARCHIVE-REPLACEMENT-UNSELECTED"
+    if path.is_relative_to(PurePosixPath("docs/98.archive")):
+        return "ARCHIVE-REPLACEMENT-ARCHIVE"
+    object_id = tracked_regular_blobs.get(target)
+    if object_id is None:
+        return "ARCHIVE-REPLACEMENT-MISSING"
+    try:
+        profile = classify_path(registry, path)
+    except DocumentContractError:
+        return "ARCHIVE-REPLACEMENT-UNSELECTED"
+    if profile.mode != "authored" or profile.profile_id == ARCHIVE_PROFILE:
+        return "ARCHIVE-REPLACEMENT-PROFILE"
+    try:
+        text = _index_blob_bytes(root, object_id).decode("utf-8", errors="strict")
+        document = document_from_text(registry, path, text)
+    except (DocumentContractError, RuntimeError, UnicodeDecodeError, ValueError):
+        return "ARCHIVE-REPLACEMENT-NONCURRENT"
+    if (
+        document.state_issue is not None
+        or document.profile_id != profile.profile_id
+        or document.status not in CURRENT_REPLACEMENT_STATUSES
+        or document.status not in profile.status_domain
+    ):
+        return "ARCHIVE-REPLACEMENT-NONCURRENT"
+    return None
+
+
 @lru_cache(maxsize=1)
 def _load_migration_validator() -> ModuleType:
     """Load the additive ACER validator from its canonical CLI module."""
 
-    path = Path(__file__).resolve(strict=True).with_name(
-        "validate-active-corpus-migrations.py"
+    path = (
+        Path(__file__)
+        .resolve(strict=True)
+        .with_name("validate-active-corpus-migrations.py")
     )
     spec = importlib.util.spec_from_file_location(
         "_archive_cutover_active_corpus_migrations", path
@@ -379,9 +550,7 @@ def _migration_projection(
         for row in batch["records"]:
             projected = dict(row)
             projected["_currentClosureOwner"] = batch["currentClosureOwner"]
-            projected["_archiveNavigationBoundary"] = batch[
-                "archiveNavigationBoundary"
-            ]
+            projected["_archiveNavigationBoundary"] = batch["archiveNavigationBoundary"]
             rows[str(row["archivePath"])] = projected
     if len(rows) != counts["records"]:
         raise RuntimeError("migration validator returned an invalid projection")
@@ -654,10 +823,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 diagnostics.append(
                     _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
                 )
-        elif not isinstance(replacement, str) or not _regular_file(root, replacement):
-            diagnostics.append(
-                _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
-            )
+        elif not isinstance(replacement, str):
+            diagnostics.append(_diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path))
 
     registry_path = root / "docs/99.templates/support/document-profiles.json"
     try:
@@ -690,6 +857,21 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 registry_path.relative_to(root).as_posix(),
             )
         )
+    try:
+        typed_registry = load_registry(root)
+    except (DocumentContractError, OSError, UnicodeDecodeError, ValueError):
+        typed_registry = None
+        diagnostics.append(
+            _diagnostic(
+                "ARCHIVE-AUTHORITY-INCOMPLETE",
+                registry_path.relative_to(root).as_posix(),
+            )
+        )
+    try:
+        tracked_regular_blobs = _tracked_regular_blobs(root)
+    except RuntimeError:
+        tracked_regular_blobs = MappingProxyType({})
+        diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
 
     try:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
@@ -709,6 +891,18 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
     if index_structure_failure or frozenset(index_rows) != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX))
+    if typed_registry is not None:
+        for archive_path, index_row in index_rows.items():
+            if index_row.replacement is None:
+                continue
+            replacement_failure = _replacement_target_diagnostic(
+                root,
+                typed_registry,
+                index_row.replacement,
+                tracked_regular_blobs,
+            )
+            if replacement_failure is not None:
+                diagnostics.append(_diagnostic(replacement_failure, archive_path))
     for archive_path, metadata, link_count in metadata_rows:
         index_row = index_rows.get(archive_path)
         expected_row = ArchiveIndexRow(
@@ -719,9 +913,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             source_blob=str(metadata.get("source_blob")),
             content_sha256=str(metadata.get("content_sha256")),
             historical_links=link_count,
-            replacement=metadata.get("replacement")
-            if isinstance(metadata.get("replacement"), str)
-            else None,
+            # ArchiveEnvelope.v1 replacement is immutable archive-time provenance.
+            # The index alone owns later current-replacement evolution.
+            replacement=index_row.replacement if index_row is not None else None,
             reason=str(metadata.get("archive_reason")),
         )
         if index_row != expected_row:

@@ -3,7 +3,7 @@ title: 'Archive Record and Workspace Boundary Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-18
+updated: 2026-07-19
 ---
 
 # Archive Record and Workspace Boundary Technical Specification (Spec)
@@ -41,10 +41,17 @@ dependency-ready with no Plan or Task created or linked.
 - Each original path has exactly one mirrored content/archive record.
 - Archive frontmatter uses the approved closed provenance fields and order.
 - The complete original source is preserved as an immutable payload.
+- Once created, the complete ArchiveEnvelope wrapper and payload remain
+  byte-identical across staged, CI, and explicit-ref lifecycle comparisons.
 - Payload identity is proven by source_commit, source_blob, and content_sha256.
 - Payload links resolve against source_commit and original_path.
 - Active documents use the archive index, not individual archive records, as
   the current navigation boundary.
+- Envelope `replacement` is immutable archive-time provenance. Only the
+  archive-index row may evolve the current replacement, which must resolve to
+  one stage-zero regular index entry whose exact bounded Git-blob bytes parse
+  as a registry-selected authored document in `active`, `accepted`, or `done`
+  state. Worktree bytes are never replacement authority.
 - Only _workspace/README.md is tracked; ignored children are not inspected.
 
 ## Core Design
@@ -82,8 +89,12 @@ Only UTF-8 Markdown source blobs are admitted by this profile; a non-UTF-8
 source is BLOCKED for a separately designed binary archive format.
 
 Archive reason is one of superseded, consolidated, completed-lineage, retired,
-abandoned, or duplicate. Replacement is a current repository path only for
-reasons that require one; otherwise it is null.
+abandoned, or duplicate. Envelope replacement records the current repository
+path observed at archive time for reasons that require one; otherwise it is
+null. Later current-replacement evolution changes only the archive index. An
+index replacement may not name another archive record, an untracked or missing
+path, a template or other non-authored profile, an unselected path, or a draft
+or archived indexed document.
 
 Temporary recovery inventories may exist under ignored _workspace during a
 dry run. Durable recovery and migration evidence is promoted to the owning
@@ -94,7 +105,8 @@ Plan, Task, archive index, or program closure record.
 - Recovery check: original path plus source commit produces blob, byte count,
   SHA-256, link count, and proposed archive metadata.
 - Archive validator: envelope schema, payload delimiter, digest, Git object,
-  mirror path, reason dependency, and immutability.
+  mirror path, reason dependency, and exact base/proposed Git-blob
+  immutability.
 - Envelope parser: exact v1 marker position, payload-to-EOF extraction, UTF-8
   admission, Git blob byte equality, final-newline preservation, and digest.
 - Historical link validator: source tree plus original base path.
@@ -120,6 +132,9 @@ Plan, Task, archive index, or program closure record.
 - If an archive body is modified after creation, restore it from source or
   record a separately approved provenance repair; do not recalculate the digest
   to hide the change.
+- If the current replacement changes, update only the archive-index row after
+  proving the target is current registry-selected authority; never rewrite the
+  envelope to match the index.
 - If _workspace contains ignored local state, do not list, open, hash, move, or
   delete it during repository validation.
 
@@ -140,8 +155,10 @@ Plan, Task, archive index, or program closure record.
   context; current links remain unbroken.
 - **VAL-ARWB-004**: Tombstone form, profile, and duplicate archival role are
   absent after cutover.
-- **VAL-ARWB-005**: Archive reactivation, payload mutation, invalid reason
-  dependency, and active direct-link fixtures fail.
+- **VAL-ARWB-005**: Archive reactivation, any existing envelope/payload byte
+  mutation, invalid reason dependency, archive/stale/non-current replacement,
+  staged-index/worktree replacement mismatch, and active direct-link fixtures
+  fail; index-only current-replacement evolution remains admissible.
 - **VAL-ARWB-006**: _workspace has one tracked README and no validation reads
   ignored children.
 - **VAL-ARWB-007**: ArchiveEnvelope.v1 round-trips payloads containing marker

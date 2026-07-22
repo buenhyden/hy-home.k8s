@@ -11,6 +11,7 @@ from contextlib import redirect_stdout
 from dataclasses import replace
 from io import StringIO
 from pathlib import Path, PurePosixPath
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +30,7 @@ from scripts.document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     LifecycleEvidenceContext,
     compare_lifecycle,
+    document_from_text,
 )
 
 
@@ -215,6 +217,291 @@ class ArchiveCutoverTest(unittest.TestCase):
 
         report = self._report_with_index_mutation(swap_digests)
         self._assert_named_partial(report, "ARCHIVE-INDEX-MEMBER")
+
+    def test_index_only_replacement_evolution_preserves_immutable_envelope(
+        self,
+    ) -> None:
+        replacement = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+
+        def evolve_replacement(text: str) -> str:
+            lines, rows = self._manifest_rows(text)
+            cells = self._cells(lines[rows[0]])
+            cells[7] = (
+                f"[`{replacement}`](../03.specs/036-archive-record-and-workspace-boundary/spec.md)"
+            )
+            lines[rows[0]] = self._row(cells)
+            return "".join(lines)
+
+        report = self._report_with_index_mutation(evolve_replacement)
+
+        self.assertTrue(report.valid, report.diagnostics)
+
+    def test_index_archive_to_archive_replacement_is_rejected(self) -> None:
+        target = archive_cutover.EXPECTED_ARCHIVE_PATHS[1]
+        target_label = target.removeprefix("docs/98.archive/")
+
+        def point_to_archive(text: str) -> str:
+            lines, rows = self._manifest_rows(text)
+            cells = self._cells(lines[rows[0]])
+            cells[7] = f"[`{target}`](./{target_label})"
+            lines[rows[0]] = self._row(cells)
+            return "".join(lines)
+
+        report = self._report_with_index_mutation(point_to_archive)
+
+        self._assert_named_partial(report, "ARCHIVE-REPLACEMENT-ARCHIVE")
+
+    def test_replacement_target_authority_fails_closed(self) -> None:
+        registry = load_registry(ROOT)
+        tracked = archive_cutover._tracked_regular_blobs(ROOT)
+        current = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        template = "docs/99.templates/templates/common/archive-record.template.md"
+
+        self.assertEqual(
+            archive_cutover._replacement_target_diagnostic(
+                ROOT,
+                registry,
+                archive_cutover.EXPECTED_ARCHIVE_PATHS[0],
+                tracked,
+            ),
+            "ARCHIVE-REPLACEMENT-ARCHIVE",
+        )
+        self.assertEqual(
+            archive_cutover._replacement_target_diagnostic(
+                ROOT,
+                registry,
+                "docs/03.specs/999-missing/spec.md",
+                tracked,
+            ),
+            "ARCHIVE-REPLACEMENT-MISSING",
+        )
+        with patch.object(
+            archive_cutover,
+            "classify_path",
+            side_effect=archive_cutover.DocumentContractError(()),
+        ):
+            self.assertEqual(
+                archive_cutover._replacement_target_diagnostic(
+                    ROOT,
+                    registry,
+                    current,
+                    tracked,
+                ),
+                "ARCHIVE-REPLACEMENT-UNSELECTED",
+            )
+        self.assertEqual(
+            archive_cutover._replacement_target_diagnostic(
+                ROOT,
+                registry,
+                template,
+                tracked,
+            ),
+            "ARCHIVE-REPLACEMENT-PROFILE",
+        )
+        for status in ("draft", "archived"):
+            with self.subTest(status=status):
+                with patch.object(
+                    archive_cutover,
+                    "document_from_text",
+                    return_value=LifecycleDocument(
+                        PurePosixPath(current), "sdlc/spec", status
+                    ),
+                ):
+                    self.assertEqual(
+                        archive_cutover._replacement_target_diagnostic(
+                            ROOT,
+                            registry,
+                            current,
+                            tracked,
+                        ),
+                        "ARCHIVE-REPLACEMENT-NONCURRENT",
+                    )
+
+    def test_replacement_target_status_comes_from_index_blob(self) -> None:
+        registry = load_registry(ROOT)
+        target = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        path = PurePosixPath(target)
+        staged_draft = "---\ntype: sdlc/spec\nstatus: draft\n---\n\n# Staged draft\n"
+        worktree_done = staged_draft.replace("status: draft", "status: done")
+
+        with TemporaryDirectory(prefix="archive-cutover-index-authority-") as raw:
+            repository = Path(raw)
+            subprocess.run(
+                ["git", "init", "--quiet"],
+                cwd=repository,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+            )
+            target_path = repository / target
+            target_path.parent.mkdir(parents=True)
+            target_path.write_text(staged_draft, encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "--", target],
+                cwd=repository,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+            )
+            target_path.write_text(worktree_done, encoding="utf-8")
+
+            tracked = archive_cutover._tracked_regular_blobs(repository)
+            worktree_document = document_from_text(
+                registry,
+                path,
+                target_path.read_text(encoding="utf-8"),
+            )
+
+            self.assertEqual(worktree_document.status, "done")
+            self.assertEqual(
+                archive_cutover._replacement_target_diagnostic(
+                    repository,
+                    registry,
+                    target,
+                    tracked,
+                ),
+                "ARCHIVE-REPLACEMENT-NONCURRENT",
+            )
+
+            target_path.write_text(worktree_done, encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "--", target],
+                cwd=repository,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+            )
+            target_path.unlink()
+            tracked = archive_cutover._tracked_regular_blobs(repository)
+            self.assertIsNone(
+                archive_cutover._replacement_target_diagnostic(
+                    repository,
+                    registry,
+                    target,
+                    tracked,
+                )
+            )
+
+            target_path.write_bytes(b"\xff")
+            subprocess.run(
+                ["git", "add", "--", target],
+                cwd=repository,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+            )
+            target_path.write_text(worktree_done, encoding="utf-8")
+            tracked = archive_cutover._tracked_regular_blobs(repository)
+            self.assertEqual(
+                archive_cutover._replacement_target_diagnostic(
+                    repository,
+                    registry,
+                    target,
+                    tracked,
+                ),
+                "ARCHIVE-REPLACEMENT-NONCURRENT",
+            )
+            self.assertEqual(
+                archive_cutover._replacement_target_diagnostic(
+                    repository,
+                    registry,
+                    target,
+                    {target: "f" * 40},
+                ),
+                "ARCHIVE-REPLACEMENT-NONCURRENT",
+            )
+
+    def test_index_blob_reads_use_bounded_sanitized_git(self) -> None:
+        object_id = "a" * 40
+        payload = b"index blob"
+        calls = []
+
+        def fake_git(argv, **kwargs):
+            calls.append((tuple(argv), dict(kwargs)))
+            stdout = (
+                f"{len(payload)}\n".encode("ascii") if argv[-2] == "-s" else payload
+            )
+            return subprocess.CompletedProcess(argv, 0, stdout, b"")
+
+        hostile = {
+            "GIT_CONFIG_GLOBAL": "sentinel-global",
+            "GIT_OBJECT_DIRECTORY": "sentinel-object",
+            "GIT_ALTERNATE_OBJECT_DIRECTORIES": "sentinel-alternate",
+            "GIT_TERMINAL_PROMPT": "1",
+        }
+        with (
+            patch.dict(os.environ, hostile, clear=False),
+            patch.object(archive_cutover.subprocess, "run", side_effect=fake_git),
+        ):
+            self.assertEqual(
+                archive_cutover._index_blob_bytes(ROOT, object_id), payload
+            )
+
+        self.assertEqual(
+            [call[0][-3:] for call in calls],
+            [("cat-file", "-s", object_id), ("cat-file", "blob", object_id)],
+        )
+        for _argv, kwargs in calls:
+            environment = kwargs["env"]
+            self.assertEqual(kwargs["stdin"], subprocess.DEVNULL)
+            self.assertEqual(kwargs["stderr"], subprocess.DEVNULL)
+            self.assertEqual(kwargs["timeout"], archive_cutover.SECRET_TIMEOUT_SECONDS)
+            self.assertNotIn("GIT_OBJECT_DIRECTORY", environment)
+            self.assertNotIn("GIT_ALTERNATE_OBJECT_DIRECTORIES", environment)
+            self.assertEqual(environment["GIT_CONFIG_GLOBAL"], os.devnull)
+            self.assertEqual(environment["GIT_CONFIG_SYSTEM"], os.devnull)
+            self.assertEqual(environment["GIT_GRAFT_FILE"], os.devnull)
+            self.assertEqual(environment["GIT_NO_LAZY_FETCH"], "1")
+            self.assertEqual(environment["GIT_NO_REPLACE_OBJECTS"], "1")
+            self.assertEqual(environment["GIT_TERMINAL_PROMPT"], "0")
+
+    def test_index_blob_read_errors_and_bounds_are_stable(self) -> None:
+        object_id = "a" * 40
+        failures = (
+            FileNotFoundError("sentinel-startup"),
+            subprocess.TimeoutExpired(("git",), 10, stderr=b"sentinel-timeout"),
+        )
+        for failure in failures:
+            with self.subTest(failure=type(failure).__name__):
+                with patch.object(
+                    archive_cutover.subprocess,
+                    "run",
+                    side_effect=failure,
+                ):
+                    with self.assertRaisesRegex(
+                        RuntimeError, "^replacement target blob is unavailable$"
+                    ):
+                        archive_cutover._index_blob_bytes(ROOT, object_id)
+
+        oversized = subprocess.CompletedProcess(
+            ("git",),
+            0,
+            f"{archive_cutover.MAX_REPLACEMENT_BLOB_BYTES + 1}\n".encode("ascii"),
+            b"",
+        )
+        with patch.object(archive_cutover.subprocess, "run", return_value=oversized):
+            with self.assertRaisesRegex(
+                RuntimeError, "^replacement target blob is unavailable$"
+            ):
+                archive_cutover._index_blob_bytes(ROOT, object_id)
+
+        wrong_length = (
+            subprocess.CompletedProcess(("git",), 0, b"2\n", b""),
+            subprocess.CompletedProcess(("git",), 0, b"x", b""),
+        )
+        with patch.object(
+            archive_cutover.subprocess,
+            "run",
+            side_effect=wrong_length,
+        ):
+            with self.assertRaisesRegex(
+                RuntimeError, "^replacement target blob is unavailable$"
+            ):
+                archive_cutover._index_blob_bytes(ROOT, object_id)
 
     def test_index_rejects_archive_row_after_prose(self) -> None:
         text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
