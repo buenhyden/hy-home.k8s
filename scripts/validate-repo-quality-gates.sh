@@ -79,6 +79,8 @@ python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --root "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections

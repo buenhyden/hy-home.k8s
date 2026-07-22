@@ -44,6 +44,7 @@ SCHEMA = (
     / "docs/90.references/data/reference-information-architecture.schema.json"
 )
 CLI = REPOSITORY_ROOT / "scripts/validate-reference-information-architecture.py"
+AGGREGATE = REPOSITORY_ROOT / "scripts/validate-repo-quality-gates.sh"
 SNAPSHOT_MUTATION = (
     REPOSITORY_ROOT
     / "tests/fixtures/reference-information-architecture/snapshot-mutation.json"
@@ -3922,6 +3923,21 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(terminal.returncode, 0, terminal.stderr)
         self.assertEqual(conflict.returncode, 2)
         self.assertEqual(malformed.returncode, 2)
+
+    def test_aggregate_runs_self_test_before_production(self) -> None:
+        aggregate = AGGREGATE.read_text(encoding="utf-8")
+        self_test = (
+            'python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" '
+            "--self-test"
+        )
+        production = (
+            'python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" '
+            '--root "$ROOT_DIR"'
+        )
+
+        self.assertEqual(aggregate.count(self_test), 1)
+        self.assertEqual(aggregate.count(production), 1)
+        self.assertLess(aggregate.index(self_test), aggregate.index(production))
 
 
 if __name__ == "__main__":
