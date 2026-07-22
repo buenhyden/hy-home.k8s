@@ -827,6 +827,46 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.validator._build_active_control_pairs(duplicate)
         self.assertEqual(duplicated.exception.code, "CLOSURE-ACTIVE-CONTROL-DUPLICATE")
 
+    def test_production_rejects_unadmitted_stage04_artifacts(self) -> None:
+        original_inventory = self.validator._inventory
+        original_payload = self.validator._proposed_or_index_bytes
+        cases = (
+            "docs/04.execution/plans/rogue.txt",
+            "docs/04.execution/plans/nested/rogue.txt",
+        )
+        for rogue_path in cases:
+            with self.subTest(rogue_path=rogue_path):
+
+                def inventory(root: str, scope: str, runner):
+                    paths, modes = original_inventory(root, scope, runner)
+                    if scope == self.validator.PLAN_ROOT:
+                        return [*paths, rogue_path], modes
+                    return paths, modes
+
+                def payload(root: str, path: str, index, runner):
+                    if path == rogue_path:
+                        return b"unadmitted fixture"
+                    return original_payload(root, path, index, runner)
+
+                with (
+                    mock.patch.object(self.validator, "_inventory", side_effect=inventory),
+                    mock.patch.object(
+                        self.validator,
+                        "_proposed_or_index_bytes",
+                        side_effect=payload,
+                    ),
+                ):
+                    with self.assertRaises(self.validator.ClosureError) as raised:
+                        self.validator.build_observed(REPOSITORY_ROOT)
+                self.assertEqual(raised.exception.code, "CLOSURE-STAGE04-PATH")
+                self.assertEqual(
+                    str(raised.exception), f"CLOSURE-STAGE04-PATH {rogue_path}"
+                )
+
+    def test_production_allows_existing_stage04_support_readmes(self) -> None:
+        observed = self.validator.build_observed(REPOSITORY_ROOT)
+        self.assertEqual(observed, self.observed)
+
     def test_frozen_terminal_path_cannot_be_promoted_to_active(self) -> None:
         plan_path = self.validator.EXECUTION_PLAN
         task_path = self.validator.EXECUTION_TASK

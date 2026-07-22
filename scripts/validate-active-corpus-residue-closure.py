@@ -556,12 +556,14 @@ def _proposed_or_index_bytes(
 
 
 def _authored_stage04(paths: Sequence[str], scope: str) -> list[str]:
-    result = [
-        path for path in paths if path.endswith(".md") and path != f"{scope}/README.md"
-    ]
-    if any(path.count("/") != 3 for path in result):
-        bad = next(path for path in result if path.count("/") != 3)
-        raise ClosureError("CLOSURE-STAGE04-PATH", bad)
+    result: list[str] = []
+    support_readme = f"{scope}/README.md"
+    for path in paths:
+        if path == support_readme:
+            continue
+        if not path.endswith(".md") or path.count("/") != 3:
+            raise ClosureError("CLOSURE-STAGE04-PATH", path)
+        result.append(path)
     return result
 
 
