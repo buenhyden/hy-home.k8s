@@ -157,6 +157,10 @@ FROZEN_HELPER_PATHS = (
     "tests/test_workspace_boundary.py",
 )
 POST_CLOSURE_HELPER_MANIFEST = {
+    "tests/fixtures/reference-information-architecture/generator-collision.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/reference-information-architecture/minimal-valid.json": (
         "json",
         "closed-fixture",
