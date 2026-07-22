@@ -94,6 +94,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-12-semantic-document-validation.md
 ├── 2026-07-12-authored-document-migration.md
 ├── 2026-07-18-active-corpus-and-execution-retention.md
+├── 2026-07-22-reference-information-architecture.md
 └── README.md
 ```
 
@@ -169,6 +170,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, migration-ledger, and reciprocal execution-lineage validation plan. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
 | [`./2026-07-18-active-corpus-and-execution-retention.md`](./2026-07-18-active-corpus-and-execution-retention.md) | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)의 ACER-001~005 reviewed 결과와 ACER-006 terminal closure를 기록한다. reciprocal pair는 active authority가 아닌 terminal Stage 04 `DEFER` evidence이며 closure content commit `cfabc506`과 clean-tree postflight PASS를 관측했다. evidence-update commit 자체는 unidentified·unclaimed이다. | Done | 2026-07-19 |
+| [`./2026-07-22-reference-information-architecture.md`](./2026-07-22-reference-information-architecture.md) | [Spec 038](../../03.specs/038-reference-information-architecture/spec.md)의 Current-pack authority를 중복하지 않는 closed contract, audit/research observation guard, projection-only overlay, source scope/freshness, generator, duplicate-owner, aggregate, closure를 RIA-000~007로 실행한다. Plan-only RED, focused activation GREEN, reviewed active-control prerequisite, `active_controls=2/1`, changed/all-files QA PASS, requirements compliance, quality approval이 관찰됐으며 activation commit과 구현 결과는 pending이다. | Active | 2026-07-22 |
 
 ## Related Documents
 
