@@ -63,18 +63,16 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     encoding="utf-8",
                 )
 
-        helper_paths = ["tests/README.md"]
-        helper_paths += [f"tests/test_fixture_{index:02d}.py" for index in range(12)]
-        helper_paths += [
-            f"tests/fixtures/fixture_{index:02d}.json" for index in range(14)
-        ]
-        helper_paths += [
-            f"tests/fixtures/fixture_{index:02d}.yaml" for index in range(6)
-        ]
-        helper_paths.sort()
-        proposal = root / "tests/test_fixture_00.py"
+        helper_paths = sorted(
+            [
+                *self.validator.FROZEN_HELPER_PATHS,
+                *self.validator.POST_CLOSURE_HELPER_MANIFEST,
+            ]
+        )
+        proposal_path = "tests/test_reference_information_architecture.py"
+        proposal = root / proposal_path
         for path in helper_paths:
-            if path in {"tests/README.md", "tests/test_fixture_00.py"}:
+            if path in {"tests/README.md", proposal_path}:
                 continue
             target = root / path
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -290,7 +288,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     self.validator.validate_ledger(self.ledger, observed)
                 self.assertIn(
                     raised.exception.code,
-                    {"ROLE-AUDIT-HELPER-DRIFT", "ROLE-AUDIT-HELPER-TRACKER"},
+                    {
+                        "ROLE-AUDIT-HELPER-ADMISSION",
+                        "ROLE-AUDIT-HELPER-DRIFT",
+                        "ROLE-AUDIT-HELPER-TRACKER",
+                    },
                 )
 
     def test_post_closure_helper_cannot_use_unsupported_format(self) -> None:
@@ -306,10 +308,20 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             self.write_git_corpus(root)
-            unlisted = root / "tests/post_closure.py"
-            unlisted.write_text("fixture\n", encoding="utf-8")
+            omitted = "tests/test_reference_information_architecture.py"
+            readme = root / "tests/README.md"
+            inventory = self.validator._readme_inventory(
+                readme.read_text(encoding="utf-8")
+            )
+            inventory.remove(omitted)
+            readme.write_text(
+                "# tests\n\n## Structure\n\n```text\n"
+                + "\n".join(inventory)
+                + "\n```\n",
+                encoding="utf-8",
+            )
             subprocess.run(
-                [self.validator.GIT_EXECUTABLE, "add", "--", "tests/post_closure.py"],
+                [self.validator.GIT_EXECUTABLE, "add", "--", "tests/README.md"],
                 cwd=root,
                 check=True,
             )
@@ -317,12 +329,46 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 self.validator.build_observed(root)
             self.assertEqual(raised.exception.code, "ROLE-AUDIT-README-DRIFT")
 
-    def test_post_closure_helper_cannot_masquerade_as_execution_tracker(self) -> None:
-        observed = copy.deepcopy(self.observed)
-        observed["helperTests"]["entries"][-1]["role"] = "execution-tracker"
-        with self.assertRaises(self.validator.RoleAuditError) as raised:
-            self.validator.validate_ledger(self.ledger, observed)
-        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-TRACKER")
+    def test_readme_listed_supported_tracker_helper_fails_production_build(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.write_git_corpus(root)
+            hostile_path = "tests/zz-execution-tracker.py"
+            hostile = root / hostile_path
+            hostile.write_text(
+                "## Task Table\nTask status: In Progress\n", encoding="utf-8"
+            )
+            readme = root / "tests/README.md"
+            inventory = sorted(
+                [
+                    *self.validator._readme_inventory(
+                        readme.read_text(encoding="utf-8")
+                    ),
+                    hostile_path,
+                ]
+            )
+            readme.write_text(
+                "# tests\n\n## Structure\n\n```text\n"
+                + "\n".join(inventory)
+                + "\n```\n",
+                encoding="utf-8",
+            )
+            subprocess.run(
+                [
+                    self.validator.GIT_EXECUTABLE,
+                    "add",
+                    "--",
+                    hostile_path,
+                    "tests/README.md",
+                ],
+                cwd=root,
+                check=True,
+            )
+            with self.assertRaises(self.validator.RoleAuditError) as raised:
+                self.validator.build_observed(root)
+            self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION")
 
     def test_helper_tracker_promotion_fails(self) -> None:
         fixture = self.fixture()
@@ -344,10 +390,14 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-TRACKER")
 
-    def test_fixture_negative_strings_are_not_scanned_as_authored_markdown(
+    def test_approved_post_closure_negative_strings_remain_fixture_data(
         self,
     ) -> None:
-        paths = ["tests/README.md", "tests/fixture.json", "tests/test_fixture.py"]
+        paths = [
+            "tests/README.md",
+            "tests/fixtures/reference-information-architecture/minimal-valid.json",
+            "tests/test_reference_information_architecture.py",
+        ]
         readme = "# tests\n\n## Structure\n\n```text\n" + "\n".join(paths) + "\n```\n"
         reads: list[str] = []
 
@@ -502,7 +552,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             with self.assertRaises(self.validator.RoleAuditError) as raised:
                 self.validator.build_observed(root)
             self.assertEqual(raised.exception.code, "ROLE-AUDIT-WORKTREE-INDEX-DRIFT")
-            self.assertEqual(raised.exception.path, "tests/test_fixture_00.py")
+            self.assertEqual(
+                raised.exception.path,
+                "tests/test_reference_information_architecture.py",
+            )
 
     def test_proposed_nonregular_helper_fails_through_build_observed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -511,7 +564,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             with self.assertRaises(self.validator.RoleAuditError) as raised:
                 self.validator.build_observed(root)
             self.assertEqual(raised.exception.code, "ROLE-AUDIT-INVENTORY-OBJECT")
-            self.assertEqual(raised.exception.path, "tests/test_fixture_00.py")
+            self.assertEqual(
+                raised.exception.path,
+                "tests/test_reference_information_architecture.py",
+            )
 
     def test_entrypoint_verifier_rejects_validator_and_aggregate_drift(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -156,6 +156,16 @@ FROZEN_HELPER_PATHS = (
     "tests/test_run_validation_lane.py",
     "tests/test_workspace_boundary.py",
 )
+POST_CLOSURE_HELPER_MANIFEST = {
+    "tests/fixtures/reference-information-architecture/minimal-valid.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/test_reference_information_architecture.py": (
+        "python",
+        "regression-test",
+    ),
+}
 README_ADDITIONS = [
     "tests/fixtures/document-contracts/template-source-parity.json",
     "tests/fixtures/document-lifecycle.json",
@@ -571,14 +581,21 @@ def _stage_entries(
 
 def _helper_format_role(path: str) -> tuple[str, str]:
     if path == "tests/README.md":
-        return "readme", "validation-evidence-boundary"
-    if path.endswith(".py"):
-        return "python", "regression-test"
-    if path.endswith(".json"):
-        return "json", "closed-fixture"
-    if path.endswith((".yaml", ".yml")):
-        return "yaml", "manifest-fixture"
-    raise RoleAuditError("ROLE-AUDIT-HELPER-FORMAT", path)
+        derived = ("readme", "validation-evidence-boundary")
+    elif path.endswith(".py"):
+        derived = ("python", "regression-test")
+    elif path.endswith(".json"):
+        derived = ("json", "closed-fixture")
+    elif path.endswith((".yaml", ".yml")):
+        derived = ("yaml", "manifest-fixture")
+    else:
+        raise RoleAuditError("ROLE-AUDIT-HELPER-FORMAT", path)
+    if path in FROZEN_HELPER_PATHS:
+        return derived
+    admitted = POST_CLOSURE_HELPER_MANIFEST.get(path)
+    if admitted is None or admitted != derived:
+        raise RoleAuditError("ROLE-AUDIT-HELPER-ADMISSION", path)
+    return admitted
 
 
 def _readme_inventory(text: str) -> list[str]:
@@ -646,6 +663,13 @@ def _expected_frozen_helper_entries() -> list[dict[str, str]]:
             "role": _helper_format_role(path)[1],
         }
         for path in FROZEN_HELPER_PATHS
+    ]
+
+
+def _expected_post_closure_helper_entries() -> list[dict[str, str]]:
+    return [
+        {"path": path, "format": helper_format, "role": role}
+        for path, (helper_format, role) in sorted(POST_CLOSURE_HELPER_MANIFEST.items())
     ]
 
 
@@ -847,6 +871,8 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:
     post_closure = [
         entry for entry in current_entries if entry["path"] not in FROZEN_HELPER_PATHS
     ]
+    if post_closure != _expected_post_closure_helper_entries():
+        raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
 
     remediation = ledger.get("readmeRemediation")
     if remediation != {
@@ -989,8 +1015,7 @@ def run_self_test() -> int:
         helper_paths = sorted(
             [
                 *FROZEN_HELPER_PATHS,
-                "tests/fixtures/post-closure.json",
-                "tests/test_post_closure.py",
+                *POST_CLOSURE_HELPER_MANIFEST,
             ]
         )
         for path in helper_paths:
@@ -1055,6 +1080,43 @@ def run_self_test() -> int:
         }
         validate_ledger(ledger, observed)
         cases += 1
+
+        hostile_helper = "tests/zz-execution-tracker.py"
+        hostile_paths = sorted([*helper_paths, hostile_helper])
+        _write_fixture_file(
+            root,
+            hostile_helper,
+            "## Task Table\nTask status: In Progress\n",
+        )
+        _write_fixture_file(
+            root,
+            "tests/README.md",
+            "# tests\n\n## Structure\n\n```text\n"
+            + "\n".join(hostile_paths)
+            + "\n```\n",
+        )
+        try:
+            build_observed(
+                root,
+                _fixture_runner(
+                    {STAGE05_ROOT: sorted(stage_paths), TESTS_ROOT: hostile_paths}
+                ),
+                enforce_index=False,
+            )
+        except RoleAuditError as exc:
+            if exc.code != "ROLE-AUDIT-HELPER-ADMISSION":
+                raise
+            cases += 1
+        else:
+            raise AssertionError("unapproved post-closure helper was accepted")
+        (root / hostile_helper).unlink()
+        _write_fixture_file(
+            root,
+            "tests/README.md",
+            "# tests\n\n## Structure\n\n```text\n"
+            + "\n".join(helper_paths)
+            + "\n```\n",
+        )
 
         def add_unique_stage(item: dict[str, Any]) -> None:
             extra = copy.deepcopy(item["stage05"]["entries"][-1])
