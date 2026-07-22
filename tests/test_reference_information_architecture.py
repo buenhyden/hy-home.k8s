@@ -63,9 +63,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
         self.contract_path.parent.mkdir(parents=True, exist_ok=True)
         self._write_contract(self._minimal_contract())
-        self._write_registry(
-            ["audits/2026-07-11-weia", "research/2026-07-07-wer"]
-        )
+        self._write_registry(["audits/2026-07-11-weia", "research/2026-07-07-wer"])
         schema_path = self.contract_path.with_name(
             "reference-information-architecture.schema.json"
         )
@@ -136,7 +134,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             "reason": "bounded structural copy",
         }
 
-    def test_minimal_contract_loads_and_references_registered_current_packs(self) -> None:
+    def test_minimal_contract_loads_and_references_registered_current_packs(
+        self,
+    ) -> None:
         contract = self._minimal_contract()
         snapshot_guard = contract["snapshotGuard"]
         assert isinstance(snapshot_guard, dict)
@@ -188,7 +188,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
                     self._load()
 
-    def test_duplicate_pack_ids_output_paths_and_mutable_paths_fail_closed(self) -> None:
+    def test_duplicate_pack_ids_output_paths_and_mutable_paths_fail_closed(
+        self,
+    ) -> None:
         cases: list[tuple[str, dict[str, object]]] = []
 
         duplicate_pack = self._minimal_contract()
@@ -244,17 +246,167 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_every_path_family_uses_semantic_boundary_validation(self) -> None:
         mutations = []
 
-        mutations.append(("registry", lambda contract: contract.update({"currentPackRegistry": "docs/../registry.json"})))
-        mutations.append(("mutable", lambda contract: contract.update({"mutableIndexProjections": [{"path": "docs/../mutable.md"}]})))
-        mutations.append(("navigation", lambda contract: contract.update({"mutableIndexProjections": [{"path": "docs/90.references/README.md", "navigationReplacement": {"visibleText": "Current", "destination": "docs/../target.md"}}]})))
-        mutations.append(("evidence", lambda contract: contract.update({"dataAssets": [{**self._asset(), "repositoryEvidence": ["docs/../evidence.md"]}]})))
-        mutations.append(("generator", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "generatorPath": "scripts/../generator.py"}]})))
-        mutations.append(("inputs", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "inputRoots": ["docs/../inputs"]}]})))
-        mutations.append(("output", lambda contract: contract.update({"generatedAssets": [self._generated("generated", "docs/../output.md")]})))
-        mutations.append(("owner", lambda contract: contract.update({"generatedAssets": [{**self._generated("generated", "docs/90.references/data/output.md"), "canonicalOwnerPath": "docs/../owner.md"}]})))
-        mutations.append(("roots", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "canonicalOwnerRoots": ["docs/../owner"]}})))
-        mutations.append(("exception-owner", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "structuralExceptions": [{**self._structural_exception(), "canonicalOwnerPath": "docs/../owner.md"}]}})))
-        mutations.append(("exception-reference", lambda contract: contract.update({"duplicateRules": {**contract["duplicateRules"], "structuralExceptions": [{**self._structural_exception(), "referencePath": "docs/../reference.md"}]}})))
+        mutations.append(
+            (
+                "registry",
+                lambda contract: contract.update(
+                    {"currentPackRegistry": "docs/../registry.json"}
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "mutable",
+                lambda contract: contract.update(
+                    {"mutableIndexProjections": [{"path": "docs/../mutable.md"}]}
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "navigation",
+                lambda contract: contract.update(
+                    {
+                        "mutableIndexProjections": [
+                            {
+                                "path": "docs/90.references/README.md",
+                                "navigationReplacement": {
+                                    "visibleText": "Current",
+                                    "destination": "docs/../target.md",
+                                },
+                            }
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "evidence",
+                lambda contract: contract.update(
+                    {
+                        "dataAssets": [
+                            {
+                                **self._asset(),
+                                "repositoryEvidence": ["docs/../evidence.md"],
+                            }
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "generator",
+                lambda contract: contract.update(
+                    {
+                        "generatedAssets": [
+                            {
+                                **self._generated(
+                                    "generated", "docs/90.references/data/output.md"
+                                ),
+                                "generatorPath": "scripts/../generator.py",
+                            }
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "inputs",
+                lambda contract: contract.update(
+                    {
+                        "generatedAssets": [
+                            {
+                                **self._generated(
+                                    "generated", "docs/90.references/data/output.md"
+                                ),
+                                "inputRoots": ["docs/../inputs"],
+                            }
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "output",
+                lambda contract: contract.update(
+                    {
+                        "generatedAssets": [
+                            self._generated("generated", "docs/../output.md")
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "owner",
+                lambda contract: contract.update(
+                    {
+                        "generatedAssets": [
+                            {
+                                **self._generated(
+                                    "generated", "docs/90.references/data/output.md"
+                                ),
+                                "canonicalOwnerPath": "docs/../owner.md",
+                            }
+                        ]
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "roots",
+                lambda contract: contract.update(
+                    {
+                        "duplicateRules": {
+                            **contract["duplicateRules"],
+                            "canonicalOwnerRoots": ["docs/../owner"],
+                        }
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "exception-owner",
+                lambda contract: contract.update(
+                    {
+                        "duplicateRules": {
+                            **contract["duplicateRules"],
+                            "structuralExceptions": [
+                                {
+                                    **self._structural_exception(),
+                                    "canonicalOwnerPath": "docs/../owner.md",
+                                }
+                            ],
+                        }
+                    }
+                ),
+            )
+        )
+        mutations.append(
+            (
+                "exception-reference",
+                lambda contract: contract.update(
+                    {
+                        "duplicateRules": {
+                            **contract["duplicateRules"],
+                            "structuralExceptions": [
+                                {
+                                    **self._structural_exception(),
+                                    "referencePath": "docs/../reference.md",
+                                }
+                            ],
+                        }
+                    }
+                ),
+            )
+        )
 
         for name, mutate in mutations:
             with self.subTest(name=name):
@@ -280,8 +432,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         ):
             with self.subTest(name=name):
                 self._write_registry([])
-                registry = self.root / "docs/99.templates/support/document-profiles.json"
-                registry.write_text(json.dumps({"referenceCurrentPacks": {"packs": packs}}), encoding="utf-8")
+                registry = (
+                    self.root / "docs/99.templates/support/document-profiles.json"
+                )
+                registry.write_text(
+                    json.dumps({"referenceCurrentPacks": {"packs": packs}}),
+                    encoding="utf-8",
+                )
                 with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
                     validate_reference_architecture(self.root, self._load())
 
@@ -298,7 +455,17 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertIsInstance(RIA_RULE_IDS, frozenset)
         self.assertEqual(
             RIA_RULE_IDS,
-            frozenset({"RIA-CONTRACT", "RIA-BOUNDARY", "RIA-SNAPSHOT", "RIA-OVERLAY", "RIA-SOURCE", "RIA-GENERATOR", "RIA-DUPLICATE"}),
+            frozenset(
+                {
+                    "RIA-CONTRACT",
+                    "RIA-BOUNDARY",
+                    "RIA-SNAPSHOT",
+                    "RIA-OVERLAY",
+                    "RIA-SOURCE",
+                    "RIA-GENERATOR",
+                    "RIA-DUPLICATE",
+                }
+            ),
         )
         contract = self._minimal_contract()
         asset = self._asset()
@@ -317,12 +484,16 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             list(Draft202012Validator(schema).iter_errors(dot_segment_contract))
         )
 
-    def test_special_file_replacement_after_lstat_fails_closed_without_blocking(self) -> None:
+    def test_special_file_replacement_after_lstat_fails_closed_without_blocking(
+        self,
+    ) -> None:
         registry = self.root / "docs/99.templates/support/document-profiles.json"
         original_open = os.open
         replaced = False
 
-        def replace_before_open(path: object, flags: int, *args: object, **kwargs: object) -> int:
+        def replace_before_open(
+            path: object, flags: int, *args: object, **kwargs: object
+        ) -> int:
             nonlocal replaced
             if path == registry.name and not replaced:
                 replaced = True
@@ -333,7 +504,10 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 os.mkfifo(registry)
             return original_open(path, flags, *args, **kwargs)
 
-        with mock.patch("reference_information_architecture.os.open", side_effect=replace_before_open):
+        with mock.patch(
+            "reference_information_architecture.os.open",
+            side_effect=replace_before_open,
+        ):
             with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
                 validate_reference_architecture(self.root, self._load())
         self.assertTrue(replaced)
@@ -349,16 +523,21 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_cli_self_test_io_failure_is_payload_safe_exit_two(self) -> None:
         cli = _load_cli_module()
         captured = StringIO()
-        with mock.patch.object(cli, "run_self_test", side_effect=OSError("secret-path/token")):
+        with mock.patch.object(
+            cli, "run_self_test", side_effect=OSError("secret-path/token")
+        ):
             with redirect_stderr(captured):
                 self.assertEqual(cli._self_test(), 2)  # noqa: SLF001
         self.assertIn("RIA-CONTRACT", captured.getvalue())
         self.assertNotIn("secret-path", captured.getvalue())
 
-    def test_snapshot_commit_parser_accepts_only_the_encoded_lowercase_sha1(self) -> None:
+    def test_snapshot_commit_parser_accepts_only_the_encoded_lowercase_sha1(
+        self,
+    ) -> None:
         accepted = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
+        bare_oid = accepted.removeprefix("git-sha1:")
         rejected = (
-            "8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
+            bare_oid,
             "git-sha1:",
             "git-sha1:git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
             "git-sha1:8FB9821497AAA93D9ED5FC1A69B60C628B047B47",
@@ -370,6 +549,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
 
         self.assertEqual(parse_git_sha1(accepted), accepted.removeprefix("git-sha1:"))
+        self.assertNotEqual(bare_oid, accepted)
         for value in rejected:
             with self.subTest(value=value):
                 with self.assertRaisesRegex(ContractError, "RIA-SNAPSHOT"):
@@ -403,19 +583,34 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             "research/2026-07-07-wer",
         ]
         self._write_contract(contract)
-        clean = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        clean = subprocess.run(
+            [sys.executable, str(CLI), "--root", str(self.root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         self.assertEqual(clean.returncode, 0, clean.stderr)
 
         guard["currentPackIds"] = ["research/not-registered"]
         self._write_contract(contract)
-        findings = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        findings = subprocess.run(
+            [sys.executable, str(CLI), "--root", str(self.root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         self.assertEqual(findings.returncode, 1)
         self.assertIn("RIA-CONTRACT", findings.stdout)
         self.assertNotIn("not-registered", findings.stdout + findings.stderr)
 
         contract["currentPackRegistry"] = "/unsafe/secret-value"
         self._write_contract(contract)
-        malformed = subprocess.run([sys.executable, str(CLI), "--root", str(self.root)], capture_output=True, text=True, check=False)
+        malformed = subprocess.run(
+            [sys.executable, str(CLI), "--root", str(self.root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         self.assertEqual(malformed.returncode, 2)
         self.assertIn("RIA-BOUNDARY", malformed.stderr)
         self.assertNotIn("secret-value", malformed.stdout + malformed.stderr)

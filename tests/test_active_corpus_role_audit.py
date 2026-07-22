@@ -35,9 +35,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         cls.observed = cls.validator.build_observed(
             REPOSITORY_ROOT, enforce_index=False
         )
-        cls.ledger = cls.validator.load_ledger(
-            REPOSITORY_ROOT, enforce_index=False
-        )
+        cls.ledger = cls.validator.load_ledger(REPOSITORY_ROOT, enforce_index=False)
 
     def fixture(self):
         return copy.deepcopy(self.ledger)
@@ -47,9 +45,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             self.validator.validate_ledger(fixture, self.observed)
         self.assertEqual(raised.exception.code, code)
 
-    def write_git_corpus(
-        self, root: Path, *, proposed_symlink: bool = False
-    ) -> Path:
+    def write_git_corpus(self, root: Path, *, proposed_symlink: bool = False) -> Path:
         for collection, count in (("guides", 8), ("policies", 7), ("runbooks", 9)):
             contract = self.validator.STAGE_KINDS[collection]
             sections = "\n".join(
@@ -130,9 +126,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 33,
-                "python": 12,
-                "json": 14,
+                "helpers": 35,
+                "frozenHelpers": 33,
+                "postClosureHelpers": 2,
+                "python": 13,
+                "json": 15,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -143,7 +141,12 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         expected = {
             "guide": ["Overview", "Guide Type", "Target Audience", "Prerequisites"],
             "policy": ["Overview", "Policy Scope", "Applies To", "Controls"],
-            "runbook": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"],
+            "runbook": [
+                "Overview",
+                "Runbook Type",
+                "When to Use",
+                "Procedure or Checklist",
+            ],
         }
         for entry in self.observed["stage05"]["entries"]:
             self.assertEqual(entry["requiredSections"], expected[entry["kind"]])
@@ -165,7 +168,12 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         roles = {entry["role"] for entry in self.observed["helperTests"]["entries"]}
         self.assertEqual(
             roles,
-            {"regression-test", "closed-fixture", "manifest-fixture", "validation-evidence-boundary"},
+            {
+                "regression-test",
+                "closed-fixture",
+                "manifest-fixture",
+                "validation-evidence-boundary",
+            },
         )
         self.assertNotIn("execution-tracker", roles)
         self.assertIs(self.ledger["helperTests"]["executionTracker"], False)
@@ -173,8 +181,35 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(self.ledger["readmeRemediation"]["finalInventory"], actual)
-        self.assertEqual(len(actual), 33)
+        self.assertEqual(len(actual), 35)
+        self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
+
+    def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
+        self,
+    ) -> None:
+        partition = self.validator.validate_ledger(self.ledger, self.observed)
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 2})
+        frozen_paths = set(self.validator.FROZEN_HELPER_PATHS)
+        post_closure = [
+            entry
+            for entry in self.observed["helperTests"]["entries"]
+            if entry["path"] not in frozen_paths
+        ]
+        self.assertEqual(
+            post_closure,
+            [
+                {
+                    "path": "tests/fixtures/reference-information-architecture/minimal-valid.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/test_reference_information_architecture.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+            ],
+        )
 
     def test_readme_remediation_records_exact_delta(self) -> None:
         self.assertEqual(
@@ -193,7 +228,9 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
 
     def test_duplicate_stage_row_fails(self) -> None:
         fixture = self.fixture()
-        fixture["stage05"]["entries"].append(copy.deepcopy(fixture["stage05"]["entries"][0]))
+        fixture["stage05"]["entries"].append(
+            copy.deepcopy(fixture["stage05"]["entries"][0])
+        )
         self.assert_audit_error(fixture, "ROLE-AUDIT-STAGE05-DUPLICATE")
 
     def test_wrong_stage_profile_status_owner_and_role_fail(self) -> None:
@@ -221,8 +258,71 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self.assert_audit_error(fixture, "ROLE-AUDIT-HELPER-DRIFT")
 
         fixture = self.fixture()
-        fixture["helperTests"]["entries"].append(copy.deepcopy(fixture["helperTests"]["entries"][0]))
+        fixture["helperTests"]["entries"].append(
+            copy.deepcopy(fixture["helperTests"]["entries"][0])
+        )
         self.assert_audit_error(fixture, "ROLE-AUDIT-HELPER-DUPLICATE")
+
+    def test_missing_or_changed_frozen_observed_helper_fails(self) -> None:
+        frozen_path = self.validator.FROZEN_HELPER_PATHS[-1]
+        for mutation in ("missing", "role", "path"):
+            with self.subTest(mutation=mutation):
+                observed = copy.deepcopy(self.observed)
+                entry = next(
+                    row
+                    for row in observed["helperTests"]["entries"]
+                    if row["path"] == frozen_path
+                )
+                if mutation == "missing":
+                    observed["helperTests"]["entries"].remove(entry)
+                    observed["readmeInventory"].remove(frozen_path)
+                    observed["helperTests"]["counts"]["total"] -= 1
+                    observed["helperTests"]["counts"][entry["format"]] -= 1
+                elif mutation == "role":
+                    entry["role"] = "execution-tracker"
+                else:
+                    entry["path"] = "tests/zz-renamed.py"
+                    observed["helperTests"]["entries"].sort(key=lambda row: row["path"])
+                    observed["readmeInventory"] = [
+                        row["path"] for row in observed["helperTests"]["entries"]
+                    ]
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator.validate_ledger(self.ledger, observed)
+                self.assertIn(
+                    raised.exception.code,
+                    {"ROLE-AUDIT-HELPER-DRIFT", "ROLE-AUDIT-HELPER-TRACKER"},
+                )
+
+    def test_post_closure_helper_cannot_use_unsupported_format(self) -> None:
+        paths = ["tests/README.md", "tests/post-closure.txt"]
+        readme = "# tests\n\n## Structure\n\n```text\n" + "\n".join(paths) + "\n```\n"
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validator._helper_entries(
+                paths, lambda path: readme if path == "tests/README.md" else "fixture\n"
+            )
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-FORMAT")
+
+    def test_post_closure_helper_cannot_bypass_readme_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.write_git_corpus(root)
+            unlisted = root / "tests/post_closure.py"
+            unlisted.write_text("fixture\n", encoding="utf-8")
+            subprocess.run(
+                [self.validator.GIT_EXECUTABLE, "add", "--", "tests/post_closure.py"],
+                cwd=root,
+                check=True,
+            )
+            with self.assertRaises(self.validator.RoleAuditError) as raised:
+                self.validator.build_observed(root)
+            self.assertEqual(raised.exception.code, "ROLE-AUDIT-README-DRIFT")
+
+    def test_post_closure_helper_cannot_masquerade_as_execution_tracker(self) -> None:
+        observed = copy.deepcopy(self.observed)
+        observed["helperTests"]["entries"][-1]["role"] = "execution-tracker"
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validator.validate_ledger(self.ledger, observed)
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-TRACKER")
 
     def test_helper_tracker_promotion_fails(self) -> None:
         fixture = self.fixture()
@@ -242,11 +342,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     self.validator._helper_entries(
                         ["tests/README.md"], lambda _path, value=text: value
                     )
-                self.assertEqual(
-                    raised.exception.code, "ROLE-AUDIT-HELPER-TRACKER"
-                )
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-TRACKER")
 
-    def test_fixture_negative_strings_are_not_scanned_as_authored_markdown(self) -> None:
+    def test_fixture_negative_strings_are_not_scanned_as_authored_markdown(
+        self,
+    ) -> None:
         paths = ["tests/README.md", "tests/fixture.json", "tests/test_fixture.py"]
         readme = "# tests\n\n## Structure\n\n```text\n" + "\n".join(paths) + "\n```\n"
         reads: list[str] = []
@@ -272,7 +372,9 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         for key, owner in (("roleOverlap", "platform"), ("unownedException", None)):
             with self.subTest(key=key):
                 fixture = self.fixture()
-                fixture["findings"][key].append({"path": "tests/fixture.py", "owner": owner})
+                fixture["findings"][key].append(
+                    {"path": "tests/fixture.py", "owner": owner}
+                )
                 self.assert_audit_error(fixture, "ROLE-AUDIT-FINDINGS")
 
     def test_malformed_and_duplicate_json_fail(self) -> None:
@@ -286,22 +388,36 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             self.assertEqual(raised.exception.code, "ROLE-AUDIT-JSON-DUPLICATE")
 
     def test_unsafe_paths_are_value_free(self) -> None:
-        for hostile in ("../outside", "/absolute", "_workspace/token", "tests/x\nFORGED"):
+        for hostile in (
+            "../outside",
+            "/absolute",
+            "_workspace/token",
+            "tests/x\nFORGED",
+        ):
             with self.subTest(hostile=repr(hostile)):
                 fixture = self.fixture()
                 fixture["helperTests"]["entries"][0]["path"] = hostile
                 with self.assertRaises(self.validator.RoleAuditError) as raised:
                     self.validator.validate_ledger(fixture, self.observed)
-                self.assertEqual(str(raised.exception).splitlines(), [
-                    f"ROLE-AUDIT-HELPER-PATH {self.validator.LEDGER_PATH}"
-                ])
+                self.assertEqual(
+                    str(raised.exception).splitlines(),
+                    [f"ROLE-AUDIT-HELPER-PATH {self.validator.LEDGER_PATH}"],
+                )
                 self.assertNotIn(hostile, str(raised.exception))
 
     def test_git_query_allowlist_rejects_head_and_steering(self) -> None:
         for arguments in (
             ("ls-files", "HEAD", "--", "tests"),
             ("-c", "core.fsmonitor=true", "ls-files", "--", "tests"),
-            ("ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "_workspace"),
+            (
+                "ls-files",
+                "-z",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--",
+                "_workspace",
+            ),
         ):
             with self.subTest(arguments=arguments):
                 with self.assertRaises(self.validator.RoleAuditError) as raised:
@@ -310,9 +426,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
 
     def test_git_runner_uses_closed_environment_and_no_head(self) -> None:
         completed = subprocess.CompletedProcess([], 0, b"", b"")
-        with mock.patch.object(self.validator.subprocess, "run", return_value=completed) as run:
+        with mock.patch.object(
+            self.validator.subprocess, "run", return_value=completed
+        ) as run:
             arguments = (
-                "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "tests"
+                "ls-files",
+                "-z",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--",
+                "tests",
             )
             self.validator._run_git(str(REPOSITORY_ROOT), arguments)
         kwargs = run.call_args.kwargs
@@ -322,14 +446,22 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
 
     def test_git_startup_and_timeout_fail_closed(self) -> None:
         arguments = (
-            "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "tests"
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--",
+            "tests",
         )
         for effect, code in (
             (OSError("missing"), "ROLE-AUDIT-GIT-STARTUP"),
             (subprocess.TimeoutExpired(["git"], 10), "ROLE-AUDIT-GIT-TIMEOUT"),
         ):
             with self.subTest(code=code):
-                with mock.patch.object(self.validator.subprocess, "run", side_effect=effect):
+                with mock.patch.object(
+                    self.validator.subprocess, "run", side_effect=effect
+                ):
                     with self.assertRaises(self.validator.RoleAuditError) as raised:
                         self.validator._run_git(str(REPOSITORY_ROOT), arguments)
                 self.assertEqual(raised.exception.code, code)
@@ -360,9 +492,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 self.validator._authoritative_text(
                     str(root), "tests/README.md", index, self.validator._run_git
                 )
-            self.assertEqual(
-                raised.exception.code, "ROLE-AUDIT-WORKTREE-INDEX-DRIFT"
-            )
+            self.assertEqual(raised.exception.code, "ROLE-AUDIT-WORKTREE-INDEX-DRIFT")
 
     def test_non_readme_helper_drift_fails_through_build_observed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -371,9 +501,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             helper.write_text("unstaged divergence\n", encoding="utf-8")
             with self.assertRaises(self.validator.RoleAuditError) as raised:
                 self.validator.build_observed(root)
-            self.assertEqual(
-                raised.exception.code, "ROLE-AUDIT-WORKTREE-INDEX-DRIFT"
-            )
+            self.assertEqual(raised.exception.code, "ROLE-AUDIT-WORKTREE-INDEX-DRIFT")
             self.assertEqual(raised.exception.path, "tests/test_fixture_00.py")
 
     def test_proposed_nonregular_helper_fails_through_build_observed(self) -> None:

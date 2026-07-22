@@ -37,7 +37,9 @@ MODE_RECORD = re.compile(
     rb"(?P<mode>[0-9]{6}) (?P<oid>[0-9a-f]{40}|[0-9a-f]{64}) "
     rb"(?P<stage>[0-3])\t(?P<path>[^\0]+)\Z"
 )
-FRONTMATTER_LINE = re.compile(r"(?P<key>[A-Za-z][A-Za-z0-9_-]*):[ \t]*(?P<value>[^\r\n]*)\Z")
+FRONTMATTER_LINE = re.compile(
+    r"(?P<key>[A-Za-z][A-Za-z0-9_-]*):[ \t]*(?P<value>[^\r\n]*)\Z"
+)
 HEADING = re.compile(r"(?m)^##[ \t]+(.+?)[ \t]*$")
 AUTHORING_PROMPT = re.compile(
     r"(?im)<!--\s*(?:describe|replace|summarize|state|list|explain|document)\b"
@@ -90,7 +92,12 @@ STAGE_KINDS = {
     "runbooks": {
         "kind": "runbook",
         "profile": "sdlc/runbook",
-        "sections": ["Overview", "Runbook Type", "When to Use", "Procedure or Checklist"],
+        "sections": [
+            "Overview",
+            "Runbook Type",
+            "When to Use",
+            "Procedure or Checklist",
+        ],
     },
     "incidents": {
         "kind": "incident",
@@ -114,6 +121,41 @@ EXPECTED_STAGE_COUNTS = {
 PARENT_HELPER_COUNTS = {"total": 32, "python": 11, "json": 14, "yaml": 6, "readme": 1}
 FINAL_HELPER_COUNTS = {"total": 33, "python": 12, "json": 14, "yaml": 6, "readme": 1}
 PROPOSAL_PATH = "tests/test_active_corpus_role_audit.py"
+FROZEN_HELPER_PATHS = (
+    "tests/README.md",
+    "tests/fixtures/agent-role-semantics.json",
+    "tests/fixtures/agent-roster-currentness.json",
+    "tests/fixtures/document-contracts/native-surface-cases.json",
+    "tests/fixtures/document-contracts/readme-profile-cases.json",
+    "tests/fixtures/document-contracts/registry-cases.json",
+    "tests/fixtures/document-contracts/template-compatibility.json",
+    "tests/fixtures/document-contracts/template-source-parity.json",
+    "tests/fixtures/document-lifecycle.json",
+    "tests/fixtures/github-actions-security.json",
+    "tests/fixtures/gitops-change-set/base/kustomization.yaml",
+    "tests/fixtures/gitops-change-set/base/removed-service.yaml",
+    "tests/fixtures/gitops-change-set/base/retained-configmap.yaml",
+    "tests/fixtures/gitops-change-set/cases.json",
+    "tests/fixtures/gitops-change-set/head/added-service.yaml",
+    "tests/fixtures/gitops-change-set/head/kustomization.yaml",
+    "tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml",
+    "tests/fixtures/links-and-owners.json",
+    "tests/fixtures/markdown-profiles.json",
+    "tests/fixtures/validation-surfaces.json",
+    "tests/fixtures/vault-eso-contracts.json",
+    "tests/test_active_corpus_eligibility.py",
+    "tests/test_active_corpus_migrations.py",
+    "tests/test_active_corpus_retention.py",
+    "tests/test_active_corpus_role_audit.py",
+    "tests/test_archive_cutover.py",
+    "tests/test_archive_recovery.py",
+    "tests/test_archive_validation.py",
+    "tests/test_document_lifecycle_archive_cutover.py",
+    "tests/test_post_validate_runner_result.py",
+    "tests/test_provider_post_validate_hook.py",
+    "tests/test_run_validation_lane.py",
+    "tests/test_workspace_boundary.py",
+)
 README_ADDITIONS = [
     "tests/fixtures/document-contracts/template-source-parity.json",
     "tests/fixtures/document-lifecycle.json",
@@ -128,9 +170,7 @@ README_ADDITIONS = [
     "tests/test_run_validation_lane.py",
     "tests/test_workspace_boundary.py",
 ]
-README_REMOVALS = [
-    "tests/fixtures/document-contracts/semantic-compatibility-debt.json"
-]
+README_REMOVALS = ["tests/fixtures/document-contracts/semantic-compatibility-debt.json"]
 FINDING_KEYS = {
     "roleOverlap",
     "copiedTemplateResidue",
@@ -174,8 +214,24 @@ TextReader = Callable[[str], str]
 
 def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
     if arguments in {
-        ("ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", STAGE05_ROOT),
-        ("ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", TESTS_ROOT),
+        (
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--",
+            STAGE05_ROOT,
+        ),
+        (
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--",
+            TESTS_ROOT,
+        ),
         ("ls-files", "-z", "--stage", "--", STAGE05_ROOT),
         ("ls-files", "-z", "--stage", "--", TESTS_ROOT),
         ("ls-files", "-z", "--stage", "--", LEDGER_PATH, SCRIPT_PATH, AGGREGATE_PATH),
@@ -183,12 +239,15 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         return True
     return (
         len(arguments) == 3
-        and arguments[:2] in {("cat-file", "-t"), ("cat-file", "-s"), ("cat-file", "blob")}
+        and arguments[:2]
+        in {("cat-file", "-t"), ("cat-file", "-s"), ("cat-file", "blob")}
         and FULL_OID.fullmatch(arguments[2]) is not None
     )
 
 
-def _run_git(root: str, arguments: tuple[str, ...]) -> subprocess.CompletedProcess[bytes]:
+def _run_git(
+    root: str, arguments: tuple[str, ...]
+) -> subprocess.CompletedProcess[bytes]:
     if not _git_arguments_allowed(arguments):
         raise RoleAuditError("ROLE-AUDIT-GIT-QUERY", ".git")
     try:
@@ -259,9 +318,11 @@ def _parse_modes(
             path = match.group("path").decode("utf-8", errors="strict")
         except UnicodeDecodeError as exc:
             raise RoleAuditError("ROLE-AUDIT-GIT-MALFORMED", ".git") from exc
-        if not is_safe_path(path) or (
-            scope is not None and not path.startswith(f"{scope}/")
-        ) or (allowed_paths is not None and path not in allowed_paths):
+        if (
+            not is_safe_path(path)
+            or (scope is not None and not path.startswith(f"{scope}/"))
+            or (allowed_paths is not None and path not in allowed_paths)
+        ):
             raise RoleAuditError("ROLE-AUDIT-INVENTORY-PATH", path)
         expected_mode = b"100755" if path == AGGREGATE_PATH else b"100644"
         if match.group("mode") != expected_mode or match.group("stage") != b"0":
@@ -323,7 +384,9 @@ def _read_worktree_bytes(root: str, relative: str) -> bytes:
         total = 0
         while True:
             try:
-                chunk = os.read(file_descriptor, min(65_536, MAX_FILE_BYTES + 1 - total))
+                chunk = os.read(
+                    file_descriptor, min(65_536, MAX_FILE_BYTES + 1 - total)
+                )
             except OSError as exc:
                 raise RoleAuditError("ROLE-AUDIT-READ", relative) from exc
             if not chunk:
@@ -400,7 +463,15 @@ def inventory_scope(
     paths = _parse_nul_paths(
         _git(
             root,
-            ("ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", scope),
+            (
+                "ls-files",
+                "-z",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--",
+                scope,
+            ),
             runner,
         ),
         scope,
@@ -472,7 +543,9 @@ def _stage_entries(
         if metadata.get("owner") != "platform":
             raise RoleAuditError("ROLE-AUDIT-STAGE05-OWNER", path)
         headings = set(HEADING.findall(text))
-        missing = [section for section in contract["sections"] if section not in headings]
+        missing = [
+            section for section in contract["sections"] if section not in headings
+        ]
         if missing:
             raise RoleAuditError("ROLE-AUDIT-STAGE05-SECTIONS", path)
         if AUTHORING_PROMPT.search(text):
@@ -509,7 +582,9 @@ def _helper_format_role(path: str) -> tuple[str, str]:
 
 
 def _readme_inventory(text: str) -> list[str]:
-    match = re.search(r"(?ms)^## Structure\s*$.*?^```text\s*$\n(?P<body>.*?)^```\s*$", text)
+    match = re.search(
+        r"(?ms)^## Structure\s*$.*?^```text\s*$\n(?P<body>.*?)^```\s*$", text
+    )
     if match is None:
         raise RoleAuditError("ROLE-AUDIT-README-STRUCTURE", "tests/README.md")
     paths = [line.strip() for line in match.group("body").splitlines() if line.strip()]
@@ -563,6 +638,47 @@ def _helper_entries(
     return entries, counts, _readme_inventory(readme_text)
 
 
+def _expected_frozen_helper_entries() -> list[dict[str, str]]:
+    return [
+        {
+            "path": path,
+            "format": _helper_format_role(path)[0],
+            "role": _helper_format_role(path)[1],
+        }
+        for path in FROZEN_HELPER_PATHS
+    ]
+
+
+def _validate_observed_helpers(observed: Mapping[str, Any]) -> list[dict[str, str]]:
+    helper = observed.get("helperTests")
+    if not isinstance(helper, Mapping) or set(helper) != {"counts", "entries"}:
+        raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+    entries = helper.get("entries")
+    _duplicates(entries, "ROLE-AUDIT-HELPER")
+    assert isinstance(entries, list)
+    normalized: list[dict[str, str]] = []
+    counts = {key: 0 for key in FINAL_HELPER_COUNTS}
+    for entry in entries:
+        if not isinstance(entry, Mapping) or set(entry) != {"path", "format", "role"}:
+            raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+        path = entry["path"]
+        helper_format, role = _helper_format_role(path)
+        if entry.get("role") == "execution-tracker":
+            raise RoleAuditError("ROLE-AUDIT-HELPER-TRACKER", path)
+        expected = {"path": path, "format": helper_format, "role": role}
+        if entry != expected:
+            raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT", path)
+        normalized.append(expected)
+        counts[helper_format] += 1
+        counts["total"] += 1
+    if helper.get("counts") != counts:
+        raise RoleAuditError("ROLE-AUDIT-HELPER-COUNTS", TESTS_ROOT)
+    readme_inventory = observed.get("readmeInventory")
+    if readme_inventory != [entry["path"] for entry in normalized]:
+        raise RoleAuditError("ROLE-AUDIT-README-DRIFT", "tests/README.md")
+    return normalized
+
+
 def build_observed(
     root: str | os.PathLike[str],
     runner: GitRunner = _run_git,
@@ -573,20 +689,18 @@ def build_observed(
     stage_paths, stage_index = inventory_scope(normalized, STAGE05_ROOT, runner)
     helper_paths, helper_index = inventory_scope(normalized, TESTS_ROOT, runner)
     combined_index = {**stage_index, **helper_index}
-    if enforce_index:
-        read_text = lambda path: _authoritative_text(
-            normalized, path, combined_index, runner
-        )
-    else:
-        read_text = lambda path: _worktree_text(normalized, path)
+
+    def read_text(path: str) -> str:
+        if enforce_index:
+            return _authoritative_text(normalized, path, combined_index, runner)
+        return _worktree_text(normalized, path)
+
     stage_entries, stage_counts = _stage_entries(stage_paths, read_text)
     helper_entries, helper_counts, readme_paths = _helper_entries(
         helper_paths, read_text
     )
     if stage_counts != EXPECTED_STAGE_COUNTS:
         raise RoleAuditError("ROLE-AUDIT-STAGE05-COUNTS", STAGE05_ROOT)
-    if helper_counts != FINAL_HELPER_COUNTS:
-        raise RoleAuditError("ROLE-AUDIT-HELPER-COUNTS", TESTS_ROOT)
     if readme_paths != list(helper_paths):
         raise RoleAuditError("ROLE-AUDIT-README-DRIFT", "tests/README.md")
     return {
@@ -643,7 +757,9 @@ def verify_entrypoints(
 def _duplicates(entries: Any, code: str) -> None:
     if not isinstance(entries, list):
         raise RoleAuditError(code)
-    paths = [entry.get("path") if isinstance(entry, Mapping) else None for entry in entries]
+    paths = [
+        entry.get("path") if isinstance(entry, Mapping) else None for entry in entries
+    ]
     if any(not is_safe_path(path) for path in paths):
         bad = next((path for path in paths if not is_safe_path(path)), LEDGER_PATH)
         raise RoleAuditError(f"{code}-PATH", bad)
@@ -653,7 +769,7 @@ def _duplicates(entries: Any, code: str) -> None:
         raise RoleAuditError(f"{code}-ORDER")
 
 
-def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
+def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:
     if not isinstance(ledger, Mapping) or set(ledger) != {
         "$schema",
         "observedAt",
@@ -684,10 +800,17 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
         raise RoleAuditError("ROLE-AUDIT-BOUNDARY")
 
     stage = ledger.get("stage05")
-    if not isinstance(stage, Mapping) or set(stage) != {"parentCounts", "finalCounts", "entries"}:
+    if not isinstance(stage, Mapping) or set(stage) != {
+        "parentCounts",
+        "finalCounts",
+        "entries",
+    }:
         raise RoleAuditError("ROLE-AUDIT-STAGE05-SCHEMA")
     _duplicates(stage.get("entries"), "ROLE-AUDIT-STAGE05")
-    if stage.get("parentCounts") != EXPECTED_STAGE_COUNTS or stage.get("finalCounts") != EXPECTED_STAGE_COUNTS:
+    if (
+        stage.get("parentCounts") != EXPECTED_STAGE_COUNTS
+        or stage.get("finalCounts") != EXPECTED_STAGE_COUNTS
+    ):
         raise RoleAuditError("ROLE-AUDIT-STAGE05-COUNTS")
     if stage.get("entries") != observed["stage05"]["entries"]:
         raise RoleAuditError("ROLE-AUDIT-STAGE05-DRIFT")
@@ -713,15 +836,24 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
         raise RoleAuditError("ROLE-AUDIT-HELPER-COUNTS")
     if helper.get("executionTracker") is not False:
         raise RoleAuditError("ROLE-AUDIT-HELPER-TRACKER")
-    if helper.get("entries") != observed["helperTests"]["entries"]:
+    expected_frozen = _expected_frozen_helper_entries()
+    if helper.get("entries") != expected_frozen:
         raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+
+    current_entries = _validate_observed_helpers(observed)
+    current_by_path = {entry["path"]: entry for entry in current_entries}
+    if any(current_by_path.get(entry["path"]) != entry for entry in expected_frozen):
+        raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+    post_closure = [
+        entry for entry in current_entries if entry["path"] not in FROZEN_HELPER_PATHS
+    ]
 
     remediation = ledger.get("readmeRemediation")
     if remediation != {
         "path": "tests/README.md",
         "addedInventoryRows": README_ADDITIONS,
         "removedInventoryRows": README_REMOVALS,
-        "finalInventory": observed["readmeInventory"],
+        "finalInventory": list(FROZEN_HELPER_PATHS),
     }:
         raise RoleAuditError("ROLE-AUDIT-README-REMEDIATION")
 
@@ -730,6 +862,7 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
         raise RoleAuditError("ROLE-AUDIT-FINDINGS")
     if any(not isinstance(value, list) or value for value in findings.values()):
         raise RoleAuditError("ROLE-AUDIT-FINDINGS")
+    return {"frozen": len(expected_frozen), "postClosure": len(post_closure)}
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -750,7 +883,11 @@ def load_ledger(
 ) -> Any:
     normalized = _normalize_root(root)
     if enforce_index:
-        index = dict(control_index) if control_index is not None else _control_index(normalized, runner)
+        index = (
+            dict(control_index)
+            if control_index is not None
+            else _control_index(normalized, runner)
+        )
         text = _authoritative_text(normalized, LEDGER_PATH, index, runner)
     else:
         text = _worktree_text(normalized, LEDGER_PATH)
@@ -774,7 +911,7 @@ def validate_active_corpus_role_audit(
         verify_entrypoints(normalized, runner) if enforce_entrypoints else None
     )
     observed = build_observed(normalized, runner, enforce_index=enforce_index)
-    validate_ledger(
+    helper_partition = validate_ledger(
         load_ledger(
             normalized,
             runner,
@@ -791,6 +928,8 @@ def validate_active_corpus_role_audit(
         "incidents": observed["stage05"]["counts"]["incident"],
         "postmortems": observed["stage05"]["counts"]["postmortem"],
         "helpers": observed["helperTests"]["counts"]["total"],
+        "frozenHelpers": helper_partition["frozen"],
+        "postClosureHelpers": helper_partition["postClosure"],
         "python": observed["helperTests"]["counts"]["python"],
         "json": observed["helperTests"]["counts"]["json"],
         "yaml": observed["helperTests"]["counts"]["yaml"],
@@ -804,7 +943,9 @@ def _completed(stdout: bytes) -> subprocess.CompletedProcess[bytes]:
 
 
 def _fixture_runner(paths: Mapping[str, list[str]]) -> GitRunner:
-    def run(_root: str, arguments: tuple[str, ...]) -> subprocess.CompletedProcess[bytes]:
+    def run(
+        _root: str, arguments: tuple[str, ...]
+    ) -> subprocess.CompletedProcess[bytes]:
         scope = arguments[-1]
         selected = paths[scope]
         if arguments[1:3] == ("-z", "--stage"):
@@ -834,7 +975,9 @@ def run_self_test() -> int:
             for index in range(count):
                 path = f"docs/05.operations/{collection}/{index + 1:04d}-fixture.md"
                 stage_paths.append(path)
-                sections = "\n".join(f"## {item}\nFixture." for item in contract["sections"])
+                sections = "\n".join(
+                    f"## {item}\nFixture." for item in contract["sections"]
+                )
                 _write_fixture_file(
                     root,
                     path,
@@ -843,15 +986,19 @@ def run_self_test() -> int:
                     "---\n# Fixture\n"
                     f"{sections}\n",
                 )
-        helper_paths = ["tests/README.md"]
-        helper_paths += [f"tests/test_fixture_{index:02d}.py" for index in range(12)]
-        helper_paths += [f"tests/fixtures/fixture_{index:02d}.json" for index in range(14)]
-        helper_paths += [f"tests/fixtures/fixture_{index:02d}.yaml" for index in range(6)]
-        helper_paths.sort()
+        helper_paths = sorted(
+            [
+                *FROZEN_HELPER_PATHS,
+                "tests/fixtures/post-closure.json",
+                "tests/test_post_closure.py",
+            ]
+        )
         for path in helper_paths:
             if path == "tests/README.md":
                 continue
-            _write_fixture_file(root, path, "{}\n" if path.endswith(".json") else "fixture\n")
+            _write_fixture_file(
+                root, path, "{}\n" if path.endswith(".json") else "fixture\n"
+            )
         _write_fixture_file(
             root,
             "tests/README.md",
@@ -860,9 +1007,7 @@ def run_self_test() -> int:
             + "\n```\n",
         )
         paths = {STAGE05_ROOT: sorted(stage_paths), TESTS_ROOT: helper_paths}
-        observed = build_observed(
-            root, _fixture_runner(paths), enforce_index=False
-        )
+        observed = build_observed(root, _fixture_runner(paths), enforce_index=False)
         ledger = {
             "$schema": SCHEMA,
             "observedAt": "2026-07-19",
@@ -887,18 +1032,24 @@ def run_self_test() -> int:
             "helperTests": {
                 "parentCounts": PARENT_HELPER_COUNTS,
                 "proposalDelta": {
-                    "add": [{"path": PROPOSAL_PATH, "format": "python", "role": "regression-test"}],
+                    "add": [
+                        {
+                            "path": PROPOSAL_PATH,
+                            "format": "python",
+                            "role": "regression-test",
+                        }
+                    ],
                     "remove": [],
                 },
                 "finalCounts": FINAL_HELPER_COUNTS,
                 "executionTracker": False,
-                "entries": observed["helperTests"]["entries"],
+                "entries": _expected_frozen_helper_entries(),
             },
             "readmeRemediation": {
                 "path": "tests/README.md",
                 "addedInventoryRows": README_ADDITIONS,
                 "removedInventoryRows": README_REMOVALS,
-                "finalInventory": observed["readmeInventory"],
+                "finalInventory": list(FROZEN_HELPER_PATHS),
             },
             "findings": {key: [] for key in sorted(FINDING_KEYS)},
         }
@@ -918,25 +1069,43 @@ def run_self_test() -> int:
         mutations: list[Callable[[dict[str, Any]], None]] = [
             lambda item: item["stage05"]["entries"].pop(),
             add_unique_stage,
-            lambda item: item["stage05"]["entries"].append(copy.deepcopy(item["stage05"]["entries"][0])),
+            lambda item: item["stage05"]["entries"].append(
+                copy.deepcopy(item["stage05"]["entries"][0])
+            ),
             lambda item: item["stage05"]["entries"].reverse(),
             lambda item: item["stage05"]["finalCounts"].__setitem__("total", 23),
-            lambda item: item["stage05"]["entries"][0].__setitem__("profile", "sdlc/policy"),
+            lambda item: item["stage05"]["entries"][0].__setitem__(
+                "profile", "sdlc/policy"
+            ),
             lambda item: item["stage05"]["entries"][0].__setitem__("status", "draft"),
             lambda item: item["stage05"]["entries"][0].__setitem__("owner", "unknown"),
-            lambda item: item["stage05"]["entries"][0].__setitem__("role", "execution-tracker"),
+            lambda item: item["stage05"]["entries"][0].__setitem__(
+                "role", "execution-tracker"
+            ),
             lambda item: item["helperTests"]["entries"].pop(),
             add_unique_helper,
-            lambda item: item["helperTests"]["entries"].append(copy.deepcopy(item["helperTests"]["entries"][0])),
+            lambda item: item["helperTests"]["entries"].append(
+                copy.deepcopy(item["helperTests"]["entries"][0])
+            ),
             lambda item: item["helperTests"].__setitem__("executionTracker", True),
             lambda item: item["readmeRemediation"]["finalInventory"].pop(),
             lambda item: item["readmeRemediation"]["addedInventoryRows"].pop(),
-            lambda item: item["findings"]["roleOverlap"].append({"path": "tests/x.py", "owner": "platform"}),
-            lambda item: item["findings"]["unownedException"].append({"path": "tests/x.py", "owner": None}),
+            lambda item: item["findings"]["roleOverlap"].append(
+                {"path": "tests/x.py", "owner": "platform"}
+            ),
+            lambda item: item["findings"]["unownedException"].append(
+                {"path": "tests/x.py", "owner": None}
+            ),
             lambda item: item.__setitem__("$schema", "unsupported"),
-            lambda item: item["helperTests"]["entries"][0].__setitem__("path", "../outside"),
-            lambda item: item["helperTests"]["entries"][0].__setitem__("path", "/absolute"),
-            lambda item: item["helperTests"]["entries"][0].__setitem__("path", "_workspace/secret"),
+            lambda item: item["helperTests"]["entries"][0].__setitem__(
+                "path", "../outside"
+            ),
+            lambda item: item["helperTests"]["entries"][0].__setitem__(
+                "path", "/absolute"
+            ),
+            lambda item: item["helperTests"]["entries"][0].__setitem__(
+                "path", "_workspace/secret"
+            ),
         ]
         for mutation in mutations:
             candidate = copy.deepcopy(ledger)
@@ -950,7 +1119,9 @@ def run_self_test() -> int:
 
         prompt_path = stage_paths[0]
         original = (root / prompt_path).read_text(encoding="utf-8")
-        (root / prompt_path).write_text(original + "<!-- describe the result -->\n", encoding="utf-8")
+        (root / prompt_path).write_text(
+            original + "<!-- describe the result -->\n", encoding="utf-8"
+        )
         try:
             build_observed(root, _fixture_runner(paths), enforce_index=False)
         except RoleAuditError as exc:
@@ -959,7 +1130,9 @@ def run_self_test() -> int:
             cases += 1
         else:
             raise AssertionError("authoring residue was accepted")
-        (root / prompt_path).write_text(original + "Runtime status: PASS\n", encoding="utf-8")
+        (root / prompt_path).write_text(
+            original + "Runtime status: PASS\n", encoding="utf-8"
+        )
         try:
             build_observed(root, _fixture_runner(paths), enforce_index=False)
         except RoleAuditError as exc:
@@ -1003,7 +1176,11 @@ def run_self_test() -> int:
         unsafe_helper.write_text(unsafe_original, encoding="utf-8")
 
         incident = "docs/05.operations/incidents/0001-synthetic.md"
-        _write_fixture_file(root, incident, "---\ntype: sdlc/incident\nstatus: active\nowner: platform\n---\n")
+        _write_fixture_file(
+            root,
+            incident,
+            "---\ntype: sdlc/incident\nstatus: active\nowner: platform\n---\n",
+        )
         event_paths = {**paths, STAGE05_ROOT: sorted([*stage_paths, incident])}
         try:
             build_observed(root, _fixture_runner(event_paths), enforce_index=False)
@@ -1034,6 +1211,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"types={counts['guides']}/{counts['policies']}/{counts['runbooks']}/"
                 f"{counts['incidents']}/{counts['postmortems']} "
                 f"helpers={counts['helpers']} "
+                f"frozen={counts['frozenHelpers']} "
+                f"post_closure={counts['postClosureHelpers']} "
                 f"formats={counts['python']}/{counts['json']}/{counts['yaml']}/{counts['readme']} "
                 f"findings={counts['findings']}"
             )
