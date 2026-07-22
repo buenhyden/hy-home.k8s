@@ -1,0 +1,238 @@
+---
+title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
+type: sdlc/adr
+status: draft
+owner: platform
+updated: 2026-07-22
+---
+
+# ADR-0019: Provider-Native Agent Harness and Loop Model
+
+## Overview
+
+이 ADR은 Stage 00 canonical governance를 local/Antigravity, Claude, Codex, Gemini의 네
+surface에 투영하고, 단일 machine harness contract, 역할별 model/effort, bounded execution
+loop, eval과 strict runtime evidence로 운영한다는 제안을 기록한다. 현재 상태는 `draft`다.
+ADR-0013은 계속 `accepted`이며, Specs 041–046을 구현하고 Spec 046의 모든 closure gate가
+PASS한 뒤에만 이 결정이 ADR-0013의 current decision을 대체할 수 있다.
+
+외부 사실 기준은 **2026-07-10 10:00 Asia/Seoul**이고 문서 관리일은 2026-07-22이다.
+
+## Context
+
+ADR-0013은 Stage 00 canonical core와 provider adapter 분리를 정착시켰지만, 당시 Gemini CLI
+native surface는 absent/`DEFER`였고 machine semantic contract는 10개 역할과 3개 adapter
+surface만 다뤘다. 현재 프로그램은 Gemini native project surface, provider config/MCP,
+role-specific model/effort, authenticated canary, retry/checkpoint/compaction, eval/admission 및
+agent-governance CI를 하나의 lifecycle로 닫아야 한다.
+
+[OpenAI Harness Engineering](https://openai.com/index/harness-engineering/)은 짧은 agent map,
+repository knowledge SSoT, 기계적 invariant, 격리된 worktree와 반복 feedback이 agent-first
+개발의 신뢰성을 만든다고 설명한다. Claude
+[subagent](https://code.claude.com/docs/en/sub-agents)·[setting](https://code.claude.com/docs/en/settings)·
+[hook](https://code.claude.com/docs/en/hooks), Codex
+[subagent](https://developers.openai.com/codex/subagents)·[configuration](https://developers.openai.com/codex/config-reference),
+Gemini [subagent](https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md)·
+[configuration](https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md)는
+서로 다른 native schema와 enforcement 경계를 제공한다. 따라서 공통 semantic을 공유하되
+provider syntax와 실제 runtime evidence는 분리해야 한다.
+
+기준 시점에는 Claude Fable 5/Sonnet 5/Haiku 4.5, OpenAI GPT-5.6 Sol/Terra/Luna와
+Gemini 3.5 Flash가 최신 일반 후보군이다. Claude Opus 4.8/Sonnet 4.6,
+GPT-5.5/GPT-5.3-Codex와 Gemini 3.1 Pro Preview는 incumbent/비교 후보로 남긴다.
+Claude Mythos 5는 제한된 trusted-access 전용이므로 일반 roster default가 아니다. 모델
+가족의 발표 사실은 특정 역할 적합성을 증명하지 않는다. 날짜가 명시된 release 근거는
+[Claude Fable 5](https://www.anthropic.com/news/claude-fable-5-mythos-5),
+[Fable 5 redeployment](https://www.anthropic.com/news/redeploying-fable-5),
+[Claude Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5),
+[Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8),
+[Claude Sonnet 4.6](https://www.anthropic.com/news/claude-sonnet-4-6),
+[Claude Haiku 4.5](https://www.anthropic.com/news/claude-haiku-4-5),
+[GPT-5.6](https://openai.com/index/gpt-5-6/),
+[Gemini 3.5](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5/)다.
+현재 model ID와 reasoning-effort 표면은 별도의 live reference인
+[OpenAI model catalog](https://developers.openai.com/api/docs/models)로 확인한다. 또한
+[Gemini CLI transition notice](https://github.com/google-gemini/gemini-cli/discussions/27274)는
+일부 login 경로와 CLI lifecycle의 전환 위험을 명시하므로 tracked `.gemini/**`의 존재와
+authenticated runtime readiness를 같은 claim으로 둘 수 없다.
+
+활성 Specs [038](../../03.specs/038-reference-information-architecture/spec.md),
+[039](../../03.specs/039-github-ci-qa-evidence/spec.md),
+[040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)은 reference IA, baseline
+CI/QA와 기존 program closure를 소유한다. 이 세 Spec이 완료되기 전에는 새 adapter나 legacy
+cutover를 시작하지 않는다.
+
+## Decision
+
+Spec 046 closure 전까지 다음을 **proposed architecture**로 채택하고, Specs 041–046에서
+foundation-first 순서로 구현·검증한다.
+
+### Canonical contract and four projections
+
+- Durable policy는 `docs/00.agent-governance/**`가 소유하고 root/provider gateway는 짧은 map으로 유지한다.
+- `docs/00.agent-governance/contracts/harness-contract.json`과 schema를 역할 semantic,
+  surface projection, evidence, permission, stop와 handoff의 단일 machine owner로 둔다.
+- `.agents/**`는 shared assets 및 local/Antigravity adapter이고 Gemini native surface가 아니다.
+- `.claude/**`, `.codex/**`, `.gemini/**`는 각각 provider-native syntax를 표현한다. Common
+  semantic을 복제하거나 unsupported native capability를 주장하지 않는다.
+- 기존 `agent-role-semantics.json`과 schema는 Spec 041에서 소비자를 전환한 뒤 Spec 045에서
+  제거한다. `validation-surfaces.json`은 validation routing owner로 별도 유지한다.
+
+### Provider-native metadata, config and evidence
+
+- Claude adapter candidate fields are `name`, `description`, `model`, `tools`; `effort`와
+  `maxTurns`는 dated cutoff evidence 또는 native schema canary가 허용할 때만 사용한다.
+- Codex adapter candidate fields are `name`, `description`, `developer_instructions`, `model`,
+  `model_reasoning_effort`와 project config다. Dated evidence 또는 native config validation
+  전에는 cutoff-proven field라고 주장하지 않는다.
+- Gemini adapter candidate fields are `name`, `description`, `kind`, `tools`, `model`,
+  `max_turns`, `timeout_mins`와 project settings다. Reasoning/model configuration은 settings
+  schema에 두고 exact support를 native canary로 확인한다.
+- Project config/MCP는 tracked secret-free baseline과 allowlist만 소유하고, user credential과
+  private config를 수정·수집하지 않는다.
+- Repo-static parse, native discovery, authenticated controlled run을 별도 evidence class로 둔다.
+  Claude/Codex/Gemini canary가 모두 PASS해야 closure할 수 있으며, 하나라도 ABSENT, BLOCKED,
+  FAIL 또는 미실행이면 program은 active 상태를 유지한다.
+
+### Role-specific model and effort
+
+- 모든 역할에 한 모델을 강제하지 않는다. Complexity, risk/blast radius, context, tool use,
+  latency/cost, provider-supported effort enum과 eval 결과를 입력으로 role별 결정을 내린다.
+- Model page나 release announcement는 candidate availability 근거이고, 역할 배정은 Spec 042
+  schema/canary와 Spec 044 fixture/model-fitness가 확정한다.
+- Fallback은 silent substitution이 아니라 실제 model, reason과 capability limitation을 evidence에 남긴다.
+
+### Bounded loop and recoverable state
+
+- 동일 normalized failure signature의 자동 재시도는 최대 2회다.
+- Task 전체 자동 recovery는 기본 최대 3회다.
+- 동일 결과가 2회 반복되고 progress delta가 없으면 즉시 stop/escalate한다.
+- `.agent-work/checkpoint.json`은 ignored transient state로서 task ID, attempt, failure class,
+  completed/remaining work, validation summary, next action만 보존한다.
+- Checkpoint와 compaction에는 credential, token, auth path/content, shell history와 full/raw
+  transcript를 저장하지 않는다. Resume는 current repository state를 다시 읽고 checkpoint를
+  보조 evidence로만 사용한다.
+
+### Roster, eval and admission
+
+- 기존 10개 canonical role에 `docs-researcher`, `quality-engineer`를 추가한 12-role roster를 둔다.
+- 네 surface에 역할당 하나의 adapter를 투영하여 목표 cardinality를 48로 고정한다.
+- 각 역할은 input/output, responsibility, prohibited action, permission, stop, handoff,
+  required evidence, eval fixture와 model-fitness evidence를 갖는다.
+- [agency-agents](https://github.com/msitarzewski/agency-agents)는 아이디어 catalog일 뿐이다.
+  새 역할은 repository gap과 위 admission contract를 fixture가 증명할 때만 추가한다.
+
+### CI, QA and cutover
+
+- Spec 039가 baseline GitHub CI/QA evidence를 먼저 닫고, Spec 045는 contract/schema,
+  12/48 parity, provider config parse, eval fixture 및 legacy/orphan detection을 위한
+  agent-governance static lane을 추가한다.
+- GitHub Actions는 least privilege와 third-party action full commit SHA 원칙을 따른다
+  ([GitHub secure use](https://docs.github.com/en/actions/reference/security/secure-use)).
+- Provider credential은 GitHub-hosted CI에 추가하지 않고 authenticated canary는 local/manual
+  lane에서 실행해 secret-free 결과만 기록한다.
+- Local QA는 targeted → affected → staged → tests →
+  [`pre-commit run --all-files`](https://pre-commit.com/) → formatter review → rerun →
+  diff/scope review 순서로 실행한다.
+- Consumer-first migration 후 old contract/schema, duplicate roster·matrix, stale 10/30/3,
+  Gemini absent/DEFER 및 obsolete runtime/model claim을 active surface에서 제거한다.
+
+### Delivery order and replacement gate
+
+1. Spec 041: Stage 00 machine contract와 consumer migration foundation.
+2. Spec 042: Provider-native surface, config/MCP, cutoff model evidence와 authenticated canary.
+3. Spec 043: Harness loop, retry, checkpoint, compaction, resume/handoff fixture.
+4. Spec 044: 12-role/48-adapter roster, eval/admission와 role model fitness.
+5. Spec 045: Agent-governance CI/QA 및 legacy/current-owner cutover.
+6. Spec 046: Strict closure, independent whole-branch review와 ADR replacement readiness.
+
+Spec 046이 repository quality gate, all-files QA, canary 3/3, 12/48 parity, eval/model fitness,
+zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대체하지 않는다.
+
+## Explicit Non-goals
+
+- ADR-0013의 historical context를 다시 쓰거나 draft 결정으로 즉시 supersede 처리하는 것.
+- 네 provider별 독립 governance, roster 또는 QA/model vocabulary를 만드는 것.
+- Unverified field/model을 provider config에 추측으로 추가하는 것.
+- Provider CLI/auth 전환을 우회하거나 credential을 repository/CI에 저장하는 것.
+- Agent retry를 완료 보장 수단으로 무한 반복하거나 checkpoint에 전체 대화를 보존하는 것.
+- Eval 없이 외부 catalog 역할을 추가하거나 48개보다 많은 adapter를 목표로 부풀리는 것.
+- Live Kubernetes/external service 변경 또는 이 프로그램과 무관한 source/template 개편.
+
+## Consequences
+
+### Positive
+
+- 한 machine contract가 역할 semantic과 네 surface parity를 기계적으로 검증한다.
+- Provider-native capability와 runtime readiness의 과장된 claim을 방지한다.
+- 역할별 model/effort를 성능·위험·비용 evidence로 조정할 수 있다.
+- Bounded retry와 compact checkpoint가 무한 loop, context bloat와 불투명한 handoff를 줄인다.
+- Eval/admission과 CI가 agent roster와 governance drift를 feedback loop로 되돌린다.
+- Consumer-first legacy cutover가 duplicate current owner와 stale cross-link를 제거한다.
+
+### Costs and trade-offs
+
+- 12 roles를 네 syntax로 유지하므로 48 adapter의 parity validator와 fixture 유지 비용이 생긴다.
+- 세 provider CLI 설치·인증·canary가 모두 필요하므로 한 provider가 외부 정책으로 막히면 closure가 지연된다.
+- Provider model/schema 갱신은 cutoff ledger, config parse, canary와 eval을 반복해야 한다.
+- 동일 semantic도 provider의 tool, hook, sandbox, recursion 차이 때문에 enforcement level은 다를 수 있다.
+- Strict loop ceiling은 자동 복구 가능한 작업도 조기에 human escalation할 수 있지만, 반복 무진행보다 관측 가능성을 우선한다.
+
+### Operational implications
+
+- ADR-0019가 draft인 동안 current runtime claim은 구현된 repository evidence를 따라야 한다.
+- Spec별 implementer, requirements reviewer, quality/security reviewer와 root verification을 분리한다.
+- Model/effort 또는 canary 결과는 provider note와 evaluation evidence를 함께 갱신한다.
+- External facts가 기준 시점 이후 변경되어도 기록을 소급 수정하지 않고 새 evidence refresh를 남긴다.
+
+## Alternatives
+
+### ADR-0013을 직접 수정하고 Gemini만 추가
+
+- 장점: 문서와 migration 범위가 작다.
+- 기각 이유: historical accepted decision의 absent/DEFER 맥락이 사라지고 contract, loop, eval,
+  strict canary와 replacement gate를 하나의 새 결정으로 추적할 수 없다.
+
+### Provider별 독립 roster와 model policy
+
+- 장점: 각 provider의 native 기능과 release cadence에 빠르게 최적화할 수 있다.
+- 기각 이유: 역할 semantic, stop/handoff, QA와 current-owner가 네 군데로 분기되어 drift와
+  과장된 capability claim을 기계적으로 막기 어렵다.
+
+### Repo-static validation만으로 closure
+
+- 장점: credential과 CLI 설치 없이 CI에서 재현하기 쉽다.
+- 기각 이유: 파일 parse는 provider discovery, authentication, selected model과 controlled run을
+  증명하지 못한다. 사용자가 승인한 strict 3-provider runtime closure를 만족하지 않는다.
+
+### Unbounded retry와 transcript 기반 resume
+
+- 장점: 사람 개입 전 Agent가 더 오래 시도하고 상세 context를 보존한다.
+- 기각 이유: 동일 실패 반복, 비용 폭증, secret/context leakage와 stale-state 재사용 위험이 커진다.
+
+### agency-agents roster를 직접 채택
+
+- 장점: 많은 전문 역할을 빠르게 확보할 수 있다.
+- 기각 이유: 외부 persona catalog는 이 repository의 permission, stop, handoff, GitOps와 eval
+  요구를 증명하지 않으며 역할 수와 유지 표면만 불필요하게 늘린다.
+
+## Traceability
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | [ADR 0013](0013-stage-00-canonical-adapter-model.md)을 Spec 046 strict closure 후에만 대체; 현재는 draft/accepted 병존 | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md) |
+| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Provider adoption은 accepted history를 보존하는 conditional replacement다. | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md) |
+| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Loop lifecycle은 ADR-0019 acceptance 전 제안 상태다. | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md) |
+| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Roster/eval은 exact parity evidence가 있어야 replacement에 포함된다. | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md) |
+| [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Consumer-first cutover 후 old 3-surface 결정을 historical record로 보존한다. | [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md) |
+| [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Spec 046가 모든 strict gate를 증명할 때만 current decision을 ADR-0019로 전환한다. | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md) |
+
+- **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
+- **ARD**: [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md)
+- **Current accepted predecessor**: [ADR 0013](0013-stage-00-canonical-adapter-model.md)
+- **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
+  [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
+- **Agent design**: [Workspace Agent Roster and Projection Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)

@@ -50,6 +50,7 @@
 ├── 0016-program-to-tranche-document-lineage.md
 ├── 0017-program-follow-up-lineage-semantics.md
 ├── 0018-full-body-archive-record-and-retention.md
+├── 0019-provider-native-agent-harness-and-loop-model.md
 └── README.md
 ```
 
@@ -81,12 +82,13 @@
 | [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md) | Kiali + 외부 Prometheus/Grafana/Tempo 연동 결정 | Accepted | Current external observability contract through GitOps Service/EndpointSlice and NetworkPolicy. |
 | [`./0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts 도입과 Rollouts Dashboard 결정 | Accepted | Current progressive delivery contract. |
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
-| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core와 native/local adapter-surface ownership 결정 | Accepted | Claude/Codex native role files, repository-local baselines, shared/local `.agents/**`, and absent/`DEFER` Gemini CLI native surface를 구분하는 current contract. |
+| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core와 native/local adapter-surface ownership 결정 | Accepted | 현재 구현의 baseline이다. ADR-0019가 아직 draft이므로 Gemini CLI native surface와 12-role/48-adapter cutover가 검증될 때까지 이 결정을 current contract로 유지한다. |
 | [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md) | Current local GitOps platform baseline and archive replacement decision | Accepted | Current Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer contract. |
 | [`./0015-declarative-document-contract-registry.md`](./0015-declarative-document-contract-registry.md) | Declarative document contract registry 결정 | Accepted | Route, profile, lifecycle, section, README 예외의 단일 machine-readable owner를 선택한다. |
 | [`./0016-program-to-tranche-document-lineage.md`](./0016-program-to-tranche-document-lineage.md) | Program-to-tranche document lineage 결정 | Accepted | PRD 005와 Spec 026-032의 명시적 one-program-to-many-tranche 계보 및 번호 예외를 정의한다. |
 | [`./0017-program-follow-up-lineage-semantics.md`](./0017-program-follow-up-lineage-semantics.md) | Original tranche와 program follow-up 계보 분리 결정 | Accepted | ADR-0016의 seven-tranche 사실을 보존하면서 Spec 033과 이후 follow-up의 별도 관계를 정의한다. |
 | [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Accepted | 이전 metadata-only archive 표면을 단일 immutable `content/archive` envelope/payload로 대체하고, archive-time replacement provenance와 index-only current replacement authority를 분리한다. |
+| [`./0019-provider-native-agent-harness-and-loop-model.md`](./0019-provider-native-agent-harness-and-loop-model.md) | Provider-native agent harness, bounded loop, model/evidence 전이 결정 | Draft | Specs 038–040 종료 후 Specs 041–046을 순차 실행해 four-surface native contract, 12-role/48-adapter roster, strict provider canaries, eval 및 CI/QA cutover를 검증한 뒤 ADR-0013을 대체하도록 제안한다. |
 
 ## Related Documents
 

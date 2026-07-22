@@ -117,6 +117,19 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 040-contract-cutover-and-program-closure/
 │   └── spec.md
+├── 041-stage-00-agent-governance-contract/
+│   ├── spec.md
+│   └── agent-design.md
+├── 042-provider-native-runtime-and-model-evidence/
+│   └── spec.md
+├── 043-agent-harness-loop-lifecycle/
+│   └── spec.md
+├── 044-agent-roster-evaluation-and-admission/
+│   └── spec.md
+├── 045-agent-governance-ci-qa-cutover/
+│   └── spec.md
+├── 046-agent-governance-program-closure/
+│   └── spec.md
 └── README.md
 ```
 
@@ -187,6 +200,12 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./038-reference-information-architecture/spec.md`](./038-reference-information-architecture/spec.md) | Reference information architecture specification | Active | Stage 90 Current/Historical/generated/source freshness와 중복 소유권을 정리한다. | 2026-07-15 |
 | [`./039-github-ci-qa-evidence/spec.md`](./039-github-ci-qa-evidence/spec.md) | GitHub CI and QA evidence specification | Active | affected/all-files QA, aggregate verdict, artifact retention, FIFO portability 경계를 정리한다. | 2026-07-15 |
 | [`./040-contract-cutover-and-program-closure/spec.md`](./040-contract-cutover-and-program-closure/spec.md) | Contract cutover and program closure specification | Active | compatibility 제거, strict corpus cutover, 전체 검증과 독립 closure review를 소유한다. | 2026-07-15 |
+| [`./041-stage-00-agent-governance-contract/spec.md`](./041-stage-00-agent-governance-contract/spec.md) | Stage 00 agent governance contract specification | Draft | Spec 040 종료 후 새 PRD-003 program lineage를 등록하고 provider-neutral machine contract 기반을 구축하는 첫 tranche다. | 2026-07-22 |
+| [`./042-provider-native-runtime-and-model-evidence/spec.md`](./042-provider-native-runtime-and-model-evidence/spec.md) | Provider native runtime and model evidence specification | Draft | Claude, Codex, Gemini native surface와 model/effort/MCP 설정 및 인증된 runtime canary 증거를 정규화한다. | 2026-07-22 |
+| [`./043-agent-harness-loop-lifecycle/spec.md`](./043-agent-harness-loop-lifecycle/spec.md) | Agent harness loop lifecycle specification | Draft | bounded retry, progress detection, checkpoint, compaction, handoff, escalation 계약을 구현한다. | 2026-07-22 |
+| [`./044-agent-roster-evaluation-and-admission/spec.md`](./044-agent-roster-evaluation-and-admission/spec.md) | Agent roster evaluation and admission specification | Draft | 기존 10개 역할에 docs-researcher와 quality-engineer를 증거 기반으로 추가하고 12-role/48-adapter roster, eval, model fitness, admission gate를 구축한다. | 2026-07-22 |
+| [`./045-agent-governance-ci-qa-cutover/spec.md`](./045-agent-governance-ci-qa-cutover/spec.md) | Agent governance CI and QA cutover specification | Draft | Spec 039 baseline 위에 agent-governance static lane, all-files QA, legacy consumer migration 및 stale surface 제거를 수행한다. | 2026-07-22 |
+| [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Draft | Specs 041–045, three-provider authenticated canaries, 12/48 parity, all-files QA, independent review를 strict closure gate로 통합한다. | 2026-07-22 |
 
 ### Helper Templates
 
