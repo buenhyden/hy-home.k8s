@@ -1,0 +1,6 @@
+{
+  "kind": "protected-byte-mutation",
+  "path": "docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md",
+  "replacement": "historical snapshot mutation\n",
+  "expectedRule": "RIA-SNAPSHOT"
+}

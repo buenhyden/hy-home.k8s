@@ -1,13 +1,25 @@
 {
   "$schema": "./reference-information-architecture.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "evidenceCutoff": "2026-07-22",
   "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
   "snapshotGuard": {
     "sourceCommit": "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
-    "historicalPackIds": [],
-    "currentPackIds": []
+    "historicalPackIds": [
+      "audits/2026-05-24-whga",
+      "audits/2026-07-02-whia",
+      "audits/2026-07-03-wdgh",
+      "audits/2026-07-04-wdcn",
+      "audits/2026-07-05-wea",
+      "research/2026-07-04-wer"
+    ]
   },
+  "currentPackBaselines": {
+    "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
+    "research/2026-07-07-wer": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+  },
+  "baselineTransitions": [],
+  "baselineSettlements": [],
   "mutableIndexProjections": [],
   "dataAssets": [],
   "generatedAssets": [],

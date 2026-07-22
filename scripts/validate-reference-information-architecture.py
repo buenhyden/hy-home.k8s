@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI for the closed RIA-001 contract."""
+"""CLI for the closed Reference Information Architecture contract."""
 
 from __future__ import annotations
 
@@ -11,6 +11,8 @@ from reference_information_architecture import (
     ContractError,
     DEFAULT_CONTRACT_PATH,
     load_contract,
+    load_contract_at_commit,
+    parse_git_sha1,
     run_self_test,
     validate_reference_architecture,
 )
@@ -31,15 +33,40 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--contract", type=Path)
     parser.add_argument("--self-test", action="store_true")
+    evidence = parser.add_mutually_exclusive_group()
+    evidence.add_argument("--staged", action="store_true")
+    evidence.add_argument("--commit")
+    parser.add_argument("--require-settled-baselines", action="store_true")
     arguments = parser.parse_args(argv)
     if arguments.self_test:
-        if arguments.contract is not None or arguments.root != Path("."):
-            parser.error("--self-test does not accept --root or --contract")
+        if (
+            arguments.contract is not None
+            or arguments.root != Path(".")
+            or arguments.staged
+            or arguments.commit is not None
+            or arguments.require_settled_baselines
+        ):
+            parser.error("--self-test does not accept validation mode arguments")
         return _self_test()
     root = arguments.root.absolute()
     try:
-        contract = load_contract(root, arguments.contract or root / DEFAULT_CONTRACT_PATH)
-        findings = validate_reference_architecture(root, contract)
+        contract_path = arguments.contract or root / DEFAULT_CONTRACT_PATH
+        if arguments.commit is None:
+            contract = load_contract(root, contract_path)
+        else:
+            parse_git_sha1(arguments.commit, field="--commit")
+            contract = load_contract_at_commit(
+                root,
+                arguments.commit,
+                contract_path,
+            )
+        findings = validate_reference_architecture(
+            root,
+            contract,
+            staged=arguments.staged,
+            commit=arguments.commit,
+            require_settled_baselines=arguments.require_settled_baselines,
+        )
     except ContractError as error:
         finding = error.finding
         print(f"{finding.rule_id} {finding.path}: {finding.message}", file=sys.stderr)

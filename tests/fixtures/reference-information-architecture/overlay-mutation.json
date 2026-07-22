@@ -1,0 +1,6 @@
+{
+  "kind": "protected-byte-mutation",
+  "path": "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+  "replacement": "current overlay mutation\n",
+  "expectedRule": "RIA-OVERLAY"
+}

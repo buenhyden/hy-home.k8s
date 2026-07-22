@@ -161,6 +161,14 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/reference-information-architecture/overlay-mutation.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/fixtures/reference-information-architecture/snapshot-mutation.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/test_reference_information_architecture.py": (
         "python",
         "regression-test",

@@ -1,8 +1,9 @@
-"""Focused contract and input-boundary tests for RIA-001."""
+"""Focused immutable-snapshot, overlay, and lineage tests for RIA-002."""
 
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -41,6 +42,16 @@ SCHEMA = (
     / "docs/90.references/data/reference-information-architecture.schema.json"
 )
 CLI = REPOSITORY_ROOT / "scripts/validate-reference-information-architecture.py"
+SNAPSHOT_MUTATION = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/snapshot-mutation.json"
+)
+OVERLAY_MUTATION = (
+    REPOSITORY_ROOT
+    / "tests/fixtures/reference-information-architecture/overlay-mutation.json"
+)
+ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
 
 
 def _load_cli_module():
@@ -87,7 +98,15 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             json.dumps(
                 {
                     "referenceCurrentPacks": {
-                        "packs": [{"id": pack_id} for pack_id in pack_ids]
+                        "profileId": "reference-current-pack",
+                        "packs": [
+                            {
+                                "id": pack_id,
+                                "members": [],
+                                "allowedStates": ["active"],
+                            }
+                            for pack_id in pack_ids
+                        ],
                     }
                 }
             ),
@@ -134,21 +153,50 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             "reason": "bounded structural copy",
         }
 
+    @staticmethod
+    def _transition(target: bytes = b"x") -> dict[str, object]:
+        return {
+            "id": "ria-007-postflight-ledger",
+            "packId": "research/2026-07-07-wer",
+            "fromCommit": ROOT_BASELINE,
+            "subject": "document-migration-evidence-ledger",
+            "targetSha256": hashlib.sha256(target).hexdigest(),
+            "targetByteLength": len(target),
+            "reason": "postflight evidence",
+        }
+
+    def _settled_contract(
+        self, transition_commit: str = "git-sha1:" + "b" * 40, target: bytes = b"x"
+    ) -> dict[str, object]:
+        contract = self._minimal_contract()
+        contract["currentPackBaselines"]["research/2026-07-07-wer"] = (
+            transition_commit
+        )
+        contract["baselineTransitions"] = []
+        contract["baselineSettlements"] = [
+            {**self._transition(target), "transitionCommit": transition_commit}
+        ]
+        return contract
+
     def test_minimal_contract_loads_and_references_registered_current_packs(
         self,
     ) -> None:
-        contract = self._minimal_contract()
-        snapshot_guard = contract["snapshotGuard"]
-        assert isinstance(snapshot_guard, dict)
-        snapshot_guard["currentPackIds"] = [
-            "audits/2026-07-11-weia",
-            "research/2026-07-07-wer",
-        ]
-        self._write_contract(contract)
-
-        findings = validate_reference_architecture(self.root, self._load())
-
-        self.assertEqual(findings, [])
+        loaded = self._load()
+        self.assertEqual(
+            tuple(loaded["currentPackBaselines"]),
+            ("audits/2026-07-11-weia", "research/2026-07-07-wer"),
+        )
+        self.assertEqual(
+            loaded["snapshotGuard"]["historicalPackIds"],
+            [
+                "audits/2026-05-24-whga",
+                "audits/2026-07-02-whia",
+                "audits/2026-07-03-wdgh",
+                "audits/2026-07-04-wdcn",
+                "audits/2026-07-05-wea",
+                "research/2026-07-04-wer",
+            ],
+        )
 
     def test_duplicate_json_key_is_a_contract_error(self) -> None:
         self.contract_path.write_text(
@@ -163,7 +211,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_unknown_top_level_key_and_schema_version_fail_closed(self) -> None:
         for mutation in (
             lambda contract: contract.update({"unknown": True}),
-            lambda contract: contract.update({"schemaVersion": 2}),
+            lambda contract: contract.update({"schemaVersion": 1}),
         ):
             with self.subTest(mutation=mutation):
                 contract = self._minimal_contract()
@@ -196,7 +244,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         duplicate_pack = self._minimal_contract()
         guard = duplicate_pack["snapshotGuard"]
         assert isinstance(guard, dict)
-        guard["currentPackIds"] = ["audits/2026-07-11-weia"] * 2
+        historical = guard["historicalPackIds"]
+        assert isinstance(historical, list)
+        historical.append(historical[0])
         cases.append(("pack", duplicate_pack))
 
         duplicate_output = self._minimal_contract()
@@ -229,19 +279,24 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         registry.unlink()
         registry.mkdir()
         with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
-            validate_reference_architecture(self.root, self._load())
+            ria._read_regular_file(  # noqa: SLF001
+                self.root,
+                Path("docs/99.templates/support/document-profiles.json"),
+                field="currentPackRegistry",
+            )
 
     def test_unknown_registry_pack_is_a_validation_finding(self) -> None:
         contract = self._minimal_contract()
-        guard = contract["snapshotGuard"]
-        assert isinstance(guard, dict)
-        guard["currentPackIds"] = ["research/not-registered"]
+        contract["currentPackBaselines"] = {
+            "audits/2026-07-11-weia": ROOT_BASELINE,
+            "research/not-registered": ROOT_BASELINE,
+        }
         self._write_contract(contract)
-
-        findings = validate_reference_architecture(self.root, self._load())
-
-        self.assertEqual([finding.rule_id for finding in findings], ["RIA-CONTRACT"])
-        self.assertIn("currentPackIds", findings[0].path)
+        loaded = self._load()
+        state, finding = ria._fsm_state(loaded)  # noqa: SLF001
+        self.assertIsNone(state)
+        self.assertEqual(finding.rule_id, "RIA-TRANSITION")
+        self.assertEqual(finding.path, "currentPackBaselines")
 
     def test_every_path_family_uses_semantic_boundary_validation(self) -> None:
         mutations = []
@@ -417,38 +472,45 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     self._load()
 
     def test_registry_is_closed_exact_and_roles_are_disjoint(self) -> None:
-        contract = self._minimal_contract()
-        guard = contract["snapshotGuard"]
-        assert isinstance(guard, dict)
-        guard["currentPackIds"] = ["audits/2026-07-11-weia"]
-        self._write_contract(contract)
-        findings = validate_reference_architecture(self.root, self._load())
-        self.assertEqual([finding.rule_id for finding in findings], ["RIA-CONTRACT"])
-
         for name, packs in (
             ("missing-id", [{}]),
             ("malformed", ["audits/2026-07-11-weia"]),
-            ("duplicate", [{"id": "audits/2026-07-11-weia"}] * 2),
+            (
+                "duplicate",
+                [
+                    {
+                        "id": "audits/2026-07-11-weia",
+                        "members": [],
+                        "allowedStates": ["active"],
+                    }
+                ]
+                * 2,
+            ),
         ):
             with self.subTest(name=name):
-                self._write_registry([])
-                registry = (
-                    self.root / "docs/99.templates/support/document-profiles.json"
-                )
-                registry.write_text(
-                    json.dumps({"referenceCurrentPacks": {"packs": packs}}),
-                    encoding="utf-8",
-                )
                 with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
-                    validate_reference_architecture(self.root, self._load())
+                    ria._registry_projection(  # noqa: SLF001
+                        {
+                            "referenceCurrentPacks": {
+                                "profileId": "reference-current-pack",
+                                "packs": packs,
+                            }
+                        }
+                    )
 
         contract = self._minimal_contract()
         guard = contract["snapshotGuard"]
         assert isinstance(guard, dict)
-        guard["historicalPackIds"] = ["audits/2026-07-11-weia"]
-        guard["currentPackIds"] = ["audits/2026-07-11-weia"]
+        guard["historicalPackIds"] = [
+            "audits/2026-06-14-active-corpus-role-audit",
+            "audits/2026-06-15-repository-structure-audit",
+            "audits/2026-06-18-agentic-structure-audit",
+            "research/2026-06-18-agentic-capabilities-research",
+            "research/2026-06-19-agentic-documentation-research",
+            "audits/2026-07-11-weia",
+        ]
         self._write_contract(contract)
-        with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+        with self.assertRaisesRegex(ContractError, "RIA-SNAPSHOT"):
             self._load()
 
     def test_rule_vocabulary_and_nonempty_scope_schema_are_closed(self) -> None:
@@ -464,6 +526,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     "RIA-SOURCE",
                     "RIA-GENERATOR",
                     "RIA-DUPLICATE",
+                    "RIA-TRANSITION",
                 }
             ),
         )
@@ -509,7 +572,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             side_effect=replace_before_open,
         ):
             with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
-                validate_reference_architecture(self.root, self._load())
+                ria._read_regular_file(  # noqa: SLF001
+                    self.root,
+                    Path("docs/99.templates/support/document-profiles.json"),
+                    field="currentPackRegistry",
+                )
         self.assertTrue(replaced)
 
     def test_self_test_uses_canonical_schema_and_full_contract_shape(self) -> None:
@@ -575,34 +642,26 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(production.returncode, 0, production.stderr)
 
     def test_cli_exit_contract_and_payload_safe_diagnostics(self) -> None:
+        non_git = subprocess.run(
+            [sys.executable, str(CLI), "--root", str(self.root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(non_git.returncode, 1)
+        self.assertIn("RIA-BOUNDARY", non_git.stdout)
+
+        cli = _load_cli_module()
+        captured = StringIO()
+        with mock.patch.object(cli, "load_contract", return_value=self._minimal_contract()), mock.patch.object(
+            cli,
+            "validate_reference_architecture",
+            return_value=[ria.Finding("RIA-CONTRACT", "contract", "closed finding")],
+        ), mock.patch("sys.stdout", captured):
+            self.assertEqual(cli.main(["--root", str(self.root)]), 1)
+        self.assertIn("RIA-CONTRACT", captured.getvalue())
+
         contract = self._minimal_contract()
-        guard = contract["snapshotGuard"]
-        assert isinstance(guard, dict)
-        guard["currentPackIds"] = [
-            "audits/2026-07-11-weia",
-            "research/2026-07-07-wer",
-        ]
-        self._write_contract(contract)
-        clean = subprocess.run(
-            [sys.executable, str(CLI), "--root", str(self.root)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(clean.returncode, 0, clean.stderr)
-
-        guard["currentPackIds"] = ["research/not-registered"]
-        self._write_contract(contract)
-        findings = subprocess.run(
-            [sys.executable, str(CLI), "--root", str(self.root)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(findings.returncode, 1)
-        self.assertIn("RIA-CONTRACT", findings.stdout)
-        self.assertNotIn("not-registered", findings.stdout + findings.stderr)
-
         contract["currentPackRegistry"] = "/unsafe/secret-value"
         self._write_contract(contract)
         malformed = subprocess.run(
@@ -614,6 +673,705 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(malformed.returncode, 2)
         self.assertIn("RIA-BOUNDARY", malformed.stderr)
         self.assertNotIn("secret-value", malformed.stdout + malformed.stderr)
+
+    def test_schema_v2_exact_current_baseline_map(self) -> None:
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        self.assertEqual(schema["properties"]["schemaVersion"]["const"], 2)
+        self.assertIn("currentPackBaselines", schema["required"])
+        self.assertIn("baselineTransitions", schema["required"])
+        self.assertIn("baselineSettlements", schema["required"])
+        snapshot_properties = schema["properties"]["snapshotGuard"]["properties"]
+        self.assertNotIn("currentPackIds", snapshot_properties)
+
+        contract = self._minimal_contract()
+        self._write_contract(contract)
+        loaded = self._load()
+        self.assertEqual(
+            set(loaded["currentPackBaselines"]),
+            {"audits/2026-07-11-weia", "research/2026-07-07-wer"},
+        )
+
+    def test_original_and_corrected_current_research_baselines(self) -> None:
+        contract = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/90.references/data/reference-information-architecture.json"
+            ).read_text(encoding="utf-8")
+        )
+        stale = json.loads(json.dumps(contract))
+        stale["currentPackBaselines"]["research/2026-07-07-wer"] = (
+            HISTORICAL_BASELINE
+        )
+        stale_findings = ria.validate_overlay_guards(REPOSITORY_ROOT, stale)
+        corrected = json.loads(json.dumps(contract))
+        corrected_findings = ria.validate_overlay_guards(REPOSITORY_ROOT, corrected)
+        self.assertTrue(
+            any(
+                finding.rule_id == "RIA-OVERLAY"
+                and "document-migration-evidence-ledger.md" in finding.path
+                for finding in stale_findings
+            )
+        )
+        self.assertEqual(corrected_findings, [])
+
+    def test_snapshot_mutation_fixture_requires_immutable_body_guard(self) -> None:
+        mutation = json.loads(SNAPSHOT_MUTATION.read_text(encoding="utf-8"))
+        self.assertEqual(mutation["expectedRule"], "RIA-SNAPSHOT")
+        cases = (
+            (
+                Path(mutation["path"]),
+                mutation["replacement"].encode("utf-8"),
+            ),
+            (
+                Path("docs/90.references/audits/2026-05-24-whga/README.md"),
+                b"historical README mutation\n",
+            ),
+        )
+        for target, replacement in cases:
+            with self.subTest(target=target):
+
+                def proposed(
+                    root: Path,
+                    path: Path,
+                    proposed_oid: str | None,
+                    runner: ria.GitRunner | None,
+                ) -> bytes:
+                    if path == target:
+                        return replacement
+                    return ria._read_commit_path(  # noqa: SLF001
+                        root,
+                        HISTORICAL_BASELINE.removeprefix("git-sha1:"),
+                        path,
+                        runner,
+                    )
+
+                with mock.patch.object(ria, "_proposed_path", side_effect=proposed):
+                    findings = ria.validate_snapshot_guards(
+                        REPOSITORY_ROOT, self._minimal_contract()
+                    )
+                self.assertEqual(
+                    [
+                        finding
+                        for finding in findings
+                        if finding.path == target.as_posix()
+                    ],
+                    [
+                        ria.Finding(
+                            "RIA-SNAPSHOT",
+                            target.as_posix(),
+                            "protected snapshot bytes differ",
+                        )
+                    ],
+                )
+
+    def test_current_overlay_fixture_requires_projection_bounds(self) -> None:
+        mutation = json.loads(OVERLAY_MUTATION.read_text(encoding="utf-8"))
+        self.assertEqual(mutation["expectedRule"], "RIA-OVERLAY")
+        target = Path(mutation["path"])
+        replacement = mutation["replacement"].encode("utf-8")
+        contract = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/90.references/data/reference-information-architecture.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        def proposed(
+            root: Path,
+            path: Path,
+            proposed_oid: str | None,
+            runner: ria.GitRunner | None,
+        ) -> bytes:
+            if path == target:
+                return replacement
+            pack_id = (
+                "audits/2026-07-11-weia"
+                if path.parts[2] == "audits"
+                else "research/2026-07-07-wer"
+            )
+            oid = contract["currentPackBaselines"][pack_id].removeprefix(
+                "git-sha1:"
+            )
+            return ria._read_commit_path(root, oid, path, runner)  # noqa: SLF001
+
+        with mock.patch.object(ria, "_proposed_path", side_effect=proposed):
+            findings = ria.validate_overlay_guards(REPOSITORY_ROOT, contract)
+        self.assertTrue(
+            any(
+                finding.rule_id == "RIA-OVERLAY"
+                and finding.path == target.as_posix()
+                for finding in findings
+            )
+        )
+
+        projection = {
+            "path": "docs/90.references/audits/README.md",
+            "table": {
+                "section": "Audit Pack Registry",
+                "columns": ["Pack role"],
+            },
+        }
+        baseline = b"## Audit Pack Registry\n\n| Pack | Pack role | Scope |\n| --- | --- | --- |\n| one | Current | exact |\n"
+        allowed = baseline.replace(b" Current ", b" Historical ")
+        protected = baseline.replace(b" exact ", b"  exact ")
+        self.assertEqual(
+            ria._projection_mask(  # noqa: SLF001
+                baseline, Path(projection["path"]), projection
+            ),
+            ria._projection_mask(  # noqa: SLF001
+                allowed, Path(projection["path"]), projection
+            ),
+        )
+        self.assertNotEqual(
+            ria._projection_mask(  # noqa: SLF001
+                baseline, Path(projection["path"]), projection
+            ),
+            ria._projection_mask(  # noqa: SLF001
+                protected, Path(projection["path"]), projection
+            ),
+        )
+        wrong_section = baseline.replace(
+            b"\n\n| Pack", b"\n\n## Other Section\n\n| Pack"
+        )
+        with self.assertRaises(ria._GitError):  # noqa: SLF001
+            ria._projection_mask(  # noqa: SLF001
+                wrong_section, Path(projection["path"]), projection
+            )
+
+    def test_open_transition_matrix_is_closed(self) -> None:
+        contract = self._minimal_contract()
+        contract["baselineTransitions"] = [self._transition()]
+        target_path = Path(
+            "docs/90.references/research/2026-07-07-wer/"
+            "document-migration-evidence-ledger.md"
+        )
+        research = ria.Pack(
+            "research/2026-07-07-wer",
+            ("active",),
+            ("document-migration-evidence-ledger.md",),
+        )
+        context = ria.ValidationContext(
+            ria.RegistryProjection("content/reference", (research,)),
+            {target_path: b"x"},
+            {},
+            {},
+            {},
+            None,
+        )
+        with mock.patch.object(ria, "_build_context", return_value=context):
+            self.assertEqual(
+                ria.validate_baseline_transitions(self.root, contract), []
+            )
+        wrong_bytes = ria.ValidationContext(
+            context.proposed_registry,
+            {target_path: b"wrong"},
+            {},
+            {},
+            {},
+            None,
+        )
+        with mock.patch.object(ria, "_build_context", return_value=wrong_bytes):
+            self.assertEqual(
+                [
+                    finding.rule_id
+                    for finding in ria.validate_baseline_transitions(
+                        self.root, contract
+                    )
+                ],
+                ["RIA-TRANSITION"],
+            )
+        nonmember = ria.ValidationContext(
+            ria.RegistryProjection(
+                "content/reference",
+                (ria.Pack("research/2026-07-07-wer", ("active",), ()),),
+            ),
+            {},
+            {},
+            {},
+            {},
+            None,
+        )
+        with mock.patch.object(ria, "_build_context", return_value=nonmember):
+            self.assertEqual(
+                [
+                    finding.rule_id
+                    for finding in ria.validate_baseline_transitions(
+                        self.root, contract
+                    )
+                ],
+                ["RIA-TRANSITION"],
+            )
+        with mock.patch.object(
+            ria, "_build_context", side_effect=ria._GitError("registry drift")
+        ):
+            self.assertEqual(
+                [
+                    finding.rule_id
+                    for finding in ria.validate_baseline_transitions(
+                        self.root, contract
+                    )
+                ],
+                ["RIA-TRANSITION"],
+            )
+        findings = ria.validate_baseline_transitions(
+            self.root,
+            contract,
+            require_settled_baselines=True,
+        )
+        self.assertEqual([finding.rule_id for finding in findings], ["RIA-TRANSITION"])
+
+    def test_direct_baseline_jump_is_rejected(self) -> None:
+        contract = self._minimal_contract()
+        contract["currentPackBaselines"]["research/2026-07-07-wer"] = (
+            "git-sha1:" + "c" * 40
+        )
+        findings = ria.validate_baseline_transitions(self.root, contract)
+        self.assertEqual([finding.rule_id for finding in findings], ["RIA-TRANSITION"])
+
+    def test_settlement_proof_chain_requires_explicit_lineage(self) -> None:
+        c2 = "b" * 40
+        target = b"settled target"
+        contract = self._settled_contract("git-sha1:" + c2, target)
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        self.assertEqual(
+            list(Draft202012Validator(schema).iter_errors(contract)), []
+        )
+
+        audit = ria.Pack("audits/2026-07-11-weia", ("done",), ())
+        research = ria.Pack(
+            "research/2026-07-07-wer",
+            ("active", "accepted"),
+            ("document-migration-evidence-ledger.md",),
+        )
+        registry = ria.RegistryProjection("content/reference", (audit, research))
+        transition_path = research.member_paths[0]
+        non_targets = (audit.readme_path, research.readme_path)
+        baseline_bytes = {
+            (ROOT_BASELINE, path): f"root:{path}".encode() for path in non_targets
+        }
+        context = ria.ValidationContext(
+            registry,
+            {transition_path: target},
+            {ROOT_BASELINE: registry, "git-sha1:" + c2: registry},
+            {},
+            {ROOT_BASELINE: ROOT_BASELINE.removeprefix("git-sha1:"), "git-sha1:" + c2: c2},
+            None,
+        )
+
+        open_contract = self._minimal_contract()
+        open_contract["baselineTransitions"] = [self._transition(target)]
+        registry_payload = json.dumps(
+            {
+                "referenceCurrentPacks": {
+                    "profileId": registry.profile_id,
+                    "packs": [
+                        {
+                            "id": pack.pack_id,
+                            "allowedStates": list(pack.allowed_states),
+                            "members": list(pack.members),
+                        }
+                        for pack in registry.packs
+                    ],
+                }
+            },
+            separators=(",", ":"),
+        ).encode()
+        payloads = {
+            ria.DEFAULT_CONTRACT_PATH: json.dumps(
+                open_contract, separators=(",", ":")
+            ).encode(),
+            ria.REGISTRY_PATH: registry_payload,
+            transition_path: target,
+            **{path: baseline_bytes[(ROOT_BASELINE, path)] for path in non_targets},
+        }
+
+        def proof_runner(current_payloads: dict[Path, bytes]):
+            by_oid: dict[str, bytes] = {}
+            by_commit_path: dict[tuple[str, Path], str] = {}
+            trees = (
+                (c2, current_payloads),
+                (ROOT_BASELINE.removeprefix("git-sha1:"), payloads),
+            )
+            index = 0
+            for commit_oid, tree_payloads in trees:
+                for path, payload in tree_payloads.items():
+                    index += 1
+                    oid = f"{index:040x}"
+                    by_commit_path[(commit_oid, path)] = oid
+                    by_oid[oid] = payload
+
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments in {
+                    ("cat-file", "-t", c2),
+                    (
+                        "cat-file",
+                        "-t",
+                        ROOT_BASELINE.removeprefix("git-sha1:"),
+                    ),
+                }:
+                    return b"commit\n"
+                if arguments[:3] == ("ls-tree", "-z", "--full-tree"):
+                    commit_oid = arguments[3]
+                    path = Path(arguments[5])
+                    oid = by_commit_path[(commit_oid, path)]
+                    return f"100644 blob {oid}\t{path.as_posix()}\0".encode()
+                oid = arguments[2]
+                if arguments[:2] == ("cat-file", "-t"):
+                    return b"blob\n"
+                if arguments[:2] == ("cat-file", "-s"):
+                    return f"{len(by_oid[oid])}\n".encode()
+                if arguments[:2] == ("cat-file", "blob"):
+                    return by_oid[oid]
+                raise AssertionError(arguments)
+
+            return runner
+
+        self.assertEqual(
+            ria._settlement_proof(  # noqa: SLF001
+                self.root, contract, context, proof_runner(dict(payloads))
+            ),
+            [],
+        )
+        changed_contract = json.loads(json.dumps(contract))
+        changed_contract["evidenceCutoff"] = "2026-07-23"
+        self.assertEqual(
+            [
+                finding.rule_id
+                for finding in ria._settlement_proof(  # noqa: SLF001
+                    self.root,
+                    changed_contract,
+                    context,
+                    proof_runner(dict(payloads)),
+                )
+            ],
+            ["RIA-TRANSITION"],
+        )
+        mutations = []
+        mismatched_contract = dict(payloads)
+        bad_open = json.loads(json.dumps(open_contract))
+        bad_open["baselineTransitions"][0]["reason"] = "different"
+        mismatched_contract[ria.DEFAULT_CONTRACT_PATH] = json.dumps(bad_open).encode()
+        mutations.append(mismatched_contract)
+        mismatched_target = dict(payloads)
+        mismatched_target[transition_path] = b"different target"
+        mutations.append(mismatched_target)
+        mismatched_non_target = dict(payloads)
+        mismatched_non_target[non_targets[0]] = b"different non-target"
+        mutations.append(mismatched_non_target)
+        for current_payloads in mutations:
+            with self.subTest(paths=tuple(current_payloads)):
+                findings = ria._settlement_proof(  # noqa: SLF001
+                    self.root,
+                    contract,
+                    context,
+                    proof_runner(current_payloads),
+                )
+                self.assertEqual(
+                    [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
+                )
+
+    def test_fixed_git_runner_contract_is_closed(self) -> None:
+        self.assertEqual(ria.GIT_EXECUTABLE, "/usr/bin/git")
+        self.assertEqual(ria.GIT_TIMEOUT_SECONDS, 10)
+        self.assertEqual(ria.MAX_BLOB_BYTES, 2_000_000)
+        self.assertNotIn("GIT_DIR", ria.CLOSED_GIT_ENVIRONMENT)
+        self.assertEqual(ria.CLOSED_GIT_ENVIRONMENT["GIT_NO_LAZY_FETCH"], "1")
+        with self.assertRaises(ContractError):
+            ria._run_git(REPOSITORY_ROOT, ("show", "HEAD"))  # noqa: SLF001
+
+    def test_fixed_git_runner_hostile_process_matrix(self) -> None:
+        hostile_environment = {"GIT_DIR": "/secret", "GIT_CONFIG_COUNT": "1"}
+        with mock.patch.dict(os.environ, hostile_environment), mock.patch.object(
+            ria.subprocess, "Popen", side_effect=OSError("missing")
+        ) as popen:
+            with self.assertRaisesRegex(ria._GitError, "unavailable"):  # noqa: SLF001
+                ria._run_git(  # noqa: SLF001
+                    self.root, ("rev-parse", "--verify", "HEAD")
+                )
+        kwargs = popen.call_args.kwargs
+        self.assertEqual(kwargs["env"], ria.CLOSED_GIT_ENVIRONMENT)
+        self.assertFalse(kwargs["shell"])
+        self.assertNotIn("GIT_DIR", kwargs["env"])
+
+        with self.assertRaisesRegex(ria._GitError, "failed"):  # noqa: SLF001
+            ria._run_git(  # noqa: SLF001
+                self.root, ("rev-parse", "--verify", "HEAD")
+            )
+        with mock.patch.object(ria, "GIT_TIMEOUT_SECONDS", 0):
+            with self.assertRaisesRegex(ria._GitError, "timed out"):  # noqa: SLF001
+                ria._run_git(  # noqa: SLF001
+                    REPOSITORY_ROOT,
+                    (
+                        "cat-file",
+                        "commit",
+                        ROOT_BASELINE.removeprefix("git-sha1:"),
+                    ),
+                )
+        with self.assertRaisesRegex(ria._GitError, "exceeded"):  # noqa: SLF001
+            ria._run_git(  # noqa: SLF001
+                REPOSITORY_ROOT,
+                (
+                    "cat-file",
+                    "commit",
+                    ROOT_BASELINE.removeprefix("git-sha1:"),
+                ),
+                stdout_limit=1,
+            )
+        with mock.patch.object(ria, "MAX_STDERR_BYTES", 0):
+            with self.assertRaisesRegex(ria._GitError, "exceeded"):  # noqa: SLF001
+                ria._run_git(  # noqa: SLF001
+                    self.root, ("rev-parse", "--verify", "HEAD")
+                )
+
+    def test_tree_blob_and_size_hostile_matrix(self) -> None:
+        oid = "a" * 40
+        path = Path("docs/example.md")
+        valid = f"100644 blob {oid}\tdocs/example.md\0".encode()
+        self.assertEqual(ria._parse_tree_record(valid, path), oid)  # noqa: SLF001
+        tree_cases = (
+            b"",
+            valid + valid,
+            f"100644 blob {oid}\tdocs/other.md\0".encode(),
+            f"120000 blob {oid}\tdocs/example.md\0".encode(),
+            f"160000 commit {oid}\tdocs/example.md\0".encode(),
+            f"100644 tree {oid}\tdocs/example.md\0".encode(),
+            f"100644 blob {'A' * 40}\tdocs/example.md\0".encode(),
+        )
+        for payload in tree_cases:
+            with self.subTest(payload=payload[:30]):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._parse_tree_record(payload, path)  # noqa: SLF001
+
+        for payload in (b"00\n", b"01\n", b"+1\n", b"1", b"2000001\n"):
+            with self.subTest(size=payload):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._parse_canonical_size(payload)  # noqa: SLF001
+
+        def blob_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, limit
+            if arguments[:2] == ("cat-file", "-t"):
+                return b"blob\n"
+            if arguments[:2] == ("cat-file", "-s"):
+                return b"3\n"
+            return b"xx"
+
+        with self.assertRaisesRegex(ria._GitError, "length"):  # noqa: SLF001
+            ria._read_blob(self.root, oid, blob_runner)  # noqa: SLF001
+
+        def extra_blob_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, limit
+            if arguments[:2] == ("cat-file", "-t"):
+                return b"blob\n"
+            if arguments[:2] == ("cat-file", "-s"):
+                return b"1\n"
+            return b"xx"
+
+        with self.assertRaisesRegex(ria._GitError, "length"):  # noqa: SLF001
+            ria._read_blob(self.root, oid, extra_blob_runner)  # noqa: SLF001
+
+    def test_proposed_index_authority_hostile_matrix(self) -> None:
+        oid = "a" * 40
+        path = Path("docs/example.md")
+        valid = f"100644 {oid} 0\tdocs/example.md\0".encode()
+        self.assertEqual(ria._parse_index_record(valid, path), oid)  # noqa: SLF001
+        index_cases = (
+            b"",  # staged delete with an untracked replacement
+            valid + valid,
+            f"100644 {oid} 1\tdocs/example.md\0".encode(),
+            f"100644 {oid} 2\tdocs/example.md\0".encode(),
+            f"100644 {oid} 3\tdocs/example.md\0".encode(),
+            f"120000 {oid} 0\tdocs/example.md\0".encode(),
+            f"160000 {oid} 0\tdocs/example.md\0".encode(),
+            f"100644 {oid} 0\tdocs/other.md\0".encode(),
+        )
+        for payload in index_cases:
+            with self.subTest(payload=payload[:30]):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._parse_index_record(payload, path)  # noqa: SLF001
+
+        absolute = self.root / path
+        absolute.parent.mkdir(parents=True, exist_ok=True)
+        absolute.write_bytes(b"worktree replacement")
+
+        def deleted_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, arguments, limit
+            return b""
+
+        with self.assertRaises(ria._GitError):  # noqa: SLF001
+            ria.read_proposed_regular_file(self.root, path, deleted_runner)
+
+        def drift_runner(
+            root: Path, arguments: tuple[str, ...], limit: int
+        ) -> bytes:
+            del root, limit
+            if arguments[0] == "ls-files":
+                return valid
+            if arguments[:2] == ("cat-file", "-t"):
+                return b"blob\n"
+            if arguments[:2] == ("cat-file", "-s"):
+                return b"7\n"
+            return b"indexed"
+
+        with self.assertRaisesRegex(ContractError, "index and worktree"):
+            ria.read_proposed_regular_file(self.root, path, drift_runner)
+
+    def test_transition_fsm_rejects_every_noncanonical_state(self) -> None:
+        cases: list[dict[str, object]] = []
+        forged_root = self._minimal_contract()
+        forged_root["currentPackBaselines"]["audits/2026-07-11-weia"] = (
+            "git-sha1:" + "a" * 40
+        )
+        cases.append(forged_root)
+        audit_transition = self._minimal_contract()
+        audit_transition["baselineTransitions"] = [
+            {**self._transition(), "packId": "audits/2026-07-11-weia"}
+        ]
+        cases.append(audit_transition)
+        multiple = self._minimal_contract()
+        multiple["baselineTransitions"] = [self._transition(), self._transition()]
+        cases.append(multiple)
+        stale = self._minimal_contract()
+        stale["baselineTransitions"] = [
+            {**self._transition(), "fromCommit": "git-sha1:" + "a" * 40}
+        ]
+        cases.append(stale)
+        arbitrary_subject = self._minimal_contract()
+        arbitrary_subject["baselineTransitions"] = [
+            {**self._transition(), "subject": "other-member"}
+        ]
+        cases.append(arbitrary_subject)
+        reused = self._settled_contract()
+        reused["baselineTransitions"] = [self._transition()]
+        cases.append(reused)
+        for contract in cases:
+            with self.subTest(contract=contract):
+                state, finding = ria._fsm_state(contract)  # noqa: SLF001
+                self.assertIsNone(state)
+                self.assertEqual(finding.rule_id, "RIA-TRANSITION")
+
+    def test_staged_and_explicit_lineage_hostile_matrix(self) -> None:
+        c2 = "b" * 40
+        c3 = "c" * 40
+        contract = self._settled_contract("git-sha1:" + c2)
+
+        def explicit_runner(parents: tuple[str, ...]):
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments == ("cat-file", "-t", c3):
+                    return b"commit\n"
+                if arguments == ("cat-file", "commit", c3):
+                    headers = [f"tree {'d' * 40}", *[f"parent {p}" for p in parents]]
+                    return ("\n".join(headers) + "\n\nmessage\n").encode()
+                raise AssertionError(arguments)
+
+            return runner
+
+        self.assertEqual(
+            ria.validate_explicit_commit_lineage(
+                self.root, contract, "git-sha1:" + c3, runner=explicit_runner((c2,))
+            ),
+            [],
+        )
+        for parents in ((), ("a" * 40,), (c2, "a" * 40)):
+            with self.subTest(parents=parents):
+                findings = ria.validate_explicit_commit_lineage(
+                    self.root,
+                    contract,
+                    "git-sha1:" + c3,
+                    runner=explicit_runner(parents),
+                )
+                self.assertEqual(
+                    [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
+                )
+
+        def staged_runner(
+            head: str, rows: bytes = b"M\0docs/90.references/data/reference-information-architecture.json\0"
+        ):
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments == ("rev-parse", "--verify", "HEAD"):
+                    return f"{head}\n".encode()
+                if arguments == ("cat-file", "-t", head):
+                    return b"commit\n"
+                if arguments[0] == "diff-index":
+                    return rows
+                raise AssertionError(arguments)
+
+            return runner
+
+        self.assertEqual(
+            ria.validate_staged_settlement_lineage(
+                self.root, contract, runner=staged_runner(c2)
+            ),
+            [],
+        )
+        staged_cases = (
+            staged_runner("a" * 40),
+            staged_runner(
+                c2,
+                b"M\0docs/90.references/data/reference-information-architecture.json\0"
+                b"M\0docs/other.md\0",
+            ),
+        )
+        for runner in staged_cases:
+            findings = ria.validate_staged_settlement_lineage(
+                self.root, contract, runner=runner
+            )
+            self.assertEqual(
+                [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
+            )
+
+    def test_proposed_stage_zero_authority_is_required(self) -> None:
+        self.assertTrue(callable(ria.read_proposed_regular_file))
+        self.assertTrue(callable(ria.validate_proposed_registry_authority))
+
+    def test_cli_modes_are_mutually_exclusive_and_terminal_is_orthogonal(self) -> None:
+        terminal = subprocess.run(
+            [
+                sys.executable,
+                str(CLI),
+                "--root",
+                str(REPOSITORY_ROOT),
+                "--require-settled-baselines",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        conflict = subprocess.run(
+            [
+                sys.executable,
+                str(CLI),
+                "--staged",
+                "--commit",
+                ROOT_BASELINE,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        malformed = subprocess.run(
+            [sys.executable, str(CLI), "--commit", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(terminal.returncode, 0, terminal.stderr)
+        self.assertEqual(conflict.returncode, 2)
+        self.assertEqual(malformed.returncode, 2)
 
 
 if __name__ == "__main__":

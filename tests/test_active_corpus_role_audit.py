@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 35,
+                "helpers": 37,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 2,
+                "postClosureHelpers": 4,
                 "python": 13,
-                "json": 15,
+                "json": 17,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,14 +179,14 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 35)
+        self.assertEqual(len(actual), 37)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 2})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 4})
         frozen_paths = set(self.validator.FROZEN_HELPER_PATHS)
         post_closure = [
             entry
@@ -198,6 +198,16 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             [
                 {
                     "path": "tests/fixtures/reference-information-architecture/minimal-valid.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/reference-information-architecture/overlay-mutation.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/reference-information-architecture/snapshot-mutation.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -340,6 +350,45 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             hostile.write_text(
                 "## Task Table\nTask status: In Progress\n", encoding="utf-8"
             )
+            readme = root / "tests/README.md"
+            inventory = sorted(
+                [
+                    *self.validator._readme_inventory(
+                        readme.read_text(encoding="utf-8")
+                    ),
+                    hostile_path,
+                ]
+            )
+            readme.write_text(
+                "# tests\n\n## Structure\n\n```text\n"
+                + "\n".join(inventory)
+                + "\n```\n",
+                encoding="utf-8",
+            )
+            subprocess.run(
+                [
+                    self.validator.GIT_EXECUTABLE,
+                    "add",
+                    "--",
+                    hostile_path,
+                    "tests/README.md",
+                ],
+                cwd=root,
+                check=True,
+            )
+            with self.assertRaises(self.validator.RoleAuditError) as raised:
+                self.validator.build_observed(root)
+            self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION")
+
+    def test_unmanifested_ria_fixture_fails_production_build(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.write_git_corpus(root)
+            hostile_path = (
+                "tests/fixtures/reference-information-architecture/unmanifested.json"
+            )
+            hostile = root / hostile_path
+            hostile.write_text("{}\n", encoding="utf-8")
             readme = root / "tests/README.md"
             inventory = sorted(
                 [

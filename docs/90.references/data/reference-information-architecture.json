@@ -1,18 +1,71 @@
 {
   "$schema": "./reference-information-architecture.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "evidenceCutoff": "2026-07-22",
   "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
   "snapshotGuard": {
     "sourceCommit": "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
-    "historicalPackIds": [],
-    "currentPackIds": ["audits/2026-07-11-weia", "research/2026-07-07-wer"]
+    "historicalPackIds": [
+      "audits/2026-05-24-whga",
+      "audits/2026-07-02-whia",
+      "audits/2026-07-03-wdgh",
+      "audits/2026-07-04-wdcn",
+      "audits/2026-07-05-wea",
+      "research/2026-07-04-wer"
+    ]
   },
-  "mutableIndexProjections": [],
+  "currentPackBaselines": {
+    "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
+    "research/2026-07-07-wer": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+  },
+  "baselineTransitions": [],
+  "baselineSettlements": [],
+  "mutableIndexProjections": [
+    {
+      "path": "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+      "completeBody": true
+    },
+    {
+      "path": "docs/90.references/audits/README.md",
+      "table": {
+        "section": "Audit Pack Registry",
+        "columns": ["Pack role", "Successor / resolution"]
+      }
+    },
+    {
+      "path": "docs/90.references/research/README.md",
+      "table": {
+        "section": "Research Pack Index",
+        "columns": ["Status"]
+      }
+    },
+    {
+      "path": "docs/90.references/audits/2026-07-11-weia/README.md",
+      "table": {
+        "section": "Report Index",
+        "columns": ["Lifecycle", "Actionable disposition"]
+      }
+    },
+    {
+      "path": "docs/90.references/research/2026-07-07-wer/README.md",
+      "table": {
+        "section": "Report Index",
+        "columns": ["Lifecycle"]
+      },
+      "navigationReplacement": {
+        "visibleText": "../README.md",
+        "destination": "docs/90.references/research/README.md"
+      }
+    }
+  ],
   "dataAssets": [],
   "generatedAssets": [],
   "duplicateRules": {
-    "canonicalOwnerRoots": ["docs/00.agent-governance", "docs/05.operations/policies", "docs/05.operations/runbooks"],
+    "canonicalOwnerRoots": [
+      "docs/00.agent-governance",
+      "docs/05.operations/policies",
+      "docs/05.operations/runbooks"
+    ],
     "minimumParagraphCharacters": 160,
     "structuralExceptions": []
   }
