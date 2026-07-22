@@ -113,8 +113,40 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             encoding="utf-8",
         )
 
+    @staticmethod
+    def _git_in(
+        root: Path, *arguments: str, input_payload: bytes | None = None
+    ) -> bytes:
+        environment = {
+            "HOME": str(root),
+            "PATH": "/usr/bin:/bin",
+            "LANG": "C",
+            "LC_ALL": "C",
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": "/dev/null",
+            "GIT_TERMINAL_PROMPT": "0",
+            "GIT_OPTIONAL_LOCKS": "0",
+        }
+        completed = subprocess.run(
+            [ria.GIT_EXECUTABLE, *arguments],
+            cwd=root,
+            env=environment,
+            input=input_payload,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise AssertionError(
+                f"isolated Git command failed: {arguments!r}: "
+                f"{completed.stderr.decode('utf-8', 'replace')}"
+            )
+        return completed.stdout
+
     def _load(self) -> dict[str, object]:
-        return load_contract(self.root, self.contract_path)
+        return ria._load_contract_for_self_test(  # noqa: SLF001
+            self.root, self.contract_path
+        )
 
     @staticmethod
     def _asset() -> dict[str, object]:
@@ -349,6 +381,102 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                             schema_payload, schema_mode, schema_size
                         ),
                     )
+
+    def test_normal_schema_requires_stage_zero_index_worktree_authority(
+        self,
+    ) -> None:
+        def repository() -> tuple[tempfile.TemporaryDirectory, Path, Path]:
+            temporary = tempfile.TemporaryDirectory()
+            root = Path(temporary.name)
+            contract_path = root / ria.DEFAULT_CONTRACT_PATH
+            schema_path = root / ria.CANONICAL_SCHEMA_PATH
+            contract_path.parent.mkdir(parents=True)
+            contract_path.write_text(
+                json.dumps(self._minimal_contract()), encoding="utf-8"
+            )
+            schema_path.write_bytes(SCHEMA.read_bytes())
+            self._git_in(root, "init", "--quiet")
+            self._git_in(
+                root, "add", "--", ria.CANONICAL_SCHEMA_PATH.as_posix()
+            )
+            return temporary, root, contract_path
+
+        for mutation in ("drift", "missing", "special-mode", "unmerged"):
+            with self.subTest(mutation=mutation):
+                temporary, root, contract_path = repository()
+                try:
+                    self.assertEqual(
+                        ria.load_contract(root, contract_path),
+                        self._minimal_contract(),
+                    )
+                    schema_path = root / ria.CANONICAL_SCHEMA_PATH
+                    if mutation == "drift":
+                        schema_path.write_bytes(SCHEMA.read_bytes() + b"\n")
+                    elif mutation == "missing":
+                        self._git_in(
+                            root,
+                            "rm",
+                            "--cached",
+                            "--quiet",
+                            "--",
+                            ria.CANONICAL_SCHEMA_PATH.as_posix(),
+                        )
+                    else:
+                        oid = self._git_in(
+                            root,
+                            "hash-object",
+                            "-w",
+                            "--",
+                            ria.CANONICAL_SCHEMA_PATH.as_posix(),
+                        ).strip().decode("ascii")
+                        self._git_in(
+                            root,
+                            "update-index",
+                            "--force-remove",
+                            ria.CANONICAL_SCHEMA_PATH.as_posix(),
+                        )
+                        if mutation == "special-mode":
+                            self._git_in(
+                                root,
+                                "update-index",
+                                "--add",
+                                "--cacheinfo",
+                                f"120000,{oid},{ria.CANONICAL_SCHEMA_PATH.as_posix()}",
+                            )
+                        else:
+                            rows = "".join(
+                                f"100644 {oid} {stage}\t"
+                                f"{ria.CANONICAL_SCHEMA_PATH.as_posix()}\n"
+                                for stage in (1, 2, 3)
+                            ).encode()
+                            self._git_in(
+                                root,
+                                "update-index",
+                                "--index-info",
+                                input_payload=rows,
+                            )
+                    with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+                        ria.load_contract(root, contract_path)
+                finally:
+                    temporary.cleanup()
+
+        with self.subTest(mutation="isolated-self-test-loader"):
+            self.assertTrue(hasattr(ria, "_load_contract_for_self_test"))
+            cli = _load_cli_module()
+            self.assertIs(cli.load_contract, ria.load_contract)
+            self.assertNotIn("_load_contract_for_self_test", vars(cli))
+            for mode in ((), ("--staged",)):
+                with self.subTest(cli_mode=mode), mock.patch.object(
+                    cli,
+                    "load_contract",
+                    side_effect=ContractError(
+                        "RIA-CONTRACT", "$schema", "schema authority unavailable"
+                    ),
+                ) as production_loader, redirect_stderr(StringIO()):
+                    self.assertEqual(
+                        cli.main(["--root", str(self.root), *mode]), 2
+                    )
+                production_loader.assert_called_once()
 
     def test_duplicate_pack_ids_output_paths_and_mutable_paths_fail_closed(
         self,
@@ -762,8 +890,8 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             text=True,
             check=False,
         )
-        self.assertEqual(non_git.returncode, 1)
-        self.assertIn("RIA-BOUNDARY", non_git.stdout)
+        self.assertEqual(non_git.returncode, 2)
+        self.assertIn("RIA-CONTRACT", non_git.stderr)
 
         cli = _load_cli_module()
         captured = StringIO()
@@ -1282,6 +1410,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria._git_arguments_allowed(  # noqa: SLF001
                 (
                     "diff-tree",
+                    "-r",
                     "--no-commit-id",
                     "--name-status",
                     "-z",
@@ -1296,6 +1425,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria._git_arguments_allowed(  # noqa: SLF001
                 (
                     "diff-tree",
+                    "-r",
                     "--name-status",
                     "-z",
                     "--no-renames",
@@ -1659,6 +1789,104 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             self.assertEqual(
                 [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
             )
+
+    def test_explicit_lineage_recurses_real_git_tree_deltas(self) -> None:
+        c2_placeholder = "b" * 40
+        c3_placeholder = "c" * 40
+        recursive_arguments = (
+            "diff-tree",
+            "-r",
+            "--no-commit-id",
+            "--name-status",
+            "-z",
+            "--no-renames",
+            c2_placeholder,
+            c3_placeholder,
+            "--",
+        )
+        with self.subTest(case="fixed-argv"):
+            self.assertTrue(
+                ria._git_arguments_allowed(recursive_arguments)  # noqa: SLF001
+            )
+            self.assertFalse(
+                ria._git_arguments_allowed(  # noqa: SLF001
+                    tuple(argument for argument in recursive_arguments if argument != "-r")
+                )
+            )
+
+        contract_path = ria.DEFAULT_CONTRACT_PATH
+        overlay_path = Path("docs/90.references/audits/README.md")
+        extra_path = Path("docs/unrelated.md")
+        contract_file = self.root / contract_path
+        overlay_file = self.root / overlay_path
+        overlay_file.parent.mkdir(parents=True, exist_ok=True)
+        contract_file.write_bytes(b"C2 contract\n")
+        overlay_file.write_bytes(b"C2 overlay\n")
+        self._git_in(self.root, "init", "--quiet")
+        self._git_in(self.root, "config", "--local", "user.name", "RIA Test")
+        self._git_in(
+            self.root,
+            "config",
+            "--local",
+            "user.email",
+            "ria-test@example.invalid",
+        )
+        self._git_in(
+            self.root,
+            "add",
+            "--",
+            contract_path.as_posix(),
+            overlay_path.as_posix(),
+        )
+        self._git_in(self.root, "commit", "--quiet", "-m", "C2")
+        c2 = self._git_in(self.root, "rev-parse", "HEAD").strip().decode("ascii")
+
+        def child_commit(
+            message: str, changes: tuple[tuple[Path, bytes], ...]
+        ) -> str:
+            self._git_in(self.root, "checkout", "--detach", "--quiet", c2)
+            paths: list[str] = []
+            for path, payload in changes:
+                target = self.root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(payload)
+                paths.append(path.as_posix())
+            self._git_in(self.root, "add", "--", *paths)
+            self._git_in(self.root, "commit", "--quiet", "-m", message)
+            return self._git_in(self.root, "rev-parse", "HEAD").strip().decode(
+                "ascii"
+            )
+
+        exact = child_commit(
+            "C3 exact", ((contract_path, b"C3 exact contract\n"),)
+        )
+        extra = child_commit(
+            "C3 extra",
+            (
+                (contract_path, b"C3 extra contract\n"),
+                (extra_path, b"unrelated\n"),
+            ),
+        )
+        overlay = child_commit(
+            "C3 overlay",
+            (
+                (contract_path, b"C3 overlay contract\n"),
+                (overlay_path, b"allowed overlay also changed\n"),
+            ),
+        )
+        contract = self._settled_contract("git-sha1:" + c2)
+        cases = (("exact", exact, []), ("extra", extra, ["RIA-TRANSITION"]), ("overlay", overlay, ["RIA-TRANSITION"]))
+        for name, c3, expected in cases:
+            with self.subTest(case=name):
+                self.assertEqual(
+                    [
+                        finding.rule_id
+                        for finding in ria.validate_explicit_commit_lineage(
+                            self.root, contract, "git-sha1:" + c3
+                        )
+                    ],
+                    expected,
+                )
 
     def test_proposed_stage_zero_authority_is_required(self) -> None:
         self.assertTrue(callable(ria.read_proposed_regular_file))

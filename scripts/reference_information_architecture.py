@@ -339,12 +339,19 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
     if arguments == ("rev-parse", "--verify", "HEAD"):
         return True
     if (
-        len(arguments) == 8
-        and arguments[:5]
-        == ("diff-tree", "--no-commit-id", "--name-status", "-z", "--no-renames")
-        and OID_PATTERN.fullmatch(arguments[5]) is not None
+        len(arguments) == 9
+        and arguments[:6]
+        == (
+            "diff-tree",
+            "-r",
+            "--no-commit-id",
+            "--name-status",
+            "-z",
+            "--no-renames",
+        )
         and OID_PATTERN.fullmatch(arguments[6]) is not None
-        and arguments[7:] == ("--",)
+        and OID_PATTERN.fullmatch(arguments[7]) is not None
+        and arguments[8:] == ("--",)
     ):
         return True
     return bool(
@@ -646,12 +653,22 @@ def _validate_schema_document(
         )
 
 
-def _validate_schema(root: Path, contract: dict[str, object], contract_path: Path) -> None:
-    schema = _load_json(
-        root,
-        contract_path.with_name("reference-information-architecture.schema.json"),
-        field="$schema",
+def _validate_schema(
+    root: Path,
+    contract: dict[str, object],
+    contract_path: Path,
+    runner: GitRunner | None = None,
+) -> None:
+    schema_path = contract_path.with_name(
+        "reference-information-architecture.schema.json"
     )
+    try:
+        payload = read_proposed_regular_file(root, schema_path, runner)
+    except (ContractError, _GitError) as error:
+        raise ContractError(
+            "RIA-CONTRACT", "$schema", "proposed schema authority is unavailable"
+        ) from error
+    schema = _decode_json_bytes(payload, field="$schema")
     _validate_schema_document(contract, schema)
 
 
@@ -848,14 +865,38 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
             outputs.add(output)
 
 
-def load_contract(root: Path, contract_path: Path) -> dict[str, object]:
-    """Load one closed contract through no-follow regular-file boundaries."""
+def load_contract(
+    root: Path,
+    contract_path: Path,
+    *,
+    runner: GitRunner | None = None,
+) -> dict[str, object]:
+    """Load a contract whose schema has exact proposed index authority."""
 
     root = root.absolute()
     relative = _path_under_root(root, contract_path, field="contract")
     contract = _load_json(root, relative, field="contract")
     _validate_path_fields(contract)
-    _validate_schema(root, contract, relative)
+    _validate_schema(root, contract, relative, runner)
+    _validate_contract_boundaries(contract)
+    return contract
+
+
+def _load_contract_for_self_test(
+    root: Path, contract_path: Path
+) -> dict[str, object]:
+    """Load isolated fixture files without claiming proposed Git authority."""
+
+    root = root.absolute()
+    relative = _path_under_root(root, contract_path, field="contract")
+    contract = _load_json(root, relative, field="contract")
+    _validate_path_fields(contract)
+    schema = _load_json(
+        root,
+        relative.with_name("reference-information-architecture.schema.json"),
+        field="$schema",
+    )
+    _validate_schema_document(contract, schema)
     _validate_contract_boundaries(contract)
     return contract
 
@@ -1562,6 +1603,7 @@ def validate_explicit_commit_lineage(
                 root,
                 (
                     "diff-tree",
+                    "-r",
                     "--no-commit-id",
                     "--name-status",
                     "-z",
@@ -1751,7 +1793,7 @@ def run_self_test() -> None:
         schema_path.write_bytes(_canonical_schema_bytes())
         contract = _self_test_contract()
         contract_path.write_text(json.dumps(contract), encoding="utf-8")
-        loaded = load_contract(root, contract_path)
+        loaded = _load_contract_for_self_test(root, contract_path)
         if loaded != contract:
             raise AssertionError("closed v2 contract did not round trip")
         for mutation in (
@@ -1768,7 +1810,7 @@ def run_self_test() -> None:
         ):
             contract_path.write_text(json.dumps(mutation), encoding="utf-8")
             try:
-                load_contract(root, contract_path)
+                _load_contract_for_self_test(root, contract_path)
             except ContractError:
                 continue
             raise AssertionError("closed schema mutation was accepted")
