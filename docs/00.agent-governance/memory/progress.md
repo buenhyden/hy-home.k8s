@@ -14,7 +14,7 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-07-19
 - **Layer**: backend, architecture, documentation lifecycle
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #archive #lifecycle #spec-036 #adr-0018 #repo-static
 
 #### Progress
@@ -39,13 +39,33 @@ inventory stays in `scripts/README.md`.
 
 #### Evidence
 
-- RED and GREEN commands plus full validation-lane results are recorded in
-  `.superpowers/sdd/task-whole-branch-archive-fix-report.md`.
+- Implementation commit
+  `21fc5b8054dd975b7269e0ff172d9f10aa52588d` was observed with clean status.
+  This evidence-update commit cannot identify its own content-addressed SHA and
+  remains unidentified and unclaimed.
+- Fixed-snapshot independent reviews returned exact verdicts
+  `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The latter followed a RED
+  index=`draft`/worktree=`done` false-PASS reproduction and confirmed that exact
+  stage-zero blob authority closes it.
+- Pre-commit evidence passed 81 focused archive/lifecycle tests, changed-file
+  hooks, staged lifecycle, ACER closure `13/29` with findings `0`, strict
+  registry `436`, strict Markdown `0`, links, Ruff, compile, archive cutover
+  `43/362/43`, and the full repository aggregate.
+- Clean-tree postflight passed explicit-ref lifecycle for
+  `efb108acb6084645b38ade86064ceb97aca5fa13..21fc5b8054dd975b7269e0ff172d9f10aa52588d`,
+  81 focused tests in 381.701 seconds, archive cutover `43/362/43`, ACER closure
+  `13/29` with findings `0`, and the full repository aggregate.
+- RED/GREEN details and validation-lane results are retained in ignored local
+  report `.superpowers/sdd/task-whole-branch-archive-fix-report.md`.
 
-#### Handoff
+#### Safety Boundary and Handoff
 
-- Complete repository-static validation, independent parent review, and
-  no-stage/no-commit handoff. Remote/live evidence remains `DEFER`.
+- Remote/live readiness and CI/FIFO PASS remain unclaimed; no workflow,
+  pre-commit scanner, Spec 038-040, archive payload/index, or ignored-workspace
+  surface changed.
+- Roll back the implementation with a scoped revert of
+  `21fc5b8054dd975b7269e0ff172d9f10aa52588d`; revert this evidence update
+  separately once its commit identity exists.
 
 ### 2026-07-19 - ACER-006 terminal lifecycle closure
 
