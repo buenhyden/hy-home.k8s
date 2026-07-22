@@ -144,7 +144,12 @@ FIXTURE_GOVERNANCE_PATHS = (
     PurePosixPath("docs/00.agent-governance/current-alpha.md"),
     PurePosixPath("docs/00.agent-governance/current-beta.md"),
 )
-STATUS_MAP = {"active": "active", "done": "done", "archived": "archived"}
+STATUS_MAP = {
+    "draft": "draft",
+    "active": "active",
+    "done": "done",
+    "archived": "archived",
+}
 OWNER_EXCLUSIONS = (
     re.compile(
         r"^docs/90\.references/(?:research|audits)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/"
