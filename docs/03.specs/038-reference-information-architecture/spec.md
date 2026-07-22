@@ -25,9 +25,11 @@ from reviewed activation and rollback parent
 51-Task inventory were captured at evidence baseline
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; prerequisite commits changed no
 Stage 04 document, so the proposed pair raises that corpus to 50 Plans and 52
-Tasks. The activation changes execution lineage only and does not claim that
-any RIA implementation package, activation commit, remote, or live result
-exists.
+Tasks. Activation commit `cb0c1f6` completed RIA-000. RIA-001 completed through
+reviewed commits `68e46fc`, `566c74f`, and
+`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`; its final requirements and quality
+reviews were clean. RIA-002 is In Progress at reviewed design correction only:
+its implementation RED has not begun, and no remote or live result is claimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -66,12 +68,34 @@ reviewed RIA-001 head
 `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`.
 
 The contract never supplies Current member paths, per-member digests, or
-pointers. Before deriving any Current path or digest, validation requires the
-baseline commit's registry `profileId`, pack IDs, member lists, and
-`allowedStates` to equal the proposed registry exactly and requires each
-registry-derived pack README and member to be an available tracked regular file
-at both sides. Fact-bearing pack READMEs remain protected outside exact
-table-cell or link-destination navigation projections.
+pointers. The validator first reads the exact constant registry path
+`docs/99.templates/support/document-profiles.json` through a bounded stage-zero
+index reader. For that path and every later registry-derived exact safe path it
+runs only `/usr/bin/git ls-files -z --stage -- <safe-path>`, requires exactly one
+stage-0 entry in regular mode `100644` or `100755`, reads that fixed blob, and
+requires a bounded `O_NOFOLLOW` regular worktree read to equal the index bytes.
+Missing, deleted-plus-untracked, unmerged stage 1/2/3, symlink `120000`,
+submodule `160000`, duplicate, unsafe-path, or index/worktree-drift inputs fail
+before semantic comparison. Proposed authority is therefore the verified
+stage-zero blob, never an untracked or worktree-only replacement.
+
+Only after the registry itself passes that boundary may validation derive pack
+README and member paths or digests. The baseline commit's registry `profileId`,
+pack IDs, member lists, and `allowedStates` must equal the proposed registry
+exactly, and every derived README/member must exist as a regular blob at the
+baseline and as the equal verified proposed index/worktree object. Fact-bearing
+pack READMEs remain protected outside exact table-cell or link-destination
+navigation projections.
+
+The code-owned immutable Current root is
+`git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`. The exact two-key map always
+pins the audit pack to that root. Audit admits no transition or settlement.
+Research has only three valid states: root (root pin, no records), open (root
+pin, exactly one `ria-007-postflight-ledger` transition from root and no
+settlement), or settled (no open transition, map pin equal to literal C2, and
+exactly one matching durable settlement whose prior open-C2 proof validates).
+Every other map value, record cardinality, arbitrary or forged root, audit
+transition, and reused ID fails the schema and code-owned state machine.
 
 Top-level `baselineTransitions` and `baselineSettlements` provide the only
 bounded way to advance a Current baseline. Normally the transition array is
@@ -88,13 +112,34 @@ transition remains open.
 
 A settlement-only commit changes no protected content, advances the affected
 map value to the literal preceding transition commit, removes the open record,
-and appends a durable settlement proof naming that literal commit. Through the
-same fixed Git object reader, validation reads the named commit's exact contract
-and blobs and proves that it contained the matching open transition, retained
-the prior baseline and registry, contained the exact target bytes, and left all
-non-target members unchanged. Direct baseline jumps, missing or mismatched
-proof, clearing without proof, and transition-ID reuse fail closed with
-`RIA-TRANSITION`.
+and appends a durable settlement proof naming that literal C2 commit.
+
+Staged C3 validation is selected only by `--staged`. The validator resolves the
+current branch commit through one fixed internal argv,
+`/usr/bin/git rev-parse --verify HEAD`, parses exactly one lowercase commit OID,
+verifies its type, and requires it to equal settlement `transitionCommit` C2.
+`HEAD` is never contract, baseline, transition, or caller-supplied authority;
+no caller or contract revision expression is accepted. A bounded fixed
+`diff-index --cached --name-status -z --no-renames <C2-oid> --` comparison must
+show that the proposed index differs from C2 only at the exact contract path.
+The verified contract worktree bytes must equal that index blob.
+
+Post-C3 durable evidence uses mutually exclusive explicit-ref mode
+`--commit git-sha1:<C3>`. It parses that literal commit object through the fixed
+Git reader, requires exactly one parent equal to literal C2, and validates the
+C3 contract/tree/blob rather than current index or worktree bytes. Detached or
+non-parent C3, zero-parent, and merge-parent commits fail. Normal mode validates
+the current verified index/worktree state but proves no commit lineage; staged
+mode proves proposed C3 against current branch parent C2; explicit-ref mode
+proves the immutable post-C3 commit chain. Only explicit-ref settled validation
+can supply terminal post-commit lineage evidence.
+
+When a settlement is present, each applicable mode uses the same fixed Git
+object reader to prove that C2 contained the matching open transition, retained
+the root baseline and equal registry, contained the exact target bytes, and left
+all non-target members unchanged. Root/open validation does not invent a C2.
+Direct baseline jumps, missing or mismatched proof, clearing without proof,
+arbitrary pins, and transition-ID reuse fail closed with `RIA-TRANSITION`.
 
 Duplicate analysis compares normalized scope, authority claim, source coverage,
 generation owner, and current state. It consolidates only duplicate current
@@ -141,6 +186,8 @@ arbitrary universal expiration date.
 - A Current baseline cannot advance merely because proposed bytes are valid;
   only the one-member open-transition commit followed by its contract-only
   settlement proof can advance it.
+- A clean normal-mode result is byte/state evidence, not C3 parent evidence;
+  terminal lineage requires literal `--commit git-sha1:<C3>` explicit-ref mode.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -159,6 +206,8 @@ arbitrary universal expiration date.
 - Run Current-pack, member, index, and observation-SHA checks.
 - Run schema-v2 baseline-map, registry-equivalence, transition, settlement,
   and terminal `--require-settled-baselines` checks.
+- Run proposed index/worktree authority tests and staged/explicit-ref settlement
+  lineage tests, including detached, non-parent, and merge-parent commits.
 - Run reference profile, source/freshness, and duplicate-owner validation.
 - Regenerate llm-wiki and require no diff.
 - Run link, repository quality, Markdown, and all-files pre-commit checks.
@@ -169,7 +218,7 @@ arbitrary universal expiration date.
 
 - **VAL-RIA-001**: Audit and research Current pointers are unique and complete.
 - **VAL-RIA-002**: Historical and Resolved observation bodies remain unchanged.
-- **VAL-RIA-003**: HEAD closure updates only the remediation overlay and
+- **VAL-RIA-003**: Current closure updates only the remediation overlay and
   affected indexes, or uses the one-shot ledger transition and durable
   settlement proof without weakening any other Current member.
 - **VAL-RIA-004**: Data references name source evidence and refresh triggers.
@@ -177,7 +226,7 @@ arbitrary universal expiration date.
 - **VAL-RIA-006**: Duplicate Current owners, generated/manual duplicates, and
   active-policy copies under references are zero.
 
-### Activation Evidence
+### Execution Evidence
 
 The Plan-only staged RED exited `1` with `LIFECYCLE-CREATE`: the lifecycle
 validator expected exactly one active Plan and one active Task and observed
@@ -203,17 +252,28 @@ formatter change. The first re-review returned `REQUIREMENTS COMPLIANT` and
 `QUALITY CHANGES REQUIRED`; the proposal now closes the anchored `git-sha1:`
 schema/parser, immediate parent `fdc86ee`, and fixed-argv bounded Git object
 reader findings. Final focused re-reviews returned `REQUIREMENTS COMPLIANT`
-and `QUALITY APPROVED` with no findings. Activation commit and postflight
-remain pending.
-RIA-001 through RIA-007 remain at their currently governed Task states. Before
+and `QUALITY APPROVED` with no findings. Activation commit `cb0c1f6` completed
+RIA-000.
+
+RIA-001 completed through `68e46fc`, `566c74f`, and `15bba3d`. Final focused
+reviews returned exact verdicts `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`, findings none. Focused unit, CLI self-test/production, and
+Draft 2020-12 schema/instance validation passed. Historical raw hook output,
+CI, remote, and live execution are not reconstructed or claimed here.
+
+Before
 RIA-002 RED or implementation began, preflight at reviewed RIA-001 head
 `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` proved the original single
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47` baseline impossible for Current
 research: activation commit `cb0c1f6` changed the protected migration ledger's
 inventory boundary from 444 to 446 outside every allowed projection. No
-RIA-002 RED, implementation, review, or result occurred. This design correction
-therefore separates Historical snapshot evidence from Current baselines and
-adds the bounded transition/settlement chain; it does not alter Current pack
+RIA-002 RED or implementation occurred. Design correction commit `08cf17d`
+received `QUALITY CHANGES REQUIRED` with four Important findings. This
+follow-up proposal closes settlement lineage, proposed tracked authority, the
+root state machine, and execution-status truth; follow-up approval is not yet
+claimed. RIA-002 is In Progress at design review only. It separates Historical
+snapshot evidence from Current baselines and adds the bounded
+transition/settlement chain; it does not alter Current pack
 membership, observation bodies, CI/FIFO, provider, remote, live, credential,
 secret, or ignored-workspace state.
 

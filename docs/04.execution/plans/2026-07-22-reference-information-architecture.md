@@ -46,8 +46,9 @@ the activation commit and rollback parent. The Plan-only RED and 49-Plan /
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; prerequisite commits `5ed6de6`
 and `fdc86ee` changed no Stage 04 document, so the active pair still raises the
 proposed corpus to 50 Plans and 52 Tasks. The activation changes lifecycle
-lineage only; RIA-001 through RIA-007 remain unexecuted until their own
-test-first evidence, review verdicts, and logical commits exist.
+lineage only. Activation commit `cb0c1f6` completed RIA-000. RIA-001 completed
+through reviewed commits `68e46fc`, `566c74f`, and `15bba3d`; RIA-002 is In
+Progress at reviewed design correction, with implementation RED not begun.
 
 ## Context
 
@@ -72,8 +73,8 @@ changed the Current research migration ledger's inventory boundary from 444 to
 446 outside every declared projection. The reviewed RIA-001 head
 `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` is therefore the initial Current
 audit and research baseline; `8fb9821` remains exclusively Historical snapshot
-authority. RIA-002 stays Queued and unexecuted until this correction is
-implemented test-first.
+authority. RIA-002 is In Progress at design correction only and remains
+unimplemented until its focused RED is directly observed.
 
 ### Global Constraints
 
@@ -92,6 +93,20 @@ implemented test-first.
   `--require-settled-baselines` validation to reject it. A transition and its
   durable `baselineSettlements` proof never become registry, baseline, member,
   or general digest authority.
+- Define immutable code-owned Current root
+  `git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`. Audit remains permanently
+  at root with no transition/settlement. Research permits only root, the exact
+  one-shot open transition from root, or one settled C2 proof; reject every
+  other pin, record cardinality, forged root, or reused ID.
+- Treat the exact constant registry path and every derived Current path as
+  proposed tracked authority only after a fixed bounded stage-zero index read
+  and byte-equal no-follow worktree read. Reject deletes/untracked replacements,
+  unmerged entries, symlink/submodule modes, and index/worktree drift.
+- Keep CLI evidence modes distinct: normal mode proves verified proposed bytes
+  and state only; `--staged` proves proposed C3 against the fixed internal
+  current-HEAD resolution of C2; `--commit git-sha1:<C3>` proves the immutable
+  post-C3 single-parent chain. Contract/caller revision expressions remain
+  forbidden.
 - Do not rewrite dated Historical, Resolved, or Current observation facts to
   make later implementation appear complete.
 - Permit Current closure changes only in the declared remediation overlay and
@@ -122,8 +137,8 @@ implemented test-first.
 | --- | --- |
 | `docs/90.references/data/reference-information-architecture.schema.json` | Closed schema-v2 contract for separate Historical guards, exact Current baseline map, one-shot transitions, durable settlements, section/cell projection rules, source/freshness records, generator relations, and pair-scoped duplicate exceptions. |
 | `docs/90.references/data/reference-information-architecture.json` | Repo-local Spec 038 contract instance; pins exact Current pack IDs by map key and commits by value without repeating members, paths, digests, states, or pointers. |
-| `scripts/reference_information_architecture.py` | Pure parsing, normalization, digest, Git-object, and finding functions shared by CLI and tests. |
-| `scripts/validate-reference-information-architecture.py` | Thin CLI with `--root`, `--contract`, and `--self-test`; prints stable rule IDs and returns 0/1/2. |
+| `scripts/reference_information_architecture.py` | Pure parsing, normalization, stage-zero index/worktree authority, root-FSM, digest, Git-object, and finding functions shared by CLI and tests. |
+| `scripts/validate-reference-information-architecture.py` | Thin CLI with normal mode, `--staged`, anchored `--commit git-sha1:<oid>`, `--require-settled-baselines`, `--root`, `--contract`, and `--self-test`; prints stable rule IDs and returns 0/1/2. |
 | `tests/test_reference_information_architecture.py` | Focused positive, hostile, and regression tests for all six Spec criteria and input boundaries. |
 | `tests/fixtures/reference-information-architecture/` | Minimal fixture contract/corpus trees for deterministic negative cases; no copied production corpus. |
 | `scripts/validate-repo-quality-gates.sh` | Aggregate invocation of self-test and production validation. |
@@ -173,9 +188,9 @@ implemented test-first.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| RIA-000 | Atomic reciprocal planning activation | None | Plan-only lifecycle RED observed at evidence baseline `8fb9821`; reviewed prerequisite head `fdc86ee` exists | Exact seven-file staged lifecycle GREEN, complete commit-level QA, independent planning re-reviews, rollback parent `fdc86ee`, and activation commit |
-| RIA-001 | Closed reference contract, safe loader, and diagnostic interface | RIA-000 | Reviewed activation commit exists | Draft 2020-12 schema/instance validation, contract negative fixtures, focused CLI self-test, complete commit gate, and reviewed logical commit |
-| RIA-002 | Audit/research immutability, Current baseline, transition, settlement, and projection-bounded overlay guard | RIA-001 | Design-correction preflight records the `8fb9821` versus `cb0c1f6` Current-ledger blocker; no RED or implementation has run | Schema-v2, Historical/Resolved/Current, registry-equivalence, transition/settlement, fixed-Git-runner, and projection fixtures pass; production transitions are empty; complete commit gate and review pass |
+| RIA-000 | Atomic reciprocal planning activation | None | Completed: Plan-only lifecycle RED and reviewed prerequisite head `fdc86ee` | Activation commit `cb0c1f6`, exact seven-file scope, lifecycle/QA/review evidence |
+| RIA-001 | Closed reference contract, safe loader, and diagnostic interface | RIA-000 | Completed from activation commit `cb0c1f6` | Reviewed commits `68e46fc`, `566c74f`, `15bba3d`; focused/schema/CLI PASS and clean final requirements/quality verdicts |
+| RIA-002 | Audit/research immutability, Current baseline FSM, transition, settlement, and projection-bounded overlay guard | RIA-001 | In Progress: blocker and design review observed; four Important design findings incorporated by this follow-up proposal | Implementation RED/GREEN, schema-v2/index/FSM/lineage hostile tests, production empty transition, commit gate, and clean follow-up review remain required |
 | RIA-003 | Data source, adopted/rejected scope, and freshness validation | RIA-002 | Observation guards are GREEN | Missing/invalid evidence, scope, date, and trigger fixtures fail; production data inventory passes the complete commit gate and review |
 | RIA-004 | Generated ownership and zero-drift validation | RIA-003 | Source/freshness relation is GREEN | Generator collision, command, input/output, stale byte, and owner-link fixtures fail; production generator relation passes the complete commit gate and review |
 | RIA-005 | Duplicate Current/generated/manual/policy-owner validation | RIA-004 | Generated relation is GREEN | Duplicate claims/copies and exception-reuse fixtures fail; production Stage 90 has zero findings after the complete commit gate and review |
@@ -248,10 +263,11 @@ implemented test-first.
   returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no Critical,
   Important, or Minor findings.
 
-- [ ] **Step 6: Commit and verify the activation.** Commit exactly the seven
+- [x] **Step 6: Commit and verify the activation.** Commit exactly the seven
   files with `docs(execution): activate reference information architecture`,
   run explicit-ref lifecycle from `fdc86ee` to the new commit, rerun focused
   document gates, and require clean status before dispatching RIA-001.
+  Activation commit `cb0c1f6` is observed with the exact seven-file scope.
 
 ### Task 1: RIA-001 — Closed contract and validator interface
 
@@ -275,7 +291,7 @@ implemented test-first.
   `validate_reference_architecture(root: Path, contract: Mapping[str, object]) -> list[Finding]`,
   and CLI exits `0` clean, `1` findings, `2` configuration/input failure.
 
-- [ ] **Step 1: Write the closed-schema RED fixtures.** Add tests that reject
+- [x] **Step 1: Write the closed-schema RED fixtures.** Add tests that reject
   duplicate JSON keys, unknown top-level keys, schema versions other than `1`,
   absolute/parent/dot/empty path segments, paths outside declared roots,
   duplicate pack IDs, output paths, and mutable paths, symlinks, non-regular
@@ -309,12 +325,12 @@ implemented test-first.
   and whitespace. The encoded string is contract data; Git receives only the
   exact 40 lowercase hexadecimal characters after one validated prefix.
 
-- [ ] **Step 2: Run the focused RED.** Run
+- [x] **Step 2: Run the focused RED.** Run
   `python3 -m unittest tests/test_reference_information_architecture.py -v`.
   Expect import or target-existence failures because the module, CLI, schema,
   and contract do not exist; record only the observed diagnostic in the Task.
 
-- [ ] **Step 3: Implement the minimum safe loader and closed schema.** Use a
+- [x] **Step 3: Implement the minimum safe loader and closed schema.** Use a
   duplicate-key-rejecting `json.loads(..., object_pairs_hook=...)`, `Path.lstat`,
   an allowlisted repository-relative POSIX path parser, and no-follow regular
   file reads. Implement
@@ -326,7 +342,7 @@ implemented test-first.
   `RIA-GENERATOR`, and `RIA-DUPLICATE`; diagnostics contain paths and rule
   facts, never file bodies.
 
-- [ ] **Step 4: Implement CLI self-test and the production contract skeleton.**
+- [x] **Step 4: Implement CLI self-test and the production contract skeleton.**
   `--self-test` runs the fixture matrix without reading the production corpus;
   normal mode validates the contract instance. The v1 bootstrap references the
   two registry pack IDs but does not copy their member lists, report paths,
@@ -336,7 +352,7 @@ implemented test-first.
   malformed-prefix case through the same production parser. RIA-002 replaces
   this bootstrap Current shape with required schema version 2.
 
-- [ ] **Step 5: Run GREEN and contract checks.** Run:
+- [x] **Step 5: Run GREEN and contract checks.** Run:
 
   ```bash
   python3 -m unittest tests/test_reference_information_architecture.py -v
@@ -349,12 +365,18 @@ implemented test-first.
   only the RIA-002/RIA-003 entries intentionally not populated; it must not
   traceback, traverse ignored paths, or claim those criteria PASS.
 
-- [ ] **Step 6: Run the RIA-001 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 6: Run the RIA-001 commit gate, review, and commit.** Run pre-commit
   for the seven RIA-001 files, full all-files pre-commit, formatter-diff
   inspection, affected-hook rerun, and both diff checks exactly as required by
   Global Constraints. Obtain requirements compliance and code-quality approval,
   remediate findings, rerun the gate, then commit with
   `feat(references): add reference architecture contract`.
+
+  RIA-001 completed through `68e46fc`, `566c74f`, and `15bba3d`. Final reviews
+  returned exact verdicts `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`,
+  findings none. Focused unit, CLI self-test/production, and canonical Draft
+  2020-12 schema/instance validation passed. Raw historical hook output is not
+  reconstructed here, and CI/remote/live PASS is not claimed.
 
 ### Task 2: RIA-002 — Immutable observation and overlay guard
 
@@ -397,6 +419,15 @@ implemented test-first.
   `8fb9821` Current research baseline fails on the ledger's 444-to-446 protected
   change and that `15bba3d` passes. Add stable `RIA-TRANSITION` diagnostics and
   require value-free path/rule facts without contract or blob bodies.
+
+  Encode the code-owned immutable root
+  `git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` and a closed schema/code FSM.
+  Audit must remain at root with no transition or settlement. Research permits
+  only: root with no records; open with root pin, exactly one
+  `ria-007-postflight-ledger` transition from root, and no settlement; or
+  settled with no open transition, map value equal to literal C2, and exactly
+  one matching durable settlement. Reject every other map value/cardinality,
+  arbitrary pin, forged root, audit transition, or reused transition ID.
 
 - [ ] **Step 2: Add immutable-body and projection RED tests.** Create fixture
   repositories where a Historical/Resolved audit report, Historical research
@@ -458,8 +489,13 @@ implemented test-first.
   non-zero exit, timeout, output caps, malformed/multiple `ls-tree` records,
   path/mode/type/OID mismatch, oversized/non-canonical size, short/extra blob,
   inherited hostile Git environment, shell use, and argv outside the allowlist.
-  Expect failures because v2 baseline/transition validation is absent. Record
-  no implementation result from the earlier preflight blocker.
+  Add proposed-authority cases for staged delete plus untracked replacement,
+  unmerged stages, symlink and submodule modes, and index/worktree byte drift.
+  Add staged-settlement and explicit-ref cases for internal-HEAD/C2 mismatch,
+  proposed index drift outside the contract, detached/non-parent C3, zero-parent
+  C3, and merge-parent C3. Expect failures because v2 index/FSM/lineage
+  validation is absent. Record no implementation result from the earlier
+  preflight blocker.
 
 - [ ] **Step 5: Implement the fixed Git runner and baseline comparison.** Pass
   every contract commit through `parse_git_sha1()` and give Git only the
@@ -473,14 +509,21 @@ implemented test-first.
   only these literal argv shapes:
 
   ```text
+  /usr/bin/git ls-files -z --stage -- <safe-path>
   /usr/bin/git cat-file -t <commit-oid>
+  /usr/bin/git cat-file commit <commit-oid>
   /usr/bin/git ls-tree -z --full-tree <commit-oid> -- <safe-path>
   /usr/bin/git cat-file -t <blob-oid>
   /usr/bin/git cat-file -s <blob-oid>
   /usr/bin/git cat-file blob <blob-oid>
+  /usr/bin/git rev-parse --verify HEAD
+  /usr/bin/git diff-index --cached --name-status -z --no-renames <commit-oid> --
   ```
 
-  Require `commit\n`; parse exactly one NUL-terminated regular-blob tree record
+  The `rev-parse` argv is an internal staged-settlement constant only; `HEAD`
+  never comes from contract/CLI data and never becomes a baseline or transition
+  authority. All other commit arguments are parsed literal OIDs. Require
+  `commit\n`; parse exactly one NUL-terminated regular-blob tree record
   whose returned path equals the requested safe path; validate the blob OID as
   40 lowercase hex; require `blob\n`; parse a canonical decimal size no larger
   than `2_000_000`; cap metadata stdout at 65,536 bytes and every stderr at
@@ -489,12 +532,18 @@ implemented test-first.
   returned blob length to equal the declared size. Treat missing executable,
   timeout, non-zero exit, output overflow, malformed/multiple tree records,
   mismatched path, non-blob/symlink mode, malformed OID, non-canonical or
-  oversized size, and short/extra bytes as value-free findings; never use
-  `HEAD`, revision expressions, a shell, inherited hostile Git variables, or
-  lazy/network fetch. Exercise the complete hostile matrix through the
-  production runner. Compare registries first, derive Current paths/digests
-  second, then compare exact proposed tracked regular files. Mask only declared
-  cells or one link destination; never infer a baseline from worktree bytes.
+  oversized size, and short/extra bytes as value-free findings; never accept a
+  caller/contract revision expression, shell, inherited hostile Git variables,
+  or lazy/network fetch.
+
+  Read the exact constant registry path first with `ls-files`. Require exactly
+  one stage-0 record, returned path equality, mode `100644` or `100755`, and no
+  stage 1/2/3, symlink `120000`, submodule `160000`, missing, or duplicate
+  record. Read its fixed blob, then require bounded `O_NOFOLLOW` regular
+  worktree bytes to equal it. Apply the same boundary to every registry-derived
+  exact safe path. Compare registries first, derive Current paths/digests second,
+  then compare proposed index authority; never infer authority from an
+  untracked or worktree-only file. Mask only declared cells or one destination.
 
 - [ ] **Step 6: Implement one-shot transition and durable settlement checks.**
   Validate exact candidate bytes while the active map remains at its old pin.
@@ -506,6 +555,17 @@ implemented test-first.
   proof. Read that commit's contract, registry, target, and non-target blobs
   through the fixed runner. No hidden or detached candidate commit is allowed.
 
+  Keep evidence modes mutually exclusive. Normal mode has no mode flag and
+  validates verified index/worktree bytes and FSM state without claiming commit
+  lineage. `--staged` is the only C3 preflight: resolve current branch HEAD with
+  the one fixed internal argv, require its OID equals settlement
+  `transitionCommit` C2, and require bounded `diff-index` output to contain only
+  one modified exact contract path relative to C2. `--commit git-sha1:<C3>` is
+  the only post-C3 explicit-ref mode: parse the literal C3 commit object, require
+  exactly one parent equal to C2, and validate the C3 contract/tree/blob. Reject
+  detached/non-parent, zero-parent, and merge-parent C3. Only this explicit mode
+  supplies durable terminal post-commit lineage evidence.
+
 - [ ] **Step 7: Populate production guards without member duplication.** Keep
   Historical source commit
   `git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47` only for the five named
@@ -513,14 +573,17 @@ implemented test-first.
   to `git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`, leave production
   `baselineTransitions` and `baselineSettlements` empty, and declare only the
   Step 2 projections. Derive all Current READMEs, members, paths, states, and
-  digests; declare no mutable README path.
+  digests; declare no mutable README path. Production therefore begins in the
+  exact FSM root state, with audit permanently rooted.
 
 - [ ] **Step 8: Run focused and production GREEN.** Run the full unit module,
   CLI self-test, normal production CLI, production CLI with
   `--require-settled-baselines`, Draft 2020-12 schema/instance validation,
   strict document registry, strict Markdown, and strict cross-links. Expect
   zero snapshot/overlay/transition findings, exact production map equality,
-  empty production transitions, and no protected observation changes.
+  empty production transitions/settlements, root-state equality, and no
+  protected observation changes. Staged and explicit-ref modes are exercised
+  in isolated fixtures; they are not inferred from normal-mode PASS.
 
 - [ ] **Step 9: Run the RIA-002 commit gate, review, and commit.** Run pre-commit
   for the RIA-002 files, full all-files pre-commit, formatter-diff inspection,
@@ -811,25 +874,34 @@ implemented test-first.
   `transitionCommit` C2. Change no registry, ledger, lifecycle, README, or other
   protected content. The validator must read C2's contract and blobs through the
   fixed runner and prove the matching transition, prior baseline/registry
-  equality, exact target bytes, and unchanged non-targets. Run focused direct-
-  jump/settlement/reuse tests, normal and `--require-settled-baselines`
-  production validation, exact contract-only pre-commit, all-files pre-commit,
-  formatter/status inspection, affected-hook reruns, and both diff checks; then
-  commit the reviewed settlement and require clean status.
+  equality, exact target bytes, and unchanged non-targets. Run `--staged` with
+  `--require-settled-baselines`: its fixed internal HEAD resolution must equal
+  literal C2, and the proposed stage-zero index must differ from C2 only by the
+  contract. Run focused direct-jump/settlement/reuse, HEAD/C2 mismatch,
+  out-of-contract index drift, and index/worktree authority tests, plus exact
+  contract-only pre-commit, all-files pre-commit, formatter/status inspection,
+  affected-hook reruns, and both diff checks. Normal mode may additionally
+  prove current bytes/FSM but cannot substitute for staged parent evidence.
+  Then commit the reviewed settlement and require clean status.
 
 - [ ] **Step 9: Verify terminal settlement postflight.** Run explicit-ref
-  lifecycle and all focused/production/generator/strict/aggregate/all-files
-  gates against C3. Require empty open transitions, a durable settlement chain,
-  terminal `--require-settled-baselines` PASS, and clean status. Rollback is
-  C3, then C2, then C1; never roll C2 back while retaining C3's baseline proof.
+  lifecycle and reference validation with exact
+  `--commit git-sha1:<literal-C3> --require-settled-baselines`, then all
+  focused/production/generator/strict/aggregate/all-files gates. Explicit-ref
+  mode must parse the C3 commit object/tree/contract, require exactly one parent
+  equal literal C2, and reject detached/non-parent/zero-parent/merge-parent
+  fixtures. Require empty open transitions, one durable settlement, terminal
+  explicit-ref PASS, and clean status. A normal clean-tree PASS remains current
+  byte/state evidence only. Rollback is C3, then C2, then C1; never roll C2 back
+  while retaining C3's baseline proof.
 
 ## Verification Plan
 
 | Spec criterion | Deterministic evidence | Required result |
 | --- | --- | --- |
-| VAL-RIA-001 | Schema-v2 exact baseline-map, registry equality, Current-pack registry/link, and pack-reference fixtures | Exactly one audit and one research Current pointer; map keys equal registry IDs; contract does not duplicate pack authority |
-| VAL-RIA-002 | Historical source plus per-Current-pack fixed Git/blob/digest fixtures and production observation guards | Historical/Resolved bodies equal `8fb9821`; Current registry/README/member/state authority equals its map pin; `8fb9821` fails and `15bba3d` passes the known ledger case |
-| VAL-RIA-003 | Current projection, open-transition, target/non-target, direct-jump, and settlement-chain fixtures | Only declared projections or the exact one-shot ledger candidate can change; C3 proves C2 and terminal settled validation passes |
+| VAL-RIA-001 | Schema-v2 exact map/root-FSM, stage-zero registry equality, Current-pack registry/link, and pack-reference fixtures | Audit is permanent root; research is exactly root/open/settled; map keys equal registry IDs; no duplicated pack authority |
+| VAL-RIA-002 | Historical source plus fixed index/worktree and per-Current-pack Git/blob/digest fixtures | Historical/Resolved bodies equal `8fb9821`; proposed registry/member authority is one stage-zero regular blob equal to no-follow worktree bytes; `8fb9821` fails and `15bba3d` passes the ledger case |
+| VAL-RIA-003 | Current projection, root/open/settled FSM, staged C3, explicit-ref parent, direct-jump, and hostile index/commit fixtures | Only declared projections or exact one-shot ledger bytes change; staged C3 differs from C2 only at contract; literal C3 has exactly parent C2 and terminal explicit-ref passes |
 | VAL-RIA-004 | Data asset URL/date/adopted/rejected-scope/trigger fixtures and production contract | Every governed data asset has repo evidence, checked source, adopted and rejected scope, and refresh trigger |
 | VAL-RIA-005 | Generator ownership fixtures and `generate-llm-wiki-index.sh --check` | One generator relation and zero output drift |
 | VAL-RIA-006 | Current-claim, generated/manual, and normalized policy-copy fixtures | Zero duplicate owners or copied active policy/procedure paragraphs |
