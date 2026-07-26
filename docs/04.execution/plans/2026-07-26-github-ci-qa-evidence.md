@@ -33,7 +33,7 @@ preserving the same non-regular-file rejection. Keep result semantics in
 `quality-standards.md`; provider shims, PR guidance, and checklists consume that
 authority instead of redefining it.
 
-**Tech Stack:** GitHub Actions YAML, Python 3.12, `pre-commit==4.6.0`,
+**Tech Stack:** GitHub Actions YAML, Python 3.12, `pre-commit==4.6.1`,
 `PyYAML==6.0.3`, `jsonschema==4.26.0`, Python standard-library `unittest`,
 repository shell validators, JSON fixtures, Markdown governance, and Git
 explicit-ref lifecycle validation.
@@ -138,7 +138,7 @@ Actions security validator is the narrow owner for the new seven-day rule.
 
 The version choices use the official package records observed on 2026-07-26:
 
-- [pre-commit 4.6.0](https://pypi.org/project/pre-commit/) is the current
+- [pre-commit 4.6.1](https://pypi.org/project/pre-commit/4.6.1/) is the current
   release and the official pre-commit documentation recommends
   `pre-commit run --all-files` for CI.
 - [PyYAML 6.0.3](https://pypi.org/project/PyYAML/) is the current exact YAML
@@ -428,7 +428,7 @@ def _create_non_regular_fixture(
 
 ```text
 jsonschema==4.26.0
-pre-commit==4.6.0
+pre-commit==4.6.1
 PyYAML==6.0.3
 ```
 
@@ -438,7 +438,7 @@ The technology inventory mirrors, but does not replace, that executable owner:
 ci_python: '3.12'
 ci_python_dependencies:
   jsonschema: '4.26.0'
-  pre-commit: '4.6.0'
+  pre-commit: '4.6.1'
   PyYAML: '6.0.3'
 ```
 
@@ -460,7 +460,7 @@ Core parsing remains network-free:
 ```python
 EXPECTED_PINS = {
     "jsonschema": "4.26.0",
-    "pre-commit": "4.6.0",
+    "pre-commit": "4.6.1",
     "pyyaml": "6.0.3",
 }
 EXPECTED_PYTHON = "3.12"
@@ -496,7 +496,7 @@ def canonical_package_name(value: str) -> str:
       root = self.make_valid_root()
       requirements = root / ".github/requirements/ci-validation.txt"
       requirements.write_text(
-          "jsonschema>=4.26.0\npre-commit==4.6.0\nPyYAML==6.0.3\n",
+          "jsonschema>=4.26.0\npre-commit==4.6.1\nPyYAML==6.0.3\n",
           encoding="utf-8",
       )
       self.assert_rule(root, "CI-PYTHON-PIN")
