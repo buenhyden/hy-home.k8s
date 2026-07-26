@@ -32,6 +32,9 @@ inventory stays in `scripts/README.md`.
 - Recorded the observed remote GitHub Actions failure for its exact SHA and
   designed an explicit pinned Python/pre-commit execution path without
   claiming an unexecuted post-change remote PASS.
+- Main-agent and independent read-only design review found and corrected the
+  remaining all-provider-PASS closure wording in Spec 042/046 and synchronized
+  the renamed agent-design label across active PRD, ARD, and Spec references.
 
 #### Memory
 
@@ -66,9 +69,9 @@ inventory stays in `scripts/README.md`.
 
 #### Handoff
 
-- Next owner: design self-review and user review. After approval, use the
-  canonical planning skill to author Spec 039's Plan/Task and begin
-  Subagent-Driven implementation in the isolated worktree.
+- Next owner: user design review. After approval, invoke the canonical planning
+  skill to author Spec 039's Plan/Task; implementation remains gated until that
+  plan is reviewed.
 
 ### 2026-07-19 - Archive immutability and current-replacement authority repair
 

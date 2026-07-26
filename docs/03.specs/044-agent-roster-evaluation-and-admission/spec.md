@@ -306,7 +306,7 @@ rejection, eval baselines, adjudication, and rollback.
 - **Predecessors**: [Spec 041](../041-stage-00-agent-governance-contract/spec.md),
   [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md), and
   [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)
-- **Agent design**: [Workspace Agent Roster and Projection Design](../041-stage-00-agent-governance-contract/agent-design.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../041-stage-00-agent-governance-contract/agent-design.md)
 - **Successor**: [Spec 045](../045-agent-governance-ci-qa-cutover/spec.md)
 
 ### Lifecycle Traceability

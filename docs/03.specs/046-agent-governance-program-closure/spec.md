@@ -54,8 +54,9 @@ majority voting are not permitted.
 
 1. Specs 038, 039, and 040 each have an allowed done state and committed
    evidence.
-2. Every criterion in Specs 041, 042, 043, 044, and 045 is PASS, with no
-   unresolved required DEFER.
+2. Every required repository-local criterion in Specs 041, 042, 043, 044, and
+   045 is PASS, with no unresolved required repository-local DEFER. Provider
+   result lanes are classified separately under item 7.
 3. The links, status, index, registry, and lineage across PRD 003, ARD 0006,
    ADR 0019, and Specs 041-046 agree.
 4. The canonical machine harness contract and schema are the sole current

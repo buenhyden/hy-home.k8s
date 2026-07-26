@@ -222,7 +222,7 @@ until Spec 046 closes and the lifecycle transition is approved.
 | [REQ-PRD-MET-04](../../01.requirements/003-workspace-agent-governance-platform.md) | Repository static gate | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-PRD-MET-05](../../01.requirements/003-workspace-agent-governance-platform.md) | Template form authority | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md) | 12/48 exact parity | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md) | Three-provider strict canary closure | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md) | Three-provider independent canary classification and readiness evidence | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-PRD-MET-08](../../01.requirements/003-workspace-agent-governance-platform.md) | Contract/schema/provider parity | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-PRD-MET-09](../../01.requirements/003-workspace-agent-governance-platform.md) | Recovery fixture and safe resume | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md) | Eval/model-fitness evidence | [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
@@ -241,4 +241,4 @@ until Spec 046 closes and the lifecycle transition is approved.
   [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md),
   [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md),
   [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Roster and Projection Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)

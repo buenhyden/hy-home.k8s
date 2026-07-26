@@ -176,10 +176,11 @@ secret-free assertion.
   last verified configuration while the contract is corrected.
 - **Canary mutation risk**: abort before execution and redesign the fixture as
   read-only/no-op.
-- **One provider not PASS**: record an owned closure blocker. Repository-local
-  Specs 043–045 may continue after Spec 042's tranche-owned static/canary-
-  harness criteria pass, but Spec 046 and the program cannot close until a
-  later authenticated rerun records PASS.
+- **One provider not PASS**: record an owned provider-runtime-readiness
+  limitation. Repository-local Specs 043–046 may continue and close after Spec
+  042's tranche-owned static/canary-harness criteria pass and the record carries
+  its limitation, owner, and retry trigger. Only that provider's runtime
+  readiness remains open until a later authenticated rerun records PASS.
 
 ## Verification Commands
 
@@ -211,12 +212,15 @@ to exist in this draft.
 - **VAL-PNME-004**: Every role/model candidate declares supported effort,
   fallback, and required Spec 044 fitness evidence.
 - **VAL-PNME-005**: Claude discovery/run canary is executable, redacted, and
-  records one allowed verdict; a non-PASS verdict becomes a closure blocker.
+  records one allowed verdict; a non-PASS verdict keeps Claude runtime readiness
+  open without failing the repository-local recording criterion.
 - **VAL-PNME-006**: Codex discovery/run canary is executable, redacted, and
-  records one allowed verdict; a non-PASS verdict becomes a closure blocker.
+  records one allowed verdict; a non-PASS verdict keeps Codex runtime readiness
+  open without failing the repository-local recording criterion.
 - **VAL-PNME-007**: Gemini discovery/run canary is executable, redacted, and
   records one allowed verdict despite the transition boundary; a non-PASS
-  verdict becomes a closure blocker.
+  verdict keeps Gemini runtime readiness open without failing the
+  repository-local recording criterion.
 - **VAL-PNME-008**: Comparable canary records pass redaction and distinguish
   static, discovery, and authenticated-run evidence.
 - **VAL-PNME-009**: Focused provider validation, strict document checks,

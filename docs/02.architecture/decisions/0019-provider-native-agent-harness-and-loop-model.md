@@ -183,7 +183,7 @@ eval/model fitness, zero stale legacy, clean tree를 모두 증명하기 전에�
 
 - 장점: 문서와 migration 범위가 작다.
 - 기각 이유: historical accepted decision의 absent/DEFER 맥락이 사라지고 contract, loop, eval,
-  strict canary와 replacement gate를 하나의 새 결정으로 추적할 수 없다.
+  provider별 canary readiness와 replacement gate를 하나의 새 결정으로 추적할 수 없다.
 
 ### Provider별 독립 roster와 model policy
 
