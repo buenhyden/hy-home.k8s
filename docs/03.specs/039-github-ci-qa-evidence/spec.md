@@ -54,6 +54,10 @@ for the observed SHA; it is not a result for the current local branch.
   days.
 - Optional, remote, and live evidence uses PASS, SKIP, FAIL, and DEFER
   accurately.
+- The settled 446-row Spec 030 migration ledger is a protected terminal
+  snapshot. Post-settlement Plan/Task admission is governed by the current
+  registry, lifecycle, reciprocal-link, and index contracts, not by appending
+  new rows to that ledger.
 
 ## Core Design
 
@@ -159,6 +163,8 @@ GitHub's workflow, security, and artifact-retention guidance:
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Plan**: [GitHub CI and QA Evidence Plan](../../04.execution/plans/2026-07-26-github-ci-qa-evidence.md)
+- **Task**: [GitHub CI and QA Evidence Task](../../04.execution/tasks/2026-07-26-github-ci-qa-evidence.md)
 
 ### Lifecycle Traceability
 

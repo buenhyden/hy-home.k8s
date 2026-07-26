@@ -66,7 +66,8 @@ inventory stays in `scripts/README.md`.
 #### Evidence
 
 - `python3 scripts/validate-document-contract-registry.py --root . --mode strict`:
-  PASS, 446 governed paths with zero uncovered or ambiguous routes.
+  PASS, 448 governed paths with zero uncovered or ambiguous routes after the
+  Spec 039 Plan/Task activation proposal.
 - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`: PASS,
   zero violations.
 - `python3 scripts/validate-links-and-owners.py --root . --mode strict
@@ -82,23 +83,31 @@ inventory stays in `scripts/README.md`.
 - `git diff --check`: PASS.
 - `bash scripts/validate-repo-quality-gates.sh .`: PASS, including the document
   registry, cross-document, affected-surface, workspace-boundary, archive,
-  agent-semantics, roster-currentness, and reference-IA validators.
+  agent-semantics, roster-currentness, and reference-IA validators after the
+  exact six-path activation proposal.
 - `pre-commit run --all-files`: FAIL only in the existing Spec 039-owned
   GitOps strict self-test FIFO probe (`os.mkfifo`, `Errno 95`); every other
   hook executed by that run passed.
 - `SKIP=strict-repository-quality pre-commit run --all-files`: PASS after the
   strict repository-quality lane was proven directly by
   `bash scripts/validate-repo-quality-gates.sh .`.
+- Settled-ledger admission prerequisite commit
+  `cd726e05fdb9d33727314d316aadb5ebbec0942d`: created the validator and fixture
+  boundary without changing the protected ledger or the completed Spec 030
+  authority object.
+- The exact six-path Spec 039 activation proposal passes staged lifecycle,
+  registry self-test and strict mode, strict Markdown profiles, strict
+  cross-document validation, settled RIA validation, and the cached diff
+  check. The activation commit itself remains unclaimed.
 - Remote GitHub Actions run `29982910320` remains observed FAIL for commit
   `bd93374d7f531317c3bd061eb1ef567c1e2e0084`; no push, dispatch, credential
   access, provider installation, or external mutation was performed.
 
 #### Handoff
 
-- Next owner: commit the settled-ledger admission prerequisite, then verify and
-  commit the exact six-path Spec 039 planning activation. Feature
-  implementation remains gated until the reciprocal Plan/Task package is
-  committed, presented, and explicitly approved.
+- Next owner: verify and commit the exact six-path Spec 039 planning
+  activation. Feature implementation remains gated until the reciprocal
+  Plan/Task package is committed, presented, and explicitly approved.
 
 ### 2026-07-19 - Archive immutability and current-replacement authority repair
 
