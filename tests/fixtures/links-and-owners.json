@@ -548,6 +548,8 @@
     {"name": "settled-ledger-inventory-growth", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-inventory-growth"}, "expected_rule_ids": []},
     {"name": "settled-ledger-byte-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-byte-drift"}, "expected_rule_ids": ["LEDGER-PROTECTED-DRIFT"]},
     {"name": "settled-ledger-malformed-metadata", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-malformed-metadata"}, "expected_rule_ids": ["LEDGER-PROTECTED-DRIFT"]},
+    {"name": "settled-ledger-from-commit-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-from-commit-drift"}, "expected_rule_ids": ["LEDGER-PROTECTED-DRIFT"]},
+    {"name": "settled-ledger-reason-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-reason-drift"}, "expected_rule_ids": ["LEDGER-PROTECTED-DRIFT"]},
     {"name": "reference-valid", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-valid"}, "expected_rule_ids": []},
     {"name": "reference-research-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-research-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
     {"name": "reference-audit-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},

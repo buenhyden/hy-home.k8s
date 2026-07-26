@@ -74,7 +74,8 @@ inventory stays in `scripts/README.md`.
   --body-contracts registry`: PASS.
 - `python3 scripts/validate-links-and-owners.py --self-test`: PASS, including
   pre-settlement inventory equality, post-settlement inventory addition and
-  removal, protected-byte drift, and malformed-settlement regression cases.
+  removal, protected-byte drift, malformed settlement, and exact
+  `fromCommit`/reason drift regression cases.
 - `python3 scripts/validate-reference-information-architecture.py --root .
   --require-settled-baselines`: PASS with the protected 446-row ledger
   unchanged.
@@ -101,6 +102,12 @@ inventory stays in `scripts/README.md`.
   registry self-test and strict mode, strict Markdown profiles, strict
   cross-document validation, settled RIA validation, the cached diff check,
   and the post-commit repository aggregate pass.
+- Independent committed-plan audit found a stale planned `pre-commit==4.6.0`
+  pin and two uncovered settled-provenance value drifts. Official PyPI and
+  upstream GitHub release evidence observed `4.6.1` on 2026-07-21, so the Plan
+  now uses `4.6.1`. Focused RED then GREEN cases prove that changing either the
+  settled `fromCommit` or settlement reason emits
+  `LEDGER-PROTECTED-DRIFT`.
 - Remote GitHub Actions run `29982910320` remains observed FAIL for commit
   `bd93374d7f531317c3bd061eb1ef567c1e2e0084`; no push, dispatch, credential
   access, provider installation, or external mutation was performed.

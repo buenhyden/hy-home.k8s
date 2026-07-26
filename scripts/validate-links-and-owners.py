@@ -60,6 +60,14 @@ OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-07-07-wer"
 LEDGER_SETTLEMENT_SUBJECT = "document-migration-evidence-ledger"
+LEDGER_SETTLEMENT_FROM_COMMIT = (
+    "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+)
+LEDGER_SETTLEMENT_REASON = (
+    "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b "
+    "lifecycle closure and repository-static postflight evidence in the "
+    "protected migration ledger"
+)
 LEDGER_SETTLEMENT_KEYS = frozenset(
     {
         "id",
@@ -4955,7 +4963,7 @@ def _ledger_protected_drift() -> Diagnostic:
         "LEDGER-PROTECTED-DRIFT",
         LEDGER_PATH,
         "content/reference",
-        "exact settled RIA metadata and protected ledger UTF-8 bytes",
+        "settled RIA identity/provenance metadata and protected ledger bytes",
         "settled metadata or protected bytes differ",
     )
 
@@ -4992,8 +5000,7 @@ def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]
         or settlement.get("id") != LEDGER_SETTLEMENT_ID
         or settlement.get("packId") != LEDGER_SETTLEMENT_PACK_ID
         or settlement.get("subject") != LEDGER_SETTLEMENT_SUBJECT
-        or not isinstance(settlement.get("fromCommit"), str)
-        or GIT_SHA1_PATTERN.fullmatch(str(settlement.get("fromCommit"))) is None
+        or settlement.get("fromCommit") != LEDGER_SETTLEMENT_FROM_COMMIT
         or not isinstance(transition_commit, str)
         or GIT_SHA1_PATTERN.fullmatch(transition_commit) is None
         or not isinstance(baselines, dict)
@@ -5003,11 +5010,7 @@ def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]
         or not isinstance(target_byte_length, int)
         or isinstance(target_byte_length, bool)
         or not 1 <= target_byte_length <= MAX_LEDGER_BYTES
-        or not isinstance(reason, str)
-        or not reason.strip()
-        or "\r" in reason
-        or "\n" in reason
-        or len(reason) > 512
+        or reason != LEDGER_SETTLEMENT_REASON
     ):
         return True, _ledger_protected_drift()
     ledger_bytes = context.ledger_bytes
@@ -7460,6 +7463,8 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         "ledger-settled-inventory-growth",
         "ledger-settled-byte-drift",
         "ledger-settled-malformed-metadata",
+        "ledger-settled-from-commit-drift",
+        "ledger-settled-reason-drift",
     }:
         original_ledger_bytes = (
             context.ledger_bytes
@@ -7470,15 +7475,19 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         settlement: dict[str, Any] = {
             "id": LEDGER_SETTLEMENT_ID,
             "packId": LEDGER_SETTLEMENT_PACK_ID,
-            "fromCommit": "git-sha1:" + "1" * 40,
+            "fromCommit": LEDGER_SETTLEMENT_FROM_COMMIT,
             "subject": LEDGER_SETTLEMENT_SUBJECT,
             "targetSha256": hashlib.sha256(original_ledger_bytes).hexdigest(),
             "targetByteLength": len(original_ledger_bytes),
-            "reason": "Fixture terminal settlement",
+            "reason": LEDGER_SETTLEMENT_REASON,
             "transitionCommit": transition_commit,
         }
         if mutation == "ledger-settled-malformed-metadata":
             settlement["targetByteLength"] = "malformed"
+        elif mutation == "ledger-settled-from-commit-drift":
+            settlement["fromCommit"] = "git-sha1:" + "3" * 40
+        elif mutation == "ledger-settled-reason-drift":
+            settlement["reason"] = "Tampered fixture settlement reason"
         ria_contract_text = json.dumps(
             {
                 "currentPackBaselines": {
@@ -8222,6 +8231,8 @@ def _self_test(root: Path) -> list[str]:
         "settled-ledger-inventory-growth",
         "settled-ledger-byte-drift",
         "settled-ledger-malformed-metadata",
+        "settled-ledger-from-commit-drift",
+        "settled-ledger-reason-drift",
         "reference-valid",
         "reference-research-draft",
         "reference-audit-draft",
