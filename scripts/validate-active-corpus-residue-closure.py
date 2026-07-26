@@ -37,6 +37,16 @@ TERMINAL_SPEC = "docs/03.specs/038-reference-information-architecture/spec.md"
 TERMINAL_PLAN = f"docs/04.execution/plans/{TERMINAL_LINEAGE}.md"
 TERMINAL_TASK = f"docs/04.execution/tasks/{TERMINAL_LINEAGE}.md"
 TERMINAL_SUCCESSOR_SPEC = "docs/03.specs/039-github-ci-qa-evidence/spec.md"
+TERMINAL_SUCCESSOR_LINEAGE = "2026-07-26-github-ci-qa-evidence"
+TERMINAL_SUCCESSOR_PLAN = (
+    f"docs/04.execution/plans/{TERMINAL_SUCCESSOR_LINEAGE}.md"
+)
+TERMINAL_SUCCESSOR_TASK = (
+    f"docs/04.execution/tasks/{TERMINAL_SUCCESSOR_LINEAGE}.md"
+)
+TERMINAL_FRONTIER_SPEC = (
+    "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
+)
 PLAN_ROOT = "docs/04.execution/plans"
 TASK_ROOT = "docs/04.execution/tasks"
 ADR_ROOT = "docs/02.architecture/decisions"
@@ -65,9 +75,20 @@ INVENTORY_ROOTS = (
     ARCHIVE_TASK_ROOT,
 )
 MANDATORY_OWNER_PATHS = {
-    SPEC_ROOT: frozenset({OWNER_SPEC, TERMINAL_SPEC, TERMINAL_SUCCESSOR_SPEC}),
-    PLAN_ROOT: frozenset({EXECUTION_PLAN, TERMINAL_PLAN}),
-    TASK_ROOT: frozenset({EXECUTION_TASK, TERMINAL_TASK}),
+    SPEC_ROOT: frozenset(
+        {
+            OWNER_SPEC,
+            TERMINAL_SPEC,
+            TERMINAL_SUCCESSOR_SPEC,
+            TERMINAL_FRONTIER_SPEC,
+        }
+    ),
+    PLAN_ROOT: frozenset(
+        {EXECUTION_PLAN, TERMINAL_PLAN, TERMINAL_SUCCESSOR_PLAN}
+    ),
+    TASK_ROOT: frozenset(
+        {EXECUTION_TASK, TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK}
+    ),
 }
 
 DEFER_AUTHORITY = "current-execution-record-pending-exact-eligibility-evidence"
@@ -132,6 +153,12 @@ TERMINAL_SUCCESSOR_IDENTITY = {
     "spec": "039",
     "order": 6,
     "reason": "GitHub CI and QA evidence",
+    "decision": "0017",
+}
+TERMINAL_FRONTIER_IDENTITY = {
+    "spec": "040",
+    "order": 7,
+    "reason": "Contract cutover and program closure",
     "decision": "0017",
 }
 FULL_OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
@@ -772,7 +799,7 @@ def _active_control_lineage(path: str, kind: str) -> str:
 
 def _terminal_registry_relations(
     registry: Mapping[str, Any],
-) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+) -> tuple[Mapping[str, Any], Mapping[str, Any], Mapping[str, Any]]:
     lineage = registry.get("programLineage")
     programs = lineage.get("programs") if isinstance(lineage, Mapping) else None
     if not isinstance(programs, list):
@@ -782,6 +809,7 @@ def _terminal_registry_relations(
     relations: dict[str, list[tuple[Mapping[str, Any], str, Mapping[str, Any]]]] = {
         "038": [],
         "039": [],
+        "040": [],
     }
     for program in programs:
         if not isinstance(program, Mapping):
@@ -811,6 +839,8 @@ def _terminal_registry_relations(
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     if len(relations["039"]) != 1:
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
+    if len(relations["040"]) != 1:
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC)
 
     exact_program = exact_programs[0]
     program_038, collection_038, relation_038 = relations["038"][0]
@@ -835,7 +865,18 @@ def _terminal_registry_relations(
         )
     ):
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
-    return relation_038, relation_039
+    program_040, collection_040, relation_040 = relations["040"][0]
+    if (
+        program_040 is not exact_program
+        or collection_040 != "tranches"
+        or set(relation_040) != {*TERMINAL_FRONTIER_IDENTITY, "state"}
+        or any(
+            relation_040.get(key) != value
+            for key, value in TERMINAL_FRONTIER_IDENTITY.items()
+        )
+    ):
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC)
+    return relation_038, relation_039, relation_040
 
 
 def _partition_terminal_controls(
@@ -851,6 +892,7 @@ def _partition_terminal_controls(
         (task_paths, TERMINAL_TASK),
         (spec_paths, TERMINAL_SPEC),
         (spec_paths, TERMINAL_SUCCESSOR_SPEC),
+        (spec_paths, TERMINAL_FRONTIER_SPEC),
     ):
         count = paths.count(path)
         if count > 1:
@@ -858,7 +900,7 @@ def _partition_terminal_controls(
         if count != 1:
             code = (
                 "CLOSURE-TERMINAL-FRONTIER"
-                if path == TERMINAL_SUCCESSOR_SPEC
+                if path in {TERMINAL_SUCCESSOR_SPEC, TERMINAL_FRONTIER_SPEC}
                 else "CLOSURE-TERMINAL-INCOMPLETE"
             )
             raise ClosureError(code, path)
@@ -869,6 +911,7 @@ def _partition_terminal_controls(
         TERMINAL_PLAN: "sdlc/plan",
         TERMINAL_TASK: "sdlc/task",
         TERMINAL_SUCCESSOR_SPEC: "sdlc/spec",
+        TERMINAL_FRONTIER_SPEC: "sdlc/spec",
     }
     for path, profile in expected_profiles.items():
         if path not in payloads:
@@ -878,9 +921,20 @@ def _partition_terminal_controls(
             raise ClosureError("CLOSURE-TERMINAL-AUTHORITY", path)
         metadata[path] = values
 
-    relation, successor_relation = _terminal_registry_relations(registry)
+    relation, successor_relation, frontier_relation = _terminal_registry_relations(
+        registry
+    )
     successor_state = metadata[TERMINAL_SUCCESSOR_SPEC].get("status")
-    if successor_state != "active" or successor_relation.get("state") != "active":
+    frontier_state = metadata[TERMINAL_FRONTIER_SPEC].get("status")
+    if (
+        frontier_state != "active"
+        or frontier_relation.get("state") != "active"
+    ):
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC)
+    if (
+        successor_state not in {"active", "done"}
+        or successor_relation.get("state") != successor_state
+    ):
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
 
     document_states = {
@@ -892,6 +946,34 @@ def _partition_terminal_controls(
     state = next(iter(document_states))
     if relation.get("state") != state:
         raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
+    if state == "active" and successor_state != "active":
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
+
+    successor_controls_required = state == "done" or any(
+        path in paths
+        for path, paths in (
+            (TERMINAL_SUCCESSOR_PLAN, plan_paths),
+            (TERMINAL_SUCCESSOR_TASK, task_paths),
+        )
+    )
+    if successor_controls_required:
+        for paths, path, profile in (
+            (plan_paths, TERMINAL_SUCCESSOR_PLAN, "sdlc/plan"),
+            (task_paths, TERMINAL_SUCCESSOR_TASK, "sdlc/task"),
+        ):
+            count = paths.count(path)
+            if count > 1:
+                raise ClosureError("CLOSURE-TERMINAL-DUPLICATE", path)
+            if count != 1:
+                raise ClosureError("CLOSURE-TERMINAL-FRONTIER", path)
+            if path not in payloads:
+                raise ClosureError("CLOSURE-TERMINAL-INCOMPLETE", path)
+            values = _frontmatter(_decode_text(payloads[path], path), path)
+            if values.get("type") != profile or values.get("owner") != "platform":
+                raise ClosureError("CLOSURE-TERMINAL-AUTHORITY", path)
+            if values.get("status") != successor_state:
+                raise ClosureError("CLOSURE-TERMINAL-FRONTIER", path)
+            metadata[path] = values
 
     result = {
         "planPaths": sorted(plan_paths),
@@ -904,21 +986,54 @@ def _partition_terminal_controls(
     if state == "active":
         return result
 
-    result["planPaths"] = sorted(path for path in plan_paths if path != TERMINAL_PLAN)
-    result["taskPaths"] = sorted(path for path in task_paths if path != TERMINAL_TASK)
-    result["specPaths"] = sorted(path for path in spec_paths if path != TERMINAL_SPEC)
+    terminal_plans = {TERMINAL_PLAN}
+    terminal_tasks = {TERMINAL_TASK}
+    if successor_state == "done":
+        terminal_plans.add(TERMINAL_SUCCESSOR_PLAN)
+        terminal_tasks.add(TERMINAL_SUCCESSOR_TASK)
+    result["planPaths"] = sorted(
+        path for path in plan_paths if path not in terminal_plans
+    )
+    result["taskPaths"] = sorted(
+        path for path in task_paths if path not in terminal_tasks
+    )
+    terminal_specs = {TERMINAL_SPEC}
+    if successor_state == "done":
+        terminal_specs.add(TERMINAL_SUCCESSOR_SPEC)
+    result["specPaths"] = sorted(
+        path for path in spec_paths if path not in terminal_specs
+    )
+    terminal_control_paths = [
+        (TERMINAL_PLAN, "plan", TERMINAL_LINEAGE),
+        (TERMINAL_TASK, "task", TERMINAL_LINEAGE),
+    ]
+    if successor_state == "done":
+        terminal_control_paths.extend(
+            [
+                (
+                    TERMINAL_SUCCESSOR_PLAN,
+                    "plan",
+                    TERMINAL_SUCCESSOR_LINEAGE,
+                ),
+                (
+                    TERMINAL_SUCCESSOR_TASK,
+                    "task",
+                    TERMINAL_SUCCESSOR_LINEAGE,
+                ),
+            ]
+        )
     result["terminalControlRows"] = sorted(
         [
             {
                 "path": path,
                 "kind": kind,
-                "lineageId": TERMINAL_LINEAGE,
+                "lineageId": lineage,
                 "profile": f"sdlc/{kind}",
                 "status": "done",
                 "owner": "platform",
                 **_object_identity(path, index, payloads[path]),
             }
-            for path, kind in ((TERMINAL_PLAN, "plan"), (TERMINAL_TASK, "task"))
+            for path, kind, lineage in terminal_control_paths
         ],
         key=lambda row: str(row["path"]),
     )
@@ -947,6 +1062,36 @@ def _partition_terminal_controls(
             "state": "done",
         }
     ]
+    if successor_state == "done":
+        result["terminalControlPairCardinality"].append(
+            {
+                "lineageId": TERMINAL_SUCCESSOR_LINEAGE,
+                "state": "complete",
+                "planPath": TERMINAL_SUCCESSOR_PLAN,
+                "taskPath": TERMINAL_SUCCESSOR_TASK,
+                "owner": "platform",
+                "status": "done",
+            }
+        )
+        result["terminalSpecRows"].append(
+            {
+                "path": TERMINAL_SUCCESSOR_SPEC,
+                "profile": "sdlc/spec",
+                "status": "done",
+                "owner": "platform",
+                **_object_identity(
+                    TERMINAL_SUCCESSOR_SPEC,
+                    index,
+                    payloads[TERMINAL_SUCCESSOR_SPEC],
+                ),
+                "registryPath": REGISTRY_PATH,
+                "programPrd": "006",
+                "programArd": "0009",
+                "relationClass": "original-tranche",
+                **TERMINAL_SUCCESSOR_IDENTITY,
+                "state": "done",
+            }
+        )
     return result
 
 
@@ -1836,11 +1981,135 @@ def _self_test_observed() -> dict[str, Any]:
     }
 
 
+def _self_test_terminal_frontier() -> int:
+    def payload(profile: str, status: str) -> bytes:
+        return (
+            "---\n"
+            f"type: {profile}\n"
+            f"status: {status}\n"
+            "owner: platform\n"
+            "---\n"
+            "# Fixture\n"
+        ).encode()
+
+    def registry(
+        successor_state: str, frontier_state: str
+    ) -> dict[str, Any]:
+        return {
+            "programLineage": {
+                "programs": [
+                    {
+                        "prd": "006",
+                        "ard": "0009",
+                        "tranches": [
+                            {**TERMINAL_RELATION_IDENTITY, "state": "done"},
+                            {
+                                **TERMINAL_SUCCESSOR_IDENTITY,
+                                "state": successor_state,
+                            },
+                            {
+                                **TERMINAL_FRONTIER_IDENTITY,
+                                "state": frontier_state,
+                            },
+                        ],
+                        "followUps": [],
+                    }
+                ]
+            }
+        }
+
+    retained_spec = "docs/03.specs/fixture-retained/spec.md"
+    payloads = {
+        TERMINAL_SPEC: payload("sdlc/spec", "done"),
+        TERMINAL_PLAN: payload("sdlc/plan", "done"),
+        TERMINAL_TASK: payload("sdlc/task", "done"),
+        TERMINAL_SUCCESSOR_SPEC: payload("sdlc/spec", "active"),
+        TERMINAL_SUCCESSOR_PLAN: payload("sdlc/plan", "active"),
+        TERMINAL_SUCCESSOR_TASK: payload("sdlc/task", "active"),
+        TERMINAL_FRONTIER_SPEC: payload("sdlc/spec", "active"),
+        retained_spec: payload("sdlc/spec", "done"),
+    }
+    spec_paths = [
+        TERMINAL_SPEC,
+        TERMINAL_SUCCESSOR_SPEC,
+        TERMINAL_FRONTIER_SPEC,
+        retained_spec,
+    ]
+    cases = 0
+
+    active = _partition_terminal_controls(
+        [TERMINAL_PLAN, TERMINAL_SUCCESSOR_PLAN],
+        [TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK],
+        spec_paths,
+        {},
+        payloads,
+        registry("active", "active"),
+    )
+    if (
+        active["specPaths"]
+        != [TERMINAL_SUCCESSOR_SPEC, TERMINAL_FRONTIER_SPEC, retained_spec]
+        or active["planPaths"] != [TERMINAL_SUCCESSOR_PLAN]
+        or active["taskPaths"] != [TERMINAL_SUCCESSOR_TASK]
+        or len(active["terminalControlRows"]) != 2
+        or [row["path"] for row in active["terminalSpecRows"]]
+        != [TERMINAL_SPEC]
+    ):
+        raise AssertionError("active terminal frontier partition drift")
+    cases += 1
+
+    advanced_payloads = dict(payloads)
+    advanced_payloads[TERMINAL_SUCCESSOR_SPEC] = payload("sdlc/spec", "done")
+    advanced_payloads[TERMINAL_SUCCESSOR_PLAN] = payload("sdlc/plan", "done")
+    advanced_payloads[TERMINAL_SUCCESSOR_TASK] = payload("sdlc/task", "done")
+    advanced = _partition_terminal_controls(
+        [TERMINAL_PLAN, TERMINAL_SUCCESSOR_PLAN],
+        [TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK],
+        spec_paths,
+        {},
+        advanced_payloads,
+        registry("done", "active"),
+    )
+    if (
+        advanced["specPaths"] != [TERMINAL_FRONTIER_SPEC, retained_spec]
+        or advanced["planPaths"]
+        or advanced["taskPaths"]
+        or len(advanced["terminalControlRows"]) != 4
+        or len(advanced["terminalControlPairCardinality"]) != 2
+        or [row["path"] for row in advanced["terminalSpecRows"]]
+        != [TERMINAL_SPEC, TERMINAL_SUCCESSOR_SPEC]
+    ):
+        raise AssertionError("advanced terminal frontier partition drift")
+    cases += 1
+
+    blocked_payloads = dict(advanced_payloads)
+    blocked_payloads[TERMINAL_FRONTIER_SPEC] = payload("sdlc/spec", "done")
+    try:
+        _partition_terminal_controls(
+            [TERMINAL_PLAN, TERMINAL_SUCCESSOR_PLAN],
+            [TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK],
+            spec_paths,
+            {},
+            blocked_payloads,
+            registry("done", "done"),
+        )
+    except ClosureError as exc:
+        if (
+            exc.code != "CLOSURE-TERMINAL-FRONTIER"
+            or exc.path != TERMINAL_FRONTIER_SPEC
+        ):
+            raise
+        cases += 1
+    else:
+        raise AssertionError("closed terminal frontier was accepted")
+
+    return cases
+
+
 def run_self_test() -> int:
     observed = _self_test_observed()
     ledger = _ledger_from_observed(observed)
     validate_ledger(ledger, observed)
-    cases = 1
+    cases = 1 + _self_test_terminal_frontier()
     mutations: list[tuple[str, Callable[[dict[str, Any]], None]]] = [
         ("CLOSURE-SCHEMA", lambda item: item.__setitem__("schemaVersion", 2)),
         ("CLOSURE-SOURCE-DRIFT", lambda item: item["sourceLedgers"].pop()),
