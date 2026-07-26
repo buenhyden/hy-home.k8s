@@ -8,6 +8,98 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-005 closed-lane Gitleaks remediation
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, ci, security, meta
+- **Status**: complete
+- **Tags**: #github-actions #qa #gitleaks #spec-039
+
+#### Progress
+
+- The first cumulative Spec 039 affected lane used 26 correctly NUL-delimited
+  paths from `4aaaa4b` through `8621e88`. Nine validators passed, while the
+  closed runner's `repository-quality` validator failed with
+  `MIGRATION-SECRET-CLASSIFIER`. The ambient aggregate PASS was not substituted
+  for that required affected result.
+- Remediation `b329016` preserved the closed PATH, added a separately validated
+  exact Gitleaks hint, revalidated it at the migration classifier, added
+  checksum-pinned Gitleaks 8.30.0 provisioning to the two hosted jobs that
+  execute repository quality, and required full history for
+  `repo-quality-static`.
+- Independent reviewer `/root/gcqe_005_remediation_reviewer` returned CHANGES
+  REQUESTED with one Important finding: owner/group/other execute bits were
+  treated as interchangeable instead of checking the effective identity's
+  selected execute and traversal classes.
+- Follow-up `7b536d1` implemented effective UID, GID, supplementary-group,
+  traversal, and root semantics in both validators. The same reviewer freshly
+  reviewed `b329016..7b536d1` and returned APPROVED after 35 focused tests, CI
+  production validation, and clean status/diffs.
+
+#### Memory
+
+- A secure executable search must distinguish file shape and ownership from
+  effective execution authority. Evaluate exactly one owner/group/other class
+  for the effective identity and every required directory traversal.
+- A PASS in an ambient developer shell cannot replace a required FAIL from the
+  closed validation runner. Preserve the failed lane, remediate its actual
+  authority boundary, and rerun the same cumulative NUL-delimited input.
+- Hosted provisioning is repository-static evidence until a separately
+  authorized hosted run observes it. The current branch must remain `DEFER`
+  even when workflow structure, checksums, and local validators pass.
+
+#### Evidence
+
+- Initial affected metadata: 26 paths, ten validators, nine PASS, and one
+  `repository-quality` FAIL with `rc=1`, zero success markers, empty stderr,
+  and stable stdout digest
+  `c2897a8d81f3745fece45c240c001b3796a7624edda539ed13f7cf037cc38329`.
+- Remediation `b329016` final evidence: 58 combined focused tests, CI contract
+  `9` rules/`13` cases and `3` jobs/`3` pins, ten affected validators PASS at
+  29 paths, direct aggregate PASS, staged/all-files hooks PASS, and clean
+  formatter review.
+- Reviewer-correction RED: two focused tests failed against owner-owned mode
+  `0001`. Follow-up GREEN: 35 runner/migration tests and 60 combined focused
+  tests passed; Actions security, affected, aggregate, staged/all-files, and
+  diff checks passed. One transient aggregate child exit lacked return-code
+  and stderr observability; two immediate standalone security self-tests and
+  the final strict aggregate/all-files rerun passed.
+- Current staged integration evidence: focused suites passed `6`, `15`, and
+  `20` tests; Actions security and affected-surface self-test/production
+  passed; CI contract passed `9` rules/`13` cases and `3` jobs/`3` pins;
+  GitOps self-test/production and all three strict document checks passed.
+- The staged proposal plus committed implementation range contains 30 unique
+  NUL-delimited paths and selects protected level, ten validators, and three
+  CI jobs with no unmatched path. All ten affected validators passed;
+  `repository-quality` returned `rc=0` and exactly one success marker.
+- Staged pre-commit, the direct aggregate, and unqualified all-files
+  pre-commit passed. Status and both diffs showed exactly the two owned staged
+  evidence files, no unstaged or formatter mutation, and both diff checks
+  passed.
+- Requirements reviewer `/root/gcqe_005_requirements_review` matched package
+  SHA-256
+  `f4d50ec45e7d977b22c55cd18f6d8e56bc6cf7436713980d1b1f09f38632cb38`
+  and returned REQUIREMENTS COMPLIANT with no Critical, Important, or minor
+  finding. Its CI-contract, affected-runner, Actions-security, and diff spot
+  checks passed.
+- Quality/security reviewer `/root/gcqe_005_quality_security_review` matched
+  the same package SHA and returned QUALITY APPROVED with no finding. Its
+  37-test and 56-test suites, CI, Actions, GitOps, aggregate, status, and diff
+  checks passed.
+- Hosted post-change CI, provider-runtime, credentials, Kubernetes, Vault,
+  ESO, Argo CD, and live infrastructure remain `DEFER`.
+
+#### Handoff
+
+- GCQE-005 is Done after both independent whole-tranche approvals. GCQE-006 is
+  the queued next owner for atomic lifecycle closure and clean-tree postflight;
+  this evidence package does not close Spec 039 or claim GCQE-006 completion.
+- Rollback newest first: `7b536d1`, `b329016`, `8621e88`, `bca57ae`,
+  `b2bf4a8`, and `d0d788d`; rerun focused and aggregate gates after each
+  logical revert. GCQE-006 remains queued.
+
 ### 2026-07-26 - GCQE-004 result vocabulary and all-files completion evidence
 
 #### Metadata
