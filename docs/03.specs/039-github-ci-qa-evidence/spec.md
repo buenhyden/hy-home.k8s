@@ -3,7 +3,7 @@ title: 'GitHub CI and QA Evidence Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-26
 ---
 
 # GitHub CI and QA Evidence Technical Specification (Spec)
@@ -16,15 +16,24 @@ new lifecycle and archive contracts. It also closes the current portability
 defect in the GitOps change-set self-test without weakening its non-regular-file
 coverage.
 
+The latest observed public `main` run, GitHub Actions run `29982910320` for
+commit `bd93374d7f531317c3bd061eb1ef567c1e2e0084`, failed its `pre-commit`,
+`repo-quality-static`, and aggregate jobs. The pre-commit environment lacked
+repository system-hook dependencies and emitted a Node.js 20 deprecation
+warning through `pre-commit/action`. This remote result is historical evidence
+for the observed SHA; it is not a result for the current local branch.
+
 ## Strategic Boundaries & Non-goals
 
 - **In scope**: .github workflows and native forms, pre-commit lanes,
   affected-surface selection, full-document escalation, aggregate verdict,
   Action identity/permissions, artifact retention, relevant validators and
-  fixtures, and QA guidance.
+  fixtures, one pinned CI validation-dependency contract, replacement of the
+  deprecated `pre-commit/action` execution path, and QA guidance.
 - **Non-goals**: Live deployment, Kubernetes or Vault mutation, remote
   branch-protection changes, secret inspection, release publication, or
-  relabeling skipped tools as passing.
+  relabeling skipped tools as passing. Push and workflow dispatch require
+  separate approval.
 
 ## Contracts
 
@@ -36,6 +45,11 @@ coverage.
 - AI agents run staged/affected checks during work and pre-commit across all
   files before each logical commit.
 - Third-party Actions use full commit SHA identity and least permissions.
+- CI-owned Python dependencies used by repository `language: system` hooks are
+  installed from one exact-version file before pre-commit or repository
+  quality execution.
+- The pre-commit job invokes `pre-commit run --all-files` explicitly instead of
+  delegating execution and cache behavior to `pre-commit/action`.
 - Changelog preview is transient, non-canonical evidence retained for seven
   days.
 - Optional, remote, and live evidence uses PASS, SKIP, FAIL, and DEFER
@@ -58,6 +72,12 @@ The GitOps change-set self-test replaces its unconditional FIFO creation with a
 portable capability-aware fixture. Unsupported FIFO creation must still test
 the boundary through a deterministic alternative or report an explicit SKIP;
 the self-test cannot abort with an uncaught filesystem error.
+
+The CI jobs that execute repository system hooks install the same pinned
+validation dependencies before running their commands. A dependency failure is
+a required-lane FAIL, not an optional SKIP. Removing `pre-commit/action` also
+removes its transitive Node.js runtime warning without changing the
+repository's all-files completion contract.
 
 ## Data Modeling & Storage Strategy
 
@@ -96,6 +116,8 @@ GitHub's workflow, security, and artifact-retention guidance:
 - An unsupported FIFO filesystem does not bypass boundary coverage silently.
 - Remote branch rules and workflow results remain DEFER until independently
   observed.
+- A public run for an older SHA remains valid historical evidence but cannot be
+  promoted to a current-HEAD result.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -113,6 +135,8 @@ GitHub's workflow, security, and artifact-retention guidance:
 - Run actionlint, zizmor, YAML validation, and workflow contract checks.
 - Run staged, affected, repository quality, and all-files pre-commit lanes.
 - Record remote and live checks separately as DEFER when not observed.
+- Record run `29982910320` as observed FAIL for its exact SHA and retain the
+  post-change remote rerun as DEFER until a separately approved push executes.
 
 ## Success Criteria & Verification Plan
 

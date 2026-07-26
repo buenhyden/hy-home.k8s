@@ -3,7 +3,7 @@ title: 'Contract Cutover and Program Closure Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-26
 ---
 
 # Contract Cutover and Program Closure Technical Specification (Spec)
@@ -27,6 +27,9 @@ without claiming unobserved remote or live results.
 ## Contracts
 
 - Specs 034-039 must satisfy their criteria before final cutover.
+- Spec 039 must close its repository-local workflow and dependency contract.
+  An unexecuted post-change remote run remains an owned DEFER and is not
+  relabeled as PASS.
 - Legacy Tombstone routes, forms, wording, and compatibility readers are absent
   after cutover.
 - All governed current and archive records resolve exactly one final profile.
@@ -78,6 +81,9 @@ cleanup.
 - A compatibility-only pass is a failure at this stage.
 - A DEFER with no owner or trigger blocks closure.
 - A remote check not executed remains DEFER regardless of local similarity.
+- An observed remote failure for an older SHA remains attached to that SHA and
+  cannot block repository-local closure after the defect is fixed and the
+  retry trigger has an owner; it still blocks a remote-current PASS claim.
 - Formatter changes discovered by all-files pre-commit are reviewed and
   recommitted before rerun.
 - A new broken link or duplicate owner introduced by final index work fails the

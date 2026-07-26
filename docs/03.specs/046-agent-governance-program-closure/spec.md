@@ -3,7 +3,7 @@ title: 'Agent Governance Program Closure Technical Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Agent Governance Program Closure Technical Specification (Spec)
@@ -16,33 +16,34 @@ program. It unifies every criterion from the existing document-lifecycle Specs
 bounded loop, 12-role/48-adapter parity, role evaluation and model fitness,
 CI/QA, and legacy cutover through one closure matrix.
 
-The authenticated native canaries for the Claude, Codex, and Gemini CLIs must
-all be `PASS`. If any CLI is absent or unauthenticated, uses an unsupported
-model or configuration, fails discovery, or reports `SKIP`, `DEFER`, or
-`FAIL`, the program remains active and this Spec is not complete. A
-repository-static PASS or the presence of a local/Antigravity adapter cannot
-substitute for this requirement.
+The program requires one separately classified canary record for each of
+Claude, Codex, and Gemini. A provider-runtime readiness claim requires that
+provider's authenticated canary to be `PASS`; repository-local implementation
+may close when an unavailable CLI is recorded as `ABSENT` or `DEFER` with an
+owner, limitation, and retry trigger. A repository-static PASS or the presence
+of a local/Antigravity adapter never substitutes for provider-runtime PASS.
 
-The provider, model, and source baseline is frozen at **2026-07-10 10:00
-Asia/Seoul**. Because final verification occurs later, each canary records the
-cutoff decision separately from the current runtime observation. Closure
-reuses the official provider documentation and release sources in the Spec
-042/044 source ledger and does not adopt a new unofficial model claim as
-closure evidence.
+The provider, model, and source observation baseline is **2026-07-26
+Asia/Seoul**. Each canary records the source decision separately from the
+current runtime observation. Closure reuses the official provider
+documentation in the Spec 042/044 source ledger and does not adopt an
+unofficial model claim as closure evidence.
 
 ## Strategic Boundaries & Non-goals
 
 - **In scope**: closure of Spec 038-045 criteria; upstream PRD/ARD/ADR
   traceability; the canonical contract and schema; loop recovery; the exact
-  12/48 roster; three provider canaries; evaluation and model fitness;
+  12/48 roster; three independently classified provider canary records;
+  evaluation and model fitness;
   CI/QA/all-files; zero stale active legacy artifacts; an independent
   whole-branch review; and a clean worktree with logical history.
 - **Protected boundaries**: Secret and authentication values and private
   transcripts are neither read nor retained. A canary is read-only or a
   provider-native bounded test; it does not change a live cluster, GitHub
   settings, or an external deployment.
-- **Non-goals**: waiver-based closure for a failing or absent provider; an
-  unobserved PASS claim for a remote workflow or branch protection; a live
+- **Non-goals**: waiver-based provider-runtime PASS for a failing or absent
+  provider; an unobserved PASS claim for a remote workflow or branch
+  protection; a live
   Kubernetes, Argo CD, or Vault readiness claim; automatic push, PR, merge, or
   release execution; or adding a new feature in the final tranche.
 
@@ -65,8 +66,10 @@ majority voting are not permitted.
 6. The canonical role set contains exactly 12 roles, the four surfaces contain
    exactly 48 adapters, and semantic parity and provider-native schema checks
    pass.
-7. The authenticated canaries for the Claude, Codex, and Gemini CLIs each pass
-   independently.
+7. Claude, Codex, and Gemini each have an independent secret-free canary
+   record. Provider-runtime readiness requires PASS; repository-local closure
+   accepts `ABSENT` or `DEFER` only with an owner, limitation, and retry
+   trigger.
 8. The incumbent/candidate evaluations and model/reasoning profiles for all 12
    roles pass the approved thresholds and independent adjudication.
 9. Agent-governance CI/QA, repository tests, all-files pre-commit, formatter
@@ -79,11 +82,11 @@ majority voting are not permitted.
     the Specs, Plans, and Tasks.
 
 The static, provider-runtime, remote-CI, and live-platform evidence lanes stay
-distinct through closure. Only this program's three required provider-runtime
-canaries are closure-required PASS results. Out-of-scope remote branch
-protection, deployment, and live-cluster state may remain DEFER when an owner
-and trigger are recorded. Closure fails if such a DEFER is represented as PASS
-or summarized as something the program proved.
+distinct through closure. Provider-runtime, remote branch protection,
+post-change remote CI, deployment, and live-cluster state may remain
+`ABSENT`/`DEFER` when an owner and trigger are recorded. Closure fails if such
+a result is represented as PASS or summarized as something the program
+proved.
 
 ## Core Design
 
@@ -104,7 +107,7 @@ criteria, duplicate evidence owners, required rows that are not PASS, stale
 commits, and ownerless DEFER results. The closure body links canonical Task
 evidence and digests instead of copying raw logs.
 
-### Three-provider authenticated canary gate
+### Three-provider canary record set
 
 Each Claude, Codex, and Gemini CLI canary proves at least:
 
@@ -119,12 +122,12 @@ Each Claude, Codex, and Gemini CLI canary proves at least:
    provider-native equivalent;
 7. applicable settings, hook, policy, sandbox, approval, and MCP inventory
    status; and
-8. redacted PASS evidence and rollback/cleanup.
+8. a redacted result, limitation, retry trigger, and rollback/cleanup.
 
 The three results are separate records and cannot be replaced by the presence
-of one aggregate file. If installation or login requires user action, closure
-stops and escalates to a human. The agent neither infers nor automates
-credential entry, renewal, or storage.
+of one aggregate file. If installation or login requires user action, record
+`ABSENT` or `DEFER` and escalate the provider-runtime readiness lane to a human.
+The agent neither infers nor automates credential entry, renewal, or storage.
 
 ### Review and finish flow
 
@@ -178,8 +181,10 @@ current owner and superseding relation instead.
 ## Edge Cases & Error Handling
 
 - If the Claude or Gemini CLI is absent or unauthenticated, its canary is not
-  PASS and the program does not close.
-- Two passing providers out of three are not rounded up to an aggregate PASS.
+  PASS. Repository-local closure requires an explicit owner and retry trigger;
+  provider-runtime readiness remains open.
+- Two passing providers out of three are not rounded up to an aggregate
+  provider-runtime PASS.
 - If only a subset is returned during runtime discovery, that provider canary
   is FAIL even when all 12 native agents exist statically.
 - If a provider cannot resolve the cutoff model because of entitlement or
@@ -196,9 +201,11 @@ current owner and superseding relation instead.
 
 ## Failure Modes & Fallback / Human Escalation
 
-- Stop the program/status transition if any required predecessor criterion,
-  provider canary, parity check, evaluation, CI/QA result, legacy scan, or
-  reviewer verdict fails.
+- Stop the program/status transition if any required repository-local
+  predecessor criterion, parity check, evaluation, CI/QA result, legacy scan,
+  or reviewer verdict fails. A provider `FAIL` requires remediation or an
+  approved bounded limitation; `ABSENT`/`DEFER` requires an owner and retry
+  trigger.
 - When provider installation or authentication is required, present only
   commands and expected evidence that do not request a secret, so the user can
   approve and perform the action directly.
@@ -215,7 +222,7 @@ current owner and superseding relation instead.
 ```bash
 python3 scripts/validate-agent-governance-closure.py --root .
 python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-provider-canaries.py --root . --require-pass claude,codex,gemini
+python3 scripts/validate-agent-provider-canaries.py --root . --require-record claude,codex,gemini
 python3 scripts/validate-agent-loop-lifecycle.py --root .
 python3 scripts/validate-agent-roster-admission.py --root .
 python3 scripts/validate-agent-evaluations.py --root .
@@ -231,19 +238,22 @@ git diff --check
 
 `validate-agent-governance-closure.py` is a planned Spec 046 deliverable and is
 not claimed to exist in this draft. It must aggregate every predecessor
-criterion, exact owner/version, three authenticated provider PASS records,
-review verdict, clean-tree/logical-history evidence, and required limitation
-without converting a missing result into PASS.
+criterion, exact owner/version, one independently classified record per
+provider, review verdict, clean-tree/logical-history evidence, and required
+limitation without converting an `ABSENT`, `DEFER`, or missing result into
+PASS.
 
 ## Success Criteria & Verification Plan
 
-- **VAL-AGPC-001**: Every required criterion in Specs 038-045 and its upstream
-  lineage has committed PASS evidence, with no unresolved required DEFER.
+- **VAL-AGPC-001**: Every required repository-local criterion in Specs 038-045
+  and its upstream lineage has committed PASS evidence, with no unresolved
+  required DEFER.
 - **VAL-AGPC-002**: The canonical roster contains exactly 12 roles and the four
   surfaces contain exactly 48 adapters; native schema and semantic parity
   checks pass.
-- **VAL-AGPC-003**: The authenticated native canaries for the Claude, Codex, and
-  Gemini CLIs each pass independently, and secret-free evidence is retained.
+- **VAL-AGPC-003**: Claude, Codex, and Gemini each have an independent
+  secret-free canary record. Only provider PASS supports runtime readiness;
+  `ABSENT`/`DEFER` records include a limitation, owner, and retry trigger.
 - **VAL-AGPC-004**: The machine harness contract and schema are the sole current
   owner, and every consumer, adapter, and validator uses the same version.
 - **VAL-AGPC-005**: The bounded-retry/no-progress termination and
@@ -282,8 +292,8 @@ without converting a missing result into PASS.
 | [REQ-PRD-MET-02](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-001 | Predecessor and lineage validation proves the complete reciprocal program chain. |
 | [REQ-PRD-FUN-08](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGPC-002 | Four-surface exact set and native semantic/schema validation prove 12/48 parity. |
 | [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-002 | Exact inventory validation reports zero role or adapter drift. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGPC-003 | Three authenticated canary records prove native discovery, config, and model resolution. |
-| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-003 | Canary aggregation rejects any provider result other than PASS. |
+| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGPC-003 | Three independently classified canary records preserve discovery, config, model-resolution, and limitation evidence. |
+| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-003 | Canary validation requires one record per provider and rejects any readiness claim not backed by PASS. |
 | [REQ-PRD-FUN-10](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGPC-004 | Contract/schema and consumer-version validation prove a single machine owner. |
 | [REQ-PRD-MET-08](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-004 | Provider metadata and adapter projections validate against the current contract version. |
 | [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGPC-005 | Retry/no-progress fixtures and checkpoint recovery prove bounded loop behavior. |

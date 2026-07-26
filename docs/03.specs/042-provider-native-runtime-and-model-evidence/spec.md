@@ -3,7 +3,7 @@ title: 'Provider-Native Runtime and Model Evidence Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Provider-Native Runtime and Model Evidence Specification
@@ -15,9 +15,11 @@ selection, MCP/tool boundaries, and comparable runtime evidence for Claude,
 Codex, and Gemini. Local/Antigravity remains a fourth tracked projection but is
 not a substitute for a Gemini-native canary.
 
-The research cutoff is **2026-07-10 10:00 Asia/Seoul**. At the recorded local
-observation, only `codex-cli 0.145.0-alpha.27` was installed; Claude and Gemini
-CLIs were absent. Those observations are inputs, not completion claims.
+The current-source observation cutoff is **2026-07-26 Asia/Seoul**. The last
+recorded local observation found only `codex-cli 0.145.0-alpha.27`; Claude and
+Gemini CLIs were absent. Implementation must re-observe versions without
+reading authentication artifacts. Those observations are inputs, not
+completion or availability claims.
 
 ## Strategic Boundaries & Non-goals
 
@@ -60,8 +62,9 @@ Each provider emits separate `repo-static`, `native-discovery`, and
 or `DEFER`; only PASS satisfies the corresponding runtime gate. Spec 042 may
 finish its repository-local tranche after the canary harness, redaction, and
 result recording work passes even when a provider result is not PASS. Such a
-result is a carried closure blocker, and Spec 046 still requires all three
-providers' latest authenticated-run verdicts to be PASS.
+result remains a provider-readiness limitation with an owner and retry trigger.
+Spec 046 may close repository-local implementation with explicit `ABSENT` or
+`DEFER` provider records, but it cannot claim the corresponding runtime PASS.
 
 ## Core Design
 
@@ -77,32 +80,20 @@ support cutoff-sensitive claims.
 Primary sources:
 
 - Claude: [subagents](https://code.claude.com/docs/en/sub-agents),
-  [settings](https://code.claude.com/docs/en/settings),
+  [configuration](https://code.claude.com/docs/en/configuration),
   [hooks](https://code.claude.com/docs/en/hooks),
-  [Fable 5 and Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5),
-  [Fable 5 redeployment](https://www.anthropic.com/news/redeploying-fable-5),
-  [Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8),
-  [Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5),
-  [Sonnet 4.6](https://www.anthropic.com/news/claude-sonnet-4-6), and
-  [Haiku 4.5](https://www.anthropic.com/news/claude-haiku-4-5).
+  [memory](https://code.claude.com/docs/en/memory), and
+  [model configuration](https://code.claude.com/docs/en/model-config).
 - Codex: [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
   [subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
   [configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
-  [GPT-5.6 release](https://openai.com/index/gpt-5-6/),
-  [GPT-5.6 model catalog](https://developers.openai.com/api/docs/models),
-  [GPT-5.3-Codex system card](https://openai.com/index/gpt-5-3-codex-system-card/),
-  and [GPT-5.5](https://developers.openai.com/api/docs/models/gpt-5.5).
-- Gemini: [project configuration](https://geminicli.com/docs/reference/configuration/),
+  and [model catalog](https://developers.openai.com/api/docs/models).
+- Gemini: [documentation](https://geminicli.com/docs/),
   [subagents](https://geminicli.com/docs/core/subagents/),
-  [Gemini 3.1 Pro Preview](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview),
-  [Gemini 3.5 Flash model card](https://deepmind.google/models/model-cards/gemini-3-5-flash/),
-  [CLI transition announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/),
-  and [migration guide](https://antigravity.google/docs/cli/gcli-migration).
-
-The Gemini transition announced that individual free/Pro/Ultra login paths
-would stop being served on 2026-06-18 while enterprise and other documented
-access modes had different boundaries. Therefore installation success cannot
-stand in for an authenticated eligibility PASS.
+  [hooks](https://geminicli.com/docs/hooks/reference/),
+  [project context](https://geminicli.com/docs/cli/gemini-md/),
+  [model selection](https://geminicli.com/docs/cli/model/), and
+  [generation settings](https://geminicli.com/docs/cli/generation-settings/).
 
 ### Role-specific model and effort policy
 
@@ -110,9 +101,9 @@ The following are **candidates**, not accepted assignments:
 
 | Provider | High-complexity candidate | Focused worker candidate | Effort boundary |
 | --- | --- | --- | --- |
-| Claude | Fable 5 | Sonnet 5; Haiku 4.5 for low-risk bounded work | Use only schema-supported `effort`; retain Opus 4.8/Sonnet 4.6 as incumbents; Mythos 5 is restricted and not a general default |
-| Codex | `gpt-5.6-sol` | `gpt-5.6-terra`; `gpt-5.6-luna` for cost-sensitive bounded work | Catalog supports `none/low/medium/high/xhigh/max`; any Codex-only `ultra` use requires CLI/plan canary evidence; retain GPT-5.5/GPT-5.3-Codex as incumbents |
-| Gemini | Gemini 3.5 Flash | Gemini 3.5 Flash with a lower supported reasoning profile; Gemini 3.1 Pro Preview as comparator | Official cutoff announcement calls 3.5 Flash the strongest coding/agentic released model; exact ID and reasoning controls require runtime verification |
+| Claude | Account-available `opus` or `fable` alias/full ID | `sonnet`; `haiku` for bounded low-risk work | Use only the model-supported native `effort` value observed by schema/runtime; aliases and organization allowlists may alter resolution |
+| Codex | `gpt-5.6` or the installed runtime's documented demanding-agent candidate | `gpt-5.6-terra` or a documented balanced/cost candidate | `model_reasoning_effort` is model- and client-dependent; validate the exact value instead of treating the union of documentation examples as universally accepted |
+| Gemini | `gemini-3-pro-preview` when available and justified | `gemini-3-flash-preview` or provider Auto routing for bounded work | Subagent `model` is independent of the parent `/model`; reasoning settings remain agent-scoped configuration and require native parse/runtime evidence |
 
 Architecture, supervisor, security, and ambiguous cross-scope work start with a
 high-capability candidate; routine editing, evidence collection, and narrow
@@ -120,12 +111,11 @@ validation start with a focused candidate. Spec 044 may change either choice
 only from versioned eval and canary evidence. Actual model, effort, fallback
 reason, limitation, latency, and cost observation are recorded per run.
 
-Fable 5 selection must also record plan/entitlement, safeguard fallback, and
-the applicable provider data-retention boundary. Mythos 5 cannot enter the
-general roster without explicit trusted-access evidence and human approval.
-GPT-5.6 has a dated July 9 announcement before the cutoff, but the official
-page exposes no publication time; its cutoff confidence is date-level until a
-timestamped release artifact is available.
+The source ledger records aliases and exact configured and observed IDs
+separately. Account/organization allowlists, model lifecycle, client version,
+and fallback may change resolution. A model is promoted only after its exact
+adapter syntax parses, a permitted runtime resolves it, and Spec 044's
+role-specific evaluation passes. Silent fallback is a FAIL.
 
 ### Canary sequence
 

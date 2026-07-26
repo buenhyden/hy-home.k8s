@@ -3,7 +3,7 @@ title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
 type: sdlc/adr
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # ADR-0019: Provider-Native Agent Harness and Loop Model
@@ -16,7 +16,7 @@ loop, eval과 strict runtime evidence로 운영한다는 제안을 기록한다.
 ADR-0013은 계속 `accepted`이며, Specs 041–046을 구현하고 Spec 046의 모든 closure gate가
 PASS한 뒤에만 이 결정이 ADR-0013의 current decision을 대체할 수 있다.
 
-외부 사실 기준은 **2026-07-10 10:00 Asia/Seoul**이고 문서 관리일은 2026-07-22이다.
+현재 외부 사실 관찰 기준은 **2026-07-26 Asia/Seoul**이다.
 
 ## Context
 
@@ -29,32 +29,21 @@ agent-governance CI를 하나의 lifecycle로 닫아야 한다.
 [OpenAI Harness Engineering](https://openai.com/index/harness-engineering/)은 짧은 agent map,
 repository knowledge SSoT, 기계적 invariant, 격리된 worktree와 반복 feedback이 agent-first
 개발의 신뢰성을 만든다고 설명한다. Claude
-[subagent](https://code.claude.com/docs/en/sub-agents)·[setting](https://code.claude.com/docs/en/settings)·
+[subagent](https://code.claude.com/docs/en/sub-agents)·[configuration](https://code.claude.com/docs/en/configuration)·
 [hook](https://code.claude.com/docs/en/hooks), Codex
-[subagent](https://developers.openai.com/codex/subagents)·[configuration](https://developers.openai.com/codex/config-reference),
-Gemini [subagent](https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md)·
-[configuration](https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md)는
+[subagent](https://learn.chatgpt.com/docs/agent-configuration/subagents)·
+[configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+Gemini [subagent](https://geminicli.com/docs/core/subagents/)·
+[hook](https://geminicli.com/docs/hooks/reference/)는
 서로 다른 native schema와 enforcement 경계를 제공한다. 따라서 공통 semantic을 공유하되
 provider syntax와 실제 runtime evidence는 분리해야 한다.
 
-기준 시점에는 Claude Fable 5/Sonnet 5/Haiku 4.5, OpenAI GPT-5.6 Sol/Terra/Luna와
-Gemini 3.5 Flash가 최신 일반 후보군이다. Claude Opus 4.8/Sonnet 4.6,
-GPT-5.5/GPT-5.3-Codex와 Gemini 3.1 Pro Preview는 incumbent/비교 후보로 남긴다.
-Claude Mythos 5는 제한된 trusted-access 전용이므로 일반 roster default가 아니다. 모델
-가족의 발표 사실은 특정 역할 적합성을 증명하지 않는다. 날짜가 명시된 release 근거는
-[Claude Fable 5](https://www.anthropic.com/news/claude-fable-5-mythos-5),
-[Fable 5 redeployment](https://www.anthropic.com/news/redeploying-fable-5),
-[Claude Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5),
-[Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8),
-[Claude Sonnet 4.6](https://www.anthropic.com/news/claude-sonnet-4-6),
-[Claude Haiku 4.5](https://www.anthropic.com/news/claude-haiku-4-5),
-[GPT-5.6](https://openai.com/index/gpt-5-6/),
-[Gemini 3.5](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5/)다.
-현재 model ID와 reasoning-effort 표면은 별도의 live reference인
-[OpenAI model catalog](https://developers.openai.com/api/docs/models)로 확인한다. 또한
-[Gemini CLI transition notice](https://github.com/google-gemini/gemini-cli/discussions/27274)는
-일부 login 경로와 CLI lifecycle의 전환 위험을 명시하므로 tracked `.gemini/**`의 존재와
-authenticated runtime readiness를 같은 claim으로 둘 수 없다.
+후보군은 Claude의 account-available `opus`/`fable`/`sonnet`/`haiku`, Codex의 documented
+`gpt-5.6` 및 balanced candidates, Gemini의 `gemini-3-pro-preview`/
+`gemini-3-flash-preview`/Auto다. 구체 ID와 effort는 provider 문서, installed client의
+native parse, account availability와 동일 corpus eval로 결정한다. 모델 발표나 최신 이름은
+특정 역할 적합성을 증명하지 않으며, tracked `.gemini/**`의 존재와 authenticated runtime
+readiness를 같은 claim으로 둘 수 없다.
 
 활성 Specs [038](../../03.specs/038-reference-information-architecture/spec.md),
 [039](../../03.specs/039-github-ci-qa-evidence/spec.md),
@@ -91,8 +80,9 @@ foundation-first 순서로 구현·검증한다.
 - Project config/MCP는 tracked secret-free baseline과 allowlist만 소유하고, user credential과
   private config를 수정·수집하지 않는다.
 - Repo-static parse, native discovery, authenticated controlled run을 별도 evidence class로 둔다.
-  Claude/Codex/Gemini canary가 모두 PASS해야 closure할 수 있으며, 하나라도 ABSENT, BLOCKED,
-  FAIL 또는 미실행이면 program은 active 상태를 유지한다.
+  Claude/Codex/Gemini마다 독립 canary record가 필요하다. 해당 provider runtime readiness는
+  PASS만 증명하며, repository-local closure는 `ABSENT`/`DEFER`에 limitation, owner와 retry
+  trigger가 있을 때 허용한다.
 
 ### Role-specific model and effort
 
@@ -135,7 +125,8 @@ foundation-first 순서로 구현·검증한다.
   [`pre-commit run --all-files`](https://pre-commit.com/) → formatter review → rerun →
   diff/scope review 순서로 실행한다.
 - Consumer-first migration 후 old contract/schema, duplicate roster·matrix, stale 10/30/3,
-  Gemini absent/DEFER 및 obsolete runtime/model claim을 active surface에서 제거한다.
+  `.gemini`-surface-absent claim 및 obsolete runtime/model claim을 active surface에서
+  제거한다. 실제 provider runtime `ABSENT`/`DEFER` evidence는 별도 class로 보존한다.
 
 ### Delivery order and replacement gate
 
@@ -146,8 +137,9 @@ foundation-first 순서로 구현·검증한다.
 5. Spec 045: Agent-governance CI/QA 및 legacy/current-owner cutover.
 6. Spec 046: Strict closure, independent whole-branch review와 ADR replacement readiness.
 
-Spec 046이 repository quality gate, all-files QA, canary 3/3, 12/48 parity, eval/model fitness,
-zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대체하지 않는다.
+Spec 046이 repository quality gate, all-files QA, 세 provider canary record, 12/48 parity,
+eval/model fitness, zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대체하지
+않는다. `ABSENT`/`DEFER` record는 해당 provider runtime readiness를 열어 둔다.
 
 ## Explicit Non-goals
 
@@ -173,7 +165,7 @@ zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대�
 ### Costs and trade-offs
 
 - 12 roles를 네 syntax로 유지하므로 48 adapter의 parity validator와 fixture 유지 비용이 생긴다.
-- 세 provider CLI 설치·인증·canary가 모두 필요하므로 한 provider가 외부 정책으로 막히면 closure가 지연된다.
+- 세 provider canary record를 유지해야 하며 unavailable provider는 runtime-readiness follow-up을 남긴다.
 - Provider model/schema 갱신은 cutoff ledger, config parse, canary와 eval을 반복해야 한다.
 - 동일 semantic도 provider의 tool, hook, sandbox, recursion 차이 때문에 enforcement level은 다를 수 있다.
 - Strict loop ceiling은 자동 복구 가능한 작업도 조기에 human escalation할 수 있지만, 반복 무진행보다 관측 가능성을 우선한다.
@@ -199,11 +191,12 @@ zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대�
 - 기각 이유: 역할 semantic, stop/handoff, QA와 current-owner가 네 군데로 분기되어 drift와
   과장된 capability claim을 기계적으로 막기 어렵다.
 
-### Repo-static validation만으로 closure
+### Repo-static validation만으로 runtime readiness까지 closure
 
 - 장점: credential과 CLI 설치 없이 CI에서 재현하기 쉽다.
-- 기각 이유: 파일 parse는 provider discovery, authentication, selected model과 controlled run을
-  증명하지 못한다. 사용자가 승인한 strict 3-provider runtime closure를 만족하지 않는다.
+- 기각 이유: 파일 parse는 provider discovery, authentication, selected model과 controlled
+  run을 증명하지 못한다. Repository-local closure와 provider-runtime readiness를 같은 PASS로
+  합치지 않는다.
 
 ### Unbounded retry와 transcript 기반 resume
 
@@ -235,4 +228,4 @@ zero stale legacy, clean tree를 모두 증명하기 전에는 ADR-0013을 대�
 - **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
   [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
   [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Roster and Projection Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)

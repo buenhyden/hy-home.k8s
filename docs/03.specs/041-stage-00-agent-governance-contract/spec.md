@@ -3,7 +3,7 @@ title: 'Stage 00 Agent Governance Contract Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Stage 00 Agent Governance Contract Specification
@@ -16,7 +16,7 @@ and deterministic consumer validation. It is a design record only while Specs
 038–040 remain active. Spec 041 may be promoted and enrolled in `programLineage`
 only after Spec 040 closes the current PRD-006 program.
 
-The external-fact cutoff is **2026-07-10 10:00 Asia/Seoul**. Repository state,
+The external-source observation cutoff is **2026-07-26 Asia/Seoul**. Repository state,
 not this draft, remains the current runtime authority until the tranche is
 implemented and reviewed.
 
@@ -47,8 +47,10 @@ implemented and reviewed.
    decision relation.
 4. Only Spec 041 may own the first execution Plan/Task pair; later tranches
    remain blocked until their predecessor's tranche-owned criteria are `done`.
-   Provider-runtime results recorded by Spec 042 may remain explicit closure
-   blockers without preventing repository-local Specs 043–045 from executing.
+   Provider-runtime results recorded by Spec 042 may remain explicit
+   `ABSENT`, `BLOCKED`, or `DEFER` readiness results without preventing
+   repository-local Specs 043–046 from executing or closing. Such results
+   cannot support a provider-runtime readiness claim.
 
 ### Machine-owner contract
 
@@ -66,6 +68,10 @@ implemented and reviewed.
 - `agent-role-semantics.json` and its schema remain readable compatibility
   inputs until all named consumers select the new version. Spec 045 removes
   them only after a zero-consumer proof.
+- The contract references
+  `docs/00.agent-governance/memory/progress.md` as the only tracked shared
+  project-memory ledger. Provider auto-memory and transient checkpoints cannot
+  become current owners for repository facts or execution status.
 
 ### Evidence classes
 
@@ -117,6 +123,7 @@ The proposed `harness-contract.json` contains:
 - an ordered surface set with native path, provider schema, evidence class,
   and per-role projection path, each marked `current` or `target`;
 - consumer/version records and compatibility state;
+- the canonical shared-memory path and transient checkpoint boundary;
 - bounded cardinality assertions and redaction rules.
 
 No credential, token, provider transcript, user configuration, or ignored

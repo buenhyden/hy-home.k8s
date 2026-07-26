@@ -3,7 +3,7 @@ title: 'Agent Harness Loop Lifecycle Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Agent Harness Loop Lifecycle Specification
@@ -13,8 +13,8 @@ updated: 2026-07-22
 This specification defines a bounded, observable, and recoverable execution
 loop shared by local/Antigravity, Claude, Codex, and Gemini projections. It
 turns repeated failures into deterministic stop/escalation or evaluation input
-instead of open-ended retries. The external-fact cutoff is **2026-07-10 10:00
-Asia/Seoul**.
+instead of open-ended retries. The external-source observation cutoff is
+**2026-07-26 Asia/Seoul**.
 
 The design follows the repository-as-system-of-record and mechanical-feedback
 principles in [OpenAI Harness Engineering](https://openai.com/index/harness-engineering/)

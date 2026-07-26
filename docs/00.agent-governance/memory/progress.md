@@ -8,6 +8,68 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - Agent governance program design rebaseline
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: product, architecture, qa, docs, meta
+- **Status**: in-progress
+- **Tags**: #agent-governance #harness #loop #provider #ci #design
+
+#### Progress
+
+- Reused the existing PRD 003, ARD 0006, ADR 0019, and Specs 039–046 instead
+  of creating a parallel program.
+- Approved the foundation-first order
+  `039 -> 040 -> 041 -> 042 -> 043 -> 044 -> 045 -> 046`.
+- Rebased current provider schema/model sources to the 2026-07-26 observation
+  date, separated repository-local closure from provider-runtime readiness,
+  and retained one independent canary record per Claude, Codex, and Gemini.
+- Defined `harness-contract.json` as the planned machine owner, retained
+  `validation-surfaces.json` as the independent validator-routing owner, and
+  fixed `progress.md` as the only tracked shared project-memory ledger.
+- Recorded the observed remote GitHub Actions failure for its exact SHA and
+  designed an explicit pinned Python/pre-commit execution path without
+  claiming an unexecuted post-change remote PASS.
+
+#### Memory
+
+- Repository-local completion and provider-runtime readiness are different
+  products of the same program. An unavailable provider needs a secret-free
+  `ABSENT` or `DEFER` record, owner, and retry trigger; it must not prevent
+  static contract closure or be rounded up to runtime PASS.
+- Model aliases, reasoning effort names, and native metadata must remain
+  provider-specific. Official documentation supplies candidates, while exact
+  client parsing, account availability, and role evals decide promotion.
+
+#### Evidence
+
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict`:
+  PASS, 446 governed paths with zero uncovered or ambiguous routes.
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict`: PASS,
+  zero violations.
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict
+  --body-contracts registry`: PASS.
+- `git diff --check`: PASS.
+- `bash scripts/validate-repo-quality-gates.sh .`: PASS, including the document
+  registry, cross-document, affected-surface, workspace-boundary, archive,
+  agent-semantics, roster-currentness, and reference-IA validators.
+- `env TMPDIR=/tmp TMP=/tmp TEMP=/tmp pre-commit run --all-files`: PASS for all
+  hooks with no formatter mutation. The unqualified invocation inherited WSL
+  `TEMP`/`TMP` paths on the Windows mount and its GitOps self-test could not
+  create a FIFO (`OSError 95`); rerunning the same hook with POSIX `/tmp`
+  removed the environmental limitation.
+- Remote GitHub Actions run `29982910320` remains observed FAIL for commit
+  `bd93374d7f531317c3bd061eb1ef567c1e2e0084`; no push, dispatch, credential
+  access, provider installation, or external mutation was performed.
+
+#### Handoff
+
+- Next owner: design self-review and user review. After approval, use the
+  canonical planning skill to author Spec 039's Plan/Task and begin
+  Subagent-Driven implementation in the isolated worktree.
+
 ### 2026-07-19 - Archive immutability and current-replacement authority repair
 
 #### Metadata

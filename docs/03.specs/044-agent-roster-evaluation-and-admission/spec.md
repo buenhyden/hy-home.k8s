@@ -3,7 +3,7 @@ title: 'Agent Roster Evaluation and Admission Technical Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Agent Roster Evaluation and Admission Technical Specification (Spec)
@@ -25,10 +25,10 @@ external [`agency-agents`](https://github.com/msitarzewski/agency-agents)
 repository is only an idea catalog for comparing responsibility and evaluation
 patterns; it is not roster or instruction authority.
 
-The cutoff for model and provider-capability decisions is
-**2026-07-10 10:00 Asia/Seoul**. Changes newer than this cutoff that are found
-during implementation must be recorded as separate currentness evidence and
-must not silently alter the approved role boundaries in this Spec.
+The current-source observation cutoff for model and provider-capability
+decisions is **2026-07-26 Asia/Seoul**. Later changes must be recorded as
+separate currentness evidence and must not silently alter approved role
+boundaries or accepted model decisions.
 
 ## Strategic Boundaries & Non-goals
 
@@ -144,44 +144,34 @@ available by cutoff sources and an authenticated Spec 042 canary.
 
 Provider mapping follows these rules.
 
-- **Claude**: the cutoff top candidate is Fable 5, the worker candidate is
-  Sonnet 5, and the low-risk/cost candidate is Haiku 4.5. Opus 4.8 and Sonnet
-  4.6 remain incumbent comparisons. Evaluations include Fable safeguard
-  fallback, plan/entitlement constraints, and data-retention boundaries. Mythos
-  5 is not a general roster default without trusted access and explicit
-  approval. `effort` or `maxTurns` is represented as an adapter field only when
-  confirmed by dated evidence or a native-schema canary.
-- **Codex**: the top candidate is `gpt-5.6-sol`, the balanced worker candidate
-  is `gpt-5.6-terra`, and the cost-sensitive candidate is `gpt-5.6-luna`.
-  Catalog values `none/low/medium/high/xhigh/max` are represented as
-  `model_reasoning_effort` according to the role profile and evaluation.
-  Codex-only `ultra` is used only when proven by a CLI/plan canary; GPT-5.5 and
-  GPT-5.3-Codex remain incumbent comparisons.
-- **Gemini CLI**: Gemini 3.5 Flash is the released primary coding/agentic
-  candidate at the cutoff. Verified reasoning profiles and evaluations
-  determine the top/worker distinction. Gemini 3.1 Pro Preview is a comparator,
-  not an assumed higher tier. The exact model ID and reasoning control require
-  confirmation by the Spec 042 native-resolution canary.
-- **local/Antigravity**: Gemini 3.5 Flash is the primary candidate, with
-  role-specific reasoning profiles recorded in the `.agents` contract. Gemini
-  3.1 Pro Preview remains only a comparison candidate and is not reused as
-  evidence of Gemini CLI model resolution or native discovery.
+- **Claude**: compare the incumbent with account-available `opus`, `fable`,
+  `sonnet`, and `haiku` aliases or exact IDs. High-risk work begins with a
+  high-capability candidate; bounded low-risk work may begin with `sonnet` or
+  `haiku`. `model` and `effort` enter an adapter only after official schema,
+  allowlist, and runtime-resolution evidence.
+- **Codex**: compare the incumbent with the installed runtime's documented
+  demanding and balanced candidates, including `gpt-5.6` and
+  `gpt-5.6-terra` where available. `model_reasoning_effort` is chosen per role
+  and exact model/client support; no union of example values is treated as a
+  universal enum.
+- **Gemini CLI**: compare `gemini-3-pro-preview`,
+  `gemini-3-flash-preview`, and supported Auto routing where available.
+  Subagent model selection is independent of the parent `/model` choice.
+  Agent-scoped generation settings require native parse and runtime evidence.
+- **local/Antigravity**: retain its current model labels as an incumbent local
+  projection until an approved local runtime evaluation replaces them. Local
+  evidence is not reused as Gemini CLI discovery or model-resolution proof.
 
 Use the following official sources for provider model releases and schemas.
 
 - [Claude Code subagents](https://code.claude.com/docs/en/sub-agents)
-- [Claude Fable 5 and Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5)
-- [Fable 5 redeployment](https://www.anthropic.com/news/redeploying-fable-5)
-- [Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8)
-- [Claude Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5)
-- [Claude Sonnet 4.6](https://www.anthropic.com/news/claude-sonnet-4-6)
-- [Codex subagents](https://developers.openai.com/codex/subagents)
-- [GPT-5.6 release](https://openai.com/index/gpt-5-6/)
-- [GPT-5.6 model catalog](https://developers.openai.com/api/docs/models)
-- [GPT-5.5 model](https://developers.openai.com/api/docs/models/gpt-5.5)
-- [GPT-5.3-Codex model](https://developers.openai.com/api/docs/models/gpt-5.3-codex)
-- [Gemini CLI subagents](https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md)
-- [Gemini 3.5 model announcement](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5/)
+- [Claude Code model configuration](https://code.claude.com/docs/en/model-config)
+- [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+- [Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+- [Codex model catalog](https://developers.openai.com/api/docs/models)
+- [Gemini CLI subagents](https://geminicli.com/docs/core/subagents/)
+- [Gemini CLI model selection](https://geminicli.com/docs/cli/model/)
+- [Gemini CLI generation settings](https://geminicli.com/docs/cli/generation-settings/)
 
 ## Data Modeling & Storage Strategy
 

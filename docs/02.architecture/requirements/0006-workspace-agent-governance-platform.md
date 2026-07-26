@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Workspace Agent Governance Platform Architecture Reference Document (ARD)
@@ -13,8 +13,9 @@ updated: 2026-07-22
 이 문서는 Stage 00 canonical governance를 네 provider surface에 투영하고, runtime evidence와
 feedback loop로 닫는 참조 아키텍처를 정의한다. 핵심 구조는
 `canonical policy + machine harness contract + provider projection + execution loop + evidence gate`다.
-설계의 외부 사실 기준은 **2026-07-10 10:00 Asia/Seoul**이며, concrete provider schema와
-model 값은 official primary source와 authenticated canary가 함께 입증할 때만 current가 된다.
+설계의 현재 외부 사실 관찰 기준은 **2026-07-26 Asia/Seoul**이며, concrete provider schema와
+model 값은 official primary source와 native parse/runtime evidence가 함께 입증할 때만
+provider-runtime current가 된다.
 
 [OpenAI Harness Engineering](https://openai.com/index/harness-engineering/)의 짧은 map,
 repo-local system of record, 기계적 invariant, 격리 환경과 feedback loop 원칙을 이 저장소의
@@ -59,7 +60,7 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 | Attribute | Architecture requirement | Measure |
 | --- | --- | --- |
 | Consistency | Machine contract가 역할 semantic과 surface projection의 유일한 machine owner다. | 12 role × 4 surface = 48 adapter exact parity, duplicate owner 0건 |
-| Verifiability | Static shape, native discovery와 authenticated run을 별도 evidence class로 관리한다. | Contract/schema/config PASS와 Claude·Codex·Gemini canary 3/3 PASS |
+| Verifiability | Static shape, native discovery와 authenticated run을 별도 evidence class로 관리한다. | Contract/schema/config PASS와 Claude·Codex·Gemini별 독립 canary record; PASS만 runtime readiness |
 | Reliability | 동일 실패의 무한 반복을 차단하고 재현 가능한 state만 checkpoint한다. | 동일 signature retry ≤2, task recovery ≤3, 동일 결과 2회면 stop |
 | Security | Least privilege, GitOps-first, secret-free evidence와 명시적 external-action approval을 적용한다. | Secret/auth/transcript 저장 0건, CI write permission 불필요, action full SHA |
 | Evolvability | Provider schema/model 변화는 cutoff ledger, eval과 canary를 통해 갱신한다. | Source date·model compatibility·fitness fixture 없는 승격 0건 |
@@ -101,11 +102,13 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 confidence와 native schema/config canary를 통과하기 전 contract-required로 승격하지 않는다.
 
 Provider schema 근거는 Claude
-[subagents](https://code.claude.com/docs/en/sub-agents)·[settings](https://code.claude.com/docs/en/settings)·
+[subagents](https://code.claude.com/docs/en/sub-agents)·[configuration](https://code.claude.com/docs/en/configuration)·
 [hooks](https://code.claude.com/docs/en/hooks), Codex
-[subagents](https://developers.openai.com/codex/subagents)·[configuration](https://developers.openai.com/codex/config-reference),
-Gemini [subagents](https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md)·
-[configuration](https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md)다.
+[subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)·
+[configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+Gemini [subagents](https://geminicli.com/docs/core/subagents/)·
+[hooks](https://geminicli.com/docs/hooks/reference/)·
+[generation settings](https://geminicli.com/docs/cli/generation-settings/)다.
 
 ### Roster, model and effort decision
 
@@ -125,20 +128,21 @@ Canonical roster는 기존 `code-reviewer`, `doc-writer`, `gitops-reviewer`, `in
 높은 위험의 supervisor/security/incident 또는 복합 architecture 역할은 강한 reasoning 후보로,
 bounded editing·formatting·index 역할은 비용/latency가 낮은 후보로 시작할 수 있으나 이는 기본
 가설일 뿐이다. `docs-researcher`는 source fidelity와 cutoff 정확성, `quality-engineer`는 fixture
-판별력과 deterministic evidence를 우선한다. 기준 시점 후보군은 Claude Fable 5/Sonnet 5/
-Haiku 4.5, OpenAI GPT-5.6 Sol/Terra/Luna, Gemini 3.5 Flash다. Claude Opus 4.8/Sonnet 4.6,
-GPT-5.5/GPT-5.3-Codex와 Gemini 3.1 Pro Preview는 incumbent 또는 비교 후보로 보존한다.
-Claude Mythos 5는 제한된 trusted-access 모델이므로 일반 roster default가 아니다.
-모델 이름이나 제공자 benchmark만으로 역할에 배정하지 않고 Spec 042/044의
-schema·canary·동일 corpus eval이 확정한다.
+판별력과 deterministic evidence를 우선한다. Claude는 account-available
+`opus`/`fable`/`sonnet`/`haiku`, Codex는 installed runtime이 문서화한 `gpt-5.6` 계열과
+balanced candidate, Gemini는 `gemini-3-pro-preview`/`gemini-3-flash-preview`/Auto를
+후보로 비교한다. 모델 이름이나 provider benchmark만으로 역할에 배정하지 않고 Spec
+042/044의 schema·canary·동일 corpus eval이 exact ID와 effort를 확정한다.
 
 ### Runtime evidence and strict closure
 
 각 Claude/Codex/Gemini canary는 CLI version, installation source, auth mode의 비밀 아닌 식별자,
 project-root discovery, known role discovery, controlled prompt/result, selected/actual model,
 exit status와 timestamp를 기록한다. Token, credential path/content, shell history, full transcript는
-기록하지 않는다. Repo-static PASS는 runtime PASS를 대체하지 않는다. 세 canary 중 하나라도
-ABSENT, BLOCKED, FAIL 또는 미실행이면 Spec 046과 프로그램은 active 상태를 유지한다.
+기록하지 않는다. Repo-static PASS는 runtime PASS를 대체하지 않는다. 각 provider의
+runtime-readiness claim은 해당 canary PASS가 필요하다. Repository-local closure는
+`ABSENT`/`DEFER`에 limitation, owner와 retry trigger가 있을 때 허용하되 runtime readiness는
+열린 상태로 유지한다.
 
 ## Data Architecture
 
@@ -183,8 +187,9 @@ remaining work만 보존하고 secret, auth data, raw/full transcript를 버린�
 - Local QA는 targeted → affected → staged → tests →
   [`pre-commit run --all-files`](https://pre-commit.com/) → formatter review → rerun →
   `git diff --check`/scope review 순서다. 실패 수정 뒤 관련 lane을 다시 실행한다.
-- Spec 046은 repository quality gate, all-files, canary 3/3, 12/48, eval/model fitness, zero-legacy,
-  independent whole-branch review와 clean tree를 모두 요구한다.
+- Spec 046은 repository quality gate, all-files, 세 provider canary record, 12/48,
+  eval/model fitness, zero-legacy, independent whole-branch review와 clean tree를 요구한다.
+  `ABSENT`/`DEFER` provider record는 runtime readiness PASS가 아니며 owner/trigger가 필수다.
 
 ## Traceability
 

@@ -3,7 +3,7 @@ title: 'Agent Governance CI and QA Cutover Technical Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Agent Governance CI and QA Cutover Technical Specification (Spec)
@@ -22,7 +22,7 @@ canaries that do not inject repository secrets into GitHub. A static CI PASS is
 not evidence that the Claude, Codex, or Gemini CLI consumed the configuration
 or executed an authenticated model.
 
-The source and security decision cutoff is **2026-07-10 10:00 Asia/Seoul**.
+The source and security observation cutoff is **2026-07-26 Asia/Seoul**.
 Implementation follows the official contracts for
 [GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use),
 [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax),
@@ -142,9 +142,10 @@ Legacy deletion occurs only after consumer migration.
 3. Positive and negative fixtures prove the new owner and rejection of the old
    owner.
 4. Only then remove the active-surface `10 roles / 30 adapters / 3 surfaces`
-   claim, the Gemini absent/`DEFER` claim, duplicate roster/model/readiness
-   matrices, stale provider-hook wording, the old semantics contract, and
-   unconsumed adapters.
+   claim, the stale claim that the `.gemini` native surface is absent,
+   duplicate roster/model/readiness matrices, stale provider-hook wording, the
+   old semantics contract, and unconsumed adapters. Preserve the independently
+   observed Gemini CLI runtime result even when it remains `ABSENT` or `DEFER`.
 5. Preserve historical facts in superseded ADRs and archive records through a
    superseding relation and explicit historical allowlist, while preventing
    them from appearing as active currentness sources.
@@ -256,8 +257,9 @@ active legacy, and the required QA ordering/formatter rerun.
 - **VAL-AGQC-006**: If `pre-commit run --all-files` creates changes, only a
   clean PASS after review and rerun qualifies as completion evidence.
 - **VAL-AGQC-007**: After all active consumers move to the new owner, the
-  counts of stale `10/30/3`, Gemini absent/`DEFER`, duplicate matrices, and
-  stale hook/semantics contracts are zero.
+  counts of stale `10/30/3`, `.gemini`-surface-absent claims, duplicate
+  matrices, and stale hook/semantics contracts are zero; separately classified
+  runtime `ABSENT`/`DEFER` evidence remains accurate.
 - **VAL-AGQC-008**: Historical exceptions remain only through
   superseding/archive relations and do not enter active currentness queries or
   the generated roster.
