@@ -189,6 +189,14 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
+    "tests/test_validate_ci_python_contract.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_gitops_change_set.py": (
+        "python",
+        "regression-test",
+    ),
 }
 README_ADDITIONS = [
     "tests/fixtures/document-contracts/template-source-parity.json",

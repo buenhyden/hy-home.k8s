@@ -3,7 +3,7 @@ title: 'Reference: Tech Stack Version Inventory'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-26
 ---
 
 # Tech Stack Version Inventory
@@ -20,7 +20,7 @@ updated: 2026-07-14
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-07-14
+- Source checked: 2026-07-26
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -100,6 +100,11 @@ helm_charts:
     repoURL: 'https://argoproj.github.io/argo-helm'
     chart: 'argo-rollouts'
     targetRevision: '2.40.9'
+ci_python: '3.12'
+ci_python_dependencies:
+  jsonschema: '4.26.0'
+  pre-commit: '4.6.1'
+  PyYAML: '6.0.3'
 github_actions:
   'actions/checkout': '9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' # pragma: allowlist secret
   'actions/first-interaction': '1c4688942c71f71d4f5502a26ea67c331730fa4d' # pragma: allowlist secret
@@ -108,7 +113,6 @@ github_actions:
   'actions/stale': 'eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899' # pragma: allowlist secret
   'actions/upload-artifact': '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # pragma: allowlist secret
   'orhun/git-cliff-action': 'f50e11560dce63f7c33227798f90b924471a88b5' # pragma: allowlist secret
-  'pre-commit/action': '2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd' # pragma: allowlist secret
 pre_commit:
   'https://github.com/commitizen-tools/commitizen': 'v4.15.1'
   'https://github.com/pre-commit/pre-commit-hooks': 'v6.0.0'
@@ -132,7 +136,7 @@ pre_commit:
 ## Review and Freshness
 
 - Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-07-14.
+- Last reviewed: 2026-07-26.
 - Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Related Documents

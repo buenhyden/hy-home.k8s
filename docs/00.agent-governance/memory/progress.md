@@ -8,6 +8,83 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-002 exact CI Python contract
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #github-actions #qa #pre-commit #spec-039
+
+#### Progress
+
+- Added `.github/requirements/ci-validation.txt` as the sole executable owner
+  for the three exact CI validation dependencies and mirrored the contract in
+  the technology inventory.
+- Pinned all three validation jobs to Python 3.12 and one shared requirements
+  install. Replaced `pre-commit/action` with explicit full-history
+  `pre-commit run --all-files --show-diff-on-failure` execution.
+- Added a network-free, duplicate-safe validator with seven stable rule IDs,
+  temporary-repository mutation coverage, regular non-symlink input checks,
+  and production-root reconciliation.
+- Preserved the six existing CI job IDs, conditional `needs`/`if` topology,
+  selector behavior, timeouts, permissions, manifest and repository-quality
+  command order, and `ci-summary` aggregation.
+- Added the observed bulk-document selector result as the eleventh selection
+  case: four document validators, two CI jobs, protected level, and no
+  unmatched paths.
+- A staged aggregate exposed a pre-existing closed helper-admission omission
+  for the already tracked GCQE-001 regression and the required GCQE-002
+  regression. The bounded Plan variance added exactly those two identities to
+  the code-owned post-closure manifest, kept the frozen 33-helper ledger and
+  its counts unchanged, and updated focused role-audit expectations to the
+  dynamic 43-helper current corpus.
+
+#### Memory
+
+- CI dependency availability is an executable three-way agreement: one exact
+  requirements owner, one workflow consumption pattern, and one human-readable
+  inventory mirror. A network-free validator should reconcile all three and
+  reject duplicate YAML keys rather than infer intent from loose text.
+
+#### Evidence
+
+- RED: `python3 -m unittest tests/test_validate_ci_python_contract.py` exited
+  `1` with `FileNotFoundError` because the validator did not yet exist.
+- Pre-owner GREEN: nine temporary-root tests passed with one intentional
+  production-root skip; the seven-rule self-test passed eight cases.
+- Complete focused GREEN: eleven tests passed, including the production root
+  and command-location regression. Validator self-test and production modes,
+  affected-surface self-test/production, and GitHub Actions security
+  production validation passed.
+- The first aggregate attempt reached
+  `ROLE-AUDIT-WORKTREE-INDEX-DRIFT` for the modified aggregate script. This is
+  the expected index-bound repository guard before staging, not a product
+  contract failure.
+- The first staged role-audit probe then exposed
+  `ROLE-AUDIT-HELPER-ADMISSION` for the new CI regression. Focused admission
+  expectations observed the same RED before exactly two post-closure identities
+  made 36 unit tests, the 28-case self-test, and production counts
+  `43/33/10` with formats `15/21/6/1` pass.
+- The staged repository aggregate passed. The first unqualified all-files run
+  found only a high-entropy synthetic SHA in the new temporary fixture; after
+  replacing it with a 40-zero non-secret placeholder, focused, affected,
+  role-audit, security, and the complete unqualified all-files run passed.
+- Review round 1 found that the standalone validator ignored Python setup and
+  loose pip-install ownership in jobs outside the three validation jobs.
+  Focused and full-suite RED both showed `ContractError not raised`, and the
+  analogous self-test RED reported an accepted `CI-PYTHON-WORKFLOW` mutation.
+  The bounded correction rejects only setup-python or pip-install steps in
+  outside jobs; unrelated jobs remain allowed. Final focused coverage is 12
+  tests, and the unchanged seven-rule self-test now contains nine cases.
+
+#### Handoff
+
+- Next owner: GCQE-003 may add the seven-day transient artifact-retention
+  contract. Hosted CI, provider runtime, and live infrastructure evidence
+  remain `DEFER`; this package makes no remote or live readiness claim.
+
 ### 2026-07-26 - GCQE-001 portable GitOps boundary fixture
 
 #### Metadata

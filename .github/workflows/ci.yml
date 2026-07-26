@@ -104,10 +104,16 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
-          python-version: '3.x'
-      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+          python-version: '3.12'
+      - name: Install repository validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
+      - name: Run all pre-commit hooks
+        run: |
+          pre-commit run --all-files --show-diff-on-failure
 
   repo-quality-static:
     needs: changes
@@ -120,10 +126,10 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
-          python-version: '3.x'
+          python-version: '3.12'
       - name: Install repository validation dependencies
         run: |
-          python -m pip install --disable-pip-version-check pyyaml jsonschema
+          python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
       - name: Run repository quality gates
         run: |
           bash scripts/validate-repo-quality-gates.sh .
@@ -140,10 +146,10 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
-          python-version: '3.x'
-      - name: Install manifest validation dependencies
+          python-version: '3.12'
+      - name: Install repository validation dependencies
         run: |
-          python -m pip install --disable-pip-version-check pyyaml
+          python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
       - name: Review GitOps object identity and deletion set
         env:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}

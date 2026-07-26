@@ -55,6 +55,8 @@ python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
