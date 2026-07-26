@@ -17,6 +17,7 @@ It is a map and routing surface, not the policy source of truth.
 - Branch strategy policy lives in `docs/00.agent-governance/rules/git-workflow.md`.
 - CI enforcement lives in `workflows/ci.yml`, `scripts/validate-repo-quality-gates.sh`, and the `manifest-static` script bundle.
 - The three validation jobs select Python 3.12 and install only from `requirements/ci-validation.txt`; `pre-commit` uses full checkout history and runs the explicit all-files/show-diff command. The network-free contract validator reconciles those workflow settings with the executable requirements owner and technology inventory.
+- The canonical local completion order and evidence vocabulary live in [`quality-standards.md`](../docs/00.agent-governance/rules/quality-standards.md); this hub routes GitHub-specific roles to that owner.
 - ARWB-003 records its 31-record/202-link full-history and secret-classifier proof as explicit local/manual evidence. `repo-quality-static` does not invoke that separate cutover proof.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.

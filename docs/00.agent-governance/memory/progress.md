@@ -8,6 +8,69 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-004 result vocabulary and all-files completion evidence
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #github-actions #qa #evidence #spec-039
+
+#### Progress
+
+- Added focused regressions for all four result states, remote/live `DEFER`
+  without a subprocess or nonzero exit, and rejection of `DEFER`/`FAIL` beside
+  the exactly-one required `PASS` post-validate result.
+- Made `quality-standards.md` the sole owner of the ordered eight-step
+  completion sequence. Postflight, Git workflow, PR, GitHub hub, operator,
+  script, and test surfaces now consume that owner through their respective
+  role-specific actions or routing.
+- The aggregate assertion-only RED was captured before consumer prose, with no
+  index drift:
+
+  ```text
+  ERR docs/00.agent-governance/rules/git-workflow.md missing PR/coverage governance phrase: Run `pre-commit run --all-files` before each logical commit and before branch finish.
+  ERR docs/00.agent-governance/rules/quality-standards.md missing quality/completion phrase: pre-commit run --all-files
+  ERR docs/00.agent-governance/rules/quality-standards.md missing quality/completion phrase: Review `git status --short`, `git diff`, and `git diff --cached` for formatter mutations.
+  ERR docs/00.agent-governance/rules/quality-standards.md missing quality/completion phrase: Rerun affected, staged, and all-files validation after any formatter mutation.
+  ERR docs/00.agent-governance/rules/postflight-checklist.md missing completion checklist phrase: - [ ] `pre-commit run --all-files` completed.
+  ERR docs/00.agent-governance/rules/postflight-checklist.md missing completion checklist phrase: - [ ] `git status --short`, `git diff`, and `git diff --cached` were inspected for formatter mutations.
+  ERR docs/00.agent-governance/rules/postflight-checklist.md missing completion checklist phrase: - [ ] Affected, staged, and all-files validation was rerun after any formatter mutation.
+  ERR .github/PULL_REQUEST_TEMPLATE.md missing QA evidence phrase: - [ ] `pre-commit run --all-files` result:
+  ERR .github/PULL_REQUEST_TEMPLATE.md missing QA evidence phrase: - [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
+  ```
+
+#### Memory
+
+- Completion evidence has one canonical ordered owner. Consumer checklists and
+  hubs should request or route the relevant action without copying the lane or
+  result definitions.
+- A local `DEFER` is an explicit limitation: remote/live commands are not a
+  local subprocess and do not turn into `PASS` merely because the local runner
+  exits successfully.
+
+#### Evidence
+
+- Focused runner/post-result/provider suite: PASS (16 tests).
+- Markdown-profile strict validation: PASS.
+- The first final aggregate run reached the guide-index check after all earlier
+  aggregate lanes passed, then emitted `ERR
+  docs/05.operations/guides/README.md updated mismatch for
+  0010-ci-cd-qa-reference-guide.md: index=2026-07-04,
+  frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
+  bounded coupled-path variance: the existing guide collection-index row now
+  carries the same date as its changed guide.
+- Remaining aggregate, strict cross-document, staged, unqualified all-files,
+  and final diff evidence is recorded in the ignored GCQE-004 implementation
+  report because this ledger commit cannot contain its own final commit SHA.
+
+#### Handoff
+
+- Rollback unit: `docs(qa): enforce all-files completion evidence`.
+- Hosted CI, provider-runtime, and live infrastructure evidence remain
+  `DEFER`; this package makes no hosted PASS claim.
+
 ### 2026-07-26 - GCQE-003 seven-day changelog artifact retention
 
 #### Metadata

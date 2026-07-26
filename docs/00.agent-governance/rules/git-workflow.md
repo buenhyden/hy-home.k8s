@@ -3,7 +3,7 @@ title: 'Git Workflow (April 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-26
 ---
 
 # Git Workflow (April 2026)
@@ -55,6 +55,7 @@ updated: 2026-07-14
 - Keep local guidance aligned with the active GitHub branch protection or ruleset configuration. If repository defaults change, update this file in the same change window.
 - Do not bypass the commit-msg hook with `--no-verify`. Commitizen enforces Conventional Commit format; bypassing it leaves malformed messages in the permanent history.
 - Apply the coverage policy in `quality-standards.md`: future testable application code targets 90% coverage where applicable, while current infra-only Bash/YAML/Markdown work uses validation-matrix coverage.
+- Run `pre-commit run --all-files` before each logical commit and before branch finish.
 
 ## Governance Context
 

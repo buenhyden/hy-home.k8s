@@ -37,6 +37,13 @@ class _ContractModule:
         return {"validators": ["repository-quality"]}
 
 
+class _RemoteLiveContractModule:
+    @staticmethod
+    def select_paths(contract, paths, lane, root):
+        del contract, paths, lane, root
+        return {"validators": ["remote-live-check"]}
+
+
 CONTRACT = {
     "validators": [
         {
@@ -260,6 +267,42 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             aggregate,
         )
 
+    def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
+        contract = {
+            "validators": [
+                {
+                    "id": "remote-live-check",
+                    "argv": ["remote-validator", "--check"],
+                    "evidenceLane": "remote/live",
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                }
+            ]
+        }
+        output = StringIO()
+        with (
+            patch.object(RUNNER.subprocess, "run") as invoked,
+            redirect_stdout(output),
+        ):
+            result = RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["scripts/run-validation-lane.py"],
+                contract,
+                _RemoteLiveContractModule,
+            )
+
+        self.assertEqual(result, 0)
+        invoked.assert_not_called()
+        self.assertEqual(
+            re.findall(
+                r"^\[DEFER\] remote-live-check ",
+                output.getvalue(),
+                re.MULTILINE,
+            ),
+            ["[DEFER] remote-live-check "],
+        )
+
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
     @staticmethod
@@ -285,7 +328,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         statuses = {
             identifier: status
             for status, identifier in re.findall(
-                r"^\[(PASS|SKIP|FAIL)\] ([^ ]+) ",
+                r"^\[(PASS|SKIP|FAIL|DEFER)\] ([^ ]+) ",
                 output.getvalue(),
                 re.MULTILINE,
             )

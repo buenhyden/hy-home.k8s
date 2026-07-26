@@ -2976,6 +2976,7 @@ for phrase in [
     "Draft or WIP PRs",
     "90% coverage",
     "validation-matrix coverage",
+    "Run `pre-commit run --all-files` before each logical commit and before branch finish.",
 ]:
     if phrase not in git_workflow_text:
         fail(f"{rel(git_workflow_path)} missing PR/coverage governance phrase: {phrase}")
@@ -2986,9 +2987,31 @@ for phrase in [
     "90% line and branch coverage",
     "validation-matrix coverage",
     "PR verification must state which coverage lane applies",
+    "pre-commit run --all-files",
+    "Review `git status --short`, `git diff`, and `git diff --cached` for formatter mutations.",
+    "Rerun affected, staged, and all-files validation after any formatter mutation.",
 ]:
     if phrase not in quality_standards_text:
-        fail(f"{rel(quality_standards_path)} missing coverage applicability phrase: {phrase}")
+        fail(f"{rel(quality_standards_path)} missing quality/completion phrase: {phrase}")
+
+postflight_checklist_path = root / "docs/00.agent-governance/rules/postflight-checklist.md"
+postflight_checklist_text = read_text(postflight_checklist_path)
+for phrase in [
+    "- [ ] `pre-commit run --all-files` completed.",
+    "- [ ] `git status --short`, `git diff`, and `git diff --cached` were inspected for formatter mutations.",
+    "- [ ] Affected, staged, and all-files validation was rerun after any formatter mutation.",
+]:
+    if phrase not in postflight_checklist_text:
+        fail(f"{rel(postflight_checklist_path)} missing completion checklist phrase: {phrase}")
+
+pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
+pull_request_template_text = read_text(pull_request_template_path)
+for phrase in [
+    "- [ ] `pre-commit run --all-files` result:",
+    "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
+]:
+    if phrase not in pull_request_template_text:
+        fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
 
 qa_scope_path = root / "docs/00.agent-governance/scopes/qa.md"
 qa_scope_text = read_text(qa_scope_path)

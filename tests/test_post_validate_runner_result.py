@@ -31,9 +31,19 @@ class PostValidateRunnerResultTest(unittest.TestCase):
             "single-pass": (valid, True),
             "missing": ("", False),
             "skip": ("[SKIP] repository-quality command=[]\n", False),
+            "defer": ("[DEFER] repository-quality command=[]\n", False),
+            "fail": ("[FAIL] repository-quality command=[]\n", False),
             "duplicate": (valid + valid, False),
             "pass-plus-skip": (
                 valid + "[SKIP] repository-quality command=[]\n",
+                False,
+            ),
+            "pass-plus-defer": (
+                valid + "[DEFER] repository-quality command=[]\n",
+                False,
+            ),
+            "pass-plus-fail": (
+                valid + "[FAIL] repository-quality command=[]\n",
                 False,
             ),
         }

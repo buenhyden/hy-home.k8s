@@ -40,7 +40,8 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-- [ ] Relevant `pre-commit` hooks passed locally
+- [ ] `pre-commit run --all-files` result:
+- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
 - [ ] GitHub CI quality gates (`branch-policy`, `repo-quality-static`, `manifest-static`) passed
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)

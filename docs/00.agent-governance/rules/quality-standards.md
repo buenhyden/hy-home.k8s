@@ -3,7 +3,7 @@ title: 'Agent Quality Standards (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-26
 ---
 
 # Agent Quality Standards (March 2026)
@@ -87,6 +87,21 @@ lanes:
   acceptance condition was not met.
 - `DEFER`: the lane requires unavailable authority, environment, provider, or
   remote/live evidence. `DEFER` is a visible limitation, never a pass.
+
+### Canonical Completion Sequence
+
+Every repo-changing task follows this ordered completion sequence. Consumers
+must link here for the shared order and result meanings rather than redefining
+them.
+
+1. Run focused tests while implementing.
+2. Run affected validators for changed paths.
+3. Stage the exact logical file set and run staged hooks against that index.
+4. Run relevant direct tests and the repository aggregate.
+5. Run `pre-commit run --all-files`.
+6. Review `git status --short`, `git diff`, and `git diff --cached` for formatter mutations.
+7. Rerun affected, staged, and all-files validation after any formatter mutation.
+8. Run final diff checks and record lane-by-lane handoff evidence.
 
 ### Handoff Evidence Contract
 

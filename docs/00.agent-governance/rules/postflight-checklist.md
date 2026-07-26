@@ -3,7 +3,7 @@ title: 'Postflight Checklist (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-26
 ---
 
 # Postflight Checklist (March 2026)
@@ -67,6 +67,9 @@ Run this checklist before finalizing a response.
 - [ ] The owning Task or evidence record identifies scope, changed paths, and acceptance IDs.
 - [ ] Validation commands and tool/version were recorded (or limitations were stated).
 - [ ] Relevant outputs were reviewed.
+- [ ] `pre-commit run --all-files` completed.
+- [ ] `git status --short`, `git diff`, and `git diff --cached` were inspected for formatter mutations.
+- [ ] Affected, staged, and all-files validation was rerun after any formatter mutation.
 - [ ] `affected`, `staged`, `all-files`, `message/manual`, `ci`, and `remote/live` lanes are each reported as `PASS`, `SKIP`, `FAIL`, or `DEFER` without inference across lanes.
 - [ ] No-file and unavailable optional-tool outcomes are `SKIP`; any fallback result is recorded separately.
 - [ ] Lifecycle hook guard ran or equivalent validation commands were executed; PreCompact advisory output is not treated as completion evidence.
@@ -80,7 +83,8 @@ Run this checklist before finalizing a response.
 - [ ] Standalone memory files, if any, used `docs/99.templates/templates/common/memory.template.md` and link back to a related `progress.md` entry.
 
 The canonical lane, result, and handoff field definitions are in
-[`quality-standards.md`](quality-standards.md). Static adapter presence is
+[`quality-standards.md`](quality-standards.md), including the ordered
+completion sequence. Static adapter presence is
 repo-static evidence only and must not be reported as native provider runtime
 consumption.
 
