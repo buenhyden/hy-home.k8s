@@ -478,7 +478,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             value = os.fspath(path)
             if value not in metadata:
                 raise FileNotFoundError(value)
-            return SimpleNamespace(st_mode=metadata[value], st_uid=1000)
+            return SimpleNamespace(st_mode=metadata[value], st_uid=1000, st_gid=1000)
 
         completed = subprocess.CompletedProcess([executable], 0, b"", b"")
         with (
@@ -542,7 +542,11 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             value = os.fspath(path)
             if value not in metadata:
                 raise FileNotFoundError(value)
-            return SimpleNamespace(st_mode=metadata[value], st_uid=owners[value])
+            return SimpleNamespace(
+                st_mode=metadata[value],
+                st_uid=owners[value],
+                st_gid=1000,
+            )
 
         with (
             mock.patch.dict(
@@ -567,6 +571,135 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             metadata[executable] = stat.S_IFREG | 0o755
             owners[executable] = 1001
             self.assertIsNone(validator._validated_gitleaks_hint(ROOT))
+
+    def test_gitleaks_hint_requires_effective_execute_and_traversal(self) -> None:
+        validator = load_validator()
+        candidate = pathlib.Path("/secure/bin/gitleaks")
+        chain = (pathlib.Path("/secure"), pathlib.Path("/secure/bin"))
+        metadata = {
+            "/secure": SimpleNamespace(
+                st_mode=stat.S_IFDIR | 0o755, st_uid=1000, st_gid=1000
+            ),
+            "/secure/bin": SimpleNamespace(
+                st_mode=stat.S_IFDIR | 0o755, st_uid=1000, st_gid=1000
+            ),
+            "/secure/bin/gitleaks": SimpleNamespace(
+                st_mode=stat.S_IFREG | 0o755, st_uid=1000, st_gid=1000
+            ),
+        }
+
+        def fake_lstat(path):
+            value = os.fspath(path)
+            if value not in metadata:
+                raise FileNotFoundError(value)
+            return metadata[value]
+
+        with (
+            mock.patch.object(validator.os, "lstat", side_effect=fake_lstat),
+            mock.patch.object(validator.os, "geteuid", return_value=1000, create=True),
+            mock.patch.object(validator.os, "getegid", return_value=1000, create=True),
+            mock.patch.object(
+                validator.os, "getgroups", return_value=[1000], create=True
+            ),
+        ):
+            self.assertTrue(
+                validator._secure_gitleaks_candidate(
+                    candidate,
+                    ROOT,
+                    owner_uid=1000,
+                    required_chain=chain,
+                )
+            )
+
+            metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o001
+            self.assertFalse(
+                validator._secure_gitleaks_candidate(
+                    candidate,
+                    ROOT,
+                    owner_uid=1000,
+                    required_chain=chain,
+                )
+            )
+
+            for path in (*chain, candidate):
+                metadata[path.as_posix()].st_uid = 0
+                metadata[path.as_posix()].st_gid = 2000
+                metadata[path.as_posix()].st_mode = (
+                    stat.S_IFDIR if path != candidate else stat.S_IFREG
+                ) | 0o010
+            with mock.patch.object(
+                validator.os, "getgroups", return_value=[2000], create=True
+            ):
+                self.assertTrue(
+                    validator._secure_gitleaks_candidate(
+                        candidate,
+                        ROOT,
+                        owner_uid=0,
+                        required_chain=chain,
+                    )
+                )
+                metadata["/secure"].st_mode = stat.S_IFDIR | 0o100
+                self.assertFalse(
+                    validator._secure_gitleaks_candidate(
+                        candidate,
+                        ROOT,
+                        owner_uid=0,
+                        required_chain=chain,
+                    )
+                )
+
+            metadata["/secure"].st_mode = stat.S_IFDIR | 0o001
+            metadata["/secure/bin"].st_mode = stat.S_IFDIR | 0o001
+            metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o100
+            with mock.patch.object(
+                validator.os, "getgroups", return_value=[], create=True
+            ):
+                self.assertFalse(
+                    validator._secure_gitleaks_candidate(
+                        candidate,
+                        ROOT,
+                        owner_uid=0,
+                        required_chain=chain,
+                    )
+                )
+                metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o001
+                self.assertTrue(
+                    validator._secure_gitleaks_candidate(
+                        candidate,
+                        ROOT,
+                        owner_uid=0,
+                        required_chain=chain,
+                    )
+                )
+
+        with (
+            mock.patch.object(validator.os, "lstat", side_effect=fake_lstat),
+            mock.patch.object(validator.os, "geteuid", return_value=0, create=True),
+            mock.patch.object(validator.os, "getegid", return_value=0, create=True),
+            mock.patch.object(
+                validator.os, "getgroups", return_value=[0], create=True
+            ),
+        ):
+            metadata["/secure"].st_mode = stat.S_IFDIR
+            metadata["/secure/bin"].st_mode = stat.S_IFDIR
+            metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o100
+            self.assertTrue(
+                validator._secure_gitleaks_candidate(
+                    candidate,
+                    ROOT,
+                    owner_uid=0,
+                    required_chain=chain,
+                )
+            )
+            metadata[candidate.as_posix()].st_mode = stat.S_IFREG
+            self.assertFalse(
+                validator._secure_gitleaks_candidate(
+                    candidate,
+                    ROOT,
+                    owner_uid=0,
+                    required_chain=chain,
+                )
+            )
 
     def test_gitleaks_hint_preserves_detected_and_classifier_diagnostics(self) -> None:
         validator = load_validator()

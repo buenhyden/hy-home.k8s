@@ -914,6 +914,23 @@ def _secure_gitleaks_candidate(
         or candidate.is_relative_to(Path("/tmp"))
     ):
         return False
+    try:
+        effective_uid = os.geteuid()
+        effective_groups = frozenset((*os.getgroups(), os.getegid()))
+    except OSError:
+        return False
+
+    def can_execute(metadata: os.stat_result, *, directory: bool) -> bool:
+        if effective_uid == 0:
+            return directory or bool(metadata.st_mode & 0o111)
+        if metadata.st_uid == effective_uid:
+            execute_bit = stat.S_IXUSR
+        elif metadata.st_gid in effective_groups:
+            execute_bit = stat.S_IXGRP
+        else:
+            execute_bit = stat.S_IXOTH
+        return bool(metadata.st_mode & execute_bit)
+
     for directory in required_chain:
         try:
             metadata = os.lstat(directory)
@@ -924,6 +941,7 @@ def _secure_gitleaks_candidate(
             or not stat.S_ISDIR(metadata.st_mode)
             or metadata.st_uid != owner_uid
             or metadata.st_mode & 0o022
+            or not can_execute(metadata, directory=True)
         ):
             return False
     try:
@@ -935,7 +953,7 @@ def _secure_gitleaks_candidate(
         and stat.S_ISREG(metadata.st_mode)
         and metadata.st_uid == owner_uid
         and not metadata.st_mode & 0o022
-        and bool(metadata.st_mode & 0o111)
+        and can_execute(metadata, directory=False)
     )
 
 
@@ -954,7 +972,7 @@ def _validated_gitleaks_hint(root: Path) -> str | None:
             return candidate.as_posix()
         return None
     try:
-        account = pwd.getpwuid(os.getuid())
+        account = pwd.getpwuid(os.geteuid())
     except (KeyError, OSError):
         return None
     home = Path(account.pw_dir)
