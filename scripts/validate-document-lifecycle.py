@@ -405,6 +405,10 @@ EXPECTED_GIT_CASE_NAMES = (
     "wrong-worktree-root",
     "bare-root",
 )
+FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES = (
+    "staged-paired-create-blocked-spec",
+    "staged-paired-create-split-spec",
+)
 EXPECTED_ARGUMENT_CASE_NAMES = (
     "staged-forbids-refs",
     "ci-requires-base",
@@ -2358,9 +2362,40 @@ def _git_case(
     fixture_registry.parent.mkdir(parents=True, exist_ok=True)
     fixture_registry.write_bytes((contract_root / REGISTRY_PATH).read_bytes())
     spec_path = "docs/03.specs/900-example/spec.md"
+    case_registry = registry
     ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(
-        registry
+        case_registry
     )
+    if (
+        name in FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES
+        and blocked_spec_id is None
+    ):
+        programs = [
+            program
+            for program in registry.program_lineage
+            if program.prd_id == "006"
+        ]
+        if len(programs) != 1:
+            raise ValueError("negative pair fixture requires one PRD-006 program")
+        tranche_ids = tuple(relation.spec_id for relation in programs[0].tranches)
+        try:
+            ready_index = tranche_ids.index(ready_spec_id)
+        except ValueError as exc:
+            raise ValueError(
+                "negative pair fixture ready tranche is not original"
+            ) from exc
+        if ready_index == 0:
+            raise ValueError("negative pair fixture has no previous original tranche")
+        case_registry = _registry_with_ready_spec(
+            registry, tranche_ids[ready_index - 1]
+        )
+        (
+            ready_spec_id,
+            ready_spec_state,
+            blocked_spec_id,
+        ) = _dependency_ready_tranche_window(case_registry)
+        if blocked_spec_id is None:
+            raise ValueError("negative pair fixture fallback has no successor tranche")
     ready_spec_path = _execution_spec_fixture_path(ready_spec_id)
     blocked_spec_path = (
         _execution_spec_fixture_path(blocked_spec_id)
@@ -2584,7 +2619,7 @@ def _git_case(
             execution_spec_path=blocked_spec_path,
         )
         _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+        diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
     elif name == "staged-paired-create-split-spec":
         plan_path = "docs/04.execution/plans/2099-01-01-example.md"
         task_path = "docs/04.execution/tasks/2099-01-01-example.md"
@@ -2604,7 +2639,7 @@ def _git_case(
             execution_spec_path=blocked_spec_path,
         )
         _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
+        diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
     elif name == "staged-evidence-index-invalid-worktree-valid":
         _write_invalid_evidence_document(root, spec_path, "sdlc/spec", "active")
         _git_fixture(root, "add", "--", spec_path)
@@ -4025,6 +4060,36 @@ def _run_self_test(root: Path) -> list[str]:
                         f"rollover {ready_spec_id}: paired create differs "
                         f"exit={pair_exit} rules={pair_rules}"
                     )
+    prd006_program = next(
+        program for program in registry.program_lineage if program.prd_id == "006"
+    )
+    final_tranche_registry = _registry_with_ready_spec(
+        registry, prd006_program.tranches[-1].spec_id
+    )
+    for case_name in FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES:
+        with tempfile.TemporaryDirectory(
+            prefix=f"document-lifecycle-final-tranche-{case_name}-"
+        ) as directory:
+            repo = Path(directory)
+            _init_fixture_repo(repo)
+            try:
+                actual_exit, actual_rules = _git_case(
+                    case_name, repo, final_tranche_registry, root
+                )
+            except (InvocationError, OSError, ValueError) as exc:
+                failures.append(
+                    f"final tranche {case_name}: unexpected error {exc}"
+                )
+                continue
+        if actual_exit != 1 or actual_rules != [
+            "LIFECYCLE-EVIDENCE",
+            "LIFECYCLE-EVIDENCE",
+        ]:
+            failures.append(
+                f"final tranche {case_name}: expected exit=1 and two "
+                f"LIFECYCLE-EVIDENCE rules, actual exit={actual_exit} "
+                f"rules={actual_rules}"
+            )
     failures.extend(_evidence_regression_failures(registry, evidence_cases))
 
     for case in fixture.get("archiveCutoverCases", []):
@@ -4196,6 +4261,7 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + 1
             + FIXTURE_MUTATION_COUNT
             + EVIDENCE_REGRESSION_COUNT
+            + len(FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES)
         )
         print(
             "PASS lifecycle self-test "
@@ -4208,7 +4274,9 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
             f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
             f"{FIXTURE_MUTATION_COUNT} fixture mutations, "
-            f"{EVIDENCE_REGRESSION_COUNT} evidence regressions)"
+            f"{EVIDENCE_REGRESSION_COUNT} evidence regressions, "
+            f"{len(FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES)} final-tranche "
+            "negative controls)"
         )
         return 0
     registry = load_registry(root)
