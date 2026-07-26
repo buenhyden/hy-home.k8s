@@ -95,19 +95,21 @@ inventory stays in `scripts/README.md`.
   `cd726e05fdb9d33727314d316aadb5ebbec0942d`: created the validator and fixture
   boundary without changing the protected ledger or the completed Spec 030
   authority object.
-- The exact six-path Spec 039 activation proposal passes staged lifecycle,
+- Exact-six Spec 039 activation commit
+  `2ddfe4b7697e998b41d3125be94cdc4cee295388` records the reciprocal Plan/Task,
+  Spec backlinks, Stage 04 indexes, and this shared handoff. Staged lifecycle,
   registry self-test and strict mode, strict Markdown profiles, strict
-  cross-document validation, settled RIA validation, and the cached diff
-  check. The activation commit itself remains unclaimed.
+  cross-document validation, settled RIA validation, the cached diff check,
+  and the post-commit repository aggregate pass.
 - Remote GitHub Actions run `29982910320` remains observed FAIL for commit
   `bd93374d7f531317c3bd061eb1ef567c1e2e0084`; no push, dispatch, credential
   access, provider installation, or external mutation was performed.
 
 #### Handoff
 
-- Next owner: verify and commit the exact six-path Spec 039 planning
-  activation. Feature implementation remains gated until the reciprocal
-  Plan/Task package is committed, presented, and explicitly approved.
+- Next owner: review the committed Spec 039 Plan and explicitly approve
+  implementation. After that gate, begin GCQE-001 with its focused RED; no
+  feature implementation has started.
 
 ### 2026-07-19 - Archive immutability and current-replacement authority repair
 

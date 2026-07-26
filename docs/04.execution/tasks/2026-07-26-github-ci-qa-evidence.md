@@ -48,7 +48,7 @@ separately approved push or workflow dispatch is directly observed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| GCQE-000 | Activation gate | Preserve the settled migration snapshot, then activate the reciprocal Spec 039 Plan/Task pair, direct backlinks, Stage 04 indexes, and shared progress handoff as one exact six-path package. | platform | In Progress | Plan-only lifecycle RED, the ledger/admission contract collision, prerequisite commit `cd726e0`, exact-six reciprocal GREEN, and repository aggregate PASS are observed; the activation commit is not recorded here. | `LIFECYCLE-CREATE`, Plan count 1/Task count 0; protected-ledger RIA failure; rollback parent `cd726e0`; staged lifecycle, registry, profile, cross-document, RIA, diff checks, and aggregate PASS; raw all-files fails only at the existing FIFO limitation. |
+| GCQE-000 | Activation gate | Preserve the settled migration snapshot, then activate the reciprocal Spec 039 Plan/Task pair, direct backlinks, Stage 04 indexes, and shared progress handoff as one exact six-path package. | platform | Done | Plan-only lifecycle RED, the ledger/admission contract collision, prerequisite commit `cd726e0`, exact-six reciprocal GREEN, activation commit `2ddfe4b`, and post-commit aggregate PASS are observed. | `LIFECYCLE-CREATE`, Plan count 1/Task count 0; protected-ledger RIA failure; rollback parent `cd726e0`; staged lifecycle/registry/profile/link/RIA PASS; exact-six commit `2ddfe4b`; HEAD aggregate PASS; raw all-files fails only at the existing FIFO limitation. |
 | GCQE-001 | VAL-GCQE-004 | Add a capability-aware FIFO/directory non-regular fixture, preserve `RESOURCE_NOT_REGULAR`, and re-raise unexpected filesystem errors. | platform | Queued | Not executed. | Focused unit RED/GREEN, unqualified GitOps self-test, aggregate, and all-files evidence will be recorded here. |
 | GCQE-002 | VAL-GCQE-001, VAL-GCQE-002, VAL-GCQE-003 | Add the exact CI Python requirements owner and validator; pin Python 3.12; replace `pre-commit/action`; preserve workflow entry, aggregate, and full-document selection. | platform | Queued | Not executed. | CI contract unit/self-test/production, selector fixture, workflow security, aggregate, and all-files evidence will be recorded here. |
 | GCQE-003 | VAL-GCQE-003 | Enforce integer seven-day retention on every upload-artifact step and set the changelog preview producer accordingly. | platform | Queued | Not executed. | Artifact-retention fixture RED/GREEN and repository Actions security evidence will be recorded here. |
@@ -111,15 +111,18 @@ observed="Plan count 1, Task count 0"
 base_mode="staged"
 ```
 
-The exact six-path reciprocal proposal now passes staged lifecycle, registry
+The exact six-path reciprocal proposal passes staged lifecycle, registry
 self-test and strict mode, strict Markdown profiles, strict cross-document
-validation, settled RIA validation, cached diff check, and repository aggregate.
-The logical activation commit, GCQE-001 through GCQE-006 implementation
-results, terminal closure, and clean-tree postflight have not yet been
-observed. Raw all-files still fails only at the Spec 039-owned FIFO limitation;
-strict-skip all-files rerun is used only after direct aggregate proof for this
-activation package. Hosted run `29982910320` remains historical FAIL for its
-exact SHA, while the current branch hosted lane is DEFER.
+validation, settled RIA validation, cached diff check, and repository
+aggregate. Activation commit
+`2ddfe4b7697e998b41d3125be94cdc4cee295388` contains exactly those six paths,
+and the post-commit repository aggregate passes at that HEAD. GCQE-001 through
+GCQE-006 implementation results, terminal closure, and final clean-tree
+postflight have not yet been observed. Raw all-files still fails only at the
+Spec 039-owned FIFO limitation; strict-skip all-files rerun is used only after
+direct aggregate proof for this activation package. Hosted run `29982910320`
+remains historical FAIL for its exact SHA, while the current branch hosted lane
+is DEFER.
 
 ## Traceability
 
@@ -134,7 +137,7 @@ exact SHA, while the current branch hosted lane is DEFER.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [GCQE-000](../plans/2026-07-26-github-ci-qa-evidence.md#task-0-gcqe-000--reciprocal-spec-039-planning-activation) | Plan-only lifecycle RED, prerequisite commit `cd726e0`, exact-six reciprocal GREEN, and aggregate PASS observed; activation commit pending. | Rule `LIFECYCLE-CREATE`, Plan 1/Task 0, rollback parent `cd726e0`, staged lifecycle/registry/profile/link/RIA PASS, aggregate PASS, and this active pair. |
+| [GCQE-000](../plans/2026-07-26-github-ci-qa-evidence.md#task-0-gcqe-000--reciprocal-spec-039-planning-activation) | Done — Plan-only lifecycle RED, prerequisite `cd726e0`, exact-six reciprocal GREEN, activation `2ddfe4b`, and post-commit aggregate PASS observed. | Rule `LIFECYCLE-CREATE`, Plan 1/Task 0, rollback parent `cd726e0`, staged lifecycle/registry/profile/link/RIA PASS, exact-six commit `2ddfe4b`, and HEAD aggregate PASS. |
 | [VAL-GCQE-004](../../03.specs/039-github-ci-qa-evidence/spec.md#success-criteria--verification-plan) | Not executed. | GCQE-001 portable fixture unit/self-test evidence is pending. |
 | N/A — GCQE-002 shares the Plan linked in GCQE-000 | Not executed. | CI dependency, workflow, selector, and validator evidence is pending. |
 | N/A — GCQE-003 shares the Plan linked in GCQE-000 | Not executed. | Artifact-retention fixture and repository evidence is pending. |

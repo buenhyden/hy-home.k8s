@@ -279,15 +279,16 @@ The version choices use the official package records observed on 2026-07-26:
   `SKIP=strict-repository-quality pre-commit run --all-files` only after direct
   aggregate proof.
 
-- [ ] **Step 6: Commit the activation.**
+- [x] **Step 6: Commit the activation.**
 
   ```bash
   git commit -m "docs(execution): activate GitHub CI QA evidence"
   ```
 
-  Verify the commit changes only the six named paths. Record the resulting
-  identity after the commit; do not predict or embed its SHA in the commit
-  that creates it.
+  Activation commit
+  `2ddfe4b7697e998b41d3125be94cdc4cee295388` changes only the six named
+  paths. Its identity is recorded here only by this later evidence update,
+  never predicted or embedded in the commit that created it.
 
 ### Task 1: GCQE-001 — Portable GitOps non-regular fixture
 
