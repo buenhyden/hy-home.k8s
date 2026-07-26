@@ -438,7 +438,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             )
         }
         cls.observed.update(
-            {"activeControlRows": [], "activeControlPairCardinality": []}
+            {
+                "activeControlRows": [],
+                "activeControlPairCardinality": [],
+                "terminalControlRows": [],
+                "terminalControlPairCardinality": [],
+                "terminalSpecRows": [],
+            }
         )
 
     def fixture(self):
@@ -454,6 +460,12 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         actual = copy.deepcopy(observed)
         rows = actual.pop("activeControlRows")
         pairs = actual.pop("activeControlPairCardinality")
+        terminal_rows = actual.pop("terminalControlRows")
+        terminal_pairs = actual.pop("terminalControlPairCardinality")
+        terminal_specs = actual.pop("terminalSpecRows")
+        self.assertEqual(terminal_rows, [])
+        self.assertEqual(terminal_pairs, [])
+        self.assertEqual(terminal_specs, [])
         self.assertEqual(
             [(row["path"], row["kind"], row["lineageId"]) for row in rows],
             [
@@ -491,7 +503,97 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         frozen = copy.deepcopy(self.observed)
         frozen.pop("activeControlRows")
         frozen.pop("activeControlPairCardinality")
+        frozen.pop("terminalControlRows")
+        frozen.pop("terminalControlPairCardinality")
+        frozen.pop("terminalSpecRows")
         self.assertEqual(actual, frozen)
+
+    def terminal_payloads(
+        self,
+        state: str,
+        *,
+        successor_state: str = "active",
+        plan_type: str = "sdlc/plan",
+        task_type: str = "sdlc/task",
+        plan_owner: str = "platform",
+        task_owner: str = "platform",
+    ) -> dict[str, bytes]:
+        return {
+            self.validator.TERMINAL_SPEC: (
+                f"---\ntype: sdlc/spec\nstatus: {state}\nowner: platform\n---\n"
+            ).encode(),
+            self.validator.TERMINAL_PLAN: (
+                f"---\ntype: {plan_type}\nstatus: {state}\nowner: {plan_owner}\n---\n"
+            ).encode(),
+            self.validator.TERMINAL_TASK: (
+                f"---\ntype: {task_type}\nstatus: {state}\nowner: {task_owner}\n---\n"
+            ).encode(),
+            self.validator.TERMINAL_SUCCESSOR_SPEC: (
+                "---\n"
+                "type: sdlc/spec\n"
+                f"status: {successor_state}\n"
+                "owner: platform\n"
+                "---\n"
+            ).encode(),
+        }
+
+    @staticmethod
+    def terminal_registry(
+        state: str,
+        *,
+        successor_state: str = "active",
+    ) -> dict[str, object]:
+        return {
+            "programLineage": {
+                "programs": [
+                    {
+                        "prd": "006",
+                        "ard": "0009",
+                        "tranches": [
+                            {
+                                "spec": "038",
+                                "order": 5,
+                                "state": state,
+                                "reason": "Reference information architecture",
+                                "decision": "0017",
+                            },
+                            {
+                                "spec": "039",
+                                "order": 6,
+                                "state": successor_state,
+                                "reason": "GitHub CI and QA evidence",
+                                "decision": "0017",
+                            },
+                        ],
+                        "followUps": [],
+                    }
+                ]
+            }
+        }
+
+    def terminal_partition(
+        self,
+        state: str,
+        *,
+        payloads: dict[str, bytes] | None = None,
+        registry: dict[str, object] | None = None,
+        plan_paths: list[str] | None = None,
+        task_paths: list[str] | None = None,
+        spec_paths: list[str] | None = None,
+    ):
+        actual_payloads = payloads or self.terminal_payloads(state)
+        return self.validator._partition_terminal_controls(
+            plan_paths or [self.validator.TERMINAL_PLAN],
+            task_paths or [self.validator.TERMINAL_TASK],
+            spec_paths
+            or [
+                self.validator.TERMINAL_SPEC,
+                self.validator.TERMINAL_SUCCESSOR_SPEC,
+            ],
+            {},
+            actual_payloads,
+            registry or self.terminal_registry(state),
+        )
 
     def test_required_validator_and_ledger_targets_exist(self) -> None:
         self.assertTrue(RESIDUE_VALIDATOR_PATH.is_file())
@@ -513,6 +615,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "findings": 0,
             "activeControlRows": 2,
             "activeControlPairs": 1,
+            "terminalControlRows": 0,
+            "terminalControlPairs": 0,
+            "terminalSpecs": 0,
         }
         try:
             counts = self.validator.validate_active_corpus_residue_closure(
@@ -524,6 +629,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 error.path,
                 {
                     *self.validator.CONTROL_PATHS,
+                    self.validator.REGISTRY_PATH,
                     self.validator.OWNER_SPEC,
                     self.validator.EXECUTION_PLAN,
                     self.validator.EXECUTION_TASK,
@@ -796,6 +902,46 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(len(active_pairs), 1)
         self.assertEqual(active_pairs[0]["state"], "complete")
 
+    def test_spec038_active_and_terminal_states_use_disjoint_partitions(self) -> None:
+        active = self.terminal_partition("active")
+        active_rows = self.validator._build_active_control_rows(
+            active["planPaths"],
+            active["taskPaths"],
+            {},
+            self.terminal_payloads("active"),
+        )
+        active_pairs = self.validator._build_active_control_pairs(active_rows)
+        self.assertEqual(len(active_rows), 2)
+        self.assertEqual(len(active_pairs), 1)
+        self.assertEqual(active["terminalControlRows"], [])
+        self.assertEqual(active["terminalControlPairCardinality"], [])
+        self.assertEqual(active["terminalSpecRows"], [])
+
+        terminal = self.terminal_partition("done")
+        self.assertEqual(terminal["planPaths"], [])
+        self.assertEqual(terminal["taskPaths"], [])
+        self.assertEqual(
+            terminal["specPaths"], [self.validator.TERMINAL_SUCCESSOR_SPEC]
+        )
+        self.assertEqual(len(terminal["terminalControlRows"]), 2)
+        self.assertEqual(
+            [row["path"] for row in terminal["terminalControlRows"]],
+            [self.validator.TERMINAL_PLAN, self.validator.TERMINAL_TASK],
+        )
+        self.assertEqual(len(terminal["terminalControlPairCardinality"]), 1)
+        self.assertEqual(len(terminal["terminalSpecRows"]), 1)
+        self.assertEqual(
+            terminal["terminalSpecRows"][0]["path"], self.validator.TERMINAL_SPEC
+        )
+        self.assertEqual(
+            len(self.observed["authorityGuards"]["doneSpecs"]),
+            self.validator.EXPECTED_COUNTS["doneSpecs"],
+        )
+        self.assertNotIn(
+            self.validator.TERMINAL_SPEC,
+            {row["path"] for row in self.observed["authorityGuards"]["doneSpecs"]},
+        )
+
     def test_post_closure_active_controls_fail_closed_when_malformed(self) -> None:
         plan_path = "docs/04.execution/plans/2099-01-01-active-control.md"
         task_path = "docs/04.execution/tasks/2099-01-01-active-control.md"
@@ -856,9 +1002,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             plan_path: b"---\ntype: sdlc/plan\nstatus: active\nowner: platform\n---\n",
             task_path: b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n",
         }
-        rows = self.validator._build_active_control_rows(
-            [plan_path], [], {}, payloads
-        )
+        rows = self.validator._build_active_control_rows([plan_path], [], {}, payloads)
         with self.assertRaises(self.validator.ClosureError) as incomplete:
             self.validator._build_active_control_pairs(rows)
         self.assertEqual(incomplete.exception.code, "CLOSURE-ACTIVE-CONTROL-PAIR")
@@ -869,6 +1013,236 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         with self.assertRaises(self.validator.ClosureError) as duplicated:
             self.validator._build_active_control_pairs(duplicate)
         self.assertEqual(duplicated.exception.code, "CLOSURE-ACTIVE-CONTROL-DUPLICATE")
+
+    def test_spec038_terminal_partition_rejects_adversarial_states(self) -> None:
+        cases = []
+
+        cases.append(
+            (
+                "incomplete",
+                {
+                    "task_paths": ["docs/04.execution/tasks/other-active.md"],
+                },
+                "CLOSURE-TERMINAL-INCOMPLETE",
+            )
+        )
+        cases.append(
+            (
+                "duplicate",
+                {
+                    "plan_paths": [
+                        self.validator.TERMINAL_PLAN,
+                        self.validator.TERMINAL_PLAN,
+                    ],
+                },
+                "CLOSURE-TERMINAL-DUPLICATE",
+            )
+        )
+        mixed = self.terminal_payloads("done")
+        mixed[self.validator.TERMINAL_TASK] = (
+            b"---\ntype: sdlc/task\nstatus: active\nowner: platform\n---\n"
+        )
+        cases.append(
+            (
+                "mixed-state",
+                {"payloads": mixed},
+                "CLOSURE-TERMINAL-STATE",
+            )
+        )
+        cases.extend(
+            (
+                name,
+                {"payloads": payloads},
+                "CLOSURE-TERMINAL-AUTHORITY",
+            )
+            for name, payloads in (
+                (
+                    "wrong-type",
+                    self.terminal_payloads("done", plan_type="sdlc/task"),
+                ),
+                (
+                    "wrong-owner",
+                    self.terminal_payloads("done", task_owner="product"),
+                ),
+            )
+        )
+        for field, value in (
+            ("prd", "005"),
+            ("ard", "0008"),
+            ("order", 6),
+            ("decision", "0016"),
+            ("reason", "Wrong authority"),
+        ):
+            registry = self.terminal_registry("done")
+            program = registry["programLineage"]["programs"][0]
+            if field in {"prd", "ard"}:
+                program[field] = value
+            else:
+                program["tranches"][0][field] = value
+            cases.append(
+                (
+                    f"wrong-{field}",
+                    {"registry": registry},
+                    "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
+                )
+            )
+        mismatch = self.terminal_registry("active")
+        cases.append(
+            (
+                "registry-mismatch",
+                {"registry": mismatch},
+                "CLOSURE-TERMINAL-STATE",
+            )
+        )
+        missing_relation = self.terminal_registry("done")
+        missing_relation["programLineage"]["programs"][0]["tranches"].pop(0)
+        cases.append(
+            (
+                "missing-relation",
+                {"registry": missing_relation},
+                "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
+            )
+        )
+        malformed_registry = self.terminal_registry("done")
+        malformed_registry["programLineage"]["programs"] = {}
+        cases.append(
+            (
+                "malformed-registry",
+                {"registry": malformed_registry},
+                "CLOSURE-TERMINAL-REGISTRY-MALFORMED",
+            )
+        )
+        duplicate_relation = self.terminal_registry("done")
+        duplicate_relation["programLineage"]["programs"][0]["tranches"].append(
+            copy.deepcopy(
+                duplicate_relation["programLineage"]["programs"][0]["tranches"][0]
+            )
+        )
+        cases.append(
+            (
+                "duplicate-relation",
+                {"registry": duplicate_relation},
+                "CLOSURE-TERMINAL-REGISTRY-DUPLICATE",
+            )
+        )
+        duplicate_program = self.terminal_registry("done")
+        duplicate_program["programLineage"]["programs"].append(
+            copy.deepcopy(duplicate_program["programLineage"]["programs"][0])
+        )
+        cases.append(
+            (
+                "duplicate-prd006-program",
+                {"registry": duplicate_program},
+                "CLOSURE-TERMINAL-REGISTRY-DUPLICATE",
+            )
+        )
+        cases.extend(
+            (
+                name,
+                kwargs,
+                "CLOSURE-TERMINAL-FRONTIER",
+            )
+            for name, kwargs in (
+                (
+                    "over-advanced-successor-document",
+                    {
+                        "payloads": self.terminal_payloads(
+                            "done", successor_state="done"
+                        )
+                    },
+                ),
+                (
+                    "over-advanced-successor-relation",
+                    {
+                        "registry": self.terminal_registry(
+                            "done", successor_state="done"
+                        )
+                    },
+                ),
+            )
+        )
+
+        for name, kwargs, code in cases:
+            with self.subTest(case=name):
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.terminal_partition("done", **kwargs)
+                self.assertEqual(raised.exception.code, code)
+
+    def test_spec038_terminal_partition_rejects_rogue_done_stage04(self) -> None:
+        rogue_plan = "docs/04.execution/plans/2099-01-01-rogue-done.md"
+        payloads = self.terminal_payloads("done")
+        payloads[rogue_plan] = (
+            b"---\ntype: sdlc/plan\nstatus: done\nowner: platform\n---\n"
+        )
+        partition = self.terminal_partition(
+            "done",
+            payloads=payloads,
+            plan_paths=[self.validator.TERMINAL_PLAN, rogue_plan],
+        )
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator._build_active_control_rows(
+                partition["planPaths"],
+                partition["taskPaths"],
+                {},
+                payloads,
+            )
+        self.assertEqual(raised.exception.code, "CLOSURE-ACTIVE-CONTROL-STATUS")
+
+    def test_spec038_registry_authority_is_exact_tracked_stage_zero(self) -> None:
+        path = self.validator.REGISTRY_PATH
+        listed = f"{path}\0".encode()
+        staged = f"100644 {'a' * 40} 0\t{path}\0".encode()
+        cases = (
+            ("missing", b"", b"", "CLOSURE-REGISTRY-INVENTORY"),
+            ("untracked", listed, b"", "CLOSURE-REGISTRY-INVENTORY"),
+            (
+                "duplicate",
+                listed + listed,
+                staged,
+                "CLOSURE-INVENTORY-DUPLICATE",
+            ),
+            ("malformed", path.encode(), staged, "CLOSURE-GIT-MALFORMED"),
+            (
+                "unsafe",
+                b"../document-profiles.json\0",
+                staged,
+                "CLOSURE-INVENTORY-PATH",
+            ),
+            (
+                "non-stage-zero",
+                listed,
+                f"100644 {'a' * 40} 1\t{path}\0".encode(),
+                "CLOSURE-INVENTORY-OBJECT",
+            ),
+        )
+        for name, paths_payload, modes_payload, code in cases:
+            with self.subTest(case=name):
+
+                def runner(_root: str, arguments: tuple[str, ...]):
+                    payload = (
+                        paths_payload if "--others" in arguments else modes_payload
+                    )
+                    return subprocess.CompletedProcess(arguments, 0, payload, b"")
+
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._registry_inventory(str(REPOSITORY_ROOT), runner)
+                self.assertEqual(raised.exception.code, code)
+
+        with (
+            mock.patch.object(
+                self.validator, "_registry_inventory", return_value={path: "a" * 40}
+            ),
+            mock.patch.object(
+                self.validator, "_read_descriptor_bytes", return_value=b"worktree"
+            ),
+            mock.patch.object(
+                self.validator, "_index_blob", return_value=b"staged registry"
+            ),
+        ):
+            with self.assertRaises(self.validator.ClosureError) as raised:
+                self.validator._load_registry_authority(str(REPOSITORY_ROOT))
+        self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
+        self.assertEqual(raised.exception.path, path)
 
     def test_production_rejects_unadmitted_stage04_artifacts(self) -> None:
         original_inventory = self.validator._inventory
@@ -892,7 +1266,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     return original_payload(root, path, index, runner)
 
                 with (
-                    mock.patch.object(self.validator, "_inventory", side_effect=inventory),
+                    mock.patch.object(
+                        self.validator, "_inventory", side_effect=inventory
+                    ),
                     mock.patch.object(
                         self.validator,
                         "_proposed_or_index_bytes",
@@ -957,14 +1333,60 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             )
             self.assertEqual(counts["activeControlRows"], 2)
             self.assertEqual(counts["activeControlPairs"], 1)
+            self.assertEqual(counts["terminalControlRows"], 0)
+            self.assertEqual(counts["terminalControlPairs"], 0)
+            self.assertEqual(counts["terminalSpecs"], 0)
             stdout = io.StringIO()
-            with redirect_stderr(io.StringIO()), mock.patch.object(
+            with (
+                redirect_stderr(io.StringIO()),
+                mock.patch.object(
+                    self.validator,
+                    "validate_active_corpus_residue_closure",
+                    return_value=counts,
+                ),
+                mock.patch("sys.stdout", stdout),
+            ):
+                self.assertEqual(self.validator.main(["--root", "."]), 0)
+        self.assertIn("active_controls=2/1", stdout.getvalue())
+        self.assertIn("terminal_controls=0/0", stdout.getvalue())
+        self.assertIn("terminal_specs=0", stdout.getvalue())
+
+    def test_cli_reports_exact_spec038_terminal_partition_counts(self) -> None:
+        counts = {
+            "migratedClosed": 12,
+            "currentRows": 100,
+            "defer": 100,
+            "retain": 0,
+            "pairKeys": 52,
+            "completePairs": 48,
+            "planOnly": 1,
+            "taskOnly": 3,
+            "acceptedAdrs": 13,
+            "doneSpecs": 29,
+            "findings": 0,
+            "activeControlRows": 0,
+            "activeControlPairs": 0,
+            "terminalControlRows": 2,
+            "terminalControlPairs": 1,
+            "terminalSpecs": 1,
+        }
+        stdout = io.StringIO()
+        with (
+            mock.patch.object(
                 self.validator,
                 "validate_active_corpus_residue_closure",
                 return_value=counts,
-            ), mock.patch("sys.stdout", stdout):
-                self.assertEqual(self.validator.main(["--root", "."]), 0)
-        self.assertIn("active_controls=2/1", stdout.getvalue())
+            ),
+            mock.patch("sys.stdout", stdout),
+        ):
+            self.assertEqual(self.validator.main(["--root", "."]), 0)
+        line = stdout.getvalue()
+        self.assertIn("migrated=12 current=100 dispositions=100/0", line)
+        self.assertIn("pairs=52:48/1/3", line)
+        self.assertIn("active_controls=0/0", line)
+        self.assertIn("terminal_controls=2/1", line)
+        self.assertIn("terminal_specs=1", line)
+        self.assertIn("guards=13/29 findings=0", line)
 
     def test_terminal_pair_and_done_spec_guard_match_exact_counts(self) -> None:
         terminal_paths = {

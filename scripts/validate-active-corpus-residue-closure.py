@@ -24,6 +24,7 @@ FIXED_INPUT_COMMIT = (
 LEDGER_PATH = "docs/90.references/data/active-corpus-residue-closure.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-residue-closure.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
+REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
 EXECUTION_PLAN = (
     "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
@@ -31,6 +32,11 @@ EXECUTION_PLAN = (
 EXECUTION_TASK = (
     "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
 )
+TERMINAL_LINEAGE = "2026-07-22-reference-information-architecture"
+TERMINAL_SPEC = "docs/03.specs/038-reference-information-architecture/spec.md"
+TERMINAL_PLAN = f"docs/04.execution/plans/{TERMINAL_LINEAGE}.md"
+TERMINAL_TASK = f"docs/04.execution/tasks/{TERMINAL_LINEAGE}.md"
+TERMINAL_SUCCESSOR_SPEC = "docs/03.specs/039-github-ci-qa-evidence/spec.md"
 PLAN_ROOT = "docs/04.execution/plans"
 TASK_ROOT = "docs/04.execution/tasks"
 ADR_ROOT = "docs/02.architecture/decisions"
@@ -59,9 +65,9 @@ INVENTORY_ROOTS = (
     ARCHIVE_TASK_ROOT,
 )
 MANDATORY_OWNER_PATHS = {
-    SPEC_ROOT: frozenset({OWNER_SPEC}),
-    PLAN_ROOT: frozenset({EXECUTION_PLAN}),
-    TASK_ROOT: frozenset({EXECUTION_TASK}),
+    SPEC_ROOT: frozenset({OWNER_SPEC, TERMINAL_SPEC, TERMINAL_SUCCESSOR_SPEC}),
+    PLAN_ROOT: frozenset({EXECUTION_PLAN, TERMINAL_PLAN}),
+    TASK_ROOT: frozenset({EXECUTION_TASK, TERMINAL_TASK}),
 }
 
 DEFER_AUTHORITY = "current-execution-record-pending-exact-eligibility-evidence"
@@ -116,6 +122,18 @@ GIT_TIMEOUT_SECONDS = 10
 MAX_FILE_BYTES = 2_000_000
 SAFE_PATH = re.compile(r"[A-Za-z0-9._@+/-]+\Z")
 ACTIVE_CONTROL_LINEAGE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._@+-]*\Z")
+TERMINAL_RELATION_IDENTITY = {
+    "spec": "038",
+    "order": 5,
+    "reason": "Reference information architecture",
+    "decision": "0017",
+}
+TERMINAL_SUCCESSOR_IDENTITY = {
+    "spec": "039",
+    "order": 6,
+    "reason": "GitHub CI and QA evidence",
+    "decision": "0017",
+}
 FULL_OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 MODE_RECORD = re.compile(
     rb"(?P<mode>[0-9]{6}) (?P<oid>[0-9a-f]{40}|[0-9a-f]{64}) "
@@ -199,6 +217,18 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         {("ls-files", "-z", "--stage", "--", root) for root in INVENTORY_ROOTS}
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", *SOURCE_PATHS))
+    inventory_queries.add(
+        (
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--",
+            REGISTRY_PATH,
+        )
+    )
+    inventory_queries.add(("ls-files", "-z", "--stage", "--", REGISTRY_PATH))
     inventory_queries.add(
         (
             "ls-files",
@@ -539,6 +569,35 @@ def _control_inventory(root: str, runner: GitRunner) -> dict[str, str]:
     return index
 
 
+def _registry_inventory(root: str, runner: GitRunner) -> dict[str, str]:
+    allowed = {REGISTRY_PATH}
+    paths = _parse_exact_nul_paths(
+        _git(
+            root,
+            (
+                "ls-files",
+                "-z",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--",
+                REGISTRY_PATH,
+            ),
+            runner,
+        ),
+        allowed,
+    )
+    if paths != [REGISTRY_PATH]:
+        raise ClosureError("CLOSURE-REGISTRY-INVENTORY", REGISTRY_PATH)
+    index = _parse_modes(
+        _git(root, ("ls-files", "-z", "--stage", "--", REGISTRY_PATH), runner),
+        allowed_paths=allowed,
+    )
+    if set(index) != allowed:
+        raise ClosureError("CLOSURE-REGISTRY-INVENTORY", REGISTRY_PATH)
+    return index
+
+
 def _proposed_or_index_bytes(
     root: str,
     path: str,
@@ -553,6 +612,18 @@ def _proposed_or_index_bytes(
     if descriptor != staged:
         raise ClosureError("CLOSURE-WORKTREE-INDEX-DRIFT", path)
     return staged
+
+
+def _load_registry_authority(
+    root: str, runner: GitRunner = _run_git
+) -> Mapping[str, Any]:
+    index = _registry_inventory(root, runner)
+    registry = _load_json_bytes(
+        _proposed_or_index_bytes(root, REGISTRY_PATH, index, runner), REGISTRY_PATH
+    )
+    if not isinstance(registry, Mapping):
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+    return registry
 
 
 def _authored_stage04(paths: Sequence[str], scope: str) -> list[str]:
@@ -697,6 +768,186 @@ def _active_control_lineage(path: str, kind: str) -> str:
     if ACTIVE_CONTROL_LINEAGE.fullmatch(lineage) is None:
         raise ClosureError("CLOSURE-ACTIVE-CONTROL-LINEAGE", path)
     return lineage
+
+
+def _terminal_registry_relations(
+    registry: Mapping[str, Any],
+) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    lineage = registry.get("programLineage")
+    programs = lineage.get("programs") if isinstance(lineage, Mapping) else None
+    if not isinstance(programs, list):
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+
+    exact_programs: list[Mapping[str, Any]] = []
+    relations: dict[str, list[tuple[Mapping[str, Any], str, Mapping[str, Any]]]] = {
+        "038": [],
+        "039": [],
+    }
+    for program in programs:
+        if not isinstance(program, Mapping):
+            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+        if program.get("prd") == "006" and program.get("ard") == "0009":
+            exact_programs.append(program)
+        for collection_name in ("tranches", "followUps"):
+            collection = program.get(collection_name)
+            if not isinstance(collection, list):
+                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+            for relation in collection:
+                if not isinstance(relation, Mapping):
+                    raise ClosureError(
+                        "CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH
+                    )
+                spec_id = relation.get("spec")
+                if spec_id in relations:
+                    relations[str(spec_id)].append((program, collection_name, relation))
+
+    if len(exact_programs) > 1:
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", REGISTRY_PATH)
+    if len(exact_programs) != 1:
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+    if any(len(relations[spec_id]) > 1 for spec_id in relations):
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", REGISTRY_PATH)
+    if len(relations["038"]) != 1:
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+    if len(relations["039"]) != 1:
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
+
+    exact_program = exact_programs[0]
+    program_038, collection_038, relation_038 = relations["038"][0]
+    if program_038 is not exact_program or collection_038 != "tranches":
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+    if set(relation_038) != {*TERMINAL_RELATION_IDENTITY, "state"} or any(
+        relation_038.get(key) != value
+        for key, value in TERMINAL_RELATION_IDENTITY.items()
+    ):
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+    if relation_038.get("state") not in {"active", "done"}:
+        raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
+
+    program_039, collection_039, relation_039 = relations["039"][0]
+    if (
+        program_039 is not exact_program
+        or collection_039 != "tranches"
+        or set(relation_039) != {*TERMINAL_SUCCESSOR_IDENTITY, "state"}
+        or any(
+            relation_039.get(key) != value
+            for key, value in TERMINAL_SUCCESSOR_IDENTITY.items()
+        )
+    ):
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
+    return relation_038, relation_039
+
+
+def _partition_terminal_controls(
+    plan_paths: Sequence[str],
+    task_paths: Sequence[str],
+    spec_paths: Sequence[str],
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    registry: Mapping[str, Any],
+) -> dict[str, Any]:
+    for paths, path in (
+        (plan_paths, TERMINAL_PLAN),
+        (task_paths, TERMINAL_TASK),
+        (spec_paths, TERMINAL_SPEC),
+        (spec_paths, TERMINAL_SUCCESSOR_SPEC),
+    ):
+        count = paths.count(path)
+        if count > 1:
+            raise ClosureError("CLOSURE-TERMINAL-DUPLICATE", path)
+        if count != 1:
+            code = (
+                "CLOSURE-TERMINAL-FRONTIER"
+                if path == TERMINAL_SUCCESSOR_SPEC
+                else "CLOSURE-TERMINAL-INCOMPLETE"
+            )
+            raise ClosureError(code, path)
+
+    metadata: dict[str, dict[str, str]] = {}
+    expected_profiles = {
+        TERMINAL_SPEC: "sdlc/spec",
+        TERMINAL_PLAN: "sdlc/plan",
+        TERMINAL_TASK: "sdlc/task",
+        TERMINAL_SUCCESSOR_SPEC: "sdlc/spec",
+    }
+    for path, profile in expected_profiles.items():
+        if path not in payloads:
+            raise ClosureError("CLOSURE-TERMINAL-INCOMPLETE", path)
+        values = _frontmatter(_decode_text(payloads[path], path), path)
+        if values.get("type") != profile or values.get("owner") != "platform":
+            raise ClosureError("CLOSURE-TERMINAL-AUTHORITY", path)
+        metadata[path] = values
+
+    relation, successor_relation = _terminal_registry_relations(registry)
+    successor_state = metadata[TERMINAL_SUCCESSOR_SPEC].get("status")
+    if successor_state != "active" or successor_relation.get("state") != "active":
+        raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
+
+    document_states = {
+        metadata[path].get("status")
+        for path in (TERMINAL_SPEC, TERMINAL_PLAN, TERMINAL_TASK)
+    }
+    if document_states not in ({"active"}, {"done"}):
+        raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
+    state = next(iter(document_states))
+    if relation.get("state") != state:
+        raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
+
+    result = {
+        "planPaths": sorted(plan_paths),
+        "taskPaths": sorted(task_paths),
+        "specPaths": sorted(spec_paths),
+        "terminalControlRows": [],
+        "terminalControlPairCardinality": [],
+        "terminalSpecRows": [],
+    }
+    if state == "active":
+        return result
+
+    result["planPaths"] = sorted(path for path in plan_paths if path != TERMINAL_PLAN)
+    result["taskPaths"] = sorted(path for path in task_paths if path != TERMINAL_TASK)
+    result["specPaths"] = sorted(path for path in spec_paths if path != TERMINAL_SPEC)
+    result["terminalControlRows"] = sorted(
+        [
+            {
+                "path": path,
+                "kind": kind,
+                "lineageId": TERMINAL_LINEAGE,
+                "profile": f"sdlc/{kind}",
+                "status": "done",
+                "owner": "platform",
+                **_object_identity(path, index, payloads[path]),
+            }
+            for path, kind in ((TERMINAL_PLAN, "plan"), (TERMINAL_TASK, "task"))
+        ],
+        key=lambda row: str(row["path"]),
+    )
+    result["terminalControlPairCardinality"] = [
+        {
+            "lineageId": TERMINAL_LINEAGE,
+            "state": "complete",
+            "planPath": TERMINAL_PLAN,
+            "taskPath": TERMINAL_TASK,
+            "owner": "platform",
+            "status": "done",
+        }
+    ]
+    result["terminalSpecRows"] = [
+        {
+            "path": TERMINAL_SPEC,
+            "profile": "sdlc/spec",
+            "status": "done",
+            "owner": "platform",
+            **_object_identity(TERMINAL_SPEC, index, payloads[TERMINAL_SPEC]),
+            "registryPath": REGISTRY_PATH,
+            "programPrd": "006",
+            "programArd": "0009",
+            "relationClass": "original-tranche",
+            **TERMINAL_RELATION_IDENTITY,
+            "state": "done",
+        }
+    ]
+    return result
 
 
 def _build_active_control_rows(
@@ -958,6 +1209,7 @@ def build_observed(
     normalized = _normalize_root(root)
     if _git(normalized, ("cat-file", "-t", FIXED_INPUT_COMMIT), runner) != b"commit\n":
         raise ClosureError("CLOSURE-FIXED-COMMIT", ".git")
+    registry = _load_registry_authority(normalized, runner)
     source_index = _source_index(normalized, runner)
     sources: dict[str, Any] = {}
     source_rows: list[dict[str, Any]] = []
@@ -1018,9 +1270,20 @@ def build_observed(
     )
     pairs = _build_pairs(current)
     frozen_paths = {row["path"] for row in current}
-    active_controls = _build_active_control_rows(
+    spec_paths = [
+        path for path in inventories[SPEC_ROOT][0] if path.endswith("/spec.md")
+    ]
+    terminal = _partition_terminal_controls(
         [path for path in plan_paths if path not in frozen_paths],
         [path for path in task_paths if path not in frozen_paths],
+        spec_paths,
+        combined_index,
+        inventory_payloads,
+        registry,
+    )
+    active_controls = _build_active_control_rows(
+        terminal["planPaths"],
+        terminal["taskPaths"],
         combined_index,
         inventory_payloads,
     )
@@ -1040,14 +1303,11 @@ def build_observed(
         for path in inventories[ADR_ROOT][0]
         if path.endswith(".md") and path != f"{ADR_ROOT}/README.md"
     ]
-    spec_paths = [
-        path for path in inventories[SPEC_ROOT][0] if path.endswith("/spec.md")
-    ]
     accepted_adrs = _authority_entries(
         adr_paths, combined_index, inventory_payloads, kind="adr"
     )
     done_specs = _authority_entries(
-        spec_paths, combined_index, inventory_payloads, kind="spec"
+        terminal["specPaths"], combined_index, inventory_payloads, kind="spec"
     )
     migrated_paths = {row["path"] for row in migrated} | {
         row["archivePath"] for row in migrated
@@ -1139,6 +1399,9 @@ def build_observed(
         "pairCardinality": pairs,
         "activeControlRows": active_controls,
         "activeControlPairCardinality": active_control_pairs,
+        "terminalControlRows": terminal["terminalControlRows"],
+        "terminalControlPairCardinality": terminal["terminalControlPairCardinality"],
+        "terminalSpecRows": terminal["terminalSpecRows"],
         "authorityGuards": {
             "acceptedAdrs": accepted_adrs,
             "doneSpecs": done_specs,
@@ -1410,6 +1673,9 @@ def validate_active_corpus_residue_closure(
         "findings": counts["findings"],
         "activeControlRows": len(observed["activeControlRows"]),
         "activeControlPairs": len(observed["activeControlPairCardinality"]),
+        "terminalControlRows": len(observed["terminalControlRows"]),
+        "terminalControlPairs": len(observed["terminalControlPairCardinality"]),
+        "terminalSpecs": len(observed["terminalSpecRows"]),
     }
 
 
@@ -1688,6 +1954,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"dispositions={counts['defer']}/{counts['retain']} "
                 f"pairs={counts['pairKeys']}:{counts['completePairs']}/{counts['planOnly']}/{counts['taskOnly']} "
                 f"active_controls={counts['activeControlRows']}/{counts['activeControlPairs']} "
+                f"terminal_controls={counts['terminalControlRows']}/{counts['terminalControlPairs']} "
+                f"terminal_specs={counts['terminalSpecs']} "
                 f"guards={counts['acceptedAdrs']}/{counts['doneSpecs']} "
                 f"findings={counts['findings']}"
             )
