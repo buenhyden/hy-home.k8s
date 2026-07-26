@@ -34,6 +34,15 @@ EXPECTED_INVENTORY_PINS = {
     "pre-commit": "4.6.1",
     "PyYAML": "6.0.3",
 }
+GITLEAKS_SHA256 = (
+    "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
+)
+EXPECTED_GITLEAKS_INVENTORY = {
+    "version": "8.30.0",
+    "asset": "gitleaks_8.30.0_linux_x64.tar.gz",
+    "sha256": GITLEAKS_SHA256,
+    "install_path": "/usr/local/bin/gitleaks",
+}
 EXPECTED_PYTHON = "3.12"
 VALIDATION_JOBS = ("pre-commit", "repo-quality-static", "manifest-static")
 INSTALL_COMMAND = (
@@ -41,6 +50,16 @@ INSTALL_COMMAND = (
     "--requirement .github/requirements/ci-validation.txt"
 )
 PRE_COMMIT_COMMAND = "pre-commit run --all-files --show-diff-on-failure"
+GITLEAKS_JOBS = ("pre-commit", "repo-quality-static")
+GITLEAKS_INSTALL_COMMAND = f"""\
+set -euo pipefail
+curl --fail --location --silent --show-error \\
+  https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \\
+  --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
+gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
+printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
+tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
+sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks"""
 PIN_PATTERN = re.compile(
     r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)"
     r"==(?P<version>[A-Za-z0-9][A-Za-z0-9.+_-]*)$"
@@ -177,6 +196,11 @@ def _validate_inventory(inventory: dict[str, Any]) -> None:
         fail(
             "CI-PYTHON-INVENTORY",
             "ci_python_dependencies must mirror the exact requirements owner",
+        )
+    if inventory.get("ci_gitleaks") != EXPECTED_GITLEAKS_INVENTORY:
+        fail(
+            "CI-GITLEAKS-TOOL",
+            "ci_gitleaks must mirror the exact release asset, digest, and install path",
         )
 
 
@@ -319,6 +343,62 @@ def _validate_pre_commit_execution(
         )
 
 
+def _validate_gitleaks_tool(
+    workflow: dict[str, Any],
+    job_steps: dict[str, list[dict[str, Any]]],
+) -> None:
+    for job_id in GITLEAKS_JOBS:
+        commands = [_run_text(step) for step in job_steps[job_id]]
+        if commands.count(GITLEAKS_INSTALL_COMMAND) != 1:
+            fail(
+                "CI-GITLEAKS-TOOL",
+                f"{job_id} must install the exact verified Gitleaks release",
+            )
+
+    jobs = workflow.get("jobs")
+    if not isinstance(jobs, dict):
+        fail("CI-GITLEAKS-TOOL", "workflow jobs must be a mapping")
+    for job_id, job in jobs.items():
+        if job_id in GITLEAKS_JOBS or not isinstance(job, dict):
+            continue
+        steps = job.get("steps")
+        if not isinstance(steps, list):
+            continue
+        if any(
+            "gitleaks/releases/download" in _run_text(step)
+            or "/usr/local/bin/gitleaks" in _run_text(step)
+            for step in steps
+            if isinstance(step, dict)
+        ):
+            fail(
+                "CI-GITLEAKS-TOOL",
+                f"non-owning job must not install Gitleaks: {job_id}",
+            )
+
+
+def _validate_repository_history(
+    job_steps: dict[str, list[dict[str, Any]]],
+) -> None:
+    steps = job_steps["repo-quality-static"]
+    checkout_steps = [
+        step
+        for step in steps
+        if isinstance(step.get("uses"), str)
+        and step["uses"].startswith("actions/checkout@")
+    ]
+    if len(checkout_steps) != 1:
+        fail(
+            "CI-REPOSITORY-HISTORY",
+            "repo-quality-static must contain exactly one checkout step",
+        )
+    checkout_with = checkout_steps[0].get("with")
+    if not isinstance(checkout_with, dict) or checkout_with.get("fetch-depth") != 0:
+        fail(
+            "CI-REPOSITORY-HISTORY",
+            "repo-quality-static checkout must use fetch-depth: 0",
+        )
+
+
 def validate_repository(root: Path) -> int:
     root = Path(root)
     requirements_text = _read_regular_text(
@@ -358,12 +438,14 @@ def validate_repository(root: Path) -> int:
     _validate_python_versions(job_steps)
     _validate_shared_installs(job_steps)
     _validate_pre_commit_execution(workflow, job_steps)
+    _validate_gitleaks_tool(workflow, job_steps)
+    _validate_repository_history(job_steps)
     return len(job_steps)
 
 
 def _valid_self_test_content() -> tuple[str, str, str]:
     requirements = "\n".join(EXPECTED_REQUIREMENT_LINES) + "\n"
-    inventory = """\
+    inventory = f"""\
 ### Version Contracts
 
 ```yaml
@@ -372,6 +454,11 @@ ci_python_dependencies:
   jsonschema: '4.26.0'
   pre-commit: '4.6.1'
   PyYAML: '6.0.3'
+ci_gitleaks:
+  version: '8.30.0'
+  asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
+  sha256: '{GITLEAKS_SHA256}' # pragma: allowlist secret
+  install_path: '/usr/local/bin/gitleaks'
 ```
 """
     workflow = f"""\
@@ -386,14 +473,20 @@ jobs:
         with:
           python-version: '3.12'
       - run: {INSTALL_COMMAND}
+      - run: |
+          {GITLEAKS_INSTALL_COMMAND.replace(chr(10), chr(10) + "          ")}
       - run: {PRE_COMMIT_COMMAND}
   repo-quality-static:
     steps:
       - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@0123456789abcdef0123456789abcdef01234567
         with:
           python-version: '3.12'
       - run: {INSTALL_COMMAND}
+      - run: |
+          {GITLEAKS_INSTALL_COMMAND.replace(chr(10), chr(10) + "          ")}
   manifest-static:
     steps:
       - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
@@ -421,6 +514,13 @@ def _write_self_test_root(
 
 def run_self_test() -> int:
     requirements, inventory, workflow = _valid_self_test_content()
+    history_parts = workflow.rsplit("          fetch-depth: 0\n", 1)
+    if len(history_parts) != 2:
+        fail(
+            "CI-PYTHON-WORKFLOW",
+            "self-test fixture lacks repo-quality-static full history",
+        )
+    shallow_repo_quality = "".join(history_parts)
     mutations = (
         (
             "CI-PYTHON-PIN",
@@ -481,6 +581,39 @@ def run_self_test() -> int:
             requirements,
             inventory,
             workflow.replace("          fetch-depth: 0\n", "", 1),
+        ),
+        (
+            "CI-GITLEAKS-TOOL",
+            requirements,
+            inventory,
+            workflow.replace(
+                "sudo install -o root -g root -m 0755 "
+                '"$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks',
+                "true",
+                1,
+            ),
+        ),
+        (
+            "CI-GITLEAKS-TOOL",
+            requirements,
+            inventory,
+            workflow.replace(
+                EXPECTED_GITLEAKS_INVENTORY["sha256"],
+                "0" * 64,
+                1,
+            ),
+        ),
+        (
+            "CI-GITLEAKS-TOOL",
+            requirements,
+            inventory,
+            workflow.replace("sha256sum --check --strict", "cat", 1),
+        ),
+        (
+            "CI-REPOSITORY-HISTORY",
+            requirements,
+            inventory,
+            shallow_repo_quality,
         ),
     )
 
@@ -546,7 +679,7 @@ def main() -> int:
             case_count = run_self_test()
             print(
                 "[PASS] CI Python contract self-test passed: "
-                f"rules=7 cases={case_count}"
+                f"rules=9 cases={case_count}"
             )
             return 0
         job_count = validate_repository(args.root)

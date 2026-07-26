@@ -16,8 +16,8 @@ import hashlib
 import json
 import os
 import posixpath
+import pwd
 import re
-import shutil
 import stat
 import subprocess
 import sys
@@ -73,6 +73,18 @@ BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
 GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 20
+GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
+SYSTEM_GITLEAKS_CANDIDATES = tuple(
+    Path(directory) / "gitleaks"
+    for directory in (
+        "/usr/local/sbin",
+        "/usr/local/bin",
+        "/usr/sbin",
+        "/usr/bin",
+        "/sbin",
+        "/bin",
+    )
+)
 MAX_JSON_BYTES = 3_000_000
 MAX_MARKDOWN_BYTES = 3_000_000
 FULL_OID = re.compile(r"[0-9a-f]{40}\Z")
@@ -885,8 +897,82 @@ def _current_documents(
     return tuple(documents)
 
 
+def _secure_gitleaks_candidate(
+    candidate: Path,
+    root: Path,
+    *,
+    owner_uid: int,
+    required_chain: Sequence[Path],
+) -> bool:
+    candidate = Path(candidate)
+    if (
+        not candidate.is_absolute()
+        or candidate.name != "gitleaks"
+        or not required_chain
+        or candidate.parent != required_chain[-1]
+        or candidate.is_relative_to(root)
+        or candidate.is_relative_to(Path("/tmp"))
+    ):
+        return False
+    for directory in required_chain:
+        try:
+            metadata = os.lstat(directory)
+        except OSError:
+            return False
+        if (
+            stat.S_ISLNK(metadata.st_mode)
+            or not stat.S_ISDIR(metadata.st_mode)
+            or metadata.st_uid != owner_uid
+            or metadata.st_mode & 0o022
+        ):
+            return False
+    try:
+        metadata = os.lstat(candidate)
+    except OSError:
+        return False
+    return (
+        not stat.S_ISLNK(metadata.st_mode)
+        and stat.S_ISREG(metadata.st_mode)
+        and metadata.st_uid == owner_uid
+        and not metadata.st_mode & 0o022
+        and bool(metadata.st_mode & 0o111)
+    )
+
+
+def _validated_gitleaks_hint(root: Path) -> str | None:
+    raw_hint = os.environ.get(GITLEAKS_EXECUTABLE_ENV)
+    if not raw_hint:
+        return None
+    candidate = Path(raw_hint)
+    if candidate in SYSTEM_GITLEAKS_CANDIDATES:
+        if _secure_gitleaks_candidate(
+            candidate,
+            root,
+            owner_uid=0,
+            required_chain=(candidate.parent,),
+        ):
+            return candidate.as_posix()
+        return None
+    try:
+        account = pwd.getpwuid(os.getuid())
+    except (KeyError, OSError):
+        return None
+    home = Path(account.pw_dir)
+    exact_home_candidate = home / ".local" / "bin" / "gitleaks"
+    if candidate != exact_home_candidate:
+        return None
+    if _secure_gitleaks_candidate(
+        candidate,
+        root,
+        owner_uid=account.pw_uid,
+        required_chain=(home, home / ".local", home / ".local" / "bin"),
+    ):
+        return candidate.as_posix()
+    return None
+
+
 def _secret_clean(root: Path, archive_path: str, payload: bytes) -> None:
-    executable = shutil.which("gitleaks")
+    executable = _validated_gitleaks_hint(root)
     if executable is None:
         _fail("MIGRATION-SECRET-CLASSIFIER", archive_path)
     try:

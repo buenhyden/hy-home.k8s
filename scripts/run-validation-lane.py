@@ -8,7 +8,9 @@ import hashlib
 import importlib.util
 import json
 import os
+import pwd
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
@@ -25,6 +27,10 @@ TRUSTED_SEARCH_DIRECTORIES = (
     "/bin",
 )
 QUALITY_SUCCESS_MARKER = "[PASS] repository quality gates passed"
+GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
+SYSTEM_GITLEAKS_CANDIDATES = tuple(
+    Path(directory) / "gitleaks" for directory in TRUSTED_SEARCH_DIRECTORIES
+)
 
 
 def load_contract_module():
@@ -94,6 +100,81 @@ def trusted_search_path() -> str:
         if resolved.is_dir() and value not in directories:
             directories.append(value)
     return os.pathsep.join(directories)
+
+
+def validate_gitleaks_candidate(
+    candidate: Path,
+    root: Path,
+    *,
+    owner_uid: int,
+    required_chain: Sequence[Path],
+) -> bool:
+    """Validate one exact non-search-path Gitleaks candidate without dereference."""
+
+    candidate = Path(candidate)
+    root = Path(root)
+    if (
+        not candidate.is_absolute()
+        or candidate.name != "gitleaks"
+        or not required_chain
+        or candidate.parent != required_chain[-1]
+        or candidate.is_relative_to(root)
+        or candidate.is_relative_to(Path("/tmp"))
+    ):
+        return False
+
+    for directory in required_chain:
+        try:
+            metadata = os.lstat(directory)
+        except OSError:
+            return False
+        if (
+            stat.S_ISLNK(metadata.st_mode)
+            or not stat.S_ISDIR(metadata.st_mode)
+            or metadata.st_uid != owner_uid
+            or metadata.st_mode & 0o022
+        ):
+            return False
+
+    try:
+        metadata = os.lstat(candidate)
+    except OSError:
+        return False
+    return (
+        not stat.S_ISLNK(metadata.st_mode)
+        and stat.S_ISREG(metadata.st_mode)
+        and metadata.st_uid == owner_uid
+        and not metadata.st_mode & 0o022
+        and bool(metadata.st_mode & 0o111)
+    )
+
+
+def secure_gitleaks_executable(root: Path) -> str | None:
+    """Return the first exact secure system or passwd-home Gitleaks candidate."""
+
+    for candidate in SYSTEM_GITLEAKS_CANDIDATES:
+        if validate_gitleaks_candidate(
+            candidate,
+            root,
+            owner_uid=0,
+            required_chain=(candidate.parent,),
+        ):
+            return candidate.as_posix()
+
+    try:
+        account = pwd.getpwuid(os.getuid())
+    except (KeyError, OSError):
+        return None
+    home = Path(account.pw_dir)
+    candidate = home / ".local" / "bin" / "gitleaks"
+    if validate_gitleaks_candidate(
+        candidate,
+        root,
+        owner_uid=account.pw_uid,
+        required_chain=(home, home / ".local", home / ".local" / "bin"),
+    ):
+        return candidate.as_posix()
+    return None
 
 
 def closed_subprocess_environment() -> dict[str, str]:
@@ -186,6 +267,9 @@ def run_selected(
 
     failed = False
     subprocess_environment = closed_subprocess_environment()
+    gitleaks_executable = secure_gitleaks_executable(root)
+    if gitleaks_executable is not None:
+        subprocess_environment[GITLEAKS_EXECUTABLE_ENV] = gitleaks_executable
     for identifier in selected["validators"]:
         validator = validators[identifier]
         argv = validator_argv(root, lane, paths, validator, contract, contract_module)

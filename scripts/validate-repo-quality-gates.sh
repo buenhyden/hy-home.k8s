@@ -6,6 +6,30 @@ set -euo pipefail
 ROOT_INPUT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 ROOT_DIR="$(cd "$ROOT_INPUT" && pwd)"
 
+GITLEAKS_EXECUTABLE_HINT="$(
+  /usr/bin/python3 -I - "$ROOT_DIR" "$ROOT_DIR/scripts/run-validation-lane.py" <<'PY'
+import importlib.util
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+module_path = pathlib.Path(sys.argv[2])
+spec = importlib.util.spec_from_file_location("closed_gitleaks_discovery", module_path)
+if spec is None or spec.loader is None:
+    raise SystemExit(1)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+candidate = module.secure_gitleaks_executable(root)
+if candidate is not None:
+    print(candidate)
+PY
+)"
+unset HY_HOME_K8S_GITLEAKS_EXECUTABLE
+if [[ -n "$GITLEAKS_EXECUTABLE_HINT" ]]; then
+  export HY_HOME_K8S_GITLEAKS_EXECUTABLE="$GITLEAKS_EXECUTABLE_HINT"
+fi
+
 if ! command -v python3 >/dev/null 2>&1; then
   echo "ERR python3 is required for repository quality validation" >&2
   exit 1

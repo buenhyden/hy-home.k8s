@@ -8,7 +8,11 @@ import importlib.util
 import json
 import os
 import pathlib
+import pwd
+import stat
+import subprocess
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 
@@ -135,8 +139,28 @@ def load_validator():
 class ActiveCorpusMigrationTests(unittest.TestCase):
     def test_all_six_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
+        home = pathlib.Path(pwd.getpwuid(os.getuid()).pw_dir)
+        home_candidate = home / ".local" / "bin" / "gitleaks"
+        system_candidates = (
+            pathlib.Path("/usr/local/bin/gitleaks"),
+            pathlib.Path("/usr/bin/gitleaks"),
+        )
+        executable = next(
+            (
+                candidate
+                for candidate in (*system_candidates, home_candidate)
+                if candidate.is_file() and os.access(candidate, os.X_OK)
+            ),
+            None,
+        )
+        self.assertIsNotNone(executable, "focused migration proof requires Gitleaks")
 
-        counts = validator.validate_active_corpus_migrations(ROOT)
+        with mock.patch.dict(
+            os.environ,
+            {"HY_HOME_K8S_GITLEAKS_EXECUTABLE": str(executable)},
+            clear=False,
+        ):
+            counts = validator.validate_active_corpus_migrations(ROOT)
 
         self.assertEqual(
             counts,
@@ -439,6 +463,138 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(environment["GIT_OPTIONAL_LOCKS"], "0")
         self.assertEqual(environment["GIT_TERMINAL_PROMPT"], "0")
         self.assertEqual(environment["LC_ALL"], "C")
+
+    def test_gitleaks_hint_is_revalidated_and_used_exactly(self) -> None:
+        validator = load_validator()
+        executable = "/home/alice/.local/bin/gitleaks"
+        metadata = {
+            "/home/alice": stat.S_IFDIR | 0o750,
+            "/home/alice/.local": stat.S_IFDIR | 0o755,
+            "/home/alice/.local/bin": stat.S_IFDIR | 0o755,
+            executable: stat.S_IFREG | 0o755,
+        }
+
+        def fake_lstat(path):
+            value = os.fspath(path)
+            if value not in metadata:
+                raise FileNotFoundError(value)
+            return SimpleNamespace(st_mode=metadata[value], st_uid=1000)
+
+        completed = subprocess.CompletedProcess([executable], 0, b"", b"")
+        with (
+            mock.patch.dict(
+                os.environ,
+                {"HY_HOME_K8S_GITLEAKS_EXECUTABLE": executable},
+                clear=False,
+            ),
+            mock.patch.object(validator.os, "lstat", side_effect=fake_lstat),
+            mock.patch.object(validator.os, "getuid", return_value=1000),
+            mock.patch.object(
+                validator.pwd,
+                "getpwuid",
+                return_value=pwd.struct_passwd(
+                    ("alice", "x", 1000, 1000, "", "/home/alice", "/bin/sh")
+                ),
+            ),
+            mock.patch.object(
+                validator.subprocess,
+                "run",
+                return_value=completed,
+            ) as invoked,
+        ):
+            validator._secret_clean(ROOT, "docs/98.archive/example.md", b"payload")
+
+        self.assertEqual(invoked.call_args.args[0][0], executable)
+        self.assertNotIn("/home/alice/.local/bin", invoked.call_args.kwargs["env"]["PATH"])
+
+    def test_gitleaks_hint_rejects_unsafe_candidates(self) -> None:
+        validator = load_validator()
+        archive = "docs/98.archive/example.md"
+        invalid = (
+            "relative/gitleaks",
+            "/tmp/gitleaks",
+            str(ROOT / "gitleaks"),
+            "/home/alice/.local/bin/not-gitleaks",
+        )
+        for candidate in invalid:
+            with (
+                self.subTest(candidate=candidate),
+                mock.patch.dict(
+                    os.environ,
+                    {"HY_HOME_K8S_GITLEAKS_EXECUTABLE": candidate},
+                    clear=False,
+                ),
+                self.assertRaises(validator.MigrationError) as raised,
+            ):
+                validator._secret_clean(ROOT, archive, b"payload")
+            self.assertEqual(str(raised.exception), f"MIGRATION-SECRET-CLASSIFIER {archive}")
+
+        executable = "/home/alice/.local/bin/gitleaks"
+        metadata = {
+            "/home/alice": stat.S_IFDIR | 0o750,
+            "/home/alice/.local": stat.S_IFDIR | 0o755,
+            "/home/alice/.local/bin": stat.S_IFDIR | 0o755,
+            executable: stat.S_IFREG | 0o755,
+        }
+        owners = {path: 1000 for path in metadata}
+
+        def fake_lstat(path):
+            value = os.fspath(path)
+            if value not in metadata:
+                raise FileNotFoundError(value)
+            return SimpleNamespace(st_mode=metadata[value], st_uid=owners[value])
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {"HY_HOME_K8S_GITLEAKS_EXECUTABLE": executable},
+                clear=False,
+            ),
+            mock.patch.object(validator.os, "lstat", side_effect=fake_lstat),
+            mock.patch.object(validator.os, "getuid", return_value=1000),
+            mock.patch.object(
+                validator.pwd,
+                "getpwuid",
+                return_value=pwd.struct_passwd(
+                    ("alice", "x", 1000, 1000, "", "/home/alice", "/bin/sh")
+                ),
+            ),
+        ):
+            metadata[executable] = stat.S_IFLNK | 0o777
+            self.assertIsNone(validator._validated_gitleaks_hint(ROOT))
+            metadata[executable] = stat.S_IFREG | 0o775
+            self.assertIsNone(validator._validated_gitleaks_hint(ROOT))
+            metadata[executable] = stat.S_IFREG | 0o755
+            owners[executable] = 1001
+            self.assertIsNone(validator._validated_gitleaks_hint(ROOT))
+
+    def test_gitleaks_hint_preserves_detected_and_classifier_diagnostics(self) -> None:
+        validator = load_validator()
+        archive = "docs/98.archive/example.md"
+        executable = "/usr/local/bin/gitleaks"
+        for returncode, rule in (
+            (17, "MIGRATION-SECRET-DETECTED"),
+            (2, "MIGRATION-SECRET-CLASSIFIER"),
+        ):
+            with (
+                self.subTest(returncode=returncode),
+                mock.patch.object(
+                    validator,
+                    "_validated_gitleaks_hint",
+                    return_value=executable,
+                    create=True,
+                ),
+                mock.patch.object(
+                    validator.subprocess,
+                    "run",
+                    return_value=subprocess.CompletedProcess(
+                        [executable], returncode, b"", b""
+                    ),
+                ),
+                self.assertRaises(validator.MigrationError) as raised,
+            ):
+                validator._secret_clean(ROOT, archive, b"payload")
+            self.assertEqual(str(raised.exception), f"{rule} {archive}")
 
 
 if __name__ == "__main__":

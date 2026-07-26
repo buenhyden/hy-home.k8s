@@ -105,6 +105,11 @@ ci_python_dependencies:
   jsonschema: '4.26.0'
   pre-commit: '4.6.1'
   PyYAML: '6.0.3'
+ci_gitleaks:
+  version: '8.30.0'
+  asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
+  sha256: '79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e' # pragma: allowlist secret
+  install_path: '/usr/local/bin/gitleaks'
 github_actions:
   'actions/checkout': '9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' # pragma: allowlist secret
   'actions/first-interaction': '1c4688942c71f71d4f5502a26ea67c331730fa4d' # pragma: allowlist secret

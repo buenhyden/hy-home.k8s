@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import pwd
 import re
+import stat
 import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -134,6 +137,101 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertTrue(
             all(not Path(entry).is_relative_to(Path("/tmp")) for entry in path_entries)
         )
+
+    def test_hostile_ambient_gitleaks_hint_is_not_forwarded(self):
+        hostile_hint = "/tmp/attacker/gitleaks"
+        with patch.object(
+            RUNNER,
+            "secure_gitleaks_executable",
+            return_value=None,
+            create=True,
+        ):
+            result, _output, invoked = self._run(
+                "affected",
+                {"HY_HOME_K8S_GITLEAKS_EXECUTABLE": hostile_hint},
+            )
+
+        self.assertEqual(result, 0)
+        environment = invoked.call_args.kwargs["env"]
+        self.assertNotIn("HY_HOME_K8S_GITLEAKS_EXECUTABLE", environment)
+        self.assertNotIn("/tmp/attacker", environment["PATH"])
+
+    def test_secure_passwd_home_gitleaks_is_passed_without_broadening_path(self):
+        executable = "/home/alice/.local/bin/gitleaks"
+        with patch.object(
+            RUNNER,
+            "secure_gitleaks_executable",
+            return_value=executable,
+            create=True,
+        ):
+            result, _output, invoked = self._run("affected", {})
+
+        self.assertEqual(result, 0)
+        environment = invoked.call_args.kwargs["env"]
+        self.assertEqual(
+            environment["HY_HOME_K8S_GITLEAKS_EXECUTABLE"],
+            executable,
+        )
+        self.assertNotIn("/home/alice/.local/bin", environment["PATH"])
+
+    def test_gitleaks_candidate_rejects_unsafe_shapes(self):
+        metadata = {
+            "/home/alice": stat.S_IFDIR | 0o750,
+            "/home/alice/.local": stat.S_IFDIR | 0o755,
+            "/home/alice/.local/bin": stat.S_IFDIR | 0o755,
+            "/home/alice/.local/bin/gitleaks": stat.S_IFREG | 0o755,
+        }
+        owners = {path: 1000 for path in metadata}
+
+        def fake_lstat(path):
+            value = os.fspath(path)
+            if value not in metadata:
+                raise FileNotFoundError(value)
+            return SimpleNamespace(st_mode=metadata[value], st_uid=owners[value])
+
+        with (
+            patch.object(RUNNER.os, "lstat", side_effect=fake_lstat),
+            patch.object(RUNNER.os, "getuid", return_value=1000),
+            patch.object(
+                RUNNER.pwd,
+                "getpwuid",
+                return_value=pwd.struct_passwd(
+                    ("alice", "x", 1000, 1000, "", "/home/alice", "/bin/sh")
+                ),
+            ),
+        ):
+            self.assertEqual(
+                RUNNER.secure_gitleaks_executable(ROOT),
+                "/home/alice/.local/bin/gitleaks",
+            )
+
+            for path in (
+                Path("relative/gitleaks"),
+                Path("/tmp/gitleaks"),
+                ROOT / "gitleaks",
+                Path("/home/alice/.local/bin/not-gitleaks"),
+            ):
+                with self.subTest(path=path):
+                    self.assertFalse(
+                        RUNNER.validate_gitleaks_candidate(
+                            path,
+                            ROOT,
+                            owner_uid=1000,
+                            required_chain=(
+                                Path("/home/alice"),
+                                Path("/home/alice/.local"),
+                                Path("/home/alice/.local/bin"),
+                            ),
+                        )
+                    )
+
+            metadata["/home/alice/.local/bin/gitleaks"] = stat.S_IFLNK | 0o777
+            self.assertIsNone(RUNNER.secure_gitleaks_executable(ROOT))
+            metadata["/home/alice/.local/bin/gitleaks"] = stat.S_IFREG | 0o775
+            self.assertIsNone(RUNNER.secure_gitleaks_executable(ROOT))
+            metadata["/home/alice/.local/bin/gitleaks"] = stat.S_IFREG | 0o755
+            owners["/home/alice/.local/bin/gitleaks"] = 1001
+            self.assertIsNone(RUNNER.secure_gitleaks_executable(ROOT))
 
     def test_path_shadow_and_bash_env_cannot_forge_quality_success(self):
         with tempfile.TemporaryDirectory(prefix="runner-hostile-") as temporary:

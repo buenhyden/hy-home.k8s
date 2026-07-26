@@ -27,7 +27,11 @@ pre-commit==4.6.1
 PyYAML==6.0.3
 """
 
-INVENTORY = """\
+GITLEAKS_SHA256 = (
+    "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
+)
+
+INVENTORY = f"""\
 # Version inventory
 
 ### Version Contracts
@@ -40,10 +44,25 @@ ci_python_dependencies:
   jsonschema: '4.26.0'
   pre-commit: '4.6.1'
   PyYAML: '6.0.3'
+ci_gitleaks:
+  version: '8.30.0'
+  asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
+  sha256: '{GITLEAKS_SHA256}' # pragma: allowlist secret
+  install_path: '/usr/local/bin/gitleaks'
 ```
 """
 
-WORKFLOW = """\
+GITLEAKS_INSTALL = f"""\
+set -euo pipefail
+curl --fail --location --silent --show-error \\
+  https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \\
+  --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
+gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
+printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
+tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
+sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks"""
+
+WORKFLOW = f"""\
 name: CI
 jobs:
   pre-commit:
@@ -57,18 +76,40 @@ jobs:
       - name: Install repository validation dependencies
         run: |
           python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
+      - name: Install Gitleaks
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \\
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \\
+            --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
+          gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
+          printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
       - name: Run all pre-commit hooks
         run: |
           pre-commit run --all-files --show-diff-on-failure
   repo-quality-static:
     steps:
       - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@0000000000000000000000000000000000000000
         with:
           python-version: '3.12'
       - name: Install repository validation dependencies
         run: |
           python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
+      - name: Install Gitleaks
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \\
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \\
+            --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
+          gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
+          printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
       - run: bash scripts/validate-repo-quality-gates.sh .
   manifest-static:
     steps:
@@ -242,6 +283,49 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PRECOMMIT-HISTORY")
+
+    def test_both_repository_quality_jobs_require_exact_verified_gitleaks(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        workflow.write_text(
+            text.replace(
+                GITLEAKS_SHA256,
+                "0" * 64,
+                1,
+            ),
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-GITLEAKS-TOOL")
+
+        workflow.write_text(
+            text.replace(
+                "      - name: Install Gitleaks\n"
+                "        run: |\n"
+                + "".join(f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()),
+                "",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-GITLEAKS-TOOL")
+
+    def test_repo_quality_checkout_must_have_full_history(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        second_history = text.find("          fetch-depth: 0\n", text.find("repo-quality-static:"))
+        self.assertNotEqual(second_history, -1)
+        workflow.write_text(
+            text[:second_history] + text[second_history + len("          fetch-depth: 0\n"):],
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-REPOSITORY-HISTORY")
+
+    def test_python_requirements_remain_exactly_three_lines(self) -> None:
+        root = self.make_valid_root()
+        requirements = root / ".github/requirements/ci-validation.txt"
+        self.assertEqual(requirements.read_text(encoding="utf-8"), REQUIREMENTS)
 
 
 @unittest.skipUnless(
