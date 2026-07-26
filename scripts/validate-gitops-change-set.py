@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import json
 import os
 import re
@@ -13,7 +14,7 @@ import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable, Literal
 
 import yaml
 
@@ -32,6 +33,30 @@ KUSTOMIZATION_NAME = "kustomization.yaml"
 KUSTOMIZATION_API_VERSION = "kustomize.config.k8s.io/v1beta1"
 KUSTOMIZATION_KIND = "Kustomization"
 ALLOWED_KUSTOMIZATION_KEYS = frozenset(("apiVersion", "kind", "resources"))
+FIFO_UNSUPPORTED_ERRNOS = frozenset(
+    code
+    for code in (
+        getattr(errno, "ENOSYS", None),
+        getattr(errno, "ENOTSUP", None),
+        getattr(errno, "EOPNOTSUPP", None),
+    )
+    if code is not None
+)
+
+
+def _create_non_regular_fixture(
+    path: Path,
+    make_fifo: Callable[[Path], None] | None = getattr(os, "mkfifo", None),
+) -> Literal["fifo", "directory-fallback"]:
+    if make_fifo is not None:
+        try:
+            make_fifo(path)
+            return "fifo"
+        except OSError as exc:
+            if exc.errno not in FIFO_UNSUPPORTED_ERRNOS:
+                raise
+    path.mkdir()
+    return "directory-fallback"
 
 
 def _is_safe_repository_path(value: str) -> bool:
@@ -460,7 +485,18 @@ def _render_roots(
             target = path.parent / relative
             kind = source.entry_kind(target)
             if kind == "directory":
-                visit_kustomization(target / KUSTOMIZATION_NAME)
+                nested_kustomization = target / KUSTOMIZATION_NAME
+                try:
+                    nested_kind = source.entry_kind(nested_kustomization)
+                except GitOpsValidationError as exc:
+                    if exc.code == "RESOURCE_MISSING":
+                        raise GitOpsValidationError(
+                            "RESOURCE_NOT_REGULAR", _stable_path(target)
+                        ) from exc
+                    raise
+                if nested_kind != "file":
+                    raise GitOpsValidationError("RESOURCE_NOT_REGULAR", _stable_path(target))
+                visit_kustomization(nested_kustomization)
             elif target.name == KUSTOMIZATION_NAME:
                 visit_kustomization(target)
             else:
@@ -629,7 +665,9 @@ def _self_test_boundaries() -> None:
         non_regular = _write_self_test_case(
             temp, "non-regular", supported + "resources: [pipe.yaml]\n"
         )
-        os.mkfifo(non_regular / "pipe.yaml")
+        fixture_kind = _create_non_regular_fixture(non_regular / "pipe.yaml")
+        if fixture_kind not in {"fifo", "directory-fallback"}:
+            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
         _expect_self_test_error(
             "RESOURCE_NOT_REGULAR", lambda: _render_self_test_case(non_regular)
         )

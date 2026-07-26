@@ -75,6 +75,7 @@ tests/test_post_validate_runner_result.py
 tests/test_provider_post_validate_hook.py
 tests/test_reference_information_architecture.py
 tests/test_run_validation_lane.py
+tests/test_validate_gitops_change_set.py
 tests/test_workspace_boundary.py
 ```
 
@@ -131,7 +132,7 @@ live readiness.
 | Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul`; `python3 -m unittest tests/test_run_validation_lane.py tests/test_post_validate_runner_result.py tests/test_provider_post_validate_hook.py` | Repo-static shell-free execution of contract-selected argv under a closed startup environment and fixed absolute tool search path. Fifteen production-isolation, marker-cardinality, hostile PATH/BASH_ENV/PYTHONPATH, pure selector/runner, hook-log, and actual provider-entry regressions prove caller state cannot forge success. Claude, Codex, and Gemini commands execute the production hook in a bounded fixture: valid manifest/docs payloads preserve all 7/4 validators and existing Markdown path arguments, while malformed JSON fails closed. |
 | GitHub Actions security fixture | `python3 scripts/validate-github-actions-security.py --self-test` | Tier A required aggregate evidence preserving exactly eleven primary, ten repository-boundary, twenty-one required-write JSON cases, plus five internal uses-shape cases |
 | GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | Tier A required aggregate evidence; `PASS` enforces immutable Action identities and least-privilege permissions |
-| GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus durable unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
+| GitOps identity change-set fixture | `python3 scripts/validate-gitops-change-set.py --self-test`; `python3 -m unittest tests/test_validate_gitops_change_set.py` | Repo-static exact one ADD, one DELETE, and one path-only RETAIN plus portable FIFO-or-directory non-regular, unsafe-ref/path, symlink/non-regular, cycle, duplicate, malformed-token, unsupported-dialect/directive, multi-document, root/two-commit, and shallow-parent rejection coverage; forbidden manifest values remain excluded |
 | GitOps identity change-set repository check | `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD` | Repo-static identity-only rows; no Argo CD prune or reconciliation claim |
 | Vault/ESO contract fixture | `python3 scripts/validate-vault-eso-contracts.py --self-test` | Repo-static exact ten-case non-secret mutation evidence |
 | Vault/ESO repository check | `python3 scripts/validate-vault-eso-contracts.py --root .` | Repo-static identity, audience, policy, local-only transport, and bootstrap process-boundary evidence; no live or secret-value claim |

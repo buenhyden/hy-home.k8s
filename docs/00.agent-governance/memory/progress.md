@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-001 portable GitOps boundary fixture
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, meta
+- **Status**: complete
+- **Tags**: #gitops #qa #pre-commit #spec-039
+
+#### Progress
+
+- Replaced the unconditional FIFO creation in the GitOps boundary self-test
+  with the Spec 039 portable non-regular fixture contract.
+- FIFO-capable filesystems retain FIFO coverage. `ENOSYS`, `ENOTSUP`, and
+  `EOPNOTSUPP` now create a directory at the same resource path, which still
+  proves the required `RESOURCE_NOT_REGULAR` rejection. Other `OSError` values
+  remain fail-closed.
+- Review round 1 found that the renderer had treated the fallback directory as
+  a nested Kustomization and emitted `RESOURCE_MISSING`. Directory dispatch now
+  requires a regular nested `kustomization.yaml`; a directory without one is
+  rejected as `RESOURCE_NOT_REGULAR`, while valid nested Kustomizations retain
+  their existing dispatch path.
+- Added focused importlib-based unit coverage for supported, unsupported,
+  explicit-no-FIFO, unexpected-error, and full boundary-self-test behavior.
+
+#### Memory
+
+- A non-regular-resource regression needs the resource class, not a specific
+  filesystem primitive. A directory fallback preserves the validator boundary
+  when FIFO creation is unsupported without downgrading permission or I/O
+  failures.
+
+#### Evidence
+
+- RED: `python3 -m unittest tests/test_validate_gitops_change_set.py` failed
+  with four `AttributeError` cases because `_create_non_regular_fixture` was
+  absent.
+- GREEN: focused unit test, GitOps self-test, and local `--base-ref HEAD`
+  repository validator passed before the package-level gates.
+- Review-round RED/GREEN: the renderer-boundary regression first observed
+  `RESOURCE_MISSING` for an injected `EOPNOTSUPP` fallback, then passed with
+  the required `RESOURCE_NOT_REGULAR` diagnostic after the directory-dispatch
+  correction.
+
+#### Handoff
+
+- Next owner: GCQE-002 may require unqualified all-files pre-commit evidence
+  after this boundary's package gate and logical commit are complete.
+
 ### 2026-07-26 - Agent governance program design rebaseline
 
 #### Metadata
