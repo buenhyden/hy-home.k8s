@@ -31,7 +31,6 @@ from reference_information_architecture import (  # noqa: E402
     RIA_RULE_IDS,
     load_contract,
     parse_git_sha1,
-    validate_reference_architecture,
 )
 
 
@@ -482,6 +481,12 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         commit_oid = "c" * 40
         contract_oid = "1" * 40
         schema_oid = "2" * 40
+        contract_path = Path(
+            "docs/alternate/reference-information-architecture.json"
+        )
+        schema_path = contract_path.with_name(
+            "reference-information-architecture.schema.json"
+        )
         contract_payload = json.dumps(self._minimal_contract()).encode()
         rejecting_schema = json.dumps(
             {
@@ -505,9 +510,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     return b"commit\n"
                 if arguments[:3] == ("ls-tree", "-z", "--full-tree"):
                     path = Path(arguments[5])
-                    if path == ria.DEFAULT_CONTRACT_PATH:
+                    if path == contract_path:
                         oid, mode = contract_oid, "100644"
-                    elif path == ria.CANONICAL_SCHEMA_PATH:
+                    elif path == schema_path:
                         oid, mode = schema_oid, schema_mode
                     else:
                         raise AssertionError(path)
@@ -529,6 +534,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria.load_contract_at_commit(
                 self.root,
                 "git-sha1:" + commit_oid,
+                contract_path,
                 runner=commit_runner(SCHEMA.read_bytes()),
             ),
             self._minimal_contract(),
@@ -548,10 +554,104 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     ria.load_contract_at_commit(
                         self.root,
                         "git-sha1:" + commit_oid,
+                        contract_path,
                         runner=commit_runner(
                             schema_payload, schema_mode, schema_size
                         ),
                     )
+
+    def test_cli_and_validation_thread_selected_contract_authority_path(
+        self,
+    ) -> None:
+        selected = Path(
+            "docs/alternate/reference-information-architecture.json"
+        )
+        contract = self._minimal_contract()
+        cli = _load_cli_module()
+        with (
+            mock.patch.object(
+                cli, "load_contract", return_value=contract
+            ) as loader,
+            mock.patch.object(
+                cli, "validate_reference_architecture", return_value=[]
+            ) as validator,
+        ):
+            self.assertEqual(
+                cli.main(
+                    [
+                        "--root",
+                        str(self.root),
+                        "--contract",
+                        selected.as_posix(),
+                    ]
+                ),
+                0,
+            )
+        loader.assert_called_once_with(self.root.absolute(), selected)
+        self.assertEqual(
+            validator.call_args.kwargs["contract_path"], selected
+        )
+
+        with (
+            mock.patch.object(
+                ria, "_contract_authority_finding", return_value=None
+            ) as authority,
+            mock.patch.object(ria, "validate_snapshot_guards", return_value=[]),
+            mock.patch.object(ria, "validate_overlay_guards", return_value=[]),
+            mock.patch.object(ria, "validate_data_assets", return_value=[]),
+            mock.patch.object(ria, "validate_generated_assets", return_value=[]),
+            mock.patch.object(ria, "validate_duplicate_rules", return_value=[]),
+            mock.patch.object(
+                ria, "validate_baseline_transitions", return_value=[]
+            ) as transitions,
+        ):
+            self.assertEqual(
+                ria.validate_reference_architecture(
+                    self.root,
+                    contract,
+                    contract_path=selected,
+                ),
+                [],
+            )
+        self.assertEqual(authority.call_args.kwargs["contract_path"], selected)
+        self.assertEqual(
+            transitions.call_args.kwargs["contract_path"], selected
+        )
+
+        payload = json.dumps(contract, separators=(",", ":")).encode()
+        with mock.patch.object(
+            ria, "read_proposed_regular_file", return_value=payload
+        ) as reader:
+            self.assertIsNone(
+                ria._contract_authority_finding(  # noqa: SLF001
+                    self.root.absolute(),
+                    contract,
+                    contract_path=selected,
+                    commit=None,
+                    runner=None,
+                )
+            )
+        reader.assert_called_once_with(self.root.absolute(), selected, None)
+
+        commit_oid = "c" * 40
+        with mock.patch.object(
+            ria, "_read_commit_path", return_value=payload
+        ) as commit_reader:
+            self.assertIsNone(
+                ria._contract_authority_finding(  # noqa: SLF001
+                    self.root.absolute(),
+                    contract,
+                    contract_path=selected,
+                    commit="git-sha1:" + commit_oid,
+                    runner=None,
+                )
+            )
+        commit_reader.assert_called_once_with(
+            self.root.absolute(),
+            commit_oid,
+            selected,
+            None,
+        )
 
     def test_normal_schema_requires_stage_zero_index_worktree_authority(
         self,
@@ -3396,6 +3496,269 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 self.assertEqual(
                     [finding.rule_id for finding in findings], ["RIA-TRANSITION"]
                 )
+
+    def test_selected_contract_controls_settlement_staged_and_explicit_paths(
+        self,
+    ) -> None:
+        selected = Path(
+            "docs/alternate/reference-information-architecture.json"
+        )
+        c2 = "b" * 40
+        c3 = "c" * 40
+        target = b"settled target"
+        contract = self._settled_contract("git-sha1:" + c2, target)
+        open_contract = self._minimal_contract()
+        open_contract["baselineTransitions"] = [self._transition(target)]
+        audit = ria.Pack("audits/2026-07-11-weia", ("done",), ())
+        research = ria.Pack(
+            "research/2026-07-07-wer",
+            ("active", "accepted"),
+            ("document-migration-evidence-ledger.md",),
+        )
+        registry = ria.RegistryProjection(
+            "content/reference", (audit, research)
+        )
+        target_path = research.member_paths[0]
+        context = ria.ValidationContext(
+            registry,
+            {target_path: target},
+            {ROOT_BASELINE: registry, "git-sha1:" + c2: registry},
+            {},
+            {
+                ROOT_BASELINE: ROOT_BASELINE.removeprefix("git-sha1:"),
+                "git-sha1:" + c2: c2,
+            },
+            None,
+        )
+        registry_payload = json.dumps(
+            {
+                "referenceCurrentPacks": {
+                    "profileId": registry.profile_id,
+                    "packs": [
+                        {
+                            "id": pack.pack_id,
+                            "allowedStates": list(pack.allowed_states),
+                            "members": list(pack.members),
+                        }
+                        for pack in registry.packs
+                    ],
+                }
+            },
+            separators=(",", ":"),
+        ).encode()
+        payloads = {
+            (c2, selected): json.dumps(
+                open_contract, separators=(",", ":")
+            ).encode(),
+            (c2, ria.REGISTRY_PATH): registry_payload,
+            (c2, target_path): target,
+            (
+                ROOT_BASELINE.removeprefix("git-sha1:"),
+                target_path,
+            ): b"root target",
+        }
+        for path in (audit.readme_path, research.readme_path):
+            payload = f"same:{path.as_posix()}".encode()
+            payloads[(c2, path)] = payload
+            payloads[
+                (ROOT_BASELINE.removeprefix("git-sha1:"), path)
+            ] = payload
+
+        def commit_path(
+            root: Path,
+            commit_oid: str,
+            path: Path,
+            runner,
+        ) -> bytes:
+            del root, runner
+            return payloads[(commit_oid, path)]
+
+        with (
+            mock.patch.object(
+                ria, "_read_commit_path", side_effect=commit_path
+            ) as reader,
+            mock.patch.object(ria, "_validate_schema_at_commit") as schema,
+        ):
+            self.assertEqual(
+                ria._settlement_proof(  # noqa: SLF001
+                    self.root,
+                    contract,
+                    context,
+                    None,
+                    contract_path=selected,
+                ),
+                [],
+            )
+        self.assertIn(
+            mock.call(self.root, c2, selected, None),
+            reader.call_args_list,
+        )
+        schema.assert_called_once_with(
+            self.root,
+            c2,
+            open_contract,
+            selected,
+            None,
+        )
+
+        selected_row = f"M\0{selected.as_posix()}\0".encode()
+        default_row = (
+            f"M\0{ria.DEFAULT_CONTRACT_PATH.as_posix()}\0".encode()
+        )
+
+        def staged_runner(rows: bytes):
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments == ("rev-parse", "--verify", "HEAD"):
+                    return f"{c2}\n".encode()
+                if arguments == ("cat-file", "-t", c2):
+                    return b"commit\n"
+                if arguments[0] == "diff-index":
+                    return rows
+                raise AssertionError(arguments)
+
+            return runner
+
+        def explicit_runner(rows: bytes):
+            def runner(
+                root: Path, arguments: tuple[str, ...], limit: int
+            ) -> bytes:
+                del root, limit
+                if arguments == ("cat-file", "-t", c3):
+                    return b"commit\n"
+                if arguments == ("cat-file", "commit", c3):
+                    return (
+                        f"tree {'d' * 40}\nparent {c2}\n\nmessage\n"
+                    ).encode()
+                if arguments[0] == "diff-tree":
+                    return rows
+                raise AssertionError(arguments)
+
+            return runner
+
+        self.assertEqual(
+            ria.validate_staged_settlement_lineage(
+                self.root,
+                contract,
+                contract_path=selected,
+                runner=staged_runner(selected_row),
+            ),
+            [],
+        )
+        self.assertEqual(
+            ria.validate_explicit_commit_lineage(
+                self.root,
+                contract,
+                "git-sha1:" + c3,
+                contract_path=selected,
+                runner=explicit_runner(selected_row),
+            ),
+            [],
+        )
+        self.assertEqual(
+            [
+                finding.rule_id
+                for finding in ria.validate_staged_settlement_lineage(
+                    self.root,
+                    contract,
+                    contract_path=selected,
+                    runner=staged_runner(default_row),
+                )
+            ],
+            ["RIA-TRANSITION"],
+        )
+        self.assertEqual(
+            [
+                finding.rule_id
+                for finding in ria.validate_explicit_commit_lineage(
+                    self.root,
+                    contract,
+                    "git-sha1:" + c3,
+                    contract_path=selected,
+                    runner=explicit_runner(default_row),
+                )
+            ],
+            ["RIA-TRANSITION"],
+        )
+
+        with (
+            mock.patch.object(
+                ria, "_build_context", return_value=context
+            ),
+            mock.patch.object(
+                ria, "_settlement_proof", return_value=[]
+            ) as settlement,
+            mock.patch.object(
+                ria, "validate_staged_settlement_lineage", return_value=[]
+            ) as staged_lineage,
+            mock.patch.object(
+                ria, "validate_explicit_commit_lineage", return_value=[]
+            ) as explicit_lineage,
+        ):
+            self.assertEqual(
+                ria.validate_baseline_transitions(
+                    self.root,
+                    contract,
+                    staged=True,
+                    contract_path=selected,
+                ),
+                [],
+            )
+            self.assertEqual(
+                ria.validate_baseline_transitions(
+                    self.root,
+                    contract,
+                    commit="git-sha1:" + c3,
+                    contract_path=selected,
+                ),
+                [],
+            )
+        self.assertTrue(
+            all(
+                call.kwargs["contract_path"] == selected
+                for call in settlement.call_args_list
+            )
+        )
+        self.assertEqual(
+            staged_lineage.call_args.kwargs["contract_path"], selected
+        )
+        self.assertEqual(
+            explicit_lineage.call_args.kwargs["contract_path"], selected
+        )
+
+    def test_selected_contract_path_mismatch_and_unsafe_path_fail_closed(
+        self,
+    ) -> None:
+        selected = Path(
+            "docs/alternate/reference-information-architecture.json"
+        )
+        contract = self._minimal_contract()
+        mismatched = self._minimal_contract()
+        mismatched["evidenceCutoff"] = "2026-07-23"
+        with mock.patch.object(
+            ria,
+            "read_proposed_regular_file",
+            return_value=json.dumps(mismatched).encode(),
+        ):
+            finding = ria._contract_authority_finding(  # noqa: SLF001
+                self.root.absolute(),
+                contract,
+                contract_path=selected,
+                commit=None,
+                runner=None,
+            )
+        self.assertIsNotNone(finding)
+        assert finding is not None
+        self.assertEqual(finding.rule_id, "RIA-BOUNDARY")
+        self.assertEqual(finding.path, selected.as_posix())
+
+        hostile = self.root.parent / "outside-secret-contract.json"
+        with self.assertRaises(ContractError) as raised:
+            ria.normalize_contract_path(self.root, hostile)
+        self.assertEqual(raised.exception.finding.rule_id, "RIA-BOUNDARY")
+        self.assertNotIn(hostile.name, str(raised.exception))
 
     def test_fixed_git_runner_contract_is_closed(self) -> None:
         self.assertEqual(ria.GIT_EXECUTABLE, "/usr/bin/git")

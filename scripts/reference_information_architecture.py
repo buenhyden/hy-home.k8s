@@ -346,6 +346,14 @@ def _path_under_root(root: Path, candidate: Path, *, field: str) -> Path:
     return parse_repository_path(relative.as_posix(), field=field)
 
 
+def normalize_contract_path(
+    root: Path, contract_path: Path = DEFAULT_CONTRACT_PATH
+) -> Path:
+    """Return one canonical repository-relative contract authority path."""
+
+    return _path_under_root(root.absolute(), contract_path, field="contract")
+
+
 def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
     """Read at most two MB without following any path component symlink."""
 
@@ -1131,7 +1139,7 @@ def load_contract(
     """Load a contract whose schema has exact proposed index authority."""
 
     root = root.absolute()
-    relative = _path_under_root(root, contract_path, field="contract")
+    relative = normalize_contract_path(root, contract_path)
     contract = _load_json(root, relative, field="contract")
     _validate_path_fields(contract)
     _validate_schema(root, contract, relative, runner)
@@ -1145,7 +1153,7 @@ def _load_contract_for_self_test(
     """Load isolated fixture files without claiming proposed Git authority."""
 
     root = root.absolute()
-    relative = _path_under_root(root, contract_path, field="contract")
+    relative = normalize_contract_path(root, contract_path)
     contract = _load_json(root, relative, field="contract")
     _validate_path_fields(contract)
     schema = _load_json(
@@ -1168,7 +1176,7 @@ def load_contract_at_commit(
     """Load the exact contract blob from one anchored literal commit."""
 
     root = root.absolute()
-    relative = _path_under_root(root, contract_path, field="contract")
+    relative = normalize_contract_path(root, contract_path)
     oid = parse_git_sha1(encoded_commit, field="--commit")
     try:
         payload = _read_commit_path(root, oid, relative, runner)
@@ -4737,6 +4745,8 @@ def _settlement_proof(
     contract: Mapping[str, object],
     context: ValidationContext,
     runner: GitRunner | None,
+    *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
 ) -> list[Finding]:
     settlement = contract["baselineSettlements"][0]
     assert isinstance(settlement, Mapping)
@@ -4744,12 +4754,12 @@ def _settlement_proof(
     try:
         c2_oid = parse_git_sha1(transition_commit, field="baselineSettlements.transitionCommit")
         c2_contract = _decode_json_bytes(
-            _read_commit_path(root, c2_oid, DEFAULT_CONTRACT_PATH, runner),
-            field=DEFAULT_CONTRACT_PATH.as_posix(),
+            _read_commit_path(root, c2_oid, contract_path, runner),
+            field=contract_path.as_posix(),
         )
         _validate_path_fields(c2_contract)
         _validate_schema_at_commit(
-            root, c2_oid, c2_contract, DEFAULT_CONTRACT_PATH, runner
+            root, c2_oid, c2_contract, contract_path, runner
         )
         _validate_contract_boundaries(c2_contract)
         if not _matching_open_contract(settlement, c2_contract, contract):
@@ -4809,6 +4819,7 @@ def validate_staged_settlement_lineage(
     root: Path,
     contract: Mapping[str, object],
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     runner: GitRunner | None = None,
 ) -> list[Finding]:
     state, finding = _fsm_state(contract)
@@ -4840,10 +4851,10 @@ def validate_staged_settlement_lineage(
                 runner=runner,
             )
         )
-        if rows != (("M", DEFAULT_CONTRACT_PATH.as_posix()),):
+        if rows != (("M", contract_path.as_posix()),):
             raise _GitError("staged settlement changes paths outside the contract")
     except (ContractError, _GitError):
-        return [Finding("RIA-TRANSITION", DEFAULT_CONTRACT_PATH.as_posix(), "staged settlement lineage is invalid")]
+        return [Finding("RIA-TRANSITION", contract_path.as_posix(), "staged settlement lineage is invalid")]
     return []
 
 
@@ -4852,6 +4863,7 @@ def validate_explicit_commit_lineage(
     contract: Mapping[str, object],
     encoded_commit: object,
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     runner: GitRunner | None = None,
 ) -> list[Finding]:
     state, finding = _fsm_state(contract)
@@ -4881,7 +4893,7 @@ def validate_explicit_commit_lineage(
                 runner=runner,
             )
         )
-        if rows != (("M", DEFAULT_CONTRACT_PATH.as_posix()),):
+        if rows != (("M", contract_path.as_posix()),):
             raise _GitError("C3 changes paths outside the contract")
     except (ContractError, _GitError):
         return [Finding("RIA-TRANSITION", "--commit", "explicit settlement lineage is invalid")]
@@ -4892,6 +4904,7 @@ def validate_baseline_transitions(
     root: Path,
     contract: Mapping[str, object],
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     staged: bool = False,
     commit: object | None = None,
     require_settled_baselines: bool = False,
@@ -4936,11 +4949,34 @@ def validate_baseline_transitions(
             ):
                 findings.append(Finding("RIA-TRANSITION", target_path.as_posix(), "transition target bytes differ"))
     elif state == "settled":
-        findings.extend(_settlement_proof(root.absolute(), contract, context, runner))
+        findings.extend(
+            _settlement_proof(
+                root.absolute(),
+                contract,
+                context,
+                runner,
+                contract_path=contract_path,
+            )
+        )
         if staged:
-            findings.extend(validate_staged_settlement_lineage(root.absolute(), contract, runner=runner))
+            findings.extend(
+                validate_staged_settlement_lineage(
+                    root.absolute(),
+                    contract,
+                    contract_path=contract_path,
+                    runner=runner,
+                )
+            )
         if commit is not None:
-            findings.extend(validate_explicit_commit_lineage(root.absolute(), contract, commit, runner=runner))
+            findings.extend(
+                validate_explicit_commit_lineage(
+                    root.absolute(),
+                    contract,
+                    commit,
+                    contract_path=contract_path,
+                    runner=runner,
+                )
+            )
     return sorted(set(findings))
 
 
@@ -4948,20 +4984,21 @@ def _contract_authority_finding(
     root: Path,
     contract: Mapping[str, object],
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     commit: object | None,
     runner: GitRunner | None,
 ) -> Finding | None:
     try:
         if commit is None:
-            payload = read_proposed_regular_file(root, DEFAULT_CONTRACT_PATH, runner)
+            payload = read_proposed_regular_file(root, contract_path, runner)
         else:
             oid = parse_git_sha1(commit, field="--commit")
-            payload = _read_commit_path(root, oid, DEFAULT_CONTRACT_PATH, runner)
-        authoritative = _decode_json_bytes(payload, field=DEFAULT_CONTRACT_PATH.as_posix())
+            payload = _read_commit_path(root, oid, contract_path, runner)
+        authoritative = _decode_json_bytes(payload, field=contract_path.as_posix())
         if authoritative != dict(contract):
             raise _GitError("contract mapping differs from proposed authority")
     except (ContractError, _GitError):
-        return Finding("RIA-BOUNDARY", DEFAULT_CONTRACT_PATH.as_posix(), "proposed contract authority is unavailable")
+        return Finding("RIA-BOUNDARY", contract_path.as_posix(), "proposed contract authority is unavailable")
     return None
 
 
@@ -4969,6 +5006,7 @@ def validate_reference_architecture(
     root: Path,
     contract: Mapping[str, object],
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     staged: bool = False,
     commit: object | None = None,
     require_settled_baselines: bool = False,
@@ -4978,7 +5016,17 @@ def validate_reference_architecture(
 
     if staged and commit is not None:
         return [Finding("RIA-TRANSITION", "evidenceMode", "evidence modes are mutually exclusive")]
-    authority = _contract_authority_finding(root.absolute(), contract, commit=commit, runner=runner)
+    try:
+        normalized_contract_path = normalize_contract_path(root, contract_path)
+    except ContractError as error:
+        return [error.finding]
+    authority = _contract_authority_finding(
+        root.absolute(),
+        contract,
+        contract_path=normalized_contract_path,
+        commit=commit,
+        runner=runner,
+    )
     if authority is not None:
         return [authority]
     findings = [
@@ -4996,6 +5044,7 @@ def validate_reference_architecture(
         *validate_baseline_transitions(
             root,
             contract,
+            contract_path=normalized_contract_path,
             staged=staged,
             commit=commit,
             require_settled_baselines=require_settled_baselines,

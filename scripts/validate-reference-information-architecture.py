@@ -12,6 +12,7 @@ from reference_information_architecture import (
     DEFAULT_CONTRACT_PATH,
     load_contract,
     load_contract_at_commit,
+    normalize_contract_path,
     parse_git_sha1,
     run_self_test,
     validate_reference_architecture,
@@ -50,7 +51,10 @@ def main(argv: list[str] | None = None) -> int:
         return _self_test()
     root = arguments.root.absolute()
     try:
-        contract_path = arguments.contract or root / DEFAULT_CONTRACT_PATH
+        contract_path = normalize_contract_path(
+            root,
+            arguments.contract or DEFAULT_CONTRACT_PATH,
+        )
         if arguments.commit is None:
             contract = load_contract(root, contract_path)
         else:
@@ -63,6 +67,7 @@ def main(argv: list[str] | None = None) -> int:
         findings = validate_reference_architecture(
             root,
             contract,
+            contract_path=contract_path,
             staged=arguments.staged,
             commit=arguments.commit,
             require_settled_baselines=arguments.require_settled_baselines,
