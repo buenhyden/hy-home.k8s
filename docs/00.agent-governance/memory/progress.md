@@ -8,6 +8,70 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-003 seven-day changelog artifact retention
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #github-actions #qa #evidence #spec-039
+
+#### Progress
+
+- Extended the GitHub Actions security validator so every
+  `actions/upload-artifact` step requires integer `retention-days: 7`.
+- Added the exact four-case artifact-retention fixture collection and an
+  internal boolean rejection regression while preserving existing Action-pin
+  and permission behavior.
+- Review round 1 added fail-closed structural diagnostics for malformed
+  `jobs`, job entries, present `steps`, and step-list members, preventing an
+  `AttributeError` and a mapping-valued-steps retention bypass.
+- Review round 2 case-folded only the upload-artifact retention prefix, so a
+  GitHub-equivalent mixed-case owner/repository reference cannot bypass the
+  seven-day rule while raw Action identity validation remains unchanged.
+- Set the changelog preview artifact to exactly seven days and documented it as
+  transient review evidence rather than publication or a hosted-run result.
+
+#### Memory
+
+- Artifact-retention checks must reject strings and booleans explicitly:
+  Python `bool` is an `int` subclass, so the boolean guard must precede the
+  integer/exact-value check.
+- Traverse workflow jobs and steps only after their container shapes are
+  validated; otherwise malformed YAML can either crash a validator or hide a
+  security-relevant step from the traversal.
+- When a platform resolves an Action owner/repository case-insensitively,
+  normalize only the narrow matcher used for that policy; preserve the raw
+  value for identity, pinning, and source-parity validation.
+
+#### Evidence
+
+- RED: fixture-only addition made
+  `python3 scripts/validate-github-actions-security.py --self-test` exit `1`
+  with the exact fixture-shape diagnostic.
+- GREEN before workflow remediation: self-test passed while production failed
+  only at `.github/workflows/generate-changelog.yml[job=changelog][step=3]`
+  for missing seven-day retention.
+- GREEN after remediation: security self-test, production validation, the
+  staged repository-quality aggregate, and unqualified `pre-commit run
+  --all-files` passed. No formatter mutation required restaging.
+- Review-round RED: internal hostile shapes made the self-test traceback at
+  `jobs: [build]`, while a mapping-valued `steps` block with pinned
+  `upload-artifact` was accepted. Review-round GREEN: self-test and production
+  validation passed; explicit CLI probes now reject those two forms with
+  `workflow jobs must be a mapping` and `job steps must be a list`.
+- Review-round-2 RED: a mixed-case `Actions/upload-artifact` reference without
+  retention was accepted. Review-round-2 GREEN: self-test and production
+  validation passed; an explicit CLI probe now emits the exact retention-days
+  diagnostic for that case variant.
+
+#### Handoff
+
+- Next owner: GCQE-004 may add result-vocabulary and completion guidance.
+  Hosted CI, provider runtime, and live infrastructure evidence remain `DEFER`;
+  this package makes no hosted PASS claim.
+
 ### 2026-07-26 - GCQE-002 exact CI Python contract
 
 #### Metadata

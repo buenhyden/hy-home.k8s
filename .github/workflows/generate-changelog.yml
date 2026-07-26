@@ -41,6 +41,7 @@ jobs:
           name: changelog-${{ github.ref_name }}
           path: CHANGELOG.md
           if-no-files-found: error
+          retention-days: 7
 
       - name: Summarize changelog evidence
         run: |

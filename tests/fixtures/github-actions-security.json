@@ -46,5 +46,11 @@
     {"name": "stale-all-read", "workflow": "stale.yml", "job": "stale", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
     {"name": "stale-missing-write", "workflow": "stale.yml", "job": "stale", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
     {"name": "stale-extra-write", "workflow": "stale.yml", "job": "stale", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]}
+  ],
+  "artifactRetentionCases": [
+    {"name": "exact-seven", "retention": 7, "expected": []},
+    {"name": "missing", "retention": null, "expected": ["upload-artifact retention-days must equal 7"]},
+    {"name": "quoted-seven", "retention": "7", "expected": ["upload-artifact retention-days must equal 7"]},
+    {"name": "wrong-number", "retention": 90, "expected": ["upload-artifact retention-days must equal 7"]}
   ]
 }

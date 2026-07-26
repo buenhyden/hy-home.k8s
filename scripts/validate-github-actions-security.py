@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate immutable GitHub Action identities and least-privilege permissions."""
+"""Validate GitHub Actions identity, permissions, and artifact retention."""
 
 from __future__ import annotations
 
@@ -21,6 +21,8 @@ REMOTE_REF = re.compile(r"^[^\s/@]+/[^\s@]+(?:/[^\s@]+)*@([0-9a-f]{40})$")
 DOCKER_REF = re.compile(r"^docker://[^\s@]+@sha256:([0-9a-f]{64})$")
 VERSION_COMMENT = re.compile(r"#\s*(v?[0-9]+(?:\.[0-9]+){0,2})\s*$")
 USES_LINE = re.compile(r"^\s*(?:-\s*)?uses\s*:\s*(?P<value>.+?)\s*$")
+ARTIFACT_RETENTION_DAYS = 7
+UPLOAD_ARTIFACT_PREFIX = "actions/upload-artifact@"
 ALLOWED_JOB_WRITES = {
     ("greetings.yml", "greeting"): {"issues", "pull-requests"},
     ("labeler.yml", "label"): {"pull-requests"},
@@ -183,6 +185,43 @@ INTERNAL_USES_SHAPE_CASES = [
     ("null", "null", ["uses entries must be plain same-line scalar values"]),
     ("mapping", "{}", ["uses entries must be plain same-line scalar values"]),
     ("list", "[]", ["uses entries must be plain same-line scalar values"]),
+]
+INTERNAL_ARTIFACT_RETENTION_CASES = [
+    ("bool-true", True, ["upload-artifact retention-days must equal 7"]),
+]
+INTERNAL_ARTIFACT_RETENTION_USES_CASES = [
+    (
+        "mixed-case-owner",
+        "Actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+        ["upload-artifact retention-days must equal 7"],
+    ),
+]
+INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES = [
+    ("jobs-list", "jobs: [build]\n", ["workflow jobs must be a mapping"]),
+    (
+        "job-scalar",
+        "jobs:\n  build: reusable-workflow\n",
+        ["workflow job must be a mapping"],
+    ),
+    (
+        "steps-mapping-upload",
+        "jobs:\n"
+        "  build:\n"
+        "    runs-on: ubuntu-latest\n"
+        "    steps:\n"
+        "      upload:\n"
+        "        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7\n",
+        ["job steps must be a list"],
+    ),
+    (
+        "step-scalar",
+        "jobs:\n"
+        "  build:\n"
+        "    runs-on: ubuntu-latest\n"
+        "    steps:\n"
+        "      - not-a-step\n",
+        ["job step must be a mapping"],
+    ),
 ]
 
 
@@ -401,12 +440,61 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
     return errors
 
 
+def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
+    errors: list[str] = []
+    jobs = data.get("jobs", {})
+    if not isinstance(jobs, dict):
+        return [_diagnostic(path, "workflow jobs must be a mapping")]
+
+    for job_id, job in jobs.items():
+        job_path = Path(f"{path.as_posix()}[job={job_id}]")
+        if not isinstance(job, dict):
+            errors.append(_diagnostic(job_path, "workflow job must be a mapping"))
+            continue
+        if "steps" not in job:
+            continue
+        steps = job["steps"]
+        if not isinstance(steps, list):
+            errors.append(_diagnostic(job_path, "job steps must be a list"))
+            continue
+        for step_index, step in enumerate(steps, start=1):
+            step_path = Path(f"{job_path.as_posix()}[step={step_index}]")
+            if not isinstance(step, dict):
+                errors.append(_diagnostic(step_path, "job step must be a mapping"))
+                continue
+            uses = step.get("uses")
+            if not isinstance(uses, str) or not uses.casefold().startswith(
+                UPLOAD_ARTIFACT_PREFIX
+            ):
+                continue
+            options = step.get("with")
+            retention = (
+                options.get("retention-days") if isinstance(options, dict) else None
+            )
+            if (
+                isinstance(retention, bool)
+                or not isinstance(retention, int)
+                or retention != ARTIFACT_RETENTION_DAYS
+            ):
+                errors.append(
+                    _diagnostic(
+                        step_path,
+                        "upload-artifact retention-days must equal 7",
+                    )
+                )
+    return errors
+
+
 def validate_workflow(path: Path, data: dict, lines: list[str]) -> list[str]:
     """Validate one parsed workflow or the repository zizmor configuration."""
 
     if path.name in {"zizmor.yml", "zizmor.yaml"}:
         return _validate_zizmor(path, data)
-    return _validate_permissions(path, data) + _validate_uses(path, data, lines)
+    return (
+        _validate_permissions(path, data)
+        + _validate_uses(path, data, lines)
+        + _validate_artifact_retention(path, data)
+    )
 
 
 def _load_yaml(path: Path) -> tuple[dict | None, list[str], str | None]:
@@ -589,6 +677,49 @@ def _write_self_test_case(root: Path, case: dict) -> None:
         )
 
 
+def _write_artifact_retention_case(
+    root: Path,
+    retention: object,
+    *,
+    uses: str = "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+) -> None:
+    path = root / ".github" / "workflows" / "ci.yml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "name: Artifact retention fixture",
+        "'on': workflow_dispatch",
+        "permissions:",
+        "  contents: read",
+        "jobs:",
+        "  build:",
+        "    runs-on: ubuntu-latest",
+        "    steps:",
+        f"      - uses: {uses} # v7",
+        "        with:",
+        "          name: artifact",
+        "          path: artifact.txt",
+    ]
+    if retention is not None:
+        rendered_retention = yaml.safe_dump(
+            retention, default_flow_style=True
+        ).strip()
+        lines.append(f"          retention-days: {rendered_retention}")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _write_artifact_retention_shape_case(root: Path, body: str) -> None:
+    path = root / ".github" / "workflows" / "ci.yml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "name: Artifact retention shape fixture\n"
+        "'on': workflow_dispatch\n"
+        "permissions:\n"
+        "  contents: read\n"
+        + body,
+        encoding="utf-8",
+    )
+
+
 def _message_only(diagnostic: str) -> str:
     return diagnostic.rsplit(": ", 1)[-1]
 
@@ -730,10 +861,32 @@ def run_self_test(script_root: Path) -> list[str]:
         "cases": EXPECTED_CASES,
         "repositoryBoundaryCases": EXPECTED_REPOSITORY_BOUNDARY_CASES,
         "requiredWriteCases": EXPECTED_REQUIRED_WRITE_CASES,
+        "artifactRetentionCases": [
+            {
+                "name": "exact-seven",
+                "retention": 7,
+                "expected": [],
+            },
+            {
+                "name": "missing",
+                "retention": None,
+                "expected": ["upload-artifact retention-days must equal 7"],
+            },
+            {
+                "name": "quoted-seven",
+                "retention": "7",
+                "expected": ["upload-artifact retention-days must equal 7"],
+            },
+            {
+                "name": "wrong-number",
+                "retention": 90,
+                "expected": ["upload-artifact retention-days must equal 7"],
+            },
+        ],
     }
     if fixture != expected_fixture:
         return [
-            "self-test fixture differs from the exact eleven-case and supplemental contract"
+            "self-test fixture differs from the exact eleven-case and supplemental artifact-retention contract"
         ]
     cases = fixture["cases"]
 
@@ -802,6 +955,62 @@ def run_self_test(script_root: Path) -> list[str]:
         if actual != case["expected"]:
             failures.append(
                 f"{case['name']}: expected {case['expected']!r}, observed {actual!r}"
+            )
+
+    for case in fixture["artifactRetentionCases"]:
+        with tempfile.TemporaryDirectory(
+            prefix="actions-security-artifact-retention-"
+        ) as temp_dir:
+            case_root = Path(temp_dir)
+            _write_artifact_retention_case(case_root, case["retention"])
+            actual = [
+                _message_only(item) for item in validate_repository(case_root)
+            ]
+        if actual != case["expected"]:
+            failures.append(
+                f"{case['name']}: expected {case['expected']!r}, observed {actual!r}"
+            )
+
+    for name, retention, expected in INTERNAL_ARTIFACT_RETENTION_CASES:
+        with tempfile.TemporaryDirectory(
+            prefix="actions-security-artifact-retention-"
+        ) as temp_dir:
+            case_root = Path(temp_dir)
+            _write_artifact_retention_case(case_root, retention)
+            actual = [
+                _message_only(item) for item in validate_repository(case_root)
+            ]
+        if actual != expected:
+            failures.append(
+                f"artifact-retention-{name}: expected {expected!r}, observed {actual!r}"
+            )
+
+    for name, uses, expected in INTERNAL_ARTIFACT_RETENTION_USES_CASES:
+        with tempfile.TemporaryDirectory(
+            prefix="actions-security-artifact-retention-"
+        ) as temp_dir:
+            case_root = Path(temp_dir)
+            _write_artifact_retention_case(case_root, None, uses=uses)
+            actual = [
+                _message_only(item) for item in validate_repository(case_root)
+            ]
+        if actual != expected:
+            failures.append(
+                f"artifact-retention-{name}: expected {expected!r}, observed {actual!r}"
+            )
+
+    for name, body, expected in INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES:
+        with tempfile.TemporaryDirectory(
+            prefix="actions-security-artifact-retention-shape-"
+        ) as temp_dir:
+            case_root = Path(temp_dir)
+            _write_artifact_retention_shape_case(case_root, body)
+            actual = [
+                _message_only(item) for item in validate_repository(case_root)
+            ]
+        if actual != expected:
+            failures.append(
+                f"artifact-retention-{name}: expected {expected!r}, observed {actual!r}"
             )
 
     for name, raw_uses, expected in INTERNAL_USES_SHAPE_CASES:
