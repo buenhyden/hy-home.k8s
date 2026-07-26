@@ -1,9 +1,9 @@
 ---
 title: 'Reference Information Architecture Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Reference Information Architecture Technical Specification (Spec)
@@ -19,17 +19,18 @@ plan, runbook, or runtime owner.
 The reciprocal implementation
 [Plan](../../04.execution/plans/2026-07-22-reference-information-architecture.md)
 and [Task](../../04.execution/tasks/2026-07-22-reference-information-architecture.md)
-activate eight dependency-ordered work packages, RIA-000 through RIA-007,
-from reviewed activation and rollback parent
-`fdc86ee9156a35f48d57916be4ecb3505e483a50`. Plan-only RED and the 49-Plan /
-51-Task inventory were captured at evidence baseline
-`8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; prerequisite commits changed no
-Stage 04 document, so the proposed pair raises that corpus to 50 Plans and 52
-Tasks. Activation commit `cb0c1f6` completed RIA-000. RIA-001 completed through
-reviewed commits `68e46fc`, `566c74f`, and
-`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`; its final requirements and quality
-reviews were clean. RIA-002 is In Progress at reviewed design correction only:
-its implementation RED has not begun, and no remote or live result is claimed.
+record the reviewed RIA-000 through RIA-006 packages and the staged RIA-007 C1
+lifecycle proposal. RIA-002 completed through design commits `08cf17d` and
+`f0c019a` plus implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
+`c278173`. RIA-003 through RIA-006 completed through commits `7083909`,
+`77e081d`, `5d15c1c`, `0cb1789`, `671e722`, `000cf858`, and `76c1d4b`.
+The current C1 proposal changes exactly this Spec/Plan/Task lineage, its three
+indexes, and the registry's Spec 038 program-lineage state from `active` to
+`done`; it leaves the migration ledger and reference contract unchanged.
+Independent whole-tranche review is the pending C1 commit gate. The C1 commit,
+clean-tree postflight, C2 transition, and C3 settlement do not yet exist, so
+none of their identities or terminal results is claimed. Remote, CI-hosted,
+provider, and live results remain unclaimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -261,21 +262,39 @@ reviews returned exact verdicts `REQUIREMENTS COMPLIANT` and
 Draft 2020-12 schema/instance validation passed. Historical raw hook output,
 CI, remote, and live execution are not reconstructed or claimed here.
 
-Before
-RIA-002 RED or implementation began, preflight at reviewed RIA-001 head
-`15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` proved the original single
-`8fb9821497aaa93d9ed5fc1a69b60c628b047b47` baseline impossible for Current
-research: activation commit `cb0c1f6` changed the protected migration ledger's
-inventory boundary from 444 to 446 outside every allowed projection. No
-RIA-002 RED or implementation occurred. Design correction commit `08cf17d`
-received `QUALITY CHANGES REQUIRED` with four Important findings. This
-follow-up proposal closes settlement lineage, proposed tracked authority, the
-root state machine, and execution-status truth; follow-up approval is not yet
-claimed. RIA-002 is In Progress at design review only. It separates Historical
-snapshot evidence from Current baselines and adds the bounded
-transition/settlement chain; it does not alter Current pack
-membership, observation bodies, CI/FIFO, provider, remote, live, credential,
-secret, or ignored-workspace state.
+RIA-002 design commits `08cf17d` and `f0c019a` separated Historical snapshot
+evidence from Current baselines and closed the reviewed stage-zero authority,
+root/open/settled FSM, and staged/explicit-ref lineage findings. Implementation
+commits `13835e9`, `e29c6fb`, `27a63b3`, and `c278173` completed schema-v2
+baseline protection, bounded overlays, and exact transition/settlement proof.
+Its final focused module passed 37/37, repository gates passed, and independent
+requirements and quality reviews approved the package.
+
+RIA-003 commits `7083909` and `77e081d` completed the exact nine-asset
+source/scope/freshness ledger and stage-zero/named-commit inventory proof;
+focused tests passed 43/43 and requirements and quality reviews approved the
+package. RIA-004 commits `5d15c1c` and `0cb1789` completed the immutable
+generator relation, fixed-argv zero-drift check, and canonical-owner proof;
+focused tests passed 46/46 and requirements and quality reviews approved the
+package. RIA-005 commits `671e722` and `000cf858` completed single Current-owner
+cardinality, generated/manual collision detection, pair-scoped exceptions, and
+bounded visible-Markdown policy-copy normalization; focused tests passed 81/81
+and requirements, parser, and quality review dispositions approved the
+package. RIA-006 commit `76c1d4b` integrated self-test-before-production
+validation and durable command inventories; focused tests passed 82/82,
+aggregate gates passed, and requirements and quality reviews approved the
+package.
+
+The RIA-007 C1 proposal changes only the six reciprocal lifecycle paths plus
+the registry's Spec 038 program-lineage state, for exactly seven tracked paths.
+It does not change the migration ledger, reference contract, Current pack
+membership, observation bodies, CI/FIFO topology, provider state, credentials,
+secrets, or ignored workspace. Independent whole-tranche requirements and
+quality review remains the pending commit gate. C1/C2/C3 identities,
+clean-tree postflight, terminal settlement, remote/live, and CI-hosted PASS are
+not claimed. The known closed post-validate environment lacks `gitleaks` on its
+`/usr/bin:/bin` PATH; Spec 039 retains that limitation and no hook, validator,
+or CI topology is changed here.
 
 ## Traceability
 
@@ -292,8 +311,8 @@ secret, or ignored-workspace state.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-001 | Registry and index checks enforce unique Current packs. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-003 | Overlay fixtures restrict mutable projections; transition/settlement fixtures prove the one-member durable baseline chain. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-004 | Reference body-contract checks verify source and freshness fields. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-005 | Generator no-diff validation protects the wiki index. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-006 | Duplicate and policy-residue fixtures fail. |
+| N/A — REQ-WDLEC-008 / VAL-RIA-002 shares the PRD-006 source linked in VAL-RIA-001 | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |
+| N/A — REQ-WDLEC-008 / VAL-RIA-003 shares the PRD-006 source linked in VAL-RIA-001 | VAL-RIA-003 | Overlay fixtures restrict mutable projections; transition/settlement fixtures prove the one-member durable baseline chain. |
+| N/A — REQ-WDLEC-008 / VAL-RIA-004 shares the PRD-006 source linked in VAL-RIA-001 | VAL-RIA-004 | Reference body-contract checks verify source and freshness fields. |
+| N/A — REQ-WDLEC-008 / VAL-RIA-005 shares the PRD-006 source linked in VAL-RIA-001 | VAL-RIA-005 | Generator no-diff validation protects the wiki index. |
+| N/A — REQ-WDLEC-008 / VAL-RIA-006 shares the PRD-006 source linked in VAL-RIA-001 | VAL-RIA-006 | Duplicate and policy-residue fixtures fail. |

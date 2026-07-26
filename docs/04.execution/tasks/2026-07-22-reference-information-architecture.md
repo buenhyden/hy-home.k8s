@@ -1,9 +1,9 @@
 ---
 title: 'Task: Reference Information Architecture'
 type: sdlc/task
-status: active
+status: done
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Task: Reference Information Architecture
@@ -11,16 +11,18 @@ updated: 2026-07-22
 ## Overview
 
 This Task is the execution, verification, review, and rollback evidence owner
-for RIA-000 through RIA-007. It activates the reciprocal Spec 038 execution
-pair from reviewed activation and rollback parent
+for RIA-000 through RIA-007. It records the reciprocal Spec 038 execution pair
+from reviewed activation and rollback parent
 `fdc86ee9156a35f48d57916be4ecb3505e483a50`. Plan-only RED and the 49-Plan /
 51-Task inventory were captured at evidence baseline
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; prerequisite commits changed no
 Stage 04 document, so this pair raised the corpus to 50 Plans and 52 Tasks.
-RIA-000 and RIA-001 are Completed from observed commits and clean final reviews.
-RIA-002 is In Progress at reviewed design correction only; its implementation
-RED has not begun. Later rows remain Queued until their own test-first result,
-independent reviews, and logical commit are directly observed.
+RIA-000 through RIA-006 are Completed from observed commits, package tests,
+repository gates, and clean final package reviews. RIA-007 has prepared the
+exact seven-file C1 lifecycle and registry-state proposal without changing the
+migration ledger or reference contract. Independent whole-tranche review
+remains the pending C1 commit gate; C1/C2/C3 identities and postflight or
+settlement results remain unobserved and unclaimed.
 
 The activation preserves the existing registry as the sole Current audit and
 research pack owner. It authorizes a separate reference-information contract
@@ -34,13 +36,14 @@ RIA-002 design preflight at reviewed RIA-001 head
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47` Current baseline could not pass:
 activation commit `cb0c1f6` changed the protected research migration ledger's
 inventory boundary from 444 to 446 outside all allowed projections. Work
-stopped before RIA-002 RED or implementation. This correction requires schema
-version 2, separate Historical and Current baselines, and a one-shot
-transition/durable-settlement chain; it records no implementation result.
-Design correction commit `08cf17d` received `QUALITY CHANGES REQUIRED` with
-four Important findings. This follow-up proposal addresses settlement lineage,
-stage-zero proposed authority, the code-owned root FSM, and execution-status
-truth; clean follow-up approval is not yet claimed.
+stopped before the initial RIA-002 RED. Design correction commits `08cf17d` and
+`f0c019a` then established schema version 2, separate Historical and Current
+baselines, stage-zero authority, the root/open/settled FSM, and the one-shot
+transition/durable-settlement chain with approved requirements and quality
+reviews. Implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
+`c278173` completed those guards with 37/37 focused tests and repository gates
+passing. The later package rows record the exact RIA-003 through RIA-006
+results.
 
 ## Inputs
 
@@ -58,14 +61,14 @@ truth; clean follow-up approval is not yet claimed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| RIA-000 | Activation gate | Commit the exact seven-file reciprocal Plan/Task activation with staged lifecycle, complete per-commit QA, independent planning re-reviews, evidence baseline `8fb9821`, and rollback parent `fdc86ee`. | platform | Completed | Activation completed. | Commit `cb0c1f6`; exact seven-file scope; Plan-only `LIFECYCLE-CREATE` RED, focused GREEN, final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. |
-| RIA-001 | VAL-RIA-001 | Add the closed Draft 2020-12 reference schema/contract, safe loader, stable diagnostics, CLI self-test, and hostile boundary fixtures without duplicating Current member paths, digests, or pointers. | platform | Completed | Contract bootstrap and safe validator completed. | Commits `68e46fc`, `566c74f`, `15bba3d`; focused unit, CLI self-test/production, schema/instance PASS; final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. Historical raw hook output and remote/live PASS are not claimed. |
-| RIA-002 | VAL-RIA-002, VAL-RIA-003 | Implement schema-v2 Historical/Current separation, stage-zero proposed authority, exact root FSM, bounded overlay, and one-shot ledger transition/durable settlement lineage. | platform | In Progress | Design correction reviewed; implementation RED not begun. | Preflight: `8fb9821` fails the `cb0c1f6` ledger 444 -> 446 change; immutable Current root is `15bba3d`. `08cf17d` review returned four Important findings; this follow-up incorporates bounded staged C2 equality, literal C3 parent proof, index/worktree hostility, and root/open/settled tests. Follow-up approval and implementation remain pending. |
-| RIA-003 | VAL-RIA-004 | Enforce repo evidence, HTTPS source, checked date, adopted/rejected scope, and refresh trigger for every current data asset. | platform | Queued | Not executed. | Named source-ledger RED selectors, production data inventory, complete commit gate, and task review are required. |
-| RIA-004 | VAL-RIA-005 | Enforce one fixed-argv generator/input/output/check relation and zero LLM Wiki drift. | platform | Queued | Not executed. | Named generator relation/command/drift RED selectors, direct no-diff, complete commit gate, and task review are required. |
-| RIA-005 | VAL-RIA-001, VAL-RIA-006 | Reject duplicate Current and generated/manual owners plus normalized active-policy copies, with only exact pair-scoped structural exceptions. | platform | Queued | Not executed. | Named duplicate/copy/exception-reuse RED selectors, zero production findings, complete commit gate, and task review are required. |
-| RIA-006 | VAL-RIA-001 through VAL-RIA-006 | Integrate self-test-before-production validation into repository aggregate QA and command inventories. | platform | Queued | Not executed. | Exact aggregate invocation RED/GREEN, full aggregate, complete commit gate, independent review, and logical integration commit are required. |
-| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Run full/all-files QA and independent whole-tranche review, then close through C1 six-file lifecycle closure, C2 eight-file postflight ledger transition, and C3 contract-only settlement. | platform | Queued | Not executed. | Requires exact verdicts and gates, C1 postflight with ledger untouched, C2 open transition with no self-claim, C3 proof naming literal C2, terminal `--require-settled-baselines`, rollback C3 -> C2 -> C1, and clean status. |
+| RIA-000 | Activation gate | Commit the exact seven-file reciprocal Plan/Task activation with staged lifecycle, complete per-commit QA, independent planning re-reviews, evidence baseline `8fb9821`, and rollback parent `fdc86ee`. | platform | Done | Activation completed. | Commit `cb0c1f6`; exact seven-file scope; Plan-only `LIFECYCLE-CREATE` RED, focused GREEN, final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. |
+| RIA-001 | VAL-RIA-001 | Add the closed Draft 2020-12 reference schema/contract, safe loader, stable diagnostics, CLI self-test, and hostile boundary fixtures without duplicating Current member paths, digests, or pointers. | platform | Done | Contract bootstrap and safe validator completed. | Commits `68e46fc`, `566c74f`, `15bba3d`; focused unit, CLI self-test/production, schema/instance PASS; final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. Historical raw hook output and remote/live PASS are not claimed. |
+| RIA-002 | VAL-RIA-002, VAL-RIA-003 | Implement schema-v2 Historical/Current separation, stage-zero proposed authority, exact root FSM, bounded overlay, and one-shot ledger transition/durable settlement lineage. | platform | Done | Historical/Current baseline protection and exact lineage proof completed. | Design commits `08cf17d`, `f0c019a`; implementation commits `13835e9`, `e29c6fb`, `27a63b3`, `c278173`; focused 37/37 and repository gates PASS; requirements compliant and quality approved. |
+| RIA-003 | VAL-RIA-004 | Enforce repo evidence, HTTPS source, checked date, adopted/rejected scope, and refresh trigger for every current data asset. | platform | Done | Exact nine-asset source/scope/freshness ledger and inventory proof completed. | Commits `7083909`, `77e081d`; focused 43/43 and repository gates PASS; requirements compliant and quality approved. |
+| RIA-004 | VAL-RIA-005 | Enforce one fixed-argv generator/input/output/check relation and zero LLM Wiki drift. | platform | Done | Immutable generator/input/output/owner relation and zero-drift proof completed. | Commits `5d15c1c`, `0cb1789`; focused 46/46 and repository gates PASS; requirements compliant and quality approved. |
+| RIA-005 | VAL-RIA-001, VAL-RIA-006 | Reject duplicate Current and generated/manual owners plus normalized active-policy copies, with only exact pair-scoped structural exceptions. | platform | Done | Current-owner, generated/manual, pair-scoped exception, and policy-copy guards completed. | Commits `671e722`, `000cf858`; focused 81/81 and repository gates PASS; requirements, parser, and quality review approved. |
+| RIA-006 | VAL-RIA-001 through VAL-RIA-006 | Integrate self-test-before-production validation into repository aggregate QA and command inventories. | platform | Done | Aggregate self-test-before-production integration and inventories completed. | Commit `76c1d4b`; focused 82/82 and aggregate gates PASS; requirements compliant and quality approved. The closed post-validate environment still lacks `gitleaks` on `/usr/bin:/bin`; Spec 039 owns that limitation. |
+| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Prepare the exact seven-file C1 lifecycle/registry-state proposal and preserve the separately gated C1 review/commit, C2 postflight transition, and C3 settlement boundaries. | platform | Done | Repository-static implementation through reviewed RIA-006 head `76c1d4b` and the exact seven-file C1 closure proposal are complete. | The migration ledger and reference contract are unchanged. Independent review is the next C1 commit gate; C1/C2/C3 identities and a whole-tranche verdict are intentionally absent from C1 until directly observed. |
 
 ## Approval and Safety Boundaries
 
@@ -97,7 +100,7 @@ truth; clean follow-up approval is not yet claimed.
 - **Rollback Plan**: Reverse newest reviewed logical commit first. Before
   closure, revert the failing RIA package only. After closure, revert the
   contract-only C3 settlement, eight-file C2 transition/postflight evidence,
-  six-file C1 closure, then RIA-006 through RIA-001 and activation last; restore
+  seven-file C1 closure, then RIA-006 through RIA-001 and activation last; restore
   each protected owner relation before removing its guard.
 - **Evidence Location**: This Task, reviewed logical commits, the Stage 90
   reference IA contract, focused tests/fixtures, aggregate results, and terminal
@@ -151,21 +154,47 @@ RIA-001 completed through `68e46fc`, `566c74f`, and `15bba3d`. Its final
 focused reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with
 no findings; focused unit, CLI self-test/production, and Draft 2020-12
 schema/instance checks passed. Historical raw hook output, CI, remote, and live
-execution are not reconstructed or claimed. RIA-003 through RIA-007 remain
-Queued. Existing Current-pack validation and the LLM Wiki no-diff check remain
-reusable controls only; they do not prove later criteria.
+execution are not reconstructed or claimed.
 
-RIA-002 preflight additionally proved a design blocker, not a RED result. The
-single `8fb9821` pin predates activation commit `cb0c1f6`, whose protected
-Current research ledger update changed 444 inventory rows to 446 outside the
-overlay model. The corrected design retains `8fb9821` only for five
-Historical/Resolved audit packs and `research/2026-07-04-wer`; the immutable
-code-owned Current root is `15bba3d`, and future ledger advancement requires
-the root/open/settled FSM and staged/explicit-ref lineage chain. RIA-002 is In
-Progress at design review only. Correction commit `08cf17d` received
-`QUALITY CHANGES REQUIRED` with four Important findings; this follow-up closes
-those design gaps, but follow-up approval and implementation RED/GREEN are not
-claimed. No RIA-002 implementation commit, CI, remote, or live result exists.
+RIA-002 design correction completed in `08cf17d` and `f0c019a`; its final
+requirements and quality reviews approved the Historical/Current separation,
+stage-zero authority, root/open/settled FSM, and staged/explicit settlement
+lineage. Implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
+`c278173` completed schema-v2 baseline protection, bounded overlays, and exact
+lineage proof. The package passed 37/37 focused tests and repository gates;
+final requirements and quality reviews approved it.
+
+RIA-003 commits `7083909` and `77e081d` added the exact post-closure fixture
+admission, nine-asset source/scope/freshness ledger, stage-zero/named-commit
+inventory, and control-safe semantic validation. The package passed 43/43
+focused tests and repository gates; requirements and quality reviews approved
+it. RIA-004 commits `5d15c1c` and `0cb1789` added the exact generator fixture
+admission, immutable generator relation, fixed-argv zero-drift check, and
+canonical-owner proof. The package passed 46/46 focused tests and repository
+gates; requirements and quality reviews approved it.
+
+RIA-005 commits `671e722` and `000cf858` added exact duplicate-owner fixture
+admission, single Current-owner cardinality, generated/manual collision
+detection, pair-scoped structural exceptions, and bounded visible-Markdown
+policy-copy normalization. The package passed 81/81 focused tests and
+repository gates; requirements, parser, and quality review dispositions
+approved it. RIA-006 commit `76c1d4b` integrated self-test before production
+validation and recorded durable script/test command inventories. The package
+passed 82/82 focused tests and aggregate gates; requirements and quality
+reviews approved it.
+
+The current RIA-007 C1 proposal changes exactly this Spec/Plan/Task lineage,
+its three indexes, and the registry's Spec 038 program-lineage state from
+`active` to `done`. The migration ledger and reference contract remain
+byte-identical. Independent whole-tranche requirements and quality review is
+the next commit gate, so no tranche-wide verdict is claimed.
+The C1 commit identity, clean-tree postflight, C2 transition, C3 settlement,
+terminal explicit-ref result, and C2/C3 identities do not yet exist and remain
+unclaimed. The closed post-validate environment's `/usr/bin:/bin` PATH still
+lacks `gitleaks`; the normal PATH repository gates are separate evidence, and
+this C1 proposal changes no hook, validator, scanner, or CI topology. Remote,
+CI-hosted, provider-runtime, Kubernetes, Vault, ESO, Argo CD, credential,
+secret-value, deployment, and live PASS remain unclaimed.
 
 ## Traceability
 
@@ -179,9 +208,9 @@ claimed. No RIA-002 implementation commit, CI, remote, or live result exists.
 | --- | --- | --- |
 | [RIA-000](../plans/2026-07-22-reference-information-architecture.md#task-0-ria-000--atomic-reciprocal-planning-activation) | Completed. | Commit `cb0c1f6`; exact seven-file activation, Plan-only lifecycle RED, focused GREEN, final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. |
 | [RIA-001](../../03.specs/038-reference-information-architecture/spec.md#success-criteria--verification-plan) | Completed. | Commits `68e46fc`, `566c74f`, and `15bba3d`; focused unit, CLI, schema/instance PASS; final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, findings none. Historical raw hook, CI, remote, and live PASS are not claimed. |
-| N/A — RIA-002 shares the Plan linked in RIA-000 | In Progress. | Preflight blocker recorded (`8fb9821` versus `cb0c1f6`, ledger 444 -> 446); `08cf17d` review returned four Important findings. Corrected FSM/index/lineage design is pending clean follow-up approval, and implementation RED has not begun. |
-| N/A — RIA-003 shares the Plan linked in RIA-000 | Queued. | Source/scope/freshness validation is not implemented. |
-| N/A — RIA-004 shares the Plan linked in RIA-000 | Queued. | Generated ownership and no-diff validation are not implemented. |
-| N/A — RIA-005 shares the Plan linked in RIA-000 | Queued. | Duplicate Current/generated/manual/policy-owner validation is not implemented. |
-| N/A — RIA-006 shares the Plan linked in RIA-000 | Queued. | Aggregate integration and command inventory changes are not implemented. |
-| N/A — RIA-007 shares the Plan linked in RIA-000 | Queued. | Whole-tranche review and the C1 six-file closure, C2 eight-file transition evidence, and C3 contract-only settlement are pending. |
+| N/A — RIA-002 shares the Plan linked in RIA-000 | Completed. | Design commits `08cf17d`, `f0c019a`; implementation commits `13835e9`, `e29c6fb`, `27a63b3`, `c278173`; focused 37/37 and repository gates PASS; requirements compliant and quality approved. |
+| N/A — RIA-003 shares the Plan linked in RIA-000 | Completed. | Commits `7083909`, `77e081d`; exact nine-asset source/scope/freshness and inventory proof; focused 43/43 and repository gates PASS; requirements compliant and quality approved. |
+| N/A — RIA-004 shares the Plan linked in RIA-000 | Completed. | Commits `5d15c1c`, `0cb1789`; immutable generator relation and zero drift; focused 46/46 and repository gates PASS; requirements compliant and quality approved. |
+| N/A — RIA-005 shares the Plan linked in RIA-000 | Completed. | Commits `671e722`, `000cf858`; owner/collision/exception/policy-copy proof; focused 81/81 and repository gates PASS; requirements, parser, and quality review approved. |
+| N/A — RIA-006 shares the Plan linked in RIA-000 | Completed. | Commit `76c1d4b`; self-test-before-production integration; focused 82/82 and aggregate gates PASS; requirements compliant and quality approved; closed-hook `gitleaks` PATH limitation retained for Spec 039. |
+| N/A — RIA-007 shares the Plan linked in RIA-000 | Done for the C1 proposal-preparation result. | Exact seven-file C1 lifecycle and registry-state proposal prepared with ledger and contract unchanged. Independent review remains the pending commit gate; C1/C2/C3 identities, postflight, transition, settlement, and terminal explicit-ref PASS remain unclaimed. |

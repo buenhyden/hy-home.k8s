@@ -6310,7 +6310,7 @@
           {
             "spec": "038",
             "order": 5,
-            "state": "active",
+            "state": "done",
             "reason": "Reference information architecture",
             "decision": "0017"
           },

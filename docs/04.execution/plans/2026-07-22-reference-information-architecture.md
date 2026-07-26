@@ -1,9 +1,9 @@
 ---
 title: 'Reference Information Architecture Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-22
+updated: 2026-07-26
 ---
 
 # Reference Information Architecture Implementation Plan
@@ -38,7 +38,7 @@ hostile fixtures pass.
 Bash generator checks, Markdown contract tables, pre-commit, and the repository
 document lifecycle/registry validators.
 
-This reciprocal Plan executes
+This reciprocal Plan records
 [Spec 038](../../03.specs/038-reference-information-architecture/spec.md) on
 reviewed prerequisite head `fdc86ee9156a35f48d57916be4ecb3505e483a50`,
 the activation commit and rollback parent. The Plan-only RED and 49-Plan /
@@ -47,8 +47,14 @@ the activation commit and rollback parent. The Plan-only RED and 49-Plan /
 and `fdc86ee` changed no Stage 04 document, so the active pair still raises the
 proposed corpus to 50 Plans and 52 Tasks. The activation changes lifecycle
 lineage only. Activation commit `cb0c1f6` completed RIA-000. RIA-001 completed
-through reviewed commits `68e46fc`, `566c74f`, and `15bba3d`; RIA-002 is In
-Progress at reviewed design correction, with implementation RED not begun.
+through reviewed commits `68e46fc`, `566c74f`, and `15bba3d`. RIA-002 through
+RIA-006 subsequently completed through the exact reviewed commits and package
+evidence recorded below. The current C1 proposal changes exactly the reciprocal
+Spec/Plan/Task, three indexes, and registry Spec 038 program-lineage state from
+`active` to `done`; it leaves the migration ledger and reference contract
+unchanged. Independent whole-tranche review is the pending C1 commit gate.
+C1/C2/C3 identities, postflight, and terminal settlement remain pending and
+unclaimed.
 
 ## Context
 
@@ -66,15 +72,19 @@ authority. Missing controls are historical/Resolved observation-byte guards,
 Current overlay-only mutation, data source/freshness evidence, an explicit
 generator/input/output/check relation, and normalized duplicate-owner checks.
 
-RIA-002 preflight stopped before any RED or implementation. The original
+RIA-002 design preflight originally stopped before RED because the proposed
 contract would have compared every Current member to evidence baseline
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47`, but activation commit `cb0c1f6`
 changed the Current research migration ledger's inventory boundary from 444 to
 446 outside every declared projection. The reviewed RIA-001 head
 `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe` is therefore the initial Current
 audit and research baseline; `8fb9821` remains exclusively Historical snapshot
-authority. RIA-002 is In Progress at design correction only and remains
-unimplemented until its focused RED is directly observed.
+authority. Design commits `08cf17d` and `f0c019a` corrected that model, and
+implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and `c278173`
+completed the schema-v2/index/FSM/lineage guard with 37/37 focused tests,
+repository gates, and approved requirements and quality reviews. RIA-003
+through RIA-006 then completed in dependency order with the exact evidence in
+the Work Breakdown and reciprocal Task.
 
 ### Global Constraints
 
@@ -190,12 +200,12 @@ unimplemented until its focused RED is directly observed.
 | --- | --- | --- | --- | --- |
 | RIA-000 | Atomic reciprocal planning activation | None | Completed: Plan-only lifecycle RED and reviewed prerequisite head `fdc86ee` | Activation commit `cb0c1f6`, exact seven-file scope, lifecycle/QA/review evidence |
 | RIA-001 | Closed reference contract, safe loader, and diagnostic interface | RIA-000 | Completed from activation commit `cb0c1f6` | Reviewed commits `68e46fc`, `566c74f`, `15bba3d`; focused/schema/CLI PASS and clean final requirements/quality verdicts |
-| RIA-002 | Audit/research immutability, Current baseline FSM, transition, settlement, and projection-bounded overlay guard | RIA-001 | In Progress: blocker and design review observed; four Important design findings incorporated by this follow-up proposal | Implementation RED/GREEN, schema-v2/index/FSM/lineage hostile tests, production empty transition, commit gate, and clean follow-up review remain required |
-| RIA-003 | Data source, adopted/rejected scope, and freshness validation | RIA-002 | Observation guards are GREEN | Missing/invalid evidence, scope, date, and trigger fixtures fail; production data inventory passes the complete commit gate and review |
-| RIA-004 | Generated ownership and zero-drift validation | RIA-003 | Source/freshness relation is GREEN | Generator collision, command, input/output, stale byte, and owner-link fixtures fail; production generator relation passes the complete commit gate and review |
-| RIA-005 | Duplicate Current/generated/manual/policy-owner validation | RIA-004 | Generated relation is GREEN | Duplicate claims/copies and exception-reuse fixtures fail; production Stage 90 has zero findings after the complete commit gate and review |
-| RIA-006 | Aggregate integration and command inventories | RIA-005 | All focused production validation is clean | Aggregate invocation RED/GREEN, repository QA, complete commit gate, independent review, and logical integration commit |
-| RIA-007 | Independent whole-tranche review, atomic lifecycle closure, postflight transition, and settlement | RIA-006 | Aggregate integration commit is reviewed | C1 six-file closure, C2 eight-file postflight evidence with one open ledger transition, C3 contract-only settlement, terminal settled-baseline PASS, and clean status |
+| RIA-002 | Audit/research immutability, Current baseline FSM, transition, settlement, and projection-bounded overlay guard | RIA-001 | Completed: design correction commits `08cf17d`, `f0c019a` | Implementation commits `13835e9`, `e29c6fb`, `27a63b3`, `c278173`; 37/37 focused and repository gates PASS; requirements compliant and quality approved |
+| RIA-003 | Data source, adopted/rejected scope, and freshness validation | RIA-002 | Completed from reviewed RIA-002 implementation | Commits `7083909`, `77e081d`; nine-asset ledger and exact inventory; 43/43 focused and repository gates PASS; requirements compliant and quality approved |
+| RIA-004 | Generated ownership and zero-drift validation | RIA-003 | Completed from reviewed RIA-003 implementation | Commits `5d15c1c`, `0cb1789`; fixed-argv generator relation and zero drift; 46/46 focused and repository gates PASS; requirements compliant and quality approved |
+| RIA-005 | Duplicate Current/generated/manual/policy-owner validation | RIA-004 | Completed from reviewed RIA-004 implementation | Commits `671e722`, `000cf858`; owner/collision/exception/policy-copy proof; 81/81 focused and repository gates PASS; requirements, parser, and quality review approved |
+| RIA-006 | Aggregate integration and command inventories | RIA-005 | Completed from reviewed RIA-005 implementation | Commit `76c1d4b`; self-test-before-production integration; 82/82 focused and aggregate gates PASS; requirements compliant and quality approved |
+| RIA-007 | Independent whole-tranche review, atomic lifecycle closure, postflight transition, and settlement | RIA-006 | C1 exact seven-file lifecycle and registry-state proposal prepared; review remains the pending commit gate | Ledger and contract remain unchanged; C1 commit/postflight, C2 transition, C3 settlement, terminal settled-baseline evidence, and their identities remain pending and unclaimed |
 
 ### Task 0: RIA-000 — Atomic reciprocal planning activation
 
@@ -224,8 +234,8 @@ unimplemented until its focused RED is directly observed.
 
 - [x] **Step 2: Build the exact seven-file reciprocal proposal.** Add the Task,
   direct Spec identity, Spec/Plan/Task index rows, 446-path migration inventory,
-  two new 14-column ledger rows, and the updated Spec row. Keep RIA-001 through
-  RIA-007 Queued and the existing registry relation unchanged.
+  two new 14-column ledger rows, and the updated Spec row. At activation, keep
+  RIA-001 through RIA-007 Queued and the existing registry relation unchanged.
 
 - [x] **Step 3: Run focused activation GREEN.** Run staged lifecycle, registry
   self-test, strict registry, strict Markdown profiles, strict cross-document
@@ -407,7 +417,7 @@ unimplemented until its focused RED is directly observed.
   from an exactly equal baseline/proposed registry and may not be supplied by
   the contract.
 
-- [ ] **Step 1: Add schema-v2 and exact-baseline RED tests.** Require
+- [x] **Step 1: Add schema-v2 and exact-baseline RED tests.** Require
   `schemaVersion: 2`; reject the v1 `snapshotGuard.currentPackIds` shape and any
   Current path, member list, digest map/list, state, or pointer duplication.
   Require `currentPackBaselines` keys to equal the live registry Current IDs
@@ -429,7 +439,7 @@ unimplemented until its focused RED is directly observed.
   one matching durable settlement. Reject every other map value/cardinality,
   arbitrary pin, forged root, audit transition, or reused transition ID.
 
-- [ ] **Step 2: Add immutable-body and projection RED tests.** Create fixture
+- [x] **Step 2: Add immutable-body and projection RED tests.** Create fixture
   repositories where a Historical/Resolved audit report, Historical research
   report, Current member, or fact-bearing pack README differs by one protected
   byte; a protected file is missing; the source ref is not a commit; or a
@@ -446,7 +456,7 @@ unimplemented until its focused RED is directly observed.
   visible text. Reject whole-file README mutability, globs, undeclared cells,
   and reusable exceptions.
 
-- [ ] **Step 3: Add transition and settlement RED tests.** Define an open
+- [x] **Step 3: Add transition and settlement RED tests.** Define an open
   transition as this exact closed record shape:
 
   ```json
@@ -481,7 +491,7 @@ unimplemented until its focused RED is directly observed.
   baseline and equal registry, contained the exact target bytes, and left all
   non-targets unchanged. Settlement records remain append-only and durable.
 
-- [ ] **Step 4: Run the named RED selectors.** Run focused tests for schema-v2
+- [x] **Step 4: Run the named RED selectors.** Run focused tests for schema-v2
   map equality, `8fb9821` failure versus `15bba3d` success, snapshot mutation,
   Current overlay bounds, the open-transition matrix, direct baseline jump, and
   settlement proof chain. Include the production fixed-runner hostile matrix:
@@ -497,7 +507,7 @@ unimplemented until its focused RED is directly observed.
   validation is absent. Record no implementation result from the earlier
   preflight blocker.
 
-- [ ] **Step 5: Implement the fixed Git runner and baseline comparison.** Pass
+- [x] **Step 5: Implement the fixed Git runner and baseline comparison.** Pass
   every contract commit through `parse_git_sha1()` and give Git only the
   returned 40-hex OID. Set `GIT_EXECUTABLE = "/usr/bin/git"`, `shell=False`, a
   10-second timeout, and a newly constructed closed environment with
@@ -545,7 +555,7 @@ unimplemented until its focused RED is directly observed.
   then compare proposed index authority; never infer authority from an
   untracked or worktree-only file. Mask only declared cells or one destination.
 
-- [ ] **Step 6: Implement one-shot transition and durable settlement checks.**
+- [x] **Step 6: Implement one-shot transition and durable settlement checks.**
   Validate exact candidate bytes while the active map remains at its old pin.
   Keep the registry and every non-target Current member old-baseline exact.
   Normal validation may accept the one open transition; terminal
@@ -566,7 +576,7 @@ unimplemented until its focused RED is directly observed.
   detached/non-parent, zero-parent, and merge-parent C3. Only this explicit mode
   supplies durable terminal post-commit lineage evidence.
 
-- [ ] **Step 7: Populate production guards without member duplication.** Keep
+- [x] **Step 7: Populate production guards without member duplication.** Keep
   Historical source commit
   `git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47` only for the five named
   audit packs and `research/2026-07-04-wer`. Set the exact two-key Current map
@@ -576,7 +586,7 @@ unimplemented until its focused RED is directly observed.
   digests; declare no mutable README path. Production therefore begins in the
   exact FSM root state, with audit permanently rooted.
 
-- [ ] **Step 8: Run focused and production GREEN.** Run the full unit module,
+- [x] **Step 8: Run focused and production GREEN.** Run the full unit module,
   CLI self-test, normal production CLI, production CLI with
   `--require-settled-baselines`, Draft 2020-12 schema/instance validation,
   strict document registry, strict Markdown, and strict cross-links. Expect
@@ -585,7 +595,7 @@ unimplemented until its focused RED is directly observed.
   protected observation changes. Staged and explicit-ref modes are exercised
   in isolated fixtures; they are not inferred from normal-mode PASS.
 
-- [ ] **Step 9: Run the RIA-002 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 9: Run the RIA-002 commit gate, review, and commit.** Run pre-commit
   for the RIA-002 files, full all-files pre-commit, formatter-diff inspection,
   affected-hook rerun, and both diff checks. After fresh requirements and
   quality approval and any required rerun, commit with
@@ -612,7 +622,7 @@ unimplemented until its focused RED is directly observed.
   closed source records with `url`, `checkedOn`, `adoptedScope`, and
   `rejectedScope`.
 
-- [ ] **Step 1: Write exact source-ledger RED tests.** Add
+- [x] **Step 1: Write exact source-ledger RED tests.** Add
   `test_data_asset_requires_source_scope_date_and_trigger`,
   `test_data_asset_rejects_after_cutoff_and_untracked_evidence`, and
   `test_data_asset_accepts_closed_source_ledger`. Reject missing/non-HTTPS URL,
@@ -620,27 +630,27 @@ unimplemented until its focused RED is directly observed.
   empty trigger, missing asset, missing tracked repo evidence, unknown fields,
   and duplicate source records.
 
-- [ ] **Step 2: Run the named RED selectors.** Run
+- [x] **Step 2: Run the named RED selectors.** Run
   `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_data_asset_requires_source_scope_date_and_trigger tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_data_asset_rejects_after_cutoff_and_untracked_evidence tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_data_asset_accepts_closed_source_ledger -v`.
   Expect failures because `validate_data_assets` is absent.
 
-- [ ] **Step 3: Implement the minimal closed source ledger.** Parse dates
+- [x] **Step 3: Implement the minimal closed source ledger.** Parse dates
   strictly, compare them only to the contract cutoff for deterministic results,
   require non-empty adopted/rejected arrays, validate HTTPS URLs without network
   access, and validate repo evidence through the RIA-001 tracked no-follow read
   boundary. Do not invent a universal expiry date.
 
-- [ ] **Step 4: Populate every current data asset.** Add all current
+- [x] **Step 4: Populate every current data asset.** Add all current
   `docs/90.references/data/` assets, including the RIA schema/contract, with
   exact tracked evidence, checked official-source URL, adopted scope, rejected
   scope, and refresh trigger. Preserve data authority boundaries and do not
   convert repo-backed evidence into live PASS.
 
-- [ ] **Step 5: Run focused and production GREEN.** Run the full unit module,
+- [x] **Step 5: Run focused and production GREEN.** Run the full unit module,
   CLI self-test, production CLI, Draft 2020-12 schema/instance validation, and
   strict Markdown/link checks. Expect zero `RIA-SOURCE` findings.
 
-- [ ] **Step 6: Run the RIA-003 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 6: Run the RIA-003 commit gate, review, and commit.** Run pre-commit
   for exact RIA-003 files, full all-files pre-commit, formatter-diff inspection,
   affected-hook rerun, and both diff checks. Obtain fresh requirements and
   quality approval, rerun after fixes, then commit with
@@ -663,7 +673,7 @@ unimplemented until its focused RED is directly observed.
   only executable mapping is the exact contract string
   `bash scripts/generate-llm-wiki-index.sh --check` to a fixed argv tuple.
 
-- [ ] **Step 1: Write exact generator RED tests.** Add
+- [x] **Step 1: Write exact generator RED tests.** Add
   `test_generator_requires_unique_owner_relation`,
   `test_generator_rejects_unmapped_command_and_stale_output`, and
   `test_generator_accepts_llm_wiki_relation`. Reject duplicate output owners,
@@ -671,25 +681,25 @@ unimplemented until its focused RED is directly observed.
   or symlink output, unknown command, stale generated bytes, and stale
   canonical-owner links.
 
-- [ ] **Step 2: Run the named RED selectors.** Run
+- [x] **Step 2: Run the named RED selectors.** Run
   `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_generator_requires_unique_owner_relation tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_generator_rejects_unmapped_command_and_stale_output tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_generator_accepts_llm_wiki_relation -v`.
   Expect failures because `validate_generated_assets` is absent.
 
-- [ ] **Step 3: Implement fixed-argv validation.** Validate relation shape and
+- [x] **Step 3: Implement fixed-argv validation.** Validate relation shape and
   tracked paths, map the one exact check string to a literal argv tuple, execute
   it without a shell in a sanitized environment, and return path-only
   `RIA-GENERATOR` diagnostics. Contract data may not introduce another command.
 
-- [ ] **Step 4: Populate one production relation.** Register
+- [x] **Step 4: Populate one production relation.** Register
   `scripts/generate-llm-wiki-index.sh`, its declared input roots,
   `docs/90.references/llm-wiki/wiki-index.md`, and the exact check command.
   Run `bash scripts/generate-llm-wiki-index.sh --check` and require zero drift.
 
-- [ ] **Step 5: Run focused and production GREEN.** Run the full unit module,
+- [x] **Step 5: Run focused and production GREEN.** Run the full unit module,
   CLI self-test/production, direct generator no-diff, and strict links. Expect
   zero `RIA-GENERATOR` findings.
 
-- [ ] **Step 6: Run the RIA-004 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 6: Run the RIA-004 commit gate, review, and commit.** Run pre-commit
   for exact RIA-004 files, full all-files pre-commit, formatter-diff inspection,
   affected-hook rerun, and both diff checks. Obtain fresh requirements and
   quality approval, rerun after fixes, then commit with
@@ -720,7 +730,7 @@ unimplemented until its focused RED is directly observed.
   `canonicalOwnerPath`, `referencePath`, `paragraphSha256`, `structuralRole`,
   and non-empty `reason`.
 
-- [ ] **Step 1: Write exact duplicate-owner RED tests.** Add
+- [x] **Step 1: Write exact duplicate-owner RED tests.** Add
   `test_duplicate_current_and_generated_manual_owners_fail`,
   `test_policy_paragraph_copy_fails`, and
   `test_structural_exception_is_pair_scoped`. Reject a second Current claim,
@@ -728,31 +738,31 @@ unimplemented until its focused RED is directly observed.
   visible characters copied from Stage 00 policy, Stage 05 Policy, or Stage 05
   Runbook into Stage 90.
 
-- [ ] **Step 2: Prove exception non-reuse in RED.** Accept an exception only
+- [x] **Step 2: Prove exception non-reuse in RED.** Accept an exception only
   when the digest occurs in the exact canonical/reference path pair and matches
   its declared structural role; reject use at any other source, destination,
   digest, or role, stale records, unknown roles, and blanket digest lists.
 
-- [ ] **Step 3: Run the named RED selectors.** Run
+- [x] **Step 3: Run the named RED selectors.** Run
   `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_duplicate_current_and_generated_manual_owners_fail tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_policy_paragraph_copy_fails tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_structural_exception_is_pair_scoped -v`.
   Expect failures because `validate_duplicate_rules` is absent.
 
-- [ ] **Step 4: Implement minimal normalized comparison.** Derive Current claims
+- [x] **Step 4: Implement minimal normalized comparison.** Derive Current claims
   from registry/index mirrors, compare generated outputs to manual owners, hash
   normalized visible paragraphs, and validate closed pair-scoped structural
   exceptions. Headings, pure link lists, table headers, and generated notices
   are ignored by parser classification, not by a global digest allowlist.
 
-- [ ] **Step 5: Run production scan and remediate only proven gaps.** Replace a
+- [x] **Step 5: Run production scan and remediate only proven gaps.** Replace a
   prohibited current policy/procedure copy with concise analysis and a
   canonical link while preserving dated facts, sources, and interpretation.
   Add a structural exception only when its exact two-path role is verified.
 
-- [ ] **Step 6: Run focused and production GREEN.** Run the full unit module,
+- [x] **Step 6: Run focused and production GREEN.** Run the full unit module,
   CLI self-test/production, generator no-diff, and strict links. Expect zero
   duplicate Current, generated/manual, or active-policy copy findings.
 
-- [ ] **Step 7: Run the RIA-005 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 7: Run the RIA-005 commit gate, review, and commit.** Run pre-commit
   for exact RIA-005 files, full all-files pre-commit, formatter-diff inspection,
   affected-hook rerun, and both diff checks. Obtain fresh requirements and
   quality approval, rerun after fixes, then commit with
@@ -773,28 +783,28 @@ unimplemented until its focused RED is directly observed.
 - Produces: aggregate self-test-before-production invocation and durable command
   inventories; it does not change CI topology or lifecycle state.
 
-- [ ] **Step 1: Add the exact aggregate-integration RED.** Add
+- [x] **Step 1: Add the exact aggregate-integration RED.** Add
   `ReferenceInformationArchitectureTests.test_aggregate_runs_self_test_before_production`
   to `tests/test_reference_information_architecture.py`. It reads the aggregate
   script and asserts one self-test invocation precedes one production `--root`
   invocation.
 
-- [ ] **Step 2: Run the named RED selector.** Run
+- [x] **Step 2: Run the named RED selector.** Run
   `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_aggregate_runs_self_test_before_production -v`.
   Expect failure because the aggregate has neither invocation.
 
-- [ ] **Step 3: Add minimal aggregate wiring and inventories.** Invoke focused
+- [x] **Step 3: Add minimal aggregate wiring and inventories.** Invoke focused
   self-test then production validation without changing CI topology or the
   generator owner. Document CLI arguments, exits, rule IDs, safe boundaries,
   the focused test selector, and production command in the two inventories.
 
-- [ ] **Step 4: Run focused and repository GREEN.** Run the named selector,
+- [x] **Step 4: Run focused and repository GREEN.** Run the named selector,
   full focused module, CLI self-test/production, generator no-diff, registry
   self-test/strict, strict Markdown/links, and
   `bash scripts/validate-repo-quality-gates.sh .`. Expect PASS and no lifecycle,
   CI, provider, remote, or live claim.
 
-- [ ] **Step 5: Run the RIA-006 commit gate, review, and commit.** Run pre-commit
+- [x] **Step 5: Run the RIA-006 commit gate, review, and commit.** Run pre-commit
   for the exact four files, full all-files pre-commit, formatter-diff
   inspection, affected-hook rerun, and both diff checks. Obtain fresh
   requirements and quality approval, rerun after fixes, then commit with
@@ -805,7 +815,9 @@ unimplemented until its focused RED is directly observed.
 **Files:**
 
 - C1 lifecycle closure modifies exactly: Spec 038 and its index, this Plan and
-  its index, and the reciprocal Task and its index. The ledger is untouched.
+  its index, the reciprocal Task and its index, and the document-profile
+  registry's Spec 038 program-lineage state. The ledger and reference contract
+  are untouched.
 - C2 postflight evidence modifies exactly the same six lifecycle paths plus
   `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
   and `docs/90.references/data/reference-information-architecture.json`.
@@ -815,20 +827,22 @@ unimplemented until its focused RED is directly observed.
 **Interfaces:**
 
 - Consumes: reviewed activation and RIA-001 through RIA-006 commits.
-- Produces: exact Task results, atomic `active -> done` Spec/Plan/Task proposal,
-  six-file closure commit C1, explicit-ref postflight, eight-file evidence and
-  open-transition commit C2, and contract-only settlement commit C3. No commit
-  claims its own content-addressed identity.
+- Produces: exact Task results, atomic `active -> done` Spec/Plan/Task and
+  registry-state proposal, seven-file closure commit C1, explicit-ref
+  postflight, eight-file evidence and open-transition commit C2, and
+  contract-only settlement commit C3. No commit claims its own content-addressed
+  identity.
 
-- [ ] **Step 1: Prepare terminal evidence without pre-claiming commits.** Mark
+- [x] **Step 1: Prepare terminal evidence without pre-claiming commits.** Mark
   each RIA row Done only with exact observed test/review/commit evidence; update
-  Spec/Plan/Task and all three indexes in one staged lifecycle proposal. Do not
-  change the migration ledger or contract in C1. Keep C1, C2, and C3 identities
-  explicitly unidentified until each preceding commit is observed.
+  Spec/Plan/Task, all three indexes, and the registry's Spec 038 program-lineage
+  state in one staged lifecycle proposal. Do not change the migration ledger or
+  contract in C1. Keep C1, C2, and C3 identities explicitly unidentified until
+  each preceding commit is observed.
 
 - [ ] **Step 2: Run terminal repository QA.** Run focused tests, production
   reference validation, generator no-diff, registry self-test/strict, staged
-  lifecycle, strict Markdown/links, aggregate QA, exact six-file pre-commit,
+  lifecycle, strict Markdown/links, aggregate QA, exact seven-file pre-commit,
   `env TMPDIR=/tmp pre-commit run --all-files`, formatter-diff inspection,
   affected-hook reruns, and both diff checks. Require observed PASS; a skipped
   strict hook cannot substitute for closure evidence.
@@ -841,7 +855,7 @@ unimplemented until its focused RED is directly observed.
 - [ ] **Step 4: Run the closure commit gate and commit.** Re-run the exact
   changed-file and all-files gates after the final review, inspect formatter
   diffs, rerun affected hooks, require both diff checks, then commit the exact
-  six lifecycle paths with
+  seven C1 paths with
   `docs(sdlc): close reference information architecture tranche`.
   The ledger remains byte-identical in C1.
 
