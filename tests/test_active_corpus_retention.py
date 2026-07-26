@@ -467,90 +467,336 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, code)
         self.assertEqual(str(raised.exception).splitlines(), [str(raised.exception)])
 
-    def assert_production_observed(self, observed: dict[str, object]) -> None:
+    @classmethod
+    def git_blob_identity(cls, payload: bytes) -> str:
+        object_id = hashlib.sha1(
+            f"blob {len(payload)}\0".encode("ascii") + payload
+        ).hexdigest()
+        return cls.validator._git_identity(object_id)
+
+    def index_object_identities(self, paths: set[str]) -> dict[str, str]:
+        result = subprocess.run(
+            [
+                self.validator.GIT_EXECUTABLE,
+                "ls-files",
+                "-z",
+                "--stage",
+                "--",
+                *sorted(paths),
+            ],
+            cwd=REPOSITORY_ROOT,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            env=self.validator.CLOSED_GIT_ENVIRONMENT,
+            timeout=self.validator.GIT_TIMEOUT_SECONDS,
+            shell=False,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0)
+        index = self.validator._parse_modes(
+            result.stdout,
+            allowed_paths=paths,
+        )
+        self.assertEqual(set(index), paths)
+        return {
+            path: self.validator._git_identity(object_id)
+            for path, object_id in index.items()
+        }
+
+    def assert_production_observed(
+        self,
+        observed: dict[str, object],
+        *,
+        expected_object_ids: dict[str, str] | None = None,
+    ) -> str:
         actual = copy.deepcopy(observed)
         rows = actual.pop("activeControlRows")
         pairs = actual.pop("activeControlPairCardinality")
         terminal_rows = actual.pop("terminalControlRows")
         terminal_pairs = actual.pop("terminalControlPairCardinality")
         terminal_specs = actual.pop("terminalSpecRows")
+        current_spec_paths = [self.validator.TERMINAL_SPEC]
+        advanced_spec_paths = [
+            self.validator.TERMINAL_SPEC,
+            self.validator.TERMINAL_SUCCESSOR_SPEC,
+        ]
+        terminal_spec_paths = [row["path"] for row in terminal_specs]
+        if terminal_spec_paths == current_spec_paths:
+            mode = "current"
+        elif terminal_spec_paths == advanced_spec_paths:
+            mode = "advanced"
+        else:
+            self.fail(
+                "production terminal Spec frontier must be exactly current or advanced"
+            )
+
+        current_plan = (
+            "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md"
+        )
+        current_task = (
+            "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md"
+        )
+        terminal_plan = (
+            "docs/04.execution/plans/"
+            "2026-07-22-reference-information-architecture.md"
+        )
+        terminal_task = (
+            "docs/04.execution/tasks/"
+            "2026-07-22-reference-information-architecture.md"
+        )
+        active_rows_by_mode = {
+            "current": [
+                (
+                    current_plan,
+                    "plan",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "active",
+                ),
+                (
+                    current_task,
+                    "task",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "active",
+                ),
+            ],
+            "advanced": [],
+        }
+        active_pairs_by_mode = {
+            "current": [
+                {
+                    "lineageId": self.SUCCESSOR_LINEAGE,
+                    "owner": "platform",
+                    "planPath": current_plan,
+                    "state": "complete",
+                    "status": "active",
+                    "taskPath": current_task,
+                }
+            ],
+            "advanced": [],
+        }
+        terminal_rows_by_mode = {
+            "current": [
+                (
+                    terminal_plan,
+                    "plan",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    terminal_task,
+                    "task",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+            ],
+            "advanced": [
+                (
+                    terminal_plan,
+                    "plan",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    current_plan,
+                    "plan",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    terminal_task,
+                    "task",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+                (
+                    current_task,
+                    "task",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+            ],
+        }
+        terminal_pairs_by_mode = {
+            "current": [
+                {
+                    "lineageId": self.validator.TERMINAL_LINEAGE,
+                    "owner": "platform",
+                    "planPath": terminal_plan,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": terminal_task,
+                }
+            ],
+            "advanced": [
+                {
+                    "lineageId": self.validator.TERMINAL_LINEAGE,
+                    "owner": "platform",
+                    "planPath": terminal_plan,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": terminal_task,
+                },
+                {
+                    "lineageId": self.SUCCESSOR_LINEAGE,
+                    "owner": "platform",
+                    "planPath": current_plan,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": current_task,
+                },
+            ],
+        }
+        terminal_specs_by_mode = {
+            "current": [
+                (
+                    self.validator.TERMINAL_SPEC,
+                    "038",
+                    5,
+                    "Reference information architecture",
+                    "done",
+                    "done",
+                )
+            ],
+            "advanced": [
+                (
+                    self.validator.TERMINAL_SPEC,
+                    "038",
+                    5,
+                    "Reference information architecture",
+                    "done",
+                    "done",
+                ),
+                (
+                    self.validator.TERMINAL_SUCCESSOR_SPEC,
+                    "039",
+                    6,
+                    "GitHub CI and QA evidence",
+                    "done",
+                    "done",
+                ),
+            ],
+        }
+        expected_paths = {
+            row[0]
+            for row in (
+                *active_rows_by_mode[mode],
+                *terminal_rows_by_mode[mode],
+                *terminal_specs_by_mode[mode],
+            )
+        }
+        row_paths = {
+            row["path"] for row in (*rows, *terminal_rows, *terminal_specs)
+        }
+        self.assertEqual(row_paths, expected_paths)
+        if expected_object_ids is None:
+            expected_object_ids = self.index_object_identities(expected_paths)
+        self.assertEqual(set(expected_object_ids), expected_paths)
+
+        control_row_keys = {
+            "kind",
+            "lineageId",
+            "objectId",
+            "objectMode",
+            "owner",
+            "path",
+            "profile",
+            "status",
+        }
+        for row in (*rows, *terminal_rows):
+            self.assertEqual(set(row), control_row_keys)
+            self.assertEqual(row["objectMode"], "index-stage-zero")
+            self.assertEqual(row["objectId"], expected_object_ids[row["path"]])
         self.assertEqual(
             [
-                (row["path"], row["kind"], row["lineageId"])
+                (
+                    row["path"],
+                    row["kind"],
+                    row["lineageId"],
+                    row["profile"],
+                    row["owner"],
+                    row["status"],
+                )
                 for row in rows
             ],
-            [
-                (
-                    "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md",
-                    "plan",
-                    "2026-07-26-github-ci-qa-evidence",
-                ),
-                (
-                    "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md",
-                    "task",
-                    "2026-07-26-github-ci-qa-evidence",
-                ),
-            ],
+            active_rows_by_mode[mode],
         )
+        self.assertEqual(pairs, active_pairs_by_mode[mode])
         self.assertEqual(
             [
                 (
-                    pair["lineageId"],
-                    pair["state"],
-                    pair["planPath"],
-                    pair["taskPath"],
+                    row["path"],
+                    row["kind"],
+                    row["lineageId"],
+                    row["profile"],
+                    row["owner"],
+                    row["status"],
                 )
-                for pair in pairs
-            ],
-            [
-                (
-                    "2026-07-26-github-ci-qa-evidence",
-                    "complete",
-                    "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md",
-                    "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md",
-                )
-            ],
-        )
-        self.assertEqual(
-            [
-                (row["path"], row["kind"], row["lineageId"])
                 for row in terminal_rows
             ],
-            [
-                (
-                    "docs/04.execution/plans/2026-07-22-reference-information-architecture.md",
-                    "plan",
-                    "2026-07-22-reference-information-architecture",
-                ),
-                (
-                    "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md",
-                    "task",
-                    "2026-07-22-reference-information-architecture",
-                ),
-            ],
+            terminal_rows_by_mode[mode],
         )
+        self.assertEqual(terminal_pairs, terminal_pairs_by_mode[mode])
+
+        terminal_spec_keys = {
+            "decision",
+            "objectId",
+            "objectMode",
+            "order",
+            "owner",
+            "path",
+            "profile",
+            "programArd",
+            "programPrd",
+            "reason",
+            "registryPath",
+            "relationClass",
+            "spec",
+            "state",
+            "status",
+        }
+        for row in terminal_specs:
+            self.assertEqual(set(row), terminal_spec_keys)
+            self.assertEqual(row["objectMode"], "index-stage-zero")
+            self.assertEqual(row["objectId"], expected_object_ids[row["path"]])
+            self.assertEqual(row["profile"], "sdlc/spec")
+            self.assertEqual(row["owner"], "platform")
+            self.assertEqual(row["programPrd"], "006")
+            self.assertEqual(row["programArd"], "0009")
+            self.assertEqual(row["decision"], "0017")
+            self.assertEqual(row["relationClass"], "original-tranche")
+            self.assertEqual(
+                row["registryPath"], self.validator.REGISTRY_PATH
+            )
         self.assertEqual(
             [
                 (
-                    pair["lineageId"],
-                    pair["state"],
-                    pair["planPath"],
-                    pair["taskPath"],
+                    row["path"],
+                    row["spec"],
+                    row["order"],
+                    row["reason"],
+                    row["state"],
+                    row["status"],
                 )
-                for pair in terminal_pairs
+                for row in terminal_specs
             ],
-            [
-                (
-                    "2026-07-22-reference-information-architecture",
-                    "complete",
-                    "docs/04.execution/plans/2026-07-22-reference-information-architecture.md",
-                    "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md",
-                )
-            ],
-        )
-        self.assertEqual(
-            [row["path"] for row in terminal_specs],
-            [self.validator.TERMINAL_SPEC],
+            terminal_specs_by_mode[mode],
         )
         frozen = copy.deepcopy(self.observed)
         frozen.pop("activeControlRows")
@@ -559,6 +805,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         frozen.pop("terminalControlPairCardinality")
         frozen.pop("terminalSpecRows")
         self.assertEqual(actual, frozen)
+        return mode
 
     def terminal_payloads(
         self,
@@ -698,7 +945,25 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertTrue(RESIDUE_LEDGER_PATH.is_file())
 
     def test_production_closure_matches_exact_repository_state(self) -> None:
-        self.validator.validate_ledger(self.ledger, self.observed)
+        observed = self.validator.build_observed(REPOSITORY_ROOT)
+        mode = self.assert_production_observed(observed)
+        self.validator.validate_ledger(self.ledger, observed)
+        frontier_counts = {
+            "current": {
+                "activeControlRows": 2,
+                "activeControlPairs": 1,
+                "terminalControlRows": 2,
+                "terminalControlPairs": 1,
+                "terminalSpecs": 1,
+            },
+            "advanced": {
+                "activeControlRows": 0,
+                "activeControlPairs": 0,
+                "terminalControlRows": 4,
+                "terminalControlPairs": 2,
+                "terminalSpecs": 2,
+            },
+        }[mode]
         expected = {
             "migratedClosed": 12,
             "currentRows": 100,
@@ -711,30 +976,26 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "acceptedAdrs": 13,
             "doneSpecs": 29,
             "findings": 0,
-            "activeControlRows": 2,
-            "activeControlPairs": 1,
-            "terminalControlRows": 2,
-            "terminalControlPairs": 1,
-            "terminalSpecs": 1,
+            **frontier_counts,
         }
-        try:
-            counts = self.validator.validate_active_corpus_residue_closure(
-                REPOSITORY_ROOT
-            )
-        except self.validator.ClosureError as error:
-            self.assertEqual(error.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
-            self.assertIn(
-                error.path,
-                {
-                    *self.validator.CONTROL_PATHS,
-                    self.validator.REGISTRY_PATH,
-                    self.validator.OWNER_SPEC,
-                    self.validator.EXECUTION_PLAN,
-                    self.validator.EXECUTION_TASK,
-                },
-            )
-        else:
-            self.assertEqual(counts, expected)
+        self.assertEqual(
+            {
+                "activeControlRows": len(observed["activeControlRows"]),
+                "activeControlPairs": len(
+                    observed["activeControlPairCardinality"]
+                ),
+                "terminalControlRows": len(observed["terminalControlRows"]),
+                "terminalControlPairs": len(
+                    observed["terminalControlPairCardinality"]
+                ),
+                "terminalSpecs": len(observed["terminalSpecRows"]),
+            },
+            frontier_counts,
+        )
+        counts = self.validator.validate_active_corpus_residue_closure(
+            REPOSITORY_ROOT
+        )
+        self.assertEqual(counts, expected)
 
     def test_tracked_inventory_requires_descriptor_and_index_equality(self) -> None:
         path = "docs/04.execution/plans/tracked.md"
@@ -1764,6 +2025,94 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
     def test_production_allows_existing_stage04_support_readmes(self) -> None:
         observed = self.validator.build_observed(REPOSITORY_ROOT)
         self.assert_production_observed(observed)
+
+    def test_production_assertion_accepts_only_exact_frontier_shapes(self) -> None:
+        def observed_for(
+            *, successor_state: str
+        ) -> tuple[dict[str, object], dict[str, str]]:
+            payloads = self.terminal_payloads(
+                "done", successor_state=successor_state
+            )
+            partition = self.terminal_partition(
+                "done",
+                payloads=payloads,
+                registry=self.terminal_registry(
+                    "done", successor_state=successor_state
+                ),
+            )
+            active_rows = self.validator._build_active_control_rows(
+                partition["planPaths"],
+                partition["taskPaths"],
+                {},
+                payloads,
+            )
+            observed = copy.deepcopy(self.observed)
+            observed.update(
+                {
+                    "activeControlRows": active_rows,
+                    "activeControlPairCardinality":
+                        self.validator._build_active_control_pairs(active_rows),
+                    "terminalControlRows": partition["terminalControlRows"],
+                    "terminalControlPairCardinality":
+                        partition["terminalControlPairCardinality"],
+                    "terminalSpecRows": partition["terminalSpecRows"],
+                }
+            )
+            expected_object_ids: dict[str, str] = {}
+            for key in (
+                "activeControlRows",
+                "terminalControlRows",
+                "terminalSpecRows",
+            ):
+                for row in observed[key]:
+                    row["objectMode"] = "index-stage-zero"
+                    identity = self.git_blob_identity(payloads[row["path"]])
+                    row["objectId"] = identity
+                    expected_object_ids[row["path"]] = identity
+            return observed, expected_object_ids
+
+        current, current_object_ids = observed_for(successor_state="active")
+        advanced, advanced_object_ids = observed_for(successor_state="done")
+        self.assert_production_observed(
+            current,
+            expected_object_ids=current_object_ids,
+        )
+        self.assert_production_observed(
+            advanced,
+            expected_object_ids=advanced_object_ids,
+        )
+
+        wrong_oid = copy.deepcopy(current)
+        wrong_oid_path = wrong_oid["activeControlRows"][0]["path"]
+        self.assertEqual(
+            wrong_oid["activeControlRows"][0]["objectId"],
+            current_object_ids[wrong_oid_path],
+        )
+        wrong_oid["activeControlRows"][0]["objectId"] = (
+            self.validator._git_identity("0" * 40)
+        )
+        with self.assertRaises(AssertionError):
+            self.assert_production_observed(
+                wrong_oid,
+                expected_object_ids=current_object_ids,
+            )
+
+        hybrid = copy.deepcopy(advanced)
+        hybrid["activeControlRows"] = copy.deepcopy(current["activeControlRows"])
+        hybrid["activeControlPairCardinality"] = copy.deepcopy(
+            current["activeControlPairCardinality"]
+        )
+        with self.assertRaises(AssertionError):
+            hybrid_object_ids = copy.deepcopy(advanced_object_ids)
+            hybrid_object_ids.update(
+                {
+                    row["path"]: row["objectId"]
+                    for row in hybrid["activeControlRows"]
+                }
+            )
+            self.assert_production_observed(
+                hybrid, expected_object_ids=hybrid_object_ids
+            )
 
     def test_frozen_terminal_path_cannot_be_promoted_to_active(self) -> None:
         plan_path = self.validator.EXECUTION_PLAN
