@@ -8,6 +8,7 @@ import bisect
 import collections
 import contextlib
 import copy
+import hashlib
 import html
 import io
 import json
@@ -52,7 +53,28 @@ DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.
 LEDGER_PATH = PurePosixPath(
     "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
 )
+RIA_CONTRACT_PATH = PurePosixPath(
+    "docs/90.references/data/reference-information-architecture.json"
+)
 OWNER = "cross-document-validator"
+LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
+LEDGER_SETTLEMENT_PACK_ID = "research/2026-07-07-wer"
+LEDGER_SETTLEMENT_SUBJECT = "document-migration-evidence-ledger"
+LEDGER_SETTLEMENT_KEYS = frozenset(
+    {
+        "id",
+        "packId",
+        "fromCommit",
+        "subject",
+        "targetSha256",
+        "targetByteLength",
+        "reason",
+        "transitionCommit",
+    }
+)
+GIT_SHA1_PATTERN = re.compile(r"git-sha1:[0-9a-f]{40}")
+SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
+MAX_LEDGER_BYTES = 2_000_000
 LEDGER_COLUMNS = (
     "path",
     "title",
@@ -102,6 +124,7 @@ IMPLEMENTED_RULES = frozenset(
         "LEDGER-MISSING",
         "LEDGER-INCOMPLETE",
         "LEDGER-UNKNOWN-PATH",
+        "LEDGER-PROTECTED-DRIFT",
         "DEBT-UNUSED",
         "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
         "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
@@ -280,6 +303,8 @@ class Context:
     governance_current_states: tuple[str, ...]
     reference_current_packs: ReferenceCurrentPacks
     tracked_regular_paths: frozenset[PurePosixPath]
+    ledger_bytes: bytes | None = None
+    ria_contract_text: str | None = None
 
 
 @dataclass(frozen=True)
@@ -604,12 +629,20 @@ def _build_context(
     profiles: dict[PurePosixPath, ProfileView] = {}
     texts: dict[PurePosixPath, str] = {}
     metadata: dict[PurePosixPath, dict[str, Any]] = {}
+    ledger_bytes: bytes | None = None
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         profiles[path] = _profile_view(profile)
         text = read_repository_text(root, path)
         texts[path] = text
         metadata[path] = _frontmatter(text)
+        if path == LEDGER_PATH:
+            ledger_bytes = (root / path).read_bytes()
+    ria_contract_text = (
+        read_repository_text(root, RIA_CONTRACT_PATH)
+        if (root / RIA_CONTRACT_PATH).exists()
+        else None
+    )
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
         raw_target = os.readlink(root / adapter)
@@ -644,6 +677,8 @@ def _build_context(
         registry.governance_current_owners.allowed_states,
         registry.reference_current_packs,
         tracked_regular_paths,
+        ledger_bytes,
+        ria_contract_text,
     )
 
 
@@ -4915,7 +4950,82 @@ def _ledger_rows(text: str) -> tuple[tuple[str, ...] | None, list[list[str]]]:
     return None, []
 
 
+def _ledger_protected_drift() -> Diagnostic:
+    return _diag(
+        "LEDGER-PROTECTED-DRIFT",
+        LEDGER_PATH,
+        "content/reference",
+        "exact settled RIA metadata and protected ledger UTF-8 bytes",
+        "settled metadata or protected bytes differ",
+    )
+
+
+def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]:
+    """Return whether the terminal RIA settlement seals the ledger inventory."""
+
+    if context.ria_contract_text is None:
+        return False, None
+    try:
+        contract = json.loads(context.ria_contract_text)
+    except (json.JSONDecodeError, UnicodeError):
+        return True, _ledger_protected_drift()
+    if not isinstance(contract, dict):
+        return True, _ledger_protected_drift()
+    settlements = contract.get("baselineSettlements")
+    if settlements is None or settlements == []:
+        return False, None
+    if (
+        not isinstance(settlements, list)
+        or len(settlements) != 1
+        or not isinstance(settlements[0], dict)
+    ):
+        return True, _ledger_protected_drift()
+    settlement = settlements[0]
+    transition_commit = settlement.get("transitionCommit")
+    target_sha256 = settlement.get("targetSha256")
+    target_byte_length = settlement.get("targetByteLength")
+    reason = settlement.get("reason")
+    baselines = contract.get("currentPackBaselines")
+    if (
+        set(settlement) != LEDGER_SETTLEMENT_KEYS
+        or contract.get("baselineTransitions") != []
+        or settlement.get("id") != LEDGER_SETTLEMENT_ID
+        or settlement.get("packId") != LEDGER_SETTLEMENT_PACK_ID
+        or settlement.get("subject") != LEDGER_SETTLEMENT_SUBJECT
+        or not isinstance(settlement.get("fromCommit"), str)
+        or GIT_SHA1_PATTERN.fullmatch(str(settlement.get("fromCommit"))) is None
+        or not isinstance(transition_commit, str)
+        or GIT_SHA1_PATTERN.fullmatch(transition_commit) is None
+        or not isinstance(baselines, dict)
+        or baselines.get(LEDGER_SETTLEMENT_PACK_ID) != transition_commit
+        or not isinstance(target_sha256, str)
+        or SHA256_PATTERN.fullmatch(target_sha256) is None
+        or not isinstance(target_byte_length, int)
+        or isinstance(target_byte_length, bool)
+        or not 1 <= target_byte_length <= MAX_LEDGER_BYTES
+        or not isinstance(reason, str)
+        or not reason.strip()
+        or "\r" in reason
+        or "\n" in reason
+        or len(reason) > 512
+    ):
+        return True, _ledger_protected_drift()
+    ledger_bytes = context.ledger_bytes
+    if ledger_bytes is None and LEDGER_PATH in context.texts:
+        ledger_bytes = context.texts[LEDGER_PATH].encode("utf-8")
+    if (
+        ledger_bytes is None
+        or len(ledger_bytes) != target_byte_length
+        or hashlib.sha256(ledger_bytes).hexdigest() != target_sha256
+    ):
+        return True, _ledger_protected_drift()
+    return True, None
+
+
 def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
+    protected, protected_drift = _ledger_protection_state(context)
+    if protected_drift is not None:
+        return [protected_drift]
     expected_literal = DEBT_LITERAL["expected"]
     if LEDGER_PATH not in context.paths or LEDGER_PATH not in context.texts:
         return [
@@ -4976,28 +5086,29 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                     "empty required cell",
                 )
             )
-    inventory_paths = {path.as_posix() for path in context.paths}
     counter = collections.Counter(ledger_paths)
-    for missing in sorted(inventory_paths - set(counter)):
-        diagnostics.append(
-            _diag(
-                "LEDGER-MISSING",
-                LEDGER_PATH,
-                "content/reference",
-                "one row per inventory path",
-                "inventory row is missing",
+    if not protected:
+        inventory_paths = {path.as_posix() for path in context.paths}
+        for missing in sorted(inventory_paths - set(counter)):
+            diagnostics.append(
+                _diag(
+                    "LEDGER-MISSING",
+                    LEDGER_PATH,
+                    "content/reference",
+                    "one row per inventory path",
+                    "inventory row is missing",
+                )
             )
-        )
-    for unknown in sorted(set(counter) - inventory_paths):
-        diagnostics.append(
-            _diag(
-                "LEDGER-UNKNOWN-PATH",
-                LEDGER_PATH,
-                "content/reference",
-                "tracked inventory path",
-                "unknown ledger path",
+        for unknown in sorted(set(counter) - inventory_paths):
+            diagnostics.append(
+                _diag(
+                    "LEDGER-UNKNOWN-PATH",
+                    LEDGER_PATH,
+                    "content/reference",
+                    "tracked inventory path",
+                    "unknown ledger path",
+                )
             )
-        )
     if any(count > 1 for count in counter.values()):
         diagnostics.append(
             _diag(
@@ -5322,6 +5433,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         ("active", "accepted"),
         reference_current_packs,
         frozenset((*paths, *collection_artifacts)),
+        texts[LEDGER_PATH].encode("utf-8"),
     )
 
 
@@ -7225,6 +7337,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     governance_current_paths = context.governance_current_paths
     reference_current_packs = context.reference_current_packs
     tracked_regular_paths = context.tracked_regular_paths
+    ria_contract_text = context.ria_contract_text
     source = PurePosixPath("docs/05.operations/guides/9999-source.md")
     if mutation == "link-broken":
         texts[source] += "\n[bad](./missing.md)\n"
@@ -7343,6 +7456,88 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[task] += traceability
     elif mutation == "owner-missing":
         metadata[PurePosixPath("docs/01.requirements/999-fixture.md")]["title"] = ""
+    elif mutation in {
+        "ledger-settled-inventory-growth",
+        "ledger-settled-byte-drift",
+        "ledger-settled-malformed-metadata",
+    }:
+        original_ledger_bytes = (
+            context.ledger_bytes
+            if context.ledger_bytes is not None
+            else context.texts[LEDGER_PATH].encode("utf-8")
+        )
+        transition_commit = "git-sha1:" + "2" * 40
+        settlement: dict[str, Any] = {
+            "id": LEDGER_SETTLEMENT_ID,
+            "packId": LEDGER_SETTLEMENT_PACK_ID,
+            "fromCommit": "git-sha1:" + "1" * 40,
+            "subject": LEDGER_SETTLEMENT_SUBJECT,
+            "targetSha256": hashlib.sha256(original_ledger_bytes).hexdigest(),
+            "targetByteLength": len(original_ledger_bytes),
+            "reason": "Fixture terminal settlement",
+            "transitionCommit": transition_commit,
+        }
+        if mutation == "ledger-settled-malformed-metadata":
+            settlement["targetByteLength"] = "malformed"
+        ria_contract_text = json.dumps(
+            {
+                "currentPackBaselines": {
+                    LEDGER_SETTLEMENT_PACK_ID: transition_commit,
+                },
+                "baselineTransitions": [],
+                "baselineSettlements": [settlement],
+            }
+        )
+        if mutation == "ledger-settled-inventory-growth":
+            retired_path = PurePosixPath(
+                "docs/05.operations/guides/9998-target file.md"
+            )
+            additions = (
+                (
+                    PurePosixPath(
+                        "docs/05.operations/guides/10000-post-settlement.md"
+                    ),
+                    ProfileView("sdlc/guide", "sdlc", "authored"),
+                    {
+                        "title": "Post-settlement Guide",
+                        "type": "sdlc/guide",
+                        "status": "active",
+                    },
+                ),
+                (
+                    PurePosixPath("docs/98.archive/1000-post-settlement.md"),
+                    ProfileView("content/archive", "common", "archive-envelope"),
+                    {
+                        "title": "Post-settlement Archive",
+                        "type": "content/archive",
+                        "status": "archived",
+                    },
+                ),
+            )
+            for path, profile, frontmatter in additions:
+                profiles[path] = profile
+                metadata[path] = frontmatter
+                texts[path] = f"# {frontmatter['title']}\n"
+            profiles.pop(retired_path)
+            metadata.pop(retired_path)
+            texts.pop(retired_path)
+            paths = tuple(
+                sorted(
+                    (
+                        *(path for path in paths if path != retired_path),
+                        *(path for path, _, _ in additions),
+                    ),
+                    key=lambda item: item.as_posix(),
+                )
+            )
+            tracked_regular_paths = frozenset(
+                (
+                    *(path for path in tracked_regular_paths if path != retired_path),
+                    *(path for path, _, _ in additions),
+                )
+            )
+        elif mutation == "ledger-settled-byte-drift":
+            texts[LEDGER_PATH] += "\n<!-- protected byte drift -->\n"
     elif mutation == "ledger-missing-row":
         texts[LEDGER_PATH] = "\n".join(
             line
@@ -7643,6 +7838,12 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         context.governance_current_states,
         reference_current_packs,
         tracked_regular_paths,
+        (
+            texts[LEDGER_PATH].encode("utf-8")
+            if LEDGER_PATH in texts
+            else None
+        ),
+        ria_contract_text,
     )
 
 
@@ -8018,6 +8219,9 @@ def _self_test(root: Path) -> list[str]:
         "missing-ledger-row",
         "incomplete-ledger-row",
         "unknown-ledger-path",
+        "settled-ledger-inventory-growth",
+        "settled-ledger-byte-drift",
+        "settled-ledger-malformed-metadata",
         "reference-valid",
         "reference-research-draft",
         "reference-audit-draft",

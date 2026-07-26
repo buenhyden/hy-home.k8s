@@ -35,6 +35,23 @@ inventory stays in `scripts/README.md`.
 - Main-agent and independent read-only design review found and corrected the
   remaining all-provider-PASS closure wording in Spec 042/046 and synchronized
   the renamed agent-design label across active PRD, ARD, and Spec references.
+- After design approval, the canonical planning skill produced the reciprocal
+  Spec 039 Plan/Task proposal. The Plan-only staged lifecycle probe exited `1`
+  with `LIFECYCLE-CREATE`, Plan count 1, and Task count 0 as the intentional
+  creation RED. The first seven-path proposal then exposed a real contract
+  collision: cross-document validation demanded two new ledger rows while the
+  settled RIA contract correctly rejected any protected Current-ledger byte
+  change.
+- Two independent read-only reviews agreed that the 446-row ledger is the
+  closed PRD-005/Spec 030 migration snapshot, not a permanent document
+  admission registry. The protected ledger was restored unchanged. The bounded
+  prerequisite now moves post-settlement admission to registry, lifecycle,
+  reciprocal-link, and index validation while retaining the ledger's settled
+  digest and structural checks.
+- An aggregate probe also confirmed that the completed Spec 030 object is an
+  ACER authority guard. Its explanatory edit was restored byte-for-byte; the
+  settled boundary remains owned by the RIA contract, validator behavior, and
+  active Spec 039 rather than by rewriting closed authority.
 
 #### Memory
 
@@ -54,24 +71,34 @@ inventory stays in `scripts/README.md`.
   zero violations.
 - `python3 scripts/validate-links-and-owners.py --root . --mode strict
   --body-contracts registry`: PASS.
+- `python3 scripts/validate-links-and-owners.py --self-test`: PASS, including
+  pre-settlement inventory equality, post-settlement inventory addition and
+  removal, protected-byte drift, and malformed-settlement regression cases.
+- `python3 scripts/validate-reference-information-architecture.py --root .
+  --require-settled-baselines`: PASS with the protected 446-row ledger
+  unchanged.
+- `python3 scripts/validate-active-corpus-residue-closure.py --root .`: PASS
+  after restoring the protected Spec 030 authority object.
 - `git diff --check`: PASS.
 - `bash scripts/validate-repo-quality-gates.sh .`: PASS, including the document
   registry, cross-document, affected-surface, workspace-boundary, archive,
   agent-semantics, roster-currentness, and reference-IA validators.
-- `env TMPDIR=/tmp TMP=/tmp TEMP=/tmp pre-commit run --all-files`: PASS for all
-  hooks with no formatter mutation. The unqualified invocation inherited WSL
-  `TEMP`/`TMP` paths on the Windows mount and its GitOps self-test could not
-  create a FIFO (`OSError 95`); rerunning the same hook with POSIX `/tmp`
-  removed the environmental limitation.
+- `pre-commit run --all-files`: FAIL only in the existing Spec 039-owned
+  GitOps strict self-test FIFO probe (`os.mkfifo`, `Errno 95`); every other
+  hook executed by that run passed.
+- `SKIP=strict-repository-quality pre-commit run --all-files`: PASS after the
+  strict repository-quality lane was proven directly by
+  `bash scripts/validate-repo-quality-gates.sh .`.
 - Remote GitHub Actions run `29982910320` remains observed FAIL for commit
   `bd93374d7f531317c3bd061eb1ef567c1e2e0084`; no push, dispatch, credential
   access, provider installation, or external mutation was performed.
 
 #### Handoff
 
-- Next owner: user design review. After approval, invoke the canonical planning
-  skill to author Spec 039's Plan/Task; implementation remains gated until that
-  plan is reviewed.
+- Next owner: commit the settled-ledger admission prerequisite, then verify and
+  commit the exact six-path Spec 039 planning activation. Feature
+  implementation remains gated until the reciprocal Plan/Task package is
+  committed, presented, and explicitly approved.
 
 ### 2026-07-19 - Archive immutability and current-replacement authority repair
 
