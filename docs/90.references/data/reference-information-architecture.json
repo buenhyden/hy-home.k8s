@@ -18,7 +18,17 @@
     "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
     "research/2026-07-07-wer": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
   },
-  "baselineTransitions": [],
+  "baselineTransitions": [
+    {
+      "id": "ria-007-postflight-ledger",
+      "packId": "research/2026-07-07-wer",
+      "fromCommit": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
+      "subject": "document-migration-evidence-ledger",
+      "targetSha256": "4c68a3d7c944a36ef7d01e0aee80de8cff8caeef43fa7c1c7544c06c905bce96",
+      "targetByteLength": 638722,
+      "reason": "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b lifecycle closure and repository-static postflight evidence in the protected migration ledger"
+    }
+  ],
   "baselineSettlements": [],
   "mutableIndexProjections": [
     {

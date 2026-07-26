@@ -18,11 +18,16 @@ from reviewed activation and rollback parent
 `8fb9821497aaa93d9ed5fc1a69b60c628b047b47`; prerequisite commits changed no
 Stage 04 document, so this pair raised the corpus to 50 Plans and 52 Tasks.
 RIA-000 through RIA-006 are Completed from observed commits, package tests,
-repository gates, and clean final package reviews. RIA-007 has prepared the
-exact seven-file C1 lifecycle and registry-state proposal without changing the
-migration ledger or reference contract. Independent whole-tranche review
-remains the pending C1 commit gate; C1/C2/C3 identities and postflight or
-settlement results remain unobserved and unclaimed.
+repository gates, and clean final package reviews. RIA-007 C1 exact-seven
+commit `8c0dcea558212e11ac93a0fe626cddb31315859b` closed the six lifecycle
+paths and registry state after final `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED` reviews. The activation-to-C1 explicit-ref lifecycle and
+repository-static clean-tree postflight passed. The current C2 exact-nine
+staged proposal records that evidence in the six lifecycle paths and 446-row
+ledger, opens the bounded contract transition, and adds only the final target
+digest's exact false-positive adjudication to `.secrets.baseline`. It has no
+known C2 identity or postcommit result, C3 identity, settlement, terminal
+explicit-ref result, or remote/live, CI-hosted, or provider claim.
 
 The activation preserves the existing registry as the sole Current audit and
 research pack owner. It authorizes a separate reference-information contract
@@ -68,7 +73,7 @@ results.
 | RIA-004 | VAL-RIA-005 | Enforce one fixed-argv generator/input/output/check relation and zero LLM Wiki drift. | platform | Done | Immutable generator/input/output/owner relation and zero-drift proof completed. | Commits `5d15c1c`, `0cb1789`; focused 46/46 and repository gates PASS; requirements compliant and quality approved. |
 | RIA-005 | VAL-RIA-001, VAL-RIA-006 | Reject duplicate Current and generated/manual owners plus normalized active-policy copies, with only exact pair-scoped structural exceptions. | platform | Done | Current-owner, generated/manual, pair-scoped exception, and policy-copy guards completed. | Commits `671e722`, `000cf858`; focused 81/81 and repository gates PASS; requirements, parser, and quality review approved. |
 | RIA-006 | VAL-RIA-001 through VAL-RIA-006 | Integrate self-test-before-production validation into repository aggregate QA and command inventories. | platform | Done | Aggregate self-test-before-production integration and inventories completed. | Commit `76c1d4b`; focused 82/82 and aggregate gates PASS; requirements compliant and quality approved. The closed post-validate environment still lacks `gitleaks` on `/usr/bin:/bin`; Spec 039 owns that limitation. |
-| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Prepare the exact seven-file C1 lifecycle/registry-state proposal and preserve the separately gated C1 review/commit, C2 postflight transition, and C3 settlement boundaries. | platform | Done | Repository-static implementation through reviewed RIA-006 head `76c1d4b` and the exact seven-file C1 closure proposal are complete. | The migration ledger and reference contract are unchanged. Independent review is the next C1 commit gate; C1/C2/C3 identities and a whole-tranche verdict are intentionally absent from C1 until directly observed. |
+| RIA-007 | VAL-RIA-001 through VAL-RIA-006 | Preserve the exact C1 closure/postflight, separately gated C2 open-transition proposal, and later contract-only C3 settlement boundaries. | platform | Done | C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b`, final whole-tranche approval, and clean-tree postflight are observed; C2 is staged only. | C1 reviews returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; activation-to-C1 explicit-ref lifecycle and the bounded repository-static postflight passed. The exact-nine C2 proposal includes only the exact-value `.secrets.baseline` adjudication beyond the lifecycle/ledger/contract paths and has no C2 identity/postcommit, C3 identity, settlement, terminal explicit-ref, or remote/live claim. |
 
 ## Approval and Safety Boundaries
 
@@ -99,8 +104,8 @@ results.
   ignored scratch is never an evidence source.
 - **Rollback Plan**: Reverse newest reviewed logical commit first. Before
   closure, revert the failing RIA package only. After closure, revert the
-  contract-only C3 settlement, eight-file C2 transition/postflight evidence,
-  seven-file C1 closure, then RIA-006 through RIA-001 and activation last; restore
+  contract-only C3 settlement, nine-file C2 transition/postflight/scanner
+  adjudication evidence, seven-file C1 closure, then RIA-006 through RIA-001 and activation last; restore
   each protected owner relation before removing its guard.
 - **Evidence Location**: This Task, reviewed logical commits, the Stage 90
   reference IA contract, focused tests/fixtures, aggregate results, and terminal
@@ -183,18 +188,36 @@ validation and recorded durable script/test command inventories. The package
 passed 82/82 focused tests and aggregate gates; requirements and quality
 reviews approved it.
 
-The current RIA-007 C1 proposal changes exactly this Spec/Plan/Task lineage,
-its three indexes, and the registry's Spec 038 program-lineage state from
-`active` to `done`. The migration ledger and reference contract remain
-byte-identical. Independent whole-tranche requirements and quality review is
-the next commit gate, so no tranche-wide verdict is claimed.
-The C1 commit identity, clean-tree postflight, C2 transition, C3 settlement,
-terminal explicit-ref result, and C2/C3 identities do not yet exist and remain
-unclaimed. The closed post-validate environment's `/usr/bin:/bin` PATH still
-lacks `gitleaks`; the normal PATH repository gates are separate evidence, and
-this C1 proposal changes no hook, validator, scanner, or CI topology. Remote,
+RIA-007 C1 exact-seven commit
+`8c0dcea558212e11ac93a0fe626cddb31315859b` changed exactly this
+Spec/Plan/Task lineage, its three indexes, and the registry's Spec 038
+program-lineage state from `active` to `done`. Final whole-tranche reviews
+returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The successful
+clean-tree postflight used activation commit
+`cb0c1f6131ad6a8cf3f2f2ca18a369b5cd31d77b` through literal C1 and observed
+explicit-ref lifecycle PASS; RIA module 85/85; RIA self-test, normal
+production, settled-baseline root validation, generator no-diff, registry
+self-test/strict, strict Markdown, strict cross-document, terminal residue,
+role audit, repository aggregate, all-files pre-commit, both diff checks, and
+clean status PASS. An earlier invocation from activation parent
+`fdc86ee9156a35f48d57916be4ecb3505e483a50` failed closed because the
+reciprocal Plan/Task did not exist at that ref; it was an operator
+ref-selection check, not the successful postflight, a repository defect, or
+PASS evidence.
+
+The current C2 staged proposal changes exactly the same six lifecycle paths,
+the migration ledger, reference contract, and `.secrets.baseline`, for exactly
+nine tracked paths. It preserves the 446-row Markdown inventory and
+dispositions, keeps both Current baseline pins at the active root, leaves
+settlements empty, opens only the ledger-byte-bound transition, and records
+only that final digest's exact path/value detect-secrets false-positive
+adjudication. The scanner baseline is not a ledger row. C2 has no known SHA or
+postcommit result; C3 identity, settlement, terminal explicit-ref, remote,
 CI-hosted, provider-runtime, Kubernetes, Vault, ESO, Argo CD, credential,
-secret-value, deployment, and live PASS remain unclaimed.
+secret-value, deployment, and live PASS remain unclaimed. The closed
+post-validate environment's `/usr/bin:/bin` PATH still lacks `gitleaks`; the
+normal PATH repository gates are separate evidence, and this C2 proposal
+changes no hook, validator, scanner behavior, or CI topology.
 
 ## Traceability
 
@@ -213,4 +236,4 @@ secret-value, deployment, and live PASS remain unclaimed.
 | N/A — RIA-004 shares the Plan linked in RIA-000 | Completed. | Commits `5d15c1c`, `0cb1789`; immutable generator relation and zero drift; focused 46/46 and repository gates PASS; requirements compliant and quality approved. |
 | N/A — RIA-005 shares the Plan linked in RIA-000 | Completed. | Commits `671e722`, `000cf858`; owner/collision/exception/policy-copy proof; focused 81/81 and repository gates PASS; requirements, parser, and quality review approved. |
 | N/A — RIA-006 shares the Plan linked in RIA-000 | Completed. | Commit `76c1d4b`; self-test-before-production integration; focused 82/82 and aggregate gates PASS; requirements compliant and quality approved; closed-hook `gitleaks` PATH limitation retained for Spec 039. |
-| N/A — RIA-007 shares the Plan linked in RIA-000 | Done for the C1 proposal-preparation result. | Exact seven-file C1 lifecycle and registry-state proposal prepared with ledger and contract unchanged. Independent review remains the pending commit gate; C1/C2/C3 identities, postflight, transition, settlement, and terminal explicit-ref PASS remain unclaimed. |
+| N/A — RIA-007 shares the Plan linked in RIA-000 | C1 closure and clean-tree postflight completed; C2 exact-nine staged proposal prepared. | C1 `8c0dcea558212e11ac93a0fe626cddb31315859b`; final `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; activation-to-C1 explicit-ref lifecycle and repository-static postflight PASS. C2 includes the exact-value `.secrets.baseline` adjudication but has no identity/postcommit claim; C3, settlement, terminal explicit-ref, and remote/live evidence remain unclaimed. |

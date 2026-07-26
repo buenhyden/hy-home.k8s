@@ -19,18 +19,23 @@ plan, runbook, or runtime owner.
 The reciprocal implementation
 [Plan](../../04.execution/plans/2026-07-22-reference-information-architecture.md)
 and [Task](../../04.execution/tasks/2026-07-22-reference-information-architecture.md)
-record the reviewed RIA-000 through RIA-006 packages and the staged RIA-007 C1
-lifecycle proposal. RIA-002 completed through design commits `08cf17d` and
+record the reviewed RIA-000 through RIA-006 packages and the observed RIA-007
+C1 closure and clean-tree postflight. RIA-002 completed through design commits `08cf17d` and
 `f0c019a` plus implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
 `c278173`. RIA-003 through RIA-006 completed through commits `7083909`,
 `77e081d`, `5d15c1c`, `0cb1789`, `671e722`, `000cf858`, and `76c1d4b`.
-The current C1 proposal changes exactly this Spec/Plan/Task lineage, its three
-indexes, and the registry's Spec 038 program-lineage state from `active` to
-`done`; it leaves the migration ledger and reference contract unchanged.
-Independent whole-tranche review is the pending C1 commit gate. The C1 commit,
-clean-tree postflight, C2 transition, and C3 settlement do not yet exist, so
-none of their identities or terminal results is claimed. Remote, CI-hosted,
-provider, and live results remain unclaimed.
+C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b`
+changed this Spec/Plan/Task lineage, its three indexes, and the registry's
+Spec 038 program-lineage state from `active` to `done`. Independent C1
+requirements and quality review returned `REQUIREMENTS COMPLIANT` and
+`QUALITY APPROVED`, and the activation-to-C1 explicit-ref lifecycle and
+repository-static clean-tree postflight passed. The current exact-nine C2
+proposal records that observed evidence in the six lifecycle paths and
+migration ledger, opens the one bounded ledger transition in the reference
+contract, and adds only the exact-value false-positive adjudication to
+`.secrets.baseline`. C2 has no known identity or postcommit result; C3,
+settlement, terminal explicit-ref, remote, CI-hosted, provider, and live
+results remain unclaimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -285,16 +290,36 @@ validation and durable command inventories; focused tests passed 82/82,
 aggregate gates passed, and requirements and quality reviews approved the
 package.
 
-The RIA-007 C1 proposal changes only the six reciprocal lifecycle paths plus
-the registry's Spec 038 program-lineage state, for exactly seven tracked paths.
-It does not change the migration ledger, reference contract, Current pack
-membership, observation bodies, CI/FIFO topology, provider state, credentials,
-secrets, or ignored workspace. Independent whole-tranche requirements and
-quality review remains the pending commit gate. C1/C2/C3 identities,
-clean-tree postflight, terminal settlement, remote/live, and CI-hosted PASS are
-not claimed. The known closed post-validate environment lacks `gitleaks` on its
-`/usr/bin:/bin` PATH; Spec 039 retains that limitation and no hook, validator,
-or CI topology is changed here.
+RIA-007 C1 exact-seven commit
+`8c0dcea558212e11ac93a0fe626cddb31315859b` changed only the six reciprocal
+lifecycle paths plus the registry's Spec 038 program-lineage state.
+Independent whole-tranche requirements and quality reviews returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`. The successful clean-tree
+postflight used activation commit
+`cb0c1f6131ad6a8cf3f2f2ca18a369b5cd31d77b` through literal C1 and observed:
+explicit-ref lifecycle PASS; RIA module 85/85; RIA self-test, normal
+production, settled-baseline root validation, generator no-diff, registry
+self-test/strict, strict Markdown, strict cross-document, terminal residue,
+role audit, repository aggregate, all-files pre-commit, both diff checks, and
+clean status PASS. An earlier explicit-ref invocation from activation parent
+`fdc86ee9156a35f48d57916be4ecb3505e483a50` failed closed because the
+reciprocal Plan/Task did not exist at that ref; that was an operator
+ref-selection check, not the successful C1 postflight, a repository defect, or
+PASS evidence.
+
+The current C2 staged proposal changes exactly the same six lifecycle paths
+plus the migration ledger, reference contract, and `.secrets.baseline`, for
+exactly nine tracked paths. It reconciles the 446-row Markdown ledger without
+changing inventory membership or dispositions, opens one ledger-byte-bound
+transition while both Current baseline pins remain at the active root and
+settlements remain empty, and admits only that final contract digest's exact
+path/value detect-secrets false positive. The scanner baseline is not a ledger
+row, and no scanner filter or behavior changes. The proposal does not identify
+C2, claim a C2 postcommit result, identify C3, claim settlement or terminal
+explicit-ref success, or claim remote/live, CI-hosted, provider, credential,
+or secret evidence. The known closed post-validate environment lacks
+`gitleaks` on its `/usr/bin:/bin` PATH; Spec 039 retains that limitation and no
+hook, validator, scanner behavior, or CI topology is changed here.
 
 ## Traceability
 

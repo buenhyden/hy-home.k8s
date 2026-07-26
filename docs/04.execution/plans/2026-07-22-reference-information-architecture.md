@@ -49,12 +49,17 @@ proposed corpus to 50 Plans and 52 Tasks. The activation changes lifecycle
 lineage only. Activation commit `cb0c1f6` completed RIA-000. RIA-001 completed
 through reviewed commits `68e46fc`, `566c74f`, and `15bba3d`. RIA-002 through
 RIA-006 subsequently completed through the exact reviewed commits and package
-evidence recorded below. The current C1 proposal changes exactly the reciprocal
+evidence recorded below. RIA-007 C1 exact-seven commit
+`8c0dcea558212e11ac93a0fe626cddb31315859b` changed the reciprocal
 Spec/Plan/Task, three indexes, and registry Spec 038 program-lineage state from
-`active` to `done`; it leaves the migration ledger and reference contract
-unchanged. Independent whole-tranche review is the pending C1 commit gate.
-C1/C2/C3 identities, postflight, and terminal settlement remain pending and
-unclaimed.
+`active` to `done`. Final whole-tranche reviews returned
+`REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`, and the activation-to-C1
+explicit-ref lifecycle and repository-static clean-tree postflight passed.
+The current C2 exact-nine staged proposal records that evidence, opens the
+bounded ledger transition, and adds only the final target digest's exact
+false-positive adjudication to `.secrets.baseline`; it has no known C2
+identity or postcommit result, C3 identity, settlement, terminal explicit-ref
+result, or remote/live, CI-hosted, or provider claim.
 
 ## Context
 
@@ -205,7 +210,7 @@ the Work Breakdown and reciprocal Task.
 | RIA-004 | Generated ownership and zero-drift validation | RIA-003 | Completed from reviewed RIA-003 implementation | Commits `5d15c1c`, `0cb1789`; fixed-argv generator relation and zero drift; 46/46 focused and repository gates PASS; requirements compliant and quality approved |
 | RIA-005 | Duplicate Current/generated/manual/policy-owner validation | RIA-004 | Completed from reviewed RIA-004 implementation | Commits `671e722`, `000cf858`; owner/collision/exception/policy-copy proof; 81/81 focused and repository gates PASS; requirements, parser, and quality review approved |
 | RIA-006 | Aggregate integration and command inventories | RIA-005 | Completed from reviewed RIA-005 implementation | Commit `76c1d4b`; self-test-before-production integration; 82/82 focused and aggregate gates PASS; requirements compliant and quality approved |
-| RIA-007 | Independent whole-tranche review, atomic lifecycle closure, postflight transition, and settlement | RIA-006 | C1 exact seven-file lifecycle and registry-state proposal prepared; review remains the pending commit gate | Ledger and contract remain unchanged; C1 commit/postflight, C2 transition, C3 settlement, terminal settled-baseline evidence, and their identities remain pending and unclaimed |
+| RIA-007 | Independent whole-tranche review, atomic lifecycle closure, postflight transition, and settlement | RIA-006 | C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b` and clean-tree postflight observed | Final C1 reviews approved and activation-to-C1 explicit-ref lifecycle plus repository-static postflight passed; C2 is an exact-nine staged open-transition and exact-value `.secrets.baseline` adjudication proposal with no C2 identity/postcommit, C3, settlement, terminal explicit-ref, or remote/live claim |
 
 ### Task 0: RIA-000 — Atomic reciprocal planning activation
 
@@ -820,7 +825,8 @@ the Work Breakdown and reciprocal Task.
   are untouched.
 - C2 postflight evidence modifies exactly the same six lifecycle paths plus
   `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
-  and `docs/90.references/data/reference-information-architecture.json`.
+  `docs/90.references/data/reference-information-architecture.json`, and
+  `.secrets.baseline`.
 - C3 settlement modifies exactly
   `docs/90.references/data/reference-information-architecture.json`.
 
@@ -829,7 +835,8 @@ the Work Breakdown and reciprocal Task.
 - Consumes: reviewed activation and RIA-001 through RIA-006 commits.
 - Produces: exact Task results, atomic `active -> done` Spec/Plan/Task and
   registry-state proposal, seven-file closure commit C1, explicit-ref
-  postflight, eight-file evidence and open-transition commit C2, and
+  postflight, nine-file evidence/open-transition/exact scanner-adjudication
+  commit C2, and
   contract-only settlement commit C3. No commit claims its own content-addressed
   identity.
 
@@ -840,43 +847,59 @@ the Work Breakdown and reciprocal Task.
   contract in C1. Keep C1, C2, and C3 identities explicitly unidentified until
   each preceding commit is observed.
 
-- [ ] **Step 2: Run terminal repository QA.** Run focused tests, production
+- [x] **Step 2: Run terminal repository QA.** Run focused tests, production
   reference validation, generator no-diff, registry self-test/strict, staged
   lifecycle, strict Markdown/links, aggregate QA, exact seven-file pre-commit,
   `env TMPDIR=/tmp pre-commit run --all-files`, formatter-diff inspection,
   affected-hook reruns, and both diff checks. Require observed PASS; a skipped
   strict hook cannot substitute for closure evidence.
 
-- [ ] **Step 3: Obtain independent whole-tranche reviews.** Generate a review
+- [x] **Step 3: Obtain independent whole-tranche reviews.** Generate a review
   package from activation parent `fdc86ee` through proposed HEAD. Require exact
   verdicts `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`; remediate all
-  blocking findings, rerun affected/full gates, and repeat both reviews.
+  blocking findings, rerun affected/full gates, and repeat both reviews. Final
+  C1 verdicts were exactly `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED`.
 
-- [ ] **Step 4: Run the closure commit gate and commit.** Re-run the exact
+- [x] **Step 4: Run the closure commit gate and commit.** Re-run the exact
   changed-file and all-files gates after the final review, inspect formatter
   diffs, rerun affected hooks, require both diff checks, then commit the exact
   seven C1 paths with
   `docs(sdlc): close reference information architecture tranche`.
-  The ledger remains byte-identical in C1.
+  The ledger remained byte-identical in C1. The exact-seven commit is
+  `8c0dcea558212e11ac93a0fe626cddb31315859b`.
 
-- [ ] **Step 5: Verify clean-tree postflight.** Run explicit-ref lifecycle from
+- [x] **Step 5: Verify clean-tree postflight.** Run explicit-ref lifecycle from
   the activation commit to C1, focused/production/generator,
   strict document, aggregate, all-files pre-commit, `git diff --check`, and
-  clean status. Record only directly observed outcomes.
+  clean status. Record only directly observed outcomes. The successful
+  postflight used activation commit
+  `cb0c1f6131ad6a8cf3f2f2ca18a369b5cd31d77b` through literal C1 and passed
+  explicit-ref lifecycle, RIA 85/85, self-test, normal production,
+  settled-baseline root validation, generator no-diff, registry
+  self-test/strict, strict Markdown/cross-document, terminal residue, role
+  audit, aggregate, all-files pre-commit, both diff checks, and clean status.
+  An earlier invocation from `fdc86ee9156a35f48d57916be4ecb3505e483a50`
+  failed closed because the reciprocal pair was absent at that ref; it was an
+  operator ref-selection check, not repository-defect or PASS evidence.
 
-- [ ] **Step 6: Prepare the exact C2 postflight transition.** Add the observed
+- [x] **Step 6: Prepare the exact C2 postflight transition.** Add the observed
   C1 identity and postflight results to the six lifecycle docs/indexes, update
   the migration ledger and its inventory/freshness evidence, and add exactly one
   `ria-007-postflight-ledger` transition to the contract. The transition keeps
   the research baseline at its active pin, names the registry-derived ledger
   subject, and commits the exact proposed ledger SHA-256 and byte length. All
-  other Current members and registry bytes remain old-baseline exact. C2 changes
-  exactly eight files; it contains no C2 SHA and makes no self-claim.
+  other Current members and registry bytes remain old-baseline exact. Add the
+  final target digest's exact path/value detect-secrets false-positive result
+  to `.secrets.baseline` without changing scanner filters or behavior. C2
+  changes exactly nine files; it contains no C2 SHA and makes no self-claim.
+  This staged proposal likewise has no C2 postcommit result, C3 identity,
+  settlement, terminal explicit-ref result, or
+  CI-hosted/provider/remote/live claim.
 
 - [ ] **Step 7: Gate and commit C2.** Run focused transition tests, normal
   production validation, and prove terminal `--require-settled-baselines`
   intentionally fails only for the open transition. Run staged lifecycle,
-  strict documents, aggregate, exact eight-file pre-commit, all-files
+  strict documents, aggregate, exact nine-file pre-commit, all-files
   pre-commit, formatter/status inspection, affected-hook reruns, and both diff
   checks. Obtain task-scoped requirements/quality approval, then commit with
   `docs(sdlc): record reference architecture postflight`. Re-run normal
@@ -885,8 +908,8 @@ the Work Breakdown and reciprocal Task.
 - [ ] **Step 8: Prepare and commit C3 baseline settlement.** Modify only the
   contract: set the research `currentPackBaselines` value to literal C2, remove
   the open transition, and append its durable settlement proof with literal
-  `transitionCommit` C2. Change no registry, ledger, lifecycle, README, or other
-  protected content. The validator must read C2's contract and blobs through the
+  `transitionCommit` C2. Change no registry, ledger, lifecycle, README,
+  `.secrets.baseline`, or other protected content. The validator must read C2's contract and blobs through the
   fixed runner and prove the matching transition, prior baseline/registry
   equality, exact target bytes, and unchanged non-targets. Run `--staged` with
   `--require-settled-baselines`: its fixed internal HEAD resolution must equal
