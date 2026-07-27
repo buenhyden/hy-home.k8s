@@ -1,7 +1,7 @@
 ---
 title: 'GitHub CI and QA Evidence Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-26
 ---
@@ -22,6 +22,42 @@ commit `bd93374d7f531317c3bd061eb1ef567c1e2e0084`, failed its `pre-commit`,
 repository system-hook dependencies and emitted a Node.js 20 deprecation
 warning through `pre-commit/action`. This remote result is historical evidence
 for the observed SHA; it is not a result for the current local branch.
+
+GCQE-001 through GCQE-005 completed the reviewed repository-static
+implementation through `7b536d1` and the committed integration evidence at
+`aaee364`. Test-only commit
+`096c5c48e364663c616a1984089c11a1fe5b3b61` fixed final-tranche lifecycle
+fixtures and received `REQUIREMENTS COMPLIANT` / `QUALITY APPROVED` from
+`/root/gcqe006_selftest_rapid_review`. Commit
+`b5c3eea128b8b3be7c858f70803f83994be1fc77` advanced the active-corpus
+validator to the exact Spec 039-done / Spec 040-active frontier and received
+`REQUIREMENTS COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and
+`QUALITY APPROVED` from `/root/gcqe006_frontier_quality_review`. Test-only
+commit `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` then bound current/advanced
+assertions to exact index object identities; fresh reviewers
+`/root/gcqe006_test_compat_requirements_review` and
+`/root/gcqe006_test_compat_fresh_quality` returned `REQUIREMENTS COMPLIANT`
+and `QUALITY APPROVED`. These scoped verdicts do not constitute whole-tranche
+terminal approval.
+
+The current GCQE-006 proposal at base HEAD
+`39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` changes exactly this Spec, its
+reciprocal Plan and Task, their three indexes, the PRD-006 program-lineage
+state for Spec 039, and shared progress from `active` to terminal `done`
+evidence. Advanced-state verification passes the 46-test residue class,
+84-test module, 22-case residue self-test, exact `0/0` active controls, `4/2`
+terminal controls, two terminal Specs, `13/29` guards, repository aggregate,
+668-case lifecycle self-test, staged lifecycle, and strict document gates.
+Earlier terminal reviews found rollback omissions, the old-frontier aggregate
+failure, three staged old-state assertions, and an index-OID P1; all are
+remediated. After the sole remaining invalid explicit-ref finding was
+corrected, `/root/gcqe006_final_requirements` returned `REQUIREMENTS
+COMPLIANT` and `/root/gcqe006_final_quality` returned `QUALITY APPROVED`, with
+no findings against staged patch digest
+`58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
+Spec 040 remains `active`, the settled migration snapshot is byte-identical,
+and no closure SHA, explicit-ref or clean-tree postflight, hosted, provider,
+or live PASS is claimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -171,8 +207,8 @@ GitHub's workflow, security, and artifact-retention guidance:
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-001 | Workflow fixtures assert entry and aggregate topology. |
-| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-002 | Selector fixtures cover every contract and migration path class. |
-| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-003 | actionlint, zizmor, and repository policy checks pass. |
-| [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-004 | Portability fixtures run on FIFO-capable and unsupported environments. |
-| [REQ-WDLEC-011](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-005 | Agent QA contract and all-files evidence are checked together. |
-| [REQ-WDLEC-012](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-006 | Result-class fixtures reject SKIP/DEFER as PASS. |
+| N/A — REQ-WDLEC-010 / VAL-GCQE-002 shares the PRD-006 source linked in VAL-GCQE-001 | VAL-GCQE-002 | Selector fixtures cover every contract and migration path class. |
+| N/A — REQ-WDLEC-010 / VAL-GCQE-003 shares the PRD-006 source linked in VAL-GCQE-001 | VAL-GCQE-003 | actionlint, zizmor, and repository policy checks pass. |
+| N/A — REQ-WDLEC-010 / VAL-GCQE-004 shares the PRD-006 source linked in VAL-GCQE-001 | VAL-GCQE-004 | Portability fixtures run on FIFO-capable and unsupported environments. |
+| N/A — REQ-WDLEC-011 / VAL-GCQE-005 shares the PRD-006 source linked in VAL-GCQE-001 | VAL-GCQE-005 | Agent QA contract and all-files evidence are checked together. |
+| N/A — REQ-WDLEC-012 / VAL-GCQE-006 shares the PRD-006 source linked in VAL-GCQE-001 | VAL-GCQE-006 | Result-class fixtures reject SKIP/DEFER as PASS. |

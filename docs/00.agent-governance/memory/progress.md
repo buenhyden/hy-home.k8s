@@ -8,6 +8,127 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-26 - GCQE-006 terminal lifecycle proposal
+
+#### Metadata
+
+- **Date**: 2026-07-26
+- **Layer**: qa, docs, meta
+- **Status**: in-progress
+- **Tags**: #github-actions #qa #lifecycle #spec-039
+
+#### Progress
+
+- Prepared the exact eight-file terminal proposal for Spec 039: the Spec,
+  reciprocal Plan and Task, and their three indexes move from `active` to
+  `done`; the PRD-006 program-lineage entry for Spec 039 moves from `active`
+  to `done`; and this shared progress ledger records the bounded handoff.
+- Preserved every GCQE-005 implementation, failed-lane, remediation, review,
+  rollback, and `DEFER` boundary. Spec 040 remains `active`.
+- Marked Plan steps complete only where commits and recorded evidence already
+  exist. GCQE-006 Step 2 passed its staged lifecycle and strict document gates,
+  Step 3 passed fresh whole-tranche requirements and quality review, and Step
+  4 passed the terminal repository quality and all-files gates. Steps 5 and 6
+  remain unchecked because the closure commit, explicit-ref lifecycle, and
+  clean-tree postflight have not occurred.
+- Refreshed the proposal after three test-only compatibility commits. The
+  staged advanced state now passes both current/advanced index-bound tests and
+  reports Spec 039 as terminal while Spec 040 remains the active frontier.
+
+#### Memory
+
+- A terminal lifecycle proposal may make the authored Spec/Plan/Task state
+  `done` before the proposal commit exists only when the Task explicitly
+  separates proposal preparation from final review, commit identity, and
+  post-commit evidence. Never predict the content-addressed closure SHA.
+- A historical hosted FAIL remains scoped to its exact SHA. Repository-static
+  proposal validation does not promote the current hosted, provider, or live
+  lanes from `DEFER`.
+
+#### Evidence
+
+- Proposal base HEAD:
+  `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a`.
+- Test-only final-tranche lifecycle-fixture compatibility commit `096c5c4`
+  passed all 668 self-test cases. Independent reviewer
+  `/root/gcqe006_selftest_rapid_review` returned `REQUIREMENTS COMPLIANT` and
+  `QUALITY APPROVED` for that test-only change. Those dispositions are not
+  whole-tranche terminal review.
+- Active-corpus frontier commit
+  `b5c3eea128b8b3be7c858f70803f83994be1fc77` received `REQUIREMENTS
+  COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
+  APPROVED` from `/root/gcqe006_frontier_quality_review`. It admits only the
+  exact Spec 039-done / Spec 040-active advanced frontier.
+- Index-bound current/advanced test commit
+  `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` received fresh `REQUIREMENTS
+  COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
+  APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. All three commit
+  review pairs are scoped compatibility evidence, not whole-tranche terminal
+  approval.
+- The exact staged proposal passed the active-corpus residue class `46/46`,
+  full module `84/84`, self-test `22`, and production result
+  `active_controls=0/0 terminal_controls=4/2 terminal_specs=2 guards=13/29
+  findings=0`. The repository aggregate ended with `[PASS] repository quality
+  gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
+  self-test `119`, registry strict `448` paths with zero uncovered/ambiguous,
+  Markdown strict with zero violations, strict links/owners, and cached and
+  unstaged diff checks also passed.
+- The terminal commit gate passed `bash scripts/validate-repo-quality-gates.sh
+  .` through its final marker and `pre-commit run --all-files` with every
+  applicable hook green; Dockerfile lint was a no-file `SKIP`. No formatter
+  mutation occurred, exactly eight paths remained staged with no unstaged
+  changes, and both diff checks passed. The closure SHA, explicit-ref
+  activation-to-closure run, and clean-tree postflight remain pending.
+- Activation identity retained for the terminal review range:
+  `2ddfe4b7697e998b41d3125be94cdc4cee295388`.
+- The protected settled migration snapshot pre-proposal SHA-256 is
+  `4c68a3d7c944a36ef7d01e0aee80de8cff8caeef43fa7c1c7544c06c905bce96`.
+  Its post-proposal digest is recorded in ignored review evidence; the tracked
+  snapshot is not part of this proposal.
+- First-pass terminal requirements reviewer
+  `/root/gcqe006_terminal_requirements_review` returned `NOT COMPLIANT`, and
+  rapid quality reviewer `/root/gcqe006_terminal_quality_rapid` returned
+  `CHANGES REQUESTED`, because the newest-first rollback chain omitted reviewed
+  identities. Original quality reviewer
+  `/root/gcqe006_terminal_quality_review` returned `QUALITY NOT APPROVED`
+  because the old active-corpus frontier failed the aggregate.
+- After the frontier remediation, the staged full residue class exposed three
+  old-state production assertions. The first test-compat review then raised an
+  index-OID P1. Commit `39e6150` binds both current and advanced assertions to
+  exact index object identities and remediates all four test findings.
+- Final whole-tranche reviewer `/root/gcqe006_final_requirements` returned
+  `REQUIREMENTS NOT COMPLIANT`, and reviewer
+  `/root/gcqe006_final_quality` returned `QUALITY NOT APPROVED`, solely because
+  Plan Task 6 Step 6 used invalid `--base-ref` / `--proposed-ref` flags and
+  passed `git-sha1:` evidence-label values to explicit-ref mode. Step 6 now
+  uses `--from-ref` / `--to-ref`, the raw activation OID, and an executor
+  placeholder that must be replaced by the observed raw 40-hex closure OID.
+  That sole invalid explicit-ref finding is closed.
+- Fresh whole-tranche reviewer `/root/gcqe006_final_requirements` returned
+  `REQUIREMENTS COMPLIANT`, and reviewer `/root/gcqe006_final_quality`
+  returned `QUALITY APPROVED`, with no findings against corrected staged patch
+  digest
+  `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
+  GCQE-006 Step 3 is complete.
+- The terminal commit gate is observed complete. The closure commit,
+  explicit-ref lifecycle, clean-tree aggregate/all-files postflight, and a
+  post-change hosted run remain pending or `DEFER` as applicable.
+
+#### Handoff
+
+- Immediate next owner: the executor for the Step 5 closure commit. The owning
+  agent must commit without predicting its SHA, then run the Step 6
+  activation-to-closure explicit-ref and clean-tree postflight.
+- After the closure commit and postflight are directly observed, the next
+  program owner is Spec 040 planning. This proposal does not activate or
+  implement Spec 040.
+- Rollback before commit: unstage and reverse only these eight proposal paths.
+  After commit, revert the eventual closure commit first, then `39e6150`,
+  `b5c3eea`, `096c5c4`, `aaee364`, `7b536d1`, `b329016`, `8621e88`,
+  `bca57ae`, `b2bf4a8`, `d0d788d`, `4aaaa4b`, `50d04e4`, `9bb74ce`, and
+  activation `2ddfe4b` last. This is the complete exact newest-first chain;
+  rerun the matching focused and aggregate gates after each logical revert.
+
 ### 2026-07-26 - GCQE-005 closed-lane Gitleaks remediation
 
 #### Metadata

@@ -1,7 +1,7 @@
 ---
 title: 'GitHub CI and QA Evidence Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-26
 ---
@@ -45,6 +45,29 @@ GitHub Actions result remains run `29982910320`, an observed FAIL for commit
 current local branch. This Plan authorizes repository-local implementation
 only. A push, workflow dispatch, branch-protection mutation, or post-change
 hosted result requires separate approval.
+
+GCQE-000 through GCQE-005 are complete from observed commits, focused and
+repository-static gates, and their recorded reviews. GCQE-006 now prepares the
+exact eight-file terminal lifecycle proposal at base HEAD
+`39e6150a6f7a79b710d0e2cd7bc2dee8349f871a`. Test-only commits `096c5c4`,
+`b5c3eea`, and `39e6150` respectively close final-tranche lifecycle fixtures,
+advance the exact active-corpus terminal frontier, and bind current/advanced
+test assertions to index object identities. Their scoped reviews returned
+`REQUIREMENTS COMPLIANT` / `QUALITY APPROVED`; they do not approve the
+whole-tranche terminal proposal. The proposal passes the 46-test residue
+class, 84-test module, 22-case self-test, exact advanced production frontier,
+repository aggregate, 668-case lifecycle self-test, staged lifecycle, and
+strict document gates. Earlier terminal review attempts found rollback
+omissions and the old-frontier aggregate failure; later staged testing found
+three old-state assertions and a first test-compat index-OID P1. Those findings
+are remediated. The sole later invalid explicit-ref finding is also closed;
+fresh whole-tranche reviewers `/root/gcqe006_final_requirements` and
+`/root/gcqe006_final_quality` returned `REQUIREMENTS COMPLIANT` and `QUALITY
+APPROVED`, with no findings against corrected patch digest
+`58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
+The terminal commit gate is observed complete. The closure commit,
+explicit-ref lifecycle, and clean-tree postflight remain separate pending
+steps. No closure SHA or post-change hosted result is predicted or claimed.
 
 ### Global Constraints
 
@@ -334,7 +357,7 @@ def _create_non_regular_fixture(
     return "directory-fallback"
 ```
 
-- [ ] **Step 1: Add focused tests before the helper exists.** Import the
+- [x] **Step 1: Add focused tests before the helper exists.** Import the
   hyphenated script with `importlib.util` and add these exact behaviors:
 
   ```python
@@ -361,7 +384,7 @@ def _create_non_regular_fixture(
   Also cover the supported injected creator, explicit `None` fallback, and
   `_self_test_boundaries()` completion.
 
-- [ ] **Step 2: Run the focused RED.**
+- [x] **Step 2: Run the focused RED.**
 
   ```bash
   python3 -m unittest tests/test_validate_gitops_change_set.py
@@ -369,7 +392,7 @@ def _create_non_regular_fixture(
 
   Require failure because `_create_non_regular_fixture` does not yet exist.
 
-- [ ] **Step 3: Implement the helper and replace the unconditional call.**
+- [x] **Step 3: Implement the helper and replace the unconditional call.**
 
   ```python
   fixture_kind = _create_non_regular_fixture(non_regular / "pipe.yaml")
@@ -380,7 +403,7 @@ def _create_non_regular_fixture(
   )
   ```
 
-- [ ] **Step 4: Run focused GREEN and both production modes.**
+- [x] **Step 4: Run focused GREEN and both production modes.**
 
   ```bash
   python3 -m unittest tests/test_validate_gitops_change_set.py
@@ -388,7 +411,7 @@ def _create_non_regular_fixture(
   python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD
   ```
 
-- [ ] **Step 5: Update command/test inventories and run the package gate.**
+- [x] **Step 5: Update command/test inventories and run the package gate.**
 
   ```bash
   python3 scripts/validate-affected-surfaces.py --root .
@@ -402,7 +425,7 @@ def _create_non_regular_fixture(
   The all-files command is intentionally unqualified. Require no FIFO error and
   inspect any formatter mutation before staging.
 
-- [ ] **Step 6: Commit the portable boundary.**
+- [x] **Step 6: Commit the portable boundary.**
 
   ```bash
   git commit -m "fix(qa): make GitOps boundary fixture portable"
@@ -476,7 +499,7 @@ def canonical_package_name(value: str) -> str:
     return re.sub(r"[-_.]+", "-", value).lower()
 ```
 
-- [ ] **Step 1: Create the focused test module before the validator.** Build a
+- [x] **Step 1: Create the focused test module before the validator.** Build a
   temporary minimal repository with the exact requirements, inventory YAML
   fence, and three validation jobs. Add positive and one-mutation cases for
   every rule ID, plus a real-root pass test.
@@ -502,7 +525,7 @@ def canonical_package_name(value: str) -> str:
       self.assert_rule(root, "CI-PYTHON-PIN")
   ```
 
-- [ ] **Step 2: Run the focused RED.**
+- [x] **Step 2: Run the focused RED.**
 
   ```bash
   python3 -m unittest tests/test_validate_ci_python_contract.py
@@ -510,20 +533,20 @@ def canonical_package_name(value: str) -> str:
 
   Require import/file failure because the validator does not yet exist.
 
-- [ ] **Step 3: Implement the fail-closed validator.** Require regular
+- [x] **Step 3: Implement the fail-closed validator.** Require regular
   non-symlink inputs, exact three-line requirements, exact inventory mirror,
   exact Python version in all validation jobs, exactly one shared install step
   per job, no inline package names, no `pre-commit/action`, full pre-commit
   checkout history, and exactly one explicit all-files/show-diff command.
 
-- [ ] **Step 4: Run validator unit GREEN and self-test.**
+- [x] **Step 4: Run validator unit GREEN and self-test.**
 
   ```bash
   python3 -m unittest tests/test_validate_ci_python_contract.py
   python3 scripts/validate-ci-python-contract.py --self-test
   ```
 
-- [ ] **Step 5: Change the CI workflow and requirements owner.** Set every
+- [x] **Step 5: Change the CI workflow and requirements owner.** Set every
   `actions/setup-python` step to:
 
   ```yaml
@@ -547,12 +570,12 @@ def canonical_package_name(value: str) -> str:
   command. Keep job IDs, `needs`, selector expressions, timeouts, permissions,
   and `ci-summary` unchanged.
 
-- [ ] **Step 6: Mirror the exact contract in the technology inventory.** Remove
+- [x] **Step 6: Mirror the exact contract in the technology inventory.** Remove
   the `pre-commit/action` Action row, add `ci_python` and
   `ci_python_dependencies`, and refresh the checked date/source note to
   2026-07-26 without changing unrelated versions.
 
-- [ ] **Step 7: Add the full-document selector regression.** Add
+- [x] **Step 7: Add the full-document selector regression.** Add
   `contract-bulk-document-escalation` to `selectionCases` with:
 
   ```json
@@ -583,7 +606,7 @@ def canonical_package_name(value: str) -> str:
   validators, two CI jobs, protected level, and empty unmatched-path set shown
   in the expected object.
 
-- [ ] **Step 8: Integrate self-test before production in the aggregate.**
+- [x] **Step 8: Integrate self-test before production in the aggregate.**
 
   ```bash
   python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --self-test
@@ -594,12 +617,12 @@ def canonical_package_name(value: str) -> str:
   stale by explicit setup, the new fixture count, and removal of
   `pre-commit/action`.
 
-- [ ] **Step 9: Update current GitHub and command inventories.** Replace
+- [x] **Step 9: Update current GitHub and command inventories.** Replace
   `.github/ABOUT.md`'s deferred Spec 039 statement with the implemented
   full-history, pinned-dependency, explicit all-files path. Document the new
   validator and tests without duplicating package-version authority.
 
-- [ ] **Step 10: Run focused and aggregate GREEN.**
+- [x] **Step 10: Run focused and aggregate GREEN.**
 
   ```bash
   python3 -m unittest tests/test_validate_ci_python_contract.py
@@ -615,7 +638,7 @@ def canonical_package_name(value: str) -> str:
   git diff --cached --check
   ```
 
-- [ ] **Step 11: Commit the exact CI validation environment.**
+- [x] **Step 11: Commit the exact CI validation environment.**
 
   ```bash
   git commit -m "ci(qa): pin explicit pre-commit validation environment"
@@ -695,7 +718,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
     return errors
 ```
 
-- [ ] **Step 1: Add the four fixture cases before implementation.** Extend the
+- [x] **Step 1: Add the four fixture cases before implementation.** Extend the
   JSON fixture only, then run:
 
   ```bash
@@ -704,12 +727,12 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 
   Require the exact fixture-shape RED.
 
-- [ ] **Step 2: Add the expected cases, fixture writer, and retention
+- [x] **Step 2: Add the expected cases, fixture writer, and retention
   validator.** Compose `_validate_artifact_retention` with the existing
   permission and `uses` validators. Update the self-test fixture equality and
   message so all four cases are mandatory.
 
-- [ ] **Step 3: Run self-test GREEN while production still reports missing
+- [x] **Step 3: Run self-test GREEN while production still reports missing
   retention.**
 
   ```bash
@@ -720,7 +743,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   Require self-test PASS and repository FAIL naming only the changelog upload
   step.
 
-- [ ] **Step 4: Set the workflow retention.**
+- [x] **Step 4: Set the workflow retention.**
 
   ```yaml
   with:
@@ -730,7 +753,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
     retention-days: 7
   ```
 
-- [ ] **Step 5: Update GitHub/script/test descriptions and run GREEN.**
+- [x] **Step 5: Update GitHub/script/test descriptions and run GREEN.**
 
   ```bash
   python3 scripts/validate-github-actions-security.py --self-test
@@ -742,7 +765,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   git diff --cached --check
   ```
 
-- [ ] **Step 6: Commit the retention contract.**
+- [x] **Step 6: Commit the retention contract.**
 
   ```bash
   git commit -m "ci(evidence): enforce seven-day changelog retention"
@@ -774,7 +797,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 - The runner continues to emit all four states. The post-validate result helper
   continues to accept exactly one PASS and reject every competing state.
 
-- [ ] **Step 1: Extend focused result tests.** Parse all four states:
+- [x] **Step 1: Extend focused result tests.** Parse all four states:
 
   ```python
   r"^\[(PASS|SKIP|FAIL|DEFER)\] ([^ ]+) "
@@ -785,7 +808,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   `pass-plus-defer`, and `pass-plus-fail` cases to
   `test_requires_one_exact_pass_and_no_competing_status`.
 
-- [ ] **Step 2: Run focused result tests.**
+- [x] **Step 2: Run focused result tests.**
 
   ```bash
   python3 -m unittest \
@@ -797,7 +820,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   Existing behavior may already pass; record that as regression evidence, not
   as a newly implemented result-state claim.
 
-- [ ] **Step 3: Add governance assertions before prose.** Extend the aggregate
+- [x] **Step 3: Add governance assertions before prose.** Extend the aggregate
   to require these exact consumer invariants:
 
   - `quality-standards.md` contains
@@ -812,7 +835,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   Run `bash scripts/validate-repo-quality-gates.sh .` and require RED naming
   the missing phrases.
 
-- [ ] **Step 4: Implement the canonical completion sequence.** In
+- [x] **Step 4: Implement the canonical completion sequence.** In
   `quality-standards.md`, require:
 
   1. focused tests while implementing;
@@ -824,13 +847,13 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   7. affected/staged/all-files rerun after any mutation; and
   8. final diff checks and lane-by-lane handoff.
 
-- [ ] **Step 5: Update each consumer in its own role.** Keep README-style
+- [x] **Step 5: Update each consumer in its own role.** Keep README-style
   routing concise, replace the PR template's vague “Relevant pre-commit hooks”
   line, remove `.github/ABOUT.md`'s stale future Spec 039 claim, and make the
   operations guide reproduce the exact local commands without redefining the
   result vocabulary.
 
-- [ ] **Step 6: Run focused and aggregate GREEN.**
+- [x] **Step 6: Run focused and aggregate GREEN.**
 
   ```bash
   python3 -m unittest \
@@ -846,7 +869,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   git diff --cached --check
   ```
 
-- [ ] **Step 7: Commit the completion evidence contract.**
+- [x] **Step 7: Commit the completion evidence contract.**
 
   ```bash
   git commit -m "docs(qa): enforce all-files completion evidence"
@@ -860,7 +883,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 - Modify: `docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Run focused test suites.**
+- [x] **Step 1: Run focused test suites.**
 
   ```bash
   python3 -m unittest tests/test_validate_gitops_change_set.py
@@ -875,7 +898,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   python3 scripts/validate-affected-surfaces.py --root .
   ```
 
-- [ ] **Step 2: Run direct CI/GitOps production checks.**
+- [x] **Step 2: Run direct CI/GitOps production checks.**
 
   ```bash
   python3 scripts/validate-ci-python-contract.py --self-test
@@ -887,7 +910,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   ```
 
-- [ ] **Step 3: Run affected, staged, aggregate, and unqualified all-files
+- [x] **Step 3: Run affected, staged, aggregate, and unqualified all-files
   lanes.** Use NUL-delimited changed paths for the affected runner, stage only
   the current logical evidence update, and then run:
 
@@ -904,23 +927,23 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   Require no FIFO error, no skipped required hook, no unreviewed formatter
   mutation, and no result-state substitution.
 
-- [ ] **Step 4: Dispatch an independent requirements reviewer.** The reviewer
+- [x] **Step 4: Dispatch an independent requirements reviewer.** The reviewer
   checks every VAL-GCQE criterion, Plan scope, exact pins, full-history
   behavior, selector escalation, result vocabulary, Task evidence, and remote
   DEFER boundary. A non-compliant verdict blocks closure.
 
-- [ ] **Step 5: Dispatch an independent quality/security reviewer.** The
+- [x] **Step 5: Dispatch an independent quality/security reviewer.** The
   reviewer checks fail-closed parsing, symlink/regular-file boundaries,
   exception handling, workflow permissions, Action identity, artifact
   retention, shell injection, dependency ownership, tests, and rollback. Any
   Critical or Important finding blocks closure.
 
-- [ ] **Step 6: Fix findings test-first and obtain fresh re-review.** Commit
+- [x] **Step 6: Fix findings test-first and obtain fresh re-review.** Commit
   each bounded remediation as its own logical unit with a Conventional Commit
   message naming the concrete reviewer rule or affected contract. Do not create
   a remediation commit when there is no finding.
 
-- [ ] **Step 7: Record observed evidence only.** Update the Task and progress
+- [x] **Step 7: Record observed evidence only.** Update the Task and progress
   ledger with exact commands, results, reviewer identities/dispositions,
   limitations, rollback commits, residual risk, and next owner. Keep hosted CI
   post-change evidence DEFER.
@@ -938,13 +961,13 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Prepare the exact terminal lifecycle proposal.** Change Spec,
+- [x] **Step 1: Prepare the exact terminal lifecycle proposal.** Change Spec,
   Plan, Task, three indexes, and PRD-006 program-lineage Spec 039 state from
   `active` to `done`; update the reciprocal Task and progress with observed
   evidence while leaving the settled migration snapshot byte-identical. Keep
   Spec 040 `active`.
 
-- [ ] **Step 2: Run staged lifecycle and strict document gates.**
+- [x] **Step 2: Run staged lifecycle and strict document gates.**
 
   ```bash
   python3 scripts/validate-document-lifecycle.py --root . --mode staged
@@ -955,12 +978,14 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   git diff --cached --check
   ```
 
-- [ ] **Step 3: Obtain final whole-tranche requirements and quality approval.**
-  Review the exact staged terminal proposal. Incorporate any finding before
-  closure and rerun both reviews until requirements are compliant and quality
-  is approved.
+- [x] **Step 3: Obtain final whole-tranche requirements and quality approval.**
+  Reviewers `/root/gcqe006_final_requirements` and
+  `/root/gcqe006_final_quality` returned `REQUIREMENTS COMPLIANT` and `QUALITY
+  APPROVED`, with no findings against corrected staged patch digest
+  `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`
+  after the sole invalid explicit-ref finding was closed.
 
-- [ ] **Step 4: Run the terminal commit gate.**
+- [x] **Step 4: Run the terminal commit gate.**
 
   ```bash
   bash scripts/validate-repo-quality-gates.sh .
@@ -981,10 +1006,22 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   Record the resulting SHA only after the commit. Do not claim a hosted rerun.
 
 - [ ] **Step 6: Run clean-tree postflight from the activation commit to the
-  closure commit.** Record both exact commit identities first, then invoke
-  `validate-document-lifecycle.py --mode explicit-ref` with `--base-ref` set to
-  the literal `git-sha1:` activation identity and `--proposed-ref` set to the
-  literal `git-sha1:` closure identity. Run the remaining clean-tree commands:
+  closure commit.** Record both exact commit identities first. Before
+  execution, replace `<observed-40-hex-closure-commit-oid>` below with the
+  literal raw 40-hex OID observed from the closure commit, then invoke
+  `validate-document-lifecycle.py --mode explicit-ref` with `--from-ref` and
+  `--to-ref`. The `git-sha1:<oid>` form is an evidence-label format only and
+  must not be passed to this CLI.
+
+  ```bash
+  python3 scripts/validate-document-lifecycle.py \
+    --root . \
+    --mode explicit-ref \
+    --from-ref 2ddfe4b7697e998b41d3125be94cdc4cee295388 \
+    --to-ref <observed-40-hex-closure-commit-oid>
+  ```
+
+  Run the remaining clean-tree commands:
 
   ```bash
   python3 scripts/validate-ci-python-contract.py --root .

@@ -1,7 +1,7 @@
 ---
 title: 'Task: GitHub CI and QA Evidence'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-26
 ---
@@ -11,9 +11,9 @@ updated: 2026-07-26
 ## Overview
 
 This Task is the execution, verification, review, rollback, and handoff evidence
-owner for GCQE-000 through GCQE-006. It activates
+owner for GCQE-000 through GCQE-006. It records
 [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md) from approved
-design and rollback parent
+design, activation, and rollback parent
 `cd726e05fdb9d33727314d316aadb5ebbec0942d`.
 
 The Plan-only staged lifecycle probe is directly observed. It exited `1` with
@@ -28,6 +28,37 @@ observed FAIL for commit
 dependencies in the pre-commit job and a transitive Node.js warning from
 `pre-commit/action`. A post-change hosted result remains DEFER until a
 separately approved push or workflow dispatch is directly observed.
+
+GCQE-001 through GCQE-005 are complete through reviewed implementation and
+integration evidence at `aaee364`. Test-only final-tranche lifecycle-fixture
+commit `096c5c48e364663c616a1984089c11a1fe5b3b61` received `REQUIREMENTS
+COMPLIANT` / `QUALITY APPROVED` from
+`/root/gcqe006_selftest_rapid_review`. Active-corpus frontier commit
+`b5c3eea128b8b3be7c858f70803f83994be1fc77` received `REQUIREMENTS
+COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
+APPROVED` from `/root/gcqe006_frontier_quality_review`. Test-only
+index-bound current/advanced assertion commit
+`39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` received fresh `REQUIREMENTS
+COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
+APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. These approvals are
+scoped to their compatibility changes, not the whole terminal tranche.
+
+GCQE-006 now prepares the exact eight-file terminal proposal at base HEAD
+`39e6150a6f7a79b710d0e2cd7bc2dee8349f871a`: Spec, Plan, Task, their three
+indexes, the PRD-006 program-lineage state for Spec 039, and shared progress
+move to terminal evidence while Spec 040 remains `active`. The 46-test residue
+class, 84-test module, 22-case residue self-test, exact advanced production
+frontier, repository aggregate, 668-case lifecycle self-test, and Step 2
+staged/strict gates pass; the settled migration snapshot remains
+byte-identical. After the sole invalid explicit-ref finding was closed,
+`/root/gcqe006_final_requirements` returned `REQUIREMENTS COMPLIANT` and
+`/root/gcqe006_final_quality` returned `QUALITY APPROVED`, with no findings
+against corrected patch digest
+`58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
+The terminal repository quality gate and unqualified all-files pre-commit both
+passed without formatter mutation; both diff checks passed with exactly eight
+staged paths and no unstaged changes. A closure commit identity, explicit-ref
+lifecycle, and clean-tree postflight are pending and unclaimed.
 
 ## Inputs
 
@@ -54,7 +85,7 @@ separately approved push or workflow dispatch is directly observed.
 | GCQE-003 | VAL-GCQE-003 | Enforce integer seven-day retention on every upload-artifact step and set the changelog preview producer accordingly. | platform | Done | Exact integer seven-day retention, hostile container-shape handling, and case-insensitive upload-artifact matching are implemented in `bca57ae`; two review corrections received final fresh approval. | Four external fixture cases plus internal hostile regressions, Actions self-test/production, aggregate, staged and all-files PASS; rollback unit `bca57ae`. |
 | GCQE-004 | VAL-GCQE-005, VAL-GCQE-006 | Prove four-state runner semantics and require all-files pre-commit, formatter review, rerun, and lane-by-lane handoff across canonical governance and consumers. | platform | Done | Four-state semantics and the canonical eight-step completion sequence are implemented in `8621e88`; the coupled guide-index correction was included and independent review approved. | Final 16-test runner/result/provider GREEN, strict documents, aggregate, staged and unqualified all-files PASS; rollback unit `8621e88`. |
 | GCQE-005 | VAL-GCQE-001 through VAL-GCQE-006 | Run focused, affected, staged, production, strict, aggregate, and unqualified all-files lanes; obtain independent requirements and quality/security reviews; remediate findings. | platform | Done | The first cumulative affected lane exposed the closed-environment classifier failure; `b329016` added securely discovered Gitleaks and hosted static provisioning. Reviewer `/root/gcqe_005_remediation_reviewer` requested changes for effective execute classes; follow-up `7b536d1` corrected them and fresh re-review approved. Whole-tranche requirements and quality/security reviews then approved the exact staged proposal. | Initial affected result: `9` PASS/`1` FAIL at 26 paths; the later `MM` index-boundary FAIL is preserved. Final focused/direct, 30-path affected, staged, aggregate, unqualified all-files, formatter, and diff gates passed. Reviewer `/root/gcqe_005_requirements_review` returned REQUIREMENTS COMPLIANT; reviewer `/root/gcqe_005_quality_security_review` returned QUALITY APPROVED. Both reported no findings against package `f4d50ec…`; hosted/provider/live remain DEFER. |
-| GCQE-006 | VAL-GCQE-001 through VAL-GCQE-006 | Close Spec/Plan/Task and program lineage atomically, run explicit-ref lifecycle and clean-tree postflight, and retain hosted CI as historical FAIL/current DEFER. | platform | Queued | Not executed. | Terminal lifecycle package, closure commit, explicit-ref and clean-tree repository-static evidence will be recorded here. |
+| GCQE-006 | VAL-GCQE-001 through VAL-GCQE-006 | Close Spec/Plan/Task and program lineage atomically, run explicit-ref lifecycle and clean-tree postflight, and retain hosted CI as historical FAIL/current DEFER. | platform | Done | Refreshed exact eight-file terminal lifecycle proposal prepared; Steps 2 through 4 passed. | At base HEAD `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a`, compatibility commits `096c5c4`, `b5c3eea`, and `39e6150` have scoped approved reviews. Advanced verification passes residue class `46`, module `84`, self-test `22`, production `active=0/0`, `terminal=4/2`, terminal Specs `2`, guards `13/29`, aggregate final marker, lifecycle `668`, staged lifecycle, registry self-test `119`/strict `448`, Markdown strict, strict links/owners, and diff checks. Spec/Plan/Task and three indexes are `done`; program-lineage Spec 039 is `done`, Spec 040 remains `active`, and the settled snapshot is unchanged. The sole invalid explicit-ref finding is closed; `/root/gcqe006_final_requirements` returned `REQUIREMENTS COMPLIANT` and `/root/gcqe006_final_quality` returned `QUALITY APPROVED` with no findings against digest `58640a0d…`. The terminal repository quality gate and unqualified all-files pre-commit passed without formatter mutation at an exact-eight staged/no-unstaged boundary. Steps 5-6, closure SHA, explicit-ref lifecycle, and clean-tree postflight remain pending and unclaimed. |
 
 ## Approval and Safety Boundaries
 
@@ -88,11 +119,12 @@ separately approved push or workflow dispatch is directly observed.
   values. Diagnostics and evidence contain only stable rule IDs,
   repository-relative paths, bounded metadata, commit identities, and public
   run identifiers.
-- **Rollback Plan**: Revert the newest reviewed logical commit first: terminal
-  closure, guidance/result contract, artifact retention, CI dependency and
-  explicit pre-commit contract, FIFO portability, then activation last. Rerun
-  focused and aggregate checks after every revert. Do not rewrite shared
-  history or use destructive reset/clean operations.
+- **Rollback Plan**: Revert the eventual terminal closure commit first, then
+  `39e6150`, `b5c3eea`, `096c5c4`, `aaee364`, `7b536d1`, `b329016`,
+  `8621e88`, `bca57ae`, `b2bf4a8`, `d0d788d`, `4aaaa4b`, `50d04e4`,
+  `9bb74ce`, and activation `2ddfe4b` last. This is the complete exact
+  newest-first chain. Rerun focused and aggregate checks after every revert.
+  Do not rewrite shared history or use destructive reset/clean operations.
 - **Evidence Location**: This Task, the reciprocal Plan, reviewed logical
   commits, exact test/fixture files, repository-static command output,
   the byte-verified settled migration snapshot, and shared progress ledger.
@@ -130,10 +162,53 @@ unqualified all-files lanes with no formatter mutation. Requirements reviewer
 finding; quality/security reviewer `/root/gcqe_005_quality_security_review`
 returned QUALITY APPROVED with no finding. Both matched review package SHA-256
 `f4d50ec45e7d977b22c55cd18f6d8e56bc6cf7436713980d1b1f09f38632cb38`.
-GCQE-005 is Done. GCQE-006 is the queued next owner; terminal closure and
-clean-tree postflight have not been observed. Hosted run `29982910320` remains
-historical FAIL for its exact SHA, while the current branch hosted, provider,
-and live lanes remain DEFER.
+GCQE-005 is Done. GCQE-006 has prepared the refreshed exact eight-file terminal
+proposal at base HEAD `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a`.
+The review history remains explicit:
+
+- First-pass requirements reviewer
+  `/root/gcqe006_terminal_requirements_review` returned `NOT COMPLIANT`, and
+  rapid quality reviewer `/root/gcqe006_terminal_quality_rapid` returned
+  `CHANGES REQUESTED`, because the rollback chain omitted reviewed commits.
+- Original quality reviewer `/root/gcqe006_terminal_quality_review` returned
+  `QUALITY NOT APPROVED` because the old active-corpus frontier made the
+  aggregate fail against the staged advanced proposal.
+- Commit `b5c3eea` remediated that frontier and received scoped frontier
+  requirements/quality approval. Its first staged full-class run then exposed
+  three old-state production assertions. The first test-compat review also
+  raised a P1 because current/advanced expectations were not bound to exact
+  index object identities.
+- Commit `39e6150` remediated the three assertions and index-OID P1. Fresh
+  test-compat reviewers returned `REQUIREMENTS COMPLIANT` and `QUALITY
+  APPROVED`; these are scoped compatibility verdicts, not terminal approval.
+- Final whole-tranche reviewer `/root/gcqe006_final_requirements` returned
+  `REQUIREMENTS NOT COMPLIANT`, and reviewer
+  `/root/gcqe006_final_quality` returned `QUALITY NOT APPROVED`, solely because
+  Plan Task 6 Step 6 used invalid explicit-ref flag names and passed
+  `git-sha1:` evidence labels where the CLI requires raw refs or OIDs. Step 6
+  now uses `--from-ref` and `--to-ref`, fixes the activation side to the exact
+  raw 40-hex OID, and requires replacement of the closure placeholder with its
+  observed raw 40-hex OID before execution.
+- Fresh whole-tranche reviewer `/root/gcqe006_final_requirements` returned
+  `REQUIREMENTS COMPLIANT`, and reviewer `/root/gcqe006_final_quality`
+  returned `QUALITY APPROVED`, with no findings against corrected staged patch
+  digest
+  `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
+  The sole invalid explicit-ref finding is closed and Step 3 is complete.
+
+The refreshed proposal passes the residue class `46/46`, full module `84/84`,
+residue self-test `22`, exact advanced production counts, repository aggregate
+with `[PASS] repository quality gates passed`, lifecycle self-test `668`,
+staged lifecycle, registry self-test/strict, strict Markdown, strict
+links/owners, and both diff checks. Fresh whole-tranche terminal reviews are
+approved. The terminal repository quality gate and unqualified all-files
+pre-commit passed with every applicable hook green, Dockerfile lint skipped
+for no files, no formatter mutation, exactly eight staged paths, no unstaged
+changes, and both diff checks green. Steps 5 and 6, the closure commit
+identity, explicit-ref lifecycle, and clean-tree postflight have not been
+observed. Hosted run
+`29982910320` remains historical FAIL for its exact SHA, while the current
+branch hosted, provider, and live lanes remain DEFER.
 
 ## Traceability
 
@@ -154,4 +229,4 @@ and live lanes remain DEFER.
 | N/A — GCQE-003 shares the Plan linked in GCQE-000 | Done in `bca57ae`. | Exact seven-day retention, hostile-shape/case regressions, aggregate/all-files PASS, and final fresh review approval observed. |
 | N/A — GCQE-004 shares the Plan linked in GCQE-000 | Done in `8621e88`. | Four-state and eight-step completion evidence, strict/aggregate/all-files PASS, and independent approval observed. |
 | N/A — GCQE-005 shares the Plan linked in GCQE-000 | Done through `7b536d1` plus the reviewed staged evidence proposal. | Initial classifier and index-boundary failures, remediation `b329016`, reviewer CHANGES REQUESTED, follow-up `7b536d1`, fresh remediation APPROVED, final cumulative repository-static PASS, REQUIREMENTS COMPLIANT, and QUALITY APPROVED are observed. |
-| N/A — GCQE-006 shares the Plan linked in GCQE-000 | Not executed. | Terminal lifecycle and clean-tree postflight evidence is pending. |
+| N/A — GCQE-006 shares the Plan linked in GCQE-000 | Done for refreshed proposal preparation and Steps 2-4. | Exact eight-file terminal lifecycle proposal at `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` passes advanced residue `46/84/22`, exact `0/0` active and `4/2` terminal controls, aggregate, lifecycle `668`, staged/strict document gates, terminal repository quality/all-files gates, and diff checks. Rollback, old-frontier, three old-state assertion, index-OID P1, and sole invalid explicit-ref findings are remediated. Reviewers `/root/gcqe006_final_requirements` and `/root/gcqe006_final_quality` returned `REQUIREMENTS COMPLIANT` and `QUALITY APPROVED` with no findings against digest `58640a0d…`. Spec 040 remains active and the settled snapshot is unchanged. Steps 5-6, closure SHA, explicit-ref lifecycle, clean-tree postflight, and current hosted result remain pending and unclaimed. |

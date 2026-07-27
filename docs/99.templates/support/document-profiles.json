@@ -6317,7 +6317,7 @@
           {
             "spec": "039",
             "order": 6,
-            "state": "active",
+            "state": "done",
             "reason": "GitHub CI and QA evidence",
             "decision": "0017"
           },
