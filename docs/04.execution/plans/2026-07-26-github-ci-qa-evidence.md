@@ -3,7 +3,7 @@ title: 'GitHub CI and QA Evidence Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-27
 ---
 
 # GitHub CI and QA Evidence Implementation Plan
@@ -65,9 +65,13 @@ fresh whole-tranche reviewers `/root/gcqe006_final_requirements` and
 `/root/gcqe006_final_quality` returned `REQUIREMENTS COMPLIANT` and `QUALITY
 APPROVED`, with no findings against corrected patch digest
 `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
-The terminal commit gate is observed complete. The closure commit,
-explicit-ref lifecycle, and clean-tree postflight remain separate pending
-steps. No closure SHA or post-change hosted result is predicted or claimed.
+The terminal commit gate is observed complete. Closure commit
+`e1d1e910840337327a557ab4b84e86f8fced11d6` contains the exact eight-file
+lifecycle package, and the activation-to-closure explicit-ref lifecycle plus
+clean-tree postflight passed on 2026-07-27. Hosted run `29982910320` remains
+historical FAIL evidence for its older SHA; current hosted, provider, and live
+evidence remains `DEFER`. This later evidence update does not identify or
+claim its own commit.
 
 ### Global Constraints
 
@@ -997,28 +1001,28 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   git diff --cached --check
   ```
 
-- [ ] **Step 5: Commit the lifecycle closure.**
+- [x] **Step 5: Commit the lifecycle closure.**
 
   ```bash
   git commit -m "docs(sdlc): close GitHub CI and QA evidence tranche"
   ```
 
-  Record the resulting SHA only after the commit. Do not claim a hosted rerun.
+  Observed closure commit:
+  `e1d1e910840337327a557ab4b84e86f8fced11d6`. Its diff contains exactly the
+  eight paths listed for Task 6. No hosted rerun is claimed.
 
-- [ ] **Step 6: Run clean-tree postflight from the activation commit to the
-  closure commit.** Record both exact commit identities first. Before
-  execution, replace `<observed-40-hex-closure-commit-oid>` below with the
-  literal raw 40-hex OID observed from the closure commit, then invoke
-  `validate-document-lifecycle.py --mode explicit-ref` with `--from-ref` and
-  `--to-ref`. The `git-sha1:<oid>` form is an evidence-label format only and
-  must not be passed to this CLI.
+- [x] **Step 6: Run clean-tree postflight from the activation commit to the
+  closure commit.** The executor recorded both exact identities and invoked
+  `validate-document-lifecycle.py --mode explicit-ref` with raw 40-hex OIDs
+  through `--from-ref` and `--to-ref`. The `git-sha1:<oid>` evidence-label
+  form was not passed to the CLI.
 
   ```bash
   python3 scripts/validate-document-lifecycle.py \
     --root . \
     --mode explicit-ref \
     --from-ref 2ddfe4b7697e998b41d3125be94cdc4cee295388 \
-    --to-ref <observed-40-hex-closure-commit-oid>
+    --to-ref e1d1e910840337327a557ab4b84e86f8fced11d6
   ```
 
   Run the remaining clean-tree commands:
@@ -1033,9 +1037,13 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
   git status --short
   ```
 
-  Require the explicit-ref command and every command above to pass with clean
-  status. Record remote hosted CI as DEFER with run
-  `29982910320` retained only as historical FAIL evidence.
+  The explicit-ref lifecycle command passed. CI Python production reported
+  `3` jobs / `3` pins; GitHub Actions security, the GitOps self-test, and the
+  repository aggregate passed. `pre-commit run --all-files` passed every
+  applicable hook, with Dockerfile lint recorded as a no-file `SKIP`.
+  `git status`, diff inspection, and diff-check inspection were clean. Remote
+  hosted CI remains `DEFER`, with run `29982910320` retained only as
+  historical FAIL evidence for its older SHA.
 
 ## Verification Plan
 
@@ -1075,7 +1083,7 @@ retroactively convert an earlier failure or skipped lane into PASS.
 | Guidance is duplicated across consumers | Keep definitions in quality standards and enforce links/action-only wording elsewhere. | GCQE-004 |
 | Formatter mutates files after tests | Inspect status and both diffs, restage intentionally, and rerun affected/staged/all-files checks. | every package |
 | Local PASS is mistaken for hosted PASS | Keep run identity/SHA in Task; hosted post-change lane stays DEFER without separately approved push. | GCQE-005/006 |
-| Terminal files claim their own unknown commit SHA | Record only pre-commit evidence in the closure commit and add the observed SHA to postflight/handoff after commit. | GCQE-006 |
+| Terminal files claim their own unknown commit SHA | Keep only pre-commit evidence in the closure commit; add its observed SHA in a later evidence update, whose own commit remains unidentified and unclaimed. | GCQE-006 |
 | Rollback removes enforcement before consumers | Revert newest consumer/guidance package first, then retention, CI contract, FIFO helper, and activation last; rerun aggregate after each rollback. | platform |
 
 ## Completion Criteria

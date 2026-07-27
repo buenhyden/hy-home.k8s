@@ -3,7 +3,7 @@ title: 'GitHub CI and QA Evidence Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-27
 ---
 
 # GitHub CI and QA Evidence Technical Specification (Spec)
@@ -40,24 +40,41 @@ assertions to exact index object identities; fresh reviewers
 and `QUALITY APPROVED`. These scoped verdicts do not constitute whole-tranche
 terminal approval.
 
-The current GCQE-006 proposal at base HEAD
-`39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` changes exactly this Spec, its
-reciprocal Plan and Task, their three indexes, the PRD-006 program-lineage
-state for Spec 039, and shared progress from `active` to terminal `done`
-evidence. Advanced-state verification passes the 46-test residue class,
-84-test module, 22-case residue self-test, exact `0/0` active controls, `4/2`
-terminal controls, two terminal Specs, `13/29` guards, repository aggregate,
-668-case lifecycle self-test, staged lifecycle, and strict document gates.
-Earlier terminal reviews found rollback omissions, the old-frontier aggregate
-failure, three staged old-state assertions, and an index-OID P1; all are
+GCQE-006 closed on 2026-07-27 in commit
+`e1d1e910840337327a557ab4b84e86f8fced11d6`, with activation commit
+`2ddfe4b7697e998b41d3125be94cdc4cee295388` as the explicit-ref origin. The
+closure commit contains exactly
+`docs/00.agent-governance/memory/progress.md`,
+`docs/03.specs/039-github-ci-qa-evidence/spec.md`,
+`docs/03.specs/README.md`,
+`docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md`,
+`docs/04.execution/plans/README.md`,
+`docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md`,
+`docs/04.execution/tasks/README.md`, and
+`docs/99.templates/support/document-profiles.json`. Those paths atomically
+record the terminal Spec/Plan/Task and index state plus the registry-owned
+PRD-006 program-lineage transition for Spec 039 while Spec 040 remains
+`active`.
+
+Advanced-state verification passed the 46-test residue class, 84-test module,
+22-case residue self-test, exact `0/0` active controls, `4/2` terminal
+controls, two terminal Specs, `13/29` guards, repository aggregate, 668-case
+lifecycle self-test, staged lifecycle, and strict document gates. Earlier
+terminal reviews found rollback omissions, the old-frontier aggregate failure,
+three staged old-state assertions, and an index-OID P1; all remain recorded and
 remediated. After the sole remaining invalid explicit-ref finding was
 corrected, `/root/gcqe006_final_requirements` returned `REQUIREMENTS
 COMPLIANT` and `/root/gcqe006_final_quality` returned `QUALITY APPROVED`, with
 no findings against staged patch digest
 `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
-Spec 040 remains `active`, the settled migration snapshot is byte-identical,
-and no closure SHA, explicit-ref or clean-tree postflight, hosted, provider,
-or live PASS is claimed.
+Postflight then passed explicit-ref lifecycle with the two raw OIDs, the CI
+Python contract at `3` jobs / `3` pins, GitHub Actions security, the GitOps
+self-test, the clean-tree repository aggregate, and all applicable all-files
+hooks; Dockerfile lint was a no-file `SKIP`. Status, diff, and diff-check
+inspection were clean. Hosted run `29982910320` remains historical FAIL
+evidence for its older SHA, and current hosted, provider, and live evidence
+remains `DEFER`. This later evidence update does not identify or claim its own
+commit.
 
 ## Strategic Boundaries & Non-goals
 

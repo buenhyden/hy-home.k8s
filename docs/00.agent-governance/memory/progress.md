@@ -8,29 +8,32 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-07-26 - GCQE-006 terminal lifecycle proposal
+### 2026-07-27 - GCQE-006 terminal lifecycle closure postflight
 
 #### Metadata
 
-- **Date**: 2026-07-26
+- **Date**: 2026-07-27
 - **Layer**: qa, docs, meta
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #github-actions #qa #lifecycle #spec-039
 
 #### Progress
 
-- Prepared the exact eight-file terminal proposal for Spec 039: the Spec,
-  reciprocal Plan and Task, and their three indexes move from `active` to
-  `done`; the PRD-006 program-lineage entry for Spec 039 moves from `active`
-  to `done`; and this shared progress ledger records the bounded handoff.
+- Observed Spec 039 closure commit
+  `e1d1e910840337327a557ab4b84e86f8fced11d6` on 2026-07-27. Its exact eight
+  paths are `docs/00.agent-governance/memory/progress.md`,
+  `docs/03.specs/039-github-ci-qa-evidence/spec.md`,
+  `docs/03.specs/README.md`,
+  `docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md`,
+  `docs/04.execution/plans/README.md`,
+  `docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md`,
+  `docs/04.execution/tasks/README.md`, and
+  `docs/99.templates/support/document-profiles.json`.
 - Preserved every GCQE-005 implementation, failed-lane, remediation, review,
   rollback, and `DEFER` boundary. Spec 040 remains `active`.
-- Marked Plan steps complete only where commits and recorded evidence already
-  exist. GCQE-006 Step 2 passed its staged lifecycle and strict document gates,
-  Step 3 passed fresh whole-tranche requirements and quality review, and Step
-  4 passed the terminal repository quality and all-files gates. Steps 5 and 6
-  remain unchecked because the closure commit, explicit-ref lifecycle, and
-  clean-tree postflight have not occurred.
+- GCQE-006 Steps 2 through 6 are complete. Step 5 produced the exact
+  eight-path closure commit. Step 6 passed activation-to-closure explicit-ref
+  lifecycle with raw OIDs and the clean-tree repository-static postflight.
 - Refreshed the proposal after three test-only compatibility commits. The
   staged advanced state now passes both current/advanced index-bound tests and
   reports Spec 039 as terminal while Spec 040 remains the active frontier.
@@ -41,6 +44,8 @@ inventory stays in `scripts/README.md`.
   `done` before the proposal commit exists only when the Task explicitly
   separates proposal preparation from final review, commit identity, and
   post-commit evidence. Never predict the content-addressed closure SHA.
+- A later evidence update may name an already observed closure commit, but it
+  must not predict or claim its own content-addressed commit identity.
 - A historical hosted FAIL remains scoped to its exact SHA. Repository-static
   proposal validation does not promote the current hosted, provider, or live
   lanes from `DEFER`.
@@ -77,8 +82,14 @@ inventory stays in `scripts/README.md`.
   .` through its final marker and `pre-commit run --all-files` with every
   applicable hook green; Dockerfile lint was a no-file `SKIP`. No formatter
   mutation occurred, exactly eight paths remained staged with no unstaged
-  changes, and both diff checks passed. The closure SHA, explicit-ref
-  activation-to-closure run, and clean-tree postflight remain pending.
+  changes, and both diff checks passed.
+- Closure commit `e1d1e910840337327a557ab4b84e86f8fced11d6` contains exactly
+  the eight paths named above. Explicit-ref lifecycle passed from raw
+  activation OID `2ddfe4b7697e998b41d3125be94cdc4cee295388` to that raw closure
+  OID. CI Python production reported `3` jobs / `3` pins; GitHub Actions
+  security, GitOps self-test, and the clean-tree repository aggregate passed.
+  `pre-commit run --all-files` passed every applicable hook; Dockerfile lint
+  was a no-file `SKIP`. Status, diff, and diff-check inspection were clean.
 - Activation identity retained for the terminal review range:
   `2ddfe4b7697e998b41d3125be94cdc4cee295388`.
 - The protected settled migration snapshot pre-proposal SHA-256 is
@@ -110,20 +121,17 @@ inventory stays in `scripts/README.md`.
   digest
   `58640a0d26c08b4ab5872c0a69be2966610f796b4b1e906a5e3ebae0033758cc`.
   GCQE-006 Step 3 is complete.
-- The terminal commit gate is observed complete. The closure commit,
-  explicit-ref lifecycle, clean-tree aggregate/all-files postflight, and a
-  post-change hosted run remain pending or `DEFER` as applicable.
+- GCQE-006 Steps 5 and 6 are observed complete. Hosted run `29982910320`
+  remains historical FAIL evidence for its older SHA, while current hosted,
+  provider, and live evidence remains `DEFER`. This evidence update does not
+  identify or claim its own commit.
 
 #### Handoff
 
-- Immediate next owner: the executor for the Step 5 closure commit. The owning
-  agent must commit without predicting its SHA, then run the Step 6
-  activation-to-closure explicit-ref and clean-tree postflight.
-- After the closure commit and postflight are directly observed, the next
-  program owner is Spec 040 planning. This proposal does not activate or
+- Next owner: Spec 040 planning. This closure record does not activate or
   implement Spec 040.
-- Rollback before commit: unstage and reverse only these eight proposal paths.
-  After commit, revert the eventual closure commit first, then `39e6150`,
+- Roll back by reverting
+  `e1d1e910840337327a557ab4b84e86f8fced11d6` first, then `39e6150`,
   `b5c3eea`, `096c5c4`, `aaee364`, `7b536d1`, `b329016`, `8621e88`,
   `bca57ae`, `b2bf4a8`, `d0d788d`, `4aaaa4b`, `50d04e4`, `9bb74ce`, and
   activation `2ddfe4b` last. This is the complete exact newest-first chain;
