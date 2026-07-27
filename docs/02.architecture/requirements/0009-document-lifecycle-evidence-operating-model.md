@@ -3,7 +3,7 @@ title: 'Document Lifecycle and Evidence Operating Model Architecture Reference D
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-27
 ---
 
 # Document Lifecycle and Evidence Operating Model Architecture Reference Document (ARD)
@@ -21,8 +21,9 @@ authority and evidence.
 - **Owns**: Program and follow-up lineage, profile-specific lifecycle graphs,
   archive provenance, execution retention, reference currentness, affected
   validation, strict cutover, and rollback interfaces.
-- **Consumes**: PRD-006, ADR-0015, ADR-0016, ADR-0017, ADR-0018, the Current
-  2026-07-11 audit pack, Git source objects, and repository-static validators.
+- **Consumes**: PRD-006, ADR-0015, ADR-0016, ADR-0017, ADR-0018, ADR-0020, the
+  Current 2026-07-11 audit pack, Git source objects, and repository-static
+  validators.
 - **Does not own**: Product runtime state, secret values, remote rulesets,
   provider entitlements, live cluster readiness, or deployment approval.
 - **Non-goals**: A parallel registry, a second archive copy, arbitrary
@@ -75,7 +76,7 @@ Responsibility remains separated:
 
 ## Data Architecture
 
-Registry v6 remains a closed JSON document. It adds explicit original-tranche
+Registry v8 remains a closed JSON document. It adds explicit original-tranche
 and follow-up relations, profile-specific transition definitions, conditional
 archive metadata, and validator escalation facts without creating a second
 hand-maintained projection.
@@ -130,5 +131,5 @@ transient and receives an explicit seven-day retention period.
 | [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Closed-lineage execution working-set boundary | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md) |
 | [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Snapshot and currentness separation | [Spec 038](../../03.specs/038-reference-information-architecture/spec.md) |
 | [REQ-WDLEC-010](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Always-running aggregate and full-corpus escalation | [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md) |
-| [REQ-WDLEC-011](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Independent tranche rollback and closure | [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md) |
+| [REQ-WDLEC-011](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Independent tranche rollback, closure, and terminal decision evidence | [ADR-0020](../decisions/0020-document-lifecycle-program-closure-evidence.md) and [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md) |
 | [REQ-WDLEC-013](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Role-specific operations and helper-document integrity | [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) and [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md) |

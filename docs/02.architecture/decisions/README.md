@@ -51,6 +51,7 @@
 ├── 0017-program-follow-up-lineage-semantics.md
 ├── 0018-full-body-archive-record-and-retention.md
 ├── 0019-provider-native-agent-harness-and-loop-model.md
+├── 0020-document-lifecycle-program-closure-evidence.md
 └── README.md
 ```
 
@@ -89,6 +90,7 @@
 | [`./0017-program-follow-up-lineage-semantics.md`](./0017-program-follow-up-lineage-semantics.md) | Original tranche와 program follow-up 계보 분리 결정 | Accepted | ADR-0016의 seven-tranche 사실을 보존하면서 Spec 033과 이후 follow-up의 별도 관계를 정의한다. |
 | [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Accepted | 이전 metadata-only archive 표면을 단일 immutable `content/archive` envelope/payload로 대체하고, archive-time replacement provenance와 index-only current replacement authority를 분리한다. |
 | [`./0019-provider-native-agent-harness-and-loop-model.md`](./0019-provider-native-agent-harness-and-loop-model.md) | Provider-native agent harness, bounded loop, model/evidence 전이 결정 | Draft | Specs 039·040 종료 후 Specs 041–046을 순차 실행해 four-surface native contract, 12-role/48-adapter roster, provider별 독립 canary record, eval 및 CI/QA cutover를 검증한 뒤 ADR-0013을 대체하도록 제안한다. |
+| [`./0020-document-lifecycle-program-closure-evidence.md`](./0020-document-lifecycle-program-closure-evidence.md) | PRD-006 / ARD-0009 문서 수명주기 프로그램 closure evidence 결정 | Draft | Spec 040 final closure에서 ARD-0009 acceptance가 요구하는 same-diff role-decision evidence를 제공하기 위한 draft decision이다. |
 
 ## Related Documents
 
