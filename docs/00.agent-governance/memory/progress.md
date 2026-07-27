@@ -23,13 +23,22 @@ inventory stays in `scripts/README.md`.
   [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md):
   the Spec backlink, new Plan, new Task, both Stage 04 indexes, and this shared
   handoff entry.
+- Observed the activation as
+  `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`; explicit-ref lifecycle from
+  `11a020d9b299ae91b7af9278c22ed89ffccb5cfc` and the clean-tree aggregate
+  passed.
 - Defined CCPC-000 activation, CCPC-001 strict-only active-reader cutover with
   finite historical-proof preservation, CCPC-002 closure matrix and Current
   audit, CCPC-003 whole-branch QA/reviews, and CCPC-004 atomic
   PRD-006/ARD-0009/program closure and postflight.
-- Kept the document registry and settled migration ledger outside the
-  activation package. The activation remains an uncommitted proposal; no
-  activation commit identity is claimed.
+- Implemented the CCPC-001 strict-only proposal after a 6-test/14-failure RED:
+  all three public document validators now default to strict, accept only
+  strict, and reject the retired compatibility value at the CLI boundary.
+  Current Stage 99 and script/test inventory wording now reflects closed v8
+  and strict-only operation while the finite Spec 033 retirement guard remains
+  intact.
+- Kept the document registry and settled migration ledger outside both the
+  activation and CCPC-001 proposals.
 
 #### Memory
 
@@ -65,17 +74,42 @@ inventory stays in `scripts/README.md`.
   sole stale fallback finding was fixed. `pre-commit run --all-files` passed
   every applicable hook; Dockerfile lint was a no-file `SKIP` and no formatter
   mutation remained.
-- The activation commit and post-commit evidence remain unclaimed until
-  observed.
+- Activation commit
+  `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656` passed explicit-ref lifecycle
+  from the evidence-update commit and the clean-tree repository aggregate.
+- CCPC-001 GREEN evidence is focused `6/6`, registry self-test `119`, Markdown
+  and cross-document self-tests PASS, three no-mode and three explicit-strict
+  production checks PASS, three retired compatibility invocations exit `2`,
+  strict registry `450`, strict Markdown zero findings, strict links/owners
+  PASS, and diff-check PASS.
+- The first staged aggregate rejected the new regression with
+  `ROLE-AUDIT-HELPER-ADMISSION`. After exact identity-bound post-closure
+  admission, role-audit tests `36`, self-test `28`, and production passed with
+  helpers `44`, frozen `33`, post-closure `11`, formats `16/21/6/1`, and zero
+  findings; the frozen ledger remained unchanged.
+- `/root/spec040_ccpc001_requirements` returned `REQUIREMENTS COMPLIANT`;
+  `/root/spec040_ccpc001_quality` returned `QUALITY APPROVED`. The CCPC-001
+  implementation commit and post-commit checks remain unobserved and
+  unclaimed.
+- The exact fifteen-path staged proposal passed lifecycle, the repository
+  aggregate final marker, every applicable all-files hook, and both diff
+  checks. Dockerfile lint was a no-file `SKIP`; no formatter mutation or
+  unstaged drift remained.
+- `/root/spec040_ccpc001_final_requirements` returned `REQUIREMENTS
+  COMPLIANT`, and `/root/spec040_ccpc001_final_quality` returned `QUALITY
+  APPROVED` for pre-evidence digest
+  `f83ec5afb90b6c2cb7d35e9c5259d5c8358697e6d7304bfa9cde39ddf9c1b360`.
+  This evidence update does not predict or claim the CCPC-001 commit identity.
 
 #### Handoff
 
-- Next owner: CCPC-000 activation committer. Preserve the reviewed exact-six
-  boundary, create one logical commit without predicting its identity, then
-  run clean-tree repository-static post-commit checks.
-- Do not change the registry or settled migration ledger during activation.
-  Record the activation identity only after Git returns it. Do not push,
-  dispatch, mutate provider or live systems, or promote any `DEFER` lane.
+- Next owner: CCPC-001 committer. Preserve the exact fifteen-path strict-only
+  implementation, focused test, active Plan/Task/progress evidence, and current
+  support/inventory/helper-admission boundary as one logical package. Stage it,
+  run lifecycle, strict, affected, aggregate, and all-files gates, and record
+  the implementation identity only after Git returns it.
+- Do not change the registry or settled migration ledger for CCPC-001. Do not
+  push, dispatch, mutate provider or live systems, or promote any `DEFER` lane.
 
 ### 2026-07-27 - GCQE-006 terminal lifecycle closure postflight
 

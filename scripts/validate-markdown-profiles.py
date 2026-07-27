@@ -927,7 +927,7 @@ def _value_pattern_text(value: object) -> str:
 
 
 def _value_rule_id(key: str, constraint: str) -> str:
-    """Preserve established key diagnostics while covering generic v7 keys."""
+    """Preserve established key diagnostics for registry-owned keys."""
 
     if key == "title" and constraint in {"kind", "null", "pattern"}:
         return "FM-TITLE"
@@ -952,7 +952,7 @@ def _value_contract_diagnostics(
     data: dict[str, object],
     today: dt.date,
 ) -> list[Diagnostic]:
-    """Validate frontmatter scalars from the selected registry v7 contract."""
+    """Validate frontmatter scalars from the selected registry contract."""
 
     diagnostics: list[Diagnostic] = []
     for contract in profile.value_contract.keys:
@@ -2812,6 +2812,8 @@ def _self_test(root: Path) -> list[str]:
                 )
 
         try:
+            default_mode = _parser().parse_args([]).mode
+            explicit_mode = _parser().parse_args(["--mode", "strict"]).mode
             default_body_contracts = _parser().parse_args([]).body_contracts
             audit_body_contracts = (
                 _parser().parse_args(["--body-contracts", "audit"]).body_contracts
@@ -2834,6 +2836,8 @@ def _self_test(root: Path) -> list[str]:
         except (AttributeError, SystemExit):
             failures.append("body-contract parser modes are unimplemented")
         else:
+            if default_mode != "strict" or explicit_mode != "strict":
+                failures.append("validator parser mode defaults differ")
             if default_body_contracts != "registry" or audit_body_contracts != "audit":
                 failures.append("body-contract parser mode defaults differ")
             expected_prefixes = [
@@ -2987,15 +2991,27 @@ def _self_test(root: Path) -> list[str]:
     stderr = io.StringIO()
     fixture_before = (root / COMPATIBILITY_PATH).read_bytes()
     with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-        return_code = main(
-            ["--root", str(root), "--mode", "compatibility", "--format", "json"]
-        )
-    expected_stderr = (
-        "configuration error: DEBT-SOURCE-MISSING: compatibilityDebt and "
-        "semanticDebtCaps are retired\n"
-    )
-    if return_code != 2 or stdout.getvalue() or stderr.getvalue() != expected_stderr:
-        failures.append("compatibility retired-source CLI boundary differs")
+        try:
+            main(
+                [
+                    "--root",
+                    str(root),
+                    "--mode",
+                    "compatibility",
+                    "--format",
+                    "json",
+                ]
+            )
+        except SystemExit as exc:
+            return_code = exc.code
+        else:
+            return_code = None
+    if (
+        return_code != 2
+        or stdout.getvalue()
+        or "invalid choice: 'compatibility'" not in stderr.getvalue()
+    ):
+        failures.append("retired compatibility CLI value was not rejected")
     if (root / COMPATIBILITY_PATH).read_bytes() != fixture_before:
         failures.append("retired-source validation rewrote the template fixture")
 
@@ -3091,9 +3107,7 @@ def _body_contract_path_prefix(value: str) -> PurePosixPath:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument(
-        "--mode", choices=("compatibility", "strict"), default="compatibility"
-    )
+    parser.add_argument("--mode", choices=("strict",), default="strict")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     parser.add_argument(
         "--body-contracts",

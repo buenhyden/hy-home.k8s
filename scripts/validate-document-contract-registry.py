@@ -695,9 +695,7 @@ def _include_path_argument(raw: str) -> PurePosixPath:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument(
-        "--mode", choices=("compatibility", "strict"), default="compatibility"
-    )
+    parser.add_argument("--mode", choices=("strict",), default="strict")
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",

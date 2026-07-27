@@ -124,10 +124,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 43,
+                "helpers": 44,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 10,
-                "python": 15,
+                "postClosureHelpers": 11,
+                "python": 16,
                 "json": 21,
                 "yaml": 6,
                 "readme": 1,
@@ -179,7 +179,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 43)
+        self.assertEqual(len(actual), 44)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -214,6 +214,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "json",
                     "closed-fixture",
                 ),
+                "tests/test_document_strict_cutover.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_reference_information_architecture.py": (
                     "python",
                     "regression-test",
@@ -233,7 +237,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 10})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 11})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -282,6 +286,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "path": "tests/fixtures/reference-information-architecture/source-freshness.json",
                     "format": "json",
                     "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/test_document_strict_cutover.py",
+                    "format": "python",
+                    "role": "regression-test",
                 },
                 {
                     "path": "tests/test_reference_information_architecture.py",

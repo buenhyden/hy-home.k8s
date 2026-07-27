@@ -9424,6 +9424,8 @@ def _self_test(root: Path) -> list[str]:
                     f"{case['name']}: expected {case['expected_rule_ids']}, actual {actual}"
                 )
         try:
+            default_mode = _parser().parse_args([]).mode
+            explicit_mode = _parser().parse_args(["--mode", "strict"]).mode
             default_body_contracts = _parser().parse_args([]).body_contracts
             audit_body_contracts = (
                 _parser().parse_args(["--body-contracts", "audit"]).body_contracts
@@ -9446,6 +9448,8 @@ def _self_test(root: Path) -> list[str]:
         except (AttributeError, SystemExit):
             failures.append("body-contract parser modes are unimplemented")
         else:
+            if default_mode != "strict" or explicit_mode != "strict":
+                failures.append("validator parser mode defaults differ")
             if default_body_contracts != "registry" or audit_body_contracts != "audit":
                 failures.append("body-contract parser mode defaults differ")
             expected_prefixes = [
@@ -9504,15 +9508,27 @@ def _self_test(root: Path) -> list[str]:
     stdout = io.StringIO()
     stderr = io.StringIO()
     with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-        return_code = main(
-            ["--root", str(root), "--mode", "compatibility", "--format", "json"]
-        )
-    expected_stderr = (
-        "configuration error: DEBT-SOURCE-MISSING: semantic compatibility "
-        "debt is retired\n"
-    )
-    if return_code != 2 or stdout.getvalue() or stderr.getvalue() != expected_stderr:
-        failures.append("retired semantic debt CLI boundary differs")
+        try:
+            main(
+                [
+                    "--root",
+                    str(root),
+                    "--mode",
+                    "compatibility",
+                    "--format",
+                    "json",
+                ]
+            )
+        except SystemExit as exc:
+            return_code = exc.code
+        else:
+            return_code = None
+    if (
+        return_code != 2
+        or stdout.getvalue()
+        or "invalid choice: 'compatibility'" not in stderr.getvalue()
+    ):
+        failures.append("retired compatibility CLI value was not rejected")
     if (root / DEBT_PATH).exists():
         failures.append("retired semantic debt source was recreated")
     proposed_forms = tuple(
@@ -9682,9 +9698,7 @@ def _body_contract_path_prefix(value: str) -> PurePosixPath:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument(
-        "--mode", choices=("compatibility", "strict"), default="compatibility"
-    )
+    parser.add_argument("--mode", choices=("strict",), default="strict")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     parser.add_argument(
         "--body-contracts",

@@ -36,9 +36,11 @@ and must not rewrite completed historical execution records merely to make
 their terminology current.
 
 This Plan, its Task, the Spec backlink, both Stage 04 indexes, and the shared
-progress handoff form one exact six-path activation package. No registry or
-migration-ledger change belongs to activation. The activation commit does not
-exist yet and is not claimed here.
+progress handoff formed the exact six-path activation package committed as
+`5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`. No registry or
+migration-ledger change belonged to activation. Explicit-ref lifecycle from
+`11a020d9b299ae91b7af9278c22ed89ffccb5cfc` to that observed activation
+commit and the clean-tree repository-static aggregate passed.
 
 ## Goals & In-Scope
 

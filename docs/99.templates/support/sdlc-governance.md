@@ -3,7 +3,7 @@ title: 'SDLC Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-27
 ---
 
 # SDLC Template Governance
@@ -25,7 +25,7 @@ route.
 
 ### SDLC Profile Handoff
 
-The closed v7 [Document Profile Registry](./document-profiles.json) is the sole
+The closed v8 [Document Profile Registry](./document-profiles.json) is the sole
 machine owner of SDLC routes, templates, headings, frontmatter, lifecycle
 domains, and body traceability contracts. Authors select the exact profile
 from the target path instead of consulting a copied profile list. This document

@@ -185,6 +185,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/test_document_strict_cutover.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_reference_information_architecture.py": (
         "python",
         "regression-test",
