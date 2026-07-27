@@ -88,9 +88,7 @@ inventory stays in `scripts/README.md`.
   helpers `44`, frozen `33`, post-closure `11`, formats `16/21/6/1`, and zero
   findings; the frozen ledger remained unchanged.
 - `/root/spec040_ccpc001_requirements` returned `REQUIREMENTS COMPLIANT`;
-  `/root/spec040_ccpc001_quality` returned `QUALITY APPROVED`. The CCPC-001
-  implementation commit and post-commit checks remain unobserved and
-  unclaimed.
+  `/root/spec040_ccpc001_quality` returned `QUALITY APPROVED`.
 - The exact fifteen-path staged proposal passed lifecycle, the repository
   aggregate final marker, every applicable all-files hook, and both diff
   checks. Dockerfile lint was a no-file `SKIP`; no formatter mutation or
@@ -100,15 +98,22 @@ inventory stays in `scripts/README.md`.
   APPROVED` for pre-evidence digest
   `f83ec5afb90b6c2cb7d35e9c5259d5c8358697e6d7304bfa9cde39ddf9c1b360`.
   This evidence update does not predict or claim the CCPC-001 commit identity.
+- CCPC-001 implementation commit
+  `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d` contains the exact fifteen
+  reviewed paths. Explicit-ref lifecycle from activation
+  `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656` passed. The clean tree then
+  passed focused strict-cutover `6/6`, role-audit production at `44/33/11`,
+  status and diff checks, and the repository aggregate final marker.
+- This postflight evidence update does not identify or claim its own commit.
 
 #### Handoff
 
-- Next owner: CCPC-001 committer. Preserve the exact fifteen-path strict-only
-  implementation, focused test, active Plan/Task/progress evidence, and current
-  support/inventory/helper-admission boundary as one logical package. Stage it,
-  run lifecycle, strict, affected, aggregate, and all-files gates, and record
-  the implementation identity only after Git returns it.
-- Do not change the registry or settled migration ledger for CCPC-001. Do not
+- Next owner: CCPC-002 closure-matrix and Current-audit reconciliation.
+  Preserve implementation `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`
+  and the frozen settled migration ledger as immutable inputs.
+- Roll back CCPC-001 by reverting `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`
+  first and activation `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`
+  last, rerunning focused and aggregate gates after each logical revert. Do not
   push, dispatch, mutate provider or live systems, or promote any `DEFER` lane.
 
 ### 2026-07-27 - GCQE-006 terminal lifecycle closure postflight
