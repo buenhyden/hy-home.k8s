@@ -8,6 +8,75 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-27 - Spec 040 reciprocal planning activation
+
+#### Metadata
+
+- **Date**: 2026-07-27
+- **Layer**: docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-040 #strict-cutover #program-closure #lifecycle
+
+#### Progress
+
+- Prepared the exact six-path reciprocal activation package for
+  [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md):
+  the Spec backlink, new Plan, new Task, both Stage 04 indexes, and this shared
+  handoff entry.
+- Defined CCPC-000 activation, CCPC-001 strict-only active-reader cutover with
+  finite historical-proof preservation, CCPC-002 closure matrix and Current
+  audit, CCPC-003 whole-branch QA/reviews, and CCPC-004 atomic
+  PRD-006/ARD-0009/program closure and postflight.
+- Kept the document registry and settled migration ledger outside the
+  activation package. The activation remains an uncommitted proposal; no
+  activation commit identity is claimed.
+
+#### Memory
+
+- Active compatibility fallback and finite historical transition proof are
+  different contracts. Remove the former; retain the latter only when it is
+  pinned, private, fail closed, and unreachable as a production fallback.
+- A predecessor repository-static PASS does not imply current hosted,
+  provider, remote, or live PASS. Keep historical results bound to their exact
+  SHA and retain current unexecuted lanes as `DEFER`.
+- Final program closure must transition the PRD, ARD, Spec, Plan, Task,
+  indexes, decision evidence, and registry relation in the one lifecycle-valid
+  proposal required by their status predicates.
+
+#### Evidence
+
+- Spec 039 closed in
+  `e1d1e910840337327a557ab4b84e86f8fced11d6`. Its raw-OID explicit-ref
+  lifecycle and clean-tree repository-static postflight passed.
+- Evidence update
+  `11a020d9b299ae91b7af9278c22ed89ffccb5cfc` records that observed closure and
+  is the base of this activation proposal.
+- Hosted run `29982910320` remains historical FAIL for its older SHA. Current
+  hosted, provider, remote, and live evidence remains `DEFER`.
+- Plan-only staged lifecycle exited `1` with `LIFECYCLE-CREATE`, Plan count
+  `1`, and Task count `0`. After exact-six staging, lifecycle passed; registry
+  self-test passed `119` cases and strict production passed `450` paths with
+  zero uncovered or ambiguous routes; strict Markdown reported zero findings;
+  strict links/owners passed; residue closure reported active controls `2/1`,
+  terminal controls `4/2`, terminal Specs `2`, and findings `0`; diff-check
+  passed; and the repository aggregate reached its final PASS marker.
+- `/root/spec040_activation_requirements` returned `REQUIREMENTS COMPLIANT`
+  and `/root/spec040_activation_quality` returned `QUALITY APPROVED` after its
+  sole stale fallback finding was fixed. `pre-commit run --all-files` passed
+  every applicable hook; Dockerfile lint was a no-file `SKIP` and no formatter
+  mutation remained.
+- The activation commit and post-commit evidence remain unclaimed until
+  observed.
+
+#### Handoff
+
+- Next owner: CCPC-000 activation committer. Preserve the reviewed exact-six
+  boundary, create one logical commit without predicting its identity, then
+  run clean-tree repository-static post-commit checks.
+- Do not change the registry or settled migration ledger during activation.
+  Record the activation identity only after Git returns it. Do not push,
+  dispatch, mutate provider or live systems, or promote any `DEFER` lane.
+
 ### 2026-07-27 - GCQE-006 terminal lifecycle closure postflight
 
 #### Metadata

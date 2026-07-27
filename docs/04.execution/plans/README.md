@@ -96,6 +96,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-18-active-corpus-and-execution-retention.md
 ├── 2026-07-22-reference-information-architecture.md
 ├── 2026-07-26-github-ci-qa-evidence.md
+├── 2026-07-27-contract-cutover-and-program-closure.md
 └── README.md
 ```
 
@@ -173,6 +174,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-18-active-corpus-and-execution-retention.md`](./2026-07-18-active-corpus-and-execution-retention.md) | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)의 ACER-001~005 reviewed 결과와 ACER-006 terminal closure를 기록한다. reciprocal pair는 active authority가 아닌 terminal Stage 04 `DEFER` evidence이며 closure content commit `cfabc506`과 clean-tree postflight PASS를 관측했다. evidence-update commit 자체는 unidentified·unclaimed이다. | Done | 2026-07-19 |
 | [`./2026-07-22-reference-information-architecture.md`](./2026-07-22-reference-information-architecture.md) | [Spec 038](../../03.specs/038-reference-information-architecture/spec.md)의 RIA-000~006 reviewed implementation과 RIA-007 C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b`을 기록한다. C1 final review는 `REQUIREMENTS COMPLIANT`/`QUALITY APPROVED`, activation-to-C1 explicit-ref lifecycle과 repository-static clean-tree postflight는 PASS였다. 현재 C2는 six lifecycle paths, 446-row ledger, contract, exact-value `.secrets.baseline` adjudication의 exact-nine staged proposal일 뿐이며 C2 SHA/postcommit, C3, settlement, terminal explicit-ref, CI-hosted/provider/remote/live 결과를 주장하지 않는다. | Done | 2026-07-26 |
 | [`./2026-07-26-github-ci-qa-evidence.md`](./2026-07-26-github-ci-qa-evidence.md) | [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md)의 GCQE-000~005 observed implementation/review evidence와 GCQE-006 closure를 기록한다. Exact eight-path commit `e1d1e910840337327a557ab4b84e86f8fced11d6`, activation `2ddfe4b7697e998b41d3125be94cdc4cee295388`부터의 raw-OID explicit-ref lifecycle, clean-tree repository-static postflight는 PASS였다. Hosted run `29982910320`은 historical FAIL이고 current hosted/provider/live는 `DEFER`이며, 이 evidence-update commit 자체는 주장하지 않는다. | Done | 2026-07-27 |
+| [`./2026-07-27-contract-cutover-and-program-closure.md`](./2026-07-27-contract-cutover-and-program-closure.md) | [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)의 strict-only active reader cutover, closure matrix, whole-branch QA/review, PRD-006/ARD-0009/program atomic closure와 postflight 실행 순서를 정의한다. Spec 039 repository-static closure는 PASS이고 current hosted/provider/live는 `DEFER`다. | Active | 2026-07-27 |
 
 ## Related Documents
 

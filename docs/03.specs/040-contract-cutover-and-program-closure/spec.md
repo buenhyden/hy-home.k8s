@@ -3,7 +3,7 @@ title: 'Contract Cutover and Program Closure Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-27
 ---
 
 # Contract Cutover and Program Closure Technical Specification (Spec)
@@ -14,6 +14,15 @@ This Spec removes temporary compatibility, proves the integrated repository
 contract, completes indexes and migration evidence, performs independent
 whole-branch review, and closes the document lifecycle and evidence program
 without claiming unobserved remote or live results.
+
+Spec 039 closed in
+`e1d1e910840337327a557ab4b84e86f8fced11d6`, and its repository-static
+postflight passed. Commit
+`11a020d9b299ae91b7af9278c22ed89ffccb5cfc` records that observed closure and
+hands the program frontier to this Spec. The current hosted, provider, and live
+lanes remain `DEFER`; they are not inferred from the local PASS. The reciprocal
+Plan/Task activation for this Spec is being prepared as an uncommitted
+six-path proposal, so no activation commit identity is claimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -91,8 +100,9 @@ cleanup.
 
 ## Failure Modes & Fallback / Human Escalation
 
-- If cutover fails, revert the smallest responsible tranche or restore the
-  compatibility reader temporarily; do not weaken strict rules globally.
+- If cutover fails, revert the smallest responsible logical unit. Do not
+  restore an active compatibility reader or weaken strict rules; retain only
+  pinned, private, fail-closed historical transition proof.
 - If independent review finds Critical or Important issues, fix and re-review
   before closure.
 - If merge integration would overwrite unrelated user work, stop and request
@@ -127,6 +137,8 @@ cleanup.
 - **Program PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **Program ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - **Decisions**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md) and [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+- **Execution Plan**: [Contract Cutover and Program Closure Implementation Plan](../../04.execution/plans/2026-07-27-contract-cutover-and-program-closure.md)
+- **Task Evidence**: [Contract Cutover and Program Closure Task](../../04.execution/tasks/2026-07-27-contract-cutover-and-program-closure.md)
 
 ### Lifecycle Traceability
 
