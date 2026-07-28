@@ -36,6 +36,7 @@ SPEC_PATH = "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
 SCHEMA_VERSION = 1
 CONTRACT_ID = "agent-loop-lifecycle"
 CONTRACT_VERSION = "1.0.0"
+MAX_JSON_BYTES = 2 * 1024 * 1024
 ACCEPTANCE_CRITERIA = (
     "VAL-AHLL-001",
     "VAL-AHLL-002",
@@ -197,7 +198,8 @@ FEEDBACK_DESTINATIONS = (
 )
 INTERFACE_SIGNATURES = {
     "normalizeFailure": (
-        "normalizeFailure(result) -> {class, signatureDigest, retryable}",
+        "normalizeFailure(result) -> "
+        "{failureClass, signatureDigest, retryable}",
         "AHLL-001",
         "executable",
     ),
@@ -261,6 +263,40 @@ FORBIDDEN_KEY_NAMES = {
     "privatediagnostic",
     "userconfiguration",
 }
+SENSITIVE_DECLARATION_KEYS = {
+    "rawoutputallowed",
+    "rawpayloadallowed",
+    "rawtraceprompttranscriptpromotionallowed",
+}
+SENSITIVE_KEY_PARTS = (
+    "stdout",
+    "stderr",
+    "rawoutput",
+    "rawprompt",
+    "rawtranscript",
+    "prompttext",
+    "promptbody",
+    "promptcontent",
+    "promptpayload",
+    "prompttranscript",
+    "transcripttext",
+    "transcriptbody",
+    "transcriptcontent",
+    "transcriptpayload",
+    "providerresponse",
+    "providerbody",
+    "requestbody",
+    "responsebody",
+)
+SENSITIVE_KEY_EDGE_TERMS = (
+    "prompt",
+    "transcript",
+    "body",
+)
+FAILURE_CLASS_PATTERN = re.compile(
+    r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+)
+SIGNATURE_DIGEST_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
 SENSITIVE_VALUE_PATTERNS = (
     re.compile(
         r"(?i)\b(?:sk|gh[pousr]|xox[baprs])[-_][a-z0-9_-]{8,}"
@@ -321,16 +357,83 @@ def decode_json_text(text: str, source: str = "<memory>") -> Any:
         fail("AHLL-JSON", f"{source}: {exc}", exit_code=2)
 
 
-def load_json(root: Path, relative: PurePosixPath) -> Any:
-    path = Path(root) / Path(relative)
+def _safe_regular_file(root: Path, relative: PurePosixPath) -> Path:
+    if relative.is_absolute() or ".." in relative.parts:
+        fail(
+            "AHLL-PATH",
+            "contract input path is unsafe",
+            exit_code=2,
+        )
     try:
-        return decode_json_text(path.read_text(encoding="utf-8"), str(relative))
-    except OSError as exc:
-        fail("AHLL-MISSING-FILE", f"{relative}: {exc}")
+        root = Path(root).resolve(strict=True)
+    except OSError:
+        fail(
+            "AHLL-ROOT",
+            "repository root is unavailable",
+            exit_code=2,
+        )
+
+    current = root
+    mode: int | None = None
+    for part in relative.parts:
+        current = current / part
+        try:
+            mode = current.lstat().st_mode
+        except OSError:
+            fail(
+                "AHLL-MISSING-FILE",
+                f"required input {relative} is unavailable",
+                exit_code=2,
+            )
+        if stat.S_ISLNK(mode):
+            fail(
+                "AHLL-PATH",
+                f"required input {relative} crosses a symlink",
+                exit_code=2,
+            )
+    if mode is None or not stat.S_ISREG(mode):
+        fail(
+            "AHLL-PATH",
+            f"required input {relative} is not a regular file",
+            exit_code=2,
+        )
+    return current
+
+
+def load_json(root: Path, relative: PurePosixPath) -> Any:
+    path = _safe_regular_file(root, relative)
+    try:
+        if path.stat().st_size > MAX_JSON_BYTES:
+            fail(
+                "AHLL-BOUNDS",
+                f"required input {relative} exceeds the read bound",
+                exit_code=2,
+            )
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        fail(
+            "AHLL-MISSING-FILE",
+            f"required input {relative} cannot be read",
+            exit_code=2,
+        )
+    return decode_json_text(text, str(relative))
 
 
 def _normalized_key(key: str) -> str:
     return re.sub(r"[^a-z0-9]", "", key.lower())
+
+
+def _is_sensitive_key(normalized: str, nested: Any) -> bool:
+    if normalized in SENSITIVE_DECLARATION_KEYS:
+        return not isinstance(nested, bool)
+    return (
+        normalized in FORBIDDEN_KEY_NAMES
+        or any(part in normalized for part in SENSITIVE_KEY_PARTS)
+        or any(
+            normalized.startswith(term) or normalized.endswith(term)
+            for term in SENSITIVE_KEY_EDGE_TERMS
+        )
+    )
 
 
 def scan_sensitive_payload(
@@ -341,7 +444,7 @@ def scan_sensitive_payload(
     if isinstance(value, dict):
         for key, nested in value.items():
             location = "/".join(str(part) for part in (*path, key))
-            if _normalized_key(key) in FORBIDDEN_KEY_NAMES:
+            if _is_sensitive_key(_normalized_key(key), nested):
                 fail(
                     "AHLL-SENSITIVE",
                     f"{location}: prohibited sensitive key",
@@ -684,6 +787,23 @@ def _stable_text(value: Any, field: str) -> str:
     return normalized
 
 
+def _canonical_failure_class(value: Any) -> str:
+    if not isinstance(value, str):
+        fail("AHLL-INPUT", "failureClass must be a non-empty string")
+    separated = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", value.strip())
+    normalized = _stable_text(separated, "failureClass")
+    slug = re.sub(r"[^a-z0-9]+", "-", normalized).strip("-")
+    if (
+        not 3 <= len(slug) <= 80
+        or FAILURE_CLASS_PATTERN.fullmatch(slug) is None
+    ):
+        fail(
+            "AHLL-INPUT",
+            "failureClass must normalize to a 3-80 character kebab-case slug",
+        )
+    return slug
+
+
 def normalize_failure(
     result: dict[str, Any],
     contract: dict[str, Any] | None = None,
@@ -751,12 +871,12 @@ def normalize_failure(
         separators=(",", ":"),
         ensure_ascii=True,
     ).encode("utf-8")
-    signature_digest = hashlib.sha256(encoded).hexdigest()
+    signature_digest = "sha256:" + hashlib.sha256(encoded).hexdigest()
 
     failure_class = result.get(
         "failureClass", signature["validator-result-class"]
     )
-    failure_class = _stable_text(failure_class, "failureClass")
+    failure_class = _canonical_failure_class(failure_class)
     explicitly_retryable = result.get("retryable", True)
     if not isinstance(explicitly_retryable, bool):
         fail("AHLL-INPUT", "retryable must be boolean when present")
@@ -765,7 +885,7 @@ def normalize_failure(
         and failure_class not in NONRETRYABLE_FAILURE_CLASSES
     )
     return {
-        "class": failure_class,
+        "failureClass": failure_class,
         "signatureDigest": signature_digest,
         "retryable": retryable,
     }
@@ -930,15 +1050,16 @@ def decide_next(
         task_limit,
     )
 
-    failure_class = failure.get("class")
+    failure_class = failure.get("failureClass")
     retryable = failure.get("retryable")
     signature_digest = failure.get("signatureDigest")
     if (
         not isinstance(failure_class, str)
-        or not failure_class
+        or FAILURE_CLASS_PATTERN.fullmatch(failure_class) is None
+        or not 3 <= len(failure_class) <= 80
         or not isinstance(retryable, bool)
         or not isinstance(signature_digest, str)
-        or re.fullmatch(r"[0-9a-f]{64}", signature_digest) is None
+        or SIGNATURE_DIGEST_PATTERN.fullmatch(signature_digest) is None
     ):
         fail("AHLL-INPUT", "failure must be a normalized failure object")
     progressed = progress.get("progressed")
@@ -1146,6 +1267,22 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         )
     elif name == "sensitive-user-configuration-key":
         contract["authority"]["userConfiguration"] = (
+            "syntheticfixturevalue"
+        )
+    elif name == "sensitive-raw-stdout-key":
+        contract["authority"]["rawStdout"] = "syntheticfixturevalue"
+    elif name == "sensitive-raw-stderr-key":
+        contract["authority"]["RAW_STDERR"] = "syntheticfixturevalue"
+    elif name == "sensitive-normalized-raw-output-key":
+        contract["authority"]["normalizedRawOutputPayload"] = (
+            "syntheticfixturevalue"
+        )
+    elif name == "sensitive-transcript-body-key":
+        contract["authority"]["capturedTranscriptBody"] = (
+            "syntheticfixturevalue"
+        )
+    elif name == "sensitive-prompt-text-key":
+        contract["authority"]["capturedPromptText"] = (
             "syntheticfixturevalue"
         )
     elif name == "sensitive-value":

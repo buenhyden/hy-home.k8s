@@ -627,6 +627,22 @@
       "expectedRule": "AHLL-CP-SENSITIVE"
     },
     {
+      "name": "sensitive-sk-proj-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-gho-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-xoxp-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-aiza-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
       "name": "sensitive-auth-path-key",
       "expectedRule": "AHLL-CP-SENSITIVE"
     },

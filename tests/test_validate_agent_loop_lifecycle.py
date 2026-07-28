@@ -8,9 +8,11 @@ import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
+from jsonschema import Draft202012Validator
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = (
@@ -22,6 +24,10 @@ CONTRACT_PATH = (
 )
 FIXTURE_PATH = (
     REPOSITORY_ROOT / "tests/fixtures/agent-loop-lifecycle.json"
+)
+CHECKPOINT_SCHEMA_PATH = (
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
 
 
@@ -43,6 +49,9 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         cls.validator = load_module()
         cls.contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
         cls.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+        cls.checkpoint_schema = json.loads(
+            CHECKPOINT_SCHEMA_PATH.read_text(encoding="utf-8")
+        )
 
     def contract_copy(self):
         return copy.deepcopy(self.contract)
@@ -135,8 +144,8 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         self,
     ) -> None:
         failure = {
-            "class": "transient-validation",
-            "signatureDigest": "a" * 64,
+            "failureClass": "transient-validation",
+            "signatureDigest": "sha256:" + ("a" * 64),
             "retryable": True,
         }
         first = self.validator.decide_next(
@@ -283,8 +292,8 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                     },
                     {},
                     {
-                        "class": failure_class,
-                        "signatureDigest": "1" * 64,
+                        "failureClass": failure_class,
+                        "signatureDigest": "sha256:" + ("1" * 64),
                         "retryable": False,
                     },
                     {"progressed": False, "deltaClasses": []},
@@ -313,7 +322,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             "sanitizedDiagnosticCode": "AHLL-EXAMPLE",
             "affectedScope": ["scripts", "tests"],
             "contractVersion": "1.0.0",
-            "failureClass": "transient-validation",
+            "failureClass": " Transient Validation ",
             "providerId": "local",
             "modelId": "model-one",
             "timestamp": "first-observation",
@@ -337,7 +346,41 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         self.assertEqual(
             first["signatureDigest"], second["signatureDigest"]
         )
+        self.assertEqual(
+            set(first),
+            {"failureClass", "signatureDigest", "retryable"},
+        )
+        self.assertEqual(first["failureClass"], "transient-validation")
+        self.assertRegex(
+            first["signatureDigest"],
+            r"^sha256:[0-9a-f]{64}$",
+        )
+        checkpoint_failure_schema = {
+            "$defs": self.checkpoint_schema["$defs"],
+            **self.checkpoint_schema["$defs"]["failure"],
+        }
+        self.assertEqual(
+            list(
+                Draft202012Validator(
+                    checkpoint_failure_schema
+                ).iter_errors(first)
+            ),
+            [],
+        )
         self.assertTrue(first["retryable"])
+        direct_decision = self.validator.decide_next(
+            {
+                "automaticRetriesForSignature": 0,
+                "automaticRecoveryActionsUsed": 0,
+                "consecutiveIdenticalNoProgressResults": 1,
+                "proposedActionDiffers": True,
+            },
+            {},
+            first,
+            {"progressed": False, "deltaClasses": []},
+            self.contract,
+        )
+        self.assertEqual(direct_decision["decision"], "retry")
 
         nonretryable = copy.deepcopy(baseline)
         nonretryable["failureClass"] = "permission-denial"
@@ -347,6 +390,42 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 nonretryable, self.contract
             )["retryable"]
         )
+
+    def test_decision_rejects_legacy_failure_keys_and_bare_digests(
+        self,
+    ) -> None:
+        loop_state = {
+            "automaticRetriesForSignature": 0,
+            "automaticRecoveryActionsUsed": 0,
+            "consecutiveIdenticalNoProgressResults": 1,
+            "proposedActionDiffers": True,
+        }
+        progress = {"progressed": False, "deltaClasses": []}
+        failures = (
+            {
+                "failureClass": "transient-validation",
+                "signatureDigest": "a" * 64,
+                "retryable": True,
+            },
+            {
+                "class": "transient-validation",
+                "signatureDigest": "sha256:" + ("a" * 64),
+                "retryable": True,
+            },
+        )
+        for failure in failures:
+            with self.subTest(failure=failure):
+                with self.assertRaises(
+                    self.validator.LoopLifecycleError
+                ) as raised:
+                    self.validator.decide_next(
+                        loop_state,
+                        {},
+                        failure,
+                        progress,
+                        self.contract,
+                    )
+                self.assertEqual(raised.exception.code, "AHLL-INPUT")
 
     def test_progress_requires_one_authorized_deterministic_delta(
         self,
@@ -411,8 +490,8 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 },
                 {},
                 {
-                    "class": "transient-validation",
-                    "signatureDigest": "a" * 64,
+                    "failureClass": "transient-validation",
+                    "signatureDigest": "sha256:" + ("a" * 64),
                     "retryable": True,
                 },
                 {"progressed": False, "deltaClasses": []},
@@ -490,11 +569,46 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "AHLL-DUPLICATE-KEY")
         self.assertEqual(raised.exception.exit_code, 2)
 
+    def test_fixed_json_inputs_reject_symlink_nonregular_and_escape(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            regular = root / "regular.json"
+            regular.write_text('{"bounded":true}', encoding="utf-8")
+            self.assertEqual(
+                self.validator.load_json(
+                    root, PurePosixPath("regular.json")
+                ),
+                {"bounded": True},
+            )
+
+            linked = root / "linked.json"
+            linked.symlink_to(regular.name)
+            directory = root / "directory.json"
+            directory.mkdir()
+            for relative in (
+                PurePosixPath("linked.json"),
+                PurePosixPath("directory.json"),
+                PurePosixPath("../escaped.json"),
+            ):
+                with self.subTest(relative=relative):
+                    with self.assertRaises(
+                        self.validator.LoopLifecycleError
+                    ) as raised:
+                        self.validator.load_json(root, relative)
+                    self.assertEqual(raised.exception.code, "AHLL-PATH")
+                    self.assertEqual(raised.exception.exit_code, 2)
+
     def test_sensitive_scanner_accepts_policy_labels_and_rejects_values(
         self,
     ) -> None:
         self.validator.scan_sensitive_payload(
             {
+                "rawOutputAllowed": False,
+                "rawPayloadAllowed": False,
+                "rawTracePromptTranscriptPromotionAllowed": False,
+                "outputSummary": "bounded validation result",
                 "prohibitedFields": [
                     "credentials",
                     "tokens",
@@ -532,6 +646,37 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 self.assertEqual(
                     key_raised.exception.code, "AHLL-SENSITIVE"
                 )
+
+        for key in (
+            "rawStdout",
+            "RAW_STDERR",
+            "raw_stdout",
+            "normalizedRawOutputPayload",
+            "capturedTranscriptBody",
+            "capturedPromptText",
+            "responseBody",
+        ):
+            with self.subTest(semantic_key=key):
+                with self.assertRaises(
+                    self.validator.LoopLifecycleError
+                ) as key_raised:
+                    self.validator.scan_sensitive_payload(
+                        {key: "syntheticfixturevalue"}
+                    )
+                self.assertEqual(
+                    key_raised.exception.code, "AHLL-SENSITIVE"
+                )
+
+        with self.assertRaises(
+            self.validator.LoopLifecycleError
+        ) as declaration_raised:
+            self.validator.scan_sensitive_payload(
+                {"rawOutputAllowed": "syntheticfixturevalue"}
+            )
+        self.assertEqual(
+            declaration_raised.exception.code,
+            "AHLL-SENSITIVE",
+        )
 
     def test_all_negative_mutations_fail_with_declared_rule(self) -> None:
         for case in self.fixture["mutations"]:

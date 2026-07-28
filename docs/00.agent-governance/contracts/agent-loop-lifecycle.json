@@ -315,7 +315,7 @@
   },
   "interfaces": {
     "normalizeFailure": {
-      "signature": "normalizeFailure(result) -> {class, signatureDigest, retryable}",
+      "signature": "normalizeFailure(result) -> {failureClass, signatureDigest, retryable}",
       "implementationOwner": "AHLL-001",
       "implementationState": "executable"
     },

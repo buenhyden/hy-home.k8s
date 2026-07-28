@@ -116,7 +116,7 @@ auth artifacts, user identities, or private provider output.
 
 ## Interfaces & Data Structures
 
-- `normalizeFailure(result) -> {class, signatureDigest, retryable}`
+- `normalizeFailure(result) -> {failureClass, signatureDigest, retryable}`
 - `measureProgress(before, after) -> {progressed, deltaClasses}`
 - `decideNext(loopState, budgets, failure, progress) -> retry | stop | escalate`
 - `writeCheckpoint(state) -> redacted transient record`

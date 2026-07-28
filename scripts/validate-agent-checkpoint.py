@@ -218,6 +218,22 @@ FORBIDDEN_VALUE_FRAGMENTS = (
 )
 FORBIDDEN_VALUE_PATTERNS = (
     re.compile(r"(?:^|[^a-z0-9])sk-[a-z0-9]{8,}", re.IGNORECASE),
+    re.compile(
+        r"(?:^|[^a-z0-9])sk[-_]proj[-_][a-z0-9_-]{8,}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"(?:^|[^a-z0-9])gh[pousr]_[a-z0-9_-]{8,256}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"(?:^|[^a-z0-9])xox[baprs]-[a-z0-9_-]{8,256}",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"(?:^|[^a-z0-9])aiza[a-z0-9_-]{12,}",
+        re.IGNORECASE,
+    ),
     re.compile(r"(?:^|[^a-z0-9])akia[a-z0-9]{12,}", re.IGNORECASE),
 )
 
@@ -281,6 +297,10 @@ MUTATION_RULES = (
     ("sensitive-secret-key", "AHLL-CP-SENSITIVE"),
     ("sensitive-token-key", "AHLL-CP-SENSITIVE"),
     ("sensitive-token-value", "AHLL-CP-SENSITIVE"),
+    ("sensitive-sk-proj-value", "AHLL-CP-SENSITIVE"),
+    ("sensitive-gho-value", "AHLL-CP-SENSITIVE"),
+    ("sensitive-xoxp-value", "AHLL-CP-SENSITIVE"),
+    ("sensitive-aiza-value", "AHLL-CP-SENSITIVE"),
     ("sensitive-auth-path-key", "AHLL-CP-SENSITIVE"),
     ("sensitive-auth-path-value", "AHLL-CP-SENSITIVE"),
     ("sensitive-account-id-key", "AHLL-CP-SENSITIVE"),
@@ -1193,6 +1213,22 @@ def apply_mutation(
         checkpoint["token"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-token-value":
         checkpoint["nextAction"] = "Bearer " + "[REDACTED-SYNTHETIC]"
+    elif name == "sensitive-sk-proj-value":
+        checkpoint["nextAction"] = (
+            "sk" + "-proj-" + "synthetic_marker_only"
+        )
+    elif name == "sensitive-gho-value":
+        checkpoint["nextAction"] = (
+            "gh" + "o_" + "syntheticmarkeronly"
+        )
+    elif name == "sensitive-xoxp-value":
+        checkpoint["nextAction"] = (
+            "xox" + "p-" + "synthetic-marker-only"
+        )
+    elif name == "sensitive-aiza-value":
+        checkpoint["nextAction"] = (
+            "AI" + "za" + "SyntheticMarkerOnly"
+        )
     elif name == "sensitive-auth-path-key":
         checkpoint["authFilePath"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-auth-path-value":

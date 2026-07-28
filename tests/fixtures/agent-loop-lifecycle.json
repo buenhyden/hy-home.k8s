@@ -19,8 +19,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "retryable": true
       },
       "progress": {
@@ -41,8 +41,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "retryable": true
       },
       "progress": {
@@ -65,8 +65,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "retryable": true
       },
       "progress": {
@@ -89,8 +89,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "alternate-provider-transient",
-        "signatureDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "failureClass": "alternate-provider-transient",
+        "signatureDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "retryable": true
       },
       "progress": {
@@ -111,8 +111,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "new-signature-transient",
-        "signatureDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "failureClass": "new-signature-transient",
+        "signatureDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "retryable": true
       },
       "progress": {
@@ -135,8 +135,8 @@
         "roleMaxAutomaticRecoveryActions": 2
       },
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "retryable": true
       },
       "progress": {
@@ -160,8 +160,8 @@
         "taskMaxAutomaticRecoveryActions": 1
       },
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         "retryable": true
       },
       "progress": {
@@ -182,8 +182,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "retryable": true
       },
       "progress": {
@@ -204,8 +204,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "transient-validation",
-        "signatureDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "failureClass": "transient-validation",
+        "signatureDigest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
         "retryable": true
       },
       "progress": {
@@ -226,8 +226,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "permission-denial",
-        "signatureDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "failureClass": "permission-denial",
+        "signatureDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
         "retryable": false
       },
       "progress": {
@@ -248,8 +248,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "credential-boundary",
-        "signatureDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "failureClass": "credential-boundary",
+        "signatureDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
         "retryable": false
       },
       "progress": {
@@ -270,8 +270,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "secret-detection",
-        "signatureDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "failureClass": "secret-detection",
+        "signatureDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
         "retryable": false
       },
       "progress": {
@@ -292,8 +292,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "destructive-live-mutation-risk",
-        "signatureDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+        "failureClass": "destructive-live-mutation-risk",
+        "signatureDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
         "retryable": false
       },
       "progress": {
@@ -314,8 +314,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "explicit-user-stop",
-        "signatureDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "failureClass": "explicit-user-stop",
+        "signatureDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
         "retryable": false
       },
       "progress": {
@@ -336,8 +336,8 @@
       },
       "budgets": {},
       "failure": {
-        "class": "contract-schema-corruption",
-        "signatureDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "failureClass": "contract-schema-corruption",
+        "signatureDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
         "retryable": false
       },
       "progress": {
@@ -499,9 +499,29 @@
       "expectedRule": "AHLL-SENSITIVE"
     },
     {
+      "name": "sensitive-raw-stdout-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-raw-stderr-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-normalized-raw-output-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-transcript-body-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-prompt-text-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
       "name": "sensitive-value",
       "expectedRule": "AHLL-SENSITIVE"
     }
   ],
-  "expectedCaseCount": 54
+  "expectedCaseCount": 59
 }

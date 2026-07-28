@@ -297,6 +297,10 @@ class AgentCheckpointContractTests(unittest.TestCase):
             "sensitive-secret-key",
             "sensitive-token-key",
             "sensitive-token-value",
+            "sensitive-sk-proj-value",
+            "sensitive-gho-value",
+            "sensitive-xoxp-value",
+            "sensitive-aiza-value",
             "sensitive-auth-path-key",
             "sensitive-auth-path-value",
             "sensitive-account-id-key",
@@ -410,6 +414,44 @@ class AgentCheckpointContractTests(unittest.TestCase):
                     "syntheticMarker": "[REDACTED-SYNTHETIC]",
                 }
             }
+        )
+
+    def test_modern_token_shapes_are_rejected_with_synthetic_markers(
+        self,
+    ) -> None:
+        synthetic_values = {
+            "openai-project": (
+                "sk" + "-proj-" + "synthetic_marker_only"
+            ),
+            "github-personal": "gh" + "p_" + "syntheticmarkeronly",
+            "github-oauth": "gh" + "o_" + "syntheticmarkeronly",
+            "github-user": "gh" + "u_" + "syntheticmarkeronly",
+            "github-server": "gh" + "s_" + "syntheticmarkeronly",
+            "github-refresh": "gh" + "r_" + "syntheticmarkeronly",
+            "github-uppercase": "GH" + "S_" + "SyntheticMarkerOnly",
+            "slack-bot": "xox" + "b-" + "synthetic-marker-only",
+            "slack-app": "xox" + "a-" + "synthetic-marker-only",
+            "slack-user": "xox" + "p-" + "synthetic-marker-only",
+            "slack-refresh": "xox" + "r-" + "synthetic-marker-only",
+            "slack-service": "xox" + "s-" + "synthetic-marker-only",
+            "slack-uppercase": "XOX" + "A-" + "Synthetic-Marker-Only",
+            "google-api": "AI" + "za" + "SyntheticMarkerOnly",
+        }
+        for token_class, value in synthetic_values.items():
+            with self.subTest(token_class=token_class):
+                with self.assertRaises(
+                    self.validator.CheckpointError
+                ) as raised:
+                    self.validator.scan_sensitive_payload(
+                        {"nextAction": value}
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "AHLL-CP-SENSITIVE",
+                )
+
+        self.validator.scan_sensitive_payload(
+            {"nextAction": "bounded synthetic marker only"}
         )
 
     def test_production_validation_uses_only_tracked_fixture(self) -> None:
