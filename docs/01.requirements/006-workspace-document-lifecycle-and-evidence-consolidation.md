@@ -12,11 +12,11 @@ updated: 2026-07-28
 
 This completed program consolidates the repository document lifecycle after
 the document-assurance modernization. Specs 034 through 040 and the integrated
-repository-static program contract are closed by this exact terminal proposal.
-The proposal preserves the existing profile registry, strict zero-route-debt
-baseline, archive preservation, execution retention, reference currentness,
-and CI evidence without promoting protected, hosted, provider, remote, or live
-`DEFER` evidence.
+repository-static program contract are closed by exact terminal closure commit
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9`. That commit preserves the existing
+profile registry, strict zero-route-debt baseline, archive preservation,
+execution retention, reference currentness, and CI evidence without promoting
+protected, hosted, provider, remote, or live `DEFER` evidence.
 
 The program is evidence-first. Historical audit observations remain pinned to
 their observation commit, accepted decisions remain immutable, and destructive
@@ -39,11 +39,14 @@ in the active working set, Current audit dispositions lagged implementation,
 and lifecycle facts were repeated outside their machine owner.
 
 Specs 034 through 040 close those implementation gaps with repository-static
-evidence. This exact terminal proposal proves the integrated strict contract,
-reconciles the Current audit, preserves explicit external `DEFER` boundaries,
-and transitions PRD-006, ARD-0009, ADR-0020, Spec 040, and its reciprocal
-execution pair atomically. It does not claim the future closure commit,
-explicit-ref lifecycle result, or clean-tree postflight.
+evidence. Exact terminal closure commit
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9` proves the integrated strict
+contract, reconciles the Current audit, preserves explicit external `DEFER`
+boundaries, and transitions PRD-006, ARD-0009, ADR-0020, Spec 040, and its
+reciprocal execution pair atomically. Explicit-ref lifecycle from parent
+`35d8552ba423e3e2d92294ddeb81674392b8f333` to the closure commit and
+clean-tree repository-static aggregate passed; this evidence-update commit is
+unidentified and unclaimed.
 
 ## Personas
 
@@ -148,9 +151,10 @@ explicit-ref lifecycle result, or clean-tree postflight.
   payload; secret-removal procedures remain an explicit preservation exception.
 - Current audit facts remain pinned to their observation SHA. Only remediation
   overlays may report later closure.
-- The earlier FIFO self-test portability defect was remediated before the
-  terminal proposal; repository-static PASS still does not establish hosted,
-  provider, remote, or live readiness.
+- The earlier FIFO self-test portability defect was remediated before terminal
+  closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`;
+  repository-static PASS still does not establish hosted, provider, remote, or
+  live readiness.
 
 ## Traceability
 

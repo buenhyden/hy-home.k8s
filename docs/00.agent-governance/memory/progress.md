@@ -8,7 +8,7 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-07-28 - CCPC-004 atomic terminal proposal
+### 2026-07-28 - CCPC-004 atomic terminal closure postflight
 
 #### Metadata
 
@@ -19,24 +19,32 @@ inventory stays in `scripts/README.md`.
 
 #### Progress
 
-- From CCPC-003 evidence commit
-  `a65a2e838a54a405e20da65197de2828cf05bcd5` and validator compatibility
-  prerequisite commit `35d8552ba423e3e2d92294ddeb81674392b8f333`, prepared
-  the exact 14-path
-  terminal boundary: this progress ledger; the PRD-006 body/index; ARD-0009
-  body/index; ADR-0020 body/index; Spec 040 body/index; its Plan body/index;
-  its Task body/index; and the single Spec 040 registry relation. No other
-  tracked path belongs to the proposal.
-- The staged proposal transitions PRD-006 to `done`, ARD-0009 and ADR-0020 to
+- From validator compatibility prerequisite commit
+  `35d8552ba423e3e2d92294ddeb81674392b8f333`, committed exact 14-path
+  terminal closure `c5adc27b13893d7cbd1266c9225372cfb7df79e9`: this progress
+  ledger; the PRD-006 body/index; ARD-0009 body/index; ADR-0020 body/index;
+  Spec 040 body/index; its Plan body/index; its Task body/index; and the
+  single Spec 040 registry relation. CCPC-003 evidence commit
+  `a65a2e838a54a405e20da65197de2828cf05bcd5` remains the earlier
+  whole-branch QA/review evidence point.
+- The closure commit transitions PRD-006 to `done`, ARD-0009 and ADR-0020 to
   `accepted`, Spec 040 and its reciprocal Plan/Task to `done`, all six index
   rows to terminal states as of 2026-07-28, and only the Spec 040 tranche
   relation to `done`.
 
 #### Memory
 
-- A lifecycle-valid terminal proposal and its future content-addressed commit
-  are separate evidence events. Record terminal review, explicit-ref, and
-  clean-tree postflight only after their exact proposal or commit is observed.
+- The staged proposal digest, terminal closure commit, and postflight
+  evidence-update commit are separate evidence events. The staged digest and
+  closure commit are observed; this evidence-update commit cannot identify or
+  claim its own future content-addressed SHA.
+- Use the atomic terminal interval for final lifecycle comparison. An initial
+  over-wide activation-to-closure comparison
+  `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656..c5adc27b13893d7cbd1266c9225372cfb7df79e9`
+  failed because it combined ADR/ARD creation with terminal transition. The
+  correct parent-to-closure interval
+  `35d8552ba423e3e2d92294ddeb81674392b8f333..c5adc27b13893d7cbd1266c9225372cfb7df79e9`
+  passed explicit-ref lifecycle.
 
 #### Evidence
 
@@ -52,17 +60,21 @@ inventory stays in `scripts/README.md`.
   APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
   APPROVED`; all reported no findings. Hosted, provider, remote,
   credential-bearing, and live evidence remains `DEFER`.
+- Terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` is
+  observed with parent `35d8552ba423e3e2d92294ddeb81674392b8f333`.
+  Explicit-ref lifecycle for that parent-to-closure interval passed; clean-tree
+  repository aggregate passed; status and cached/unstaged diff inspection were
+  clean. This evidence-update commit is unidentified and unclaimed.
 
 #### Handoff
 
-- Next owner: an authorized closure executor. Observe the future closure commit
-  before running explicit-ref lifecycle or clean-tree postflight; never predict
-  its SHA or result.
-- Roll back newest-first: the future terminal closure commit/proposal first,
-  validator compatibility prerequisite `35d8552` second, CCPC-003 evidence
-  commit `a65a2e83` third, earlier CCPC-002 and CCPC-001 logical units next,
-  and activation `5c7bb820` last. Rerun focused and aggregate gates after each
-  logical revert.
+- Next owner: the future evidence-update committer records only the commit it
+  actually creates. Do not predict its SHA or promote any external lane.
+- Roll back newest-first: this future evidence-update commit first after it is
+  observed, terminal closure `c5adc27` second, validator compatibility
+  prerequisite `35d8552` third, CCPC-003 evidence commit `a65a2e83` fourth,
+  earlier CCPC-002 and CCPC-001 logical units next, and activation `5c7bb820`
+  last. Rerun focused and aggregate gates after each logical revert.
 
 ### 2026-07-27 - Spec 040 reciprocal planning activation
 

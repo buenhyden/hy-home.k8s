@@ -16,7 +16,9 @@ Specs 034 through 040 close its repository-static implementation, and
 [ADR-0020](../decisions/0020-document-lifecycle-program-closure-evidence.md)
 is the reciprocally linked same-diff accepted role-decision evidence for this
 ARD acceptance. Hosted, provider, remote, and live readiness remain `DEFER`;
-the future closure commit and postflight are not claimed.
+terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and
+parent-to-closure postflight are observed, while this evidence-update commit is
+unidentified and unclaimed.
 
 ## Boundaries & Non-goals
 
@@ -48,7 +50,7 @@ the future closure commit and postflight are not claimed.
 - **Scalability**: Active stages are bounded by current-owner and active-lineage
   cardinality rather than a repository-wide numeric cap.
 
-The exact terminal proposal passes the repository-static traceability,
+The exact terminal closure commit passes the repository-static traceability,
 operability, and scalability frontier at active controls `0/0`, terminal
 controls `6/3`, and terminal Specs `3`. Security remains split: static
 boundaries pass, while its provider, remote, credential-bearing, and live

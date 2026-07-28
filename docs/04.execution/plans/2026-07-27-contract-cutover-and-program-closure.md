@@ -15,11 +15,14 @@ as the final PRD-006 repository-static tranche. It activated a reciprocal
 [Task](../tasks/2026-07-27-contract-cutover-and-program-closure.md), removes
 active compatibility-reader behavior, proves the final repository contract,
 and closes PRD-006, ARD-0009, ADR-0020, the Spec, Plan, Task, indexes, and
-program relation in one exact staged terminal proposal. Deterministic
-precommit validation passes, and independent terminal reviewers approved
-staged diff SHA-256
+program relation in exact terminal closure commit
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9`. Deterministic precommit validation
+passes, and independent terminal reviewers approved staged diff SHA-256
 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no
-findings. No future commit or postflight is claimed.
+findings. Explicit-ref lifecycle from parent
+`35d8552ba423e3e2d92294ddeb81674392b8f333` to the closure commit and
+clean-tree repository-static aggregate passed. This evidence-update commit is
+unidentified and unclaimed.
 
 ## Context
 
@@ -82,7 +85,7 @@ commit and the clean-tree repository-static aggregate passed.
 | CCPC-001 | Cut active document readers over to strict-only operation | CCPC-000 | Reciprocal Plan/Task pair is active | Tests prove strict default/no-mode PASS and retired compatibility invocation rejection; active current prose and retirement guard are consistent; finite historical proof fixtures remain bounded |
 | CCPC-002 | Build the final closure matrix and Current audit overlay | CCPC-001 | Strict-only active reader contract is green | Every Spec 040 criterion and PRD-006 requirement has repository evidence, result class, owner, limitation, rollback, and final disposition; no unowned current finding remains |
 | CCPC-003 | Run whole-branch QA and independent reviews | CCPC-002 | Closure matrix is complete and the proposal is stable | Focused, affected, strict, lifecycle, aggregate, all-files, formatter, and diff gates pass; independent requirements and quality/security reviews approve the exact proposal |
-| CCPC-004 | Close the program lifecycle atomically and hand off future postflight | CCPC-003 | Observed CCPC-003 commit `a65a2e83` contains whole-branch QA/review evidence | Exact 14-path terminal proposal transitions PRD-006, ARD-0009, ADR-0020, Spec/Plan/Task, six indexes, progress, and registry relation together; required precommit gates pass and final frontier is `0/0·6/3·3`; independent terminal reviewers approved staged diff SHA-256 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no findings while future commit/explicit-ref/clean-tree postflight remain unclaimed |
+| CCPC-004 | Close the program lifecycle atomically and record postflight | CCPC-003 | Observed validator compatibility prerequisite commit `35d8552` is the closure parent | Exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` transitions PRD-006, ARD-0009, ADR-0020, Spec/Plan/Task, six indexes, progress, and registry relation together; required precommit gates pass and final frontier is `0/0·6/3·3`; independent terminal reviewers approved staged diff SHA-256 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no findings; parent-to-closure explicit-ref lifecycle and clean-tree aggregate passed; this evidence-update commit remains unclaimed |
 
 ### CCPC-000 — Reciprocal activation
 
@@ -138,10 +141,10 @@ commit and the clean-tree repository-static aggregate passed.
 
 ### CCPC-004 — Atomic closure and postflight
 
-1. Prepared one terminal lifecycle proposal that changes PRD-006 from `active`
+1. Committed one terminal lifecycle closure that changes PRD-006 from `active`
    to `done`, ARD-0009 from `active` to `accepted`, and Spec 040, this Plan,
    its Task, their indexes, and the final registry relation from `active` to
-   `done`. Update the accepted decision evidence required by the lifecycle
+   `done`. Updated the accepted decision evidence required by the lifecycle
    contract in the same proposal.
 2. Passed terminal lifecycle, strict document, residue, reference, aggregate,
    unqualified all-files, formatter, and diff gates for the exact staged
@@ -152,11 +155,17 @@ commit and the clean-tree repository-static aggregate passed.
    COMPLIANT`, `/root/ccpc004_terminal_quality_review` returned `QUALITY
    APPROVED`, and `/root/ccpc004_terminal_security_review` returned `SECURITY
    APPROVED`; all reported no findings.
-4. Handed future closure-commit creation to the authorized next owner. This
-   proposal does not predict or claim that content-addressed identity.
-5. Deferred explicit-ref lifecycle and clean-tree repository-static postflight
-   until the future closure commit is observed. Remote/live lanes remain
-   `DEFER` until separately authorized and executed.
+4. Observed exact terminal closure commit
+   `c5adc27b13893d7cbd1266c9225372cfb7df79e9` with parent
+   `35d8552ba423e3e2d92294ddeb81674392b8f333`.
+5. Recorded explicit-ref lifecycle and clean-tree repository-static aggregate
+   PASS for the parent-to-closure interval. An initial over-wide
+   activation-to-closure comparison
+   `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656..c5adc27b13893d7cbd1266c9225372cfb7df79e9`
+   failed because it combined ADR/ARD creation with terminal transition; the
+   correct atomic terminal interval passed. Remote/live lanes remain `DEFER`
+   until separately authorized and executed. This evidence-update commit is
+   unidentified and unclaimed.
 
 ## Verification Plan
 
@@ -202,11 +211,12 @@ commit and the clean-tree repository-static aggregate passed.
   quality, and security reviews approve the exact staged terminal proposal
   without findings.
 - PRD-006, ARD-0009, ADR-0020, Spec 040, Plan, Task, indexes, progress, and the
-  final registry relation transition atomically in the exact 14-path proposal.
-- The future closure commit, explicit-ref lifecycle, and clean-tree
-  repository-static postflight remain a bounded handoff and are recorded only
-  after observation. Current hosted, provider, remote, and live lanes remain
-  `DEFER` unless separately authorized and observed.
+  final registry relation transition atomically in exact 14-path closure commit
+  `c5adc27b13893d7cbd1266c9225372cfb7df79e9`.
+- Parent-to-closure explicit-ref lifecycle and clean-tree repository-static
+  postflight are observed. This evidence-update commit itself remains
+  unidentified and unclaimed. Current hosted, provider, remote, and live lanes
+  remain `DEFER` unless separately authorized and observed.
 
 ## Traceability
 

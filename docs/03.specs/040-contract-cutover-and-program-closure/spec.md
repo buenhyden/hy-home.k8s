@@ -26,17 +26,20 @@ Plan/Task activation is observed in
 observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. CCPC-002 now records the
 complete repository-static closure matrix, exact advanced terminal frontier,
 and Current-audit reconciliation. CCPC-003 whole-branch QA and independent
-review are observed. CCPC-004 completes the exact 14-path staged terminal
-proposal with lifecycle self-test `668`, staged lifecycle, strict document
-gates, residue frontier `0/0·6/3·3`, repository aggregate, unqualified
-all-files pre-commit, formatter review, and both diff checks passing.
+review are observed. CCPC-004 completes exact 14-path terminal closure commit
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9` from parent
+`35d8552ba423e3e2d92294ddeb81674392b8f333` with lifecycle self-test `668`,
+staged lifecycle, strict document gates, residue frontier `0/0·6/3·3`,
+repository aggregate, unqualified all-files pre-commit, formatter review, and
+both diff checks passing.
 Independent terminal reviewers approved staged diff SHA-256
 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no
 findings: `/root/ccpc004_terminal_requirements_review` returned
 `REQUIREMENTS COMPLIANT`, `/root/ccpc004_terminal_quality_review` returned
 `QUALITY APPROVED`, and `/root/ccpc004_terminal_security_review` returned
-`SECURITY APPROVED`. No future closure commit, explicit-ref result, or
-clean-tree postflight is claimed. Hosted, provider, remote, credential-bearing,
+`SECURITY APPROVED`. Explicit-ref lifecycle for the parent-to-closure interval
+and clean-tree repository-static aggregate passed. This evidence-update commit
+is unidentified and unclaimed. Hosted, provider, remote, credential-bearing,
 and live evidence remains `DEFER`.
 
 ## Strategic Boundaries & Non-goals
@@ -61,8 +64,8 @@ and live evidence remains `DEFER`.
 - Final QA separates static PASS from optional SKIP and remote/live DEFER.
 - CCPC-003 independent reviewers approved the whole-branch implementation.
 - CCPC-004 independent terminal reviewers approved the exact staged terminal
-  proposal before any future closure commit; the future commit and postflight
-  are still not inferred.
+  proposal before the terminal closure commit; parent-to-closure explicit-ref
+  lifecycle and clean-tree postflight are observed.
 
 ## Core Design
 
@@ -74,9 +77,9 @@ and rollback.
 
 The Current audit overlay records repository-static closure and retains
 remaining provider, platform, and live findings with their existing owners.
-Program documents move through allowed states together in this lifecycle-valid
-staged terminal proposal. Its future commit identity and postflight remain
-separate observed evidence.
+Program documents moved through allowed states together in the lifecycle-valid
+terminal closure commit. This evidence-update commit remains a separate
+unidentified and unclaimed evidence event.
 
 ## Data Modeling & Storage Strategy
 
