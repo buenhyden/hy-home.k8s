@@ -1,9 +1,9 @@
 ---
 title: 'Stage 00 Agent Governance Contract Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-28
 ---
 
 # Stage 00 Agent Governance Contract Specification
@@ -12,13 +12,18 @@ updated: 2026-07-26
 
 This specification defines the foundation for the next workspace agent-governance
 program: one provider-neutral machine contract, four provider/local projections,
-and deterministic consumer validation. It is a design record only while Specs
-038–040 remain active. Spec 041 may be promoted and enrolled in `programLineage`
-only after Spec 040 closes the current PRD-006 program.
+an explicit four-class project-memory contract, and deterministic consumer
+validation. Specs 038–040 are closed. Spec 040 terminal closure
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9` and postflight evidence update
+`4335ea6076a68fe0bbed3526a21b92a39180faa7` satisfy this tranche's activation
+prerequisite.
 
 The external-source observation cutoff is **2026-07-26 Asia/Seoul**. Repository state,
-not this draft, remains the current runtime authority until the tranche is
-implemented and reviewed.
+not provider prose, remains runtime authority until each later evidence class
+is implemented and observed. This Spec, its reciprocal Plan/Task, their
+indexes, the shared progress entry, and the PRD-003 lineage relation form one
+exact eight-path activation proposal; no future activation commit identity is
+claimed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -43,8 +48,10 @@ implemented and reviewed.
 2. ADR-0019 remains `draft` and ADR-0013 remains the accepted current baseline
    until the new program is implemented.
 3. At Spec 041 activation, the registry adds one PRD `003` / ARD `0006`
-   program with Specs 041–046 as ordered tranches and ADR `0019` as the
-   decision relation.
+   program with Specs 041–046 as ordered tranches and accepted ADR `0013` as
+   its governing decision. Draft ADR `0019` remains the proposed successor
+   linked by PRD/ARD/Spec traceability and may replace that registry relation
+   only with its Spec 046 acceptance evidence.
 4. Only Spec 041 may own the first execution Plan/Task pair; later tranches
    remain blocked until their predecessor's tranche-owned criteria are `done`.
    Provider-runtime results recorded by Spec 042 may remain explicit
@@ -72,6 +79,16 @@ implemented and reviewed.
   `docs/00.agent-governance/memory/progress.md` as the only tracked shared
   project-memory ledger. Provider auto-memory and transient checkpoints cannot
   become current owners for repository facts or execution status.
+- The contract declares exactly four memory classes:
+  `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`. Each class identifies scope, authority role,
+  owner, provenance, sensitivity, promotion target, and lifecycle-policy
+  references. Provider-local memory is advisory; it cannot own repository
+  facts, decisions, task status, or durable handoff evidence.
+- Spec 043 owns executable checkpoint promotion, refresh, expiry, archive/GC,
+  conflict resolution, redaction, resume, and negative-fixture behavior. No
+  provider transcript, full prompt, credential, token, or secret becomes a
+  durable memory store.
 
 ### Evidence classes
 
@@ -124,6 +141,8 @@ The proposed `harness-contract.json` contains:
   and per-role projection path, each marked `current` or `target`;
 - consumer/version records and compatibility state;
 - the canonical shared-memory path and transient checkpoint boundary;
+- four explicit memory-class declarations with authority, owner, provenance,
+  sensitivity, promotion target, and lifecycle-policy references;
 - bounded cardinality assertions and redaction rules.
 
 No credential, token, provider transcript, user configuration, or ignored
@@ -201,6 +220,10 @@ not claimed to exist in this draft.
   the tracked contract or fixtures.
 - **VAL-SAGC-008**: Focused validation, strict document checks, repository
   quality gate, and diff checks PASS before tranche handoff.
+- **VAL-SAGC-009**: The machine contract declares the four memory classes and
+  their authority/provenance/sensitivity/promotion boundaries, while executable
+  checkpoint lifecycle behavior remains owned by Spec 043 and sensitive or raw
+  transcript content is rejected.
 
 ## Traceability
 
@@ -209,6 +232,8 @@ not claimed to exist in this draft.
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Agent design**: [Agent Design](./agent-design.md)
+- **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](../../04.execution/plans/2026-07-28-stage-00-agent-governance-contract.md)
+- **Task evidence**: [Stage 00 Agent Governance Contract Task](../../04.execution/tasks/2026-07-28-stage-00-agent-governance-contract.md)
 - **Successor**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
 
 ### Lifecycle Traceability
@@ -216,10 +241,11 @@ not claimed to exist in this draft.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-10](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-002 | Contract/schema negative fixtures prove the closed machine contract. |
-| [REQ-PRD-FUN-10](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-003 | Routing-owner comparison proves validation routing remains separate. |
-| [REQ-PRD-FUN-10](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-004 | Consumer migration ledger proves one selected machine owner. |
-| [REQ-PRD-MET-08](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-SAGC-005 | Exact-set validation proves canonical role/projection parity. |
-| [REQ-PRD-MET-08](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-SAGC-006 | Evidence fixtures prove result-class separation. |
-| [REQ-PRD-FUN-07](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-001 | Dependency validation proves safe program activation. |
-| [REQ-PRD-FUN-07](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-007 | Redaction fixtures prove sensitive data exclusion. |
-| [REQ-PRD-FUN-07](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-008 | Focused and aggregate QA prove reviewable handoff. |
+| N/A — VAL-SAGC-003 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-003 | Routing-owner comparison proves validation routing remains separate. |
+| N/A — VAL-SAGC-004 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-004 | Consumer migration ledger proves one selected machine owner. |
+| N/A — VAL-SAGC-005 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-005 | Exact-set validation proves canonical role/projection parity. |
+| N/A — VAL-SAGC-006 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-006 | Evidence fixtures prove result-class separation. |
+| N/A — VAL-SAGC-001 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-001 | Dependency validation proves safe program activation. |
+| N/A — VAL-SAGC-007 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-007 | Redaction fixtures prove sensitive data exclusion. |
+| N/A — VAL-SAGC-008 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-008 | Focused and aggregate QA prove reviewable handoff. |
+| N/A — VAL-SAGC-009 shares the PRD-003 source linked in VAL-SAGC-002 | VAL-SAGC-009 | Contract/schema fixtures prove explicit memory classes, authority boundaries, and the Spec 041/043 ownership split. |

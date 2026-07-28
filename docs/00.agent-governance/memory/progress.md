@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - Spec 041 reciprocal planning activation
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-041 #agent-governance #machine-contract #memory
+
+#### Progress
+
+- Observed Spec 040 terminal closure
+  `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and postflight evidence update
+  `4335ea6076a68fe0bbed3526a21b92a39180faa7`.
+- Prepared an exact eight-path activation proposal: Spec 041 and its index,
+  reciprocal Plan/Task and both indexes, this progress entry, and the
+  PRD-003/ARD-0006 registry program relation governed by current accepted
+  ADR-0013. Draft ADR-0019 remains the proposed successor until Spec 046.
+- Ordered SAGC-000 through SAGC-005 so schema and negative fixtures precede
+  contract data, consumer migration precedes derived cutover, and whole-tranche
+  QA/review precedes terminal closure.
+
+#### Memory
+
+- Spec 041 owns machine declarations for `working-short-term`,
+  `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary` memory. Each declares authority, owner,
+  provenance, sensitivity, promotion target, and lifecycle-policy references.
+- Spec 043 owns checkpoint promotion, refresh, expiry, archive/GC, conflict,
+  redaction, resume, and negative-fixture enforcement. Provider-local memory is
+  advisory and no raw prompt, transcript, credential, token, secret, auth data,
+  shell history, or private diagnostic becomes durable project memory.
+
+#### Evidence
+
+- Activation is a proposal only. Lifecycle, strict document, aggregate,
+  all-files, independent review, commit, and explicit-ref postflight results
+  will be recorded after observation.
+- Current inventory remains ten roles and thirty adapters. The 12-role,
+  four-surface, 48-adapter inventory remains a non-current target.
+- Provider runtime, hosted CI, remote, credential-bearing, and live evidence
+  remains `DEFER`.
+
+#### Handoff
+
+- Next owner: SAGC-000 activation validator and independent reviewers.
+- Do not predict the activation commit SHA. Roll back the future activation
+  commit before the Spec 040 evidence update if rollback is required.
+
 ### 2026-07-28 - CCPC-004 atomic terminal closure postflight
 
 #### Metadata

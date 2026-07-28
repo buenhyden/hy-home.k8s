@@ -6211,6 +6211,55 @@
   "programLineage": {
     "programs": [
       {
+        "prd": "003",
+        "ard": "0006",
+        "tranches": [
+          {
+            "spec": "041",
+            "order": 1,
+            "state": "active",
+            "reason": "Stage 00 agent governance contract",
+            "decision": "0013"
+          },
+          {
+            "spec": "042",
+            "order": 2,
+            "state": "draft",
+            "reason": "Provider-native runtime and model evidence",
+            "decision": "0013"
+          },
+          {
+            "spec": "043",
+            "order": 3,
+            "state": "draft",
+            "reason": "Agent harness loop lifecycle",
+            "decision": "0013"
+          },
+          {
+            "spec": "044",
+            "order": 4,
+            "state": "draft",
+            "reason": "Agent roster evaluation and admission",
+            "decision": "0013"
+          },
+          {
+            "spec": "045",
+            "order": 5,
+            "state": "draft",
+            "reason": "Agent governance CI and QA cutover",
+            "decision": "0013"
+          },
+          {
+            "spec": "046",
+            "order": 6,
+            "state": "draft",
+            "reason": "Agent governance program closure",
+            "decision": "0013"
+          }
+        ],
+        "followUps": []
+      },
+      {
         "prd": "005",
         "ard": "0008",
         "tranches": [
