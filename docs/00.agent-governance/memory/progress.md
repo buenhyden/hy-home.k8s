@@ -60,6 +60,56 @@ inventory stays in `scripts/README.md`.
 - Roll back this terminal closure before reverting implementation
   `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`.
 
+### 2026-07-29 - Spec 042 terminal closure postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-042 #provider-runtime #model-evidence #lifecycle #postflight
+
+#### Progress
+
+- Observed terminal closure commit
+  `90a7d85698cc024e26085ca7caed1b018f78a04e` with parent
+  `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`.
+- Confirmed the exact eight changed paths: Spec 042 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, this progress ledger, and the single
+  Spec 042 program-lineage relation. PRD-003 and ARD-0006 remain active for
+  Specs 043 through 046.
+
+#### Memory
+
+- Durable memory records the observed implementation and closure identities,
+  exact path set, validation verdicts, external limitations, and next owner.
+- Provider-local observations remain provenance-bound and advisory. No
+  credential, auth artifact, raw prompt/transcript, provider response body,
+  shell history, environment dump, private diagnostic, or user configuration
+  is stored.
+
+#### Evidence
+
+- Parent-to-closure explicit-ref lifecycle passed for
+  `9c4dcc7b7572bfe8f436d81ee87ede872707cc73..90a7d85698cc024e26085ca7caed1b018f78a04e`.
+- The clean-tree repository aggregate ended with
+  `[PASS] repository quality gates passed`.
+- `git show --name-only` confirmed the closure commit's single parent and exact
+  eight changed paths.
+- Provider discovery, authenticated run, model promotion, hosted CI, remote,
+  credential-bearing, Kubernetes/GitOps, Vault/ESO, and live results remain
+  their observed `DEFER` or `ABSENT` verdicts.
+- This postflight evidence-update commit cannot identify or claim its own
+  future content-addressed SHA.
+
+#### Handoff
+
+- Next owner: Spec 043 agent harness loop lifecycle, including executable
+  checkpoint, memory promotion/refresh/expiry/archive-GC, redaction, conflict,
+  resume, retry, and escalation controls.
+- Roll back this evidence update before reverting closure
+  `90a7d85698cc024e26085ca7caed1b018f78a04e`.
+
 ### 2026-07-28 - Spec 042 activation postflight
 
 #### Metadata
