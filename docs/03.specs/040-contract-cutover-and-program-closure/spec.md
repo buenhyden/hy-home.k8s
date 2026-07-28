@@ -3,7 +3,7 @@ title: 'Contract Cutover and Program Closure Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 
 # Contract Cutover and Program Closure Technical Specification (Spec)
@@ -23,8 +23,10 @@ hands the program frontier to this Spec. The current hosted, provider, and live
 lanes remain `DEFER`; they are not inferred from the local PASS. Reciprocal
 Plan/Task activation is observed in
 `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`. CCPC-001 strict-only cutover is
-observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`; CCPC-002 closure-matrix and
-Current-audit reconciliation is the active work package.
+observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. CCPC-002 now records the
+complete repository-static closure matrix, exact advanced terminal frontier,
+and Current-audit reconciliation; CCPC-003 whole-branch QA and independent
+review is the active work package.
 
 ## Strategic Boundaries & Non-goals
 
