@@ -117,13 +117,20 @@ commit `7098a3242ac40e757c86ccac9b986e3253766f23`. The aggregate
 individual check pass but exited nonzero because this QA evidence draft was
 staged concurrently while the strict hook was running. The stable rerun then
 passed every applicable hook with Dockerfile lint a no-file `SKIP`; status,
-cached diff, and unstaged diff inspections were clean. Quality review returned
-`QUALITY APPROVED`; security review returned `SECURITY APPROVED`. Requirements
-review correctly found that committed HEAD still had SAGC-005 queued; this
-terminal proposal remediates that finding and requires terminal re-review
-before commit. No provider runtime, hosted CI, remote, credential-bearing,
-Kubernetes/GitOps, Vault/ESO, or live result is inferred from these
-repository-static PASS lanes.
+cached diff, and unstaged diff inspections were clean. Terminal requirements
+review returned `REQUIREMENTS COMPLIANT`; terminal quality review returned
+`QUALITY APPROVED`; security review returned `SECURITY APPROVED`. No provider
+runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps, Vault/ESO,
+or live result is inferred from these repository-static PASS lanes.
+
+Terminal closure commit `1a3232ce73a653371634e99d773d71ab03f87967` has parent
+`e85b7829cd120742c5f62712259a037134e2db7a` and changes exactly this Task, the
+reciprocal Plan, Spec 041, their three indexes, the shared progress ledger, and
+the single Spec 041 program-lineage relation. Parent-to-closure explicit-ref
+lifecycle passed for
+`e85b7829cd120742c5f62712259a037134e2db7a..1a3232ce73a653371634e99d773d71ab03f87967`;
+clean-tree aggregate passed after the closure commit. This postflight evidence
+update does not identify or claim its own future content-addressed SHA.
 
 ## Traceability
 

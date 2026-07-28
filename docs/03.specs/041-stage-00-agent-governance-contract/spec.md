@@ -25,6 +25,9 @@ later evidence class is implemented and observed. The reciprocal Plan/Task
 record the activation, implementation, QA, and closure evidence for this
 tranche. Provider-runtime, hosted CI, remote, credential-bearing, and live
 evidence remains `DEFER`.
+Terminal closure was observed at
+`1a3232ce73a653371634e99d773d71ab03f87967`; parent-to-closure explicit-ref
+lifecycle and clean-tree aggregate passed after that commit.
 
 ## Strategic Boundaries & Non-goals
 

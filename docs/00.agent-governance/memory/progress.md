@@ -38,9 +38,7 @@ inventory stays in `scripts/README.md`.
 
 - SAGC-000 through SAGC-005 are recorded as PASS in the reciprocal Task before
   terminal status transition.
-- Implementation quality and security reviews are approved. The committed-HEAD
-  requirements finding is remediated by the exact atomic proposal; independent
-  terminal requirements/quality/security review remains the pre-commit gate.
+- Terminal requirements, quality, and security reviews are approved.
 - Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
   Vault/ESO, and live results remain `DEFER`.
 - This staged entry does not claim the future content-addressed closure commit
@@ -53,6 +51,52 @@ inventory stays in `scripts/README.md`.
   lifecycle and clean-tree aggregate postflight.
 - Roll back this terminal closure before reverting QA or implementation
   commits.
+
+### 2026-07-28 - Spec 041 terminal closure postflight
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-041 #agent-governance #lifecycle #postflight
+
+#### Progress
+
+- Observed terminal closure commit
+  `1a3232ce73a653371634e99d773d71ab03f87967` with parent
+  `e85b7829cd120742c5f62712259a037134e2db7a`.
+- The closure commit changes exactly eight paths: Spec 041 body/index,
+  reciprocal Plan body/index, reciprocal Task body/index, this progress ledger,
+  and the single Spec 041 program-lineage relation. PRD-003 and ARD-0006 remain
+  active for Specs 042 through 046.
+
+#### Memory
+
+- Durable memory records the observed closure SHA, parent, exact path set, and
+  postflight validation results. It does not record raw prompts, transcripts,
+  credentials, tokens, secrets, auth files, shell history, environment dumps,
+  private diagnostics, or user config.
+
+#### Evidence
+
+- `python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref
+  --from-ref e85b7829cd120742c5f62712259a037134e2db7a --to-ref
+  1a3232ce73a653371634e99d773d71ab03f87967` passed.
+- `bash scripts/validate-repo-quality-gates.sh .` passed on the clean tree
+  after closure.
+- `git show --name-only` confirmed the closure commit's single parent and exact
+  eight changed paths.
+- Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, and live results remain `DEFER`.
+- This postflight evidence-update commit cannot identify or claim its own
+  future content-addressed SHA.
+
+#### Handoff
+
+- Next owner: Spec 042 provider-native runtime and model evidence.
+- Roll back this evidence update before reverting closure
+  `1a3232ce73a653371634e99d773d71ab03f87967`.
 
 ### 2026-07-28 - Spec 041 whole-tranche QA evidence
 

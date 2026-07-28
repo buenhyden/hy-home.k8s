@@ -17,6 +17,12 @@ one provider-neutral harness contract without prematurely changing the current
 10-role/30-adapter runtime inventory, migrated named consumers, and closed the
 tranche only after deterministic validation and independent review.
 
+Terminal closure was observed at
+`1a3232ce73a653371634e99d773d71ab03f87967` with parent
+`e85b7829cd120742c5f62712259a037134e2db7a`. Parent-to-closure explicit-ref
+lifecycle and clean-tree aggregate passed; this postflight evidence update does
+not claim its own future commit SHA.
+
 ## Context
 
 The preceding PRD-006 program closed in terminal commit
