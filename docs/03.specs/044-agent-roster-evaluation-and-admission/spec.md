@@ -1,9 +1,9 @@
 ---
 title: 'Agent Roster Evaluation and Admission Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-29
 ---
 
 # Agent Roster Evaluation and Admission Technical Specification (Spec)
@@ -25,10 +25,13 @@ external [`agency-agents`](https://github.com/msitarzewski/agency-agents)
 repository is only an idea catalog for comparing responsibility and evaluation
 patterns; it is not roster or instruction authority.
 
-The current-source observation cutoff for model and provider-capability
-decisions is **2026-07-26 Asia/Seoul**. Later changes must be recorded as
-separate currentness evidence and must not silently alter approved role
-boundaries or accepted model decisions.
+The provider/model evidence cutoff for model and provider-capability decisions
+is **2026-07-10 10:00 Asia/Seoul** (`2026-07-10 01:00 UTC`), as owned by
+[`provider-runtime-evidence.json`](../../00.agent-governance/contracts/provider-runtime-evidence.json).
+The Spec 042 source ledger was reconciled on 2026-07-28 and distinguishes
+dated cutoff evidence from current-only observation evidence. Later changes
+must be recorded as separate currentness evidence and must not silently alter
+approved role boundaries or accepted model decisions.
 
 ## Strategic Boundaries & Non-goals
 
@@ -144,20 +147,27 @@ available by cutoff sources and an authenticated Spec 042 canary.
 
 Provider mapping follows these rules.
 
-- **Claude**: compare the incumbent with account-available `opus`, `fable`,
-  `sonnet`, and `haiku` aliases or exact IDs. High-risk work begins with a
-  high-capability candidate; bounded low-risk work may begin with `sonnet` or
-  `haiku`. `model` and `effort` enter an adapter only after official schema,
-  allowlist, and runtime-resolution evidence.
-- **Codex**: compare the incumbent with the installed runtime's documented
-  demanding and balanced candidates, including `gpt-5.6` and
-  `gpt-5.6-terra` where available. `model_reasoning_effort` is chosen per role
-  and exact model/client support; no union of example values is treated as a
-  universal enum.
-- **Gemini CLI**: compare `gemini-3-pro-preview`,
-  `gemini-3-flash-preview`, and supported Auto routing where available.
-  Subagent model selection is independent of the parent `/model` choice.
-  Agent-scoped generation settings require native parse and runtime evidence.
+- **Claude**: compare incumbent repository labels (`opus 4.8`,
+  `sonnet 4.6`) with the fixed-cutoff Fable 5, Opus 4.8, Sonnet 5, and
+  Haiku 4.5 families. High-risk work begins with a high-capability candidate;
+  bounded low-risk work may begin with a worker candidate. An exact `model`
+  alias/ID and `effort` become an accepted provider mapping only after dated
+  primary-source, allowlist, native parse, runtime-resolution, and same-suite
+  fitness evidence.
+- **Codex**: compare incumbent repository mappings (`gpt-5.5`,
+  `gpt-5.3-codex`) with fixed-cutoff candidates including `gpt-5.6-sol`,
+  `gpt-5.6-terra`, `gpt-5.6-luna`, and a bounded `gpt-5.4-mini` route where
+  the cited product surface supports them. `model_reasoning_effort` is chosen
+  per role and exact model/client support; no union of example values is
+  treated as a universal enum, and publication does not prove local
+  entitlement or resolution.
+- **Gemini CLI**: keep the local/Antigravity `Gemini 3.1 Pro` and
+  `Gemini 3.5 Flash` labels as incumbent local evidence. Evaluate the
+  fixed-cutoff API families `gemini-3.1-pro-preview`, `gemini-3.5-flash`, and
+  `gemini-3.1-flash-lite` separately from Gemini CLI's unresolved pro, flash,
+  and Auto routes. API lifecycle never proves CLI/account availability;
+  `.gemini/**` native schema parsing and runtime resolution must identify any
+  accepted CLI ID and generation setting.
 - **local/Antigravity**: retain its current model labels as an incumbent local
   projection until an approved local runtime evaluation replaces them. Local
   evidence is not reused as Gemini CLI discovery or model-resolution proof.
@@ -166,12 +176,17 @@ Use the following official sources for provider model releases and schemas.
 
 - [Claude Code subagents](https://code.claude.com/docs/en/sub-agents)
 - [Claude Code model configuration](https://code.claude.com/docs/en/model-config)
+- [Claude model overview](https://platform.claude.com/docs/en/about-claude/models/overview)
 - [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
 - [Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
-- [Codex model catalog](https://developers.openai.com/api/docs/models)
+- [GPT-5.6 release](https://openai.com/index/gpt-5-6/)
+- [Codex release `rust-v0.144.1`](https://github.com/openai/codex/releases/tag/rust-v0.144.1)
+- [Codex release `rust-v0.145.0-alpha.2`](https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2)
 - [Gemini CLI subagents](https://geminicli.com/docs/core/subagents/)
-- [Gemini CLI model selection](https://geminicli.com/docs/cli/model/)
-- [Gemini CLI generation settings](https://geminicli.com/docs/cli/generation-settings/)
+- [Gemini CLI release `v0.50.0`](https://github.com/google-gemini/gemini-cli/releases/tag/v0.50.0)
+- [Gemini CLI release `v0.51.0-preview.0`](https://github.com/google-gemini/gemini-cli/releases/tag/v0.51.0-preview.0)
+- [Gemini CLI memory](https://geminicli.com/docs/tools/memory/)
+- [Gemini API model catalog](https://ai.google.dev/gemini-api/docs/models)
 
 ## Data Modeling & Storage Strategy
 
@@ -308,18 +323,20 @@ rejection, eval baselines, adjudication, and rollback.
   [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)
 - **Agent design**: [Workspace Agent Governance Program Design](../041-stage-00-agent-governance-contract/agent-design.md)
 - **Successor**: [Spec 045](../045-agent-governance-ci-qa-cutover/spec.md)
+- **Execution Plan**: [Agent Roster Evaluation and Admission Implementation Plan](../../04.execution/plans/2026-07-29-agent-roster-evaluation-and-admission.md)
+- **Task evidence**: [Agent Roster Evaluation and Admission Task](../../04.execution/tasks/2026-07-29-agent-roster-evaluation-and-admission.md)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-12](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-001 | Canonical-role validation proves the exact 12-role set. |
-| [REQ-PRD-FUN-12](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-002 | Four-surface validation proves exact 48-adapter parity. |
-| [REQ-PRD-FUN-12](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-003 | Role-contract fixtures prove the two new roles are bounded and non-overlapping. |
-| [REQ-PRD-FUN-15](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-004 | Admission negative fixtures reject direct catalog import, overlap, excess authority, and missing evidence. |
-| [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-001 | Canonical set validation reports zero missing, extra, or duplicate role. |
-| [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-002 | Native-schema and semantic fixtures report zero adapter mismatch. |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-005 | Versioned role corpora and incumbent baselines prove evaluation coverage. |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-006 | Independent adjudication proves safety and quality precede cost optimization. |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-007 | Provider-native field validation proves role-specific model/reasoning mapping. |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AREA-008 | Provider canary, same-version eval, and rollback prove promotion fitness. |
+| N/A — VAL-AREA-002 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-002 | Four-surface validation proves exact 48-adapter parity. |
+| N/A — VAL-AREA-003 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-003 | Role-contract fixtures prove the two new roles are bounded and non-overlapping. |
+| N/A — VAL-AREA-004 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-004 | Admission negative fixtures reject direct catalog import, overlap, excess authority, and missing evidence. |
+| N/A — repeated VAL-AREA-001 metric shares the PRD-003 source linked above | VAL-AREA-001 | Canonical set validation reports zero missing, extra, or duplicate role. |
+| N/A — repeated VAL-AREA-002 metric shares the PRD-003 source linked above | VAL-AREA-002 | Native-schema and semantic fixtures report zero adapter mismatch. |
+| N/A — VAL-AREA-005 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-005 | Versioned role corpora and incumbent baselines prove evaluation coverage. |
+| N/A — VAL-AREA-006 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-006 | Independent adjudication proves safety and quality precede cost optimization. |
+| N/A — VAL-AREA-007 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-007 | Provider-native field validation proves role-specific model/reasoning mapping. |
+| N/A — VAL-AREA-008 shares the PRD-003 source linked in VAL-AREA-001 | VAL-AREA-008 | Provider canary, same-version eval, and rollback prove promotion fitness. |

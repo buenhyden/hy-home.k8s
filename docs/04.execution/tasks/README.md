@@ -101,6 +101,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-28-provider-native-runtime-and-model-evidence.md
 ├── 2026-07-28-stage-00-agent-governance-contract.md
 ├── 2026-07-29-agent-harness-loop-lifecycle.md
+├── 2026-07-29-agent-roster-evaluation-and-admission.md
 └── README.md
 ```
 
@@ -184,6 +185,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-28-provider-native-runtime-and-model-evidence.md`](./2026-07-28-provider-native-runtime-and-model-evidence.md) | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md)과 reciprocal [Plan](../plans/2026-07-28-provider-native-runtime-and-model-evidence.md)의 PNME-000~005 완료 증거를 추적한다. 구현 `9c4dcc7b`, focused/strict/lifecycle/aggregate/all-files/diff PASS, 요구사항 `COMPLIANT`, 품질·보안 `APPROVED`를 기록하며 provider runtime/live 실행은 별도 승인 없이는 `DEFER`다. | Done | 2026-07-29 |
 | [`./2026-07-28-stage-00-agent-governance-contract.md`](./2026-07-28-stage-00-agent-governance-contract.md) | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md)과 reciprocal [Plan](../plans/2026-07-28-stage-00-agent-governance-contract.md)의 SAGC-000~005 결과를 추적한다. Activation, closed schema/fixtures, current 10/30과 target-only 12/48, 네 memory class, consumer migration, routing, QA/review/closure를 완료했고 provider/runtime/hosted/remote/live는 `DEFER`다. | Done | 2026-07-28 |
 | [`./2026-07-29-agent-harness-loop-lifecycle.md`](./2026-07-29-agent-harness-loop-lifecycle.md) | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md)과 reciprocal [Plan](../plans/2026-07-29-agent-harness-loop-lifecycle.md)의 AHLL-000~004 완료 증거를 추적한다. 구현·보강 `8a995014`, `95a6ee03`, `f0190643`, `9d8a2a36`, evidence `4bc3da76`, focused `59/82/39`, lifecycle `668`, strict/affected/aggregate/all-files/diff 및 독립 승인을 기록하며 closure SHA/postflight와 external/live 실행은 preclaim하지 않는다. | Done | 2026-07-29 |
+| [`./2026-07-29-agent-roster-evaluation-and-admission.md`](./2026-07-29-agent-roster-evaluation-and-admission.md) | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md)과 reciprocal [Plan](../plans/2026-07-29-agent-roster-evaluation-and-admission.md)의 AREA-000~005 실행 증거를 추적한다. 현재 AREA-000 activation만 진행 중이며 provider runtime/live와 모델 resolution은 관찰 전까지 `DEFER`다. | Active | 2026-07-29 |
 
 ## Related Documents
 

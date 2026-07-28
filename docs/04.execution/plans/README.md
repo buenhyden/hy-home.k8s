@@ -100,6 +100,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-28-provider-native-runtime-and-model-evidence.md
 ├── 2026-07-28-stage-00-agent-governance-contract.md
 ├── 2026-07-29-agent-harness-loop-lifecycle.md
+├── 2026-07-29-agent-roster-evaluation-and-admission.md
 └── README.md
 ```
 
@@ -181,6 +182,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-28-provider-native-runtime-and-model-evidence.md`](./2026-07-28-provider-native-runtime-and-model-evidence.md) | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md)의 PNME-000~005를 실행해 exact cutoff source ledger, 분리된 provider-local 관찰, candidate-only model/effort, secret-free canary와 MCP/path 경계를 검증했다. 구현 commit `9c4dcc7b`과 독립 재검토는 PASS이며 외부 provider/runtime/live lane은 `DEFER` 또는 `ABSENT`다. | Done | 2026-07-29 |
 | [`./2026-07-28-stage-00-agent-governance-contract.md`](./2026-07-28-stage-00-agent-governance-contract.md) | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md)의 SAGC-000~005를 schema/fixture → current/target 및 memory contract → consumer migration → derived routing → QA/closure 순서로 완료했다. 현재 10-role/30-adapter는 유지하고 12/48은 target-only이며 provider/runtime/hosted/remote/live는 `DEFER`다. | Done | 2026-07-28 |
 | [`./2026-07-29-agent-harness-loop-lifecycle.md`](./2026-07-29-agent-harness-loop-lifecycle.md) | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md)의 AHLL-000~004를 실행해 bounded retry/recovery, checkpoint/resume, 네 memory class lifecycle, routing/provider projection과 review remediation을 완료했다. Evidence head `4bc3da76`, focused `59/82/39`, lifecycle `668`, strict/affected/aggregate/all-files/diff 및 독립 review는 PASS이며 provider/runtime/live와 실제 ignored checkpoint 실행은 unclaimed다. | Done | 2026-07-29 |
+| [`./2026-07-29-agent-roster-evaluation-and-admission.md`](./2026-07-29-agent-roster-evaluation-and-admission.md) | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md)의 AREA-000~005를 실행해 12-role/4-surface/48-adapter repository-static roster, new-role admission, eval coverage, model/effort fitness, catalog/provider note reconciliation을 순차 구현한다. Provider runtime/live와 모델 resolution은 관찰 전까지 `DEFER`다. | Active | 2026-07-29 |
 
 ## Related Documents
 

@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 044 roster admission activation
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-044 #agent-roster #model-fitness #admission #gemini
+
+#### Progress
+
+- Observed Spec 043 closure
+  `a0bc3565988e291980320dec8442405c7ef16eb6` and postflight
+  `80ffd6d92a53990b04e413c0acf7fbc879b437d4`.
+- Prepared the reciprocal Spec 044 activation path: Spec body/index, Plan
+  body/index, Task body/index, this progress entry, and the single Spec 044
+  program-lineage transition from `draft` to `active`.
+- The current implementation remains the Spec 041 baseline until subsequent
+  commits promote repository-static roster evidence: current `10 roles / 3
+  surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
+
+#### Memory
+
+- The Spec 043 memory hierarchy remains in force: `working-short-term` for
+  bounded scratch context, `durable-long-term` for repository facts and
+  decisions, `domain-scoped` for governed domain records, and
+  `provider-local-auxiliary` for advisory provider-local notes.
+- Repository-owned durable memory wins over provider-local notes. No private
+  provider transcripts, auth files, credentials, tokens, shell history, or
+  actual ignored checkpoint state may be promoted.
+
+#### Evidence
+
+- This activation changes no provider adapter semantics, `.gemini/**` file,
+  model assignment, provider settings, workflow, credential, CI job, remote,
+  Kubernetes/GitOps, Vault/ESO, live surface, or actual
+  `.agent-work/checkpoint.json`.
+- Provider runtime discovery, provider model resolution, hosted CI, and live
+  execution remain `DEFER` until separately observed.
+- No future implementation commit, validation result, or closure SHA is
+  claimed before observation.
+
+#### Handoff
+
+- Next owner: AREA-001 closed admission, evaluation, and model-fitness
+  contracts, validators, and synthetic fixtures.
+- Roll back this exact activation set before reverting any future Spec 044
+  implementation commit.
+
 ### 2026-07-29 - Spec 043 terminal closure postflight
 
 #### Metadata
