@@ -3,7 +3,7 @@ title: 'Reference: Claude Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Claude Provider Notes
@@ -56,7 +56,12 @@ Checked on 2026-07-06:
 
 - Follow CLAUDE hierarchy: managed policy -> project -> user -> path-specific rules.
 - Use imports for modular instructions when needed.
-- Use auto memory for recurring lessons, but keep governance controls in docs.
+- Treat auto memory as `provider-local-auxiliary`: advisory only, never the
+  owner of repository facts, decisions, task status, or durable handoff
+  evidence. Re-observe a claim from the repository before review-promoting it.
+- Use `memory/progress.md` for `durable-long-term` shared progress and the
+  owning Spec/Runbook/Incident/Postmortem for `domain-scoped` knowledge.
+  Ignored `.agent-work/checkpoint.json` content is `working-short-term` only.
 
 ## Current Contract
 
@@ -65,12 +70,20 @@ Checked on 2026-07-06:
 - Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
 - Keep responses to users in Korean.
 - Keep governance control docs in English.
-- Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.
+- Use `contracts/harness-contract.json` as the machine roster owner and
+  `harness-catalog.md` as its readable runtime view.
 - Use `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle hook contract wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures; PreCompact is advisory and must not replace validation evidence.
 - Keep `.claude/*.local.md`, including Hookify rules, as ignored local warning files only. Shared Claude enforcement stays in `.claude/settings.json`, `docs/00.agent-governance/hooks/*.sh`, and repository validators.
 
 ### QA Evidence Resolution
 
+- `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
+  machine owner. Its current `10 roles / 3 surfaces / 30 adapters` inventory is
+  repository-static; `12 / 4 / 48` remains target-only.
+- Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
+  separate. A result in one class never proves another.
+- The legacy role-semantics contract is readable compatibility input with zero
+  semantic consumers until Spec 045 and is not current authority.
 - Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
   `remote/live` semantics plus handoff fields from
   [`rules/quality-standards.md`](../rules/quality-standards.md).
@@ -78,14 +91,15 @@ Checked on 2026-07-06:
   are repo-static evidence. They do not prove native Claude discovery, hook
   delivery, delegated role use, permission enforcement, or remote execution.
 - Preserve Claude-native `model` and least-privilege `tools:` validation while
-  the provider-neutral role contract owns only shared role semantics.
+  `contracts/harness-contract.json` owns shared role semantics.
 
 ## Validation and Refresh
 
-Run the shared role-semantic and roster checks plus the repository quality
-gate after changing Claude settings, hooks, or agent adapters:
+Run the harness, shared role-semantic, roster, and repository quality checks
+after changing Claude settings, hooks, or agent adapters:
 
 ```bash
+python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

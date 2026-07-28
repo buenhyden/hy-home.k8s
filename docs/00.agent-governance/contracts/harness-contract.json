@@ -996,65 +996,65 @@
     {
       "id": "harness-catalog",
       "path": "docs/00.agent-governance/harness-catalog.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "harness-implementation-map",
       "path": "docs/00.agent-governance/harness-implementation-map.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "provider-agents-md-note",
       "path": "docs/00.agent-governance/providers/agents-md.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "provider-claude-note",
       "path": "docs/00.agent-governance/providers/claude.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "provider-codex-note",
       "path": "docs/00.agent-governance/providers/codex.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "provider-gemini-note",
       "path": "docs/00.agent-governance/providers/gemini.md",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "affected-surface-selector",
       "path": "scripts/validate-affected-surfaces.py",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     },
     {
       "id": "repository-quality-aggregate",
       "path": "scripts/validate-repo-quality-gates.sh",
-      "selectedContract": "agent-role-semantics-compatibility",
-      "selectedVersion": "2",
-      "migrationState": "pending-spec-041-migration",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
       "evidenceClass": "repo-static"
     }
   ],
@@ -1063,16 +1063,7 @@
     "legacySchemaPath": "docs/00.agent-governance/contracts/agent-role-semantics.schema.json",
     "legacyVersion": "2",
     "state": "readable-compatibility-input",
-    "legacyConsumers": [
-      "harness-catalog",
-      "harness-implementation-map",
-      "provider-agents-md-note",
-      "provider-claude-note",
-      "provider-codex-note",
-      "provider-gemini-note",
-      "affected-surface-selector",
-      "repository-quality-aggregate"
-    ],
+    "legacyConsumers": [],
     "removalOwnerSpec": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
     "deletionGate": "zero-legacy-consumers-with-repository-static-proof"
   },

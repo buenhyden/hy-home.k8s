@@ -26,7 +26,16 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
-- Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
+- Resolve memory through the four classes in
+  `docs/00.agent-governance/memory/README.md`: `working-short-term`,
+  `durable-long-term`, `domain-scoped`, and `provider-local-auxiliary`.
+  `docs/00.agent-governance/memory/progress.md` is the canonical progress ledger,
+  serving as the durable shared ledger and the only tracked `progress.md`;
+  `.agent-work/checkpoint.json`
+  is ignored, temporary, and advisory, and repository evidence wins conflicts.
+- Treat provider-local memory as auxiliary only. Spec 043 owns the not-yet-
+  implemented executable promotion, refresh, expiry, archive/GC, redaction,
+  conflict, and resume controls.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
@@ -61,10 +70,12 @@ Codex implements the shared four-element harness model from
    prevented it instead of treating the failure as only an agent mistake.
 4. **Knowledge stores**: read and update
    `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
-   `harness-catalog.md` as current runtime truth, and record RTK PATH/database
-   limitations without inspecting private runtime state. Preserve compact
-   durable lessons there, while keeping current policy in Stage 00 and current
-   implementation truth in the owning docs, scripts, and manifests.
+   the owning Spec/Runbook/Incident/Postmortem for domain-scoped knowledge, and
+   keep working or provider-local memory non-authoritative. Record RTK
+   PATH/database limitations without inspecting private runtime state.
+   Preserve compact reviewed lessons in durable owners, while keeping current
+   policy in Stage 00 and current implementation truth in the owning docs,
+   scripts, and manifests.
 
 ## Codex/GPT Capabilities & Constraints
 

@@ -3,7 +3,7 @@ title: 'Preflight Checklist (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Preflight Checklist (March 2026)
@@ -37,7 +37,9 @@ Run this checklist before making substantial edits.
 - [ ] Persona selected via `rules/persona.md`.
 - [ ] Matching scope loaded from `scopes/`.
 - [ ] Provider notes loaded from `providers/` when relevant.
-- [ ] `memory/progress.md` reviewed for current progress, handoff, and reusable memory context.
+- [ ] `memory/progress.md` reviewed for durable shared progress and the relevant
+      domain owner reviewed; any working or provider-local memory was treated
+      as advisory and checked against repository state.
 
 ### 3. Stage and Source Mapping
 
@@ -61,6 +63,8 @@ the active Task or handoff before proceeding.
 - [ ] Evidence requirements for completion are defined.
 - [ ] Unavailable local tools and expected validation limitations are identified.
 - [ ] A `memory/progress.md` update is planned for repo-changing work.
+- [ ] Any ignored `.agent-work/checkpoint.json` recovery context is bounded,
+      non-sensitive, non-authoritative, and subordinate to repository evidence.
 - [ ] If a standalone memory file will be created or updated, `docs/99.templates/templates/common/memory.template.md` has been read and a matching `progress.md` entry is planned.
 
 ## Related Documents

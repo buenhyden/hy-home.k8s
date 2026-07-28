@@ -99,6 +99,8 @@ python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.p
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_document_lifecycle_archive_cutover.py"
+python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
 

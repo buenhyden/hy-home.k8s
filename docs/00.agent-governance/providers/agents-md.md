@@ -3,7 +3,7 @@ title: 'Reference: AGENTS.md Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # AGENTS.md Provider Notes
@@ -23,8 +23,11 @@ Claude and Gemini use their root provider shims (`CLAUDE.md`, `GEMINI.md`) and m
 ### Gateway Integrity Rules
 
 - Never add policy text to `AGENTS.md` directly; add it to the appropriate `rules/` or `scopes/` file and add a pointer in `AGENTS.md`.
-- Routing pointers must stay in sync with `docs/00.agent-governance/harness-catalog.md`, `subagent-protocol.md`, and rule documents.
-- Runtime roster details belong in `docs/00.agent-governance/harness-catalog.md`, not in `AGENTS.md`.
+- Routing pointers must stay in sync with
+  `docs/00.agent-governance/contracts/harness-contract.json`, the derived
+  `harness-catalog.md`, `subagent-protocol.md`, and rule documents.
+- Runtime roster semantics belong in `contracts/harness-contract.json`; the
+  readable catalog belongs in `harness-catalog.md`, not in `AGENTS.md`.
 - `.codex/agents/*.toml` role-adapter status belongs in `harness-catalog.md` and `subagent-protocol.md`, not in a root catalog table.
 
 ### Cross-Provider Consistency
@@ -63,6 +66,13 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 
 ### QA Evidence Resolution
 
+- `contracts/harness-contract.json` version `1.0.0` is the machine owner. The
+  current inventory is exactly `10 roles / 3 surfaces / 30 adapters`; the
+  `12 / 4 / 48` inventory is target-only. The four evidence classes are
+  `repo-static`, `provider-runtime`, `ci`, and `remote-live`, with no
+  cross-class inference.
+- The legacy role-semantics contract remains readable compatibility input with
+  zero semantic consumers until Spec 045; it is not authority.
 - `AGENTS.md` points to, but does not restate, the validation lane, result, and
   handoff contract in [`rules/quality-standards.md`](../rules/quality-standards.md).
 - A tracked `AGENTS.md`, `.codex/agents/*.toml`, or `.codex/hooks.json` proves
@@ -74,10 +84,11 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 
 ## Validation and Refresh
 
-Run the role-semantic validator, roster-currentness validator, and repository
-quality gate after changing the gateway or a Codex adapter:
+Run the harness, role-semantic, roster-currentness, and repository quality
+checks after changing the gateway or a Codex adapter:
 
 ```bash
+python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

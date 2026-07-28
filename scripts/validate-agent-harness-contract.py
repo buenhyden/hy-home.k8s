@@ -83,6 +83,31 @@ SURFACE_LAYOUT = {
     "gemini": (PurePosixPath(".gemini/agents"), ".md"),
 }
 EVIDENCE_CLASSES = ("repo-static", "provider-runtime", "ci", "remote-live")
+HARNESS_ROUTED_SURFACES = (
+    "provider-gateways",
+    "agent-shared",
+    "agent-claude",
+    "agent-codex",
+    "governance-documents",
+    "scripts",
+    "tests",
+)
+HARNESS_VALIDATOR = {
+    "id": "agent-harness-contract",
+    "argv": [
+        "python3",
+        "scripts/validate-agent-harness-contract.py",
+        "--root",
+        ".",
+    ],
+    "lanes": ["affected", "staged", "all-files", "ci"],
+    "optional": False,
+    "fallback": {
+        "status": "FAIL",
+        "reason": "Provider-neutral harness contract validation is required.",
+    },
+    "evidenceLane": "repo-static",
+}
 PERMISSION_CLASSES = (
     "read-only-evidence",
     "scoped-authoring",
@@ -141,58 +166,58 @@ CONSUMERS = (
     (
         "harness-catalog",
         "docs/00.agent-governance/harness-catalog.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "harness-implementation-map",
         "docs/00.agent-governance/harness-implementation-map.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "provider-agents-md-note",
         "docs/00.agent-governance/providers/agents-md.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "provider-claude-note",
         "docs/00.agent-governance/providers/claude.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "provider-codex-note",
         "docs/00.agent-governance/providers/codex.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "provider-gemini-note",
         "docs/00.agent-governance/providers/gemini.md",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "affected-surface-selector",
         "scripts/validate-affected-surfaces.py",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "repository-quality-aggregate",
         "scripts/validate-repo-quality-gates.sh",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
 )
 LEGACY_CONSUMERS = tuple(
@@ -912,6 +937,46 @@ def _validate_routing(root: Path, contract: dict[str, Any]) -> None:
         fail(
             "HARNESS-ROUTING",
             "validation-surfaces evidence lanes differ from the mapped owner",
+        )
+    validators = routing.get("validators")
+    if not isinstance(validators, list):
+        fail("HARNESS-ROUTING", "validation-surfaces validators must be a list")
+    harness_validators = [
+        validator
+        for validator in validators
+        if isinstance(validator, dict)
+        and validator.get("id") == HARNESS_VALIDATOR["id"]
+    ]
+    if harness_validators != [HARNESS_VALIDATOR]:
+        fail(
+            "HARNESS-ROUTING",
+            "agent-harness-contract validator registration differs",
+        )
+    surfaces = routing.get("surfaces")
+    if not isinstance(surfaces, list):
+        fail("HARNESS-ROUTING", "validation-surfaces surfaces must be a list")
+    routed_surfaces: list[str] = []
+    for surface in surfaces:
+        if not isinstance(surface, dict):
+            fail("HARNESS-ROUTING", "validation surface must be an object")
+        surface_validators = surface.get("validators")
+        if not isinstance(surface_validators, list):
+            fail(
+                "HARNESS-ROUTING",
+                f"surface {surface.get('id', '<missing>')} validators must be a list",
+            )
+        occurrences = surface_validators.count(HARNESS_VALIDATOR["id"])
+        if occurrences > 1:
+            fail(
+                "HARNESS-ROUTING",
+                f"surface {surface.get('id', '<missing>')} repeats the harness validator",
+            )
+        if occurrences == 1:
+            routed_surfaces.append(surface.get("id"))
+    if tuple(routed_surfaces) != HARNESS_ROUTED_SURFACES:
+        fail(
+            "HARNESS-ROUTING",
+            "agent-harness-contract surface routing differs from the closed set",
         )
 
 

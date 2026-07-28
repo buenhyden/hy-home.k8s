@@ -27,7 +27,16 @@ Start from the root Claude provider shim, then follow the governance JIT sequenc
 
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
-- Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
+- Resolve memory through the four classes in
+  `docs/00.agent-governance/memory/README.md`: `working-short-term`,
+  `durable-long-term`, `domain-scoped`, and `provider-local-auxiliary`.
+  `docs/00.agent-governance/memory/progress.md` is the canonical progress ledger,
+  serving as the durable shared ledger and the only tracked `progress.md`;
+  `.agent-work/checkpoint.json`
+  is ignored, temporary, and advisory, and repository evidence wins conflicts.
+- Treat Claude auto memory or other provider-local memory as auxiliary only.
+  Spec 043 owns the not-yet-implemented executable promotion, refresh, expiry,
+  archive/GC, redaction, conflict, and resume controls.
 - Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
@@ -65,10 +74,11 @@ Claude implements the shared four-element harness model from
    mistake.
 4. **Knowledge stores**: read and update
    `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
-   `harness-catalog.md` as current runtime truth, and route generated wiki or
-   graphify findings back to canonical owner files. Preserve compact durable
-   lessons there, while keeping current policy in Stage 00 and current
-   implementation truth in the owning docs, scripts, and manifests.
+   the owning Spec/Runbook/Incident/Postmortem for domain-scoped knowledge, and
+   keep working or provider-local memory non-authoritative. Route generated
+   wiki or graphify findings back to canonical owner files. Preserve compact
+   reviewed lessons in durable owners, while keeping current policy in Stage 00
+   and current implementation truth in the owning docs, scripts, and manifests.
 
 ## Runtime Roster
 

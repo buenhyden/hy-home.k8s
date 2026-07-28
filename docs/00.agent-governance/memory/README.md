@@ -9,6 +9,11 @@ repeated mistakes in agent work. Memory entries are supporting context only;
 they do not override repository governance, scope rules, or direct user
 instructions.
 
+The machine-readable class and authority owner is
+[`../contracts/harness-contract.json`](../contracts/harness-contract.json).
+This README explains how its four memory classes are used; it does not create a
+second memory taxonomy.
+
 ### Collection Readers
 
 This README is primarily for:
@@ -32,11 +37,34 @@ This README is primarily for:
 - Runtime bridge configuration that belongs under `.claude/**` or `.codex/**`
 - Product, architecture, execution, and operations SSoT under the current docs taxonomy
 
+### Four Memory Classes
+
+| Class | Use | Authority and Location |
+| --- | --- | --- |
+| `working-short-term` | Bounded context for one active task or session | Temporary and non-authoritative. The ignored `.agent-work/checkpoint.json` path is an advisory recovery carrier only. |
+| `durable-long-term` | Reviewed repository facts, decisions, task status, reusable lessons, and handoff evidence | Canonical repository records, with `docs/00.agent-governance/memory/progress.md` as the durable shared progress ledger and the owning SDLC document as applicable. |
+| `domain-scoped` | Knowledge whose meaning belongs to one product, architecture, operation, incident, or policy domain | The owning Spec, Runbook, Incident, Postmortem, or other canonical domain document, linked to related progress. It does not independently own task status. |
+| `provider-local-auxiliary` | Provider- or user-local recall that may help rediscovery | Advisory only. It must not own repository facts, decisions, task status, or durable handoff evidence. |
+
+Repository state and canonical SDLC owners win every conflict with temporary or
+provider-local context. Promotion is review-gated: working context may be
+promoted to durable memory, domain knowledge may be promoted when it becomes
+cross-domain, and provider-local claims must first be re-observed from the
+repository. Credentials, auth files, tokens, secrets, raw prompts, complete
+provider transcripts, shell history, private diagnostics, environment dumps,
+and user configuration are never memory payloads.
+
+The contract declares these boundaries now. Spec 043
+([`../../03.specs/043-agent-harness-loop-lifecycle/spec.md`](../../03.specs/043-agent-harness-loop-lifecycle/spec.md))
+owns future executable promotion, refresh, expiry, archive/garbage-collection,
+redaction, conflict, and resume controls. Until those controls are implemented
+and validated, do not report them as executable runtime behavior.
+
 ## Item Index
 
 ```text
 memory/
-├── progress.md  # Agent progress and reusable memory ledger
+├── progress.md  # Canonical durable shared progress ledger
 ├── <topic>.md   # Optional standalone memory entry using memory.template.md
 └── README.md    # This file
 ```
@@ -54,6 +82,9 @@ memory/
 5. Keep policy changes in `../rules/` instead of relying on memory notes.
 6. When a standalone memory file is added or updated, append a matching
    progress entry to `progress.md` in the same change.
+7. On resume, rediscover repository status and the owning SDLC record before
+   using `.agent-work/checkpoint.json` or provider-local memory; the repository
+   wins on conflict.
 
 ### Relative Link Rules
 

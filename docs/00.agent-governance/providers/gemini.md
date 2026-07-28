@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Gemini Provider Notes
@@ -58,6 +58,12 @@ and output styles. It is not the Gemini CLI native configuration directory.
 ### Context Strategy
 
 - Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).
+- Treat any native or local provider recall as `provider-local-auxiliary`, not
+  repository authority. Ignored `.agent-work/checkpoint.json` is
+  `working-short-term`; `memory/progress.md` is the shared
+  `durable-long-term` ledger; owning Specs, Runbooks, Incidents, and
+  Postmortems hold `domain-scoped` knowledge. Repository evidence wins
+  conflicts.
 - The tracked local adapter workflow may be used only by a runtime that
   explicitly supports it. Do not infer Gemini CLI agent registration from
   `.agents/agents/**`.
@@ -78,6 +84,12 @@ approved Spec/Plan/Task when upstream intent is already established. That work
 must provide schema and runtime canary evidence instead of relabeling
 `.agents/**`.
 
+The provider-neutral machine owner is
+`contracts/harness-contract.json` version `1.0.0`. Its current inventory is
+exactly `10 roles / 3 surfaces / 30 adapters`; the Gemini-native surface and
+the complete `12 roles / 4 surfaces / 48 adapters` inventory remain target-only.
+The tracked local/Antigravity projection does not promote that target.
+
 ### Model Policy (Gemini)
 
 - Refer to `docs/00.agent-governance/model-policy.md` for canonical tiers.
@@ -89,10 +101,16 @@ must provide schema and runtime canary evidence instead of relabeling
 - Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
 - Keep user-facing responses in Korean.
 - Keep governance and technical control docs in English.
-- Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.
+- Use `contracts/harness-contract.json` as the machine roster owner and
+  `harness-catalog.md` as its readable runtime view.
 
 ### QA Evidence Resolution
 
+- Keep the harness evidence classes `repo-static`, `provider-runtime`, `ci`,
+  and `remote-live` separate. A tracked local adapter is repo-static evidence
+  only and never proves Gemini CLI runtime discovery or use.
+- The legacy role-semantics contract is readable compatibility input with zero
+  semantic consumers until Spec 045 and is not current authority.
 - Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
   `remote/live` semantics plus handoff fields from
   [`rules/quality-standards.md`](../rules/quality-standards.md).
@@ -105,11 +123,11 @@ must provide schema and runtime canary evidence instead of relabeling
 
 ## Validation and Refresh
 
-Run the shared role-semantic and roster checks plus the repository quality gate
-after changing local/Antigravity agents, hooks, model metadata, or the root
-shim:
+Run the harness, shared role-semantic, roster, and repository quality checks
+after changing local/Antigravity agents, hooks, model metadata, or the root shim:
 
 ```bash
+python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

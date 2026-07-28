@@ -182,6 +182,28 @@ class AgentHarnessContractTests(unittest.TestCase):
             )
         )
 
+    def test_harness_validator_registration_and_surface_routes_are_exact(
+        self,
+    ) -> None:
+        routing = self.validator.load_json(
+            REPOSITORY_ROOT, self.validator.ROUTING_PATH
+        )
+        harness_validators = [
+            validator
+            for validator in routing["validators"]
+            if validator["id"] == "agent-harness-contract"
+        ]
+        self.assertEqual(
+            harness_validators,
+            [self.validator.HARNESS_VALIDATOR],
+        )
+        routed = tuple(
+            surface["id"]
+            for surface in routing["surfaces"]
+            if "agent-harness-contract" in surface["validators"]
+        )
+        self.assertEqual(routed, self.validator.HARNESS_ROUTED_SURFACES)
+
     def test_consumer_set_and_legacy_subset_are_exact(self) -> None:
         observed = tuple(
             (
@@ -198,15 +220,17 @@ class AgentHarnessContractTests(unittest.TestCase):
             tuple(self.contract["compatibility"]["legacyConsumers"]),
             self.validator.LEGACY_CONSUMERS,
         )
-        self.assertNotIn(
-            "role-semantics-validator",
-            self.contract["compatibility"]["legacyConsumers"],
+        self.assertEqual(self.validator.LEGACY_CONSUMERS, ())
+        self.assertTrue(
+            all(
+                (
+                    consumer["selectedContract"],
+                    consumer["selectedVersion"],
+                    consumer["migrationState"],
+                ) == ("harness-contract", "1.0.0", "current")
+                for consumer in self.contract["consumers"]
+            )
         )
-        self.assertNotIn(
-            "roster-currentness-validator",
-            self.contract["compatibility"]["legacyConsumers"],
-        )
-        self.assertEqual(len(self.validator.LEGACY_CONSUMERS), 8)
         self.assertEqual(
             self.contract["compatibility"]["removalOwnerSpec"],
             self.validator.REMOVAL_OWNER_SPEC,

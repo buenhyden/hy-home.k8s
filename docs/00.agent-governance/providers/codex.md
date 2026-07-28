@@ -3,7 +3,7 @@ title: 'Reference: Codex Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Codex Provider Notes
@@ -61,6 +61,11 @@ Checked on 2026-07-06:
 - Hook event wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations where the runtime consumes that file.
 - `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
 - Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/adapter surface unless populated by a future approved adapter change.
+- Treat provider- or user-local recall as `provider-local-auxiliary`, ignored
+  `.agent-work/checkpoint.json` as `working-short-term`,
+  `memory/progress.md` as the shared `durable-long-term` ledger, and the owning
+  Spec/Runbook/Incident/Postmortem as `domain-scoped`. Repository evidence wins
+  conflicts.
 
 ## Current Contract
 
@@ -72,6 +77,13 @@ Checked on 2026-07-06:
 
 ### QA Evidence Resolution
 
+- `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
+  machine owner. Its current `10 roles / 3 surfaces / 30 adapters` inventory is
+  repository-static; `12 / 4 / 48` remains target-only.
+- Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
+  separate. A result in one class never proves another.
+- The legacy role-semantics contract is readable compatibility input with zero
+  semantic consumers until Spec 045 and is not current authority.
 - Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
   `remote/live` semantics plus handoff fields from
   [`rules/quality-standards.md`](../rules/quality-standards.md).
@@ -79,15 +91,16 @@ Checked on 2026-07-06:
   configuration. They do not prove native Codex discovery, role use, event
   delivery, sandbox enforcement, approval handling, or remote execution.
 - Preserve Codex-native `model`, `model_reasoning_effort`, sandbox, and approval
-  validation while the provider-neutral role contract owns only shared role
+  validation while `contracts/harness-contract.json` owns shared role
   semantics.
 
 ## Validation and Refresh
 
-Run the provider-neutral role check, roster-currentness check, and repository
-quality gate after changing Codex adapters, model metadata, or hook wiring:
+Run the harness, provider-neutral role, roster-currentness, and repository
+quality checks after changing Codex adapters, model metadata, or hook wiring:
 
 ```bash
+python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

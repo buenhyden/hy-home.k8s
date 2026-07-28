@@ -3,7 +3,7 @@ title: 'Agent Bootstrap Governance (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Agent Bootstrap Governance (March 2026)
@@ -18,7 +18,11 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Plan from repo-backed evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
 - Use [Agentic Execution Rules](agentic.md) as the Agent-first Engineering contract for non-trivial work.
 - Use spec-driven execution anchored to `docs/01.requirements/` and `docs/03.specs/`.
-- Use `docs/00.agent-governance/memory/progress.md` as the agent progress and reusable memory ledger for repo-changing work.
+- Resolve `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary` memory through
+  [`../memory/README.md`](../memory/README.md). Use
+  `docs/00.agent-governance/memory/progress.md` as the canonical durable shared
+  progress ledger for repo-changing work.
 - Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update `progress.md` in the same change.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
@@ -46,7 +50,9 @@ missing authority requires human clarification before execution.
 3. Resolve persona via `rules/persona.md`.
 4. Load one layer scope from `scopes/`.
 5. Load provider notes from `providers/` when needed.
-6. Load `memory/progress.md` for current progress, handoff, and reusable memory context.
+6. Load `memory/progress.md` for durable shared progress and load only the
+   relevant domain owner. Rediscover repository state before using ignored
+   short-term checkpoints or provider-local auxiliary memory.
 7. Load `rules/postflight-checklist.md` before completion.
 
 ### Stage Taxonomy

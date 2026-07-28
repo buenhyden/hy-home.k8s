@@ -3,7 +3,7 @@ title: 'Reference: Harness Implementation Map'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Reference: Harness Implementation Map
@@ -41,7 +41,8 @@ where is the evidence recorded?_
 
 | Surface             | Source                                                               | Role                               | Required Validation                          | Evidence             |
 | ------------------- | -------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------- | -------------------- |
-| Runtime roster SSOT | [`harness-catalog.md`](harness-catalog.md)                           | Agents, skills, adapters, matrices | repo-quality-static (adapter + matrix checks) | `memory/progress.md` |
+| Runtime machine contract | [`contracts/harness-contract.json`](contracts/harness-contract.json) | Role semantics, permissions, evidence, memory, current/target inventory, and consumers | harness, role-semantic, roster-currentness, and affected-surface checks | owning Task and `memory/progress.md` |
+| Runtime catalog view | [`harness-catalog.md`](harness-catalog.md)                           | Human-readable agents, skills, adapters, and matrices derived from the machine contract | repo-quality-static (adapter + matrix checks) | `memory/progress.md` |
 | Model tier policy   | `model-policy.md`                                                    | Supervisor/worker model tiers      | repo-quality-static                          | catalog              |
 | Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Native Claude/Codex plus local/Antigravity adapters; static parity only | agent adapter checks in repo-quality-static  | catalog              |
 | Shared assets       | `.agents/{skills,workflows,output-styles}`                           | Provider-neutral SSoT via symlinks | repo-quality-static                          | catalog              |
@@ -102,8 +103,10 @@ where is the evidence recorded?_
 
 | Surface | Source | Role | Required Validation | Evidence |
 | --- | --- | --- | --- | --- |
-| Role semantics | `contracts/agent-role-semantics.json`, adjacent schema, thirty tracked role adapters | Own shared responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims across `local`, `claude`, and `codex` adapter surfaces without copying model/tool/effort metadata | `python3 scripts/validate-agent-role-semantics.py --self-test` and `--root .` | Spec 031 Task |
-| Surface metadata and roster | Native Claude/Codex plus local/Antigravity adapters, `harness-catalog.md` | Preserve surface-owned model/tool/effort fields, exact ten-role stems, thirty adapters, and scope imports without claiming Gemini CLI native parity | repository quality gate plus roster-currentness validator | Spec 031 Task |
+| Harness contract | `contracts/harness-contract.json`, adjacent schema | Own the closed role, permission, evidence, consumer, and four-class memory contract; current inventory is exactly `10/3/30`, while `12/4/48` remains target-only | `python3 scripts/validate-agent-harness-contract.py --self-test` and `--root .` | Spec 041 Task |
+| Role semantics | `contracts/harness-contract.json` `adapterSemantics`, thirty tracked role adapters | Own shared responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims across `local`, `claude`, and `codex` without copying surface model/tool/effort metadata | `python3 scripts/validate-agent-role-semantics.py --self-test` and `--root .` | Spec 041 Task |
+| Surface metadata and roster | `contracts/harness-contract.json`, native Claude/Codex plus local/Antigravity adapters | Preserve surface-owned model/tool/effort fields, exact ten-role stems, thirty current adapters, and scope imports; Gemini native and the twelve-role/four-surface/forty-eight-adapter inventory remain target-only | harness validator, repository quality gate, and roster-currentness validator | Spec 041 Task |
+| Legacy readability | `contracts/agent-role-semantics.json` and adjacent schema | Readable compatibility input with zero semantic consumers; removal remains Spec 045-owned | harness compatibility check | Spec 045 Task |
 | Lane, result, and handoff contract | `rules/quality-standards.md`, `rules/postflight-checklist.md` | Define `affected`, `staged`, `all-files`, `message/manual`, `ci`, `remote/live`; require `PASS`/`SKIP`/`FAIL`/`DEFER` and complete handoff fields | postflight review and repository quality gate | owning Task and `memory/progress.md` |
 
 Tracked gateway, hook, and role-adapter files are repository configuration.
@@ -115,6 +118,7 @@ those files; provider-runtime evidence remains a separate lane.
 | Surface         | Source                                                     | Role                                 | Required Validation | Evidence   |
 | --------------- | ---------------------------------------------------------- | ------------------------------------ | ------------------- | ---------- |
 | Progress ledger | `docs/00.agent-governance/memory/progress.md`              | Repo-changing work + reusable memory | repo-quality-static | itself     |
+| Memory classes  | `contracts/harness-contract.json`, `memory/README.md`      | Declare working short-term, durable long-term, domain-scoped, and provider-local auxiliary authority | harness contract check; executable lifecycle deferred to Spec 043 | owning Task |
 | Plans / tasks   | `docs/04.execution/plans/**`, `docs/04.execution/tasks/**` | Execution + validation evidence      | repo-quality-static | stage docs |
 
 ### Operations / Runbooks

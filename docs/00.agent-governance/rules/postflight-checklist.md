@@ -3,7 +3,7 @@ title: 'Postflight Checklist (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-28
 ---
 
 # Postflight Checklist (March 2026)
@@ -80,6 +80,9 @@ Run this checklist before finalizing a response.
 - [ ] Staged and unstaged changes were reviewed for scope.
 - [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
 - [ ] `memory/progress.md` was updated with progress, reusable memory, evidence, and handoff for repo-changing work.
+- [ ] Working short-term and provider-local auxiliary context was either
+      discarded or review-promoted to the correct durable/domain owner; no
+      executable Spec 043 lifecycle control was claimed before implementation.
 - [ ] Standalone memory files, if any, used `docs/99.templates/templates/common/memory.template.md` and link back to a related `progress.md` entry.
 
 The canonical lane, result, and handoff field definitions are in

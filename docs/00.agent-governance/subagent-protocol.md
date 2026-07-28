@@ -3,7 +3,7 @@ title: 'Reference: Subagent Protocol'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Reference: Subagent Protocol
@@ -59,9 +59,10 @@ scoping.
 
 Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
 `GEMINI.md`) for gateway routing and use
-`docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
-catalog, including native Claude/Codex adapters and local/Antigravity role
-adapters.
+`docs/00.agent-governance/contracts/harness-contract.json` as the
+machine-readable role, permission, evidence, memory, and inventory owner. Use
+`docs/00.agent-governance/harness-catalog.md` as its human-readable catalog
+view.
 
 ## Current Contract
 
@@ -75,9 +76,13 @@ adapters.
 
 ### Agent File Requirement
 
-Every local roster role must have corresponding parity files in
+The machine contract's current inventory is exactly `10 roles / 3 surfaces /
+30 adapters`. Every current local roster role must have corresponding parity files in
 `.agents/agents/`, `.claude/agents/`, and `.codex/agents/`. This is a static
 local adapter contract, not proof that all three runtimes discover the files.
+The `12 roles / 4 surfaces / 48 adapters` inventory is target-only; it does not
+admit `docs-researcher`, `quality-engineer`, or Gemini-native adapters before
+their owning Specs provide the required evidence.
 
 Claude Markdown agent files in `.claude/agents/*.md` must contain frontmatter
 with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool
@@ -99,6 +104,10 @@ stems, scope imports, Runtime Bootstrap text, Guardrails, Handoff / Escalation,
 and Postflight requirements. Surface metadata keys differ. This parity
 relationship is validated by `scripts/validate-repo-quality-gates.sh` and does
 not establish Gemini CLI runtime parity.
+
+The legacy role-semantics contract and schema remain readable compatibility
+inputs with zero semantic consumers until Spec 045. They must not be used as
+delegation or role authority.
 
 ### Coordination
 
@@ -135,6 +144,8 @@ Run both self-tests and repository checks for role semantics and roster
 currentness, followed by the aggregate repository gate:
 
 ```bash
+python3 scripts/validate-agent-harness-contract.py --self-test
+python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-role-semantics.py --self-test
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py . --self-test
