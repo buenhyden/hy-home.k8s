@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 043 terminal closure postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: done
+- **Tags**: #spec-043 #agent-loop #checkpoint #memory-lifecycle #postflight
+
+#### Progress
+
+- Committed the reviewed exact eight-path Spec 043 terminal transition as
+  `a0bc3565988e291980320dec8442405c7ef16eb6`
+  (`docs(sdlc): close agent loop lifecycle`) with sole parent
+  `4bc3da7621c84048e1aee3b146482f9d7e62bbaa`.
+- The commit contains only the Spec 043 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, progress ledger, and Spec 043
+  program-lineage relation. Spec 044 through 046 remain draft.
+
+#### Evidence
+
+- Parent-to-closure explicit-ref lifecycle validation, clean-tree repository
+  aggregate, status, cached diff, and unstaged diff checks: PASS.
+- Two preliminary monolithic postflight runs received `SIGTERM` (`143`)
+  without a hook failure. All `20` applicable all-files hooks then passed in
+  bounded independent runs, Dockerfile lint was a no-file `SKIP`, and the
+  final monolithic `pre-commit run --all-files` retry exited `0`.
+- Requirements review returned `COMPLIANT`; quality and security returned
+  `APPROVED`. The closure commit has one parent and exactly eight paths.
+- Provider hook delivery, provider runtime, hosted CI, remote,
+  credential-bearing, Kubernetes/GitOps, Vault/ESO, live, and actual
+  `.agent-work/checkpoint.json` execution remain `DEFER` or unobserved.
+
+#### Handoff
+
+- Next owner: activate Spec 044 and implement evidence-backed roster
+  evaluation, admission, provider adapter coverage, and candidate-only
+  model/effort fitness gates.
+- This entry does not preclaim its own evidence-update commit SHA or any
+  provider/runtime/model-resolution result.
+- Roll back this evidence entry before reverting terminal closure
+  `a0bc3565988e291980320dec8442405c7ef16eb6`.
+
 ### 2026-07-29 - Spec 043 terminal closure staging
 
 #### Metadata
