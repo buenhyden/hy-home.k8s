@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 044 activation postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: done
+- **Tags**: #spec-044 #agent-roster #model-fitness #admission #postflight
+
+#### Progress
+
+- Committed the reviewed exact eight-path Spec 044 activation as
+  `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`
+  (`docs(sdlc): activate agent roster admission`) with sole parent
+  `80ffd6d92a53990b04e413c0acf7fbc879b437d4`.
+- The commit contains only the Spec 044 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, progress ledger, and Spec 044
+  program-lineage relation. Spec 045 and Spec 046 remain draft.
+- AREA-000 is complete. Current implementation truth remains `10 roles / 3
+  surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
+  remains a target until later Spec 044 implementation evidence exists.
+
+#### Evidence
+
+- Parent-to-activation explicit-ref lifecycle validation, clean-tree
+  repository aggregate, `pre-commit run --all-files`, status, cached diff,
+  and unstaged diff checks all exited `0`.
+- Requirements review returned `COMPLIANT`; quality and security returned
+  `APPROVED`; the fixed-cutoff and provider-model evidence review returned
+  `VERIFIED`. The quality review's one invalid role-semantics command was
+  corrected to use `--root .` and independently rechecked before commit.
+- The provider/model evidence cutoff remains `2026-07-10 10:00 Asia/Seoul`.
+  Provider runtime discovery, provider model resolution, hosted CI, remote,
+  credential-bearing, Kubernetes/GitOps, Vault/ESO, live execution, and
+  actual ignored checkpoint state remain `DEFER` or unobserved.
+
+#### Handoff
+
+- Next owner: AREA-001 closed admission, evaluation, and model-fitness
+  contracts, schemas, validators, and synthetic negative fixtures.
+- This entry does not preclaim its own evidence-update commit SHA, any later
+  role or adapter promotion, or any provider/runtime/model-resolution result.
+- Roll back this evidence entry before reverting activation
+  `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`.
+
 ### 2026-07-29 - Spec 044 roster admission activation
 
 #### Metadata
