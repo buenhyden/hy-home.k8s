@@ -409,9 +409,12 @@ class ActiveCorpusRetentionContractTests(unittest.TestCase):
 
 
 class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
+    FRONTIER_LINEAGE = "2026-07-27-contract-cutover-and-program-closure"
     FRONTIER_SPEC = (
         "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
     )
+    FRONTIER_PLAN = f"docs/04.execution/plans/{FRONTIER_LINEAGE}.md"
+    FRONTIER_TASK = f"docs/04.execution/tasks/{FRONTIER_LINEAGE}.md"
     SUCCESSOR_LINEAGE = "2026-07-26-github-ci-qa-evidence"
     SUCCESSOR_PLAN = (
         f"docs/04.execution/plans/{SUCCESSOR_LINEAGE}.md"
@@ -521,14 +524,22 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.validator.TERMINAL_SPEC,
             self.validator.TERMINAL_SUCCESSOR_SPEC,
         ]
+        terminal_spec_paths_expected = [
+            self.validator.TERMINAL_SPEC,
+            self.validator.TERMINAL_SUCCESSOR_SPEC,
+            self.FRONTIER_SPEC,
+        ]
         terminal_spec_paths = [row["path"] for row in terminal_specs]
         if terminal_spec_paths == current_spec_paths:
             mode = "current"
         elif terminal_spec_paths == advanced_spec_paths:
             mode = "advanced"
+        elif terminal_spec_paths == terminal_spec_paths_expected:
+            mode = "terminal"
         else:
             self.fail(
-                "production terminal Spec frontier must be exactly current or advanced"
+                "production terminal Spec frontier must be exactly current, "
+                "advanced, or terminal"
             )
 
         current_plan = (
@@ -564,7 +575,25 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "active",
                 ),
             ],
-            "advanced": [],
+            "advanced": [
+                (
+                    self.FRONTIER_PLAN,
+                    "plan",
+                    self.FRONTIER_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "active",
+                ),
+                (
+                    self.FRONTIER_TASK,
+                    "task",
+                    self.FRONTIER_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "active",
+                ),
+            ],
+            "terminal": [],
         }
         active_pairs_by_mode = {
             "current": [
@@ -577,7 +606,17 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "taskPath": current_task,
                 }
             ],
-            "advanced": [],
+            "advanced": [
+                {
+                    "lineageId": self.FRONTIER_LINEAGE,
+                    "owner": "platform",
+                    "planPath": self.FRONTIER_PLAN,
+                    "state": "complete",
+                    "status": "active",
+                    "taskPath": self.FRONTIER_TASK,
+                }
+            ],
+            "terminal": [],
         }
         terminal_rows_by_mode = {
             "current": [
@@ -632,6 +671,56 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "done",
                 ),
             ],
+            "terminal": [
+                (
+                    terminal_plan,
+                    "plan",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    current_plan,
+                    "plan",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    self.FRONTIER_PLAN,
+                    "plan",
+                    self.FRONTIER_LINEAGE,
+                    "sdlc/plan",
+                    "platform",
+                    "done",
+                ),
+                (
+                    terminal_task,
+                    "task",
+                    self.validator.TERMINAL_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+                (
+                    current_task,
+                    "task",
+                    self.SUCCESSOR_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+                (
+                    self.FRONTIER_TASK,
+                    "task",
+                    self.FRONTIER_LINEAGE,
+                    "sdlc/task",
+                    "platform",
+                    "done",
+                ),
+            ],
         }
         terminal_pairs_by_mode = {
             "current": [
@@ -662,6 +751,32 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "taskPath": current_task,
                 },
             ],
+            "terminal": [
+                {
+                    "lineageId": self.validator.TERMINAL_LINEAGE,
+                    "owner": "platform",
+                    "planPath": terminal_plan,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": terminal_task,
+                },
+                {
+                    "lineageId": self.SUCCESSOR_LINEAGE,
+                    "owner": "platform",
+                    "planPath": current_plan,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": current_task,
+                },
+                {
+                    "lineageId": self.FRONTIER_LINEAGE,
+                    "owner": "platform",
+                    "planPath": self.FRONTIER_PLAN,
+                    "state": "complete",
+                    "status": "done",
+                    "taskPath": self.FRONTIER_TASK,
+                },
+            ],
         }
         terminal_specs_by_mode = {
             "current": [
@@ -688,6 +803,32 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "039",
                     6,
                     "GitHub CI and QA evidence",
+                    "done",
+                    "done",
+                ),
+            ],
+            "terminal": [
+                (
+                    self.validator.TERMINAL_SPEC,
+                    "038",
+                    5,
+                    "Reference information architecture",
+                    "done",
+                    "done",
+                ),
+                (
+                    self.validator.TERMINAL_SUCCESSOR_SPEC,
+                    "039",
+                    6,
+                    "GitHub CI and QA evidence",
+                    "done",
+                    "done",
+                ),
+                (
+                    self.FRONTIER_SPEC,
+                    "040",
+                    7,
+                    "Contract cutover and program closure",
                     "done",
                     "done",
                 ),
@@ -866,7 +1007,26 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 f"owner: {frontier_owner}\n"
                 "---\n"
             ).encode(),
-        }
+        } | (
+            {
+                self.FRONTIER_PLAN: (
+                    "---\n"
+                    "type: sdlc/plan\n"
+                    f"status: {frontier_state}\n"
+                    "owner: platform\n"
+                    "---\n"
+                ).encode(),
+                self.FRONTIER_TASK: (
+                    "---\n"
+                    "type: sdlc/task\n"
+                    f"status: {frontier_state}\n"
+                    "owner: platform\n"
+                    "---\n"
+                ).encode(),
+            }
+            if successor_state == "done" or frontier_state == "done"
+            else {}
+        )
 
     @staticmethod
     def terminal_registry(
@@ -926,6 +1086,10 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         if state == "done":
             default_plan_paths.append(self.SUCCESSOR_PLAN)
             default_task_paths.append(self.SUCCESSOR_TASK)
+        if self.FRONTIER_PLAN in actual_payloads:
+            default_plan_paths.append(self.FRONTIER_PLAN)
+        if self.FRONTIER_TASK in actual_payloads:
+            default_task_paths.append(self.FRONTIER_TASK)
         return self.validator._partition_terminal_controls(
             plan_paths or default_plan_paths,
             task_paths or default_task_paths,
@@ -957,11 +1121,18 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "terminalSpecs": 1,
             },
             "advanced": {
-                "activeControlRows": 0,
-                "activeControlPairs": 0,
+                "activeControlRows": 2,
+                "activeControlPairs": 1,
                 "terminalControlRows": 4,
                 "terminalControlPairs": 2,
                 "terminalSpecs": 2,
+            },
+            "terminal": {
+                "activeControlRows": 0,
+                "activeControlPairs": 0,
+                "terminalControlRows": 6,
+                "terminalControlPairs": 3,
+                "terminalSpecs": 3,
             },
         }[mode]
         expected = {
@@ -1584,8 +1755,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             registry=self.terminal_registry("done", successor_state="done"),
         )
 
-        self.assertEqual(advanced["planPaths"], [])
-        self.assertEqual(advanced["taskPaths"], [])
+        self.assertEqual(advanced["planPaths"], [self.FRONTIER_PLAN])
+        self.assertEqual(advanced["taskPaths"], [self.FRONTIER_TASK])
         self.assertEqual(
             [row["path"] for row in advanced["terminalControlRows"]],
             [
@@ -1609,10 +1780,91 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             [row["path"] for row in advanced["terminalSpecRows"]],
             [self.validator.TERMINAL_SPEC, self.validator.TERMINAL_SUCCESSOR_SPEC],
         )
+        active_rows = self.validator._build_active_control_rows(
+            advanced["planPaths"],
+            advanced["taskPaths"],
+            {},
+            payloads,
+        )
+        self.assertEqual(
+            [
+                (row["path"], row["lineageId"], row["status"])
+                for row in active_rows
+            ],
+            [
+                (self.FRONTIER_PLAN, self.FRONTIER_LINEAGE, "active"),
+                (self.FRONTIER_TASK, self.FRONTIER_LINEAGE, "active"),
+            ],
+        )
+        self.assertEqual(
+            self.validator._build_active_control_pairs(active_rows),
+            [
+                {
+                    "lineageId": self.FRONTIER_LINEAGE,
+                    "state": "complete",
+                    "planPath": self.FRONTIER_PLAN,
+                    "taskPath": self.FRONTIER_TASK,
+                    "owner": "platform",
+                    "status": "active",
+                }
+            ],
+        )
+
+    def test_spec040_final_frontier_partitions_reciprocal_controls(
+        self,
+    ) -> None:
+        payloads = self.terminal_payloads(
+            "done", successor_state="done", frontier_state="done"
+        )
+        terminal = self.terminal_partition(
+            "done",
+            payloads=payloads,
+            registry=self.terminal_registry(
+                "done", successor_state="done", frontier_state="done"
+            ),
+        )
+
+        self.assertEqual(terminal["planPaths"], [])
+        self.assertEqual(terminal["taskPaths"], [])
+        self.assertEqual(terminal["specPaths"], [])
+        self.assertEqual(
+            [row["path"] for row in terminal["terminalControlRows"]],
+            [
+                self.validator.TERMINAL_PLAN,
+                self.SUCCESSOR_PLAN,
+                self.FRONTIER_PLAN,
+                self.validator.TERMINAL_TASK,
+                self.SUCCESSOR_TASK,
+                self.FRONTIER_TASK,
+            ],
+        )
+        self.assertEqual(
+            [
+                (row["lineageId"], row["status"])
+                for row in terminal["terminalControlPairCardinality"]
+            ],
+            [
+                (self.validator.TERMINAL_LINEAGE, "done"),
+                (self.SUCCESSOR_LINEAGE, "done"),
+                (self.FRONTIER_LINEAGE, "done"),
+            ],
+        )
+        self.assertEqual(
+            [row["path"] for row in terminal["terminalSpecRows"]],
+            [
+                self.validator.TERMINAL_SPEC,
+                self.validator.TERMINAL_SUCCESSOR_SPEC,
+                self.FRONTIER_SPEC,
+            ],
+        )
+        self.assertEqual(
+            [row["spec"] for row in terminal["terminalSpecRows"]],
+            ["038", "039", "040"],
+        )
         self.assertEqual(
             self.validator._build_active_control_rows(
-                advanced["planPaths"],
-                advanced["taskPaths"],
+                terminal["planPaths"],
+                terminal["taskPaths"],
                 {},
                 payloads,
             ),
@@ -1745,32 +1997,50 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "CLOSURE-TERMINAL-REGISTRY-DUPLICATE",
             ),
             (
-                "closed-document",
+                "closed-missing-plan",
                 {
-                    "payloads": self.terminal_payloads(
+                    "payloads": {
+                        path: payload
+                        for path, payload in self.terminal_payloads(
+                            "done",
+                            successor_state="done",
+                            frontier_state="done",
+                        ).items()
+                        if path != self.FRONTIER_PLAN
+                    },
+                    "registry": self.terminal_registry(
                         "done",
                         successor_state="done",
                         frontier_state="done",
                     ),
-                    "registry": self.terminal_registry(
-                        "done",
-                        successor_state="done",
-                    ),
+                    "plan_paths": [
+                        self.validator.TERMINAL_PLAN,
+                        self.SUCCESSOR_PLAN,
+                    ],
                 },
                 "CLOSURE-TERMINAL-FRONTIER",
             ),
             (
-                "closed-relation",
+                "closed-missing-task",
                 {
-                    "payloads": self.terminal_payloads(
-                        "done",
-                        successor_state="done",
-                    ),
+                    "payloads": {
+                        path: payload
+                        for path, payload in self.terminal_payloads(
+                            "done",
+                            successor_state="done",
+                            frontier_state="done",
+                        ).items()
+                        if path != self.FRONTIER_TASK
+                    },
                     "registry": self.terminal_registry(
                         "done",
                         successor_state="done",
                         frontier_state="done",
                     ),
+                    "task_paths": [
+                        self.validator.TERMINAL_TASK,
+                        self.SUCCESSOR_TASK,
+                    ],
                 },
                 "CLOSURE-TERMINAL-FRONTIER",
             ),
@@ -1898,11 +2168,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     self.terminal_partition("done", **parameters)
                 self.assertEqual(raised.exception.code, code)
 
-    def test_terminal_frontier_self_test_covers_active_advanced_and_blocked(
+    def test_terminal_frontier_self_test_covers_active_advanced_final_and_blocked(
         self,
     ) -> None:
-        self.assertEqual(self.validator._self_test_terminal_frontier(), 3)
-        self.assertEqual(self.validator.run_self_test(), 22)
+        self.assertEqual(self.validator._self_test_terminal_frontier(), 4)
+        self.assertEqual(self.validator.run_self_test(), 23)
 
     def test_spec038_terminal_partition_rejects_rogue_done_stage04(self) -> None:
         rogue_plan = "docs/04.execution/plans/2099-01-01-rogue-done.md"
@@ -2026,18 +2296,22 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         observed = self.validator.build_observed(REPOSITORY_ROOT)
         self.assert_production_observed(observed)
 
-    def test_production_assertion_accepts_only_exact_frontier_shapes(self) -> None:
+    def test_production_validator_accepts_only_exact_frontier_shapes(self) -> None:
         def observed_for(
-            *, successor_state: str
+            *, successor_state: str, frontier_state: str = "active"
         ) -> tuple[dict[str, object], dict[str, str]]:
             payloads = self.terminal_payloads(
-                "done", successor_state=successor_state
+                "done",
+                successor_state=successor_state,
+                frontier_state=frontier_state,
             )
             partition = self.terminal_partition(
                 "done",
                 payloads=payloads,
                 registry=self.terminal_registry(
-                    "done", successor_state=successor_state
+                    "done",
+                    successor_state=successor_state,
+                    frontier_state=frontier_state,
                 ),
             )
             active_rows = self.validator._build_active_control_rows(
@@ -2073,6 +2347,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
 
         current, current_object_ids = observed_for(successor_state="active")
         advanced, advanced_object_ids = observed_for(successor_state="done")
+        terminal, terminal_object_ids = observed_for(
+            successor_state="done", frontier_state="done"
+        )
         self.assert_production_observed(
             current,
             expected_object_ids=current_object_ids,
@@ -2080,6 +2357,10 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assert_production_observed(
             advanced,
             expected_object_ids=advanced_object_ids,
+        )
+        self.assert_production_observed(
+            terminal,
+            expected_object_ids=terminal_object_ids,
         )
 
         wrong_oid = copy.deepcopy(current)
@@ -2114,6 +2395,52 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 hybrid, expected_object_ids=hybrid_object_ids
             )
 
+        rogue = copy.deepcopy(terminal)
+        rogue_plan = "docs/04.execution/plans/2099-01-01-rogue-active.md"
+        rogue_task = "docs/04.execution/tasks/2099-01-01-rogue-active.md"
+        rogue_lineage = "2099-01-01-rogue-active"
+        rogue["activeControlRows"] = [
+            {
+                "path": path,
+                "kind": kind,
+                "lineageId": rogue_lineage,
+                "profile": f"sdlc/{kind}",
+                "status": "active",
+                "owner": "platform",
+                "objectMode": "index-stage-zero",
+                "objectId": self.validator._git_identity("9" * 40),
+            }
+            for path, kind in ((rogue_plan, "plan"), (rogue_task, "task"))
+        ]
+        rogue["activeControlPairCardinality"] = [
+            {
+                "lineageId": rogue_lineage,
+                "state": "complete",
+                "planPath": rogue_plan,
+                "taskPath": rogue_task,
+                "owner": "platform",
+                "status": "active",
+            }
+        ]
+        with (
+            mock.patch.object(
+                self.validator, "verify_entrypoints", return_value={}
+            ),
+            mock.patch.object(
+                self.validator, "build_observed", return_value=rogue
+            ),
+            mock.patch.object(
+                self.validator, "load_ledger", return_value=self.ledger
+            ),
+            mock.patch.object(self.validator, "validate_ledger"),
+            self.assertRaises(self.validator.ClosureError) as raised,
+        ):
+            self.validator.validate_active_corpus_residue_closure(
+                REPOSITORY_ROOT
+            )
+        self.assertEqual(raised.exception.code, "CLOSURE-TERMINAL-FRONTIER")
+        self.assertEqual(raised.exception.path, rogue_plan)
+
     def test_frozen_terminal_path_cannot_be_promoted_to_active(self) -> None:
         plan_path = self.validator.EXECUTION_PLAN
         task_path = self.validator.EXECUTION_TASK
@@ -2144,12 +2471,19 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "CLOSURE-CONTROL-STATUS")
 
     def test_production_and_cli_report_active_control_counts_separately(self) -> None:
-        observed = copy.deepcopy(self.observed)
-        observed["activeControlRows"] = [
-            {"path": "docs/04.execution/plans/2099-01-01-active-control.md"},
-            {"path": "docs/04.execution/tasks/2099-01-01-active-control.md"},
-        ]
-        observed["activeControlPairCardinality"] = [{"lineageId": "active"}]
+        observed = self.validator.build_observed(REPOSITORY_ROOT)
+        self.assert_production_observed(observed)
+        expected = {
+            "activeControlRows": len(observed["activeControlRows"]),
+            "activeControlPairs": len(
+                observed["activeControlPairCardinality"]
+            ),
+            "terminalControlRows": len(observed["terminalControlRows"]),
+            "terminalControlPairs": len(
+                observed["terminalControlPairCardinality"]
+            ),
+            "terminalSpecs": len(observed["terminalSpecRows"]),
+        }
         with (
             mock.patch.object(self.validator, "verify_entrypoints", return_value={}),
             mock.patch.object(self.validator, "build_observed", return_value=observed),
@@ -2159,11 +2493,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             counts = self.validator.validate_active_corpus_residue_closure(
                 REPOSITORY_ROOT
             )
-            self.assertEqual(counts["activeControlRows"], 2)
-            self.assertEqual(counts["activeControlPairs"], 1)
-            self.assertEqual(counts["terminalControlRows"], 0)
-            self.assertEqual(counts["terminalControlPairs"], 0)
-            self.assertEqual(counts["terminalSpecs"], 0)
+            for key, value in expected.items():
+                self.assertEqual(counts[key], value)
             stdout = io.StringIO()
             with (
                 redirect_stderr(io.StringIO()),
@@ -2175,9 +2506,19 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 mock.patch("sys.stdout", stdout),
             ):
                 self.assertEqual(self.validator.main(["--root", "."]), 0)
-        self.assertIn("active_controls=2/1", stdout.getvalue())
-        self.assertIn("terminal_controls=0/0", stdout.getvalue())
-        self.assertIn("terminal_specs=0", stdout.getvalue())
+        self.assertIn(
+            "active_controls="
+            f"{expected['activeControlRows']}/{expected['activeControlPairs']}",
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            "terminal_controls="
+            f"{expected['terminalControlRows']}/{expected['terminalControlPairs']}",
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            f"terminal_specs={expected['terminalSpecs']}", stdout.getvalue()
+        )
 
     def test_cli_reports_exact_spec038_terminal_partition_counts(self) -> None:
         counts = {
