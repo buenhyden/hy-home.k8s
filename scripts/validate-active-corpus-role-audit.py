@@ -157,6 +157,10 @@ FROZEN_HELPER_PATHS = (
     "tests/test_workspace_boundary.py",
 )
 POST_CLOSURE_HELPER_MANIFEST = {
+    "tests/fixtures/agent-harness-contract.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/reference-information-architecture/current-owner.json": (
         "json",
         "closed-fixture",
@@ -190,6 +194,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
     "tests/test_reference_information_architecture.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_harness_contract.py": (
         "python",
         "regression-test",
     ),

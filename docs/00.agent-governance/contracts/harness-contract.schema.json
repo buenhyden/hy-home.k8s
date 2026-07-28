@@ -1,0 +1,954 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/agent-harness-contract-1.schema.json",
+  "title": "Provider-neutral agent harness contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "contractId",
+    "contractVersion",
+    "sourceObservationCutoff",
+    "currentOwner",
+    "routingContract",
+    "evidenceClasses",
+    "permissionClasses",
+    "canonicalRoles",
+    "surfaces",
+    "currentInventory",
+    "targetInventory",
+    "consumers",
+    "compatibility",
+    "memory",
+    "redaction"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./harness-contract.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "contractId": {
+      "const": "hy-home.k8s/agent-harness"
+    },
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "sourceObservationCutoff": {
+      "const": "2026-07-26 Asia/Seoul"
+    },
+    "currentOwner": {
+      "$ref": "#/$defs/currentOwner"
+    },
+    "routingContract": {
+      "$ref": "#/$defs/routingContract"
+    },
+    "evidenceClasses": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/evidenceClass"
+      }
+    },
+    "permissionClasses": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/permissionClass"
+      }
+    },
+    "canonicalRoles": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/role"
+      }
+    },
+    "surfaces": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/surface"
+      }
+    },
+    "currentInventory": {
+      "$ref": "#/$defs/currentInventory"
+    },
+    "targetInventory": {
+      "$ref": "#/$defs/targetInventory"
+    },
+    "consumers": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "$ref": "#/$defs/consumer"
+      }
+    },
+    "compatibility": {
+      "$ref": "#/$defs/compatibility"
+    },
+    "memory": {
+      "$ref": "#/$defs/memory"
+    },
+    "redaction": {
+      "$ref": "#/$defs/redaction"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "repoPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 500
+      }
+    },
+    "roleIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "surfaceIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "local",
+          "claude",
+          "codex",
+          "gemini"
+        ]
+      }
+    },
+    "currentOwner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "contractVersion",
+        "status"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/00.agent-governance/contracts/harness-contract.json"
+        },
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "current"
+        }
+      }
+    },
+    "routingContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "schemaVersion",
+        "ownership",
+        "ownsPathRouting",
+        "evidenceMapping"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/00.agent-governance/contracts/validation-surfaces.json"
+        },
+        "schemaVersion": {
+          "const": 2
+        },
+        "ownership": {
+          "const": "independent-path-to-validation-routing"
+        },
+        "ownsPathRouting": {
+          "const": false
+        },
+        "evidenceMapping": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/evidenceMapping"
+          }
+        }
+      }
+    },
+    "evidenceMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceClass",
+        "validationSurfaceLane",
+        "owner",
+        "crossClassInferenceAllowed"
+      ],
+      "properties": {
+        "evidenceClass": {
+          "enum": [
+            "repo-static",
+            "provider-runtime",
+            "ci",
+            "remote-live"
+          ]
+        },
+        "validationSurfaceLane": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "repo-static",
+            "ci",
+            "remote/live",
+            null
+          ]
+        },
+        "owner": {
+          "enum": [
+            "validation-surfaces",
+            "provider-runtime-record"
+          ]
+        },
+        "crossClassInferenceAllowed": {
+          "const": false
+        }
+      }
+    },
+    "evidenceClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "authority",
+        "claimBoundary",
+        "crossClassInferenceAllowed"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "repo-static",
+            "provider-runtime",
+            "ci",
+            "remote-live"
+          ]
+        },
+        "authority": {
+          "enum": [
+            "repository-observation",
+            "provider-process-observation",
+            "hosted-ci-observation",
+            "authorized-remote-or-live-observation"
+          ]
+        },
+        "claimBoundary": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300
+        },
+        "crossClassInferenceAllowed": {
+          "const": false
+        }
+      }
+    },
+    "permissionClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "allowsMutation",
+        "allowsDelegation",
+        "externalWritesRequireApproval",
+        "boundary"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "read-only-evidence",
+            "scoped-authoring",
+            "orchestration"
+          ]
+        },
+        "allowsMutation": {
+          "type": "boolean"
+        },
+        "allowsDelegation": {
+          "type": "boolean"
+        },
+        "externalWritesRequireApproval": {
+          "const": true
+        },
+        "boundary": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "admissionState",
+        "purpose",
+        "category",
+        "responsibilities",
+        "inputs",
+        "outputs",
+        "prohibitedActions",
+        "permissionClass",
+        "stopConditions",
+        "handoffs",
+        "requiredEvidence",
+        "evalSuite",
+        "modelPolicyRef"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "admissionState": {
+          "enum": [
+            "current",
+            "target-only"
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "category": {
+          "enum": [
+            "orchestrator",
+            "implementer",
+            "reviewer",
+            "responder",
+            "writer",
+            "curator",
+            "researcher",
+            "quality"
+          ]
+        },
+        "responsibilities": {
+          "$ref": "#/$defs/claims"
+        },
+        "inputs": {
+          "$ref": "#/$defs/claims"
+        },
+        "outputs": {
+          "$ref": "#/$defs/claims"
+        },
+        "prohibitedActions": {
+          "$ref": "#/$defs/claims"
+        },
+        "permissionClass": {
+          "enum": [
+            "read-only-evidence",
+            "scoped-authoring",
+            "orchestration"
+          ]
+        },
+        "stopConditions": {
+          "$ref": "#/$defs/claims"
+        },
+        "handoffs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "requiredEvidence": {
+          "$ref": "#/$defs/claims"
+        },
+        "evalSuite": {
+          "$ref": "#/$defs/evalSuite"
+        },
+        "modelPolicyRef": {
+          "const": "docs/00.agent-governance/model-policy.md"
+        }
+      }
+    },
+    "evalSuite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "ownerSpec",
+        "admissionState"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^eval/[a-z0-9]+(?:-[a-z0-9]+)*/v[0-9]+$"
+        },
+        "ownerSpec": {
+          "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+        },
+        "admissionState": {
+          "const": "pending-spec-044"
+        }
+      }
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "admissionState",
+        "pathRoot",
+        "extension",
+        "providerSchema",
+        "evidenceClass",
+        "claimBoundary"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "local",
+            "claude",
+            "codex",
+            "gemini"
+          ]
+        },
+        "admissionState": {
+          "enum": [
+            "current",
+            "target-only"
+          ]
+        },
+        "pathRoot": {
+          "$ref": "#/$defs/repoPath"
+        },
+        "extension": {
+          "enum": [
+            ".md",
+            ".toml"
+          ]
+        },
+        "providerSchema": {
+          "enum": [
+            "local-markdown-frontmatter",
+            "claude-markdown-frontmatter",
+            "codex-role-toml",
+            "gemini-markdown-frontmatter"
+          ]
+        },
+        "evidenceClass": {
+          "const": "repo-static"
+        },
+        "claimBoundary": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300
+        }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleId",
+        "surfaceId",
+        "path",
+        "admissionState"
+      ],
+      "properties": {
+        "roleId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "surfaceId": {
+          "enum": [
+            "local",
+            "claude",
+            "codex",
+            "gemini"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/repoPath"
+        },
+        "admissionState": {
+          "enum": [
+            "current",
+            "target-only"
+          ]
+        }
+      }
+    },
+    "currentInventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "expectedRoleCount",
+        "expectedSurfaceCount",
+        "expectedProjectionCount",
+        "roleIds",
+        "surfaceIds",
+        "projections"
+      ],
+      "properties": {
+        "state": {
+          "const": "current"
+        },
+        "expectedRoleCount": {
+          "const": 10
+        },
+        "expectedSurfaceCount": {
+          "const": 3
+        },
+        "expectedProjectionCount": {
+          "const": 30
+        },
+        "roleIds": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/roleIds"
+            },
+            {
+              "minItems": 10,
+              "maxItems": 10
+            }
+          ]
+        },
+        "surfaceIds": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/surfaceIds"
+            },
+            {
+              "minItems": 3,
+              "maxItems": 3
+            }
+          ]
+        },
+        "projections": {
+          "type": "array",
+          "minItems": 30,
+          "maxItems": 30,
+          "items": {
+            "$ref": "#/$defs/projection"
+          }
+        }
+      }
+    },
+    "targetInventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "promotionOwnerSpec",
+        "expectedRoleCount",
+        "expectedSurfaceCount",
+        "expectedProjectionCount",
+        "roleIds",
+        "surfaceIds",
+        "projections"
+      ],
+      "properties": {
+        "state": {
+          "const": "target-only"
+        },
+        "promotionOwnerSpec": {
+          "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+        },
+        "expectedRoleCount": {
+          "const": 12
+        },
+        "expectedSurfaceCount": {
+          "const": 4
+        },
+        "expectedProjectionCount": {
+          "const": 48
+        },
+        "roleIds": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/roleIds"
+            },
+            {
+              "minItems": 12,
+              "maxItems": 12
+            }
+          ]
+        },
+        "surfaceIds": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/surfaceIds"
+            },
+            {
+              "minItems": 4,
+              "maxItems": 4
+            }
+          ]
+        },
+        "projections": {
+          "type": "array",
+          "minItems": 48,
+          "maxItems": 48,
+          "items": {
+            "$ref": "#/$defs/projection"
+          }
+        }
+      }
+    },
+    "consumer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "selectedContract",
+        "selectedVersion",
+        "migrationState",
+        "evidenceClass"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path": {
+          "$ref": "#/$defs/repoPath"
+        },
+        "selectedContract": {
+          "enum": [
+            "harness-contract",
+            "agent-role-semantics-compatibility"
+          ]
+        },
+        "selectedVersion": {
+          "enum": [
+            "1.0.0",
+            "2"
+          ]
+        },
+        "migrationState": {
+          "enum": [
+            "current",
+            "pending-spec-041-migration"
+          ]
+        },
+        "evidenceClass": {
+          "const": "repo-static"
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "legacyContractPath",
+        "legacySchemaPath",
+        "legacyVersion",
+        "state",
+        "legacyConsumers",
+        "removalOwnerSpec",
+        "deletionGate"
+      ],
+      "properties": {
+        "legacyContractPath": {
+          "const": "docs/00.agent-governance/contracts/agent-role-semantics.json"
+        },
+        "legacySchemaPath": {
+          "const": "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
+        },
+        "legacyVersion": {
+          "const": "2"
+        },
+        "state": {
+          "const": "readable-compatibility-input"
+        },
+        "legacyConsumers": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "removalOwnerSpec": {
+          "const": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        },
+        "deletionGate": {
+          "const": "zero-legacy-consumers-with-repository-static-proof"
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalDurableSharedPath",
+        "transientCheckpointPath",
+        "executableLifecycleOwner",
+        "classes"
+      ],
+      "properties": {
+        "canonicalDurableSharedPath": {
+          "const": "docs/00.agent-governance/memory/progress.md"
+        },
+        "transientCheckpointPath": {
+          "const": ".agent-work/checkpoint.json"
+        },
+        "executableLifecycleOwner": {
+          "const": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+        },
+        "classes": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/memoryClass"
+          }
+        }
+      }
+    },
+    "memoryClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "scope",
+        "authority",
+        "owner",
+        "provenance",
+        "sensitivity",
+        "promotion",
+        "lifecyclePolicyRefs",
+        "conflictBoundary",
+        "prohibitedContent"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "working-short-term",
+            "durable-long-term",
+            "domain-scoped",
+            "provider-local-auxiliary"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "authority": {
+          "$ref": "#/$defs/memoryAuthority"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 200
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 200
+          }
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/memorySensitivity"
+        },
+        "promotion": {
+          "$ref": "#/$defs/memoryPromotion"
+        },
+        "lifecyclePolicyRefs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repoPath"
+          }
+        },
+        "conflictBoundary": {
+          "type": "string",
+          "minLength": 30,
+          "maxLength": 500
+        },
+        "prohibitedContent": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "credential-values",
+              "auth-files",
+              "tokens",
+              "secrets",
+              "raw-prompts",
+              "full-provider-transcripts",
+              "shell-history",
+              "private-diagnostics",
+              "environment-dumps",
+              "user-configuration"
+            ]
+          }
+        }
+      }
+    },
+    "memoryAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "repositoryFacts",
+        "decisions",
+        "taskStatus",
+        "durableHandoffEvidence"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "temporary-context-only",
+            "canonical-repository-record",
+            "canonical-domain-record",
+            "advisory-only"
+          ]
+        },
+        "repositoryFacts": {
+          "type": "boolean"
+        },
+        "decisions": {
+          "type": "boolean"
+        },
+        "taskStatus": {
+          "type": "boolean"
+        },
+        "durableHandoffEvidence": {
+          "type": "boolean"
+        }
+      }
+    },
+    "memorySensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "secretMaterialAllowed",
+        "rawPromptOrTranscriptAllowed",
+        "requiredTreatment"
+      ],
+      "properties": {
+        "classification": {
+          "const": "non-sensitive-redacted"
+        },
+        "secretMaterialAllowed": {
+          "const": false
+        },
+        "rawPromptOrTranscriptAllowed": {
+          "const": false
+        },
+        "requiredTreatment": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300
+        }
+      }
+    },
+    "memoryPromotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetClass",
+        "gate",
+        "reviewRequired"
+      ],
+      "properties": {
+        "targetClass": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "working-short-term",
+            "durable-long-term",
+            null
+          ]
+        },
+        "gate": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "reviewRequired": {
+          "type": "boolean"
+        }
+      }
+    },
+    "redaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "secretMaterialAllowed",
+        "rawPromptOrTranscriptAllowed",
+        "syntheticFixtureMarker",
+        "prohibitedPayloadKinds"
+      ],
+      "properties": {
+        "secretMaterialAllowed": {
+          "const": false
+        },
+        "rawPromptOrTranscriptAllowed": {
+          "const": false
+        },
+        "syntheticFixtureMarker": {
+          "const": "[REDACTED-SYNTHETIC]"
+        },
+        "prohibitedPayloadKinds": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "credential-values",
+              "auth-files",
+              "tokens",
+              "secrets",
+              "raw-prompts",
+              "full-provider-transcripts",
+              "shell-history",
+              "private-diagnostics",
+              "environment-dumps",
+              "user-configuration"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

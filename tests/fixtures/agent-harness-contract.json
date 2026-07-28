@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "expected": {
+    "currentRoles": 10,
+    "currentSurfaces": 3,
+    "currentProjections": 30,
+    "targetRoles": 12,
+    "targetSurfaces": 4,
+    "targetProjections": 48,
+    "evidenceClasses": 4,
+    "memoryClasses": 4,
+    "consumers": 11
+  },
+  "mutations": [
+    {
+      "name": "unknown-top-level-key",
+      "expectedRule": "HARNESS-SCHEMA"
+    },
+    {
+      "name": "unknown-nested-key",
+      "expectedRule": "HARNESS-SCHEMA"
+    },
+    {
+      "name": "duplicate-role",
+      "expectedRule": "HARNESS-ROLE-DUPLICATE"
+    },
+    {
+      "name": "missing-role",
+      "expectedRule": "HARNESS-ROLE-SET"
+    },
+    {
+      "name": "unsupported-schema-version",
+      "expectedRule": "HARNESS-VERSION"
+    },
+    {
+      "name": "unsupported-contract-version",
+      "expectedRule": "HARNESS-VERSION"
+    },
+    {
+      "name": "count-drift",
+      "expectedRule": "HARNESS-SCHEMA"
+    },
+    {
+      "name": "current-projection-drift",
+      "expectedRule": "HARNESS-PROJECTION-SET"
+    },
+    {
+      "name": "target-projection-drift",
+      "expectedRule": "HARNESS-PROJECTION-SET"
+    },
+    {
+      "name": "duplicate-projection",
+      "expectedRule": "HARNESS-PROJECTION-DUPLICATE"
+    },
+    {
+      "name": "current-target-conflation",
+      "expectedRule": "HARNESS-INVENTORY-STATE"
+    },
+    {
+      "name": "invalid-permission",
+      "expectedRule": "HARNESS-SCHEMA"
+    },
+    {
+      "name": "unbounded-stop-rules",
+      "expectedRule": "HARNESS-SCHEMA"
+    },
+    {
+      "name": "evidence-class-drift",
+      "expectedRule": "HARNESS-EVIDENCE"
+    },
+    {
+      "name": "consumer-version-drift",
+      "expectedRule": "HARNESS-CONSUMER"
+    },
+    {
+      "name": "routing-ownership-drift",
+      "expectedRule": "HARNESS-ROUTING"
+    },
+    {
+      "name": "memory-authority-drift",
+      "expectedRule": "HARNESS-MEMORY-AUTHORITY"
+    },
+    {
+      "name": "memory-sensitivity-drift",
+      "expectedRule": "HARNESS-MEMORY-SENSITIVITY"
+    },
+    {
+      "name": "sensitive-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "bare-token-assignment",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "bare-secret-assignment",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "aws-secret-access-key",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "slack-token-prefix",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "auth-file-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "auth-file-path-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "shell-history-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "observed-shell-history",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "private-diagnostic-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "environment-dump-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "user-configuration-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "raw-prompt-payload",
+      "expectedRule": "HARNESS-SENSITIVE"
+    },
+    {
+      "name": "missing-required-field",
+      "expectedRule": "HARNESS-SCHEMA"
+    }
+  ],
+  "expectedCaseCount": 33
+}

@@ -1,0 +1,1013 @@
+{
+  "$schema": "./harness-contract.schema.json",
+  "schemaVersion": 1,
+  "contractId": "hy-home.k8s/agent-harness",
+  "contractVersion": "1.0.0",
+  "sourceObservationCutoff": "2026-07-26 Asia/Seoul",
+  "currentOwner": {
+    "path": "docs/00.agent-governance/contracts/harness-contract.json",
+    "contractVersion": "1.0.0",
+    "status": "current"
+  },
+  "routingContract": {
+    "path": "docs/00.agent-governance/contracts/validation-surfaces.json",
+    "schemaVersion": 2,
+    "ownership": "independent-path-to-validation-routing",
+    "ownsPathRouting": false,
+    "evidenceMapping": [
+      {
+        "evidenceClass": "repo-static",
+        "validationSurfaceLane": "repo-static",
+        "owner": "validation-surfaces",
+        "crossClassInferenceAllowed": false
+      },
+      {
+        "evidenceClass": "provider-runtime",
+        "validationSurfaceLane": null,
+        "owner": "provider-runtime-record",
+        "crossClassInferenceAllowed": false
+      },
+      {
+        "evidenceClass": "ci",
+        "validationSurfaceLane": "ci",
+        "owner": "validation-surfaces",
+        "crossClassInferenceAllowed": false
+      },
+      {
+        "evidenceClass": "remote-live",
+        "validationSurfaceLane": "remote/live",
+        "owner": "validation-surfaces",
+        "crossClassInferenceAllowed": false
+      }
+    ]
+  },
+  "evidenceClasses": [
+    {
+      "id": "repo-static",
+      "authority": "repository-observation",
+      "claimBoundary": "Tracked files, deterministic local validators, and repository state only.",
+      "crossClassInferenceAllowed": false
+    },
+    {
+      "id": "provider-runtime",
+      "authority": "provider-process-observation",
+      "claimBoundary": "An observed provider process and its native schema or model result only.",
+      "crossClassInferenceAllowed": false
+    },
+    {
+      "id": "ci",
+      "authority": "hosted-ci-observation",
+      "claimBoundary": "An identified hosted CI job and its recorded result only.",
+      "crossClassInferenceAllowed": false
+    },
+    {
+      "id": "remote-live",
+      "authority": "authorized-remote-or-live-observation",
+      "claimBoundary": "A separately authorized and observed remote service or live environment only.",
+      "crossClassInferenceAllowed": false
+    }
+  ],
+  "permissionClasses": [
+    {
+      "id": "read-only-evidence",
+      "allowsMutation": false,
+      "allowsDelegation": false,
+      "externalWritesRequireApproval": true,
+      "boundary": "Repository reads and static analysis are allowed; mutation requires a new scoped assignment."
+    },
+    {
+      "id": "scoped-authoring",
+      "allowsMutation": true,
+      "allowsDelegation": false,
+      "externalWritesRequireApproval": true,
+      "boundary": "Only explicitly owned repository paths and deterministic local validation are allowed."
+    },
+    {
+      "id": "orchestration",
+      "allowsMutation": false,
+      "allowsDelegation": true,
+      "externalWritesRequireApproval": true,
+      "boundary": "Delegation must preserve parent scope, disjoint ownership, approval boundaries, and evidence reconciliation."
+    }
+  ],
+  "canonicalRoles": [
+    {
+      "id": "supervisor",
+      "admissionState": "current",
+      "purpose": "Route bounded work to canonical roles, enforce dependencies and permissions, and reconcile final evidence.",
+      "category": "orchestrator",
+      "responsibilities": [
+        "Select roles, assign disjoint ownership, preserve parent authority, sequence reviews, and synthesize conflicting results."
+      ],
+      "inputs": [
+        "User intent, active Spec and Plan, repository state, role roster, dependencies, approvals, and evidence requirements."
+      ],
+      "outputs": [
+        "Delegation and dependency plan, reconciled evidence, completion decision, limitations, and next owner."
+      ],
+      "prohibitedActions": [
+        "Do not grant broader authority than the parent task, hide conflicts, or substitute orchestration for required specialist review."
+      ],
+      "permissionClass": "orchestration",
+      "stopConditions": [
+        "Stop delegation on governance conflict, unresolved ownership, repeated no-progress, missing approval, or destructive risk."
+      ],
+      "handoffs": [
+        "code-reviewer",
+        "doc-writer",
+        "k8s-implementer",
+        "quality-engineer",
+        "security-auditor"
+      ],
+      "requiredEvidence": [
+        "Record selected roles, routing rationale, ownership, delegated results, conflicts, gates, and escalation decisions."
+      ],
+      "evalSuite": {
+        "id": "eval/supervisor/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "code-reviewer",
+      "admissionState": "current",
+      "purpose": "Review repository changes for correctness, maintainability, and policy alignment without assuming implementation authority.",
+      "category": "reviewer",
+      "responsibilities": [
+        "Inspect the authorized change set and identify correctness, consistency, regression, and maintainability risks."
+      ],
+      "inputs": [
+        "Task scope, changed paths, relevant contracts, validation evidence, and risk context."
+      ],
+      "outputs": [
+        "Prioritized findings with path, location, severity, evidence, and a bounded remediation."
+      ],
+      "prohibitedActions": [
+        "Do not mutate files or approve the implementation unless a separate human-authorized task grants that scope."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop and escalate when evidence indicates a security-critical defect, missing authority, or an unreviewable change boundary."
+      ],
+      "handoffs": [
+        "security-auditor",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Cite each finding to repository evidence and distinguish observed defects from unresolved uncertainty."
+      ],
+      "evalSuite": {
+        "id": "eval/code-reviewer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "doc-writer",
+      "admissionState": "current",
+      "purpose": "Route and author governed documentation at its canonical SDLC or common-document owner.",
+      "category": "writer",
+      "responsibilities": [
+        "Use the selected document profile, template, contract, lifecycle state, and canonical owner for delegated documentation work."
+      ],
+      "inputs": [
+        "Document intent, topic evidence, target profile, upstream lineage, allowed paths, and acceptance criteria."
+      ],
+      "outputs": [
+        "Topic-specific governed documentation with valid frontmatter, sections, links, and lifecycle evidence."
+      ],
+      "prohibitedActions": [
+        "Do not invent durable policy in a README, memory note, or provider adapter when a canonical rule or SDLC owner is required."
+      ],
+      "permissionClass": "scoped-authoring",
+      "stopConditions": [
+        "Stop when the document type, canonical owner, template route, source evidence, or delegation authority is ambiguous."
+      ],
+      "handoffs": [
+        "docs-researcher",
+        "supervisor",
+        "wiki-curator"
+      ],
+      "requiredEvidence": [
+        "Report the canonical target, template route, upstream references, source basis, and every validation result."
+      ],
+      "evalSuite": {
+        "id": "eval/doc-writer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "gitops-reviewer",
+      "admissionState": "current",
+      "purpose": "Review desired-state changes for Kustomize structure, Argo CD target correctness, and rollout safety.",
+      "category": "reviewer",
+      "responsibilities": [
+        "Inspect affected sync targets, Kustomize composition, reconciliation boundaries, and rollback implications."
+      ],
+      "inputs": [
+        "Changed desired-state paths, rendered or static output, application hierarchy, and release constraints."
+      ],
+      "outputs": [
+        "Structured findings covering sync targets, composition, rollout risk, drift, and rollback readiness."
+      ],
+      "prohibitedActions": [
+        "Do not perform direct cluster mutation, live synchronization, or implementation edits in this review role."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop when a sync target is missing, rollout safety cannot be established, or sensitive-data boundaries are crossed."
+      ],
+      "handoffs": [
+        "k8s-implementer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Identify affected sync targets, composition paths, validation results, rollout risks, and the evidence class."
+      ],
+      "evalSuite": {
+        "id": "eval/gitops-reviewer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "incident-responder",
+      "admissionState": "current",
+      "purpose": "Reconstruct incidents from approved evidence and prepare remediation-ready handoff without unauthorized live action.",
+      "category": "responder",
+      "responsibilities": [
+        "Build a timestamped timeline, assess impact and confidence, identify contributing conditions, and define safe next steps."
+      ],
+      "inputs": [
+        "Approved incident observations, manifests, logs or summaries, affected scope, and current safety boundaries."
+      ],
+      "outputs": [
+        "Timeline, impact assessment, confidence, containment options, unresolved questions, and remediation handoff."
+      ],
+      "prohibitedActions": [
+        "Do not perform live remediation, expose sensitive output, or infer missing events as observed facts."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop when a security breach is indicated, an unsafe live action is required, or evidence cannot support a reliable conclusion."
+      ],
+      "handoffs": [
+        "security-auditor",
+        "k8s-implementer",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Preserve timestamps, source class, affected scope, confidence, contradictions, and approved references for each conclusion."
+      ],
+      "evalSuite": {
+        "id": "eval/incident-responder/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "k8s-implementer",
+      "admissionState": "current",
+      "purpose": "Author bounded Kubernetes desired-state changes that follow repository policy and the GitOps delivery path.",
+      "category": "implementer",
+      "responsibilities": [
+        "Implement authorized manifest changes, preserve ownership and composition rules, and run the selected static validation lane."
+      ],
+      "inputs": [
+        "Approved task scope, owned manifest paths, architecture constraints, policy boundaries, and expected validation."
+      ],
+      "outputs": [
+        "Scoped desired-state edits, validation evidence, rollout considerations, and a GitOps review handoff."
+      ],
+      "prohibitedActions": [
+        "Do not write plaintext sensitive values or mutate live clusters, remote controllers, or credentials."
+      ],
+      "permissionClass": "scoped-authoring",
+      "stopConditions": [
+        "Stop when the change requires live mutation, sensitive material, unclear ownership, or desired state outside the approved task."
+      ],
+      "handoffs": [
+        "gitops-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "List changed paths, rendered or static checks, policy results, limitations, and the required reviewer handoff."
+      ],
+      "evalSuite": {
+        "id": "eval/k8s-implementer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "network-reviewer",
+      "admissionState": "current",
+      "purpose": "Review ingress, Traefik, NetworkPolicy, DNS, and TLS desired state at the manifest-static boundary.",
+      "category": "reviewer",
+      "responsibilities": [
+        "Trace routing, isolation, DNS, certificate, and service relationships across the authorized manifest set."
+      ],
+      "inputs": [
+        "Ingress and routing manifests, network policy, service wiring, certificate references, and static validation."
+      ],
+      "outputs": [
+        "Findings about routing correctness, isolation gaps, DNS or TLS wiring, evidence limits, and escalation needs."
+      ],
+      "prohibitedActions": [
+        "Do not perform live ingress probes, DNS resolution, TLS handshakes, or unauthorized security conclusions."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop when a conclusion needs live probing, sensitive material, or security authority beyond manifest-static review."
+      ],
+      "handoffs": [
+        "security-auditor",
+        "gitops-reviewer",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Cite routing, policy, DNS, or TLS paths and the static relationship or command supporting each finding."
+      ],
+      "evalSuite": {
+        "id": "eval/network-reviewer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "observability-reviewer",
+      "admissionState": "current",
+      "purpose": "Review observability manifests and SLO documents for static wiring, ownership, and operational completeness.",
+      "category": "reviewer",
+      "responsibilities": [
+        "Inspect scrape, alert, dashboard, telemetry pipeline, and SLO relationships without claiming live signal behavior."
+      ],
+      "inputs": [
+        "Observability manifests, dashboards or references, SLO documents, alert routes, and static evidence."
+      ],
+      "outputs": [
+        "Findings about telemetry wiring, SLO completeness, ownership, static correctness, and runtime evidence gaps."
+      ],
+      "prohibitedActions": [
+        "Do not query live clusters, scrape endpoints, dashboards, or monitoring backends in this role."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop when a conclusion requires live access, reveals sensitive material, or crosses into security isolation judgment."
+      ],
+      "handoffs": [
+        "gitops-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Cite scrape, alert, dashboard, telemetry, or SLO paths and identify the evidence class for each conclusion."
+      ],
+      "evalSuite": {
+        "id": "eval/observability-reviewer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "security-auditor",
+      "admissionState": "current",
+      "purpose": "Audit repository security controls across RBAC, isolation, sensitive-data handling, and supply-chain boundaries.",
+      "category": "reviewer",
+      "responsibilities": [
+        "Assess authorized changes against least privilege, isolation, secret-management, provenance, and approval controls."
+      ],
+      "inputs": [
+        "Changed paths, security policy, RBAC and network manifests, supply-chain metadata, and validation evidence."
+      ],
+      "outputs": [
+        "Prioritized security findings with severity, evidence, control impact, remediation, and residual risk."
+      ],
+      "prohibitedActions": [
+        "Do not weaken least privilege, expose sensitive values, approve exceptions, or perform remediation in this role."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop immediately on plaintext sensitive-data exposure or when safe review requires unauthorized access."
+      ],
+      "handoffs": [
+        "k8s-implementer",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Cite each finding to a path or approved observation, severity, affected control, evidence class, and remediation basis."
+      ],
+      "evalSuite": {
+        "id": "eval/security-auditor/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "wiki-curator",
+      "admissionState": "current",
+      "purpose": "Maintain repository-local discovery entrypoints and generated owner maps without duplicating canonical policy.",
+      "category": "curator",
+      "responsibilities": [
+        "Curate wiki entrypoints, owner links, and generated indexes so agents can locate canonical repository facts."
+      ],
+      "inputs": [
+        "Canonical owner paths, current taxonomy, generated-map contract, stale-link evidence, and delegated scope."
+      ],
+      "outputs": [
+        "Updated discovery entrypoints or indexes with canonical links, freshness evidence, and no duplicated authority."
+      ],
+      "prohibitedActions": [
+        "Do not create a new retrieval runtime, duplicate policy, or treat generated output as a canonical source."
+      ],
+      "permissionClass": "scoped-authoring",
+      "stopConditions": [
+        "Stop when ownership is ambiguous, content would duplicate a contract, or the request creates an unapproved runtime."
+      ],
+      "handoffs": [
+        "doc-writer",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Identify each changed entrypoint, canonical owner target, generation source, stale-link result, and freshness check."
+      ],
+      "evalSuite": {
+        "id": "eval/wiki-curator/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "docs-researcher",
+      "admissionState": "target-only",
+      "purpose": "Verify current primary sources and produce bounded, cited evidence for documentation and governance decisions.",
+      "category": "researcher",
+      "responsibilities": [
+        "Collect authoritative primary sources, record observation dates, reconcile conflicts, and separate sourced facts from inference."
+      ],
+      "inputs": [
+        "Research questions, source constraints, observation cutoff, intended consumer, and claim-risk boundaries."
+      ],
+      "outputs": [
+        "A source ledger and concise synthesis with direct citations, limitations, and unresolved freshness risks."
+      ],
+      "prohibitedActions": [
+        "Do not convert source prose into repository authority or claim recency beyond observed evidence."
+      ],
+      "permissionClass": "read-only-evidence",
+      "stopConditions": [
+        "Stop when primary sources are unavailable, observation dates conflict materially, or the request requires an unauthorized external action."
+      ],
+      "handoffs": [
+        "doc-writer",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Record source identity, direct link, observation date, supported claim, conflicting evidence, and inference labels."
+      ],
+      "evalSuite": {
+        "id": "eval/docs-researcher/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    },
+    {
+      "id": "quality-engineer",
+      "admissionState": "target-only",
+      "purpose": "Design deterministic QA and agent-evaluation fixtures, select validation lanes, and reconcile result evidence.",
+      "category": "quality",
+      "responsibilities": [
+        "Map acceptance criteria to positive and negative fixtures, execute authorized local lanes, and classify outcomes without waivers."
+      ],
+      "inputs": [
+        "Spec criteria, contract boundaries, affected paths, expected failure rules, and authorized validation environments."
+      ],
+      "outputs": [
+        "Reproducible fixtures, command results, result-class labels, limitations, and admission or rollback recommendations."
+      ],
+      "prohibitedActions": [
+        "Do not treat formatter mutation, a skipped lane, or one evidence class as proof for another class."
+      ],
+      "permissionClass": "scoped-authoring",
+      "stopConditions": [
+        "Stop when acceptance criteria are not testable, a required lane is unavailable, or evidence is inconsistent."
+      ],
+      "handoffs": [
+        "code-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "requiredEvidence": [
+        "Record fixture identity, command, environment boundary, expected and actual rule, result class, and repeatability."
+      ],
+      "evalSuite": {
+        "id": "eval/quality-engineer/v1",
+        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "admissionState": "pending-spec-044"
+      },
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+    }
+  ],
+  "surfaces": [
+    {
+      "id": "local",
+      "admissionState": "current",
+      "pathRoot": ".agents/agents",
+      "extension": ".md",
+      "providerSchema": "local-markdown-frontmatter",
+      "evidenceClass": "repo-static",
+      "claimBoundary": "Tracked local adapter syntax and semantic projection only; it is not Gemini-native runtime evidence."
+    },
+    {
+      "id": "claude",
+      "admissionState": "current",
+      "pathRoot": ".claude/agents",
+      "extension": ".md",
+      "providerSchema": "claude-markdown-frontmatter",
+      "evidenceClass": "repo-static",
+      "claimBoundary": "Tracked Claude adapter syntax and semantic projection only; runtime readiness requires provider observation."
+    },
+    {
+      "id": "codex",
+      "admissionState": "current",
+      "pathRoot": ".codex/agents",
+      "extension": ".toml",
+      "providerSchema": "codex-role-toml",
+      "evidenceClass": "repo-static",
+      "claimBoundary": "Tracked Codex role TOML and semantic projection only; runtime model fitness requires provider observation."
+    },
+    {
+      "id": "gemini",
+      "admissionState": "target-only",
+      "pathRoot": ".gemini/agents",
+      "extension": ".md",
+      "providerSchema": "gemini-markdown-frontmatter",
+      "evidenceClass": "repo-static",
+      "claimBoundary": "Planned Gemini-native projection only; no file presence or runtime readiness is claimed by this target."
+    }
+  ],
+  "currentInventory": {
+    "state": "current",
+    "expectedRoleCount": 10,
+    "expectedSurfaceCount": 3,
+    "expectedProjectionCount": 30,
+    "roleIds": [
+      "code-reviewer",
+      "doc-writer",
+      "gitops-reviewer",
+      "incident-responder",
+      "k8s-implementer",
+      "network-reviewer",
+      "observability-reviewer",
+      "security-auditor",
+      "supervisor",
+      "wiki-curator"
+    ],
+    "surfaceIds": [
+      "local",
+      "claude",
+      "codex"
+    ],
+    "projections": [
+      {"roleId": "code-reviewer", "surfaceId": "local", "path": ".agents/agents/code-reviewer.md", "admissionState": "current"},
+      {"roleId": "code-reviewer", "surfaceId": "claude", "path": ".claude/agents/code-reviewer.md", "admissionState": "current"},
+      {"roleId": "code-reviewer", "surfaceId": "codex", "path": ".codex/agents/code-reviewer.toml", "admissionState": "current"},
+      {"roleId": "doc-writer", "surfaceId": "local", "path": ".agents/agents/doc-writer.md", "admissionState": "current"},
+      {"roleId": "doc-writer", "surfaceId": "claude", "path": ".claude/agents/doc-writer.md", "admissionState": "current"},
+      {"roleId": "doc-writer", "surfaceId": "codex", "path": ".codex/agents/doc-writer.toml", "admissionState": "current"},
+      {"roleId": "gitops-reviewer", "surfaceId": "local", "path": ".agents/agents/gitops-reviewer.md", "admissionState": "current"},
+      {"roleId": "gitops-reviewer", "surfaceId": "claude", "path": ".claude/agents/gitops-reviewer.md", "admissionState": "current"},
+      {"roleId": "gitops-reviewer", "surfaceId": "codex", "path": ".codex/agents/gitops-reviewer.toml", "admissionState": "current"},
+      {"roleId": "incident-responder", "surfaceId": "local", "path": ".agents/agents/incident-responder.md", "admissionState": "current"},
+      {"roleId": "incident-responder", "surfaceId": "claude", "path": ".claude/agents/incident-responder.md", "admissionState": "current"},
+      {"roleId": "incident-responder", "surfaceId": "codex", "path": ".codex/agents/incident-responder.toml", "admissionState": "current"},
+      {"roleId": "k8s-implementer", "surfaceId": "local", "path": ".agents/agents/k8s-implementer.md", "admissionState": "current"},
+      {"roleId": "k8s-implementer", "surfaceId": "claude", "path": ".claude/agents/k8s-implementer.md", "admissionState": "current"},
+      {"roleId": "k8s-implementer", "surfaceId": "codex", "path": ".codex/agents/k8s-implementer.toml", "admissionState": "current"},
+      {"roleId": "network-reviewer", "surfaceId": "local", "path": ".agents/agents/network-reviewer.md", "admissionState": "current"},
+      {"roleId": "network-reviewer", "surfaceId": "claude", "path": ".claude/agents/network-reviewer.md", "admissionState": "current"},
+      {"roleId": "network-reviewer", "surfaceId": "codex", "path": ".codex/agents/network-reviewer.toml", "admissionState": "current"},
+      {"roleId": "observability-reviewer", "surfaceId": "local", "path": ".agents/agents/observability-reviewer.md", "admissionState": "current"},
+      {"roleId": "observability-reviewer", "surfaceId": "claude", "path": ".claude/agents/observability-reviewer.md", "admissionState": "current"},
+      {"roleId": "observability-reviewer", "surfaceId": "codex", "path": ".codex/agents/observability-reviewer.toml", "admissionState": "current"},
+      {"roleId": "security-auditor", "surfaceId": "local", "path": ".agents/agents/security-auditor.md", "admissionState": "current"},
+      {"roleId": "security-auditor", "surfaceId": "claude", "path": ".claude/agents/security-auditor.md", "admissionState": "current"},
+      {"roleId": "security-auditor", "surfaceId": "codex", "path": ".codex/agents/security-auditor.toml", "admissionState": "current"},
+      {"roleId": "supervisor", "surfaceId": "local", "path": ".agents/agents/supervisor.md", "admissionState": "current"},
+      {"roleId": "supervisor", "surfaceId": "claude", "path": ".claude/agents/supervisor.md", "admissionState": "current"},
+      {"roleId": "supervisor", "surfaceId": "codex", "path": ".codex/agents/supervisor.toml", "admissionState": "current"},
+      {"roleId": "wiki-curator", "surfaceId": "local", "path": ".agents/agents/wiki-curator.md", "admissionState": "current"},
+      {"roleId": "wiki-curator", "surfaceId": "claude", "path": ".claude/agents/wiki-curator.md", "admissionState": "current"},
+      {"roleId": "wiki-curator", "surfaceId": "codex", "path": ".codex/agents/wiki-curator.toml", "admissionState": "current"}
+    ]
+  },
+  "targetInventory": {
+    "state": "target-only",
+    "promotionOwnerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+    "expectedRoleCount": 12,
+    "expectedSurfaceCount": 4,
+    "expectedProjectionCount": 48,
+    "roleIds": [
+      "supervisor",
+      "code-reviewer",
+      "doc-writer",
+      "gitops-reviewer",
+      "incident-responder",
+      "k8s-implementer",
+      "network-reviewer",
+      "observability-reviewer",
+      "security-auditor",
+      "wiki-curator",
+      "docs-researcher",
+      "quality-engineer"
+    ],
+    "surfaceIds": [
+      "local",
+      "claude",
+      "codex",
+      "gemini"
+    ],
+    "projections": [
+      {"roleId": "supervisor", "surfaceId": "local", "path": ".agents/agents/supervisor.md", "admissionState": "target-only"},
+      {"roleId": "supervisor", "surfaceId": "claude", "path": ".claude/agents/supervisor.md", "admissionState": "target-only"},
+      {"roleId": "supervisor", "surfaceId": "codex", "path": ".codex/agents/supervisor.toml", "admissionState": "target-only"},
+      {"roleId": "supervisor", "surfaceId": "gemini", "path": ".gemini/agents/supervisor.md", "admissionState": "target-only"},
+      {"roleId": "code-reviewer", "surfaceId": "local", "path": ".agents/agents/code-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "code-reviewer", "surfaceId": "claude", "path": ".claude/agents/code-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "code-reviewer", "surfaceId": "codex", "path": ".codex/agents/code-reviewer.toml", "admissionState": "target-only"},
+      {"roleId": "code-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/code-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "doc-writer", "surfaceId": "local", "path": ".agents/agents/doc-writer.md", "admissionState": "target-only"},
+      {"roleId": "doc-writer", "surfaceId": "claude", "path": ".claude/agents/doc-writer.md", "admissionState": "target-only"},
+      {"roleId": "doc-writer", "surfaceId": "codex", "path": ".codex/agents/doc-writer.toml", "admissionState": "target-only"},
+      {"roleId": "doc-writer", "surfaceId": "gemini", "path": ".gemini/agents/doc-writer.md", "admissionState": "target-only"},
+      {"roleId": "gitops-reviewer", "surfaceId": "local", "path": ".agents/agents/gitops-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "gitops-reviewer", "surfaceId": "claude", "path": ".claude/agents/gitops-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "gitops-reviewer", "surfaceId": "codex", "path": ".codex/agents/gitops-reviewer.toml", "admissionState": "target-only"},
+      {"roleId": "gitops-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/gitops-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "incident-responder", "surfaceId": "local", "path": ".agents/agents/incident-responder.md", "admissionState": "target-only"},
+      {"roleId": "incident-responder", "surfaceId": "claude", "path": ".claude/agents/incident-responder.md", "admissionState": "target-only"},
+      {"roleId": "incident-responder", "surfaceId": "codex", "path": ".codex/agents/incident-responder.toml", "admissionState": "target-only"},
+      {"roleId": "incident-responder", "surfaceId": "gemini", "path": ".gemini/agents/incident-responder.md", "admissionState": "target-only"},
+      {"roleId": "k8s-implementer", "surfaceId": "local", "path": ".agents/agents/k8s-implementer.md", "admissionState": "target-only"},
+      {"roleId": "k8s-implementer", "surfaceId": "claude", "path": ".claude/agents/k8s-implementer.md", "admissionState": "target-only"},
+      {"roleId": "k8s-implementer", "surfaceId": "codex", "path": ".codex/agents/k8s-implementer.toml", "admissionState": "target-only"},
+      {"roleId": "k8s-implementer", "surfaceId": "gemini", "path": ".gemini/agents/k8s-implementer.md", "admissionState": "target-only"},
+      {"roleId": "network-reviewer", "surfaceId": "local", "path": ".agents/agents/network-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "network-reviewer", "surfaceId": "claude", "path": ".claude/agents/network-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "network-reviewer", "surfaceId": "codex", "path": ".codex/agents/network-reviewer.toml", "admissionState": "target-only"},
+      {"roleId": "network-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/network-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "observability-reviewer", "surfaceId": "local", "path": ".agents/agents/observability-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "observability-reviewer", "surfaceId": "claude", "path": ".claude/agents/observability-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "observability-reviewer", "surfaceId": "codex", "path": ".codex/agents/observability-reviewer.toml", "admissionState": "target-only"},
+      {"roleId": "observability-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/observability-reviewer.md", "admissionState": "target-only"},
+      {"roleId": "security-auditor", "surfaceId": "local", "path": ".agents/agents/security-auditor.md", "admissionState": "target-only"},
+      {"roleId": "security-auditor", "surfaceId": "claude", "path": ".claude/agents/security-auditor.md", "admissionState": "target-only"},
+      {"roleId": "security-auditor", "surfaceId": "codex", "path": ".codex/agents/security-auditor.toml", "admissionState": "target-only"},
+      {"roleId": "security-auditor", "surfaceId": "gemini", "path": ".gemini/agents/security-auditor.md", "admissionState": "target-only"},
+      {"roleId": "wiki-curator", "surfaceId": "local", "path": ".agents/agents/wiki-curator.md", "admissionState": "target-only"},
+      {"roleId": "wiki-curator", "surfaceId": "claude", "path": ".claude/agents/wiki-curator.md", "admissionState": "target-only"},
+      {"roleId": "wiki-curator", "surfaceId": "codex", "path": ".codex/agents/wiki-curator.toml", "admissionState": "target-only"},
+      {"roleId": "wiki-curator", "surfaceId": "gemini", "path": ".gemini/agents/wiki-curator.md", "admissionState": "target-only"},
+      {"roleId": "docs-researcher", "surfaceId": "local", "path": ".agents/agents/docs-researcher.md", "admissionState": "target-only"},
+      {"roleId": "docs-researcher", "surfaceId": "claude", "path": ".claude/agents/docs-researcher.md", "admissionState": "target-only"},
+      {"roleId": "docs-researcher", "surfaceId": "codex", "path": ".codex/agents/docs-researcher.toml", "admissionState": "target-only"},
+      {"roleId": "docs-researcher", "surfaceId": "gemini", "path": ".gemini/agents/docs-researcher.md", "admissionState": "target-only"},
+      {"roleId": "quality-engineer", "surfaceId": "local", "path": ".agents/agents/quality-engineer.md", "admissionState": "target-only"},
+      {"roleId": "quality-engineer", "surfaceId": "claude", "path": ".claude/agents/quality-engineer.md", "admissionState": "target-only"},
+      {"roleId": "quality-engineer", "surfaceId": "codex", "path": ".codex/agents/quality-engineer.toml", "admissionState": "target-only"},
+      {"roleId": "quality-engineer", "surfaceId": "gemini", "path": ".gemini/agents/quality-engineer.md", "admissionState": "target-only"}
+    ]
+  },
+  "consumers": [
+    {
+      "id": "harness-validator",
+      "path": "scripts/validate-agent-harness-contract.py",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "role-semantics-validator",
+      "path": "scripts/validate-agent-role-semantics.py",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "roster-currentness-validator",
+      "path": "scripts/validate-agent-roster-currentness.py",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "harness-catalog",
+      "path": "docs/00.agent-governance/harness-catalog.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "harness-implementation-map",
+      "path": "docs/00.agent-governance/harness-implementation-map.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "provider-agents-md-note",
+      "path": "docs/00.agent-governance/providers/agents-md.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "provider-claude-note",
+      "path": "docs/00.agent-governance/providers/claude.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "provider-codex-note",
+      "path": "docs/00.agent-governance/providers/codex.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "provider-gemini-note",
+      "path": "docs/00.agent-governance/providers/gemini.md",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "affected-surface-selector",
+      "path": "scripts/validate-affected-surfaces.py",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "repository-quality-aggregate",
+      "path": "scripts/validate-repo-quality-gates.sh",
+      "selectedContract": "agent-role-semantics-compatibility",
+      "selectedVersion": "2",
+      "migrationState": "pending-spec-041-migration",
+      "evidenceClass": "repo-static"
+    }
+  ],
+  "compatibility": {
+    "legacyContractPath": "docs/00.agent-governance/contracts/agent-role-semantics.json",
+    "legacySchemaPath": "docs/00.agent-governance/contracts/agent-role-semantics.schema.json",
+    "legacyVersion": "2",
+    "state": "readable-compatibility-input",
+    "legacyConsumers": [
+      "role-semantics-validator",
+      "roster-currentness-validator",
+      "harness-catalog",
+      "harness-implementation-map",
+      "provider-agents-md-note",
+      "provider-claude-note",
+      "provider-codex-note",
+      "provider-gemini-note",
+      "affected-surface-selector",
+      "repository-quality-aggregate"
+    ],
+    "removalOwnerSpec": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+    "deletionGate": "zero-legacy-consumers-with-repository-static-proof"
+  },
+  "memory": {
+    "canonicalDurableSharedPath": "docs/00.agent-governance/memory/progress.md",
+    "transientCheckpointPath": ".agent-work/checkpoint.json",
+    "executableLifecycleOwner": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+    "classes": [
+      {
+        "id": "working-short-term",
+        "scope": "One active bounded task or session, including compact recovery context that has not been promoted.",
+        "authority": {
+          "mode": "temporary-context-only",
+          "repositoryFacts": false,
+          "decisions": false,
+          "taskStatus": false,
+          "durableHandoffEvidence": false
+        },
+        "owner": "active-task-executor",
+        "provenance": [
+          "active task identifier",
+          "observed repository revision",
+          "bounded command-result summaries"
+        ],
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "secretMaterialAllowed": false,
+          "rawPromptOrTranscriptAllowed": false,
+          "requiredTreatment": "Keep only bounded summaries and stable references; redact or discard sensitive and conversational payloads."
+        },
+        "promotion": {
+          "targetClass": "durable-long-term",
+          "gate": "Promote only reviewed decisions, reusable lessons, progress, or handoff evidence into the canonical repository owner.",
+          "reviewRequired": true
+        },
+        "lifecyclePolicyRefs": [
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+          "docs/00.agent-governance/rules/postflight-checklist.md"
+        ],
+        "conflictBoundary": "Observed repository state and canonical SDLC owners always override temporary context after compaction, resume, or handoff.",
+        "prohibitedContent": [
+          "credential-values",
+          "auth-files",
+          "tokens",
+          "secrets",
+          "raw-prompts",
+          "full-provider-transcripts",
+          "shell-history",
+          "private-diagnostics",
+          "environment-dumps",
+          "user-configuration"
+        ]
+      },
+      {
+        "id": "durable-long-term",
+        "scope": "Reviewed repository facts, decisions, progress, reusable lessons, and handoff evidence stored by their canonical owner.",
+        "authority": {
+          "mode": "canonical-repository-record",
+          "repositoryFacts": true,
+          "decisions": true,
+          "taskStatus": true,
+          "durableHandoffEvidence": true
+        },
+        "owner": "canonical-sdlc-owner-or-shared-progress-ledger",
+        "provenance": [
+          "reviewed repository commit",
+          "canonical SDLC lineage",
+          "classified validation evidence",
+          "named human or task owner"
+        ],
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "secretMaterialAllowed": false,
+          "rawPromptOrTranscriptAllowed": false,
+          "requiredTreatment": "Store only reviewed factual summaries, stable references, decisions, and redacted evidence in tracked canonical paths."
+        },
+        "promotion": {
+          "targetClass": null,
+          "gate": "No implicit promotion exists beyond the canonical repository owner; corrections require a reviewed repository change.",
+          "reviewRequired": true
+        },
+        "lifecyclePolicyRefs": [
+          "docs/00.agent-governance/memory/README.md",
+          "docs/00.agent-governance/rules/documentation-protocol.md",
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+        ],
+        "conflictBoundary": "The document-type current owner outranks the progress ledger, and newer reviewed repository evidence must explicitly reconcile older durable memory.",
+        "prohibitedContent": [
+          "credential-values",
+          "auth-files",
+          "tokens",
+          "secrets",
+          "raw-prompts",
+          "full-provider-transcripts",
+          "shell-history",
+          "private-diagnostics",
+          "environment-dumps",
+          "user-configuration"
+        ]
+      },
+      {
+        "id": "domain-scoped",
+        "scope": "Durable knowledge limited to one governed domain, document type, service, infrastructure area, or operational scope.",
+        "authority": {
+          "mode": "canonical-domain-record",
+          "repositoryFacts": true,
+          "decisions": true,
+          "taskStatus": false,
+          "durableHandoffEvidence": true
+        },
+        "owner": "canonical-domain-document-owner",
+        "provenance": [
+          "domain owner",
+          "domain-scoped source evidence",
+          "upstream requirement or architecture link",
+          "reviewed repository revision"
+        ],
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "secretMaterialAllowed": false,
+          "rawPromptOrTranscriptAllowed": false,
+          "requiredTreatment": "Keep facts in the canonical domain document and link outward rather than copying cross-domain policy or sensitive payloads."
+        },
+        "promotion": {
+          "targetClass": "durable-long-term",
+          "gate": "Promote only when a lesson becomes cross-domain and the receiving canonical owner accepts a reviewed, source-linked summary.",
+          "reviewRequired": true
+        },
+        "lifecyclePolicyRefs": [
+          "docs/00.agent-governance/rules/document-stage-routing.md",
+          "docs/00.agent-governance/rules/documentation-protocol.md",
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+        ],
+        "conflictBoundary": "The canonical owner for the affected domain wins; cross-domain conflict must be escalated to the shared SDLC owner instead of copied locally.",
+        "prohibitedContent": [
+          "credential-values",
+          "auth-files",
+          "tokens",
+          "secrets",
+          "raw-prompts",
+          "full-provider-transcripts",
+          "shell-history",
+          "private-diagnostics",
+          "environment-dumps",
+          "user-configuration"
+        ]
+      },
+      {
+        "id": "provider-local-auxiliary",
+        "scope": "Provider-managed or user-local convenience context that is not tracked repository authority and may disappear without notice.",
+        "authority": {
+          "mode": "advisory-only",
+          "repositoryFacts": false,
+          "decisions": false,
+          "taskStatus": false,
+          "durableHandoffEvidence": false
+        },
+        "owner": "provider-runtime-or-user-local-store",
+        "provenance": [
+          "identified provider and runtime",
+          "local observation time",
+          "repository revision used for revalidation"
+        ],
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "secretMaterialAllowed": false,
+          "rawPromptOrTranscriptAllowed": false,
+          "requiredTreatment": "Treat all provider-local context as advisory and re-observe repository truth before use or promotion."
+        },
+        "promotion": {
+          "targetClass": "working-short-term",
+          "gate": "Re-observe the claim against repository state, classify the evidence, redact it, and route it through reviewed short-term context first.",
+          "reviewRequired": true
+        },
+        "lifecyclePolicyRefs": [
+          "docs/00.agent-governance/harness-catalog.md",
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+        ],
+        "conflictBoundary": "Provider-local context loses every conflict with observed repository state, canonical decisions, Task status, or durable handoff evidence.",
+        "prohibitedContent": [
+          "credential-values",
+          "auth-files",
+          "tokens",
+          "secrets",
+          "raw-prompts",
+          "full-provider-transcripts",
+          "shell-history",
+          "private-diagnostics",
+          "environment-dumps",
+          "user-configuration"
+        ]
+      }
+    ]
+  },
+  "redaction": {
+    "secretMaterialAllowed": false,
+    "rawPromptOrTranscriptAllowed": false,
+    "syntheticFixtureMarker": "[REDACTED-SYNTHETIC]",
+    "prohibitedPayloadKinds": [
+      "credential-values",
+      "auth-files",
+      "tokens",
+      "secrets",
+      "raw-prompts",
+      "full-provider-transcripts",
+      "shell-history",
+      "private-diagnostics",
+      "environment-dumps",
+      "user-configuration"
+    ]
+  }
+}

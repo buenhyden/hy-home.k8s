@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 44,
+                "helpers": 46,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 11,
-                "python": 16,
-                "json": 21,
+                "postClosureHelpers": 13,
+                "python": 17,
+                "json": 22,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,13 +179,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 44)
+        self.assertEqual(len(actual), 46)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
         self.assertEqual(
             self.validator.POST_CLOSURE_HELPER_MANIFEST,
             {
+                "tests/fixtures/agent-harness-contract.json": (
+                    "json",
+                    "closed-fixture",
+                ),
                 "tests/fixtures/reference-information-architecture/current-owner.json": (
                     "json",
                     "closed-fixture",
@@ -222,6 +226,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_harness_contract.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_ci_python_contract.py": (
                     "python",
                     "regression-test",
@@ -237,7 +245,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 11})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 13})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -252,6 +260,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self.assertEqual(
             post_closure,
             [
+                {
+                    "path": "tests/fixtures/agent-harness-contract.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
                 {
                     "path": "tests/fixtures/reference-information-architecture/current-owner.json",
                     "format": "json",
@@ -294,6 +307,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/test_reference_information_architecture.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_harness_contract.py",
                     "format": "python",
                     "role": "regression-test",
                 },
@@ -404,6 +422,36 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 paths, lambda path: readme if path == "tests/README.md" else "fixture\n"
             )
         self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-FORMAT")
+
+    def test_harness_helpers_are_admitted_only_by_exact_identity(self) -> None:
+        exact = {
+            "tests/fixtures/agent-harness-contract.json": (
+                "json",
+                "closed-fixture",
+            ),
+            "tests/test_validate_agent_harness_contract.py": (
+                "python",
+                "regression-test",
+            ),
+        }
+        for path, expected in exact.items():
+            with self.subTest(path=path):
+                self.assertEqual(
+                    self.validator._helper_format_role(path),
+                    expected,
+                )
+
+        for unmanifested in (
+            "tests/fixtures/agent-harness-contract-copy.json",
+            "tests/test_validate_agent_harness_contract_copy.py",
+        ):
+            with self.subTest(unmanifested=unmanifested):
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator._helper_format_role(unmanifested)
+                self.assertEqual(
+                    raised.exception.code,
+                    "ROLE-AUDIT-HELPER-ADMISSION",
+                )
 
     def test_post_closure_helper_cannot_bypass_readme_inventory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
