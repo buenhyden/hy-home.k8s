@@ -8,18 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-07-28 - Spec 041 whole-tranche QA evidence
+### 2026-07-28 - Spec 041 terminal closure staging
 
 #### Metadata
 
 - **Date**: 2026-07-28
 - **Layer**: architecture, docs, governance, qa, meta
 - **Status**: active
+- **Tags**: #spec-041 #agent-governance #lifecycle #closure
+
+#### Progress
+
+- Staged the terminal lifecycle transition for Spec 041 after QA checkpoint
+  `e85b7829`.
+- This closure changes only the Spec 041 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, this progress ledger, and the single
+  Spec 041 program-lineage relation. PRD-003 and ARD-0006 remain active because
+  Specs 042 through 046 still own later tranches.
+
+#### Memory
+
+- Closure preserves the Spec 041 memory split: durable facts live in this
+  progress ledger and the harness contract; executable checkpoint lifecycle is
+  still Spec 043 work.
+- Provider-local memory remains advisory and cannot own repository facts,
+  decisions, task status, or handoff evidence.
+
+#### Evidence
+
+- SAGC-000 through SAGC-005 are recorded as PASS in the reciprocal Task before
+  terminal status transition.
+- Implementation quality and security reviews are approved. The committed-HEAD
+  requirements finding is remediated by the exact atomic proposal; independent
+  terminal requirements/quality/security review remains the pre-commit gate.
+- Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, and live results remain `DEFER`.
+- This staged entry does not claim the future content-addressed closure commit
+  SHA. The closure commit and explicit-ref/clean-tree postflight must be
+  observed after commit creation.
+
+#### Handoff
+
+- Next owner: commit this atomic lifecycle transition, then run explicit-ref
+  lifecycle and clean-tree aggregate postflight.
+- Roll back this terminal closure before reverting QA or implementation
+  commits.
+
+### 2026-07-28 - Spec 041 whole-tranche QA evidence
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: complete
 - **Tags**: #spec-041 #agent-governance #quality-gate #precommit
 
 #### Progress
 
-- Began SAGC-005 repository-static QA after implementation evidence commit
+- Completed SAGC-005 repository-static QA after implementation evidence commit
   `7098a3242ac40e757c86ccac9b986e3253766f23`.
 - Preserved the lifecycle split: QA evidence is recorded before terminal
   Spec/Plan/Task status transition, and clean-tree postflight evidence remains
@@ -41,20 +87,19 @@ inventory stays in `scripts/README.md`.
   `[PASS] repository quality gates passed`.
 - The first `pre-commit run --all-files` observed every individual check pass
   but exited nonzero because this QA evidence draft was staged concurrently
-  while the strict hook was running. A stable rerun, formatter/status review,
-  and both diff inspections remain required.
+  while the strict hook was running. The stable rerun then passed every
+  applicable hook; Dockerfile lint was a no-file `SKIP`. Formatter/status,
+  cached diff, and unstaged diff inspections were clean.
 - Independent requirements review correctly reported that committed HEAD still
-  had SAGC-005 queued. Quality and security reviews remain pending; the finding
-  must be remediated and all three final verdicts recorded before terminal
-  closure.
+  had SAGC-005 queued. Quality review returned `QUALITY APPROVED`; security
+  review returned `SECURITY APPROVED`. The terminal proposal remediates the
+  requirements finding and requires terminal re-review before closure commit.
 - Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
   Vault/ESO, and live results remain `DEFER`.
 
 #### Handoff
 
-- Next owner: stable all-files rerun, formatter/status and diff inspection,
-  requirements finding remediation, final requirements/quality/security
-  verdicts, and only then terminal Spec/Plan/Task lifecycle closure.
+- Next owner: terminal requirements re-review, atomic closure, and postflight.
 - Roll back newest-first: QA evidence update, SAGC-004 integration
   `8c342ce6`, consumer migration `52a4ab6c`, harness contract introduction
   `8d5a4c50`, activation postflight `5d4dd5c`, and activation `9e6fc553`.

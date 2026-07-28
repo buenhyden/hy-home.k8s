@@ -1,7 +1,7 @@
 ---
 title: 'Task: Stage 00 Agent Governance Contract'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-28
 ---
@@ -14,7 +14,10 @@ This Task is the durable result ledger for the
 [Spec 041 Plan](../plans/2026-07-28-stage-00-agent-governance-contract.md).
 It tracks reciprocal activation, closed schema and fixtures, current/target
 contract data, explicit memory classes, consumer migration, derived governance,
-complete repository QA, independent review, and atomic tranche closure.
+complete repository QA, independent review, and the exact eight-path atomic
+terminal proposal. The future closure commit, explicit-ref lifecycle result,
+and clean-tree postflight are separate observed evidence and are not claimed
+in this staged proposal.
 
 Spec 040 closure `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and
 postflight evidence update `4335ea6076a68fe0bbed3526a21b92a39180faa7`
@@ -45,7 +48,7 @@ claimed; those evidence lanes remain `DEFER`.
 | SAGC-002 | VAL-SAGC-005, VAL-SAGC-006, VAL-SAGC-007, VAL-SAGC-009 | Add exact current/target contract data, evidence classes, and four explicit memory-class declarations. | platform | Done | PASS — current and target inventories, four non-transitive evidence classes, and four memory classes validate without promoting target or runtime state. | Implementation `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`; current `10/3/30`; target-only `12/4/48`; evidence `4`; memory `4`; redaction and provider-local advisory boundaries PASS. |
 | SAGC-003 | VAL-SAGC-004 | Migrate named validators and readers to one selected harness contract version while retaining explicit legacy compatibility input. | platform | Done | PASS — all named semantic consumers select `harness-contract/1.0.0`; the legacy role contract is readable compatibility input with no current semantic consumer. | Migration `52a4ab6c2e1e4436486a74ec13f35109150161a1`; consumers `11`; `legacyConsumers=[]`; harness, role-semantics, roster, unit, aggregate, path-safety, requirements, and quality review PASS. |
 | SAGC-004 | VAL-SAGC-003, VAL-SAGC-008 | Align catalog, provider notes, implementation maps, inventories, validation routing, and aggregate coverage. | platform | Done | PASS — derived governance consumes the harness owner, seven exact affected surfaces route the focused validator, and the aggregate runs it before compatibility checks. | Integration `8c342ce6011c465e138c4cec0ab796ee6c83bdb3`; harness/affected/role/roster/strict/aggregate and staged hooks PASS; requirements `COMPLIANT`; quality `APPROVED`; no Gemini-native, infrastructure, CI-job, adapter, or provider-setting promotion. |
-| SAGC-005 | VAL-SAGC-001 through VAL-SAGC-009 | Run whole-tranche QA/review, close Spec/Plan/Task atomically, and perform explicit-ref/clean-tree postflight. | platform | In Progress | Focused and aggregate repository-static QA pass; stable all-files, final independent review, atomic lifecycle closure, and postflight remain required. | Implementation evidence HEAD `7098a3242ac40e757c86ccac9b986e3253766f23`; focused/affected/strict/lifecycle/aggregate PASS; first all-files run detected concurrent staging and exited nonzero despite individual hook PASS; requirements review correctly found SAGC-005 still queued at committed HEAD; stable rerun and final requirements/quality/security verdicts pending; provider/runtime/hosted/remote/live lanes remain `DEFER`. |
+| SAGC-005 | VAL-SAGC-001 through VAL-SAGC-009 | Run whole-tranche QA/review, close Spec/Plan/Task atomically, and perform explicit-ref/clean-tree postflight. | platform | Done | PASS — whole-tranche repository-static QA and terminal lifecycle proposal are complete; postflight remains a later evidence event. | QA checkpoint `e85b7829cd120742c5f62712259a037134e2db7a`; focused/affected/strict/lifecycle/aggregate PASS; stable `pre-commit run --all-files` PASS with Dockerfile no-file `SKIP`; status and both diff inspections clean; final requirements/quality/security review required before commit; provider/runtime/hosted/remote/live lanes remain `DEFER`. |
 
 ## Approval and Safety Boundaries
 
@@ -107,17 +110,20 @@ credential-bearing, and live evidence remain non-current or `DEFER`. Executable
 checkpoint promotion, retry, resume, expiry, archive/GC, conflict, and redaction
 behavior remains owned by Spec 043.
 
-Whole-tranche SAGC-005 repository-static QA began after implementation evidence
+Whole-tranche SAGC-005 repository-static QA completed after implementation evidence
 commit `7098a3242ac40e757c86ccac9b986e3253766f23`. The aggregate
 `bash scripts/validate-repo-quality-gates.sh .` ended with
 `[PASS] repository quality gates passed`. The first all-files run observed every
 individual check pass but exited nonzero because this QA evidence draft was
-staged concurrently while the strict hook was running. Requirements review
-correctly found that committed HEAD still had SAGC-005 queued. Stable all-files,
-formatter/status and diff inspections, remediation review, quality, and
-security verdicts remain required before any terminal lifecycle status commit.
-No provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
-Vault/ESO, or live result is inferred from these repository-static PASS lanes.
+staged concurrently while the strict hook was running. The stable rerun then
+passed every applicable hook with Dockerfile lint a no-file `SKIP`; status,
+cached diff, and unstaged diff inspections were clean. Quality review returned
+`QUALITY APPROVED`; security review returned `SECURITY APPROVED`. Requirements
+review correctly found that committed HEAD still had SAGC-005 queued; this
+terminal proposal remediates that finding and requires terminal re-review
+before commit. No provider runtime, hosted CI, remote, credential-bearing,
+Kubernetes/GitOps, Vault/ESO, or live result is inferred from these
+repository-static PASS lanes.
 
 ## Traceability
 
@@ -136,4 +142,4 @@ Vault/ESO, or live result is inferred from these repository-static PASS lanes.
 | N/A — SAGC-002 shares the Plan and Spec sources linked above | PASS — exact inventories, evidence classes, and memory classes observed. | `8d5a4c50`; current `10/3/30`, target-only `12/4/48`, evidence `4`, memory `4`, and redaction boundaries PASS. |
 | N/A — SAGC-003 shares the Plan and Spec sources linked above | PASS — named consumers select one current contract. | `52a4ab6c`; consumers `11`, `legacyConsumers=[]`, compatibility input retained for Spec 045 removal proof. |
 | N/A — SAGC-004 shares the Plan and Spec sources linked above | PASS — derived governance and validation routing integrated. | `8c342ce6`; seven exact surfaces, aggregate ordering, focused/affected/strict/aggregate checks, requirements `COMPLIANT`, quality `APPROVED`. |
-| N/A — SAGC-005 shares the Plan and Spec sources linked above | In Progress — focused and aggregate QA pass; stable all-files, final reviews, atomic closure, and postflight remain. | Focused/affected/strict/lifecycle/aggregate PASS; first all-files run detected concurrent staging; requirements finding open; final requirements/quality/security verdicts pending; external/provider/live lanes `DEFER`. |
+| N/A — SAGC-005 shares the Plan and Spec sources linked above | PASS — repository-static QA and terminal lifecycle proposal complete; postflight remains a later evidence event. | Focused/affected/strict/lifecycle/aggregate/all-files PASS; formatter/status/diffs clean; final requirements/quality/security review required before commit; external/provider/live lanes `DEFER`. |

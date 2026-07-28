@@ -1,7 +1,7 @@
 ---
 title: 'Stage 00 Agent Governance Contract Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-28
 ---
@@ -18,12 +18,13 @@ validation. Specs 038–040 are closed. Spec 040 terminal closure
 `4335ea6076a68fe0bbed3526a21b92a39180faa7` satisfy this tranche's activation
 prerequisite.
 
-The external-source observation cutoff is **2026-07-26 Asia/Seoul**. Repository state,
-not provider prose, remains runtime authority until each later evidence class
-is implemented and observed. This Spec, its reciprocal Plan/Task, their
-indexes, the shared progress entry, and the PRD-003 lineage relation form one
-exact eight-path activation proposal; no future activation commit identity is
-claimed.
+This tranche is repository-static. Spec 042 owns provider/model evidence with
+the user-approved observation cutoff **2026-07-10 10:00 Asia/Seoul**.
+Repository state, not provider prose, remains runtime authority until each
+later evidence class is implemented and observed. The reciprocal Plan/Task
+record the activation, implementation, QA, and closure evidence for this
+tranche. Provider-runtime, hosted CI, remote, credential-bearing, and live
+evidence remains `DEFER`.
 
 ## Strategic Boundaries & Non-goals
 
@@ -61,8 +62,8 @@ claimed.
 
 ### Machine-owner contract
 
-- `docs/00.agent-governance/contracts/harness-contract.json` is the proposed
-  single data owner for canonical roles, surface projections, permissions,
+- `docs/00.agent-governance/contracts/harness-contract.json` is the current
+  repository-static data owner for canonical roles, surface projections, permissions,
   stop conditions, handoff, evidence requirements, and model/eval references.
   It separates `currentInventory` from `targetInventory`: Spec 041 encodes the
   implemented 10-role/three-surface baseline exactly, while the 12-role/four-
@@ -198,8 +199,8 @@ bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
 
-`validate-agent-harness-contract.py` is a planned Spec 041 deliverable and is
-not claimed to exist in this draft.
+`validate-agent-harness-contract.py` is the focused Spec 041 deliverable and is
+now part of the repository-static aggregate lane.
 
 ## Success Criteria & Verification Plan
 

@@ -1,7 +1,7 @@
 ---
 title: 'Stage 00 Agent Governance Contract Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-28
 ---
@@ -10,11 +10,11 @@ updated: 2026-07-28
 
 ## Overview
 
-This Plan executes [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md)
-as the first PRD-003 tranche. It activates a reciprocal
-[Task](../tasks/2026-07-28-stage-00-agent-governance-contract.md), introduces
+This Plan executed [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md)
+as the first PRD-003 tranche. It activated a reciprocal
+[Task](../tasks/2026-07-28-stage-00-agent-governance-contract.md), introduced
 one provider-neutral harness contract without prematurely changing the current
-10-role/30-adapter runtime inventory, migrates named consumers, and closes the
+10-role/30-adapter runtime inventory, migrated named consumers, and closed the
 tranche only after deterministic validation and independent review.
 
 ## Context

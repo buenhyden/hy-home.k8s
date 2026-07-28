@@ -6217,7 +6217,7 @@
           {
             "spec": "041",
             "order": 1,
-            "state": "active",
+            "state": "done",
             "reason": "Stage 00 agent governance contract",
             "decision": "0013"
           },
