@@ -205,8 +205,10 @@ commit and the clean-tree repository-static aggregate passed.
 - **Program ARD**:
   [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - **Decisions**:
-  [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md) and
-  [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+  [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md),
+  [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md),
+  and
+  [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - **Predecessor evidence**: Spec 039 closure
   `e1d1e910840337327a557ab4b84e86f8fced11d6` and evidence update
   `11a020d9b299ae91b7af9278c22ed89ffccb5cfc`

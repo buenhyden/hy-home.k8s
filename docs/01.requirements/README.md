@@ -101,7 +101,7 @@
 | [`./003-workspace-agent-governance-platform.md`](./003-workspace-agent-governance-platform.md) | Workspace AI Agent governance, provider-native harness, loop, model, and evidence program PRD | Active | ARD-0006과 현재 baseline ADR-0013을 유지하면서 draft ADR-0019 및 Specs 041–046이 039·040 종료 후 시작할 기반 우선 후속 프로그램을 정의한다. Repository-local closure와 provider-runtime readiness를 분리한다. | 2026-07-26 |
 | [`./004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
 | [`./005-workspace-document-assurance-modernization.md`](./005-workspace-document-assurance-modernization.md) | Workspace document assurance modernization program PRD | Done | ARD-0008, ADR-0015/0016과 Spec 026–032 및 각 canonical Plan/Task의 repository-static 구현 완료 증적을 소유한다. | 2026-07-14 |
-| [`./006-workspace-document-lifecycle-and-evidence-consolidation.md`](./006-workspace-document-lifecycle-and-evidence-consolidation.md) | Workspace document lifecycle, archive, reference, and QA evidence consolidation program PRD | Active | ARD-0009, ADR-0017/0018, Specs 034–040의 기반 우선 다중 Spec 구현을 소유한다. | 2026-07-15 |
+| [`./006-workspace-document-lifecycle-and-evidence-consolidation.md`](./006-workspace-document-lifecycle-and-evidence-consolidation.md) | Workspace document lifecycle, archive, reference, and QA evidence consolidation program PRD | Active | ARD-0009, ADR-0017/0018/0020, Specs 034–040의 기반 우선 다중 Spec 구현을 소유한다. Specs 034–039와 Spec 040 CCPC-001은 repository-static으로 완료됐고 CCPC-002 closure evidence가 진행 중이다. | 2026-07-27 |
 
 ### 예시
 

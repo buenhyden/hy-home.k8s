@@ -3,7 +3,7 @@ title: 'Audit: Integrated Remediation Roadmap'
 type: content/reference
 status: done
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-27
 ---
 
 # Audit: Integrated Remediation Roadmap
@@ -229,6 +229,30 @@ compatibility removal and program closure. None of those routes, nor this
 overlay, infer provider, remote, Kubernetes, Vault, Argo CD, secret, or
 live-system readiness from repository-static PASS.
 
+### 2026-07-27 contract-cutover disposition overlay
+
+This dated overlay records repository-static follow-up evidence from [Spec
+040](../../../03.specs/040-contract-cutover-and-program-closure/spec.md)
+without changing original audit rows, scores, priorities, dependencies, or the
+audit observation SHA. Source reports remain the fact owners; this roadmap
+records only disposition, limitation, rollback, and next-owner changes.
+
+| Program surface | Disposition at 2026-07-27 | Evidence and result class | Retained boundary and next owner |
+| --- | --- | --- | --- |
+| Active document-reader compatibility | Closed for active repository-static validation. The current registry, Markdown-profile, and owner/link readers now default to strict operation, explicit `--mode strict` remains accepted, and retired `--mode compatibility` invocations are rejected at the CLI boundary. The finite historical transition proof fixture remains bounded and fail-closed rather than an active reader. | [Spec 040 Task](../../../04.execution/tasks/2026-07-27-contract-cutover-and-program-closure.md) records focused RED with 6 tests and 14 intended failures, GREEN focused 6/6, self-tests, no-mode and strict production PASS, compatibility exit `2`, staged/aggregate/all-files PASS, independent requirements/quality approval, and commit `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. Result class: repository-static `PASS`; Dockerfile no-file lane remains `SKIP`. | Hosted GitHub Actions, provider-native discovery, remote execution, Kubernetes, Vault, ESO, Argo CD, credential, secret-value, deployment, and live evidence remain `DEFER`. Next owner: Spec 040 CCPC-002 through CCPC-004 until atomic program closure. |
+| Archive wording and currentness remediation | Closed for the targeted repository-static wording defect introduced after CCPC-001. Current documentation no longer advertises active compatibility-reader behavior while preserving bounded historical archive proof. | Commit `d99b183` is the local logical remediation for archive/current wording. Result class: repository-static `PASS` for the wording correction once included in the Spec 040 evidence chain; no source-report score changes are implied. | The correction does not reopen historical audit bodies or compatibility readers. Rollback is newest-first revert of the wording remediation, then rerun the strict document and aggregate gates. |
+| Closure matrix and Current audit reconciliation | In progress. CCPC-002 owns the final requirement/criterion closure matrix, archive/migration/reference/workflow evidence reruns, and this Current-audit reconciliation overlay. | The Task now records CCPC-002 in progress and contains the initial closure matrix; this row supplies its Current-audit disposition without claiming the pending reruns or terminal closure. Unobserved repository-static checks have no result class yet; external lanes remain `DEFER`. | Next owner: Spec 040 CCPC-002. Closure is blocked until every requirement/criterion has evidence, result class, limitation, owner, reviewer, rollback, and residual-risk entry. |
+| Whole-branch QA and independent review | Not yet closed by this overlay. CCPC-003 owns focused, affected, lifecycle, strict, aggregate, all-files, formatter, diff, and independent whole-branch review evidence for the final proposal. | No current CCPC-003 validation or reviewer result is claimed here. Repository-static checks remain pending until exact commands, versions, scopes, and reviewer dispositions are recorded in the Spec 040 Task; hosted/provider/live lanes remain `DEFER`. | Next owner: Spec 040 CCPC-003. A repository-static PASS cannot stand in for unexecuted remote/provider/live evidence. |
+| Atomic program closure and postflight | Not yet closed by this overlay. CCPC-004 owns terminal PRD-006, ARD-0009, Spec, Plan, Task, index, decision, registry-relation, closure-commit, explicit-ref, and clean-tree postflight evidence. | No terminal lifecycle transition, closure commit, explicit-ref postflight, or clean-tree final result is claimed here. Repository-static closure remains pending until CCPC-004 lands and is observed; external lanes remain `DEFER`. | Next owner: Spec 040 CCPC-004. Rollback remains newest-first logical reverts with activation last if needed; rollback must not restore active compatibility readers or weaken strict rules. |
+
+The result vocabulary is the active Stage 00 contract: `PASS` means a named
+repository-static command or check ran over the stated scope; `SKIP` means the
+lane had no applicable files or an optional tool was unavailable; `FAIL` means
+the stated acceptance condition was not met; `DEFER` means the lane lacks
+authorized environment, provider, remote, or live evidence. None of the
+repository-static results above promotes hosted, provider, remote, Kubernetes,
+Vault, ESO, Argo CD, credential, secret, deployment, or live-system readiness.
+
 ### Historical Lineage Map
 
 | Historical finding or roadmap item | Current canonical disposition |
@@ -353,9 +377,10 @@ remain code literals until created.
 ## Review and Freshness
 
 - Review cadence: on owner report or disposition change
-- Last reviewed: 2026-07-11
+- Last reviewed: 2026-07-27
 - Next review trigger: source finding closes/changes, Task 13 index reconciliation,
-  approved target-state ADR, new consumer/telemetry, or acceptance evidence lands.
+  Spec 040 CCPC-002 through CCPC-004 evidence, approved target-state ADR, new
+  consumer/telemetry, or acceptance evidence lands.
 - Refresh method: preserve the prior mapping, reread each owner report at its stated
   observation SHA, account for every actionable row once, and change priority or
   disposition only with linked owner evidence.

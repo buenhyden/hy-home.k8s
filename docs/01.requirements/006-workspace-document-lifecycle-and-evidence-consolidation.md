@@ -3,7 +3,7 @@ title: 'Workspace Document Lifecycle and Evidence Consolidation Product Requirem
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-07-15
+updated: 2026-07-27
 ---
 
 # Workspace Document Lifecycle and Evidence Consolidation Product Requirements
@@ -30,19 +30,16 @@ current policy or relying on Git object retention alone.
 
 ## Problem Statement
 
-The repository now routes all governed Markdown through a machine-readable
-profile and passes strict structural validation, but several semantic gaps
-remain. The program registry incorrectly counts completed Spec 033 as an
-eighth original tranche despite ADR-0016 fixing seven tranches. Archive files
-are metadata-only Tombstones, so their bodies depend on Git history. Completed
-Plans and Tasks remain in the active execution stage after their lineages
-close. Current audit dispositions lag implementation evidence. The lifecycle
-state table is repeated outside its machine owner, and the repository quality
-self-test assumes FIFO support that is absent in the current filesystem.
+At program start, governed Markdown passed structural validation but several
+semantic gaps remained: Spec 033 was modeled as an eighth original tranche,
+archive bodies depended on Git history, completed execution controls remained
+in the active working set, Current audit dispositions lagged implementation,
+and lifecycle facts were repeated outside their machine owner.
 
-Leaving these gaps unresolved makes historical preservation, active-owner
-selection, and QA outcomes dependent on conventions that are not consistently
-machine-verifiable.
+Specs 034 through 039 have closed those implementation gaps with repository
+evidence. The remaining active problem is to prove the integrated strict
+contract, reconcile the Current audit, preserve explicit external `DEFER`
+boundaries, and close PRD-006, ARD-0009, and Spec 040 atomically.
 
 ## Personas
 
@@ -79,7 +76,7 @@ machine-verifiable.
 | REQ-WDLEC-001 | Preserve document-profiles.json as the sole machine owner of routes, frontmatter, lifecycle domains, templates, body contracts, current packs, and program lineage. | Must | Strict registry validation resolves every governed path exactly once. |
 | REQ-WDLEC-002 | Represent Spec 033 as a completed follow-up to the seven Specs fixed by ADR-0016, not as an eighth original tranche. | Must | Registry and reciprocal document checks distinguish tranches from follow-ups. |
 | REQ-WDLEC-003 | Define closed, profile-specific metadata and state-transition contracts without adding consumer-free relationship keys. | Must | Positive and negative fixtures cover allowed values, transitions, and evidence. |
-| REQ-WDLEC-004 | Replace metadata-only Tombstones with one non-authoritative full-body archive record per original path. | Must | Existing 31 records recover exact payloads with commit, blob, and digest evidence. |
+| REQ-WDLEC-004 | Replace retired metadata-only archive stubs with one non-authoritative full-body archive record per original path. | Must | Existing 31 records recover exact payloads with commit, blob, and digest evidence. |
 | REQ-WDLEC-005 | Keep current SDLC owners separate from archive records and prohibit archive reactivation. | Must | Owner and transition validators reject archive-as-current and archived-to-active cases. |
 | REQ-WDLEC-006 | Move eligible completed Plans and Tasks from closed lineages to the archive while preserving current Specs and accepted architecture decisions. | Must | A migration ledger proves eligibility, movement, links, and rollback per lineage. |
 | REQ-WDLEC-007 | Enforce lifecycle-based active-stage cardinality instead of arbitrary folder file-count limits. | Must | Current-owner, active Plan/Task, and closed-lineage residue fixtures pass. |
@@ -98,7 +95,7 @@ machine-verifiable.
   original tranches and Spec 033 as a follow-up.
 - **ACC-WDLEC-003**: Every document family rejects unsupported frontmatter
   keys, values, ordering, and transitions through independent fixtures.
-- **ACC-WDLEC-004**: All 31 existing Tombstones are replaced by full-body
+- **ACC-WDLEC-004**: All 31 retired metadata-only archive stubs are replaced by full-body
   archive records whose payloads match recoverable source blobs; missing and
   ambiguous recoveries are zero.
 - **ACC-WDLEC-005**: All historical payload links resolve in their source-tree
@@ -134,12 +131,12 @@ machine-verifiable.
 ## Risks, Dependencies, and Assumptions
 
 - Archive conversion must verify the exact source tree before replacing a
-  Tombstone; a missing source is a blocker rather than an invitation to
+  retired metadata-only stub; a missing source is a blocker rather than an invitation to
   reconstruct prose.
 - Moving execution records can break current traceability unless index anchors
   and closure evidence change in the same logical commit.
-- A compatibility window is required while the old Tombstone profile and the
-  full-body archive profile coexist on the implementation branch.
+- Retired archive and compatibility forms may remain only as finite,
+  identity-pinned, fail-closed proof fixtures; active readers stay strict-only.
 - Program Specs use active to mean an approved current technical contract.
   Active status does not authorize concurrent execution; predecessor
   acceptance and the creation of the owning Plan and Task open each tranche.

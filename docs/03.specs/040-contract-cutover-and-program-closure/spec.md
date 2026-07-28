@@ -20,9 +20,11 @@ Spec 039 closed in
 postflight passed. Commit
 `11a020d9b299ae91b7af9278c22ed89ffccb5cfc` records that observed closure and
 hands the program frontier to this Spec. The current hosted, provider, and live
-lanes remain `DEFER`; they are not inferred from the local PASS. The reciprocal
-Plan/Task activation for this Spec is being prepared as an uncommitted
-six-path proposal, so no activation commit identity is claimed.
+lanes remain `DEFER`; they are not inferred from the local PASS. Reciprocal
+Plan/Task activation is observed in
+`5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`. CCPC-001 strict-only cutover is
+observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`; CCPC-002 closure-matrix and
+Current-audit reconciliation is the active work package.
 
 ## Strategic Boundaries & Non-goals
 
@@ -39,8 +41,8 @@ six-path proposal, so no activation commit identity is claimed.
 - Spec 039 must close its repository-local workflow and dependency contract.
   An unexecuted post-change remote run remains an owned DEFER and is not
   relabeled as PASS.
-- Legacy Tombstone routes, forms, wording, and compatibility readers are absent
-  after cutover.
+- Retired Stage 99 archive routes, forms, active-reader wording, and
+  compatibility behavior are absent after cutover.
 - All governed current and archive records resolve exactly one final profile.
 - Every migration row has a final disposition and rollback reference.
 - Final QA separates static PASS from optional SKIP and remote/live DEFER.
@@ -119,8 +121,8 @@ cleanup.
 
 ## Success Criteria & Verification Plan
 
-- **VAL-CCPC-001**: Legacy compatibility, Tombstone profile/form, and stale
-  wording are zero.
+- **VAL-CCPC-001**: Active compatibility behavior, retired Stage 99 archive
+  profile/form claims, and stale wording are zero.
 - **VAL-CCPC-002**: Uncovered routes, ambiguous routes, duplicate current
   owners, invalid transitions, and broken current links are zero.
 - **VAL-CCPC-003**: Archive provenance and historical links pass for every
@@ -136,7 +138,7 @@ cleanup.
 - **Predecessors**: [Spec 037](../037-active-corpus-and-execution-retention/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), and [Spec 039](../039-github-ci-qa-evidence/spec.md)
 - **Program PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **Program ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Decisions**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md) and [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+- **Decisions**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md), [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md), and [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - **Execution Plan**: [Contract Cutover and Program Closure Implementation Plan](../../04.execution/plans/2026-07-27-contract-cutover-and-program-closure.md)
 - **Task Evidence**: [Contract Cutover and Program Closure Task](../../04.execution/tasks/2026-07-27-contract-cutover-and-program-closure.md)
 
