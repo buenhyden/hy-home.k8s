@@ -1466,6 +1466,45 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(len(active_pairs), 1)
         self.assertEqual(active_pairs[0]["state"], "complete")
 
+    def test_terminal_program_scope_excludes_later_execution_controls(self) -> None:
+        later_plan = "docs/04.execution/plans/2099-01-01-later-program.md"
+        later_task = "docs/04.execution/tasks/2099-01-01-later-program.md"
+
+        self.assertEqual(
+            self.validator._terminal_program_control_scope(
+                [
+                    self.validator.TERMINAL_PLAN,
+                    later_plan,
+                    self.validator.TERMINAL_SUCCESSOR_PLAN,
+                    self.validator.TERMINAL_FRONTIER_PLAN,
+                ],
+                kind="plan",
+            ),
+            [
+                self.validator.TERMINAL_PLAN,
+                self.validator.TERMINAL_SUCCESSOR_PLAN,
+                self.validator.TERMINAL_FRONTIER_PLAN,
+            ],
+        )
+        self.assertEqual(
+            self.validator._terminal_program_control_scope(
+                [
+                    self.validator.TERMINAL_TASK,
+                    later_task,
+                    self.validator.TERMINAL_SUCCESSOR_TASK,
+                    self.validator.TERMINAL_FRONTIER_TASK,
+                ],
+                kind="task",
+            ),
+            [
+                self.validator.TERMINAL_TASK,
+                self.validator.TERMINAL_SUCCESSOR_TASK,
+                self.validator.TERMINAL_FRONTIER_TASK,
+            ],
+        )
+        with self.assertRaisesRegex(ValueError, "unsupported terminal control kind"):
+            self.validator._terminal_program_control_scope([], kind="spec")
+
     def test_spec038_active_and_terminal_states_use_disjoint_partitions(self) -> None:
         active = self.terminal_partition("active")
         active_rows = self.validator._build_active_control_rows(

@@ -50,6 +50,12 @@ TERMINAL_FRONTIER_SPEC = (
 TERMINAL_FRONTIER_LINEAGE = "2026-07-27-contract-cutover-and-program-closure"
 TERMINAL_FRONTIER_PLAN = f"docs/04.execution/plans/{TERMINAL_FRONTIER_LINEAGE}.md"
 TERMINAL_FRONTIER_TASK = f"docs/04.execution/tasks/{TERMINAL_FRONTIER_LINEAGE}.md"
+TERMINAL_PROGRAM_PLAN_PATHS = frozenset(
+    {TERMINAL_PLAN, TERMINAL_SUCCESSOR_PLAN, TERMINAL_FRONTIER_PLAN}
+)
+TERMINAL_PROGRAM_TASK_PATHS = frozenset(
+    {TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK, TERMINAL_FRONTIER_TASK}
+)
 TERMINAL_PROGRAM_CLOSURE_ADR = (
     "docs/02.architecture/decisions/"
     "0020-document-lifecycle-program-closure-evidence.md"
@@ -812,6 +818,20 @@ def _active_control_lineage(path: str, kind: str) -> str:
     if ACTIVE_CONTROL_LINEAGE.fullmatch(lineage) is None:
         raise ClosureError("CLOSURE-ACTIVE-CONTROL-LINEAGE", path)
     return lineage
+
+
+def _terminal_program_control_scope(
+    paths: Sequence[str], *, kind: str
+) -> list[str]:
+    """Select only the PRD-006 execution controls owned by ACER-006."""
+
+    if kind == "plan":
+        owned = TERMINAL_PROGRAM_PLAN_PATHS
+    elif kind == "task":
+        owned = TERMINAL_PROGRAM_TASK_PATHS
+    else:
+        raise ValueError(f"unsupported terminal control kind: {kind}")
+    return [path for path in paths if path in owned]
 
 
 def _terminal_registry_relations(
@@ -1940,8 +1960,14 @@ def build_observed(
         path for path in inventories[SPEC_ROOT][0] if path.endswith("/spec.md")
     ]
     terminal = _partition_terminal_controls(
-        [path for path in plan_paths if path not in frozen_paths],
-        [path for path in task_paths if path not in frozen_paths],
+        _terminal_program_control_scope(
+            [path for path in plan_paths if path not in frozen_paths],
+            kind="plan",
+        ),
+        _terminal_program_control_scope(
+            [path for path in task_paths if path not in frozen_paths],
+            kind="task",
+        ),
         spec_paths,
         combined_index,
         inventory_payloads,
