@@ -8,6 +8,50 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - Spec 042 activation postflight
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-042 #provider-runtime #lifecycle #postflight
+
+#### Progress
+
+- Observed activation commit
+  `1c3cc9bf32adae3033494ae7cb50eaaf1650b096` with parent
+  `fdc3d457a3806f86c288ea1bb923898a67294709`.
+- Confirmed the exact eight changed paths: Spec/index, reciprocal Plan/Task
+  and both indexes, this durable progress ledger, and the single Spec 042
+  program-lineage relation.
+
+#### Memory
+
+- Durable memory records only the observed commit identity, path set, gate
+  results, evidence boundaries, and next owner. Provider/local observations
+  remain provenance-bound and non-transitive.
+- No raw prompt, transcript, provider body, credential, token, auth artifact,
+  private user configuration, shell history, or secret-bearing diagnostic is
+  stored.
+
+#### Evidence
+
+- Parent-to-activation explicit-ref lifecycle passed for
+  `fdc3d457a3806f86c288ea1bb923898a67294709..1c3cc9bf32adae3033494ae7cb50eaaf1650b096`.
+- The clean-tree repository aggregate ended with
+  `[PASS] repository quality gates passed`.
+- Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, and live results remain `DEFER`.
+- This postflight evidence update does not identify or claim its own future
+  content-addressed SHA.
+
+#### Handoff
+
+- Next owner: PNME-001 official cutoff source ledger and Current research-pack
+  reconciliation.
+- Roll back this evidence update before reverting activation `1c3cc9bf`.
+
 ### 2026-07-28 - Spec 042 reciprocal planning activation
 
 #### Metadata

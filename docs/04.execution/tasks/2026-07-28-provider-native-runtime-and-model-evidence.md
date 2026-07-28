@@ -38,7 +38,7 @@ removes stale future-gate wording before this tranche activates.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| PNME-000 | VAL-PNME-001 through VAL-PNME-009 | Activate reciprocal Spec/Plan/Task frontier after Spec 041 closure. | platform | Done | PASS — the exact eight-path activation proposal satisfies lifecycle, strict document, aggregate, all-files, diff, and independent review gates. | Spec 041 closure/postflight/reconciliation observed; exact eight staged paths; registry/Markdown/links/lifecycle/aggregate/all-files/diff PASS; requirements scope compliant after completion evidence; quality approved; no provider-runtime or model-promotion claim. |
+| PNME-000 | VAL-PNME-001 through VAL-PNME-009 | Activate reciprocal Spec/Plan/Task frontier after Spec 041 closure. | platform | Done | PASS — the exact eight-path activation and postflight satisfy lifecycle, strict document, aggregate, all-files, diff, and independent review gates. | Activation `1c3cc9bf32adae3033494ae7cb50eaaf1650b096`; parent `fdc3d457a3806f86c288ea1bb923898a67294709`; exact eight paths; explicit-ref lifecycle and clean-tree aggregate PASS; requirements compliant; quality approved; no provider-runtime or model-promotion claim. |
 | PNME-001 | VAL-PNME-002, VAL-PNME-004 | Refresh official cutoff source ledger and unsupported model/runtime claims. | platform | Queued | Not executed. | Claude, Codex, Gemini, and agency-agents sources will be recorded with cutoff applicability. |
 | PNME-002 | VAL-PNME-004 | Normalize provider model/effort candidates, exact-ID uncertainty, fallback behavior, and the Spec 044 fitness gate. | platform | Queued | Not executed. | No candidate becomes a current role assignment without parse, runtime resolution, and fitness evidence. |
 | PNME-003 | VAL-PNME-005 through VAL-PNME-008 | Define secret-free provider baseline/canary records and provider verdict handling. | platform | Queued | Not executed. | `PASS`, `FAIL`, `BLOCKED`, `ABSENT`, and `DEFER` records must be redacted, comparable, and evidence-class specific. |
@@ -92,8 +92,14 @@ relationships. The repaired exact eight-path proposal then passed strict
 registry, Markdown body-contract, cross-link/owner, staged lifecycle,
 repository aggregate, all-files pre-commit, cached/unstaged diff, requirements
 scope, and independent quality review. PNME-000 is complete without claiming
-an unobserved activation SHA; explicit-ref and clean-tree postflight remain
-post-commit evidence.
+an unobserved result.
+
+Activation commit `1c3cc9bf32adae3033494ae7cb50eaaf1650b096`
+has parent `fdc3d457a3806f86c288ea1bb923898a67294709` and changes
+exactly the declared eight lifecycle paths. Parent-to-activation explicit-ref
+lifecycle and the clean-tree repository aggregate passed after commit
+creation. This evidence update does not identify or claim its own future
+content-addressed SHA.
 
 ## Traceability
 
@@ -104,7 +110,7 @@ post-commit evidence.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [PNME-000](../plans/2026-07-28-provider-native-runtime-and-model-evidence.md#work-breakdown) | PASS — exact eight-path activation proposal satisfies its repository-static gates. | Strict registry/Markdown/links, staged lifecycle, aggregate, all-files, diff, requirements scope, and quality review passed; no provider-runtime claim. |
+| [PNME-000](../plans/2026-07-28-provider-native-runtime-and-model-evidence.md#work-breakdown) | PASS — exact eight-path activation and postflight satisfy their repository-static gates. | `fdc3d457` → `1c3cc9bf`; explicit-ref lifecycle and clean-tree aggregate passed; no provider-runtime claim. |
 | [PNME-001](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md#success-criteria--verification-plan) | Queued — cutoff source ledger not yet refreshed. | Official Claude, Codex, Gemini, and pinned agency-agents evidence required. |
 | N/A — PNME-002 shares the Plan and Spec sources linked above | Queued — model/effort candidates are not assignments. | Exact configured/observed IDs, fallback, runtime resolution, and Spec 044 fitness remain required. |
 | N/A — PNME-003 shares the Plan and Spec sources linked above | Queued — baseline/canary schemas not yet implemented. | Closed, synthetic, secret-free records with evidence-specific verdicts required. |
