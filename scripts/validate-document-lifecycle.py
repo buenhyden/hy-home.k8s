@@ -540,6 +540,25 @@ def _registry_with_ready_spec(registry: Registry, ready_spec_id: str) -> Registr
     )
 
 
+def _self_test_dependency_ready_registry(registry: Registry) -> Registry:
+    """Return an isolated final-tranche-ready registry for terminal self-tests."""
+
+    try:
+        _dependency_ready_tranche_window(registry)
+    except ValueError as exc:
+        if str(exc) != "PRD-006 has no dependency-ready original tranche":
+            raise
+        program = next(
+            program for program in registry.program_lineage if program.prd_id == "006"
+        )
+        if not program.tranches or any(
+            relation.state != "done" for relation in program.tranches
+        ):
+            raise
+        return _registry_with_ready_spec(registry, program.tranches[-1].spec_id)
+    return registry
+
+
 class InvocationError(ValueError):
     """Invalid CLI, ref, base, Git object, or include-path provenance."""
 
@@ -3946,6 +3965,7 @@ def _run_self_test(root: Path) -> list[str]:
     if contract_failures:
         return failures
     failures.extend(_fixture_mutation_probe_failures(fixture, registry))
+    evidence_registry = _self_test_dependency_ready_registry(registry)
     for entrypoint in fixture.get("requiredEntrypoints", []):
         if not (root / entrypoint).is_file():
             failures.append(f"missing public entrypoint: {entrypoint}")
@@ -3982,12 +4002,12 @@ def _run_self_test(root: Path) -> list[str]:
                 forward_count += 1
 
     evidence_cases = fixture.get("evidenceCases", [])
-    failures.extend(_ambiguous_base_edge_failures(registry, evidence_cases))
+    failures.extend(_ambiguous_base_edge_failures(evidence_registry, evidence_cases))
     (
         evidence_assertion_projection,
         ambiguous_edge_controls,
         evidence_assertion_failures,
-    ) = _evidence_assertion_run(registry, evidence_cases)
+    ) = _evidence_assertion_run(evidence_registry, evidence_cases)
     failures.extend(evidence_assertion_failures)
     if len(ambiguous_edge_controls) != 42 or len(set(ambiguous_edge_controls)) != 42:
         failures.append("ambiguous-base edge projection is not exactly 42 unique edges")
@@ -4005,7 +4025,7 @@ def _run_self_test(root: Path) -> list[str]:
         )
 
     current_ready_spec_id, current_ready_state, _ = _dependency_ready_tranche_window(
-        registry
+        evidence_registry
     )
     if current_ready_state != "active":
         failures.append("current dependency-ready original tranche is not active")
@@ -4090,7 +4110,7 @@ def _run_self_test(root: Path) -> list[str]:
                 f"LIFECYCLE-EVIDENCE rules, actual exit={actual_exit} "
                 f"rules={actual_rules}"
             )
-    failures.extend(_evidence_regression_failures(registry, evidence_cases))
+    failures.extend(_evidence_regression_failures(evidence_registry, evidence_cases))
 
     for case in fixture.get("archiveCutoverCases", []):
         admitted = finite_archive_cutover_paths(
@@ -4159,7 +4179,7 @@ def _run_self_test(root: Path) -> list[str]:
             _init_fixture_repo(repo)
             try:
                 actual_exit, actual_rules = _git_case(
-                    case["name"], repo, registry, root
+                    case["name"], repo, evidence_registry, root
                 )
             except (InvocationError, OSError, ValueError) as exc:
                 failures.append(f"git {case['name']}: unexpected error {exc}")

@@ -458,6 +458,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "terminalControlRows": [],
                 "terminalControlPairCardinality": [],
                 "terminalSpecRows": [],
+                "terminalProgramClosureAuthority": [],
             }
         )
 
@@ -519,6 +520,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         terminal_rows = actual.pop("terminalControlRows")
         terminal_pairs = actual.pop("terminalControlPairCardinality")
         terminal_specs = actual.pop("terminalSpecRows")
+        terminal_authority = actual.pop("terminalProgramClosureAuthority")
         current_spec_paths = [self.validator.TERMINAL_SPEC]
         advanced_spec_paths = [
             self.validator.TERMINAL_SPEC,
@@ -540,6 +542,37 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.fail(
                 "production terminal Spec frontier must be exactly current, "
                 "advanced, or terminal"
+            )
+        expected_terminal_authority = (
+            [
+                {
+                    "path": self.validator.TERMINAL_PROGRAM_CLOSURE_ADR,
+                    "profile": "sdlc/adr",
+                    "status": "accepted",
+                    "owner": "platform",
+                    "objectMode": "index-stage-zero",
+                    "authorityRole": "terminal-program-closure-decision",
+                    "frontierSpecPath": self.FRONTIER_SPEC,
+                }
+            ]
+            if mode == "terminal"
+            else []
+        )
+        self.assertEqual(len(terminal_authority), len(expected_terminal_authority))
+        for row, expected_row in zip(
+            terminal_authority, expected_terminal_authority, strict=True
+        ):
+            self.assertEqual(
+                {key: row[key] for key in expected_row},
+                expected_row,
+            )
+            self.assertEqual(
+                set(row),
+                {*expected_row, "objectId"},
+            )
+            self.assertRegex(
+                row["objectId"],
+                r"\Agit:(?:sha1:[0-9a-f]{40}|sha256:[0-9a-f]{64})\Z",
             )
 
         current_plan = (
@@ -945,6 +978,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         frozen.pop("terminalControlRows")
         frozen.pop("terminalControlPairCardinality")
         frozen.pop("terminalSpecRows")
+        frozen.pop("terminalProgramClosureAuthority")
         self.assertEqual(actual, frozen)
         return mode
 
@@ -1870,6 +1904,126 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ),
             [],
         )
+        closure_payload = (
+            b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
+        )
+        closure_authority = self.validator._terminal_program_closure_authority(
+            [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
+            {},
+            {
+                self.validator.TERMINAL_PROGRAM_CLOSURE_ADR: closure_payload,
+            },
+            terminal["terminalSpecRows"],
+        )
+        self.assertEqual(
+            [
+                (
+                    row["path"],
+                    row["profile"],
+                    row["status"],
+                    row["owner"],
+                    row["authorityRole"],
+                    row["frontierSpecPath"],
+                )
+                for row in closure_authority
+            ],
+            [
+                (
+                    self.validator.TERMINAL_PROGRAM_CLOSURE_ADR,
+                    "sdlc/adr",
+                    "accepted",
+                    "platform",
+                    "terminal-program-closure-decision",
+                    self.FRONTIER_SPEC,
+                )
+            ],
+        )
+        for field, value in (
+            ("type", "sdlc/ard"),
+            ("status", "active"),
+            ("owner", "product"),
+        ):
+            invalid = {
+                "type": "sdlc/adr",
+                "status": "accepted",
+                "owner": "platform",
+            }
+            invalid[field] = value
+            invalid_payload = (
+                "---\n"
+                f"type: {invalid['type']}\n"
+                f"status: {invalid['status']}\n"
+                f"owner: {invalid['owner']}\n"
+                "---\n"
+            ).encode()
+            with self.subTest(terminal_closure_authority=field):
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._terminal_program_closure_authority(
+                        [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
+                        {},
+                        {
+                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
+                                invalid_payload,
+                        },
+                        terminal["terminalSpecRows"],
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "CLOSURE-TERMINAL-AUTHORITY",
+                )
+        early = self.terminal_partition(
+            "done",
+            payloads=self.terminal_payloads(
+                "done",
+                successor_state="done",
+                frontier_state="active",
+            ),
+            registry=self.terminal_registry(
+                "done",
+                successor_state="done",
+                frontier_state="active",
+            ),
+        )
+        self.assertEqual(
+            self.validator._terminal_program_closure_authority(
+                [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
+                {},
+                {
+                    self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
+                        closure_payload,
+                },
+                early["terminalSpecRows"],
+            ),
+            [],
+        )
+        rogue_adr = (
+            "docs/02.architecture/decisions/"
+            "2099-rogue-accepted-decision.md"
+        )
+        self.assertEqual(
+            self.validator._generic_adr_authority_paths(
+                [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR, rogue_adr],
+                [],
+            ),
+            [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR, rogue_adr],
+        )
+        self.assertEqual(
+            self.validator._generic_adr_authority_paths(
+                [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR, rogue_adr],
+                closure_authority,
+            ),
+            [rogue_adr],
+        )
+        rogue_entries = self.validator._authority_entries(
+            [rogue_adr],
+            {},
+            {rogue_adr: closure_payload},
+            kind="adr",
+        )
+        self.assertEqual(
+            [row["path"] for row in rogue_entries],
+            [rogue_adr],
+        )
 
     def test_spec039_reciprocal_controls_reject_malformed_frontiers(self) -> None:
         base_payloads = self.terminal_payloads("done", successor_state="done")
@@ -2330,8 +2484,28 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     "terminalControlPairCardinality":
                         partition["terminalControlPairCardinality"],
                     "terminalSpecRows": partition["terminalSpecRows"],
+                    "terminalProgramClosureAuthority": [],
                 }
             )
+            if frontier_state == "done":
+                closure_payload = (
+                    b"---\ntype: sdlc/adr\nstatus: accepted\n"
+                    b"owner: platform\n---\n"
+                )
+                observed["terminalProgramClosureAuthority"] = (
+                    self.validator._terminal_program_closure_authority(
+                        [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
+                        {},
+                        {
+                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
+                                closure_payload,
+                        },
+                        partition["terminalSpecRows"],
+                    )
+                )
+                for row in observed["terminalProgramClosureAuthority"]:
+                    row["objectMode"] = "index-stage-zero"
+                    row["objectId"] = self.git_blob_identity(closure_payload)
             expected_object_ids: dict[str, str] = {}
             for key in (
                 "activeControlRows",

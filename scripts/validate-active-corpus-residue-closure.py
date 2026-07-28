@@ -50,6 +50,10 @@ TERMINAL_FRONTIER_SPEC = (
 TERMINAL_FRONTIER_LINEAGE = "2026-07-27-contract-cutover-and-program-closure"
 TERMINAL_FRONTIER_PLAN = f"docs/04.execution/plans/{TERMINAL_FRONTIER_LINEAGE}.md"
 TERMINAL_FRONTIER_TASK = f"docs/04.execution/tasks/{TERMINAL_FRONTIER_LINEAGE}.md"
+TERMINAL_PROGRAM_CLOSURE_ADR = (
+    "docs/02.architecture/decisions/"
+    "0020-document-lifecycle-program-closure-evidence.md"
+)
 PLAN_ROOT = "docs/04.execution/plans"
 TASK_ROOT = "docs/04.execution/tasks"
 ADR_ROOT = "docs/02.architecture/decisions"
@@ -1331,6 +1335,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
     terminal_rows = rows_for("terminalControlRows")
     terminal_pairs = rows_for("terminalControlPairCardinality")
     terminal_specs = rows_for("terminalSpecRows")
+    terminal_authority = rows_for("terminalProgramClosureAuthority")
 
     spec_paths = tuple(row.get("path") for row in terminal_specs)
     modes = {
@@ -1555,6 +1560,53 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
                 "CLOSURE-TERMINAL-FRONTIER",
                 failure_path(rows, paths, pair=pair),
             )
+    expected_terminal_authority = (
+        [
+            (
+                TERMINAL_PROGRAM_CLOSURE_ADR,
+                "sdlc/adr",
+                "accepted",
+                "platform",
+                "terminal-program-closure-decision",
+                TERMINAL_FRONTIER_SPEC,
+            )
+        ]
+        if mode_name == "terminal"
+        else []
+    )
+    actual_terminal_authority: list[tuple[Any, ...] | None] = []
+    for row in terminal_authority:
+        if (
+            set(row)
+            != {
+                "path",
+                "profile",
+                "status",
+                "owner",
+                "objectMode",
+                "objectId",
+                "authorityRole",
+                "frontierSpecPath",
+            }
+            or not object_identity_is_indexed(row)
+        ):
+            actual_terminal_authority.append(None)
+            continue
+        actual_terminal_authority.append(
+            (
+                row.get("path"),
+                row.get("profile"),
+                row.get("status"),
+                row.get("owner"),
+                row.get("authorityRole"),
+                row.get("frontierSpecPath"),
+            )
+        )
+    if actual_terminal_authority != expected_terminal_authority:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-AUTHORITY",
+            TERMINAL_PROGRAM_CLOSURE_ADR,
+        )
     return mode_name
 
 
@@ -1745,6 +1797,78 @@ def _authority_entries(
     return entries
 
 
+def _terminal_program_closure_authority(
+    adr_paths: Sequence[str],
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    terminal_spec_rows: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Classify ADR-0020 only at the exact closed Spec 040 frontier."""
+
+    final_frontier = tuple(row.get("path") for row in terminal_spec_rows) == (
+        TERMINAL_SPEC,
+        TERMINAL_SUCCESSOR_SPEC,
+        TERMINAL_FRONTIER_SPEC,
+    )
+    if not final_frontier:
+        return []
+    if (
+        adr_paths.count(TERMINAL_PROGRAM_CLOSURE_ADR) != 1
+        or TERMINAL_PROGRAM_CLOSURE_ADR not in payloads
+    ):
+        raise ClosureError(
+            "CLOSURE-TERMINAL-AUTHORITY",
+            TERMINAL_PROGRAM_CLOSURE_ADR,
+        )
+    payload = payloads[TERMINAL_PROGRAM_CLOSURE_ADR]
+    metadata = _frontmatter(
+        _decode_text(payload, TERMINAL_PROGRAM_CLOSURE_ADR),
+        TERMINAL_PROGRAM_CLOSURE_ADR,
+    )
+    if {
+        "type": metadata.get("type"),
+        "status": metadata.get("status"),
+        "owner": metadata.get("owner"),
+    } != {
+        "type": "sdlc/adr",
+        "status": "accepted",
+        "owner": "platform",
+    }:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-AUTHORITY",
+            TERMINAL_PROGRAM_CLOSURE_ADR,
+        )
+    return [
+        {
+            "path": TERMINAL_PROGRAM_CLOSURE_ADR,
+            "profile": "sdlc/adr",
+            "status": "accepted",
+            "owner": "platform",
+            **_object_identity(TERMINAL_PROGRAM_CLOSURE_ADR, index, payload),
+            "authorityRole": "terminal-program-closure-decision",
+            "frontierSpecPath": TERMINAL_FRONTIER_SPEC,
+        }
+    ]
+
+
+def _generic_adr_authority_paths(
+    adr_paths: Sequence[str],
+    terminal_program_closure_authority: Sequence[Mapping[str, Any]],
+) -> list[str]:
+    """Keep every accepted ADR generic except exact final ADR-0020 authority."""
+
+    if not terminal_program_closure_authority:
+        return list(adr_paths)
+    if [row.get("path") for row in terminal_program_closure_authority] != [
+        TERMINAL_PROGRAM_CLOSURE_ADR
+    ]:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-AUTHORITY",
+            TERMINAL_PROGRAM_CLOSURE_ADR,
+        )
+    return [path for path in adr_paths if path != TERMINAL_PROGRAM_CLOSURE_ADR]
+
+
 def build_observed(
     root: str | os.PathLike[str], runner: GitRunner = _run_git
 ) -> dict[str, Any]:
@@ -1845,8 +1969,18 @@ def build_observed(
         for path in inventories[ADR_ROOT][0]
         if path.endswith(".md") and path != f"{ADR_ROOT}/README.md"
     ]
+    terminal_program_closure_authority = _terminal_program_closure_authority(
+        adr_paths,
+        combined_index,
+        inventory_payloads,
+        terminal["terminalSpecRows"],
+    )
+    generic_adr_paths = _generic_adr_authority_paths(
+        adr_paths,
+        terminal_program_closure_authority,
+    )
     accepted_adrs = _authority_entries(
-        adr_paths, combined_index, inventory_payloads, kind="adr"
+        generic_adr_paths, combined_index, inventory_payloads, kind="adr"
     )
     done_specs = _authority_entries(
         terminal["specPaths"], combined_index, inventory_payloads, kind="spec"
@@ -1944,6 +2078,7 @@ def build_observed(
         "terminalControlRows": terminal["terminalControlRows"],
         "terminalControlPairCardinality": terminal["terminalControlPairCardinality"],
         "terminalSpecRows": terminal["terminalSpecRows"],
+        "terminalProgramClosureAuthority": terminal_program_closure_authority,
         "authorityGuards": {
             "acceptedAdrs": accepted_adrs,
             "doneSpecs": done_specs,
