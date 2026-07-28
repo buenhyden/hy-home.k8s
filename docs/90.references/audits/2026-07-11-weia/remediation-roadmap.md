@@ -229,7 +229,7 @@ compatibility removal and program closure. None of those routes, nor this
 overlay, infer provider, remote, Kubernetes, Vault, Argo CD, secret, or
 live-system readiness from repository-static PASS.
 
-### 2026-07-27 contract-cutover disposition overlay
+### 2026-07-28 contract-cutover disposition overlay
 
 This dated overlay records repository-static follow-up evidence from [Spec
 040](../../../03.specs/040-contract-cutover-and-program-closure/spec.md)
@@ -237,12 +237,12 @@ without changing original audit rows, scores, priorities, dependencies, or the
 audit observation SHA. Source reports remain the fact owners; this roadmap
 records only disposition, limitation, rollback, and next-owner changes.
 
-| Program surface | Disposition at 2026-07-27 | Evidence and result class | Retained boundary and next owner |
+| Program surface | Disposition at 2026-07-28 | Evidence and result class | Retained boundary and next owner |
 | --- | --- | --- | --- |
 | Active document-reader compatibility | Closed for active repository-static validation. The current registry, Markdown-profile, and owner/link readers now default to strict operation, explicit `--mode strict` remains accepted, and retired `--mode compatibility` invocations are rejected at the CLI boundary. The finite historical transition proof fixture remains bounded and fail-closed rather than an active reader. | [Spec 040 Task](../../../04.execution/tasks/2026-07-27-contract-cutover-and-program-closure.md) records focused RED with 6 tests and 14 intended failures, GREEN focused 6/6, self-tests, no-mode and strict production PASS, compatibility exit `2`, staged/aggregate/all-files PASS, independent requirements/quality approval, and commit `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. Result class: repository-static `PASS`; Dockerfile no-file lane remains `SKIP`. | Hosted GitHub Actions, provider-native discovery, remote execution, Kubernetes, Vault, ESO, Argo CD, credential, secret-value, deployment, and live evidence remain `DEFER`. Next owner: Spec 040 CCPC-002 through CCPC-004 until atomic program closure. |
 | Archive wording and currentness remediation | Closed for the targeted repository-static wording defect introduced after CCPC-001. Current documentation no longer advertises active compatibility-reader behavior while preserving bounded historical archive proof. | Commit `d99b183` is the local logical remediation for archive/current wording. Result class: repository-static `PASS` for the wording correction once included in the Spec 040 evidence chain; no source-report score changes are implied. | The correction does not reopen historical audit bodies or compatibility readers. Rollback is newest-first revert of the wording remediation, then rerun the strict document and aggregate gates. |
 | Closure matrix and Current audit reconciliation | Closed for CCPC-002 repository-static evidence. The final matrix now classifies every criterion, PRD requirement, and ARD quality attribute as observed `PASS`, later-unit `Pending`, or external `DEFER`, with a limitation and rollback/follow-up owner. | The Spec 040 Task records archive `15/22/27/17` and `43/362/43`; retention/eligibility/migration/role/residue results; registry `119/451`; lifecycle `668`; RIA `85` plus self/root; generated index, workflow security, CI Python, affected-surface `739/21/12/3/0/0`, workspace, agent-semantics, and aggregate PASS. The exact advanced frontier is `active 2/1`, terminal controls `4/2`, terminal Specs `2`; terminal closure is not inferred. | Next owner: Spec 040 CCPC-003 for whole-branch QA/review, then CCPC-004 for atomic lifecycle closure. Hosted/provider/remote/live lanes remain `DEFER`, and the original audit rows, scores, priorities, dependencies, observation SHA, and protected frontmatter remain unchanged. |
-| Whole-branch QA and independent review | In progress. CCPC-003 owns focused, affected, lifecycle, strict, aggregate, all-files, formatter, diff, and independent whole-branch review evidence for the final proposal. | CCPC-002 entry evidence is complete, but no final all-files result, exact whole-branch digest, formatter/status inspection, or independent final reviewer verdict is claimed here. Hosted/provider/live lanes remain `DEFER`. | Next owner: Spec 040 CCPC-003. A repository-static PASS cannot stand in for unexecuted remote/provider/live evidence. |
+| Whole-branch QA and independent review | Closed for CCPC-003 repository-static scope. | Cumulative range `32ffb7fce2147e485c94443479e82bba261b3d9c..9cc36e81d26e7b52cb00d9381cdc1a56db57afa6` contains 30 commits and 68 changed paths; binary diff SHA-256 is `f8e4641a91a7d4c4f08f7d03fdf14422a85b4be9b9df133a6dd011e57a3cf241`. Focused cumulative modules passed `253`; portability passed `16`, including the simulated non-root effective-identity fixture; lifecycle self-test passed `668` with clean staged lifecycle; 10 validators selected for 68 paths all passed. `pre-commit run --all-files` exited `0`, every applicable hook passed, Dockerfile lint was no-file `SKIP`, and formatter/status plus cached/unstaged diff checks were clean. The initial effective-identity portability blocker was remediated in `9cc36e81d26e7b52cb00d9381cdc1a56db57afa6`; final verdicts were `REQUIREMENTS COMPLIANT`, `QUALITY APPROVED`, and `SECURITY APPROVED`. Result class: repository-static `PASS`. | Atomic program closure remains open and owned by Spec 040 CCPC-004. Hosted/provider/remote/live lanes remain `DEFER`; a repository-static PASS does not claim terminal lifecycle transition, closure commit, explicit-ref lifecycle, or clean-tree postflight. |
 | Atomic program closure and postflight | Not yet closed by this overlay. CCPC-004 owns terminal PRD-006, ARD-0009, Spec, Plan, Task, index, decision, registry-relation, closure-commit, explicit-ref, and clean-tree postflight evidence. | No terminal lifecycle transition, closure commit, explicit-ref postflight, or clean-tree final result is claimed here. Repository-static closure remains pending until CCPC-004 lands and is observed; external lanes remain `DEFER`. | Next owner: Spec 040 CCPC-004. Rollback remains newest-first logical reverts with activation last if needed; rollback must not restore active compatibility readers or weaken strict rules. |
 
 The result vocabulary is the active Stage 00 contract: `PASS` means a named
@@ -377,9 +377,9 @@ remain code literals until created.
 ## Review and Freshness
 
 - Review cadence: on owner report or disposition change
-- Last reviewed: 2026-07-27
+- Last reviewed: 2026-07-28
 - Next review trigger: source finding closes/changes, Task 13 index reconciliation,
-  Spec 040 CCPC-002 through CCPC-004 evidence, approved target-state ADR, new
+  Spec 040 CCPC-004 evidence, approved target-state ADR, new
   consumer/telemetry, or acceptance evidence lands.
 - Refresh method: preserve the prior mapping, reread each owner report at its stated
   observation SHA, account for every actionable row once, and change priority or

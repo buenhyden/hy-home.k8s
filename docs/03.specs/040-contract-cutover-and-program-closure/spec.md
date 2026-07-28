@@ -25,8 +25,9 @@ Plan/Task activation is observed in
 `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656`. CCPC-001 strict-only cutover is
 observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. CCPC-002 now records the
 complete repository-static closure matrix, exact advanced terminal frontier,
-and Current-audit reconciliation; CCPC-003 whole-branch QA and independent
-review is the active work package.
+and Current-audit reconciliation. CCPC-003 whole-branch QA and independent
+review are observed; CCPC-004 atomic terminal closure is the active work
+package.
 
 ## Strategic Boundaries & Non-goals
 
