@@ -195,7 +195,9 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
 
         with (
             patch.object(RUNNER.os, "lstat", side_effect=fake_lstat),
-            patch.object(RUNNER.os, "getuid", return_value=1000),
+            patch.object(RUNNER.os, "geteuid", return_value=1000, create=True),
+            patch.object(RUNNER.os, "getegid", return_value=1000, create=True),
+            patch.object(RUNNER.os, "getgroups", return_value=[1000], create=True),
             patch.object(
                 RUNNER.pwd,
                 "getpwuid",
