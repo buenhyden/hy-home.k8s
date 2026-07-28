@@ -18,9 +18,10 @@ complete repository QA, independent review, and atomic tranche closure.
 
 Spec 040 closure `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and
 postflight evidence update `4335ea6076a68fe0bbed3526a21b92a39180faa7`
-are observed prerequisites. This exact activation proposal has not yet been
-committed; no activation commit identity, provider runtime, hosted CI, remote,
-credential-bearing, or live PASS is claimed.
+are observed prerequisites. Exact eight-path activation
+`9e6fc553fa6d6b700e628ecd59306ab2a55777c1` and its postflight are observed.
+No provider runtime, hosted CI, remote, credential-bearing, or live PASS is
+claimed; those evidence lanes remain `DEFER`.
 
 ## Inputs
 
@@ -39,7 +40,7 @@ credential-bearing, or live PASS is claimed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| SAGC-000 | VAL-SAGC-001 | Enroll PRD-003/ARD-0006/Specs041–046 under current accepted ADR-0013, retain ADR-0019 as the proposed successor, and activate the reciprocal Spec/Plan/Task frontier as one exact eight-path proposal. | platform | In Progress | No activation commit or postflight result is claimed. | Exact path set, lifecycle/strict/aggregate/all-files results, independent review, observed commit, and explicit-ref postflight will be recorded here. |
+| SAGC-000 | VAL-SAGC-001 | Enroll PRD-003/ARD-0006/Specs041–046 under current accepted ADR-0013, retain ADR-0019 as the proposed successor, and activate the reciprocal Spec/Plan/Task frontier as one exact eight-path proposal. | platform | Done | PASS — reciprocal activation and postflight are observed without promoting provider/runtime evidence. | Activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`; exact eight paths; strict/lifecycle/aggregate/all-files/diff PASS; requirements compliant; quality approved; explicit-ref and clean-tree postflight PASS. |
 | SAGC-001 | VAL-SAGC-002, VAL-SAGC-003 | Implement the closed harness schema, focused validator, and negative fixtures while preserving independent route ownership. | platform | Queued | Not executed. | Schema cases, fixture mutations, focused command output, and routing comparison will be recorded here. |
 | SAGC-002 | VAL-SAGC-005, VAL-SAGC-006, VAL-SAGC-007, VAL-SAGC-009 | Add exact current/target contract data, evidence classes, and four explicit memory-class declarations. | platform | Queued | Not executed. | Exact 10/30 current, 12/48 target-only, memory authority/provenance/sensitivity/promotion boundaries, and redaction cases will be recorded here. |
 | SAGC-003 | VAL-SAGC-004 | Migrate named validators and readers to one selected harness contract version while retaining explicit legacy compatibility input. | platform | Queued | Not executed. | Consumer/version ledger, focused regressions, compatibility boundary, and rollback evidence will be recorded here. |
@@ -82,13 +83,18 @@ credential-bearing, or live PASS is claimed.
 
 ## Verification Summary
 
-SAGC-000 is an uncommitted activation proposal at prerequisite HEAD
-`4335ea6076a68fe0bbed3526a21b92a39180faa7`. It changes only the Spec/index,
-new reciprocal Plan/Task and their indexes, the shared progress entry, and
-the registry program relation. Contract data, scripts, tests, adapters,
-provider settings, CI, and live surfaces remain unchanged until their owning
-work package. Validation and independent review results will be recorded only
-after observation.
+SAGC-000 activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`
+has the single parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`
+and changes only the declared Spec/index, reciprocal Plan/Task and indexes,
+shared progress entry, and registry relation. Registry self-test/strict (`119`
+cases; `453` selected paths), Markdown, links/owners, lifecycle self-test/staged
+(`668` cases), ACER, affected surfaces, aggregate, all-files pre-commit, and
+both diff checks passed. Independent requirements and quality reviews approved
+the remediated proposal. Explicit-ref lifecycle for the observed commit interval
+and clean-tree aggregate postflight passed. Contract data, scripts, tests,
+adapters, provider settings, CI, and live surfaces remain unchanged until their
+owning work package; provider runtime, hosted CI, remote, credentials, and live
+evidence remain `DEFER`.
 
 ## Traceability
 
@@ -102,7 +108,7 @@ after observation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [SAGC-000](../plans/2026-07-28-stage-00-agent-governance-contract.md#work-breakdown) | In Progress; activation identity remains unclaimed. | Exact-eight lifecycle, strict, aggregate, all-files, review, commit, and postflight evidence will be recorded here. |
+| [SAGC-000](../plans/2026-07-28-stage-00-agent-governance-contract.md#work-breakdown) | PASS — activation and postflight observed. | `48d8f731d062f5e29fe58c7084fe134ddf2740b3` → `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; exact eight paths; all declared repository-static gates and independent reviews PASS. |
 | [VAL-SAGC-002](../../03.specs/041-stage-00-agent-governance-contract/spec.md#success-criteria--verification-plan) | Queued. | Closed schema, negative fixtures, and separate routing-owner evidence. |
 | N/A — SAGC-002 shares the Plan and Spec sources linked above | Queued. | Current/target, result-class, memory-class, and redaction evidence. |
 | N/A — SAGC-003 shares the Plan and Spec sources linked above | Queued. | Consumer/version migration and compatibility-removal ledger. |

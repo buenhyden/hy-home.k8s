@@ -14,7 +14,7 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-07-28
 - **Layer**: architecture, docs, governance, qa, meta
-- **Status**: active
+- **Status**: complete
 - **Tags**: #spec-041 #agent-governance #machine-contract #memory
 
 #### Progress
@@ -22,7 +22,8 @@ inventory stays in `scripts/README.md`.
 - Observed Spec 040 terminal closure
   `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and postflight evidence update
   `4335ea6076a68fe0bbed3526a21b92a39180faa7`.
-- Prepared an exact eight-path activation proposal: Spec 041 and its index,
+- Committed the exact eight-path activation at
+  `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`: Spec 041 and its index,
   reciprocal Plan/Task and both indexes, this progress entry, and the
   PRD-003/ARD-0006 registry program relation governed by current accepted
   ADR-0013. Draft ADR-0019 remains the proposed successor until Spec 046.
@@ -43,9 +44,16 @@ inventory stays in `scripts/README.md`.
 
 #### Evidence
 
-- Activation is a proposal only. Lifecycle, strict document, aggregate,
-  all-files, independent review, commit, and explicit-ref postflight results
-  will be recorded after observation.
+- Registry self-test/strict (`119` cases; `453` selected paths), Markdown,
+  links/owners, lifecycle self-test/staged (`668` cases), ACER, affected
+  surfaces, aggregate, all-files pre-commit, and both diff checks passed before
+  activation. Independent requirements and quality reviews approved the exact
+  proposal after the governing/proposed ADR labels were separated.
+- Explicit-ref lifecycle passed from prerequisite
+  `48d8f731d062f5e29fe58c7084fe134ddf2740b3` to activation
+  `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; the activation has that one
+  parent and exactly the declared eight paths. Clean-tree aggregate postflight
+  also passed.
 - Current inventory remains ten roles and thirty adapters. The 12-role,
   four-surface, 48-adapter inventory remains a non-current target.
 - Provider runtime, hosted CI, remote, credential-bearing, and live evidence
@@ -53,9 +61,11 @@ inventory stays in `scripts/README.md`.
 
 #### Handoff
 
-- Next owner: SAGC-000 activation validator and independent reviewers.
-- Do not predict the activation commit SHA. Roll back the future activation
-  commit before the Spec 040 evidence update if rollback is required.
+- Next owner: SAGC-001 closed harness schema, focused validator, and negative
+  fixtures.
+- Roll back this postflight evidence first and activation
+  `9e6fc553fa6d6b700e628ecd59306ab2a55777c1` second if SAGC-000 must be
+  reverted; do not cross the Spec 040 evidence update.
 
 ### 2026-07-28 - CCPC-004 atomic terminal closure postflight
 
