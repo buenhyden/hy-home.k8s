@@ -1,9 +1,9 @@
 ---
 title: 'Agent Harness Loop Lifecycle Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-29
 ---
 
 # Agent Harness Loop Lifecycle Specification
@@ -174,7 +174,7 @@ git diff --check
 ```
 
 The first three commands are planned Spec 043 deliverables and are not claimed
-to exist in this draft.
+to exist or pass by this lifecycle activation.
 
 ## Success Criteria & Verification Plan
 
@@ -204,17 +204,19 @@ to exist in this draft.
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
 - **Successor**: [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md)
+- **Execution Plan**: [Agent Harness Loop Lifecycle Implementation Plan](../../04.execution/plans/2026-07-29-agent-harness-loop-lifecycle.md)
+- **Task evidence**: [Agent Harness Loop Lifecycle Task](../../04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-001 | Same-signature fixtures prove the retry ceiling. |
-| [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-002 | Task-budget fixtures prove the recovery ceiling. |
-| [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-003 | No-progress fixtures prove early stop and escalation. |
-| [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-004 | Non-retryable fixtures prove immediate termination. |
-| [REQ-PRD-MET-09](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AHLL-005 | Checkpoint redaction fixtures prove sensitive-data exclusion. |
-| [REQ-PRD-MET-09](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AHLL-006 | Resume fixtures prove stale-state rejection. |
-| [REQ-PRD-MET-09](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AHLL-007 | Compaction/handoff fixtures prove bounded recovery state. |
-| [REQ-PRD-FUN-05](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-008 | Feedback routing proves durable owner assignment. |
-| [REQ-PRD-FUN-05](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-009 | Focused and aggregate QA prove reviewable handoff. |
+| N/A — VAL-AHLL-002 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-002 | Task-budget fixtures prove the recovery ceiling. |
+| N/A — VAL-AHLL-003 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-003 | No-progress fixtures prove early stop and escalation. |
+| N/A — VAL-AHLL-004 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-004 | Non-retryable fixtures prove immediate termination. |
+| N/A — VAL-AHLL-005 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-005 | Checkpoint redaction fixtures prove sensitive-data exclusion. |
+| N/A — VAL-AHLL-006 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-006 | Resume fixtures prove stale-state rejection. |
+| N/A — VAL-AHLL-007 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-007 | Compaction/handoff fixtures prove bounded recovery state. |
+| N/A — VAL-AHLL-008 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-008 | Feedback routing proves durable owner assignment. |
+| N/A — VAL-AHLL-009 shares the PRD-003 source linked in VAL-AHLL-001 | VAL-AHLL-009 | Focused and aggregate QA prove reviewable handoff. |

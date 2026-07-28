@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 043 reciprocal planning activation staging
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-043 #agent-loop #checkpoint #memory-lifecycle
+
+#### Progress
+
+- Observed Spec 042 terminal closure
+  `90a7d85698cc024e26085ca7caed1b018f78a04e` and postflight evidence
+  update `023c13dfe4f1643fe29157dde57b5eaae5e495bd`.
+- Prepared the exact eight-path Spec 043 activation proposal: Spec/index,
+  reciprocal Plan/Task and both indexes, this progress entry, and only the
+  Spec 043 program-lineage relation from `draft` to `active`.
+- Ordered AHLL-000 through AHLL-004 so the closed lifecycle/state/retry
+  contract precedes checkpoint and memory lifecycle controls, which precede
+  routing/provider integration, whole-tranche QA, atomic closure, and
+  postflight.
+
+#### Memory
+
+- The four memory classes remain `working-short-term`,
+  `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`. Spec 043 will implement promotion, refresh,
+  expiry, archive/garbage-collection, redaction, compaction, handoff, and
+  conflict controls without creating a durable conversation store.
+- `.agent-work/checkpoint.json` remains ignored, replaceable, bounded, and
+  advisory. On resume, current repository root, governance, Git state, owned
+  paths, and canonical SDLC records are re-observed; repository state wins
+  every conflict.
+- Credentials, tokens, secrets, auth artifacts, account identities, raw
+  prompts/transcripts, provider response bodies, shell history, environment
+  dumps, user configuration, and private diagnostics are never memory or
+  checkpoint payloads.
+
+#### Evidence
+
+- The proposed retry contract permits at most two automatic retries after the
+  initial same-signature failure, at most three default automatic recovery
+  actions per task, and stops on the second identical result with no progress.
+- Permission denial, credential boundary, secret detection, destructive/live
+  mutation risk, explicit user stop, and contract/schema corruption remain
+  non-retryable.
+- This staging entry claims no future activation commit, explicit-ref
+  postflight, loop/checkpoint implementation, provider-hook delivery, provider
+  runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, or live result. Repository-static gates and independent review
+  remain to be observed on the exact proposal.
+
+#### Handoff
+
+- Next owner: validate and independently review the exact eight paths, commit
+  the activation only on PASS, record explicit-ref/clean-tree postflight, then
+  begin AHLL-001.
+- Roll back the exact eight activation paths together before reverting Spec
+  042 closure evidence.
+
 ### 2026-07-29 - Spec 042 terminal closure staging
 
 #### Metadata
