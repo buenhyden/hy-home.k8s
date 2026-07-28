@@ -45,7 +45,7 @@ result.
 | AHLL-001 | VAL-AHLL-001 through VAL-AHLL-004 | Implement closed loop lifecycle/state/failure/progress contracts, validator, and deterministic fixtures. | platform | Done | Closed contract, schema, focused validator, 47-case self-test fixture, and 17 unit tests committed as `8a995014`. | Production/self-test/unit/diff checks passed; requirements were `COMPLIANT` and quality/security was `APPROVED`. Exact fixtures prove two retries after the initial same-signature failure, three default task recovery actions, lower role/task limits, second identical no-progress stop, and all six non-retryable classes. |
 | AHLL-002 | VAL-AHLL-005 through VAL-AHLL-007 | Implement atomic checkpoint validation, repository-wins resume, and four-class memory lifecycle controls. | platform | Done | Closed checkpoint schema, validator, 78-case mutation fixture, 17 focused tests, executable loop-boundary promotion, and exact helper admission committed as `95a6ee03`. | Combined loop/checkpoint tests passed 34/34; active-corpus role audit passed 37/37, 28 self-test cases, and production `53/33/20 · 21/25/6/1`; all applicable pre-commit hooks passed. Requirements were `COMPLIANT`; quality/security was `APPROVED` after the missing-loop-contract fail-open finding was fixed and re-reviewed as `ADDRESSED`. |
 | AHLL-003 | VAL-AHLL-008 | Integrate focused validation routing, repository aggregate, and provider projection semantics. | platform | Done | Two validators, seven exact routed surfaces, aggregate ownership, five reviewed feedback destinations, and twelve bounded provider/governance projections committed as `f0190643`. | Lifecycle production/self-test `54`, focused tests `19`, checkpoint mutations `78`, affected-surface selection `13` with `16` validators and zero uncovered/ambiguous paths, strict documents, aggregate, applicable pre-commit, and diff checks passed. Independent review finished `SPEC: COMPLIANT` and `QUALITY: APPROVED` after destination-ID mutation and exact lifecycle projection findings were `ADDRESSED`. |
-| AHLL-004 | VAL-AHLL-009 | Run focused/strict/lifecycle/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | In Progress | Terminal QA, independent whole-tranche review, exact-eight closure, explicit-ref lifecycle, and clean-tree postflight are now the active frontier. | Commands, reviewer verdicts, implementation/closure commits, explicit-ref, clean-tree postflight, rollback, and external limitations will be recorded here. |
+| AHLL-004 | VAL-AHLL-009 | Run focused/strict/lifecycle/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | In Progress | Whole-tranche review findings and the token-family completeness follow-up were fixed in `9d8a2a36`; focused, strict, staged lifecycle, aggregate, all-files, diff, and independent re-review gates passed. Exact-eight closure, explicit-ref lifecycle, and clean-tree postflight remain. | Lifecycle production/self-test `59`, checkpoint mutations `82`, focused tests `39`, affected-surface `21/21` with `16` validators and zero uncovered/ambiguous paths, strict registry `457`, aggregate, all applicable hooks, and diff checks passed. Requirements were `COMPLIANT`; quality and security were `APPROVED` after all findings were `ADDRESSED`. |
 
 ## Approval and Safety Boundaries
 
@@ -116,6 +116,19 @@ self-test, `19` focused tests, `78` checkpoint mutations, affected-surface
 selection, strict documents, aggregate, applicable pre-commit, diff, and
 independent review passed. AHLL-004 is now the active closure frontier.
 
+AHLL-004 whole-tranche review then found a loop-to-checkpoint failure-shape
+drift, incomplete checkpoint token-family redaction, lifecycle raw-output key
+and symlink-input fail-open paths, and a token-family completeness follow-up.
+Commit `9d8a2a368849dbab947eff0e9fb066afc6d239a4` closed those findings with one
+canonical `failureClass` plus `sha256:<64hex>` interface, synthetic-only
+GitHub/Slack/OpenAI/Google token probes, boolean-only policy declaration
+exceptions, and regular-file/path-escape guards. Lifecycle `59`, checkpoint
+`82`, combined tests `39`, staged lifecycle, strict documents, affected
+surfaces, aggregate, all-files, and both diff checks passed. Requirements
+returned `COMPLIANT`; quality and security returned `APPROVED` after every
+finding was `ADDRESSED`. Terminal exact-eight closure and postflight remain
+unobserved.
+
 This evidence does not claim provider hook delivery, provider runtime, hosted
 CI, remote, credential-bearing, live, or actual `.agent-work/checkpoint.json`
 execution.
@@ -136,4 +149,4 @@ execution.
 | [AHLL-001](../../03.specs/043-agent-harness-loop-lifecycle/spec.md#success-criteria--verification-plan) | Done — loop lifecycle contract and fixtures committed as `8a995014`. | Production and 47-case self-test PASS; 17 focused tests PASS; requirements `COMPLIANT`; quality/security `APPROVED`. |
 | N/A — AHLL-002 shares the Plan and Spec sources linked above | Done — checkpoint and four-class memory lifecycle controls committed as `95a6ee03`. | Loop/checkpoint production and self-tests, 34 combined tests, role-audit `53/33/20 · 21/25/6/1`, applicable pre-commit hooks, requirements `COMPLIANT`, and quality/security `APPROVED` after fix re-review passed. |
 | N/A — AHLL-003 shares the Plan and Spec sources linked above | Done — routing, feedback ownership, aggregate, and provider projections committed as `f0190643`. | Lifecycle `54` self-test, `19` focused tests, checkpoint `78`, affected-surface `13` selection cases and `16` validators, strict documents, aggregate, applicable pre-commit, diff, `SPEC: COMPLIANT`, and `QUALITY: APPROVED` passed after fix re-review. |
-| N/A — AHLL-004 shares the Plan and Spec sources linked above | In Progress — terminal QA/review/closure is the active frontier. | Focused/strict/lifecycle/aggregate/all-files/diff, independent whole-tranche review, atomic closure, explicit-ref, and clean-tree postflight remain required. |
+| N/A — AHLL-004 shares the Plan and Spec sources linked above | In Progress — whole-tranche findings are fixed in `9d8a2a36`; terminal closure/postflight remain. | Lifecycle `59`, checkpoint `82`, focused tests `39`, staged/strict/affected/aggregate/all-files/diff PASS; requirements `COMPLIANT`; quality/security `APPROVED`; exact-eight closure, explicit-ref, and clean-tree postflight remain required. |
