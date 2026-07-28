@@ -60,6 +60,68 @@ TERMINAL_PROGRAM_CLOSURE_ADR = (
     "docs/02.architecture/decisions/"
     "0020-document-lifecycle-program-closure-evidence.md"
 )
+FROZEN_ACCEPTED_ADR_PATHS = (
+    "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
+    "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md",
+    "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md",
+    "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md",
+    "docs/02.architecture/decisions/0009-kiali-external-observability.md",
+    "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
+    "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
+    "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
+    "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
+    "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md",
+    "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md",
+    "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md",
+    "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md",
+)
+FROZEN_DONE_SPEC_PATHS = (
+    "docs/03.specs/009-workspace-harness-research-pack/spec.md",
+    "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md",
+    "docs/03.specs/011-template-contract-governance-migration/spec.md",
+    "docs/03.specs/012-template-governance-audit-enhancement/spec.md",
+    "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+    "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
+    "docs/03.specs/015-agent-governance-contract-normalization/spec.md",
+    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
+    "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
+    "docs/03.specs/019-template-path-numbering-contract/spec.md",
+    "docs/03.specs/020-workspace-contract-governance-normalization/spec.md",
+    "docs/03.specs/021-sdlc-lifecycle-contract/spec.md",
+    "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
+    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
+    "docs/03.specs/024-observability-and-network-review-agents/spec.md",
+    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md",
+    "docs/03.specs/026-document-contract-registry/spec.md",
+    "docs/03.specs/027-template-contract-consolidation/spec.md",
+    "docs/03.specs/028-readme-workspace-profiles/spec.md",
+    "docs/03.specs/029-semantic-document-validation/spec.md",
+    "docs/03.specs/030-authored-document-migration/spec.md",
+    "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+    "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
+    "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
+    "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
+    "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
+    "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+)
+POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
+    {
+        "docs/02.architecture/decisions/"
+        "0019-provider-native-agent-harness-and-loop-model.md",
+    }
+)
+POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
+    {
+        "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
+        "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
+        "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+        "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/03.specs/046-agent-governance-program-closure/spec.md",
+    }
+)
 PLAN_ROOT = "docs/04.execution/plans"
 TASK_ROOT = "docs/04.execution/tasks"
 ADR_ROOT = "docs/02.architecture/decisions"
@@ -1817,6 +1879,59 @@ def _authority_entries(
     return entries
 
 
+def _frozen_authority_scope(
+    paths: Sequence[str],
+    *,
+    kind: str,
+) -> list[str]:
+    """Select the exact PRD-006 authority paths and ignore later programs."""
+
+    if kind == "adr":
+        owned = FROZEN_ACCEPTED_ADR_PATHS
+    elif kind == "spec":
+        owned = FROZEN_DONE_SPEC_PATHS
+    else:
+        raise ValueError(f"unsupported frozen authority kind: {kind}")
+    counts = Counter(paths)
+    for path in owned:
+        if counts[path] != 1:
+            raise ClosureError("CLOSURE-AUTHORITY-SCOPE", path)
+    return list(owned)
+
+
+def _frozen_authority_entries(
+    paths: Sequence[str],
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    *,
+    kind: str,
+) -> list[dict[str, Any]]:
+    """Build only the exact PRD-006 authority rows and require their state."""
+
+    scoped_paths = _frozen_authority_scope(paths, kind=kind)
+    entries = _authority_entries(scoped_paths, index, payloads, kind=kind)
+    entries_by_path = {row["path"] for row in entries}
+    for path in scoped_paths:
+        if path not in entries_by_path:
+            raise ClosureError("CLOSURE-AUTHORITY-SCOPE", path)
+    allowed_later = (
+        POST_CLOSURE_ADR_AUTHORITY_PATHS
+        if kind == "adr"
+        else POST_CLOSURE_SPEC_AUTHORITY_PATHS
+    )
+    frozen_paths = frozenset(scoped_paths)
+    later_authority = _authority_entries(
+        [path for path in paths if path not in frozen_paths],
+        index,
+        payloads,
+        kind=kind,
+    )
+    for row in later_authority:
+        if row["path"] not in allowed_later:
+            raise ClosureError("CLOSURE-AUTHORITY-SCOPE", row["path"])
+    return entries
+
+
 def _terminal_program_closure_authority(
     adr_paths: Sequence[str],
     index: Mapping[str, str],
@@ -2005,11 +2120,17 @@ def build_observed(
         adr_paths,
         terminal_program_closure_authority,
     )
-    accepted_adrs = _authority_entries(
-        generic_adr_paths, combined_index, inventory_payloads, kind="adr"
+    accepted_adrs = _frozen_authority_entries(
+        generic_adr_paths,
+        combined_index,
+        inventory_payloads,
+        kind="adr",
     )
-    done_specs = _authority_entries(
-        terminal["specPaths"], combined_index, inventory_payloads, kind="spec"
+    done_specs = _frozen_authority_entries(
+        terminal["specPaths"],
+        combined_index,
+        inventory_payloads,
+        kind="spec",
     )
     migrated_paths = {row["path"] for row in migrated} | {
         row["archivePath"] for row in migrated

@@ -1505,6 +1505,164 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unsupported terminal control kind"):
             self.validator._terminal_program_control_scope([], kind="spec")
 
+    def test_frozen_authority_scope_excludes_later_program_authority(self) -> None:
+        future_adr = (
+            "docs/02.architecture/decisions/"
+            "0019-provider-native-agent-harness-and-loop-model.md"
+        )
+        future_spec = (
+            "docs/03.specs/041-stage-00-agent-governance-contract/spec.md"
+        )
+        future_adrs = sorted(self.validator.POST_CLOSURE_ADR_AUTHORITY_PATHS)
+        future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
+        self.assertEqual(future_adrs, [future_adr])
+        self.assertIn(future_spec, future_specs)
+        accepted_payload = (
+            b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
+        )
+        done_payload = b"---\ntype: sdlc/spec\nstatus: done\nowner: platform\n---\n"
+        payloads = {
+            **{
+                path: accepted_payload
+                for path in self.validator.FROZEN_ACCEPTED_ADR_PATHS
+            },
+            **{
+                path: done_payload
+                for path in self.validator.FROZEN_DONE_SPEC_PATHS
+            },
+            **{path: accepted_payload for path in future_adrs},
+            **{path: done_payload for path in future_specs},
+        }
+
+        adr_scope = self.validator._frozen_authority_scope(
+            [*self.validator.FROZEN_ACCEPTED_ADR_PATHS, *future_adrs],
+            kind="adr",
+        )
+        spec_scope = self.validator._frozen_authority_scope(
+            [*self.validator.FROZEN_DONE_SPEC_PATHS, *future_specs],
+            kind="spec",
+        )
+        self.assertEqual(adr_scope, list(self.validator.FROZEN_ACCEPTED_ADR_PATHS))
+        self.assertEqual(spec_scope, list(self.validator.FROZEN_DONE_SPEC_PATHS))
+        self.assertEqual(
+            [
+                row["path"]
+                for row in self.validator._frozen_authority_entries(
+                    [*adr_scope, *future_adrs], {}, payloads, kind="adr"
+                )
+            ],
+            list(self.validator.FROZEN_ACCEPTED_ADR_PATHS),
+        )
+        self.assertEqual(
+            [
+                row["path"]
+                for row in self.validator._frozen_authority_entries(
+                    [*spec_scope, *future_specs], {}, payloads, kind="spec"
+                )
+            ],
+            list(self.validator.FROZEN_DONE_SPEC_PATHS),
+        )
+        for kind, frozen, future in (
+            ("adr", self.validator.FROZEN_ACCEPTED_ADR_PATHS, future_adrs),
+            ("spec", self.validator.FROZEN_DONE_SPEC_PATHS, future_specs),
+        ):
+            for frozen_path in frozen:
+                with self.subTest(
+                    kind=kind, path=frozen_path, mutation="missing"
+                ):
+                    with self.assertRaises(self.validator.ClosureError) as raised:
+                        self.validator._frozen_authority_scope(
+                            [
+                                *(
+                                    path
+                                    for path in frozen
+                                    if path != frozen_path
+                                ),
+                                *future,
+                            ],
+                            kind=kind,
+                        )
+                    self.assertEqual(
+                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
+                    )
+                    self.assertEqual(raised.exception.path, frozen_path)
+                with self.subTest(
+                    kind=kind, path=frozen_path, mutation="duplicate"
+                ):
+                    with self.assertRaises(self.validator.ClosureError) as raised:
+                        self.validator._frozen_authority_scope(
+                            [*frozen, frozen_path, *future],
+                            kind=kind,
+                        )
+                    self.assertEqual(
+                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
+                    )
+                    self.assertEqual(raised.exception.path, frozen_path)
+                with self.subTest(
+                    kind=kind, path=frozen_path, mutation="status"
+                ):
+                    mutated_payloads = dict(payloads)
+                    expected_type = f"sdlc/{kind}"
+                    mutated_payloads[frozen_path] = (
+                        "---\n"
+                        f"type: {expected_type}\n"
+                        "status: active\n"
+                        "owner: platform\n"
+                        "---\n"
+                    ).encode()
+                    with self.assertRaises(self.validator.ClosureError) as raised:
+                        self.validator._frozen_authority_entries(
+                            [*frozen, *future],
+                            {},
+                            mutated_payloads,
+                            kind=kind,
+                        )
+                    self.assertEqual(
+                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
+                    )
+                    self.assertEqual(raised.exception.path, frozen_path)
+        rogue_adr = (
+            "docs/02.architecture/decisions/"
+            "2099-rogue-accepted-decision.md"
+        )
+        rogue_spec = "docs/03.specs/999-rogue-done-spec/spec.md"
+        for kind, frozen, future, rogue_path, rogue_payload in (
+            (
+                "adr",
+                self.validator.FROZEN_ACCEPTED_ADR_PATHS,
+                future_adrs,
+                self.validator.TERMINAL_PROGRAM_CLOSURE_ADR,
+                accepted_payload,
+            ),
+            (
+                "adr",
+                self.validator.FROZEN_ACCEPTED_ADR_PATHS,
+                future_adrs,
+                rogue_adr,
+                accepted_payload,
+            ),
+            (
+                "spec",
+                self.validator.FROZEN_DONE_SPEC_PATHS,
+                future_specs,
+                rogue_spec,
+                done_payload,
+            ),
+        ):
+            with self.subTest(kind=kind, rogue_path=rogue_path):
+                rogue_payloads = {**payloads, rogue_path: rogue_payload}
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._frozen_authority_entries(
+                        [*frozen, *future, rogue_path],
+                        {},
+                        rogue_payloads,
+                        kind=kind,
+                    )
+                self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-SCOPE")
+                self.assertEqual(raised.exception.path, rogue_path)
+        with self.assertRaisesRegex(ValueError, "unsupported frozen authority kind"):
+            self.validator._frozen_authority_scope([], kind="plan")
+
     def test_spec038_active_and_terminal_states_use_disjoint_partitions(self) -> None:
         active = self.terminal_partition("active")
         active_rows = self.validator._build_active_control_rows(
