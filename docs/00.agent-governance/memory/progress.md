@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - Spec 041 whole-tranche QA evidence
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-041 #agent-governance #quality-gate #precommit
+
+#### Progress
+
+- Began SAGC-005 repository-static QA after implementation evidence commit
+  `7098a3242ac40e757c86ccac9b986e3253766f23`.
+- Preserved the lifecycle split: QA evidence is recorded before terminal
+  Spec/Plan/Task status transition, and clean-tree postflight evidence remains
+  a later event after the closure commit is observed.
+
+#### Memory
+
+- The durable memory facts from Spec 041 remain unchanged: the four declared
+  classes are `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`.
+- This progress entry records QA status only. It does not promote provider
+  local memory, transient checkpoints, prompts, transcripts, credentials,
+  tokens, secrets, auth files, shell history, environment dumps, private
+  diagnostics, or user config into durable project memory.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` ended with
+  `[PASS] repository quality gates passed`.
+- The first `pre-commit run --all-files` observed every individual check pass
+  but exited nonzero because this QA evidence draft was staged concurrently
+  while the strict hook was running. A stable rerun, formatter/status review,
+  and both diff inspections remain required.
+- Independent requirements review correctly reported that committed HEAD still
+  had SAGC-005 queued. Quality and security reviews remain pending; the finding
+  must be remediated and all three final verdicts recorded before terminal
+  closure.
+- Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, and live results remain `DEFER`.
+
+#### Handoff
+
+- Next owner: stable all-files rerun, formatter/status and diff inspection,
+  requirements finding remediation, final requirements/quality/security
+  verdicts, and only then terminal Spec/Plan/Task lifecycle closure.
+- Roll back newest-first: QA evidence update, SAGC-004 integration
+  `8c342ce6`, consumer migration `52a4ab6c`, harness contract introduction
+  `8d5a4c50`, activation postflight `5d4dd5c`, and activation `9e6fc553`.
+
 ### 2026-07-28 - Spec 041 harness contract implementation evidence
 
 #### Metadata

@@ -107,7 +107,8 @@ is claimed before observation.
 
 ## Completion Criteria
 
-- SAGC-000 through SAGC-005 have observed results in the reciprocal Task.
+- SAGC-000 through SAGC-005 have observed repository-static results in the
+  reciprocal Task.
 - Exactly one closed harness contract owns migrated shared role/projection,
   permission, stop, handoff, evidence, model/eval-reference, and memory
   declarations.
@@ -121,7 +122,8 @@ is claimed before observation.
 - Focused, affected, lifecycle, strict document, aggregate, all-files,
   formatter, diff, and independent review gates pass.
 - Spec/Plan/Task terminal transition and explicit-ref/clean-tree postflight are
-  observed without promoting provider/runtime/hosted/remote/live evidence.
+  recorded as separate evidence events without promoting
+  provider/runtime/hosted/remote/live evidence.
 
 ## Traceability
 
