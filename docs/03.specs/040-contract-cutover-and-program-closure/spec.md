@@ -1,7 +1,7 @@
 ---
 title: 'Contract Cutover and Program Closure Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-28
 ---
@@ -26,8 +26,18 @@ Plan/Task activation is observed in
 observed in `0ae1fcd300d43914901d0eb2f0fd929bfe65cb1d`. CCPC-002 now records the
 complete repository-static closure matrix, exact advanced terminal frontier,
 and Current-audit reconciliation. CCPC-003 whole-branch QA and independent
-review are observed; CCPC-004 atomic terminal closure is the active work
-package.
+review are observed. CCPC-004 completes the exact 14-path staged terminal
+proposal with lifecycle self-test `668`, staged lifecycle, strict document
+gates, residue frontier `0/0·6/3·3`, repository aggregate, unqualified
+all-files pre-commit, formatter review, and both diff checks passing.
+Independent terminal reviewers approved staged diff SHA-256
+`e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no
+findings: `/root/ccpc004_terminal_requirements_review` returned
+`REQUIREMENTS COMPLIANT`, `/root/ccpc004_terminal_quality_review` returned
+`QUALITY APPROVED`, and `/root/ccpc004_terminal_security_review` returned
+`SECURITY APPROVED`. No future closure commit, explicit-ref result, or
+clean-tree postflight is claimed. Hosted, provider, remote, credential-bearing,
+and live evidence remains `DEFER`.
 
 ## Strategic Boundaries & Non-goals
 
@@ -49,8 +59,10 @@ package.
 - All governed current and archive records resolve exactly one final profile.
 - Every migration row has a final disposition and rollback reference.
 - Final QA separates static PASS from optional SKIP and remote/live DEFER.
-- Independent reviewers approve both requirement compliance and implementation
-  quality before program status changes.
+- CCPC-003 independent reviewers approved the whole-branch implementation.
+- CCPC-004 independent terminal reviewers approved the exact staged terminal
+  proposal before any future closure commit; the future commit and postflight
+  are still not inferred.
 
 ## Core Design
 
@@ -61,9 +73,10 @@ and Spec criterion to a command, result, commit range, reviewer, limitation,
 and rollback.
 
 The Current audit overlay records repository-static closure and retains
-remaining lifecycle, provider, platform, and live findings with their existing
-owners. Program documents move through allowed states only after evidence is
-committed.
+remaining provider, platform, and live findings with their existing owners.
+Program documents move through allowed states together in this lifecycle-valid
+staged terminal proposal. Its future commit identity and postflight remain
+separate observed evidence.
 
 ## Data Modeling & Storage Strategy
 
@@ -150,8 +163,8 @@ cleanup.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-WDLEC-003](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-001 | Final stale-route and compatibility scans report zero. |
-| [REQ-WDLEC-001](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-002 | Strict registry, profile, transition, owner, and link gates pass. |
-| [REQ-WDLEC-004](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-003 | Complete archive integrity and historical-link checks pass. |
-| [REQ-WDLEC-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-004 | Final migration ledger has no unowned disposition. |
-| [REQ-WDLEC-008](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-005 | References, generation, workflow, and selector suites pass. |
-| [REQ-WDLEC-011](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-006 | All-files QA and independent review produce clean verdicts. |
+| N/A — REQ-WDLEC-001 shares the PRD-006 source linked in VAL-CCPC-001 | VAL-CCPC-002 | Strict registry, profile, transition, owner, and link gates pass. |
+| N/A — REQ-WDLEC-004 shares the PRD-006 source linked in VAL-CCPC-001 | VAL-CCPC-003 | Complete archive integrity and historical-link checks pass. |
+| N/A — REQ-WDLEC-006 shares the PRD-006 source linked in VAL-CCPC-001 | VAL-CCPC-004 | Final migration ledger has no unowned disposition. |
+| N/A — REQ-WDLEC-008 shares the PRD-006 source linked in VAL-CCPC-001 | VAL-CCPC-005 | References, generation, workflow, and selector suites pass. |
+| N/A — REQ-WDLEC-011 shares the PRD-006 source linked in VAL-CCPC-001 | VAL-CCPC-006 | All-files QA and independent review produce clean verdicts. |

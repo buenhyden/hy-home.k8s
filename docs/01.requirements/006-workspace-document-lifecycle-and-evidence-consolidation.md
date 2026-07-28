@@ -1,20 +1,22 @@
 ---
 title: 'Workspace Document Lifecycle and Evidence Consolidation Product Requirements'
 type: sdlc/prd
-status: active
+status: done
 owner: platform
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 
 # Workspace Document Lifecycle and Evidence Consolidation Product Requirements
 
 ## Overview
 
-This program consolidates the repository document lifecycle after the completed
-document-assurance modernization. It preserves the existing profile registry
-and strict zero-route-debt baseline while closing the remaining gaps in
-program lineage, state-transition evidence, archive preservation, execution
-retention, reference currentness, and CI evidence.
+This completed program consolidates the repository document lifecycle after
+the document-assurance modernization. Specs 034 through 040 and the integrated
+repository-static program contract are closed by this exact terminal proposal.
+The proposal preserves the existing profile registry, strict zero-route-debt
+baseline, archive preservation, execution retention, reference currentness,
+and CI evidence without promoting protected, hosted, provider, remote, or live
+`DEFER` evidence.
 
 The program is evidence-first. Historical audit observations remain pinned to
 their observation commit, accepted decisions remain immutable, and destructive
@@ -36,10 +38,12 @@ archive bodies depended on Git history, completed execution controls remained
 in the active working set, Current audit dispositions lagged implementation,
 and lifecycle facts were repeated outside their machine owner.
 
-Specs 034 through 039 have closed those implementation gaps with repository
-evidence. The remaining active problem is to prove the integrated strict
-contract, reconcile the Current audit, preserve explicit external `DEFER`
-boundaries, and close PRD-006, ARD-0009, and Spec 040 atomically.
+Specs 034 through 040 close those implementation gaps with repository-static
+evidence. This exact terminal proposal proves the integrated strict contract,
+reconciles the Current audit, preserves explicit external `DEFER` boundaries,
+and transitions PRD-006, ARD-0009, ADR-0020, Spec 040, and its reciprocal
+execution pair atomically. It does not claim the future closure commit,
+explicit-ref lifecycle result, or clean-tree postflight.
 
 ## Personas
 
@@ -144,8 +148,9 @@ boundaries, and close PRD-006, ARD-0009, and Spec 040 atomically.
   payload; secret-removal procedures remain an explicit preservation exception.
 - Current audit facts remain pinned to their observation SHA. Only remediation
   overlays may report later closure.
-- The existing FIFO self-test failure is an environment-portability defect and
-  must not be relabeled as a passing baseline.
+- The earlier FIFO self-test portability defect was remediated before the
+  terminal proposal; repository-static PASS still does not establish hosted,
+  provider, remote, or live readiness.
 
 ## Traceability
 
@@ -154,15 +159,15 @@ boundaries, and close PRD-006, ARD-0009, and Spec 040 atomically.
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
 | REQ-WDLEC-001 | ACC-WDLEC-001 | [ARD-0009](../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/034-authority-and-lineage-foundation/spec.md) |
-| REQ-WDLEC-002 | ACC-WDLEC-002 | [Spec 034](../03.specs/034-authority-and-lineage-foundation/spec.md), governed by ADR-0017 |
+| REQ-WDLEC-002 | ACC-WDLEC-002 | N/A — Spec 034 shares the downstream owner linked in REQ-WDLEC-001 and is governed by unchanged accepted ADR-0017. |
 | REQ-WDLEC-003 | ACC-WDLEC-003 | [Spec 035](../03.specs/035-document-schema-and-lifecycle-contract/spec.md) |
 | REQ-WDLEC-004 | ACC-WDLEC-004 | [Spec 036](../03.specs/036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |
-| REQ-WDLEC-005 | ACC-WDLEC-005 | [Spec 036](../03.specs/036-archive-record-and-workspace-boundary/spec.md) |
+| REQ-WDLEC-005 | ACC-WDLEC-005 | N/A — Spec 036 shares the downstream owner linked in REQ-WDLEC-004. |
 | REQ-WDLEC-006 | ACC-WDLEC-006 | [Spec 037](../03.specs/037-active-corpus-and-execution-retention/spec.md) |
-| REQ-WDLEC-007 | ACC-WDLEC-006 | [Spec 037](../03.specs/037-active-corpus-and-execution-retention/spec.md) |
+| REQ-WDLEC-007 | ACC-WDLEC-006 | N/A — Spec 037 shares the downstream owner linked in REQ-WDLEC-006. |
 | REQ-WDLEC-008 | ACC-WDLEC-007 | [Spec 038](../03.specs/038-reference-information-architecture/spec.md) |
-| REQ-WDLEC-009 | ACC-WDLEC-001 | [Spec 036](../03.specs/036-archive-record-and-workspace-boundary/spec.md) |
+| REQ-WDLEC-009 | ACC-WDLEC-001 | N/A — Spec 036 shares the downstream owner linked in REQ-WDLEC-004. |
 | REQ-WDLEC-010 | ACC-WDLEC-008 | [Spec 039](../03.specs/039-github-ci-qa-evidence/spec.md) |
 | REQ-WDLEC-011 | ACC-WDLEC-008 | [Spec 040](../03.specs/040-contract-cutover-and-program-closure/spec.md) |
-| REQ-WDLEC-012 | ACC-WDLEC-009 | [Spec 040](../03.specs/040-contract-cutover-and-program-closure/spec.md) |
-| REQ-WDLEC-013 | ACC-WDLEC-010 | [Spec 035](../03.specs/035-document-schema-and-lifecycle-contract/spec.md) and [Spec 037](../03.specs/037-active-corpus-and-execution-retention/spec.md) |
+| REQ-WDLEC-012 | ACC-WDLEC-009 | N/A — Spec 040 shares the downstream owner linked in REQ-WDLEC-011 and retains external `DEFER`. |
+| REQ-WDLEC-013 | ACC-WDLEC-010 | N/A — Specs 035 and 037 share the downstream owners linked in REQ-WDLEC-003 and REQ-WDLEC-006. |

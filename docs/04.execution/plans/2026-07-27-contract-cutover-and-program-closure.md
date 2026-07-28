@@ -1,21 +1,25 @@
 ---
 title: 'Contract Cutover and Program Closure Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 
 # Contract Cutover and Program Closure Implementation Plan
 
 ## Overview
 
-This Plan executes [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
-as the final PRD-006 tranche. It activates a reciprocal
+This completed Plan executes [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
+as the final PRD-006 repository-static tranche. It activated a reciprocal
 [Task](../tasks/2026-07-27-contract-cutover-and-program-closure.md), removes
 active compatibility-reader behavior, proves the final repository contract,
-and closes PRD-006, ARD-0009, the Spec, Plan, Task, and program lineage only
-after deterministic validation and independent review.
+and closes PRD-006, ARD-0009, ADR-0020, the Spec, Plan, Task, indexes, and
+program relation in one exact staged terminal proposal. Deterministic
+precommit validation passes, and independent terminal reviewers approved
+staged diff SHA-256
+`e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no
+findings. No future commit or postflight is claimed.
 
 ## Context
 
@@ -78,7 +82,7 @@ commit and the clean-tree repository-static aggregate passed.
 | CCPC-001 | Cut active document readers over to strict-only operation | CCPC-000 | Reciprocal Plan/Task pair is active | Tests prove strict default/no-mode PASS and retired compatibility invocation rejection; active current prose and retirement guard are consistent; finite historical proof fixtures remain bounded |
 | CCPC-002 | Build the final closure matrix and Current audit overlay | CCPC-001 | Strict-only active reader contract is green | Every Spec 040 criterion and PRD-006 requirement has repository evidence, result class, owner, limitation, rollback, and final disposition; no unowned current finding remains |
 | CCPC-003 | Run whole-branch QA and independent reviews | CCPC-002 | Closure matrix is complete and the proposal is stable | Focused, affected, strict, lifecycle, aggregate, all-files, formatter, and diff gates pass; independent requirements and quality/security reviews approve the exact proposal |
-| CCPC-004 | Close the program lifecycle atomically and perform postflight | CCPC-003 | Reviews approve with no blocking finding | PRD-006, ARD-0009, Spec/Plan/Task, indexes, decision evidence, and registry relation transition together; closure commit is observed; explicit-ref and clean-tree postflight pass; remote/live remain truthfully classified |
+| CCPC-004 | Close the program lifecycle atomically and hand off future postflight | CCPC-003 | Observed CCPC-003 commit `a65a2e83` contains whole-branch QA/review evidence | Exact 14-path terminal proposal transitions PRD-006, ARD-0009, ADR-0020, Spec/Plan/Task, six indexes, progress, and registry relation together; required precommit gates pass and final frontier is `0/0·6/3·3`; independent terminal reviewers approved staged diff SHA-256 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no findings while future commit/explicit-ref/clean-tree postflight remain unclaimed |
 
 ### CCPC-000 — Reciprocal activation
 
@@ -134,20 +138,25 @@ commit and the clean-tree repository-static aggregate passed.
 
 ### CCPC-004 — Atomic closure and postflight
 
-1. Prepare one terminal lifecycle proposal that changes PRD-006 from `active`
+1. Prepared one terminal lifecycle proposal that changes PRD-006 from `active`
    to `done`, ARD-0009 from `active` to `accepted`, and Spec 040, this Plan,
    its Task, their indexes, and the final registry relation from `active` to
    `done`. Update the accepted decision evidence required by the lifecycle
    contract in the same proposal.
-2. Require all terminal lifecycle, strict document, archive, migration,
-   reference, generated-output, workflow, aggregate, all-files, formatter,
-   and diff gates to pass before commit.
-3. Obtain final independent requirements and quality/security approval for the
-   exact terminal proposal.
-4. Create one logical closure commit and record only its observed identity.
-5. Run lifecycle in `explicit-ref` mode from the observed activation commit to
-   the observed closure commit, then rerun the clean-tree repository-static
-   postflight. Preserve remote/live lanes as `DEFER` until separately executed.
+2. Passed terminal lifecycle, strict document, residue, reference, aggregate,
+   unqualified all-files, formatter, and diff gates for the exact staged
+   proposal.
+3. Recorded independent terminal review for staged diff SHA-256
+   `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`:
+   `/root/ccpc004_terminal_requirements_review` returned `REQUIREMENTS
+   COMPLIANT`, `/root/ccpc004_terminal_quality_review` returned `QUALITY
+   APPROVED`, and `/root/ccpc004_terminal_security_review` returned `SECURITY
+   APPROVED`; all reported no findings.
+4. Handed future closure-commit creation to the authorized next owner. This
+   proposal does not predict or claim that content-addressed identity.
+5. Deferred explicit-ref lifecycle and clean-tree repository-static postflight
+   until the future closure commit is observed. Remote/live lanes remain
+   `DEFER` until separately authorized and executed.
 
 ## Verification Plan
 
@@ -188,13 +197,16 @@ commit and the clean-tree repository-static aggregate passed.
 - The full branch passes focused, affected, lifecycle, strict document,
   archive, migration, reference, generated-output, workflow, aggregate,
   all-files, formatter, and diff gates.
-- Independent requirements and quality/security reviews approve the exact
-  terminal proposal.
-- PRD-006, ARD-0009, Spec 040, Plan, Task, indexes, decision evidence, and
-  final registry relation close atomically in one observed commit.
-- Explicit-ref lifecycle and clean-tree repository-static postflight pass.
-  Current hosted, provider, remote, and live lanes remain `DEFER` unless
-  separately authorized and observed.
+- CCPC-003 independent requirements and quality/security reviews approve the
+  whole-branch implementation; CCPC-004 independent terminal requirements,
+  quality, and security reviews approve the exact staged terminal proposal
+  without findings.
+- PRD-006, ARD-0009, ADR-0020, Spec 040, Plan, Task, indexes, progress, and the
+  final registry relation transition atomically in the exact 14-path proposal.
+- The future closure commit, explicit-ref lifecycle, and clean-tree
+  repository-static postflight remain a bounded handoff and are recorded only
+  after observation. Current hosted, provider, remote, and live lanes remain
+  `DEFER` unless separately authorized and observed.
 
 ## Traceability
 

@@ -8,6 +8,62 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - CCPC-004 atomic terminal proposal
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: product, architecture, backend, qa, meta
+- **Status**: complete
+- **Tags**: #spec-040 #program-closure #lifecycle #precommit
+
+#### Progress
+
+- From CCPC-003 evidence commit
+  `a65a2e838a54a405e20da65197de2828cf05bcd5` and validator compatibility
+  prerequisite commit `35d8552ba423e3e2d92294ddeb81674392b8f333`, prepared
+  the exact 14-path
+  terminal boundary: this progress ledger; the PRD-006 body/index; ARD-0009
+  body/index; ADR-0020 body/index; Spec 040 body/index; its Plan body/index;
+  its Task body/index; and the single Spec 040 registry relation. No other
+  tracked path belongs to the proposal.
+- The staged proposal transitions PRD-006 to `done`, ARD-0009 and ADR-0020 to
+  `accepted`, Spec 040 and its reciprocal Plan/Task to `done`, all six index
+  rows to terminal states as of 2026-07-28, and only the Spec 040 tranche
+  relation to `done`.
+
+#### Memory
+
+- A lifecycle-valid terminal proposal and its future content-addressed commit
+  are separate evidence events. Record terminal review, explicit-ref, and
+  clean-tree postflight only after their exact proposal or commit is observed.
+
+#### Evidence
+
+- Lifecycle self-test `668` and staged lifecycle PASS; strict registry,
+  Markdown, and links/owners PASS; residue focused module, self-test, and
+  production PASS at `active_controls=0/0`, `terminal_controls=6/3`, and
+  `terminal_specs=3`; reference IA, repository aggregate, unqualified
+  all-files pre-commit, formatter review, and both diff checks PASS.
+- Independent terminal reviewers inspected staged diff SHA-256
+  `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`.
+  `/root/ccpc004_terminal_requirements_review` returned `REQUIREMENTS
+  COMPLIANT`; `/root/ccpc004_terminal_quality_review` returned `QUALITY
+  APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
+  APPROVED`; all reported no findings. Hosted, provider, remote,
+  credential-bearing, and live evidence remains `DEFER`.
+
+#### Handoff
+
+- Next owner: an authorized closure executor. Observe the future closure commit
+  before running explicit-ref lifecycle or clean-tree postflight; never predict
+  its SHA or result.
+- Roll back newest-first: the future terminal closure commit/proposal first,
+  validator compatibility prerequisite `35d8552` second, CCPC-003 evidence
+  commit `a65a2e83` third, earlier CCPC-002 and CCPC-001 logical units next,
+  and activation `5c7bb820` last. Rerun focused and aggregate gates after each
+  logical revert.
+
 ### 2026-07-27 - Spec 040 reciprocal planning activation
 
 #### Metadata

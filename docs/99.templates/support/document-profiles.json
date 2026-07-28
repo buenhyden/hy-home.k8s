@@ -6324,7 +6324,7 @@
           {
             "spec": "040",
             "order": 7,
-            "state": "active",
+            "state": "done",
             "reason": "Contract cutover and program closure",
             "decision": "0017"
           }

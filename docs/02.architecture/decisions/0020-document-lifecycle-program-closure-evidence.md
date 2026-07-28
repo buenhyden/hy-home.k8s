@@ -1,7 +1,7 @@
 ---
 title: 'ADR-0020: Document Lifecycle Program Closure Evidence'
 type: sdlc/adr
-status: active
+status: accepted
 owner: platform
 updated: 2026-07-28
 ---
@@ -10,11 +10,12 @@ updated: 2026-07-28
 
 ## Overview
 
-This active decision records the closure-evidence architecture for the PRD-006
-and ARD-0009 document lifecycle program. It exists so the final ARD-0009
-`active` to `accepted` transition has a dedicated role-decision evidence owner
-that can later move through the lifecycle validator's same-diff
-`active` to `accepted` predicate.
+This accepted decision records the closure-evidence architecture for the
+PRD-006 and ARD-0009 document lifecycle program. In this exact terminal
+proposal it changes body and status with
+[ARD-0009](../requirements/0009-document-lifecycle-evidence-operating-model.md)
+and supplies that ARD's reciprocal same-diff accepted role-decision evidence.
+ADR-0017 and ADR-0018 remain unchanged accepted history.
 
 ## Context
 
@@ -39,10 +40,10 @@ bounded, current role-decision evidence path.
   observed strict, archive, migration, residue, reference, workflow, and
   advanced-frontier evidence while retaining later-unit `Pending` and external
   `DEFER` owners.
-- Require this ADR to remain reciprocally linked with ARD-0009 while it is
-  `active`.
-- Use this ADR, after a later `active` to `accepted` transition, as the
-  same-diff role-decision evidence for ARD-0009 acceptance.
+- Keep this ADR reciprocally linked with ARD-0009 through the terminal
+  transition.
+- Accept this ADR in the exact same diff as ARD-0009 and use it as the
+  same-diff role-decision evidence for that acceptance.
 - Preserve ADR-0017 and ADR-0018 as historical accepted decisions rather than
   reopening or rewriting them to manufacture closure evidence.
 - Keep hosted, provider, remote, and live evidence classifications separate from
@@ -50,9 +51,10 @@ bounded, current role-decision evidence path.
 
 ## Explicit Non-goals
 
-- Accepting ARD-0009 in this activation commit.
-- Accepting this ADR before Spec 040 final review and whole-branch QA evidence
-  exists.
+- Claiming a future closure commit, explicit-ref lifecycle result, or
+  clean-tree postflight from this proposal.
+- Claiming terminal reviewer approval without the observed independent
+  requirements, quality, and security verdicts for the exact staged digest.
 - Superseding ADR-0017 or ADR-0018.
 - Rewriting accepted decisions or completed tranche bodies for cosmetic
   reciprocity.
@@ -61,13 +63,14 @@ bounded, current role-decision evidence path.
 
 ## Consequences
 
-- ARD-0009 can later close through the registry's `accept-architecture`
-  predicate without reusing already accepted ADRs as synthetic same-diff
-  evidence.
-- Spec 040 gains an explicit decision evidence path for the final atomic closure
-  proposal.
-- This dedicated ADR is active before the terminal closure commit and must be
-  accepted in that same terminal proposal.
+- ARD-0009 closes through the registry's `accept-architecture` predicate
+  without reusing already accepted ADRs as synthetic same-diff evidence.
+- Spec 040 has an explicit accepted decision evidence path in the final atomic
+  terminal proposal.
+- This dedicated ADR and ARD-0009 are accepted together in the staged terminal
+  proposal. Independent terminal reviewers approved staged diff SHA-256
+  `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no
+  findings; its future commit identity and postflight remain unclaimed.
 - Closure remains honest about repository-static PASS versus deferred external
   lanes.
 
@@ -98,4 +101,4 @@ bounded, current role-decision evidence path.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD-0009](../requirements/0009-document-lifecycle-evidence-operating-model.md) | Adds a dedicated closure-evidence decision for final PRD-006 / ARD-0009 acceptance; existing ADR-0017 and ADR-0018 remain accepted history. | N/A — Spec 040 already owns the final closure plan and will link this ADR during the terminal proposal. |
+| [ARD-0009](../requirements/0009-document-lifecycle-evidence-operating-model.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md) owns the exact terminal proposal and preserves external `DEFER`. |
