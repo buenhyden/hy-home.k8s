@@ -94,6 +94,16 @@ MEMORY_CLASSES = (
     "domain-scoped",
     "provider-local-auxiliary",
 )
+ADAPTER_SEMANTIC_FIELDS = (
+    "responsibilities",
+    "outputs",
+    "prohibitedActions",
+    "stopConditions",
+    "handoffs",
+    "capabilityTier",
+    "capabilityTierClaim",
+    "requiredEvidence",
+)
 PROHIBITED_CONTENT = (
     "credential-values",
     "auth-files",
@@ -117,16 +127,16 @@ CONSUMERS = (
     (
         "role-semantics-validator",
         "scripts/validate-agent-role-semantics.py",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "roster-currentness-validator",
         "scripts/validate-agent-roster-currentness.py",
-        "agent-role-semantics-compatibility",
-        "2",
-        "pending-spec-041-migration",
+        "harness-contract",
+        "1.0.0",
+        "current",
     ),
     (
         "harness-catalog",
@@ -722,6 +732,7 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
     defined_permissions = {
         permission["id"] for permission in contract["permissionClasses"]
     }
+    adapter_anchors: dict[str, tuple[str, str]] = {}
     for role in roles:
         role_id = role["id"]
         expected_state = (
@@ -737,6 +748,38 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
                 "HARNESS-PERMISSION",
                 f"{role_id} references an unknown permission class",
             )
+        adapter_semantics = role["adapterSemantics"]
+        expected_tier = "top" if role_id == "supervisor" else "worker"
+        if (
+            adapter_semantics["admissionState"] != expected_state
+            or adapter_semantics["capabilityTier"] != expected_tier
+        ):
+            fail(
+                "HARNESS-ADAPTER-SEMANTICS",
+                f"{role_id} adapter semantics state or capability tier differs",
+            )
+        for field in ADAPTER_SEMANTIC_FIELDS:
+            if field == "capabilityTier":
+                continue
+            values = (
+                [adapter_semantics[field]]
+                if field == "capabilityTierClaim"
+                else adapter_semantics[field]
+            )
+            for value in values:
+                if " ".join(value.split()) != value:
+                    fail(
+                        "HARNESS-ADAPTER-SEMANTICS",
+                        f"{role_id}/{field} is not whitespace-normalized",
+                    )
+                if value in adapter_anchors:
+                    other_role, other_field = adapter_anchors[value]
+                    fail(
+                        "HARNESS-ADAPTER-SEMANTICS",
+                        f"{role_id}/{field} duplicates "
+                        f"{other_role}/{other_field}",
+                    )
+                adapter_anchors[value] = (role_id, field)
         if not set(role["handoffs"]).issubset(TARGET_ROLES):
             fail(
                 "HARNESS-HANDOFF",
@@ -1182,6 +1225,14 @@ def _apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["targetInventory"]["state"] = "current"
     elif name == "invalid-permission":
         contract["canonicalRoles"][0]["permissionClass"] = "unbounded"
+    elif name == "adapter-state-drift":
+        contract["canonicalRoles"][0]["adapterSemantics"][
+            "admissionState"
+        ] = "target-only"
+    elif name == "target-adapter-state-drift":
+        contract["canonicalRoles"][-1]["adapterSemantics"][
+            "admissionState"
+        ] = "current"
     elif name == "unbounded-stop-rules":
         contract["canonicalRoles"][0]["stopConditions"] = [
             f"synthetic bounded fixture condition {index}"

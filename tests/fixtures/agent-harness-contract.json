@@ -61,6 +61,14 @@
       "expectedRule": "HARNESS-SCHEMA"
     },
     {
+      "name": "adapter-state-drift",
+      "expectedRule": "HARNESS-ADAPTER-SEMANTICS"
+    },
+    {
+      "name": "target-adapter-state-drift",
+      "expectedRule": "HARNESS-ADAPTER-SEMANTICS"
+    },
+    {
       "name": "unbounded-stop-rules",
       "expectedRule": "HARNESS-SCHEMA"
     },
@@ -141,5 +149,5 @@
       "expectedRule": "HARNESS-SCHEMA"
     }
   ],
-  "expectedCaseCount": 33
+  "expectedCaseCount": 35
 }

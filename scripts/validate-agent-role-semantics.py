@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import re
+import stat
 import sys
 import tomllib
 from dataclasses import dataclass
@@ -20,25 +22,15 @@ from yaml.nodes import MappingNode
 
 
 CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-role-semantics.json"
+    "docs/00.agent-governance/contracts/harness-contract.json"
 )
 SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
+    "docs/00.agent-governance/contracts/harness-contract.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-role-semantics.json")
-ADAPTER_SURFACES = ("local", "claude", "codex")
-ROLE_IDS = (
-    "code-reviewer",
-    "doc-writer",
-    "gitops-reviewer",
-    "incident-responder",
-    "k8s-implementer",
-    "network-reviewer",
-    "observability-reviewer",
-    "security-auditor",
-    "supervisor",
-    "wiki-curator",
-)
+CONTRACT_VERSION = "1.0.0"
+CONSUMER_ID = "role-semantics-validator"
+ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
 CATEGORY_RULES = {
     "responsibilities": "ROLE-RESPONSIBILITY",
     "outputs": "ROLE-OUTPUT",
@@ -62,11 +54,6 @@ CATEGORY_SECTIONS = {
     "requiredEvidence": "Capability and Evidence",
 }
 FORBIDDEN_COMMON_FIELDS = ("model", "tools", "modelReasoningEffort")
-ADAPTER_LOCATIONS = {
-    "local": (PurePosixPath(".agents/agents"), ".md"),
-    "claude": (PurePosixPath(".claude/agents"), ".md"),
-    "codex": (PurePosixPath(".codex/agents"), ".toml"),
-}
 NEGATION_STATES = (
     "false",
     "not true",
@@ -319,6 +306,17 @@ class Adapter:
 
 
 @dataclass(frozen=True)
+class HarnessSelection:
+    """Current role semantics and adapter layout selected by the harness."""
+
+    role_ids: tuple[str, ...]
+    surface_ids: tuple[str, ...]
+    roles: dict[str, dict[str, Any]]
+    locations: dict[str, tuple[PurePosixPath, str]]
+    projection_paths: dict[tuple[str, str], PurePosixPath]
+
+
+@dataclass(frozen=True)
 class Diagnostic:
     code: str
     path: str
@@ -329,7 +327,13 @@ class Diagnostic:
         return f"ERR {self.code} {self.path} role={self.role}: {self.detail}"
 
 
-def load_json(path: Path) -> Any:
+def load_json(root: Path, relative: PurePosixPath) -> Any:
+    path = safe_repo_path(
+        root,
+        relative,
+        final_kind="file",
+        code="ROLE-JSON",
+    )
     try:
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
@@ -343,10 +347,226 @@ def normalize_whitespace(value: str) -> str:
     return " ".join(value.split())
 
 
+def safe_relative_root(value: str) -> PurePosixPath:
+    path = PurePosixPath(value)
+    if (
+        not value
+        or path.is_absolute()
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        fail("ROLE-ADAPTER-SURFACES", f"unsafe surface path root: {value!r}")
+    return path
+
+
+def safe_repo_path(
+    root: Path,
+    relative: PurePosixPath | str,
+    *,
+    final_kind: str,
+    code: str,
+) -> Path:
+    raw = relative.as_posix() if isinstance(relative, PurePosixPath) else relative
+    candidate_relative = PurePosixPath(raw)
+    segments = raw.split("/")
+    if (
+        candidate_relative.is_absolute()
+        or not segments
+        or any(segment in {"", ".", ".."} for segment in segments)
+    ):
+        fail(code, f"{raw}: expected a normalized repository-relative path")
+    try:
+        absolute_root = root.absolute()
+        root_mode = os.lstat(absolute_root).st_mode
+    except OSError as exc:
+        fail(code, f"repository root: {exc}")
+    if stat.S_ISLNK(root_mode) or not stat.S_ISDIR(root_mode):
+        fail(code, "repository root must be a non-symlink directory")
+    strict_root = absolute_root.resolve(strict=True)
+    candidate = strict_root
+    for index, segment in enumerate(segments):
+        candidate = candidate / segment
+        try:
+            mode = os.lstat(candidate).st_mode
+        except OSError as exc:
+            fail(code, f"{raw}: {exc}")
+        if stat.S_ISLNK(mode):
+            fail(code, f"{raw}: symlink path component {segment!r} is forbidden")
+        is_final = index == len(segments) - 1
+        if not is_final and not stat.S_ISDIR(mode):
+            fail(code, f"{raw}: parent component {segment!r} is not a directory")
+        if is_final:
+            expected = (
+                stat.S_ISREG(mode)
+                if final_kind == "file"
+                else stat.S_ISDIR(mode)
+            )
+            if not expected:
+                fail(code, f"{raw}: expected a regular non-symlink {final_kind}")
+    try:
+        resolved = candidate.resolve(strict=True)
+        resolved.relative_to(strict_root)
+    except (OSError, ValueError) as exc:
+        fail(code, f"{raw}: resolved path escapes the repository root: {exc}")
+    return resolved
+
+
+def select_current_harness(contract: dict[str, Any]) -> HarnessSelection:
+    """Select the current adapter claims without a hard-coded roster or layout."""
+
+    if contract.get("contractVersion") != CONTRACT_VERSION:
+        fail("ROLE-CONTRACT-VERSION", "harness contract version differs")
+    consumers = contract.get("consumers")
+    if not isinstance(consumers, list):
+        fail("ROLE-CONSUMER", "harness consumers must be a list")
+    selected = [
+        consumer for consumer in consumers
+        if isinstance(consumer, dict) and consumer.get("id") == CONSUMER_ID
+    ]
+    if len(selected) != 1 or (
+        selected[0].get("selectedContract"),
+        selected[0].get("selectedVersion"),
+        selected[0].get("migrationState"),
+    ) != ("harness-contract", CONTRACT_VERSION, "current"):
+        fail(
+            "ROLE-CONSUMER",
+            "role semantics validator must select harness-contract/1.0.0/current",
+        )
+
+    inventory = contract.get("currentInventory")
+    if not isinstance(inventory, dict) or inventory.get("state") != "current":
+        fail("ROLE-INVENTORY", "currentInventory must be a current object")
+    role_ids = tuple(inventory.get("roleIds", ()))
+    surface_ids = tuple(inventory.get("surfaceIds", ()))
+    if (
+        not role_ids
+        or not surface_ids
+        or not all(isinstance(item, str) for item in (*role_ids, *surface_ids))
+        or len(role_ids) != len(set(role_ids))
+        or len(surface_ids) != len(set(surface_ids))
+    ):
+        fail("ROLE-INVENTORY", "current role and surface identities differ")
+    expected_counts = (
+        len(role_ids),
+        len(surface_ids),
+        len(role_ids) * len(surface_ids),
+    )
+    actual_counts = (
+        inventory.get("expectedRoleCount"),
+        inventory.get("expectedSurfaceCount"),
+        inventory.get("expectedProjectionCount"),
+    )
+    if actual_counts != expected_counts:
+        fail("ROLE-INVENTORY", "current inventory counts differ")
+
+    canonical = contract.get("canonicalRoles")
+    if not isinstance(canonical, list):
+        fail("ROLE-IDS", "canonicalRoles must be a list")
+    canonical_by_id = {
+        role.get("id"): role
+        for role in canonical
+        if isinstance(role, dict) and isinstance(role.get("id"), str)
+    }
+    semantic_keys = {
+        "admissionState",
+        "responsibilities",
+        "outputs",
+        "prohibitedActions",
+        "stopConditions",
+        "handoffs",
+        "capabilityTier",
+        "capabilityTierClaim",
+        "requiredEvidence",
+    }
+    roles: dict[str, dict[str, Any]] = {}
+    for role_id in role_ids:
+        role = canonical_by_id.get(role_id)
+        if not isinstance(role, dict) or role.get("admissionState") != "current":
+            fail("ROLE-IDS", f"{role_id} is not a current canonical role")
+        semantics = role.get("adapterSemantics")
+        if not isinstance(semantics, dict) or set(semantics) != semantic_keys:
+            fail("ROLE-CATEGORIES", f"{role_id} adapter semantics differ")
+        if semantics.get("admissionState") != "current":
+            fail("ROLE-CATEGORIES", f"{role_id} adapter semantics are not current")
+        roles[role_id] = {
+            "id": role_id,
+            **{
+                key: copy.deepcopy(value)
+                for key, value in semantics.items()
+                if key != "admissionState"
+            },
+        }
+
+    surfaces = contract.get("surfaces")
+    if not isinstance(surfaces, list):
+        fail("ROLE-ADAPTER-SURFACES", "surfaces must be a list")
+    surface_by_id = {
+        surface.get("id"): surface
+        for surface in surfaces
+        if isinstance(surface, dict) and isinstance(surface.get("id"), str)
+    }
+    locations: dict[str, tuple[PurePosixPath, str]] = {}
+    for surface_id in surface_ids:
+        surface = surface_by_id.get(surface_id)
+        if not isinstance(surface, dict) or surface.get("admissionState") != "current":
+            fail(
+                "ROLE-ADAPTER-SURFACES",
+                f"{surface_id} is not a current canonical surface",
+            )
+        path_root = surface.get("pathRoot")
+        extension = surface.get("extension")
+        if (
+            not isinstance(path_root, str)
+            or not isinstance(extension, str)
+            or extension not in ALLOWED_EXTENSIONS
+        ):
+            fail(
+                "ROLE-ADAPTER-SURFACES",
+                f"{surface_id} adapter location differs",
+            )
+        locations[surface_id] = (safe_relative_root(path_root), extension)
+
+    projections = inventory.get("projections")
+    if not isinstance(projections, list):
+        fail("ROLE-INVENTORY", "current projections must be a list")
+    expected_projection_paths = {
+        (role_id, surface_id): (
+            locations[surface_id][0]
+            / f"{role_id}{locations[surface_id][1]}"
+        )
+        for role_id in role_ids
+        for surface_id in surface_ids
+    }
+    actual_projection_paths: dict[tuple[str, str], PurePosixPath] = {}
+    for projection in projections:
+        if not isinstance(projection, dict):
+            fail("ROLE-INVENTORY", "current projection must be an object")
+        key = (projection.get("roleId"), projection.get("surfaceId"))
+        path = projection.get("path")
+        if (
+            key not in expected_projection_paths
+            or projection.get("admissionState") != "current"
+            or not isinstance(path, str)
+            or PurePosixPath(path) != expected_projection_paths[key]
+            or key in actual_projection_paths
+        ):
+            fail("ROLE-INVENTORY", "current projection layout differs")
+        actual_projection_paths[key] = PurePosixPath(path)
+    if actual_projection_paths != expected_projection_paths:
+        fail("ROLE-INVENTORY", "current projection membership differs")
+
+    return HarnessSelection(
+        role_ids=role_ids,
+        surface_ids=surface_ids,
+        roles=roles,
+        locations=locations,
+        projection_paths=actual_projection_paths,
+    )
+
+
 def validate_contract(
     root: Path, raw_contract: dict[str, Any] | None = None
-) -> dict[str, dict[str, Any]]:
-    schema = load_json(root / SCHEMA_PATH)
+) -> HarnessSelection:
+    schema = load_json(root, SCHEMA_PATH)
     try:
         Draft202012Validator.check_schema(schema)
     except Exception as exc:  # jsonschema exposes multiple schema subclasses
@@ -354,7 +574,7 @@ def validate_contract(
     contract = (
         copy.deepcopy(raw_contract)
         if raw_contract is not None
-        else load_json(root / CONTRACT_PATH)
+        else load_json(root, CONTRACT_PATH)
     )
     errors = sorted(
         Draft202012Validator(schema).iter_errors(contract),
@@ -365,27 +585,15 @@ def validate_contract(
         location = "/".join(str(part) for part in error.absolute_path) or "<root>"
         fail("ROLE-SCHEMA", f"{location}: {error.message}")
 
-    if tuple(contract["adapterSurfaces"]) != ADAPTER_SURFACES:
-        fail("ROLE-ADAPTER-SURFACES", "adapter surface order or membership differs")
-    if tuple(contract["categories"]) != CONTRACT_CATEGORIES:
-        fail("ROLE-CATEGORIES", "semantic category order or membership differs")
-
-    roles = contract["roles"]
-    role_ids = tuple(role["id"] for role in roles)
-    if role_ids != ROLE_IDS:
-        fail("ROLE-IDS", "role order or membership differs from the current roster")
-    if len(set(role_ids)) != len(role_ids):
-        fail("ROLE-IDS", "duplicate role id")
+    selection = select_current_harness(contract)
 
     anchors: dict[str, tuple[str, str]] = {}
-    indexed: dict[str, dict[str, Any]] = {}
-    for role in roles:
+    for role in selection.roles.values():
         role_id = role["id"]
-        expected_tier = "top" if role_id == "supervisor" else "worker"
-        if role["capabilityTier"] != expected_tier:
+        if role["capabilityTier"] not in {"top", "worker"}:
             fail(
                 "ROLE-CAPABILITY-TIER",
-                f"{role_id} must declare shared tier {expected_tier!r}",
+                f"{role_id} declares an unsupported capability tier",
             )
         for category in CONTRACT_CATEGORIES:
             claims = (
@@ -408,8 +616,7 @@ def validate_contract(
                         f"{other_role}/{other_category}",
                     )
                 anchors[claim] = (role_id, category)
-        indexed[role_id] = role
-    return indexed
+    return selection
 
 
 def parse_frontmatter(text: str, path: str) -> tuple[dict[str, Any], str]:
@@ -662,19 +869,23 @@ def parse_adapter_text(surface: str, relative_path: PurePosixPath, text: str) ->
     )
 
 
-def adapter_source(root: Path, surface: str, role_id: str) -> tuple[PurePosixPath, str]:
-    directory, suffix = ADAPTER_LOCATIONS[surface]
-    relative_path = directory / f"{role_id}{suffix}"
+def adapter_source(
+    root: Path,
+    selection: HarnessSelection,
+    surface: str,
+    role_id: str,
+) -> tuple[PurePosixPath, str]:
+    relative_path = selection.projection_paths[(role_id, surface)]
     try:
-        text = (root / relative_path).read_text(encoding="utf-8")
+        text = safe_repo_path(
+            root,
+            relative_path,
+            final_kind="file",
+            code="ROLE-ADAPTER-PARSE",
+        ).read_text(encoding="utf-8")
     except OSError as exc:
         fail("ROLE-ADAPTER-PARSE", f"{relative_path}: {exc}")
     return relative_path, text
-
-
-def parse_adapter(root: Path, surface: str, role_id: str) -> Adapter:
-    relative_path, text = adapter_source(root, surface, role_id)
-    return parse_adapter_text(surface, relative_path, text)
 
 
 def _missing_claims(
@@ -718,27 +929,34 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
     return diagnostics
 
 
-def repository_adapters(root: Path) -> dict[tuple[str, str], Adapter]:
+def repository_adapters(
+    root: Path, selection: HarnessSelection
+) -> dict[tuple[str, str], Adapter]:
     return {
-        (surface, role_id): parse_adapter(root, surface, role_id)
-        for surface in ADAPTER_SURFACES
-        for role_id in ROLE_IDS
+        (surface, role_id): parse_adapter_text(
+            surface,
+            *adapter_source(root, selection, surface, role_id),
+        )
+        for surface in selection.surface_ids
+        for role_id in selection.role_ids
     }
 
 
 def validate_repository(root: Path) -> list[Diagnostic]:
-    roles = validate_contract(root)
-    adapters = repository_adapters(root)
+    selection = validate_contract(root)
+    adapters = repository_adapters(root, selection)
     return [
         diagnostic
-        for surface in ADAPTER_SURFACES
-        for role_id in ROLE_IDS
-        for diagnostic in validate_adapter(roles[role_id], adapters[(surface, role_id)])
+        for surface in selection.surface_ids
+        for role_id in selection.role_ids
+        for diagnostic in validate_adapter(
+            selection.roles[role_id], adapters[(surface, role_id)]
+        )
     ]
 
 
 def validate_fixture(
-    fixture: dict[str, Any], roles: dict[str, dict[str, Any]]
+    fixture: dict[str, Any], selection: HarnessSelection
 ) -> None:
     expected_keys = {
         "schemaVersion",
@@ -753,9 +971,9 @@ def validate_fixture(
     }
     if set(fixture) != expected_keys or fixture["schemaVersion"] != 2:
         fail("ROLE-FIXTURE", "fixture keys or schemaVersion differ")
-    if tuple(fixture["adapterSurfaces"]) != ADAPTER_SURFACES:
+    if tuple(fixture["adapterSurfaces"]) != selection.surface_ids:
         fail("ROLE-FIXTURE", "fixture adapter surfaces differ")
-    if tuple(fixture["roles"]) != ROLE_IDS or tuple(roles) != ROLE_IDS:
+    if tuple(fixture["roles"]) != selection.role_ids:
         fail("ROLE-FIXTURE", "fixture roles differ")
     if fixture["categories"] != CATEGORY_RULES:
         fail("ROLE-FIXTURE", "fixture category rule IDs differ")
@@ -766,7 +984,10 @@ def validate_fixture(
     if tuple(fixture["negationStates"]) != NEGATION_STATES:
         fail("ROLE-FIXTURE", "negation state vocabulary differs")
     expected_count = (
-        len(ADAPTER_SURFACES) * len(ROLE_IDS) * len(CATEGORY_RULES) * 2
+        len(selection.surface_ids)
+        * len(selection.role_ids)
+        * len(CATEGORY_RULES)
+        * 2
     )
     if fixture["expectedCaseCount"] != expected_count:
         fail("ROLE-FIXTURE", f"expectedCaseCount must equal {expected_count}")
@@ -912,13 +1133,16 @@ def validate_mutated_source(
 
 
 def run_self_test(root: Path) -> tuple[list[str], int]:
-    roles = validate_contract(root)
-    fixture = load_json(root / FIXTURE_PATH)
-    validate_fixture(fixture, roles)
+    selection = validate_contract(root)
+    roles = selection.roles
+    fixture = load_json(root, FIXTURE_PATH)
+    validate_fixture(fixture, selection)
     sources = {
-        (surface, role_id): adapter_source(root, surface, role_id)
-        for surface in ADAPTER_SURFACES
-        for role_id in ROLE_IDS
+        (surface, role_id): adapter_source(
+            root, selection, surface, role_id
+        )
+        for surface in selection.surface_ids
+        for role_id in selection.role_ids
     }
     adapters = {
         key: parse_adapter_text(key[0], path, source)
@@ -926,8 +1150,8 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
     }
     baseline = [
         diagnostic
-        for surface in ADAPTER_SURFACES
-        for role_id in ROLE_IDS
+        for surface in selection.surface_ids
+        for role_id in selection.role_ids
         for diagnostic in validate_adapter(roles[role_id], adapters[(surface, role_id)])
     ]
     if baseline:
@@ -935,8 +1159,8 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
 
     failures: list[str] = []
     cases = 0
-    for surface in ADAPTER_SURFACES:
-        for role_id in ROLE_IDS:
+    for surface in selection.surface_ids:
+        for role_id in selection.role_ids:
             role = roles[role_id]
             path, base_source = sources[(surface, role_id)]
             for category, expected_rule in CATEGORY_RULES.items():
@@ -1010,10 +1234,12 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                     f"['ROLE-RESPONSIBILITY'], got {actual_rules!r}"
                 )
 
-    raw_contract = load_json(root / CONTRACT_PATH)
+    raw_contract = load_json(root, CONTRACT_PATH)
     for forbidden in fixture["forbiddenCommonFields"]:
         mutated_contract = copy.deepcopy(raw_contract)
-        mutated_contract["roles"][0][forbidden] = "adapter-owned"
+        mutated_contract["canonicalRoles"][0]["adapterSemantics"][
+            forbidden
+        ] = "adapter-owned"
         try:
             validate_contract(root, mutated_contract)
         except ContractError as exc:
@@ -1043,10 +1269,13 @@ def main() -> int:
                 "[PASS] agent role semantics self-test passed: "
                 f"cases={cases} adversarial={len(ADVERSARIAL_SCHEMA)} "
                 f"vocabulary={len(NEGATION_STATES) * 2} "
-                "roles=10 adapters=30 categories=8"
+                f"roles={len(validate_contract(root).role_ids)} "
+                f"adapters={len(validate_contract(root).projection_paths)} "
+                f"categories={len(CATEGORY_RULES)}"
             )
             return 0
 
+        selection = validate_contract(root)
         diagnostics = validate_repository(root)
         if diagnostics:
             for diagnostic in diagnostics:
@@ -1054,7 +1283,9 @@ def main() -> int:
             return 1
         print(
             "[PASS] agent role semantics validation passed: "
-            "roles=10 adapters=30 categories=8"
+            f"roles={len(selection.role_ids)} "
+            f"adapters={len(selection.projection_paths)} "
+            f"categories={len(CATEGORY_RULES)}"
         )
         return 0
     except (ContractError, KeyError, TypeError, ValueError) as exc:

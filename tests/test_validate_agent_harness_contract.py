@@ -4,6 +4,7 @@ import contextlib
 import copy
 import importlib.util
 import io
+import json
 import sys
 import tempfile
 import unittest
@@ -28,6 +29,17 @@ def load_validator():
     return module
 
 
+def load_script(name: str, relative_path: str):
+    path = REPOSITORY_ROOT / relative_path
+    specification = importlib.util.spec_from_file_location(name, path)
+    if specification is None or specification.loader is None:
+        raise AssertionError(f"{relative_path} could not be loaded")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
 class AgentHarnessContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -37,6 +49,14 @@ class AgentHarnessContractTests(unittest.TestCase):
         )
         cls.fixture = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.FIXTURE_PATH
+        )
+        cls.role_validator = load_script(
+            "agent_role_semantics_consumer_test_target",
+            "scripts/validate-agent-role-semantics.py",
+        )
+        cls.roster_validator = load_script(
+            "agent_roster_currentness_consumer_test_target",
+            "scripts/validate-agent-roster-currentness.py",
         )
 
     def contract_copy(self):
@@ -178,10 +198,268 @@ class AgentHarnessContractTests(unittest.TestCase):
             tuple(self.contract["compatibility"]["legacyConsumers"]),
             self.validator.LEGACY_CONSUMERS,
         )
+        self.assertNotIn(
+            "role-semantics-validator",
+            self.contract["compatibility"]["legacyConsumers"],
+        )
+        self.assertNotIn(
+            "roster-currentness-validator",
+            self.contract["compatibility"]["legacyConsumers"],
+        )
+        self.assertEqual(len(self.validator.LEGACY_CONSUMERS), 8)
         self.assertEqual(
             self.contract["compatibility"]["removalOwnerSpec"],
             self.validator.REMOVAL_OWNER_SPEC,
         )
+
+    def test_current_adapter_semantics_are_the_exact_migrated_legacy_values(
+        self,
+    ) -> None:
+        legacy = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/00.agent-governance/contracts/agent-role-semantics.json"
+            ).read_text(encoding="utf-8")
+        )
+        legacy_by_id = {role["id"]: role for role in legacy["roles"]}
+        canonical_by_id = {
+            role["id"]: role for role in self.contract["canonicalRoles"]
+        }
+        self.assertEqual(
+            tuple(legacy_by_id),
+            tuple(self.contract["currentInventory"]["roleIds"]),
+        )
+        for role_id, legacy_role in legacy_by_id.items():
+            actual = canonical_by_id[role_id]["adapterSemantics"]
+            self.assertEqual(actual["admissionState"], "current")
+            self.assertEqual(
+                {
+                    key: actual[key]
+                    for key in self.validator.ADAPTER_SEMANTIC_FIELDS
+                },
+                {
+                    key: legacy_role[key]
+                    for key in self.validator.ADAPTER_SEMANTIC_FIELDS
+                },
+            )
+
+    def test_target_adapter_semantics_remain_target_only(self) -> None:
+        current = set(self.contract["currentInventory"]["roleIds"])
+        targets = [
+            role for role in self.contract["canonicalRoles"]
+            if role["id"] not in current
+        ]
+        self.assertEqual(
+            tuple(role["id"] for role in targets),
+            ("docs-researcher", "quality-engineer"),
+        )
+        self.assertTrue(
+            all(
+                role["admissionState"] == "target-only"
+                and role["adapterSemantics"]["admissionState"] == "target-only"
+                for role in targets
+            )
+        )
+
+    def _single_role_surface_contract(self):
+        mutated = self.contract_copy()
+        projection = copy.deepcopy(
+            mutated["currentInventory"]["projections"][0]
+        )
+        mutated["currentInventory"].update(
+            {
+                "expectedRoleCount": 1,
+                "expectedSurfaceCount": 1,
+                "expectedProjectionCount": 1,
+                "roleIds": [projection["roleId"]],
+                "surfaceIds": [projection["surfaceId"]],
+                "projections": [projection],
+            }
+        )
+        return mutated, projection
+
+    def test_role_semantics_consumer_follows_mutated_harness_selection(self) -> None:
+        mutated, projection = self._single_role_surface_contract()
+        canonical = next(
+            role for role in mutated["canonicalRoles"]
+            if role["id"] == projection["roleId"]
+        )
+        migrated_claim = canonical["adapterSemantics"]["responsibilities"][0]
+        canonical["adapterSemantics"]["responsibilities"] = [
+            "Synthetic harness-selected responsibility for consumer routing."
+        ]
+        selection = self.role_validator.select_current_harness(mutated)
+        self.assertEqual(selection.role_ids, (projection["roleId"],))
+        self.assertEqual(selection.surface_ids, (projection["surfaceId"],))
+        path, source = self.role_validator.adapter_source(
+            REPOSITORY_ROOT,
+            selection,
+            projection["surfaceId"],
+            projection["roleId"],
+        )
+        adapter = self.role_validator.parse_adapter_text(
+            projection["surfaceId"], path, source
+        )
+        diagnostics = self.role_validator.validate_adapter(
+            selection.roles[projection["roleId"]], adapter
+        )
+        self.assertEqual(
+            [diagnostic.code for diagnostic in diagnostics],
+            ["ROLE-RESPONSIBILITY"],
+        )
+        self.assertIn(migrated_claim, source)
+        self.assertEqual(
+            self.role_validator.CONTRACT_PATH,
+            PurePosixPath(
+                "docs/00.agent-governance/contracts/harness-contract.json"
+            ),
+        )
+
+    def test_roster_consumer_follows_mutated_harness_selection(self) -> None:
+        mutated, projection = self._single_role_surface_contract()
+        roster = self.roster_validator.select_current_harness(mutated)
+        catalog = (
+            REPOSITORY_ROOT / "docs/00.agent-governance/harness-catalog.md"
+        ).read_text(encoding="utf-8")
+        errors = self.roster_validator.validate_contract(
+            {projection["surfaceId"]: {projection["roleId"]}},
+            catalog,
+            roster,
+        )
+        self.assertEqual(errors, [])
+        self.assertEqual(len(roster.projection_paths), 1)
+        self.assertEqual(
+            self.roster_validator.HARNESS_CONTRACT_PATH,
+            PurePosixPath(
+                "docs/00.agent-governance/contracts/harness-contract.json"
+            ),
+        )
+
+    def test_semantic_consumer_rejects_unsafe_surface_root(self) -> None:
+        mutated, projection = self._single_role_surface_contract()
+        surface = next(
+            surface for surface in mutated["surfaces"]
+            if surface["id"] == projection["surfaceId"]
+        )
+        surface["pathRoot"] = "../.agents/agents"
+        projection["path"] = "../.agents/agents/supervisor.md"
+        with self.assertRaises(self.role_validator.ContractError) as caught:
+            self.role_validator.select_current_harness(mutated)
+        self.assertIn("ROLE-ADAPTER-SURFACES", str(caught.exception))
+
+    def test_roster_consumer_rejects_non_adapter_extension(self) -> None:
+        mutated, projection = self._single_role_surface_contract()
+        surface = next(
+            surface for surface in mutated["surfaces"]
+            if surface["id"] == projection["surfaceId"]
+        )
+        surface["extension"] = ".json"
+        projection["path"] = (
+            f"{surface['pathRoot']}/{projection['roleId']}.json"
+        )
+        with self.assertRaises(ValueError) as caught:
+            self.roster_validator.select_current_harness(mutated)
+        self.assertIn("location differs", str(caught.exception))
+
+    def test_semantic_consumer_rejects_symlink_adapter_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "repo"
+            outside = Path(tmpdir) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (root / ".agents").symlink_to(outside, target_is_directory=True)
+            selection = self.role_validator.HarnessSelection(
+                role_ids=("supervisor",),
+                surface_ids=("local",),
+                roles={},
+                locations={"local": (PurePosixPath(".agents/agents"), ".md")},
+                projection_paths={
+                    ("supervisor", "local"): PurePosixPath(
+                        ".agents/agents/supervisor.md"
+                    )
+                },
+            )
+            with self.assertRaises(self.role_validator.ContractError) as caught:
+                self.role_validator.adapter_source(
+                    root, selection, "local", "supervisor"
+                )
+            self.assertIn("symlink path component", str(caught.exception))
+
+    def test_roster_consumer_rejects_symlink_surface_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "repo"
+            outside = Path(tmpdir) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (root / ".agents").symlink_to(outside, target_is_directory=True)
+            roster = self.roster_validator.HarnessRoster(
+                role_ids=("supervisor",),
+                surface_ids=("local",),
+                locations={"local": (PurePosixPath(".agents/agents"), ".md")},
+                projection_paths=frozenset({
+                    PurePosixPath(".agents/agents/supervisor.md")
+                }),
+            )
+            with self.assertRaises(ValueError) as caught:
+                self.roster_validator.repository_inputs(root, roster)
+            self.assertIn("symlink path component", str(caught.exception))
+
+    def test_semantic_consumer_rejects_symlink_contract_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "repo"
+            outside = Path(tmpdir) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "harness-contract.json").write_text(
+                "{}\n", encoding="utf-8"
+            )
+            (root / "docs").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(self.role_validator.ContractError) as caught:
+                self.role_validator.load_json(
+                    root,
+                    PurePosixPath("docs/harness-contract.json"),
+                )
+            self.assertIn("symlink path component", str(caught.exception))
+
+    def test_roster_consumer_rejects_symlink_contract_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "repo"
+            outside = Path(tmpdir) / "outside"
+            contract_parent = outside / "00.agent-governance" / "contracts"
+            root.mkdir()
+            contract_parent.mkdir(parents=True)
+            (contract_parent / "harness-contract.json").write_text(
+                "{}\n", encoding="utf-8"
+            )
+            (root / "docs").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(ValueError) as caught:
+                self.roster_validator.load_harness_contract(root)
+            self.assertIn("symlink path component", str(caught.exception))
+
+    def test_roster_consumer_rejects_symlink_fixture_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "repo"
+            outside = Path(tmpdir) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "agent-roster-currentness.json").write_text(
+                "{}\n", encoding="utf-8"
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "fixtures").symlink_to(
+                outside, target_is_directory=True
+            )
+            roster = self.roster_validator.HarnessRoster(
+                role_ids=("supervisor",),
+                surface_ids=("local",),
+                locations={"local": (PurePosixPath(".agents/agents"), ".md")},
+                projection_paths=frozenset({
+                    PurePosixPath(".agents/agents/supervisor.md")
+                }),
+            )
+            with self.assertRaises(ValueError) as caught:
+                self.roster_validator.run_self_test(root, roster)
+            self.assertIn("symlink path component", str(caught.exception))
 
     def test_memory_classes_have_closed_authority_and_promotion(self) -> None:
         classes = {
@@ -365,7 +643,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 ["--root", str(REPOSITORY_ROOT), "--self-test"]
             )
         self.assertEqual(self_test, 0)
-        self.assertIn("cases=33", stdout.getvalue())
+        self.assertIn("cases=35", stdout.getvalue())
 
 
 if __name__ == "__main__":

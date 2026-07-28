@@ -321,6 +321,7 @@
         "stopConditions",
         "handoffs",
         "requiredEvidence",
+        "adapterSemantics",
         "evalSuite",
         "modelPolicyRef"
       ],
@@ -385,11 +386,66 @@
         "requiredEvidence": {
           "$ref": "#/$defs/claims"
         },
+        "adapterSemantics": {
+          "$ref": "#/$defs/adapterSemantics"
+        },
         "evalSuite": {
           "$ref": "#/$defs/evalSuite"
         },
         "modelPolicyRef": {
           "const": "docs/00.agent-governance/model-policy.md"
+        }
+      }
+    },
+    "adapterSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admissionState",
+        "responsibilities",
+        "outputs",
+        "prohibitedActions",
+        "stopConditions",
+        "handoffs",
+        "capabilityTier",
+        "capabilityTierClaim",
+        "requiredEvidence"
+      ],
+      "properties": {
+        "admissionState": {
+          "enum": [
+            "current",
+            "target-only"
+          ]
+        },
+        "responsibilities": {
+          "$ref": "#/$defs/claims"
+        },
+        "outputs": {
+          "$ref": "#/$defs/claims"
+        },
+        "prohibitedActions": {
+          "$ref": "#/$defs/claims"
+        },
+        "stopConditions": {
+          "$ref": "#/$defs/claims"
+        },
+        "handoffs": {
+          "$ref": "#/$defs/claims"
+        },
+        "capabilityTier": {
+          "enum": [
+            "top",
+            "worker"
+          ]
+        },
+        "capabilityTierClaim": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "requiredEvidence": {
+          "$ref": "#/$defs/claims"
         }
       }
     },
