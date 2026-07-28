@@ -16,10 +16,12 @@ Codex, and Gemini. Local/Antigravity remains a fourth tracked projection but is
 not a substitute for a Gemini-native canary.
 
 The current-source observation cutoff is **2026-07-10 10:00 Asia/Seoul**
-(`2026-07-10 01:00 UTC`). The last recorded local observation found only
-`codex-cli 0.145.0-alpha.27`; Claude and Gemini CLIs were absent. Implementation
-must re-observe versions without reading authentication artifacts. Those
-observations are inputs, not completion or availability claims.
+(`2026-07-10 01:00 UTC`). A prior user report recorded Codex CLI
+`0.145.0-alpha.27` present with Claude and Gemini absent. Read-only executable
+re-observation on 2026-07-28 found Claude Code `2.1.220 (Claude Code)` and Codex CLI `0.140.0`
+present while Gemini remained absent. The observations remain separately
+provenanced inputs, not cutoff, authentication, completion, model-resolution,
+or runtime-availability claims.
 
 ## Strategic Boundaries & Non-goals
 

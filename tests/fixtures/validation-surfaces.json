@@ -42,7 +42,7 @@
       "lane": "affected",
       "paths": ["AGENTS.md", ".agents/agents/supervisor.md"],
       "expected": {
-        "validators": ["agent-harness-contract", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-harness-contract", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -53,7 +53,7 @@
       "lane": "affected",
       "paths": ["docs/00.agent-governance/contracts/harness-contract.json"],
       "expected": {
-        "validators": ["agent-harness-contract", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-harness-contract", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -93,7 +93,7 @@
         "traefik/traefik.yaml"
       ],
       "expected": {
-        "validators": ["agent-harness-contract", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-harness-contract", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -111,7 +111,7 @@
         "tests/fixtures/links-and-owners.json"
       ],
       "expected": {
-        "validators": ["agent-harness-contract", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-harness-contract", "agent-provider-evidence", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -155,7 +155,7 @@
       "lane": "affected",
       "paths": [".agents/agents/network-reviewer.md"],
       "expected": {
-        "validators": ["agent-harness-contract", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-harness-contract", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []

@@ -77,10 +77,13 @@ inventory stays in `scripts/README.md`.
 
 - Provider source facts, local version observations, and canary verdicts must
   retain provenance and evidence class before promotion to durable memory.
-- User-reported local state remains an observation, not provider readiness:
-  Codex CLI `0.145.0-alpha.27` was present; Claude and Gemini CLIs were absent.
-  No auth cache, credential, account identity, prompt transcript, provider
-  response body, or private user configuration is durable evidence.
+- The prior user report remains a separately provenanced observation: Codex CLI
+  `0.145.0-alpha.27` present with Claude and Gemini absent. Read-only executable
+  re-observation on 2026-07-28 found Claude Code `2.1.220 (Claude Code)` and Codex CLI
+  `0.140.0` present while Gemini remained absent. These values are not treated
+  as an ordered upgrade history or provider readiness. No auth cache,
+  credential, account identity, prompt transcript, provider response body, or
+  private user configuration is durable evidence.
 
 #### Evidence
 

@@ -69,15 +69,19 @@ readiness claim.
 
 ### Official Capability Basis
 
-Official provider capability basis checked on 2026-07-06:
+The provider/model cutoff is `2026-07-10 10:00 Asia/Seoul`; dated releases
+and current documentation were reconciled on 2026-07-28. Current pages are
+observation-time evidence unless a dated release or tag supports the cutoff
+claim:
 
-- Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
-- Codex subagents: <https://developers.openai.com/codex/subagents>
-- Codex CLI/config/approval modes: <https://developers.openai.com/codex/cli>
+- Codex custom instructions with `AGENTS.md`: <https://learn.chatgpt.com/docs/agent-configuration/agents-md>
+- Codex subagents: <https://learn.chatgpt.com/docs/agent-configuration/subagents>
+- Codex CLI/config/approval modes: <https://learn.chatgpt.com/docs/config-file/config-reference>
 - Claude Code settings: <https://code.claude.com/docs/en/settings>
 - Claude Code hooks: <https://code.claude.com/docs/en/hooks>
 - Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
-- Gemini CLI commands and hierarchical memory: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
+- Gemini CLI changelog: <https://geminicli.com/docs/changelogs/>
+- Gemini CLI subagents and memory: <https://geminicli.com/docs/core/subagents/> and <https://geminicli.com/docs/tools/memory/>
 - GitHub Actions: <https://docs.github.com/en/actions>
 - External Agency Agents roster and multi-tool packaging scan: <https://github.com/msitarzewski/agency-agents>
 
@@ -109,7 +113,7 @@ same policy in different words.
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`; Gemini-native projections remain target-only | Harness, role-semantic, roster-currentness, and affected-surface validators |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
-| Model tiers and concrete IDs              | This catalog plus `model-policy.md`                                               | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`    | Agent adapter/model checks in the quality gate; Gemini CLI resolution is `DEFER`    |
+| Model tiers and concrete local declarations | This catalog plus `model-policy.md`; cutoff/runtime confidence in `contracts/provider-runtime-evidence.json` | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml` | Agent adapter/model checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
 | Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
@@ -134,7 +138,10 @@ resolution.
 - `supervisor` is the only `top`-tier agent; all other local agents are `worker` tier.
 - Each tracked role surface must declare the concrete model for its tier from this table.
 - Codex agent TOML files must also declare `model_reasoning_effort`; use `xhigh` for `supervisor`, `high` for implementation/review/security/incident workers, and `medium` for documentation and wiki curation workers.
-- Concrete identifiers may be updated here in one place when a provider promotes a new top or worker model.
+- A concrete identifier changes only after the intended provider syntax parses,
+  the permitted runtime resolves it without silent fallback, and Spec 044
+  records role-specific fitness. Provider publication alone is not promotion
+  evidence.
 
 ### Model Selection Policy
 

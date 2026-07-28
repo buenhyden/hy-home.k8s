@@ -89,6 +89,8 @@ checks after changing the gateway or a Codex adapter:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-provider-config.py --root .
+python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

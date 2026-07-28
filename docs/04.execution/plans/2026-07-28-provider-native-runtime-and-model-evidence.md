@@ -32,10 +32,12 @@ Spec 041 established one closed harness machine contract, the exact current
 classes, and four memory classes. Spec 042 must now distinguish cutoff-backed
 provider facts from observation-time docs and local runtime observations.
 
-The user-reported local baseline is Codex CLI `0.145.0-alpha.27` present with
-Claude and Gemini CLIs absent. This is a bounded local observation only. It
-does not establish authentication, model resolution, subagent discovery,
-runtime readiness, or provider support at the cutoff.
+A prior user report recorded Codex CLI `0.145.0-alpha.27` present with Claude
+and Gemini absent. Read-only executable re-observation on 2026-07-28 found
+Claude Code `2.1.220 (Claude Code)` and Codex CLI `0.140.0` present while Gemini remained
+absent. Preserve both observations with provenance; neither establishes
+authentication, model resolution, subagent discovery, runtime readiness, or
+provider support at the cutoff.
 
 ## Goals & In-Scope
 
@@ -67,7 +69,7 @@ runtime readiness, or provider support at the cutoff.
 | ID | Work package | Exit evidence |
 | --- | --- | --- |
 | PNME-000 | Activate reciprocal Plan/Task and Spec 042 lineage after Spec 041 postflight | Spec042 active; Plan/Task active; registry tranche active; predecessor closure cited |
-| PNME-001 | Refresh official source ledger and Current research references at cutoff | Claude/Codex/Gemini/agency-agents sources recorded with dated applicability and unsupported claims marked unresolved |
+| PNME-001 | Refresh the active provider source ledger while preserving the protected Current research snapshot | Claude/Codex/Gemini/agency-agents sources are recorded with dated applicability in the active evidence contract; the Current pack remains its fixed-cutoff reference basis |
 | PNME-002 | Normalize provider model and effort policy | Candidate model/effort table distinguishes cutoff-backed family evidence, local observation, exact runtime resolution, fallback, and Spec044 fitness gate |
 | PNME-003 | Define secret-free provider baseline and canary records | Records forbid credentials, auth files, account identity, prompt transcripts, provider response bodies, and secret-bearing diagnostics |
 | PNME-004 | Validate tracked provider surfaces and MCP boundaries | Repo-static validators prove `.agents`, `.claude`, `.codex`, and target-only `.gemini` boundaries without runtime promotion |

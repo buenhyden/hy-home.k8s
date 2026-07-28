@@ -39,11 +39,11 @@ removes stale future-gate wording before this tranche activates.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | PNME-000 | VAL-PNME-001 through VAL-PNME-009 | Activate reciprocal Spec/Plan/Task frontier after Spec 041 closure. | platform | Done | PASS — the exact eight-path activation and postflight satisfy lifecycle, strict document, aggregate, all-files, diff, and independent review gates. | Activation `1c3cc9bf32adae3033494ae7cb50eaaf1650b096`; parent `fdc3d457a3806f86c288ea1bb923898a67294709`; exact eight paths; explicit-ref lifecycle and clean-tree aggregate PASS; requirements compliant; quality approved; no provider-runtime or model-promotion claim. |
-| PNME-001 | VAL-PNME-002, VAL-PNME-004 | Refresh official cutoff source ledger and unsupported model/runtime claims. | platform | Queued | Not executed. | Claude, Codex, Gemini, and agency-agents sources will be recorded with cutoff applicability. |
-| PNME-002 | VAL-PNME-004 | Normalize provider model/effort candidates, exact-ID uncertainty, fallback behavior, and the Spec 044 fitness gate. | platform | Queued | Not executed. | No candidate becomes a current role assignment without parse, runtime resolution, and fitness evidence. |
-| PNME-003 | VAL-PNME-005 through VAL-PNME-008 | Define secret-free provider baseline/canary records and provider verdict handling. | platform | Queued | Not executed. | `PASS`, `FAIL`, `BLOCKED`, `ABSENT`, and `DEFER` records must be redacted, comparable, and evidence-class specific. |
-| PNME-004 | VAL-PNME-001 through VAL-PNME-003 | Validate tracked provider paths, native metadata, MCP/tool boundaries, and target-only Gemini admission. | platform | Queued | Not executed. | Repository-static validation must not promote provider discovery, authenticated-run, or Gemini-native readiness. |
-| PNME-005 | VAL-PNME-001 through VAL-PNME-009 | Run focused/static/strict/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | Queued | Not executed. | Commands, reviewer verdicts, closure commits, rollback, and external limitations will be recorded here. |
+| PNME-001 | VAL-PNME-002, VAL-PNME-004 | Refresh official cutoff source ledger and unsupported model/runtime claims. | platform | Done | PASS — the fixed ten-source ledger records exact UTC publication time when known, requires precision for cutoff-day claims, and preserves the protected Current research snapshot. | Config validator production/self-test PASS with 13 closed mutations, including same-day-after-cutoff, source-set substitution/growth, invalid calendar date, and exact observed-version cases. |
+| PNME-002 | VAL-PNME-004 | Normalize provider model/effort candidates, exact-ID uncertainty, fallback behavior, and the Spec 044 fitness gate. | platform | Done | PASS — eight provider/role model records remain candidate-only and require config parse, exact runtime resolution, no silent fallback, and Spec 044 fitness. | Provider contract/schema and config unit suite PASS; no candidate is promoted to a current assignment. |
+| PNME-003 | VAL-PNME-005 through VAL-PNME-008 | Define secret-free provider baseline/canary records and provider verdict handling. | platform | Done | PASS — twelve provider/evidence-class canaries use closed redacted records and evidence-lane-specific verdicts. | Canary production/self-test PASS with eight negative mutations; credentials, raw prompts, provider bodies, mutation, missing ownership/retry trigger, and cross-lane promotion are rejected. |
+| PNME-004 | VAL-PNME-001 through VAL-PNME-003 | Validate tracked provider paths, native metadata, MCP/tool boundaries, and target-only Gemini admission. | platform | Done | PASS — four provider surfaces, canonical repo-relative project paths, seven MCP servers, and target-only absent Gemini are validated without runtime promotion. | Affected-surface self/production, strict registry/Markdown/links, role audit, Current-pack RIA, and repository aggregate PASS. |
+| PNME-005 | VAL-PNME-001 through VAL-PNME-009 | Run focused/static/strict/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | In Progress | PASS for focused/static/strict/aggregate/all-files/diff lanes and independent re-review; implementation commit, atomic closure, and postflight remain pending. | Provider unit `17/17`, config `13`, canary `8`, affected `21/21`, strict registry `455`, aggregate PASS, all applicable pre-commit hooks PASS; requirements `COMPLIANT`; quality/security `APPROVED`; provider discovery/authenticated run, hosted CI, remote, credential, and live lanes remain `DEFER`. |
 
 ## Approval and Safety Boundaries
 
@@ -83,9 +83,11 @@ removes stale future-gate wording before this tranche activates.
 The activation proposal records only a repository-local lifecycle transition.
 It does not claim provider discovery, authentication, runtime availability,
 model resolution, Gemini-native admission, hosted CI, remote, credential, or
-live PASS. The user-reported local observation remains Codex CLI
-`0.145.0-alpha.27` present with Claude and Gemini CLIs absent; it is not a
-provider-readiness result.
+live PASS. The prior user report recorded Codex CLI `0.145.0-alpha.27` present
+with Claude and Gemini absent. A read-only executable observation on 2026-07-28
+instead found Claude Code `2.1.220 (Claude Code)` and Codex CLI `0.140.0` present while
+Gemini remained absent. The two observations are retained separately; neither
+is a provider-readiness result.
 
 Initial staged validation exposed missing reciprocal Task body sections and
 relationships. The repaired exact eight-path proposal then passed strict
@@ -93,6 +95,14 @@ registry, Markdown body-contract, cross-link/owner, staged lifecycle,
 repository aggregate, all-files pre-commit, cached/unstaged diff, requirements
 scope, and independent quality review. PNME-000 is complete without claiming
 an unobserved result.
+
+PNME-001 through PNME-004 now have staged implementation evidence. The
+provider contract fixes ten source identities, exact cutoff-day UTC handling,
+four provider surfaces, eight candidate-only model records, seven MCP
+boundaries, and twelve redacted canary records. Focused and repository-wide QA
+passed and independent re-review returned requirements `COMPLIANT` plus
+quality/security `APPROVED`; PNME-005 remains in progress until the
+implementation commit, atomic lifecycle closure, and postflight all complete.
 
 Activation commit `1c3cc9bf32adae3033494ae7cb50eaaf1650b096`
 has parent `fdc3d457a3806f86c288ea1bb923898a67294709` and changes
@@ -111,8 +121,8 @@ content-addressed SHA.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [PNME-000](../plans/2026-07-28-provider-native-runtime-and-model-evidence.md#work-breakdown) | PASS — exact eight-path activation and postflight satisfy their repository-static gates. | `fdc3d457` → `1c3cc9bf`; explicit-ref lifecycle and clean-tree aggregate passed; no provider-runtime claim. |
-| [PNME-001](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md#success-criteria--verification-plan) | Queued — cutoff source ledger not yet refreshed. | Official Claude, Codex, Gemini, and pinned agency-agents evidence required. |
-| N/A — PNME-002 shares the Plan and Spec sources linked above | Queued — model/effort candidates are not assignments. | Exact configured/observed IDs, fallback, runtime resolution, and Spec 044 fitness remain required. |
-| N/A — PNME-003 shares the Plan and Spec sources linked above | Queued — baseline/canary schemas not yet implemented. | Closed, synthetic, secret-free records with evidence-specific verdicts required. |
-| N/A — PNME-004 shares the Plan and Spec sources linked above | Queued — tracked surfaces not yet reconciled. | Local/Antigravity, Claude, Codex, and target-only Gemini remain non-transitive evidence lanes. |
-| N/A — PNME-005 shares the Plan and Spec sources linked above | Queued — terminal QA/review/closure not executed. | Focused, strict, lifecycle, aggregate, all-files, diff, and independent review evidence required. |
+| [PNME-001](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md#success-criteria--verification-plan) | PASS — fixed cutoff source ledger implemented. | Exact ten-source set, UTC cutoff-day precision, prior/current observation separation, and protected Current snapshot preservation validate. |
+| N/A — PNME-002 shares the Plan and Spec sources linked above | PASS — candidate model/effort policy implemented without assignment promotion. | Eight candidate-only records retain exact parse, runtime resolution, fallback, and Spec 044 fitness gates. |
+| N/A — PNME-003 shares the Plan and Spec sources linked above | PASS — provider baseline/canary records implemented. | Twelve closed redacted records and eight canary mutations validate evidence-specific verdict behavior. |
+| N/A — PNME-004 shares the Plan and Spec sources linked above | PASS — tracked surfaces and MCP boundaries reconciled. | Four surfaces, canonical repo-relative project paths, seven MCP servers, target-only absent Gemini, and seven-surface routing validate. |
+| N/A — PNME-005 shares the Plan and Spec sources linked above | In Progress — static QA and independent re-review are PASS; commit, closure, and postflight remain. | Unit/focused/strict/lifecycle/aggregate/all-files/diff evidence is observed; requirements `COMPLIANT`; quality/security `APPROVED`; external/provider/live lanes remain `DEFER`. |

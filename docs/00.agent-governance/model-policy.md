@@ -3,7 +3,7 @@ title: 'Reference: Model Selection Policy'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-28
 ---
 
 # Model Selection Policy
@@ -31,9 +31,10 @@ must be reviewed by the platform owner before the catalog and adapters change.
 
 ### Source Freshness
 
-- Last checked: 2026-07-06
-- Provider capability references were reconciled with the official source basis
-  recorded in `harness-catalog.md`.
+- Last checked: 2026-07-10 10:00 Asia/Seoul cutoff, refreshed on
+  2026-07-28 by Spec 042.
+- Provider capability references are reconciled with
+  `contracts/provider-runtime-evidence.json`.
 - Claude and local/Antigravity Gemini identifiers remain the repository-local
   baseline recorded in `harness-catalog.md`; verify provider identifiers against
   official sources before changing those concrete IDs. Do not treat the local
@@ -45,15 +46,17 @@ must be reviewed by the platform owner before the catalog and adapters change.
 
 | Provider / Environment | Planning / Supervisor Tier (High Difficulty) | Worker / Subagent Tier (Speed & Efficiency) | Reasoning / Effort Policy |
 | --- | --- | --- | --- |
-| **Gemini (Antigravity)** | `Gemini 3.1 Pro` | `Gemini 3.5 Flash` | Use the local adapter high/medium tier labels recorded in `harness-catalog.md`; Gemini CLI native model resolution remains `DEFER`. |
-| **Claude** | `opus 4.8` | `sonnet 4.6` / `haiku 4.5` | Use the provider-native model tier controls recorded in agent frontmatter. |
-| **Codex** | `gpt-5.5` | `gpt-5.3-codex` | `gpt-5.5`: `none`, `low`, `medium`, `high`, `xhigh`; `gpt-5.3-codex`: `low`, `medium`, `high`, `xhigh`. |
+| **Gemini (Antigravity / Gemini CLI)** | Local high-tier label or Gemini-native pro candidate | Local worker label, Gemini-native flash candidate, or provider Auto | `.agents/**` is local adapter evidence only. Gemini CLI native IDs and reasoning settings remain candidate-only until `.gemini/**` parse/runtime evidence exists. |
+| **Claude** | Opus 4.8 family candidate for high-risk planning/security | Sonnet/Haiku family candidate for bounded work | `/effort` and exact model aliases require Claude runtime/account resolution; cutoff evidence does not promote a local assignment by itself. |
+| **Codex** | GPT-5.6 family candidate or installed-runtime demanding candidate | Installed-runtime balanced candidate | `model_reasoning_effort` is required for Codex role adapters but exact accepted values are model/runtime dependent and must be validated before promotion. |
 
-The concrete provider identifiers consumed by local runtime files are recorded in
-the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
-That catalog is the canonical roster table; this file owns the tier vocabulary
-and reasoning/effort policy. Codex TOML role adapters must use lowercase model
-IDs and must declare `model_reasoning_effort` explicitly.
+The concrete provider identifiers consumed by local runtime files are recorded
+in `docs/00.agent-governance/harness-catalog.md` and
+`docs/00.agent-governance/contracts/provider-runtime-evidence.json`. The
+catalog remains the readable roster table; the provider evidence contract owns
+cutoff confidence, runtime verdicts, candidate-only status, and canary record
+boundaries. Codex TOML role adapters must use lowercase model IDs and must
+declare `model_reasoning_effort` explicitly when the adapter is current.
 
 ## Validation and Refresh
 
@@ -62,14 +65,14 @@ IDs and must declare `model_reasoning_effort` explicitly.
 - All `agent-design.md` specs must adhere to these tier definitions when assigning models to roles.
 - Platform configurations (`GEMINI.md`, `CLAUDE.md`, `CODEX.md`) should inherit this policy instead of re-defining model specs locally.
 - `.codex/agents/*.toml` must declare a model from this policy and an allowed `model_reasoning_effort` value.
-- *Note:* The models listed above are the canonical supported versions for the
-  July 2026 local runtime. Older local baseline models are considered legacy and
-  should not be used for new tasks unless a provider-specific migration plan
-  records the exception.
+- *Note:* The models listed above are candidate families or local labels unless
+  a provider-specific runtime/canary/eval record promotes an exact ID. Newer is
+  not automatically better, supported, or cost-appropriate.
 
 ## Related Documents
 
 - [Harness Catalog](harness-catalog.md)
+- [Provider Runtime Evidence Contract](contracts/provider-runtime-evidence.json)
 - [Codex Provider Notes](providers/codex.md)
 - [Codex Subagents](https://developers.openai.com/codex/subagents)
 - [Codex AGENTS.md](https://developers.openai.com/codex/guides/agents-md)

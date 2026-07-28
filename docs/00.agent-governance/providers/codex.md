@@ -43,11 +43,24 @@ the limitation in the active task evidence.
 
 ### Official Source Basis
 
-Checked on 2026-07-06:
+Cutoff-sensitive capability evidence was reconciled against
+`2026-07-10 10:00 Asia/Seoul` on 2026-07-28:
 
-- Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
-- Codex subagents: <https://developers.openai.com/codex/subagents>
-- Codex CLI/config/approval modes: <https://developers.openai.com/codex/cli>
+- Codex release `rust-v0.144.1`: <https://github.com/openai/codex/releases/tag/rust-v0.144.1>
+- Codex release `rust-v0.145.0-alpha.2`: <https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2>
+- Codex custom instructions with `AGENTS.md`: <https://learn.chatgpt.com/docs/agent-configuration/agents-md>
+- Codex subagents: <https://learn.chatgpt.com/docs/agent-configuration/subagents>
+- Codex configuration and approval surfaces: <https://learn.chatgpt.com/docs/config-file/config-reference>
+
+The cutoff ledger records stable `0.144.1` and prerelease
+`0.145.0-alpha.2` as published before the cutoff. The current config reference
+is observation-time evidence; accepted `model_reasoning_effort` values and
+model IDs remain model/client dependent until the intended runtime parses and
+resolves them without silent fallback. A read-only `codex --version`
+observation on 2026-07-28 returned `0.140.0`. The earlier user-reported
+`0.145.0-alpha.27` is retained as a separate prior observation; neither
+observation proves authentication, model availability, agent discovery, or
+delegated execution.
 
 ### Loading Model
 
@@ -101,6 +114,8 @@ quality checks after changing Codex adapters, model metadata, or hook wiring:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-provider-config.py --root .
+python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

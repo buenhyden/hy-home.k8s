@@ -27,9 +27,22 @@ Gemini-specific guidance for `hy-home.k8s`.
 
 ### Official Source Basis
 
-Checked on 2026-07-06:
+Cutoff-sensitive capability evidence was reconciled against
+`2026-07-10 10:00 Asia/Seoul` on 2026-07-28:
 
-- Gemini CLI commands and hierarchical memory: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
+- Gemini CLI release `v0.50.0`: <https://github.com/google-gemini/gemini-cli/releases/tag/v0.50.0>
+- Gemini CLI release `v0.51.0-preview.0`: <https://github.com/google-gemini/gemini-cli/releases/tag/v0.51.0-preview.0>
+- Gemini CLI changelog: <https://geminicli.com/docs/changelogs/>
+- Gemini CLI subagents: <https://geminicli.com/docs/core/subagents/>
+- Gemini CLI memory: <https://geminicli.com/docs/tools/memory/>
+
+The dated release ledger proves CLI releases before the cutoff, not local
+installation or this repository's native registration. Current subagent and
+memory pages are observation-time evidence unless a cutoff tag or native parser
+proves the exact field. A read-only executable lookup on 2026-07-28 found no
+Gemini CLI. This `ABSENT` installation observation leaves native discovery,
+authentication, model resolution, event delivery, and delegated execution
+unproven.
 
 ### Loading Model
 
@@ -92,9 +105,14 @@ The tracked local/Antigravity projection does not promote that target.
 
 ### Model Policy (Gemini)
 
-- Refer to `docs/00.agent-governance/model-policy.md` for canonical tiers.
-- **Planning / Supervisor**: `Gemini 3.1 Pro` must be used for architecture, planning, and governance review.
-- **Worker / Subagent**: `Gemini 3.5 Flash` must be used for routine file edits, summaries, and repetitive validation.
+- Refer to `docs/00.agent-governance/model-policy.md` and
+  `docs/00.agent-governance/contracts/provider-runtime-evidence.json` for
+  candidate tiers and cutoff confidence.
+- Current `.agents/**` model labels are local/Antigravity adapter evidence
+  only. They are not Gemini CLI native model-resolution evidence.
+- Gemini CLI pro/flash/Auto candidates remain candidate-only until `.gemini/**`
+  parse evidence, a permitted runtime canary, and Spec 044 role fitness evidence
+  promote an exact ID.
 
 ### Execution Expectations
 
@@ -128,6 +146,8 @@ after changing local/Antigravity agents, hooks, model metadata, or the root shim
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-provider-config.py --root .
+python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

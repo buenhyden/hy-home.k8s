@@ -28,11 +28,21 @@ Claude-specific guidance for `hy-home.k8s`.
 
 ### Official Source Basis
 
-Checked on 2026-07-06:
+Cutoff-sensitive capability evidence was reconciled against
+`2026-07-10 10:00 Asia/Seoul` on 2026-07-28:
 
+- Claude Code changelog: <https://code.claude.com/docs/en/changelog>
 - Claude Code settings: <https://code.claude.com/docs/en/settings>
 - Claude Code hooks: <https://code.claude.com/docs/en/hooks>
 - Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
+
+The dated changelog supports Claude Code `2.1.206` by the cutoff and records
+Opus 4.8 plus `/effort xhigh` in `2.1.154`. Current documentation is
+observation-time evidence for current syntax; it does not backdate every
+subagent field. A read-only `claude --version` observation on 2026-07-28
+returned `2.1.220 (Claude Code)`. Installation and version evidence do not prove project
+agent discovery, authentication, account entitlement, configured-model
+resolution, hooks, or delegated execution.
 
 ### Loading Model
 
@@ -100,6 +110,8 @@ after changing Claude settings, hooks, or agent adapters:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-provider-config.py --root .
+python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

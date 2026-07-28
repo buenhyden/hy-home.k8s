@@ -161,6 +161,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/agent-provider-runtime-evidence.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/reference-information-architecture/current-owner.json": (
         "json",
         "closed-fixture",
@@ -198,6 +202,14 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
     "tests/test_validate_agent_harness_contract.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_provider_canaries.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_provider_config.py": (
         "python",
         "regression-test",
     ),
