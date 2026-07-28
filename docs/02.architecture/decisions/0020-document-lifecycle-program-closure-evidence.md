@@ -1,16 +1,16 @@
 ---
 title: 'ADR-0020: Document Lifecycle Program Closure Evidence'
 type: sdlc/adr
-status: draft
+status: active
 owner: platform
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 
 # ADR-0020: Document Lifecycle Program Closure Evidence
 
 ## Overview
 
-This draft decision records the closure-evidence architecture for the PRD-006
+This active decision records the closure-evidence architecture for the PRD-006
 and ARD-0009 document lifecycle program. It exists so the final ARD-0009
 `active` to `accepted` transition has a dedicated role-decision evidence owner
 that can later move through the lifecycle validator's same-diff
@@ -34,10 +34,13 @@ bounded, current role-decision evidence path.
 
 - Introduce this ADR as the dedicated closure-evidence decision for PRD-006,
   ARD-0009, and Spec 040.
-- Keep the decision in `draft` until the closure matrix and repository-static
-  evidence are complete enough to justify activation.
+- Activate the decision after commit `b8d38d1` makes the complete CCPC-002
+  closure matrix and Current-audit reconciliation durable. The matrix records
+  observed strict, archive, migration, residue, reference, workflow, and
+  advanced-frontier evidence while retaining later-unit `Pending` and external
+  `DEFER` owners.
 - Require this ADR to remain reciprocally linked with ARD-0009 while it is
-  `draft` or `active`.
+  `active`.
 - Use this ADR, after a later `active` to `accepted` transition, as the
   same-diff role-decision evidence for ARD-0009 acceptance.
 - Preserve ADR-0017 and ADR-0018 as historical accepted decisions rather than
@@ -47,8 +50,9 @@ bounded, current role-decision evidence path.
 
 ## Explicit Non-goals
 
-- Accepting ARD-0009 in this draft commit.
-- Accepting this ADR before Spec 040 final review and QA evidence exists.
+- Accepting ARD-0009 in this activation commit.
+- Accepting this ADR before Spec 040 final review and whole-branch QA evidence
+  exists.
 - Superseding ADR-0017 or ADR-0018.
 - Rewriting accepted decisions or completed tranche bodies for cosmetic
   reciprocity.
@@ -62,7 +66,7 @@ bounded, current role-decision evidence path.
   evidence.
 - Spec 040 gains an explicit decision evidence path for the final atomic closure
   proposal.
-- One additional ADR must be activated before the terminal closure commit and
+- This dedicated ADR is active before the terminal closure commit and must be
   accepted in that same terminal proposal.
 - Closure remains honest about repository-static PASS versus deferred external
   lanes.
