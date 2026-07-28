@@ -275,7 +275,7 @@
   "checkpointBoundary": {
     "schemaRef": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json",
     "implementationOwner": "AHLL-002",
-    "implementationState": "declaration-only",
+    "implementationState": "executable",
     "repositoryStateWins": true,
     "executableValidationDelegated": true,
     "memoryClassIds": [
@@ -304,17 +304,17 @@
     "writeCheckpoint": {
       "signature": "writeCheckpoint(state) -> redacted transient record",
       "implementationOwner": "AHLL-002",
-      "implementationState": "declaration-only"
+      "implementationState": "executable"
     },
     "resume": {
       "signature": "resume(checkpoint, repositoryState) -> validated next state or rejection",
       "implementationOwner": "AHLL-002",
-      "implementationState": "declaration-only"
+      "implementationState": "executable"
     },
     "handoff": {
       "signature": "handoff(state) -> bounded result/evidence/limitation/next-owner summary",
       "implementationOwner": "AHLL-002",
-      "implementationState": "declaration-only"
+      "implementationState": "executable"
     }
   }
 }

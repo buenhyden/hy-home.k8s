@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 49,
+                "helpers": 53,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 16,
-                "python": 19,
-                "json": 23,
+                "postClosureHelpers": 20,
+                "python": 21,
+                "json": 25,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,14 +179,22 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 49)
+        self.assertEqual(len(actual), 53)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
         self.assertEqual(
             self.validator.POST_CLOSURE_HELPER_MANIFEST,
             {
+                "tests/fixtures/agent-checkpoint.json": (
+                    "json",
+                    "closed-fixture",
+                ),
                 "tests/fixtures/agent-harness-contract.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-loop-lifecycle.json": (
                     "json",
                     "closed-fixture",
                 ),
@@ -230,7 +238,15 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_checkpoint.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_agent_harness_contract.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_loop_lifecycle.py": (
                     "python",
                     "regression-test",
                 ),
@@ -257,7 +273,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 16})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 20})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -273,7 +289,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             post_closure,
             [
                 {
+                    "path": "tests/fixtures/agent-checkpoint.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
                     "path": "tests/fixtures/agent-harness-contract.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/agent-loop-lifecycle.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -328,7 +354,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
+                    "path": "tests/test_validate_agent_checkpoint.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_validate_agent_harness_contract.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_loop_lifecycle.py",
                     "format": "python",
                     "role": "regression-test",
                 },
@@ -450,13 +486,29 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             )
         self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-FORMAT")
 
-    def test_harness_helpers_are_admitted_only_by_exact_identity(self) -> None:
+    def test_harness_checkpoint_and_loop_helpers_are_exactly_admitted(self) -> None:
         exact = {
+            "tests/fixtures/agent-checkpoint.json": (
+                "json",
+                "closed-fixture",
+            ),
             "tests/fixtures/agent-harness-contract.json": (
                 "json",
                 "closed-fixture",
             ),
+            "tests/fixtures/agent-loop-lifecycle.json": (
+                "json",
+                "closed-fixture",
+            ),
+            "tests/test_validate_agent_checkpoint.py": (
+                "python",
+                "regression-test",
+            ),
             "tests/test_validate_agent_harness_contract.py": (
+                "python",
+                "regression-test",
+            ),
+            "tests/test_validate_agent_loop_lifecycle.py": (
                 "python",
                 "regression-test",
             ),
@@ -469,8 +521,12 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 )
 
         for unmanifested in (
+            "tests/fixtures/agent-checkpoint-copy.json",
             "tests/fixtures/agent-harness-contract-copy.json",
+            "tests/fixtures/agent-loop-lifecycle-copy.json",
+            "tests/test_validate_agent_checkpoint_copy.py",
             "tests/test_validate_agent_harness_contract_copy.py",
+            "tests/test_validate_agent_loop_lifecycle_copy.py",
         ):
             with self.subTest(unmanifested=unmanifested):
                 with self.assertRaises(self.validator.RoleAuditError) as raised:

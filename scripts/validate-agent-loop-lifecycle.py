@@ -193,17 +193,17 @@ INTERFACE_SIGNATURES = {
     "writeCheckpoint": (
         "writeCheckpoint(state) -> redacted transient record",
         "AHLL-002",
-        "declaration-only",
+        "executable",
     ),
     "resume": (
         "resume(checkpoint, repositoryState) -> validated next state or rejection",
         "AHLL-002",
-        "declaration-only",
+        "executable",
     ),
     "handoff": (
         "handoff(state) -> bounded result/evidence/limitation/next-owner summary",
         "AHLL-002",
-        "declaration-only",
+        "executable",
     ),
 }
 
@@ -525,7 +525,7 @@ def _validate_checkpoint_boundary(
     if (
         boundary["schemaRef"] != CHECKPOINT_SCHEMA_PATH
         or boundary["implementationOwner"] != "AHLL-002"
-        or boundary["implementationState"] != "declaration-only"
+        or boundary["implementationState"] != "executable"
         or boundary["repositoryStateWins"] is not True
         or boundary["executableValidationDelegated"] is not True
         or tuple(boundary["memoryClassIds"]) != MEMORY_CLASS_IDS
@@ -565,7 +565,7 @@ def _validate_interfaces(contract: dict[str, Any]) -> None:
     if observed != INTERFACE_SIGNATURES:
         fail(
             "AHLL-INTERFACE",
-            "loop APIs or declaration-only checkpoint ownership differs",
+            "loop APIs or executable checkpoint ownership differs",
         )
 
 
@@ -1057,14 +1057,24 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         )
     elif name == "checkpoint-owner-drift":
         contract["checkpointBoundary"]["implementationOwner"] = "AHLL-001"
-    elif name == "executable-checkpoint-claimed":
-        contract["checkpointBoundary"]["implementationState"] = "executable"
+    elif name == "checkpoint-execution-demoted":
+        contract["checkpointBoundary"]["implementationState"] = (
+            "declaration-only"
+        )
+    elif name == "checkpoint-validation-disabled":
+        contract["checkpointBoundary"][
+            "executableValidationDelegated"
+        ] = False
     elif name == "memory-class-drift":
         contract["checkpointBoundary"]["memoryClassIds"][-1] = (
             "provider-local-authority"
         )
     elif name == "interface-owner-drift":
         contract["interfaces"]["resume"]["implementationOwner"] = "AHLL-001"
+    elif name == "checkpoint-interface-demoted":
+        contract["interfaces"]["resume"]["implementationState"] = (
+            "declaration-only"
+        )
     elif name == "sensitive-key":
         contract["authority"]["token"] = "syntheticfixturevalue"
     elif name == "sensitive-provider-response-key":

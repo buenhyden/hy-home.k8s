@@ -1,0 +1,718 @@
+{
+  "fixtureVersion": 1,
+  "syntheticCheckpoint": {
+    "$schema": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json",
+    "schemaVersion": 1,
+    "contractVersion": "1.0.0",
+    "checkpointPath": ".agent-work/checkpoint.json",
+    "synthetic": true,
+    "atomicWrite": {
+      "required": true,
+      "strategy": "same-directory-temp-fsync-replace",
+      "targetPath": ".agent-work/checkpoint.json",
+      "partialWriteAllowed": false
+    },
+    "identity": {
+      "taskId": "AHLL-002-SYNTHETIC",
+      "specRef": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+      "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "branchRef": "refs/heads/feat/agent-governance-platform",
+      "baseRevision": "git-sha1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "headRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "workingStateDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "ownedPathsDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "createdAtUtc": "2026-07-29T00:00:00Z",
+      "updatedAtUtc": "2026-07-29T00:05:00Z"
+    },
+    "repository": {
+      "authority": "repository-wins",
+      "observed": true,
+      "loopState": "running"
+    },
+    "executor": {
+      "roleId": "governance-steward",
+      "providerId": "codex"
+    },
+    "counters": {
+      "attemptCount": 2,
+      "signatureRetryCount": 1,
+      "taskRecoveryCount": 1
+    },
+    "failure": {
+      "failureClass": "validator-failure",
+      "signatureDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "retryable": true
+    },
+    "completedWork": [
+      "Loaded current governance and canonical memory owners.",
+      "Defined a closed synthetic checkpoint contract."
+    ],
+    "remainingWork": [
+      "Recompute repository state before continuing.",
+      "Run focused validation and hand off bounded evidence."
+    ],
+    "validationSummary": [
+      {
+        "evidenceRef": "tests/test_validate_agent_checkpoint.py",
+        "result": "PASS",
+        "summary": "Synthetic schema and lifecycle assertions are bounded."
+      },
+      {
+        "evidenceRef": "tests/fixtures/agent-checkpoint.json",
+        "result": "PASS",
+        "summary": "Negative mutations carry names and expected rules only."
+      }
+    ],
+    "nextAction": "Rediscover repository state, reject stale claims, and recompute remaining work.",
+    "resume": {
+      "repositoryStateWins": true,
+      "conflictOrder": [
+        "observed-repository-state",
+        "canonical-sdlc-or-domain-owner",
+        "reviewed-durable-memory",
+        "working-short-term",
+        "provider-local-auxiliary"
+      ],
+      "rediscoveryRequired": true,
+      "recomputeRemainingWork": true,
+      "terminalReplayAllowed": false
+    },
+    "redaction": {
+      "status": "PASS",
+      "credentialsStored": false,
+      "tokensStored": false,
+      "authPathsStored": false,
+      "accountIdentifiersStored": false,
+      "rawPromptStored": false,
+      "transcriptStored": false,
+      "providerBodyStored": false,
+      "stdoutStored": false,
+      "stderrStored": false,
+      "shellHistoryStored": false,
+      "environmentDumpStored": false,
+      "privateDiagnosticsStored": false,
+      "userConfigurationStored": false,
+      "syntheticMarker": "[REDACTED-SYNTHETIC]"
+    },
+    "compaction": {
+      "state": "compacted",
+      "summary": "The checkpoint retains only bounded work, validation, lifecycle, and handoff summaries.",
+      "rawPromptRetained": false,
+      "fullTranscriptRetained": false,
+      "providerBodyRetained": false,
+      "validationEvidenceRefs": [
+        "tests/test_validate_agent_checkpoint.py",
+        "tests/fixtures/agent-checkpoint.json"
+      ],
+      "remainingWorkCount": 2
+    },
+    "handoff": {
+      "state": "ready",
+      "owner": "active-task-executor",
+      "nextOwner": "platform",
+      "resultSummary": "Synthetic checkpoint state is eligible for repository-first resume.",
+      "evidenceRefs": [
+        "tests/test_validate_agent_checkpoint.py",
+        "tests/fixtures/agent-checkpoint.json"
+      ],
+      "limitations": [
+        "Provider runtime, hosted, remote, credential-bearing, and live evidence remain deferred."
+      ],
+      "nextAction": "Reobserve repository identity and continue only from current nonterminal state."
+    },
+    "memoryLifecycle": [
+      {
+        "classId": "working-short-term",
+        "authorityMode": "temporary-context-only",
+        "canonicalOwner": "active-task-executor",
+        "sourceEvidenceRefs": [
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+          "tests/fixtures/agent-checkpoint.json"
+        ],
+        "redactionStatus": "PASS",
+        "promotion": {
+          "targetClass": "durable-long-term",
+          "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "evidenceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+            "tests/test_validate_agent_checkpoint.py"
+          ],
+          "review": {
+            "required": true,
+            "status": "approved",
+            "reviewer": "independent-reviewer",
+            "evidenceRef": "tests/test_validate_agent_checkpoint.py"
+          },
+          "redactionStatus": "PASS",
+          "repositoryReobserved": true,
+          "directCanonicalWrite": false,
+          "reobservationEvidenceClass": "repo-static"
+        },
+        "refresh": {
+          "status": "refreshed",
+          "basis": "task-resume",
+          "refreshDueAtUtc": "2026-07-30T00:00:00Z",
+          "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalOwner": "active-task-executor",
+          "evidenceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          ]
+        },
+        "expiry": {
+          "basis": "task-terminal",
+          "state": "active",
+          "disposition": "discard",
+          "decisionOwner": "active-task-executor",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "archiveGc": {
+          "reason": "Discard bounded working context after the owning task reaches a terminal state.",
+          "disposition": "discard",
+          "archivedAtUtc": null,
+          "originalOwner": "active-task-executor",
+          "currentOrReplacementOwner": null,
+          "reviewStatus": "approved",
+          "provenanceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          ]
+        },
+        "conflict": {
+          "status": "repository-won",
+          "repositoryWins": true,
+          "winner": "repository-state",
+          "resolutionEvidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        }
+      },
+      {
+        "classId": "durable-long-term",
+        "authorityMode": "canonical-repository-record",
+        "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+        "sourceEvidenceRefs": [
+          "docs/00.agent-governance/memory/README.md",
+          "docs/00.agent-governance/memory/progress.md"
+        ],
+        "redactionStatus": "PASS",
+        "promotion": {
+          "targetClass": null,
+          "canonicalOwner": null,
+          "evidenceRefs": [],
+          "review": {
+            "required": true,
+            "status": "approved",
+            "reviewer": "independent-reviewer",
+            "evidenceRef": "tests/test_validate_agent_checkpoint.py"
+          },
+          "redactionStatus": "PASS",
+          "repositoryReobserved": true,
+          "directCanonicalWrite": false,
+          "reobservationEvidenceClass": "repo-static"
+        },
+        "refresh": {
+          "status": "refreshed",
+          "basis": "canonical-owner-review",
+          "refreshDueAtUtc": "2026-08-05T00:00:00Z",
+          "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/progress.md"
+          ]
+        },
+        "expiry": {
+          "basis": "owner-retention",
+          "state": "active",
+          "disposition": "retain",
+          "decisionOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "archiveGc": {
+          "reason": "Retain reviewed durable evidence under its current canonical repository owner.",
+          "disposition": "retain",
+          "archivedAtUtc": null,
+          "originalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "currentOrReplacementOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "reviewStatus": "approved",
+          "provenanceRefs": [
+            "docs/00.agent-governance/memory/progress.md"
+          ]
+        },
+        "conflict": {
+          "status": "canonical-owner-won",
+          "repositoryWins": true,
+          "winner": "canonical-document-owner",
+          "resolutionEvidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        }
+      },
+      {
+        "classId": "domain-scoped",
+        "authorityMode": "canonical-domain-record",
+        "canonicalOwner": "canonical-domain-document-owner",
+        "sourceEvidenceRefs": [
+          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+          "docs/00.agent-governance/memory/README.md"
+        ],
+        "redactionStatus": "PASS",
+        "promotion": {
+          "targetClass": "durable-long-term",
+          "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "evidenceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+            "tests/test_validate_agent_checkpoint.py"
+          ],
+          "review": {
+            "required": true,
+            "status": "approved",
+            "reviewer": "domain-owner-reviewer",
+            "evidenceRef": "tests/test_validate_agent_checkpoint.py"
+          },
+          "redactionStatus": "PASS",
+          "repositoryReobserved": true,
+          "directCanonicalWrite": false,
+          "reobservationEvidenceClass": "repo-static"
+        },
+        "refresh": {
+          "status": "refreshed",
+          "basis": "domain-owner-review",
+          "refreshDueAtUtc": "2026-08-05T00:00:00Z",
+          "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalOwner": "canonical-domain-document-owner",
+          "evidenceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          ]
+        },
+        "expiry": {
+          "basis": "superseded-or-invalidated",
+          "state": "expired",
+          "disposition": "archive",
+          "decisionOwner": "canonical-domain-document-owner",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "archiveGc": {
+          "reason": "Archive superseded domain knowledge with its canonical owner and source provenance.",
+          "disposition": "archive",
+          "archivedAtUtc": "2026-07-29T00:04:00Z",
+          "originalOwner": "canonical-domain-document-owner",
+          "currentOrReplacementOwner": "canonical-domain-document-owner",
+          "reviewStatus": "approved",
+          "provenanceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          ]
+        },
+        "conflict": {
+          "status": "canonical-owner-won",
+          "repositoryWins": true,
+          "winner": "canonical-domain-owner",
+          "resolutionEvidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        }
+      },
+      {
+        "classId": "provider-local-auxiliary",
+        "authorityMode": "advisory-only",
+        "canonicalOwner": "provider-runtime-or-user-local-store",
+        "sourceEvidenceRefs": [
+          "docs/00.agent-governance/contracts/provider-runtime-evidence.json",
+          "docs/00.agent-governance/memory/README.md"
+        ],
+        "redactionStatus": "PASS",
+        "promotion": {
+          "targetClass": "working-short-term",
+          "canonicalOwner": "active-task-executor",
+          "evidenceRefs": [
+            "docs/00.agent-governance/contracts/provider-runtime-evidence.json",
+            "tests/test_validate_agent_checkpoint.py"
+          ],
+          "review": {
+            "required": true,
+            "status": "approved",
+            "reviewer": "independent-reviewer",
+            "evidenceRef": "tests/test_validate_agent_checkpoint.py"
+          },
+          "redactionStatus": "PASS",
+          "repositoryReobserved": true,
+          "directCanonicalWrite": false,
+          "reobservationEvidenceClass": "repo-static"
+        },
+        "refresh": {
+          "status": "refreshed",
+          "basis": "provider-reobservation",
+          "refreshDueAtUtc": "2026-07-30T00:00:00Z",
+          "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalOwner": "provider-runtime-or-user-local-store",
+          "evidenceRefs": [
+            "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
+          ]
+        },
+        "expiry": {
+          "basis": "provider-retention",
+          "state": "expired",
+          "disposition": "garbage-collect",
+          "decisionOwner": "provider-runtime-or-user-local-store",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "archiveGc": {
+          "reason": "Garbage-collect advisory provider context after repository re-observation and review.",
+          "disposition": "garbage-collect",
+          "archivedAtUtc": "2026-07-29T00:04:00Z",
+          "originalOwner": "provider-runtime-or-user-local-store",
+          "currentOrReplacementOwner": "provider-runtime-or-user-local-store",
+          "reviewStatus": "approved",
+          "provenanceRefs": [
+            "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
+          ]
+        },
+        "conflict": {
+          "status": "repository-won",
+          "repositoryWins": true,
+          "winner": "repository-state",
+          "resolutionEvidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        }
+      }
+    ]
+  },
+  "repositoryState": {
+    "synthetic": true,
+    "observed": true,
+    "observedAtUtc": "2026-07-29T00:10:00Z",
+    "identity": {
+      "taskId": "AHLL-002-SYNTHETIC",
+      "specRef": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+      "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "branchRef": "refs/heads/feat/agent-governance-platform",
+      "baseRevision": "git-sha1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "headRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "contractVersion": "1.0.0",
+      "workingStateDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "ownedPathsDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "loopState": "running"
+  },
+  "negativeMutations": [
+    {
+      "name": "duplicate-json-key",
+      "expectedRule": "AHLL-CP-DUPLICATE-KEY"
+    },
+    {
+      "name": "unknown-checkpoint-field",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "stale-task",
+      "expectedRule": "AHLL-CP-STALE-TASK"
+    },
+    {
+      "name": "stale-spec",
+      "expectedRule": "AHLL-CP-STALE-SPEC"
+    },
+    {
+      "name": "stale-worktree",
+      "expectedRule": "AHLL-CP-STALE-WORKTREE"
+    },
+    {
+      "name": "stale-branch",
+      "expectedRule": "AHLL-CP-STALE-BRANCH"
+    },
+    {
+      "name": "stale-base",
+      "expectedRule": "AHLL-CP-STALE-BASE"
+    },
+    {
+      "name": "stale-head",
+      "expectedRule": "AHLL-CP-STALE-HEAD"
+    },
+    {
+      "name": "stale-contract",
+      "expectedRule": "AHLL-CP-STALE-CONTRACT"
+    },
+    {
+      "name": "stale-working-state",
+      "expectedRule": "AHLL-CP-STALE-WORKING-STATE"
+    },
+    {
+      "name": "stale-owned-paths",
+      "expectedRule": "AHLL-CP-STALE-OWNERSHIP"
+    },
+    {
+      "name": "checkpoint-timestamp-order",
+      "expectedRule": "AHLL-CP-FRESHNESS"
+    },
+    {
+      "name": "checkpoint-timestamp-future",
+      "expectedRule": "AHLL-CP-FRESHNESS"
+    },
+    {
+      "name": "checkpoint-timestamp-stale",
+      "expectedRule": "AHLL-CP-FRESHNESS"
+    },
+    {
+      "name": "terminal-replay-completed",
+      "expectedRule": "AHLL-CP-TERMINAL-REPLAY"
+    },
+    {
+      "name": "terminal-replay-blocked",
+      "expectedRule": "AHLL-CP-TERMINAL-REPLAY"
+    },
+    {
+      "name": "terminal-replay-escalated",
+      "expectedRule": "AHLL-CP-TERMINAL-REPLAY"
+    },
+    {
+      "name": "terminal-replay-aborted",
+      "expectedRule": "AHLL-CP-TERMINAL-REPLAY"
+    },
+    {
+      "name": "completed-work-overflow",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "validation-summary-overflow",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "next-action-overflow",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "atomic-write-disabled",
+      "expectedRule": "AHLL-CP-ATOMIC-WRITE"
+    },
+    {
+      "name": "atomic-partial-write",
+      "expectedRule": "AHLL-CP-ATOMIC-WRITE"
+    },
+    {
+      "name": "resume-repository-loses",
+      "expectedRule": "AHLL-CP-RESUME"
+    },
+    {
+      "name": "resume-conflict-order-drift",
+      "expectedRule": "AHLL-CP-RESUME"
+    },
+    {
+      "name": "resume-skips-rediscovery",
+      "expectedRule": "AHLL-CP-RESUME"
+    },
+    {
+      "name": "resume-synthetic-mode-mismatch",
+      "expectedRule": "AHLL-CP-RESUME"
+    },
+    {
+      "name": "redaction-allows-token",
+      "expectedRule": "AHLL-CP-REDACTION"
+    },
+    {
+      "name": "memory-class-order",
+      "expectedRule": "AHLL-CP-MEMORY-CLASSES"
+    },
+    {
+      "name": "memory-authority-drift",
+      "expectedRule": "AHLL-CP-MEMORY-AUTHORITY"
+    },
+    {
+      "name": "promotion-evidence-missing",
+      "expectedRule": "AHLL-CP-MEMORY-PROMOTION"
+    },
+    {
+      "name": "promotion-owner-missing",
+      "expectedRule": "AHLL-CP-MEMORY-PROMOTION"
+    },
+    {
+      "name": "promotion-review-missing",
+      "expectedRule": "AHLL-CP-MEMORY-PROMOTION"
+    },
+    {
+      "name": "promotion-redaction-failed",
+      "expectedRule": "AHLL-CP-MEMORY-PROMOTION"
+    },
+    {
+      "name": "promotion-direct-write",
+      "expectedRule": "AHLL-CP-MEMORY-PROMOTION"
+    },
+    {
+      "name": "provider-local-not-reobserved",
+      "expectedRule": "AHLL-CP-PROVIDER-LOCAL"
+    },
+    {
+      "name": "provider-local-direct-canonical",
+      "expectedRule": "AHLL-CP-PROVIDER-LOCAL"
+    },
+    {
+      "name": "refresh-revision-stale",
+      "expectedRule": "AHLL-CP-MEMORY-REFRESH"
+    },
+    {
+      "name": "refresh-basis-drift",
+      "expectedRule": "AHLL-CP-MEMORY-REFRESH"
+    },
+    {
+      "name": "refresh-due-before-update",
+      "expectedRule": "AHLL-CP-MEMORY-REFRESH"
+    },
+    {
+      "name": "expiry-disposition-missing",
+      "expectedRule": "AHLL-CP-MEMORY-EXPIRY"
+    },
+    {
+      "name": "archive-gc-provenance-missing",
+      "expectedRule": "AHLL-CP-MEMORY-ARCHIVE-GC"
+    },
+    {
+      "name": "archive-gc-reason-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "archive-gc-date-missing",
+      "expectedRule": "AHLL-CP-MEMORY-ARCHIVE-GC"
+    },
+    {
+      "name": "archive-gc-original-owner-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "archive-gc-replacement-owner-missing",
+      "expectedRule": "AHLL-CP-MEMORY-ARCHIVE-GC"
+    },
+    {
+      "name": "repository-conflict-loses",
+      "expectedRule": "AHLL-CP-MEMORY-CONFLICT"
+    },
+    {
+      "name": "compaction-retains-transcript",
+      "expectedRule": "AHLL-CP-COMPACTION"
+    },
+    {
+      "name": "compaction-count-drift",
+      "expectedRule": "AHLL-CP-COMPACTION"
+    },
+    {
+      "name": "handoff-owner-missing",
+      "expectedRule": "AHLL-CP-HANDOFF"
+    },
+    {
+      "name": "handoff-evidence-missing",
+      "expectedRule": "AHLL-CP-HANDOFF"
+    },
+    {
+      "name": "sensitive-credential-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-credential-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-secret-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-token-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-token-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-auth-path-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-auth-path-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-account-id-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-account-id-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-raw-prompt-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-raw-prompt-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-transcript-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-transcript-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-provider-body-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-provider-body-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-stdout-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-stdout-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-stderr-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-stderr-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-shell-history-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-shell-history-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-environment-dump-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-environment-dump-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-private-diagnostics-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-private-diagnostics-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-user-config-key",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    },
+    {
+      "name": "sensitive-user-config-value",
+      "expectedRule": "AHLL-CP-SENSITIVE"
+    }
+  ]
+}

@@ -157,7 +157,15 @@ FROZEN_HELPER_PATHS = (
     "tests/test_workspace_boundary.py",
 )
 POST_CLOSURE_HELPER_MANIFEST = {
+    "tests/fixtures/agent-checkpoint.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/agent-harness-contract.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/fixtures/agent-loop-lifecycle.json": (
         "json",
         "closed-fixture",
     ),
@@ -201,7 +209,15 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
+    "tests/test_validate_agent_checkpoint.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_validate_agent_harness_contract.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_loop_lifecycle.py": (
         "python",
         "regression-test",
     ),

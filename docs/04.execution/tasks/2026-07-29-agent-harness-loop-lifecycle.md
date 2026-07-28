@@ -41,9 +41,9 @@ result.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| AHLL-000 | VAL-AHLL-001 through VAL-AHLL-009 | Activate reciprocal Spec/Plan/Task frontier after Spec 042 closure and postflight. | platform | In Progress | Exact-eight activation proposal prepared; staged validation, independent review, commit identity, and postflight are not yet observed. | Spec 042 closure/postflight are cited; Spec/Plan/Task, indexes, progress, and only the Spec 043 registry relation comprise the bounded proposal. |
-| AHLL-001 | VAL-AHLL-001 through VAL-AHLL-004 | Implement closed loop lifecycle/state/failure/progress contracts, validator, and deterministic fixtures. | platform | Queued | Not executed. | Fixtures must prove two retries after the initial same-signature failure, three default task recovery actions, second identical no-progress stop, and immediate stop for all six non-retryable classes. |
-| AHLL-002 | VAL-AHLL-005 through VAL-AHLL-007 | Implement atomic checkpoint validation, repository-wins resume, and four-class memory lifecycle controls. | platform | Queued | Not executed. | Redacted fixtures must cover stale task/worktree/base/contract rejection plus promotion, refresh, expiry, archive/GC, redaction, conflict, compaction, and handoff. |
+| AHLL-000 | VAL-AHLL-001 through VAL-AHLL-009 | Activate reciprocal Spec/Plan/Task frontier after Spec 042 closure and postflight. | platform | Done | Exact-eight activation committed as `64e203a4`; explicit-ref lifecycle, clean-tree aggregate, all-files pre-commit, and independent review passed. | Activation postflight is recorded in `memory/progress.md` by `3b4981ab`; requirements were `COMPLIANT` and quality/security was `APPROVED`. |
+| AHLL-001 | VAL-AHLL-001 through VAL-AHLL-004 | Implement closed loop lifecycle/state/failure/progress contracts, validator, and deterministic fixtures. | platform | Done | Closed contract, schema, focused validator, 47-case self-test fixture, and 17 unit tests committed as `8a995014`. | Production/self-test/unit/diff checks passed; requirements were `COMPLIANT` and quality/security was `APPROVED`. Exact fixtures prove two retries after the initial same-signature failure, three default task recovery actions, lower role/task limits, second identical no-progress stop, and all six non-retryable classes. |
+| AHLL-002 | VAL-AHLL-005 through VAL-AHLL-007 | Implement atomic checkpoint validation, repository-wins resume, and four-class memory lifecycle controls. | platform | In Progress | Checkpoint schema, validator, synthetic fixture, and focused tests are being implemented against the AHLL-001 contract. | Redacted fixtures must cover stale task/worktree/base/contract rejection plus promotion, refresh, expiry, archive/GC, redaction, conflict, compaction, and handoff. |
 | AHLL-003 | VAL-AHLL-008 | Integrate focused validation routing, repository aggregate, and provider projection semantics. | platform | Queued | Not executed. | Affected surfaces must select one validator owner; provider delivery remains local and cannot promote runtime or override repository verdicts. |
 | AHLL-004 | VAL-AHLL-009 | Run focused/strict/lifecycle/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | Queued | Not executed. | Commands, reviewer verdicts, implementation/closure commits, explicit-ref, clean-tree postflight, rollback, and external limitations will be recorded here. |
 
@@ -83,10 +83,17 @@ result.
 
 ## Verification Summary
 
-The exact-eight activation proposal changes only reciprocal lifecycle records.
-It does not claim that the planned loop lifecycle or checkpoint validators
-exist, that `.agent-work/checkpoint.json` has been written, that provider hooks
-delivered events, or that any provider/runtime/hosted/remote/live lane passed.
+The exact-eight activation changed only reciprocal lifecycle records and was
+committed as `64e203a4a4ab26239b92a3ee335bce785d938f45`; its explicit-ref,
+clean-tree aggregate, all-files, and independent review postflight is recorded
+in `memory/progress.md`. AHLL-001 then committed the closed provider-neutral
+loop contract and focused validator as
+`8a995014d76a92763df420321919e493ec37323e`; its production, 47-case
+self-test, and 17 focused unit tests passed independent requirements and
+quality/security review. This evidence does not claim that the checkpoint
+validator passes, that `.agent-work/checkpoint.json` has been written, that
+provider hooks delivered events, or that any provider/runtime/hosted/remote/live
+lane passed.
 
 The proposed contract retains these exact future assertions: no more than two
 automatic retries after the initial same-signature failure; no more than three
@@ -98,10 +105,9 @@ canonical SDLC owners win every resume or memory conflict. Promotion, refresh,
 expiry, archive/GC, redaction, compaction, and handoff require deterministic
 implementation and fixture evidence before they can be reported as executable.
 
-AHLL-000 remains in progress until the exact staged proposal passes its
-declared repository-static gates and independent review. Its future commit
-identity, explicit-ref lifecycle interval, and clean-tree postflight must be
-recorded only after observation.
+AHLL-000 and AHLL-001 are complete. AHLL-002 is now the active implementation
+frontier; its checkpoint and memory lifecycle evidence must be observed before
+AHLL-003 routing and aggregate integration begins.
 
 ## Traceability
 
@@ -115,8 +121,8 @@ recorded only after observation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [AHLL-000](../plans/2026-07-29-agent-harness-loop-lifecycle.md#work-breakdown) | In Progress — exact-eight activation proposal is prepared but not yet validated or committed. | Spec 042 closure/postflight are observed; staged gates, reviewer verdicts, activation commit, and postflight remain required. |
-| [AHLL-001](../../03.specs/043-agent-harness-loop-lifecycle/spec.md#success-criteria--verification-plan) | Queued — loop lifecycle contract and fixtures are not implemented. | Exact retry, recovery, no-progress, non-retryable, state, failure, and progress assertions remain required. |
-| N/A — AHLL-002 shares the Plan and Spec sources linked above | Queued — checkpoint and memory lifecycle controls are not implemented. | Atomic/redacted checkpoint, repository-wins resume, promotion, refresh, expiry, archive/GC, conflict, compaction, and handoff evidence remain required. |
+| [AHLL-000](../plans/2026-07-29-agent-harness-loop-lifecycle.md#work-breakdown) | Done — exact-eight activation and postflight completed. | Activation `64e203a4`; postflight evidence `3b4981ab`; lifecycle, aggregate, all-files, diff, and independent review gates passed. |
+| [AHLL-001](../../03.specs/043-agent-harness-loop-lifecycle/spec.md#success-criteria--verification-plan) | Done — loop lifecycle contract and fixtures committed as `8a995014`. | Production and 47-case self-test PASS; 17 focused tests PASS; requirements `COMPLIANT`; quality/security `APPROVED`. |
+| N/A — AHLL-002 shares the Plan and Spec sources linked above | In Progress — checkpoint and memory lifecycle controls are being implemented. | Atomic/redacted checkpoint, repository-wins resume, promotion, refresh, expiry, archive/GC, conflict, compaction, and handoff evidence remain required. |
 | N/A — AHLL-003 shares the Plan and Spec sources linked above | Queued — routing and provider projections are not integrated. | Focused selection, aggregate ordering, and non-transitive provider evidence remain required. |
 | N/A — AHLL-004 shares the Plan and Spec sources linked above | Queued — terminal QA/review/closure is not executed. | Focused/strict/lifecycle/aggregate/all-files/diff, independent review, atomic closure, explicit-ref, and clean-tree postflight remain required. |

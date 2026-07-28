@@ -544,9 +544,7 @@
           "$ref": "#/$defs/nonEmptyString"
         },
         "implementationState": {
-          "enum": [
-            "declaration-only"
-          ]
+          "const": "executable"
         },
         "repositoryStateWins": {
           "type": "boolean"
@@ -596,6 +594,20 @@
         }
       }
     },
+    "ahll002ExecutableInterface": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/interface"
+        },
+        {
+          "properties": {
+            "implementationState": {
+              "const": "executable"
+            }
+          }
+        }
+      ]
+    },
     "interfaces": {
       "type": "object",
       "additionalProperties": false,
@@ -618,13 +630,13 @@
           "$ref": "#/$defs/interface"
         },
         "writeCheckpoint": {
-          "$ref": "#/$defs/interface"
+          "$ref": "#/$defs/ahll002ExecutableInterface"
         },
         "resume": {
-          "$ref": "#/$defs/interface"
+          "$ref": "#/$defs/ahll002ExecutableInterface"
         },
         "handoff": {
-          "$ref": "#/$defs/interface"
+          "$ref": "#/$defs/ahll002ExecutableInterface"
         }
       }
     }

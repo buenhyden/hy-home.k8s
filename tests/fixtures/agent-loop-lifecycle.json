@@ -446,8 +446,12 @@
       "expectedRule": "AHLL-CHECKPOINT-BOUNDARY"
     },
     {
-      "name": "executable-checkpoint-claimed",
+      "name": "checkpoint-execution-demoted",
       "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-validation-disabled",
+      "expectedRule": "AHLL-CHECKPOINT-BOUNDARY"
     },
     {
       "name": "memory-class-drift",
@@ -456,6 +460,10 @@
     {
       "name": "interface-owner-drift",
       "expectedRule": "AHLL-INTERFACE"
+    },
+    {
+      "name": "checkpoint-interface-demoted",
+      "expectedRule": "AHLL-SCHEMA"
     },
     {
       "name": "sensitive-key",
@@ -474,5 +482,5 @@
       "expectedRule": "AHLL-SENSITIVE"
     }
   ],
-  "expectedCaseCount": 47
+  "expectedCaseCount": 49
 }

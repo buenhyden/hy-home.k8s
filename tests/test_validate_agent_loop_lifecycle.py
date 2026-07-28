@@ -420,7 +420,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             )
         self.assertEqual(raised.exception.code, "AHLL-SENSITIVE")
 
-    def test_checkpoint_boundary_is_declaration_only_and_harness_aligned(
+    def test_checkpoint_boundary_is_executable_and_harness_aligned(
         self,
     ) -> None:
         boundary = self.contract["checkpointBoundary"]
@@ -432,14 +432,24 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             ),
         )
         self.assertEqual(boundary["implementationOwner"], "AHLL-002")
-        self.assertEqual(
-            boundary["implementationState"], "declaration-only"
-        )
+        self.assertEqual(boundary["implementationState"], "executable")
+        self.assertTrue(boundary["executableValidationDelegated"])
         self.assertTrue(boundary["repositoryStateWins"])
         self.assertEqual(
             tuple(boundary["memoryClassIds"]),
             self.validator.MEMORY_CLASS_IDS,
         )
+        for interface_id in ("writeCheckpoint", "resume", "handoff"):
+            with self.subTest(interface_id=interface_id):
+                interface = self.contract["interfaces"][interface_id]
+                self.assertEqual(
+                    interface["implementationOwner"],
+                    "AHLL-002",
+                )
+                self.assertEqual(
+                    interface["implementationState"],
+                    "executable",
+                )
 
     def test_duplicate_json_keys_fail_at_the_input_boundary(self) -> None:
         with self.assertRaises(
