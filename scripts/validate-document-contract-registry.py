@@ -1624,8 +1624,8 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         profile["routes"].append({"kind": "exact", "value": target})
         return
     programs = raw_registry["programLineage"]["programs"]
-    original = programs[0]
-    current = programs[1]
+    original = next(program for program in programs if program["prd"] == "005")
+    current = next(program for program in programs if program["prd"] == "006")
     if mutation == "duplicate-program":
         duplicate = copy.deepcopy(current)
         duplicate["prd"] = original["prd"]
@@ -1998,6 +1998,19 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     )
     immutable_expected = (
         (
+            "003",
+            "0006",
+            (
+                ("041", 1, "0013"),
+                ("042", 2, "0013"),
+                ("043", 3, "0013"),
+                ("044", 4, "0013"),
+                ("045", 5, "0013"),
+                ("046", 6, "0013"),
+            ),
+            (),
+        ),
+        (
             "005",
             "0008",
             tuple(
@@ -2027,17 +2040,24 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     def assert_state_contract(candidate: Registry) -> None:
         for program in candidate.program_lineage:
             states = tuple(relation.state for relation in program.tranches)
-            completed = tuple(state == "done" for state in states)
-            if states and completed != tuple(
-                index < sum(completed) for index in range(len(states))
+            if any(state not in {"done", "active", "draft"} for state in states):
+                raise AssertionError(
+                    f"PRD-{program.prd_id} original tranche state domain differs"
+                )
+            rank = {"done": 0, "active": 1, "draft": 2}
+            if any(
+                rank[current] > rank[following]
+                for current, following in zip(states, states[1:])
             ):
                 raise AssertionError(
                     f"PRD-{program.prd_id} original tranche is not one "
-                    "contiguous done prefix followed by an active suffix"
+                    "contiguous done prefix followed by at most one active "
+                    "relation and a draft suffix"
                 )
-            if any(state not in {"done", "active"} for state in states):
+            if states.count("active") > 1:
                 raise AssertionError(
-                    f"PRD-{program.prd_id} original tranche state domain differs"
+                    f"PRD-{program.prd_id} original tranche has more than one "
+                    "active relation"
                 )
         historical = next(
             program for program in candidate.program_lineage if program.prd_id == "005"
@@ -2050,7 +2070,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     # Keep mutable relation state separate from immutable lineage identity.
     # Cross-document strict validation owns current Spec-to-relation parity;
     # this self-test owns the typed registry's contiguous state invariant and
-    # both first-unfinished positions used by the current rollover.
+    # two synthetic first-unfinished positions used by rollover validation.
     assert_state_contract(registry)
     current = next(
         program for program in registry.program_lineage if program.prd_id == "006"
@@ -2066,7 +2086,13 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
             tranches=tuple(
                 replace(
                     relation,
-                    state="done" if relation.order < ready_order else "active",
+                    state=(
+                        "done"
+                        if relation.order < ready_order
+                        else "active"
+                        if relation.order == ready_order
+                        else "draft"
+                    ),
                 )
                 for relation in current.tranches
             ),
@@ -2100,6 +2126,36 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
         pass
     else:
         raise AssertionError("noncontiguous original-tranche state mutation accepted")
+
+    multiple_active_program = replace(
+        current,
+        tranches=tuple(
+            replace(
+                relation,
+                state=(
+                    "done"
+                    if relation.order < 2
+                    else "active"
+                    if relation.order <= 3
+                    else "draft"
+                ),
+            )
+            for relation in current.tranches
+        ),
+    )
+    multiple_active_candidate = replace(
+        registry,
+        program_lineage=tuple(
+            multiple_active_program if program.prd_id == "006" else program
+            for program in registry.program_lineage
+        ),
+    )
+    try:
+        assert_state_contract(multiple_active_candidate)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("multiple-active original-tranche mutation accepted")
 
 
 def _assert_document_contract_projection(registry: Registry) -> None:
