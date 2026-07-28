@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 043 activation postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: done
+- **Tags**: #spec-043 #agent-loop #checkpoint #memory-lifecycle #postflight
+
+#### Progress
+
+- Committed the reviewed exact eight-path Spec 043 activation as
+  `64e203a4a4ab26239b92a3ee335bce785d938f45`
+  (`docs(sdlc): activate agent loop lifecycle`).
+- Activated the reciprocal Spec, Plan, Task, indexes, progress ledger, and only
+  the Spec 043 program-lineage relation. No implementation surface was included
+  in the activation commit.
+- Preserved AHLL-001 through AHLL-004 as ordered implementation, integration,
+  QA, closure, and postflight work; this record does not preclaim those
+  results.
+
+#### Evidence
+
+- Explicit-ref lifecycle validation for `HEAD^..HEAD`: PASS.
+- Clean-tree repository aggregate: PASS (`[PASS] repository quality gates
+  passed`).
+- Pre-commit all-files: PASS for every applicable hook; Dockerfile lint was a
+  no-file `SKIP`.
+- Strict registry, Markdown profile, cross-document, affected-surface, staged
+  lifecycle, cached diff, and unstaged diff checks: PASS.
+- Independent activation review: requirements `COMPLIANT`; quality/security
+  `APPROVED`, with no blocking findings.
+
+#### Handoff
+
+- Next owner: AHLL-001, implementing the closed loop lifecycle contract,
+  schema, validator, synthetic fixtures, and focused unit tests.
+- Provider runtime, hosted CI, remote, credentials, secrets, Kubernetes/GitOps,
+  Vault/ESO, and live-system evidence remain `DEFER`; no such action occurred.
+- Rollback unit: revert
+  `64e203a4a4ab26239b92a3ee335bce785d938f45` before reverting this postflight
+  evidence.
+
 ### 2026-07-29 - Spec 043 reciprocal planning activation staging
 
 #### Metadata
