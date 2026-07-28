@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - Spec 042 reciprocal planning activation
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-042 #provider-runtime #model-evidence #cutoff
+
+#### Progress
+
+- Observed Spec 041 closure
+  `1a3232ce73a653371634e99d773d71ab03f87967`, postflight
+  `6c35268793f09c1ba3f70cdbe3ece9293828ec16`, and terminal evidence
+  reconciliation `fdc3d457`.
+- Prepared the exact eight-path Spec 042 activation proposal: Spec/index,
+  reciprocal Plan/Task and both indexes, this progress handoff, and only the
+  Spec 042 registry tranche transition from `draft` to `active`.
+- Fixed the external/provider observation cutoff at
+  `2026-07-10 10:00 Asia/Seoul` (`2026-07-10 01:00 UTC`).
+
+#### Memory
+
+- Provider source facts, local version observations, and canary verdicts must
+  retain provenance and evidence class before promotion to durable memory.
+- User-reported local state remains an observation, not provider readiness:
+  Codex CLI `0.145.0-alpha.27` was present; Claude and Gemini CLIs were absent.
+  No auth cache, credential, account identity, prompt transcript, provider
+  response body, or private user configuration is durable evidence.
+
+#### Evidence
+
+- Activation changes no provider adapter, `.gemini/**`, provider settings,
+  model assignment, MCP registration, credential, CI job, Kubernetes/GitOps,
+  Vault/ESO, remote, or live surface.
+- The exact eight staged paths passed strict registry, Markdown body-contract,
+  cross-link/owner, staged lifecycle, repository aggregate, all-files
+  pre-commit, cached/unstaged diff, requirements scope, and independent
+  quality review.
+- Repo-static, native-discovery, authenticated-run, CI, and remote/live claims
+  remain non-transitive. Provider execution remains `DEFER` unless separately
+  authorized and observed.
+- No future activation commit, explicit-ref postflight, or runtime verdict is
+  claimed before observation.
+
+#### Handoff
+
+- Next owner: PNME-001 official cutoff source ledger and Current research-pack
+  reconciliation.
+- Roll back the exact eight-path activation together before reverting any
+  Spec 041 closure evidence.
+
 ### 2026-07-28 - Spec 041 terminal closure staging
 
 #### Metadata

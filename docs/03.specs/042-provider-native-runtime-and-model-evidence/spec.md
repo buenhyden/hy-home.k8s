@@ -1,9 +1,9 @@
 ---
 title: 'Provider-Native Runtime and Model Evidence Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-28
 ---
 
 # Provider-Native Runtime and Model Evidence Specification
@@ -15,11 +15,11 @@ selection, MCP/tool boundaries, and comparable runtime evidence for Claude,
 Codex, and Gemini. Local/Antigravity remains a fourth tracked projection but is
 not a substitute for a Gemini-native canary.
 
-The current-source observation cutoff is **2026-07-26 Asia/Seoul**. The last
-recorded local observation found only `codex-cli 0.145.0-alpha.27`; Claude and
-Gemini CLIs were absent. Implementation must re-observe versions without
-reading authentication artifacts. Those observations are inputs, not
-completion or availability claims.
+The current-source observation cutoff is **2026-07-10 10:00 Asia/Seoul**
+(`2026-07-10 01:00 UTC`). The last recorded local observation found only
+`codex-cli 0.145.0-alpha.27`; Claude and Gemini CLIs were absent. Implementation
+must re-observe versions without reading authentication artifacts. Those
+observations are inputs, not completion or availability claims.
 
 ## Strategic Boundaries & Non-goals
 
@@ -97,13 +97,17 @@ Primary sources:
 
 ### Role-specific model and effort policy
 
-The following are **candidates**, not accepted assignments:
+The following are **cutoff-bounded candidates**, not accepted assignments. A
+candidate can be recorded from a dated provider source or local observation, but
+it cannot become a current role assignment until the exact adapter syntax parses,
+the permitted runtime resolves it without silent fallback, and Spec 044 fitness
+evidence passes.
 
 | Provider | High-complexity candidate | Focused worker candidate | Effort boundary |
 | --- | --- | --- | --- |
-| Claude | Account-available `opus` or `fable` alias/full ID | `sonnet`; `haiku` for bounded low-risk work | Use only the model-supported native `effort` value observed by schema/runtime; aliases and organization allowlists may alter resolution |
-| Codex | `gpt-5.6` or the installed runtime's documented demanding-agent candidate | `gpt-5.6-terra` or a documented balanced/cost candidate | `model_reasoning_effort` is model- and client-dependent; validate the exact value instead of treating the union of documentation examples as universally accepted |
-| Gemini | `gemini-3-pro-preview` when available and justified | `gemini-3-flash-preview` or provider Auto routing for bounded work | Subagent `model` is independent of the parent `/model`; reasoning settings remain agent-scoped configuration and require native parse/runtime evidence |
+| Claude | Dated cutoff evidence supports Opus 4.8 and `/effort xhigh`; exact configured ID/alias remains account- and runtime-resolved | Sonnet/Haiku family only when the cutoff source or runtime canary proves the exact identifier | Use only a model-supported native effort value observed by schema/runtime; aliases and organization allowlists may alter resolution |
+| Codex | Dated cutoff evidence supports Codex 0.144.1 and GPT-5.6-related Codex app performance notes; exact CLI model IDs remain unresolved until runtime/config evidence | Current documented Codex model family or installed-runtime fallback only after exact parse/runtime evidence | `model_reasoning_effort` is model- and client-dependent; validate the exact value instead of treating documentation examples as universally accepted |
+| Gemini | Gemini CLI release evidence before the cutoff may support CLI capability, but exact Gemini-native project model IDs remain unresolved until native parse/runtime evidence | Gemini CLI Auto/default or exact model ID only after cutoff source plus runtime evidence | Subagent `model` is independent of parent selection only when native docs/runtime prove it; reasoning settings require agent-scoped parse/runtime evidence |
 
 Architecture, supervisor, security, and ambiguous cross-scope work start with a
 high-capability candidate; routine editing, evidence collection, and narrow
@@ -233,17 +237,19 @@ to exist in this draft.
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 041](../041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)
+- **Execution Plan**: [Provider-Native Runtime and Model Evidence Implementation Plan](../../04.execution/plans/2026-07-28-provider-native-runtime-and-model-evidence.md)
+- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](../../04.execution/tasks/2026-07-28-provider-native-runtime-and-model-evidence.md)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-08](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-001 | Path ownership proves four distinct projections. |
-| [REQ-PRD-FUN-08](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-002 | Provider-schema fixtures prove supported metadata and cutoff confidence. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-003 | Config/MCP validation proves secret-free tracked baselines. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-004 | Model compatibility records prove effort and fallback boundaries. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-005 | Claude canary harness and redacted verdict record provide an executable closure input. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-006 | Codex canary harness and redacted verdict record provide an executable closure input. |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-007 | Gemini canary harness and redacted verdict record provide an executable closure input. |
-| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-PNME-008 | Normalized redaction evidence proves comparable strict closure input. |
-| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-PNME-009 | Focused and aggregate QA prove provider tranche readiness. |
+| N/A — VAL-PNME-002 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-002 | Provider-schema fixtures prove supported metadata and cutoff confidence. |
+| N/A — VAL-PNME-003 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-003 | Config/MCP validation proves secret-free tracked baselines. |
+| N/A — VAL-PNME-004 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-004 | Model compatibility records prove effort and fallback boundaries. |
+| N/A — VAL-PNME-005 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-005 | Claude canary harness and redacted verdict record provide an executable closure input. |
+| N/A — VAL-PNME-006 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-006 | Codex canary harness and redacted verdict record provide an executable closure input. |
+| N/A — VAL-PNME-007 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-007 | Gemini canary harness and redacted verdict record provide an executable closure input. |
+| N/A — VAL-PNME-008 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-008 | Normalized redaction evidence proves comparable strict closure input. |
+| N/A — VAL-PNME-009 shares the PRD-003 source linked in VAL-PNME-001 | VAL-PNME-009 | Focused and aggregate QA prove provider tranche readiness. |

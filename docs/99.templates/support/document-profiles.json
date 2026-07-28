@@ -6224,7 +6224,7 @@
           {
             "spec": "042",
             "order": 2,
-            "state": "draft",
+            "state": "active",
             "reason": "Provider-native runtime and model evidence",
             "decision": "0013"
           },
