@@ -316,7 +316,10 @@ adapter PASS does not prove provider runtime consumption.
   fourteen-column ledger를 production component로 검증한다. Semantic debt fixture는
   ADM-002가 ledger와 468-path self-row를 같은 commit에서 만들 때 제거하는 exact
   `LEDGER-MISSING` 한 건만 허용하며 alias, glob, growth, duplicate, unknown rule을
-  configuration error로 거부한다.
+  configuration error로 거부한다. Program-lineage 실행 사례는 registry relation
+  Spec에 연결되지 않은 active Plan/Task component를 fail-closed로 거부하며,
+  relation에 연결된 component의 dependency-ready·reciprocal·direct-Spec 규칙과
+  함께 검증한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
   `missing-role`, `surface-mismatch`, `stale-count`, `bad-owner`,
   `missing-current-phrase`인 사례 6개만

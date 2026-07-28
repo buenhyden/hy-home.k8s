@@ -3970,11 +3970,12 @@ def _current_execution_component(
 
 
 def _program_execution_diagnostics(
-    context: Context, program: ProgramLineage
+    context: Context,
+    program: ProgramLineage,
+    graph: dict[PurePosixPath, frozenset[PurePosixPath]],
+    execution_index: CurrentExecutionIndex,
 ) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
-    graph = _current_execution_link_graph(context)
-    execution_index = _current_execution_index(graph)
     relations = (*program.tranches, *program.follow_ups)
     dependency_ready = next(
         (
@@ -4000,6 +4001,9 @@ def _program_execution_diagnostics(
             if context.profiles[path].profile_id == "sdlc/task"
         )
         direct_spec_links = all(spec in graph[path] for path in component)
+        execution_state_matches = all(
+            _program_status(context, path) == relation.state for path in component
+        )
         reciprocal_pair = (
             len(plans) == 1
             and len(tasks) == 1
@@ -4012,6 +4016,7 @@ def _program_execution_diagnostics(
                 len(plans) == 1
                 and len(tasks) == 1
                 and direct_spec_links
+                and execution_state_matches
                 and reciprocal_pair
             )
         )
@@ -4023,8 +4028,47 @@ def _program_execution_diagnostics(
                 "PROGRAM-LINEAGE-EXECUTION-GATE",
                 spec,
                 context.profiles[spec].profile_id,
-                "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
-                f"component={len(component)}, plans={len(plans)}, tasks={len(tasks)}, direct-spec={direct_spec_links}, reciprocal={reciprocal_pair}, dependency-ready-original={relation == dependency_ready}",
+                "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links and relation-state parity for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
+                f"component={len(component)}, plans={len(plans)}, tasks={len(tasks)}, direct-spec={direct_spec_links}, execution-state={execution_state_matches}, reciprocal={reciprocal_pair}, dependency-ready-original={relation == dependency_ready}",
+            )
+        )
+    return diagnostics
+
+
+def _unowned_active_execution_diagnostics(
+    context: Context,
+    execution_index: CurrentExecutionIndex,
+    program_owned_paths: set[PurePosixPath],
+) -> list[Diagnostic]:
+    """Reject active execution components not seeded by a registry Spec."""
+
+    diagnostics: list[Diagnostic] = []
+    reported_components: set[PurePosixPath] = set()
+    for path in sorted(execution_index.graph, key=lambda item: item.as_posix()):
+        if (
+            _program_status(context, path) != "active"
+            or path in program_owned_paths
+        ):
+            continue
+        component = execution_index.component_by_node[path]
+        representative = component[0]
+        if representative in reported_components:
+            continue
+        reported_components.add(representative)
+        active_paths = tuple(
+            candidate
+            for candidate in component
+            if _program_status(context, candidate) == "active"
+            and candidate not in program_owned_paths
+        )
+        owner = active_paths[0] if active_paths else path
+        diagnostics.append(
+            _diag(
+                "PROGRAM-LINEAGE-EXECUTION-GATE",
+                owner,
+                context.profiles[owner].profile_id,
+                "every active Plan/Task component connected to one registry relation Spec",
+                f"unowned active execution component={len(component)}, active={len(active_paths)}",
             )
         )
     return diagnostics
@@ -4036,6 +4080,16 @@ def _program_lineage_diagnostics(
     """Validate registry relations against immutable bodies and current evidence."""
 
     diagnostics: list[Diagnostic] = []
+    graph = _current_execution_link_graph(context)
+    execution_index = _current_execution_index(graph)
+    program_owned_paths: set[PurePosixPath] = set()
+    for program in program_lineage:
+        for relation in (*program.tranches, *program.follow_ups):
+            spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
+            if spec is not None:
+                program_owned_paths.update(
+                    _current_execution_component(context, spec, execution_index)
+                )
     for program in program_lineage:
         for relation in (*program.tranches, *program.follow_ups):
             spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
@@ -4071,7 +4125,21 @@ def _program_lineage_diagnostics(
             diagnostics.extend(
                 _historical_exception_diagnostics(context, program, follow_up)
             )
-        diagnostics.extend(_program_execution_diagnostics(context, program))
+        diagnostics.extend(
+            _program_execution_diagnostics(
+                context,
+                program,
+                graph,
+                execution_index,
+            )
+        )
+    diagnostics.extend(
+        _unowned_active_execution_diagnostics(
+            context,
+            execution_index,
+            program_owned_paths,
+        )
+    )
     for path in context.paths:
         if path.as_posix().startswith(
             "docs/00.agent-governance/"
@@ -6631,7 +6699,15 @@ def _mutated_program_lineage_fixture(
             "sdlc/plan",
             "[Task](../tasks/2026-07-15-fixture-034.md)",
         )
+    elif mutation == "program-execution-mixed-ready-state":
+        mutated.metadata[task_034]["status"] = "draft"
     elif mutation == "program-execution-unrelated-component":
+        spec = PurePosixPath("docs/03.specs/999-fixture/spec.md")
+        paths = tuple(sorted((*paths, spec), key=lambda item: item.as_posix()))
+        tracked_regular_paths = frozenset((*tracked_regular_paths, spec))
+        mutated.profiles[spec] = ProfileView("sdlc/spec", "sdlc", "authored")
+        mutated.metadata[spec] = {"type": "sdlc/spec", "status": "active"}
+        mutated.texts[spec] = "# Unregistered Spec fixture\n"
         add_execution_pair("999", "999")
     elif mutation == "program-execution-active-follow-up-direct":
         add_execution_pair("042", "042")
@@ -8560,6 +8636,7 @@ def _self_test(root: Path) -> list[str]:
             "program-lineage-ready-multiple-pairs",
             "program-lineage-ready-one-plan-two-tasks",
             "program-lineage-ready-two-plans-one-task",
+            "program-lineage-ready-mixed-state-pair",
             "program-lineage-unrelated-execution-component",
             "program-lineage-follow-up-current-execution-is-absent",
             "program-lineage-active-follow-up-direct-execution-is-rejected",
@@ -9363,8 +9440,8 @@ def _self_test(root: Path) -> list[str]:
                         "PROGRAM-LINEAGE-EXECUTION-GATE",
                         "docs/03.specs/034-fixture/spec.md",
                         "sdlc/spec",
-                        "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
-                        "component=3, plans=1, tasks=2, direct-spec=False, reciprocal=False, dependency-ready-original=True",
+                        "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links and relation-state parity for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
+                        "component=3, plans=1, tasks=2, direct-spec=False, execution-state=True, reciprocal=False, dependency-ready-original=True",
                         OWNER,
                     ),
                     (
@@ -9379,6 +9456,33 @@ def _self_test(root: Path) -> list[str]:
                 if projection != expected_projection:
                     failures.append(
                         f"{case['name']}: stable diagnostic tuples differ: "
+                        f"{projection!r}"
+                    )
+            elif case["mutation"] == "program-execution-unrelated-component":
+                projection = tuple(
+                    (
+                        item.rule_id,
+                        item.path.as_posix(),
+                        item.profile,
+                        item.expected,
+                        item.actual,
+                        item.owner,
+                    )
+                    for item in diagnostics
+                )
+                expected_projection = (
+                    (
+                        "PROGRAM-LINEAGE-EXECUTION-GATE",
+                        "docs/04.execution/plans/2026-07-15-fixture-999.md",
+                        "sdlc/plan",
+                        "every active Plan/Task component connected to one registry relation Spec",
+                        "unowned active execution component=2, active=2",
+                        OWNER,
+                    ),
+                )
+                if projection != expected_projection:
+                    failures.append(
+                        f"{case['name']}: stable unowned diagnostic tuple differs: "
                         f"{projection!r}"
                     )
         registry = load_registry(root)
