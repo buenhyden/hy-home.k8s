@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-28 - Spec 041 harness contract implementation evidence
+
+#### Metadata
+
+- **Date**: 2026-07-28
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-041 #agent-governance #harness-contract #memory
+
+#### Progress
+
+- Added the closed harness machine contract, schema, focused validator,
+  production fixture, and negative fixtures in
+  `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`.
+- Migrated current role and roster consumers to
+  `harness-contract/1.0.0/current` in
+  `52a4ab6c2e1e4436486a74ec13f35109150161a1`; the legacy role-semantics
+  contract remains readable compatibility input only and Spec 045 owns deletion
+  after a zero-consumer proof.
+- Aligned catalog, provider notes, implementation map, rules, validation
+  routing, aggregate coverage, tests, and README inventories in
+  `8c342ce6011c465e138c4cec0ab796ee6c83bdb3`.
+
+#### Memory
+
+- The four memory classes are now repository-static machine-contract data:
+  `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`.
+- `docs/00.agent-governance/memory/progress.md` is the canonical durable shared
+  ledger. `.agent-work/checkpoint.json` is transient, ignored, and advisory.
+  Domain owners remain the owning Spec, Task, Runbook, Incident, Postmortem, or
+  equivalent governed document. Provider-local memory is auxiliary and loses
+  conflicts to observed repository state.
+- Spec 043 still owns executable checkpoint promotion, refresh, expiry,
+  archive/GC, conflict resolution, redaction, and resume behavior. Raw prompts,
+  transcripts, credentials, tokens, secrets, auth files, shell history, env
+  dumps, private diagnostics, and user config remain prohibited durable memory.
+
+#### Evidence
+
+- Harness self-test `35` PASS and production PASS at current `10` roles,
+  `3` current surfaces, `30` current adapters, target-only `12/4/48`, four
+  evidence classes, four memory classes, and `11` migrated consumers.
+- Affected-surface self-test PASS with `21` paths, `12` selection cases, and
+  `31` mutations; affected production PASS with `746` paths and `13`
+  validators. Role semantics and roster currentness production checks PASS.
+- Repository aggregate PASS after adding the focused harness validator lane.
+  Provider runtime, hosted CI, remote, credential-bearing, Kubernetes/GitOps,
+  Vault/ESO, and live evidence remains `DEFER`.
+
+#### Handoff
+
+- Next owner: SAGC-005 whole-tranche QA, independent requirements/quality/security
+  review, atomic Spec/Plan/Task closure, and explicit-ref/clean-tree postflight.
+- Roll back newest-first: derived routing/catalog integration `8c342ce6`,
+  consumer migration `52a4ab6c`, harness contract introduction `8d5a4c50`,
+  activation postflight `5d4dd5c`, and activation `9e6fc553`.
+
 ### 2026-07-28 - Spec 041 reciprocal planning activation
 
 #### Metadata

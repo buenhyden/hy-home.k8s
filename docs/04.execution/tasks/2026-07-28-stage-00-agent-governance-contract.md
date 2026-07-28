@@ -41,10 +41,10 @@ claimed; those evidence lanes remain `DEFER`.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | SAGC-000 | VAL-SAGC-001 | Enroll PRD-003/ARD-0006/Specs041–046 under current accepted ADR-0013, retain ADR-0019 as the proposed successor, and activate the reciprocal Spec/Plan/Task frontier as one exact eight-path proposal. | platform | Done | PASS — reciprocal activation and postflight are observed without promoting provider/runtime evidence. | Activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`; exact eight paths; strict/lifecycle/aggregate/all-files/diff PASS; requirements compliant; quality approved; explicit-ref and clean-tree postflight PASS. |
-| SAGC-001 | VAL-SAGC-002, VAL-SAGC-003 | Implement the closed harness schema, focused validator, and negative fixtures while preserving independent route ownership. | platform | Queued | Not executed. | Schema cases, fixture mutations, focused command output, and routing comparison will be recorded here. |
-| SAGC-002 | VAL-SAGC-005, VAL-SAGC-006, VAL-SAGC-007, VAL-SAGC-009 | Add exact current/target contract data, evidence classes, and four explicit memory-class declarations. | platform | Queued | Not executed. | Exact 10/30 current, 12/48 target-only, memory authority/provenance/sensitivity/promotion boundaries, and redaction cases will be recorded here. |
-| SAGC-003 | VAL-SAGC-004 | Migrate named validators and readers to one selected harness contract version while retaining explicit legacy compatibility input. | platform | Queued | Not executed. | Consumer/version ledger, focused regressions, compatibility boundary, and rollback evidence will be recorded here. |
-| SAGC-004 | VAL-SAGC-003, VAL-SAGC-008 | Align catalog, provider notes, implementation maps, inventories, validation routing, and aggregate coverage. | platform | Queued | Not executed. | Derived-prose parity, affected selection, aggregate integration, and no-duplicate-owner results will be recorded here. |
+| SAGC-001 | VAL-SAGC-002, VAL-SAGC-003 | Implement the closed harness schema, focused validator, and negative fixtures while preserving independent route ownership. | platform | Done | PASS — the closed schema, focused validator, and mutation fixtures reject malformed or unsupported contract states while routing remains separately owned. | Implementation `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`; harness self-test/production PASS; unknown-key, enum, duplicate-role, projection, stop-rule, version, path, and sensitive-content mutations PASS. |
+| SAGC-002 | VAL-SAGC-005, VAL-SAGC-006, VAL-SAGC-007, VAL-SAGC-009 | Add exact current/target contract data, evidence classes, and four explicit memory-class declarations. | platform | Done | PASS — current and target inventories, four non-transitive evidence classes, and four memory classes validate without promoting target or runtime state. | Implementation `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`; current `10/3/30`; target-only `12/4/48`; evidence `4`; memory `4`; redaction and provider-local advisory boundaries PASS. |
+| SAGC-003 | VAL-SAGC-004 | Migrate named validators and readers to one selected harness contract version while retaining explicit legacy compatibility input. | platform | Done | PASS — all named semantic consumers select `harness-contract/1.0.0`; the legacy role contract is readable compatibility input with no current semantic consumer. | Migration `52a4ab6c2e1e4436486a74ec13f35109150161a1`; consumers `11`; `legacyConsumers=[]`; harness, role-semantics, roster, unit, aggregate, path-safety, requirements, and quality review PASS. |
+| SAGC-004 | VAL-SAGC-003, VAL-SAGC-008 | Align catalog, provider notes, implementation maps, inventories, validation routing, and aggregate coverage. | platform | Done | PASS — derived governance consumes the harness owner, seven exact affected surfaces route the focused validator, and the aggregate runs it before compatibility checks. | Integration `8c342ce6011c465e138c4cec0ab796ee6c83bdb3`; harness/affected/role/roster/strict/aggregate and staged hooks PASS; requirements `COMPLIANT`; quality `APPROVED`; no Gemini-native, infrastructure, CI-job, adapter, or provider-setting promotion. |
 | SAGC-005 | VAL-SAGC-001 through VAL-SAGC-009 | Run whole-tranche QA/review, close Spec/Plan/Task atomically, and perform explicit-ref/clean-tree postflight. | platform | Queued | Not executed. | Exact digest/range, all validation lanes, reviewer verdicts, observed commits, rollback chain, and external limitations will be recorded here. |
 
 ## Approval and Safety Boundaries
@@ -86,15 +86,26 @@ claimed; those evidence lanes remain `DEFER`.
 SAGC-000 activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`
 has the single parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`
 and changes only the declared Spec/index, reciprocal Plan/Task and indexes,
-shared progress entry, and registry relation. Registry self-test/strict (`119`
-cases; `453` selected paths), Markdown, links/owners, lifecycle self-test/staged
-(`668` cases), ACER, affected surfaces, aggregate, all-files pre-commit, and
-both diff checks passed. Independent requirements and quality reviews approved
-the remediated proposal. Explicit-ref lifecycle for the observed commit interval
-and clean-tree aggregate postflight passed. Contract data, scripts, tests,
-adapters, provider settings, CI, and live surfaces remain unchanged until their
-owning work package; provider runtime, hosted CI, remote, credentials, and live
-evidence remain `DEFER`.
+shared progress entry, and registry relation. Its postflight evidence update is
+`5d4dd5cf`.
+
+SAGC-001 and SAGC-002 implementation `8d5a4c50` adds the closed machine
+contract, schema, focused validator, fixtures, exact current `10/3/30` and
+target-only `12/4/48` inventories, four evidence classes, and four memory
+classes. SAGC-003 migration `52a4ab6c` moves all eleven named semantic consumers
+to `harness-contract/1.0.0`, leaves `legacyConsumers=[]`, and retains the old
+role contract only as readable compatibility input until Spec 045. SAGC-004
+integration `8c342ce6` aligns the derived governance, routes the focused
+validator through exactly seven affected surfaces, and places harness checks
+before compatibility validators in the aggregate. Focused harness, role,
+roster, affected-surface, strict document, aggregate, staged-hook, path-safety,
+requirements, and quality checks passed for their owning proposals.
+
+Current inventory remains `10/3/30`; target `12/4/48`, Gemini-native admission,
+provider installation/runtime, model promotion, hosted CI, remote,
+credential-bearing, and live evidence remain non-current or `DEFER`. Executable
+checkpoint promotion, retry, resume, expiry, archive/GC, conflict, and redaction
+behavior remains owned by Spec 043.
 
 ## Traceability
 
@@ -109,8 +120,8 @@ evidence remain `DEFER`.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [SAGC-000](../plans/2026-07-28-stage-00-agent-governance-contract.md#work-breakdown) | PASS — activation and postflight observed. | `48d8f731d062f5e29fe58c7084fe134ddf2740b3` → `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; exact eight paths; all declared repository-static gates and independent reviews PASS. |
-| [VAL-SAGC-002](../../03.specs/041-stage-00-agent-governance-contract/spec.md#success-criteria--verification-plan) | Queued. | Closed schema, negative fixtures, and separate routing-owner evidence. |
-| N/A — SAGC-002 shares the Plan and Spec sources linked above | Queued. | Current/target, result-class, memory-class, and redaction evidence. |
-| N/A — SAGC-003 shares the Plan and Spec sources linked above | Queued. | Consumer/version migration and compatibility-removal ledger. |
-| N/A — SAGC-004 shares the Plan and Spec sources linked above | Queued. | Derived parity, affected routing, and aggregate evidence. |
+| [VAL-SAGC-002](../../03.specs/041-stage-00-agent-governance-contract/spec.md#success-criteria--verification-plan) | PASS — closed schema and mutation fixtures observed. | `8d5a4c50`; focused harness self-test/production and negative fixtures PASS; routing remains independently owned. |
+| N/A — SAGC-002 shares the Plan and Spec sources linked above | PASS — exact inventories, evidence classes, and memory classes observed. | `8d5a4c50`; current `10/3/30`, target-only `12/4/48`, evidence `4`, memory `4`, and redaction boundaries PASS. |
+| N/A — SAGC-003 shares the Plan and Spec sources linked above | PASS — named consumers select one current contract. | `52a4ab6c`; consumers `11`, `legacyConsumers=[]`, compatibility input retained for Spec 045 removal proof. |
+| N/A — SAGC-004 shares the Plan and Spec sources linked above | PASS — derived governance and validation routing integrated. | `8c342ce6`; seven exact surfaces, aggregate ordering, focused/affected/strict/aggregate checks, requirements `COMPLIANT`, quality `APPROVED`. |
 | N/A — SAGC-005 shares the Plan and Spec sources linked above | Queued. | Whole-tranche QA/review, atomic closure, postflight, and rollback evidence. |
