@@ -33,9 +33,13 @@ Start from the repository gateway files, then follow the governance JIT sequence
   serving as the durable shared ledger and the only tracked `progress.md`;
   `.agent-work/checkpoint.json`
   is ignored, temporary, and advisory, and repository evidence wins conflicts.
-- Treat provider-local memory as auxiliary only. Spec 043 owns the not-yet-
-  implemented executable promotion, refresh, expiry, archive/GC, redaction,
-  conflict, and resume controls.
+- Treat provider-local memory as auxiliary only. Repo-static lifecycle
+  validators enforce the atomic/redacted synthetic checkpoint contract,
+  repository-wins resume, promotion/refresh/expiry/archive-GC/conflict,
+  compaction, handoff, and five bounded reviewed feedback destinations; ignored
+  checkpoints are not read or written. This does not prove Codex discovery,
+  hook delivery, permissions, model resolution, authenticated execution,
+  hosted CI, remote, credential-bearing, live, or actual checkpoint execution.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.

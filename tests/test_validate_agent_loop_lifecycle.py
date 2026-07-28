@@ -451,6 +451,34 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                     "executable",
                 )
 
+    def test_feedback_routing_has_one_reviewed_ordered_destination_set(
+        self,
+    ) -> None:
+        routing = self.contract["feedbackRouting"]
+        self.assertEqual(routing["trigger"], "repeated-stable-failure")
+        self.assertEqual(
+            routing["selection"],
+            "exactly-one-reviewed-destination",
+        )
+        self.assertTrue(routing["reviewRequired"])
+        self.assertFalse(
+            routing["rawTracePromptTranscriptPromotionAllowed"]
+        )
+        self.assertEqual(
+            tuple(
+                (destination["id"], destination["ownerRef"])
+                for destination in routing["destinations"]
+            ),
+            self.validator.FEEDBACK_DESTINATIONS,
+        )
+
+    def test_feedback_destination_id_drift_is_rejected(self) -> None:
+        mutated = self.contract_copy()
+        self.validator.apply_mutation(
+            mutated, "feedback-destination-id-drift"
+        )
+        self.assert_rule(mutated, "AHLL-FEEDBACK-ROUTING")
+
     def test_duplicate_json_keys_fail_at_the_input_boundary(self) -> None:
         with self.assertRaises(
             self.validator.LoopLifecycleError

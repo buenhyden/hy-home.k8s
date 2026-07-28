@@ -54,11 +54,15 @@ repository. Credentials, auth files, tokens, secrets, raw prompts, complete
 provider transcripts, shell history, private diagnostics, environment dumps,
 and user configuration are never memory payloads.
 
-The contract declares these boundaries now. Spec 043
-([`../../03.specs/043-agent-harness-loop-lifecycle/spec.md`](../../03.specs/043-agent-harness-loop-lifecycle/spec.md))
-owns future executable promotion, refresh, expiry, archive/garbage-collection,
-redaction, conflict, and resume controls. Until those controls are implemented
-and validated, do not report them as executable runtime behavior.
+The executable Spec 043 lifecycle validators enforce these four classes,
+atomic redacted synthetic checkpoint shape, repository-wins resume,
+promotion/refresh/expiry/archive-GC/conflict controls, compaction, handoff,
+and the five bounded reviewed feedback destinations. `.agent-work/checkpoint.json`
+remains ignored and advisory; validators neither read nor write it. Repository
+state and canonical owners win, provider-local memory remains auxiliary, and a
+repo-static PASS does not prove provider discovery, hook/event delivery,
+permissions, model resolution, authenticated execution, hosted CI, remote,
+credential-bearing, live, or actual checkpoint execution.
 
 ## Item Index
 

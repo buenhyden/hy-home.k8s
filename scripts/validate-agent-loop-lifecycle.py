@@ -173,6 +173,28 @@ MEMORY_CLASS_IDS = (
     "domain-scoped",
     "provider-local-auxiliary",
 )
+FEEDBACK_DESTINATIONS = (
+    (
+        "regression-fixture",
+        "tests/fixtures/agent-loop-lifecycle.json",
+    ),
+    (
+        "instruction-clarification",
+        "docs/00.agent-governance/rules/agentic.md",
+    ),
+    (
+        "validator-improvement",
+        "scripts/validate-agent-loop-lifecycle.py",
+    ),
+    (
+        "role-evaluation-case",
+        "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+    ),
+    (
+        "owned-external-limitation",
+        "docs/04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md",
+    ),
+)
 INTERFACE_SIGNATURES = {
     "normalizeFailure": (
         "normalizeFailure(result) -> {class, signatureDigest, retryable}",
@@ -552,6 +574,26 @@ def _validate_checkpoint_boundary(
         )
 
 
+def _validate_feedback_routing(contract: dict[str, Any]) -> None:
+    routing = contract["feedbackRouting"]
+    destinations = tuple(
+        (destination["id"], destination["ownerRef"])
+        for destination in routing["destinations"]
+    )
+    if (
+        routing["trigger"] != "repeated-stable-failure"
+        or routing["selection"]
+        != "exactly-one-reviewed-destination"
+        or routing["reviewRequired"] is not True
+        or routing["rawTracePromptTranscriptPromotionAllowed"] is not False
+        or destinations != FEEDBACK_DESTINATIONS
+    ):
+        fail(
+            "AHLL-FEEDBACK-ROUTING",
+            "trigger, review boundary, or ordered feedback owners differ",
+        )
+
+
 def _validate_interfaces(contract: dict[str, Any]) -> None:
     interfaces = contract["interfaces"]
     observed = {
@@ -592,6 +634,7 @@ def validate_contract(
     _validate_progress_policy(contract)
     _validate_event_record(contract)
     _validate_checkpoint_boundary(root, contract)
+    _validate_feedback_routing(contract)
     _validate_interfaces(contract)
     return {
         "states": len(contract["stateMachine"]["states"]),
@@ -601,6 +644,9 @@ def validate_contract(
         ),
         "progressDeltaClasses": len(
             contract["progressPolicy"]["allowedDeltaClasses"]
+        ),
+        "feedbackDestinations": len(
+            contract["feedbackRouting"]["destinations"]
         ),
         "interfaces": len(contract["interfaces"]),
     }
@@ -1069,6 +1115,23 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["checkpointBoundary"]["memoryClassIds"][-1] = (
             "provider-local-authority"
         )
+    elif name == "feedback-destination-id-drift":
+        contract["feedbackRouting"]["destinations"][0]["id"] = (
+            "replacement-fixture"
+        )
+    elif name == "feedback-destination-order-drift":
+        destinations = contract["feedbackRouting"]["destinations"]
+        destinations[0], destinations[1] = destinations[1], destinations[0]
+    elif name == "feedback-owner-ref-drift":
+        contract["feedbackRouting"]["destinations"][0]["ownerRef"] = (
+            "tests/fixtures/replacement.json"
+        )
+    elif name == "feedback-review-disabled":
+        contract["feedbackRouting"]["reviewRequired"] = False
+    elif name == "feedback-raw-promotion-enabled":
+        contract["feedbackRouting"][
+            "rawTracePromptTranscriptPromotionAllowed"
+        ] = True
     elif name == "interface-owner-drift":
         contract["interfaces"]["resume"]["implementationOwner"] = "AHLL-001"
     elif name == "checkpoint-interface-demoted":

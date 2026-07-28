@@ -5,6 +5,7 @@
     "transitions": 9,
     "nonRetryableFailureClasses": 6,
     "progressDeltaClasses": 5,
+    "feedbackDestinations": 5,
     "interfaces": 6
   },
   "decisionCases": [
@@ -458,6 +459,26 @@
       "expectedRule": "AHLL-SCHEMA"
     },
     {
+      "name": "feedback-destination-id-drift",
+      "expectedRule": "AHLL-FEEDBACK-ROUTING"
+    },
+    {
+      "name": "feedback-destination-order-drift",
+      "expectedRule": "AHLL-FEEDBACK-ROUTING"
+    },
+    {
+      "name": "feedback-owner-ref-drift",
+      "expectedRule": "AHLL-FEEDBACK-ROUTING"
+    },
+    {
+      "name": "feedback-review-disabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "feedback-raw-promotion-enabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
       "name": "interface-owner-drift",
       "expectedRule": "AHLL-INTERFACE"
     },
@@ -482,5 +503,5 @@
       "expectedRule": "AHLL-SENSITIVE"
     }
   ],
-  "expectedCaseCount": 49
+  "expectedCaseCount": 54
 }

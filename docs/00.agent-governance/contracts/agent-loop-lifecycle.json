@@ -285,6 +285,34 @@
       "provider-local-auxiliary"
     ]
   },
+  "feedbackRouting": {
+    "trigger": "repeated-stable-failure",
+    "selection": "exactly-one-reviewed-destination",
+    "reviewRequired": true,
+    "rawTracePromptTranscriptPromotionAllowed": false,
+    "destinations": [
+      {
+        "id": "regression-fixture",
+        "ownerRef": "tests/fixtures/agent-loop-lifecycle.json"
+      },
+      {
+        "id": "instruction-clarification",
+        "ownerRef": "docs/00.agent-governance/rules/agentic.md"
+      },
+      {
+        "id": "validator-improvement",
+        "ownerRef": "scripts/validate-agent-loop-lifecycle.py"
+      },
+      {
+        "id": "role-evaluation-case",
+        "ownerRef": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+      },
+      {
+        "id": "owned-external-limitation",
+        "ownerRef": "docs/04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md"
+      }
+    ]
+  },
   "interfaces": {
     "normalizeFailure": {
       "signature": "normalizeFailure(result) -> {class, signatureDigest, retryable}",

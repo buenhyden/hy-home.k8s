@@ -79,6 +79,13 @@ delegated execution.
   `memory/progress.md` as the shared `durable-long-term` ledger, and the owning
   Spec/Runbook/Incident/Postmortem as `domain-scoped`. Repository evidence wins
   conflicts.
+- Repo-static loop and checkpoint validators enforce the atomic/redacted
+  synthetic checkpoint contract, repository-wins resume,
+  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
+  bounded reviewed feedback destinations. They neither read nor write the ignored
+  checkpoint and do not prove Codex discovery, event delivery, permissions,
+  model resolution, authenticated execution, hosted CI, remote,
+  credential-bearing, live, or actual checkpoint execution.
 
 ## Current Contract
 

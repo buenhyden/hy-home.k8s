@@ -119,7 +119,7 @@ those files; provider-runtime evidence remains a separate lane.
 | Surface         | Source                                                     | Role                                 | Required Validation | Evidence   |
 | --------------- | ---------------------------------------------------------- | ------------------------------------ | ------------------- | ---------- |
 | Progress ledger | `docs/00.agent-governance/memory/progress.md`              | Repo-changing work + reusable memory | repo-quality-static | itself     |
-| Memory classes  | `contracts/harness-contract.json`, `memory/README.md`      | Declare working short-term, durable long-term, domain-scoped, and provider-local auxiliary authority | harness contract check; executable lifecycle deferred to Spec 043 | owning Task |
+| Memory lifecycle | `contracts/agent-loop-lifecycle.json`, `contracts/agent-checkpoint.schema.json`, `memory/README.md` | Enforce the four authority-bounded memory classes, atomic/redacted synthetic checkpoint shape, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and bounded reviewed feedback destinations | loop lifecycle and checkpoint repo-static validators; ignored `.agent-work/checkpoint.json` is advisory and not read or written | owning Task |
 | Plans / tasks   | `docs/04.execution/plans/**`, `docs/04.execution/tasks/**` | Execution + validation evidence      | repo-quality-static | stage docs |
 
 ### Operations / Runbooks

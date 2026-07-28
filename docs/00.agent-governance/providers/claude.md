@@ -72,6 +72,13 @@ resolution, hooks, or delegated execution.
 - Use `memory/progress.md` for `durable-long-term` shared progress and the
   owning Spec/Runbook/Incident/Postmortem for `domain-scoped` knowledge.
   Ignored `.agent-work/checkpoint.json` content is `working-short-term` only.
+- Repo-static loop and checkpoint validators enforce atomic/redacted synthetic
+  checkpoint shape, repository-wins resume,
+  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
+  bounded reviewed feedback destinations across all four memory classes. They
+  neither read nor write ignored checkpoints and do not prove Claude discovery,
+  hooks, permissions, model resolution, authenticated execution, hosted CI,
+  remote, credential-bearing, live, or actual checkpoint execution.
 
 ## Current Contract
 

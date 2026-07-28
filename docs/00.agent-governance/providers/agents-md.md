@@ -61,6 +61,14 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 - Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex hook JSON and local/Antigravity hook wiring are not equivalent to a native permission gate. Gemini CLI native event delivery remains `DEFER` while `.gemini/settings.json` is absent.
 - `.claude/*.local.md` files are ignored local warning files. Hookify local rules may advise a local session, but shared enforcement belongs in tracked Claude settings, shared hook scripts, repository validators, and provider hook JSON only as context/validation wiring.
 - Durable policy and governance belong under `docs/00.agent-governance/**`.
+- The repo-static loop and checkpoint validators enforce the four memory
+  classes, atomic/redacted synthetic checkpoint contract, repository-wins
+  resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff,
+  and five bounded reviewed feedback destinations. Ignored `.agent-work/checkpoint.json`
+  remains advisory and is not read or written; this PASS proves none of
+  provider discovery, event delivery, permissions, model resolution,
+  authenticated execution, hosted CI, remote, credential-bearing, live, or
+  actual checkpoint execution.
 - This repository does **not** use GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
 - If GitHub tooling needs guidance, it must be routed through the existing gateway model instead of adding a parallel instruction hierarchy.
 

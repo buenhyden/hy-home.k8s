@@ -35,8 +35,13 @@ Start from the root Claude provider shim, then follow the governance JIT sequenc
   `.agent-work/checkpoint.json`
   is ignored, temporary, and advisory, and repository evidence wins conflicts.
 - Treat Claude auto memory or other provider-local memory as auxiliary only.
-  Spec 043 owns the not-yet-implemented executable promotion, refresh, expiry,
-  archive/GC, redaction, conflict, and resume controls.
+  Repo-static lifecycle validators enforce the atomic/redacted synthetic
+  checkpoint contract, repository-wins resume, promotion/refresh/expiry/
+  archive-GC/conflict, compaction, handoff, and five bounded reviewed feedback
+  destinations; ignored checkpoints are not read or written. This does not
+  prove Claude discovery, hook delivery, permissions, model resolution,
+  authenticated execution, hosted CI, remote, credential-bearing, live, or
+  actual checkpoint execution.
 - Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.

@@ -20,6 +20,7 @@
     "progressPolicy",
     "eventRecord",
     "checkpointBoundary",
+    "feedbackRouting",
     "interfaces"
   ],
   "properties": {
@@ -77,6 +78,9 @@
     },
     "checkpointBoundary": {
       "$ref": "#/$defs/checkpointBoundary"
+    },
+    "feedbackRouting": {
+      "$ref": "#/$defs/feedbackRouting"
     },
     "interfaces": {
       "$ref": "#/$defs/interfaces"
@@ -564,6 +568,56 @@
               "domain-scoped",
               "provider-local-auxiliary"
             ]
+          }
+        }
+      }
+    },
+    "feedbackDestination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "ownerRef"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "ownerRef": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "feedbackRouting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trigger",
+        "selection",
+        "reviewRequired",
+        "rawTracePromptTranscriptPromotionAllowed",
+        "destinations"
+      ],
+      "properties": {
+        "trigger": {
+          "const": "repeated-stable-failure"
+        },
+        "selection": {
+          "const": "exactly-one-reviewed-destination"
+        },
+        "reviewRequired": {
+          "const": true
+        },
+        "rawTracePromptTranscriptPromotionAllowed": {
+          "const": false
+        },
+        "destinations": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/feedbackDestination"
           }
         }
       }

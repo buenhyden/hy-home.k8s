@@ -77,6 +77,13 @@ and output styles. It is not the Gemini CLI native configuration directory.
   `durable-long-term` ledger; owning Specs, Runbooks, Incidents, and
   Postmortems hold `domain-scoped` knowledge. Repository evidence wins
   conflicts.
+- Repo-static loop and checkpoint validators enforce the atomic/redacted
+  synthetic checkpoint contract, repository-wins resume,
+  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
+  bounded reviewed feedback destinations. They neither read nor write ignored
+  checkpoints and do not establish Gemini CLI discovery, event delivery,
+  permissions, model resolution, authenticated execution, hosted CI, remote,
+  credential-bearing, live, or actual checkpoint execution.
 - The tracked local adapter workflow may be used only by a runtime that
   explicitly supports it. Do not infer Gemini CLI agent registration from
   `.agents/agents/**`.

@@ -34,6 +34,13 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 - The `.agents/agents/*.md` files serve as local/Antigravity role adapters and reference indexes.
 - `.agents/hooks.json` provides local behavioral/event-context wiring where a compatible runtime honors it. It routes to shared hook scripts for Template-First guidance and QA/CI/static validation, but it is neither a Claude-style permission gate nor Gemini CLI native settings and does not replace explicit validation commands.
 - Gemini CLI native project agents and settings are reserved for `.gemini/agents/**` and `.gemini/settings.json`. Both are absent; native discovery, event delivery, policy loading, and model resolution remain `DEFER` pending a separately approved PRD/ARD/Spec/Plan/Task, or at minimum Spec/Plan/Task.
+- Repo-static loop and checkpoint validators enforce the four memory classes,
+  atomic/redacted synthetic checkpoint contract, repository-wins resume,
+  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
+  bounded reviewed feedback destinations. They neither read nor write ignored
+  `.agent-work/checkpoint.json` and do not prove Gemini CLI discovery, hook
+  delivery, permissions, model resolution, authenticated execution, hosted CI,
+  remote, credential-bearing, live, or actual checkpoint execution.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - See `.agents/rules/workspace-rules.md` for local/Antigravity workspace rules
   and `.agents/workflows/qa-cicd-workflow.md` for shared QA/CI workflow steps.
