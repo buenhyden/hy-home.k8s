@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 043 terminal closure staging
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-043 #agent-loop #checkpoint #memory-lifecycle #closure
+
+#### Progress
+
+- Observed bounded-loop, checkpoint/memory, routing/provider, remediation, and
+  evidence commits through
+  `4bc3da7621c84048e1aee3b146482f9d7e62bbaa`.
+- Prepared the exact eight-path terminal proposal: Spec 043 body/index,
+  reciprocal Plan body/index, reciprocal Task body/index, this progress
+  ledger, and only the Spec 043 program-lineage relation. PRD-003, ARD-0006,
+  and proposed ADR-0019 remain open for Specs 044 through 046.
+
+#### Memory
+
+- `working-short-term` remains bounded checkpoint working state;
+  `durable-long-term` retains reviewed reusable facts in canonical repository
+  owners; `domain-scoped` retains governed domain evidence; and
+  `provider-local-auxiliary` remains replaceable, provenance-bound, and
+  non-authoritative.
+- Promotion, refresh, expiry, archive/GC, conflict, redaction, compaction, and
+  handoff are closed and fixture-tested. Current repository and canonical SDLC
+  state win every checkpoint, resume, memory, and provider-local conflict.
+- Raw prompts/transcripts, provider response bodies, credentials, tokens,
+  secrets, auth artifacts, account identities, shell history, environment
+  dumps, user configuration, and private diagnostics are prohibited memory.
+
+#### Evidence
+
+- Lifecycle production/self-test `59`, checkpoint mutations `82`, combined
+  focused tests `39`, affected surfaces `21/21` with `16` validators and zero
+  uncovered/ambiguous paths, lifecycle self-test `668`, strict registry `457`,
+  Markdown, links/owners, whole-tranche explicit-ref, aggregate, all-files,
+  status, and both diff checks passed.
+- Whole-tranche requirements review returned `COMPLIANT`; quality and security
+  returned `APPROVED` after every finding and the token-family completeness
+  follow-up were `ADDRESSED`.
+- Provider hook delivery, provider runtime, hosted CI, remote,
+  credential-bearing, Kubernetes/GitOps, Vault/ESO, live, and actual
+  `.agent-work/checkpoint.json` execution remain `DEFER` or unobserved.
+- This staged entry does not claim the future content-addressed closure SHA or
+  its post-closure explicit-ref/clean-tree evidence event.
+
+#### Handoff
+
+- Next owner: commit this exact eight-path transition, run parent-to-closure
+  explicit-ref lifecycle and clean-tree aggregate/all-files postflight, record
+  the observed closure identity, then activate Spec 044.
+- Roll back the terminal closure before reverting evidence `4bc3da76`,
+  remediation `9d8a2a36`, routing `f0190643`, checkpoint `95a6ee03`, loop
+  `8a995014`, or activation `64e203a4`.
+
 ### 2026-07-29 - Spec 043 activation postflight
 
 #### Metadata

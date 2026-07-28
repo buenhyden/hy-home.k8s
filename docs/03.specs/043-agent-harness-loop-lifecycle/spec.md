@@ -1,7 +1,7 @@
 ---
 title: 'Agent Harness Loop Lifecycle Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-29
 ---
@@ -173,8 +173,10 @@ bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
 
-The first three commands are planned Spec 043 deliverables and are not claimed
-to exist or pass by this lifecycle activation.
+The first three commands are implemented repository-static deliverables. They
+validate the provider-neutral loop and checkpoint contracts without claiming
+provider-hook delivery, provider runtime, hosted CI, remote, credential, live,
+or actual ignored-checkpoint execution.
 
 ## Success Criteria & Verification Plan
 
@@ -196,6 +198,18 @@ to exist or pass by this lifecycle activation.
   instruction, validator, eval, or limitation owners.
 - **VAL-AHLL-009**: Focused lifecycle tests, strict document checks,
   repository quality gate, and diff checks PASS.
+
+Implementation commits `8a995014d76a92763df420321919e493ec37323e`,
+`95a6ee03ff2cdff03cb399b4815ba229b5ff27e8`,
+`f0190643e443c28c36e4e54b001589b3a162c903`, and
+`9d8a2a368849dbab947eff0e9fb066afc6d239a4` implement the bounded loop,
+checkpoint and four-class memory lifecycle, routing/provider projection, and
+review remediation. Lifecycle `59`, checkpoint `82`, combined focused tests
+`39`, affected surfaces `21/21` with `16` validators, lifecycle self-test
+`668`, strict registry `457`, aggregate, all-files, and diff gates passed.
+Requirements review returned `COMPLIANT`; quality and security returned
+`APPROVED` after every finding was `ADDRESSED`. External and actual
+`.agent-work/checkpoint.json` execution claims remain unobserved.
 
 ## Traceability
 

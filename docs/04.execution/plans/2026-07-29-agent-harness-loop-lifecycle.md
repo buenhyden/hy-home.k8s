@@ -1,7 +1,7 @@
 ---
 title: 'Agent Harness Loop Lifecycle Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-29
 ---
@@ -10,7 +10,7 @@ updated: 2026-07-29
 
 ## Overview
 
-This Plan executes
+This Plan executed
 [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md) after the
 repository-static closure of Spec 042. It turns the four memory classes and
 provider-neutral evidence boundaries introduced by Specs 041 and 042 into a
@@ -19,11 +19,10 @@ resume, handoff, and durable-memory controls.
 
 Spec 042 closure `90a7d85698cc024e26085ca7caed1b018f78a04e` and
 postflight evidence update `023c13dfe4f1643fe29157dde57b5eaae5e495bd`
-are observed prerequisites. This Plan, its Task, Spec 043 and its index, both
-Stage 04 indexes, the shared progress entry, and only the Spec 043 registry
-tranche form one exact eight-path activation proposal. No future activation
-commit, checkpoint implementation, provider-hook delivery, or runtime result
-is claimed before observation.
+were observed prerequisites. The exact eight-path activation was committed as
+`64e203a4a4ab26239b92a3ee335bce785d938f45`, and its postflight evidence was
+recorded by `3b4981ab`. No provider-hook delivery or provider-runtime result is
+inferred from that repository-static activation.
 
 ## Context
 
@@ -32,9 +31,10 @@ Spec 041 declared `working-short-term`, `durable-long-term`,
 `.agent-work/checkpoint.json` as an ignored, advisory recovery carrier and the
 repository as the system of record. Spec 042 supplied provider-specific
 configuration and evidence boundaries without making provider-local state
-authoritative. The executable lifecycle for those declarations remains open.
+authoritative. The executable lifecycle for those declarations was open when
+this Plan activated and is closed by the implementation evidence below.
 
-The implementation must preserve exact ceilings: at most two automatic
+The implementation preserves exact ceilings: at most two automatic
 retries after the initial failure for one normalized signature, at most three
 automatic recovery actions per task by default, and immediate escalation on
 the second identical result with no progress. Permission denial, credential
@@ -92,8 +92,8 @@ stop, and contract/schema corruption are non-retryable.
 | Independent review | Requirements, quality, and security reviewers inspect the stable proposal | No unresolved Critical or Important finding |
 | External evidence | Provider runtime, hosted CI, remote, and live lanes | `DEFER`, `ABSENT`, or `BLOCKED` unless separately authorized and observed |
 
-The focused loop and checkpoint commands are AHLL-001/AHLL-002 deliverables;
-this activation does not claim that they exist or pass.
+The focused loop and checkpoint commands are observed AHLL-001/AHLL-002
+deliverables and pass with the terminal evidence recorded in the Task.
 
 ## Risks & Mitigations
 
@@ -126,6 +126,14 @@ this activation does not claim that they exist or pass.
 - Provider runtime, hosted CI, remote, credential-bearing, and live results
   retain their separately observed verdicts and are never inferred from
   repository-static PASS.
+
+AHLL-000 through AHLL-004 are complete through evidence head
+`4bc3da7621c84048e1aee3b146482f9d7e62bbaa`. The bounded lifecycle,
+checkpoint/four-class memory controls, routing/provider integration, review
+remediation, focused `59/82/39`, lifecycle `668`, strict, affected, aggregate,
+all-files, diff, and independent-review gates passed. The exact eight-path
+terminal proposal closes this Plan without preclaiming its future closure SHA
+or post-closure evidence update.
 
 ## Traceability
 

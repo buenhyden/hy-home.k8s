@@ -6231,7 +6231,7 @@
           {
             "spec": "043",
             "order": 3,
-            "state": "active",
+            "state": "done",
             "reason": "Agent harness loop lifecycle",
             "decision": "0013"
           },
