@@ -1,0 +1,320 @@
+{
+  "$schema": "./agent-loop-lifecycle.schema.json",
+  "schemaVersion": 1,
+  "contractId": "agent-loop-lifecycle",
+  "contractVersion": "1.0.0",
+  "currentOwner": {
+    "path": "docs/00.agent-governance/contracts/agent-loop-lifecycle.json",
+    "contractVersion": "1.0.0",
+    "status": "current"
+  },
+  "providerNeutral": true,
+  "authority": {
+    "spec": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+    "implementationScope": "AHLL-001",
+    "acceptanceCriteria": [
+      "VAL-AHLL-001",
+      "VAL-AHLL-002",
+      "VAL-AHLL-003",
+      "VAL-AHLL-004"
+    ],
+    "checkpointControlsOwner": "AHLL-002"
+  },
+  "stateMachine": {
+    "initialState": "ready",
+    "states": [
+      {
+        "id": "ready",
+        "terminal": false,
+        "meaning": "Task and bounded loop inputs are ready for execution."
+      },
+      {
+        "id": "running",
+        "terminal": false,
+        "meaning": "One authorized action is executing."
+      },
+      {
+        "id": "validating",
+        "terminal": false,
+        "meaning": "Deterministic evidence is being evaluated."
+      },
+      {
+        "id": "retry-assessment",
+        "terminal": false,
+        "meaning": "Failure, progress, action difference, and both budgets are assessed."
+      },
+      {
+        "id": "completed",
+        "terminal": true,
+        "meaning": "The requested acceptance conditions are satisfied."
+      },
+      {
+        "id": "blocked",
+        "terminal": true,
+        "meaning": "Continuation requires an unavailable dependency or authority."
+      },
+      {
+        "id": "escalated",
+        "terminal": true,
+        "meaning": "Automatic recovery stopped and an owned decision is required."
+      },
+      {
+        "id": "aborted",
+        "terminal": true,
+        "meaning": "Execution stopped without further automatic action."
+      }
+    ],
+    "transitions": [
+      {
+        "from": "ready",
+        "event": "start",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "event": "submit-for-validation",
+        "to": "validating"
+      },
+      {
+        "from": "validating",
+        "event": "validation-pass",
+        "to": "completed"
+      },
+      {
+        "from": "validating",
+        "event": "recoverable-failure",
+        "to": "retry-assessment"
+      },
+      {
+        "from": "retry-assessment",
+        "event": "retry-approved",
+        "to": "running"
+      },
+      {
+        "from": "retry-assessment",
+        "event": "retry-denied",
+        "to": "escalated"
+      },
+      {
+        "from": "validating",
+        "event": "blocked-dependency",
+        "to": "blocked"
+      },
+      {
+        "from": "validating",
+        "event": "escalation-required",
+        "to": "escalated"
+      },
+      {
+        "from": "validating",
+        "event": "explicit-user-stop",
+        "to": "aborted"
+      }
+    ],
+    "automaticTerminalStates": [
+      "completed",
+      "blocked",
+      "escalated",
+      "aborted"
+    ]
+  },
+  "failureNormalization": {
+    "signatureVersion": 1,
+    "digestAlgorithm": "sha256",
+    "signatureFields": [
+      "validator-result-class",
+      "stable-command-id",
+      "exit-class",
+      "sanitized-diagnostic-code",
+      "affected-scope",
+      "contract-version"
+    ],
+    "excludedFields": [
+      "timestamps",
+      "random-paths",
+      "credentials",
+      "raw-stdout-stderr",
+      "provider-prose",
+      "volatile-ids"
+    ],
+    "boundedDiagnosticRequired": true,
+    "semanticEquivalenceAcrossProviders": true,
+    "providerEvidenceRetainedSeparately": true,
+    "rawOutputAllowed": false
+  },
+  "retryPolicy": {
+    "initialFailureCountsAsRetry": false,
+    "maxAutomaticRetriesPerSignature": 2,
+    "defaultMaxAutomaticRecoveryActionsPerTask": 3,
+    "effectiveRecoveryLimit": "minimum-of-present-default-role-task-limits",
+    "counterScope": "task",
+    "signatureRetriesKeyedByNormalizedSignature": true,
+    "providerFallbackResetsCounters": false,
+    "modelFallbackResetsCounters": false,
+    "handoffResetsCounters": false,
+    "signatureChangeResetsTaskRecoveryCounter": false,
+    "retryRequiresDifferentAction": true,
+    "automaticRecoveryActionKinds": [
+      "retry",
+      "provider-fallback",
+      "model-fallback",
+      "tool-fallback",
+      "approved-remediation-action"
+    ],
+    "budgetExhaustionDecision": "escalate",
+    "evaluationOrder": [
+      "non-retryable-class",
+      "second-identical-no-progress-result",
+      "same-signature-retry-budget",
+      "task-recovery-budget",
+      "different-action-requirement"
+    ]
+  },
+  "noProgressPolicy": {
+    "resultIdentityFields": [
+      "result-class",
+      "normalized-signature-digest",
+      "stable-command-id",
+      "affected-scope"
+    ],
+    "maxConsecutiveIdenticalResultsWithoutProgress": 2,
+    "secondObservationDecision": "escalate",
+    "secondObservationState": "escalated",
+    "consumesRetryBudgetBeforeStop": false,
+    "progressResetsConsecutiveCount": true,
+    "providerChangeResetsSequence": false,
+    "modelChangeResetsSequence": false
+  },
+  "nonRetryableFailureClasses": [
+    {
+      "id": "permission-denial",
+      "retryable": false,
+      "decision": "escalate",
+      "terminalState": "escalated"
+    },
+    {
+      "id": "credential-boundary",
+      "retryable": false,
+      "decision": "escalate",
+      "terminalState": "escalated"
+    },
+    {
+      "id": "secret-detection",
+      "retryable": false,
+      "decision": "escalate",
+      "terminalState": "escalated"
+    },
+    {
+      "id": "destructive-live-mutation-risk",
+      "retryable": false,
+      "decision": "escalate",
+      "terminalState": "escalated"
+    },
+    {
+      "id": "explicit-user-stop",
+      "retryable": false,
+      "decision": "stop",
+      "terminalState": "aborted"
+    },
+    {
+      "id": "contract-schema-corruption",
+      "retryable": false,
+      "decision": "escalate",
+      "terminalState": "escalated"
+    }
+  ],
+  "progressPolicy": {
+    "allowedDeltaClasses": [
+      "changed-intended-file-state",
+      "fewer-failing-assertions",
+      "newly-satisfied-criterion",
+      "narrowed-reproducible-failure",
+      "approved-handoff-artifact"
+    ],
+    "rejectedSignals": [
+      "more-tokens",
+      "repeated-commands",
+      "changed-wording",
+      "unverified-fallback"
+    ],
+    "requiresAtLeastOneAuthorizedDelta": true,
+    "requiresDeterministicEvidence": true,
+    "providerProseIsEvidence": false
+  },
+  "eventRecord": {
+    "requiredFields": [
+      "task-id",
+      "role-id",
+      "provider-id",
+      "state-transition",
+      "attempt-counter",
+      "recovery-action-counter",
+      "signature-digest",
+      "progress-delta-class",
+      "result-class",
+      "validation-evidence-ref",
+      "stop-reason",
+      "handoff-owner",
+      "redaction-result"
+    ],
+    "prohibitedFields": [
+      "credentials",
+      "tokens",
+      "account-identifiers",
+      "auth-paths-or-content",
+      "environment-dumps",
+      "shell-history",
+      "raw-prompts-or-transcripts",
+      "provider-response-bodies",
+      "secret-bearing-output",
+      "private-diagnostics",
+      "user-configuration"
+    ],
+    "rawPayloadAllowed": false
+  },
+  "checkpointBoundary": {
+    "schemaRef": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json",
+    "implementationOwner": "AHLL-002",
+    "implementationState": "declaration-only",
+    "repositoryStateWins": true,
+    "executableValidationDelegated": true,
+    "memoryClassIds": [
+      "working-short-term",
+      "durable-long-term",
+      "domain-scoped",
+      "provider-local-auxiliary"
+    ]
+  },
+  "interfaces": {
+    "normalizeFailure": {
+      "signature": "normalizeFailure(result) -> {class, signatureDigest, retryable}",
+      "implementationOwner": "AHLL-001",
+      "implementationState": "executable"
+    },
+    "measureProgress": {
+      "signature": "measureProgress(before, after) -> {progressed, deltaClasses}",
+      "implementationOwner": "AHLL-001",
+      "implementationState": "executable"
+    },
+    "decideNext": {
+      "signature": "decideNext(loopState, budgets, failure, progress) -> retry | stop | escalate",
+      "implementationOwner": "AHLL-001",
+      "implementationState": "executable"
+    },
+    "writeCheckpoint": {
+      "signature": "writeCheckpoint(state) -> redacted transient record",
+      "implementationOwner": "AHLL-002",
+      "implementationState": "declaration-only"
+    },
+    "resume": {
+      "signature": "resume(checkpoint, repositoryState) -> validated next state or rejection",
+      "implementationOwner": "AHLL-002",
+      "implementationState": "declaration-only"
+    },
+    "handoff": {
+      "signature": "handoff(state) -> bounded result/evidence/limitation/next-owner summary",
+      "implementationOwner": "AHLL-002",
+      "implementationState": "declaration-only"
+    }
+  }
+}

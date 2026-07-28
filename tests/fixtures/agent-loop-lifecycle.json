@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 1,
+  "expectedCounts": {
+    "states": 8,
+    "transitions": 9,
+    "nonRetryableFailureClasses": 6,
+    "progressDeltaClasses": 5,
+    "interfaces": 6
+  },
+  "decisionCases": [
+    {
+      "name": "initial-failure-permits-first-retry",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "retry",
+      "expectedReason": "retry-approved",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "same-signature-permits-second-retry-after-progress",
+      "loopState": {
+        "automaticRetriesForSignature": 1,
+        "automaticRecoveryActionsUsed": 1,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": true,
+        "deltaClasses": [
+          "narrowed-reproducible-failure"
+        ]
+      },
+      "expectedDecision": "retry",
+      "expectedReason": "retry-approved",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "same-signature-third-retry-is-denied",
+      "loopState": {
+        "automaticRetriesForSignature": 2,
+        "automaticRecoveryActionsUsed": 2,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": true,
+        "deltaClasses": [
+          "newly-satisfied-criterion"
+        ]
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "same-signature-retry-budget-exhausted",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "third-task-recovery-survives-provider-model-fallback",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 2,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "alternate-provider-transient",
+        "signatureDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "retry",
+      "expectedReason": "retry-approved",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "fourth-task-recovery-is-denied",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 3,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "new-signature-transient",
+        "signatureDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "task-recovery-budget-exhausted",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "lower-role-limit-wins",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 2,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": true
+      },
+      "budgets": {
+        "roleMaxAutomaticRecoveryActions": 2
+      },
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "task-recovery-budget-exhausted",
+      "expectedEffectiveRecoveryLimit": 2
+    },
+    {
+      "name": "lower-task-limit-wins",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 1,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": true
+      },
+      "budgets": {
+        "roleMaxAutomaticRecoveryActions": 2,
+        "taskMaxAutomaticRecoveryActions": 1
+      },
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "task-recovery-budget-exhausted",
+      "expectedEffectiveRecoveryLimit": 1
+    },
+    {
+      "name": "second-identical-no-progress-result-escalates-first",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 2,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "second-identical-no-progress-result",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "identical-proposed-action-escalates",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 1,
+        "proposedActionDiffers": false
+      },
+      "budgets": {},
+      "failure": {
+        "class": "transient-validation",
+        "signatureDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "retryable": true
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "proposed-action-not-different",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "permission-denial-stops-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "permission-denial",
+        "signatureDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "non-retryable:permission-denial",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "credential-boundary-stops-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "credential-boundary",
+        "signatureDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "non-retryable:credential-boundary",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "secret-detection-stops-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "secret-detection",
+        "signatureDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "non-retryable:secret-detection",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "destructive-live-mutation-risk-stops-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "destructive-live-mutation-risk",
+        "signatureDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "non-retryable:destructive-live-mutation-risk",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "explicit-user-stop-aborts-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "explicit-user-stop",
+        "signatureDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "stop",
+      "expectedReason": "non-retryable:explicit-user-stop",
+      "expectedEffectiveRecoveryLimit": 3
+    },
+    {
+      "name": "contract-schema-corruption-stops-immediately",
+      "loopState": {
+        "automaticRetriesForSignature": 0,
+        "automaticRecoveryActionsUsed": 0,
+        "consecutiveIdenticalNoProgressResults": 0,
+        "proposedActionDiffers": true
+      },
+      "budgets": {},
+      "failure": {
+        "class": "contract-schema-corruption",
+        "signatureDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "retryable": false
+      },
+      "progress": {
+        "progressed": false,
+        "deltaClasses": []
+      },
+      "expectedDecision": "escalate",
+      "expectedReason": "non-retryable:contract-schema-corruption",
+      "expectedEffectiveRecoveryLimit": 3
+    }
+  ],
+  "mutations": [
+    {
+      "name": "unknown-top-level-key",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "unknown-nested-key",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "unsupported-schema-version",
+      "expectedRule": "AHLL-IDENTITY"
+    },
+    {
+      "name": "unsupported-contract-version",
+      "expectedRule": "AHLL-IDENTITY"
+    },
+    {
+      "name": "contract-id-drift",
+      "expectedRule": "AHLL-IDENTITY"
+    },
+    {
+      "name": "current-owner-drift",
+      "expectedRule": "AHLL-IDENTITY"
+    },
+    {
+      "name": "provider-neutral-disabled",
+      "expectedRule": "AHLL-IDENTITY"
+    },
+    {
+      "name": "state-order-drift",
+      "expectedRule": "AHLL-STATE"
+    },
+    {
+      "name": "terminal-state-drift",
+      "expectedRule": "AHLL-STATE"
+    },
+    {
+      "name": "transition-drift",
+      "expectedRule": "AHLL-STATE"
+    },
+    {
+      "name": "signature-field-drift",
+      "expectedRule": "AHLL-FAILURE-NORMALIZATION"
+    },
+    {
+      "name": "initial-failure-counted-as-retry",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "same-signature-retry-ceiling",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "task-recovery-ceiling",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "provider-fallback-reset",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "model-fallback-reset",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "recovery-limit-precedence-drift",
+      "expectedRule": "AHLL-RETRY"
+    },
+    {
+      "name": "no-progress-limit",
+      "expectedRule": "AHLL-NO-PROGRESS"
+    },
+    {
+      "name": "no-progress-budget-consumption",
+      "expectedRule": "AHLL-NO-PROGRESS"
+    },
+    {
+      "name": "missing-nonretryable-class",
+      "expectedRule": "AHLL-NONRETRYABLE"
+    },
+    {
+      "name": "nonretryable-marked-retryable",
+      "expectedRule": "AHLL-NONRETRYABLE"
+    },
+    {
+      "name": "progress-delta-drift",
+      "expectedRule": "AHLL-PROGRESS"
+    },
+    {
+      "name": "rejected-signal-drift",
+      "expectedRule": "AHLL-PROGRESS"
+    },
+    {
+      "name": "checkpoint-owner-drift",
+      "expectedRule": "AHLL-CHECKPOINT-BOUNDARY"
+    },
+    {
+      "name": "executable-checkpoint-claimed",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "memory-class-drift",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "interface-owner-drift",
+      "expectedRule": "AHLL-INTERFACE"
+    },
+    {
+      "name": "sensitive-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-provider-response-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-user-configuration-key",
+      "expectedRule": "AHLL-SENSITIVE"
+    },
+    {
+      "name": "sensitive-value",
+      "expectedRule": "AHLL-SENSITIVE"
+    }
+  ],
+  "expectedCaseCount": 47
+}
