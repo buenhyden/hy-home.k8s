@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 042 terminal closure staging
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, docs, governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-042 #provider-runtime #model-evidence #lifecycle #closure
+
+#### Progress
+
+- Staged the terminal lifecycle transition for Spec 042 after implementation
+  commit `9c4dcc7b7572bfe8f436d81ee87ede872707cc73` and its
+  explicit-ref/clean-tree postflight.
+- This closure changes exactly eight paths: Spec 042 body/index, reciprocal
+  Plan body/index, reciprocal Task body/index, this progress ledger, and the
+  single Spec 042 program-lineage relation. PRD-003 and ARD-0006 remain active
+  because Specs 043 through 046 own later tranches.
+
+#### Memory
+
+- Durable memory retains only source identity, bounded local observations,
+  provider/evidence verdicts, implementation evidence, and reviewer results.
+  It excludes credentials, auth artifacts, raw prompts/transcripts, provider
+  response bodies, shell history, environment dumps, and private diagnostics.
+- Provider-local memory remains advisory. Repository state and canonical SDLC
+  owners win every conflict; executable promotion, refresh, expiry,
+  archive/GC, redaction, conflict, and resume controls remain Spec 043 work.
+
+#### Evidence
+
+- PNME-000 through PNME-005 are recorded as PASS in the reciprocal Task before
+  terminal status transition.
+- Provider config `13`, canary `8`, unit `17/17`, affected `21/21`, strict
+  registry `455`, focused, lifecycle, aggregate, all-files, and diff checks
+  passed.
+- Requirements re-review returned `COMPLIANT`; quality/security re-review
+  returned `APPROVED`.
+- Provider discovery, authenticated run, model promotion, hosted CI, remote,
+  credential-bearing, Kubernetes/GitOps, Vault/ESO, and live results remain
+  their observed `DEFER` or `ABSENT` verdicts.
+- This staged entry does not claim the future content-addressed closure commit
+  SHA. The closure commit and explicit-ref/clean-tree postflight must be
+  observed after commit creation.
+
+#### Handoff
+
+- Next owner: commit this atomic lifecycle transition, run explicit-ref
+  lifecycle and clean-tree aggregate postflight, then activate Spec 043.
+- Roll back this terminal closure before reverting implementation
+  `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`.
+
 ### 2026-07-28 - Spec 042 activation postflight
 
 #### Metadata

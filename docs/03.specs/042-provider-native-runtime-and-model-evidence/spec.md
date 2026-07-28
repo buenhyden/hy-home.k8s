@@ -1,9 +1,9 @@
 ---
 title: 'Provider-Native Runtime and Model Evidence Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-29
 ---
 
 # Provider-Native Runtime and Model Evidence Specification
@@ -204,8 +204,10 @@ bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
 
-The first three commands are planned program deliverables and are not claimed
-to exist in this draft.
+The focused provider commands are implemented repository-static deliverables.
+They validate comparable evidence records without promoting provider
+discovery, authentication, model resolution, hosted CI, remote, or live
+readiness.
 
 ## Success Criteria & Verification Plan
 
@@ -231,6 +233,16 @@ to exist in this draft.
   static, discovery, and authenticated-run evidence.
 - **VAL-PNME-009**: Focused provider validation, strict document checks,
   repository quality gate, and diff checks PASS.
+
+Implementation commit `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`
+implements the closed provider evidence contract, exact ten-source ledger,
+thirteen config and eight canary negative fixtures, four provider surfaces,
+eight candidate-only model records, seven MCP boundaries, and twelve redacted
+canary records. Focused, strict, lifecycle, aggregate, all-files, and diff
+checks passed; requirements review returned `COMPLIANT` and quality/security
+review returned `APPROVED`. Provider discovery, authenticated run, model
+promotion, hosted CI, remote, credential-bearing, and live results remain
+their recorded `DEFER` or `ABSENT` verdicts.
 
 ## Traceability
 

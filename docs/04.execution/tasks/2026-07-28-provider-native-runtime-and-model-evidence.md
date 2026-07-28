@@ -1,9 +1,9 @@
 ---
 title: 'Task: Provider-Native Runtime and Model Evidence'
 type: sdlc/task
-status: active
+status: done
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-29
 ---
 
 # Task: Provider-Native Runtime and Model Evidence
@@ -43,7 +43,7 @@ removes stale future-gate wording before this tranche activates.
 | PNME-002 | VAL-PNME-004 | Normalize provider model/effort candidates, exact-ID uncertainty, fallback behavior, and the Spec 044 fitness gate. | platform | Done | PASS — eight provider/role model records remain candidate-only and require config parse, exact runtime resolution, no silent fallback, and Spec 044 fitness. | Provider contract/schema and config unit suite PASS; no candidate is promoted to a current assignment. |
 | PNME-003 | VAL-PNME-005 through VAL-PNME-008 | Define secret-free provider baseline/canary records and provider verdict handling. | platform | Done | PASS — twelve provider/evidence-class canaries use closed redacted records and evidence-lane-specific verdicts. | Canary production/self-test PASS with eight negative mutations; credentials, raw prompts, provider bodies, mutation, missing ownership/retry trigger, and cross-lane promotion are rejected. |
 | PNME-004 | VAL-PNME-001 through VAL-PNME-003 | Validate tracked provider paths, native metadata, MCP/tool boundaries, and target-only Gemini admission. | platform | Done | PASS — four provider surfaces, canonical repo-relative project paths, seven MCP servers, and target-only absent Gemini are validated without runtime promotion. | Affected-surface self/production, strict registry/Markdown/links, role audit, Current-pack RIA, and repository aggregate PASS. |
-| PNME-005 | VAL-PNME-001 through VAL-PNME-009 | Run focused/static/strict/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | In Progress | PASS for focused/static/strict/aggregate/all-files/diff lanes and independent re-review; implementation commit, atomic closure, and postflight remain pending. | Provider unit `17/17`, config `13`, canary `8`, affected `21/21`, strict registry `455`, aggregate PASS, all applicable pre-commit hooks PASS; requirements `COMPLIANT`; quality/security `APPROVED`; provider discovery/authenticated run, hosted CI, remote, credential, and live lanes remain `DEFER`. |
+| PNME-005 | VAL-PNME-001 through VAL-PNME-009 | Run focused/static/strict/aggregate/all-files QA, independent review, atomic closure, and postflight. | platform | Done | PASS — focused/static/strict/aggregate/all-files/diff lanes, independent re-review, implementation postflight, and the exact eight-path terminal proposal are observed. The future closure SHA and post-closure evidence event are not preclaimed. | Implementation `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`; provider unit `17/17`, config `13`, canary `8`, affected `21/21`, strict registry `455`, aggregate PASS, all applicable pre-commit hooks PASS; requirements `COMPLIANT`; quality/security `APPROVED`; provider discovery/authenticated run, hosted CI, remote, credential, and live lanes remain `DEFER`. |
 
 ## Approval and Safety Boundaries
 
@@ -96,13 +96,16 @@ repository aggregate, all-files pre-commit, cached/unstaged diff, requirements
 scope, and independent quality review. PNME-000 is complete without claiming
 an unobserved result.
 
-PNME-001 through PNME-004 now have staged implementation evidence. The
+PNME-001 through PNME-004 have implementation evidence in
+`9c4dcc7b7572bfe8f436d81ee87ede872707cc73`. The
 provider contract fixes ten source identities, exact cutoff-day UTC handling,
 four provider surfaces, eight candidate-only model records, seven MCP
 boundaries, and twelve redacted canary records. Focused and repository-wide QA
 passed and independent re-review returned requirements `COMPLIANT` plus
-quality/security `APPROVED`; PNME-005 remains in progress until the
-implementation commit, atomic lifecycle closure, and postflight all complete.
+quality/security `APPROVED`. Implementation explicit-ref lifecycle and
+clean-tree aggregate postflight passed. PNME-005 is complete with the exact
+eight-path terminal proposal; the future closure SHA and its post-closure
+evidence event are intentionally unclaimed.
 
 Activation commit `1c3cc9bf32adae3033494ae7cb50eaaf1650b096`
 has parent `fdc3d457a3806f86c288ea1bb923898a67294709` and changes
@@ -125,4 +128,4 @@ content-addressed SHA.
 | N/A — PNME-002 shares the Plan and Spec sources linked above | PASS — candidate model/effort policy implemented without assignment promotion. | Eight candidate-only records retain exact parse, runtime resolution, fallback, and Spec 044 fitness gates. |
 | N/A — PNME-003 shares the Plan and Spec sources linked above | PASS — provider baseline/canary records implemented. | Twelve closed redacted records and eight canary mutations validate evidence-specific verdict behavior. |
 | N/A — PNME-004 shares the Plan and Spec sources linked above | PASS — tracked surfaces and MCP boundaries reconciled. | Four surfaces, canonical repo-relative project paths, seven MCP servers, target-only absent Gemini, and seven-surface routing validate. |
-| N/A — PNME-005 shares the Plan and Spec sources linked above | In Progress — static QA and independent re-review are PASS; commit, closure, and postflight remain. | Unit/focused/strict/lifecycle/aggregate/all-files/diff evidence is observed; requirements `COMPLIANT`; quality/security `APPROVED`; external/provider/live lanes remain `DEFER`. |
+| N/A — PNME-005 shares the Plan and Spec sources linked above | PASS — static QA, independent re-review, implementation commit/postflight, and exact eight-path terminal proposal are observed. | `9c4dcc7b`; unit/focused/strict/lifecycle/aggregate/all-files/diff PASS; requirements `COMPLIANT`; quality/security `APPROVED`; future closure SHA unclaimed; external/provider/live lanes remain `DEFER`. |

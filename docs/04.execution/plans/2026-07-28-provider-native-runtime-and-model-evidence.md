@@ -1,16 +1,16 @@
 ---
 title: 'Provider-Native Runtime and Model Evidence Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-29
 ---
 
 # Provider-Native Runtime and Model Evidence Implementation Plan
 
 ## Overview
 
-This Plan executes [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md)
+This Plan executed [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md)
 after Spec 041 closure. It reconciles Claude, Codex, Gemini, and local adapter
 claims against the **2026-07-10 10:00 Asia/Seoul** cutoff, records provider
 model candidates without promoting unsupported IDs, and defines secret-free
@@ -115,6 +115,12 @@ available, record `BLOCKED`; if a live action is out of scope, record `DEFER`.
   review gates pass before atomic closure.
 - Provider runtime, hosted CI, remote, credential-bearing, and live outcomes
   remain their observed verdicts and are never inferred from static PASS.
+
+Implementation commit `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`
+and its explicit-ref/clean-tree postflight satisfy PNME-001 through PNME-004
+and the repository-static portion of PNME-005. The exact eight-path terminal
+proposal closes this Plan without claiming its future closure SHA or
+post-closure evidence event.
 
 ## Traceability
 
