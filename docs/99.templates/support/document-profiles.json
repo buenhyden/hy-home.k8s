@@ -6242,7 +6242,7 @@
           {
             "spec": "044",
             "order": 4,
-            "state": "active",
+            "state": "done",
             "reason": "Agent roster evaluation and admission",
             "decision": "0013"
           },

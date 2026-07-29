@@ -1,40 +1,46 @@
 ---
 title: 'Agent Roster Evaluation and Admission Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-29
+updated: 2026-07-30
 ---
 
 # Agent Roster Evaluation and Admission Implementation Plan
 
 ## Overview
 
-This Plan executes
+This Plan executed
 [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md)
-after the completed Spec 043 loop lifecycle closure. AREA-002 projects the
-target-only 12-role / 4-surface / 48-adapter design into tracked
+after the completed Spec 043 loop lifecycle closure. AREA-002 projected the
+then-target-only 12-role / 4-surface / 48-adapter design into tracked
 repository-static implementation while keeping candidate decisions and the
-admission verdict `DEFER`. AREA-003 separately owns the four-class evaluation,
-independent adjudication, and rollback evidence required for final roster
-admission.
+admission verdict `DEFER`. AREA-003 supplies repository-static four-class
+evaluation, adjudication-readiness, and rollback-source evidence, while
+observed same-suite evaluation, result adjudication, and final roster admission
+remain `DEFER`.
 
 ## Context
 
-Spec 041 currently owns the machine-readable harness contract with a current
+Spec 041 supplied the machine-readable harness baseline with a historical
 10-role / 3-surface / 30-adapter inventory and a target-only 12-role /
-4-surface / 48-adapter inventory. Spec 042 owns provider/source currentness and
-keeps runtime/model-resolution claims separated from repository-static files.
-Spec 043 owns bounded loop, checkpoint, and memory lifecycle controls.
+4-surface / 48-adapter inventory. Spec 044 now records the exact 12-role /
+4-surface / 48-adapter current repository-static inventory. Spec 042 owns
+provider/source currentness and keeps runtime/model-resolution claims
+separated from repository-static files. Spec 043 owns bounded loop,
+checkpoint, and memory lifecycle controls.
 Its terminal closure
 `a0bc3565988e291980320dec8442405c7ef16eb6` and postflight
 `80ffd6d92a53990b04e413c0acf7fbc879b437d4` are observed prerequisites.
 
-The active transition first materializes `docs-researcher`,
+The completed repository-static transition materialized `docs-researcher`,
 `quality-engineer`, and the native `.gemini/agents/**` surface as current
-repo-static projections. That transition is not final admission. This Plan
-does not claim provider-native runtime discovery, authenticated execution,
-hosted CI, remote, live Kubernetes/GitOps, or credential-bearing evidence.
+repo-static projections. That transition is not final admission, and all
+configured incumbents remain retained. This Plan does not claim observed
+evaluation, result adjudication, final admission, model fitness, threshold
+satisfaction, promotion, canary, provider-native runtime discovery or
+authentication, model resolution, hosted CI, remote, live Kubernetes/GitOps,
+or credential-bearing evidence.
 
 Spec 042 fixes provider/model source evidence at
 `2026-07-10 10:00 Asia/Seoul`. The harness contract's later
@@ -83,7 +89,7 @@ separate.
 | AREA-002 | Project two bounded candidates and the exact repository-static roster/adapters | AREA-001 | Closed gates reject unsafe or incomplete projections | `docs-researcher` and `quality-engineer` remain `repository-static-projected`; local, Claude, Codex, and Gemini projections form exact 12-role / 4-surface / 48-adapter set equality with native metadata, no duplicate owner, and admission `DEFER` |
 | AREA-003 | Establish versioned role evaluation, adjudication, rollback, and final admission evidence | AREA-002 | Exact projected role and surface identities validate with admission `DEFER` | All 12 roles cover positive, negative/adversarial, refusal/stop, and handoff cases; independent adjudication and rollback references validate without retaining private prompts or transcripts before any final admission PASS |
 | AREA-004 | Reconcile cutoff evidence and optimize provider-specific candidate model/effort profiles | AREA-003, Spec 042 | Same-version role suites and provider evidence contract are available | Each role/provider tuple has a risk-based candidate, effort/routing rationale, baseline, fitness threshold, fallback, and `PASS`/`FAIL`/`DEFER`; exact runtime resolution remains unpromoted unless observed |
-| AREA-005 | Reconcile catalog, provider notes, and quality gates | AREA-002, AREA-003, AREA-004 | Focused validators pass | aggregate, all-files pre-commit, review, and closure evidence |
+| AREA-005 | Reconcile catalog, provider notes, and quality gates | AREA-002, AREA-003, AREA-004 | Focused validators pass | Catalog/provider semantics reconciled in `7891368e`; focused model, staged lifecycle, strict registry `463`, aggregate, all-files, diff, and requirements/quality/security review gates pass; reciprocal closure remains SHA-unclaimed until committed |
 
 ## Verification Plan
 
@@ -129,17 +135,34 @@ git diff --check
   final roster admission by itself.
 - New admission, evaluation, and model-fitness validators pass self-tests and
   repository checks.
-- All 12 roles have versioned four-class evaluation coverage, adjudication, and
-  rollback evidence; the two new roles have distinct deliverable ownership and
-  least-privilege stop/handoff behavior.
-- Provider-specific role model/effort profiles are optimized as candidate-only
+- All 12 roles have versioned repository-static four-class corpus coverage,
+  adjudication-readiness, and rollback-source evidence; the two new roles have
+  distinct deliverable ownership and least-privilege stop/handoff behavior.
+  Observed evaluation, result adjudication, and final admission remain
+  `DEFER`.
+- Provider-specific role model/effort profiles are recorded as candidate-only
   repository mappings with explicit baselines, thresholds, fallback, cutoff,
-  and `DEFER` runtime-resolution verdicts unless an authorized canary was
-  actually observed.
+  and `DEFER` fitness, threshold, promotion, canary, and runtime verdicts.
 - Existing aggregate, lifecycle, registry, Markdown, link/owner, affected
   surface, and all-files pre-commit gates pass.
 - Independent requirements, quality, and security reviews accept the bounded
   repository-static claims and residual `DEFER` lanes.
+
+AREA-000 through AREA-005 are complete at the repository-static readiness and
+gate-enforcement boundary. Observed commits
+`258955b3e0d999ec4ebc3de561d0db39ce11ac3c`,
+`a15d5e10a4848aca013848571ba6d56c3568b5c3`, and
+`7891368e3d29e5e9e5e8ada4023118d331e38000` establish AREA-004
+implementation, its postflight, and AREA-005 semantic reconciliation.
+The resulting contract covers exactly 12 roles, four provider surfaces, and 48
+tuples; mapping readiness is `PASS` 21 / `DEFER` 27, configured incumbents are
+retained, and every observed evaluation, final-admission, model-fitness,
+threshold, promotion, canary, runtime, provider-authentication, hosted-CI,
+remote, and live lane remains `DEFER` as applicable. AREA-005 requirements
+were `COMPLIANT`, quality/security were `APPROVED`, and focused model, staged
+lifecycle, strict registry `463`, full aggregate, all-files, and diff checks
+passed. This reciprocal closure proposal does not preclaim its own future
+commit SHA or postflight evidence update.
 
 ## Traceability
 
@@ -148,6 +171,7 @@ git diff --check
 - **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
 - **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Proposed successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Successor**: [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md)
 - **Prerequisite**: Spec 043 closure `a0bc3565` and postflight `80ffd6d9`
 
 ### Lifecycle Traceability

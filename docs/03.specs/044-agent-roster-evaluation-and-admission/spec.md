@@ -1,9 +1,9 @@
 ---
 title: 'Agent Roster Evaluation and Admission Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-29
+updated: 2026-07-30
 ---
 
 # Agent Roster Evaluation and Admission Technical Specification (Spec)
@@ -32,6 +32,16 @@ The Spec 042 source ledger was reconciled on 2026-07-28 and distinguishes
 dated cutoff evidence from current-only observation evidence. Later changes
 must be recorded as separate currentness evidence and must not silently alter
 approved role boundaries or accepted model decisions.
+
+This Spec is closed at the repository-static readiness and gate-enforcement
+boundary. The current tracked inventory is exactly 12 roles across four
+provider surfaces and 48 role/provider tuples. AREA-003 repository-static
+evaluation readiness is complete, AREA-004 mapping readiness is `PASS` for 21
+tuples and `DEFER` for 27, and every configured incumbent is retained.
+Observed evaluation, result adjudication, final admission, model fitness,
+threshold satisfaction, promotion, canary, provider runtime/authentication,
+model resolution, hosted CI, remote, and live evidence remain `DEFER` as
+applicable; this closure records none of those outcomes as observed.
 
 ## Strategic Boundaries & Non-goals
 
@@ -318,20 +328,35 @@ rejection, eval baselines, adjudication, and rollback.
   evaluation or rollback.
 - **VAL-AREA-005**: All 12 roles have versioned positive, negative,
   refusal/stop, and handoff corpora together with incumbent baselines.
-- **VAL-AREA-006**: High-risk roles and model promotions undergo independent
-  adjudication, with quality and safety prioritized over cost and latency.
+- **VAL-AREA-006**: The repository-static gate requires independent
+  adjudication for high-risk roles and any model promotion, with quality and
+  safety prioritized over cost and latency; observed result adjudication and
+  promotion remain `DEFER`.
 - **VAL-AREA-007**: Claude, Codex, Gemini CLI, and local/Antigravity adapters
   express role-specific model/reasoning profiles in provider-native forms and
   do not pretend unsupported fields exist.
-- **VAL-AREA-008**: A model or role promotion passes both the Spec 042 canary
-  and a same-version evaluation, and rolls back to the verified incumbent on
-  failure.
+- **VAL-AREA-008**: The promotion gate requires both a Spec 042 canary and a
+  same-version evaluation before a model or role promotion, and requires
+  rollback to the verified incumbent on failure; no promotion or rollback
+  execution is observed by this Spec.
 
 AREA-002 satisfies only the repository projection criterion. Final roster
-admission remains blocked until AREA-003 supplies the evaluation,
-independent-adjudication, and rollback evidence required by the seven
-admission conditions above; no subset of VAL-AREA-001 through VAL-AREA-006
-weakens that gate.
+admission remains `DEFER`. AREA-003 supplies repository-static four-class
+corpus, adjudication-readiness, rollback-source, and explicit final-decision
+records, but it does not supply observed same-suite evaluation, result
+adjudication, or final admission. No subset of VAL-AREA-001 through
+VAL-AREA-006 weakens that gate.
+
+Observed implementation commit
+`258955b3e0d999ec4ebc3de561d0db39ce11ac3c`, AREA-004 postflight commit
+`a15d5e10a4848aca013848571ba6d56c3568b5c3`, and AREA-005 semantic
+reconciliation commit `7891368e3d29e5e9e5e8ada4023118d331e38000`
+complete the repository-static Spec 044 work. AREA-005 requirements were
+`COMPLIANT`; quality and security were `APPROVED`; focused model checks,
+staged lifecycle, strict registry over 463 tracked paths, the full repository
+aggregate, all-files pre-commit, and diff checks passed. This reciprocal
+closure proposal does not preclaim its own future commit SHA or postflight
+evidence update. The next workstream is Spec 045.
 
 ## Traceability
 
