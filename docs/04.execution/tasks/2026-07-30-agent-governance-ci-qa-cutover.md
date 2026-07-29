@@ -18,8 +18,8 @@ policy.
 
 The fixed provider/model/source cutoff remains
 `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z`. The date
-`2026-07-30` is the activation observation only. AGQC-000 is the only active
-package; `validate-agent-governance-ci.py` and
+`2026-07-30` is the activation observation only. AGQC-000 is complete and
+AGQC-001 is the active package; `validate-agent-governance-ci.py` and
 `validate-agent-legacy-cutover.py` are planned and do not exist at activation.
 
 Spec 045 completion remains repository-static. Hosted CI, branch protection,
@@ -39,6 +39,8 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 - Observed prerequisite commits: Spec 044 closure
   `42864832c966744ac4e5cf8c28baa5bf31ac2765` and postflight
   `279f81032528dbf732acc3a1a8bc232d11d2c246`
+- Observed Spec 045 activation:
+  `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`
 - Fixed cutoff owner:
   [provider-runtime-evidence.json](../../00.agent-governance/contracts/provider-runtime-evidence.json)
 - Current machine owners:
@@ -51,8 +53,8 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| AGQC-000 | VAL-AGQC-001, VAL-AGQC-010 | Activate the reciprocal Spec/Plan/Task path and single program-lineage relation after observed Spec 044 closure/postflight | platform | In Progress | Exact eight-file activation is staged and validated without an activation-SHA preclaim | Staged lifecycle, strict registry `465` with `0/0` uncovered/ambiguous, Markdown, link/owner, JSON, aggregate, all-files pre-commit, and diff gates PASS |
-| AGQC-001 | VAL-AGQC-001, VAL-AGQC-002 | Add dedicated agent-governance selector output, static job, and `ci-summary` topology | platform | Queued | Not executed | Planned workflow, selector, validation-surface, security, fixture, and aggregate evidence |
+| AGQC-000 | VAL-AGQC-001, VAL-AGQC-010 | Activate the reciprocal Spec/Plan/Task path and single program-lineage relation after observed Spec 044 closure/postflight | platform | Done | Exact eight-file activation committed and clean-tree postflight observed | Activation `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`; focused, aggregate, all-files, diff, and final independent review PASS |
+| AGQC-001 | VAL-AGQC-001, VAL-AGQC-002 | Add dedicated agent-governance selector output, static job, and `ci-summary` topology | platform | In Progress | Repository-static implementation starting from the observed activation | Planned workflow, selector, validation-surface, security, fixture, and aggregate evidence |
 | AGQC-002 | VAL-AGQC-001..004 | Implement closed `validate-agent-governance-ci.py` contract/schema/fixture/tests and route it through local/CI owners | platform | Queued | Not implemented; the named validator is planned and absent at activation | Planned contract/schema, validator, fixture, focused tests, self-test/production, affected, aggregate, pre-commit, CI, and inventory evidence |
 | AGQC-003 | VAL-AGQC-007, VAL-AGQC-008 | Implement consumer-first `validate-agent-legacy-cutover.py`, prove zero consumers, remove legacy role-semantics ownership/tests, and rename `.github/ABOUT.md` to `.github/README.md` | platform | Queued | Not implemented; no legacy file or GitHub hub is removed by activation | Planned zero-consumer fixtures, active-reference scan, atomic removal/rename diff, registry/quality/docs/inventory updates, and rollback evidence |
 | AGQC-004 | VAL-AGQC-005, VAL-AGQC-006 | Align local QA order, repository-quality/pre-commit behavior, and script/test/GitHub/docs inventories | platform | Queued | Not executed | Targeted → affected → staged → tests → all-files → formatter review → rerun → diff evidence and current inventory checks |
@@ -99,16 +101,15 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 
 ## Verification Summary
 
-AGQC-000 is the only active work item. Its exact-eight proposal changes no
-workflow, selector, contract implementation, schema, validator, fixture, test,
-pre-commit hook, provider adapter, provider setting, model assignment,
+AGQC-000 is complete at activation `c677321d`. Its exact-eight commit changes
+no workflow, selector, contract implementation, schema, validator, fixture,
+test, pre-commit hook, provider adapter, provider setting, model assignment,
 checkpoint behavior, legacy file, `.github` hub, credential, remote resource,
-or live surface.
+or live surface. Focused document gates, aggregate, all-files pre-commit,
+diff/scope checks, and final independent review passed.
 
-The activation observes Spec 044 closure `42864832` and postflight `279f8103`;
-it does not claim its own future content-addressed commit SHA. The two planned
-Spec 045 validators are absent and no future focused, aggregate, hosted, or
-provider result is preclaimed.
+AGQC-001 is active. The two planned Spec 045 validators remain absent and no
+future implementation, hosted, provider, remote, or live result is preclaimed.
 
 The provider/model/source cutoff remains the fixed 2026-07-10 timestamp.
 Hosted CI, branch protection, provider runtime/auth/model discovery, actual
@@ -124,8 +125,8 @@ only in AGQC-006.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [AGQC-000](../plans/2026-07-30-agent-governance-ci-qa-cutover.md#work-breakdown) | In Progress | Exact-eight staged activation; lifecycle, strict registry `465` with `0/0` uncovered/ambiguous, Markdown, link/owner, JSON, aggregate, all-files pre-commit, and diff gates PASS; activation SHA unclaimed. |
-| [AGQC-001](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md#success-criteria--verification-plan) | Not executed | Pending dedicated selector/job/`ci-summary` topology and repository-static fixtures. |
+| [AGQC-000](../plans/2026-07-30-agent-governance-ci-qa-cutover.md#work-breakdown) | Done | Activation `c677321d`; lifecycle, strict registry `465` with `0/0` uncovered/ambiguous, Markdown, link/owner, JSON, aggregate, all-files pre-commit, diff, and final independent review PASS. |
+| [AGQC-001](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md#success-criteria--verification-plan) | In Progress | Dedicated selector/job/`ci-summary` repository-static topology implementation is active; results are not yet claimed. |
 | N/A — AGQC-002 shares the Plan and Spec sources above | Not executed | Planned CI contract/schema/validator/fixture/tests do not exist at activation. |
 | N/A — AGQC-003 shares the Plan and Spec sources above | Not executed | Pending zero-consumer proof before legacy removal and `.github/ABOUT.md` to `.github/README.md` cutover. |
 | N/A — AGQC-004 shares the Plan and Spec sources above | Not executed | Pending QA-order and repository-quality/pre-commit/docs inventory alignment. |

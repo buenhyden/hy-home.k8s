@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 activation postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, docs, governance, qa, security, meta
+- **Status**: done
+- **Tags**: #spec-045 #agent-governance #ci #qa #activation #postflight
+
+#### Progress
+
+- Committed the reviewed exact eight-path Spec 045 activation as
+  `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`
+  (`docs(agent): activate Spec 045 CI QA cutover`) with sole parent
+  `279f81032528dbf732acc3a1a8bc232d11d2c246`.
+- The commit contains only the Spec 045 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, this progress ledger, and Spec 045
+  program-lineage relation. Spec 046 remains draft and successor-only.
+- AGQC-000 is complete. AGQC-001 is the active next package; its dedicated
+  selector output, static job, and `ci-summary` topology are not preclaimed by
+  activation.
+
+#### Evidence
+
+- Staged lifecycle, strict registry over `465` paths with `0/0`
+  uncovered/ambiguous, Markdown/frontmatter, links/owners, JSON, aggregate,
+  `pre-commit run --all-files`, and diff/scope checks passed.
+- The first independent review returned zero Critical and two Important
+  evidence-wording findings. Both were corrected; the final independent review
+  returned zero Critical and zero Important findings.
+- The fixed source cutoff remains `2026-07-10T10:00:00+09:00` /
+  `2026-07-10T01:00:00Z`. The activation observation date does not move it.
+- Hosted CI, branch protection, provider runtime/auth/model discovery, actual
+  evaluation/admission/promotion, provider resume/handoff canaries, remote,
+  live, credential-bearing, and Kubernetes/GitOps mutation remain `DEFER` or
+  unobserved.
+
+#### Handoff
+
+- Next owner: AGQC-001 dedicated agent-governance selector output, static CI
+  job, and `ci-summary` repository-static topology.
+- This entry does not preclaim its own postflight commit SHA, AGQC-001
+  implementation results, or any Spec 046 external/actual result.
+- Roll back this evidence entry before reverting activation
+  `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`.
+
 ### 2026-07-30 - Spec 045 CI and QA cutover activation
 
 #### Metadata
