@@ -2,8 +2,6 @@
 name: supervisor
 description: Supervising agent for routing tasks, selecting workers, and enforcing runtime completion gates.
 kind: local
-tools: [read_file, grep_search, list_directory]
-model: gemini-3.1-pro-preview
 max_turns: 12
 timeout_mins: 30
 ---

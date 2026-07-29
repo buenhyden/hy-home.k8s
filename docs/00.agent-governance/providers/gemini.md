@@ -23,9 +23,11 @@ Gemini-specific guidance for `hy-home.k8s`.
 - Track Gemini CLI project agents at `.gemini/agents/**` as repo-static
   project-surface evidence only. Track `.gemini/settings.json` only in the
   closed schema-linked form with empty `agents.overrides`; provider-specific
-  model override promotion remains deferred. Do not treat either repo-static
-  surface as native discovery, event delivery, authenticated execution,
-  policy loading, or model-resolution evidence.
+  tool aliases and model override promotion remain deferred. The project-agent
+  frontmatter intentionally omits `tools` and `model`. Do not treat either
+  repo-static surface as native discovery, parsing, event delivery,
+  authenticated execution, policy loading, tool enforcement, or
+  model-resolution evidence.
 
 ## Governance Context
 
@@ -100,13 +102,15 @@ and output styles. It is not the Gemini CLI native configuration directory.
 ### Gemini CLI Native Surface
 
 Gemini CLI native project agents are tracked under `.gemini/agents/**` as
-repo-static adapter files. They use the fixed native metadata admitted by Spec
-044 (`name`, `description`, `kind: local`, a role-specific `tools` allowlist,
-candidate-only `model`, `max_turns`, and `timeout_mins`). The model values must
-match the pending Gemini tuples in the model-fitness contract; neither those
-values nor the minimal settings file proves native resolution. Native
-discovery, event delivery, policy loading, authenticated execution, settings
-interpretation, and model resolution remain `DEFER` or `ABSENT` until a
+repo-static adapter files. They use the fixed native metadata projected by Spec
+044: exactly `name`, `description`, `kind: local`, `max_turns`, and
+`timeout_mins`. They do not declare generic `tools` aliases or an exact
+`model`. Candidate models and reasoning profiles remain candidate-only in
+`contracts/agent-model-fitness.json`; each Gemini tuple points to its candidate
+there rather than to nonexistent adapter metadata. The minimal settings file
+does not prove runtime interpretation. Native discovery, parsing, event
+delivery, policy loading, authenticated execution, settings interpretation,
+tool enforcement, and model resolution remain `DEFER` or `ABSENT` until a
 provider-runtime canary proves them.
 
 The provider-neutral machine owner is
@@ -124,9 +128,10 @@ or model resolution.
   only. They are not Gemini CLI native model-resolution evidence.
 - Gemini CLI pro/flash/Auto candidates remain candidate-only until a permitted
   runtime canary and Spec 044 role fitness evidence promote an exact ID. The
-  tracked `.gemini/agents/**` files record the pending candidate IDs selected
-  by the model-fitness contract, but those repo-static declarations do not
-  prove provider-side availability, resolution, or execution.
+  model-fitness contract records the pending candidate IDs and reasoning
+  profiles; `.gemini/agents/**` deliberately does not mirror them. Neither the
+  contract nor the adapter files prove provider-side availability, resolution,
+  or execution.
 
 ### Execution Expectations
 
@@ -155,8 +160,9 @@ or model resolution.
 
 ## Validation and Refresh
 
-Run the harness, shared role-semantic, roster, and repository quality checks
-after changing local/Antigravity agents, hooks, model metadata, or the root shim:
+Run the harness, shared role-semantic, provider-config, roster, and repository
+quality checks after changing local/Antigravity agents, Gemini project-agent
+metadata, hooks, model metadata, or the root shim:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
@@ -171,8 +177,8 @@ Refresh the official source basis when Gemini CLI context or agent-registry
 behavior changes. Tracked `.agents/**` files provide local adapter evidence
 only; tracked `.gemini/agents/**` files provide repo-static Gemini
 project-surface evidence only. Native discovery, event, policy, settings
-interpretation, tools, and model behavior require separately approved runtime
-evidence.
+interpretation, tool enforcement, and model behavior require separately
+approved runtime evidence.
 
 ## Related Documents
 

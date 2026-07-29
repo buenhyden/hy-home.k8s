@@ -75,6 +75,18 @@ does not hold, provider-required metadata is missing, or shared role semantics
 are absent. `.agents` is the local/Antigravity surface, whereas `.gemini` is the
 native Gemini CLI surface; neither substitutes for the other.
 
+Tracked repository inventory and roster admission are independent lifecycle
+axes. AREA-001 owns the `contract-only` / `DEFER` gate. AREA-002 may transition
+the exact tracked set to `repository-static-projected` and authorize only the
+12-role / 4-surface / 48-adapter projection while the admission verdict remains
+`DEFER`. Its candidate decisions are projections, not operational or final
+admissions. AREA-003 owns the versioned four-class evaluation, incumbent
+baseline, independent adjudication, and rollback evidence required before a
+separate evaluation-backed final admission transition can return `PASS`.
+Provider discovery, authentication, model resolution, hosted CI, remote, live,
+and runtime activation remain separate evidence classes even after final
+roster admission.
+
 `docs-researcher` is a read-only role that verifies official primary sources
 and the cutoff, then produces a source ledger, conflict notes, and confidence
 limits. It does not write document bodies, decide policy, change code, or
@@ -285,8 +297,9 @@ pre-commit run --all-files
 git diff --check
 ```
 
-The first three commands are planned Spec 044 deliverables and are not claimed
-to exist in this draft. Their fixtures must cover exact 12/48 equality,
+The first three commands are Spec 044 deliverables. Their repository-static
+PASS results do not establish evaluation-backed final admission or any
+provider-runtime evidence. Their fixtures must cover exact 12/48 equality,
 provider-native metadata/model mapping, new-role admission, external-catalog
 rejection, eval baselines, adjudication, and rollback.
 
@@ -296,7 +309,7 @@ rejection, eval baselines, adjudication, and rollback.
   has no extra or duplicate role and no ambiguous owner.
 - **VAL-AREA-002**: Each of the four surfaces implements every one of the 12
   stems exactly once and passes 48-adapter set equality and provider-native
-  field validation.
+  field validation as a `repository-static-projected` / `DEFER` transition.
 - **VAL-AREA-003**: `docs-researcher` and `quality-engineer` have non-overlapping
   input, output, authority, stop, and handoff contracts and least-privilege
   adapters.
@@ -313,6 +326,12 @@ rejection, eval baselines, adjudication, and rollback.
 - **VAL-AREA-008**: A model or role promotion passes both the Spec 042 canary
   and a same-version evaluation, and rolls back to the verified incumbent on
   failure.
+
+AREA-002 satisfies only the repository projection criterion. Final roster
+admission remains blocked until AREA-003 supplies the evaluation,
+independent-adjudication, and rollback evidence required by the seven
+admission conditions above; no subset of VAL-AREA-001 through VAL-AREA-006
+weakens that gate.
 
 ## Traceability
 

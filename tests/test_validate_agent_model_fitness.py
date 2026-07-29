@@ -342,6 +342,31 @@ class ModelFitnessContractTests(unittest.TestCase):
             providers["gemini"]["apiVsCliBoundary"],
         )
 
+    def test_gemini_candidate_config_sources_are_contract_owned(self) -> None:
+        gemini_index = 3
+        candidates = self.contract["providers"][gemini_index]["candidateModels"]
+        candidate_indexes = {
+            candidate["modelId"]: index
+            for index, candidate in enumerate(candidates)
+        }
+        for candidate in candidates:
+            self.assertTrue(candidate["candidateOnly"])
+            self.assertEqual(candidate["runtimeResolution"], "DEFER")
+        for profile in self.contract["roleProfiles"]:
+            gemini_tuple = next(
+                item
+                for item in profile["providerTuples"]
+                if item["providerId"] == "gemini"
+            )
+            candidate_index = candidate_indexes[gemini_tuple["modelCandidate"]]
+            self.assertEqual(
+                gemini_tuple["configSource"],
+                "docs/00.agent-governance/contracts/"
+                "agent-model-fitness.json"
+                f"#/providers/{gemini_index}/candidateModels/"
+                f"{candidate_index}/modelId",
+            )
+
     def test_api_cli_boundary_text_is_closed_for_every_provider(self) -> None:
         for index, provider_id in enumerate(
             ("local", "claude", "codex", "gemini")

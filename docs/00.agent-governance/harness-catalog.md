@@ -46,7 +46,8 @@ and pattern families used by the shared local runtime bridge (`.claude/`,
 - Local adapter parity means role parity plus validation evidence: the same role,
   scope imports, guardrails, handoff, and postflight contract expressed through
   surface-specific metadata and syntax. It does not prove Gemini CLI native
-  discovery, events, policy loading, or model resolution.
+  discovery, parsing, events, policy loading, tool enforcement, or model
+  resolution.
 - Skill files are either workflow contracts or reference-pattern contracts and
   must remain specific to this cluster.
 
@@ -115,7 +116,7 @@ same policy in different words.
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md` | Harness, role-semantic, roster-currentness, and affected-surface validators |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
-| Model tiers and concrete local declarations | This catalog plus `model-policy.md`; cutoff/runtime confidence in `contracts/provider-runtime-evidence.json` | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`, `.gemini/agents/*.md` | Agent adapter/model checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
+| Model tiers and concrete local declarations | This catalog plus `model-policy.md`; pending provider candidates and reasoning in `contracts/agent-model-fitness.json`; cutoff/runtime confidence in `contracts/provider-runtime-evidence.json` | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
 | Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
@@ -129,9 +130,11 @@ at the concrete model level. The `top` tier serves planning and supervising
 roles; the `worker` tier serves delegated subagent roles. This table records
 the incumbent defaults that predate Spec 044. The exact pending candidate
 tuple for each role and provider, including reasoning effort, is owned by
-`contracts/agent-model-fitness.json`. A candidate recorded in an adapter is
-repo-static configuration evidence only and does not replace an incumbent
-without the AREA-004 fitness decision.
+`contracts/agent-model-fitness.json`. Candidate-bearing adapter values are
+repo-static configuration evidence only; Gemini candidates are recorded only
+in that contract because the projected five-field project-agent metadata has no
+`model` field. Neither form replaces an incumbent without the AREA-004 fitness
+decision.
 
 | Tier     | Role               | Claude                      | Gemini (local/Antigravity)  | GPT (Codex)                      |
 | -------- | ------------------ | --------------------------- | --------------------------- | -------------------------------- |
@@ -140,8 +143,9 @@ without the AREA-004 fitness decision.
 
 - `supervisor` is the only `top`-tier agent; all other local agents are `worker` tier.
 - Existing adapters may retain an incumbent value while the model-fitness
-  contract records a candidate-only replacement. Newly admitted adapters may
-  record their pending candidate when no incumbent surface existed.
+  contract records a candidate-only replacement. A newly admitted adapter may
+  record its pending candidate only when its admitted provider metadata owns
+  such a field; Gemini project-agent adapters do not.
 - Codex agent TOML files must declare the exact
   `model_reasoning_effort` selected for that role in the model-fitness
   contract.
@@ -392,10 +396,11 @@ Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements
 across all four tracked role surfaces. Claude has native `tools:` frontmatter,
 the local/Antigravity adapter has Markdown metadata without Claude-style tool
 scoping, Codex uses TOML metadata including `developer_instructions` and
-`model_reasoning_effort`, and Gemini uses the closed native metadata order plus
-role-specific tool allowlists. Static model declarations are candidate or
-incumbent configuration evidence only; the model-fitness contract owns any
-promotion decision.
+`model_reasoning_effort`, and Gemini uses exactly the closed five-field metadata
+order: `name`, `description`, `kind`, `max_turns`, and `timeout_mins`. Gemini
+generic tool aliases and exact CLI model metadata remain deferred; the
+model-fitness contract alone owns its candidate models, reasoning profiles,
+and any promotion decision.
 
 ### External Agency Catalog Gap Lens
 
@@ -497,11 +502,11 @@ symmetry from static files.
 
 | Dimension          | Common Contract (governance)                                                                          | Claude native                                 | Gemini CLI native / local adapter                  | Codex native                                                                     | Status / Gap                                                                          |
 | ------------------ | ----------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Model tiers        | Model Tier Mapping (this file)                                                                        | `.claude/agents/*.md` model                   | Native repo-static candidate: `.gemini/agents/*.md`; local: `.agents/agents/*.md` | `.codex/agents/*.toml` model                                                     | Static candidate parity Ready; Gemini CLI resolution `DEFER`                           |
+| Model tiers        | Model Tier Mapping plus `contracts/agent-model-fitness.json`                                           | `.claude/agents/*.md` model                   | Native candidate-only contract owner: `contracts/agent-model-fitness.json`; local: `.agents/agents/*.md` | `.codex/agents/*.toml` model                                                     | Candidate contract Ready; Gemini project-agent metadata has no model field and CLI resolution remains `DEFER` |
 | Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills` → `.agents/skills` (symlink) | Native: absent; local SSoT: `.agents/skills/**`   | `.codex/skills` → `.agents/skills` (symlink)                                     | Shared content Ready; Gemini CLI discovery `DEFER`                                    |
 | Rules              | `rules/**` + provider notes                                                                           | `rules/**` + global graphify skill            | Native: absent; local: `.agents/rules/**`         | shared `rules/**` + `graphify-out` convention                                    | Local behavior Ready; Gemini CLI policy loading `DEFER`                               |
 | Hooks              | Lifecycle/edit hook contract (`rules/bootstrap.md`, `rules/documentation-protocol.md`)                | Native settings/hooks plus shared scripts     | Native: absent; local: `.agents/hooks.json`       | `.codex/hooks.json` context/validation wiring                                    | Local wiring Ready; Gemini CLI event delivery `DEFER`                                 |
-| Subagents + tools  | `subagent-protocol.md` least-privilege role contract                                                  | Native subagents plus `tools:` frontmatter    | Native repo-static definitions and tool allowlists: `.gemini/agents/*.md`; local adapter workflow: `.agents/agents/*.md` | Official AGENTS.md/config plus explicit subagent orchestration and TOML adapters | Static parity Ready; Gemini CLI discovery/tool enforcement `DEFER`                     |
+| Subagents + tools  | `subagent-protocol.md` least-privilege role contract                                                  | Native subagents plus `tools:` frontmatter    | Native repo-static five-field definitions without generic tool aliases: `.gemini/agents/*.md`; local adapter workflow: `.agents/agents/*.md` | Official AGENTS.md/config plus explicit subagent orchestration and TOML adapters | Static role parity Ready; Gemini CLI discovery and tool interpretation/enforcement `DEFER` |
 | Output style       | Output-style contract (this file)                                                                     | `.claude/output-styles/*.md`                  | Native: absent; local `GEMINI.md` tone            | `developer_instructions` tone                                                    | Partial; Gemini CLI native enforcement `DEFER`                                        |
 | Workflows          | Workflow-type skills (Skills table) + provider workflow surfaces                                      | workflow-type `.claude/skills/**`             | Native: absent; local `.agents/workflows/**`      | shared workflow skills via routing                                               | Local workflow Ready; Gemini CLI consumption `DEFER`                                  |
 | Memory             | `contracts/agent-loop-lifecycle.json` + `contracts/agent-checkpoint.schema.json` + `memory/README.md` + `memory/progress.md` | shared durable ledger plus provider-local auxiliary context | Native: absent; local auxiliary context only | shared durable ledger plus provider-local auxiliary context | Closed repo-static validators enforce four classes, atomic/redacted synthetic checkpoint, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five bounded reviewed feedback destinations; ignored checkpoints remain advisory and static PASS is not provider-runtime evidence |
@@ -539,7 +544,7 @@ its agent prompt. Do not duplicate the same rule across all three layers.
 - **Supported natively (Claude)**: Settings, hooks, subagents, native permissions, least-privilege agent `tools:`, output styles, memory ledger, template authoring, and QA/CI gates.
 - **Supported (Codex)**: Official `AGENTS.md`, config, sandbox/approval modes, explicit subagent orchestration when requested by the user, TOML role adapters, hook wiring (`hooks.json` reusing shared scripts), shared Skill/Rule via mapping, memory ledger, and template authoring.
 - **Tracked local adapter baseline (Antigravity)**: root `GEMINI.md`, `.agents/GEMINI.md`, and repository `.agents/**` local adapter surfaces. `.agents/hooks.json` invokes shared hook scripts only where a compatible local runtime honors it; it is not Gemini CLI native settings or a Claude-style permission gate.
-- **Gemini CLI native adapter surface**: `.gemini/agents/**` is tracked as the repository-static Gemini project-agent projection for the 12-role roster, and `.gemini/settings.json` is the minimal schema-linked settings surface with empty agent overrides. Native discovery, event delivery, policy loading, authenticated execution, and model resolution remain `DEFER` until provider-runtime canaries supply explicit evidence.
+- **Gemini CLI native adapter surface**: `.gemini/agents/**` is tracked as the repository-static Gemini project-agent projection for the 12-role roster with exactly `name`, `description`, `kind`, `max_turns`, and `timeout_mins`; it carries no generic tool aliases or exact model field. `.gemini/settings.json` is the minimal schema-linked settings surface with empty agent overrides, while candidate model/reasoning ownership stays in `contracts/agent-model-fitness.json`. Native discovery, parsing, event delivery, policy loading, tool enforcement, authenticated execution, and model resolution remain `DEFER` until provider-runtime canaries supply explicit evidence.
 - **Shared via symlink to the `.agents/` SSoT**: `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` are symlinks to `.agents/`, so shared content stays byte-identical without duplication. Role adapters remain real files because metadata differs across Claude, local/Antigravity, and Codex surfaces.
 
 ### Memory Scope Mapping

@@ -3,7 +3,7 @@ title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
 type: sdlc/adr
 status: draft
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-29
 ---
 
 # ADR-0019: Provider-Native Agent Harness and Loop Model
@@ -74,9 +74,10 @@ foundation-first 순서로 구현·검증한다.
 - Codex adapter candidate fields are `name`, `description`, `developer_instructions`, `model`,
   `model_reasoning_effort`와 project config다. Dated evidence 또는 native config validation
   전에는 cutoff-proven field라고 주장하지 않는다.
-- Gemini adapter candidate fields are `name`, `description`, `kind`, `tools`, `model`,
-  `max_turns`, `timeout_mins`와 project settings다. Reasoning/model configuration은 settings
-  schema에 두고 exact support를 native canary로 확인한다.
+- Gemini의 현재 repo-static adapter fields는 Spec 044가 닫힌 형태로 소유하는
+  `name`, `description`, `kind`, `max_turns`, `timeout_mins`다. Spec 042의
+  `tools`/`model` 목록은 observation-time candidate 이력이며, generic tool alias와
+  exact model/reasoning은 model-fitness contract와 native canary가 별도로 소유한다.
 - Project config/MCP는 tracked secret-free baseline과 allowlist만 소유하고, user credential과
   private config를 수정·수집하지 않는다.
 - Repo-static parse, native discovery, authenticated controlled run을 별도 evidence class로 둔다.

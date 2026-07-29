@@ -36,23 +36,23 @@
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "admission-verdict-defer",
+      "name": "admission-verdict-pass",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promotion-scope-runtime",
+      "name": "projection-scope-runtime",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promotion-authorization-disabled",
+      "name": "projection-authorization-disabled",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promotion-exclusion-duplicate",
+      "name": "projection-exclusion-duplicate",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promotion-exclusion-reordered",
+      "name": "projection-exclusion-reordered",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
@@ -116,7 +116,7 @@
       "expectedRule": "AREA-ADM-CANDIDATE"
     },
     {
-      "name": "candidate-runtime-preclaim",
+      "name": "candidate-admission-preclaim",
       "expectedRule": "AREA-ADM-CANDIDATE"
     },
     {

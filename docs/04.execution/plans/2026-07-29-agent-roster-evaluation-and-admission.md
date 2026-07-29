@@ -12,11 +12,12 @@ updated: 2026-07-29
 
 This Plan executes
 [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md)
-after the completed Spec 043 loop lifecycle closure. It promotes the target-only
-12-role / 4-surface / 48-adapter design into repository-static implementation
-only after closed admission, evaluation, and model-fitness contracts fail
-unsafe or incomplete candidates and the roster, adapter semantics, rollback,
-and evidence gates pass deterministic validation.
+after the completed Spec 043 loop lifecycle closure. AREA-002 projects the
+target-only 12-role / 4-surface / 48-adapter design into tracked
+repository-static implementation while keeping candidate decisions and the
+admission verdict `DEFER`. AREA-003 separately owns the four-class evaluation,
+independent adjudication, and rollback evidence required for final roster
+admission.
 
 ## Context
 
@@ -29,11 +30,11 @@ Its terminal closure
 `a0bc3565988e291980320dec8442405c7ef16eb6` and postflight
 `80ffd6d92a53990b04e413c0acf7fbc879b437d4` are observed prerequisites.
 
-The active gap is admission: `docs-researcher`, `quality-engineer`, and the
-native `.gemini/agents/**` surface are designed but not implemented as current
-repo-static adapters. This Plan does not claim provider-native runtime
-discovery, authenticated execution, hosted CI, remote, live Kubernetes/GitOps,
-or credential-bearing evidence.
+The active transition first materializes `docs-researcher`,
+`quality-engineer`, and the native `.gemini/agents/**` surface as current
+repo-static projections. That transition is not final admission. This Plan
+does not claim provider-native runtime discovery, authenticated execution,
+hosted CI, remote, live Kubernetes/GitOps, or credential-bearing evidence.
 
 Spec 042 fixes provider/model source evidence at
 `2026-07-10 10:00 Asia/Seoul`. The harness contract's later
@@ -43,8 +44,8 @@ separate.
 
 ## Goals & In-Scope
 
-- Activate the canonical 12-role roster and exact four-surface adapter set in
-  repository-static contract evidence.
+- Project the canonical 12-role roster and exact four-surface adapter set in
+  repository-static contract evidence without returning an admission PASS.
 - Add least-privilege adapters for `docs-researcher` and `quality-engineer`
   across local/Antigravity, Claude, Codex, and Gemini.
 - Add Gemini-native repository adapter files without claiming Gemini CLI runtime
@@ -52,7 +53,7 @@ separate.
 - Add deterministic validators and fixtures for roster admission, role
   evaluation coverage, and provider model/effort fitness.
 - Define the closed schemas, versioned synthetic corpora, adjudication,
-  promotion, and rollback records before switching the current inventory.
+  promotion, and rollback records before final roster or runtime promotion.
 - Reconcile the fixed Spec 042 source cutoff without rewriting later
   repository-observation dates.
 - Preserve the memory hierarchy from Spec 043: working-short-term,
@@ -79,8 +80,8 @@ separate.
 | --- | --- | --- | --- | --- |
 | AREA-000 | Activate reciprocal SDLC execution path | Spec 043 done | Clean worktree and approved successor | Spec, Plan, Task, indexes, registry, and progress record `active` |
 | AREA-001 | Implement closed admission, evaluation, and model-fitness contracts, schemas, validators, and synthetic negative fixtures | AREA-000 | Active reciprocal Spec/Plan/Task and target-only 12/4/48 design | Planned validators fail malformed, overlapping, over-authorized, secret-bearing, unadjudicated, unversioned, and runtime-preclaim fixtures and pass the frozen baseline |
-| AREA-002 | Admit two bounded roles and promote the exact repository-static roster/adapters | AREA-001 | Closed gates reject unsafe or incomplete candidates | `docs-researcher` and `quality-engineer` are admitted; local, Claude, Codex, and Gemini projections form exact 12-role / 4-surface / 48-adapter set equality with native metadata and no duplicate owner |
-| AREA-003 | Establish versioned role evaluation, adjudication, and rollback evidence | AREA-002 | Exact role and surface identities validate | All 12 roles cover positive, negative/adversarial, refusal/stop, and handoff cases; independent adjudication and rollback references validate without retaining private prompts or transcripts |
+| AREA-002 | Project two bounded candidates and the exact repository-static roster/adapters | AREA-001 | Closed gates reject unsafe or incomplete projections | `docs-researcher` and `quality-engineer` remain `repository-static-projected`; local, Claude, Codex, and Gemini projections form exact 12-role / 4-surface / 48-adapter set equality with native metadata, no duplicate owner, and admission `DEFER` |
+| AREA-003 | Establish versioned role evaluation, adjudication, rollback, and final admission evidence | AREA-002 | Exact projected role and surface identities validate with admission `DEFER` | All 12 roles cover positive, negative/adversarial, refusal/stop, and handoff cases; independent adjudication and rollback references validate without retaining private prompts or transcripts before any final admission PASS |
 | AREA-004 | Reconcile cutoff evidence and optimize provider-specific candidate model/effort profiles | AREA-003, Spec 042 | Same-version role suites and provider evidence contract are available | Each role/provider tuple has a risk-based candidate, effort/routing rationale, baseline, fitness threshold, fallback, and `PASS`/`FAIL`/`DEFER`; exact runtime resolution remains unpromoted unless observed |
 | AREA-005 | Reconcile catalog, provider notes, and quality gates | AREA-002, AREA-003, AREA-004 | Focused validators pass | aggregate, all-files pre-commit, review, and closure evidence |
 
@@ -110,8 +111,8 @@ git diff --check
 
 | Risk | Mitigation |
 | --- | --- |
-| Static adapter parity is mistaken for provider runtime support | Keep runtime, model resolution, hosted CI, remote, and live lanes explicitly separate and `DEFER` unless observed. |
-| Files are promoted before admission is proved | Build closed schemas, negative fixtures, and validators first; switch current inventory only after the two role decisions pass. |
+| Static adapter parity is mistaken for admission or provider runtime support | Keep the AREA-002 projection and admission states distinct, and keep runtime, model resolution, hosted CI, remote, and live lanes explicitly `DEFER` unless observed. |
+| Projected files are mistaken for admitted roles | Require AREA-003 four-class evaluation, independent adjudication, and rollback evidence before any final roster admission PASS. |
 | New roles overlap existing owners | Admission validator rejects overlapping deliverables, excess authority, missing stop/handoff contracts, and unowned outputs. |
 | `.gemini/**` files imply Gemini CLI execution | Provider note and model fitness validator require runtime canary evidence before runtime-ready claims. |
 | A later repository observation silently moves the fixed cutoff | Validate the Spec 042 cutoff separately from repository observation dates and reject conflicting source-boundary values. |
@@ -124,6 +125,8 @@ git diff --check
   close as `done` after implementation and review.
 - The harness contract reports current 12/4/48 repository-static inventory.
 - All four adapter surfaces contain exactly one file per canonical role.
+- AREA-002 records `repository-static-projected` / `DEFER`; it does not satisfy
+  final roster admission by itself.
 - New admission, evaluation, and model-fitness validators pass self-tests and
   repository checks.
 - All 12 roles have versioned four-class evaluation coverage, adjudication, and

@@ -2,8 +2,6 @@
 name: observability-reviewer
 description: Worker agent for manifest-static observability and SLO review.
 kind: local
-tools: [read_file, grep_search, list_directory]
-model: gemini-3.1-pro-preview
 max_turns: 8
 timeout_mins: 20
 ---

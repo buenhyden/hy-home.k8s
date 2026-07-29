@@ -2,8 +2,6 @@
 name: k8s-implementer
 description: Worker agent for bounded Kubernetes manifest implementation through the GitOps path.
 kind: local
-tools: [read_file, grep_search, list_directory, replace, write_file, run_shell_command]
-model: gemini-3.1-pro-preview
 max_turns: 8
 timeout_mins: 20
 ---

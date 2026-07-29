@@ -46,7 +46,7 @@ TARGET_ROLES = (
 )
 TARGET_SURFACES = ("local", "claude", "codex", "gemini")
 CANDIDATE_ROLES = ("docs-researcher", "quality-engineer")
-PROMOTION_SCOPE = "repository-static-role-and-adapter-inventory-only"
+PROJECTION_SCOPE = "repository-static-role-and-adapter-projection-only"
 EVALUATION_CLASSES = (
     "positive",
     "negative-adversarial",
@@ -413,35 +413,35 @@ def _validate_identity_and_cutoff(contract: dict[str, Any]) -> None:
 
 
 def _validate_evidence_boundary(contract: dict[str, Any]) -> None:
-    if contract["state"] != "repository-static-admitted":
+    if contract["state"] != "repository-static-projected":
         fail(
             "AREA-ADM-STATE",
-            "roster admission state must be repository-static-admitted",
+            "roster staging state must be repository-static-projected",
         )
     evidence = contract["evidence"]
     if (
         evidence["class"] != "repo-static"
-        or evidence["claimBoundary"] != PROMOTION_SCOPE
-        or evidence["admissionVerdict"] != "PASS"
+        or evidence["claimBoundary"] != PROJECTION_SCOPE
+        or evidence["admissionVerdict"] != "DEFER"
     ):
         fail(
             "AREA-ADM-EVIDENCE",
-            "admission verdict must stay inside the repository-static boundary",
+            "admission must remain DEFER at the repository-static projection boundary",
         )
-    authorization = evidence["promotionAuthorization"]
+    authorization = evidence["projectionAuthorization"]
     if (
         authorization["authorized"] is not True
-        or authorization["scope"] != PROMOTION_SCOPE
+        or authorization["scope"] != PROJECTION_SCOPE
     ):
         fail(
             "AREA-ADM-EVIDENCE",
-            "promotion authorization must be repository-static only",
+            "projection authorization must be repository-static only",
         )
     _require_exact_list(
         authorization["excludedEvidenceClasses"],
         DEFERRED_EVIDENCE,
         "AREA-ADM-EVIDENCE",
-        "promotion exclusions",
+        "projection exclusions",
     )
     _require_exact_list(
         evidence["deferredClasses"],
@@ -619,13 +619,13 @@ def _validate_allowed_path(path: str, role_id: str) -> None:
 def _validate_candidate(candidate: dict[str, Any], role_id: str) -> None:
     if (
         candidate["roleId"] != role_id
-        or candidate["decision"] != "repository-static-admitted"
-        or candidate["authority"] != PROMOTION_SCOPE
+        or candidate["decision"] != "repository-static-projected"
+        or candidate["authority"] != PROJECTION_SCOPE
         or candidate["owner"] != role_id
     ):
         fail(
             "AREA-ADM-CANDIDATE",
-            f"{role_id} must remain admitted only to repository-static inventory",
+            f"{role_id} must remain a repository-static projection",
         )
     gap = candidate["requirementGap"]
     if (
@@ -860,20 +860,20 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         "non-static-evidence": lambda: contract["evidence"].__setitem__(
             "class", "runtime"
         ),
-        "admission-verdict-defer": lambda: contract["evidence"].__setitem__(
-            "admissionVerdict", "DEFER"
+        "admission-verdict-pass": lambda: contract["evidence"].__setitem__(
+            "admissionVerdict", "PASS"
         ),
-        "promotion-scope-runtime": lambda: contract["evidence"][
-            "promotionAuthorization"
+        "projection-scope-runtime": lambda: contract["evidence"][
+            "projectionAuthorization"
         ].__setitem__("scope", "runtime-and-repository-static"),
-        "promotion-authorization-disabled": lambda: contract["evidence"][
-            "promotionAuthorization"
+        "projection-authorization-disabled": lambda: contract["evidence"][
+            "projectionAuthorization"
         ].__setitem__("authorized", False),
-        "promotion-exclusion-duplicate": lambda: contract["evidence"][
-            "promotionAuthorization"
+        "projection-exclusion-duplicate": lambda: contract["evidence"][
+            "projectionAuthorization"
         ]["excludedEvidenceClasses"].__setitem__(8, "runtime"),
-        "promotion-exclusion-reordered": lambda: contract["evidence"][
-            "promotionAuthorization"
+        "projection-exclusion-reordered": lambda: contract["evidence"][
+            "projectionAuthorization"
         ]["excludedEvidenceClasses"].reverse(),
         "runtime-pass": lambda: contract["evidence"][
             "deferredClassStates"
@@ -918,8 +918,8 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
             1, copy.deepcopy(first)
         ),
         "swapped-candidates": lambda: candidates.reverse(),
-        "candidate-runtime-preclaim": lambda: first.__setitem__(
-            "decision", "runtime-admitted"
+        "candidate-admission-preclaim": lambda: first.__setitem__(
+            "decision", "repository-static-admitted"
         ),
         "gap-not-approved": lambda: first["requirementGap"].__setitem__(
             "approved", False
@@ -1094,8 +1094,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         counts = validate_contract(args.root)
         print(
             "[PASS] agent roster admission policy validation passed: "
-            "state=repository-static-admitted verdict=PASS "
-            f"scope={PROMOTION_SCOPE} "
+            "state=repository-static-projected verdict=DEFER "
+            f"scope={PROJECTION_SCOPE} "
             f"candidates={counts['candidates']} "
             f"conditions={counts['conditions']} "
             f"current={counts['currentRoles']}/"

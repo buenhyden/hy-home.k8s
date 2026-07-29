@@ -99,8 +99,10 @@ with `name`, `description`, and `model`, and must preserve the same role, scope
 imports, guardrails, handoff, and postflight contract as the Claude source.
 These local adapter files do not require Claude-style `tools:` frontmatter.
 Gemini CLI native agents are tracked under `.gemini/agents/**`. Their
-frontmatter must use the closed Gemini-native metadata and role-specific
-least-privilege tool lists selected by the repository validators.
+frontmatter must contain exactly `name`, `description`, `kind`, `max_turns`,
+and `timeout_mins`. Least-privilege intent remains in the shared role contract
+and adapter body; generic tool aliases and exact models remain candidate-only
+or runtime `DEFER` and must not appear in this repo-static frontmatter.
 `.gemini/settings.json` is the minimal schema-linked project settings surface
 with empty agent overrides; model overrides remain owned by the model-fitness
 gate. File presence proves repository-static parity only, not CLI discovery,

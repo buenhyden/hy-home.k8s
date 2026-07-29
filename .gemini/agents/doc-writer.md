@@ -2,8 +2,6 @@
 name: doc-writer
 description: Worker agent for template-aligned documentation routing, drafting support, and delegated stage document updates.
 kind: local
-tools: [read_file, grep_search, list_directory, replace, write_file]
-model: gemini-3.5-flash
 max_turns: 8
 timeout_mins: 20
 ---

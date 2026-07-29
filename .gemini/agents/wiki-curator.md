@@ -2,8 +2,6 @@
 name: wiki-curator
 description: Worker agent for maintaining repo-local LLM wiki entrypoints and generated-owner maps.
 kind: local
-tools: [read_file, grep_search, list_directory, replace, write_file]
-model: gemini-3.5-flash
 max_turns: 8
 timeout_mins: 20
 ---

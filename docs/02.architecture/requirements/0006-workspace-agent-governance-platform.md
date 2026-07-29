@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-29
 ---
 
 # Workspace Agent Governance Platform Architecture Reference Document (ARD)
@@ -95,11 +95,13 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 | local/Antigravity | `name`, `description`, `model`을 가진 local role file과 shared asset reference | Antigravity/local capability만 주장하며 Gemini native로 재해석하지 않는다. |
 | Claude | Official subagent schema의 `name`, `description`, `model`, `tools`; `effort`·`maxTurns` 등은 cutoff schema가 허용할 때만 사용 | Claude settings/hooks의 native permission을 다른 provider에 일반화하지 않는다. |
 | Codex | role `name`, `description`, `developer_instructions`, `model`, `model_reasoning_effort`와 project config | Sandbox/approval 및 agent config를 사용하고 Claude-style hook enforcement를 주장하지 않는다. |
-| Gemini | Official subagent schema의 `name`, `description`, `kind`, `tools`, `model`, `max_turns`, `timeout_mins`와 project settings | Reasoning/model config는 settings schema에 두며, subagent recursion과 unsupported permission을 가정하지 않는다. |
+| Gemini | Spec 044가 현재 repo-static contract로 허용한 `name`, `description`, `kind`, `max_turns`, `timeout_mins`와 최소 project settings | Generic tool alias와 exact model은 model-fitness candidate/runtime evidence가 소유하며, native parser/canary 전에는 adapter field로 승격하지 않는다. |
 
-이 field 목록은 live documentation에서 관찰한 implementation candidate다. Cutoff 시점
-지원 사실은 dated tag/release/snapshot으로 별도 증명하고, 그렇지 못한 field는 observation-time
-confidence와 native schema/config canary를 통과하기 전 contract-required로 승격하지 않는다.
+Spec 042가 기록한 더 넓은 live-documentation field 목록은 observation-time
+candidate 이력이다. 현재 repository contract는 Spec 044의 닫힌 5필드 Gemini
+projection이 소유한다. Cutoff 시점 지원 사실은 dated tag/release/snapshot으로
+별도 증명하고, 그렇지 못한 field는 native schema/config canary를 통과하기 전
+contract-required로 승격하지 않는다.
 
 Provider schema 근거는 Claude
 [subagents](https://code.claude.com/docs/en/sub-agents)·[configuration](https://code.claude.com/docs/en/configuration)·

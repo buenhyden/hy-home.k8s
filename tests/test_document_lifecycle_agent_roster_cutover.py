@@ -1,4 +1,4 @@
-"""Finite Spec 044 AREA-002 agent-roster lifecycle admission regressions."""
+"""Finite Spec 044 AREA-002 repository-projection lifecycle regressions."""
 
 from __future__ import annotations
 
@@ -152,8 +152,8 @@ def exact_contracts() -> tuple[dict[str, object], dict[str, object], dict[str, o
         candidates.append(
             {
                 "roleId": role_id,
-                "decision": "repository-static-admitted",
-                "authority": "repository-static-role-and-adapter-inventory-only",
+                "decision": "repository-static-projected",
+                "authority": "repository-static-role-and-adapter-projection-only",
                 "surfacePlan": [
                     {
                         "surfaceId": surface_id,
@@ -172,14 +172,14 @@ def exact_contracts() -> tuple[dict[str, object], dict[str, object], dict[str, o
     proposed_admission = {
         "contractId": "hy-home.k8s/agent-roster-admission",
         "contractVersion": "1.0.0",
-        "state": "repository-static-admitted",
+        "state": "repository-static-projected",
         "evidence": {
             "class": "repo-static",
-            "claimBoundary": "repository-static-role-and-adapter-inventory-only",
-            "admissionVerdict": "PASS",
-            "promotionAuthorization": {
+            "claimBoundary": "repository-static-role-and-adapter-projection-only",
+            "admissionVerdict": "DEFER",
+            "projectionAuthorization": {
                 "authorized": True,
-                "scope": "repository-static-role-and-adapter-inventory-only",
+                "scope": "repository-static-role-and-adapter-projection-only",
                 "excludedEvidenceClasses": list(PROPOSED_DEFERRED_CLASSES),
             },
             "deferredClasses": list(PROPOSED_DEFERRED_CLASSES),
@@ -285,9 +285,13 @@ class FiniteAgentRosterCutoverAdmissionTest(unittest.TestCase):
         base[path] = proposed[path]
         self.assertFalse(self.admit(base_documents=base, proposed_documents=proposed))
 
-    def test_admission_and_candidate_plan_controls_fail_closed(self):
+    def test_projection_state_and_candidate_plan_controls_fail_closed(self):
         contracts = list(exact_contracts())
         contracts[1]["state"] = "contract-only"
+        self.assertFalse(self.admit(contracts=tuple(contracts)))
+
+        contracts = list(exact_contracts())
+        contracts[1]["state"] = "repository-static-admitted"
         self.assertFalse(self.admit(contracts=tuple(contracts)))
 
         contracts = list(exact_contracts())
@@ -298,11 +302,30 @@ class FiniteAgentRosterCutoverAdmissionTest(unittest.TestCase):
         contracts[1]["candidates"][0]["surfacePlan"][0]["adapterPath"] = "bad.md"
         self.assertFalse(self.admit(contracts=tuple(contracts)))
 
+        contracts = list(exact_contracts())
+        contracts[1]["candidates"][0][
+            "decision"
+        ] = "repository-static-admitted"
+        self.assertFalse(self.admit(contracts=tuple(contracts)))
+
+        contracts = list(exact_contracts())
+        contracts[1]["candidates"][0][
+            "authority"
+        ] = "repository-static-role-and-adapter-inventory-only"
+        self.assertFalse(self.admit(contracts=tuple(contracts)))
+
     def test_evidence_defer_and_area003_evaluation_gate_controls_fail_closed(self):
         mutations = (
             lambda contract: contract["evidence"].__setitem__("class", "runtime"),
             lambda contract: contract["evidence"].__setitem__(
                 "claimBoundary", "repository-static-and-runtime"
+            ),
+            lambda contract: contract["evidence"].__setitem__(
+                "admissionVerdict", "PASS"
+            ),
+            lambda contract: contract["evidence"].__setitem__(
+                "promotionAuthorization",
+                contract["evidence"].pop("projectionAuthorization"),
             ),
             lambda contract: contract["evidence"]["deferredClassStates"].__setitem__(
                 "runtime", "PASS"

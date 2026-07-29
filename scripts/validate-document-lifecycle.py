@@ -184,11 +184,15 @@ AGENT_ROSTER_CUTOVER_MUTATIONS = (
     "wrong-admission-inventory",
     "wrong-evidence-class",
     "wrong-claim-boundary",
+    "admission-verdict-preclaim",
+    "promotion-authorization-preclaim",
     "runtime-preclaim",
     "missing-provider-deferred-state",
     "missing-deferred-evidence",
     "missing-live-deferred-state",
     "wrong-candidate-surface",
+    "candidate-admission-preclaim",
+    "candidate-admission-authority-preclaim",
     "wrong-evaluation-baseline",
     "wrong-independent-adjudication",
     "wrong-harness-inventory",
@@ -407,11 +411,11 @@ def _agent_evidence_matches(
     expected: dict[str, object] = {
         "class": "repo-static",
         "claimBoundary": (
-            "repository-static-role-and-adapter-inventory-only"
+            "repository-static-role-and-adapter-projection-only"
             if proposed
             else "prepared-policy-and-candidate-contract-only"
         ),
-        "admissionVerdict": "PASS" if proposed else "DEFER",
+        "admissionVerdict": "DEFER",
         "deferredClasses": list(deferred_classes),
         "deferredClassStates": {
             evidence_class: "DEFER"
@@ -419,9 +423,9 @@ def _agent_evidence_matches(
         },
     }
     if proposed:
-        expected["promotionAuthorization"] = {
+        expected["projectionAuthorization"] = {
             "authorized": True,
-            "scope": "repository-static-role-and-adapter-inventory-only",
+            "scope": "repository-static-role-and-adapter-projection-only",
             "excludedEvidenceClasses": list(deferred_classes),
         }
     else:
@@ -477,7 +481,7 @@ def _agent_contracts_admit_cutover(
         or base_admission.get("contractVersion") != "1.0.0"
         or proposed_admission.get("contractVersion") != "1.0.0"
         or base_admission.get("state") != "contract-only"
-        or proposed_admission.get("state") != "repository-static-admitted"
+        or proposed_admission.get("state") != "repository-static-projected"
         or not _agent_evidence_matches(
             base_admission.get("evidence"),
             proposed=False,
@@ -555,9 +559,9 @@ def _agent_contracts_admit_cutover(
         role_id = candidate.get("roleId")
         if (
             role_id not in expected_candidates
-            or candidate.get("decision") != "repository-static-admitted"
+            or candidate.get("decision") != "repository-static-projected"
             or candidate.get("authority")
-            != "repository-static-role-and-adapter-inventory-only"
+            != "repository-static-role-and-adapter-projection-only"
             or not _agent_evaluation_gate_matches(
                 candidate.get("evaluationGate"),
                 baseline_state=(
@@ -661,7 +665,7 @@ def finite_agent_roster_cutover_paths(
     base_harness: object,
     proposed_harness: object,
 ) -> frozenset[PurePosixPath]:
-    """Admit only the exact Spec 044 AREA-002 one-time Markdown creation set."""
+    """Admit only the exact AREA-002 repository-projection creation set."""
 
     expected = frozenset(AGENT_ROSTER_CUTOVER_PATHS)
     if (
@@ -783,14 +787,14 @@ def _agent_roster_cutover_fixture_inputs(
     proposed_admission: dict[str, object] = {
         "contractId": "hy-home.k8s/agent-roster-admission",
         "contractVersion": "1.0.0",
-        "state": "repository-static-admitted",
+        "state": "repository-static-projected",
         "evidence": {
             "class": "repo-static",
-            "claimBoundary": "repository-static-role-and-adapter-inventory-only",
-            "admissionVerdict": "PASS",
-            "promotionAuthorization": {
+            "claimBoundary": "repository-static-role-and-adapter-projection-only",
+            "admissionVerdict": "DEFER",
+            "projectionAuthorization": {
                 "authorized": True,
-                "scope": "repository-static-role-and-adapter-inventory-only",
+                "scope": "repository-static-role-and-adapter-projection-only",
                 "excludedEvidenceClasses": list(
                     AGENT_ROSTER_DEFERRED_CLASSES
                 ),
@@ -810,8 +814,8 @@ def _agent_roster_cutover_fixture_inputs(
         "candidates": [
             {
                 "roleId": role_id,
-                "decision": "repository-static-admitted",
-                "authority": "repository-static-role-and-adapter-inventory-only",
+                "decision": "repository-static-projected",
+                "authority": "repository-static-role-and-adapter-projection-only",
                 "surfacePlan": [
                     {
                         "surfaceId": surface_id,
@@ -894,6 +898,8 @@ def _agent_roster_cutover_fixture_inputs(
     elif mutation in {
         "wrong-evidence-class",
         "wrong-claim-boundary",
+        "admission-verdict-preclaim",
+        "promotion-authorization-preclaim",
         "runtime-preclaim",
         "missing-provider-deferred-state",
         "missing-deferred-evidence",
@@ -905,6 +911,12 @@ def _agent_roster_cutover_fixture_inputs(
             evidence["class"] = "runtime"
         elif mutation == "wrong-claim-boundary":
             evidence["claimBoundary"] = "repository-static-and-runtime"
+        elif mutation == "admission-verdict-preclaim":
+            evidence["admissionVerdict"] = "PASS"
+        elif mutation == "promotion-authorization-preclaim":
+            evidence["promotionAuthorization"] = evidence.pop(
+                "projectionAuthorization"
+            )
         elif mutation == "missing-deferred-evidence":
             evidence.pop("deferredClassStates")
         else:
@@ -926,6 +938,20 @@ def _agent_roster_cutover_fixture_inputs(
         surface = plan[0]
         assert isinstance(surface, dict)
         surface["adapterPath"] = ".agents/agents/wrong.md"
+    elif mutation in {
+        "candidate-admission-preclaim",
+        "candidate-admission-authority-preclaim",
+    }:
+        candidates = proposed_admission["candidates"]
+        assert isinstance(candidates, list)
+        candidate = candidates[0]
+        assert isinstance(candidate, dict)
+        if mutation == "candidate-admission-preclaim":
+            candidate["decision"] = "repository-static-admitted"
+        else:
+            candidate[
+                "authority"
+            ] = "repository-static-role-and-adapter-inventory-only"
     elif mutation in {
         "wrong-evaluation-baseline",
         "wrong-independent-adjudication",

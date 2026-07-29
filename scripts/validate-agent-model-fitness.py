@@ -466,10 +466,23 @@ def _expected_model(role_id: str, provider_id: str) -> str:
 def _expected_config_source(role_id: str, provider_id: str) -> str:
     if provider_id == "codex":
         return f".codex/agents/{role_id}.toml#model"
+    if provider_id == "gemini":
+        candidate = _expected_model(role_id, provider_id)
+        candidate_ids = tuple(
+            model_id
+            for model_id, _lifecycle in PROVIDER_CONTRACT[provider_id][
+                "candidateModels"
+            ]
+        )
+        candidate_index = candidate_ids.index(candidate)
+        provider_index = PROVIDER_IDS.index(provider_id)
+        return (
+            f"{CONTRACT_PATH.as_posix()}#/providers/{provider_index}/"
+            f"candidateModels/{candidate_index}/modelId"
+        )
     return {
         "local": f".agents/agents/{role_id}.md#frontmatter.model",
         "claude": f".claude/agents/{role_id}.md#frontmatter.model",
-        "gemini": f".gemini/agents/{role_id}.md#frontmatter.model",
     }[provider_id]
 
 

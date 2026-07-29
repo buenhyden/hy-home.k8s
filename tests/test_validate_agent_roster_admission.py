@@ -65,7 +65,7 @@ DEFERRED_EVIDENCE = (
     "agent-evaluation",
     "model-fitness",
 )
-PROMOTION_SCOPE = "repository-static-role-and-adapter-inventory-only"
+PROJECTION_SCOPE = "repository-static-role-and-adapter-projection-only"
 GOVERNED_INPUTS = (
     CONTRACT_PATH,
     SCHEMA_PATH,
@@ -168,7 +168,7 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
         )
         assert_all_object_schemas_closed(self, self.schema)
 
-    def test_baseline_admits_only_repository_static_inventory(self) -> None:
+    def test_baseline_projects_only_repository_static_inventory(self) -> None:
         counts = self.validator.validate_contract(
             REPOSITORY_ROOT, self.contract
         )
@@ -190,13 +190,17 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             },
         )
         self.assertEqual(
-            self.contract["state"], "repository-static-admitted"
+            self.contract["state"], "repository-static-projected"
         )
         self.assertEqual(self.contract["evidence"]["class"], "repo-static")
-        self.assertEqual(self.contract["evidence"]["admissionVerdict"], "PASS")
-        authorization = self.contract["evidence"]["promotionAuthorization"]
+        self.assertEqual(
+            self.contract["evidence"]["admissionVerdict"], "DEFER"
+        )
+        authorization = self.contract["evidence"][
+            "projectionAuthorization"
+        ]
         self.assertTrue(authorization["authorized"])
-        self.assertEqual(authorization["scope"], PROMOTION_SCOPE)
+        self.assertEqual(authorization["scope"], PROJECTION_SCOPE)
         self.assertEqual(
             tuple(authorization["excludedEvidenceClasses"]),
             DEFERRED_EVIDENCE,
@@ -214,7 +218,9 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             )
         )
 
-    def test_target_is_achieved_and_candidates_are_static_only(self) -> None:
+    def test_target_is_achieved_and_candidates_are_static_projections(
+        self,
+    ) -> None:
         self.assertEqual(
             self.contract["currentInventory"],
             {
@@ -238,8 +244,8 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
         )
         self.assertTrue(
             all(
-                candidate["decision"] == "repository-static-admitted"
-                and candidate["authority"] == PROMOTION_SCOPE
+                candidate["decision"] == "repository-static-projected"
+                and candidate["authority"] == PROJECTION_SCOPE
                 for candidate in self.contract["candidates"]
             )
         )
@@ -324,7 +330,7 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
     def test_duplicate_keys_fail_at_the_input_boundary(self) -> None:
         with self.assertRaises(self.validator.AdmissionError) as raised:
             self.validator.decode_json_text(
-                '{"state":"repository-static-admitted","state":"current"}',
+                '{"state":"repository-static-projected","state":"current"}',
                 "<unit-fixture>",
             )
         self.assertEqual(raised.exception.code, "AREA-ADM-DUPLICATE-KEY")
@@ -411,7 +417,9 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
             self.assertNotIn(str(actual_root), raised.exception.detail)
 
-    def test_self_test_and_production_cli_pass_without_runtime_claims(self) -> None:
+    def test_self_test_and_projection_cli_pass_without_admission_or_runtime_claims(
+        self,
+    ) -> None:
         self_test = subprocess.run(
             [
                 sys.executable,
@@ -441,11 +449,13 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(production.returncode, 0, production.stderr)
-        self.assertIn("state=repository-static-admitted", production.stdout)
-        self.assertIn("verdict=PASS", production.stdout)
-        self.assertIn(f"scope={PROMOTION_SCOPE}", production.stdout)
+        self.assertIn("state=repository-static-projected", production.stdout)
+        self.assertIn("verdict=DEFER", production.stdout)
+        self.assertIn(f"scope={PROJECTION_SCOPE}", production.stdout)
         self.assertIn("current=12/4/48", production.stdout)
         self.assertIn("target=achieved:12/4/48", production.stdout)
+        self.assertNotIn("state=repository-static-admitted", production.stdout)
+        self.assertNotIn("verdict=PASS", production.stdout)
         self.assertNotIn("runtime=PASS", production.stdout)
         self.assertNotIn("model_resolution=PASS", production.stdout)
         self.assertNotIn("agent_evaluation=PASS", production.stdout)

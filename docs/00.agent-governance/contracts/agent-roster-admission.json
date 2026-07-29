@@ -4,18 +4,18 @@
   "contractId": "hy-home.k8s/agent-roster-admission",
   "contractVersion": "1.0.0",
   "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-  "state": "repository-static-admitted",
+  "state": "repository-static-projected",
   "fixedSourceCutoff": {
     "localTime": "2026-07-10 10:00 Asia/Seoul",
     "instantUtc": "2026-07-10T01:00:00Z"
   },
   "evidence": {
     "class": "repo-static",
-    "claimBoundary": "repository-static-role-and-adapter-inventory-only",
-    "admissionVerdict": "PASS",
-    "promotionAuthorization": {
+    "claimBoundary": "repository-static-role-and-adapter-projection-only",
+    "admissionVerdict": "DEFER",
+    "projectionAuthorization": {
       "authorized": true,
-      "scope": "repository-static-role-and-adapter-inventory-only",
+      "scope": "repository-static-role-and-adapter-projection-only",
       "excludedEvidenceClasses": [
         "runtime",
         "provider-discovery",
@@ -103,8 +103,8 @@
   "candidates": [
     {
       "roleId": "docs-researcher",
-      "decision": "repository-static-admitted",
-      "authority": "repository-static-role-and-adapter-inventory-only",
+      "decision": "repository-static-projected",
+      "authority": "repository-static-role-and-adapter-projection-only",
       "distinctDeliverable": "official-source-currentness-and-cutoff-evidence",
       "requirementGap": {
         "classification": "approved-recurring-unowned-gap",
@@ -242,8 +242,8 @@
           "failed adapter parity"
         ],
         "procedure": [
-          "freeze repository-static admission changes and keep runtime evidence deferred",
-          "remove only the two admitted roles and the Gemini repository-static projections",
+          "freeze repository-static projection changes and keep admission and runtime evidence deferred",
+          "remove only the two projected candidate roles and the Gemini repository-static projections",
           "restore the last verified 10/3/30 role and surface inventory",
           "rerun repository-static roster and evaluation gates"
         ]
@@ -251,8 +251,8 @@
     },
     {
       "roleId": "quality-engineer",
-      "decision": "repository-static-admitted",
-      "authority": "repository-static-role-and-adapter-inventory-only",
+      "decision": "repository-static-projected",
+      "authority": "repository-static-role-and-adapter-projection-only",
       "distinctDeliverable": "deterministic-fixture-and-validation-evidence",
       "requirementGap": {
         "classification": "approved-recurring-unowned-gap",
@@ -391,8 +391,8 @@
           "failed adapter parity"
         ],
         "procedure": [
-          "freeze repository-static admission changes and keep runtime evidence deferred",
-          "remove only the two admitted roles and the Gemini repository-static projections",
+          "freeze repository-static projection changes and keep admission and runtime evidence deferred",
+          "remove only the two projected candidate roles and the Gemini repository-static projections",
           "restore the last verified 10/3/30 role and surface inventory",
           "rerun repository-static roster and evaluation gates"
         ]

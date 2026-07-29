@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "adapterSurfaces": ["local", "claude", "codex", "gemini"],
   "roles": [
     "supervisor",
@@ -26,6 +26,17 @@
     "adapterStem": "ROLE-ADAPTER-STEM"
   },
   "mutations": ["remove", "replace"],
+  "geminiMetadataMutations": [
+    "missing-description",
+    "extra-key",
+    "duplicate-kind",
+    "malformed-description",
+    "wildcard-kind",
+    "wrong-kind",
+    "malformed-max-turns",
+    "wrong-timeout",
+    "key-order-drift"
+  ],
   "forbiddenCommonFields": ["model", "tools", "modelReasoningEffort"],
   "negationStates": [
     "false",
