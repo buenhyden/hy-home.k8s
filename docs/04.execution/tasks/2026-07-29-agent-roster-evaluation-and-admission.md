@@ -36,7 +36,8 @@ AREA-003 owns the evidence required for final roster admission.
   `6d9b01d51f8a198c521621bcd52ff088c397ee0b`, and AREA-001 implementation
   `0129daf7d44c9308bcad63d4966e11ffa98d05af`; AREA-002 projection
   `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` and admission-boundary
-  remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`
+  remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; AREA-003 evaluation
+  readiness `3bd5759029cc49742c12a811f8751f1609c4f330`
 
 ## Task Table
 
@@ -45,7 +46,7 @@ AREA-003 owns the evidence required for final roster admission.
 | AREA-000 | VAL-AREA-001 | Activate reciprocal Spec/Plan/Task path and registry relation | platform | Done | Activation and clean-tree postflight committed | `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`; `6d9b01d51f8a198c521621bcd52ff088c397ee0b` |
 | AREA-001 | VAL-AREA-001..008 | Implement closed admission, evaluation, and model-fitness schemas, validators, and synthetic negative fixtures before promotion | platform | Done | Closed gates preserve current `10/3/30`, target-only `12/4/48`, and all promotion/runtime lanes as `DEFER` | `0129daf7d44c9308bcad63d4966e11ffa98d05af`; focused `119`, aggregate/all-files PASS |
 | AREA-002 | VAL-AREA-001..004 | Project `docs-researcher` and `quality-engineer` with the exact 12/4/48 repository-static roster and native projections | platform | Done | Exact tracked projection is committed with admission `DEFER`; final-admission evidence remains owned by AREA-003 | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`; boundary remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; focused, aggregate, all-files, and independent review PASS |
-| AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, rollback records, and final admission decision | platform | Queued | Not executed | Evaluation manifests/corpora, validator, fixtures, reviewed decisions, and final admission evidence |
+| AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, rollback records, and final admission decision | platform | Done | Repository-static evaluation readiness is complete; readiness is `PASS`, while observed evaluation and final admission remain `DEFER` | `3bd5759029cc49742c12a811f8751f1609c4f330`; 48 role-specific records, 12 adjudication-readiness records, 2 source-bound rollback records, explicit final-DEFER decision, focused/aggregate/all-files/review PASS |
 | AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Queued | Not executed | Model-fitness map, baseline/threshold/fallback records, validator, fixtures, and provider evidence links |
 | AREA-005 | VAL-AREA-001..008 | Reconcile catalogs, provider notes, QA, and closure | platform | Queued | Not executed | aggregate/all-files/review/closure evidence |
 
@@ -99,11 +100,25 @@ Repository aggregate and `pre-commit run --all-files` passed. Requirements
 review approved Spec compliance, and final quality review reported zero
 Critical or Important findings after two wording corrections.
 
-AREA-003 still owns versioned four-class evaluation, independent
-adjudication, rollback evidence, and the final admission decision. The
-provider/model cutoff remains `2026-07-10 10:00 Asia/Seoul`; runtime, provider
-discovery/authentication, model resolution, agent evaluation, model fitness,
-hosted CI, remote, live, and ignored checkpoint execution remain `DEFER`.
+AREA-003 commit `3bd57590` completes the versioned four-class corpus,
+adjudication-readiness, rollback-source binding, and explicit final-decision
+record within its repository-static readiness scope. Contract
+version `1.1.0` and state `repository-static-evaluation-ready`: exact 12-role
+harness suite/version binding, 48 role-specific synthetic records, 12
+adjudication-readiness records, and 2 rollback records bound to the governed
+roster-admission source. Readiness is `PASS`, but observed same-suite
+evaluation, result adjudication, and final admission remain `DEFER`.
+
+Focused tests passed `33/33`, evaluation self-test `60/60`, staged lifecycle,
+repository aggregate, all-files pre-commit, and diff checks passed. Spec review
+approved with zero Critical or Important findings. Quality review's two
+Important findings—symlink-root resolution and unbound rollback references—
+were corrected and independently re-reviewed as addressed.
+
+The provider/model cutoff remains `2026-07-10 10:00 Asia/Seoul`; runtime,
+provider discovery/authentication, model resolution, agent evaluation, model
+fitness, hosted CI, remote, live, and ignored checkpoint execution remain
+`DEFER`.
 
 ## Traceability
 
@@ -114,6 +129,6 @@ hosted CI, remote, live, and ignored checkpoint execution remain `DEFER`.
 | [AREA-000](../plans/2026-07-29-agent-roster-evaluation-and-admission.md#work-breakdown) | Done | Activation `b8b1a388` and clean-tree postflight `6d9b01d5`. |
 | [AREA-001](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md#success-criteria--verification-plan) | Done | Closed admission/evaluation/model-fitness gates and postflight evidence in `0129daf7`; requirements `COMPLIANT`, security/model-path review `APPROVED`. |
 | N/A — AREA-002 shares the Plan source above | Done | Commits `138ce6ac` and `1d03b0b4` project exact 12/4/48 repository-static inventory while preserving admission `DEFER`; focused, aggregate, all-files, requirements, and quality review gates passed. |
-| N/A — AREA-003 shares the Plan source above | Not executed | Pending versioned evaluation, independent adjudication, rollback, and final admission evidence. |
+| N/A — AREA-003 shares the Plan source above | Done | Commit `3bd57590` establishes `repository-static-evaluation-ready` with 48 corpus records, 12 readiness adjudications, 2 source-bound rollback records, and explicit final admission `DEFER`; focused, aggregate, all-files, Spec, and quality review gates passed. |
 | N/A — AREA-004 shares the Plan source above | Not executed | Pending fixed-cutoff candidate model/effort fitness evidence; runtime resolution remains `DEFER`. |
 | N/A — AREA-005 shares the Plan source above | Not executed | Pending QA and independent review. |

@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 044 AREA-003 evaluation-readiness postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, governance, qa, security, meta
+- **Status**: done
+- **Tags**: #spec-044 #agent-evaluation #adjudication #rollback #readiness
+
+#### Progress
+
+- Committed the exact seven-path AREA-003 implementation as
+  `3bd5759029cc49742c12a811f8751f1609c4f330`
+  (`feat(agent): add evaluation readiness corpus`).
+- Advanced the evaluation contract to version `1.1.0`, schema version `2`,
+  and state `repository-static-evaluation-ready`.
+- Bound all 12 canonical roles to their exact harness `eval/<role>/v1` suite
+  and role-contract version, and added 48 role-specific synthetic records
+  covering positive, negative-adversarial, refusal-stop, and handoff cases.
+- Added 12 adjudication-readiness records and two rollback records. Each
+  rollback record is bound to the governed roster-admission candidate and
+  rollback object through canonical source digests and the verified
+  `e324d4c1fa49ef7e508fa07c32e7f054f5a3a05e` `10/3/30` incumbent.
+
+#### Memory
+
+- The four-class memory hierarchy remains unchanged:
+  `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`.
+- The corpus retains only concise synthetic scenario summaries and stable
+  digests. Raw prompts, full transcripts, credentials, auth files, tokens,
+  secrets, shell history, environment dumps, production data, private
+  diagnostics, and user configuration remain prohibited.
+- Repository-owned contracts and durable records remain authoritative;
+  provider-local context remains advisory and cannot promote an evaluation or
+  admission result.
+
+#### Evidence
+
+- Focused evaluation tests passed `33/33`; the closed mutation self-test passed
+  `60/60`. Production reported `roles=12`, `fixtureClasses=4`,
+  `corpusRecords=48`, `highRiskRoles=9`, `adjudicationRecords=12`,
+  `rollbackRecords=2`, `promotionBlocks=4`, and `deferredEvidence=9`.
+- Staged lifecycle, strict repository aggregate, all-files pre-commit, JSON
+  parsing/schema validation, and staged/unstaged diff checks passed.
+- Independent Spec review returned `APPROVED` with zero Critical and zero
+  Important findings. Quality review found two Important input/reference
+  integrity gaps; symlink-root validation and governed rollback-source binding
+  were corrected, regression-tested, and independently re-reviewed as
+  `ADDRESSED`.
+- Readiness is repository-static `PASS`. Evaluation execution, evaluation
+  result adjudication, final admission, provider discovery/authentication,
+  runtime, model resolution, hosted CI, remote, and live evidence remain
+  `DEFER`.
+
+#### Handoff
+
+- Next owner: AREA-004 fixed-cutoff, per-role/per-provider candidate model and
+  reasoning-effort fitness with fitness, promotion, and runtime decisions kept
+  distinct.
+- Current adapters retain their incumbent assignments. Candidate mappings
+  cannot become runtime defaults without Spec 042 canary evidence and the
+  same-version evaluation result required by Spec 044.
+- This entry does not preclaim its own postflight commit SHA, any AREA-004
+  fitness result, or final roster admission.
+
 ### 2026-07-29 - Spec 044 AREA-002 repository projection postflight
 
 #### Metadata
