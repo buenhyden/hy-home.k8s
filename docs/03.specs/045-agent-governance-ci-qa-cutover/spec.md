@@ -1,52 +1,68 @@
 ---
 title: 'Agent Governance CI and QA Cutover Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-30
 ---
 
 # Agent Governance CI and QA Cutover Technical Specification (Spec)
 
 ## Overview
 
-This Spec adds an agent-governance-specific static validation lane on top of
-the always-start CI, affected-surface selection, `ci-summary`, full-SHA, and
-least-permission foundation provided by Spec 039. It combines the machine
-harness contract, 12-role/48-adapter parity, provider-native configuration,
-role evaluation and admission evidence, and active-corpus legacy cutover into
-one reproducible QA contract.
+This Spec adds an agent-governance-specific repository-static validation lane
+on top of the always-start CI, affected-surface selection, `ci-summary`,
+full-SHA, and least-permission foundation provided by Spec 039. It combines
+the machine harness contract, exact 12-role / 4-provider-surface / 48-tuple
+repository inventory, closed CI validation, consumer-first legacy cutover,
+local QA ordering, concurrent checkpoint isolation, and durable memory policy
+into one reproducible repository-static contract.
 
-Provider authentication and actual model/agent discovery remain local/manual
-canaries that do not inject repository secrets into GitHub. A static CI PASS is
-not evidence that the Claude, Codex, or Gemini CLI consumed the configuration
-or executed an authenticated model.
+Spec 044 is an observed prerequisite: reciprocal closure
+`42864832c966744ac4e5cf8c28baa5bf31ac2765` and postflight
+`279f81032528dbf732acc3a1a8bc232d11d2c246` preserve configured incumbents,
+mapping readiness `PASS` 21 / `DEFER` 27, and repository-static evaluation
+readiness without claiming observed evaluation, admission, model fitness,
+promotion, canary, or runtime results.
 
-The source and security observation cutoff is **2026-07-26 Asia/Seoul**.
-Implementation follows the official contracts for
-[GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use),
-[workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax),
-and [`pre-commit`](https://pre-commit.com/).
+The fixed provider/model/source cutoff is
+**2026-07-10T10:00:00+09:00** (**2026-07-10T01:00:00Z**), as owned by
+[`provider-runtime-evidence.json`](../../00.agent-governance/contracts/provider-runtime-evidence.json).
+The date **2026-07-30** records only this Spec activation observation and does
+not move that source boundary.
+
+Spec 045 may close only the repository-static implementation and local QA
+boundary. Hosted CI observation, branch protection, provider runtime and
+authentication, native agent/model discovery, actual evaluation/admission/
+promotion, remote execution, live systems, and provider resume/handoff
+canaries remain `DEFER` here and belong to the successor Spec 046
+workstream. A repository-static PASS never proves that Claude, Codex, Gemini,
+or a hosted runner consumed or executed the tracked configuration.
 
 ## Strategic Boundaries & Non-goals
 
-- **In scope**: Agent-governance static job, path-to-validator selection,
-  contract/schema/parity/config/eval/legacy fixtures, aggregate result wiring,
-  full-SHA Action identity, least permissions, the local QA sequence, and
-  legacy consumer cutover.
+- **In scope**: Agent-governance selector/job/`ci-summary` topology; closed
+  CI contract/schema/fixture/test validation; consumer-first legacy cutover;
+  the `.github/ABOUT.md` to `.github/README.md` canonical rename; local QA
+  ordering and inventories; repository-static concurrent checkpoint/provider
+  identity; durable memory retention, compaction, and archive policy; full-SHA
+  Action identity; least permissions; and reciprocal closure evidence.
 - **Dependencies**: The CI/QA evidence topology in
   [Spec 039](../039-github-ci-qa-evidence/spec.md) and the 12/48 roster and
   evaluation contract in
-  [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md) must precede
-  this Spec.
+  [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md) precede this
+  Spec. Spec 044 closure `42864832` and postflight `279f8103` are the observed
+  activation prerequisites.
 - **Protected boundaries**: The workflow does not require or output provider
   credentials, model tokens, secret values, or private transcripts. It does
   not introduce `pull_request_target`, broad write permissions, or mutable
   third-party Action tags.
-- **Non-goals**: Changing GitHub branch protection, claiming the state of
-  remote required checks, automating provider installation or login, mutating
-  a live cluster, replacing authenticated canaries with static CI, or rewriting
-  historical ADR/archive content as current policy.
+- **Non-goals**: Changing GitHub branch protection; claiming a hosted workflow
+  or remote required-check result; automating provider installation or login;
+  executing provider resume/handoff canaries; observing native agent/model
+  discovery; running actual role evaluations, admission, or promotion;
+  mutating a live cluster; replacing provider canaries with static CI; or
+  rewriting historical ADR/archive content as current policy.
 
 ## Contracts
 
@@ -78,7 +94,19 @@ The lane performs at least the following checks:
    rollback, and admission negative fixtures;
 6. legacy/deprecated claims and duplicate-owner scans across the active corpus;
 7. root/provider links, governed README/index files, and generated-output
-   currentness.
+   currentness;
+8. concurrent checkpoint namespace and provider/worktree/task identity
+   isolation using synthetic repository-static fixtures; and
+9. durable memory retention, compaction provenance, replacement, archive/GC,
+   conflict, and sensitivity-policy validation.
+
+AGQC-002 plans
+`docs/00.agent-governance/contracts/agent-governance-ci.json`, its adjacent
+schema, `scripts/validate-agent-governance-ci.py`,
+`tests/fixtures/agent-governance-ci.json`, and focused tests as one closed
+contract. AGQC-003 plans `scripts/validate-agent-legacy-cutover.py` and its
+deterministic fixture/test coverage. Neither validator exists at activation;
+their names describe required deliverables, not observed commands.
 
 The workflow and every third-party Action are pinned to a full commit SHA and
 default to the minimum `contents: read` permission. Additional permissions are
@@ -86,11 +114,12 @@ granted only when the job-specific consumer and threat boundary are
 documented. Agent-governance static checks receive no repository write,
 issue/PR write, package, deployment, or id-token permission.
 
-Provider-auth canaries run only in the local/manual lane and retain redacted
-evidence for each Claude, Codex, and Gemini version, effective project
-configuration, agent discovery, model resolution, and applicable
-hook/policy/configuration result. GitHub Actions secrets are not added to run
-canaries remotely.
+Provider-auth and resume/handoff canaries are Spec 046-owned local/manual
+evidence. When separately authorized, they retain redacted evidence for each
+Claude, Codex, and Gemini version, effective project configuration, agent
+discovery, model resolution, and applicable hook/policy/configuration result.
+Spec 045 does not run them, and GitHub Actions secrets are not added to run
+them remotely.
 
 ## Core Design
 
@@ -135,20 +164,56 @@ reason and owner, but a required-tool failure cannot be converted to SKIP.
 
 Legacy deletion occurs only after consumer migration.
 
-1. The new harness contract/schema and validator accept every current
-   consumer.
-2. The four provider/local surfaces and canonical documentation reference the
-   new roster/model/evidence owner.
-3. Positive and negative fixtures prove the new owner and rejection of the old
-   owner.
-4. Only then remove the active-surface `10 roles / 30 adapters / 3 surfaces`
-   claim, the stale claim that the `.gemini` native surface is absent,
-   duplicate roster/model/readiness matrices, stale provider-hook wording, the
-   old semantics contract, and unconsumed adapters. Preserve the independently
-   observed Gemini CLI runtime result even when it remains `ABSENT` or `DEFER`.
-5. Preserve historical facts in superseded ADRs and archive records through a
+1. The current harness contract/schema and validator accept every active
+   semantic consumer and remain the sole current role-semantics authority.
+2. The four provider/local surfaces, aggregate, affected-surface registry,
+   pre-commit and documentation inventories, and canonical documentation move
+   to the harness owner.
+3. The planned legacy-cutover validator proves zero active consumers of the
+   legacy contract, schema, validator, fixture, and legacy-specific tests or
+   allowlist entries. Positive and negative fixtures reject deletion while any
+   consumer remains.
+4. Only after that zero-consumer proof may the implementation remove
+   `docs/00.agent-governance/contracts/agent-role-semantics.json`, its adjacent
+   schema, `scripts/validate-agent-role-semantics.py`,
+   `tests/fixtures/agent-role-semantics.json`, and their embedded self-test or
+   focused compatibility assertions.
+5. In the same consumer-first cutover, rename `.github/ABOUT.md` to canonical
+   `.github/README.md` and update the registry route, repository-quality
+   owner, documentation routes, fixtures, inventories, and every active
+   reference before the old path disappears.
+6. Remove stale active `10 roles / 30 adapters / 3 surfaces`,
+   `.gemini`-surface-absent, duplicate roster/model/readiness, and provider-hook
+   claims only after their consumers move. Preserve independently observed
+   provider runtime `ABSENT` or `DEFER` evidence.
+7. Preserve historical facts in superseded ADRs and archive records through a
    superseding relation and explicit historical allowlist, while preventing
    them from appearing as active currentness sources.
+
+### Concurrent checkpoint and durable memory boundary
+
+AGQC-005 extends repository-static loop/checkpoint evidence with a deterministic
+non-secret identity tuple for repository, worktree, task, provider surface, and
+provider/session instance. Synthetic fixtures reject cross-worktree,
+cross-task, cross-provider, stale-base, or duplicate-writer resume and
+overwrite attempts. Repository and canonical SDLC state remain authoritative
+over every checkpoint claim.
+
+The same package closes durable memory retention policy through explicit
+owner, class, provenance, sensitivity, refresh/expiry, compaction source and
+replacement, archive/GC disposition, conflict result, and handoff fields.
+Fixture PASS proves only the tracked contract. It neither reads nor writes an
+actual ignored checkpoint, provider-local memory, provider session, or
+transcript and does not establish an actual provider resume or handoff.
+
+### Spec 046 evidence boundary
+
+AGQC-006 may close Spec 045 after repository-static contracts, local QA,
+consumer migration, zero legacy, independent review, and reciprocal closure
+evidence pass. Spec 046 separately owns provider canaries, hosted CI
+observation, branch protection, actual evaluation/admission/promotion, native
+runtime/auth/model discovery, remote execution, and live evidence. None of
+those lanes may be promoted by a Spec 045 static or local result.
 
 ## Data Modeling & Storage Strategy
 
@@ -165,9 +230,16 @@ after every row is `migrated` or an approved historical exception. One-time
 raw scans and dry-run logs are not canonical documentation; retain only the
 required conclusions and digests in Stage 04 Task evidence.
 
-Canary evidence remains a separate redacted record for each provider. Do not
-store authentication material in CI artifacts or GitHub secrets. Spec 046
-consumes the static result and local canary result independently.
+Checkpoint isolation fixtures contain non-secret identity labels and digests,
+not provider credentials, raw session state, or actual ignored checkpoint
+content. Durable memory records retain only reviewed summaries in canonical
+owners and preserve compaction/archive provenance without retaining raw
+prompts or transcripts.
+
+Canary evidence remains a separate Spec 046-owned redacted record for each
+provider. Do not store authentication material in CI artifacts or GitHub
+secrets. Spec 046 consumes the Spec 045 static result and any separately
+authorized provider result independently.
 
 ## Interfaces & Data Structures
 
@@ -181,9 +253,15 @@ consumes the static result and local canary result independently.
   reviewer.
 - **Legacy interface**: one-to-one migration from the old claim/owner to the
   replacement consumer; deletion is rejected while any consumer is unresolved.
+- **Checkpoint isolation interface**: repository/worktree/task/provider/
+  instance identity, base state, writer identity, resume verdict, and
+  value-free conflict reason.
+- **Durable memory interface**: memory class, canonical owner, provenance,
+  sensitivity, retention/expiry, compaction replacement, archive/GC
+  disposition, conflict verdict, and handoff.
 - **Canary interface**: provider/version/configuration
   source/discovery/model/configuration result -> secret-free local record that
-  is not combined with the CI static verdict.
+  is not combined with the CI static verdict and remains Spec 046-owned.
 
 ## Edge Cases & Error Handling
 
@@ -198,6 +276,12 @@ consumes the static result and local canary result independently.
   superseding relation is verified.
 - Deletion stops if any active validator, script, template, or provider note
   still consumes the old contract.
+- A partial `.github/ABOUT.md` to `.github/README.md` rename fails while either
+  the old active path or a stale registry, quality-gate, fixture, inventory, or
+  documentation reference remains.
+- A checkpoint identity collision, stale base, cross-worktree/task/provider
+  resume, or unowned durable memory record fails repository-static validation
+  without reading the actual provider or ignored checkpoint payload.
 - If a formatter changes a file outside the target, do not accept that change
   automatically. Confirm the owner and reason, then reassess the scope.
 
@@ -211,6 +295,9 @@ consumes the static result and local canary result independently.
 - If legacy consumer migration is incomplete, retain the old owner and record
   the active gap and follow-up owner. Do not weaken the validator to force the
   cutover.
+- If checkpoint namespace isolation or durable retention/compaction/archive
+  policy is incomplete, retain the Spec 043 baseline and record the missing
+  identity or owner contract. Do not claim an actual provider resume/handoff.
 - If a canary would require moving provider authentication into a CI secret,
   stop and request separate approval from the platform/security owner.
 - Failure of all-files or formatter review blocks the logical commit and
@@ -222,6 +309,8 @@ consumes the static result and local canary result independently.
 python3 scripts/validate-agent-governance-ci.py --root .
 python3 scripts/validate-agent-legacy-cutover.py --root .
 python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-loop-lifecycle.py --root .
+python3 scripts/validate-agent-checkpoint.py --root . --self-test
 python3 scripts/validate-agent-roster-admission.py --root .
 python3 scripts/validate-affected-surfaces.py --root .
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
@@ -233,10 +322,11 @@ git diff --check
 ```
 
 The first two commands are planned Spec 045 deliverables and are not claimed
-to exist in this draft. Together with existing/focused validators they must
+to exist at activation. Together with existing/focused validators they must
 cover selector positive/negative cases, workflow security/aggregate topology,
 credential-free evidence separation, consumer-first migration, zero stale
-active legacy, and the required QA ordering/formatter rerun.
+active legacy, concurrent checkpoint/provider identity, durable memory policy,
+and the required QA ordering/formatter rerun.
 
 ## Success Criteria & Verification Plan
 
@@ -258,11 +348,24 @@ active legacy, and the required QA ordering/formatter rerun.
   clean PASS after review and rerun qualifies as completion evidence.
 - **VAL-AGQC-007**: After all active consumers move to the new owner, the
   counts of stale `10/30/3`, `.gemini`-surface-absent claims, duplicate
-  matrices, and stale hook/semantics contracts are zero; separately classified
-  runtime `ABSENT`/`DEFER` evidence remains accurate.
+  matrices, stale hook/semantics contracts, old role-semantics contract/schema/
+  validator/fixture/test ownership, `.github/ABOUT.md`, and orphan references
+  are zero; `.github/README.md` is canonical and separately classified runtime
+  `ABSENT`/`DEFER` evidence remains accurate.
 - **VAL-AGQC-008**: Historical exceptions remain only through
   superseding/archive relations and do not enter active currentness queries or
   the generated roster.
+- **VAL-AGQC-009**: Synthetic repository-static fixtures reject concurrent
+  checkpoint identity collisions and cross-worktree/task/provider resume, and
+  durable memory records validate retention, compaction replacement,
+  archive/GC, conflict, sensitivity, and canonical-owner policy without
+  reading or claiming actual provider checkpoint/resume/handoff state.
+- **VAL-AGQC-010**: Independent requirements, quality, and security reviews
+  plus focused, affected, staged, tests, all-files, formatter-review/rerun, and
+  diff gates approve repository-static closure while hosted CI, branch
+  protection, provider runtime/auth/model discovery, actual evaluation/
+  admission/promotion, remote, live, and provider canary outcomes remain
+  `DEFER` for Spec 046.
 
 ## Traceability
 
@@ -271,19 +374,26 @@ active legacy, and the required QA ordering/formatter rerun.
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **CI foundation**: [Spec 039](../039-github-ci-qa-evidence/spec.md)
 - **Roster/eval predecessor**: [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md)
+- **Observed prerequisite**: Spec 044 closure `42864832` and postflight
+  `279f8103`
 - **Successor**: [Spec 046](../046-agent-governance-program-closure/spec.md)
+- **Execution Plan**: [Agent Governance CI and QA Cutover Implementation Plan](../../04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md)
+- **Task evidence**: [Agent Governance CI and QA Cutover Task](../../04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-13](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-001 | Selector and aggregate fixtures prove the Spec 039 CI ownership boundary. |
-| [REQ-PRD-FUN-13](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-002 | Workflow-security fixtures prove full-SHA and least-permission enforcement. |
-| [REQ-PRD-FUN-13](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-003 | Static contract and parity fixtures produce identical local/CI verdicts. |
-| [REQ-PRD-FUN-13](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-004 | Evidence-lane fixtures keep provider credentials and canaries outside GitHub CI. |
-| [REQ-PRD-FUN-14](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-007 | Consumer migration and active scans prove safe legacy removal. |
-| [REQ-PRD-FUN-14](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-008 | Historical scans prove intentional records remain non-current. |
-| [REQ-PRD-MET-11](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-005 | Task evidence proves the mandatory QA lane ordering. |
-| [REQ-PRD-MET-11](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
-| [REQ-PRD-MET-12](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-007 | Active-corpus scans report zero stale current claim. |
-| [REQ-PRD-MET-12](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-008 | Historical relation validation prevents old evidence from becoming current. |
+| N/A — VAL-AGQC-002 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-002 | Workflow-security fixtures prove full-SHA and least-permission enforcement. |
+| N/A — VAL-AGQC-003 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-003 | Static contract and parity fixtures produce identical local/CI verdicts. |
+| N/A — VAL-AGQC-004 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-004 | Evidence-lane fixtures keep provider credentials and canaries outside GitHub CI. |
+| N/A — VAL-AGQC-007 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-007 | Consumer migration and active scans prove safe legacy removal. |
+| N/A — VAL-AGQC-008 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-008 | Historical scans prove intentional records remain non-current. |
+| N/A — VAL-AGQC-009 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-009 | Checkpoint identity and durable memory fixtures prove repository-static isolation and lifecycle policy. |
+| N/A — VAL-AGQC-005 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-005 | Task evidence proves the mandatory QA lane ordering. |
+| N/A — VAL-AGQC-006 shares the REQ-PRD-MET-11 source linked above | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
+| N/A — repeated VAL-AGQC-007 metric shares the PRD-003 source linked above | VAL-AGQC-007 | Active-corpus scans report zero stale current claim. |
+| N/A — repeated VAL-AGQC-008 metric shares the PRD-003 source linked above | VAL-AGQC-008 | Historical relation validation prevents old evidence from becoming current. |
+| N/A — repeated VAL-AGQC-009 metric shares the PRD-003 source linked above | VAL-AGQC-009 | Synthetic isolation and memory-policy fixtures preserve the Spec 043 runtime boundary. |
+| N/A — VAL-AGQC-010 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-010 | Reciprocal closure and independent review prove only the repository-static Spec 045 transition. |

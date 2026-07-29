@@ -6249,7 +6249,7 @@
           {
             "spec": "045",
             "order": 5,
-            "state": "draft",
+            "state": "active",
             "reason": "Agent governance CI and QA cutover",
             "decision": "0013"
           },

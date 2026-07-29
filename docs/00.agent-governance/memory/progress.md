@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 CI and QA cutover activation
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, docs, governance, qa, security, meta
+- **Status**: active
+- **Tags**: #spec-045 #agent-governance #ci #qa #legacy-cutover #memory
+
+#### Progress
+
+- Observed Spec 044 reciprocal closure
+  `42864832c966744ac4e5cf8c28baa5bf31ac2765` and postflight
+  `279f81032528dbf732acc3a1a8bc232d11d2c246`.
+- Prepared the exact eight-file Spec 045 activation: Spec body/index, new Plan
+  body/index, new Task body/index, this progress entry, and only the Spec 045
+  program-lineage transition from `draft` to `active`.
+- Activated AGQC-000 while AGQC-001 through AGQC-006 remain queued. The
+  dedicated CI topology, planned CI/legacy validators, consumer cutover,
+  `.github` rename, QA inventory, checkpoint/provider identity, durable memory
+  policy, and closure are not implemented by this transition.
+
+#### Memory
+
+- The fixed provider/model/source cutoff is
+  `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z`. The activation
+  observation date `2026-07-30` is not source-cutoff authority.
+- Legacy role-semantics files may be removed only after deterministic
+  zero-consumer proof. Repository-owned harness semantics and canonical SDLC
+  state win every checkpoint, resume, compaction, memory, or provider-local
+  conflict.
+- Spec 045 can complete repository-static CI/QA and memory-policy gates only.
+  Spec 046 retains provider canaries, hosted CI observation, branch protection,
+  actual evaluation/admission/promotion, runtime/auth/model discovery, remote,
+  live, and actual provider resume/handoff evidence.
+
+#### Evidence
+
+- `scripts/validate-agent-governance-ci.py` and
+  `scripts/validate-agent-legacy-cutover.py` are planned deliverables and are
+  not claimed to exist at activation.
+- This activation changes no workflow, selector, contract implementation,
+  schema, validator, fixture, test, hook, provider adapter/setting, model,
+  legacy file, `.github` hub, credential, checkpoint behavior, remote resource,
+  or live surface.
+- Hosted CI, branch protection, provider runtime/auth/model discovery, actual
+  evaluation/admission/promotion, provider resume/handoff canaries, remote, and
+  live evidence remain `DEFER`.
+- No activation commit SHA, future implementation commit, validation result,
+  review verdict, closure SHA, or postflight SHA is preclaimed.
+
+#### Handoff
+
+- Next owner: AGQC-001 dedicated agent-governance selector/job/`ci-summary`
+  repository-static topology.
+- Roll back only this exact activation set before reverting any future Spec 045
+  implementation unit; do not reset or overwrite unrelated work.
+
 ### 2026-07-30 - Spec 044 AREA-005 repository-static closure
 
 #### Metadata
