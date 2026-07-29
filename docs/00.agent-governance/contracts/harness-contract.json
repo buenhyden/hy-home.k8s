@@ -1503,8 +1503,8 @@
       "evidenceClass": "repo-static"
     },
     {
-      "id": "role-semantics-validator",
-      "path": "scripts/validate-agent-role-semantics.py",
+      "id": "harness-semantics-validator",
+      "path": "scripts/validate-agent-harness-semantics.py",
       "selectedContract": "harness-contract",
       "selectedVersion": "1.0.0",
       "migrationState": "current",
@@ -1583,15 +1583,6 @@
       "evidenceClass": "repo-static"
     }
   ],
-  "compatibility": {
-    "legacyContractPath": "docs/00.agent-governance/contracts/agent-role-semantics.json",
-    "legacySchemaPath": "docs/00.agent-governance/contracts/agent-role-semantics.schema.json",
-    "legacyVersion": "2",
-    "state": "readable-compatibility-input",
-    "legacyConsumers": [],
-    "removalOwnerSpec": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
-    "deletionGate": "zero-legacy-consumers-with-repository-static-proof"
-  },
   "memory": {
     "canonicalDurableSharedPath": "docs/00.agent-governance/memory/progress.md",
     "transientCheckpointPath": ".agent-work/checkpoint.json",

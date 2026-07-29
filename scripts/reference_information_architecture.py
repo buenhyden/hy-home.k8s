@@ -29,6 +29,18 @@ from jsonschema import Draft202012Validator
 DEFAULT_CONTRACT_PATH = Path(
     "docs/90.references/data/reference-information-architecture.json"
 )
+AGENT_LEGACY_CUTOVER_PATH = Path(
+    "docs/00.agent-governance/contracts/agent-legacy-cutover.json"
+)
+AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
+    "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
+)
+AGENT_LEGACY_CUTOVER_SHA256 = (
+    "e4b24372ae536ae8e15ccbccdb703ac0449dd0c43c530d4773bb4108c247962a"  # pragma: allowlist secret
+)
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = (
+    "167eed2dbcff30f45d263ff131234e051f5aaad2091fbac661922a04b6620e90"  # pragma: allowlist secret
+)
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -85,6 +97,30 @@ RESEARCH_PACK_ID = "research/2026-07-07-wer"
 TRANSITION_ID = "ria-007-postflight-ledger"
 TRANSITION_SUBJECT = "document-migration-evidence-ledger"
 TRANSITION_MEMBER = "document-migration-evidence-ledger.md"
+AGENT_CUTOVER_RETIRED_HUB = ".github/ABOUT.md"
+AGENT_CUTOVER_REPLACEMENT_HUB = ".github/README.md"
+AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
+    (
+        "docs/90.references/research/2026-07-07-wer/"
+        "automation-pipeline-workflow-qa.md",
+        3,
+    ),
+    (
+        "docs/90.references/research/2026-07-07-wer/"
+        "document-migration-evidence-ledger.md",
+        3,
+    ),
+    (
+        "docs/90.references/research/2026-07-07-wer/"
+        "kubernetes-infrastructure-security.md",
+        1,
+    ),
+    (
+        "docs/90.references/research/2026-07-07-wer/"
+        "workspace-governance-baseline.md",
+        2,
+    ),
+)
 DATA_ASSET_FIELDS = frozenset(
     {"id", "repositoryEvidence", "refreshTrigger", "sources"}
 )
@@ -4507,7 +4543,13 @@ def _navigation_mask(text: str, path: Path, visible: str, destination: str) -> s
     return pattern.sub(f"[{visible}](<RIA-NAVIGATION>)", text, count=1)
 
 
-def _projection_mask(payload: bytes, path: Path, projection: Mapping[str, object]) -> bytes:
+def _projection_mask(
+    payload: bytes,
+    path: Path,
+    projection: Mapping[str, object],
+    *,
+    state: str = "either",
+) -> bytes:
     try:
         text = payload.decode("utf-8", "strict")
     except UnicodeDecodeError as error:
@@ -4541,6 +4583,46 @@ def _projection_mask(payload: bytes, path: Path, projection: Mapping[str, object
         if not isinstance(visible, str) or not isinstance(destination, str):
             raise _GitError("navigation projection is malformed")
         text = _navigation_mask(text, path, visible, destination)
+    literals = projection.get("literalReplacements")
+    if literals is not None:
+        if not isinstance(literals, list) or not literals:
+            raise _GitError("literal replacement projection is malformed")
+        for index, replacement in enumerate(literals):
+            if not isinstance(replacement, Mapping):
+                raise _GitError("literal replacement projection is malformed")
+            source = replacement.get("from")
+            target = replacement.get("to")
+            count = replacement.get("count")
+            if (
+                not isinstance(source, str)
+                or not source
+                or not isinstance(target, str)
+                or not target
+                or source == target
+                or not isinstance(count, int)
+                or isinstance(count, bool)
+                or count < 1
+            ):
+                raise _GitError("literal replacement projection is malformed")
+            source_count = text.count(source)
+            target_count = text.count(target)
+            expected = {
+                "baseline": (count, 0),
+                "proposed": (0, count),
+            }
+            if state in expected:
+                if (source_count, target_count) != expected[state]:
+                    raise _GitError("literal replacement count differs")
+            elif state == "either":
+                if (source_count, target_count) not in {
+                    (count, 0),
+                    (0, count),
+                }:
+                    raise _GitError("literal replacement count differs")
+            else:
+                raise _GitError("literal replacement state is invalid")
+            marker = f"<RIA-LITERAL-{index}>"
+            text = text.replace(source, marker).replace(target, marker)
     return text.encode("utf-8")
 
 
@@ -4559,6 +4641,81 @@ def _projection_map(contract: Mapping[str, object]) -> dict[Path, Mapping[str, o
         Path(str(projection["path"])): projection
         for projection in projections
         if isinstance(projection, Mapping) and "path" in projection
+    }
+
+
+def load_agent_cutover_projections(
+    root: Path,
+    runner: GitRunner | None,
+) -> dict[Path, Mapping[str, object]]:
+    authority = root / AGENT_LEGACY_CUTOVER_PATH
+    try:
+        mode = authority.lstat().st_mode
+    except FileNotFoundError:
+        return {}
+    except OSError as error:
+        raise _GitError("agent cutover projection authority is unavailable") from error
+    if not stat.S_ISREG(mode):
+        raise _GitError("agent cutover projection authority is not regular")
+    try:
+        payload = read_proposed_regular_file(
+            root,
+            AGENT_LEGACY_CUTOVER_PATH,
+            runner,
+        )
+        schema_payload = read_proposed_regular_file(
+            root,
+            AGENT_LEGACY_CUTOVER_SCHEMA_PATH,
+            runner,
+        )
+        if (
+            hashlib.sha256(payload).hexdigest()
+            != AGENT_LEGACY_CUTOVER_SHA256
+            or hashlib.sha256(schema_payload).hexdigest()
+            != AGENT_LEGACY_CUTOVER_SCHEMA_SHA256
+        ):
+            raise _GitError("agent cutover projection authority digest differs")
+        cutover = _decode_json_bytes(
+            payload,
+            field=AGENT_LEGACY_CUTOVER_PATH.as_posix(),
+        )
+        cutover_schema = _decode_json_bytes(
+            schema_payload,
+            field=AGENT_LEGACY_CUTOVER_SCHEMA_PATH.as_posix(),
+        )
+        Draft202012Validator.check_schema(cutover_schema)
+        if any(Draft202012Validator(cutover_schema).iter_errors(cutover)):
+            raise _GitError("agent cutover projection authority schema differs")
+    except (ContractError, _GitError) as error:
+        raise _GitError("agent cutover projection authority is unavailable") from error
+    expected = [
+        {
+            "path": path,
+            "from": AGENT_CUTOVER_RETIRED_HUB,
+            "to": AGENT_CUTOVER_REPLACEMENT_HUB,
+            "count": count,
+        }
+        for path, count in AGENT_CUTOVER_CURRENT_PATH_COUNTS
+    ]
+    if (
+        cutover.get("schemaVersion") != 1
+        or cutover.get("currentOwnerSpec")
+        != "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        or cutover.get("currentAuthorityMigrations") != expected
+    ):
+        raise _GitError("agent cutover projection authority differs")
+    return {
+        Path(row["path"]): {
+            "path": row["path"],
+            "literalReplacements": [
+                {
+                    "from": row["from"],
+                    "to": row["to"],
+                    "count": row["count"],
+                }
+            ],
+        }
+        for row in expected
     }
 
 
@@ -4583,6 +4740,29 @@ def validate_overlay_guards(
         return [Finding("RIA-OVERLAY", REGISTRY_PATH.as_posix(), "Current authority is unavailable")]
     baselines = _encoded_baselines(contract)
     projections = _projection_map(contract)
+    try:
+        cutover_projections = load_agent_cutover_projections(
+            root.absolute(),
+            runner,
+        )
+    except _GitError:
+        return [
+            Finding(
+                "RIA-OVERLAY",
+                AGENT_LEGACY_CUTOVER_PATH.as_posix(),
+                "Current cutover projection authority is unavailable",
+            )
+        ]
+    overlap = set(projections) & set(cutover_projections)
+    if overlap:
+        return [
+            Finding(
+                "RIA-OVERLAY",
+                min(path.as_posix() for path in overlap),
+                "Projection ownership overlaps",
+            )
+        ]
+    projections.update(cutover_projections)
     transition = _transition_record(contract)
     transition_path = (
         Path("docs/90.references/research") / "2026-07-07-wer" / TRANSITION_MEMBER
@@ -4609,8 +4789,18 @@ def validate_overlay_guards(
                 continue
             try:
                 if projection is not None:
-                    baseline = _projection_mask(baseline, path, projection)
-                    proposed = _projection_mask(proposed, path, projection)
+                    baseline = _projection_mask(
+                        baseline,
+                        path,
+                        projection,
+                        state="baseline",
+                    )
+                    proposed = _projection_mask(
+                        proposed,
+                        path,
+                        projection,
+                        state="proposed",
+                    )
             except _GitError:
                 findings.append(Finding("RIA-OVERLAY", path.as_posix(), "declared projection is malformed"))
                 continue
@@ -4632,8 +4822,18 @@ def validate_overlay_guards(
         try:
             baseline = _read_commit_path(root.absolute(), oid, path, runner)
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
-            baseline = _projection_mask(baseline, path, projection)
-            proposed = _projection_mask(proposed, path, projection)
+            baseline = _projection_mask(
+                baseline,
+                path,
+                projection,
+                state="baseline",
+            )
+            proposed = _projection_mask(
+                proposed,
+                path,
+                projection,
+                state="proposed",
+            )
         except (ContractError, _GitError):
             findings.append(Finding("RIA-OVERLAY", path.as_posix(), "projected index is unavailable"))
             continue

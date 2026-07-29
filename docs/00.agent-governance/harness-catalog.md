@@ -100,11 +100,11 @@ resolution, event delivery, authenticated execution, CI, remote, or live
 evidence.
 
 The contract keeps `repo-static`, `provider-runtime`, `ci`, and `remote-live`
-as four non-transitive evidence classes. The legacy
-`contracts/agent-role-semantics.json` and adjacent schema remain readable
-compatibility inputs until Spec 045, but have zero semantic consumers and are
-not current authority. Repository-static adapter presence does not prove
-provider discovery, runtime use, CI, or remote/live readiness.
+as four non-transitive evidence classes. Spec 045 retired the former
+role-semantics compatibility inputs after zero-consumer proof; the harness
+contract and harness-semantics validator are the only current semantic
+owners. Repository-static adapter presence does not prove provider discovery,
+runtime use, CI, or remote/live readiness.
 
 ### Canonical Adapter Ownership Model
 
@@ -114,7 +114,7 @@ same policy in different words.
 
 | Contract Area                             | Canonical Owner                                                                   | Adapter Surface                                                                 | Validation Owner                                                                   |
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md` | Harness, role-semantic, roster-currentness, and affected-surface validators |
+| Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md` | Harness contract, harness-semantics, roster-currentness, and affected-surface validators |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
 | Model tier vocabulary and per-tuple state | `model-policy.md` owns `top` / `worker` and reasoning vocabulary; `contracts/agent-model-fitness.json` owns each role/provider incumbent, configured and observed value, candidate, reasoning, fallback, and decision state; `contracts/provider-runtime-evidence.json` owns cutoff/current source confidence | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |

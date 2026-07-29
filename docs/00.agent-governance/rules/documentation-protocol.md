@@ -110,7 +110,7 @@ This protocol defines how governance references authored docs and how language b
   an independent heading rule.
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
-- GitHub-native control Markdown under `.github/ABOUT.md`,
+- GitHub-native control Markdown under `.github/README.md`,
   `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` is
   frontmatter-free and mirrors canonical owners instead of becoming authored
   stage documentation.

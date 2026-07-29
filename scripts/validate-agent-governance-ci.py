@@ -115,6 +115,18 @@ DELEGATED_COMMANDS = (
         "python3 scripts/validate-agent-harness-contract.py --root .",
     ),
     (
+        "agent-harness-semantics",
+        "python3 scripts/validate-agent-harness-semantics.py --root .",
+    ),
+    (
+        "agent-legacy-cutover-self-test",
+        "python3 scripts/validate-agent-legacy-cutover.py --root . --self-test",
+    ),
+    (
+        "agent-legacy-cutover-production",
+        "python3 scripts/validate-agent-legacy-cutover.py --root .",
+    ),
+    (
         "agent-provider-config",
         "python3 scripts/validate-agent-provider-config.py --root .",
     ),
@@ -171,6 +183,12 @@ SELF_TEST_COMMAND = (
     "python3 scripts/validate-agent-governance-ci.py --root . --self-test"
 )
 PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
+LEGACY_SELF_TEST_COMMAND = (
+    "python3 scripts/validate-agent-legacy-cutover.py --root . --self-test"
+)
+LEGACY_PRODUCTION_COMMAND = (
+    "python3 scripts/validate-agent-legacy-cutover.py --root ."
+)
 AGGREGATE_SELF_TEST_COMMAND = (
     'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
     '--root "$ROOT_DIR" --self-test'
@@ -179,18 +197,19 @@ AGGREGATE_PRODUCTION_COMMAND = (
     'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
     '--root "$ROOT_DIR"'
 )
+AGGREGATE_LEGACY_SELF_TEST_COMMAND = (
+    'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" '
+    '--root "$ROOT_DIR" --self-test'
+)
+AGGREGATE_LEGACY_PRODUCTION_COMMAND = (
+    'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" '
+    '--root "$ROOT_DIR"'
+)
 CHECKOUT_ACTION = (
     "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
 )
 REMOTE_ACTION = re.compile(r"^[^./\s@][^\s@]*@[0-9a-f]{40}$")
 EXPECTED_DEFERRED = (
-    (
-        "AGQC-003",
-        (
-            "legacy-consumer-cutover",
-            "github-hub-rename",
-        ),
-    ),
     (
         "AGQC-005",
         (
@@ -569,7 +588,7 @@ def validate_contract_data(
     if observed_deferred != expected_deferred:
         fail(
             "AGQC-CI-EVIDENCE",
-            "AGQC-003, AGQC-005, or Spec046 DEFER ownership differs",
+            "AGQC-005 or Spec046 DEFER ownership differs",
         )
     return contract
 
@@ -933,6 +952,8 @@ def _validate_integrations(
     required_order = (
         AGGREGATE_SELF_TEST_COMMAND,
         AGGREGATE_PRODUCTION_COMMAND,
+        AGGREGATE_LEGACY_SELF_TEST_COMMAND,
+        AGGREGATE_LEGACY_PRODUCTION_COMMAND,
         'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test',
         'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"',
     )
@@ -960,6 +981,14 @@ def _validate_integrations(
     expected_hooks = (
         ("validate-agent-governance-ci-self-test", SELF_TEST_COMMAND),
         ("validate-agent-governance-ci", PRODUCTION_COMMAND),
+        (
+            "validate-agent-legacy-cutover-self-test",
+            LEGACY_SELF_TEST_COMMAND,
+        ),
+        (
+            "validate-agent-legacy-cutover",
+            LEGACY_PRODUCTION_COMMAND,
+        ),
     )
     for hook_id, entry in expected_hooks:
         matches = [
@@ -971,8 +1000,12 @@ def _validate_integrations(
             "id": hook_id,
             "name": (
                 "self-test agent-governance CI contract"
-                if hook_id.endswith("self-test")
+                if hook_id == "validate-agent-governance-ci-self-test"
                 else "validate agent-governance CI contract"
+                if hook_id == "validate-agent-governance-ci"
+                else "self-test agent legacy cutover contract"
+                if hook_id == "validate-agent-legacy-cutover-self-test"
+                else "validate agent legacy cutover contract"
             ),
             "entry": entry,
             "language": "system",
@@ -990,6 +1023,8 @@ def _validate_integrations(
     required_hook_order = [
         "validate-agent-governance-ci-self-test",
         "validate-agent-governance-ci",
+        "validate-agent-legacy-cutover-self-test",
+        "validate-agent-legacy-cutover",
         "validate-affected-surfaces",
         "strict-repository-quality",
     ]

@@ -26,12 +26,6 @@ FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-harness-contract.json")
 ROUTING_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
-LEGACY_CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-role-semantics.json"
-)
-LEGACY_SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-)
 CANONICAL_MEMORY_PATH = PurePosixPath(
     "docs/00.agent-governance/memory/progress.md"
 )
@@ -42,10 +36,6 @@ MODEL_POLICY_PATH = "docs/00.agent-governance/model-policy.md"
 EVAL_OWNER_SPEC = (
     "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
 )
-REMOVAL_OWNER_SPEC = (
-    "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
-)
-
 SCHEMA_VERSION = 1
 CONTRACT_VERSION = "1.0.0"
 TARGET_ROLES = (
@@ -161,8 +151,8 @@ CONSUMERS = (
         "current",
     ),
     (
-        "role-semantics-validator",
-        "scripts/validate-agent-role-semantics.py",
+        "harness-semantics-validator",
+        "scripts/validate-agent-harness-semantics.py",
         "harness-contract",
         "1.0.0",
         "current",
@@ -230,11 +220,6 @@ CONSUMERS = (
         "1.0.0",
         "current",
     ),
-)
-LEGACY_CONSUMERS = tuple(
-    consumer_id
-    for consumer_id, _path, selected, _version, _state in CONSUMERS
-    if selected == "agent-role-semantics-compatibility"
 )
 EVIDENCE_MAPPING = (
     ("repo-static", "repo-static", "validation-surfaces", False),
@@ -1026,59 +1011,12 @@ def _validate_consumers(root: Path, contract: dict[str, Any]) -> None:
             "HARNESS-CONSUMER",
             "consumer order, path, selected version, or migration state differs",
         )
-    compatibility = contract["compatibility"]
-    if tuple(compatibility["legacyConsumers"]) != LEGACY_CONSUMERS:
-        fail(
-            "HARNESS-CONSUMER",
-            "legacyConsumers is not the exact compatibility-selected subset",
-        )
     for consumer in contract["consumers"]:
         _safe_repo_regular_file(
             root,
             PurePosixPath(consumer["path"]),
             "HARNESS-CONSUMER",
             f"consumer {consumer['id']}",
-        )
-
-    expected_compatibility = {
-        "legacyContractPath": LEGACY_CONTRACT_PATH.as_posix(),
-        "legacySchemaPath": LEGACY_SCHEMA_PATH.as_posix(),
-        "legacyVersion": "2",
-        "state": "readable-compatibility-input",
-        "legacyConsumers": list(LEGACY_CONSUMERS),
-        "removalOwnerSpec": REMOVAL_OWNER_SPEC,
-        "deletionGate": "zero-legacy-consumers-with-repository-static-proof",
-    }
-    if compatibility != expected_compatibility:
-        fail(
-            "HARNESS-COMPATIBILITY",
-            "legacy compatibility or removal boundary differs",
-        )
-    legacy_contract = load_json(
-        root,
-        LEGACY_CONTRACT_PATH,
-        code="HARNESS-COMPATIBILITY",
-        exit_code=1,
-    )
-    legacy_schema = load_json(
-        root,
-        LEGACY_SCHEMA_PATH,
-        code="HARNESS-COMPATIBILITY",
-        exit_code=1,
-    )
-    if not isinstance(legacy_contract, dict) or legacy_contract.get(
-        "schemaVersion"
-    ) != 2:
-        fail(
-            "HARNESS-COMPATIBILITY",
-            "legacy contract is not readable at schemaVersion 2",
-        )
-    if not isinstance(legacy_schema, dict) or legacy_schema.get("$schema") != (
-        "https://json-schema.org/draft/2020-12/schema"
-    ):
-        fail(
-            "HARNESS-COMPATIBILITY",
-            "legacy schema is not a readable Draft 2020-12 input",
         )
 
 

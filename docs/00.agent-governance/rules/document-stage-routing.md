@@ -111,7 +111,7 @@ form and required/allowed headings from the Template Routing Contract.
 Operations policy documents use `policy.template.md` through the support route
 map.
 
-`.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+`.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
 `.github/SECURITY.md` are GitHub-native control Markdown files. They remain
 frontmatter-free and are not structural stage documents; durable policy must
 route back to Stage 00, Stage 05, scripts, or workflow owners.

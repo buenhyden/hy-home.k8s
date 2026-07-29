@@ -278,7 +278,7 @@
     "executionTracker": false,
     "entries": [
       {"path": "tests/README.md", "format": "readme", "role": "validation-evidence-boundary"},
-      {"path": "tests/fixtures/agent-role-semantics.json", "format": "json", "role": "closed-fixture"},
+      {"path": "tests/fixtures/agent-harness-semantics.json", "format": "json", "role": "closed-fixture"},
       {"path": "tests/fixtures/agent-roster-currentness.json", "format": "json", "role": "closed-fixture"},
       {"path": "tests/fixtures/document-contracts/native-surface-cases.json", "format": "json", "role": "closed-fixture"},
       {"path": "tests/fixtures/document-contracts/readme-profile-cases.json", "format": "json", "role": "closed-fixture"},
@@ -333,7 +333,7 @@
     ],
     "finalInventory": [
       "tests/README.md",
-      "tests/fixtures/agent-role-semantics.json",
+      "tests/fixtures/agent-harness-semantics.json",
       "tests/fixtures/agent-roster-currentness.json",
       "tests/fixtures/document-contracts/native-surface-cases.json",
       "tests/fixtures/document-contracts/readme-profile-cases.json",

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "adapterSurfaces": ["local", "claude", "codex", "gemini"],
   "roles": [
     "supervisor",

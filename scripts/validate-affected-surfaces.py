@@ -1068,7 +1068,8 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     if json_output(root_result) != (
         '{"ciJobs":["agent-governance-static","pre-commit","repo-quality-static"],'
         '"protectedLevel":"review","unmatchedPaths":[],'
-        '"validators":["agent-governance-ci","repository-quality"]}'
+        '"validators":["agent-governance-ci","agent-legacy-cutover",'
+        '"repository-quality"]}'
     ):
         fail("SURFACE-SELF-TEST", "stable JSON output differs")
     if github_output(contract, root_result) != (

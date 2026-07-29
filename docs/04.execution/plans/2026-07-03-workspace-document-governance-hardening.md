@@ -794,5 +794,5 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - [Template Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
 - [Template Routing Contract](../../99.templates/support/template-routing.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [GitHub Configuration Hub](../../../.github/ABOUT.md)
+- [GitHub Configuration Hub](../../../.github/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)

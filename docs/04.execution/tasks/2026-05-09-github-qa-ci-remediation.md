@@ -110,6 +110,6 @@ defensive overlap between CI jobs remains intentional QA coverage.
 ## Traceability
 
 - **Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
-- **GitHub Hub**: [`../../../.github/ABOUT.md`](../../../.github/ABOUT.md)
+- **GitHub Hub**: [`../../../.github/README.md`](../../../.github/README.md)
 - **PR Template**: [`../../../.github/PULL_REQUEST_TEMPLATE.md`](../../../.github/PULL_REQUEST_TEMPLATE.md)
 - **Git Workflow**: [`../../00.agent-governance/rules/git-workflow.md`](../../00.agent-governance/rules/git-workflow.md)

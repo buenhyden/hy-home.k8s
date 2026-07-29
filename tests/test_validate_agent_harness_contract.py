@@ -4,7 +4,6 @@ import contextlib
 import copy
 import importlib.util
 import io
-import json
 import sys
 import tempfile
 import unittest
@@ -51,8 +50,8 @@ class AgentHarnessContractTests(unittest.TestCase):
             REPOSITORY_ROOT, cls.validator.FIXTURE_PATH
         )
         cls.role_validator = load_script(
-            "agent_role_semantics_consumer_test_target",
-            "scripts/validate-agent-role-semantics.py",
+            "agent_harness_semantics_consumer_test_target",
+            "scripts/validate-agent-harness-semantics.py",
         )
         cls.roster_validator = load_script(
             "agent_roster_currentness_consumer_test_target",
@@ -204,7 +203,7 @@ class AgentHarnessContractTests(unittest.TestCase):
         )
         self.assertEqual(routed, self.validator.HARNESS_ROUTED_SURFACES)
 
-    def test_consumer_set_and_legacy_subset_are_exact(self) -> None:
+    def test_consumer_set_is_exact_and_current(self) -> None:
         observed = tuple(
             (
                 consumer["id"],
@@ -216,11 +215,6 @@ class AgentHarnessContractTests(unittest.TestCase):
             for consumer in self.contract["consumers"]
         )
         self.assertEqual(observed, self.validator.CONSUMERS)
-        self.assertEqual(
-            tuple(self.contract["compatibility"]["legacyConsumers"]),
-            self.validator.LEGACY_CONSUMERS,
-        )
-        self.assertEqual(self.validator.LEGACY_CONSUMERS, ())
         self.assertTrue(
             all(
                 (
@@ -231,38 +225,6 @@ class AgentHarnessContractTests(unittest.TestCase):
                 for consumer in self.contract["consumers"]
             )
         )
-        self.assertEqual(
-            self.contract["compatibility"]["removalOwnerSpec"],
-            self.validator.REMOVAL_OWNER_SPEC,
-        )
-
-    def test_current_adapter_semantics_are_the_exact_migrated_legacy_values(
-        self,
-    ) -> None:
-        legacy = json.loads(
-            (
-                REPOSITORY_ROOT
-                / "docs/00.agent-governance/contracts/agent-role-semantics.json"
-            ).read_text(encoding="utf-8")
-        )
-        legacy_by_id = {role["id"]: role for role in legacy["roles"]}
-        canonical_by_id = {
-            role["id"]: role for role in self.contract["canonicalRoles"]
-        }
-        self.assertTrue(set(legacy_by_id).issubset(canonical_by_id))
-        for role_id, legacy_role in legacy_by_id.items():
-            actual = canonical_by_id[role_id]["adapterSemantics"]
-            self.assertEqual(actual["admissionState"], "current")
-            self.assertEqual(
-                {
-                    key: actual[key]
-                    for key in self.validator.ADAPTER_SEMANTIC_FIELDS
-                },
-                {
-                    key: legacy_role[key]
-                    for key in self.validator.ADAPTER_SEMANTIC_FIELDS
-                },
-            )
 
     def test_no_canonical_role_remains_target_only_after_area002(self) -> None:
         current = set(self.contract["currentInventory"]["roleIds"])

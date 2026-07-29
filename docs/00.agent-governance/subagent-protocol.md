@@ -118,9 +118,9 @@ and Postflight requirements. Surface metadata keys differ. This parity
 relationship is validated by `scripts/validate-repo-quality-gates.sh` and does
 not establish provider runtime parity.
 
-The legacy role-semantics contract and schema remain readable compatibility
-inputs with zero semantic consumers until Spec 045. They must not be used as
-delegation or role authority.
+Spec 045 retired the former role-semantics compatibility inputs after
+zero-consumer proof. The harness contract and harness-semantics validator are
+the only current delegation and role-semantic authorities.
 
 ### Coordination
 
@@ -159,8 +159,8 @@ currentness, followed by the aggregate repository gate:
 ```bash
 python3 scripts/validate-agent-harness-contract.py --self-test
 python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-role-semantics.py --self-test
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --self-test
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py . --self-test
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

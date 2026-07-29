@@ -19,7 +19,6 @@
     "currentInventory",
     "targetInventory",
     "consumers",
-    "compatibility",
     "memory",
     "redaction"
   ],
@@ -90,9 +89,6 @@
       "items": {
         "$ref": "#/$defs/consumer"
       }
-    },
-    "compatibility": {
-      "$ref": "#/$defs/compatibility"
     },
     "memory": {
       "$ref": "#/$defs/memory"
@@ -693,67 +689,16 @@
           "$ref": "#/$defs/repoPath"
         },
         "selectedContract": {
-          "enum": [
-            "harness-contract",
-            "agent-role-semantics-compatibility"
-          ]
+          "const": "harness-contract"
         },
         "selectedVersion": {
-          "enum": [
-            "1.0.0",
-            "2"
-          ]
+          "const": "1.0.0"
         },
         "migrationState": {
-          "enum": [
-            "current",
-            "pending-spec-041-migration"
-          ]
+          "const": "current"
         },
         "evidenceClass": {
           "const": "repo-static"
-        }
-      }
-    },
-    "compatibility": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "legacyContractPath",
-        "legacySchemaPath",
-        "legacyVersion",
-        "state",
-        "legacyConsumers",
-        "removalOwnerSpec",
-        "deletionGate"
-      ],
-      "properties": {
-        "legacyContractPath": {
-          "const": "docs/00.agent-governance/contracts/agent-role-semantics.json"
-        },
-        "legacySchemaPath": {
-          "const": "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-        },
-        "legacyVersion": {
-          "const": "2"
-        },
-        "state": {
-          "const": "readable-compatibility-input"
-        },
-        "legacyConsumers": {
-          "type": "array",
-          "minItems": 0,
-          "maxItems": 14,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
-        },
-        "removalOwnerSpec": {
-          "const": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
-        },
-        "deletionGate": {
-          "const": "zero-legacy-consumers-with-repository-static-proof"
         }
       }
     },

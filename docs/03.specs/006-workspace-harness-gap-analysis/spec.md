@@ -381,7 +381,7 @@ git diff --check
   mutating live external services.
 - **VAL-SPC-006-041**: 2026-05-26 GitHub workflow responsibility matrix
   guardrail follow-up strengthens QA/CI-CD SSoT by validating that
-  `.github/ABOUT.md` lists every workflow, separates required QA gates from
+  `.github/README.md` lists every workflow, separates required QA gates from
   release-evidence and maintenance automation, and preserves no-deploy/no-live
   mutation boundaries without changing workflow job structure.
 - **VAL-SPC-006-042**: 2026-05-26 app onboarding secret path contract

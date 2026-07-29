@@ -28,10 +28,10 @@ not claim its own future commit SHA.
 The preceding PRD-006 program closed in terminal commit
 `c5adc27b13893d7cbd1266c9225372cfb7df79e9`; postflight evidence update
 `4335ea6076a68fe0bbed3526a21b92a39180faa7` records the correct atomic
-explicit-ref interval and clean-tree aggregate. The current machine owner is
-still `agent-role-semantics.json`, with ten roles and three tracked adapter
-surfaces. `validation-surfaces.json` independently owns path-to-validator
-routing.
+explicit-ref interval and clean-tree aggregate. At activation, the then-current
+role-semantics compatibility owner represented ten roles and three tracked
+adapter surfaces. `validation-surfaces.json` independently owns
+path-to-validator routing.
 
 Spec 041 must create a closed harness schema, current/target inventory split,
 consumer/version ledger, result-class boundary, and four-class project-memory

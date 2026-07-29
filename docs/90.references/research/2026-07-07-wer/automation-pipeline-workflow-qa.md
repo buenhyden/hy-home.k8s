@@ -260,7 +260,7 @@ the named active files.
 
 | Classification | Severity | Finding | Current evidence | Risk rationale | Recommendation | Canonical follow-up route |
 | --- | --- | --- | --- | --- | --- | --- |
-| Implementation gap | Medium | Path-filter-to-validator dependencies are incomplete | `repo_quality` includes `gitops/apps/root/**` but omits other `gitops/**`, `policy/**`, most infrastructure, Traefik, and several root tool configs; `manifest-static` covers many of those paths, but does not execute repo-quality | A contract added to repo-quality for an omitted surface can be bypassed on a surface-only PR even though another static lane passes | Define an explicit validator-input inventory and regression-test each path filter against it before changing filters | `.github/workflows/ci.yml`, `.github/ABOUT.md`, CI/CD QA guide, and a new Stage 03/04 CI-filter hardening spec/task |
+| Implementation gap | Medium | Path-filter-to-validator dependencies are incomplete | `repo_quality` includes `gitops/apps/root/**` but omits other `gitops/**`, `policy/**`, most infrastructure, Traefik, and several root tool configs; `manifest-static` covers many of those paths, but does not execute repo-quality | A contract added to repo-quality for an omitted surface can be bypassed on a surface-only PR even though another static lane passes | Define an explicit validator-input inventory and regression-test each path filter against it before changing filters | `.github/workflows/ci.yml`, `.github/README.md`, CI/CD QA guide, and a new Stage 03/04 CI-filter hardening spec/task |
 | Implementation gap | Medium | Local provider edit hooks do not mirror the complete manifest-static policy bundle | `post-validate.sh` and `lifecycle-guard.sh` run manifest syntax and secret handling for manifest edits, but not static contracts, GitOps structure, or policy gates; `.rego` edits have no targeted PostToolUse policy run | Fast local feedback can be green while the later CI policy/static-contract lane fails | Design a bounded cost-aware hook matrix or explicit task checklist; retain CI as final authority | Shared hook scripts, three provider wiring files, `validate-harness.sh`, and a separately approved hook/validator task |
 | Implementation gap | Medium | Two live ingress/TLS findings are warn-only | `verify-ingress-tls.sh` emits `[WARN]` for missing/mismatched Headlamp and Kiali TLS secrets and continues; `run-all.sh` can therefore reach its final PASS | A broad live-run PASS can be read as stronger than the component assertions actually enforce | Classify required versus advisory endpoints, make the final summary report both, and change failure semantics only through an operations-approved task | `infrastructure/tests/verify-ingress-tls.sh`, `run-all.sh`, Stage 05 setup/maintenance runbooks, and a Stage 03/04 live-test contract task |
 | Implementation gap | High | Third-party Actions are tag-pinned rather than immutable-SHA-pinned | Every `uses:` entry in the five workflows uses a version tag; `.github/zizmor.yml` disables `unpinned-uses`; GitHub secure-use recommends full-length SHAs | Mutable upstream tags expand workflow supply-chain risk and make exact executed code less reproducible | Inventory each action, verify official repositories and SHAs, define update automation/rollback, then enable enforcement in one coordinated change | `.github/workflows/*.yml`, `.github/zizmor.yml`, version inventory, Dependabot policy, and a Stage 03/04 Actions-hardening task |
@@ -312,7 +312,7 @@ files, not the external sources, establish local implementation claims.
 
 ### Repository Sources
 
-- [GitHub configuration hub](../../../../.github/ABOUT.md)
+- [GitHub configuration hub](../../../../.github/README.md)
 - [CI workflow](../../../../.github/workflows/ci.yml)
 - [Generate changelog workflow](../../../../.github/workflows/generate-changelog.yml)
 - [Labeler workflow](../../../../.github/workflows/labeler.yml)
@@ -320,7 +320,7 @@ files, not the external sources, establish local implementation claims.
 - [Stale workflow](../../../../.github/workflows/stale.yml)
 - [Dependabot configuration](../../../../.github/dependabot.yml)
 - [Labeler configuration](../../../../.github/labeler.yml)
-- [Zizmor configuration](../../../../.github/ABOUT.md)
+- [Zizmor configuration](../../../../.github/README.md)
 - [Pre-commit configuration](../../../../.pre-commit-config.yaml)
 - [Prettier configuration](../../../../.prettierrc.json)
 - [Prettier ignore configuration](../../../../.prettierignore)

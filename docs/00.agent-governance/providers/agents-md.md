@@ -88,8 +88,9 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 - AREA-003 repository-static evaluation readiness is complete, while observed
   same-suite evaluation and final admission remain `DEFER`. Neither gateway
   presence nor model-fitness validation supplies provider/runtime evidence.
-- The legacy role-semantics contract remains readable compatibility input with
-  zero semantic consumers until Spec 045; it is not authority.
+- Spec 045 retired the former role-semantics compatibility inputs after
+  zero-consumer proof; the harness contract and harness-semantics validator
+  are the current semantic owners.
 - `AGENTS.md` points to, but does not restate, the validation lane, result, and
   handoff contract in [`rules/quality-standards.md`](../rules/quality-standards.md).
 - A tracked `AGENTS.md`, `.codex/agents/*.toml`, or `.codex/hooks.json` proves
@@ -110,7 +111,7 @@ python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-provider-config.py --root .
 python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-model-fitness.py --root .
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .
 ```

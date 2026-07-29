@@ -130,8 +130,8 @@ must not trigger CI; only the tracked boundary README and ignore contract do.
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
 python3 scripts/validate-affected-surfaces.py --root .
-python3 scripts/validate-agent-role-semantics.py --self-test
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --self-test
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py . --self-test
 python3 scripts/validate-agent-roster-currentness.py .
 pre-commit run --all-files
@@ -157,10 +157,10 @@ git diff --check
 
 ASQA-001 through ASQA-006 are complete. The Stage 00 lane/result/handoff
 contract, thin provider routing, repository quality orchestration, and
-cross-surface role semantics are aligned. The machine owner is
-`agent-role-semantics` v2 with `adapterSurfaces = [local, claude, codex]`; this
-preserves the completed 480-case result without treating `.agents/**` as
-Gemini CLI native evidence. Independent reviewer agent
+cross-surface role semantics are aligned. The successor machine owner is the
+harness contract with current `12 roles / 4 surfaces / 48 adapters`; the
+harness-semantics validator preserves the original completed evidence without
+treating `.agents/**` as Gemini CLI native evidence. Independent reviewer agent
 `/root/review_adm006_adm007_conflict` approved lifecycle closure with
 `C0/H0/M0/L0`; remote CI, native provider consumption, credentials, secrets,
 and live infrastructure remain `DEFER` for their separately authorized owners.

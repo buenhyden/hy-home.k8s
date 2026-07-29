@@ -25,7 +25,7 @@ The template system has separate surfaces:
 | Template support contracts | `docs/99.templates/support/**` | Template-specific routing, schema, governance, and cleanup rules. |
 | Agent governance | `docs/00.agent-governance/**` | Agent-facing execution policy, stage routing policy, hooks, and protected-surface rules. |
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
-| GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
+| GitHub-native control Markdown | `.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 | Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
 | Cloud example snapshot collection | Stage 90 Current reference pack | Durable dated provider snapshots; an approved lifecycle change is required to refresh them. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |

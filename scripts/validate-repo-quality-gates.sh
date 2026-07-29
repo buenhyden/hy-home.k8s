@@ -83,6 +83,8 @@ python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
@@ -114,8 +116,8 @@ python3 "$ROOT_DIR/scripts/validate-agent-model-fitness.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-checkpoint.py" --root "$ROOT_DIR" --self-test
-python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
-python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-harness-semantics.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-harness-semantics.py" --root "$ROOT_DIR"
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
@@ -1061,7 +1063,7 @@ for contract_path, phrases in active_app_secret_contracts:
             fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
 
 github_native_markdown = [
-    root / ".github/ABOUT.md",
+    root / ".github/README.md",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
     root / ".github/SECURITY.md",
 ]
@@ -3499,7 +3501,7 @@ for prefix in branch_prefixes:
             f"{rel(git_workflow_path)} SSoT: {prefix_label}"
         )
 
-github_about_path = root / ".github/ABOUT.md"
+github_about_path = root / ".github/README.md"
 github_about_text = read_text(github_about_path)
 for phrase in [
     "docs/00.agent-governance/rules/git-workflow.md",
@@ -3542,10 +3544,10 @@ expected_workflow_responsibility_header = [
 ]
 expected_workflows = [path.name for path in sorted((root / ".github/workflows").glob("*.yml"))]
 if len(workflow_responsibility_rows) < 2:
-    fail(".github/ABOUT.md Workflow Responsibility Matrix must contain a header and workflow rows")
+    fail(".github/README.md Workflow Responsibility Matrix must contain a header and workflow rows")
 elif workflow_responsibility_rows[0] != expected_workflow_responsibility_header:
     fail(
-        ".github/ABOUT.md Workflow Responsibility Matrix header must be: "
+        ".github/README.md Workflow Responsibility Matrix header must be: "
         + " | ".join(expected_workflow_responsibility_header)
     )
 else:
@@ -3553,7 +3555,7 @@ else:
     for row_number, row in enumerate(workflow_responsibility_rows[1:], start=1):
         if len(row) != len(expected_workflow_responsibility_header):
             fail(
-                ".github/ABOUT.md Workflow Responsibility Matrix "
+                ".github/README.md Workflow Responsibility Matrix "
                 f"row {row_number} must have {len(expected_workflow_responsibility_header)} columns"
             )
             continue
@@ -3561,14 +3563,14 @@ else:
         match = re.fullmatch(r"`([^`]+\.yml)`", workflow_cell)
         if not match:
             fail(
-                ".github/ABOUT.md Workflow Responsibility Matrix "
+                ".github/README.md Workflow Responsibility Matrix "
                 f"row {row_number} must start with a backticked workflow filename"
             )
             continue
         workflow_name = match.group(1)
         indexed_workflows.append(workflow_name)
         if not (root / ".github/workflows" / workflow_name).is_file():
-            fail(f".github/ABOUT.md Workflow Responsibility Matrix references missing workflow: {workflow_name}")
+            fail(f".github/README.md Workflow Responsibility Matrix references missing workflow: {workflow_name}")
         for label, value in [
             ("Role", role),
             ("Trigger / scope", trigger_scope),
@@ -3576,7 +3578,7 @@ else:
             ("Boundary", boundary),
         ]:
             if not value:
-                fail(f".github/ABOUT.md Workflow Responsibility Matrix row {row_number} has empty {label}")
+                fail(f".github/README.md Workflow Responsibility Matrix row {row_number} has empty {label}")
         if workflow_name == "ci.yml":
             for phrase, value in [
                 ("Required QA gate", role),
@@ -3587,6 +3589,7 @@ else:
                 ("pull_request", trigger_scope),
                 ("workflow_dispatch", trigger_scope),
                 ("ci-summary", required_evidence),
+                ("agent-governance-static", required_evidence),
                 ("repo-quality-static", required_evidence),
                 ("manifest-static", required_evidence),
                 ("No deploy CD", boundary),
@@ -3594,7 +3597,7 @@ else:
                 ("external Vault mutation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/ABOUT.md ci.yml responsibility row missing phrase: {phrase}")
+                    fail(f".github/README.md ci.yml responsibility row missing phrase: {phrase}")
         elif workflow_name == "generate-changelog.yml":
             for phrase, value in [
                 ("Release-evidence", role),
@@ -3605,7 +3608,7 @@ else:
                 ("publish", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/ABOUT.md generate-changelog.yml responsibility row missing phrase: {phrase}")
+                    fail(f".github/README.md generate-changelog.yml responsibility row missing phrase: {phrase}")
         elif workflow_name == "greetings.yml":
             for phrase, value in [
                 ("maintenance greeting", role),
@@ -3615,7 +3618,7 @@ else:
                 ("deployment automation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/ABOUT.md greetings.yml responsibility row missing phrase: {phrase}")
+                    fail(f".github/README.md greetings.yml responsibility row missing phrase: {phrase}")
         elif workflow_name == "labeler.yml":
             for phrase, value in [
                 ("maintenance labeling", role),
@@ -3626,7 +3629,7 @@ else:
                 ("human review", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/ABOUT.md labeler.yml responsibility row missing phrase: {phrase}")
+                    fail(f".github/README.md labeler.yml responsibility row missing phrase: {phrase}")
         elif workflow_name == "stale.yml":
             for phrase, value in [
                 ("maintenance stale-item", role),
@@ -3637,10 +3640,10 @@ else:
                 ("deployment automation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/ABOUT.md stale.yml responsibility row missing phrase: {phrase}")
+                    fail(f".github/README.md stale.yml responsibility row missing phrase: {phrase}")
     if indexed_workflows != expected_workflows:
         fail(
-            ".github/ABOUT.md Workflow Responsibility Matrix row order must match actual workflows: "
+            ".github/README.md Workflow Responsibility Matrix row order must match actual workflows: "
             + ", ".join(expected_workflows)
         )
 
@@ -5882,7 +5885,7 @@ script_command_contract_paths = [
     scripts_dir / "README.md",
     root / ".github/workflows/ci.yml",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
-    root / ".github/ABOUT.md",
+    root / ".github/README.md",
     root / ".claude/settings.json",
     root / ".claude/CLAUDE.md",
     root / "docs/00.agent-governance/hooks/post-validate.sh",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate shared role semantics across local and provider adapter surfaces."""
+"""Validate harness-owned role semantics across provider adapter surfaces."""
 
 from __future__ import annotations
 
@@ -28,9 +28,9 @@ CONTRACT_PATH = PurePosixPath(
 SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/harness-contract.schema.json"
 )
-FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-role-semantics.json")
+FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-harness-semantics.json")
 CONTRACT_VERSION = "1.0.0"
-CONSUMER_ID = "role-semantics-validator"
+CONSUMER_ID = "harness-semantics-validator"
 ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
 GEMINI_FRONTMATTER_KEYS = (
     "name",
@@ -1038,7 +1038,7 @@ def validate_fixture(
         "adversarialCases",
         "expectedCaseCount",
     }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 3:
+    if set(fixture) != expected_keys or fixture["schemaVersion"] != 4:
         fail("ROLE-FIXTURE", "fixture keys or schemaVersion differ")
     if tuple(fixture["adapterSurfaces"]) != selection.surface_ids:
         fail("ROLE-FIXTURE", "fixture adapter surfaces differ")
@@ -1399,7 +1399,7 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
             failures.append(f"forbidden field {forbidden}: mutation passed")
 
     with tempfile.TemporaryDirectory(
-        prefix="agent-role-semantics-root-boundary-"
+        prefix="agent-harness-semantics-root-boundary-"
     ) as directory:
         symlink_root = Path(directory) / "repository-root-link"
         symlink_root.symlink_to(root.absolute(), target_is_directory=True)
@@ -1430,7 +1430,7 @@ def main() -> int:
                     print(f"ERR ROLE-SELF-TEST {failure}", file=sys.stderr)
                 return 1
             print(
-                "[PASS] agent role semantics self-test passed: "
+                "[PASS] agent harness semantics self-test passed: "
                 f"cases={cases} adversarial={len(ADVERSARIAL_SCHEMA)} "
                 f"vocabulary={len(NEGATION_STATES) * 2} "
                 f"geminiMetadata={GEMINI_METADATA_MUTATION_COUNT} "
@@ -1447,7 +1447,7 @@ def main() -> int:
                 print(diagnostic.render(), file=sys.stderr)
             return 1
         print(
-            "[PASS] agent role semantics validation passed: "
+            "[PASS] agent harness semantics validation passed: "
             f"roles={len(selection.role_ids)} "
             f"adapters={len(selection.projection_paths)} "
             f"categories={len(CATEGORY_RULES)}"

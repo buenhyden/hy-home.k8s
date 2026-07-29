@@ -3203,6 +3203,82 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 with self.assertRaises(ria._GitError):  # noqa: SLF001
                     ria._projection_mask(malformed, path, projection)  # noqa: SLF001
 
+    def test_literal_replacement_projection_is_exact_and_directional(
+        self,
+    ) -> None:
+        projection = {
+            "path": (
+                "docs/90.references/research/2026-07-07-wer/"
+                "automation-pipeline-workflow-qa.md"
+            ),
+            "literalReplacements": [
+                {
+                    "from": ".github/ABOUT.md",
+                    "to": ".github/README.md",
+                    "count": 2,
+                }
+            ],
+        }
+        path = Path(projection["path"])
+        baseline = b".github/ABOUT.md and .github/ABOUT.md\n"
+        proposed = b".github/README.md and .github/README.md\n"
+        self.assertEqual(
+            ria._projection_mask(  # noqa: SLF001
+                baseline,
+                path,
+                projection,
+                state="baseline",
+            ),
+            ria._projection_mask(  # noqa: SLF001
+                proposed,
+                path,
+                projection,
+                state="proposed",
+            ),
+        )
+        for payload, state in (
+            (baseline, "proposed"),
+            (proposed, "baseline"),
+            (b".github/ABOUT.md and .github/README.md\n", "either"),
+            (b".github/README.md\n", "proposed"),
+        ):
+            with self.subTest(payload=payload, state=state):
+                with self.assertRaises(ria._GitError):  # noqa: SLF001
+                    ria._projection_mask(  # noqa: SLF001
+                        payload,
+                        path,
+                        projection,
+                        state=state,
+                    )
+
+    def test_agent_cutover_projection_authority_is_fully_pinned(self) -> None:
+        projections = ria.load_agent_cutover_projections(
+            REPOSITORY_ROOT,
+            None,
+        )
+        self.assertEqual(
+            tuple(path.as_posix() for path in projections),
+            tuple(
+                path
+                for path, _count in ria.AGENT_CUTOVER_CURRENT_PATH_COUNTS
+            ),
+        )
+        for digest_name in (
+            "AGENT_LEGACY_CUTOVER_SHA256",
+            "AGENT_LEGACY_CUTOVER_SCHEMA_SHA256",
+        ):
+            with self.subTest(digest_name=digest_name):
+                with mock.patch.object(
+                    ria,
+                    digest_name,
+                    "0" * 64,
+                ):
+                    with self.assertRaises(ria._GitError):  # noqa: SLF001
+                        ria.load_agent_cutover_projections(
+                            REPOSITORY_ROOT,
+                            None,
+                        )
+
     def test_open_transition_matrix_is_closed(self) -> None:
         contract = self._minimal_contract()
         contract["baselineTransitions"] = [self._transition()]

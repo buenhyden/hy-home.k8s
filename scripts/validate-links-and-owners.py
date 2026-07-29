@@ -46,6 +46,11 @@ from document_contracts import (
     load_registry,
     read_repository_text,
 )
+from reference_information_architecture import (
+    ContractError as RiaContractError,
+    _GitError as RiaGitError,
+    load_agent_cutover_projections,
+)
 
 
 FIXTURE_PATH = Path("tests/fixtures/links-and-owners.json")
@@ -187,6 +192,54 @@ OWNER_EXCLUSIONS = (
     ),
     re.compile(r"^docs/90\.references/cloud-examples/"),
     re.compile(r"^examples/(?:aws|azure)/docs/"),
+)
+RETIRED_REFERENCE_ALIASES = {
+    PurePosixPath(
+        "docs/00.agent-governance/contracts/agent-role-semantics.json"
+    ): PurePosixPath("docs/00.agent-governance/contracts/harness-contract.json"),
+    PurePosixPath(
+        "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
+    ): PurePosixPath(
+        "docs/00.agent-governance/contracts/harness-contract.schema.json"
+    ),
+    PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
+        "scripts/validate-agent-harness-semantics.py"
+    ),
+    PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
+        "tests/fixtures/agent-harness-semantics.json"
+    ),
+    PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/README.md"),
+}
+RETIRED_REFERENCE_PROTECTED_FILES = {
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/"
+        "sdlc-ci-qa-formatting-automation.md"
+    ): "c81e25e2346241c4ffcb83fb073ba2d7c147541dbfeadd0bdeb21bc13e004bb8",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-03-wdgh/"
+        "workspace-document-governance-hardening-audit.md"
+    ): "16ebdfce8fcb4f2e82cfd47e76962b0509385c30823b3d4ece23c1b130994b4f",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/research/2026-07-04-wer/"
+        "automation-pipeline-workflow-qa.md"
+    ): "9e4b828aae5e631ff5cf3daf6bc88223ecdb17ce377914b5e9b2f1a2af2601ab",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-04-wdcn/"
+        "workspace-document-contract-normalization-audit.md"
+    ): "bfa40f0f7e918df9dfaf0c44e5098e581a38969b7417bed2ab7fdabbdad80913",  # pragma: allowlist secret
+}
+RETIRED_REFERENCE_TERMINAL_STATUSES = frozenset(
+    {
+        "archived",
+        "cancelled",
+        "closed",
+        "complete",
+        "completed",
+        "done",
+        "rejected",
+        "retired",
+        "superseded",
+    }
 )
 SMDV_CLOSURE_PATHS = (
     PurePosixPath("docs/03.specs/029-semantic-document-validation/spec.md"),
@@ -2235,6 +2288,26 @@ def _is_current_authority(context: Context, path: PurePosixPath) -> bool:
     return profile.mode == "authored" and status in {"active", "accepted"}
 
 
+def _retired_reference_replacement(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> PurePosixPath | None:
+    replacement = RETIRED_REFERENCE_ALIASES.get(target)
+    if replacement is None:
+        return None
+    status = str(context.metadata.get(source, {}).get("status", "")).casefold()
+    if status in RETIRED_REFERENCE_TERMINAL_STATUSES:
+        return replacement
+    expected_digest = RETIRED_REFERENCE_PROTECTED_FILES.get(source)
+    if expected_digest is None:
+        return None
+    actual_digest = hashlib.sha256(
+        context.texts.get(source, "").encode("utf-8")
+    ).hexdigest()
+    return replacement if actual_digest == expected_digest else None
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     for source in context.paths:
@@ -2263,6 +2336,15 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             if not _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
+                replacement = _retired_reference_replacement(
+                    context,
+                    source,
+                    target,
+                )
+                if replacement is not None and _path_exists_without_dereference(
+                    context.root, replacement, context.adapter_targets
+                ):
+                    continue
                 diagnostics.append(
                     _diag(
                         "LINK-BROKEN",
@@ -5036,6 +5118,37 @@ def _ledger_protected_drift() -> Diagnostic:
     )
 
 
+def _project_settled_ledger_bytes(
+    context: Context,
+    ledger_bytes: bytes,
+) -> bytes | None:
+    try:
+        projections = load_agent_cutover_projections(context.root, None)
+    except (RiaContractError, RiaGitError):
+        return None
+    projection = projections.get(Path(LEDGER_PATH.as_posix()))
+    if projection is None:
+        return ledger_bytes
+    replacements = projection.get("literalReplacements")
+    if (
+        not isinstance(replacements, list)
+        or len(replacements) != 1
+        or not isinstance(replacements[0], Mapping)
+    ):
+        return None
+    migration = replacements[0]
+    try:
+        text = ledger_bytes.decode("utf-8", "strict")
+    except UnicodeDecodeError:
+        return None
+    source = str(migration["from"])
+    target = str(migration["to"])
+    count = int(migration["count"])
+    if text.count(source) != 0 or text.count(target) != count:
+        return None
+    return text.replace(target, source).encode("utf-8")
+
+
 def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]:
     """Return whether the terminal RIA settlement seals the ledger inventory."""
 
@@ -5084,6 +5197,8 @@ def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]
     ledger_bytes = context.ledger_bytes
     if ledger_bytes is None and LEDGER_PATH in context.texts:
         ledger_bytes = context.texts[LEDGER_PATH].encode("utf-8")
+    if ledger_bytes is not None:
+        ledger_bytes = _project_settled_ledger_bytes(context, ledger_bytes)
     if (
         ledger_bytes is None
         or len(ledger_bytes) != target_byte_length
@@ -7420,6 +7535,30 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     source = PurePosixPath("docs/05.operations/guides/9999-source.md")
     if mutation == "link-broken":
         texts[source] += "\n[bad](./missing.md)\n"
+    elif mutation in {
+        "link-retired-evidence",
+        "link-retired-active",
+        "link-retired-current-reference",
+    }:
+        replacement = context.root / ".github/README.md"
+        replacement.parent.mkdir(parents=True, exist_ok=True)
+        replacement.write_text("# GitHub Configuration\n", encoding="utf-8")
+        if mutation == "link-retired-evidence":
+            evidence_source = PurePosixPath(
+                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            )
+            texts[evidence_source] += (
+                "\n[retired hub](../../../../.github/ABOUT.md)\n"
+            )
+        elif mutation == "link-retired-current-reference":
+            reference_source = PurePosixPath(
+                "docs/90.references/research/2026-07-07-wer/accepted.md"
+            )
+            texts[reference_source] += (
+                "\n[retired hub](../../../../.github/ABOUT.md)\n"
+            )
+        else:
+            texts[source] += "\n[retired hub](../../../.github/ABOUT.md)\n"
     elif mutation == "link-absolute":
         texts[source] += "\n[bad](/etc/passwd)\n"
     elif mutation == "link-file-uri":
@@ -8278,6 +8417,9 @@ def _self_test(root: Path) -> list[str]:
     required = {
         "valid-tree",
         "broken-link",
+        "retired-evidence-link",
+        "retired-active-link",
+        "retired-current-reference-link",
         "absolute-link",
         "archive-bypass",
         "missing-index-row",

@@ -497,6 +497,9 @@
   "cases": [
     {"name": "valid-tree", "tree": {"base": "baseTree"}, "mutation": {"kind": "none"}, "expected_rule_ids": []},
     {"name": "broken-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-broken"}, "expected_rule_ids": ["LINK-BROKEN"]},
+    {"name": "retired-evidence-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-retired-evidence"}, "expected_rule_ids": []},
+    {"name": "retired-active-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-retired-active"}, "expected_rule_ids": ["LINK-BROKEN"]},
+    {"name": "retired-current-reference-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-retired-current-reference"}, "expected_rule_ids": ["LINK-BROKEN"]},
     {"name": "absolute-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-absolute"}, "expected_rule_ids": ["LINK-ABSOLUTE"]},
     {"name": "file-uri", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-file-uri"}, "expected_rule_ids": ["LINK-FILE-URI"]},
     {"name": "repository-escape", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-escape"}, "expected_rule_ids": ["LINK-ESCAPE"]},

@@ -588,13 +588,14 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             statuses,
             {
                 "agent-governance-ci": "PASS",
+                "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
                 "links-and-owners": "PASS",
                 "markdown-profiles": "PASS",
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 5)
+        self.assertEqual(invoked.call_count, 6)
         self.assertGreaterEqual(output.count(path), 3)
 
 

@@ -66,7 +66,7 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical taxonom
 
 Run `bash scripts/validate-repo-quality-gates.sh .` after persona or scope-map
 changes. When a change affects delegated roles, also run
-`python3 scripts/validate-agent-role-semantics.py --root .` and
+`python3 scripts/validate-agent-harness-semantics.py --root .` and
 `python3 scripts/validate-agent-roster-currentness.py .`. Review the mapping
 when a stage owner, scope file, or provider role roster changes.
 

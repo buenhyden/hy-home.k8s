@@ -3959,7 +3959,7 @@ def _evaluate_readme_document(
 
 
 def _is_readme_path(path: PurePosixPath) -> bool:
-    return path.name == "README.md"
+    return path.name == "README.md" and path != PurePosixPath(".github/README.md")
 
 
 def _readme_inventory_exact_error(

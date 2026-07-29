@@ -34,9 +34,9 @@ lifecycle and clean-tree aggregate passed after that commit.
 - **Owns**: the machine-contract shape, schema boundary, consumer migration
   order, provider projection invariants, evidence classes, and the activation
   gate for the PRD-003 / ARD-0006 / ADR-0019 program.
-- **Consumes**: the current Stage 00 owner graph, `agent-role-semantics.json`,
-  `validation-surfaces.json`, roster validators, provider adapters, and Specs
-  038–040 closure evidence.
+- **Consumes**: the Stage 00 owner graph, the then-current role-semantics
+  compatibility input, `validation-surfaces.json`, roster validators,
+  provider adapters, and Specs 038–040 closure evidence.
 - **Does not own**: concrete provider installation/authentication, loop runtime,
   role admission, CI cutover, or terminal program closure; Specs 042–046 own
   those responsibilities in sequence.
@@ -76,9 +76,9 @@ lifecycle and clean-tree aggregate passed after that commit.
 - `docs/00.agent-governance/contracts/validation-surfaces.json` remains the
   independent path-to-validation routing owner. Role semantics must reference,
   not absorb, that contract.
-- `agent-role-semantics.json` and its schema remain readable compatibility
-  inputs until all named consumers select the new version. Spec 045 removes
-  them only after a zero-consumer proof.
+- The former role-semantics contract and schema remained readable
+  compatibility inputs until all named consumers selected the harness owner.
+  Spec 045 removes them only after a zero-consumer proof.
 - The contract references
   `docs/00.agent-governance/memory/progress.md` as the only tracked shared
   project-memory ledger. Provider auto-memory and transient checkpoints cannot
@@ -193,7 +193,7 @@ before the existing aggregate gates:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
@@ -215,8 +215,8 @@ now part of the repository-static aggregate lane.
   owner with no duplicated path-routing rules in the harness contract.
 - **VAL-SAGC-004**: Every current consumer selects exactly one contract version
   and records deterministic migration evidence.
-- **VAL-SAGC-005**: The current inventory is exactly the implemented 10 roles
-  and 30 adapters, with no missing, extra, duplicate, or orphan current member;
+- **VAL-SAGC-005**: The activation inventory was exactly the implemented 10
+  roles and 30 adapters, with no missing, extra, duplicate, or orphan member;
   the proposed 12/48 inventory is present only as a non-current target.
 - **VAL-SAGC-006**: Repo-static, provider-runtime, CI, and remote-live results
   remain separate evidence classes.

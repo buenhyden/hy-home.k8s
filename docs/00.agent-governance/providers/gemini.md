@@ -154,8 +154,9 @@ or model resolution.
 - Keep the harness evidence classes `repo-static`, `provider-runtime`, `ci`,
   and `remote-live` separate. A tracked local adapter is repo-static evidence
   only and never proves Gemini CLI runtime discovery or use.
-- The legacy role-semantics contract is readable compatibility input with zero
-  semantic consumers until Spec 045 and is not current authority.
+- Spec 045 retired the former role-semantics compatibility inputs after
+  zero-consumer proof; the harness contract and harness-semantics validator
+  are the current semantic owners.
 - Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
   `remote/live` semantics plus handoff fields from
   [`rules/quality-standards.md`](../rules/quality-standards.md).
@@ -177,7 +178,7 @@ python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-provider-config.py --root .
 python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-model-fitness.py --root .
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .
 ```

@@ -123,7 +123,7 @@ FINAL_HELPER_COUNTS = {"total": 33, "python": 12, "json": 14, "yaml": 6, "readme
 PROPOSAL_PATH = "tests/test_active_corpus_role_audit.py"
 FROZEN_HELPER_PATHS = (
     "tests/README.md",
-    "tests/fixtures/agent-role-semantics.json",
+    "tests/fixtures/agent-harness-semantics.json",
     "tests/fixtures/agent-roster-currentness.json",
     "tests/fixtures/document-contracts/native-surface-cases.json",
     "tests/fixtures/document-contracts/readme-profile-cases.json",
@@ -170,6 +170,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "closed-fixture",
     ),
     "tests/fixtures/agent-harness-contract.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/fixtures/agent-legacy-cutover.json": (
         "json",
         "closed-fixture",
     ),
@@ -242,6 +246,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
     "tests/test_validate_agent_harness_contract.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_legacy_cutover.py": (
         "python",
         "regression-test",
     ),

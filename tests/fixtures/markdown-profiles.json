@@ -924,7 +924,7 @@
       "profile": "exception/github-native-control",
       "mode": "frontmatter-free",
       "applicability": "validate-document",
-      "fixturePath": ".github/ABOUT.md",
+      "fixturePath": ".github/README.md",
       "positiveSource": "# Fixture Document\n",
       "negativeMutations": [
         {

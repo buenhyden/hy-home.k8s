@@ -106,7 +106,7 @@ SECOND_SOURCE_ORIGINAL_PATHS = frozenset(
 )
 
 STALE_CONTRACT_SURFACES = (
-    ".github/ABOUT.md",
+    ".github/README.md",
     "docs/README.md",
     "docs/00.agent-governance/harness-catalog.md",
     "docs/00.agent-governance/scopes/docs.md",

@@ -2393,7 +2393,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.github/(?:ABOUT|PULL_REQUEST_TEMPLATE|SECURITY)\\.md$"
+          "value": "^\\.github/(?:README|PULL_REQUEST_TEMPLATE|SECURITY)\\.md$"
         }
       ],
       "frontmatter": {

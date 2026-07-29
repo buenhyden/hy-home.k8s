@@ -134,13 +134,15 @@
     },
     "requiredRouteClasses": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 12,
+      "maxItems": 12,
       "uniqueItems": true,
       "items": {"$ref": "#/$defs/routeClass"}
     },
     "delegatedChecks": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 16,
+      "maxItems": 16,
       "items": {"$ref": "#/$defs/delegatedCheck"}
     },
     "gateCommands": {
@@ -157,7 +159,8 @@
     },
     "deferredEvidence": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 2,
+      "maxItems": 2,
       "items": {"$ref": "#/$defs/deferredEvidence"}
     }
   },

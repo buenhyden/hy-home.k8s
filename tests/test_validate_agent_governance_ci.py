@@ -182,7 +182,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
     def test_repository_root_passes(self) -> None:
         counts = self.validator.validate_repository(REPO_ROOT)
         self.assertEqual(counts["routeClasses"], 12)
-        self.assertEqual(counts["delegatedChecks"], 13)
+        self.assertEqual(counts["delegatedChecks"], 16)
 
     def test_truth_table_is_fail_closed(self) -> None:
         for case in self.fixture["truthTableCases"]:
@@ -525,7 +525,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         )
         self.assertEqual(
             [row["owner"] for row in contract["deferredEvidence"]],
-            ["AGQC-003", "AGQC-005", "Spec046"],
+            ["AGQC-005", "Spec046"],
         )
         self.assertEqual(
             {row["result"] for row in contract["deferredEvidence"]},

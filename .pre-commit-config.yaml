@@ -25,6 +25,20 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit, manual]
+      - id: validate-agent-legacy-cutover-self-test
+        name: self-test agent legacy cutover contract
+        entry: python3 scripts/validate-agent-legacy-cutover.py --root . --self-test
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
+      - id: validate-agent-legacy-cutover
+        name: validate agent legacy cutover contract
+        entry: python3 scripts/validate-agent-legacy-cutover.py --root .
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
       - id: validate-affected-surfaces
         name: validate affected-surface contract
         entry: python3 scripts/validate-affected-surfaces.py --root .

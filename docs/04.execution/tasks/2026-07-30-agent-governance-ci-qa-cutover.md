@@ -20,9 +20,10 @@ The fixed provider/model/source cutoff remains
 `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z`. The date
 `2026-07-30` is the activation observation only. AGQC-000 through AGQC-002 are
 complete and AGQC-003 is the active package. The closed
-`validate-agent-governance-ci.py` owner now exists;
-`validate-agent-legacy-cutover.py` remains planned until AGQC-003 creates its
-contract, schema, fixture, tests, and validator together.
+`validate-agent-governance-ci.py` owner exists. AGQC-003 has assembled its
+legacy-cutover contract, schema, fixture, tests, validator, zero-consumer
+proof, and canonical GitHub hub migration in the proposed package; final
+review and commit evidence remain pending.
 
 Spec 045 completion remains repository-static. Hosted CI, branch protection,
 provider runtime/auth/model discovery, actual evaluation/admission/promotion,
@@ -63,7 +64,7 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 | AGQC-000 | VAL-AGQC-001, VAL-AGQC-010 | Activate the reciprocal Spec/Plan/Task path and single program-lineage relation after observed Spec 044 closure/postflight | platform | Done | Exact eight-file activation committed and clean-tree postflight observed | Activation `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`; focused, aggregate, all-files, diff, and final independent review PASS |
 | AGQC-001 | VAL-AGQC-001, VAL-AGQC-002 | Add dedicated agent-governance selector output, static job, and `ci-summary` topology | platform | Done | Four-job selector/workflow/summary topology is repository-statically enforced and all required owner classes select the lane | `12c5578747ef37afb9a1e65afe41bee6aca0e473`; affected `22/22`, `19` selections, `6` CI ranges, `37` mutations, `806` paths, `0/0`; focused/aggregate/all-files/review PASS |
 | AGQC-002 | VAL-AGQC-001..004 | Implement closed `validate-agent-governance-ci.py` contract/schema/fixture/tests and route it through local/CI owners | platform | Done | Closed Draft 2020-12 contract, exact CI topology and command sequence, delegated checks, result/evidence vocabularies, and fail-closed security controls are repository-statically enforced | `be0a12ecd8d51b73f251004b34be6e8288159eb5`; `22` focused tests, `6` truth and `38` mutation self-test cases, `12` route classes, `13` delegated checks, affected `22/22` and `811` staged paths with `0/0` uncovered/ambiguous; aggregate/all-files/diff/final review PASS |
-| AGQC-003 | VAL-AGQC-007, VAL-AGQC-008 | Implement consumer-first `validate-agent-legacy-cutover.py`, prove zero consumers, remove legacy role-semantics ownership/tests, and rename `.github/ABOUT.md` to `.github/README.md` | platform | In Progress | Consumer-first evidence and atomic cutover are active; no deletion or rename result is preclaimed | Planned zero-consumer fixtures, active-reference scan, atomic removal/rename diff, registry/quality/docs/inventory updates, and rollback evidence |
+| AGQC-003 | VAL-AGQC-007, VAL-AGQC-008 | Implement consumer-first `validate-agent-legacy-cutover.py`, prove zero consumers, remove legacy role-semantics ownership/tests, and establish `.github/README.md` as the canonical GitHub hub | platform | In Progress | The proposed package passes focused, aggregate, all-files, diff, security, and integration checks; requirements re-review is closing the active-reference exception before commit evidence is recorded | Zero-consumer fixtures and scan, atomic removal/rename diff, registry/quality/docs/inventory updates, rollback evidence, and final independent review |
 | AGQC-004 | VAL-AGQC-005, VAL-AGQC-006 | Align local QA order, repository-quality/pre-commit behavior, and script/test/GitHub/docs inventories | platform | Queued | Not executed | Targeted → affected → staged → tests → all-files → formatter review → rerun → diff evidence and current inventory checks |
 | AGQC-005 | VAL-AGQC-009 | Add repository-static concurrent checkpoint/provider identity and durable memory retention/compaction/archive policy | platform | Queued | Not executed; actual provider checkpoint/resume/handoff remains `DEFER` | Planned closed contract/schema/fixture/test updates for identity collisions, retention, sensitivity, replacement, archive/GC, conflict, and handoff |
 | AGQC-006 | VAL-AGQC-001..010 | Reconcile semantic owners, complete independent reviews and full local QA, then record reciprocal closure/postflight | platform | Queued | Not executed | Requirements/quality/security verdicts; focused/affected/staged/tests/all-files/formatter-rerun/diff results; exact closure/postflight identities; Spec 046 limitations |
@@ -101,9 +102,9 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 - **Secret / Vault Handling**: no secret reads or prints, no auth inspection,
   no credential fixture values, and synthetic/redacted fixtures only
 - **Rollback Plan**: discard or revert only the exact AGQC unit in reverse
-  dependency order; restore the legacy owner and `.github/ABOUT.md` together if
-  zero-consumer or rename validation fails; revert AGQC-000 last without reset,
-  clean, or overwrite of unrelated work
+  dependency order; restore the legacy owner and former GitHub hub name
+  together if zero-consumer or rename validation fails; revert AGQC-000 last
+  without reset, clean, or overwrite of unrelated work
 - **Evidence Location**: this Task and
   `../../00.agent-governance/memory/progress.md`
 
@@ -118,10 +119,11 @@ command, pin, result, evidence, and delegated-check shapes; the summary
 accepts only selected-success and unselected-skipped combinations and fails
 closed otherwise.
 
-AGQC-003 is active. Its legacy-cutover contract, schema, fixture, tests, and
-validator remain absent until the package creates them together and proves
-zero active consumers before any legacy deletion or GitHub hub rename. No
-hosted, provider, remote, live, or future implementation result is preclaimed.
+AGQC-003 is active. Its proposed legacy-cutover contract, schema, fixture,
+tests, and validator prove zero active consumers before the atomic legacy
+deletion and GitHub hub rename. Final requirements re-review and logical commit
+identity remain pending. No hosted, provider, remote, live, or future
+implementation result is preclaimed.
 
 The provider/model/source cutoff remains the fixed 2026-07-10 timestamp.
 Hosted CI, branch protection, provider runtime/auth/model discovery, actual
@@ -140,7 +142,7 @@ only in AGQC-006.
 | [AGQC-000](../plans/2026-07-30-agent-governance-ci-qa-cutover.md#work-breakdown) | Done | Activation `c677321d`; lifecycle, strict registry `465` with `0/0` uncovered/ambiguous, Markdown, link/owner, JSON, aggregate, all-files pre-commit, diff, and final independent review PASS. |
 | [AGQC-001](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md#success-criteria--verification-plan) | Done | `12c55787`; affected `22/22`, `19` selections, `6` CI ranges, `37` mutations, `806` paths, `4` jobs, `0/0`; CI Python/GitHub security/aggregate/all-files/final review PASS. |
 | N/A — AGQC-002 shares the Plan and Spec sources above | Done | `be0a12ec`; `22` focused tests, self-test `6` truth/`38` mutation cases, production `12` route classes/`13` delegated checks, affected `22/22` and `811` staged paths with `0/0`, aggregate/all-files/diff/final review PASS. |
-| N/A — AGQC-003 shares the Plan and Spec sources above | In Progress | Consumer-first implementation is active; zero-consumer proof must precede legacy removal and `.github/ABOUT.md` to `.github/README.md` cutover. |
+| N/A — AGQC-003 shares the Plan and Spec sources above | In Progress | Consumer-first implementation and zero-consumer proof are packaged; final requirements re-review and logical commit identity remain pending before closure. |
 | N/A — AGQC-004 shares the Plan and Spec sources above | Not executed | Pending QA-order and repository-quality/pre-commit/docs inventory alignment. |
 | N/A — AGQC-005 shares the Plan and Spec sources above | Not executed | Pending repository-static concurrent checkpoint/provider identity and durable memory policy; actual provider resume/handoff remains `DEFER`. |
 | N/A — AGQC-006 shares the Plan and Spec sources above | Not executed | Pending semantic reconciliation, independent reviews, full QA, reciprocal closure/postflight, and explicit Spec 046 handoff. |

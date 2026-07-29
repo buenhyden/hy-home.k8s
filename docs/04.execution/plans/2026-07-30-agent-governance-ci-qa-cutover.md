@@ -47,11 +47,12 @@ The fixed provider/model/source cutoff is
 observation only and does not move that cutoff.
 
 At activation, `scripts/validate-agent-governance-ci.py` and
-`scripts/validate-agent-legacy-cutover.py` do not exist. The legacy
-role-semantics contract/schema/validator/fixture remain readable compatibility
-surfaces, `.github/ABOUT.md` remains the tracked GitHub hub, and the Spec 043
-checkpoint/memory gates do not yet prove concurrent provider-instance
-isolation. These are planned gaps, not completed results.
+`scripts/validate-agent-legacy-cutover.py` did not exist. The legacy
+role-semantics contract/schema/validator/fixture remained readable
+compatibility surfaces, the GitHub hub retained its pre-cutover name, and the
+Spec 043 checkpoint/memory gates did not yet prove concurrent
+provider-instance isolation. These were activation-time gaps, not completed
+results.
 
 ## Goals & In-Scope
 
@@ -64,7 +65,7 @@ isolation. These are planned gaps, not completed results.
 - Implement a consumer-first legacy-cutover validator and prove zero active
   consumers before deleting the legacy role-semantics contract, schema,
   validator, fixture, and legacy-specific test expectations.
-- Rename `.github/ABOUT.md` to canonical `.github/README.md` with its registry,
+- Establish `.github/README.md` as the canonical GitHub hub with its registry,
   quality-gate, fixture, inventory, and active-reference migration.
 - Preserve targeted, affected, staged, tests, all-files, formatter review,
   rerun, and diff ordering across the quality, pre-commit, script, test, and
@@ -98,7 +99,7 @@ isolation. These are planned gaps, not completed results.
 | AGQC-000 | Activate the reciprocal Spec 045 execution path | Spec 044 closure `42864832` and postflight `279f8103` | Clean target worktree and observed predecessor identities | Exactly the Spec body/index, new Plan body/index, new Task body/index, program-lineage relation, and progress entry are `active`; no activation SHA is preclaimed |
 | AGQC-001 | Add dedicated agent-governance CI selector/job/`ci-summary` topology | AGQC-000, Spec 039 | Active reciprocal path and current selector/workflow baseline | Changed agent-governance owners select one required static job; `ci-summary` distinguishes selected PASS/FAIL from valid SKIP and rejects missing/cancelled results; full-SHA and least permissions remain intact |
 | AGQC-002 | Implement the closed `validate-agent-governance-ci.py` contract/schema/fixture/tests | AGQC-001 | Topology and result vocabulary are explicit | Planned contract, adjacent schema, validator, deterministic fixture, focused tests, self-test, affected routing, aggregate owner, pre-commit/CI invocation, and inventories pass without provider credentials or hosted-runtime inference |
-| AGQC-003 | Execute consumer-first legacy cutover and canonical GitHub hub rename | AGQC-002 | Harness semantics are current and the new CI gate fails closed | `validate-agent-legacy-cutover.py` proves zero active consumers before legacy role-semantics contract/schema/validator/fixture/test removal; stale claims are zero; `.github/README.md` and every route/reference/fixture/inventory replace `.github/ABOUT.md` atomically |
+| AGQC-003 | Execute consumer-first legacy cutover and canonical GitHub hub rename | AGQC-002 | Harness semantics are current and the new CI gate fails closed | `validate-agent-legacy-cutover.py` proves zero active consumers before legacy role-semantics contract/schema/validator/fixture/test removal; stale claims are zero; `.github/README.md` and every route/reference/fixture/inventory adopt the canonical hub atomically |
 | AGQC-004 | Align local QA ordering and repository inventories | AGQC-001, AGQC-002, AGQC-003 | New and retired command surfaces are known | Quality owner, affected/staged runner, `.pre-commit-config.yaml`, repository-quality gate, scripts/tests/GitHub/docs inventories, and formatter-rerun evidence express one targeted-to-diff order without dangling commands |
 | AGQC-005 | Add repository-static concurrent checkpoint/provider identity and durable memory policy | AGQC-000, Spec 043 | Current loop/checkpoint/memory contracts and synthetic fixtures pass | Synthetic collisions and cross-worktree/task/provider resumes fail closed; durable retention, sensitivity, compaction replacement, archive/GC, conflict, and handoff policy validate; actual provider checkpoint/resume/handoff remains `DEFER` |
 | AGQC-006 | Reconcile semantics, obtain independent reviews, run full QA, and close/postflight | AGQC-001 through AGQC-005 | Focused package gates pass and zero-consumer deletion is observed | Requirements are compliant, quality/security are approved, affected/staged/tests/all-files/formatter-rerun/diff gates pass, exact reciprocal closure/postflight are recorded, and every Spec 046 external/actual lane remains `DEFER` |
@@ -174,8 +175,8 @@ canaries are not completion commands for this Plan and remain `DEFER`.
 - `validate-agent-legacy-cutover.py` proves zero active consumers before all
   legacy role-semantics ownership surfaces and legacy-specific tests are
   removed.
-- `.github/README.md` is the sole canonical GitHub hub; `.github/ABOUT.md` and
-  active references to it are zero.
+- `.github/README.md` is the sole canonical GitHub hub; the retired predecessor
+  path and active references to it are zero.
 - Local QA, repository-quality, pre-commit, script, test, GitHub, and
   documentation inventories agree on the new and retired surfaces and the
   canonical completion order.

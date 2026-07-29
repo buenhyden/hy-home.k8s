@@ -378,5 +378,5 @@ Repository inputs:
 - [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
 - [CI/CD QA Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../scripts/README.md)
-- [GitHub Configuration Hub](../../../.github/ABOUT.md)
+- [GitHub Configuration Hub](../../../.github/README.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)

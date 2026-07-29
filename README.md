@@ -89,7 +89,7 @@ hy-home.k8s/
 7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [Template Routing Contract](docs/99.templates/support/template-routing.md), [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
 8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
-10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
+10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/README.md`](.github/README.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
@@ -132,7 +132,7 @@ hy-home.k8s/
 - [docs/03.specs/008-current-local-gitops-platform/spec.md](docs/03.specs/008-current-local-gitops-platform/spec.md)
 - [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [docs/90.references/README.md](docs/90.references/README.md)
-- [.github/ABOUT.md](.github/ABOUT.md)
+- [.github/README.md](.github/README.md)
 - [scripts/README.md](scripts/README.md)
 
 ### Top-level Areas
@@ -233,7 +233,7 @@ cd hy-home.k8s
 
 - [`./.pre-commit-config.yaml`](./.pre-commit-config.yaml)
 - [`./.github/workflows/ci.yml`](./.github/workflows/ci.yml)
-- [`./.github/ABOUT.md`](./.github/ABOUT.md)
+- [`./.github/README.md`](./.github/README.md)
 
 repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`와 `manifest-static` 책임에 맞춰져 있고, shell syntax coverage는 pre-commit과 repo-static/manual checks가 담당한다.
 

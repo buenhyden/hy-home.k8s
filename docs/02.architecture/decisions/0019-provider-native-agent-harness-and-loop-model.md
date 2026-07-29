@@ -64,8 +64,9 @@ foundation-first 순서로 구현·검증한다.
 - `.agents/**`는 shared assets 및 local/Antigravity adapter이고 Gemini native surface가 아니다.
 - `.claude/**`, `.codex/**`, `.gemini/**`는 각각 provider-native syntax를 표현한다. Common
   semantic을 복제하거나 unsupported native capability를 주장하지 않는다.
-- 기존 `agent-role-semantics.json`과 schema는 Spec 041에서 소비자를 전환한 뒤 Spec 045에서
-  제거한다. `validation-surfaces.json`은 validation routing owner로 별도 유지한다.
+- Spec 041이 구형 역할 의미 계약의 소비자를 전환했고 Spec 045가
+  zero-consumer 증거 뒤 그 compatibility 입력을 제거한다.
+  `validation-surfaces.json`은 validation routing owner로 별도 유지한다.
 
 ### Provider-native metadata, config and evidence
 

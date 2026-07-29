@@ -103,7 +103,7 @@ python3 scripts/validate-agent-evaluations.py --root . --self-test
 python3 scripts/validate-agent-model-fitness.py --root .
 python3 scripts/validate-agent-model-fitness.py --root . --self-test
 python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 python3 scripts/validate-affected-surfaces.py --root . --self-test
 python3 scripts/validate-document-lifecycle.py --root . --mode staged

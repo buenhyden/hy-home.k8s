@@ -75,7 +75,7 @@ claim its own commit.
 - [Affected-surface contract](../../00.agent-governance/contracts/validation-surfaces.json)
 - [Agent quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [Git workflow](../../00.agent-governance/rules/git-workflow.md)
-- [GitHub configuration hub](../../../.github/ABOUT.md)
+- [GitHub configuration hub](../../../.github/README.md)
 - [Technology version inventory](../../90.references/data/tech-stack-version-inventory.md)
 - [Settled migration snapshot](../../90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md)
 - [Predecessor Spec 038 Task](./2026-07-22-reference-information-architecture.md)

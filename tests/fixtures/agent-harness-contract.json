@@ -78,7 +78,7 @@
     },
     {
       "name": "consumer-version-drift",
-      "expectedRule": "HARNESS-CONSUMER"
+      "expectedRule": "HARNESS-SCHEMA"
     },
     {
       "name": "routing-ownership-drift",

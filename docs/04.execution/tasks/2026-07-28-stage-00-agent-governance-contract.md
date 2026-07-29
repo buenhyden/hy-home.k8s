@@ -37,7 +37,7 @@ claimed; those evidence lanes remain `DEFER`.
 - [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - Spec 040 closure content commit `c5adc27b` and postflight evidence update
   `4335ea60`
-- [Current role semantics](../../00.agent-governance/contracts/agent-role-semantics.json)
+- [Current role semantics](../../00.agent-governance/contracts/harness-contract.json)
 - [Independent validation routing owner](../../00.agent-governance/contracts/validation-surfaces.json)
 - [Memory boundary](../../00.agent-governance/memory/README.md)
 

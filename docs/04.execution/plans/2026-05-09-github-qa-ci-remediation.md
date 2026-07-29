@@ -136,7 +136,7 @@ is not removed as prose duplication.
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [`../tasks/2026-05-09-github-qa-ci-remediation.md`](../tasks/2026-05-09-github-qa-ci-remediation.md)
 - **Git Workflow**: [`../../00.agent-governance/rules/git-workflow.md`](../../00.agent-governance/rules/git-workflow.md)
-- **GitHub Hub**: [`../../../.github/ABOUT.md`](../../../.github/ABOUT.md)
+- **GitHub Hub**: [`../../../.github/README.md`](../../../.github/README.md)
 - **PR Template**: [`../../../.github/PULL_REQUEST_TEMPLATE.md`](../../../.github/PULL_REQUEST_TEMPLATE.md)
 - **GitHub Workflow Syntax**: [Workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
 - **GitHub Concurrency**: [Control workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)

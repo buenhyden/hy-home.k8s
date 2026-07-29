@@ -118,6 +118,24 @@
       "allowedResults": ["PASS", "FAIL"]
     },
     {
+      "id": "agent-harness-semantics",
+      "command": "python3 scripts/validate-agent-harness-semantics.py --root .",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
+      "id": "agent-legacy-cutover-self-test",
+      "command": "python3 scripts/validate-agent-legacy-cutover.py --root . --self-test",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
+      "id": "agent-legacy-cutover-production",
+      "command": "python3 scripts/validate-agent-legacy-cutover.py --root .",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
       "id": "agent-provider-config",
       "command": "python3 scripts/validate-agent-provider-config.py --root .",
       "evidence": "repo-static",
@@ -220,11 +238,6 @@
     ]
   },
   "deferredEvidence": [
-    {
-      "owner": "AGQC-003",
-      "result": "DEFER",
-      "scope": ["legacy-consumer-cutover", "github-hub-rename"]
-    },
     {
       "owner": "AGQC-005",
       "result": "DEFER",

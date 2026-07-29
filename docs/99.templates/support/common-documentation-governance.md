@@ -68,7 +68,7 @@ owner list.
 
 ### GitHub-Native Control Markdown Governance
 
-`.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+`.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
 `.github/SECURITY.md` are active repository control surfaces, but they are not
 structural stage documents and must not receive YAML frontmatter. GitHub reads
 or renders these files directly, so metadata belongs in their body structure
