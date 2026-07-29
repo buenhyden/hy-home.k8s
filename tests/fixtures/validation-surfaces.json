@@ -32,7 +32,7 @@
       "paths": [".env.example", ".gitignore", "_workspace/README.md"],
       "expected": {
         "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
       }
@@ -43,7 +43,7 @@
       "paths": ["AGENTS.md", ".agents/agents/supervisor.md"],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -54,7 +54,7 @@
       "paths": ["docs/00.agent-governance/contracts/harness-contract.json"],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -65,8 +65,81 @@
       "paths": ["docs/00.agent-governance/contracts/agent-loop-lifecycle.json", "scripts/validate-agent-checkpoint.py"],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
-        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-ci-topology",
+      "lane": "ci",
+      "paths": [".github/workflows/ci.yml"],
+      "expected": {
+        "validators": ["repository-quality"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-root-config",
+      "lane": "ci",
+      "paths": [".pre-commit-config.yaml"],
+      "expected": {
+        "validators": ["repository-quality"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-template-documents",
+      "lane": "ci",
+      "paths": ["docs/99.templates/support/template-routing.md"],
+      "expected": {
+        "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-authored-lineage",
+      "lane": "ci",
+      "paths": [
+        "docs/01.requirements/003-workspace-agent-governance-platform.md",
+        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
+        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
+        "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md"
+      ],
+      "expected": {
+        "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-scripts",
+      "lane": "ci",
+      "paths": ["scripts/validate-affected-surfaces.py"],
+      "expected": {
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+        "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "agent-governance-tests",
+      "lane": "ci",
+      "paths": ["tests/test_validate_ci_python_contract.py"],
+      "expected": {
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "repository-quality"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
         "unmatchedPaths": []
       }
     },
@@ -105,7 +178,7 @@
       ],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
-        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -123,7 +196,7 @@
       ],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
-        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -145,7 +218,7 @@
       "paths": [".gitignore"],
       "expected": {
         "validators": ["repository-quality"],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
       }
@@ -167,7 +240,7 @@
       "paths": [".agents/agents/network-reviewer.md"],
       "expected": {
         "validators": ["agent-checkpoint", "agent-evaluations", "agent-harness-contract", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -198,7 +271,7 @@
           "markdown-profiles",
           "repository-quality"
         ],
-        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -216,8 +289,8 @@
         "docs/99.templates/support/template-routing.md",
         ".github/workflows/ci.yml"
       ],
-      "expectedJobs": ["pre-commit", "repo-quality-static"],
-      "expectedGithubOutput": "manifests=false\nprecommit=true\nrepo_quality=true"
+      "expectedJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
     },
     {
       "name": "pull-request-base-head-document-surfaces",
@@ -230,8 +303,8 @@
         "docs/99.templates/support/template-routing.md",
         ".github/workflows/ci.yml"
       ],
-      "expectedJobs": ["pre-commit", "repo-quality-static"],
-      "expectedGithubOutput": "manifests=false\nprecommit=true\nrepo_quality=true"
+      "expectedJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
     },
     {
       "name": "push-initial-head-tree-all-surfaces",
@@ -249,8 +322,8 @@
         "docs/99.templates/support/template-routing.md",
         ".github/workflows/ci.yml"
       ],
-      "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
-      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
     },
     {
       "name": "pull-request-base-head-protected-surfaces",
@@ -264,7 +337,7 @@
         "traefik/traefik.yaml"
       ],
       "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
-      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "agent_governance=false\nmanifests=true\nprecommit=true\nrepo_quality=true"
     },
     {
       "name": "pull-request-rename-protected-to-document",
@@ -274,8 +347,27 @@
         "gitops/rename-probe.yaml",
         "docs/03.specs/999-rename-probe/spec.md"
       ],
-      "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
-      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
+    },
+    {
+      "name": "pull-request-agent-governance-broad-surfaces",
+      "event": "pull_request",
+      "rangeKind": "base-head",
+      "paths": [
+        ".pre-commit-config.yaml",
+        "docs/99.templates/support/template-routing.md",
+        "docs/01.requirements/003-workspace-agent-governance-platform.md",
+        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
+        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
+        "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
+        "scripts/validate-affected-surfaces.py",
+        "tests/test_validate_ci_python_contract.py"
+      ],
+      "expectedJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
     }
   ],
   "rejectionCases": [
@@ -615,6 +707,66 @@
       },
       "paths": ["README.md"],
       "expectedError": "SURFACE-CI-OUTPUT"
+    },
+    {
+      "name": "agent-governance-output-drift",
+      "mutation": {
+        "kind": "replace-ci-output",
+        "ciJobId": "agent-governance-static",
+        "output": "agent_static"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-CI-JOB"
+    },
+    {
+      "name": "remove-agent-governance-root-config",
+      "mutation": {
+        "kind": "remove-ci-job-reference",
+        "surfaceId": "root-config",
+        "ciJobId": "agent-governance-static"
+      },
+      "paths": [".pre-commit-config.yaml"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+    },
+    {
+      "name": "remove-agent-governance-template-documents",
+      "mutation": {
+        "kind": "remove-ci-job-reference",
+        "surfaceId": "template-documents",
+        "ciJobId": "agent-governance-static"
+      },
+      "paths": ["docs/99.templates/support/template-routing.md"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+    },
+    {
+      "name": "remove-agent-governance-authored-documents",
+      "mutation": {
+        "kind": "remove-ci-job-reference",
+        "surfaceId": "authored-documents",
+        "ciJobId": "agent-governance-static"
+      },
+      "paths": ["docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+    },
+    {
+      "name": "remove-agent-governance-scripts",
+      "mutation": {
+        "kind": "remove-ci-job-reference",
+        "surfaceId": "scripts",
+        "ciJobId": "agent-governance-static"
+      },
+      "paths": ["scripts/validate-affected-surfaces.py"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+    },
+    {
+      "name": "remove-agent-governance-tests",
+      "mutation": {
+        "kind": "remove-ci-job-reference",
+        "surfaceId": "tests",
+        "ciJobId": "agent-governance-static"
+      },
+      "paths": ["tests/test_validate_ci_python_contract.py"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
     }
   ]
 }

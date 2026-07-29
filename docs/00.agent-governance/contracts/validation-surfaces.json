@@ -176,6 +176,7 @@
     }
   ],
   "ciJobs": [
+    {"id": "agent-governance-static", "output": "agent_governance", "evidenceLane": "ci"},
     {"id": "manifest-static", "output": "manifests", "evidenceLane": "ci"},
     {"id": "pre-commit", "output": "precommit", "evidenceLane": "ci"},
     {"id": "repo-quality-static", "output": "repo_quality", "evidenceLane": "ci"}
@@ -205,7 +206,7 @@
         {"kind": "exact", "value": "cliff.toml"}
       ],
       "validators": ["repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "review",
       "fallback": {"status": "FAIL", "reason": "New root files require an explicit route."},
       "evidenceLane": "repo-static"
@@ -218,7 +219,7 @@
         {"kind": "exact", "value": "GEMINI.md"}
       ],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Provider gateways must remain thin and aligned."},
       "evidenceLane": "repo-static"
@@ -236,7 +237,7 @@
       "id": "agent-shared",
       "routes": [{"kind": "regex", "value": "^\\.agents/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Shared agent assets require provider parity evidence."},
       "evidenceLane": "repo-static"
@@ -245,7 +246,7 @@
       "id": "agent-claude",
       "routes": [{"kind": "regex", "value": "^\\.claude/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Claude adapters require provider parity evidence."},
       "evidenceLane": "repo-static"
@@ -254,7 +255,7 @@
       "id": "agent-codex",
       "routes": [{"kind": "regex", "value": "^\\.codex/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Codex adapters require provider parity evidence."},
       "evidenceLane": "repo-static"
@@ -263,7 +264,7 @@
       "id": "agent-gemini",
       "routes": [{"kind": "regex", "value": "^\\.gemini/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Gemini native adapters require provider parity evidence."},
       "evidenceLane": "repo-static"
@@ -272,7 +273,7 @@
       "id": "github-automation",
       "routes": [{"kind": "regex", "value": "^\\.github/.*$"}],
       "validators": ["repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Workflow and policy changes require repository QA."},
       "evidenceLane": "repo-static"
@@ -281,7 +282,7 @@
       "id": "governance-documents",
       "routes": [{"kind": "regex", "value": "^docs/00\\.agent-governance/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Stage 00 changes require governance validation."},
       "evidenceLane": "repo-static"
@@ -290,7 +291,7 @@
       "id": "template-documents",
       "routes": [{"kind": "regex", "value": "^docs/99\\.templates/.*$"}],
       "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Template changes require strict document validation."},
       "evidenceLane": "repo-static"
@@ -299,7 +300,7 @@
       "id": "authored-documents",
       "routes": [{"kind": "regex", "value": "^docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*|98\\.archive/.*)$"}],
       "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "review",
       "fallback": {"status": "FAIL", "reason": "Authored documents require strict profile and link validation."},
       "evidenceLane": "repo-static"
@@ -369,7 +370,7 @@
       "id": "scripts",
       "routes": [{"kind": "regex", "value": "^scripts/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
-      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Validator changes rerun every dependent static lane."},
       "evidenceLane": "repo-static"
@@ -387,7 +388,7 @@
       "id": "tests",
       "routes": [{"kind": "regex", "value": "^tests/.*$"}],
       "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "repository-quality"],
-      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "review",
       "fallback": {"status": "FAIL", "reason": "Fixture changes require repository QA."},
       "evidenceLane": "repo-static"

@@ -44,7 +44,13 @@ EXPECTED_GITLEAKS_INVENTORY = {
     "install_path": "/usr/local/bin/gitleaks",
 }
 EXPECTED_PYTHON = "3.12"
-VALIDATION_JOBS = ("pre-commit", "repo-quality-static", "manifest-static")
+VALIDATION_JOBS = (
+    "pre-commit",
+    "repo-quality-static",
+    "agent-governance-static",
+    "manifest-static",
+)
+AGENT_GOVERNANCE_JOB = "agent-governance-static"
 INSTALL_COMMAND = (
     "python -m pip install --disable-pip-version-check "
     "--requirement .github/requirements/ci-validation.txt"
@@ -399,6 +405,32 @@ def _validate_repository_history(
         )
 
 
+def _validate_agent_governance_checkout(
+    job_steps: dict[str, list[dict[str, Any]]],
+) -> None:
+    steps = job_steps[AGENT_GOVERNANCE_JOB]
+    checkout_steps = [
+        step
+        for step in steps
+        if isinstance(step.get("uses"), str)
+        and step["uses"].startswith("actions/checkout@")
+    ]
+    if len(checkout_steps) != 1:
+        fail(
+            "CI-AGENT-GOVERNANCE-CHECKOUT",
+            "agent-governance-static must contain exactly one checkout step",
+        )
+    checkout_with = checkout_steps[0].get("with")
+    if checkout_with != {
+        "persist-credentials": False,
+        "fetch-depth": 0,
+    }:
+        fail(
+            "CI-AGENT-GOVERNANCE-CHECKOUT",
+            "agent-governance-static checkout must disable credentials and fetch full history",
+        )
+
+
 def validate_repository(root: Path) -> int:
     root = Path(root)
     requirements_text = _read_regular_text(
@@ -440,6 +472,7 @@ def validate_repository(root: Path) -> int:
     _validate_pre_commit_execution(workflow, job_steps)
     _validate_gitleaks_tool(workflow, job_steps)
     _validate_repository_history(job_steps)
+    _validate_agent_governance_checkout(job_steps)
     return len(job_steps)
 
 
@@ -487,6 +520,17 @@ jobs:
       - run: {INSTALL_COMMAND}
       - run: |
           {GITLEAKS_INSTALL_COMMAND.replace(chr(10), chr(10) + "          ")}
+  agent-governance-static:
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@0123456789abcdef0123456789abcdef01234567
+        with:
+          python-version: '3.12'
+      - run: {INSTALL_COMMAND}
+      - run: python3 scripts/validate-agent-harness-contract.py --root .
   manifest-static:
     steps:
       - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
@@ -514,13 +558,39 @@ def _write_self_test_root(
 
 def run_self_test() -> int:
     requirements, inventory, workflow = _valid_self_test_content()
-    history_parts = workflow.rsplit("          fetch-depth: 0\n", 1)
-    if len(history_parts) != 2:
+    repository_job_start = workflow.find("  repo-quality-static:\n")
+    repository_history = workflow.find(
+        "          fetch-depth: 0\n",
+        repository_job_start,
+    )
+    if repository_job_start < 0 or repository_history < 0:
         fail(
             "CI-PYTHON-WORKFLOW",
             "self-test fixture lacks repo-quality-static full history",
         )
-    shallow_repo_quality = "".join(history_parts)
+    shallow_repo_quality = (
+        workflow[:repository_history]
+        + workflow[
+            repository_history + len("          fetch-depth: 0\n") :
+        ]
+    )
+    agent_job_start = workflow.find("  agent-governance-static:\n")
+    agent_persist_credentials = workflow.find(
+        "          persist-credentials: false\n",
+        agent_job_start,
+    )
+    if agent_job_start < 0 or agent_persist_credentials < 0:
+        fail(
+            "CI-PYTHON-WORKFLOW",
+            "self-test fixture lacks agent-governance-static checkout hardening",
+        )
+    credential_persisting_agent = (
+        workflow[:agent_persist_credentials]
+        + workflow[
+            agent_persist_credentials
+            + len("          persist-credentials: false\n") :
+        ]
+    )
     mutations = (
         (
             "CI-PYTHON-PIN",
@@ -615,6 +685,12 @@ def run_self_test() -> int:
             inventory,
             shallow_repo_quality,
         ),
+        (
+            "CI-AGENT-GOVERNANCE-CHECKOUT",
+            requirements,
+            inventory,
+            credential_persisting_agent,
+        ),
     )
 
     with tempfile.TemporaryDirectory(prefix="ci-python-contract-self-test-") as raw:
@@ -679,7 +755,7 @@ def main() -> int:
             case_count = run_self_test()
             print(
                 "[PASS] CI Python contract self-test passed: "
-                f"rules=9 cases={case_count}"
+                f"rules=10 cases={case_count}"
             )
             return 0
         job_count = validate_repository(args.root)

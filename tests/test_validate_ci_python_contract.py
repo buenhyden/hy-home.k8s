@@ -111,6 +111,19 @@ jobs:
           tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
           sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
       - run: bash scripts/validate-repo-quality-gates.sh .
+  agent-governance-static:
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@0000000000000000000000000000000000000000
+        with:
+          python-version: '3.12'
+      - name: Install repository validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
+      - run: python3 scripts/validate-agent-harness-contract.py --root .
   manifest-static:
     steps:
       - uses: actions/checkout@0000000000000000000000000000000000000000
@@ -150,7 +163,7 @@ class CiPythonContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.rule_id, rule_id)
 
     def test_valid_temporary_repository_passes(self) -> None:
-        self.assertEqual(VALIDATOR.validate_repository(self.make_valid_root()), 3)
+        self.assertEqual(VALIDATOR.validate_repository(self.make_valid_root()), 4)
 
     def test_cli_accepts_valid_temporary_repository(self) -> None:
         root = self.make_valid_root()
@@ -211,6 +224,80 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
+
+    def test_agent_governance_job_must_pin_python_312(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        start = text.index("  agent-governance-static:")
+        version = text.index("python-version: '3.12'", start)
+        workflow.write_text(
+            text[:version]
+            + text[version:].replace(
+                "python-version: '3.12'",
+                "python-version: '3.x'",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-PYTHON-VERSION")
+
+    def test_agent_governance_job_must_use_shared_install(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        start = text.index("  agent-governance-static:")
+        install = text.index(
+            "python -m pip install --disable-pip-version-check --requirement "
+            ".github/requirements/ci-validation.txt",
+            start,
+        )
+        workflow.write_text(
+            text[:install]
+            + text[install:].replace(
+                "python -m pip install --disable-pip-version-check --requirement "
+                ".github/requirements/ci-validation.txt",
+                "python -m pip install pyyaml",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-PYTHON-WORKFLOW")
+
+    def test_agent_governance_checkout_must_be_credential_free_with_history(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        start = text.index("  agent-governance-static:")
+        persist_credentials = text.index("          persist-credentials: false\n", start)
+        workflow.write_text(
+            text[:persist_credentials]
+            + text[
+                persist_credentials + len("          persist-credentials: false\n") :
+            ],
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-AGENT-GOVERNANCE-CHECKOUT")
+
+    def test_agent_governance_job_must_not_install_gitleaks(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / ".github/workflows/ci.yml"
+        text = workflow.read_text(encoding="utf-8")
+        start = text.index("  agent-governance-static:")
+        harness_step = text.index(
+            "      - run: python3 scripts/validate-agent-harness-contract.py --root .\n",
+            start,
+        )
+        injected = (
+            "      - name: Install Gitleaks\n"
+            "        run: |\n"
+            + "".join(f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines())
+        )
+        workflow.write_text(
+            text[:harness_step] + injected + text[harness_step:],
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "CI-GITLEAKS-TOOL")
 
     def test_unexpected_job_must_not_own_python_validation_setup(self) -> None:
         root = self.make_valid_root()
@@ -334,7 +421,7 @@ class CiPythonContractTests(unittest.TestCase):
 )
 class CiPythonProductionRootTests(unittest.TestCase):
     def test_repository_root_passes(self) -> None:
-        self.assertEqual(VALIDATOR.validate_repository(REPO_ROOT), 3)
+        self.assertEqual(VALIDATOR.validate_repository(REPO_ROOT), 4)
 
 
 if __name__ == "__main__":

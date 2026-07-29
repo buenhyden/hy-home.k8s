@@ -36,6 +36,28 @@ LANES = (
 )
 PROTECTED_LEVELS = ("none", "review", "protected")
 EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
+EXPECTED_CI_JOBS = {
+    "agent-governance-static": "agent_governance",
+    "manifest-static": "manifests",
+    "pre-commit": "precommit",
+    "repo-quality-static": "repo_quality",
+}
+EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
+    (
+        "root-config",
+        "provider-gateways",
+        "agent-shared",
+        "agent-claude",
+        "agent-codex",
+        "agent-gemini",
+        "github-automation",
+        "governance-documents",
+        "template-documents",
+        "authored-documents",
+        "scripts",
+        "tests",
+    )
+)
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
 )
@@ -254,6 +276,13 @@ def validate_contract(
         outputs.add(job["output"])
         if job["evidenceLane"] != "ci":
             fail("SURFACE-EVIDENCE-LANE", job["id"])
+    if {
+        identifier: job["output"] for identifier, job in ci_jobs.items()
+    } != EXPECTED_CI_JOBS:
+        fail(
+            "SURFACE-CI-JOB",
+            "CI job IDs and selector outputs differ from the exact contract",
+        )
 
     route_keys: set[tuple[str, str, str]] = set()
     for surface in surfaces.values():
@@ -285,6 +314,16 @@ def validate_contract(
             if key in route_keys:
                 fail("SURFACE-ROUTE-DUPLICATE", f"{surface['id']}: {route}")
             route_keys.add(key)
+    agent_governance_surfaces = {
+        identifier
+        for identifier, surface in surfaces.items()
+        if "agent-governance-static" in surface["ciJobs"]
+    }
+    if agent_governance_surfaces != EXPECTED_AGENT_GOVERNANCE_SURFACES:
+        fail(
+            "SURFACE-AGENT-GOVERNANCE-CI",
+            "agent-governance-static surface ownership differs from the exact contract",
+        )
     return contract
 
 
@@ -402,6 +441,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         fail("SURFACE-LOCAL-CI-MISMATCH", f"cannot read changes job: {exc}")
 
     required_fragments = (
+        "agent_governance: ${{ steps.filter.outputs.agent_governance }}",
         "precommit: ${{ steps.filter.outputs.precommit }}",
         "repo_quality: ${{ steps.filter.outputs.repo_quality }}",
         "manifests: ${{ steps.filter.outputs.manifests }}",
@@ -443,6 +483,107 @@ def validate_ci_workflow_selector(root: Path) -> None:
             detail.append(f"missing={missing!r}")
         if present:
             detail.append(f"forbidden={present!r}")
+        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
+
+    try:
+        agent_job = workflow.split("\n  agent-governance-static:\n", 1)[1].split(
+            "\n  manifest-static:\n", 1
+        )[0]
+        summary_job = workflow.split("\n  ci-summary:\n", 1)[1]
+    except IndexError as exc:
+        fail(
+            "SURFACE-LOCAL-CI-MISMATCH",
+            f"cannot read agent-governance-static or ci-summary job: {exc}",
+        )
+
+    required_agent_fragments = (
+        "needs: changes",
+        "if: needs.changes.outputs.agent_governance == 'true'",
+        "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0",
+        "persist-credentials: false",
+        "fetch-depth: 0",
+        "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0",
+        "python-version: '3.12'",
+        "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
+        "python3 scripts/validate-agent-harness-contract.py --root .",
+        "python3 scripts/validate-agent-provider-config.py --root .",
+        "python3 scripts/validate-agent-loop-lifecycle.py --root .",
+        "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
+        "python3 scripts/validate-agent-roster-admission.py --root .",
+        "python3 scripts/validate-agent-evaluations.py --root .",
+        "python3 scripts/validate-agent-model-fitness.py --root .",
+        "python3 scripts/validate-agent-roster-currentness.py .",
+        "python3 scripts/validate-affected-surfaces.py --root . --self-test",
+        "python3 scripts/validate-affected-surfaces.py --root .",
+        "python3 scripts/validate-ci-python-contract.py --root . --self-test",
+        "python3 scripts/validate-ci-python-contract.py --root .",
+        "python3 scripts/validate-github-actions-security.py --root .",
+    )
+    missing_agent = [
+        fragment for fragment in required_agent_fragments if fragment not in agent_job
+    ]
+    forbidden_agent_fragments = (
+        "secrets.",
+        "validate-agent-provider-canaries.py",
+        "validate-agent-provider-evidence.py",
+        "pull_request_target",
+        "id-token:",
+        "contents: write",
+        "gitleaks/releases/download",
+    )
+    present_agent = [
+        fragment for fragment in forbidden_agent_fragments if fragment in agent_job
+    ]
+    if missing_agent or present_agent:
+        detail = []
+        if missing_agent:
+            detail.append(f"agent_missing={missing_agent!r}")
+        if present_agent:
+            detail.append(f"agent_forbidden={present_agent!r}")
+        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
+
+    required_summary_fragments = (
+        "- agent-governance-static",
+        "if: always()",
+        "EVENT_NAME: ${{ github.event_name }}",
+        "AGENT_GOVERNANCE_STATIC_SELECTED: ${{ needs.changes.outputs.agent_governance }}",
+        "AGENT_GOVERNANCE_STATIC_RESULT: ${{ needs['agent-governance-static'].result }}",
+        'report_required "changes" "$CHANGES_RESULT"',
+        'report_conditional "branch-policy" "$branch_policy_selected" "$BRANCH_POLICY_RESULT"',
+        'report_conditional "pre-commit" "$PRE_COMMIT_SELECTED" "$PRE_COMMIT_RESULT"',
+        'report_conditional "repo-quality-static" "$REPO_QUALITY_STATIC_SELECTED" "$REPO_QUALITY_STATIC_RESULT"',
+        'report_conditional "agent-governance-static" "$AGENT_GOVERNANCE_STATIC_SELECTED" "$AGENT_GOVERNANCE_STATIC_RESULT"',
+        'report_conditional "manifest-static" "$MANIFEST_STATIC_SELECTED" "$MANIFEST_STATIC_RESULT"',
+        'true:success)',
+        'false:skipped)',
+        '*)',
+        'verdict="PASS"',
+        'verdict="SKIP"',
+        'verdict="FAIL"',
+        "failed=1",
+        'if [ "$failed" -ne 0 ]; then',
+        "one or more required CI gates failed closed",
+    )
+    missing_summary = [
+        fragment
+        for fragment in required_summary_fragments
+        if fragment not in summary_job
+    ]
+    forbidden_summary_fragments = (
+        "contains(needs.*.result",
+        "continue-on-error",
+    )
+    present_summary = [
+        fragment
+        for fragment in forbidden_summary_fragments
+        if fragment in summary_job
+    ]
+    if missing_summary or present_summary:
+        detail = []
+        if missing_summary:
+            detail.append(f"summary_missing={missing_summary!r}")
+        if present_summary:
+            detail.append(f"summary_forbidden={present_summary!r}")
         fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
 
 
@@ -615,6 +756,18 @@ def _mutate(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
         )
         surface["ciJobs"].append(mutation["ciJobId"])
         return
+    if mutation["kind"] == "remove-ci-job-reference":
+        surface = next(
+            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
+        )
+        try:
+            surface["ciJobs"].remove(mutation["ciJobId"])
+        except ValueError:
+            fail(
+                "SURFACE-FIXTURE",
+                f"{mutation['surfaceId']} does not reference {mutation['ciJobId']}",
+            )
+        return
     if mutation["kind"] == "replace-protected-level":
         surface = next(
             row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
@@ -700,7 +853,40 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         if actual != case["expectedSurface"]:
             fail("SURFACE-SELF-TEST", f"{case['name']}: {actual}")
 
-    for case in fixture["selectionCases"]:
+    selection_cases = fixture["selectionCases"]
+    selection_by_name = {case.get("name"): case for case in selection_cases}
+    if len(selection_by_name) != len(selection_cases):
+        fail("SURFACE-FIXTURE", "selection case names must be unique")
+    required_agent_selection_paths = {
+        "agent-governance-root-config": (".pre-commit-config.yaml",),
+        "agent-governance-template-documents": (
+            "docs/99.templates/support/template-routing.md",
+        ),
+        "agent-governance-authored-lineage": (
+            "docs/01.requirements/003-workspace-agent-governance-platform.md",
+            "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+            "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
+            "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+            "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
+            "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
+        ),
+        "agent-governance-scripts": ("scripts/validate-affected-surfaces.py",),
+        "agent-governance-tests": (
+            "tests/test_validate_ci_python_contract.py",
+        ),
+    }
+    for name, paths in required_agent_selection_paths.items():
+        case = selection_by_name.get(name)
+        if (
+            case is None
+            or case.get("lane") != "ci"
+            or tuple(case.get("paths", ())) != paths
+            or "agent-governance-static"
+            not in case.get("expected", {}).get("ciJobs", ())
+        ):
+            fail("SURFACE-FIXTURE", f"{name}: broad CI route coverage differs")
+
+    for case in selection_cases:
         actual = select_paths(contract, case["paths"], case["lane"], root)
         if actual != case["expected"]:
             fail(
@@ -719,6 +905,10 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "pull-request-rename-protected-to-document": (
             "pull_request",
             "base-head-no-renames",
+        ),
+        "pull-request-agent-governance-broad-surfaces": (
+            "pull_request",
+            "base-head",
         ),
     }
     ci_range_cases = fixture["ciRangeCases"]
@@ -744,6 +934,15 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         ".github/workflows/ci.yml",
         "gitops/rename-probe.yaml",
         "docs/03.specs/999-rename-probe/spec.md",
+        ".pre-commit-config.yaml",
+        "docs/01.requirements/003-workspace-agent-governance-platform.md",
+        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
+        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
+        "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
+        "scripts/validate-affected-surfaces.py",
+        "tests/test_validate_ci_python_contract.py",
     }
     observed_ci_paths = {
         path for case in ci_range_cases for path in case.get("paths", [])
@@ -827,6 +1026,29 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     mutation_names = {case.get("name") for case in fixture["mutationCases"]}
     if not required_argv_mutations.issubset(mutation_names):
         fail("SURFACE-FIXTURE", "direct-script negative argv coverage differs")
+    required_agent_mutations = {
+        "remove-agent-governance-root-config": "root-config",
+        "remove-agent-governance-template-documents": "template-documents",
+        "remove-agent-governance-authored-documents": "authored-documents",
+        "remove-agent-governance-scripts": "scripts",
+        "remove-agent-governance-tests": "tests",
+    }
+    mutations_by_name = {
+        case.get("name"): case for case in fixture["mutationCases"]
+    }
+    for name, surface_id in required_agent_mutations.items():
+        case = mutations_by_name.get(name)
+        if (
+            case is None
+            or case.get("mutation")
+            != {
+                "kind": "remove-ci-job-reference",
+                "surfaceId": surface_id,
+                "ciJobId": "agent-governance-static",
+            }
+            or case.get("expectedError") != "SURFACE-AGENT-GOVERNANCE-CI"
+        ):
+            fail("SURFACE-FIXTURE", f"{name}: mutation coverage differs")
 
     for case in fixture["mutationCases"]:
         mutated = copy.deepcopy(contract)
@@ -842,13 +1064,14 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
 
     root_result = select_paths(contract, ["README.md"], "ci", root)
     if json_output(root_result) != (
-        '{"ciJobs":["pre-commit","repo-quality-static"],'
+        '{"ciJobs":["agent-governance-static","pre-commit","repo-quality-static"],'
         '"protectedLevel":"review","unmatchedPaths":[],'
         '"validators":["repository-quality"]}'
     ):
         fail("SURFACE-SELF-TEST", "stable JSON output differs")
     if github_output(contract, root_result) != (
-        "manifests=false\nprecommit=true\nrepo_quality=true"
+        "agent_governance=true\nmanifests=false\n"
+        "precommit=true\nrepo_quality=true"
     ):
         fail("SURFACE-SELF-TEST", "stable GitHub output differs")
     mixed_result = select_paths(

@@ -42,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      agent_governance: ${{ steps.filter.outputs.agent_governance }}
       precommit: ${{ steps.filter.outputs.precommit }}
       repo_quality: ${{ steps.filter.outputs.repo_quality }}
       manifests: ${{ steps.filter.outputs.manifests }}
@@ -155,6 +156,38 @@ jobs:
         run: |
           bash scripts/validate-repo-quality-gates.sh .
 
+  agent-governance-static:
+    needs: changes
+    if: needs.changes.outputs.agent_governance == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Install repository validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt
+      - name: Run agent governance static checks
+        run: |
+          python3 scripts/validate-agent-harness-contract.py --root .
+          python3 scripts/validate-agent-provider-config.py --root .
+          python3 scripts/validate-agent-loop-lifecycle.py --root .
+          python3 scripts/validate-agent-checkpoint.py --root . --self-test
+          python3 scripts/validate-agent-roster-admission.py --root .
+          python3 scripts/validate-agent-evaluations.py --root .
+          python3 scripts/validate-agent-model-fitness.py --root .
+          python3 scripts/validate-agent-roster-currentness.py .
+          python3 scripts/validate-affected-surfaces.py --root . --self-test
+          python3 scripts/validate-affected-surfaces.py --root .
+          python3 scripts/validate-ci-python-contract.py --root . --self-test
+          python3 scripts/validate-ci-python-contract.py --root .
+          python3 scripts/validate-github-actions-security.py --root .
+
   manifest-static:
     needs: changes
     if: needs.changes.outputs.manifests == 'true'
@@ -193,6 +226,7 @@ jobs:
       - changes
       - pre-commit
       - repo-quality-static
+      - agent-governance-static
       - manifest-static
     if: always()
     runs-on: ubuntu-latest
@@ -200,19 +234,72 @@ jobs:
     steps:
       - name: Summarize CI result
         env:
+          EVENT_NAME: ${{ github.event_name }}
           BRANCH_POLICY_RESULT: ${{ needs['branch-policy'].result }}
           CHANGES_RESULT: ${{ needs.changes.result }}
+          PRE_COMMIT_SELECTED: ${{ needs.changes.outputs.precommit }}
           PRE_COMMIT_RESULT: ${{ needs['pre-commit'].result }}
+          REPO_QUALITY_STATIC_SELECTED: ${{ needs.changes.outputs.repo_quality }}
           REPO_QUALITY_STATIC_RESULT: ${{ needs['repo-quality-static'].result }}
+          AGENT_GOVERNANCE_STATIC_SELECTED: ${{ needs.changes.outputs.agent_governance }}
+          AGENT_GOVERNANCE_STATIC_RESULT: ${{ needs['agent-governance-static'].result }}
+          MANIFEST_STATIC_SELECTED: ${{ needs.changes.outputs.manifests }}
           MANIFEST_STATIC_RESULT: ${{ needs['manifest-static'].result }}
         run: |
-          printf 'branch-policy=%s\n' "$BRANCH_POLICY_RESULT"
-          printf 'changes=%s\n' "$CHANGES_RESULT"
-          printf 'pre-commit=%s\n' "$PRE_COMMIT_RESULT"
-          printf 'repo-quality-static=%s\n' "$REPO_QUALITY_STATIC_RESULT"
-          printf 'manifest-static=%s\n' "$MANIFEST_STATIC_RESULT"
-      - name: Fail on gate failure
-        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
-        run: |
-          echo "one or more required CI gates failed"
-          exit 1
+          set -euo pipefail
+          failed=0
+
+          report_required() {
+            label="$1"
+            result="$2"
+            if [ "$result" = "success" ]; then
+              verdict="PASS"
+            else
+              verdict="FAIL"
+              failed=1
+            fi
+            printf '%s selected=true result=%s verdict=%s\n' "$label" "$result" "$verdict"
+          }
+
+          report_conditional() {
+            label="$1"
+            selected="$2"
+            result="$3"
+            case "$selected:$result" in
+              true:success)
+                verdict="PASS"
+                ;;
+              false:skipped)
+                verdict="SKIP"
+                ;;
+              *)
+                verdict="FAIL"
+                failed=1
+                ;;
+            esac
+            printf '%s selected=%s result=%s verdict=%s\n' "$label" "$selected" "$result" "$verdict"
+          }
+
+          case "$EVENT_NAME" in
+            pull_request)
+              branch_policy_selected="true"
+              ;;
+            push|workflow_dispatch)
+              branch_policy_selected="false"
+              ;;
+            *)
+              branch_policy_selected="invalid"
+              ;;
+          esac
+
+          report_conditional "branch-policy" "$branch_policy_selected" "$BRANCH_POLICY_RESULT"
+          report_required "changes" "$CHANGES_RESULT"
+          report_conditional "pre-commit" "$PRE_COMMIT_SELECTED" "$PRE_COMMIT_RESULT"
+          report_conditional "repo-quality-static" "$REPO_QUALITY_STATIC_SELECTED" "$REPO_QUALITY_STATIC_RESULT"
+          report_conditional "agent-governance-static" "$AGENT_GOVERNANCE_STATIC_SELECTED" "$AGENT_GOVERNANCE_STATIC_RESULT"
+          report_conditional "manifest-static" "$MANIFEST_STATIC_SELECTED" "$MANIFEST_STATIC_RESULT"
+
+          if [ "$failed" -ne 0 ]; then
+            echo "one or more required CI gates failed closed"
+            exit 1
+          fi

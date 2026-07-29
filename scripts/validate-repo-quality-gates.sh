@@ -3101,6 +3101,7 @@ required_ci_jobs = {
     "changes",
     "pre-commit",
     "repo-quality-static",
+    "agent-governance-static",
     "manifest-static",
     "ci-summary",
 }
@@ -3114,12 +3115,14 @@ expected_job_needs = {
     "changes": [],
     "pre-commit": ["changes"],
     "repo-quality-static": ["changes"],
+    "agent-governance-static": ["changes"],
     "manifest-static": ["changes"],
     "ci-summary": [
         "branch-policy",
         "changes",
         "pre-commit",
         "repo-quality-static",
+        "agent-governance-static",
         "manifest-static",
     ],
 }
@@ -3128,6 +3131,7 @@ expected_job_if = {
     "changes": "",
     "pre-commit": "needs.changes.outputs.precommit == 'true'",
     "repo-quality-static": "needs.changes.outputs.repo_quality == 'true'",
+    "agent-governance-static": "needs.changes.outputs.agent_governance == 'true'",
     "manifest-static": "needs.changes.outputs.manifests == 'true'",
     "ci-summary": "always()",
 }
@@ -3187,12 +3191,35 @@ ci_summary_env_text = "\n".join(
     "\n".join(f"{key}={value}" for key, value in (step.get("env") or {}).items())
     for step in ci_summary_job.get("steps") or []
 )
-for phrase in ["BRANCH_POLICY_RESULT", "branch-policy="]:
+for phrase in [
+    "BRANCH_POLICY_RESULT",
+    "AGENT_GOVERNANCE_STATIC_SELECTED",
+    "AGENT_GOVERNANCE_STATIC_RESULT",
+    'report_conditional "branch-policy"',
+    'report_required "changes"',
+    'report_conditional "agent-governance-static"',
+    'true:success)',
+    'false:skipped)',
+    '*)',
+    'verdict="PASS"',
+    'verdict="SKIP"',
+    'verdict="FAIL"',
+    "failed=1",
+    'if [ "$failed" -ne 0 ]; then',
+    "one or more required CI gates failed closed",
+]:
     if phrase not in (ci_summary_text + "\n" + ci_summary_env_text):
-        fail(f"{rel(ci_path)} ci-summary missing branch-policy linkage: {phrase}")
+        fail(f"{rel(ci_path)} ci-summary missing fail-closed result contract: {phrase}")
+for forbidden_phrase in [
+    "contains(needs.*.result",
+    "continue-on-error",
+]:
+    if forbidden_phrase in (ci_summary_text + "\n" + ci_summary_env_text):
+        fail(f"{rel(ci_path)} ci-summary contains open result contract: {forbidden_phrase}")
 
 changes_job = ci_jobs.get("changes") or {}
 expected_changes_outputs = {
+    "agent_governance": "${{ steps.filter.outputs.agent_governance }}",
     "precommit": "${{ steps.filter.outputs.precommit }}",
     "repo_quality": "${{ steps.filter.outputs.repo_quality }}",
     "manifests": "${{ steps.filter.outputs.manifests }}",
@@ -3239,6 +3266,70 @@ for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
     if forbidden_marker in selector_run or forbidden_marker in ci_text:
         fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
 
+agent_governance_steps = (ci_jobs.get("agent-governance-static") or {}).get("steps") or []
+agent_governance_checkout_steps = [
+    step
+    for step in agent_governance_steps
+    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+]
+if len(agent_governance_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} agent-governance-static must have exactly one pinned checkout step")
+else:
+    agent_governance_checkout_with = agent_governance_checkout_steps[0].get("with") or {}
+    if agent_governance_checkout_with != {
+        "persist-credentials": False,
+        "fetch-depth": 0,
+    }:
+        fail(
+            f"{rel(ci_path)} agent-governance-static checkout must disable persisted "
+            "credentials and use fetch-depth: 0"
+        )
+
+agent_governance_setup_steps = [
+    step
+    for step in agent_governance_steps
+    if step.get("uses") == "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1"
+]
+if len(agent_governance_setup_steps) != 1:
+    fail(f"{rel(ci_path)} agent-governance-static must have exactly one pinned setup-python step")
+elif (agent_governance_setup_steps[0].get("with") or {}) != {
+    "python-version": "3.12"
+}:
+    fail(f"{rel(ci_path)} agent-governance-static must use Python 3.12")
+
+agent_governance_runs = "\n".join(
+    str(step.get("run") or "")
+    for step in agent_governance_steps
+)
+for command in [
+    "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
+    "python3 scripts/validate-agent-harness-contract.py --root .",
+    "python3 scripts/validate-agent-provider-config.py --root .",
+    "python3 scripts/validate-agent-loop-lifecycle.py --root .",
+    "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
+    "python3 scripts/validate-agent-roster-admission.py --root .",
+    "python3 scripts/validate-agent-evaluations.py --root .",
+    "python3 scripts/validate-agent-model-fitness.py --root .",
+    "python3 scripts/validate-agent-roster-currentness.py .",
+    "python3 scripts/validate-affected-surfaces.py --root . --self-test",
+    "python3 scripts/validate-affected-surfaces.py --root .",
+    "python3 scripts/validate-ci-python-contract.py --root . --self-test",
+    "python3 scripts/validate-ci-python-contract.py --root .",
+    "python3 scripts/validate-github-actions-security.py --root .",
+]:
+    if command not in agent_governance_runs:
+        fail(f"{rel(ci_path)} agent-governance-static missing command: {command}")
+for forbidden_command in [
+    "validate-agent-provider-canaries.py",
+    "validate-agent-provider-evidence.py",
+    "gitleaks/releases/download",
+    "secrets.",
+]:
+    if forbidden_command in agent_governance_runs:
+        fail(
+            f"{rel(ci_path)} agent-governance-static contains forbidden runtime, "
+            f"secret, or duplicated tool surface: {forbidden_command}"
+        )
 
 manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
 manifest_checkout_steps = [
