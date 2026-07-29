@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 AGQC-003 consumer-first legacy cutover postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, automation, docs, governance, qa, security
+- **Status**: done
+- **Tags**: #spec-045 #agqc-003 #legacy-cutover #github-hub #security
+
+#### Progress
+
+- Committed the exact seventy-seven-path AGQC-003 implementation as
+  `38a2fe6b90bad694d0a9a021c7edce8d800e03ea`
+  (`feat(agent): complete consumer-first legacy cutover`) with sole parent
+  `a3cf5836e46cb2e53f9ec5ddf4150559d2643d39`.
+- Added the closed legacy-cutover contract, adjacent schema, validator,
+  deterministic fixture, focused tests, local/CI registration, and complete
+  active-consumer scan before removing the legacy role-semantics
+  contract/schema/validator/fixture ownership.
+- Renamed the GitHub hub to `.github/README.md`, migrated current authority
+  routes and active references, and restricted retained history to exact
+  normative/progress counts or byte-pinned snapshots with explicit
+  superseding relations.
+
+#### Evidence
+
+- Focused validation passed `20` unit tests, `3` positive and `22` mutation
+  self-test cases, and production scanning of `810` files with `43` evidence
+  references and `0` active consumers.
+- Reference-information-architecture `87` tests, strict cross-document
+  validation, the repository quality aggregate, all-files pre-commit, staged
+  and unstaged diff checks, and clean post-commit status passed.
+- Requirements, security, and integration reviews reported zero remaining
+  Critical or Important findings. Review remediation added exact active
+  Plan/Task zero-reference enforcement, lifecycle-qualified protected
+  evidence, no-follow pinned authority loading, and fail-closed checks for
+  missing or rewritten historical snapshots.
+
+#### Security & Boundary
+
+- Protected evidence cannot pass by digest alone. Every closed row must exist
+  as regular UTF-8 and match its digest, evidence kind, superseded lifecycle,
+  observation/source identity, retired-reference count, and canonical
+  replacement before the repository scan starts.
+- No provider authentication, model/runtime discovery, hosted workflow
+  dispatch, branch-protection mutation, credential read/change, remote
+  mutation, or live Kubernetes/GitOps/Vault/ESO action occurred. Those lanes
+  remain `DEFER` for Spec 046.
+
+#### Handoff
+
+- AGQC-004 now owns the remaining local QA ordering and current
+  repository-quality, pre-commit, script, test, GitHub, and documentation
+  inventory reconciliation.
+- This entry records the observed AGQC-003 implementation identity but does
+  not preclaim its own postflight commit SHA, AGQC-004 completion, AGQC-005
+  memory/checkpoint completion, Spec 045 closure, or any Spec 046 result.
+
 ### 2026-07-30 - Spec 045 AGQC-002 closed CI contract postflight
 
 #### Metadata
