@@ -3,7 +3,7 @@ title: 'Reference: AGENTS.md Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-30
 ---
 
 # AGENTS.md Provider Notes
@@ -79,6 +79,15 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
   repo-static adapter boundary. The four evidence classes are
   `repo-static`, `provider-runtime`, `ci`, and `remote-live`, with no
   cross-class inference.
+- `model-policy.md` owns the shared tier and reasoning vocabulary.
+  `contracts/agent-model-fitness.json` version `1.1.0` owns every
+  role/provider incumbent, configured and observed value, candidate, reasoning,
+  fallback, and decision state. AREA-004 records mapping readiness
+  `PASS` 21 / `DEFER` 27 and observed fitness, threshold, promotion, canary,
+  and runtime `DEFER` 48; configured incumbents remain in place.
+- AREA-003 repository-static evaluation readiness is complete, while observed
+  same-suite evaluation and final admission remain `DEFER`. Neither gateway
+  presence nor model-fitness validation supplies provider/runtime evidence.
 - The legacy role-semantics contract remains readable compatibility input with
   zero semantic consumers until Spec 045; it is not authority.
 - `AGENTS.md` points to, but does not restate, the validation lane, result, and
@@ -92,13 +101,15 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 
 ## Validation and Refresh
 
-Run the harness, role-semantic, roster-currentness, and repository quality
-checks after changing the gateway or a Codex adapter:
+Run the harness, provider/model, role-semantic, roster-currentness, and
+repository quality checks after changing the gateway, model semantics, or a
+Codex adapter:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-provider-config.py --root .
 python3 scripts/validate-agent-provider-canaries.py --root .
+python3 scripts/validate-agent-model-fitness.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

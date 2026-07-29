@@ -3,7 +3,7 @@ title: 'Reference: Claude Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-30
 ---
 
 # Claude Provider Notes
@@ -97,6 +97,18 @@ resolution, hooks, or delegated execution.
 - `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
   machine owner. Its current `12 roles / 4 surfaces / 48 adapters` inventory is
   repository-static adapter evidence.
+- `model-policy.md` owns shared tier/reasoning vocabulary, while
+  `contracts/agent-model-fitness.json` version `1.1.0` owns exact
+  role/provider incumbent, configured and observed value, candidate, reasoning,
+  fallback, and decision state. AREA-004 records nine cutoff-backed Claude
+  high-risk mappings as ready and three current-only Claude mappings as
+  `DEFER`; this contributes to the global mapping result `PASS` 21 /
+  `DEFER` 27. Observed fitness, threshold, promotion, canary, and runtime
+  remain `DEFER` for all 48 tuples.
+- Claude adapter model values remain configured incumbents until a future
+  authorized, evidence-backed promotion. AREA-003 repository-static evaluation
+  readiness is complete, while observed same-suite evaluation and final
+  admission remain `DEFER`.
 - Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
   separate. A result in one class never proves another.
 - The legacy role-semantics contract is readable compatibility input with zero
@@ -112,13 +124,15 @@ resolution, hooks, or delegated execution.
 
 ## Validation and Refresh
 
-Run the harness, shared role-semantic, roster, and repository quality checks
-after changing Claude settings, hooks, or agent adapters:
+Run the harness, provider/model, shared role-semantic, roster, and repository
+quality checks after changing Claude settings, hooks, model semantics, or agent
+adapters:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-provider-config.py --root .
 python3 scripts/validate-agent-provider-canaries.py --root .
+python3 scripts/validate-agent-model-fitness.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-29
+updated: 2026-07-30
 ---
 
 # Gemini Provider Notes
@@ -123,15 +123,23 @@ or model resolution.
 
 - Refer to `docs/00.agent-governance/model-policy.md` and
   `docs/00.agent-governance/contracts/provider-runtime-evidence.json` for
-  candidate tiers and cutoff confidence.
+  shared tier/reasoning vocabulary and cutoff confidence, respectively.
+- `docs/00.agent-governance/contracts/agent-model-fitness.json` version `1.1.0`
+  owns each Gemini tuple's non-configurable native incumbent state, candidate,
+  reasoning, fallback, mapping rationale, and decisions.
 - Current `.agents/**` model labels are local/Antigravity adapter evidence
   only. They are not Gemini CLI native model-resolution evidence.
-- Gemini CLI pro/flash/Auto candidates remain candidate-only until a permitted
-  runtime canary and Spec 044 role fitness evidence promote an exact ID. The
-  model-fitness contract records the pending candidate IDs and reasoning
-  profiles; `.gemini/agents/**` deliberately does not mirror them. Neither the
-  contract nor the adapter files prove provider-side availability, resolution,
-  or execution.
+- AREA-004 leaves all 12 Gemini mapping decisions `DEFER` because the source
+  basis is mixed cutoff/current and the candidate families remain unresolved.
+  Observed fitness, threshold, promotion, canary, and runtime are `DEFER` for
+  all 48 provider tuples. `.gemini/agents/**` deliberately does not mirror
+  candidate or reasoning state.
+- A future exact-ID promotion requires explicit authorization and
+  provider-runtime, same-suite fitness, threshold, independent-adjudication,
+  and canary evidence. Neither the contract nor the adapter files prove
+  provider-side availability, resolution, or execution. AREA-003
+  repository-static evaluation readiness is complete, while observed
+  evaluation and final admission remain `DEFER`.
 
 ### Execution Expectations
 
@@ -160,14 +168,15 @@ or model resolution.
 
 ## Validation and Refresh
 
-Run the harness, shared role-semantic, provider-config, roster, and repository
+Run the harness, shared role-semantic, provider/model, roster, and repository
 quality checks after changing local/Antigravity agents, Gemini project-agent
-metadata, hooks, model metadata, or the root shim:
+metadata, hooks, model semantics, or the root shim:
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-provider-config.py --root .
 python3 scripts/validate-agent-provider-canaries.py --root .
+python3 scripts/validate-agent-model-fitness.py --root .
 python3 scripts/validate-agent-role-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
 bash scripts/validate-repo-quality-gates.sh .

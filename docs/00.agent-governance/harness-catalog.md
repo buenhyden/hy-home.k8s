@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-29
+updated: 2026-07-30
 ---
 
 # Reference: Local Harness Catalog
@@ -116,7 +116,7 @@ same policy in different words.
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md` | Harness, role-semantic, roster-currentness, and affected-surface validators |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
-| Model tiers and concrete local declarations | This catalog plus `model-policy.md`; pending provider candidates and reasoning in `contracts/agent-model-fitness.json`; cutoff/runtime confidence in `contracts/provider-runtime-evidence.json` | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
+| Model tier vocabulary and per-tuple state | `model-policy.md` owns `top` / `worker` and reasoning vocabulary; `contracts/agent-model-fitness.json` owns each role/provider incumbent, configured and observed value, candidate, reasoning, fallback, and decision state; `contracts/provider-runtime-evidence.json` owns cutoff/current source confidence | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
 | Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
@@ -127,32 +127,35 @@ same policy in different words.
 
 Model allocation is provider-agnostic at the tier level and provider-specific
 at the concrete model level. The `top` tier serves planning and supervising
-roles; the `worker` tier serves delegated subagent roles. This table records
-the incumbent defaults that predate Spec 044. The exact pending candidate
-tuple for each role and provider, including reasoning effort, is owned by
-`contracts/agent-model-fitness.json`. Candidate-bearing adapter values are
-repo-static configuration evidence only; Gemini candidates are recorded only
-in that contract because the projected five-field project-agent metadata has no
-`model` field. Neither form replaces an incumbent without the AREA-004 fitness
-decision.
+roles plus the two high-risk specialist profiles selected by Spec 044; the
+`worker` tier serves the other bounded delegated roles. This table records the
+readable roster-to-tier projection; `model-policy.md` owns the tier vocabulary.
+`contracts/agent-model-fitness.json` version `1.1.0` owns the exact incumbent,
+configured and observed values, candidate, reasoning, fallback, and decision
+state for every role/provider tuple. Its completed AREA-004 repository-static
+result covers exactly `12 roles / 4 providers / 48 tuples`: mapping readiness
+is `PASS` for 21 and `DEFER` for 27, while observed fitness, threshold,
+promotion, canary, and runtime are `DEFER` for all 48. Configured incumbents
+remain unchanged until a future authorized, evidence-backed promotion.
 
-| Tier     | Role               | Claude                      | Gemini (local/Antigravity)  | GPT (Codex)                      |
-| -------- | ------------------ | --------------------------- | --------------------------- | -------------------------------- |
-| `top`    | plan / supervisor  | `opus 4.8`                  | `Gemini 3.1 Pro (High)`     | `gpt-5.5`                        |
-| `worker` | delegated subagent | `sonnet 4.6` or `haiku 4.5` | `Gemini 3.5 Flash (Medium)` | `gpt-5.3-codex` (agentic coding) |
+| Tier | Current role profiles | Routing meaning | Exact model/reasoning state owner |
+| --- | --- | --- | --- |
+| `top` | `supervisor`, `incident-responder`, `security-auditor` | Planning, synthesis, and high-risk specialist work | `contracts/agent-model-fitness.json` |
+| `worker` | The other nine canonical roles | Bounded delegated work, with explicit task-level escalation when required | `contracts/agent-model-fitness.json` |
 
-- `supervisor` is the only `top`-tier agent; all other local agents are `worker` tier.
-- Existing adapters may retain an incumbent value while the model-fitness
-  contract records a candidate-only replacement. A newly admitted adapter may
-  record its pending candidate only when its admitted provider metadata owns
-  such a field; Gemini project-agent adapters do not.
-- Codex agent TOML files must declare the exact
-  `model_reasoning_effort` selected for that role in the model-fitness
+- Tier membership is a role-profile property; task-level escalation does not
+  rewrite it.
+- Adapter model values are configured incumbents, not promotion results. The
+  model-fitness contract records candidate and reasoning state separately;
+  Gemini project-agent adapters have no model field.
+- Codex agent TOML files retain the configured `model` and
+  `model_reasoning_effort` values recorded as incumbents in the model-fitness
   contract.
-- A concrete identifier changes only after the intended provider syntax parses,
-  the permitted runtime resolves it without silent fallback, and Spec 044
-  records role-specific fitness. Provider publication alone is not promotion
-  evidence.
+- A future concrete-identifier change requires explicit authorization plus
+  provider parsing and resolution without silent fallback, observed
+  same-suite fitness, threshold and independent-adjudication PASS, and a canary
+  PASS. Provider publication or repository-static mapping readiness alone is
+  not promotion evidence.
 
 ### Model Selection Policy
 
@@ -163,8 +166,9 @@ incumbent or candidate state through the model-fitness contract.
 - Use `worker` for delegated subagent roles, repetitive edits, structuring, format conversion, classification, summarization, and focused review.
 - Escalate a `worker` task to `top` only as an execution-time routing decision; do not reclassify the provider agent as a `top`-tier agent unless the roster changes.
 - Do not infer provider availability or promotion from either this table or an
-  adapter value. AREA-004 evaluation evidence owns reconciliation of
-  incumbents and candidates.
+  adapter value. The completed AREA-004 model-fitness contract owns the
+  incumbent/candidate reconciliation and retains all promotion decisions as
+  `DEFER`.
 - Codex `model_reasoning_effort` values must be one of the allowed values in `docs/00.agent-governance/model-policy.md`.
 
 ### Matrix Status Contract
@@ -366,8 +370,8 @@ belongs to a human-approved bootstrap or break-glass path with explicit evidence
 | `.claude/agents/wiki-curator.md`           | LLM Wiki curation                            | `sonnet` | `docs`         | Maintain generated canonical-owner link maps and route stale links              | technical-writer, governance                 |
 | `.claude/agents/observability-reviewer.md` | Observability manifest and SLO-doc review    | `sonnet` | `infra`        | Review Prometheus/Grafana/kube-state-metrics/Alloy/Kiali manifests and SLO docs | cicd-pipeline, infra-as-code                 |
 | `.claude/agents/network-reviewer.md`       | Ingress and network manifest review          | `sonnet` | `infra`        | Review Traefik/ingress/NetworkPolicy/DNS/TLS manifest correctness               | infra-as-code                                |
-| `.claude/agents/docs-researcher.md`        | Primary-source and cutoff research           | `Sonnet 5` candidate | `docs` | Preserve source dates, supported claims, conflicts, and inference boundaries     | technical-writer, governance                 |
-| `.claude/agents/quality-engineer.md`       | Deterministic QA and fixture design          | `Sonnet 5` candidate | `qa`   | Map acceptance criteria to focused fixtures and classified validation evidence  | code-reviewer, cicd-pipeline                 |
+| `.claude/agents/docs-researcher.md`        | Primary-source and cutoff research           | `Sonnet 5` | `docs` | Preserve source dates, supported claims, conflicts, and inference boundaries     | technical-writer, governance                 |
+| `.claude/agents/quality-engineer.md`       | Deterministic QA and fixture design          | `Sonnet 5` | `qa`   | Map acceptance criteria to focused fixtures and classified validation evidence  | code-reviewer, cicd-pipeline                 |
 
 ### Native and Local Role Adapters
 
@@ -399,8 +403,9 @@ scoping, Codex uses TOML metadata including `developer_instructions` and
 `model_reasoning_effort`, and Gemini uses exactly the closed five-field metadata
 order: `name`, `description`, `kind`, `max_turns`, and `timeout_mins`. Gemini
 generic tool aliases and exact CLI model metadata remain deferred; the
-model-fitness contract alone owns its candidate models, reasoning profiles,
-and any promotion decision.
+model-fitness contract alone owns each tuple's configured incumbent, candidate,
+reasoning profile, mapping readiness, and decision state. Its current promotion
+decision is `DEFER` for all 48 tuples.
 
 ### External Agency Catalog Gap Lens
 
@@ -502,7 +507,7 @@ symmetry from static files.
 
 | Dimension          | Common Contract (governance)                                                                          | Claude native                                 | Gemini CLI native / local adapter                  | Codex native                                                                     | Status / Gap                                                                          |
 | ------------------ | ----------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Model tiers        | Model Tier Mapping plus `contracts/agent-model-fitness.json`                                           | `.claude/agents/*.md` model                   | Native candidate-only contract owner: `contracts/agent-model-fitness.json`; local: `.agents/agents/*.md` | `.codex/agents/*.toml` model                                                     | Candidate contract Ready; Gemini project-agent metadata has no model field and CLI resolution remains `DEFER` |
+| Model tiers        | `model-policy.md` vocabulary plus per-tuple state in `contracts/agent-model-fitness.json`              | `.claude/agents/*.md` configured incumbent    | Native tuple state: `contracts/agent-model-fitness.json`; local incumbent: `.agents/agents/*.md` | `.codex/agents/*.toml` configured model and reasoning effort                    | Mapping readiness `PASS` 21 / `DEFER` 27; all 48 promotion and runtime decisions remain `DEFER`; Gemini project-agent metadata has no model field |
 | Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills` → `.agents/skills` (symlink) | Native: absent; local SSoT: `.agents/skills/**`   | `.codex/skills` → `.agents/skills` (symlink)                                     | Shared content Ready; Gemini CLI discovery `DEFER`                                    |
 | Rules              | `rules/**` + provider notes                                                                           | `rules/**` + global graphify skill            | Native: absent; local: `.agents/rules/**`         | shared `rules/**` + `graphify-out` convention                                    | Local behavior Ready; Gemini CLI policy loading `DEFER`                               |
 | Hooks              | Lifecycle/edit hook contract (`rules/bootstrap.md`, `rules/documentation-protocol.md`)                | Native settings/hooks plus shared scripts     | Native: absent; local: `.agents/hooks.json`       | `.codex/hooks.json` context/validation wiring                                    | Local wiring Ready; Gemini CLI event delivery `DEFER`                                 |
