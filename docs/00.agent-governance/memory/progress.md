@@ -8,6 +8,61 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 AGQC-001 CI topology postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, automation, ci, governance, qa, security
+- **Status**: done
+- **Tags**: #spec-045 #agqc-001 #github-actions #affected-surfaces #ci-summary
+
+#### Progress
+
+- Committed the exact seven-path AGQC-001 implementation as
+  `12c5578747ef37afb9a1e65afe41bee6aca0e473`
+  (`feat(ci): add agent governance static lane`) with sole parent
+  `46c8e6b64097cce1c403b8c22989b11226f21263`.
+- Added the `agent_governance` selector output, conditional
+  `agent-governance-static` job, and fail-closed `ci-summary` result
+  classification while preserving the Spec 039 always-start workflow.
+- Root provider/config, four adapter surfaces, Stage 00 governance,
+  templates, authored SDLC, GitHub automation, scripts, and tests now select
+  the dedicated static lane through the canonical affected-surface contract.
+
+#### Evidence
+
+- Fixture-first RED reproduced the missing fourth job and later the missing
+  root/template/SDLC/script/test routes before production changes.
+- Affected-surface validation passed `22/22` surfaces, `19` selection cases,
+  `6` CI range cases, `37` mutation cases, `806` tracked paths, `4` CI jobs,
+  and `0/0` uncovered/ambiguous paths.
+- CI Python validation passed `19` focused tests, `10` self-test rules,
+  `14` self-test cases, and exact `4` jobs. GitHub Actions security,
+  canonical YAML/actionlint/zizmor, direct job commands, Python compile, shell
+  parse, staged aggregate, all-files pre-commit, and diff/scope checks passed.
+- Initial requirements review found one Important incomplete-routing gap. The
+  fixture-first remediation closed it; final review returned
+  `REQUIREMENTS COMPLIANT`, zero Critical, and zero Important findings.
+
+#### Security & Boundary
+
+- Actions remain pinned to full commit SHAs, workflow permissions remain
+  `contents: read`, checkout disables persisted credentials and uses full
+  history, and the new job has no provider secret, token, runtime canary,
+  `pull_request_target`, write, or OIDC permission.
+- This repository-static topology is not a hosted CI run or required-check
+  observation. Hosted CI, branch protection, provider auth/runtime/model
+  discovery, actual evaluation/admission/promotion, resume/handoff canaries,
+  remote, and live evidence remain `DEFER`.
+
+#### Handoff
+
+- Next owner: AGQC-002 closed `agent-governance-ci` contract, adjacent schema,
+  validator, deterministic fixture, focused tests, and local/CI registration.
+- This entry does not preclaim its own postflight commit SHA, the planned
+  AGQC-002 validator, AGQC-003 legacy deletion, or any Spec 046 result.
+
 ### 2026-07-30 - Spec 045 activation postflight
 
 #### Metadata
