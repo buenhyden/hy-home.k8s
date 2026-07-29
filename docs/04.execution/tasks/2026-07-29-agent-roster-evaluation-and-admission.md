@@ -34,7 +34,9 @@ AREA-003 owns the evidence required for final roster admission.
 - Observed Spec 044 commits: activation
   `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`, activation postflight
   `6d9b01d51f8a198c521621bcd52ff088c397ee0b`, and AREA-001 implementation
-  `0129daf7d44c9308bcad63d4966e11ffa98d05af`
+  `0129daf7d44c9308bcad63d4966e11ffa98d05af`; AREA-002 projection
+  `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` and admission-boundary
+  remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`
 
 ## Task Table
 
@@ -42,7 +44,7 @@ AREA-003 owns the evidence required for final roster admission.
 | --- | --- | --- | --- | --- | --- | --- |
 | AREA-000 | VAL-AREA-001 | Activate reciprocal Spec/Plan/Task path and registry relation | platform | Done | Activation and clean-tree postflight committed | `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`; `6d9b01d51f8a198c521621bcd52ff088c397ee0b` |
 | AREA-001 | VAL-AREA-001..008 | Implement closed admission, evaluation, and model-fitness schemas, validators, and synthetic negative fixtures before promotion | platform | Done | Closed gates preserve current `10/3/30`, target-only `12/4/48`, and all promotion/runtime lanes as `DEFER` | `0129daf7d44c9308bcad63d4966e11ffa98d05af`; focused `119`, aggregate/all-files PASS |
-| AREA-002 | VAL-AREA-001..004 | Project `docs-researcher` and `quality-engineer` with the exact 12/4/48 repository-static roster and native projections | platform | In progress | Exact tracked projection is staged with admission `DEFER`; review remediation remains open | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`; harness contract, 48 adapter files, projection decisions, and set-equality evidence |
+| AREA-002 | VAL-AREA-001..004 | Project `docs-researcher` and `quality-engineer` with the exact 12/4/48 repository-static roster and native projections | platform | Done | Exact tracked projection is committed with admission `DEFER`; final-admission evidence remains owned by AREA-003 | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`; boundary remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; focused, aggregate, all-files, and independent review PASS |
 | AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, rollback records, and final admission decision | platform | Queued | Not executed | Evaluation manifests/corpora, validator, fixtures, reviewed decisions, and final admission evidence |
 | AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Queued | Not executed | Model-fitness map, baseline/threshold/fallback records, validator, fixtures, and provider evidence links |
 | AREA-005 | VAL-AREA-001..008 | Reconcile catalogs, provider notes, QA, and closure | platform | Queued | Not executed | aggregate/all-files/review/closure evidence |
@@ -85,9 +87,21 @@ repository aggregate, and staged and clean-tree all-files pre-commit passed.
 AREA-002 commit `138ce6ac` materializes exact 12-role / 4-surface / 48-adapter
 tracked set equality. Its corrected lifecycle result is
 `repository-static-projected` / `DEFER`: the two candidates are projected, not
-finally admitted. AREA-003 still owns versioned four-class evaluation,
-independent adjudication, and rollback evidence. The provider/model cutoff
-remains `2026-07-10 10:00 Asia/Seoul`; runtime, provider
+finally admitted. Remediation commit `1d03b0b4` preserves that boundary across
+the contract, schema, validators, lifecycle controls, all four provider
+surfaces, and the five-field Gemini project-agent metadata projection.
+Admission focused validation passed `59` self-test and `13` unit cases;
+lifecycle passed `696` self-test and `6` focused cases; role semantics passed
+`768` cases plus `9` Gemini metadata mutations; model fitness passed `16`
+self-test and `18` focused unit cases. The active corpus audit passed with
+`helpers=60`, `frozen=33`, `post_closure=27`, and formats `25/28/6/1`.
+Repository aggregate and `pre-commit run --all-files` passed. Requirements
+review approved Spec compliance, and final quality review reported zero
+Critical or Important findings after two wording corrections.
+
+AREA-003 still owns versioned four-class evaluation, independent
+adjudication, rollback evidence, and the final admission decision. The
+provider/model cutoff remains `2026-07-10 10:00 Asia/Seoul`; runtime, provider
 discovery/authentication, model resolution, agent evaluation, model fitness,
 hosted CI, remote, live, and ignored checkpoint execution remain `DEFER`.
 
@@ -99,7 +113,7 @@ hosted CI, remote, live, and ignored checkpoint execution remain `DEFER`.
 | --- | --- | --- |
 | [AREA-000](../plans/2026-07-29-agent-roster-evaluation-and-admission.md#work-breakdown) | Done | Activation `b8b1a388` and clean-tree postflight `6d9b01d5`. |
 | [AREA-001](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md#success-criteria--verification-plan) | Done | Closed admission/evaluation/model-fitness gates and postflight evidence in `0129daf7`; requirements `COMPLIANT`, security/model-path review `APPROVED`. |
-| N/A — AREA-002 shares the Plan source above | In progress | Commit `138ce6ac` projects exact 12/4/48 repository-static inventory; admission remains `DEFER` while review remediation is open. |
+| N/A — AREA-002 shares the Plan source above | Done | Commits `138ce6ac` and `1d03b0b4` project exact 12/4/48 repository-static inventory while preserving admission `DEFER`; focused, aggregate, all-files, requirements, and quality review gates passed. |
 | N/A — AREA-003 shares the Plan source above | Not executed | Pending versioned evaluation, independent adjudication, rollback, and final admission evidence. |
 | N/A — AREA-004 shares the Plan source above | Not executed | Pending fixed-cutoff candidate model/effort fitness evidence; runtime resolution remains `DEFER`. |
 | N/A — AREA-005 shares the Plan source above | Not executed | Pending QA and independent review. |

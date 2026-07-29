@@ -8,6 +8,71 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 044 AREA-002 repository projection postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, governance, qa, security, meta
+- **Status**: done
+- **Tags**: #spec-044 #agent-roster #projection #gemini #memory
+
+#### Progress
+
+- Committed the AREA-002 repository-static projection as
+  `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`
+  (`feat(agent): promote repository-static roster parity`) and its reviewed
+  admission-boundary remediation as
+  `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`
+  (`fix(agent): preserve projected admission boundaries`).
+- The tracked inventory is now exactly `12 roles / 4 surfaces / 48 adapters`.
+  `docs-researcher` and `quality-engineer` and their adapters are projected
+  repository state; final admission remains `DEFER` until AREA-003 produces
+  versioned evaluation, independent adjudication, and rollback evidence.
+- Gemini project-agent adapters use only the five Spec 044 static metadata
+  fields: `name`, `description`, `kind`, `max_turns`, and `timeout_mins`.
+  Candidate model provenance stays in exact JSON pointers under
+  `agent-model-fitness.json`; no adapter preclaims runtime model resolution.
+
+#### Memory
+
+- Preserved the four-class memory hierarchy:
+  `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`.
+- Canonical repository and document-type owners remain authoritative.
+  Provider-local auxiliary memory remains advisory, provenance-bound,
+  replaceable, and ineligible to override reviewed durable or domain records.
+- Promotion, refresh, expiry/archive-GC, conflict resolution, redaction,
+  compaction, and handoff boundaries remain explicit. Credentials, auth
+  files, tokens, secrets, raw prompts, full provider transcripts, shell
+  history, environment dumps, user configuration, and private diagnostics
+  remain prohibited from repository memory.
+
+#### Evidence
+
+- Admission passed `59` self-test and `13` focused unit cases; lifecycle
+  passed `696` self-test and `6` focused cases.
+- Role semantics passed `768` cases plus `9` Gemini metadata mutations; model
+  fitness passed `16` self-test and `18` focused unit cases.
+- Active corpus audit passed with `helpers=60`, `frozen=33`,
+  `post_closure=27`, and formats `25/28/6/1`.
+- Strict document registry, Markdown profiles, cross-document references,
+  staged lifecycle validation, repository aggregate, diff checks, and
+  `pre-commit run --all-files` passed.
+- Requirements re-review returned `SPEC COMPLIANCE APPROVED`. Final quality
+  review reported zero Critical and zero Important findings after the two
+  projection-wording corrections were independently rechecked.
+
+#### Handoff
+
+- Next owner: AREA-003 versioned four-class evaluation corpus, independent
+  adjudication evidence, rollback records, and final admission decision.
+- Provider discovery/authentication, runtime execution, model resolution,
+  hosted CI, remote mutation, live cluster state, credential-bearing
+  evidence, and actual ignored checkpoint execution remain `DEFER`.
+- This entry does not preclaim its own postflight commit SHA or any AREA-003
+  admission result.
+
 ### 2026-07-29 - Spec 044 AREA-001 admission-gate postflight
 
 #### Metadata
