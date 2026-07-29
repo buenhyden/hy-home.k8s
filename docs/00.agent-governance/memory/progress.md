@@ -8,6 +8,67 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 AGQC-002 closed CI contract postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, automation, ci, governance, qa, security
+- **Status**: done
+- **Tags**: #spec-045 #agqc-002 #closed-contract #ci-summary #security
+
+#### Progress
+
+- Committed the exact seventeen-path AGQC-002 implementation as
+  `be0a12ecd8d51b73f251004b34be6e8288159eb5`
+  (`feat(ci): enforce closed agent governance contract`) with sole parent
+  `25688ec6e321a0458437f83bdc914b339fe28c2d`.
+- Added a closed Draft 2020-12 contract and adjacent schema, production
+  validator, deterministic fixture, focused tests, delegated local/CI
+  registration, affected-surface routing, and current inventory ownership.
+- The contract now owns exact `PASS`/`FAIL`/`SKIP`/`DEFER` results,
+  repository-static/hosted-CI/provider-runtime/remote-live evidence classes,
+  twelve route classes, thirteen delegated checks, the install/gate command
+  sequence, and the fail-closed four-job summary topology.
+
+#### Evidence
+
+- Fixture-first RED evolved through missing contract ownership, final-summary
+  bypasses, inherited secret and execution-control mutations, extra commands,
+  and exact summary closure before the final `22` focused tests passed.
+- Validator self-test passed `6` truth and `38` mutation cases; production
+  validation passed `12` route classes and `13` delegated checks. Affected
+  validation passed `22/22` surfaces, `19` selections, `6` CI ranges, `4`
+  argument cases, `37` mutations, and `811` staged paths with `0/0`
+  uncovered/ambiguous paths.
+- CI Python and GitHub Actions security checks, active-corpus role audit,
+  provider post-validation hook tests, validation-lane runner tests, the full
+  aggregate quality gate, all-files pre-commit, and `git diff --check` passed.
+  The final independent requirements and security reviews reported zero
+  Critical and zero Important findings.
+
+#### Security & Boundary
+
+- The validator rejects workflow/job/step environment, defaults, permissions,
+  condition, shell, continuation, command-sequence, checkout, pin, summary,
+  secret, and provider-runtime drift outside the exact closed contract.
+- Only the public summary-script digest was admitted to the secret scanner as
+  an explicit non-secret fingerprint. No credential, provider token, auth
+  state, private prompt/transcript, or live value was read or recorded.
+- This is repository-static evidence. Hosted CI, branch protection, provider
+  auth/runtime/model discovery, actual evaluation/admission/promotion,
+  resume/handoff canaries, remote execution, and live evidence remain
+  `DEFER`.
+
+#### Handoff
+
+- Next owner: AGQC-003 consumer-first legacy cutover contract, schema,
+  fixture, tests, validator, zero-active-consumer proof, atomic legacy owner
+  removal, and `.github/ABOUT.md` to `.github/README.md` cutover.
+- This entry does not preclaim its own postflight commit SHA, any AGQC-003
+  deletion or rename, AGQC-005 provider checkpoint evidence, or any Spec 046
+  result.
+
 ### 2026-07-30 - Spec 045 AGQC-001 CI topology postflight
 
 #### Metadata
