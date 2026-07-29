@@ -3,7 +3,7 @@ title: 'Agent Quality Standards (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-30
 ---
 
 # Agent Quality Standards (March 2026)
@@ -43,11 +43,12 @@ Quality gates for governance and execution alignment.
 
 ## Governance Context
 
-The affected-surface contract selects repository validators; this rule owns the
-meaning of their evidence and handoff vocabulary. Preflight defines expected
-lanes, postflight confirms results, and provider adapters consume the same
-terms without redefining them. CI, provider-runtime, and live evidence remain
-separate authorities.
+The affected-surface contract selects repository validators. This document is
+the sole canonical owner of the local completion order, step IDs, lane and
+result meanings, formatter completion rule, and handoff vocabulary. Preflight
+defines expected lanes; workflows, checklists, inventories, and provider
+adapters route here and must not redefine those semantics. CI,
+provider-runtime, and live evidence remain separate authorities.
 
 ## Current Contract
 
@@ -60,14 +61,22 @@ CI and lifecycle Git ranges disable rename detection so both old and new paths
 retain their gates. This document owns how agents name and report the resulting
 lanes:
 
-- **affected**: validators selected for normalized changed paths during work.
-  Evidence names the input path set and every selected validator. An empty path
-  set or a validator with no applicable files is `SKIP`, not `PASS`.
-- **staged**: standard file hooks evaluated against the actual Git index before
-  commit. Evidence must identify the staged scope; an affected-path or
-  working-tree run cannot stand in for this lane.
-- **all-files**: all applicable file hooks plus the repository quality gate.
-  This lane does not execute or prove `commit-msg` or explicit `manual` stages.
+- **affected**: validators selected for normalized changed paths during work
+  through `scripts/run-validation-lane.py --lane affected`. Evidence names the
+  input path set and every selected validator. An empty path set or a validator
+  with no applicable files is `SKIP`, not `PASS`.
+- **staged**: contract-selected validators run through
+  `scripts/run-validation-lane.py --lane staged` for the exact staged path set,
+  followed separately by plain `pre-commit run` against the exact Git index.
+  Evidence records both results and identifies the index scope. An affected or
+  all-files runner invocation, a working-tree check, or either staged command
+  alone cannot substitute for this lane.
+- **all-files**: completion requires `pre-commit run --all-files`, which runs
+  all applicable file hooks plus the repository quality gate. A
+  `scripts/run-validation-lane.py --lane all-files` result is supplemental
+  repository-static validator evidence, not a substitute for this command or
+  for staged evidence. This lane does not execute or prove `commit-msg` or
+  explicit `manual` stages.
 - **message/manual**: commit-message and explicit manual-stage checks. Report
   each applicable check separately; do not infer it from `--all-files`.
 - **ci**: jobs deterministically selected from the affected-surface contract.
@@ -95,14 +104,33 @@ Every repo-changing task follows this ordered completion sequence. Consumers
 must link here for the shared order and result meanings rather than redefining
 them.
 
-1. Run focused tests while implementing.
-2. Run affected validators for changed paths.
-3. Stage the exact logical file set and run staged hooks against that index.
-4. Run relevant direct tests and the repository aggregate.
-5. Run `pre-commit run --all-files`.
-6. Review `git status --short`, `git diff`, and `git diff --cached` for formatter mutations.
-7. Rerun affected, staged, and all-files validation after any formatter mutation.
-8. Run final diff checks and record lane-by-lane handoff evidence.
+1. **targeted**: Run the smallest focused checks while implementing and record
+   their command, scope, and result.
+2. **affected**: Run the affected runner for every normalized changed path and
+   record the selected validators and their results.
+3. **staged**: Stage the exact logical file set, run the staged runner for the
+   exact staged path set, then run plain `pre-commit run` against that exact Git
+   index; record both results.
+4. **tests**: Run the relevant direct test suites and repository aggregate,
+   preserving each command's separate result.
+5. **all-files**: Run `pre-commit run --all-files`; only that command qualifies
+   as all-files completion evidence.
+6. **formatter-review**: Review `git status --short`, `git diff`, and
+   `git diff --cached` for every formatter mutation, including files outside
+   the initial target set.
+7. **rerun**: If any formatter changes any file, treat the mutating invocation
+   and earlier affected, staged, and all-files results as non-completion
+   evidence; review the change, restage the exact logical set, and rerun
+   affected, staged, and all-files validation until the final results are
+   clean.
+8. **diff-checks**: Run `git diff --check` and
+   `git diff --cached --check`, confirm the final staged and unstaged scope, and
+   record all eight ordered step results in the handoff.
+
+Prettier remains dormant and decision-gated. Its configuration files are
+routed validation inputs, but no current hook, runner, aggregate, or CI
+contract enforces Prettier; do not report Prettier coverage without a separate
+approved activation.
 
 ### Handoff Evidence Contract
 
@@ -113,6 +141,8 @@ reason, but it must not be silently omitted:
 - scope and changed paths;
 - acceptance IDs;
 - commands and tool/version;
+- the ordered `targeted`, `affected`, `staged`, `tests`, `all-files`,
+  `formatter-review`, `rerun`, and `diff-checks` result for each step;
 - per-lane `PASS`, `SKIP`, `FAIL`, or `DEFER` results;
 - limitations;
 - reviewer identity and review disposition;

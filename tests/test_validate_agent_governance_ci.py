@@ -28,6 +28,17 @@ AFFECTED_PATH = (
 )
 AGGREGATE_PATH = REPO_ROOT / "scripts/validate-repo-quality-gates.sh"
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
+QUALITY_STANDARDS_PATH = (
+    REPO_ROOT / "docs/00.agent-governance/rules/quality-standards.md"
+)
+POSTFLIGHT_PATH = (
+    REPO_ROOT / "docs/00.agent-governance/rules/postflight-checklist.md"
+)
+SHARED_QA_WORKFLOW_PATH = REPO_ROOT / ".agents/workflows/qa-cicd-workflow.md"
+PULL_REQUEST_TEMPLATE_PATH = REPO_ROOT / ".github/PULL_REQUEST_TEMPLATE.md"
+GITHUB_README_PATH = REPO_ROOT / ".github/README.md"
+SCRIPTS_README_PATH = REPO_ROOT / "scripts/README.md"
+TESTS_README_PATH = REPO_ROOT / "tests/README.md"
 
 SELF_TEST_COMMAND = (
     "python3 scripts/validate-agent-governance-ci.py --root . --self-test"
@@ -54,8 +65,27 @@ REQUIRED_INPUTS = (
     Path("tests/fixtures/agent-governance-ci.json"),
     Path(".github/workflows/ci.yml"),
     Path(".pre-commit-config.yaml"),
+    Path("scripts/run-validation-lane.py"),
     Path("scripts/validate-repo-quality-gates.sh"),
+    Path("docs/00.agent-governance/rules/quality-standards.md"),
+    Path("docs/00.agent-governance/rules/postflight-checklist.md"),
+    Path(".agents/workflows/qa-cicd-workflow.md"),
+    Path(".github/PULL_REQUEST_TEMPLATE.md"),
+    Path(".github/README.md"),
+    Path("scripts/README.md"),
+    Path("tests/README.md"),
 )
+
+LOCAL_QA_SEQUENCE = [
+    "targeted",
+    "affected",
+    "staged",
+    "tests",
+    "all-files",
+    "formatter-review",
+    "rerun",
+    "diff-checks",
+]
 
 
 def load_validator():
@@ -183,6 +213,120 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         counts = self.validator.validate_repository(REPO_ROOT)
         self.assertEqual(counts["routeClasses"], 12)
         self.assertEqual(counts["delegatedChecks"], 16)
+        self.assertEqual(counts["qaSurfaces"], 10)
+
+    def test_local_qa_contract_is_closed(self) -> None:
+        contract = self.validator.load_json_document(
+            CONTRACT_PATH,
+            "AGQC-CI-JSON",
+        )
+        self.assertEqual(
+            contract["localQa"]["owner"],
+            "docs/00.agent-governance/rules/quality-standards.md",
+        )
+        self.assertEqual(contract["localQa"]["sequence"], LOCAL_QA_SEQUENCE)
+        self.assertEqual(
+            contract["localQa"]["commands"],
+            {
+                "affectedRunner": (
+                    "python3 scripts/run-validation-lane.py --root . "
+                    "--lane affected --paths-file <paths.nul> --delimiter nul"
+                ),
+                "stagedRunner": (
+                    "python3 scripts/run-validation-lane.py --root . "
+                    "--lane staged --paths-file <paths.nul> --delimiter nul"
+                ),
+                "stagedHooks": "pre-commit run",
+                "allFiles": "pre-commit run --all-files",
+                "diffCheck": "git diff --check",
+                "cachedDiffCheck": "git diff --cached --check",
+            },
+        )
+        self.assertEqual(
+            contract["localQa"]["formatterCompletion"],
+            {
+                "mutationResult": "not-completion-evidence",
+                "requiredFinalResult": "PASS",
+                "rerun": ["affected", "staged", "all-files"],
+            },
+        )
+        self.assertEqual(
+            contract["localQa"]["consumerSurfaces"],
+            [
+                "scripts/run-validation-lane.py",
+                ".pre-commit-config.yaml",
+                "scripts/validate-repo-quality-gates.sh",
+                ".agents/workflows/qa-cicd-workflow.md",
+                "docs/00.agent-governance/rules/postflight-checklist.md",
+                ".github/PULL_REQUEST_TEMPLATE.md",
+                ".github/README.md",
+                "scripts/README.md",
+                "tests/README.md",
+            ],
+        )
+        self.assertEqual(
+            contract["localQa"]["inventory"],
+            {
+                "truthCases": 6,
+                "mutationCases": 43,
+                "delegatedChecks": 16,
+                "deferredOwners": 2,
+                "qaSurfaces": 10,
+                "legacyPositiveCases": 3,
+                "legacyMutationCases": 22,
+            },
+        )
+
+    def test_local_qa_order_and_inventory_drift_fail_closed(self) -> None:
+        cases = (
+            (
+                "quality-order",
+                QUALITY_STANDARDS_PATH,
+                "1. **targeted**:",
+                "1. **focused-only**:",
+                "AGQC-QA-ORDER",
+            ),
+            (
+                "workflow-owner",
+                SHARED_QA_WORKFLOW_PATH,
+                "docs/00.agent-governance/rules/quality-standards.md",
+                "docs/00.agent-governance/rules/postflight-checklist.md",
+                "AGQC-QA-OWNER",
+            ),
+            (
+                "scripts-inventory",
+                SCRIPTS_README_PATH,
+                "delegated_checks=16",
+                "delegated_checks=13",
+                "AGQC-QA-INVENTORY",
+            ),
+            (
+                "formatter-evidence",
+                PULL_REQUEST_TEMPLATE_PATH,
+                (
+                    "targeted -> affected -> staged -> tests -> all-files -> "
+                    "formatter-review -> rerun -> diff-checks"
+                ),
+                "targeted -> affected -> staged -> tests -> all-files",
+                "AGQC-QA-EVIDENCE",
+            ),
+            (
+                "cached-diff-evidence",
+                QUALITY_STANDARDS_PATH,
+                "`git diff --cached --check`",
+                "`git diff --check`",
+                "AGQC-QA-EVIDENCE",
+            ),
+        )
+        for name, relative, old, new, expected_rule in cases:
+            with self.subTest(case=name):
+                root = self.make_valid_root()
+                target = root / relative.relative_to(REPO_ROOT)
+                text = target.read_text(encoding="utf-8")
+                mutated = text.replace(old, new, 1)
+                self.assertNotEqual(mutated, text)
+                target.write_text(mutated, encoding="utf-8")
+                self.assert_rule(root, expected_rule)
 
     def test_truth_table_is_fail_closed(self) -> None:
         for case in self.fixture["truthTableCases"]:
@@ -215,7 +359,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
     def test_self_test_executes_closed_fixture(self) -> None:
         self.assertEqual(
             self.validator.run_self_test(REPO_ROOT),
-            (6, 38),
+            (6, 43),
         )
 
     def test_unknown_contract_key_is_rejected(self) -> None:

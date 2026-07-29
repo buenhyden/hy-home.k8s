@@ -12,43 +12,62 @@ Before making changes to the codebase or documentation:
 - **Evidence Baseline**: Document what the current state is and how the change will be verified (e.g., test command, lint command, manifest validation).
 - **Template Check**: If creating a new document, resolve the route through `docs/99.templates/support/template-routing.md` and load the matching template under `docs/99.templates/templates/` first.
 
-## 2. Post-Edit QA
+## 2. Canonical Post-Edit QA
 
-Immediately after executing file modifications:
+The sole order, lane, result, formatter, and handoff semantics owner is
+`docs/00.agent-governance/rules/quality-standards.md`. This workflow
+operationalizes that owner without redefining its meanings:
 
-- **Affected-surface selection**: Write changed repository-relative POSIX paths
-  as NUL-terminated records and run `scripts/run-validation-lane.py` with the
-  `affected` lane. Never transport machine-produced paths through newline
-  iteration or shell command substitution. Provider payload paths must pass
-  control-byte, whitespace, normalization, root, symlink, and canonical
-  selector validation before any formatter or pre-commit hook receives them.
-  Existing affected Markdown, including untracked edits, is passed to the
-  exact document validators through contract-owned `--include-path` arguments.
-  A present scalar alias must contain one non-empty string and cannot shadow a
-  second alias; `files`/`paths` accept only one explicitly present string list.
-- **Syntax Check**: Verify that the file modification did not break markdown syntax, YAML structure, or code formatting.
-- **Local Testing**: Run the predetermined test/validation command (via `RTK.md` if available, or direct shell execution like `pytest`, `helm lint`).
-- **Log Review**: Review the outputs of the test/validation command. If failures occur, enter a debugging loop until the validation passes.
+`targeted -> affected -> staged -> tests -> all-files -> formatter-review -> rerun -> diff-checks`
 
-## 3. CI/static QA Pre-Commit Gate
+1. **targeted**: Run the predetermined focused test or validation command for
+   the edited surface and review its output.
+2. **affected**: Write every changed repository-relative POSIX path as a
+   NUL-terminated record and run
+   `python3 scripts/run-validation-lane.py --root . --lane affected --paths-file
+   <paths.nul> --delimiter nul`. Never reconstruct machine-produced paths
+   through newline iteration or shell command substitution.
+3. **staged**: Stage the exact logical file set, create a NUL-delimited path
+   inventory from that exact index, run
+   `python3 scripts/run-validation-lane.py --root . --lane staged --paths-file
+   <staged-paths.nul> --delimiter nul`, and then run plain `pre-commit run`
+   against the same exact Git index. The affected and all-files runner modes
+   are not staged substitutes.
+4. **tests**: Run the relevant direct test suites and
+   `bash scripts/validate-repo-quality-gates.sh .` when the repository
+   aggregate applies; review every result.
+5. **all-files**: Run `pre-commit run --all-files`. A separate
+   `run-validation-lane.py --lane all-files` invocation may provide
+   contract-selected repository-static evidence, but it is not completion
+   evidence for this step or for `staged`.
+6. **formatter-review**: Inspect `git status --short`, `git diff`, and
+   `git diff --cached` for every formatter mutation and confirm each changed
+   file remains within the approved scope.
+7. **rerun**: If a formatter changes any file, review it, restage the exact
+   logical set, and rerun `affected`, both staged checks, and
+   `pre-commit run --all-files`; the mutating invocation is not completion
+   evidence.
+8. **diff-checks**: Run `git diff --check` and
+   `git diff --cached --check`, verify final staged and unstaged scope, and
+   record all eight results through the canonical owner vocabulary.
 
-Before marking a task as `Done` and returning control to the user:
+Provider payload paths must pass control-byte, whitespace, normalization, root,
+symlink, and canonical selector validation before any formatter or pre-commit
+hook receives them. Existing affected Markdown, including untracked edits, is
+passed to the exact document validators through contract-owned
+`--include-path` arguments. A present scalar alias must contain one non-empty
+string and cannot shadow a second alias; `files`/`paths` accept only one
+explicitly present string list. Child output stays within the bounded runner
+evidence contract owned by the quality standard.
 
-- **Run Regressions**: Execute `scripts/validate-repo-quality-gates.sh .` (or equivalent CI script) to ensure no repository-wide regressions were introduced.
-- **All-files lane**: For explicit repository-wide evidence, provide the
-  NUL-delimited tracked-path inventory to `scripts/run-validation-lane.py
-  --lane all-files`; the runner executes only contract-approved argv arrays
-  without a shell.
-- **Artifact Update**: Update `docs/00.agent-governance/memory/progress.md` with the execution results and evidence logs.
+Update `docs/00.agent-governance/memory/progress.md` with the execution results
+and evidence logs when the task scope authorizes that repository change.
 
-Runner results are evidence-scoped: `PASS` means the named local argv returned
-zero; `SKIP` names an empty scope or unavailable optional tool; `DEFER` names a
-remote/live or fallback limitation; and `FAIL` names a local contract or command
-failure. An optional-tool `SKIP` and its fallback result are separate records.
-Child stdout and stderr are never copied into runner results; bounded byte-count
-and SHA-256 metadata identifies the captured streams without exposing values.
-No local result proves provider discovery, remote CI, Kubernetes convergence,
-or cloud availability.
+## 3. CI/static QA Boundary
+
+Local results remain scoped to the evidence class defined by the canonical
+quality owner. They do not prove provider discovery, hosted CI, Kubernetes
+convergence, or cloud availability.
 
 ## 4. Subagent Handoff
 

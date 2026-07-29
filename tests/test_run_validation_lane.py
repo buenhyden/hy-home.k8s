@@ -445,6 +445,18 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertIn("[PASS] repository-quality ", output)
         self.assertNotIn("[SKIP] repository-quality ", output)
 
+    def test_staged_lane_executes_contract_selected_validators(self):
+        self.assertEqual(
+            RUNNER.LOCAL_LANES,
+            ("affected", "staged", "all-files"),
+        )
+        result, output, invoked = self._run("staged", {})
+
+        self.assertEqual(result, 0)
+        invoked.assert_called_once()
+        self.assertIn("[PASS] repository-quality ", output)
+        self.assertIn('scope="staged:paths=1"', output)
+
     def test_affected_environment_without_post_validate_context_executes(self):
         result, output, invoked = self._run(
             "affected",
@@ -530,7 +542,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
     @staticmethod
-    def _run(paths: list[str]):
+    def _run(paths: list[str], lane: str = "affected"):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
         completed = subprocess.CompletedProcess(
@@ -544,7 +556,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         ):
             result = RUNNER.run_selected(
                 ROOT,
-                "affected",
+                lane,
                 paths,
                 contract,
                 contract_module,
@@ -597,6 +609,33 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         )
         self.assertEqual(invoked.call_count, 6)
         self.assertGreaterEqual(output.count(path), 3)
+
+    def test_staged_selector_executes_every_selected_validator(self):
+        path = "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        result, statuses, output, invoked = self._run([path], lane="staged")
+
+        self.assertEqual(result, 0)
+        self.assertEqual(
+            statuses,
+            {
+                "agent-governance-ci": "PASS",
+                "agent-legacy-cutover": "PASS",
+                "document-contract-registry": "PASS",
+                "links-and-owners": "PASS",
+                "markdown-profiles": "PASS",
+                "repository-quality": "PASS",
+            },
+        )
+        self.assertEqual(invoked.call_count, 6)
+        self.assertIn('scope="staged:paths=1"', output)
+        propagated = [
+            call.args[0]
+            for call in invoked.call_args_list
+            if path in call.args[0]
+        ]
+        self.assertEqual(len(propagated), 3)
+        for argv in propagated:
+            self.assertIn("--include-path", argv)
 
 
 if __name__ == "__main__":

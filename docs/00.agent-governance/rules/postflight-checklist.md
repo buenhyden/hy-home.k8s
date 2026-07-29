@@ -3,7 +3,7 @@ title: 'Postflight Checklist (March 2026)'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-30
 ---
 
 # Postflight Checklist (March 2026)
@@ -64,6 +64,18 @@ Run this checklist before finalizing a response.
 
 ### 5. Verification Evidence
 
+Record the canonical sequence from
+[`quality-standards.md`](quality-standards.md):
+`targeted -> affected -> staged -> tests -> all-files -> formatter-review -> rerun -> diff-checks`.
+
+- [ ] `targeted` result was recorded.
+- [ ] `affected` result was recorded.
+- [ ] `staged` runner and exact-index `pre-commit run` results were recorded.
+- [ ] `tests` result was recorded.
+- [ ] `all-files` result from `pre-commit run --all-files` was recorded.
+- [ ] `formatter-review` result was recorded.
+- [ ] `rerun` result was recorded, including `SKIP` with a reason when no formatter changed a file.
+- [ ] `diff-checks` result was recorded.
 - [ ] The owning Task or evidence record identifies scope, changed paths, and acceptance IDs.
 - [ ] Validation commands and tool/version were recorded (or limitations were stated).
 - [ ] Relevant outputs were reviewed.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the closed agent-governance CI topology and evidence boundary."""
+"""Validate closed agent-governance CI topology and local QA evidence."""
 
 from __future__ import annotations
 
@@ -32,9 +32,23 @@ FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-governance-ci.json")
 WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 PRE_COMMIT_PATH = PurePosixPath(".pre-commit-config.yaml")
 AGGREGATE_PATH = PurePosixPath("scripts/validate-repo-quality-gates.sh")
+RUNNER_PATH = PurePosixPath("scripts/run-validation-lane.py")
+QUALITY_STANDARDS_PATH = PurePosixPath(
+    "docs/00.agent-governance/rules/quality-standards.md"
+)
+POSTFLIGHT_PATH = PurePosixPath(
+    "docs/00.agent-governance/rules/postflight-checklist.md"
+)
+SHARED_QA_WORKFLOW_PATH = PurePosixPath(
+    ".agents/workflows/qa-cicd-workflow.md"
+)
+PULL_REQUEST_TEMPLATE_PATH = PurePosixPath(".github/PULL_REQUEST_TEMPLATE.md")
+GITHUB_README_PATH = PurePosixPath(".github/README.md")
+SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
+TESTS_README_PATH = PurePosixPath("tests/README.md")
 
 SCHEMA_VERSION = 1
-CONTRACT_VERSION = "1.0.0"
+CONTRACT_VERSION = "1.1.0"
 RESULT_VOCABULARY = ("PASS", "FAIL", "SKIP", "DEFER")
 EVIDENCE_VOCABULARY = (
     "repo-static",
@@ -229,6 +243,52 @@ EXPECTED_DEFERRED = (
         ),
     ),
 )
+LOCAL_QA_SEQUENCE = (
+    "targeted",
+    "affected",
+    "staged",
+    "tests",
+    "all-files",
+    "formatter-review",
+    "rerun",
+    "diff-checks",
+)
+LOCAL_QA_OWNER = QUALITY_STANDARDS_PATH.as_posix()
+LOCAL_QA_COMMANDS = {
+    "affectedRunner": (
+        "python3 scripts/run-validation-lane.py --root . --lane affected "
+        "--paths-file <paths.nul> --delimiter nul"
+    ),
+    "stagedRunner": (
+        "python3 scripts/run-validation-lane.py --root . --lane staged "
+        "--paths-file <paths.nul> --delimiter nul"
+    ),
+    "stagedHooks": "pre-commit run",
+    "allFiles": "pre-commit run --all-files",
+    "diffCheck": "git diff --check",
+    "cachedDiffCheck": "git diff --cached --check",
+}
+LOCAL_QA_CONSUMERS = (
+    RUNNER_PATH,
+    PRE_COMMIT_PATH,
+    AGGREGATE_PATH,
+    SHARED_QA_WORKFLOW_PATH,
+    POSTFLIGHT_PATH,
+    PULL_REQUEST_TEMPLATE_PATH,
+    GITHUB_README_PATH,
+    SCRIPTS_README_PATH,
+    TESTS_README_PATH,
+)
+LOCAL_QA_COMPACT_SEQUENCE = " -> ".join(LOCAL_QA_SEQUENCE)
+LOCAL_QA_INVENTORY = {
+    "truthCases": 6,
+    "mutationCases": 43,
+    "delegatedChecks": 16,
+    "deferredOwners": 2,
+    "qaSurfaces": 10,
+    "legacyPositiveCases": 3,
+    "legacyMutationCases": 22,
+}
 EXPECTED_MUTATION_NAMES = (
     "unknown-contract-key",
     "contract-version-drift",
@@ -268,6 +328,11 @@ EXPECTED_MUTATION_NAMES = (
     "schema-non-regular",
     "duplicate-contract-key",
     "duplicate-workflow-key",
+    "local-qa-sequence-drift",
+    "staged-runner-disabled",
+    "formatter-rerun-evidence-missing",
+    "qa-inventory-stale",
+    "cached-diff-evidence-missing",
 )
 INPUT_PATHS = (
     CONTRACT_PATH,
@@ -277,6 +342,14 @@ INPUT_PATHS = (
     WORKFLOW_PATH,
     PRE_COMMIT_PATH,
     AGGREGATE_PATH,
+    RUNNER_PATH,
+    QUALITY_STANDARDS_PATH,
+    POSTFLIGHT_PATH,
+    SHARED_QA_WORKFLOW_PATH,
+    PULL_REQUEST_TEMPLATE_PATH,
+    GITHUB_README_PATH,
+    SCRIPTS_README_PATH,
+    TESTS_README_PATH,
 )
 
 
@@ -590,6 +663,24 @@ def validate_contract_data(
             "AGQC-CI-EVIDENCE",
             "AGQC-005 or Spec046 DEFER ownership differs",
         )
+    expected_local_qa = {
+        "owner": LOCAL_QA_OWNER,
+        "sequence": list(LOCAL_QA_SEQUENCE),
+        "commands": LOCAL_QA_COMMANDS,
+        "consumerSurfaces": [
+            path.as_posix() for path in LOCAL_QA_CONSUMERS
+        ],
+        "formatterCompletion": {
+            "mutationResult": "not-completion-evidence",
+            "requiredFinalResult": "PASS",
+            "rerun": ["affected", "staged", "all-files"],
+        },
+        "inventory": LOCAL_QA_INVENTORY,
+    }
+    if contract["localQa"] != expected_local_qa:
+        if contract["localQa"].get("sequence") != list(LOCAL_QA_SEQUENCE):
+            fail("AGQC-QA-ORDER", "local QA sequence or order differs")
+        fail("AGQC-QA-CONTRACT", "local QA owner, command, or inventory differs")
     return contract
 
 
@@ -1040,6 +1131,95 @@ def _validate_integrations(
         )
 
 
+def _validate_local_qa_surfaces(
+    root: Path,
+    contract: dict[str, Any],
+    texts: dict[PurePosixPath, str],
+) -> None:
+    local_qa = contract["localQa"]
+    expected_consumers = [
+        path.as_posix() for path in LOCAL_QA_CONSUMERS
+    ]
+    if local_qa["owner"] != LOCAL_QA_OWNER:
+        fail("AGQC-QA-OWNER", "canonical local QA owner differs")
+    if local_qa["consumerSurfaces"] != expected_consumers:
+        fail("AGQC-QA-OWNER", "local QA consumer surface inventory differs")
+
+    quality_text = texts[QUALITY_STANDARDS_PATH]
+    markers = [
+        f"{index}. **{identifier}**:"
+        for index, identifier in enumerate(LOCAL_QA_SEQUENCE, start=1)
+    ]
+    if any(quality_text.count(marker) != 1 for marker in markers):
+        fail("AGQC-QA-ORDER", "canonical local QA step markers differ")
+    positions = [quality_text.index(marker) for marker in markers]
+    if positions != sorted(positions):
+        fail("AGQC-QA-ORDER", "canonical local QA step order differs")
+    for marker in (
+        "`git diff --check`",
+        "`git diff --cached --check`",
+    ):
+        if marker not in quality_text:
+            fail(
+                "AGQC-QA-EVIDENCE",
+                f"canonical local QA owner lacks {marker}",
+            )
+
+    workflow_text = texts[SHARED_QA_WORKFLOW_PATH]
+    github_text = texts[GITHUB_README_PATH]
+    if LOCAL_QA_OWNER not in workflow_text or LOCAL_QA_OWNER not in github_text:
+        fail("AGQC-QA-OWNER", "QA consumers do not route to the canonical owner")
+
+    for path in (
+        SHARED_QA_WORKFLOW_PATH,
+        POSTFLIGHT_PATH,
+        PULL_REQUEST_TEMPLATE_PATH,
+        SCRIPTS_README_PATH,
+        TESTS_README_PATH,
+    ):
+        if LOCAL_QA_COMPACT_SEQUENCE not in texts[path]:
+            fail(
+                "AGQC-QA-EVIDENCE",
+                f"{path.as_posix()} lacks the canonical local QA sequence",
+            )
+
+    runner_text = texts[RUNNER_PATH]
+    if 'LOCAL_LANES = ("affected", "staged", "all-files")' not in runner_text:
+        fail("AGQC-QA-RUNNER", "local runner lane set differs")
+    for marker in (
+        "--lane affected",
+        "--lane staged",
+        "pre-commit run",
+        "pre-commit run --all-files",
+    ):
+        if marker not in workflow_text:
+            fail("AGQC-QA-RUNNER", f"shared QA workflow lacks {marker}")
+
+    inventory_markers = (
+        "truth_cases=6 mutation_cases=43",
+        "delegated_checks=16",
+        "deferred_owners=2",
+        "qa_surfaces=10",
+        "positive_cases=3 mutation_cases=22",
+    )
+    for path in (SCRIPTS_README_PATH, TESTS_README_PATH):
+        text = texts[path]
+        for marker in inventory_markers:
+            if marker not in text:
+                fail(
+                    "AGQC-QA-INVENTORY",
+                    f"{path.as_posix()} lacks current inventory {marker}",
+                )
+
+    command_paths = {
+        PurePosixPath(match)
+        for command in local_qa["commands"].values()
+        for match in re.findall(r"scripts/[A-Za-z0-9_.-]+\.(?:py|sh)", command)
+    }
+    for path in sorted(command_paths):
+        _read_regular_text(root, path)
+
+
 def _validate_fixture_shape(fixture: dict[str, Any]) -> None:
     if set(fixture) != {"fixtureVersion", "truthTableCases", "mutationCases"}:
         fail("AGQC-CI-FIXTURE", "fixture keys differ")
@@ -1087,6 +1267,7 @@ def _load_repository_inputs(root: Path) -> tuple[
     dict[str, Any],
     str,
     dict[str, Any],
+    dict[PurePosixPath, str],
 ]:
     schema = _parse_json(
         _read_regular_text(root, SCHEMA_PATH),
@@ -1113,10 +1294,26 @@ def _load_repository_inputs(root: Path) -> tuple[
         WORKFLOW_PATH.as_posix(),
     )
     aggregate = _read_regular_text(root, AGGREGATE_PATH)
+    pre_commit_text = _read_regular_text(root, PRE_COMMIT_PATH)
     pre_commit = _parse_yaml(
-        _read_regular_text(root, PRE_COMMIT_PATH),
+        pre_commit_text,
         PRE_COMMIT_PATH.as_posix(),
     )
+    qa_texts = {
+        path: _read_regular_text(root, path)
+        for path in (
+            QUALITY_STANDARDS_PATH,
+            RUNNER_PATH,
+            SHARED_QA_WORKFLOW_PATH,
+            POSTFLIGHT_PATH,
+            PULL_REQUEST_TEMPLATE_PATH,
+            GITHUB_README_PATH,
+            SCRIPTS_README_PATH,
+            TESTS_README_PATH,
+        )
+    }
+    qa_texts[PRE_COMMIT_PATH] = pre_commit_text
+    qa_texts[AGGREGATE_PATH] = aggregate
     return (
         schema,
         contract,
@@ -1125,6 +1322,7 @@ def _load_repository_inputs(root: Path) -> tuple[
         workflow,
         aggregate,
         pre_commit,
+        qa_texts,
     )
 
 
@@ -1138,17 +1336,20 @@ def validate_repository(root: Path) -> dict[str, int]:
         workflow,
         aggregate,
         pre_commit,
+        qa_texts,
     ) = _load_repository_inputs(absolute)
     validate_contract_data(absolute, contract, schema=schema)
     validate_affected_data(affected, contract)
     validate_workflow_data(workflow, contract)
     _validate_integrations(aggregate, pre_commit)
+    _validate_local_qa_surfaces(absolute, contract, qa_texts)
     _validate_fixture_shape(fixture)
     return {
         "routeClasses": len(contract["requiredRouteClasses"]),
         "delegatedChecks": len(contract["delegatedChecks"]),
         "truthRows": len(contract["summary"]["truthTable"]),
         "deferredOwners": len(contract["deferredEvidence"]),
+        "qaSurfaces": 1 + len(contract["localQa"]["consumerSurfaces"]),
     }
 
 
@@ -1175,6 +1376,11 @@ def _mutate_contract(contract: dict[str, Any], mutation: dict[str, Any]) -> None
         row["result"] = mutation["value"]
     elif kind == "replace-result-vocabulary":
         contract["resultVocabulary"] = list(mutation["value"])
+    elif kind == "swap-local-qa-steps":
+        first = int(mutation["first"])
+        second = int(mutation["second"])
+        sequence = contract["localQa"]["sequence"]
+        sequence[first], sequence[second] = sequence[second], sequence[first]
     else:
         fail("AGQC-CI-FIXTURE", f"unknown contract mutation: {kind}")
 
@@ -1347,6 +1553,10 @@ def _run_filesystem_mutation(
         contract_path = target_root / CONTRACT_PATH
         schema_path = target_root / SCHEMA_PATH
         workflow_path = target_root / WORKFLOW_PATH
+        runner_path = target_root / RUNNER_PATH
+        pull_request_path = target_root / PULL_REQUEST_TEMPLATE_PATH
+        scripts_readme_path = target_root / SCRIPTS_README_PATH
+        quality_standards_path = target_root / QUALITY_STANDARDS_PATH
         if kind == "symlink-input":
             copy_path = contract_path.with_name("contract-copy.json")
             shutil.copyfile(contract_path, copy_path)
@@ -1371,6 +1581,46 @@ def _run_filesystem_mutation(
                 text.replace("name: CI\n", "name: CI\nname: Duplicate\n", 1),
                 encoding="utf-8",
             )
+        elif kind == "disable-staged-runner":
+            text = runner_path.read_text(encoding="utf-8")
+            runner_path.write_text(
+                text.replace(
+                    'LOCAL_LANES = ("affected", "staged", "all-files")',
+                    'LOCAL_LANES = ("affected", "all-files")',
+                    1,
+                ),
+                encoding="utf-8",
+            )
+        elif kind == "remove-formatter-rerun-evidence":
+            text = pull_request_path.read_text(encoding="utf-8")
+            pull_request_path.write_text(
+                text.replace(
+                    LOCAL_QA_COMPACT_SEQUENCE,
+                    "targeted -> affected -> staged -> tests -> all-files",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+        elif kind == "stale-qa-inventory":
+            text = scripts_readme_path.read_text(encoding="utf-8")
+            scripts_readme_path.write_text(
+                text.replace(
+                    "delegated_checks=16",
+                    "delegated_checks=13",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+        elif kind == "remove-cached-diff-evidence":
+            text = quality_standards_path.read_text(encoding="utf-8")
+            quality_standards_path.write_text(
+                text.replace(
+                    "`git diff --cached --check`",
+                    "`git diff --check`",
+                    1,
+                ),
+                encoding="utf-8",
+            )
         else:
             fail("AGQC-CI-FIXTURE", f"unknown filesystem mutation: {kind}")
         validate_repository(target_root)
@@ -1387,6 +1637,7 @@ def run_self_test(root: Path) -> tuple[int, int]:
         workflow,
         _aggregate,
         _pre_commit,
+        _qa_texts,
     ) = _load_repository_inputs(absolute)
     _validate_fixture_shape(fixture)
 
@@ -1456,7 +1707,8 @@ def main() -> int:
             f"route_classes={counts['routeClasses']} "
             f"delegated_checks={counts['delegatedChecks']} "
             f"truth_rows={counts['truthRows']} "
-            f"deferred_owners={counts['deferredOwners']}"
+            f"deferred_owners={counts['deferredOwners']} "
+            f"qa_surfaces={counts['qaSurfaces']}"
         )
         return 0
     except ContractError as exc:

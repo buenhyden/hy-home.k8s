@@ -3029,8 +3029,6 @@ for phrase in [
     "validation-matrix coverage",
     "PR verification must state which coverage lane applies",
     "pre-commit run --all-files",
-    "Review `git status --short`, `git diff`, and `git diff --cached` for formatter mutations.",
-    "Rerun affected, staged, and all-files validation after any formatter mutation.",
 ]:
     if phrase not in quality_standards_text:
         fail(f"{rel(quality_standards_path)} missing quality/completion phrase: {phrase}")
@@ -3048,7 +3046,7 @@ for phrase in [
 pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
-    "- [ ] `pre-commit run --all-files` result:",
+    "- [ ] `all-files` result (`pre-commit run --all-files`):",
     "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
 ]:
     if phrase not in pull_request_template_text:

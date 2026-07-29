@@ -25,7 +25,14 @@ source of truth.
   history, and `pre-commit` runs the explicit all-files/show-diff command. The
   network-free contract validator reconciles those workflow settings with the
   executable requirements owner and technology inventory.
-- The canonical local completion order and evidence vocabulary live in [`quality-standards.md`](../docs/00.agent-governance/rules/quality-standards.md); this hub routes GitHub-specific roles to that owner.
+- The sole canonical local completion-order, lane, result, formatter, and
+  handoff owner is
+  [`quality-standards.md`](../docs/00.agent-governance/rules/quality-standards.md);
+  this hub and the PR template only route GitHub-specific consumers there.
+- Current validator command and fixture inventories live in
+  [`scripts/README.md`](../scripts/README.md) and
+  [`tests/README.md`](../tests/README.md); this hub does not duplicate their
+  counts.
 - ARWB-003 records its 31-record/202-link full cutover proof as explicit local/manual evidence, so `repo-quality-static` does not invoke that separate proof. The blocking ACER migration validator does classify its additive archive payloads with the exact security-validated Gitleaks executable supplied to the closed lane.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.

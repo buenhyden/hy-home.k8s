@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-governance-ci.schema.json",
   "schemaVersion": 1,
-  "contractVersion": "1.0.0",
+  "contractVersion": "1.1.0",
   "resultVocabulary": ["PASS", "FAIL", "SKIP", "DEFER"],
   "evidenceVocabulary": [
     "repo-static",
@@ -258,5 +258,51 @@
         "remote-live"
       ]
     }
-  ]
+  ],
+  "localQa": {
+    "owner": "docs/00.agent-governance/rules/quality-standards.md",
+    "sequence": [
+      "targeted",
+      "affected",
+      "staged",
+      "tests",
+      "all-files",
+      "formatter-review",
+      "rerun",
+      "diff-checks"
+    ],
+    "commands": {
+      "affectedRunner": "python3 scripts/run-validation-lane.py --root . --lane affected --paths-file <paths.nul> --delimiter nul",
+      "stagedRunner": "python3 scripts/run-validation-lane.py --root . --lane staged --paths-file <paths.nul> --delimiter nul",
+      "stagedHooks": "pre-commit run",
+      "allFiles": "pre-commit run --all-files",
+      "diffCheck": "git diff --check",
+      "cachedDiffCheck": "git diff --cached --check"
+    },
+    "consumerSurfaces": [
+      "scripts/run-validation-lane.py",
+      ".pre-commit-config.yaml",
+      "scripts/validate-repo-quality-gates.sh",
+      ".agents/workflows/qa-cicd-workflow.md",
+      "docs/00.agent-governance/rules/postflight-checklist.md",
+      ".github/PULL_REQUEST_TEMPLATE.md",
+      ".github/README.md",
+      "scripts/README.md",
+      "tests/README.md"
+    ],
+    "formatterCompletion": {
+      "mutationResult": "not-completion-evidence",
+      "requiredFinalResult": "PASS",
+      "rerun": ["affected", "staged", "all-files"]
+    },
+    "inventory": {
+      "truthCases": 6,
+      "mutationCases": 43,
+      "delegatedChecks": 16,
+      "deferredOwners": 2,
+      "qaSurfaces": 10,
+      "legacyPositiveCases": 3,
+      "legacyMutationCases": 22
+    }
+  }
 }

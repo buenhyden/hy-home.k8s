@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://hy-home.k8s/contracts/agent-governance-ci.schema.json",
-  "title": "Agent-governance CI topology and evidence contract",
+  "title": "Agent-governance CI topology and local QA evidence contract",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -17,7 +17,8 @@
     "delegatedChecks",
     "gateCommands",
     "securityBoundary",
-    "deferredEvidence"
+    "deferredEvidence",
+    "localQa"
   ],
   "properties": {
     "$schema": {
@@ -162,9 +163,105 @@
       "minItems": 2,
       "maxItems": 2,
       "items": {"$ref": "#/$defs/deferredEvidence"}
+    },
+    "localQa": {
+      "$ref": "#/$defs/localQa"
     }
   },
   "$defs": {
+    "localQa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "sequence",
+        "commands",
+        "consumerSurfaces",
+        "formatterCompletion",
+        "inventory"
+      ],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "sequence": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "commands": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "affectedRunner",
+            "stagedRunner",
+            "stagedHooks",
+            "allFiles",
+            "diffCheck",
+            "cachedDiffCheck"
+          ],
+          "properties": {
+            "affectedRunner": {"type": "string", "minLength": 1},
+            "stagedRunner": {"type": "string", "minLength": 1},
+            "stagedHooks": {"type": "string", "minLength": 1},
+            "allFiles": {"type": "string", "minLength": 1},
+            "diffCheck": {"type": "string", "minLength": 1},
+            "cachedDiffCheck": {"type": "string", "minLength": 1}
+          }
+        },
+        "consumerSurfaces": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "formatterCompletion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mutationResult",
+            "requiredFinalResult",
+            "rerun"
+          ],
+          "properties": {
+            "mutationResult": {"type": "string", "minLength": 1},
+            "requiredFinalResult": {
+              "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+            },
+            "rerun": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "inventory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "truthCases",
+            "mutationCases",
+            "delegatedChecks",
+            "deferredOwners",
+            "qaSurfaces",
+            "legacyPositiveCases",
+            "legacyMutationCases"
+          ],
+          "properties": {
+            "truthCases": {"type": "integer", "minimum": 1},
+            "mutationCases": {"type": "integer", "minimum": 1},
+            "delegatedChecks": {"type": "integer", "minimum": 1},
+            "deferredOwners": {"type": "integer", "minimum": 1},
+            "qaSurfaces": {"type": "integer", "minimum": 1},
+            "legacyPositiveCases": {"type": "integer", "minimum": 1},
+            "legacyMutationCases": {"type": "integer", "minimum": 1}
+          }
+        }
+      }
+    },
     "truthRow": {
       "type": "object",
       "additionalProperties": false,

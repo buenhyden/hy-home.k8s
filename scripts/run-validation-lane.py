@@ -17,7 +17,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Sequence
 
 
-LOCAL_LANES = ("affected", "all-files")
+LOCAL_LANES = ("affected", "staged", "all-files")
 TRUSTED_SEARCH_DIRECTORIES = (
     "/usr/local/sbin",
     "/usr/local/bin",
@@ -225,7 +225,10 @@ def validator_argv(
     contract_module: Any,
 ) -> list[str]:
     argv = list(validator["argv"])
-    if lane != "affected" or validator.get("pathInput") != "include-existing-markdown":
+    if (
+        lane not in ("affected", "staged")
+        or validator.get("pathInput") != "include-existing-markdown"
+    ):
         return argv
 
     include_candidates = list(paths)

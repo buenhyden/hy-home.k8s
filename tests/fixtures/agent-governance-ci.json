@@ -291,6 +291,36 @@
       "target": "filesystem",
       "mutation": {"kind": "duplicate-yaml-key"},
       "expectedRule": "AGQC-CI-YAML"
+    },
+    {
+      "name": "local-qa-sequence-drift",
+      "target": "contract",
+      "mutation": {"kind": "swap-local-qa-steps", "first": 0, "second": 1},
+      "expectedRule": "AGQC-QA-ORDER"
+    },
+    {
+      "name": "staged-runner-disabled",
+      "target": "filesystem",
+      "mutation": {"kind": "disable-staged-runner"},
+      "expectedRule": "AGQC-QA-RUNNER"
+    },
+    {
+      "name": "formatter-rerun-evidence-missing",
+      "target": "filesystem",
+      "mutation": {"kind": "remove-formatter-rerun-evidence"},
+      "expectedRule": "AGQC-QA-EVIDENCE"
+    },
+    {
+      "name": "qa-inventory-stale",
+      "target": "filesystem",
+      "mutation": {"kind": "stale-qa-inventory"},
+      "expectedRule": "AGQC-QA-INVENTORY"
+    },
+    {
+      "name": "cached-diff-evidence-missing",
+      "target": "filesystem",
+      "mutation": {"kind": "remove-cached-diff-evidence"},
+      "expectedRule": "AGQC-QA-EVIDENCE"
     }
   ]
 }
