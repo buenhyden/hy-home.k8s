@@ -513,6 +513,8 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "python3 scripts/validate-agent-evaluations.py --root .",
         "python3 scripts/validate-agent-model-fitness.py --root .",
         "python3 scripts/validate-agent-roster-currentness.py .",
+        "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
+        "python3 scripts/validate-agent-governance-ci.py --root .",
         "python3 scripts/validate-affected-surfaces.py --root . --self-test",
         "python3 scripts/validate-affected-surfaces.py --root .",
         "python3 scripts/validate-ci-python-contract.py --root . --self-test",
@@ -870,9 +872,9 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
             "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
         ),
-        "agent-governance-scripts": ("scripts/validate-affected-surfaces.py",),
+        "agent-governance-scripts": ("scripts/validate-agent-governance-ci.py",),
         "agent-governance-tests": (
-            "tests/test_validate_ci_python_contract.py",
+            "tests/test_validate_agent_governance_ci.py",
         ),
     }
     for name, paths in required_agent_selection_paths.items():
@@ -941,8 +943,8 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
         "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
         "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
-        "scripts/validate-affected-surfaces.py",
-        "tests/test_validate_ci_python_contract.py",
+        "scripts/validate-agent-governance-ci.py",
+        "tests/test_validate_agent_governance_ci.py",
     }
     observed_ci_paths = {
         path for case in ci_range_cases for path in case.get("paths", [])
@@ -1066,7 +1068,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     if json_output(root_result) != (
         '{"ciJobs":["agent-governance-static","pre-commit","repo-quality-static"],'
         '"protectedLevel":"review","unmatchedPaths":[],'
-        '"validators":["repository-quality"]}'
+        '"validators":["agent-governance-ci","repository-quality"]}'
     ):
         fail("SURFACE-SELF-TEST", "stable JSON output differs")
     if github_output(contract, root_result) != (

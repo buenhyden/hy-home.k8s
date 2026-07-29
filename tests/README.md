@@ -38,6 +38,7 @@
 tests/README.md
 tests/fixtures/agent-checkpoint.json
 tests/fixtures/agent-evaluations.json
+tests/fixtures/agent-governance-ci.json
 tests/fixtures/agent-harness-contract.json
 tests/fixtures/agent-loop-lifecycle.json
 tests/fixtures/agent-model-fitness.json
@@ -86,6 +87,7 @@ tests/test_reference_information_architecture.py
 tests/test_run_validation_lane.py
 tests/test_validate_agent_checkpoint.py
 tests/test_validate_agent_evaluations.py
+tests/test_validate_agent_governance_ci.py
 tests/test_validate_agent_harness_contract.py
 tests/test_validate_agent_loop_lifecycle.py
 tests/test_validate_agent_model_fitness.py
@@ -148,6 +150,8 @@ live readiness.
 | Agent roster admission repository check | `python3 scripts/validate-agent-roster-admission.py --root .` | Repo-static `state=repository-static-projected verdict=DEFER`, current `12/4/48`, achieved target mirror `12/4/48`; evaluation-backed final admission and provider runtime/hosted CI/remote/live promotion remain deferred |
 | Agent evaluation fixture | `python3 scripts/validate-agent-evaluations.py --self-test`; `python3 -m unittest tests/test_validate_agent_evaluations.py` | Exact 60-case closed mutation matrix plus thirty-three focused tests for exact harness suite/version binding, twelve role suites × four classes의 48 role-specific executable synthetic scenarios, stable identity/digest, generic-placeholder rejection, twelve adjudication-readiness records, roster-admission candidate/source digest에 직접 결합된 two rollback records, nine high-risk independent reviews, four promotion blockers, redacted data, four memory boundaries, raw root와 five governed inputs의 fail-closed symlink/non-regular/path-escape/sensitive-content/non-disclosing read boundaries |
 | Agent evaluation repository check | `python3 scripts/validate-agent-evaluations.py --root .` | Repo-static `roles=12 fixtureClasses=4 corpusRecords=48 highRiskRoles=9 adjudicationRecords=12 rollbackRecords=2 promotionBlocks=4 deferredEvidence=9`; readiness review alone is `PASS`, while execution, runtime, provider resolution, authentication, live action, evaluation/admission/model decisions remain `DEFER` |
+| Agent-governance CI fixture | `python3 scripts/validate-agent-governance-ci.py --root . --self-test`; `python3 -m unittest tests/test_validate_agent_governance_ci.py` | Exact six-row selected/result truth table, 38-case closed mutation matrix, and twenty-two focused artifact, schema, semantic, path/symlink/non-regular, duplicate-key, topology, inherited-secret, skipped-step, custom/default-shell, exact-run-sequence, exact-summary-shape/digest, job/step fail-open, security, routing, invocation-order, and evidence-boundary regressions |
+| Agent-governance CI repository check | `python3 scripts/validate-agent-governance-ci.py --root .` | Repo-static `route_classes=12 delegated_checks=13 truth_rows=6 deferred_owners=3`; PASS proves only the closed selector/job/summary/route/delegation/security contract and leaves hosted CI, branch protection, provider runtime/auth/model discovery, remote, and live evidence `DEFER` |
 | Agent model-fitness fixture | `python3 scripts/validate-agent-model-fitness.py --self-test`; `python3 -m unittest tests/test_validate_agent_model_fitness.py` | Exact 33-case closed mutation matrix plus 28 focused tests for authoritative cutoff, harness observation separation, tracked incumbent values, checked Spec 042 validator import, exact ten-source ledger and `publishedAtUtc` cutoff-day UTC semantics, provider source ownership/classification/confidence/date binding, exact quality/safety/cost/latency thresholds, checked AREA-003 validator import and nested corpus/input/fixture-manifest digest validation, suite/adjudication/rollback binding, 48 provider tuples, fallback, decision-plane separation, and fail-closed root/input symlink, intermediate-path, non-regular, containment, semantic-drift, and non-disclosing CLI boundaries |
 | Agent model-fitness repository check | `python3 scripts/validate-agent-model-fitness.py --root .` | Repository-static `roles=12 providers=4 tuples=48 mappingReady=21 mappingDeferred=27 fitnessDeferred=48 thresholdDeferred=48 promotionDeferred=48 canaryDeferred=48 runtimeDeferred=48`; local 12 and fixed-cutoff Claude high-risk 9 mappings are ready, while current-only Claude/Codex and mixed/unresolved Gemini mappings remain deferred. No result proves model execution, threshold fitness, promotion, provider runtime resolution, authentication, hosted CI, remote, or live evidence |
 | Agent loop lifecycle regression | `python3 -m unittest tests.test_validate_agent_loop_lifecycle`; `python3 scripts/validate-agent-loop-lifecycle.py --self-test`; `python3 scripts/validate-agent-loop-lifecycle.py --root .` | Focused contract, destination-ID/order/owner-reference, review, and raw-promotion mutations prove the four memory classes, atomic/redacted synthetic checkpoint boundary, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five bounded reviewed feedback destinations. PASS does not read or write ignored checkpoints or establish provider/runtime/CI/remote/live/actual checkpoint execution. |
@@ -158,7 +162,7 @@ live readiness.
 | Agent role semantics repository check | `python3 scripts/validate-agent-role-semantics.py --root .` | Repo-static 48-adapter semantic coverage across local, Claude, Codex, and Gemini surfaces |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
-| Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, NUL-transport, and focused agent-harness/loop/checkpoint plus Spec 044 admission/evaluation/model-fitness selection evidence across the required agent/governance/script/test surfaces |
+| Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, NUL-transport, and focused agent-harness/loop/checkpoint plus Spec 044 admission/evaluation/model-fitness and Spec 045 agent-governance CI selection evidence across the required agent/governance/script/test surfaces |
 | Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
 | Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul`; `python3 -m unittest tests/test_run_validation_lane.py tests/test_post_validate_runner_result.py tests/test_provider_post_validate_hook.py` | Repo-static shell-free execution of contract-selected argv under a closed startup environment and fixed absolute tool search path. Twenty production-isolation, marker-cardinality, hostile PATH/BASH_ENV/PYTHONPATH/Gitleaks-hint, exact secure passwd-home executable, unsafe candidate, effective owner/group/other execute and full directory traversal, root semantics, pure selector/runner, remote/live `DEFER` no-subprocess, hook-log, and actual provider-entry regressions prove caller state cannot forge success. The secure executable hint never broadens PATH. Claude, Codex, and Gemini commands execute the production hook in a bounded fixture: valid manifest/docs payloads preserve all 7/4 validators and existing Markdown path arguments, while malformed JSON fails closed. |
 | CI Python contract regression | `python3 -m unittest tests/test_validate_ci_python_contract.py`; `python3 scripts/validate-ci-python-contract.py --self-test`; `python3 scripts/validate-ci-python-contract.py --root .` | 15개 focused test와 13-case self-test가 임시 최소 저장소 및 실제 root에서 exact three-line Python requirements/inventory mirror, 세 validation job의 Python 3.12 및 단일 shared install, validation set 밖 job의 setup-python/pip-install 부재, `pre-commit/action` 부재, exact all-files/show-diff 실행, `pre-commit`과 `repo-quality-static`의 exact verified Gitleaks `8.30.0` 설치, 두 job의 full-history checkout을 검증한다. 아홉 stable rule ID와 regular non-symlink input을 fail-closed로 검사하며 validator 자체는 네트워크를 사용하지 않는다. |
@@ -397,6 +401,20 @@ adapter PASS does not prove provider runtime consumption.
   contract/schema/fixture/harness/roster-admission 입력과 raw repository
   root의 symlink, non-regular node, 중간 경로 symlink, `..` 탈출을 읽기
   전에 `AREA-EVAL-INPUT`으로 비노출 차단한다.
+- `tests/fixtures/agent-governance-ci.json`은 selected/result 조합의 exact
+  six-row truth table과 38개 closed mutation을 고정한다.
+  `tests/test_validate_agent_governance_ci.py`의 22 focused tests는 adjacent
+  schema, unknown key/version, result/evidence vocabulary, selector/job/summary,
+  twelve route classes, thirteen delegated checks, aggregate/pre-commit/CI order,
+  full-SHA와 least-permission 경계, duplicate JSON/YAML, symlink/non-regular
+  input, workflow-level inherited provider/secret env, agent validation 및
+  summary job/step `continue-on-error`, validation step skip, step/workflow/job
+  custom/default shell, dependency-install/gate/delegated command 밖의 extra
+  run line, exact summary job/verdict-step/env shape, summary permissions,
+  summary provider/secret env, pinned full-script SHA-256 drift,
+  secret/provider-canary read, hosted-result preclaim, 그리고
+  AGQC-003/005/Spec-046 `DEFER` ownership drift를 production 함수에서
+  fail closed로 거부한다.
 - `tests/fixtures/agent-model-fitness.json`은 33개 closed mutation과
   열두 role × 네 provider의 48 tuple, AREA-003 same-suite/corpus/
   adjudicator/rollback binding, configured incumbent, risk rationale,

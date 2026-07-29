@@ -1,0 +1,296 @@
+{
+  "fixtureVersion": 1,
+  "truthTableCases": [
+    {
+      "name": "selected-success",
+      "selected": true,
+      "conclusion": "success",
+      "expected": "PASS"
+    },
+    {
+      "name": "unselected-skipped",
+      "selected": false,
+      "conclusion": "skipped",
+      "expected": "SKIP"
+    },
+    {
+      "name": "selected-skipped",
+      "selected": true,
+      "conclusion": "skipped",
+      "expected": "FAIL"
+    },
+    {
+      "name": "selected-cancelled",
+      "selected": true,
+      "conclusion": "cancelled",
+      "expected": "FAIL"
+    },
+    {
+      "name": "selected-missing",
+      "selected": true,
+      "conclusion": "missing",
+      "expected": "FAIL"
+    },
+    {
+      "name": "selected-failure",
+      "selected": true,
+      "conclusion": "failure",
+      "expected": "FAIL"
+    }
+  ],
+  "mutationCases": [
+    {
+      "name": "unknown-contract-key",
+      "target": "contract",
+      "mutation": {"kind": "add-unknown-key"},
+      "expectedRule": "AGQC-CI-SCHEMA"
+    },
+    {
+      "name": "contract-version-drift",
+      "target": "contract",
+      "mutation": {"kind": "replace-contract-version", "value": "2.0.0"},
+      "expectedRule": "AGQC-CI-VERSION"
+    },
+    {
+      "name": "selector-output-missing",
+      "target": "workflow",
+      "mutation": {"kind": "remove-selector-output"},
+      "expectedRule": "AGQC-CI-SELECTOR"
+    },
+    {
+      "name": "selector-output-duplicate",
+      "target": "affected",
+      "mutation": {"kind": "duplicate-selector-output"},
+      "expectedRule": "AGQC-CI-SELECTOR"
+    },
+    {
+      "name": "route-job-missing",
+      "target": "affected",
+      "mutation": {"kind": "remove-route-job", "surfaceId": "root-config"},
+      "expectedRule": "AGQC-CI-ROUTE"
+    },
+    {
+      "name": "workflow-job-missing",
+      "target": "workflow",
+      "mutation": {"kind": "remove-workflow-job"},
+      "expectedRule": "AGQC-CI-WORKFLOW"
+    },
+    {
+      "name": "workflow-needs-missing",
+      "target": "workflow",
+      "mutation": {"kind": "remove-workflow-needs"},
+      "expectedRule": "AGQC-CI-WORKFLOW"
+    },
+    {
+      "name": "workflow-if-missing",
+      "target": "workflow",
+      "mutation": {"kind": "remove-workflow-if"},
+      "expectedRule": "AGQC-CI-WORKFLOW"
+    },
+    {
+      "name": "summary-missing",
+      "target": "workflow",
+      "mutation": {"kind": "remove-summary-job"},
+      "expectedRule": "AGQC-CI-SUMMARY"
+    },
+    {
+      "name": "selected-skipped-preclaim",
+      "target": "contract",
+      "mutation": {
+        "kind": "replace-truth-verdict",
+        "selected": true,
+        "conclusion": "skipped",
+        "value": "PASS"
+      },
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "selected-cancelled-preclaim",
+      "target": "contract",
+      "mutation": {
+        "kind": "replace-truth-verdict",
+        "selected": true,
+        "conclusion": "cancelled",
+        "value": "PASS"
+      },
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "selected-missing-preclaim",
+      "target": "contract",
+      "mutation": {
+        "kind": "replace-truth-verdict",
+        "selected": true,
+        "conclusion": "missing",
+        "value": "PASS"
+      },
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "required-validator-missing",
+      "target": "workflow",
+      "mutation": {
+        "kind": "remove-required-validator",
+        "checkId": "agent-harness-contract"
+      },
+      "expectedRule": "AGQC-CI-DELEGATION"
+    },
+    {
+      "name": "provider-secret-injected",
+      "target": "workflow",
+      "mutation": {"kind": "inject-provider-secret"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "workflow-provider-secret-injected",
+      "target": "workflow",
+      "mutation": {"kind": "inject-workflow-provider-secret"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "id-token-injected",
+      "target": "workflow",
+      "mutation": {"kind": "inject-id-token"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "provider-canary-injected",
+      "target": "workflow",
+      "mutation": {"kind": "inject-provider-canary"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "agent-job-continue-on-error",
+      "target": "workflow",
+      "mutation": {"kind": "set-agent-job-continue-on-error"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "validation-step-continue-on-error",
+      "target": "workflow",
+      "mutation": {"kind": "set-validation-step-continue-on-error"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "summary-job-continue-on-error",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-job-continue-on-error"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "summary-step-continue-on-error",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-step-continue-on-error"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "validation-step-if",
+      "target": "workflow",
+      "mutation": {"kind": "set-validation-step-if"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "validation-step-shell",
+      "target": "workflow",
+      "mutation": {"kind": "set-validation-step-shell"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "workflow-default-shell",
+      "target": "workflow",
+      "mutation": {"kind": "set-workflow-default-shell"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "agent-job-default-shell",
+      "target": "workflow",
+      "mutation": {"kind": "set-agent-job-default-shell"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "extra-run-command",
+      "target": "workflow",
+      "mutation": {"kind": "inject-extra-run-command"},
+      "expectedRule": "AGQC-CI-DELEGATION"
+    },
+    {
+      "name": "summary-step-if",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-step-if"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "summary-step-shell",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-step-shell"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "summary-job-default-shell",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-job-default-shell"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "summary-job-write-permissions",
+      "target": "workflow",
+      "mutation": {"kind": "set-summary-job-write-permissions"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "summary-step-secret-env",
+      "target": "workflow",
+      "mutation": {"kind": "inject-summary-step-provider-secret"},
+      "expectedRule": "AGQC-CI-SECURITY"
+    },
+    {
+      "name": "summary-run-bypass",
+      "target": "workflow",
+      "mutation": {"kind": "inject-summary-run-bypass"},
+      "expectedRule": "AGQC-CI-TRUTH"
+    },
+    {
+      "name": "hosted-pass-preclaim",
+      "target": "contract",
+      "mutation": {
+        "kind": "replace-deferred-result",
+        "owner": "Spec046",
+        "value": "PASS"
+      },
+      "expectedRule": "AGQC-CI-EVIDENCE"
+    },
+    {
+      "name": "result-vocabulary-drift",
+      "target": "contract",
+      "mutation": {
+        "kind": "replace-result-vocabulary",
+        "value": ["PASS", "FAIL", "SKIP"]
+      },
+      "expectedRule": "AGQC-CI-VOCABULARY"
+    },
+    {
+      "name": "contract-symlink",
+      "target": "filesystem",
+      "mutation": {"kind": "symlink-input", "path": "contract"},
+      "expectedRule": "AGQC-CI-INPUT"
+    },
+    {
+      "name": "schema-non-regular",
+      "target": "filesystem",
+      "mutation": {"kind": "non-regular-input", "path": "schema"},
+      "expectedRule": "AGQC-CI-INPUT"
+    },
+    {
+      "name": "duplicate-contract-key",
+      "target": "filesystem",
+      "mutation": {"kind": "duplicate-json-key"},
+      "expectedRule": "AGQC-CI-JSON"
+    },
+    {
+      "name": "duplicate-workflow-key",
+      "target": "filesystem",
+      "mutation": {"kind": "duplicate-yaml-key"},
+      "expectedRule": "AGQC-CI-YAML"
+    }
+  ]
+}

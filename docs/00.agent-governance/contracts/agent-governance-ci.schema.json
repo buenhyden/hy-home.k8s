@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/contracts/agent-governance-ci.schema.json",
+  "title": "Agent-governance CI topology and evidence contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "contractVersion",
+    "resultVocabulary",
+    "evidenceVocabulary",
+    "selector",
+    "job",
+    "summary",
+    "requiredRouteClasses",
+    "delegatedChecks",
+    "gateCommands",
+    "securityBoundary",
+    "deferredEvidence"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./agent-governance-ci.schema.json"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "contractVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "resultVocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+      }
+    },
+    "evidenceVocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+      }
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jobId",
+        "stepId",
+        "output",
+        "expression",
+        "selectedValue",
+        "unselectedValue"
+      ],
+      "properties": {
+        "jobId": {"type": "string", "minLength": 1},
+        "stepId": {"type": "string", "minLength": 1},
+        "output": {"type": "string", "minLength": 1},
+        "expression": {"type": "string", "minLength": 1},
+        "selectedValue": {"type": "string", "minLength": 1},
+        "unselectedValue": {"type": "string", "minLength": 1}
+      }
+    },
+    "job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "needs", "if", "evidence", "allowedResults"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "needs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "if": {"type": "string", "minLength": 1},
+        "evidence": {
+          "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+        },
+        "allowedResults": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jobId",
+        "needs",
+        "if",
+        "selectedEnv",
+        "resultEnv",
+        "runSha256",
+        "truthTable",
+        "defaultResult"
+      ],
+      "properties": {
+        "jobId": {"type": "string", "minLength": 1},
+        "needs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "if": {"type": "string", "minLength": 1},
+        "selectedEnv": {"type": "string", "minLength": 1},
+        "resultEnv": {"type": "string", "minLength": 1},
+        "runSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "truthTable": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/truthRow"}
+        },
+        "defaultResult": {
+          "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+        }
+      }
+    },
+    "requiredRouteClasses": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/routeClass"}
+    },
+    "delegatedChecks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/delegatedCheck"}
+    },
+    "gateCommands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selfTest", "production"],
+      "properties": {
+        "selfTest": {"type": "string", "minLength": 1},
+        "production": {"type": "string", "minLength": 1}
+      }
+    },
+    "securityBoundary": {
+      "$ref": "#/$defs/securityBoundary"
+    },
+    "deferredEvidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/deferredEvidence"}
+    }
+  },
+  "$defs": {
+    "truthRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected", "conclusion", "result"],
+      "properties": {
+        "selected": {"type": "boolean"},
+        "conclusion": {
+          "enum": ["success", "skipped", "cancelled", "missing", "failure"]
+        },
+        "result": {
+          "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+        }
+      }
+    },
+    "routeClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surfaceId", "jobId", "validatorId"],
+      "properties": {
+        "surfaceId": {"type": "string", "minLength": 1},
+        "jobId": {"type": "string", "minLength": 1},
+        "validatorId": {"type": "string", "minLength": 1}
+      }
+    },
+    "delegatedCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "command", "evidence", "allowedResults"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "command": {"type": "string", "minLength": 1},
+        "evidence": {
+          "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+        },
+        "allowedResults": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+          }
+        }
+      }
+    },
+    "securityBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflowPermissions",
+        "checkoutAction",
+        "checkout",
+        "remoteUsesPin",
+        "forbiddenCommandClasses"
+      ],
+      "properties": {
+        "workflowPermissions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contents"],
+          "properties": {
+            "contents": {"enum": ["read", "write"]}
+          }
+        },
+        "checkoutAction": {"type": "string", "minLength": 1},
+        "checkout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["persistCredentials", "fetchDepth"],
+          "properties": {
+            "persistCredentials": {"type": "boolean"},
+            "fetchDepth": {"type": "integer", "minimum": 0}
+          }
+        },
+        "remoteUsesPin": {"type": "string", "minLength": 1},
+        "forbiddenCommandClasses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "deferredEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "result", "scope"],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "result": {
+          "enum": ["PASS", "FAIL", "SKIP", "DEFER"]
+        },
+        "scope": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

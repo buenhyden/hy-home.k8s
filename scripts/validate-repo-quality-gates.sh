@@ -81,6 +81,8 @@ python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-ci-python-contract.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
@@ -3303,6 +3305,8 @@ agent_governance_runs = "\n".join(
 )
 for command in [
     "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
+    "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
+    "python3 scripts/validate-agent-governance-ci.py --root .",
     "python3 scripts/validate-agent-harness-contract.py --root .",
     "python3 scripts/validate-agent-provider-config.py --root .",
     "python3 scripts/validate-agent-loop-lifecycle.py --root .",

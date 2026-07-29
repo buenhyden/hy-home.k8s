@@ -25,6 +25,7 @@ PROVIDERS = {
 
 EXPECTED_VALIDATORS = {
     "docs": {
+        "agent-governance-ci",
         "document-contract-registry",
         "links-and-owners",
         "markdown-profiles",

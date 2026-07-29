@@ -11,6 +11,20 @@ repos:
   # --- 0a. 로컬 검증 계약 (pre-commit/manual 전용) ---
   - repo: local
     hooks:
+      - id: validate-agent-governance-ci-self-test
+        name: self-test agent-governance CI contract
+        entry: python3 scripts/validate-agent-governance-ci.py --root . --self-test
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
+      - id: validate-agent-governance-ci
+        name: validate agent-governance CI contract
+        entry: python3 scripts/validate-agent-governance-ci.py --root .
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
       - id: validate-affected-surfaces
         name: validate affected-surface contract
         entry: python3 scripts/validate-affected-surfaces.py --root .
