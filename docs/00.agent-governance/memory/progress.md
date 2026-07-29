@@ -8,6 +8,82 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 AGQC-004 canonical local QA postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: automation, ci, docs, governance, qa, security
+- **Status**: done
+- **Tags**: #spec-045 #agqc-004 #local-qa #pre-commit #staged-runner
+
+#### Progress
+
+- Committed the exact fifteen-path AGQC-004 implementation as
+  `baf4df962cb70c55eefd20b5fe76ee07e7ff8be0`
+  (`feat(qa): close canonical local validation order`) with sole parent
+  `dc7dccbfcb907ae38cc0f7c91b59b6556e4fe888`.
+- Promoted `quality-standards.md` to the sole local completion-order owner and
+  aligned the shared QA workflow, postflight checklist, PR template, GitHub
+  router, aggregate compatibility checks, and script/test inventories.
+- Extended the closed CI contract to version `1.1.0` with the exact
+  `targeted -> affected -> staged -> tests -> all-files ->
+  formatter-review -> rerun -> diff-checks` sequence, separate staged and
+  all-files commands, both worktree and cached diff checks, and formatter
+  invalidation/rerun semantics.
+- Added production staged-runner support. Exact staged Markdown paths now flow
+  to all selected `include-existing-markdown` validators instead of producing
+  pathless staged evidence.
+
+#### Evidence
+
+- **targeted — PASS**: runner/hook suites passed `22` tests; the closed CI
+  suite passed `24` tests; CI self-test passed `6` truth and `43` mutation
+  cases; production reported `12` route classes, `16` delegated checks, `6`
+  truth rows, `2` deferred owners, and `10` QA surfaces. Legacy evidence
+  remained `3/22` with `810` scanned files, `43` evidence references, and
+  `0` active consumers.
+- **affected — PASS**: the final exact `15`-path set selected and passed every
+  contract validator, including the repository quality aggregate.
+- **staged — PASS**: the same exact `15` index paths passed the staged runner;
+  plain `pre-commit run` then passed every applicable hook.
+- **tests — PASS**: focused suites, strict Markdown profiles, production
+  validators, Python compilation, and
+  `scripts/validate-repo-quality-gates.sh .` passed.
+- **all-files — PASS**: `pre-commit run --all-files` passed all applicable
+  repository hooks.
+- **formatter-review — PASS**: final `git status --short`, `git diff`, and
+  `git diff --cached` review found zero formatter mutations and no paths
+  outside the fifteen-file implementation scope.
+- **rerun — SKIP**: no formatter changed a file. Full affected, staged,
+  plain-pre-commit, and all-files reruns nevertheless passed after independent
+  review remediation.
+- **diff-checks — PASS**: `git diff --check` and
+  `git diff --cached --check` passed with no unstaged implementation changes.
+- Two independent review rounds ended with zero Critical or Important
+  findings. Remediation added exact staged Markdown path propagation and
+  fail-closed cached-diff evidence with the forty-third mutation case.
+
+#### Security & Boundary
+
+- Local runner execution remains shell-free with closed argv/environment
+  handling. A staged runner result cannot substitute for exact-index plain
+  pre-commit, and an all-files runner result cannot substitute for
+  `pre-commit run --all-files`.
+- No provider authentication, model/runtime discovery, hosted workflow
+  dispatch, branch-protection mutation, credential access, remote mutation, or
+  live Kubernetes/GitOps/Vault/ESO action occurred. Those lanes remain
+  `DEFER`.
+
+#### Handoff
+
+- AGQC-005 owns repository-static concurrent checkpoint/provider identity and
+  long-term, short-term, domain, and progress memory retention, promotion,
+  compaction, archive/GC, conflict, and handoff policy.
+- This entry records the observed AGQC-004 implementation identity but does
+  not preclaim its own postflight commit SHA, AGQC-005 completion, Spec 045
+  closure, or any Spec 046 result.
+
 ### 2026-07-30 - Spec 045 AGQC-003 consumer-first legacy cutover postflight
 
 #### Metadata
