@@ -30,13 +30,17 @@ claim provider discovery, model resolution, or execution.
 - Observed prerequisite commits: Spec 043 closure
   `a0bc3565988e291980320dec8442405c7ef16eb6` and postflight
   `80ffd6d92a53990b04e413c0acf7fbc879b437d4`
+- Observed Spec 044 commits: activation
+  `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`, activation postflight
+  `6d9b01d51f8a198c521621bcd52ff088c397ee0b`, and AREA-001 implementation
+  `0129daf7d44c9308bcad63d4966e11ffa98d05af`
 
 ## Task Table
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| AREA-000 | VAL-AREA-001 | Activate reciprocal Spec/Plan/Task path and registry relation | platform | In Progress | Activation proposal staged in this task stream | Spec/Plan/Task/index/registry/progress diff |
-| AREA-001 | VAL-AREA-001..008 | Implement closed admission, evaluation, and model-fitness schemas, validators, and synthetic negative fixtures before promotion | platform | Queued | Not executed | Three focused validators, schemas/contracts, fixtures, and unit tests |
+| AREA-000 | VAL-AREA-001 | Activate reciprocal Spec/Plan/Task path and registry relation | platform | Done | Activation and clean-tree postflight committed | `b8b1a3884f9948fcd4ac2aecc89ea727118ad787`; `6d9b01d51f8a198c521621bcd52ff088c397ee0b` |
+| AREA-001 | VAL-AREA-001..008 | Implement closed admission, evaluation, and model-fitness schemas, validators, and synthetic negative fixtures before promotion | platform | Done | Closed gates preserve current `10/3/30`, target-only `12/4/48`, and all promotion/runtime lanes as `DEFER` | `0129daf7d44c9308bcad63d4966e11ffa98d05af`; focused `119`, aggregate/all-files PASS |
 | AREA-002 | VAL-AREA-001..004 | Admit `docs-researcher` and `quality-engineer`; promote exact 12/4/48 repository-static roster and native projections | platform | Queued | Not executed | Harness contract, 48 adapter files, admission decisions, and set-equality evidence |
 | AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, and rollback records | platform | Queued | Not executed | Evaluation manifests/corpora, validator, fixtures, and reviewed decisions |
 | AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Queued | Not executed | Model-fitness map, baseline/threshold/fallback records, validator, fixtures, and provider evidence links |
@@ -70,10 +74,18 @@ claim provider discovery, model resolution, or execution.
 
 ## Verification Summary
 
-AREA-000 is the only active work item. The exact-eight activation proposal does
-not change adapters, contracts, validators, models, provider settings,
-workflow/CI, runtime, remote, live, or ignored checkpoint state and does not
-claim future validation or commit results.
+AREA-000 and AREA-001 are complete. AREA-001 added three closed machine
+contracts, schemas, validators, synthetic fixtures, focused tests, harness
+consumer registration, affected-surface routing, aggregate invocation, and
+exact helper admission. Focused tests `119`, helper audit `59/33/26`,
+affected surfaces `21/21` with `19` validators, staged and clean-tree
+repository aggregate, and staged and clean-tree all-files pre-commit passed.
+
+The admission result remains `contract-only` / `DEFER`: current is still
+`10 roles / 3 surfaces / 30 adapters`, while `12 / 4 / 48` remains target-only
+until AREA-002. The provider/model cutoff remains
+`2026-07-10 10:00 Asia/Seoul`; runtime, provider discovery/authentication,
+hosted CI, remote, live, and ignored checkpoint execution remain `DEFER`.
 
 ## Traceability
 
@@ -81,8 +93,8 @@ claim future validation or commit results.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [AREA-000](../plans/2026-07-29-agent-roster-evaluation-and-admission.md#work-breakdown) | In Progress | Activation diff and validation will be recorded before commit. |
-| [AREA-001](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md#success-criteria--verification-plan) | Not executed | Pending closed contracts, validators, and synthetic fixtures. |
+| [AREA-000](../plans/2026-07-29-agent-roster-evaluation-and-admission.md#work-breakdown) | Done | Activation `b8b1a388` and clean-tree postflight `6d9b01d5`. |
+| [AREA-001](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md#success-criteria--verification-plan) | Done | Closed admission/evaluation/model-fitness gates and postflight evidence in `0129daf7`; requirements `COMPLIANT`, security/model-path review `APPROVED`. |
 | N/A — AREA-002 shares the Plan source above | Not executed | Pending two-role admission and exact repository-static adapter promotion. |
 | N/A — AREA-003 shares the Plan source above | Not executed | Pending versioned eval, adjudication, and rollback evidence. |
 | N/A — AREA-004 shares the Plan source above | Not executed | Pending fixed-cutoff candidate model/effort fitness evidence; runtime resolution remains `DEFER`. |

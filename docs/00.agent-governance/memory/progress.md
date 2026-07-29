@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-29 - Spec 044 AREA-001 admission-gate postflight
+
+#### Metadata
+
+- **Date**: 2026-07-29
+- **Layer**: architecture, governance, qa, security, meta
+- **Status**: done
+- **Tags**: #spec-044 #agent-roster #admission #evaluation #model-fitness
+
+#### Progress
+
+- Committed the 27-path AREA-001 implementation as
+  `0129daf7d44c9308bcad63d4966e11ffa98d05af`
+  (`feat(agent): add roster admission evaluation gates`) with sole parent
+  `6d9b01d51f8a198c521621bcd52ff088c397ee0b`.
+- Added closed roster-admission, role-evaluation, and provider/model-fitness
+  contracts, Draft 2020-12 schemas, fail-closed validators, synthetic fixtures,
+  and focused regressions before any role or adapter promotion.
+- Registered the three validators as current harness consumers and required
+  affected/all-files/CI contract lanes. Harness consumers are now `14`, while
+  current/target projections remain `10/3/30` and target-only `12/4/48`.
+
+#### Memory
+
+- Preserved four distinct classes: `working-short-term`,
+  `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`.
+- Each class retains its canonical store, authority, promotion, refresh,
+  expiry/archive-GC, conflict, redaction, compaction, and handoff boundary
+  from the Spec 043 harness and loop contracts. Repository and document-type
+  owners win conflicts; provider-local context remains advisory.
+- Credentials, auth files, tokens, secrets, raw prompts, full provider
+  transcripts, shell history, environment dumps, user configuration, and
+  private diagnostics remain prohibited from repository memory and synthetic
+  evaluation fixtures.
+
+#### Evidence
+
+- Focused tests passed `119`; roster admission passed `51` self-test cases,
+  role evaluation `18`, model fitness `16`, and harness `35`.
+- Exact helper admission passed with `helpers=59`, `frozen=33`,
+  `post_closure=26`, and formats `24/28/6/1`; affected surfaces passed
+  `21/21` with `19` validators and zero uncovered or ambiguous paths.
+- Staged and clean-tree repository aggregate and
+  `pre-commit run --all-files` passed. Dockerfile lint was the only no-file
+  `SKIP`; every applicable hook passed.
+- Requirements review returned `COMPLIANT`. Security and independent
+  model-path reviews returned `APPROVED`. A P2 symlink/non-regular input gap
+  was corrected before commit with evaluation `21` and model-fitness `17`
+  focused boundary tests.
+- The authoritative provider/model cutoff remains
+  `2026-07-10 10:00 Asia/Seoul` (`2026-07-10T01:00:00Z`). Later harness
+  observation provenance does not replace it.
+
+#### Handoff
+
+- Next owner: AREA-002 exact admission of `docs-researcher` and
+  `quality-engineer`, native Gemini surface introduction, and repository-static
+  `12 roles / 4 surfaces / 48 adapters` set-equality promotion.
+- Admission, execution, provider discovery/model resolution,
+  authentication, hosted CI, remote, live, credential-bearing, and actual
+  ignored checkpoint evidence remain `DEFER` until their owning areas produce
+  observed evidence.
+- This entry does not preclaim its own evidence-update commit SHA or any
+  AREA-002 role/model/runtime result.
+
 ### 2026-07-29 - Spec 044 activation postflight
 
 #### Metadata
