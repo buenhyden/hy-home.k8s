@@ -110,6 +110,96 @@ EXPECTED_RULE_IDS = (
     "LIFECYCLE-BASE",
     "LIFECYCLE-BASE-DEFER",
 )
+AGENT_ROSTER_ADMISSION_BASE_COMMIT = (
+    "e324d4c1fa49ef7e508fa07c32e7f054f5a3a05e"  # pragma: allowlist secret
+)
+AGENT_ROSTER_ADMISSION_CONTRACT_PATH = PurePosixPath(
+    "docs/00.agent-governance/contracts/agent-roster-admission.json"
+)
+AGENT_HARNESS_CONTRACT_PATH = PurePosixPath(
+    "docs/00.agent-governance/contracts/harness-contract.json"
+)
+AGENT_ROSTER_CONTRACT_PATHS = frozenset(
+    {
+        AGENT_ROSTER_ADMISSION_CONTRACT_PATH,
+        AGENT_HARNESS_CONTRACT_PATH,
+    }
+)
+AGENT_ROSTER_ROLE_IDS = (
+    "supervisor",
+    "code-reviewer",
+    "doc-writer",
+    "gitops-reviewer",
+    "incident-responder",
+    "k8s-implementer",
+    "network-reviewer",
+    "observability-reviewer",
+    "security-auditor",
+    "wiki-curator",
+    "docs-researcher",
+    "quality-engineer",
+)
+AGENT_ROSTER_SURFACE_IDS = ("local", "claude", "codex", "gemini")
+AGENT_ROSTER_CANDIDATE_IDS = ("docs-researcher", "quality-engineer")
+AGENT_ROSTER_BASE_DEFERRED_CLASSES = (
+    "runtime",
+    "provider-discovery",
+    "provider-authentication",
+    "hosted-ci",
+    "remote",
+    "live",
+)
+AGENT_ROSTER_DEFERRED_CLASSES = (
+    "runtime",
+    "provider-discovery",
+    "provider-authentication",
+    "model-resolution",
+    "hosted-ci",
+    "remote",
+    "live",
+    "agent-evaluation",
+    "model-fitness",
+)
+AGENT_ROSTER_EVALUATION_CLASSES = (
+    "positive",
+    "negative-adversarial",
+    "refusal-stop",
+    "handoff",
+)
+AGENT_ROSTER_CUTOVER_PATHS = (
+    PurePosixPath(".agents/agents/docs-researcher.md"),
+    PurePosixPath(".agents/agents/quality-engineer.md"),
+    PurePosixPath(".claude/agents/docs-researcher.md"),
+    PurePosixPath(".claude/agents/quality-engineer.md"),
+)
+AGENT_ROSTER_CUTOVER_MUTATIONS = (
+    "exact",
+    "wrong-mode",
+    "wrong-base",
+    "missing-path",
+    "extra-path",
+    "wrong-profile",
+    "base-already-contains-path",
+    "wrong-admission-state",
+    "wrong-admission-inventory",
+    "wrong-evidence-class",
+    "wrong-claim-boundary",
+    "runtime-preclaim",
+    "missing-provider-deferred-state",
+    "missing-deferred-evidence",
+    "missing-live-deferred-state",
+    "wrong-candidate-surface",
+    "wrong-evaluation-baseline",
+    "wrong-independent-adjudication",
+    "wrong-harness-inventory",
+    "wrong-harness-projection",
+)
+AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS = (
+    "malformed",
+    "missing",
+    "non-object",
+    "duplicate-key",
+)
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -236,6 +326,645 @@ def finite_archive_cutover_paths(
     ):
         return frozenset()
     return expected_records | {legacy_template, archive_template}
+
+
+def _agent_projection_path(role_id: str, surface_id: str) -> str:
+    if surface_id == "local":
+        return f".agents/agents/{role_id}.md"
+    if surface_id == "claude":
+        return f".claude/agents/{role_id}.md"
+    if surface_id == "codex":
+        return f".codex/agents/{role_id}.toml"
+    if surface_id == "gemini":
+        return f".gemini/agents/{role_id}.md"
+    raise ValueError(f"unknown agent surface: {surface_id}")
+
+
+def _agent_inventory_matches(
+    inventory: object,
+    *,
+    state: str,
+    count_prefix: str,
+    role_count: int,
+    surface_count: int,
+    projection_count: int,
+) -> bool:
+    if not isinstance(inventory, Mapping):
+        return False
+    if count_prefix == "":
+        count_keys = ("roleCount", "surfaceCount", "adapterCount")
+    elif count_prefix == "expected":
+        count_keys = (
+            "expectedRoleCount",
+            "expectedSurfaceCount",
+            "expectedProjectionCount",
+        )
+    else:
+        return False
+    role_key, surface_key, projection_key = count_keys
+    return (
+        inventory.get("state") == state
+        and inventory.get(role_key) == role_count
+        and inventory.get(surface_key) == surface_count
+        and inventory.get(projection_key) == projection_count
+    )
+
+
+def _harness_projection_set(inventory: object) -> set[tuple[str, str, str, str]]:
+    if not isinstance(inventory, Mapping):
+        return set()
+    projections = inventory.get("projections")
+    if not isinstance(projections, list):
+        return set()
+    result: set[tuple[str, str, str, str]] = set()
+    for projection in projections:
+        if not isinstance(projection, Mapping):
+            return set()
+        values = (
+            projection.get("roleId"),
+            projection.get("surfaceId"),
+            projection.get("path"),
+            projection.get("admissionState"),
+        )
+        if not all(isinstance(value, str) for value in values):
+            return set()
+        if values in result:
+            return set()
+        result.add(values)  # type: ignore[arg-type]
+    return result
+
+
+def _agent_evidence_matches(
+    evidence: object,
+    *,
+    proposed: bool,
+) -> bool:
+    deferred_classes = (
+        AGENT_ROSTER_DEFERRED_CLASSES
+        if proposed
+        else AGENT_ROSTER_BASE_DEFERRED_CLASSES
+    )
+    expected: dict[str, object] = {
+        "class": "repo-static",
+        "claimBoundary": (
+            "repository-static-role-and-adapter-inventory-only"
+            if proposed
+            else "prepared-policy-and-candidate-contract-only"
+        ),
+        "admissionVerdict": "PASS" if proposed else "DEFER",
+        "deferredClasses": list(deferred_classes),
+        "deferredClassStates": {
+            evidence_class: "DEFER"
+            for evidence_class in deferred_classes
+        },
+    }
+    if proposed:
+        expected["promotionAuthorization"] = {
+            "authorized": True,
+            "scope": "repository-static-role-and-adapter-inventory-only",
+            "excludedEvidenceClasses": list(deferred_classes),
+        }
+    else:
+        expected["promotionAuthorized"] = False
+    return isinstance(evidence, Mapping) and evidence == expected
+
+
+def _agent_evaluation_gate_matches(
+    gate: object,
+    *,
+    baseline_state: str,
+) -> bool:
+    return isinstance(gate, Mapping) and gate == {
+        "classes": list(AGENT_ROSTER_EVALUATION_CLASSES),
+        "baselineState": baseline_state,
+        "sameCorpusAndGraderRequired": True,
+        "independentAdjudication": {
+            "required": True,
+            "selfAdjudicationProhibited": True,
+            "adjudicatorOwner": "independent-reviewer",
+            "thresholdOrder": ["quality", "safety", "cost", "latency"],
+            "criticalMissBlocksPromotion": True,
+        },
+    }
+
+
+def _agent_contracts_admit_cutover(
+    base_admission: object,
+    proposed_admission: object,
+    base_harness: object,
+    proposed_harness: object,
+) -> bool:
+    if not all(
+        isinstance(contract, Mapping)
+        for contract in (
+            base_admission,
+            proposed_admission,
+            base_harness,
+            proposed_harness,
+        )
+    ):
+        return False
+    assert isinstance(base_admission, Mapping)
+    assert isinstance(proposed_admission, Mapping)
+    assert isinstance(base_harness, Mapping)
+    assert isinstance(proposed_harness, Mapping)
+
+    if (
+        base_admission.get("contractId")
+        != "hy-home.k8s/agent-roster-admission"
+        or proposed_admission.get("contractId")
+        != "hy-home.k8s/agent-roster-admission"
+        or base_admission.get("contractVersion") != "1.0.0"
+        or proposed_admission.get("contractVersion") != "1.0.0"
+        or base_admission.get("state") != "contract-only"
+        or proposed_admission.get("state") != "repository-static-admitted"
+        or not _agent_evidence_matches(
+            base_admission.get("evidence"),
+            proposed=False,
+        )
+        or not _agent_evidence_matches(
+            proposed_admission.get("evidence"),
+            proposed=True,
+        )
+    ):
+        return False
+    if not _agent_inventory_matches(
+        base_admission.get("currentInventory"),
+        state="current",
+        count_prefix="",
+        role_count=10,
+        surface_count=3,
+        projection_count=30,
+    ) or not _agent_inventory_matches(
+        proposed_admission.get("currentInventory"),
+        state="current",
+        count_prefix="",
+        role_count=12,
+        surface_count=4,
+        projection_count=48,
+    ):
+        return False
+
+    target = proposed_admission.get("targetInventory")
+    if not isinstance(target, Mapping) or (
+        target.get("state"),
+        target.get("roleCount"),
+        target.get("surfaceCount"),
+        target.get("adapterCount"),
+        tuple(target.get("roleIds", ())),
+        tuple(target.get("surfaceIds", ())),
+    ) != (
+        "achieved",
+        12,
+        4,
+        48,
+        AGENT_ROSTER_ROLE_IDS,
+        AGENT_ROSTER_SURFACE_IDS,
+    ):
+        return False
+
+    base_candidates = base_admission.get("candidates")
+    if not isinstance(base_candidates, list) or len(base_candidates) != 2:
+        return False
+    if {
+        candidate.get("roleId")
+        for candidate in base_candidates
+        if isinstance(candidate, Mapping)
+    } != set(AGENT_ROSTER_CANDIDATE_IDS):
+        return False
+    for candidate in base_candidates:
+        if not isinstance(candidate, Mapping) or not _agent_evaluation_gate_matches(
+            candidate.get("evaluationGate"),
+            baseline_state="required-before-promotion",
+        ):
+            return False
+
+    candidates = proposed_admission.get("candidates")
+    if not isinstance(candidates, list) or len(candidates) != 2:
+        return False
+    expected_candidates = set(AGENT_ROSTER_CANDIDATE_IDS)
+    if {
+        candidate.get("roleId")
+        for candidate in candidates
+        if isinstance(candidate, Mapping)
+    } != expected_candidates:
+        return False
+    for candidate in candidates:
+        if not isinstance(candidate, Mapping):
+            return False
+        role_id = candidate.get("roleId")
+        if (
+            role_id not in expected_candidates
+            or candidate.get("decision") != "repository-static-admitted"
+            or candidate.get("authority")
+            != "repository-static-role-and-adapter-inventory-only"
+            or not _agent_evaluation_gate_matches(
+                candidate.get("evaluationGate"),
+                baseline_state=(
+                    "deferred-to-area-003-before-runtime-activation"
+                ),
+            )
+        ):
+            return False
+        plan = candidate.get("surfacePlan")
+        if not isinstance(plan, list) or len(plan) != 4:
+            return False
+        actual_plan = {
+            (
+                item.get("surfaceId"),
+                item.get("state"),
+                item.get("adapterPath"),
+                item.get("leastPrivilege"),
+                item.get("providerNativeMetadataRequired"),
+            )
+            for item in plan
+            if isinstance(item, Mapping)
+        }
+        expected_plan = {
+            (
+                surface_id,
+                "current",
+                _agent_projection_path(str(role_id), surface_id),
+                True,
+                True,
+            )
+            for surface_id in AGENT_ROSTER_SURFACE_IDS
+        }
+        if actual_plan != expected_plan:
+            return False
+
+    if (
+        base_harness.get("contractId") != "hy-home.k8s/agent-harness"
+        or proposed_harness.get("contractId") != "hy-home.k8s/agent-harness"
+        or base_harness.get("contractVersion") != "1.0.0"
+        or proposed_harness.get("contractVersion") != "1.0.0"
+        or not _agent_inventory_matches(
+            base_harness.get("currentInventory"),
+            state="current",
+            count_prefix="expected",
+            role_count=10,
+            surface_count=3,
+            projection_count=30,
+        )
+        or not _agent_inventory_matches(
+            proposed_harness.get("currentInventory"),
+            state="current",
+            count_prefix="expected",
+            role_count=12,
+            surface_count=4,
+            projection_count=48,
+        )
+        or not _agent_inventory_matches(
+            proposed_harness.get("targetInventory"),
+            state="achieved",
+            count_prefix="expected",
+            role_count=12,
+            surface_count=4,
+            projection_count=48,
+        )
+    ):
+        return False
+
+    current = proposed_harness.get("currentInventory")
+    achieved = proposed_harness.get("targetInventory")
+    for inventory, state in ((current, "current"), (achieved, "achieved")):
+        if not isinstance(inventory, Mapping) or (
+            inventory.get("state"),
+            tuple(inventory.get("roleIds", ())),
+            tuple(inventory.get("surfaceIds", ())),
+        ) != (state, AGENT_ROSTER_ROLE_IDS, AGENT_ROSTER_SURFACE_IDS):
+            return False
+    expected_projections = {
+        (
+            role_id,
+            surface_id,
+            _agent_projection_path(role_id, surface_id),
+            "current",
+        )
+        for role_id in AGENT_ROSTER_ROLE_IDS
+        for surface_id in AGENT_ROSTER_SURFACE_IDS
+    }
+    return (
+        _harness_projection_set(current) == expected_projections
+        and _harness_projection_set(achieved) == expected_projections
+    )
+
+
+def finite_agent_roster_cutover_paths(
+    *,
+    mode: str,
+    base_commit: str,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_admission: object,
+    proposed_admission: object,
+    base_harness: object,
+    proposed_harness: object,
+) -> frozenset[PurePosixPath]:
+    """Admit only the exact Spec 044 AREA-002 one-time Markdown creation set."""
+
+    expected = frozenset(AGENT_ROSTER_CUTOVER_PATHS)
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != AGENT_ROSTER_ADMISSION_BASE_COMMIT
+        or not _agent_contracts_admit_cutover(
+            base_admission,
+            proposed_admission,
+            base_harness,
+            proposed_harness,
+        )
+        or expected & set(base_documents)
+    ):
+        return frozenset()
+    created_snapshot_paths = {
+        path
+        for path, document in proposed_documents.items()
+        if path not in base_documents
+        and document.profile_id
+        in {"exception/local-agent-asset", "exception/provider-native-metadata"}
+    }
+    if created_snapshot_paths != expected:
+        return frozenset()
+    for path in expected:
+        expected_profile = (
+            "exception/local-agent-asset"
+            if path.parts[0] == ".agents"
+            else "exception/provider-native-metadata"
+        )
+        if proposed_documents.get(path) != LifecycleDocument(
+            path,
+            expected_profile,
+            None,
+        ):
+            return frozenset()
+    return expected
+
+
+def _agent_roster_cutover_fixture_inputs(
+    mutation: str,
+) -> dict[str, object]:
+    def admission_inventory(
+        state: str,
+        role_count: int,
+        surface_count: int,
+        adapter_count: int,
+    ) -> dict[str, object]:
+        return {
+            "state": state,
+            "roleCount": role_count,
+            "surfaceCount": surface_count,
+            "adapterCount": adapter_count,
+        }
+
+    def harness_inventory(
+        state: str,
+        role_count: int,
+        surface_count: int,
+        projection_count: int,
+    ) -> dict[str, object]:
+        return {
+            "state": state,
+            "expectedRoleCount": role_count,
+            "expectedSurfaceCount": surface_count,
+            "expectedProjectionCount": projection_count,
+        }
+
+    def evaluation_gate(baseline_state: str) -> dict[str, object]:
+        return {
+            "classes": list(AGENT_ROSTER_EVALUATION_CLASSES),
+            "baselineState": baseline_state,
+            "sameCorpusAndGraderRequired": True,
+            "independentAdjudication": {
+                "required": True,
+                "selfAdjudicationProhibited": True,
+                "adjudicatorOwner": "independent-reviewer",
+                "thresholdOrder": ["quality", "safety", "cost", "latency"],
+                "criticalMissBlocksPromotion": True,
+            },
+        }
+
+    base_documents: dict[PurePosixPath, LifecycleDocument] = {}
+    proposed_documents = {
+        path: LifecycleDocument(
+            path,
+            (
+                "exception/local-agent-asset"
+                if path.parts[0] == ".agents"
+                else "exception/provider-native-metadata"
+            ),
+            None,
+        )
+        for path in AGENT_ROSTER_CUTOVER_PATHS
+    }
+    base_admission: dict[str, object] = {
+        "contractId": "hy-home.k8s/agent-roster-admission",
+        "contractVersion": "1.0.0",
+        "state": "contract-only",
+        "currentInventory": admission_inventory("current", 10, 3, 30),
+        "evidence": {
+            "class": "repo-static",
+            "claimBoundary": "prepared-policy-and-candidate-contract-only",
+            "admissionVerdict": "DEFER",
+            "promotionAuthorized": False,
+            "deferredClasses": list(AGENT_ROSTER_BASE_DEFERRED_CLASSES),
+            "deferredClassStates": {
+                evidence_class: "DEFER"
+                for evidence_class in AGENT_ROSTER_BASE_DEFERRED_CLASSES
+            },
+        },
+        "candidates": [
+            {
+                "roleId": role_id,
+                "evaluationGate": evaluation_gate("required-before-promotion"),
+            }
+            for role_id in AGENT_ROSTER_CANDIDATE_IDS
+        ],
+    }
+    proposed_admission: dict[str, object] = {
+        "contractId": "hy-home.k8s/agent-roster-admission",
+        "contractVersion": "1.0.0",
+        "state": "repository-static-admitted",
+        "evidence": {
+            "class": "repo-static",
+            "claimBoundary": "repository-static-role-and-adapter-inventory-only",
+            "admissionVerdict": "PASS",
+            "promotionAuthorization": {
+                "authorized": True,
+                "scope": "repository-static-role-and-adapter-inventory-only",
+                "excludedEvidenceClasses": list(
+                    AGENT_ROSTER_DEFERRED_CLASSES
+                ),
+            },
+            "deferredClasses": list(AGENT_ROSTER_DEFERRED_CLASSES),
+            "deferredClassStates": {
+                evidence_class: "DEFER"
+                for evidence_class in AGENT_ROSTER_DEFERRED_CLASSES
+            },
+        },
+        "currentInventory": admission_inventory("current", 12, 4, 48),
+        "targetInventory": {
+            **admission_inventory("achieved", 12, 4, 48),
+            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
+            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
+        },
+        "candidates": [
+            {
+                "roleId": role_id,
+                "decision": "repository-static-admitted",
+                "authority": "repository-static-role-and-adapter-inventory-only",
+                "surfacePlan": [
+                    {
+                        "surfaceId": surface_id,
+                        "state": "current",
+                        "adapterPath": _agent_projection_path(
+                            role_id,
+                            surface_id,
+                        ),
+                        "leastPrivilege": True,
+                        "providerNativeMetadataRequired": True,
+                    }
+                    for surface_id in AGENT_ROSTER_SURFACE_IDS
+                ],
+                "evaluationGate": evaluation_gate(
+                    "deferred-to-area-003-before-runtime-activation"
+                ),
+            }
+            for role_id in AGENT_ROSTER_CANDIDATE_IDS
+        ],
+    }
+    projections = [
+        {
+            "roleId": role_id,
+            "surfaceId": surface_id,
+            "path": _agent_projection_path(role_id, surface_id),
+            "admissionState": "current",
+        }
+        for role_id in AGENT_ROSTER_ROLE_IDS
+        for surface_id in AGENT_ROSTER_SURFACE_IDS
+    ]
+    base_harness: dict[str, object] = {
+        "contractId": "hy-home.k8s/agent-harness",
+        "contractVersion": "1.0.0",
+        "currentInventory": harness_inventory("current", 10, 3, 30),
+    }
+    proposed_harness: dict[str, object] = {
+        "contractId": "hy-home.k8s/agent-harness",
+        "contractVersion": "1.0.0",
+        "currentInventory": {
+            **harness_inventory("current", 12, 4, 48),
+            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
+            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
+            "projections": copy.deepcopy(projections),
+        },
+        "targetInventory": {
+            **harness_inventory("achieved", 12, 4, 48),
+            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
+            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
+            "projections": projections,
+        },
+    }
+    mode = "staged"
+    base_commit = AGENT_ROSTER_ADMISSION_BASE_COMMIT
+
+    if mutation == "wrong-mode":
+        mode = "explicit-ref"
+    elif mutation == "wrong-base":
+        base_commit = "0" * 40
+    elif mutation == "missing-path":
+        proposed_documents.pop(AGENT_ROSTER_CUTOVER_PATHS[0])
+    elif mutation == "extra-path":
+        extra = PurePosixPath(".agents/agents/unrelated.md")
+        proposed_documents[extra] = LifecycleDocument(
+            extra,
+            "exception/local-agent-asset",
+            None,
+        )
+    elif mutation == "wrong-profile":
+        path = AGENT_ROSTER_CUTOVER_PATHS[0]
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/spec", "active")
+    elif mutation == "base-already-contains-path":
+        path = AGENT_ROSTER_CUTOVER_PATHS[0]
+        base_documents[path] = proposed_documents[path]
+    elif mutation == "wrong-admission-state":
+        proposed_admission["state"] = "contract-only"
+    elif mutation == "wrong-admission-inventory":
+        current = proposed_admission["currentInventory"]
+        assert isinstance(current, dict)
+        current["adapterCount"] = 47
+    elif mutation in {
+        "wrong-evidence-class",
+        "wrong-claim-boundary",
+        "runtime-preclaim",
+        "missing-provider-deferred-state",
+        "missing-deferred-evidence",
+        "missing-live-deferred-state",
+    }:
+        evidence = proposed_admission["evidence"]
+        assert isinstance(evidence, dict)
+        if mutation == "wrong-evidence-class":
+            evidence["class"] = "runtime"
+        elif mutation == "wrong-claim-boundary":
+            evidence["claimBoundary"] = "repository-static-and-runtime"
+        elif mutation == "missing-deferred-evidence":
+            evidence.pop("deferredClassStates")
+        else:
+            states = evidence["deferredClassStates"]
+            assert isinstance(states, dict)
+            if mutation == "runtime-preclaim":
+                states["runtime"] = "PASS"
+            elif mutation == "missing-provider-deferred-state":
+                states.pop("provider-discovery")
+            else:
+                states.pop("live")
+    elif mutation == "wrong-candidate-surface":
+        candidates = proposed_admission["candidates"]
+        assert isinstance(candidates, list)
+        candidate = candidates[0]
+        assert isinstance(candidate, dict)
+        plan = candidate["surfacePlan"]
+        assert isinstance(plan, list)
+        surface = plan[0]
+        assert isinstance(surface, dict)
+        surface["adapterPath"] = ".agents/agents/wrong.md"
+    elif mutation in {
+        "wrong-evaluation-baseline",
+        "wrong-independent-adjudication",
+    }:
+        candidates = proposed_admission["candidates"]
+        assert isinstance(candidates, list)
+        candidate = candidates[0]
+        assert isinstance(candidate, dict)
+        gate = candidate["evaluationGate"]
+        assert isinstance(gate, dict)
+        if mutation == "wrong-evaluation-baseline":
+            gate["baselineState"] = "runtime-activated"
+        else:
+            adjudication = gate["independentAdjudication"]
+            assert isinstance(adjudication, dict)
+            adjudication["required"] = False
+    elif mutation == "wrong-harness-inventory":
+        target = proposed_harness["targetInventory"]
+        assert isinstance(target, dict)
+        target["expectedProjectionCount"] = 47
+    elif mutation == "wrong-harness-projection":
+        current = proposed_harness["currentInventory"]
+        assert isinstance(current, dict)
+        current_projections = current["projections"]
+        assert isinstance(current_projections, list)
+        current_projections.pop()
+    elif mutation != "exact":
+        raise ValueError(f"unknown agent roster cutover mutation: {mutation}")
+
+    return {
+        "mode": mode,
+        "base_commit": base_commit,
+        "base_documents": base_documents,
+        "proposed_documents": proposed_documents,
+        "base_admission": base_admission,
+        "proposed_admission": proposed_admission,
+        "base_harness": base_harness,
+        "proposed_harness": proposed_harness,
+    }
 
 
 def _archive_cutover_fixture_inputs(
@@ -878,6 +1607,17 @@ def _index_blob_oid(root: Path, path: PurePosixPath) -> str | None:
     return oid.decode("ascii")
 
 
+def _agent_contract_blob_map(
+    blob_oid: Callable[[PurePosixPath], str | None],
+) -> Mapping[PurePosixPath, str]:
+    result: dict[PurePosixPath, str] = {}
+    for path in AGENT_ROSTER_CONTRACT_PATHS:
+        oid = blob_oid(path)
+        if oid is not None:
+            result[path] = oid
+    return MappingProxyType(result)
+
+
 def _tree_blob_map(root: Path, commit: str) -> Mapping[PurePosixPath, str]:
     raw = _run_git(root, ("ls-tree", "-r", "-z", "--full-tree", commit))
     records = raw.split(b"\0")
@@ -999,6 +1739,54 @@ def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
             raise InvocationError("registry blob contains a duplicate JSON key")
         result[key] = value
     return result
+
+
+def _agent_contract_blob_from_bytes(
+    raw: bytes,
+    path: PurePosixPath,
+) -> Mapping[str, object]:
+    try:
+        text = raw.decode("utf-8")
+        loaded = json.loads(text, object_pairs_hook=_unique_json_object)
+    except (UnicodeDecodeError, json.JSONDecodeError, InvocationError) as exc:
+        raise InvocationError(
+            f"agent contract blob is invalid JSON: {path.as_posix()}"
+        ) from exc
+    if not isinstance(loaded, dict):
+        raise InvocationError(
+            f"agent contract blob is not an object: {path.as_posix()}"
+        )
+    return MappingProxyType(loaded)
+
+
+def _agent_contracts_from_blob_maps(
+    root: Path,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> tuple[
+    Mapping[str, object],
+    Mapping[str, object],
+    Mapping[str, object],
+    Mapping[str, object],
+]:
+    def load(
+        blobs: Mapping[PurePosixPath, str],
+        path: PurePosixPath,
+        snapshot: str,
+    ) -> Mapping[str, object]:
+        oid = blobs.get(path)
+        if oid is None:
+            raise InvocationError(
+                f"{snapshot} snapshot lacks agent contract blob: {path.as_posix()}"
+            )
+        return _agent_contract_blob_from_bytes(_blob_bytes(root, oid), path)
+
+    return (
+        load(base_blobs, AGENT_ROSTER_ADMISSION_CONTRACT_PATH, "base"),
+        load(proposed_blobs, AGENT_ROSTER_ADMISSION_CONTRACT_PATH, "proposed"),
+        load(base_blobs, AGENT_HARNESS_CONTRACT_PATH, "base"),
+        load(proposed_blobs, AGENT_HARNESS_CONTRACT_PATH, "proposed"),
+    )
 
 
 def _registry_blob(
@@ -1346,6 +2134,25 @@ def _evaluate_comparison(
         changes = _tree_changes(root, base_commit, proposed_commit)
         proposed_registry_oid = _tree_blob_oid(root, proposed_commit, REGISTRY_PATH)
 
+    base_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
+    proposed_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
+    if (
+        mode in {"staged", "ci"}
+        and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT
+    ):
+        base_agent_contract_blobs = _agent_contract_blob_map(
+            lambda path: _tree_blob_oid(root, base_commit, path)
+        )
+        if mode == "staged":
+            proposed_agent_contract_blobs = _agent_contract_blob_map(
+                lambda path: _index_blob_oid(root, path)
+            )
+        else:
+            assert proposed_commit is not None
+            proposed_agent_contract_blobs = _agent_contract_blob_map(
+                lambda path: _tree_blob_oid(root, proposed_commit, path)
+            )
+
     base_registry_oid = _tree_blob_oid(root, base_commit, REGISTRY_PATH)
     base_registry_raw = _registry_blob(root, base_registry_oid)
     proposed_registry_raw = _registry_blob(root, proposed_registry_oid)
@@ -1384,7 +2191,7 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
-    consumed_paths = finite_archive_cutover_paths(
+    archive_consumed_paths = finite_archive_cutover_paths(
         mode=mode,
         base_commit=base_commit,
         base_registry_oid=base_registry_oid or "",
@@ -1394,6 +2201,37 @@ def _evaluate_comparison(
         base_documents=base_documents,
         proposed_documents=proposed_documents,
     )
+    agent_consumed_paths: frozenset[PurePosixPath] = frozenset()
+    if (
+        mode in {"staged", "ci"}
+        and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT
+        and frozenset(AGENT_ROSTER_CUTOVER_PATHS) <= set(proposed_documents)
+    ):
+        try:
+            (
+                base_admission,
+                proposed_admission,
+                base_harness,
+                proposed_harness,
+            ) = _agent_contracts_from_blob_maps(
+                root,
+                base_agent_contract_blobs,
+                proposed_agent_contract_blobs,
+            )
+        except InvocationError:
+            pass
+        else:
+            agent_consumed_paths = finite_agent_roster_cutover_paths(
+                mode=mode,
+                base_commit=base_commit,
+                base_documents=base_documents,
+                proposed_documents=proposed_documents,
+                base_admission=base_admission,
+                proposed_admission=proposed_admission,
+                base_harness=base_harness,
+                proposed_harness=proposed_harness,
+            )
+    consumed_paths = archive_consumed_paths | agent_consumed_paths
 
     def consume_finite_cutover(
         diagnostics: Sequence[LifecycleDiagnostic],
@@ -4122,6 +4960,35 @@ def _run_self_test(root: Path) -> list[str]:
                 f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
             )
 
+    for mutation in AGENT_ROSTER_CUTOVER_MUTATIONS:
+        admitted = finite_agent_roster_cutover_paths(
+            **_agent_roster_cutover_fixture_inputs(mutation)
+        )
+        expected_count = len(AGENT_ROSTER_CUTOVER_PATHS) if mutation == "exact" else 0
+        if len(admitted) != expected_count:
+            failures.append(
+                f"agent roster cutover {mutation}: expected admitted count "
+                f"{expected_count}, actual {len(admitted)}"
+            )
+
+    invalid_agent_contract_blobs = {
+        "malformed": b"{",
+        "non-object": b"[]",
+        "duplicate-key": b'{"state":"one","state":"two"}',
+    }
+    for mutation in AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS:
+        try:
+            if mutation == "missing":
+                _agent_contracts_from_blob_maps(root, {}, {})
+            else:
+                _agent_contract_blob_from_bytes(
+                    invalid_agent_contract_blobs[mutation],
+                    AGENT_ROSTER_ADMISSION_CONTRACT_PATH,
+                )
+        except InvocationError:
+            continue
+        failures.append(f"agent contract blob {mutation}: mutation was accepted")
+
     for case in fixture.get("comparisonCases", []):
         base = _document(*case["base"])
         proposed = _document(*case["proposed"])
@@ -4278,6 +5145,8 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + len(fixture["argumentCases"])
             + len(fixture["includePathCases"])
             + len(fixture["archiveCutoverCases"])
+            + len(AGENT_ROSTER_CUTOVER_MUTATIONS)
+            + len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)
             + 1
             + FIXTURE_MUTATION_COUNT
             + EVIDENCE_REGRESSION_COUNT
@@ -4293,6 +5162,9 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             f"{len(fixture['argumentCases'])} arguments, "
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
             f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
+            f"{len(AGENT_ROSTER_CUTOVER_MUTATIONS)} agent roster cutovers, "
+            f"{len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)} agent contract "
+            "blob controls, "
             f"{FIXTURE_MUTATION_COUNT} fixture mutations, "
             f"{EVIDENCE_REGRESSION_COUNT} evidence regressions, "
             f"{len(FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES)} final-tranche "

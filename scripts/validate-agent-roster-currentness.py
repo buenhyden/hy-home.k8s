@@ -33,8 +33,14 @@ STALE_COUNT_VARIANTS = (
     "Eight local role adapters",
     "eight shared roles",
     "8 role stems",
+    "10 local agents",
+    "Ten local role adapters",
+    "ten shared roles",
+    "10 role stems",
+    "3 surfaces",
+    "30 adapters",
 )
-VALID_ROSTER_PHRASE = "Ten shared local role stems / thirty tracked role adapters"
+VALID_ROSTER_PHRASE = "Twelve shared local role stems / forty-eight tracked role adapters"
 VALID_ROSTER_PHRASE_ERROR = (
     "harness catalog canonical roster phrase must appear exactly once"
 )
@@ -280,7 +286,7 @@ def fixture_case_schema(roster: HarnessRoster) -> dict[str, dict[str, Any]]:
         "stale-count": {
             "mutation": "check-stale-count-variants",
             "expected_errors": frozenset({
-                "harness catalog contains stale eight-role currentness prose",
+                "harness catalog contains stale pre-12-role currentness prose",
             }),
             "catalog_variants": STALE_COUNT_VARIANTS,
         },
@@ -324,12 +330,13 @@ def validate_contract(
             f"{expected_projection_count} files"
         )
     if re.search(
-        r"\b(?:8|eight)\s+(?:local\s+|shared\s+)?"
-        r"(?:provider adapters|role adapters|agents|roles|role stems)\b",
+        r"\b(?:(?:8|eight|10|ten)\s+(?:local\s+|shared\s+)?"
+        r"(?:provider adapters|role adapters|agents|roles|role stems)"
+        r"|3\s+surfaces|30\s+adapters)\b",
         catalog_text,
         re.IGNORECASE,
     ):
-        errors.append("harness catalog contains stale eight-role currentness prose")
+        errors.append("harness catalog contains stale pre-12-role currentness prose")
     if catalog_text.count(VALID_ROSTER_PHRASE) != 1:
         errors.append(VALID_ROSTER_PHRASE_ERROR)
     catalog_links = {

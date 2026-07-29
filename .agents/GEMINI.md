@@ -33,7 +33,7 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 - The `.agents/` folder is the git-tracked single source of truth for provider-neutral shared content (`skills/`, `workflows`, `output-styles`) and local/Antigravity adapters. `.claude/skills`, `.claude/workflows`, `.claude/output-styles`, `.codex/skills`, `.codex/workflows`, and `.codex/output-styles` are symlink views; `.claude/agents/*`, `.codex/agents/*`, `.claude/settings.json`, and `.codex/hooks.json` remain provider-native files. `.agents/agents/*.md` and `.agents/hooks.json` are local adapter surfaces, not Gemini CLI native files.
 - The `.agents/agents/*.md` files serve as local/Antigravity role adapters and reference indexes.
 - `.agents/hooks.json` provides local behavioral/event-context wiring where a compatible runtime honors it. It routes to shared hook scripts for Template-First guidance and QA/CI/static validation, but it is neither a Claude-style permission gate nor Gemini CLI native settings and does not replace explicit validation commands.
-- Gemini CLI native project agents and settings are reserved for `.gemini/agents/**` and `.gemini/settings.json`. Both are absent; native discovery, event delivery, policy loading, and model resolution remain `DEFER` pending a separately approved PRD/ARD/Spec/Plan/Task, or at minimum Spec/Plan/Task.
+- Gemini CLI native project agents and minimal settings are tracked at `.gemini/agents/**` and `.gemini/settings.json` as repo-static project-surface evidence only. Native discovery, event delivery, policy loading, authenticated execution, and model resolution remain `DEFER` until provider-runtime evidence promotes them.
 - Repo-static loop and checkpoint validators enforce the four memory classes,
   atomic/redacted synthetic checkpoint contract, repository-wins resume,
   promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
@@ -90,8 +90,10 @@ The local/Antigravity adapter implements the repo-static portion of the shared f
   `docs/00.agent-governance/providers/gemini.md`.
 
 The presence of `.agents/agents/*.md` or `.agents/hooks.json` is local adapter
-repo-static evidence only. It does not prove Gemini CLI native discovery,
-event delivery, policy loading, model resolution, or role consumption.
+repo-static evidence only. The presence of `.gemini/agents/*.md` and
+`.gemini/settings.json` is Gemini project-surface repo-static evidence only.
+Neither surface proves Gemini CLI native discovery, event delivery, policy
+loading, model resolution, authenticated execution, or role consumption.
 
 ## Runtime Roster
 

@@ -48,18 +48,6 @@ REMOVAL_OWNER_SPEC = (
 
 SCHEMA_VERSION = 1
 CONTRACT_VERSION = "1.0.0"
-CURRENT_ROLES = (
-    "code-reviewer",
-    "doc-writer",
-    "gitops-reviewer",
-    "incident-responder",
-    "k8s-implementer",
-    "network-reviewer",
-    "observability-reviewer",
-    "security-auditor",
-    "supervisor",
-    "wiki-curator",
-)
 TARGET_ROLES = (
     "supervisor",
     "code-reviewer",
@@ -74,8 +62,9 @@ TARGET_ROLES = (
     "docs-researcher",
     "quality-engineer",
 )
-CURRENT_SURFACES = ("local", "claude", "codex")
 TARGET_SURFACES = ("local", "claude", "codex", "gemini")
+CURRENT_ROLES = TARGET_ROLES
+CURRENT_SURFACES = TARGET_SURFACES
 SURFACE_LAYOUT = {
     "local": (PurePosixPath(".agents/agents"), ".md"),
     "claude": (PurePosixPath(".claude/agents"), ".md"),
@@ -88,6 +77,7 @@ HARNESS_ROUTED_SURFACES = (
     "agent-shared",
     "agent-claude",
     "agent-codex",
+    "agent-gemini",
     "governance-documents",
     "scripts",
     "tests",
@@ -566,7 +556,7 @@ def _precheck_contract(contract: Any) -> None:
         if not isinstance(inventory, dict):
             continue
         expected_state = (
-            "current" if inventory_name == "currentInventory" else "target-only"
+            "current" if inventory_name == "currentInventory" else "achieved"
         )
         if inventory.get("state") != expected_state:
             fail(
@@ -671,7 +661,14 @@ def _validate_inventory(
     roles: tuple[str, ...],
     surfaces: tuple[str, ...],
     state: str,
+    projection_state: str | None = None,
 ) -> None:
+    projection_state = projection_state or state
+    if inventory["state"] != state:
+        fail(
+            "HARNESS-INVENTORY-STATE",
+            f"{name} state {inventory['state']!r}, expected {state!r}",
+        )
     expected_count = len(roles) * len(surfaces)
     expected_counts = (
         len(roles),
@@ -699,7 +696,7 @@ def _validate_inventory(
             f"{name} surface order or membership differs from the closed set",
         )
     expected = tuple(
-        _expected_projection(role_id, surface_id, state)
+        _expected_projection(role_id, surface_id, projection_state)
         for role_id in roles
         for surface_id in surfaces
     )
@@ -714,10 +711,8 @@ def _validate_inventory(
         )
 
 
-def validate_current_projection_files(
-    root: Path, projections: Sequence[dict[str, Any]]
-) -> None:
-    """Require the current 30 adapters and reject current-surface orphans."""
+def validate_projection_files(root: Path, projections: Sequence[dict[str, Any]]) -> None:
+    """Require the closed current 48 adapter files."""
 
     expected_paths = {
         PurePosixPath(projection["path"]) for projection in projections
@@ -727,25 +722,26 @@ def validate_current_projection_files(
             root,
             relative,
             "HARNESS-FILE",
-            f"current projection {relative.as_posix()}",
+            f"adapter projection {relative.as_posix()}",
         )
 
-    observed_paths: set[PurePosixPath] = set()
-    for surface_id in CURRENT_SURFACES:
+    observed_paths_by_surface: dict[str, set[PurePosixPath]] = {}
+    for surface_id in TARGET_SURFACES:
         directory, extension = SURFACE_LAYOUT[surface_id]
         absolute_directory = _safe_repo_directory(
             root,
             directory,
             "HARNESS-FILE",
-            f"current surface {directory.as_posix()}",
+            f"adapter surface {directory.as_posix()}",
         )
         try:
             entries = list(absolute_directory.iterdir())
         except OSError as exc:
             fail(
                 "HARNESS-FILE",
-                f"current surface {directory.as_posix()}: {exc}",
+                f"adapter surface {directory.as_posix()}: {exc}",
             )
+        observed_paths: set[PurePosixPath] = set()
         for entry in entries:
             if entry.suffix != extension:
                 continue
@@ -755,16 +751,29 @@ def validate_current_projection_files(
                 root,
                 relative,
                 "HARNESS-FILE",
-                f"current surface member {relative.as_posix()}",
+                f"adapter surface member {relative.as_posix()}",
             )
             observed_paths.add(relative)
-    if observed_paths != expected_paths:
-        missing = sorted(path.as_posix() for path in expected_paths - observed_paths)
-        extra = sorted(path.as_posix() for path in observed_paths - expected_paths)
-        fail(
-            "HARNESS-FILE",
-            f"current adapter set drift: missing={missing!r} extra={extra!r}",
-        )
+        observed_paths_by_surface[surface_id] = observed_paths
+
+    for surface_id in TARGET_SURFACES:
+        directory, extension = SURFACE_LAYOUT[surface_id]
+        expected_surface_paths = {
+            path for path in expected_paths
+            if path.parent == directory and path.suffix == extension
+        }
+        observed_paths = observed_paths_by_surface[surface_id]
+        if observed_paths != expected_surface_paths:
+            missing = sorted(
+                path.as_posix() for path in expected_surface_paths - observed_paths
+            )
+            extra = sorted(
+                path.as_posix() for path in observed_paths - expected_surface_paths
+            )
+            fail(
+                "HARNESS-FILE",
+                f"target adapter set drift for {surface_id}: missing={missing!r} extra={extra!r}",
+            )
 
 
 def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
@@ -1216,15 +1225,14 @@ def validate_contract(
         name="targetInventory",
         roles=TARGET_ROLES,
         surfaces=TARGET_SURFACES,
-        state="target-only",
+        state="achieved",
+        projection_state="current",
     )
     _validate_routing(root, contract)
     _validate_consumers(root, contract)
     _validate_memory(root, contract)
     if check_files:
-        validate_current_projection_files(
-            root, contract["currentInventory"]["projections"]
-        )
+        validate_projection_files(root, contract["currentInventory"]["projections"])
     return {
         "currentRoles": len(contract["currentInventory"]["roleIds"]),
         "currentSurfaces": len(contract["currentInventory"]["surfaceIds"]),
@@ -1318,7 +1326,7 @@ def _apply_mutation(contract: dict[str, Any], name: str) -> None:
     elif name == "target-adapter-state-drift":
         contract["canonicalRoles"][-1]["adapterSemantics"][
             "admissionState"
-        ] = "current"
+        ] = "target-only"
     elif name == "unbounded-stop-rules":
         contract["canonicalRoles"][0]["stopConditions"] = [
             f"synthetic bounded fixture condition {index}"
@@ -1462,7 +1470,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return 1
             print(
                 "[PASS] agent harness contract self-test passed: "
-                f"cases={cases} current=10/3/30 target=12/4/48 "
+                f"cases={cases} current=12/4/48 target=12/4/48 "
                 "evidence=4 memory=4 consumers=14"
             )
             return 0

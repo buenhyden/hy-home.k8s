@@ -4,41 +4,61 @@
   "contractId": "hy-home.k8s/agent-roster-admission",
   "contractVersion": "1.0.0",
   "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-  "state": "contract-only",
+  "state": "repository-static-admitted",
   "fixedSourceCutoff": {
     "localTime": "2026-07-10 10:00 Asia/Seoul",
     "instantUtc": "2026-07-10T01:00:00Z"
   },
   "evidence": {
     "class": "repo-static",
-    "claimBoundary": "prepared-policy-and-candidate-contract-only",
-    "admissionVerdict": "DEFER",
-    "promotionAuthorized": false,
+    "claimBoundary": "repository-static-role-and-adapter-inventory-only",
+    "admissionVerdict": "PASS",
+    "promotionAuthorization": {
+      "authorized": true,
+      "scope": "repository-static-role-and-adapter-inventory-only",
+      "excludedEvidenceClasses": [
+        "runtime",
+        "provider-discovery",
+        "provider-authentication",
+        "model-resolution",
+        "hosted-ci",
+        "remote",
+        "live",
+        "agent-evaluation",
+        "model-fitness"
+      ]
+    },
     "deferredClasses": [
       "runtime",
       "provider-discovery",
       "provider-authentication",
+      "model-resolution",
       "hosted-ci",
       "remote",
-      "live"
+      "live",
+      "agent-evaluation",
+      "model-fitness"
     ],
     "deferredClassStates": {
       "runtime": "DEFER",
       "provider-discovery": "DEFER",
       "provider-authentication": "DEFER",
+      "model-resolution": "DEFER",
       "hosted-ci": "DEFER",
       "remote": "DEFER",
-      "live": "DEFER"
+      "live": "DEFER",
+      "agent-evaluation": "DEFER",
+      "model-fitness": "DEFER"
     }
   },
   "currentInventory": {
     "state": "current",
-    "roleCount": 10,
-    "surfaceCount": 3,
-    "adapterCount": 30
+    "roleCount": 12,
+    "surfaceCount": 4,
+    "adapterCount": 48
   },
   "targetInventory": {
-    "state": "target-only",
+    "state": "achieved",
     "roleCount": 12,
     "surfaceCount": 4,
     "adapterCount": 48,
@@ -78,13 +98,13 @@
     "least-privilege-four-surface-target-plan",
     "four-class-evaluation-with-incumbent-baseline",
     "independent-quality-safety-cost-latency-adjudication",
-    "reproducible-rollback-to-current-10-3-30"
+    "reproducible-rollback-to-last-verified-10-3-30"
   ],
   "candidates": [
     {
       "roleId": "docs-researcher",
-      "decision": "candidate-only",
-      "authority": "repository-static-candidate-only",
+      "decision": "repository-static-admitted",
+      "authority": "repository-static-role-and-adapter-inventory-only",
       "distinctDeliverable": "official-source-currentness-and-cutoff-evidence",
       "requirementGap": {
         "classification": "approved-recurring-unowned-gap",
@@ -161,28 +181,28 @@
       "surfacePlan": [
         {
           "surfaceId": "local",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".agents/agents/docs-researcher.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "claude",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".claude/agents/docs-researcher.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "codex",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".codex/agents/docs-researcher.toml",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "gemini",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".gemini/agents/docs-researcher.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
@@ -195,7 +215,7 @@
           "refusal-stop",
           "handoff"
         ],
-        "baselineState": "required-before-promotion",
+        "baselineState": "deferred-to-area-003-before-runtime-activation",
         "sameCorpusAndGraderRequired": true,
         "independentAdjudication": {
           "required": true,
@@ -211,7 +231,7 @@
         }
       },
       "rollback": {
-        "state": "required-before-promotion",
+        "state": "armed",
         "restoreInventory": "10/3/30",
         "reproducible": true,
         "executed": false,
@@ -222,17 +242,17 @@
           "failed adapter parity"
         ],
         "procedure": [
-          "keep current inventory authoritative until a separate promotion",
-          "remove only candidate projections from the proposed change",
-          "restore the verified current role and model map",
+          "freeze repository-static admission changes and keep runtime evidence deferred",
+          "remove only the two admitted roles and the Gemini repository-static projections",
+          "restore the last verified 10/3/30 role and surface inventory",
           "rerun repository-static roster and evaluation gates"
         ]
       }
     },
     {
       "roleId": "quality-engineer",
-      "decision": "candidate-only",
-      "authority": "repository-static-candidate-only",
+      "decision": "repository-static-admitted",
+      "authority": "repository-static-role-and-adapter-inventory-only",
       "distinctDeliverable": "deterministic-fixture-and-validation-evidence",
       "requirementGap": {
         "classification": "approved-recurring-unowned-gap",
@@ -310,28 +330,28 @@
       "surfacePlan": [
         {
           "surfaceId": "local",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".agents/agents/quality-engineer.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "claude",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".claude/agents/quality-engineer.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "codex",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".codex/agents/quality-engineer.toml",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
         },
         {
           "surfaceId": "gemini",
-          "state": "target-only",
+          "state": "current",
           "adapterPath": ".gemini/agents/quality-engineer.md",
           "leastPrivilege": true,
           "providerNativeMetadataRequired": true
@@ -344,7 +364,7 @@
           "refusal-stop",
           "handoff"
         ],
-        "baselineState": "required-before-promotion",
+        "baselineState": "deferred-to-area-003-before-runtime-activation",
         "sameCorpusAndGraderRequired": true,
         "independentAdjudication": {
           "required": true,
@@ -360,7 +380,7 @@
         }
       },
       "rollback": {
-        "state": "required-before-promotion",
+        "state": "armed",
         "restoreInventory": "10/3/30",
         "reproducible": true,
         "executed": false,
@@ -371,9 +391,9 @@
           "failed adapter parity"
         ],
         "procedure": [
-          "keep current inventory authoritative until a separate promotion",
-          "remove only candidate projections from the proposed change",
-          "restore the verified current role and model map",
+          "freeze repository-static admission changes and keep runtime evidence deferred",
+          "remove only the two admitted roles and the Gemini repository-static projections",
+          "restore the last verified 10/3/30 role and surface inventory",
           "rerun repository-static roster and evaluation gates"
         ]
       }

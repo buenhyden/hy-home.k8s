@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "expected": {
-    "currentRoles": 10,
-    "currentSurfaces": 3,
-    "currentProjections": 30,
+    "currentRoles": 12,
+    "currentSurfaces": 4,
+    "currentProjections": 48,
     "targetRoles": 12,
     "targetSurfaces": 4,
     "targetProjections": 48,

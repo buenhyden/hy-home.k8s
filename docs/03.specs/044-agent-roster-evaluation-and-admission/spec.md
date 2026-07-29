@@ -221,9 +221,10 @@ native-schema canary.
   `maxTurns` only when verified.
 - Codex: `name`, `description`, `developer_instructions`, `model`,
   `model_reasoning_effort`.
-- Gemini CLI: `name`, `description`, `kind`, `tools`, `model`, `max_turns`, and
-  `timeout_mins`; the native settings owner manages reasoning/model
-  configuration.
+- Gemini CLI: `name`, `description`, `kind: local`, `max_turns`, and
+  `timeout_mins`. Generic tool aliases and exact CLI model resolution are not
+  repository-static evidence; they remain provider-runtime `DEFER` until a
+  native parser/canary proves the exact field and accepted value.
 - local/Antigravity: `name`, `description`, `model`, and the repository-local
   body contract.
 

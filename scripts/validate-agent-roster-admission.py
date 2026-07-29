@@ -44,10 +44,9 @@ TARGET_ROLES = (
     "docs-researcher",
     "quality-engineer",
 )
-CURRENT_ROLES = frozenset(TARGET_ROLES[:-2])
 TARGET_SURFACES = ("local", "claude", "codex", "gemini")
-CURRENT_SURFACES = frozenset(("local", "claude", "codex"))
 CANDIDATE_ROLES = ("docs-researcher", "quality-engineer")
+PROMOTION_SCOPE = "repository-static-role-and-adapter-inventory-only"
 EVALUATION_CLASSES = (
     "positive",
     "negative-adversarial",
@@ -64,9 +63,12 @@ DEFERRED_EVIDENCE = (
     "runtime",
     "provider-discovery",
     "provider-authentication",
+    "model-resolution",
     "hosted-ci",
     "remote",
     "live",
+    "agent-evaluation",
+    "model-fitness",
 )
 ADMISSION_CONDITIONS = (
     "approved-recurring-unowned-gap",
@@ -75,7 +77,7 @@ ADMISSION_CONDITIONS = (
     "least-privilege-four-surface-target-plan",
     "four-class-evaluation-with-incumbent-baseline",
     "independent-quality-safety-cost-latency-adjudication",
-    "reproducible-rollback-to-current-10-3-30",
+    "reproducible-rollback-to-last-verified-10-3-30",
 )
 PROHIBITED_MEMORY_CONTENT = (
     "credential-values",
@@ -218,25 +220,72 @@ def decode_json_text(text: str, source: str) -> Any:
 
 def _resolve_regular_file(root: Path, relative: PurePosixPath) -> Path:
     try:
+        root_metadata = os.lstat(root)
+    except OSError:
+        fail("AREA-ADM-INPUT", "repository root is unavailable", exit_code=2)
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+        root_metadata.st_mode
+    ):
+        fail(
+            "AREA-ADM-INPUT",
+            "repository root is not a real directory",
+            exit_code=2,
+        )
+    try:
         repository_root = root.resolve(strict=True)
     except OSError:
         fail("AREA-ADM-INPUT", "repository root is unavailable", exit_code=2)
-    if not repository_root.is_dir():
-        fail("AREA-ADM-INPUT", "repository root is not a directory", exit_code=2)
-    candidate = repository_root.joinpath(*relative.parts)
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        fail("AREA-ADM-INPUT", "required input path is invalid", exit_code=2)
+
+    candidate = repository_root
+    for index, part in enumerate(relative.parts):
+        candidate = candidate / part
+        try:
+            metadata = os.lstat(candidate)
+        except OSError:
+            fail(
+                "AREA-ADM-INPUT",
+                f"required input is unavailable: {relative}",
+                exit_code=2,
+            )
+        final_component = index == len(relative.parts) - 1
+        if stat.S_ISLNK(metadata.st_mode):
+            fail(
+                "AREA-ADM-INPUT",
+                f"required input is not a real regular file: {relative}",
+                exit_code=2,
+            )
+        if not final_component and not stat.S_ISDIR(metadata.st_mode):
+            fail(
+                "AREA-ADM-INPUT",
+                f"required input path is unavailable: {relative}",
+                exit_code=2,
+            )
+        if final_component and not stat.S_ISREG(metadata.st_mode):
+            fail(
+                "AREA-ADM-INPUT",
+                f"required input is not a regular file: {relative}",
+                exit_code=2,
+            )
+
     try:
-        candidate.relative_to(repository_root)
-        metadata = os.lstat(candidate)
+        resolved_candidate = candidate.resolve(strict=True)
+        resolved_candidate.relative_to(repository_root)
     except (OSError, ValueError):
         fail(
             "AREA-ADM-INPUT",
             f"required input is unavailable: {relative}",
             exit_code=2,
         )
-    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+    if resolved_candidate != candidate:
         fail(
             "AREA-ADM-INPUT",
-            f"required input is not a regular file: {relative}",
+            f"required input is not a real regular file: {relative}",
             exit_code=2,
         )
     return candidate
@@ -244,14 +293,31 @@ def _resolve_regular_file(root: Path, relative: PurePosixPath) -> Path:
 
 def _load_json_file(root: Path, relative: PurePosixPath) -> Any:
     path = _resolve_regular_file(root, relative)
+    descriptor = -1
     try:
-        text = path.read_text(encoding="utf-8")
-    except OSError:
+        flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0)
+        flags |= getattr(os, "O_NOFOLLOW", 0)
+        descriptor = os.open(path, flags)
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            fail(
+                "AREA-ADM-INPUT",
+                f"required input is not a regular file: {relative}",
+                exit_code=2,
+            )
+        with os.fdopen(descriptor, "r", encoding="utf-8") as stream:
+            descriptor = -1
+            text = stream.read()
+    except AdmissionError:
+        raise
+    except (OSError, UnicodeError):
         fail(
             "AREA-ADM-INPUT",
             f"required input cannot be read: {relative}",
             exit_code=2,
         )
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
     return decode_json_text(text, str(relative))
 
 
@@ -347,20 +413,36 @@ def _validate_identity_and_cutoff(contract: dict[str, Any]) -> None:
 
 
 def _validate_evidence_boundary(contract: dict[str, Any]) -> None:
-    if contract["state"] != "contract-only":
-        fail("AREA-ADM-STATE", "roster admission policy must remain contract-only")
+    if contract["state"] != "repository-static-admitted":
+        fail(
+            "AREA-ADM-STATE",
+            "roster admission state must be repository-static-admitted",
+        )
     evidence = contract["evidence"]
     if (
         evidence["class"] != "repo-static"
-        or evidence["claimBoundary"]
-        != "prepared-policy-and-candidate-contract-only"
-        or evidence["admissionVerdict"] != "DEFER"
-        or evidence["promotionAuthorized"] is not False
+        or evidence["claimBoundary"] != PROMOTION_SCOPE
+        or evidence["admissionVerdict"] != "PASS"
     ):
         fail(
             "AREA-ADM-EVIDENCE",
-            "repo-static policy must not claim admission or promotion",
+            "admission verdict must stay inside the repository-static boundary",
         )
+    authorization = evidence["promotionAuthorization"]
+    if (
+        authorization["authorized"] is not True
+        or authorization["scope"] != PROMOTION_SCOPE
+    ):
+        fail(
+            "AREA-ADM-EVIDENCE",
+            "promotion authorization must be repository-static only",
+        )
+    _require_exact_list(
+        authorization["excludedEvidenceClasses"],
+        DEFERRED_EVIDENCE,
+        "AREA-ADM-EVIDENCE",
+        "promotion exclusions",
+    )
     _require_exact_list(
         evidence["deferredClasses"],
         DEFERRED_EVIDENCE,
@@ -374,7 +456,7 @@ def _validate_evidence_boundary(contract: dict[str, Any]) -> None:
     ):
         fail(
             "AREA-ADM-EVIDENCE",
-            "runtime/provider/auth/CI/remote/live evidence must remain DEFER",
+            "runtime/provider/model/CI/remote/live/evaluation evidence must remain DEFER",
         )
 
 
@@ -387,14 +469,14 @@ def _validate_harness_and_inventory(
     current = contract["currentInventory"]
     if current != {
         "state": "current",
-        "roleCount": 10,
-        "surfaceCount": 3,
-        "adapterCount": 30,
+        "roleCount": 12,
+        "surfaceCount": 4,
+        "adapterCount": 48,
     }:
-        fail("AREA-ADM-INVENTORY", "current inventory must remain 10/3/30")
+        fail("AREA-ADM-INVENTORY", "current inventory must be 12/4/48")
     target = contract["targetInventory"]
     if (
-        target["state"] != "target-only"
+        target["state"] != "achieved"
         or (
             target["roleCount"],
             target["surfaceCount"],
@@ -402,7 +484,10 @@ def _validate_harness_and_inventory(
         )
         != (12, 4, 48)
     ):
-        fail("AREA-ADM-INVENTORY", "target inventory must remain target-only 12/4/48")
+        fail(
+            "AREA-ADM-INVENTORY",
+            "target inventory must be the achieved 12/4/48 snapshot",
+        )
     _require_exact_list(
         target["roleIds"],
         TARGET_ROLES,
@@ -429,17 +514,17 @@ def _validate_harness_and_inventory(
             harness_current.get("expectedSurfaceCount"),
             harness_current.get("expectedProjectionCount"),
         )
-        != (10, 3, 30)
-        or set(harness_current.get("roleIds", [])) != CURRENT_ROLES
-        or set(harness_current.get("surfaceIds", [])) != CURRENT_SURFACES
-        or len(harness_current.get("projections", [])) != 30
+        != (12, 4, 48)
+        or tuple(harness_current.get("roleIds", [])) != TARGET_ROLES
+        or tuple(harness_current.get("surfaceIds", [])) != TARGET_SURFACES
+        or len(harness_current.get("projections", [])) != 48
     ):
         fail(
             "AREA-ADM-INVENTORY",
-            "harness current inventory no longer proves 10/3/30",
+            "harness current inventory no longer proves 12/4/48",
         )
     if (
-        harness_target.get("state") != "target-only"
+        harness_target.get("state") != "achieved"
         or (
             harness_target.get("expectedRoleCount"),
             harness_target.get("expectedSurfaceCount"),
@@ -451,7 +536,7 @@ def _validate_harness_and_inventory(
     ):
         fail(
             "AREA-ADM-INVENTORY",
-            "harness target inventory no longer proves target-only 12/4/48",
+            "harness target inventory no longer proves achieved 12/4/48 mirror",
         )
     projections = harness_target.get("projections")
     if not isinstance(projections, list) or len(projections) != 48:
@@ -459,7 +544,7 @@ def _validate_harness_and_inventory(
     actual_projection_set = {
         (item.get("roleId"), item.get("surfaceId"))
         for item in projections
-        if isinstance(item, dict) and item.get("admissionState") == "target-only"
+        if isinstance(item, dict) and item.get("admissionState") == "current"
     }
     expected_projection_set = {
         (role_id, surface_id)
@@ -534,13 +619,13 @@ def _validate_allowed_path(path: str, role_id: str) -> None:
 def _validate_candidate(candidate: dict[str, Any], role_id: str) -> None:
     if (
         candidate["roleId"] != role_id
-        or candidate["decision"] != "candidate-only"
-        or candidate["authority"] != "repository-static-candidate-only"
+        or candidate["decision"] != "repository-static-admitted"
+        or candidate["authority"] != PROMOTION_SCOPE
         or candidate["owner"] != role_id
     ):
         fail(
             "AREA-ADM-CANDIDATE",
-            f"{role_id} must remain an unpromoted repository-static candidate",
+            f"{role_id} must remain admitted only to repository-static inventory",
         )
     gap = candidate["requirementGap"]
     if (
@@ -637,14 +722,14 @@ def _validate_candidate(candidate: dict[str, Any], role_id: str) -> None:
             f"{root_by_surface[item['surfaceId']]}/{role_id}{suffix}"
         )
         if (
-            item["state"] != "target-only"
+            item["state"] != "current"
             or item["adapterPath"] != expected_path
             or item["leastPrivilege"] is not True
             or item["providerNativeMetadataRequired"] is not True
         ):
             fail(
                 "AREA-ADM-SURFACE",
-                f"{role_id} {item['surfaceId']} plan is not target-only least privilege",
+                f"{role_id} {item['surfaceId']} plan is not current least privilege",
             )
 
     evaluation = candidate["evaluationGate"]
@@ -655,7 +740,8 @@ def _validate_candidate(candidate: dict[str, Any], role_id: str) -> None:
         f"{role_id} evaluation classes",
     )
     if (
-        evaluation["baselineState"] != "required-before-promotion"
+        evaluation["baselineState"]
+        != "deferred-to-area-003-before-runtime-activation"
         or evaluation["sameCorpusAndGraderRequired"] is not True
     ):
         fail(
@@ -677,7 +763,7 @@ def _validate_candidate(candidate: dict[str, Any], role_id: str) -> None:
         )
     rollback = candidate["rollback"]
     if (
-        rollback["state"] != "required-before-promotion"
+        rollback["state"] != "armed"
         or rollback["restoreInventory"] != "10/3/30"
         or rollback["reproducible"] is not True
         or rollback["executed"] is not False
@@ -723,7 +809,7 @@ def _validate_candidates(contract: dict[str, Any]) -> None:
 def validate_contract(
     root: Path, contract: dict[str, Any] | None = None
 ) -> dict[str, int]:
-    """Validate one policy contract without authorizing roster promotion."""
+    """Validate repository-static admission without promoting other evidence."""
 
     root = Path(root)
     selected = load_contract(root) if contract is None else contract
@@ -774,12 +860,21 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         "non-static-evidence": lambda: contract["evidence"].__setitem__(
             "class", "runtime"
         ),
-        "admission-pass-preclaim": lambda: contract["evidence"].__setitem__(
-            "admissionVerdict", "PASS"
+        "admission-verdict-defer": lambda: contract["evidence"].__setitem__(
+            "admissionVerdict", "DEFER"
         ),
-        "promotion-authorized": lambda: contract["evidence"].__setitem__(
-            "promotionAuthorized", True
-        ),
+        "promotion-scope-runtime": lambda: contract["evidence"][
+            "promotionAuthorization"
+        ].__setitem__("scope", "runtime-and-repository-static"),
+        "promotion-authorization-disabled": lambda: contract["evidence"][
+            "promotionAuthorization"
+        ].__setitem__("authorized", False),
+        "promotion-exclusion-duplicate": lambda: contract["evidence"][
+            "promotionAuthorization"
+        ]["excludedEvidenceClasses"].__setitem__(8, "runtime"),
+        "promotion-exclusion-reordered": lambda: contract["evidence"][
+            "promotionAuthorization"
+        ]["excludedEvidenceClasses"].reverse(),
         "runtime-pass": lambda: contract["evidence"][
             "deferredClassStates"
         ].__setitem__("runtime", "PASS"),
@@ -789,12 +884,27 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         "provider-auth-pass": lambda: contract["evidence"][
             "deferredClassStates"
         ].__setitem__("provider-authentication", "PASS"),
+        "model-resolution-pass": lambda: contract["evidence"][
+            "deferredClassStates"
+        ].__setitem__("model-resolution", "PASS"),
+        "hosted-ci-pass": lambda: contract["evidence"][
+            "deferredClassStates"
+        ].__setitem__("hosted-ci", "PASS"),
+        "remote-pass": lambda: contract["evidence"][
+            "deferredClassStates"
+        ].__setitem__("remote", "PASS"),
         "live-pass": lambda: contract["evidence"][
             "deferredClassStates"
         ].__setitem__("live", "PASS"),
-        "promoted-current-count": lambda: contract[
+        "agent-evaluation-pass": lambda: contract["evidence"][
+            "deferredClassStates"
+        ].__setitem__("agent-evaluation", "PASS"),
+        "model-fitness-pass": lambda: contract["evidence"][
+            "deferredClassStates"
+        ].__setitem__("model-fitness", "PASS"),
+        "stale-current-count": lambda: contract[
             "currentInventory"
-        ].__setitem__("roleCount", 12),
+        ].__setitem__("roleCount", 10),
         "target-state-current": lambda: contract["targetInventory"].__setitem__(
             "state", "current"
         ),
@@ -808,7 +918,9 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
             1, copy.deepcopy(first)
         ),
         "swapped-candidates": lambda: candidates.reverse(),
-        "candidate-pass-preclaim": lambda: first.__setitem__("decision", "PASS"),
+        "candidate-runtime-preclaim": lambda: first.__setitem__(
+            "decision", "runtime-admitted"
+        ),
         "gap-not-approved": lambda: first["requirementGap"].__setitem__(
             "approved", False
         ),
@@ -842,8 +954,8 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         "self-handoff": lambda: first["handoffs"].__setitem__(
             0, "docs-researcher"
         ),
-        "promoted-surface": lambda: first["surfacePlan"][0].__setitem__(
-            "state", "current"
+        "stale-target-surface": lambda: first["surfacePlan"][0].__setitem__(
+            "state", "target-only"
         ),
         "wrong-adapter-path": lambda: second["surfacePlan"][2].__setitem__(
             "adapterPath", ".codex/agents/docs-researcher.toml"
@@ -982,12 +1094,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         counts = validate_contract(args.root)
         print(
             "[PASS] agent roster admission policy validation passed: "
-            "state=contract-only verdict=DEFER "
+            "state=repository-static-admitted verdict=PASS "
+            f"scope={PROMOTION_SCOPE} "
             f"candidates={counts['candidates']} "
             f"conditions={counts['conditions']} "
             f"current={counts['currentRoles']}/"
             f"{counts['currentSurfaces']}/{counts['currentAdapters']} "
-            f"target={counts['targetRoles']}/"
+            f"target=achieved:{counts['targetRoles']}/"
             f"{counts['targetSurfaces']}/{counts['targetAdapters']} "
             f"surface_plans={counts['surfacePlans']} "
             f"evaluation_classes={counts['evaluationClasses']} "

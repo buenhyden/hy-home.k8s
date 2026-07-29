@@ -91,15 +91,15 @@ delegated execution.
 
 ### Execution Expectations
 
-- **Symmetry**: Codex follows the same three-surface local role parity rules as Claude and the local/Antigravity adapter while using Codex-native TOML metadata. This static parity does not assert Gemini CLI runtime parity.
+- **Symmetry**: Codex follows the same repo-static role parity rules as Claude, Gemini, and the local/Antigravity adapter while using Codex-native TOML metadata. This static parity does not assert provider runtime parity.
 - **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
 - **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
 
 ### QA Evidence Resolution
 
 - `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
-  machine owner. Its current `10 roles / 3 surfaces / 30 adapters` inventory is
-  repository-static; `12 / 4 / 48` remains target-only.
+  machine owner. Its current `12 roles / 4 surfaces / 48 adapters` inventory is
+  repository-static adapter evidence.
 - Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
   separate. A result in one class never proves another.
 - The legacy role-semantics contract is readable compatibility input with zero

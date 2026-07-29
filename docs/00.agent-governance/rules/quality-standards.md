@@ -33,11 +33,12 @@ Quality gates for governance and execution alignment.
 - GitHub Actions is the provider-agnostic remote QA gate for this repository; it
   is not live deployment CD and must not be used as evidence of live runtime
   readiness without an approved live check.
-- Local adapter parity is validated as role parity plus evidence, not identical
-  metadata keys. Native Claude/Codex adapters and local/Antigravity adapters
-  must preserve role, scope, guardrails, handoff, and postflight while using
-  their surface-specific metadata. This static result is not Gemini CLI native
-  discovery, policy, model, or permission evidence.
+- Adapter parity is validated as role parity plus evidence, not identical
+  metadata keys. Native Claude/Codex/Gemini adapters and local/Antigravity
+  adapters must preserve role, scope, guardrails, handoff, and postflight
+  while using their surface-specific metadata. This static result is not
+  provider discovery, policy loading, model resolution, permission, or
+  execution evidence.
 - PR verification must state which coverage lane applies: 90% code coverage for future testable application code, or validation-matrix coverage for current infrastructure artifacts.
 
 ## Governance Context

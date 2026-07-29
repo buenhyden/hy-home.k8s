@@ -260,6 +260,15 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "agent-gemini",
+      "routes": [{"kind": "regex", "value": "^\\.gemini/.*$"}],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Gemini native adapters require provider parity evidence."},
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "github-automation",
       "routes": [{"kind": "regex", "value": "^\\.github/.*$"}],
       "validators": ["repository-quality"],

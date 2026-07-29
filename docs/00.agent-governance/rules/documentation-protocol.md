@@ -120,9 +120,9 @@ This protocol defines how governance references authored docs and how language b
   stage doc edits where the runtime supports it: Claude uses
   `.claude/settings.json`, Codex uses `.codex/hooks.json` context/validation
   wiring, and local/Antigravity adapters use `.agents/hooks.json` behavioral
-  wiring. Gemini CLI native `.gemini/settings.json` is absent, so native event
-  delivery remains `DEFER`. Explicit validation commands remain required before
-  handoff.
+  wiring. Gemini CLI native `.gemini/settings.json` is repo-static only, so
+  native event delivery remains `DEFER`. Explicit validation commands remain
+  required before handoff.
 
 ### Drift Garbage Collection
 

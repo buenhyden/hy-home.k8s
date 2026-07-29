@@ -1,5 +1,6 @@
 {
   "expected_stems": [
+    "supervisor",
     "code-reviewer",
     "doc-writer",
     "gitops-reviewer",
@@ -8,13 +9,14 @@
     "network-reviewer",
     "observability-reviewer",
     "security-auditor",
-    "supervisor",
-    "wiki-curator"
+    "wiki-curator",
+    "docs-researcher",
+    "quality-engineer"
   ],
   "cases": [
     {"name": "valid", "mutation": "none", "expected_errors": []},
-    {"name": "missing-role", "mutation": "remove-network-from-claude", "expected_errors": ["claude roster missing expected stems: network-reviewer", "role adapter inventory must contain exactly 30 files"]},
-    {"name": "surface-mismatch", "mutation": "add-extra-to-codex", "expected_errors": ["codex roster has unexpected stems: extra-reviewer", "role adapter inventory must contain exactly 30 files"]},
+    {"name": "missing-role", "mutation": "remove-network-from-claude", "expected_errors": ["claude roster missing expected stems: network-reviewer", "role adapter inventory must contain exactly 48 files"]},
+    {"name": "surface-mismatch", "mutation": "add-extra-to-codex", "expected_errors": ["codex roster has unexpected stems: extra-reviewer", "role adapter inventory must contain exactly 48 files"]},
     {
       "name": "stale-count",
       "mutation": "check-stale-count-variants",
@@ -22,9 +24,15 @@
         "8 local agents",
         "Eight local role adapters",
         "eight shared roles",
-        "8 role stems"
+        "8 role stems",
+        "10 local agents",
+        "Ten local role adapters",
+        "ten shared roles",
+        "10 role stems",
+        "3 surfaces",
+        "30 adapters"
       ],
-      "expected_errors": ["harness catalog contains stale eight-role currentness prose"]
+      "expected_errors": ["harness catalog contains stale pre-12-role currentness prose"]
     },
     {"name": "bad-owner", "mutation": "misdirect-bootstrap-owner", "expected_errors": ["harness catalog missing canonical owner link: docs/00.agent-governance/rules/bootstrap.md -> rules/bootstrap.md"]},
     {"name": "missing-current-phrase", "mutation": "remove-current-roster-phrase", "expected_errors": ["harness catalog canonical roster phrase must appear exactly once"]}

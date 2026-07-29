@@ -538,21 +538,21 @@
       "displayName": "Gemini CLI",
       "trackedSurface": {
         "pathRoot": ".gemini/agents",
-        "state": "target-only",
-        "presence": "absent",
+        "state": "current",
+        "presence": "present",
         "evidenceClass": "repo-static",
-        "claimBoundary": "Reserved Gemini-native project surface; .gemini is absent and .agents remains the distinct local projection."
+        "claimBoundary": "Tracked Gemini-native project adapter syntax only; CLI installation, native discovery, event delivery, authentication, and model resolution remain absent or deferred."
       },
       "projectPaths": [
         {
           "path": ".gemini/agents",
           "kind": "role-directory",
-          "state": "target-only"
+          "state": "current"
         },
         {
           "path": ".gemini/settings.json",
           "kind": "tracked-settings",
-          "state": "target-only"
+          "state": "current"
         },
         {
           "path": "GEMINI.md",
@@ -571,25 +571,25 @@
         "evidence": "Gemini CLI is locally absent; no installation, authentication, native discovery, or runtime claim is made."
       },
       "runtimeVerdicts": {
-        "repoStatic": "ABSENT",
+        "repoStatic": "PASS",
         "nativeDiscovery": "ABSENT",
         "authenticatedRun": "DEFER"
       },
       "evidenceLanes": [
         {
           "id": "repo-static",
-          "verdict": "ABSENT",
+          "verdict": "PASS",
           "owner": "platform",
-          "limitation": "Gemini-native .gemini project surface is target-only and absent.",
-          "retryTrigger": "Spec 044 admits the Gemini projection and tracked native surface.",
+          "limitation": "Only tracked .gemini syntax and settings metadata are present; runtime discovery and model resolution are not claimed.",
+          "retryTrigger": "Run an approved Gemini CLI native-discovery canary after installation and authentication are authorized.",
           "crossLanePromotion": false
         },
         {
           "id": "native-discovery",
           "verdict": "ABSENT",
           "owner": "platform",
-          "limitation": "Gemini CLI and native project surface are absent.",
-          "retryTrigger": "Approve installation separately, then admit and validate the native project surface.",
+          "limitation": "Gemini CLI installation and native discovery are absent; tracked project files are repo-static evidence only.",
+          "retryTrigger": "Approve installation separately, then run a no-mutation native-discovery canary against the tracked project surface.",
           "crossLanePromotion": false
         },
         {
@@ -1042,7 +1042,7 @@
       "id": "gemini-repo-static",
       "providerId": "gemini",
       "evidenceClass": "repo-static",
-      "verdict": "ABSENT",
+      "verdict": "PASS",
       "synthetic": true,
       "mutationMode": "no-mutation",
       "executionState": "synthetic-static-observation",
@@ -1051,10 +1051,10 @@
       "effort": null,
       "fallbackObserved": false,
       "allowedTools": [],
-      "resultAssertion": "Gemini-native .gemini surface is absent and target-only.",
+      "resultAssertion": "Gemini-native .gemini adapter and settings surface is tracked as repository-static syntax evidence.",
       "owner": "platform",
-      "limitation": "No admitted Gemini-native tracked surface exists.",
-      "retryTrigger": "Spec 044 admits the Gemini projection and tracked native surface.",
+      "limitation": "This canary does not execute Gemini CLI or resolve any model.",
+      "retryTrigger": "Approve Gemini CLI installation/authentication and run a native discovery canary.",
       "redaction": {
         "status": "PASS",
         "rawPromptStored": false,
@@ -1079,8 +1079,8 @@
       "allowedTools": [],
       "resultAssertion": "Gemini native discovery was not available.",
       "owner": "platform",
-      "limitation": "Gemini CLI and native project surface are absent.",
-      "retryTrigger": "Approve installation separately, then admit and validate the native project surface.",
+      "limitation": "Gemini CLI installation is absent; tracked .gemini files alone do not prove native discovery.",
+      "retryTrigger": "Approve installation separately, then run native project-surface discovery.",
       "redaction": {
         "status": "PASS",
         "rawPromptStored": false,
@@ -1141,13 +1141,14 @@
     ],
     "surfaces": [
       "provider-gateways",
-      "agent-shared",
-      "agent-claude",
-      "agent-codex",
-      "governance-documents",
-      "scripts",
-      "tests"
-    ],
+    "agent-shared",
+    "agent-claude",
+    "agent-codex",
+    "agent-gemini",
+    "governance-documents",
+    "scripts",
+    "tests"
+  ],
     "excludedSurfaces": [
       "infrastructure",
       "gitops",

@@ -213,6 +213,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/test_document_lifecycle_agent_roster_cutover.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_document_strict_cutover.py": (
         "python",
         "regression-test",

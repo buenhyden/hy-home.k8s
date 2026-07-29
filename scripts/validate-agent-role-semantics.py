@@ -10,6 +10,7 @@ import os
 import re
 import stat
 import sys
+import tempfile
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -28,9 +29,72 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/harness-contract.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-role-semantics.json")
+MODEL_FITNESS_PATH = PurePosixPath(
+    "docs/00.agent-governance/contracts/agent-model-fitness.json"
+)
 CONTRACT_VERSION = "1.0.0"
 CONSUMER_ID = "role-semantics-validator"
 ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
+GEMINI_METADATA_MUTATION_COUNT = 8
+GEMINI_FRONTMATTER_KEYS = (
+    "name",
+    "description",
+    "kind",
+    "tools",
+    "model",
+    "max_turns",
+    "timeout_mins",
+)
+GEMINI_ROLE_TOOLS = {
+    "supervisor": ("read_file", "grep_search", "list_directory"),
+    "code-reviewer": ("read_file", "grep_search", "list_directory"),
+    "doc-writer": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+        "replace",
+        "write_file",
+    ),
+    "gitops-reviewer": ("read_file", "grep_search", "list_directory"),
+    "incident-responder": ("read_file", "grep_search", "list_directory"),
+    "k8s-implementer": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+        "replace",
+        "write_file",
+        "run_shell_command",
+    ),
+    "network-reviewer": ("read_file", "grep_search", "list_directory"),
+    "observability-reviewer": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+    ),
+    "security-auditor": ("read_file", "grep_search", "list_directory"),
+    "wiki-curator": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+        "replace",
+        "write_file",
+    ),
+    "docs-researcher": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+        "google_web_search",
+        "web_fetch",
+    ),
+    "quality-engineer": (
+        "read_file",
+        "grep_search",
+        "list_directory",
+        "replace",
+        "write_file",
+        "run_shell_command",
+    ),
+}
 CATEGORY_RULES = {
     "responsibilities": "ROLE-RESPONSIBILITY",
     "outputs": "ROLE-OUTPUT",
@@ -339,6 +403,38 @@ def load_json(root: Path, relative: PurePosixPath) -> Any:
             return json.load(handle)
     except (OSError, json.JSONDecodeError) as exc:
         fail("ROLE-JSON", f"{path}: {exc}")
+
+
+def load_gemini_model_candidates(root: Path) -> dict[str, str]:
+    contract = load_json(root, MODEL_FITNESS_PATH)
+    profiles = contract.get("roleProfiles")
+    if not isinstance(profiles, list):
+        fail("ROLE-ADAPTER-PARSE", "model fitness roleProfiles must be a list")
+    candidates: dict[str, str] = {}
+    for profile in profiles:
+        if not isinstance(profile, dict):
+            fail("ROLE-ADAPTER-PARSE", "model fitness roleProfile must be an object")
+        role_id = profile.get("roleId")
+        tuples = profile.get("providerTuples")
+        if not isinstance(role_id, str) or not isinstance(tuples, list):
+            fail("ROLE-ADAPTER-PARSE", "model fitness roleProfile shape differs")
+        gemini_tuples = [
+            item for item in tuples
+            if isinstance(item, dict) and item.get("providerId") == "gemini"
+        ]
+        if len(gemini_tuples) != 1:
+            fail(
+                "ROLE-ADAPTER-PARSE",
+                f"{role_id}: Gemini model candidate tuple differs",
+            )
+        candidate = gemini_tuples[0].get("modelCandidate")
+        if not isinstance(candidate, str) or not candidate:
+            fail(
+                "ROLE-ADAPTER-PARSE",
+                f"{role_id}: Gemini model candidate must be a string",
+            )
+        candidates[role_id] = candidate
+    return candidates
 
 
 def normalize_whitespace(value: str) -> str:
@@ -837,11 +933,77 @@ def extract_heading(body: str) -> str:
     return headings[0].strip() if len(headings) == 1 else ""
 
 
-def parse_adapter_text(surface: str, relative_path: PurePosixPath, text: str) -> Adapter:
+def validate_gemini_frontmatter(
+    metadata: dict[str, Any],
+    relative_path: PurePosixPath,
+    *,
+    model_candidates: dict[str, str],
+) -> None:
+    role_id = relative_path.stem
+    if tuple(metadata) != GEMINI_FRONTMATTER_KEYS:
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: Gemini frontmatter keys or key order differ",
+        )
+    if metadata["name"] != role_id:
+        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: name must match file stem")
+    if metadata["kind"] != "local":
+        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: kind must be local")
+    expected_tools = GEMINI_ROLE_TOOLS.get(role_id)
+    if expected_tools is None:
+        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: unknown Gemini role")
+    tools = metadata["tools"]
+    if not isinstance(tools, list) or not all(
+        isinstance(tool, str) and tool for tool in tools
+    ):
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: tools must be a list of non-empty strings",
+        )
+    if any(tool in {"*", "all", "inherit", "inherited-all"} for tool in tools):
+        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: wildcard tools are forbidden")
+    if tuple(tools) != expected_tools:
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: Gemini tools differ from role least-privilege list",
+        )
+    expected_model = model_candidates.get(role_id)
+    if not expected_model:
+        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: Gemini model candidate missing")
+    if metadata["model"] != expected_model:
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: model must match agent-model-fitness candidate",
+        )
+    if not isinstance(metadata["max_turns"], int) or metadata["max_turns"] < 1:
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: max_turns must be a positive integer",
+        )
+    if not isinstance(metadata["timeout_mins"], int) or metadata["timeout_mins"] < 1:
+        fail(
+            "ROLE-ADAPTER-PARSE",
+            f"{relative_path}: timeout_mins must be a positive integer",
+        )
+
+
+def parse_adapter_text(
+    surface: str,
+    relative_path: PurePosixPath,
+    text: str,
+    *,
+    gemini_model_candidates: dict[str, str] | None = None,
+) -> Adapter:
     suffix = relative_path.suffix
     if suffix == ".md":
         metadata, body = parse_frontmatter(text, relative_path.as_posix())
         declared_name = metadata["name"]
+        if surface == "gemini":
+            validate_gemini_frontmatter(
+                metadata,
+                relative_path,
+                model_candidates=gemini_model_candidates or {},
+            )
     else:
         try:
             data = tomllib.loads(text)
@@ -932,10 +1094,12 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
 def repository_adapters(
     root: Path, selection: HarnessSelection
 ) -> dict[tuple[str, str], Adapter]:
+    gemini_model_candidates = load_gemini_model_candidates(root)
     return {
         (surface, role_id): parse_adapter_text(
             surface,
             *adapter_source(root, selection, surface, role_id),
+            gemini_model_candidates=gemini_model_candidates,
         )
         for surface in selection.surface_ids
         for role_id in selection.role_ids
@@ -1124,12 +1288,67 @@ def validate_mutated_source(
     path: PurePosixPath,
     source: str,
     role: dict[str, Any],
+    *,
+    gemini_model_candidates: dict[str, str],
 ) -> list[str]:
     try:
-        adapter = parse_adapter_text(surface, path, source)
+        adapter = parse_adapter_text(
+            surface,
+            path,
+            source,
+            gemini_model_candidates=gemini_model_candidates,
+        )
     except ContractError as exc:
         return [exc.code]
     return [diagnostic.code for diagnostic in validate_adapter(role, adapter)]
+
+
+def mutate_gemini_frontmatter(source: str, mutation: str) -> str:
+    if mutation == "missing-tools":
+        return re.sub(r"^tools: .*\n", "", source, count=1, flags=re.MULTILINE)
+    if mutation == "extra-key":
+        return source.replace(
+            "timeout_mins:",
+            "provider_runtime: promoted\n" "timeout_mins:",
+            1,
+        )
+    if mutation == "duplicate-key":
+        return source.replace("tools:", "tools: [read_file]\ntools:", 1)
+    if mutation == "unrecognized-tool":
+        return source.replace(
+            "tools: [read_file, grep_search, list_directory]",
+            "tools: [read_file, grep_search, list_directory, mcp_server]",
+            1,
+        )
+    if mutation == "wildcard-tool":
+        return source.replace(
+            "tools: [read_file, grep_search, list_directory]",
+            "tools: [read_file, grep_search, list_directory, *]",
+            1,
+        )
+    if mutation == "tool-order-drift":
+        return source.replace(
+            "tools: [read_file, grep_search, list_directory]",
+            "tools: [grep_search, read_file, list_directory]",
+            1,
+        )
+    if mutation == "model-drift":
+        return re.sub(
+            r"^model: .*$",
+            "model: gemini-3.1-flash-lite",
+            source,
+            count=1,
+            flags=re.MULTILINE,
+        )
+    if mutation == "key-order-drift":
+        return re.sub(
+            r"^(tools: .*\n)(model: .*\n)",
+            r"\2\1",
+            source,
+            count=1,
+            flags=re.MULTILINE,
+        )
+    fail("ROLE-SELF-TEST", f"unknown Gemini frontmatter mutation {mutation!r}")
 
 
 def run_self_test(root: Path) -> tuple[list[str], int]:
@@ -1137,6 +1356,7 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
     roles = selection.roles
     fixture = load_json(root, FIXTURE_PATH)
     validate_fixture(fixture, selection)
+    gemini_model_candidates = load_gemini_model_candidates(root)
     sources = {
         (surface, role_id): adapter_source(
             root, selection, surface, role_id
@@ -1145,7 +1365,12 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
         for role_id in selection.role_ids
     }
     adapters = {
-        key: parse_adapter_text(key[0], path, source)
+        key: parse_adapter_text(
+            key[0],
+            path,
+            source,
+            gemini_model_candidates=gemini_model_candidates,
+        )
         for key, (path, source) in sources.items()
     }
     baseline = [
@@ -1170,7 +1395,11 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                         base_source, role, category, mutation, path
                     )
                     actual_rules = validate_mutated_source(
-                        surface, path, mutated_source, role
+                        surface,
+                        path,
+                        mutated_source,
+                        role,
+                        gemini_model_candidates=gemini_model_candidates,
                     )
                     if actual_rules != [expected_rule]:
                         failures.append(
@@ -1187,12 +1416,41 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
             base_source, role, case["category"], case["mutation"], path
         )
         actual_rules = validate_mutated_source(
-            surface, path, mutated_source, role
+            surface,
+            path,
+            mutated_source,
+            role,
+            gemini_model_candidates=gemini_model_candidates,
         )
         if actual_rules != [case["expectedRule"]]:
             failures.append(
                 f"adversarial/{case['name']}: expected "
                 f"{[case['expectedRule']]!r}, got {actual_rules!r}"
+            )
+
+    gemini_path, gemini_source = sources[("gemini", "code-reviewer")]
+    gemini_role = roles["code-reviewer"]
+    for mutation in (
+        "missing-tools",
+        "extra-key",
+        "duplicate-key",
+        "unrecognized-tool",
+        "wildcard-tool",
+        "tool-order-drift",
+        "model-drift",
+        "key-order-drift",
+    ):
+        actual_rules = validate_mutated_source(
+            "gemini",
+            gemini_path,
+            mutate_gemini_frontmatter(gemini_source, mutation),
+            gemini_role,
+            gemini_model_candidates=gemini_model_candidates,
+        )
+        if actual_rules != ["ROLE-ADAPTER-PARSE"]:
+            failures.append(
+                f"gemini-frontmatter/{mutation}: expected "
+                f"['ROLE-ADAPTER-PARSE'], got {actual_rules!r}"
             )
 
     vocabulary_surface = "local"
@@ -1227,6 +1485,7 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                 vocabulary_path,
                 mutated_source,
                 vocabulary_role,
+                gemini_model_candidates=gemini_model_candidates,
             )
             if actual_rules != ["ROLE-RESPONSIBILITY"]:
                 failures.append(
@@ -1249,6 +1508,22 @@ def run_self_test(root: Path) -> tuple[list[str], int]:
                 )
         else:
             failures.append(f"forbidden field {forbidden}: mutation passed")
+
+    with tempfile.TemporaryDirectory(
+        prefix="agent-role-semantics-root-boundary-"
+    ) as directory:
+        symlink_root = Path(directory) / "repository-root-link"
+        symlink_root.symlink_to(root.absolute(), target_is_directory=True)
+        try:
+            validate_contract(symlink_root)
+        except ContractError as exc:
+            if exc.code != "ROLE-JSON":
+                failures.append(
+                    "symlink root: expected ROLE-JSON, "
+                    f"got {exc.code}"
+                )
+        else:
+            failures.append("symlink root: mutation passed")
     return failures, cases
 
 
@@ -1257,7 +1532,7 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
-    root = args.root.resolve()
+    root = args.root.absolute()
     try:
         if args.self_test:
             failures, cases = run_self_test(root)
@@ -1269,6 +1544,7 @@ def main() -> int:
                 "[PASS] agent role semantics self-test passed: "
                 f"cases={cases} adversarial={len(ADVERSARIAL_SCHEMA)} "
                 f"vocabulary={len(NEGATION_STATES) * 2} "
+                f"geminiMetadata={GEMINI_METADATA_MUTATION_COUNT} "
                 f"roles={len(validate_contract(root).role_ids)} "
                 f"adapters={len(validate_contract(root).projection_paths)} "
                 f"categories={len(CATEGORY_RULES)}"

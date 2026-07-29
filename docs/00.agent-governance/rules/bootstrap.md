@@ -29,7 +29,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
 - GitOps-first is mandatory: do not mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Define validation evidence before editing, and report unavailable tools or skipped live checks.
-- `.claude/agents/*.md` and `.codex/agents/*.toml` are provider-native role adapters; `.agents/agents/*.md` is the local/Antigravity adapter surface. Keep their role, scope imports, guardrails, handoff, and postflight statically aligned while preserving surface-specific metadata keys. The `.agents/` folder remains the git-tracked shared asset and local adapter owner; it is not Gemini CLI native configuration. Gemini CLI reserves `.gemini/agents/**` and `.gemini/settings.json`, which are absent and `DEFER` pending a separate approved PRD/ARD/Spec/Plan/Task or at minimum Spec/Plan/Task.
+- `.claude/agents/*.md`, `.codex/agents/*.toml`, and `.gemini/agents/*.md` are provider-native role adapters; `.agents/agents/*.md` is the local/Antigravity adapter surface. Keep their role, scope imports, guardrails, handoff, and postflight statically aligned while preserving surface-specific metadata keys. The `.agents/` folder remains the git-tracked shared asset and local adapter owner; it is not Gemini CLI native configuration. `.gemini/agents/**` and `.gemini/settings.json` are tracked repo-static Gemini project-surface evidence only; native discovery, event delivery, authentication, and model resolution remain `DEFER` or `ABSENT`.
 - **In-place refactor only.** Modify existing files rather than creating new ones unless explicitly requested by a human.
 
 ## Authority Boundary

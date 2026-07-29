@@ -47,7 +47,7 @@ This README is primarily for:
 | `.agents/agents/*.md` | Local/Antigravity role adapters, not Gemini CLI native roles. |
 | `.agents/{skills,workflows,output-styles}/` | Shared SSoT exposed through the tracked Claude/Codex symlink views. |
 | `.codex/hooks.json`, `.agents/hooks.json` | Context/validation wiring; the latter is local/Antigravity wiring. |
-| `.gemini/agents/**`, `.gemini/settings.json` | Gemini CLI native surfaces; absent and `DEFER`. |
+| `.gemini/agents/**`, `.gemini/settings.json` | Gemini CLI native project surfaces tracked as repo-static evidence; runtime discovery, event delivery, auth, and model resolution remain `DEFER` or `ABSENT`. |
 
 ## Document Index
 

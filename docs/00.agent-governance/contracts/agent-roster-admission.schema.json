@@ -106,7 +106,7 @@
         "class",
         "claimBoundary",
         "admissionVerdict",
-        "promotionAuthorized",
+        "promotionAuthorization",
         "deferredClasses",
         "deferredClassStates"
       ],
@@ -123,13 +123,13 @@
           "type": "string",
           "minLength": 1
         },
-        "promotionAuthorized": {
-          "type": "boolean"
+        "promotionAuthorization": {
+          "$ref": "#/$defs/promotionAuthorization"
         },
         "deferredClasses": {
           "type": "array",
-          "minItems": 6,
-          "maxItems": 6,
+          "minItems": 9,
+          "maxItems": 9,
           "items": {
             "type": "string",
             "minLength": 1
@@ -142,9 +142,12 @@
             "runtime",
             "provider-discovery",
             "provider-authentication",
+            "model-resolution",
             "hosted-ci",
             "remote",
-            "live"
+            "live",
+            "agent-evaluation",
+            "model-fitness"
           ],
           "properties": {
             "runtime": {
@@ -159,6 +162,10 @@
               "type": "string",
               "minLength": 1
             },
+            "model-resolution": {
+              "type": "string",
+              "minLength": 1
+            },
             "hosted-ci": {
               "type": "string",
               "minLength": 1
@@ -170,7 +177,42 @@
             "live": {
               "type": "string",
               "minLength": 1
+            },
+            "agent-evaluation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "model-fitness": {
+              "type": "string",
+              "minLength": 1
             }
+          }
+        }
+      }
+    },
+    "promotionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorized",
+        "scope",
+        "excludedEvidenceClasses"
+      ],
+      "properties": {
+        "authorized": {
+          "type": "boolean"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "excludedEvidenceClasses": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "items": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

@@ -3,16 +3,16 @@
   "expected": {
     "candidates": 2,
     "conditions": 7,
-    "currentRoles": 10,
-    "currentSurfaces": 3,
-    "currentAdapters": 30,
+    "currentRoles": 12,
+    "currentSurfaces": 4,
+    "currentAdapters": 48,
     "targetRoles": 12,
     "targetSurfaces": 4,
     "targetAdapters": 48,
     "surfacePlans": 8,
     "evaluationClasses": 4,
     "memoryClasses": 4,
-    "deferredEvidenceClasses": 6
+    "deferredEvidenceClasses": 9
   },
   "mutations": [
     {
@@ -36,11 +36,23 @@
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "admission-pass-preclaim",
+      "name": "admission-verdict-defer",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promotion-authorized",
+      "name": "promotion-scope-runtime",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "promotion-authorization-disabled",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "promotion-exclusion-duplicate",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "promotion-exclusion-reordered",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
@@ -56,11 +68,31 @@
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
+      "name": "model-resolution-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "hosted-ci-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "remote-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "agent-evaluation-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "model-fitness-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
       "name": "live-pass",
       "expectedRule": "AREA-ADM-EVIDENCE"
     },
     {
-      "name": "promoted-current-count",
+      "name": "stale-current-count",
       "expectedRule": "AREA-ADM-INVENTORY"
     },
     {
@@ -84,7 +116,7 @@
       "expectedRule": "AREA-ADM-CANDIDATE"
     },
     {
-      "name": "candidate-pass-preclaim",
+      "name": "candidate-runtime-preclaim",
       "expectedRule": "AREA-ADM-CANDIDATE"
     },
     {
@@ -140,7 +172,7 @@
       "expectedRule": "AREA-ADM-HANDOFF"
     },
     {
-      "name": "promoted-surface",
+      "name": "stale-target-surface",
       "expectedRule": "AREA-ADM-SURFACE"
     },
     {

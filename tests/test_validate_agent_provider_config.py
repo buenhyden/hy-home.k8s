@@ -141,7 +141,7 @@ class ProviderConfigContractTests(unittest.TestCase):
         }
         self.assertEqual(actual, expected)
         self.assertEqual(actual["local"][0], ".agents/agents")
-        self.assertEqual(actual["gemini"], (".gemini/agents", "target-only"))
+        self.assertEqual(actual["gemini"], (".gemini/agents", "current"))
 
     def test_sources_have_dates_cutoff_classification_and_primary_claims(
         self,

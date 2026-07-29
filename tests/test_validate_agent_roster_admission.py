@@ -6,8 +6,10 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
@@ -56,10 +58,28 @@ DEFERRED_EVIDENCE = (
     "runtime",
     "provider-discovery",
     "provider-authentication",
+    "model-resolution",
     "hosted-ci",
     "remote",
     "live",
+    "agent-evaluation",
+    "model-fitness",
 )
+PROMOTION_SCOPE = "repository-static-role-and-adapter-inventory-only"
+GOVERNED_INPUTS = (
+    CONTRACT_PATH,
+    SCHEMA_PATH,
+    FIXTURE_PATH,
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/harness-contract.json",
+)
+
+
+def copy_governed_inputs(root: Path) -> None:
+    for source in GOVERNED_INPUTS:
+        destination = root / source.relative_to(REPOSITORY_ROOT)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
 
 
 def load_module():
@@ -148,7 +168,7 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
         )
         assert_all_object_schemas_closed(self, self.schema)
 
-    def test_baseline_is_policy_only_and_preserves_inventory_boundary(self) -> None:
+    def test_baseline_admits_only_repository_static_inventory(self) -> None:
         counts = self.validator.validate_contract(
             REPOSITORY_ROOT, self.contract
         )
@@ -157,22 +177,30 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             {
                 "candidates": 2,
                 "conditions": 7,
-                "currentRoles": 10,
-                "currentSurfaces": 3,
-                "currentAdapters": 30,
+                "currentRoles": 12,
+                "currentSurfaces": 4,
+                "currentAdapters": 48,
                 "targetRoles": 12,
                 "targetSurfaces": 4,
                 "targetAdapters": 48,
                 "surfacePlans": 8,
                 "evaluationClasses": 4,
                 "memoryClasses": 4,
-                "deferredEvidenceClasses": 6,
+                "deferredEvidenceClasses": 9,
             },
         )
-        self.assertEqual(self.contract["state"], "contract-only")
+        self.assertEqual(
+            self.contract["state"], "repository-static-admitted"
+        )
         self.assertEqual(self.contract["evidence"]["class"], "repo-static")
-        self.assertEqual(self.contract["evidence"]["admissionVerdict"], "DEFER")
-        self.assertFalse(self.contract["evidence"]["promotionAuthorized"])
+        self.assertEqual(self.contract["evidence"]["admissionVerdict"], "PASS")
+        authorization = self.contract["evidence"]["promotionAuthorization"]
+        self.assertTrue(authorization["authorized"])
+        self.assertEqual(authorization["scope"], PROMOTION_SCOPE)
+        self.assertEqual(
+            tuple(authorization["excludedEvidenceClasses"]),
+            DEFERRED_EVIDENCE,
+        )
         self.assertEqual(
             tuple(self.contract["evidence"]["deferredClasses"]),
             DEFERRED_EVIDENCE,
@@ -186,18 +214,18 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             )
         )
 
-    def test_target_and_candidates_are_exact_but_unpromoted(self) -> None:
+    def test_target_is_achieved_and_candidates_are_static_only(self) -> None:
         self.assertEqual(
             self.contract["currentInventory"],
             {
                 "state": "current",
-                "roleCount": 10,
-                "surfaceCount": 3,
-                "adapterCount": 30,
+                "roleCount": 12,
+                "surfaceCount": 4,
+                "adapterCount": 48,
             },
         )
         target = self.contract["targetInventory"]
-        self.assertEqual(target["state"], "target-only")
+        self.assertEqual(target["state"], "achieved")
         self.assertEqual(
             (target["roleCount"], target["surfaceCount"], target["adapterCount"]),
             (12, 4, 48),
@@ -210,7 +238,8 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
         )
         self.assertTrue(
             all(
-                candidate["decision"] == "candidate-only"
+                candidate["decision"] == "repository-static-admitted"
+                and candidate["authority"] == PROMOTION_SCOPE
                 for candidate in self.contract["candidates"]
             )
         )
@@ -246,14 +275,14 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             owners.add(candidate["owner"])
             deliverables.add(candidate["distinctDeliverable"])
 
-    def test_four_surface_eval_adjudication_and_rollback_are_preconditions(self) -> None:
+    def test_static_surfaces_are_current_but_future_gates_stay_deferred(self) -> None:
         for candidate in self.contract["candidates"]:
             surface_plan = candidate["surfacePlan"]
             self.assertEqual(
                 tuple(item["surfaceId"] for item in surface_plan), SURFACES
             )
             self.assertTrue(
-                all(item["state"] == "target-only" for item in surface_plan)
+                all(item["state"] == "current" for item in surface_plan)
             )
             self.assertTrue(
                 all(item["leastPrivilege"] for item in surface_plan)
@@ -263,7 +292,8 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
                 tuple(evaluation["classes"]), EVALUATION_CLASSES
             )
             self.assertEqual(
-                evaluation["baselineState"], "required-before-promotion"
+                evaluation["baselineState"],
+                "deferred-to-area-003-before-runtime-activation",
             )
             adjudication = evaluation["independentAdjudication"]
             self.assertTrue(adjudication["required"])
@@ -273,9 +303,7 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
                 ("quality", "safety", "cost", "latency"),
             )
             rollback = candidate["rollback"]
-            self.assertEqual(
-                rollback["state"], "required-before-promotion"
-            )
+            self.assertEqual(rollback["state"], "armed")
             self.assertEqual(rollback["restoreInventory"], "10/3/30")
             self.assertTrue(rollback["reproducible"])
             self.assertFalse(rollback["executed"])
@@ -296,7 +324,7 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
     def test_duplicate_keys_fail_at_the_input_boundary(self) -> None:
         with self.assertRaises(self.validator.AdmissionError) as raised:
             self.validator.decode_json_text(
-                '{"state":"contract-only","state":"current"}',
+                '{"state":"repository-static-admitted","state":"current"}',
                 "<unit-fixture>",
             )
         self.assertEqual(raised.exception.code, "AREA-ADM-DUPLICATE-KEY")
@@ -316,6 +344,72 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
                 self.contract_copy(), "not-a-supported-mutation"
             )
         self.assertEqual(raised.exception.code, "AREA-ADM-FIXTURE")
+
+    def test_governed_inputs_reject_final_and_intermediate_symlinks(self) -> None:
+        for source in GOVERNED_INPUTS:
+            with self.subTest(path=source.relative_to(REPOSITORY_ROOT)):
+                with tempfile.TemporaryDirectory() as directory:
+                    base = Path(directory)
+                    root = base / "repository"
+                    copy_governed_inputs(root)
+                    relative = source.relative_to(REPOSITORY_ROOT)
+                    candidate = root / relative
+                    outside = base / "outside.json"
+                    shutil.copy2(source, outside)
+                    candidate.unlink()
+                    candidate.symlink_to(outside)
+                    with self.assertRaises(
+                        self.validator.AdmissionError
+                    ) as raised:
+                        if source == FIXTURE_PATH:
+                            self.validator.run_self_test(root)
+                        else:
+                            self.validator.validate_contract(root)
+                    self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
+                    self.assertNotIn(str(outside), raised.exception.detail)
+
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "repository"
+            root.mkdir()
+            (root / "tests/fixtures").mkdir(parents=True)
+            shutil.copy2(
+                FIXTURE_PATH,
+                root / FIXTURE_PATH.relative_to(REPOSITORY_ROOT),
+            )
+            (root / "docs").symlink_to(REPOSITORY_ROOT / "docs")
+            with self.assertRaises(self.validator.AdmissionError) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
+            self.assertNotIn(str(REPOSITORY_ROOT), raised.exception.detail)
+
+    def test_non_regular_input_and_symlink_or_file_root_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "repository"
+            copy_governed_inputs(root)
+            harness = root / GOVERNED_INPUTS[-1].relative_to(REPOSITORY_ROOT)
+            harness.unlink()
+            harness.mkdir()
+            with self.assertRaises(self.validator.AdmissionError) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
+
+            root_file = base / "not-a-directory"
+            root_file.write_text("synthetic\n", encoding="utf-8")
+            with self.assertRaises(self.validator.AdmissionError) as raised:
+                self.validator.validate_contract(root_file)
+            self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
+            self.assertNotIn(str(root_file), raised.exception.detail)
+
+            actual_root = base / "actual-repository"
+            copy_governed_inputs(actual_root)
+            root_link = base / "repository-link"
+            root_link.symlink_to(actual_root)
+            with self.assertRaises(self.validator.AdmissionError) as raised:
+                self.validator.validate_contract(root_link)
+            self.assertEqual(raised.exception.code, "AREA-ADM-INPUT")
+            self.assertNotIn(str(actual_root), raised.exception.detail)
 
     def test_self_test_and_production_cli_pass_without_runtime_claims(self) -> None:
         self_test = subprocess.run(
@@ -347,12 +441,15 @@ class AgentRosterAdmissionContractTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(production.returncode, 0, production.stderr)
-        self.assertIn("state=contract-only", production.stdout)
-        self.assertIn("verdict=DEFER", production.stdout)
-        self.assertIn("current=10/3/30", production.stdout)
-        self.assertIn("target=12/4/48", production.stdout)
-        self.assertNotIn("admission=PASS", production.stdout)
+        self.assertIn("state=repository-static-admitted", production.stdout)
+        self.assertIn("verdict=PASS", production.stdout)
+        self.assertIn(f"scope={PROMOTION_SCOPE}", production.stdout)
+        self.assertIn("current=12/4/48", production.stdout)
+        self.assertIn("target=achieved:12/4/48", production.stdout)
         self.assertNotIn("runtime=PASS", production.stdout)
+        self.assertNotIn("model_resolution=PASS", production.stdout)
+        self.assertNotIn("agent_evaluation=PASS", production.stdout)
+        self.assertNotIn("model_fitness=PASS", production.stdout)
 
 
 if __name__ == "__main__":

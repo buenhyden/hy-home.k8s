@@ -2363,6 +2363,10 @@
         {
           "kind": "regex",
           "value": "^\\.claude/agents/[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^\\.gemini/agents/[^/]+\\.md$"
         }
       ],
       "frontmatter": {

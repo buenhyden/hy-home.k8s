@@ -573,13 +573,13 @@
           "const": "current"
         },
         "expectedRoleCount": {
-          "const": 10
+          "const": 12
         },
         "expectedSurfaceCount": {
-          "const": 3
+          "const": 4
         },
         "expectedProjectionCount": {
-          "const": 30
+          "const": 48
         },
         "roleIds": {
           "allOf": [
@@ -587,8 +587,8 @@
               "$ref": "#/$defs/roleIds"
             },
             {
-              "minItems": 10,
-              "maxItems": 10
+              "minItems": 12,
+              "maxItems": 12
             }
           ]
         },
@@ -598,15 +598,15 @@
               "$ref": "#/$defs/surfaceIds"
             },
             {
-              "minItems": 3,
-              "maxItems": 3
+              "minItems": 4,
+              "maxItems": 4
             }
           ]
         },
         "projections": {
           "type": "array",
-          "minItems": 30,
-          "maxItems": 30,
+          "minItems": 48,
+          "maxItems": 48,
           "items": {
             "$ref": "#/$defs/projection"
           }
@@ -628,7 +628,7 @@
       ],
       "properties": {
         "state": {
-          "const": "target-only"
+          "const": "achieved"
         },
         "promotionOwnerSpec": {
           "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"

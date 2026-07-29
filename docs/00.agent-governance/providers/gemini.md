@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-28
+updated: 2026-07-29
 ---
 
 # Gemini Provider Notes
@@ -20,8 +20,12 @@ Gemini-specific guidance for `hy-home.k8s`.
 - In this repository, keep `AGENTS.md` out of the Gemini loading path unless a
   future approved adapter change updates Stage 00; `AGENTS.md` is the Codex/GPT
   gateway.
-- Reserve Gemini CLI project-local settings for `.gemini/settings.json`; that
-  native surface is not tracked in the current repository.
+- Track Gemini CLI project agents at `.gemini/agents/**` as repo-static
+  project-surface evidence only. Track `.gemini/settings.json` only in the
+  closed schema-linked form with empty `agents.overrides`; provider-specific
+  model override promotion remains deferred. Do not treat either repo-static
+  surface as native discovery, event delivery, authenticated execution,
+  policy loading, or model-resolution evidence.
 
 ## Governance Context
 
@@ -95,20 +99,21 @@ and output styles. It is not the Gemini CLI native configuration directory.
 
 ### Gemini CLI Native Surface
 
-Gemini CLI native project agents and settings are reserved for
-`.gemini/agents/**` and `.gemini/settings.json`; neither path exists in the
-tracked current baseline. Native discovery, event delivery, policy loading,
-and model resolution remain `DEFER`. Implementing Gemini CLI adoption requires
-a separate approved PRD/ARD/Spec/Plan/Task change set, or at minimum an
-approved Spec/Plan/Task when upstream intent is already established. That work
-must provide schema and runtime canary evidence instead of relabeling
-`.agents/**`.
+Gemini CLI native project agents are tracked under `.gemini/agents/**` as
+repo-static adapter files. They use the fixed native metadata admitted by Spec
+044 (`name`, `description`, `kind: local`, a role-specific `tools` allowlist,
+candidate-only `model`, `max_turns`, and `timeout_mins`). The model values must
+match the pending Gemini tuples in the model-fitness contract; neither those
+values nor the minimal settings file proves native resolution. Native
+discovery, event delivery, policy loading, authenticated execution, settings
+interpretation, and model resolution remain `DEFER` or `ABSENT` until a
+provider-runtime canary proves them.
 
 The provider-neutral machine owner is
 `contracts/harness-contract.json` version `1.0.0`. Its current inventory is
-exactly `10 roles / 3 surfaces / 30 adapters`; the Gemini-native surface and
-the complete `12 roles / 4 surfaces / 48 adapters` inventory remain target-only.
-The tracked local/Antigravity projection does not promote that target.
+exactly `12 roles / 4 surfaces / 48 adapters`. This is repo-static adapter
+parity only; it does not promote Gemini CLI runtime discovery, tool execution,
+or model resolution.
 
 ### Model Policy (Gemini)
 
@@ -117,9 +122,11 @@ The tracked local/Antigravity projection does not promote that target.
   candidate tiers and cutoff confidence.
 - Current `.agents/**` model labels are local/Antigravity adapter evidence
   only. They are not Gemini CLI native model-resolution evidence.
-- Gemini CLI pro/flash/Auto candidates remain candidate-only until `.gemini/**`
-  parse evidence, a permitted runtime canary, and Spec 044 role fitness evidence
-  promote an exact ID.
+- Gemini CLI pro/flash/Auto candidates remain candidate-only until a permitted
+  runtime canary and Spec 044 role fitness evidence promote an exact ID. The
+  tracked `.gemini/agents/**` files record the pending candidate IDs selected
+  by the model-fitness contract, but those repo-static declarations do not
+  prove provider-side availability, resolution, or execution.
 
 ### Execution Expectations
 
@@ -162,9 +169,10 @@ bash scripts/validate-repo-quality-gates.sh .
 
 Refresh the official source basis when Gemini CLI context or agent-registry
 behavior changes. Tracked `.agents/**` files provide local adapter evidence
-only; the absent `.gemini/**` native surfaces and all native discovery, event,
-policy, and model behavior require a separately approved implementation and
-runtime evidence.
+only; tracked `.gemini/agents/**` files provide repo-static Gemini
+project-surface evidence only. Native discovery, event, policy, settings
+interpretation, tools, and model behavior require separately approved runtime
+evidence.
 
 ## Related Documents
 

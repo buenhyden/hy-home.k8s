@@ -74,9 +74,9 @@ class AgentHarnessContractTests(unittest.TestCase):
         self.assertEqual(
             counts,
             {
-                "currentRoles": 10,
-                "currentSurfaces": 3,
-                "currentProjections": 30,
+                "currentRoles": 12,
+                "currentSurfaces": 4,
+                "currentProjections": 48,
                 "targetRoles": 12,
                 "targetSurfaces": 4,
                 "targetProjections": 48,
@@ -123,7 +123,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 "targetInventory",
                 self.validator.TARGET_ROLES,
                 self.validator.TARGET_SURFACES,
-                "target-only",
+                "current",
             ),
         ):
             expected = tuple(
@@ -159,7 +159,7 @@ class AgentHarnessContractTests(unittest.TestCase):
 
     def test_current_target_state_conflation_is_rejected(self) -> None:
         mutated = self.contract_copy()
-        mutated["canonicalRoles"][-1]["admissionState"] = "current"
+        mutated["targetInventory"]["state"] = "current"
         self.assert_rule(mutated, "HARNESS-INVENTORY-STATE")
 
     def test_evidence_classes_and_remote_live_mapping_are_non_transitive(self) -> None:
@@ -249,10 +249,7 @@ class AgentHarnessContractTests(unittest.TestCase):
         canonical_by_id = {
             role["id"]: role for role in self.contract["canonicalRoles"]
         }
-        self.assertEqual(
-            tuple(legacy_by_id),
-            tuple(self.contract["currentInventory"]["roleIds"]),
-        )
+        self.assertTrue(set(legacy_by_id).issubset(canonical_by_id))
         for role_id, legacy_role in legacy_by_id.items():
             actual = canonical_by_id[role_id]["adapterSemantics"]
             self.assertEqual(actual["admissionState"], "current")
@@ -267,23 +264,13 @@ class AgentHarnessContractTests(unittest.TestCase):
                 },
             )
 
-    def test_target_adapter_semantics_remain_target_only(self) -> None:
+    def test_no_canonical_role_remains_target_only_after_area002(self) -> None:
         current = set(self.contract["currentInventory"]["roleIds"])
         targets = [
             role for role in self.contract["canonicalRoles"]
             if role["id"] not in current
         ]
-        self.assertEqual(
-            tuple(role["id"] for role in targets),
-            ("docs-researcher", "quality-engineer"),
-        )
-        self.assertTrue(
-            all(
-                role["admissionState"] == "target-only"
-                and role["adapterSemantics"]["admissionState"] == "target-only"
-                for role in targets
-            )
-        )
+        self.assertEqual(targets, [])
 
     def _single_role_surface_contract(self):
         mutated = self.contract_copy()
@@ -564,7 +551,7 @@ class AgentHarnessContractTests(unittest.TestCase):
             outside.write_text("synthetic outside\n", encoding="utf-8")
             target.symlink_to(outside)
             with self.assertRaises(self.validator.HarnessError) as raised:
-                self.validator.validate_current_projection_files(
+                self.validator.validate_projection_files(
                     root, self.contract["currentInventory"]["projections"]
                 )
             self.assertEqual(raised.exception.code, "HARNESS-FILE")
@@ -579,7 +566,7 @@ class AgentHarnessContractTests(unittest.TestCase):
             (root / ".agents").rename(outside)
             (root / ".agents").symlink_to(outside, target_is_directory=True)
             with self.assertRaises(self.validator.HarnessError) as raised:
-                self.validator.validate_current_projection_files(
+                self.validator.validate_projection_files(
                     root, self.contract["currentInventory"]["projections"]
                 )
             self.assertEqual(raised.exception.code, "HARNESS-FILE")
@@ -629,18 +616,21 @@ class AgentHarnessContractTests(unittest.TestCase):
             orphan = root / ".agents/agents/orphan.md"
             orphan.write_text("synthetic orphan\n", encoding="utf-8")
             with self.assertRaises(self.validator.HarnessError) as raised:
-                self.validator.validate_current_projection_files(
+                self.validator.validate_projection_files(
                     root, self.contract["currentInventory"]["projections"]
                 )
             self.assertEqual(raised.exception.code, "HARNESS-FILE")
 
-    def test_target_files_are_not_required_for_current_validation(self) -> None:
-        missing_target_paths = [
+    def test_target_inventory_paths_are_now_current_projection_paths(self) -> None:
+        target_paths = [
             projection["path"]
             for projection in self.contract["targetInventory"]["projections"]
-            if not (REPOSITORY_ROOT / projection["path"]).exists()
         ]
-        self.assertGreater(len(missing_target_paths), 0)
+        current_paths = [
+            projection["path"]
+            for projection in self.contract["currentInventory"]["projections"]
+        ]
+        self.assertEqual(target_paths, current_paths)
         self.validator.validate_contract(REPOSITORY_ROOT)
 
     def test_cli_distinguishes_input_boundary_from_findings(self) -> None:
@@ -659,7 +649,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 ["--root", str(REPOSITORY_ROOT)]
             )
         self.assertEqual(production, 0)
-        self.assertIn("current=10/3/30", stdout.getvalue())
+        self.assertIn("current=12/4/48", stdout.getvalue())
 
         stdout = io.StringIO()
         with contextlib.redirect_stdout(stdout):

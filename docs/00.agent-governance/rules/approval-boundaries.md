@@ -33,7 +33,8 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   `.codex/hooks.json` provides Codex context/validation wiring and
   `.agents/hooks.json` provides local/Antigravity behavioral wiring where
   supported. The latter is not Gemini CLI native configuration;
-  `.gemini/settings.json` is reserved and absent.
+  `.gemini/settings.json` is repo-static project-surface evidence only and does
+  not prove Gemini CLI runtime loading.
 
 ## Authority Boundary
 

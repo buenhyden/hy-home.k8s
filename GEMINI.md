@@ -13,7 +13,7 @@ Thin Gemini provider shim for `hy-home.k8s`.
 - Template selection: `docs/99.templates/support/template-routing.md`
 
 Tracked `.agents/**` adapters are local/Antigravity repo-static configuration,
-not Gemini CLI native surfaces. Gemini CLI reserves `.gemini/agents/**` and
-`.gemini/settings.json`; both are absent, so native discovery, event delivery,
-policy loading, and model resolution remain `DEFER` under the separately
-approved change path in the provider note.
+not Gemini CLI native surfaces. Tracked `.gemini/agents/**` and
+`.gemini/settings.json` provide Gemini CLI repo-static project-surface evidence
+only; native discovery, event delivery, policy loading, authenticated execution,
+and model resolution remain `DEFER` under the provider evidence contract.

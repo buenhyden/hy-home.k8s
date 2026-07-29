@@ -3967,6 +3967,8 @@ expected_codex_agent_models = {
     "observability-reviewer": ("gpt-5.3-codex", "high"),
     "security-auditor": ("gpt-5.3-codex", "high"),
     "wiki-curator": ("gpt-5.3-codex", "medium"),
+    "docs-researcher": ("gpt-5.6-terra", "high"),
+    "quality-engineer": ("gpt-5.6-terra", "high"),
 }
 expected_claude_agent_models = {
     "supervisor": "opus 4.8",
@@ -3979,6 +3981,8 @@ expected_claude_agent_models = {
     "observability-reviewer": "sonnet 4.6",
     "security-auditor": "sonnet 4.6",
     "wiki-curator": "sonnet 4.6",
+    "docs-researcher": "Sonnet 5",
+    "quality-engineer": "Sonnet 5",
 }
 expected_claude_agent_tools = {
     "supervisor": "Read, Grep, Glob, Bash, Edit, Write, Task",
@@ -3991,9 +3995,11 @@ expected_claude_agent_tools = {
     "observability-reviewer": "Read, Grep, Glob, Bash",
     "security-auditor": "Read, Grep, Glob, Bash",
     "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
+    "docs-researcher": "Read, Grep, Glob, WebFetch, WebSearch",
+    "quality-engineer": "Read, Write, Edit, Grep, Glob, Bash",
 }
 expected_local_agent_models = {
-    stem: "Gemini 3.1 Pro" if stem == "supervisor" else "Gemini 3.5 Flash"
+    stem: "Gemini 3.1 Pro" if stem in {"supervisor", "docs-researcher"} else "Gemini 3.5 Flash"
     for stem in expected_claude_agent_models
 }
 for stem, claude_path in sorted(claude_agents.items()):

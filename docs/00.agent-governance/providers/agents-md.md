@@ -58,7 +58,7 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 - Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
 - `.claude/CLAUDE.md` is the runtime baseline for local agent execution.
 - Claude runtime behavior and editor/tool hook implementations belong under `.claude/**`; Codex event wiring belongs in `.codex/hooks.json`. The `.agents/hooks.json` file is local/Antigravity behavioral wiring, not Gemini CLI native event configuration. Both JSON adapter files must reuse the repo-local hook contract instead of defining separate policy layers.
-- Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex hook JSON and local/Antigravity hook wiring are not equivalent to a native permission gate. Gemini CLI native event delivery remains `DEFER` while `.gemini/settings.json` is absent.
+- Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex hook JSON and local/Antigravity hook wiring are not equivalent to a native permission gate. Gemini CLI native event delivery remains `DEFER` because `.gemini/settings.json` is repo-static project-surface evidence only.
 - `.claude/*.local.md` files are ignored local warning files. Hookify local rules may advise a local session, but shared enforcement belongs in tracked Claude settings, shared hook scripts, repository validators, and provider hook JSON only as context/validation wiring.
 - Durable policy and governance belong under `docs/00.agent-governance/**`.
 - The repo-static loop and checkpoint validators enforce the four memory
@@ -75,8 +75,8 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 ### QA Evidence Resolution
 
 - `contracts/harness-contract.json` version `1.0.0` is the machine owner. The
-  current inventory is exactly `10 roles / 3 surfaces / 30 adapters`; the
-  `12 / 4 / 48` inventory is target-only. The four evidence classes are
+  current inventory is exactly `12 roles / 4 surfaces / 48 adapters` at the
+  repo-static adapter boundary. The four evidence classes are
   `repo-static`, `provider-runtime`, `ci`, and `remote-live`, with no
   cross-class inference.
 - The legacy role-semantics contract remains readable compatibility input with

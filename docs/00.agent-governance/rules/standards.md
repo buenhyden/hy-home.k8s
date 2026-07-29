@@ -56,14 +56,17 @@ Infrastructure assumptions must match current workspace assets:
 - `.claude/`
 - `.codex/`
 - `.agents/`
+- `.gemini/`
 
-`.claude/agents/*.md` and `.codex/agents/*.toml` are provider-native role
-adapters; `.agents/agents/*.md` is the local/Antigravity role-adapter surface.
-All three must keep the same role, scope imports, guardrails, handoff, and
-postflight requirements while preserving surface-specific metadata, tool, and
-permission syntax. This checked stem parity is local adapter parity, not
-Gemini CLI runtime parity; native Gemini CLI files remain reserved under the
-currently absent `.gemini/agents/**` and `.gemini/settings.json` paths.
+`.claude/agents/*.md`, `.codex/agents/*.toml`, and `.gemini/agents/*.md` are
+provider-native role adapters; `.agents/agents/*.md` is the
+local/Antigravity role-adapter surface. All four must keep the same role,
+scope imports, guardrails, handoff, and postflight requirements while
+preserving surface-specific metadata, tool, and permission syntax. Tracked
+`.gemini/agents/**` plus the minimal `.gemini/settings.json` prove
+repository-static Gemini project-surface parity only; Gemini CLI discovery,
+authentication, event delivery, policy loading, model resolution, and
+execution remain separately evidenced.
 
 ## Current Contract
 

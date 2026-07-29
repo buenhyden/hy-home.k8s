@@ -8,6 +8,7 @@ import copy
 import json
 import re
 import shutil
+import stat
 import subprocess
 import tempfile
 from dataclasses import replace
@@ -35,10 +36,18 @@ from document_contracts import (
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 LOCAL_AGENT_FIXTURE_FIELD = "localAgentFixtureSamplePath"
-RESERVED_GEMINI_NATIVE_SURFACE_RULE = "REGISTRY_RESERVED_GEMINI_NATIVE_SURFACE"
-RESERVED_GEMINI_NATIVE_SURFACE_ERROR = (
-    f"{RESERVED_GEMINI_NATIVE_SURFACE_RULE}: reserved Gemini CLI native surface "
-    "must remain absent from the Git index"
+GEMINI_NATIVE_CURRENT_SURFACE_RULE = "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
+GEMINI_NATIVE_CURRENT_SURFACE_ERROR = (
+    f"{GEMINI_NATIVE_CURRENT_SURFACE_RULE}: Gemini CLI native surface must be "
+    "a closed repository-static current projection"
+)
+DOCUMENT_REGISTRY_ROOT_ERROR = (
+    "REGISTRY_ROOT_BOUNDARY: repository root must be an existing "
+    "non-symlink directory"
+)
+GEMINI_SETTINGS_SCHEMA_URL = (
+    "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/"
+    "schemas/settings.schema.json"
 )
 RETIRED_CLOUD_SDLC_SURFACE_RULE = "REGISTRY_RETIRED_CLOUD_SDLC_SURFACE"
 RETIRED_CLOUD_SDLC_SURFACE_ERROR = (
@@ -3127,64 +3136,262 @@ def _assert_tracked_local_agent_fixture_sample(root: Path, registry: Any) -> Non
         )
 
 
-def _assert_reserved_gemini_native_surfaces_absent(root: Path) -> None:
-    """Reject reserved Gemini CLI native paths using index metadata only."""
-    completed = subprocess.run(
-        [
-            "git",
-            "ls-files",
-            "-z",
-            "--",
-            ".gemini/agents",
-            ".gemini/settings.json",
-        ],
-        cwd=root,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    if completed.stdout and not completed.stdout.endswith(b"\0"):
-        raise AssertionError(
-            f"{RESERVED_GEMINI_NATIVE_SURFACE_RULE}: Git index inventory must be NUL terminated"
-        )
-    if completed.stdout:
-        raise AssertionError(RESERVED_GEMINI_NATIVE_SURFACE_ERROR)
-
-
-def _assert_reserved_gemini_native_surface_mutation_proofs() -> None:
-    for reserved_path in (
-        PurePosixPath(".gemini/agents/fixture-agent.md"),
-        PurePosixPath(".gemini/settings.json"),
+def _repo_path_without_symlinks(
+    root: Path,
+    relative: PurePosixPath,
+    *,
+    final_kind: str,
+) -> Path:
+    if relative.is_absolute() or any(
+        part in {"", ".", ".."} for part in relative.parts
     ):
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+    strict_root = _assert_repository_root_directory(
+        root,
+        error=GEMINI_NATIVE_CURRENT_SURFACE_ERROR,
+    )
+
+    candidate = strict_root
+    for index, part in enumerate(relative.parts):
+        candidate = candidate / part
+        try:
+            mode = candidate.lstat().st_mode
+        except OSError as exc:
+            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+        if stat.S_ISLNK(mode):
+            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+        is_final = index == len(relative.parts) - 1
+        if not is_final and not stat.S_ISDIR(mode):
+            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+        if is_final:
+            if final_kind == "directory" and not stat.S_ISDIR(mode):
+                raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+            if final_kind == "file" and not stat.S_ISREG(mode):
+                raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+    try:
+        candidate.resolve(strict=True).relative_to(strict_root)
+    except (OSError, ValueError) as exc:
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+    return candidate
+
+
+def _assert_repository_root_directory(
+    root: Path,
+    *,
+    error: str = DOCUMENT_REGISTRY_ROOT_ERROR,
+) -> Path:
+    absolute_root = root.absolute()
+    try:
+        mode = absolute_root.lstat().st_mode
+    except OSError as exc:
+        raise AssertionError(error) from exc
+    if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+        raise AssertionError(error)
+    try:
+        return absolute_root.resolve(strict=True)
+    except OSError as exc:
+        raise AssertionError(error) from exc
+
+
+def _load_gemini_settings_json(path: Path) -> dict[str, Any]:
+    def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+            result[key] = value
+        return result
+
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle, object_pairs_hook=reject_duplicate_keys)
+    except AssertionError:
+        raise
+    except (OSError, json.JSONDecodeError) as exc:
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+    if not isinstance(payload, dict):
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+    return payload
+
+
+def _expected_gemini_settings_json() -> dict[str, Any]:
+    return {
+        "$schema": GEMINI_SETTINGS_SCHEMA_URL,
+        "agents": {"overrides": {}},
+    }
+
+
+def _harness_current_role_ids(root: Path) -> tuple[str, ...]:
+    harness = _load_json(
+        root / "docs/00.agent-governance/contracts/harness-contract.json"
+    )
+    try:
+        inventory = harness["currentInventory"]
+        role_ids = tuple(inventory["roleIds"])
+    except (KeyError, TypeError) as exc:
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+    if (
+        inventory.get("state") != "current"
+        or inventory.get("expectedRoleCount") != 12
+        or inventory.get("expectedSurfaceCount") != 4
+        or inventory.get("expectedProjectionCount") != 48
+        or len(role_ids) != 12
+        or len(role_ids) != len(set(role_ids))
+        or any(not isinstance(role_id, str) or not role_id for role_id in role_ids)
+    ):
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+    return role_ids
+
+
+def _assert_gemini_native_current_surface(root: Path) -> None:
+    """Prove repo-static Gemini current files without claiming runtime readiness."""
+    strict_root = _assert_repository_root_directory(
+        root,
+        error=GEMINI_NATIVE_CURRENT_SURFACE_ERROR,
+    )
+    role_ids = _harness_current_role_ids(strict_root)
+    agents_dir = _repo_path_without_symlinks(
+        strict_root,
+        PurePosixPath(".gemini/agents"),
+        final_kind="directory",
+    )
+    settings_path = _repo_path_without_symlinks(
+        strict_root,
+        PurePosixPath(".gemini/settings.json"),
+        final_kind="file",
+    )
+
+    expected_names = {f"{role_id}.md" for role_id in role_ids}
+    try:
+        entries = tuple(agents_dir.iterdir())
+    except OSError as exc:
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+    actual_names: set[str] = set()
+    for entry in entries:
+        try:
+            mode = entry.lstat().st_mode
+        except OSError as exc:
+            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
+        if stat.S_ISLNK(mode) or not stat.S_ISREG(mode) or entry.suffix != ".md":
+            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+        actual_names.add(entry.name)
+    if actual_names != expected_names:
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+
+    settings = _load_gemini_settings_json(settings_path)
+    if settings != _expected_gemini_settings_json():
+        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
+
+
+def _write_minimal_gemini_surface(root: Path, role_ids: tuple[str, ...]) -> None:
+    agents_dir = root / ".gemini/agents"
+    agents_dir.mkdir(parents=True, exist_ok=True)
+    for role_id in role_ids:
+        (agents_dir / f"{role_id}.md").write_text(
+            f"---\nname: {role_id}\n---\n\n# {role_id}\n",
+            encoding="utf-8",
+        )
+    (root / ".gemini/settings.json").write_text(
+        json.dumps(_expected_gemini_settings_json(), indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _assert_gemini_native_current_surface_mutation_proofs(root: Path) -> None:
+    role_ids = _harness_current_role_ids(root)
+    mutation_names = (
+        "root-symlink",
+        "agents-dir-symlink",
+        "missing-agent",
+        "extra-agent",
+        "symlink-agent",
+        "missing-settings",
+        "settings-symlink",
+        "malformed-settings",
+        "duplicate-settings-key",
+        "unknown-settings-key",
+        "nonempty-agent-overrides",
+    )
+    for mutation_name in mutation_names:
         with tempfile.TemporaryDirectory(
-            prefix="document-registry-gemini-reserved-"
+            prefix="document-registry-gemini-current-"
         ) as directory:
             fixture_root = Path(directory)
-            subprocess.run(["git", "init", "--quiet"], cwd=fixture_root, check=True)
-            target = fixture_root / reserved_path
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("{}\n", encoding="utf-8")
-
-            # The guard is index-scoped: an untracked local file is not a
-            # repository declaration and therefore remains outside this rule.
-            _assert_reserved_gemini_native_surfaces_absent(fixture_root)
-            subprocess.run(
-                ["git", "add", "--", reserved_path.as_posix()],
-                cwd=fixture_root,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+            source_harness = root / "docs/00.agent-governance/contracts"
+            target_harness = fixture_root / "docs/00.agent-governance/contracts"
+            target_harness.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(
+                source_harness / "harness-contract.json",
+                target_harness / "harness-contract.json",
             )
+            _write_minimal_gemini_surface(fixture_root, role_ids)
+            _assert_gemini_native_current_surface(fixture_root)
+            probe_root = fixture_root
+
+            if mutation_name == "root-symlink":
+                probe_root = fixture_root / "repository-root-link"
+                probe_root.symlink_to(fixture_root, target_is_directory=True)
+            elif mutation_name == "agents-dir-symlink":
+                shutil.rmtree(fixture_root / ".gemini/agents")
+                outside = fixture_root / "outside-agents"
+                outside.mkdir()
+                (outside / f"{role_ids[0]}.md").write_text(
+                    "# outside\n", encoding="utf-8"
+                )
+                (fixture_root / ".gemini/agents").symlink_to(outside)
+            elif mutation_name == "missing-agent":
+                (fixture_root / ".gemini/agents" / f"{role_ids[0]}.md").unlink()
+            elif mutation_name == "extra-agent":
+                (fixture_root / ".gemini/agents/extra-reviewer.md").write_text(
+                    "# extra\n", encoding="utf-8"
+                )
+            elif mutation_name == "symlink-agent":
+                target = fixture_root / ".gemini/agents" / f"{role_ids[0]}.md"
+                target.unlink()
+                target.symlink_to(f"{role_ids[1]}.md")
+            elif mutation_name == "missing-settings":
+                (fixture_root / ".gemini/settings.json").unlink()
+            elif mutation_name == "settings-symlink":
+                (fixture_root / ".gemini/settings.json").unlink()
+                (fixture_root / ".gemini/settings.json").symlink_to(
+                    "agents/code-reviewer.md"
+                )
+            elif mutation_name == "malformed-settings":
+                (fixture_root / ".gemini/settings.json").write_text(
+                    "{\n", encoding="utf-8"
+                )
+            elif mutation_name == "duplicate-settings-key":
+                (fixture_root / ".gemini/settings.json").write_text(
+                    (
+                        '{"$schema":"'
+                        + GEMINI_SETTINGS_SCHEMA_URL
+                        + '","agents":{"overrides":{}},"agents":{}}\n'
+                    ),
+                    encoding="utf-8",
+                )
+            elif mutation_name == "unknown-settings-key":
+                settings = _expected_gemini_settings_json()
+                settings["hooks"] = {}
+                (fixture_root / ".gemini/settings.json").write_text(
+                    json.dumps(settings) + "\n", encoding="utf-8"
+                )
+            elif mutation_name == "nonempty-agent-overrides":
+                settings = _expected_gemini_settings_json()
+                settings["agents"]["overrides"]["supervisor"] = {"model": "auto"}
+                (fixture_root / ".gemini/settings.json").write_text(
+                    json.dumps(settings) + "\n", encoding="utf-8"
+                )
+
             try:
-                _assert_reserved_gemini_native_surfaces_absent(fixture_root)
+                _assert_gemini_native_current_surface(probe_root)
             except AssertionError as exc:
-                if str(exc) != RESERVED_GEMINI_NATIVE_SURFACE_ERROR:
+                if str(exc) != GEMINI_NATIVE_CURRENT_SURFACE_ERROR:
                     raise AssertionError(
-                        "reserved Gemini native surface guard returned an unstable error"
+                        "Gemini native current surface guard returned an unstable error"
                     ) from exc
             else:
                 raise AssertionError(
-                    "reserved Gemini native surface guard accepted a tracked mutation"
+                    f"Gemini native current surface guard accepted {mutation_name}"
                 )
 
 
@@ -3260,6 +3467,9 @@ def _assert_adapter_surface_routes(
         PurePosixPath(".claude/agents/code-reviewer.md"): (
             "exception/provider-native-metadata"
         ),
+        PurePosixPath(".gemini/agents/code-reviewer.md"): (
+            "exception/provider-native-metadata"
+        ),
     }
     for path, expected_profile in probes.items():
         actual_profile = classify_path(registry, path).profile_id
@@ -3267,18 +3477,6 @@ def _assert_adapter_surface_routes(
             raise AssertionError(
                 f"{path}: expected {expected_profile!r}, got {actual_profile!r}"
             )
-
-    try:
-        classify_path(registry, PurePosixPath(".gemini/agents/code-reviewer.md"))
-    except DocumentContractError as exc:
-        if _ordered_rule_ids(exc.diagnostics) != ("REGISTRY_ROUTE_UNCOVERED",):
-            raise AssertionError(
-                ".gemini/** uncovered probe returned wrong rule"
-            ) from exc
-    else:
-        raise AssertionError(
-            ".gemini/** must remain outside the tracked adapter contract"
-        )
 
     broad_registry = copy.deepcopy(raw_registry)
     provider_profile = next(
@@ -4464,7 +4662,7 @@ def _self_test(root: Path) -> int:
             return 1
 
     try:
-        _assert_reserved_gemini_native_surface_mutation_proofs()
+        _assert_gemini_native_current_surface_mutation_proofs(root)
         _assert_retired_cloud_sdlc_surface_mutation_proofs()
         _assert_parser_safety()
         _assert_inventory_safety(root)
@@ -4513,14 +4711,18 @@ def _print_diagnostic(diagnostic: Any) -> None:
 
 def main() -> int:
     args = _parse_args()
-    root = args.root.absolute()
+    try:
+        root = _assert_repository_root_directory(args.root)
+    except AssertionError as exc:
+        print(f"FAIL document contract registry: {exc}")
+        return 1
     if args.self_test:
         return _self_test(root)
 
     try:
         registry = load_registry(root)
         _assert_template_source_parity(registry)
-        _assert_reserved_gemini_native_surfaces_absent(root)
+        _assert_gemini_native_current_surface(root)
         _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         is_readme_family = args.profile == "readme"

@@ -68,6 +68,7 @@ ROUTED_SURFACES = (
     "agent-shared",
     "agent-claude",
     "agent-codex",
+    "agent-gemini",
     "governance-documents",
     "scripts",
     "tests",
@@ -452,7 +453,11 @@ def validate_surface_parity(
             "PNME-SURFACE-PARITY",
             "Gemini native projection must remain under .gemini",
         )
-    if check_paths and (root / ".gemini").exists():
+    if (
+        check_paths
+        and providers["gemini"]["trackedSurface"]["state"] != "current"
+        and (root / ".gemini").exists()
+    ):
         fail(
             "PNME-SURFACE-PARITY",
             ".gemini exists before target admission",
@@ -732,7 +737,7 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
     elif name == "invalid-calendar-source-date":
         contract["sourceLedger"][0]["sourceDate"] = "2026-02-30"
     elif name == "gemini-current-while-absent":
-        contract["providers"][3]["trackedSurface"]["state"] = "current"
+        contract["providers"][3]["trackedSurface"]["presence"] = "absent"
     elif name == "agents-relabeled-as-gemini":
         contract["providers"][0]["trackedSurface"]["pathRoot"] = ".gemini/agents"
     elif name == "model-silent-fallback-enabled":

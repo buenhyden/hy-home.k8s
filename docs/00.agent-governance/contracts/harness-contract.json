@@ -682,7 +682,7 @@
     },
     {
       "id": "docs-researcher",
-      "admissionState": "target-only",
+      "admissionState": "current",
       "purpose": "Verify current primary sources and produce bounded, cited evidence for documentation and governance decisions.",
       "category": "researcher",
       "responsibilities": [
@@ -709,7 +709,7 @@
         "Record source identity, direct link, observation date, supported claim, conflicting evidence, and inference labels."
       ],
       "adapterSemantics": {
-        "admissionState": "target-only",
+        "admissionState": "current",
         "responsibilities": [
           "Research authoritative primary sources within the delegated question and preserve observation dates, claim boundaries, and unresolved conflicts."
         ],
@@ -740,7 +740,7 @@
     },
     {
       "id": "quality-engineer",
-      "admissionState": "target-only",
+      "admissionState": "current",
       "purpose": "Design deterministic QA and agent-evaluation fixtures, select validation lanes, and reconcile result evidence.",
       "category": "quality",
       "responsibilities": [
@@ -768,7 +768,7 @@
         "Record fixture identity, command, environment boundary, expected and actual rule, result class, and repeatability."
       ],
       "adapterSemantics": {
-        "admissionState": "target-only",
+        "admissionState": "current",
         "responsibilities": [
           "Map acceptance criteria to deterministic positive and negative fixtures, execute authorized local lanes, and classify each result without waivers."
         ],
@@ -828,20 +828,21 @@
     },
     {
       "id": "gemini",
-      "admissionState": "target-only",
+      "admissionState": "current",
       "pathRoot": ".gemini/agents",
       "extension": ".md",
       "providerSchema": "gemini-markdown-frontmatter",
       "evidenceClass": "repo-static",
-      "claimBoundary": "Planned Gemini-native projection only; no file presence or runtime readiness is claimed by this target."
+      "claimBoundary": "Tracked Gemini CLI native role Markdown projection only; runtime model fitness requires provider observation."
     }
   ],
   "currentInventory": {
     "state": "current",
-    "expectedRoleCount": 10,
-    "expectedSurfaceCount": 3,
-    "expectedProjectionCount": 30,
+    "expectedRoleCount": 12,
+    "expectedSurfaceCount": 4,
+    "expectedProjectionCount": 48,
     "roleIds": [
+      "supervisor",
       "code-reviewer",
       "doc-writer",
       "gitops-reviewer",
@@ -850,49 +851,309 @@
       "network-reviewer",
       "observability-reviewer",
       "security-auditor",
-      "supervisor",
-      "wiki-curator"
+      "wiki-curator",
+      "docs-researcher",
+      "quality-engineer"
     ],
     "surfaceIds": [
       "local",
       "claude",
-      "codex"
+      "codex",
+      "gemini"
     ],
     "projections": [
-      {"roleId": "code-reviewer", "surfaceId": "local", "path": ".agents/agents/code-reviewer.md", "admissionState": "current"},
-      {"roleId": "code-reviewer", "surfaceId": "claude", "path": ".claude/agents/code-reviewer.md", "admissionState": "current"},
-      {"roleId": "code-reviewer", "surfaceId": "codex", "path": ".codex/agents/code-reviewer.toml", "admissionState": "current"},
-      {"roleId": "doc-writer", "surfaceId": "local", "path": ".agents/agents/doc-writer.md", "admissionState": "current"},
-      {"roleId": "doc-writer", "surfaceId": "claude", "path": ".claude/agents/doc-writer.md", "admissionState": "current"},
-      {"roleId": "doc-writer", "surfaceId": "codex", "path": ".codex/agents/doc-writer.toml", "admissionState": "current"},
-      {"roleId": "gitops-reviewer", "surfaceId": "local", "path": ".agents/agents/gitops-reviewer.md", "admissionState": "current"},
-      {"roleId": "gitops-reviewer", "surfaceId": "claude", "path": ".claude/agents/gitops-reviewer.md", "admissionState": "current"},
-      {"roleId": "gitops-reviewer", "surfaceId": "codex", "path": ".codex/agents/gitops-reviewer.toml", "admissionState": "current"},
-      {"roleId": "incident-responder", "surfaceId": "local", "path": ".agents/agents/incident-responder.md", "admissionState": "current"},
-      {"roleId": "incident-responder", "surfaceId": "claude", "path": ".claude/agents/incident-responder.md", "admissionState": "current"},
-      {"roleId": "incident-responder", "surfaceId": "codex", "path": ".codex/agents/incident-responder.toml", "admissionState": "current"},
-      {"roleId": "k8s-implementer", "surfaceId": "local", "path": ".agents/agents/k8s-implementer.md", "admissionState": "current"},
-      {"roleId": "k8s-implementer", "surfaceId": "claude", "path": ".claude/agents/k8s-implementer.md", "admissionState": "current"},
-      {"roleId": "k8s-implementer", "surfaceId": "codex", "path": ".codex/agents/k8s-implementer.toml", "admissionState": "current"},
-      {"roleId": "network-reviewer", "surfaceId": "local", "path": ".agents/agents/network-reviewer.md", "admissionState": "current"},
-      {"roleId": "network-reviewer", "surfaceId": "claude", "path": ".claude/agents/network-reviewer.md", "admissionState": "current"},
-      {"roleId": "network-reviewer", "surfaceId": "codex", "path": ".codex/agents/network-reviewer.toml", "admissionState": "current"},
-      {"roleId": "observability-reviewer", "surfaceId": "local", "path": ".agents/agents/observability-reviewer.md", "admissionState": "current"},
-      {"roleId": "observability-reviewer", "surfaceId": "claude", "path": ".claude/agents/observability-reviewer.md", "admissionState": "current"},
-      {"roleId": "observability-reviewer", "surfaceId": "codex", "path": ".codex/agents/observability-reviewer.toml", "admissionState": "current"},
-      {"roleId": "security-auditor", "surfaceId": "local", "path": ".agents/agents/security-auditor.md", "admissionState": "current"},
-      {"roleId": "security-auditor", "surfaceId": "claude", "path": ".claude/agents/security-auditor.md", "admissionState": "current"},
-      {"roleId": "security-auditor", "surfaceId": "codex", "path": ".codex/agents/security-auditor.toml", "admissionState": "current"},
-      {"roleId": "supervisor", "surfaceId": "local", "path": ".agents/agents/supervisor.md", "admissionState": "current"},
-      {"roleId": "supervisor", "surfaceId": "claude", "path": ".claude/agents/supervisor.md", "admissionState": "current"},
-      {"roleId": "supervisor", "surfaceId": "codex", "path": ".codex/agents/supervisor.toml", "admissionState": "current"},
-      {"roleId": "wiki-curator", "surfaceId": "local", "path": ".agents/agents/wiki-curator.md", "admissionState": "current"},
-      {"roleId": "wiki-curator", "surfaceId": "claude", "path": ".claude/agents/wiki-curator.md", "admissionState": "current"},
-      {"roleId": "wiki-curator", "surfaceId": "codex", "path": ".codex/agents/wiki-curator.toml", "admissionState": "current"}
+      {
+        "roleId": "supervisor",
+        "surfaceId": "local",
+        "path": ".agents/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "claude",
+        "path": ".claude/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "codex",
+        "path": ".codex/agents/supervisor.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/code-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "local",
+        "path": ".agents/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/doc-writer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/gitops-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "local",
+        "path": ".agents/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "claude",
+        "path": ".claude/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "codex",
+        "path": ".codex/agents/incident-responder.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "local",
+        "path": ".agents/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/k8s-implementer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/network-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/observability-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "local",
+        "path": ".agents/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "claude",
+        "path": ".claude/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "codex",
+        "path": ".codex/agents/security-auditor.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "local",
+        "path": ".agents/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "claude",
+        "path": ".claude/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "codex",
+        "path": ".codex/agents/wiki-curator.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "local",
+        "path": ".agents/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "claude",
+        "path": ".claude/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "codex",
+        "path": ".codex/agents/docs-researcher.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "local",
+        "path": ".agents/agents/quality-engineer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/quality-engineer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/quality-engineer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/quality-engineer.md",
+        "admissionState": "current"
+      }
     ]
   },
   "targetInventory": {
-    "state": "target-only",
+    "state": "achieved",
     "promotionOwnerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
     "expectedRoleCount": 12,
     "expectedSurfaceCount": 4,
@@ -918,54 +1179,294 @@
       "gemini"
     ],
     "projections": [
-      {"roleId": "supervisor", "surfaceId": "local", "path": ".agents/agents/supervisor.md", "admissionState": "target-only"},
-      {"roleId": "supervisor", "surfaceId": "claude", "path": ".claude/agents/supervisor.md", "admissionState": "target-only"},
-      {"roleId": "supervisor", "surfaceId": "codex", "path": ".codex/agents/supervisor.toml", "admissionState": "target-only"},
-      {"roleId": "supervisor", "surfaceId": "gemini", "path": ".gemini/agents/supervisor.md", "admissionState": "target-only"},
-      {"roleId": "code-reviewer", "surfaceId": "local", "path": ".agents/agents/code-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "code-reviewer", "surfaceId": "claude", "path": ".claude/agents/code-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "code-reviewer", "surfaceId": "codex", "path": ".codex/agents/code-reviewer.toml", "admissionState": "target-only"},
-      {"roleId": "code-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/code-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "doc-writer", "surfaceId": "local", "path": ".agents/agents/doc-writer.md", "admissionState": "target-only"},
-      {"roleId": "doc-writer", "surfaceId": "claude", "path": ".claude/agents/doc-writer.md", "admissionState": "target-only"},
-      {"roleId": "doc-writer", "surfaceId": "codex", "path": ".codex/agents/doc-writer.toml", "admissionState": "target-only"},
-      {"roleId": "doc-writer", "surfaceId": "gemini", "path": ".gemini/agents/doc-writer.md", "admissionState": "target-only"},
-      {"roleId": "gitops-reviewer", "surfaceId": "local", "path": ".agents/agents/gitops-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "gitops-reviewer", "surfaceId": "claude", "path": ".claude/agents/gitops-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "gitops-reviewer", "surfaceId": "codex", "path": ".codex/agents/gitops-reviewer.toml", "admissionState": "target-only"},
-      {"roleId": "gitops-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/gitops-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "incident-responder", "surfaceId": "local", "path": ".agents/agents/incident-responder.md", "admissionState": "target-only"},
-      {"roleId": "incident-responder", "surfaceId": "claude", "path": ".claude/agents/incident-responder.md", "admissionState": "target-only"},
-      {"roleId": "incident-responder", "surfaceId": "codex", "path": ".codex/agents/incident-responder.toml", "admissionState": "target-only"},
-      {"roleId": "incident-responder", "surfaceId": "gemini", "path": ".gemini/agents/incident-responder.md", "admissionState": "target-only"},
-      {"roleId": "k8s-implementer", "surfaceId": "local", "path": ".agents/agents/k8s-implementer.md", "admissionState": "target-only"},
-      {"roleId": "k8s-implementer", "surfaceId": "claude", "path": ".claude/agents/k8s-implementer.md", "admissionState": "target-only"},
-      {"roleId": "k8s-implementer", "surfaceId": "codex", "path": ".codex/agents/k8s-implementer.toml", "admissionState": "target-only"},
-      {"roleId": "k8s-implementer", "surfaceId": "gemini", "path": ".gemini/agents/k8s-implementer.md", "admissionState": "target-only"},
-      {"roleId": "network-reviewer", "surfaceId": "local", "path": ".agents/agents/network-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "network-reviewer", "surfaceId": "claude", "path": ".claude/agents/network-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "network-reviewer", "surfaceId": "codex", "path": ".codex/agents/network-reviewer.toml", "admissionState": "target-only"},
-      {"roleId": "network-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/network-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "observability-reviewer", "surfaceId": "local", "path": ".agents/agents/observability-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "observability-reviewer", "surfaceId": "claude", "path": ".claude/agents/observability-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "observability-reviewer", "surfaceId": "codex", "path": ".codex/agents/observability-reviewer.toml", "admissionState": "target-only"},
-      {"roleId": "observability-reviewer", "surfaceId": "gemini", "path": ".gemini/agents/observability-reviewer.md", "admissionState": "target-only"},
-      {"roleId": "security-auditor", "surfaceId": "local", "path": ".agents/agents/security-auditor.md", "admissionState": "target-only"},
-      {"roleId": "security-auditor", "surfaceId": "claude", "path": ".claude/agents/security-auditor.md", "admissionState": "target-only"},
-      {"roleId": "security-auditor", "surfaceId": "codex", "path": ".codex/agents/security-auditor.toml", "admissionState": "target-only"},
-      {"roleId": "security-auditor", "surfaceId": "gemini", "path": ".gemini/agents/security-auditor.md", "admissionState": "target-only"},
-      {"roleId": "wiki-curator", "surfaceId": "local", "path": ".agents/agents/wiki-curator.md", "admissionState": "target-only"},
-      {"roleId": "wiki-curator", "surfaceId": "claude", "path": ".claude/agents/wiki-curator.md", "admissionState": "target-only"},
-      {"roleId": "wiki-curator", "surfaceId": "codex", "path": ".codex/agents/wiki-curator.toml", "admissionState": "target-only"},
-      {"roleId": "wiki-curator", "surfaceId": "gemini", "path": ".gemini/agents/wiki-curator.md", "admissionState": "target-only"},
-      {"roleId": "docs-researcher", "surfaceId": "local", "path": ".agents/agents/docs-researcher.md", "admissionState": "target-only"},
-      {"roleId": "docs-researcher", "surfaceId": "claude", "path": ".claude/agents/docs-researcher.md", "admissionState": "target-only"},
-      {"roleId": "docs-researcher", "surfaceId": "codex", "path": ".codex/agents/docs-researcher.toml", "admissionState": "target-only"},
-      {"roleId": "docs-researcher", "surfaceId": "gemini", "path": ".gemini/agents/docs-researcher.md", "admissionState": "target-only"},
-      {"roleId": "quality-engineer", "surfaceId": "local", "path": ".agents/agents/quality-engineer.md", "admissionState": "target-only"},
-      {"roleId": "quality-engineer", "surfaceId": "claude", "path": ".claude/agents/quality-engineer.md", "admissionState": "target-only"},
-      {"roleId": "quality-engineer", "surfaceId": "codex", "path": ".codex/agents/quality-engineer.toml", "admissionState": "target-only"},
-      {"roleId": "quality-engineer", "surfaceId": "gemini", "path": ".gemini/agents/quality-engineer.md", "admissionState": "target-only"}
+      {
+        "roleId": "supervisor",
+        "surfaceId": "local",
+        "path": ".agents/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "claude",
+        "path": ".claude/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "codex",
+        "path": ".codex/agents/supervisor.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "supervisor",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/supervisor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/code-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "code-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/code-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "local",
+        "path": ".agents/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/doc-writer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "doc-writer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/doc-writer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/gitops-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "gitops-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/gitops-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "local",
+        "path": ".agents/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "claude",
+        "path": ".claude/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "codex",
+        "path": ".codex/agents/incident-responder.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "incident-responder",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/incident-responder.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "local",
+        "path": ".agents/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/k8s-implementer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "k8s-implementer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/k8s-implementer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/network-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "network-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/network-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "local",
+        "path": ".agents/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/observability-reviewer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "observability-reviewer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/observability-reviewer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "local",
+        "path": ".agents/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "claude",
+        "path": ".claude/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "codex",
+        "path": ".codex/agents/security-auditor.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "security-auditor",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/security-auditor.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "local",
+        "path": ".agents/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "claude",
+        "path": ".claude/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "codex",
+        "path": ".codex/agents/wiki-curator.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "wiki-curator",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/wiki-curator.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "local",
+        "path": ".agents/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "claude",
+        "path": ".claude/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "codex",
+        "path": ".codex/agents/docs-researcher.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "docs-researcher",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/docs-researcher.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "local",
+        "path": ".agents/agents/quality-engineer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "claude",
+        "path": ".claude/agents/quality-engineer.md",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "codex",
+        "path": ".codex/agents/quality-engineer.toml",
+        "admissionState": "current"
+      },
+      {
+        "roleId": "quality-engineer",
+        "surfaceId": "gemini",
+        "path": ".gemini/agents/quality-engineer.md",
+        "admissionState": "current"
+      }
     ]
   },
   "consumers": [

@@ -400,8 +400,8 @@ def _validate_external_authorities(root: Path, contract: dict[str, Any]) -> None
     ):
         fail("AREA-FIT-HARNESS", "harness observation metadata is missing")
     target = harness.get("targetInventory")
-    if not isinstance(target, dict) or target.get("state") != "target-only":
-        fail("AREA-FIT-HARNESS", "harness target inventory must remain target-only")
+    if not isinstance(target, dict) or target.get("state") != "achieved":
+        fail("AREA-FIT-HARNESS", "harness target inventory must remain achieved")
     _require_exact_sequence(
         target.get("roleIds"), ROLE_IDS, "AREA-FIT-HARNESS", "target roleIds"
     )

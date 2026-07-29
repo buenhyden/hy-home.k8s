@@ -1,7 +1,8 @@
 {
   "schemaVersion": 2,
-  "adapterSurfaces": ["local", "claude", "codex"],
+  "adapterSurfaces": ["local", "claude", "codex", "gemini"],
   "roles": [
+    "supervisor",
     "code-reviewer",
     "doc-writer",
     "gitops-reviewer",
@@ -10,8 +11,9 @@
     "network-reviewer",
     "observability-reviewer",
     "security-auditor",
-    "supervisor",
-    "wiki-curator"
+    "wiki-curator",
+    "docs-researcher",
+    "quality-engineer"
   ],
   "categories": {
     "responsibilities": "ROLE-RESPONSIBILITY",
@@ -303,5 +305,5 @@
       "expectedRule": "ROLE-STOP"
     }
   ],
-  "expectedCaseCount": 480
+  "expectedCaseCount": 768
 }
