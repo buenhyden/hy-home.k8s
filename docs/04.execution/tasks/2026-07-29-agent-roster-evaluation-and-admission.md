@@ -43,7 +43,8 @@ same-suite evaluation, result adjudication, and final roster admission remain
   readiness `3bd5759029cc49742c12a811f8751f1609c4f330`; AREA-004 model-fitness
   readiness `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`; AREA-004 postflight
   `a15d5e10a4848aca013848571ba6d56c3568b5c3`; and AREA-005 semantic
-  reconciliation `7891368e3d29e5e9e5e8ada4023118d331e38000`
+  reconciliation `7891368e3d29e5e9e5e8ada4023118d331e38000` and exact eight-path
+  closure `42864832c966744ac4e5cf8c28baa5bf31ac2765`
 
 ## Task Table
 
@@ -54,7 +55,7 @@ same-suite evaluation, result adjudication, and final roster admission remain
 | AREA-002 | VAL-AREA-001..004 | Project `docs-researcher` and `quality-engineer` with the exact 12/4/48 repository-static roster and native projections | platform | Done | Exact tracked projection is committed with admission `DEFER`; AREA-003 separately supplies repository-static readiness without changing the final-admission verdict | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`; boundary remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; focused, aggregate, all-files, and independent review PASS |
 | AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, rollback records, and final admission decision | platform | Done | Repository-static evaluation readiness is complete; readiness is `PASS`, while observed evaluation and final admission remain `DEFER` | `3bd5759029cc49742c12a811f8751f1609c4f330`; 48 role-specific records, 12 adjudication-readiness records, 2 source-bound rollback records, explicit final-DEFER decision, focused/aggregate/all-files/review PASS |
 | AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Done | Repository-static mapping readiness is complete: `PASS` 21 and `DEFER` 27; all 48 fitness, threshold, promotion, canary, and runtime decisions remain `DEFER` | `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`; contract `1.1.0`, schema `2`, `repository-static-fitness-ready`; focused `28`, self-test `33`, production, aggregate, all-files, and independent review PASS |
-| AREA-005 | VAL-AREA-001..008 | Reconcile catalogs, provider notes, QA, and closure | platform | Done | Repository-static catalog/model-policy/provider semantics and reciprocal closure are reconciled without promotion, admission, or runtime preclaim | `7891368e3d29e5e9e5e8ada4023118d331e38000`; requirements `COMPLIANT`; quality/security `APPROVED`; focused model, staged lifecycle, strict registry `463`, full aggregate, all-files, and diff PASS; closure SHA/postflight unclaimed |
+| AREA-005 | VAL-AREA-001..008 | Reconcile catalogs, provider notes, QA, and closure | platform | Done | Repository-static catalog/model-policy/provider semantics and reciprocal closure are reconciled without promotion, admission, or runtime preclaim | Reconciliation `7891368e3d29e5e9e5e8ada4023118d331e38000`; closure `42864832c966744ac4e5cf8c28baa5bf31ac2765`; requirements `COMPLIANT`; quality/security `APPROVED`; focused model, staged lifecycle, strict registry `463`, full aggregate, all-files, and diff PASS; postflight SHA unclaimed |
 
 ## Approval and Safety Boundaries
 
@@ -159,18 +160,20 @@ checks, exact-eight staged lifecycle, strict registry over 463 tracked paths,
 the full repository aggregate, all-files pre-commit, and final diff checks
 passed. The affected and staged lanes are `PASS` for the exact eight closure
 paths; manual strict/aggregate/diff checks and the all-files lane are `PASS`;
-commit-message is `SKIP` because this proposal is not committed; hosted CI and
-provider-runtime/remote/live lanes are `DEFER` because they were neither
-authorized nor observed.
+the pre-commit message/commit-msg lane was `SKIP` before commit identity
+existed; hosted CI and provider-runtime/remote/live lanes are `DEFER` because
+they were neither authorized nor observed.
 
 The provider/model cutoff remains `2026-07-10 10:00 Asia/Seoul`; runtime,
 provider discovery/authentication, model resolution, agent evaluation,
 result adjudication, final admission, observed model fitness, threshold
 satisfaction, promotion, canary, hosted CI, remote, live, and ignored
 checkpoint execution remain `DEFER`. Spec 044 closure therefore means closed
-repository-static readiness and fail-closed gate enforcement only. This exact
-eight-file reciprocal closure proposal does not preclaim its own future commit
-SHA or postflight evidence update.
+repository-static readiness and fail-closed gate enforcement only. Exact
+eight-path reciprocal closure commit
+`42864832c966744ac4e5cf8c28baa5bf31ac2765` is observed with sole parent
+`7891368e3d29e5e9e5e8ada4023118d331e38000`; this postflight evidence update
+does not preclaim its own content-addressed commit SHA.
 
 ## Traceability
 
@@ -185,4 +188,4 @@ SHA or postflight evidence update.
 | N/A — AREA-002 shares the Plan source above | Done | Commits `138ce6ac` and `1d03b0b4` project exact 12/4/48 repository-static inventory while preserving admission `DEFER`; focused, aggregate, all-files, requirements, and quality review gates passed. |
 | N/A — AREA-003 shares the Plan source above | Done | Commit `3bd57590` establishes `repository-static-evaluation-ready` with 48 corpus records, 12 readiness adjudications, 2 source-bound rollback records, and explicit final admission `DEFER`; focused, aggregate, all-files, Spec, and quality review gates passed. |
 | N/A — AREA-004 shares the Plan source above | Done | Commit `258955b3` establishes `repository-static-fitness-ready` for 12 roles, 4 providers, and 48 tuples; mapping is `PASS` 21 / `DEFER` 27, configured incumbents are retained, and all 48 fitness, threshold, promotion, canary, and runtime decisions remain `DEFER`; focused, lifecycle, strict-registry, aggregate, all-files, diff, and independent-review gates passed without provider/model execution; rollback state remains `armed-not-executed` with execution evidence `DEFER`. |
-| N/A — AREA-005 shares the Plan source above | Done | Commit `7891368e` reconciles repository-static catalog/model/provider semantics; focused model, exact-eight staged lifecycle, strict registry `463`, aggregate, all-files, diff, requirements `COMPLIANT`, and quality/security `APPROVED` passed. Closure SHA and postflight remain unclaimed. |
+| N/A — AREA-005 shares the Plan source above | Done | Commit `7891368e` reconciles repository-static catalog/model/provider semantics; closure `42864832` records the exact eight-path reciprocal transition; focused model, staged lifecycle, strict registry `463`, aggregate, all-files, diff, requirements `COMPLIANT`, and quality/security `APPROVED` passed. The postflight evidence-update SHA remains unclaimed. |

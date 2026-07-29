@@ -23,9 +23,13 @@ inventory stays in `scripts/README.md`.
   `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`, its postflight
   `a15d5e10a4848aca013848571ba6d56c3568b5c3`, and AREA-005 semantic
   reconciliation `7891368e3d29e5e9e5e8ada4023118d331e38000`.
-- Closed the reciprocal Spec 044, Plan, Task, AREA-005, three stage-index
-  records, and canonical program-lineage relation as `done` in the exact
-  eight-file closure proposal.
+- Observed exact eight-path reciprocal Spec 044 closure commit
+  `42864832c966744ac4e5cf8c28baa5bf31ac2765`
+  (`docs(agent): close Spec 044 roster readiness`) with sole parent
+  `7891368e3d29e5e9e5e8ada4023118d331e38000`.
+- The closure commit records the Spec 044 body/index, reciprocal Plan
+  body/index, reciprocal Task body/index, this progress ledger, and canonical
+  program-lineage relation as `done`.
 - Preserved the exact 12-role / 4-provider-surface / 48-tuple current
   repository-static inventory. Mapping readiness is `PASS` 21 / `DEFER` 27,
   AREA-003 repository-static evaluation readiness is complete, and every
@@ -47,11 +51,14 @@ inventory stays in `scripts/README.md`.
 - Focused model-fitness unit, self-test, and production checks, exact-eight
   staged lifecycle, strict registry over 463 tracked paths, the full
   repository aggregate, all-files pre-commit, and final diff checks passed.
-- Affected and staged are `PASS` for the eight closure paths;
-  message/commit-msg is `SKIP` because no closure commit exists; manual strict,
-  aggregate, and diff checks plus all-files are `PASS`; hosted CI and
-  provider-runtime/remote/live are `DEFER` because they were not authorized or
-  observed.
+- Affected and staged were `PASS` for the eight closure paths; the pre-commit
+  message/commit-msg lane was `SKIP` before commit identity existed; manual
+  strict, aggregate, and diff checks plus all-files were `PASS`.
+- `git show --name-only` confirms closure
+  `42864832c966744ac4e5cf8c28baa5bf31ac2765` has the sole parent above and
+  exactly the declared eight paths.
+- Hosted CI and provider-runtime/remote/live are `DEFER` because they were not
+  authorized or observed.
 - Observed same-suite evaluation, result adjudication, final admission, model
   fitness, threshold satisfaction, promotion, canary, provider runtime and
   authentication, model resolution, hosted CI, remote, live, and rollback
@@ -60,13 +67,12 @@ inventory stays in `scripts/README.md`.
 #### Handoff
 
 - Next owner: Spec 045 agent-governance CI/QA cutover activation and execution.
-- Bounded rollback: revert only the future exact-eight closure commit, if
-  created, before reverting AREA-005 reconciliation `7891368e`, AREA-004
-  postflight `a15d5e10`, or implementation `258955b3`; do not reset or
-  overwrite unrelated work.
-- This entry does not preclaim the closure proposal's future commit SHA, its
-  postflight evidence-update SHA, any observed admission/promotion/runtime
-  result, or Spec 046 activation.
+- Bounded rollback: revert closure `42864832` before AREA-005 reconciliation
+  `7891368e`, AREA-004 postflight `a15d5e10`, or implementation `258955b3`; do
+  not reset or overwrite unrelated work.
+- This postflight evidence update does not preclaim its own content-addressed
+  commit SHA, any observed admission/promotion/runtime result, or Spec 046
+  activation.
 
 ### 2026-07-30 - Spec 044 AREA-004 model-fitness readiness postflight
 
