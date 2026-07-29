@@ -1,0 +1,310 @@
+{
+  "$schema": "./agent-model-fitness.schema.json",
+  "schemaVersion": 1,
+  "contractId": "hy-home.k8s/agent-model-fitness",
+  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "contractMode": "contract-only",
+  "evidenceClass": "repo-static",
+  "lifecycleState": "pre-area004",
+  "authoritativeCutoff": {
+    "authorityRef": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/cutoff",
+    "localTime": "2026-07-10T10:00:00+09:00",
+    "utc": "2026-07-10T01:00:00Z",
+    "timezone": "Asia/Seoul"
+  },
+  "authorityBoundaries": {
+    "providerRuntimeEvidenceAuthority": true,
+    "harnessObservationRef": "docs/00.agent-governance/contracts/harness-contract.json#/sourceObservationCutoff",
+    "harnessObservationUse": "repository-observation-only",
+    "harnessProviderModelAuthority": false
+  },
+  "runtimeBoundaries": {
+    "modelResolution": "DEFER",
+    "authentication": "DEFER",
+    "liveExecution": "DEFER"
+  },
+  "evaluationPolicy": {
+    "policyId": "quality-safety-before-cost-latency-v1",
+    "sameSuiteRequired": true,
+    "priorityOrder": [
+      "quality",
+      "safety",
+      "cost",
+      "latency"
+    ],
+    "thresholds": {
+      "qualityMinimum": 0.9,
+      "safetyMinimum": 1,
+      "costMaximumUsd": 1,
+      "latencyMaximumMs": 120000
+    },
+    "promotionRequirements": [
+      "canary-PASS",
+      "same-suite-baseline-PASS",
+      "quality-threshold-PASS",
+      "safety-threshold-PASS"
+    ],
+    "fallback": {
+      "action": "retain-incumbent",
+      "silentFallbackAllowed": false
+    },
+    "rollback": {
+      "trigger": "quality-or-safety-regression",
+      "action": "restore-incumbent"
+    }
+  },
+  "providers": [
+    {
+      "providerId": "local",
+      "displayName": "Local repository projection",
+      "trackedSurface": ".agents/agents",
+      "runtimeInterface": "repo-static",
+      "modelIdentifierPlane": "local-repository-label",
+      "apiVsCliBoundary": "repository-label-is-not-provider-api-or-cli-resolution",
+      "candidateModels": [
+        {
+          "modelId": "Gemini 3.1 Pro",
+          "lifecycle": "repo-label",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "Gemini 3.5 Flash",
+          "lifecycle": "repo-label",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        }
+      ]
+    },
+    {
+      "providerId": "claude",
+      "displayName": "Claude Code",
+      "trackedSurface": ".claude/agents",
+      "runtimeInterface": "claude-code-cli",
+      "modelIdentifierPlane": "claude-code-cli-alias",
+      "apiVsCliBoundary": "claude-code-cli-alias-does-not-prove-anthropic-api-resolution",
+      "candidateModels": [
+        {
+          "modelId": "Fable 5",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "Opus 4.8",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "Sonnet 5",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "Haiku 4.5",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        }
+      ]
+    },
+    {
+      "providerId": "codex",
+      "displayName": "Codex CLI",
+      "trackedSurface": ".codex/agents",
+      "runtimeInterface": "codex-cli",
+      "modelIdentifierPlane": "codex-cli-model-id",
+      "apiVsCliBoundary": "codex-cli-model-id-does-not-prove-openai-api-or-hosted-resolution",
+      "candidateModels": [
+        {
+          "modelId": "gpt-5.6-sol",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "gpt-5.6-terra",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "gpt-5.6-luna",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "gpt-5.4-mini",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        }
+      ]
+    },
+    {
+      "providerId": "gemini",
+      "displayName": "Gemini CLI",
+      "trackedSurface": ".gemini/agents",
+      "runtimeInterface": "gemini-cli",
+      "modelIdentifierPlane": "gemini-api-id-candidate-for-cli",
+      "apiVsCliBoundary": "gemini-api-id-does-not-prove-cli-resolution-or-auto-routing",
+      "candidateModels": [
+        {
+          "modelId": "gemini-3.1-pro-preview",
+          "lifecycle": "preview",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "gemini-3.5-flash",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        },
+        {
+          "modelId": "gemini-3.1-flash-lite",
+          "lifecycle": "stable",
+          "candidateOnly": true,
+          "runtimeResolution": "DEFER"
+        }
+      ]
+    }
+  ],
+  "roleProfiles": [
+    {
+      "roleId": "supervisor",
+      "capabilityTier": "top",
+      "reasoningProfile": "xhigh",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "xhigh", "configSource": ".agents/agents/supervisor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Opus 4.8", "reasoningEffort": "xhigh", "configSource": ".claude/agents/supervisor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-sol", "reasoningEffort": "xhigh", "configSource": ".codex/agents/supervisor.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "xhigh", "configSource": ".gemini/agents/supervisor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "code-reviewer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/code-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/code-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/code-reviewer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/code-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "doc-writer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "medium",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.5 Flash", "reasoningEffort": "medium", "configSource": ".agents/agents/doc-writer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Haiku 4.5", "reasoningEffort": "medium", "configSource": ".claude/agents/doc-writer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-luna", "reasoningEffort": "medium", "configSource": ".codex/agents/doc-writer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.5-flash", "reasoningEffort": "medium", "configSource": ".gemini/agents/doc-writer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "gitops-reviewer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/gitops-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/gitops-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/gitops-reviewer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/gitops-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "incident-responder",
+      "capabilityTier": "top",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/incident-responder.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Opus 4.8", "reasoningEffort": "high", "configSource": ".claude/agents/incident-responder.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-sol", "reasoningEffort": "high", "configSource": ".codex/agents/incident-responder.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/incident-responder.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "k8s-implementer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/k8s-implementer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/k8s-implementer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/k8s-implementer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/k8s-implementer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "network-reviewer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/network-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/network-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/network-reviewer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/network-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "observability-reviewer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/observability-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/observability-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/observability-reviewer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/observability-reviewer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "security-auditor",
+      "capabilityTier": "top",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/security-auditor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Opus 4.8", "reasoningEffort": "high", "configSource": ".claude/agents/security-auditor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-sol", "reasoningEffort": "high", "configSource": ".codex/agents/security-auditor.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/security-auditor.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "wiki-curator",
+      "capabilityTier": "worker",
+      "reasoningProfile": "medium",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.5 Flash", "reasoningEffort": "medium", "configSource": ".agents/agents/wiki-curator.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Haiku 4.5", "reasoningEffort": "medium", "configSource": ".claude/agents/wiki-curator.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-luna", "reasoningEffort": "medium", "configSource": ".codex/agents/wiki-curator.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.5-flash", "reasoningEffort": "medium", "configSource": ".gemini/agents/wiki-curator.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "docs-researcher",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/docs-researcher.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/docs-researcher.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/docs-researcher.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/docs-researcher.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    },
+    {
+      "roleId": "quality-engineer",
+      "capabilityTier": "worker",
+      "reasoningProfile": "high",
+      "providerTuples": [
+        {"providerId": "local", "modelCandidate": "Gemini 3.1 Pro", "reasoningEffort": "high", "configSource": ".agents/agents/quality-engineer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "claude", "modelCandidate": "Sonnet 5", "reasoningEffort": "high", "configSource": ".claude/agents/quality-engineer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "codex", "modelCandidate": "gpt-5.6-terra", "reasoningEffort": "high", "configSource": ".codex/agents/quality-engineer.toml#model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"},
+        {"providerId": "gemini", "modelCandidate": "gemini-3.1-pro-preview", "reasoningEffort": "high", "configSource": ".gemini/agents/quality-engineer.md#frontmatter.model", "evidenceClass": "repo-static", "state": "pending", "promotionState": "candidate-only", "canary": {"ref": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/providers", "verdict": "DEFER"}, "sameSuiteBaseline": {"ref": "tests/fixtures/agent-model-fitness.json#/sameSuiteBaseline", "verdict": "DEFER"}, "policyRef": "#/evaluationPolicy", "runtime": {"modelResolution": "DEFER", "authentication": "DEFER", "liveExecution": "DEFER"}, "fallback": "retain-incumbent", "decision": "DEFER", "rollback": "pending"}
+      ]
+    }
+  ]
+}

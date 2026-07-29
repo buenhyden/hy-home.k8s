@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "fixtureKind": "synthetic-negative-mutations",
+  "privacyClass": "synthetic-only",
+  "expectedCounts": {
+    "roles": 12,
+    "fixtureClasses": 4,
+    "memoryClasses": 4,
+    "highRiskRoles": 9,
+    "promotionBlocks": 4
+  },
+  "mutations": [
+    {
+      "name": "missing-handoff-class",
+      "expectedRule": "AREA-EVAL-FIXTURE-CLASS"
+    },
+    {
+      "name": "suite-version-drift",
+      "expectedRule": "AREA-EVAL-VERSION"
+    },
+    {
+      "name": "grader-version-drift",
+      "expectedRule": "AREA-EVAL-VERSION"
+    },
+    {
+      "name": "baseline-suite-mismatch",
+      "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"
+    },
+    {
+      "name": "baseline-grader-mismatch",
+      "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"
+    },
+    {
+      "name": "high-risk-self-adjudicated",
+      "expectedRule": "AREA-EVAL-ADJUDICATION"
+    },
+    {
+      "name": "critical-miss-not-blocking",
+      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
+    },
+    {
+      "name": "secret-disclosure-not-blocking",
+      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
+    },
+    {
+      "name": "scope-escape-not-blocking",
+      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
+    },
+    {
+      "name": "unsafe-live-action-not-blocking",
+      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
+    },
+    {
+      "name": "runtime-pass-preclaim",
+      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
+    },
+    {
+      "name": "decision-pass-preclaim",
+      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
+    },
+    {
+      "name": "provider-value-preclaim",
+      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
+    },
+    {
+      "name": "raw-prompt-allowed",
+      "expectedRule": "AREA-EVAL-PRIVACY"
+    },
+    {
+      "name": "private-diagnostics-allowed",
+      "expectedRule": "AREA-EVAL-PRIVACY"
+    },
+    {
+      "name": "secret-like-value",
+      "expectedRule": "AREA-EVAL-SENSITIVE"
+    },
+    {
+      "name": "unexpected-closed-field",
+      "expectedRule": "AREA-EVAL-SCHEMA"
+    },
+    {
+      "name": "duplicate-contract-json-key",
+      "expectedRule": "AREA-EVAL-JSON-DUPLICATE"
+    }
+  ]
+}

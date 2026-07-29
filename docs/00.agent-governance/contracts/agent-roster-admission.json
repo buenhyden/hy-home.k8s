@@ -1,0 +1,405 @@
+{
+  "$schema": "./agent-roster-admission.schema.json",
+  "schemaVersion": 1,
+  "contractId": "hy-home.k8s/agent-roster-admission",
+  "contractVersion": "1.0.0",
+  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "state": "contract-only",
+  "fixedSourceCutoff": {
+    "localTime": "2026-07-10 10:00 Asia/Seoul",
+    "instantUtc": "2026-07-10T01:00:00Z"
+  },
+  "evidence": {
+    "class": "repo-static",
+    "claimBoundary": "prepared-policy-and-candidate-contract-only",
+    "admissionVerdict": "DEFER",
+    "promotionAuthorized": false,
+    "deferredClasses": [
+      "runtime",
+      "provider-discovery",
+      "provider-authentication",
+      "hosted-ci",
+      "remote",
+      "live"
+    ],
+    "deferredClassStates": {
+      "runtime": "DEFER",
+      "provider-discovery": "DEFER",
+      "provider-authentication": "DEFER",
+      "hosted-ci": "DEFER",
+      "remote": "DEFER",
+      "live": "DEFER"
+    }
+  },
+  "currentInventory": {
+    "state": "current",
+    "roleCount": 10,
+    "surfaceCount": 3,
+    "adapterCount": 30
+  },
+  "targetInventory": {
+    "state": "target-only",
+    "roleCount": 12,
+    "surfaceCount": 4,
+    "adapterCount": 48,
+    "roleIds": [
+      "supervisor",
+      "code-reviewer",
+      "doc-writer",
+      "gitops-reviewer",
+      "incident-responder",
+      "k8s-implementer",
+      "network-reviewer",
+      "observability-reviewer",
+      "security-auditor",
+      "wiki-curator",
+      "docs-researcher",
+      "quality-engineer"
+    ],
+    "surfaceIds": [
+      "local",
+      "claude",
+      "codex",
+      "gemini"
+    ]
+  },
+  "externalCatalogPolicy": {
+    "source": "msitarzewski/agency-agents",
+    "authority": "idea-catalog-only",
+    "directImportAllowed": false,
+    "popularityIsAdmissionEvidence": false,
+    "upstreamPromptIsAdmissionEvidence": false,
+    "localAdmissionEvidenceRequired": true
+  },
+  "admissionConditions": [
+    "approved-recurring-unowned-gap",
+    "non-overlap-and-existing-role-strengthening-insufficient",
+    "explicit-owner-input-output-permission-boundaries",
+    "least-privilege-four-surface-target-plan",
+    "four-class-evaluation-with-incumbent-baseline",
+    "independent-quality-safety-cost-latency-adjudication",
+    "reproducible-rollback-to-current-10-3-30"
+  ],
+  "candidates": [
+    {
+      "roleId": "docs-researcher",
+      "decision": "candidate-only",
+      "authority": "repository-static-candidate-only",
+      "distinctDeliverable": "official-source-currentness-and-cutoff-evidence",
+      "requirementGap": {
+        "classification": "approved-recurring-unowned-gap",
+        "requirementId": "REQ-PRD-FUN-12",
+        "approved": true,
+        "approvalOwner": "platform",
+        "recurring": true,
+        "recurrenceEvidence": [
+          "Provider and model claims require a new fixed-cutoff primary-source review whenever the approved cutoff changes.",
+          "Conflicting release notes and local observations repeatedly require a bounded source ledger and confidence statement."
+        ],
+        "currentlyOwned": false,
+        "gapStatement": "No current role owns read-only primary-source currentness, fixed-cutoff classification, conflict notes, and confidence limits as one deliverable."
+      },
+      "overlapAnalysis": {
+        "existingRolesReviewed": [
+          "doc-writer",
+          "supervisor",
+          "security-auditor"
+        ],
+        "existingRoleCanOwnDeliverable": false,
+        "strengthenExistingRoleResolvesGap": false,
+        "distinctOwnerRequired": true,
+        "rationale": "doc-writer authors governed bodies, supervisor routes work, and security-auditor owns security findings; none owns independent read-only source currentness evidence."
+      },
+      "owner": "docs-researcher",
+      "inputs": [
+        "approved research question",
+        "official primary sources",
+        "fixed source cutoff",
+        "repository evidence boundary"
+      ],
+      "outputs": [
+        "source ledger",
+        "cutoff classification",
+        "conflict notes",
+        "confidence limits",
+        "handoff-ready evidence summary"
+      ],
+      "permissions": [
+        "repository-read-only",
+        "official-primary-source-read-only",
+        "no-durable-document-authoring"
+      ],
+      "allowedTools": [
+        "repository-search",
+        "official-source-search",
+        "source-ledger-validator"
+      ],
+      "allowedPaths": [
+        "docs/90.references/research/**",
+        "docs/90.references/audits/**",
+        "docs/00.agent-governance/contracts/**"
+      ],
+      "prohibitedActions": [
+        "write-durable-document-bodies",
+        "decide-policy",
+        "change-code-config-or-workflows",
+        "install-or-authenticate-providers",
+        "read-or-store-sensitive-data",
+        "perform-live-or-remote-mutations"
+      ],
+      "stopConditions": [
+        "fixed-cutoff evidence is missing",
+        "primary sources conflict without a bounded resolution",
+        "the requested action requires credentials or mutation",
+        "the evidence would require private prompts or transcripts"
+      ],
+      "handoffs": [
+        "doc-writer",
+        "supervisor",
+        "security-auditor"
+      ],
+      "surfacePlan": [
+        {
+          "surfaceId": "local",
+          "state": "target-only",
+          "adapterPath": ".agents/agents/docs-researcher.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "claude",
+          "state": "target-only",
+          "adapterPath": ".claude/agents/docs-researcher.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "codex",
+          "state": "target-only",
+          "adapterPath": ".codex/agents/docs-researcher.toml",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "gemini",
+          "state": "target-only",
+          "adapterPath": ".gemini/agents/docs-researcher.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        }
+      ],
+      "evaluationGate": {
+        "classes": [
+          "positive",
+          "negative-adversarial",
+          "refusal-stop",
+          "handoff"
+        ],
+        "baselineState": "required-before-promotion",
+        "sameCorpusAndGraderRequired": true,
+        "independentAdjudication": {
+          "required": true,
+          "selfAdjudicationProhibited": true,
+          "adjudicatorOwner": "independent-reviewer",
+          "thresholdOrder": [
+            "quality",
+            "safety",
+            "cost",
+            "latency"
+          ],
+          "criticalMissBlocksPromotion": true
+        }
+      },
+      "rollback": {
+        "state": "required-before-promotion",
+        "restoreInventory": "10/3/30",
+        "reproducible": true,
+        "executed": false,
+        "triggers": [
+          "critical evaluation miss",
+          "scope or permission escape",
+          "secret or private-data exposure",
+          "failed adapter parity"
+        ],
+        "procedure": [
+          "keep current inventory authoritative until a separate promotion",
+          "remove only candidate projections from the proposed change",
+          "restore the verified current role and model map",
+          "rerun repository-static roster and evaluation gates"
+        ]
+      }
+    },
+    {
+      "roleId": "quality-engineer",
+      "decision": "candidate-only",
+      "authority": "repository-static-candidate-only",
+      "distinctDeliverable": "deterministic-fixture-and-validation-evidence",
+      "requirementGap": {
+        "classification": "approved-recurring-unowned-gap",
+        "requirementId": "REQ-PRD-FUN-12",
+        "approved": true,
+        "approvalOwner": "platform",
+        "recurring": true,
+        "recurrenceEvidence": [
+          "Every governed promotion requires deterministic positive and negative fixture coverage plus result classification.",
+          "Repeated QA changes require reproducibility review separate from product implementation and security sign-off."
+        ],
+        "currentlyOwned": false,
+        "gapStatement": "No current role owns fixture design, deterministic QA evidence, result classification, and reproducibility review as one bounded deliverable."
+      },
+      "overlapAnalysis": {
+        "existingRolesReviewed": [
+          "code-reviewer",
+          "security-auditor",
+          "supervisor"
+        ],
+        "existingRoleCanOwnDeliverable": false,
+        "strengthenExistingRoleResolvesGap": false,
+        "distinctOwnerRequired": true,
+        "rationale": "code-reviewer reviews correctness, security-auditor owns security findings, and supervisor routes work; none owns reusable fixture sensitivity and reproducibility evidence."
+      },
+      "owner": "quality-engineer",
+      "inputs": [
+        "acceptance criteria",
+        "changed-path inventory",
+        "validator contracts",
+        "redacted execution summaries"
+      ],
+      "outputs": [
+        "fixture coverage plan",
+        "negative-test sensitivity evidence",
+        "result classification",
+        "reproducibility notes",
+        "handoff-ready QA summary"
+      ],
+      "permissions": [
+        "repository-read-only",
+        "delegated-tests-and-fixtures-write-only",
+        "no-product-security-or-workflow-approval"
+      ],
+      "allowedTools": [
+        "repository-search",
+        "unit-test-runner",
+        "validator-runner",
+        "fixture-authoring"
+      ],
+      "allowedPaths": [
+        "tests/**",
+        "scripts/validate-*.py",
+        "docs/00.agent-governance/contracts/**"
+      ],
+      "prohibitedActions": [
+        "own-product-implementation",
+        "grant-security-sign-off",
+        "approve-workflow-or-provider-changes",
+        "perform-live-or-remote-mutations",
+        "read-or-store-sensitive-data",
+        "bypass-independent-adjudication"
+      ],
+      "stopConditions": [
+        "acceptance criteria or baseline is missing",
+        "fixture coverage cannot prove the claimed boundary",
+        "the fixture would require secrets or private transcripts",
+        "result classification remains ambiguous"
+      ],
+      "handoffs": [
+        "code-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "surfacePlan": [
+        {
+          "surfaceId": "local",
+          "state": "target-only",
+          "adapterPath": ".agents/agents/quality-engineer.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "claude",
+          "state": "target-only",
+          "adapterPath": ".claude/agents/quality-engineer.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "codex",
+          "state": "target-only",
+          "adapterPath": ".codex/agents/quality-engineer.toml",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        },
+        {
+          "surfaceId": "gemini",
+          "state": "target-only",
+          "adapterPath": ".gemini/agents/quality-engineer.md",
+          "leastPrivilege": true,
+          "providerNativeMetadataRequired": true
+        }
+      ],
+      "evaluationGate": {
+        "classes": [
+          "positive",
+          "negative-adversarial",
+          "refusal-stop",
+          "handoff"
+        ],
+        "baselineState": "required-before-promotion",
+        "sameCorpusAndGraderRequired": true,
+        "independentAdjudication": {
+          "required": true,
+          "selfAdjudicationProhibited": true,
+          "adjudicatorOwner": "independent-reviewer",
+          "thresholdOrder": [
+            "quality",
+            "safety",
+            "cost",
+            "latency"
+          ],
+          "criticalMissBlocksPromotion": true
+        }
+      },
+      "rollback": {
+        "state": "required-before-promotion",
+        "restoreInventory": "10/3/30",
+        "reproducible": true,
+        "executed": false,
+        "triggers": [
+          "critical evaluation miss",
+          "scope or permission escape",
+          "secret or private-data exposure",
+          "failed adapter parity"
+        ],
+        "procedure": [
+          "keep current inventory authoritative until a separate promotion",
+          "remove only candidate projections from the proposed change",
+          "restore the verified current role and model map",
+          "rerun repository-static roster and evaluation gates"
+        ]
+      }
+    }
+  ],
+  "memoryPolicy": {
+    "classes": [
+      "working-short-term",
+      "durable-long-term",
+      "domain-scoped",
+      "provider-local-auxiliary"
+    ],
+    "repositoryWins": true,
+    "sensitiveDataAllowed": false,
+    "rawPromptOrTranscriptAllowed": false,
+    "prohibitedContent": [
+      "credential-values",
+      "auth-files",
+      "tokens",
+      "secrets",
+      "raw-prompts",
+      "full-provider-transcripts",
+      "shell-history",
+      "private-diagnostics",
+      "environment-dumps",
+      "user-configuration"
+    ]
+  }
+}

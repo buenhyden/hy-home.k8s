@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "sameSuiteBaseline": {
+    "suiteId": "spec044-model-fitness-v1",
+    "evidenceClass": "synthetic-contract-fixture",
+    "status": "not-executed"
+  },
+  "expected": {
+    "roles": 12,
+    "providers": 4,
+    "tuples": 48,
+    "pending": 48,
+    "deferred": 48
+  },
+  "mutations": [
+    {
+      "name": "duplicate-json-key",
+      "expectedRule": "AREA-FIT-DUPLICATE-KEY"
+    },
+    {
+      "name": "unsupported-field",
+      "expectedRule": "AREA-FIT-UNSUPPORTED-FIELD"
+    },
+    {
+      "name": "unsupported-alias",
+      "expectedRule": "AREA-FIT-UNSUPPORTED-ALIAS"
+    },
+    {
+      "name": "runtime-preclaim",
+      "expectedRule": "AREA-FIT-RUNTIME-PRECLAIM"
+    },
+    {
+      "name": "preview-promotion",
+      "expectedRule": "AREA-FIT-PREVIEW-PROMOTION"
+    },
+    {
+      "name": "secret-like-value",
+      "expectedRule": "AREA-FIT-SENSITIVE-CONTENT"
+    },
+    {
+      "name": "scope-escape",
+      "expectedRule": "AREA-FIT-SCOPE"
+    },
+    {
+      "name": "harness-cutoff-authority",
+      "expectedRule": "AREA-FIT-CUTOFF-AUTHORITY"
+    },
+    {
+      "name": "cutoff-mismatch",
+      "expectedRule": "AREA-FIT-CUTOFF"
+    },
+    {
+      "name": "tuple-provider-duplicate",
+      "expectedRule": "AREA-FIT-TUPLE-SET"
+    },
+    {
+      "name": "threshold-order",
+      "expectedRule": "AREA-FIT-ORDERING"
+    },
+    {
+      "name": "canary-pass",
+      "expectedRule": "AREA-FIT-CANARY"
+    },
+    {
+      "name": "baseline-pass",
+      "expectedRule": "AREA-FIT-BASELINE"
+    },
+    {
+      "name": "decision-pass",
+      "expectedRule": "AREA-FIT-DECISION"
+    },
+    {
+      "name": "fallback-change",
+      "expectedRule": "AREA-FIT-FALLBACK"
+    },
+    {
+      "name": "api-cli-conflation",
+      "expectedRule": "AREA-FIT-NAMESPACE"
+    }
+  ]
+}

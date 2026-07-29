@@ -978,6 +978,30 @@
       "evidenceClass": "repo-static"
     },
     {
+      "id": "roster-admission-validator",
+      "path": "scripts/validate-agent-roster-admission.py",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "role-evaluations-validator",
+      "path": "scripts/validate-agent-evaluations.py",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
+      "evidenceClass": "repo-static"
+    },
+    {
+      "id": "model-fitness-validator",
+      "path": "scripts/validate-agent-model-fitness.py",
+      "selectedContract": "harness-contract",
+      "selectedVersion": "1.0.0",
+      "migrationState": "current",
+      "evidenceClass": "repo-static"
+    },
+    {
       "id": "role-semantics-validator",
       "path": "scripts/validate-agent-role-semantics.py",
       "selectedContract": "harness-contract",

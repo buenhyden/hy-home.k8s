@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "expected": {
+    "candidates": 2,
+    "conditions": 7,
+    "currentRoles": 10,
+    "currentSurfaces": 3,
+    "currentAdapters": 30,
+    "targetRoles": 12,
+    "targetSurfaces": 4,
+    "targetAdapters": 48,
+    "surfacePlans": 8,
+    "evaluationClasses": 4,
+    "memoryClasses": 4,
+    "deferredEvidenceClasses": 6
+  },
+  "mutations": [
+    {
+      "name": "unknown-top-level",
+      "expectedRule": "AREA-ADM-SCHEMA"
+    },
+    {
+      "name": "wrong-owner-spec",
+      "expectedRule": "AREA-ADM-OWNER"
+    },
+    {
+      "name": "wrong-cutoff",
+      "expectedRule": "AREA-ADM-CUTOFF"
+    },
+    {
+      "name": "wrong-contract-state",
+      "expectedRule": "AREA-ADM-STATE"
+    },
+    {
+      "name": "non-static-evidence",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "admission-pass-preclaim",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "promotion-authorized",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "runtime-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "provider-discovery-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "provider-auth-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "live-pass",
+      "expectedRule": "AREA-ADM-EVIDENCE"
+    },
+    {
+      "name": "promoted-current-count",
+      "expectedRule": "AREA-ADM-INVENTORY"
+    },
+    {
+      "name": "target-state-current",
+      "expectedRule": "AREA-ADM-INVENTORY"
+    },
+    {
+      "name": "missing-target-role",
+      "expectedRule": "AREA-ADM-INVENTORY"
+    },
+    {
+      "name": "extra-target-surface",
+      "expectedRule": "AREA-ADM-INVENTORY"
+    },
+    {
+      "name": "duplicate-candidate",
+      "expectedRule": "AREA-ADM-CANDIDATE"
+    },
+    {
+      "name": "swapped-candidates",
+      "expectedRule": "AREA-ADM-CANDIDATE"
+    },
+    {
+      "name": "candidate-pass-preclaim",
+      "expectedRule": "AREA-ADM-CANDIDATE"
+    },
+    {
+      "name": "gap-not-approved",
+      "expectedRule": "AREA-ADM-GAP"
+    },
+    {
+      "name": "gap-not-recurring",
+      "expectedRule": "AREA-ADM-GAP"
+    },
+    {
+      "name": "gap-already-owned",
+      "expectedRule": "AREA-ADM-GAP"
+    },
+    {
+      "name": "overlap-existing-owner",
+      "expectedRule": "AREA-ADM-OVERLAP"
+    },
+    {
+      "name": "overlap-strengthening-sufficient",
+      "expectedRule": "AREA-ADM-OVERLAP"
+    },
+    {
+      "name": "duplicate-owner",
+      "expectedRule": "AREA-ADM-OVERLAP"
+    },
+    {
+      "name": "duplicate-deliverable",
+      "expectedRule": "AREA-ADM-OVERLAP"
+    },
+    {
+      "name": "over-authorized-permission",
+      "expectedRule": "AREA-ADM-AUTHORITY"
+    },
+    {
+      "name": "forbidden-tool",
+      "expectedRule": "AREA-ADM-AUTHORITY"
+    },
+    {
+      "name": "unsafe-allowed-path",
+      "expectedRule": "AREA-ADM-AUTHORITY"
+    },
+    {
+      "name": "missing-prohibited-action",
+      "expectedRule": "AREA-ADM-AUTHORITY"
+    },
+    {
+      "name": "missing-stop-condition",
+      "expectedRule": "AREA-ADM-ROLE-CONTRACT"
+    },
+    {
+      "name": "self-handoff",
+      "expectedRule": "AREA-ADM-HANDOFF"
+    },
+    {
+      "name": "promoted-surface",
+      "expectedRule": "AREA-ADM-SURFACE"
+    },
+    {
+      "name": "wrong-adapter-path",
+      "expectedRule": "AREA-ADM-SURFACE"
+    },
+    {
+      "name": "duplicate-surface",
+      "expectedRule": "AREA-ADM-SURFACE"
+    },
+    {
+      "name": "missing-evaluation-class",
+      "expectedRule": "AREA-ADM-EVALUATION"
+    },
+    {
+      "name": "missing-baseline",
+      "expectedRule": "AREA-ADM-EVALUATION"
+    },
+    {
+      "name": "different-grader",
+      "expectedRule": "AREA-ADM-EVALUATION"
+    },
+    {
+      "name": "self-adjudication",
+      "expectedRule": "AREA-ADM-ADJUDICATION"
+    },
+    {
+      "name": "cost-first-threshold",
+      "expectedRule": "AREA-ADM-ADJUDICATION"
+    },
+    {
+      "name": "rollback-not-required",
+      "expectedRule": "AREA-ADM-ROLLBACK"
+    },
+    {
+      "name": "rollback-executed",
+      "expectedRule": "AREA-ADM-ROLLBACK"
+    },
+    {
+      "name": "rollback-wrong-inventory",
+      "expectedRule": "AREA-ADM-ROLLBACK"
+    },
+    {
+      "name": "agency-agents-authoritative",
+      "expectedRule": "AREA-ADM-CATALOG"
+    },
+    {
+      "name": "agency-agents-direct-import",
+      "expectedRule": "AREA-ADM-CATALOG"
+    },
+    {
+      "name": "agency-no-local-evidence",
+      "expectedRule": "AREA-ADM-CATALOG"
+    },
+    {
+      "name": "duplicate-condition",
+      "expectedRule": "AREA-ADM-CONDITIONS"
+    },
+    {
+      "name": "missing-memory-class",
+      "expectedRule": "AREA-ADM-MEMORY"
+    },
+    {
+      "name": "repository-wins-false",
+      "expectedRule": "AREA-ADM-MEMORY"
+    },
+    {
+      "name": "sensitive-data-allowed",
+      "expectedRule": "AREA-ADM-SENSITIVE"
+    },
+    {
+      "name": "raw-transcript-allowed",
+      "expectedRule": "AREA-ADM-SENSITIVE"
+    },
+    {
+      "name": "secret-like-value",
+      "expectedRule": "AREA-ADM-SENSITIVE"
+    }
+  ]
+}

@@ -1,0 +1,584 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/agent-evaluations-1.schema.json",
+  "title": "Spec 044 agent evaluation contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "contractId",
+    "contractVersion",
+    "ownerSpec",
+    "authority",
+    "fixedSourceCutoff",
+    "memoryClasses",
+    "requiredFixtureClasses",
+    "privacyPolicy",
+    "promotionPolicy",
+    "evaluationRecordContract",
+    "roleSuites"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./agent-evaluations.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "contractId": {
+      "const": "hy-home.k8s/agent-evaluations"
+    },
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "ownerSpec": {
+      "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+    },
+    "authority": {
+      "$ref": "#/$defs/authority"
+    },
+    "fixedSourceCutoff": {
+      "$ref": "#/$defs/fixedSourceCutoff"
+    },
+    "memoryClasses": {
+      "const": [
+        "working-short-term",
+        "durable-long-term",
+        "domain-scoped",
+        "provider-local-auxiliary"
+      ]
+    },
+    "requiredFixtureClasses": {
+      "$ref": "#/$defs/fixtureClasses"
+    },
+    "privacyPolicy": {
+      "$ref": "#/$defs/privacyPolicy"
+    },
+    "promotionPolicy": {
+      "$ref": "#/$defs/promotionPolicy"
+    },
+    "evaluationRecordContract": {
+      "$ref": "#/$defs/evaluationRecordContract"
+    },
+    "roleSuites": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/roleSuite"
+      }
+    }
+  },
+  "$defs": {
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "evidenceKind",
+        "execution",
+        "runtime",
+        "providerResolution",
+        "authentication",
+        "liveAction",
+        "evaluationDecision"
+      ],
+      "properties": {
+        "state": {
+          "const": "contract-only"
+        },
+        "evidenceKind": {
+          "const": "repo-static"
+        },
+        "execution": {
+          "const": "DEFER"
+        },
+        "runtime": {
+          "const": "DEFER"
+        },
+        "providerResolution": {
+          "const": "DEFER"
+        },
+        "authentication": {
+          "const": "DEFER"
+        },
+        "liveAction": {
+          "const": "DEFER"
+        },
+        "evaluationDecision": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "fixedSourceCutoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "localTime",
+        "instantUtc"
+      ],
+      "properties": {
+        "localTime": {
+          "const": "2026-07-10 10:00 Asia/Seoul"
+        },
+        "instantUtc": {
+          "const": "2026-07-10T01:00:00Z"
+        }
+      }
+    },
+    "fixtureClasses": {
+      "const": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ]
+    },
+    "privacyPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "material",
+        "secretsAllowed",
+        "rawPromptsAllowed",
+        "fullTranscriptsAllowed",
+        "authenticationMaterialAllowed",
+        "shellHistoryAllowed",
+        "privateDiagnosticsAllowed",
+        "productionDataAllowed"
+      ],
+      "properties": {
+        "material": {
+          "const": "synthetic-or-redacted-only"
+        },
+        "secretsAllowed": {
+          "const": false
+        },
+        "rawPromptsAllowed": {
+          "const": false
+        },
+        "fullTranscriptsAllowed": {
+          "const": false
+        },
+        "authenticationMaterialAllowed": {
+          "const": false
+        },
+        "shellHistoryAllowed": {
+          "const": false
+        },
+        "privateDiagnosticsAllowed": {
+          "const": false
+        },
+        "productionDataAllowed": {
+          "const": false
+        }
+      }
+    },
+    "promotionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baselineComparison",
+        "highRiskAdjudication",
+        "qualitySafetyBeforeCostLatency",
+        "blockingEvents",
+        "promotionState"
+      ],
+      "properties": {
+        "baselineComparison": {
+          "const": "same-suite-and-grader"
+        },
+        "highRiskAdjudication": {
+          "const": "independent-required"
+        },
+        "qualitySafetyBeforeCostLatency": {
+          "const": true
+        },
+        "blockingEvents": {
+          "const": [
+            "critical-miss",
+            "secret-disclosure",
+            "scope-escape",
+            "unsafe-live-action"
+          ]
+        },
+        "promotionState": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "evaluationRecordContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite",
+        "fixture",
+        "grader",
+        "providerExecution",
+        "baselineCandidate",
+        "metrics",
+        "adjudication",
+        "rollback"
+      ],
+      "properties": {
+        "suite": {
+          "$ref": "#/$defs/suiteFieldContract"
+        },
+        "fixture": {
+          "$ref": "#/$defs/fixtureFieldContract"
+        },
+        "grader": {
+          "$ref": "#/$defs/graderFieldContract"
+        },
+        "providerExecution": {
+          "$ref": "#/$defs/providerExecution"
+        },
+        "baselineCandidate": {
+          "$ref": "#/$defs/baselineCandidate"
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        },
+        "adjudication": {
+          "$ref": "#/$defs/adjudication"
+        },
+        "rollback": {
+          "$ref": "#/$defs/rollback"
+        }
+      }
+    },
+    "suiteFieldContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idField",
+        "versionField",
+        "required"
+      ],
+      "properties": {
+        "idField": {
+          "const": "suiteId"
+        },
+        "versionField": {
+          "const": "suiteVersion"
+        },
+        "required": {
+          "const": true
+        }
+      }
+    },
+    "fixtureFieldContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identityFields",
+        "requiredClasses",
+        "evidenceFields",
+        "digest",
+        "expectedBehavior"
+      ],
+      "properties": {
+        "identityFields": {
+          "const": [
+            "fixtureId",
+            "fixtureVersion"
+          ]
+        },
+        "requiredClasses": {
+          "$ref": "#/$defs/fixtureClasses"
+        },
+        "evidenceFields": {
+          "const": [
+            "provenance",
+            "privacy",
+            "risk",
+            "inputDigest"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/digestFieldContract"
+        },
+        "expectedBehavior": {
+          "$ref": "#/$defs/expectedBehavior"
+        }
+      }
+    },
+    "digestFieldContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "algorithm",
+        "format",
+        "requiredAtExecution",
+        "currentState"
+      ],
+      "properties": {
+        "field": {
+          "const": "inputDigest"
+        },
+        "algorithm": {
+          "const": "sha256"
+        },
+        "format": {
+          "const": "sha256:<64-lowercase-hex>"
+        },
+        "requiredAtExecution": {
+          "const": true
+        },
+        "currentState": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "expectedBehavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pathsField",
+        "toolsField",
+        "prohibitedActionsField",
+        "stopHandoffField"
+      ],
+      "properties": {
+        "pathsField": {
+          "const": "allowedPaths"
+        },
+        "toolsField": {
+          "const": "allowedTools"
+        },
+        "prohibitedActionsField": {
+          "const": "prohibitedActions"
+        },
+        "stopHandoffField": {
+          "const": "stopHandoffExpectation"
+        }
+      }
+    },
+    "graderFieldContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionField",
+        "rubricVersionField",
+        "rubricDimensions"
+      ],
+      "properties": {
+        "versionField": {
+          "const": "graderVersion"
+        },
+        "rubricVersionField": {
+          "const": "rubricVersion"
+        },
+        "rubricDimensions": {
+          "const": [
+            "quality",
+            "safety",
+            "cost",
+            "latency"
+          ]
+        }
+      }
+    },
+    "providerExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "model",
+        "reasoning",
+        "config",
+        "canary"
+      ],
+      "properties": {
+        "provider": {
+          "const": "DEFER"
+        },
+        "model": {
+          "const": "DEFER"
+        },
+        "reasoning": {
+          "const": "DEFER"
+        },
+        "config": {
+          "const": "DEFER"
+        },
+        "canary": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "baselineCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline",
+        "candidate",
+        "sameSuiteVersionRequired",
+        "sameGraderVersionRequired"
+      ],
+      "properties": {
+        "baseline": {
+          "const": "DEFER"
+        },
+        "candidate": {
+          "const": "DEFER"
+        },
+        "sameSuiteVersionRequired": {
+          "const": true
+        },
+        "sameGraderVersionRequired": {
+          "const": true
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quality",
+        "safety",
+        "cost",
+        "latency"
+      ],
+      "properties": {
+        "quality": {
+          "const": "DEFER"
+        },
+        "safety": {
+          "const": "DEFER"
+        },
+        "cost": {
+          "const": "DEFER"
+        },
+        "latency": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "adjudication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adjudicator",
+        "independentForHighRisk",
+        "decision"
+      ],
+      "properties": {
+        "adjudicator": {
+          "const": "DEFER"
+        },
+        "independentForHighRisk": {
+          "const": true
+        },
+        "decision": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "reference"
+      ],
+      "properties": {
+        "state": {
+          "const": "DEFER"
+        },
+        "reference": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "roleSuite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleId",
+        "suiteId",
+        "suiteVersion",
+        "fixtureManifestId",
+        "fixtureVersion",
+        "fixtureClasses",
+        "graderVersion",
+        "rubricVersion",
+        "provenanceClass",
+        "privacyClass",
+        "riskClass",
+        "corpusState",
+        "independentAdjudicationRequired",
+        "evaluationDecision",
+        "rollbackState"
+      ],
+      "properties": {
+        "roleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "suiteId": {
+          "type": "string",
+          "pattern": "^eval/[a-z0-9-]+$"
+        },
+        "suiteVersion": {
+          "const": "1.0.0"
+        },
+        "fixtureManifestId": {
+          "type": "string",
+          "pattern": "^eval/[a-z0-9-]+/fixtures$"
+        },
+        "fixtureVersion": {
+          "const": "1.0.0"
+        },
+        "fixtureClasses": {
+          "$ref": "#/$defs/fixtureClasses"
+        },
+        "graderVersion": {
+          "const": "1.0.0"
+        },
+        "rubricVersion": {
+          "const": "1.0.0"
+        },
+        "provenanceClass": {
+          "const": "repository-contract-only"
+        },
+        "privacyClass": {
+          "const": "synthetic-or-redacted-only"
+        },
+        "riskClass": {
+          "enum": [
+            "standard",
+            "high"
+          ]
+        },
+        "corpusState": {
+          "const": "DEFER"
+        },
+        "independentAdjudicationRequired": {
+          "type": "boolean"
+        },
+        "evaluationDecision": {
+          "const": "DEFER"
+        },
+        "rollbackState": {
+          "const": "DEFER"
+        }
+      }
+    }
+  }
+}

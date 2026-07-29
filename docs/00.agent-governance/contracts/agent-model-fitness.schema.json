@@ -1,0 +1,519 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/agent-model-fitness-1.schema.json",
+  "title": "Spec 044 agent model fitness contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "contractId",
+    "ownerSpec",
+    "contractMode",
+    "evidenceClass",
+    "lifecycleState",
+    "authoritativeCutoff",
+    "authorityBoundaries",
+    "runtimeBoundaries",
+    "evaluationPolicy",
+    "providers",
+    "roleProfiles"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./agent-model-fitness.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "contractId": {
+      "const": "hy-home.k8s/agent-model-fitness"
+    },
+    "ownerSpec": {
+      "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+    },
+    "contractMode": {
+      "const": "contract-only"
+    },
+    "evidenceClass": {
+      "const": "repo-static"
+    },
+    "lifecycleState": {
+      "const": "pre-area004"
+    },
+    "authoritativeCutoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityRef",
+        "localTime",
+        "utc",
+        "timezone"
+      ],
+      "properties": {
+        "authorityRef": {
+          "const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/cutoff"
+        },
+        "localTime": {
+          "const": "2026-07-10T10:00:00+09:00"
+        },
+        "utc": {
+          "const": "2026-07-10T01:00:00Z"
+        },
+        "timezone": {
+          "const": "Asia/Seoul"
+        }
+      }
+    },
+    "authorityBoundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerRuntimeEvidenceAuthority",
+        "harnessObservationRef",
+        "harnessObservationUse",
+        "harnessProviderModelAuthority"
+      ],
+      "properties": {
+        "providerRuntimeEvidenceAuthority": {
+          "const": true
+        },
+        "harnessObservationRef": {
+          "const": "docs/00.agent-governance/contracts/harness-contract.json#/sourceObservationCutoff"
+        },
+        "harnessObservationUse": {
+          "enum": [
+            "repository-observation-only",
+            "provider-model-authority"
+          ]
+        },
+        "harnessProviderModelAuthority": {
+          "type": "boolean"
+        }
+      }
+    },
+    "runtimeBoundaries": {
+      "$ref": "#/$defs/runtimeVerdicts"
+    },
+    "evaluationPolicy": {
+      "$ref": "#/$defs/evaluationPolicy"
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/provider"
+      }
+    },
+    "roleProfiles": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/roleProfile"
+      }
+    }
+  },
+  "$defs": {
+    "runtimeVerdicts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modelResolution",
+        "authentication",
+        "liveExecution"
+      ],
+      "properties": {
+        "modelResolution": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "authentication": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "liveExecution": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualityMinimum",
+        "safetyMinimum",
+        "costMaximumUsd",
+        "latencyMaximumMs"
+      ],
+      "properties": {
+        "qualityMinimum": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "safetyMinimum": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "costMaximumUsd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "latencyMaximumMs": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "evaluationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyId",
+        "sameSuiteRequired",
+        "priorityOrder",
+        "thresholds",
+        "promotionRequirements",
+        "fallback",
+        "rollback"
+      ],
+      "properties": {
+        "policyId": {
+          "const": "quality-safety-before-cost-latency-v1"
+        },
+        "sameSuiteRequired": {
+          "const": true
+        },
+        "priorityOrder": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "quality",
+              "safety",
+              "cost",
+              "latency"
+            ]
+          }
+        },
+        "thresholds": {
+          "$ref": "#/$defs/thresholds"
+        },
+        "promotionRequirements": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "canary-PASS",
+              "same-suite-baseline-PASS",
+              "quality-threshold-PASS",
+              "safety-threshold-PASS"
+            ]
+          }
+        },
+        "fallback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "action",
+            "silentFallbackAllowed"
+          ],
+          "properties": {
+            "action": {
+              "enum": [
+                "retain-incumbent",
+                "fail-closed"
+              ]
+            },
+            "silentFallbackAllowed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "rollback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "trigger",
+            "action"
+          ],
+          "properties": {
+            "trigger": {
+              "const": "quality-or-safety-regression"
+            },
+            "action": {
+              "enum": [
+                "restore-incumbent",
+                "continue-candidate"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "candidateModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modelId",
+        "lifecycle",
+        "candidateOnly",
+        "runtimeResolution"
+      ],
+      "properties": {
+        "modelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "lifecycle": {
+          "enum": [
+            "repo-label",
+            "stable",
+            "preview"
+          ]
+        },
+        "candidateOnly": {
+          "const": true
+        },
+        "runtimeResolution": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerId",
+        "displayName",
+        "trackedSurface",
+        "runtimeInterface",
+        "modelIdentifierPlane",
+        "apiVsCliBoundary",
+        "candidateModels"
+      ],
+      "properties": {
+        "providerId": {
+          "enum": [
+            "local",
+            "claude",
+            "codex",
+            "gemini"
+          ]
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trackedSurface": {
+          "type": "string",
+          "pattern": "^\\.[a-z]+/agents$"
+        },
+        "runtimeInterface": {
+          "enum": [
+            "repo-static",
+            "claude-code-cli",
+            "codex-cli",
+            "gemini-cli"
+          ]
+        },
+        "modelIdentifierPlane": {
+          "enum": [
+            "local-repository-label",
+            "claude-code-cli-alias",
+            "codex-cli-model-id",
+            "gemini-api-id-candidate-for-cli",
+            "gemini-cli-alias"
+          ]
+        },
+        "apiVsCliBoundary": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 160
+        },
+        "candidateModels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/candidateModel"
+          }
+        }
+      }
+    },
+    "evidenceVerdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "verdict"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "verdict": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        }
+      }
+    },
+    "providerTuple": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerId",
+        "modelCandidate",
+        "reasoningEffort",
+        "configSource",
+        "evidenceClass",
+        "state",
+        "promotionState",
+        "canary",
+        "sameSuiteBaseline",
+        "policyRef",
+        "runtime",
+        "fallback",
+        "decision",
+        "rollback"
+      ],
+      "properties": {
+        "providerId": {
+          "enum": [
+            "local",
+            "claude",
+            "codex",
+            "gemini"
+          ]
+        },
+        "modelCandidate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "reasoningEffort": {
+          "enum": [
+            "medium",
+            "high",
+            "xhigh"
+          ]
+        },
+        "configSource": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 220
+        },
+        "evidenceClass": {
+          "const": "repo-static"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "evaluated"
+          ]
+        },
+        "promotionState": {
+          "enum": [
+            "candidate-only",
+            "current"
+          ]
+        },
+        "canary": {
+          "$ref": "#/$defs/evidenceVerdict"
+        },
+        "sameSuiteBaseline": {
+          "$ref": "#/$defs/evidenceVerdict"
+        },
+        "policyRef": {
+          "const": "#/evaluationPolicy"
+        },
+        "runtime": {
+          "$ref": "#/$defs/runtimeVerdicts"
+        },
+        "fallback": {
+          "enum": [
+            "retain-incumbent",
+            "fail-closed"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "rollback": {
+          "enum": [
+            "pending",
+            "restore-incumbent"
+          ]
+        }
+      }
+    },
+    "roleProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleId",
+        "capabilityTier",
+        "reasoningProfile",
+        "providerTuples"
+      ],
+      "properties": {
+        "roleId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "capabilityTier": {
+          "enum": [
+            "top",
+            "worker"
+          ]
+        },
+        "reasoningProfile": {
+          "enum": [
+            "medium",
+            "high",
+            "xhigh"
+          ]
+        },
+        "providerTuples": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/providerTuple"
+          }
+        }
+      }
+    }
+  }
+}

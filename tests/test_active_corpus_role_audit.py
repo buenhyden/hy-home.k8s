@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 53,
+                "helpers": 59,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 20,
-                "python": 21,
-                "json": 25,
+                "postClosureHelpers": 26,
+                "python": 24,
+                "json": 28,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,7 +179,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 53)
+        self.assertEqual(len(actual), 59)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -187,6 +187,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             self.validator.POST_CLOSURE_HELPER_MANIFEST,
             {
                 "tests/fixtures/agent-checkpoint.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-evaluations.json": (
                     "json",
                     "closed-fixture",
                 ),
@@ -198,7 +202,15 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "json",
                     "closed-fixture",
                 ),
+                "tests/fixtures/agent-model-fitness.json": (
+                    "json",
+                    "closed-fixture",
+                ),
                 "tests/fixtures/agent-provider-runtime-evidence.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-roster-admission.json": (
                     "json",
                     "closed-fixture",
                 ),
@@ -242,6 +254,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_evaluations.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_agent_harness_contract.py": (
                     "python",
                     "regression-test",
@@ -250,11 +266,19 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_model_fitness.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_agent_provider_canaries.py": (
                     "python",
                     "regression-test",
                 ),
                 "tests/test_validate_agent_provider_config.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_roster_admission.py": (
                     "python",
                     "regression-test",
                 ),
@@ -273,7 +297,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 20})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 26})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -294,6 +318,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
+                    "path": "tests/fixtures/agent-evaluations.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
                     "path": "tests/fixtures/agent-harness-contract.json",
                     "format": "json",
                     "role": "closed-fixture",
@@ -304,7 +333,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
+                    "path": "tests/fixtures/agent-model-fitness.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
                     "path": "tests/fixtures/agent-provider-runtime-evidence.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/agent-roster-admission.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -359,6 +398,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
+                    "path": "tests/test_validate_agent_evaluations.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_validate_agent_harness_contract.py",
                     "format": "python",
                     "role": "regression-test",
@@ -369,12 +413,22 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
+                    "path": "tests/test_validate_agent_model_fitness.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_validate_agent_provider_canaries.py",
                     "format": "python",
                     "role": "regression-test",
                 },
                 {
                     "path": "tests/test_validate_agent_provider_config.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_roster_admission.py",
                     "format": "python",
                     "role": "regression-test",
                 },

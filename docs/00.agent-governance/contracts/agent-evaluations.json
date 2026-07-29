@@ -1,0 +1,397 @@
+{
+  "$schema": "./agent-evaluations.schema.json",
+  "schemaVersion": 1,
+  "contractId": "hy-home.k8s/agent-evaluations",
+  "contractVersion": "1.0.0",
+  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "authority": {
+    "state": "contract-only",
+    "evidenceKind": "repo-static",
+    "execution": "DEFER",
+    "runtime": "DEFER",
+    "providerResolution": "DEFER",
+    "authentication": "DEFER",
+    "liveAction": "DEFER",
+    "evaluationDecision": "DEFER"
+  },
+  "fixedSourceCutoff": {
+    "localTime": "2026-07-10 10:00 Asia/Seoul",
+    "instantUtc": "2026-07-10T01:00:00Z"
+  },
+  "memoryClasses": [
+    "working-short-term",
+    "durable-long-term",
+    "domain-scoped",
+    "provider-local-auxiliary"
+  ],
+  "requiredFixtureClasses": [
+    "positive",
+    "negative-adversarial",
+    "refusal-stop",
+    "handoff"
+  ],
+  "privacyPolicy": {
+    "material": "synthetic-or-redacted-only",
+    "secretsAllowed": false,
+    "rawPromptsAllowed": false,
+    "fullTranscriptsAllowed": false,
+    "authenticationMaterialAllowed": false,
+    "shellHistoryAllowed": false,
+    "privateDiagnosticsAllowed": false,
+    "productionDataAllowed": false
+  },
+  "promotionPolicy": {
+    "baselineComparison": "same-suite-and-grader",
+    "highRiskAdjudication": "independent-required",
+    "qualitySafetyBeforeCostLatency": true,
+    "blockingEvents": [
+      "critical-miss",
+      "secret-disclosure",
+      "scope-escape",
+      "unsafe-live-action"
+    ],
+    "promotionState": "DEFER"
+  },
+  "evaluationRecordContract": {
+    "suite": {
+      "idField": "suiteId",
+      "versionField": "suiteVersion",
+      "required": true
+    },
+    "fixture": {
+      "identityFields": [
+        "fixtureId",
+        "fixtureVersion"
+      ],
+      "requiredClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "evidenceFields": [
+        "provenance",
+        "privacy",
+        "risk",
+        "inputDigest"
+      ],
+      "digest": {
+        "field": "inputDigest",
+        "algorithm": "sha256",
+        "format": "sha256:<64-lowercase-hex>",
+        "requiredAtExecution": true,
+        "currentState": "DEFER"
+      },
+      "expectedBehavior": {
+        "pathsField": "allowedPaths",
+        "toolsField": "allowedTools",
+        "prohibitedActionsField": "prohibitedActions",
+        "stopHandoffField": "stopHandoffExpectation"
+      }
+    },
+    "grader": {
+      "versionField": "graderVersion",
+      "rubricVersionField": "rubricVersion",
+      "rubricDimensions": [
+        "quality",
+        "safety",
+        "cost",
+        "latency"
+      ]
+    },
+    "providerExecution": {
+      "provider": "DEFER",
+      "model": "DEFER",
+      "reasoning": "DEFER",
+      "config": "DEFER",
+      "canary": "DEFER"
+    },
+    "baselineCandidate": {
+      "baseline": "DEFER",
+      "candidate": "DEFER",
+      "sameSuiteVersionRequired": true,
+      "sameGraderVersionRequired": true
+    },
+    "metrics": {
+      "quality": "DEFER",
+      "safety": "DEFER",
+      "cost": "DEFER",
+      "latency": "DEFER"
+    },
+    "adjudication": {
+      "adjudicator": "DEFER",
+      "independentForHighRisk": true,
+      "decision": "DEFER"
+    },
+    "rollback": {
+      "state": "DEFER",
+      "reference": "DEFER"
+    }
+  },
+  "roleSuites": [
+    {
+      "roleId": "supervisor",
+      "suiteId": "eval/supervisor",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/supervisor/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "code-reviewer",
+      "suiteId": "eval/code-reviewer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/code-reviewer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "standard",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": false,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "doc-writer",
+      "suiteId": "eval/doc-writer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/doc-writer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "standard",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": false,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "gitops-reviewer",
+      "suiteId": "eval/gitops-reviewer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/gitops-reviewer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "incident-responder",
+      "suiteId": "eval/incident-responder",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/incident-responder/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "k8s-implementer",
+      "suiteId": "eval/k8s-implementer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/k8s-implementer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "network-reviewer",
+      "suiteId": "eval/network-reviewer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/network-reviewer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "observability-reviewer",
+      "suiteId": "eval/observability-reviewer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/observability-reviewer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "security-auditor",
+      "suiteId": "eval/security-auditor",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/security-auditor/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "wiki-curator",
+      "suiteId": "eval/wiki-curator",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/wiki-curator/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "standard",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": false,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "docs-researcher",
+      "suiteId": "eval/docs-researcher",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/docs-researcher/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    },
+    {
+      "roleId": "quality-engineer",
+      "suiteId": "eval/quality-engineer",
+      "suiteVersion": "1.0.0",
+      "fixtureManifestId": "eval/quality-engineer/fixtures",
+      "fixtureVersion": "1.0.0",
+      "fixtureClasses": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ],
+      "graderVersion": "1.0.0",
+      "rubricVersion": "1.0.0",
+      "provenanceClass": "repository-contract-only",
+      "privacyClass": "synthetic-or-redacted-only",
+      "riskClass": "high",
+      "corpusState": "DEFER",
+      "independentAdjudicationRequired": true,
+      "evaluationDecision": "DEFER",
+      "rollbackState": "DEFER"
+    }
+  ]
+}

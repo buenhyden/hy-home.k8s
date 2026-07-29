@@ -82,7 +82,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 "targetProjections": 48,
                 "evidenceClasses": 4,
                 "memoryClasses": 4,
-                "consumers": 11,
+                "consumers": 14,
             },
         )
 

@@ -52,6 +52,30 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "agent-roster-admission",
+      "argv": ["python3", "scripts/validate-agent-roster-admission.py", "--root", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Spec 044 roster admission validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-evaluations",
+      "argv": ["python3", "scripts/validate-agent-evaluations.py", "--root", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Spec 044 role evaluation validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-model-fitness",
+      "argv": ["python3", "scripts/validate-agent-model-fitness.py", "--root", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Spec 044 model-fitness validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "agent-roster-currentness",
       "argv": ["python3", "scripts/validate-agent-roster-currentness.py", "."],
       "lanes": ["affected", "staged", "all-files", "ci"],
@@ -193,7 +217,7 @@
         {"kind": "exact", "value": "CLAUDE.md"},
         {"kind": "exact", "value": "GEMINI.md"}
       ],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Provider gateways must remain thin and aligned."},
@@ -211,7 +235,7 @@
     {
       "id": "agent-shared",
       "routes": [{"kind": "regex", "value": "^\\.agents/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Shared agent assets require provider parity evidence."},
@@ -220,7 +244,7 @@
     {
       "id": "agent-claude",
       "routes": [{"kind": "regex", "value": "^\\.claude/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Claude adapters require provider parity evidence."},
@@ -229,7 +253,7 @@
     {
       "id": "agent-codex",
       "routes": [{"kind": "regex", "value": "^\\.codex/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Codex adapters require provider parity evidence."},
@@ -247,7 +271,7 @@
     {
       "id": "governance-documents",
       "routes": [{"kind": "regex", "value": "^docs/00\\.agent-governance/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Stage 00 changes require governance validation."},
@@ -335,7 +359,7 @@
     {
       "id": "scripts",
       "routes": [{"kind": "regex", "value": "^scripts/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
       "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
       "protectedLevel": "protected",
       "fallback": {"status": "FAIL", "reason": "Validator changes rerun every dependent static lane."},
@@ -353,7 +377,7 @@
     {
       "id": "tests",
       "routes": [{"kind": "regex", "value": "^tests/.*$"}],
-      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "repository-quality"],
+      "validators": ["agent-checkpoint", "agent-harness-contract", "agent-loop-lifecycle", "agent-provider-evidence", "agent-roster-admission", "agent-evaluations", "agent-model-fitness", "repository-quality"],
       "ciJobs": ["pre-commit", "repo-quality-static"],
       "protectedLevel": "review",
       "fallback": {"status": "FAIL", "reason": "Fixture changes require repository QA."},

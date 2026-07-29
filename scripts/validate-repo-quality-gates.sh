@@ -103,6 +103,12 @@ python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-roster-admission.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-roster-admission.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-evaluations.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-evaluations.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-model-fitness.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-model-fitness.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-checkpoint.py" --root "$ROOT_DIR" --self-test

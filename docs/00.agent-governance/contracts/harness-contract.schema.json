@@ -85,8 +85,8 @@
     },
     "consumers": {
       "type": "array",
-      "minItems": 11,
-      "maxItems": 11,
+      "minItems": 14,
+      "maxItems": 14,
       "items": {
         "$ref": "#/$defs/consumer"
       }
@@ -743,7 +743,7 @@
         "legacyConsumers": {
           "type": "array",
           "minItems": 0,
-          "maxItems": 11,
+          "maxItems": 14,
           "uniqueItems": true,
           "items": {
             "$ref": "#/$defs/identifier"

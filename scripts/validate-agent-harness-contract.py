@@ -150,6 +150,27 @@ CONSUMERS = (
         "current",
     ),
     (
+        "roster-admission-validator",
+        "scripts/validate-agent-roster-admission.py",
+        "harness-contract",
+        "1.0.0",
+        "current",
+    ),
+    (
+        "role-evaluations-validator",
+        "scripts/validate-agent-evaluations.py",
+        "harness-contract",
+        "1.0.0",
+        "current",
+    ),
+    (
+        "model-fitness-validator",
+        "scripts/validate-agent-model-fitness.py",
+        "harness-contract",
+        "1.0.0",
+        "current",
+    ),
+    (
         "role-semantics-validator",
         "scripts/validate-agent-role-semantics.py",
         "harness-contract",
@@ -1442,7 +1463,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(
                 "[PASS] agent harness contract self-test passed: "
                 f"cases={cases} current=10/3/30 target=12/4/48 "
-                "evidence=4 memory=4 consumers=11"
+                "evidence=4 memory=4 consumers=14"
             )
             return 0
         counts = validate_contract(root)

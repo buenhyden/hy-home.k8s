@@ -161,6 +161,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/agent-evaluations.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/agent-harness-contract.json": (
         "json",
         "closed-fixture",
@@ -169,7 +173,15 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/agent-model-fitness.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/agent-provider-runtime-evidence.json": (
+        "json",
+        "closed-fixture",
+    ),
+    "tests/fixtures/agent-roster-admission.json": (
         "json",
         "closed-fixture",
     ),
@@ -213,6 +225,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
+    "tests/test_validate_agent_evaluations.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_validate_agent_harness_contract.py": (
         "python",
         "regression-test",
@@ -221,11 +237,19 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
+    "tests/test_validate_agent_model_fitness.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_validate_agent_provider_canaries.py": (
         "python",
         "regression-test",
     ),
     "tests/test_validate_agent_provider_config.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_roster_admission.py": (
         "python",
         "regression-test",
     ),
