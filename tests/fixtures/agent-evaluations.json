@@ -1,86 +1,79 @@
 {
-  "schemaVersion": 1,
-  "fixtureKind": "synthetic-negative-mutations",
+  "schemaVersion": 2,
+  "fixtureKind": "agent-evaluation-contract-negative-mutations",
   "privacyClass": "synthetic-only",
   "expectedCounts": {
     "roles": 12,
     "fixtureClasses": 4,
+    "corpusRecords": 48,
     "memoryClasses": 4,
     "highRiskRoles": 9,
-    "promotionBlocks": 4
+    "adjudicationRecords": 12,
+    "rollbackRecords": 2,
+    "promotionBlocks": 4,
+    "versionHistory": 2,
+    "deferredEvidence": 9
   },
   "mutations": [
-    {
-      "name": "missing-handoff-class",
-      "expectedRule": "AREA-EVAL-FIXTURE-CLASS"
-    },
-    {
-      "name": "suite-version-drift",
-      "expectedRule": "AREA-EVAL-VERSION"
-    },
-    {
-      "name": "grader-version-drift",
-      "expectedRule": "AREA-EVAL-VERSION"
-    },
-    {
-      "name": "baseline-suite-mismatch",
-      "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"
-    },
-    {
-      "name": "baseline-grader-mismatch",
-      "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"
-    },
-    {
-      "name": "high-risk-self-adjudicated",
-      "expectedRule": "AREA-EVAL-ADJUDICATION"
-    },
-    {
-      "name": "critical-miss-not-blocking",
-      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
-    },
-    {
-      "name": "secret-disclosure-not-blocking",
-      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
-    },
-    {
-      "name": "scope-escape-not-blocking",
-      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
-    },
-    {
-      "name": "unsafe-live-action-not-blocking",
-      "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"
-    },
-    {
-      "name": "runtime-pass-preclaim",
-      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
-    },
-    {
-      "name": "decision-pass-preclaim",
-      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
-    },
-    {
-      "name": "provider-value-preclaim",
-      "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"
-    },
-    {
-      "name": "raw-prompt-allowed",
-      "expectedRule": "AREA-EVAL-PRIVACY"
-    },
-    {
-      "name": "private-diagnostics-allowed",
-      "expectedRule": "AREA-EVAL-PRIVACY"
-    },
-    {
-      "name": "secret-like-value",
-      "expectedRule": "AREA-EVAL-SENSITIVE"
-    },
-    {
-      "name": "unexpected-closed-field",
-      "expectedRule": "AREA-EVAL-SCHEMA"
-    },
-    {
-      "name": "duplicate-contract-json-key",
-      "expectedRule": "AREA-EVAL-JSON-DUPLICATE"
-    }
+    {"name": "missing-handoff-class", "expectedRule": "AREA-EVAL-FIXTURE-CLASS"},
+    {"name": "suite-version-drift", "expectedRule": "AREA-EVAL-VERSION"},
+    {"name": "grader-version-drift", "expectedRule": "AREA-EVAL-VERSION"},
+    {"name": "baseline-suite-mismatch", "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"},
+    {"name": "baseline-grader-mismatch", "expectedRule": "AREA-EVAL-BASELINE-COMPARISON"},
+    {"name": "high-risk-self-adjudicated", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "critical-miss-not-blocking", "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"},
+    {"name": "secret-disclosure-not-blocking", "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"},
+    {"name": "scope-escape-not-blocking", "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"},
+    {"name": "unsafe-live-action-not-blocking", "expectedRule": "AREA-EVAL-PROMOTION-BLOCK"},
+    {"name": "runtime-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "decision-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "provider-value-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "raw-prompt-allowed", "expectedRule": "AREA-EVAL-PRIVACY"},
+    {"name": "private-diagnostics-allowed", "expectedRule": "AREA-EVAL-PRIVACY"},
+    {"name": "secret-like-value", "expectedRule": "AREA-EVAL-SENSITIVE"},
+    {"name": "unexpected-closed-field", "expectedRule": "AREA-EVAL-SCHEMA"},
+    {"name": "duplicate-contract-json-key", "expectedRule": "AREA-EVAL-JSON-DUPLICATE"},
+    {"name": "unsupported-contract-version", "expectedRule": "AREA-EVAL-VERSION"},
+    {"name": "version-history-drift", "expectedRule": "AREA-EVAL-VERSION"},
+    {"name": "harness-binding-declaration-drift", "expectedRule": "AREA-EVAL-HARNESS-BINDING"},
+    {"name": "harness-suite-id-drift", "expectedRule": "AREA-EVAL-HARNESS-BINDING"},
+    {"name": "suite-id-drift", "expectedRule": "AREA-EVAL-HARNESS-BINDING"},
+    {"name": "role-contract-version-drift", "expectedRule": "AREA-EVAL-HARNESS-BINDING"},
+    {"name": "missing-manifest-record", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "duplicate-manifest-record", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "extra-manifest-record", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "cross-role-manifest-record", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "wrong-fixture-class", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "wrong-fixture-version", "expectedRule": "AREA-EVAL-VERSION"},
+    {"name": "wrong-record-digest", "expectedRule": "AREA-EVAL-DIGEST"},
+    {"name": "wrong-manifest-digest", "expectedRule": "AREA-EVAL-DIGEST"},
+    {"name": "wrong-suite-manifest-digest", "expectedRule": "AREA-EVAL-MANIFEST"},
+    {"name": "privacy-unsafe-record", "expectedRule": "AREA-EVAL-PRIVACY"},
+    {"name": "missing-adjudication-record", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "adjudication-self-review", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "adjudication-missing-independence", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "adjudication-proof-missing", "expectedRule": "AREA-EVAL-SCHEMA"},
+    {"name": "adjudication-rubric-drift", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "adjudication-evidence-digest-drift", "expectedRule": "AREA-EVAL-ADJUDICATION"},
+    {"name": "adjudication-evaluation-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "adjudication-admission-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "missing-rollback-record", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "wrong-rollback-incumbent", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "weakened-rollback-triggers", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "executed-rollback", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "rollback-procedure-digest-drift", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "rollback-reference-drift", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "rollback-status-weakened", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "source-rollback-drift", "expectedRule": "AREA-EVAL-ROLLBACK"},
+    {"name": "final-admission-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "final-evaluation-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "readiness-implies-admission", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "deferred-blocker-missing", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "deferred-evidence-pass-preclaim", "expectedRule": "AREA-EVAL-RUNTIME-PRECLAIM"},
+    {"name": "placeholder-scenario-residue", "expectedRule": "AREA-EVAL-BOUNDARY"},
+    {"name": "pseudo-path-residue", "expectedRule": "AREA-EVAL-BOUNDARY"},
+    {"name": "generic-tool-residue", "expectedRule": "AREA-EVAL-BOUNDARY"},
+    {"name": "noncanonical-handoff-target", "expectedRule": "AREA-EVAL-BOUNDARY"},
+    {"name": "cross-role-boundary-profile", "expectedRule": "AREA-EVAL-BOUNDARY"}
   ]
 }

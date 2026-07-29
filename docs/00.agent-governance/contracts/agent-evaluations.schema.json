@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/agent-evaluations-1.schema.json",
-  "title": "Spec 044 agent evaluation contract",
+  "$id": "./agent-evaluations.schema.json",
+  "title": "Spec 044 repository-static agent evaluation readiness contract",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -9,34 +9,55 @@
     "schemaVersion",
     "contractId",
     "contractVersion",
+    "state",
     "ownerSpec",
+    "versionHistory",
     "authority",
+    "harnessBinding",
     "fixedSourceCutoff",
     "memoryClasses",
     "requiredFixtureClasses",
     "privacyPolicy",
     "promotionPolicy",
     "evaluationRecordContract",
-    "roleSuites"
+    "roleSuites",
+    "corpusManifest",
+    "adjudicationReadiness",
+    "rollbackRecords",
+    "finalAdmissionDecision"
   ],
   "properties": {
     "$schema": {
       "const": "./agent-evaluations.schema.json"
     },
     "schemaVersion": {
-      "const": 1
+      "const": 2
     },
     "contractId": {
       "const": "hy-home.k8s/agent-evaluations"
     },
     "contractVersion": {
-      "const": "1.0.0"
+      "const": "1.1.0"
+    },
+    "state": {
+      "const": "repository-static-evaluation-ready"
     },
     "ownerSpec": {
       "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
     },
+    "versionHistory": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/versionHistoryEntry"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
     "authority": {
       "$ref": "#/$defs/authority"
+    },
+    "harnessBinding": {
+      "$ref": "#/$defs/harnessBinding"
     },
     "fixedSourceCutoff": {
       "$ref": "#/$defs/fixedSourceCutoff"
@@ -50,7 +71,12 @@
       ]
     },
     "requiredFixtureClasses": {
-      "$ref": "#/$defs/fixtureClasses"
+      "const": [
+        "positive",
+        "negative-adversarial",
+        "refusal-stop",
+        "handoff"
+      ]
     },
     "privacyPolicy": {
       "$ref": "#/$defs/privacyPolicy"
@@ -63,15 +89,64 @@
     },
     "roleSuites": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
-      "uniqueItems": true,
       "items": {
         "$ref": "#/$defs/roleSuite"
-      }
+      },
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "corpusManifest": {
+      "$ref": "#/$defs/corpusManifest"
+    },
+    "adjudicationReadiness": {
+      "$ref": "#/$defs/adjudicationReadiness"
+    },
+    "rollbackRecords": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rollbackRecord"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "finalAdmissionDecision": {
+      "$ref": "#/$defs/finalAdmissionDecision"
     }
   },
   "$defs": {
+    "versionHistoryEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractVersion",
+        "state",
+        "evidenceScope",
+        "admissionDisposition"
+      ],
+      "properties": {
+        "contractVersion": {
+          "enum": [
+            "1.0.0",
+            "1.1.0"
+          ]
+        },
+        "state": {
+          "enum": [
+            "superseded-string-manifest-scaffold",
+            "current-corpus-ready"
+          ]
+        },
+        "evidenceScope": {
+          "enum": [
+            "repository-static-schema-only",
+            "repository-static-evaluation-readiness"
+          ]
+        },
+        "admissionDisposition": {
+          "const": "DEFER"
+        }
+      }
+    },
     "authority": {
       "type": "object",
       "additionalProperties": false,
@@ -87,7 +162,7 @@
       ],
       "properties": {
         "state": {
-          "const": "contract-only"
+          "const": "repository-static-evaluation-ready"
         },
         "evidenceKind": {
           "const": "repo-static"
@@ -112,6 +187,34 @@
         }
       }
     },
+    "harnessBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractPath",
+        "contractId",
+        "contractVersion",
+        "roleSetSource",
+        "evalSuiteField"
+      ],
+      "properties": {
+        "contractPath": {
+          "const": "docs/00.agent-governance/contracts/harness-contract.json"
+        },
+        "contractId": {
+          "const": "hy-home.k8s/agent-harness"
+        },
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "roleSetSource": {
+          "const": "#/canonicalRoles"
+        },
+        "evalSuiteField": {
+          "const": "evalSuite.id"
+        }
+      }
+    },
     "fixedSourceCutoff": {
       "type": "object",
       "additionalProperties": false,
@@ -127,14 +230,6 @@
           "const": "2026-07-10T01:00:00Z"
         }
       }
-    },
-    "fixtureClasses": {
-      "const": [
-        "positive",
-        "negative-adversarial",
-        "refusal-stop",
-        "handoff"
-      ]
     },
     "privacyPolicy": {
       "type": "object",
@@ -209,46 +304,6 @@
         }
       }
     },
-    "evaluationRecordContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "suite",
-        "fixture",
-        "grader",
-        "providerExecution",
-        "baselineCandidate",
-        "metrics",
-        "adjudication",
-        "rollback"
-      ],
-      "properties": {
-        "suite": {
-          "$ref": "#/$defs/suiteFieldContract"
-        },
-        "fixture": {
-          "$ref": "#/$defs/fixtureFieldContract"
-        },
-        "grader": {
-          "$ref": "#/$defs/graderFieldContract"
-        },
-        "providerExecution": {
-          "$ref": "#/$defs/providerExecution"
-        },
-        "baselineCandidate": {
-          "$ref": "#/$defs/baselineCandidate"
-        },
-        "metrics": {
-          "$ref": "#/$defs/metrics"
-        },
-        "adjudication": {
-          "$ref": "#/$defs/adjudication"
-        },
-        "rollback": {
-          "$ref": "#/$defs/rollback"
-        }
-      }
-    },
     "suiteFieldContract": {
       "type": "object",
       "additionalProperties": false,
@@ -269,51 +324,15 @@
         }
       }
     },
-    "fixtureFieldContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "identityFields",
-        "requiredClasses",
-        "evidenceFields",
-        "digest",
-        "expectedBehavior"
-      ],
-      "properties": {
-        "identityFields": {
-          "const": [
-            "fixtureId",
-            "fixtureVersion"
-          ]
-        },
-        "requiredClasses": {
-          "$ref": "#/$defs/fixtureClasses"
-        },
-        "evidenceFields": {
-          "const": [
-            "provenance",
-            "privacy",
-            "risk",
-            "inputDigest"
-          ]
-        },
-        "digest": {
-          "$ref": "#/$defs/digestFieldContract"
-        },
-        "expectedBehavior": {
-          "$ref": "#/$defs/expectedBehavior"
-        }
-      }
-    },
-    "digestFieldContract": {
+    "digestContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "field",
         "algorithm",
         "format",
-        "requiredAtExecution",
-        "currentState"
+        "source",
+        "required"
       ],
       "properties": {
         "field": {
@@ -325,15 +344,15 @@
         "format": {
           "const": "sha256:<64-lowercase-hex>"
         },
-        "requiredAtExecution": {
-          "const": true
+        "source": {
+          "const": "utf8-scenario-summary"
         },
-        "currentState": {
-          "const": "DEFER"
+        "required": {
+          "const": true
         }
       }
     },
-    "expectedBehavior": {
+    "expectedBehaviorContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -357,7 +376,53 @@
         }
       }
     },
-    "graderFieldContract": {
+    "fixtureContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identityFields",
+        "requiredClasses",
+        "evidenceFields",
+        "digest",
+        "expectedBehavior"
+      ],
+      "properties": {
+        "identityFields": {
+          "const": [
+            "fixtureId",
+            "fixtureVersion",
+            "roleId",
+            "roleContractVersion",
+            "fixtureClass"
+          ]
+        },
+        "requiredClasses": {
+          "const": [
+            "positive",
+            "negative-adversarial",
+            "refusal-stop",
+            "handoff"
+          ]
+        },
+        "evidenceFields": {
+          "const": [
+            "scenarioSummary",
+            "provenanceClass",
+            "privacyClass",
+            "riskClass",
+            "inputDigest",
+            "expectedBoundaryBehavior"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/digestContract"
+        },
+        "expectedBehavior": {
+          "$ref": "#/$defs/expectedBehaviorContract"
+        }
+      }
+    },
+    "graderContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -382,7 +447,7 @@
         }
       }
     },
-    "providerExecution": {
+    "providerExecutionContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -410,7 +475,7 @@
         }
       }
     },
-    "baselineCandidate": {
+    "baselineCandidateContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -434,7 +499,7 @@
         }
       }
     },
-    "metrics": {
+    "metricsContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -458,39 +523,87 @@
         }
       }
     },
-    "adjudication": {
+    "adjudicationContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "adjudicator",
-        "independentForHighRisk",
-        "decision"
+        "readinessDisposition",
+        "evaluationDisposition",
+        "admissionDisposition",
+        "independentForHighRisk"
       ],
       "properties": {
-        "adjudicator": {
+        "readinessDisposition": {
+          "const": "PASS"
+        },
+        "evaluationDisposition": {
+          "const": "DEFER"
+        },
+        "admissionDisposition": {
           "const": "DEFER"
         },
         "independentForHighRisk": {
           "const": true
-        },
-        "decision": {
-          "const": "DEFER"
         }
       }
     },
-    "rollback": {
+    "rollbackContract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "state",
-        "reference"
+        "status",
+        "execution",
+        "incumbent"
       ],
       "properties": {
-        "state": {
+        "status": {
+          "const": "armed-not-executed"
+        },
+        "execution": {
           "const": "DEFER"
         },
-        "reference": {
-          "const": "DEFER"
+        "incumbent": {
+          "const": "10/3/30"
+        }
+      }
+    },
+    "evaluationRecordContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite",
+        "fixture",
+        "grader",
+        "providerExecution",
+        "baselineCandidate",
+        "metrics",
+        "adjudication",
+        "rollback"
+      ],
+      "properties": {
+        "suite": {
+          "$ref": "#/$defs/suiteFieldContract"
+        },
+        "fixture": {
+          "$ref": "#/$defs/fixtureContract"
+        },
+        "grader": {
+          "$ref": "#/$defs/graderContract"
+        },
+        "providerExecution": {
+          "$ref": "#/$defs/providerExecutionContract"
+        },
+        "baselineCandidate": {
+          "$ref": "#/$defs/baselineCandidateContract"
+        },
+        "metrics": {
+          "$ref": "#/$defs/metricsContract"
+        },
+        "adjudication": {
+          "$ref": "#/$defs/adjudicationContract"
+        },
+        "rollback": {
+          "$ref": "#/$defs/rollbackContract"
         }
       }
     },
@@ -499,11 +612,14 @@
       "additionalProperties": false,
       "required": [
         "roleId",
+        "roleContractVersion",
         "suiteId",
         "suiteVersion",
         "fixtureManifestId",
         "fixtureVersion",
         "fixtureClasses",
+        "fixtureRecordIds",
+        "fixtureManifestDigest",
         "graderVersion",
         "rubricVersion",
         "provenanceClass",
@@ -511,8 +627,8 @@
         "riskClass",
         "corpusState",
         "independentAdjudicationRequired",
-        "evaluationDecision",
-        "rollbackState"
+        "evaluationDisposition",
+        "adjudicationRef"
       ],
       "properties": {
         "roleId": {
@@ -531,22 +647,44 @@
             "quality-engineer"
           ]
         },
+        "roleContractVersion": {
+          "const": "1.0.0"
+        },
         "suiteId": {
           "type": "string",
-          "pattern": "^eval/[a-z0-9-]+$"
+          "pattern": "^eval/[a-z0-9-]+/v1$"
         },
         "suiteVersion": {
           "const": "1.0.0"
         },
         "fixtureManifestId": {
           "type": "string",
-          "pattern": "^eval/[a-z0-9-]+/fixtures$"
+          "pattern": "^eval/[a-z0-9-]+/v1/fixtures/v1$"
         },
         "fixtureVersion": {
           "const": "1.0.0"
         },
         "fixtureClasses": {
-          "$ref": "#/$defs/fixtureClasses"
+          "const": [
+            "positive",
+            "negative-adversarial",
+            "refusal-stop",
+            "handoff"
+          ]
+        },
+        "fixtureRecordIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^eval/[a-z0-9-]+/v1/fixtures/(positive|negative-adversarial|refusal-stop|handoff)/v1$"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "fixtureManifestDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
         },
         "graderVersion": {
           "const": "1.0.0"
@@ -555,28 +693,625 @@
           "const": "1.0.0"
         },
         "provenanceClass": {
-          "const": "repository-contract-only"
+          "const": "repository-synthetic"
         },
         "privacyClass": {
-          "const": "synthetic-or-redacted-only"
+          "const": "synthetic-only"
         },
         "riskClass": {
           "enum": [
-            "standard",
-            "high"
+            "high",
+            "standard"
           ]
         },
         "corpusState": {
-          "const": "DEFER"
+          "const": "repository-static-evaluation-ready"
         },
         "independentAdjudicationRequired": {
           "type": "boolean"
         },
-        "evaluationDecision": {
+        "evaluationDisposition": {
           "const": "DEFER"
         },
-        "rollbackState": {
+        "adjudicationRef": {
+          "type": "string",
+          "pattern": "^#/adjudicationReadiness/records/(?:[0-9]|1[01])$"
+        }
+      }
+    },
+    "expectedBoundaryBehavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowedPaths",
+        "allowedTools",
+        "prohibitedActions",
+        "stopHandoffExpectation"
+      ],
+      "properties": {
+        "allowedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "allowedTools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "prohibitedActions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "stopHandoffExpectation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "corpusRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixtureId",
+        "fixtureVersion",
+        "suiteId",
+        "suiteVersion",
+        "roleId",
+        "roleContractVersion",
+        "fixtureClass",
+        "scenarioSummary",
+        "inputDigest",
+        "provenanceClass",
+        "privacyClass",
+        "riskClass",
+        "expectedBoundaryBehavior"
+      ],
+      "properties": {
+        "fixtureId": {
+          "type": "string",
+          "pattern": "^eval/[a-z0-9-]+/v1/fixtures/(positive|negative-adversarial|refusal-stop|handoff)/v1$"
+        },
+        "fixtureVersion": {
+          "const": "1.0.0"
+        },
+        "suiteId": {
+          "type": "string",
+          "pattern": "^eval/[a-z0-9-]+/v1$"
+        },
+        "suiteVersion": {
+          "const": "1.0.0"
+        },
+        "roleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "roleContractVersion": {
+          "const": "1.0.0"
+        },
+        "fixtureClass": {
+          "enum": [
+            "positive",
+            "negative-adversarial",
+            "refusal-stop",
+            "handoff"
+          ]
+        },
+        "scenarioSummary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "inputDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "provenanceClass": {
+          "const": "repository-synthetic"
+        },
+        "privacyClass": {
+          "const": "synthetic-only"
+        },
+        "riskClass": {
+          "enum": [
+            "high",
+            "standard"
+          ]
+        },
+        "expectedBoundaryBehavior": {
+          "$ref": "#/$defs/expectedBoundaryBehavior"
+        }
+      }
+    },
+    "corpusManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestId",
+        "manifestVersion",
+        "digestAlgorithm",
+        "manifestDigest",
+        "recordCount",
+        "records"
+      ],
+      "properties": {
+        "manifestId": {
+          "const": "hy-home.k8s/agent-evaluation-corpus/v1"
+        },
+        "manifestVersion": {
+          "const": "1.0.0"
+        },
+        "digestAlgorithm": {
+          "const": "sha256-canonical-json"
+        },
+        "manifestDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "recordCount": {
+          "const": 48
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/corpusRecord"
+          },
+          "minItems": 48,
+          "maxItems": 48
+        }
+      }
+    },
+    "independenceProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidateRoleId",
+        "adjudicatorRoleId",
+        "sameRole",
+        "basis"
+      ],
+      "properties": {
+        "candidateRoleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "adjudicatorRoleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "sameRole": {
+          "const": false
+        },
+        "basis": {
+          "const": "distinct-canonical-role-and-no-result-execution-authority"
+        }
+      }
+    },
+    "adjudicationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adjudicationId",
+        "adjudicationVersion",
+        "roleId",
+        "adjudicatorId",
+        "adjudicatorOwner",
+        "adjudicatorRoleId",
+        "roleSeparation",
+        "independenceRequired",
+        "independenceProof",
+        "rubricVersion",
+        "rubricRef",
+        "evidenceSummary",
+        "evidenceDigest",
+        "reviewScope",
+        "readinessDisposition",
+        "evaluationDisposition",
+        "admissionDisposition"
+      ],
+      "properties": {
+        "adjudicationId": {
+          "type": "string",
+          "pattern": "^adjudication/[a-z0-9-]+/v1$"
+        },
+        "adjudicationVersion": {
+          "const": "1.0.0"
+        },
+        "roleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "adjudicatorId": {
+          "type": "string",
+          "pattern": "^adjudicator/[a-z0-9-]+/v1$"
+        },
+        "adjudicatorOwner": {
+          "const": "workspace-quality-governance"
+        },
+        "adjudicatorRoleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "roleSeparation": {
+          "const": "independent-canonical-role"
+        },
+        "independenceRequired": {
+          "type": "boolean"
+        },
+        "independenceProof": {
+          "$ref": "#/$defs/independenceProof"
+        },
+        "rubricVersion": {
+          "const": "1.0.0"
+        },
+        "rubricRef": {
+          "const": "#/promotionPolicy"
+        },
+        "evidenceSummary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "evidenceDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "reviewScope": {
+          "const": "repository-static-corpus-readiness-only"
+        },
+        "readinessDisposition": {
+          "const": "PASS"
+        },
+        "evaluationDisposition": {
           "const": "DEFER"
+        },
+        "admissionDisposition": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "adjudicationReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "readinessVersion",
+        "records"
+      ],
+      "properties": {
+        "readinessVersion": {
+          "const": "1.0.0"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adjudicationRecord"
+          },
+          "minItems": 12,
+          "maxItems": 12
+        }
+      }
+    },
+    "incumbent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleCount",
+        "surfaceCount",
+        "adapterCount",
+        "commit"
+      ],
+      "properties": {
+        "roleCount": {
+          "const": 10
+        },
+        "surfaceCount": {
+          "const": 3
+        },
+        "adapterCount": {
+          "const": 30
+        },
+        "commit": {
+          "const": "e324d4c1fa49ef7e508fa07\u006332e7f054f5a3a05e"
+        }
+      }
+    },
+    "rollbackProcedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "steps",
+        "digest"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string",
+          "pattern": "^docs/00[.]agent-governance/contracts/agent-roster-admission[.]json#/candidates/[01]/rollback$"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "rollbackSourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractPath",
+        "candidateReference",
+        "candidateRoleId",
+        "rollbackReference",
+        "rollbackDigest"
+      ],
+      "properties": {
+        "contractPath": {
+          "const": "docs/00.agent-governance/contracts/agent-roster-admission.json"
+        },
+        "candidateReference": {
+          "type": "string",
+          "pattern": "^docs/00[.]agent-governance/contracts/agent-roster-admission[.]json#/candidates/[01]$"
+        },
+        "candidateRoleId": {
+          "enum": [
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "rollbackReference": {
+          "type": "string",
+          "pattern": "^docs/00[.]agent-governance/contracts/agent-roster-admission[.]json#/candidates/[01]/rollback$"
+        },
+        "rollbackDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "rollbackRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rollbackId",
+        "rollbackVersion",
+        "candidateRoleId",
+        "incumbent",
+        "triggers",
+        "procedure",
+        "sourceBinding",
+        "status",
+        "executed",
+        "executionBoundary",
+        "executionEvidence"
+      ],
+      "properties": {
+        "rollbackId": {
+          "type": "string",
+          "pattern": "^rollback/(docs-researcher|quality-engineer)/v1$"
+        },
+        "rollbackVersion": {
+          "const": "1.0.0"
+        },
+        "candidateRoleId": {
+          "enum": [
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "incumbent": {
+          "$ref": "#/$defs/incumbent"
+        },
+        "triggers": {
+          "const": [
+            "critical-miss",
+            "secret-disclosure",
+            "scope-escape",
+            "unsafe-live-action"
+          ]
+        },
+        "procedure": {
+          "$ref": "#/$defs/rollbackProcedure"
+        },
+        "sourceBinding": {
+          "$ref": "#/$defs/rollbackSourceBinding"
+        },
+        "status": {
+          "const": "armed-not-executed"
+        },
+        "executed": {
+          "const": false
+        },
+        "executionBoundary": {
+          "const": "repository-static-plan-only-no-rollback-executed"
+        },
+        "executionEvidence": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "deferredEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerDiscovery",
+        "authentication",
+        "runtime",
+        "modelResolution",
+        "hostedCi",
+        "remoteAction",
+        "liveAction",
+        "evaluationExecution",
+        "evaluationAdjudication"
+      ],
+      "properties": {
+        "providerDiscovery": {
+          "const": "DEFER"
+        },
+        "authentication": {
+          "const": "DEFER"
+        },
+        "runtime": {
+          "const": "DEFER"
+        },
+        "modelResolution": {
+          "const": "DEFER"
+        },
+        "hostedCi": {
+          "const": "DEFER"
+        },
+        "remoteAction": {
+          "const": "DEFER"
+        },
+        "liveAction": {
+          "const": "DEFER"
+        },
+        "evaluationExecution": {
+          "const": "DEFER"
+        },
+        "evaluationAdjudication": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "finalAdmissionDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "decisionVersion",
+        "scope",
+        "readinessDisposition",
+        "evaluationDisposition",
+        "admissionDisposition",
+        "validatorReadinessPassIsAdmissionPass",
+        "statement",
+        "unresolvedEvidenceBlockers",
+        "deferredEvidence"
+      ],
+      "properties": {
+        "decisionId": {
+          "const": "spec044/repository-static-roster-admission/v1"
+        },
+        "decisionVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "const": "repository-static-roster-admission"
+        },
+        "readinessDisposition": {
+          "const": "PASS"
+        },
+        "evaluationDisposition": {
+          "const": "DEFER"
+        },
+        "admissionDisposition": {
+          "const": "DEFER"
+        },
+        "validatorReadinessPassIsAdmissionPass": {
+          "const": false
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unresolvedEvidenceBlockers": {
+          "const": [
+            "provider-discovery",
+            "authentication",
+            "runtime",
+            "model-resolution",
+            "hosted-ci",
+            "remote-action",
+            "live-action",
+            "evaluation-execution",
+            "evaluation-adjudication"
+          ]
+        },
+        "deferredEvidence": {
+          "$ref": "#/$defs/deferredEvidence"
         }
       }
     }

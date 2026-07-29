@@ -146,8 +146,8 @@ live readiness.
 | Agent harness contract repository check | `python3 scripts/validate-agent-harness-contract.py --root .` | Repo-static current `12/4/48`, achieved target mirror `12/4/48`, four evidence classes, four memory classes, fourteen `harness-contract/1.0.0/current` consumers, and readable legacy compatibility; no provider-runtime, CI, remote, or live inference |
 | Agent roster admission fixture | `python3 scripts/validate-agent-roster-admission.py --self-test`; `python3 -m unittest tests/test_validate_agent_roster_admission.py` | Exact 59-case closed mutation matrix plus thirteen focused tests for repository-static projection authorization, achieved/current separation, two projected candidates, seven final-admission conditions, four evaluation/memory classes, nine deferred evidence classes, eight surface plans, rollback, closed schema, path/symlink, and sensitive-memory boundaries |
 | Agent roster admission repository check | `python3 scripts/validate-agent-roster-admission.py --root .` | Repo-static `state=repository-static-projected verdict=DEFER`, current `12/4/48`, achieved target mirror `12/4/48`; evaluation-backed final admission and provider runtime/hosted CI/remote/live promotion remain deferred |
-| Agent evaluation fixture | `python3 scripts/validate-agent-evaluations.py --self-test`; `python3 -m unittest tests/test_validate_agent_evaluations.py` | Exact 18-case closed mutation matrix plus twenty-one focused tests for twelve role suites, four fixture classes, nine high-risk independent reviews, four promotion blockers, same-suite/grader, redacted synthetic data, four memory boundaries, and fail-closed root/input symlink, non-regular, path-escape, and non-disclosing read boundaries |
-| Agent evaluation repository check | `python3 scripts/validate-agent-evaluations.py --root .` | Repo-static `roles=12 fixtureClasses=4 highRiskRoles=9 promotionBlocks=4`; execution, runtime, provider resolution, authentication, live action, and evaluation decision remain `DEFER` |
+| Agent evaluation fixture | `python3 scripts/validate-agent-evaluations.py --self-test`; `python3 -m unittest tests/test_validate_agent_evaluations.py` | Exact 60-case closed mutation matrix plus thirty-three focused tests for exact harness suite/version binding, twelve role suites × four classes의 48 role-specific executable synthetic scenarios, stable identity/digest, generic-placeholder rejection, twelve adjudication-readiness records, roster-admission candidate/source digest에 직접 결합된 two rollback records, nine high-risk independent reviews, four promotion blockers, redacted data, four memory boundaries, raw root와 five governed inputs의 fail-closed symlink/non-regular/path-escape/sensitive-content/non-disclosing read boundaries |
+| Agent evaluation repository check | `python3 scripts/validate-agent-evaluations.py --root .` | Repo-static `roles=12 fixtureClasses=4 corpusRecords=48 highRiskRoles=9 adjudicationRecords=12 rollbackRecords=2 promotionBlocks=4 deferredEvidence=9`; readiness review alone is `PASS`, while execution, runtime, provider resolution, authentication, live action, evaluation/admission/model decisions remain `DEFER` |
 | Agent model-fitness fixture | `python3 scripts/validate-agent-model-fitness.py --self-test`; `python3 -m unittest tests/test_validate_agent_model_fitness.py` | Exact 16-case closed mutation matrix plus eighteen focused tests for authoritative cutoff, harness observation separation, local/Claude/Codex/Gemini API/CLI boundaries, candidate-only Gemini provenance, 48 provider tuples, same-suite baseline, quality/safety priority, fallback, no promotion preclaim, and fail-closed root/input symlink, intermediate-path, non-regular, containment, and non-disclosing CLI boundaries |
 | Agent model-fitness repository check | `python3 scripts/validate-agent-model-fitness.py --root .` | Repo-static `roles=12 providers=4 tuples=48 pending=48 deferred=48`; repository labels and local executable observations do not prove provider model resolution |
 | Agent loop lifecycle regression | `python3 -m unittest tests.test_validate_agent_loop_lifecycle`; `python3 scripts/validate-agent-loop-lifecycle.py --self-test`; `python3 scripts/validate-agent-loop-lifecycle.py --root .` | Focused contract, destination-ID/order/owner-reference, review, and raw-promotion mutations prove the four memory classes, atomic/redacted synthetic checkpoint boundary, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five bounded reviewed feedback destinations. PASS does not read or write ignored checkpoints or establish provider/runtime/CI/remote/live/actual checkpoint execution. |
@@ -383,14 +383,20 @@ adapter PASS does not prove provider runtime consumption.
   `tests/test_validate_agent_roster_admission.py`는 조기 `PASS`, 누락 rollback,
   unsafe path/symlink, secret-like durable memory, harness projection drift를
   production 함수와 동일한 경계에서 거부한다.
-- `tests/fixtures/agent-evaluations.json`은 18개 closed mutation과 열두 role의
-  네 fixture class, 아홉 high-risk independent review, 네 promotion blocker,
-  same-suite/grader 및 synthetic/redacted privacy 계약을 고정한다.
-  `tests/test_validate_agent_evaluations.py`는 quality/safety 전에 cost/latency를
-  판정하거나 runtime/provider/auth/live/evaluation 권한을 조기 승격하는
-  상태를 거부한다. 또한 repository root와 contract/schema/fixture의
-  symlink, non-regular node, 중간 경로 symlink, `..` 탈출을 읽기 전에
-  `AREA-EVAL-INPUT`으로 비노출 차단한다.
+- `tests/fixtures/agent-evaluations.json`은 exact 60개 closed mutation과
+  canonical harness에 결합된 열두 role × 네 fixture class의 48개 역할별
+  실행형 synthetic scenario, stable identity/digest, 12 adjudication-readiness
+  record, 2 rollback record, 아홉 high-risk independent review, 네 promotion
+  blocker, same-suite/grader 및 synthetic/redacted privacy 계약을 고정한다.
+  두 rollback record는 governed `agent-roster-admission.json`의 exact candidate
+  reference, 원본 rollback 객체와 deterministic source digest에 결합된다.
+  `tests/test_validate_agent_evaluations.py`는 generic placeholder residue와
+  역할별 path/tool/prohibited-action/handoff 경계 drift, quality/safety 전에
+  cost/latency를 판정하는 상태, runtime/provider/auth/live/evaluation/admission/
+  model 권한을 조기 승격하는 상태를 거부한다. 또한 repository root와
+  contract/schema/fixture/harness/roster-admission 입력과 raw repository
+  root의 symlink, non-regular node, 중간 경로 symlink, `..` 탈출을 읽기
+  전에 `AREA-EVAL-INPUT`으로 비노출 차단한다.
 - `tests/fixtures/agent-model-fitness.json`은 16개 closed mutation과
   열두 role × 네 provider의 48 tuple, same-suite baseline, fallback,
   authoritative cutoff를 고정한다.
