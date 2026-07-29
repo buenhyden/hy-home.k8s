@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import shutil
@@ -31,6 +32,28 @@ PROVIDER_EVIDENCE_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
 )
+PROVIDER_EVIDENCE_SCHEMA_PATH = (
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/provider-runtime-evidence.schema.json"
+)
+PROVIDER_CONFIG_VALIDATOR_PATH = (
+    REPOSITORY_ROOT / "scripts/validate-agent-provider-config.py"
+)
+EVALUATIONS_PATH = (
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/agent-evaluations.json"
+)
+EVALUATIONS_SCHEMA_PATH = (
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/agent-evaluations.schema.json"
+)
+EVALUATIONS_VALIDATOR_PATH = (
+    REPOSITORY_ROOT / "scripts/validate-agent-evaluations.py"
+)
+ADMISSION_PATH = (
+    REPOSITORY_ROOT
+    / "docs/00.agent-governance/contracts/agent-roster-admission.json"
+)
 HARNESS_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/harness-contract.json"
@@ -40,7 +63,37 @@ GOVERNED_INPUTS = (
     SCHEMA_PATH,
     FIXTURE_PATH,
     PROVIDER_EVIDENCE_PATH,
+    PROVIDER_EVIDENCE_SCHEMA_PATH,
+    PROVIDER_CONFIG_VALIDATOR_PATH,
+    EVALUATIONS_PATH,
+    EVALUATIONS_SCHEMA_PATH,
+    EVALUATIONS_VALIDATOR_PATH,
+    ADMISSION_PATH,
     HARNESS_PATH,
+)
+ROLE_IDS = (
+    "supervisor",
+    "code-reviewer",
+    "doc-writer",
+    "gitops-reviewer",
+    "incident-responder",
+    "k8s-implementer",
+    "network-reviewer",
+    "observability-reviewer",
+    "security-auditor",
+    "wiki-curator",
+    "docs-researcher",
+    "quality-engineer",
+)
+ADAPTER_INPUTS = tuple(
+    REPOSITORY_ROOT / path
+    for role_id in ROLE_IDS
+    for path in (
+        f".agents/agents/{role_id}.md",
+        f".claude/agents/{role_id}.md",
+        f".codex/agents/{role_id}.toml",
+        f".gemini/agents/{role_id}.md",
+    )
 )
 
 
@@ -76,10 +129,24 @@ def assert_all_objects_closed(test: unittest.TestCase, node, path="<root>"):
 
 
 def copy_governed_inputs(root: Path) -> None:
-    for source in GOVERNED_INPUTS:
+    for source in (*GOVERNED_INPUTS, *ADAPTER_INPUTS):
         destination = root / source.relative_to(REPOSITORY_ROOT)
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+
+
+def canonical_digest(value) -> str:
+    encoded = json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
+
+
+def text_digest(value: str) -> str:
+    return f"sha256:{hashlib.sha256(value.encode('utf-8')).hexdigest()}"
 
 
 class ModelFitnessContractTests(unittest.TestCase):
@@ -112,7 +179,7 @@ class ModelFitnessContractTests(unittest.TestCase):
         Draft202012Validator.check_schema(schema)
         assert_all_objects_closed(self, schema)
 
-    def test_production_contract_is_pre_area004_and_exact_12_by_4(self) -> None:
+    def test_production_contract_is_area004_ready_and_exact_12_by_4(self) -> None:
         counts = self.validator.validate_contract(REPOSITORY_ROOT)
         self.assertEqual(
             counts,
@@ -120,23 +187,190 @@ class ModelFitnessContractTests(unittest.TestCase):
                 "roles": 12,
                 "providers": 4,
                 "tuples": 48,
-                "pending": 48,
-                "deferred": 48,
+                "mappingReady": 21,
+                "mappingDeferred": 27,
+                "fitnessDeferred": 48,
+                "thresholdDeferred": 48,
+                "promotionDeferred": 48,
+                "canaryDeferred": 48,
+                "runtimeDeferred": 48,
             },
         )
-        self.assertEqual(self.contract["contractMode"], "contract-only")
-        self.assertEqual(self.contract["evidenceClass"], "repo-static")
-        self.assertEqual(self.contract["lifecycleState"], "pre-area004")
+        self.assertEqual(self.contract["contractVersion"], "1.1.0")
+        self.assertEqual(self.contract["schemaVersion"], 2)
+        self.assertEqual(
+            self.contract["contractMode"],
+            "repository-static-fitness-readiness",
+        )
+        self.assertEqual(self.contract["evidenceClass"], "repository-static")
+        self.assertEqual(
+            self.contract["lifecycleState"],
+            "repository-static-fitness-ready",
+        )
         for profile in self.contract["roleProfiles"]:
             for item in profile["providerTuples"]:
-                self.assertEqual(item["state"], "pending")
-                self.assertEqual(item["promotionState"], "candidate-only")
-                self.assertEqual(item["decision"], "DEFER")
-                self.assertEqual(item["canary"]["verdict"], "DEFER")
-                self.assertEqual(item["sameSuiteBaseline"]["verdict"], "DEFER")
-                self.assertTrue(
-                    all(value == "DEFER" for value in item["runtime"].values())
+                decisions = item["decisions"]
+                expected_mapping = (
+                    "PASS"
+                    if item["providerId"] == "local"
+                    or (
+                        item["providerId"] == "claude"
+                        and profile["riskTier"] == "high"
+                    )
+                    else "DEFER"
                 )
+                self.assertEqual(
+                    decisions["mappingReadiness"],
+                    expected_mapping,
+                )
+                self.assertEqual(decisions["fitness"], "DEFER")
+                self.assertEqual(decisions["promotion"], "DEFER")
+                self.assertEqual(decisions["canary"], "DEFER")
+                self.assertEqual(decisions["runtime"], "DEFER")
+                self.assertEqual(
+                    item["evaluation"]["baselineMetricsDigest"], "DEFER"
+                )
+                self.assertEqual(
+                    item["evaluation"]["candidateMetricsDigest"], "DEFER"
+                )
+                self.assertEqual(
+                    item["evaluation"]["thresholdResult"], "DEFER"
+                )
+
+    def test_current_only_candidate_mapping_pass_fails_closed(self) -> None:
+        mutated = self.contract_copy()
+        claude_worker = mutated["providers"][1]["roleClassCandidates"][1]
+        claude_worker["mappingReadiness"] = "PASS"
+        code_reviewer = mutated["roleProfiles"][1]["providerTuples"][1]
+        code_reviewer["decisions"]["mappingReadiness"] = "PASS"
+        self.assert_rule(mutated, "AREA-FIT-MAPPING")
+
+    def test_unknown_and_cross_provider_source_ids_fail_closed(self) -> None:
+        cases = (
+            ("unknown-provider-source", "AREA-FIT-SOURCE-ID"),
+            ("codex-release-0-144-1", "AREA-FIT-SOURCE-ALIAS"),
+        )
+        for source_id, expected_rule in cases:
+            with self.subTest(source_id=source_id):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    copy_governed_inputs(root)
+                    evidence_path = root / PROVIDER_EVIDENCE_PATH.relative_to(
+                        REPOSITORY_ROOT
+                    )
+                    evidence = json.loads(
+                        evidence_path.read_text(encoding="utf-8")
+                    )
+                    evidence["providers"][1]["modelCandidates"][1][
+                        "sourceIds"
+                    ] = [source_id]
+                    evidence_path.write_text(
+                        json.dumps(evidence, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+
+                    contract_path = root / CONTRACT_PATH.relative_to(
+                        REPOSITORY_ROOT
+                    )
+                    contract = json.loads(
+                        contract_path.read_text(encoding="utf-8")
+                    )
+                    contract["providers"][1]["roleClassCandidates"][1][
+                        "sourceIds"
+                    ] = [source_id]
+                    for profile in contract["roleProfiles"]:
+                        if profile["riskTier"] == "standard":
+                            claude_tuple = profile["providerTuples"][1]
+                            claude_tuple["sourceIds"] = [source_id]
+                    contract_path.write_text(
+                        json.dumps(contract, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+
+                    with self.assertRaises(
+                        self.validator.ModelFitnessError
+                    ) as raised:
+                        self.validator.validate_contract(root)
+                    self.assertEqual(raised.exception.code, expected_rule)
+
+    def test_area003_scenario_digest_tamper_fails_before_binding(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            copy_governed_inputs(root)
+            evaluations_path = root / EVALUATIONS_PATH.relative_to(
+                REPOSITORY_ROOT
+            )
+            evaluations = json.loads(
+                evaluations_path.read_text(encoding="utf-8")
+            )
+            records = evaluations["corpusManifest"]["records"]
+            records[0]["scenarioSummary"] += " tampered"
+            evaluations["corpusManifest"]["manifestDigest"] = canonical_digest(
+                records
+            )
+            evaluations_path.write_text(
+                json.dumps(evaluations, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            contract_path = root / CONTRACT_PATH.relative_to(REPOSITORY_ROOT)
+            contract = json.loads(contract_path.read_text(encoding="utf-8"))
+            for binding in contract["evaluationBindings"]:
+                binding["corpusManifestDigest"] = evaluations[
+                    "corpusManifest"
+                ]["manifestDigest"]
+            contract_path.write_text(
+                json.dumps(contract, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(
+                self.validator.ModelFitnessError
+            ) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-FIT-MANIFEST")
+
+    def test_area003_role_fixture_manifest_tamper_fails_before_binding(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            copy_governed_inputs(root)
+            evaluations_path = root / EVALUATIONS_PATH.relative_to(
+                REPOSITORY_ROOT
+            )
+            evaluations = json.loads(
+                evaluations_path.read_text(encoding="utf-8")
+            )
+            records = evaluations["corpusManifest"]["records"]
+            records[0]["scenarioSummary"] += " tampered"
+            records[0]["inputDigest"] = text_digest(
+                records[0]["scenarioSummary"]
+            )
+            evaluations["corpusManifest"]["manifestDigest"] = canonical_digest(
+                records
+            )
+            evaluations_path.write_text(
+                json.dumps(evaluations, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            contract_path = root / CONTRACT_PATH.relative_to(REPOSITORY_ROOT)
+            contract = json.loads(contract_path.read_text(encoding="utf-8"))
+            for binding in contract["evaluationBindings"]:
+                binding["corpusManifestDigest"] = evaluations[
+                    "corpusManifest"
+                ]["manifestDigest"]
+            contract_path.write_text(
+                json.dumps(contract, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(
+                self.validator.ModelFitnessError
+            ) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-FIT-MANIFEST")
 
     def test_fixed_cutoff_is_cross_checked_against_spec042_authority(self) -> None:
         provider_evidence = json.loads(
@@ -166,15 +400,7 @@ class ModelFitnessContractTests(unittest.TestCase):
     def test_authoritative_cutoff_drift_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for source in (
-                CONTRACT_PATH,
-                SCHEMA_PATH,
-                PROVIDER_EVIDENCE_PATH,
-                HARNESS_PATH,
-            ):
-                destination = root / source.relative_to(REPOSITORY_ROOT)
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, destination)
+            copy_governed_inputs(root)
             evidence_path = root / PROVIDER_EVIDENCE_PATH.relative_to(
                 REPOSITORY_ROOT
             )
@@ -188,6 +414,150 @@ class ModelFitnessContractTests(unittest.TestCase):
             self.assertEqual(
                 raised.exception.code, "AREA-FIT-CUTOFF-AUTHORITY"
             )
+
+    def test_spec042_source_set_and_exact_utc_cutoff_fail_closed(self) -> None:
+        def same_day_after_cutoff(ledger) -> None:
+            ledger[0]["sourceDate"] = "2026-07-10"
+            ledger[0]["publishedAtUtc"] = "2026-07-10T01:00:01Z"
+
+        def cutoff_day_without_timestamp(ledger) -> None:
+            ledger[0]["sourceDate"] = "2026-07-10"
+            ledger[0]["publishedAtUtc"] = None
+
+        def publication_date_mismatch(ledger) -> None:
+            ledger[0]["publishedAtUtc"] = "2026-07-08T23:59:59Z"
+
+        def extra_source(ledger) -> None:
+            extra = copy.deepcopy(ledger[-1])
+            extra["id"] = "extra-source-new-id"
+            ledger.append(extra)
+
+        def missing_source(ledger) -> None:
+            ledger.pop()
+
+        cases = (
+            (
+                "same-day-after-cutoff",
+                same_day_after_cutoff,
+                "AREA-FIT-SOURCE-CLASSIFICATION",
+            ),
+            (
+                "cutoff-day-without-timestamp",
+                cutoff_day_without_timestamp,
+                "AREA-FIT-SOURCE-CLASSIFICATION",
+            ),
+            (
+                "publication-date-mismatch",
+                publication_date_mismatch,
+                "AREA-FIT-SOURCE-CLASSIFICATION",
+            ),
+            ("extra-source", extra_source, "AREA-FIT-SOURCE-ID"),
+            ("missing-source", missing_source, "AREA-FIT-SOURCE-ID"),
+        )
+        for name, mutate, expected_rule in cases:
+            with self.subTest(case=name):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    copy_governed_inputs(root)
+                    evidence_path = (
+                        root
+                        / PROVIDER_EVIDENCE_PATH.relative_to(REPOSITORY_ROOT)
+                    )
+                    evidence = json.loads(
+                        evidence_path.read_text(encoding="utf-8")
+                    )
+                    mutate(evidence["sourceLedger"])
+                    evidence_path.write_text(
+                        json.dumps(evidence, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+
+                    with self.assertRaises(
+                        self.validator.ModelFitnessError
+                    ) as raised:
+                        self.validator.validate_contract(root)
+                    self.assertEqual(raised.exception.code, expected_rule)
+
+    def test_provider_source_alias_drift_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            copy_governed_inputs(root)
+            evidence_path = root / PROVIDER_EVIDENCE_PATH.relative_to(
+                REPOSITORY_ROOT
+            )
+            evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+            evidence["providers"][1]["modelCandidates"][0]["sourceIds"] = [
+                "codex-config-reference-current"
+            ]
+            evidence_path.write_text(
+                json.dumps(evidence, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(
+                self.validator.ModelFitnessError
+            ) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-FIT-SOURCE-ALIAS")
+
+    def test_area003_suite_source_drift_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            copy_governed_inputs(root)
+            evaluations_path = root / EVALUATIONS_PATH.relative_to(
+                REPOSITORY_ROOT
+            )
+            evaluations = json.loads(
+                evaluations_path.read_text(encoding="utf-8")
+            )
+            evaluations["roleSuites"][0]["suiteVersion"] = "2.0.0"
+            evaluations_path.write_text(
+                json.dumps(evaluations, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(
+                self.validator.ModelFitnessError
+            ) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(
+                raised.exception.code,
+                "AREA-FIT-EVALUATION-SOURCE",
+            )
+
+    def test_area003_rollback_sources_cannot_be_weakened(self) -> None:
+        cases = (
+            (
+                ADMISSION_PATH,
+                lambda data: data["candidates"][0]["rollback"].update(
+                    {"state": "not-armed"}
+                ),
+            ),
+            (
+                EVALUATIONS_PATH,
+                lambda data: data["rollbackRecords"][0].update(
+                    {"status": "not-armed"}
+                ),
+            ),
+        )
+        for source, mutate in cases:
+            with self.subTest(path=source.relative_to(REPOSITORY_ROOT)):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    copy_governed_inputs(root)
+                    target = root / source.relative_to(REPOSITORY_ROOT)
+                    data = json.loads(target.read_text(encoding="utf-8"))
+                    mutate(data)
+                    target.write_text(
+                        json.dumps(data, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+                    with self.assertRaises(
+                        self.validator.ModelFitnessError
+                    ) as raised:
+                        self.validator.validate_contract(root)
+                    self.assertEqual(
+                        raised.exception.code,
+                        "AREA-FIT-ROLLBACK-SOURCE",
+                    )
 
     def test_governed_inputs_reject_symlinks_without_following_outside_repo(
         self,
@@ -215,6 +585,27 @@ class ModelFitnessContractTests(unittest.TestCase):
                         raised.exception.code, "AREA-FIT-INPUT"
                     )
                     self.assertNotIn(str(outside), raised.exception.detail)
+
+    def test_adapter_symlink_is_rejected_before_model_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "repository"
+            copy_governed_inputs(root)
+            relative = Path(".codex/agents/supervisor.toml")
+            adapter = root / relative
+            outside = base / "outside-adapter.toml"
+            outside.write_text(
+                'model = "unverified"\nmodel_reasoning_effort = "high"\n',
+                encoding="utf-8",
+            )
+            adapter.unlink()
+            adapter.symlink_to(outside)
+            with self.assertRaises(
+                self.validator.ModelFitnessError
+            ) as raised:
+                self.validator.validate_contract(root)
+            self.assertEqual(raised.exception.code, "AREA-FIT-INPUT")
+            self.assertNotIn(str(outside), raised.exception.detail)
 
     def test_intermediate_symlink_cannot_escape_repository_root(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -301,17 +692,9 @@ class ModelFitnessContractTests(unittest.TestCase):
     def test_symlink_contract_input_is_rejected_before_read(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for source in (
-                SCHEMA_PATH,
-                PROVIDER_EVIDENCE_PATH,
-                HARNESS_PATH,
-                FIXTURE_PATH,
-            ):
-                destination = root / source.relative_to(REPOSITORY_ROOT)
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, destination)
+            copy_governed_inputs(root)
             contract_path = root / CONTRACT_PATH.relative_to(REPOSITORY_ROOT)
-            contract_path.parent.mkdir(parents=True, exist_ok=True)
+            contract_path.unlink()
             contract_path.symlink_to(CONTRACT_PATH)
             with self.assertRaises(self.validator.ModelFitnessError) as raised:
                 self.validator.validate_contract(root)
@@ -335,22 +718,36 @@ class ModelFitnessContractTests(unittest.TestCase):
         )
         self.assertEqual(
             providers["gemini"]["modelIdentifierPlane"],
-            "gemini-api-id-candidate-for-cli",
+            "gemini-cli-family-unresolved",
         )
         self.assertIn(
             "does-not-prove-cli-resolution",
             providers["gemini"]["apiVsCliBoundary"],
         )
+        self.assertEqual(
+            self.contract["authorityBoundaries"][
+                "providerEvidenceGranularity"
+            ],
+            "two-role-class-candidates-per-provider",
+        )
+        self.assertEqual(
+            self.contract["authorityBoundaries"][
+                "roleSpecificRuntimeEvidence"
+            ],
+            "DEFER",
+        )
 
-    def test_gemini_candidate_config_sources_are_contract_owned(self) -> None:
-        gemini_index = 3
-        candidates = self.contract["providers"][gemini_index]["candidateModels"]
-        candidate_indexes = {
-            candidate["modelId"]: index
-            for index, candidate in enumerate(candidates)
-        }
+    def test_gemini_native_surface_fails_closed_without_fabricated_model(
+        self,
+    ) -> None:
+        candidates = self.contract["providers"][3]["roleClassCandidates"]
         for candidate in candidates:
-            self.assertTrue(candidate["candidateOnly"])
+            self.assertIn("unresolved", candidate["candidateModel"])
+            self.assertEqual(candidate["mappingReadiness"], "DEFER")
+            self.assertEqual(
+                candidate["cutoffConfidence"],
+                "mixed-cutoff-current-unresolved",
+            )
             self.assertEqual(candidate["runtimeResolution"], "DEFER")
         for profile in self.contract["roleProfiles"]:
             gemini_tuple = next(
@@ -358,14 +755,20 @@ class ModelFitnessContractTests(unittest.TestCase):
                 for item in profile["providerTuples"]
                 if item["providerId"] == "gemini"
             )
-            candidate_index = candidate_indexes[gemini_tuple["modelCandidate"]]
             self.assertEqual(
-                gemini_tuple["configSource"],
-                "docs/00.agent-governance/contracts/"
-                "agent-model-fitness.json"
-                f"#/providers/{gemini_index}/candidateModels/"
-                f"{candidate_index}/modelId",
+                gemini_tuple["incumbentModel"],
+                "not-configurable-on-native-surface",
             )
+            self.assertEqual(gemini_tuple["observedValue"], "DEFER")
+            self.assertEqual(
+                gemini_tuple["configPath"],
+                f".gemini/agents/{profile['roleId']}.md#frontmatter.model",
+            )
+            self.assertEqual(
+                gemini_tuple["fallbackPolicy"],
+                "fail-closed-no-configurable-incumbent",
+            )
+            self.assertEqual(gemini_tuple["fallbackTarget"], "fail-closed")
 
     def test_api_cli_boundary_text_is_closed_for_every_provider(self) -> None:
         for index, provider_id in enumerate(
@@ -383,11 +786,48 @@ class ModelFitnessContractTests(unittest.TestCase):
         self.assertEqual(
             policy["priorityOrder"], ["quality", "safety", "cost", "latency"]
         )
-        self.assertGreater(policy["thresholds"]["qualityMinimum"], 0)
-        self.assertEqual(policy["thresholds"]["safetyMinimum"], 1)
+        self.assertEqual(
+            policy["thresholds"],
+            {
+                "qualityMinimum": 0.9,
+                "safetyMinimum": 1,
+                "costMaximumUsd": 1,
+                "latencyMaximumMs": 120000,
+            },
+        )
         self.assertTrue(policy["sameSuiteRequired"])
-        self.assertFalse(policy["fallback"]["silentFallbackAllowed"])
-        self.assertEqual(policy["rollback"]["action"], "restore-incumbent")
+        self.assertEqual(
+            policy["validatorPassMeaning"],
+            "mapping-readiness-only",
+        )
+        self.assertEqual(
+            policy["unobservedMetricPolicy"],
+            "remain-DEFER-never-synthesize",
+        )
+        self.assertEqual(
+            self.contract["rollbackAuthority"]["state"],
+            "armed-not-executed",
+        )
+        for profile in self.contract["roleProfiles"]:
+            for item in profile["providerTuples"]:
+                self.assertFalse(item["silentFallbackAllowed"])
+
+    def test_all_evaluation_threshold_fields_are_exact_and_fail_closed(
+        self,
+    ) -> None:
+        cases = (
+            ("qualityMinimum", 0.89),
+            ("safetyMinimum", 0.99),
+            ("costMaximumUsd", 1.01),
+            ("latencyMaximumMs", 120001),
+        )
+        for field, weakened_value in cases:
+            with self.subTest(field=field):
+                mutated = self.contract_copy()
+                mutated["evaluationPolicy"]["thresholds"][
+                    field
+                ] = weakened_value
+                self.assert_rule(mutated, "AREA-FIT-THRESHOLD")
 
     def test_duplicate_json_key_is_rejected_with_stable_rule(self) -> None:
         with self.assertRaises(self.validator.ModelFitnessError) as raised:

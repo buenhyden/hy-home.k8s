@@ -1,21 +1,25 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hy-home.k8s/schemas/agent-model-fitness-1.schema.json",
-  "title": "Spec 044 agent model fitness contract",
+  "$id": "https://hy-home.k8s/schemas/agent-model-fitness-2.schema.json",
+  "title": "Spec 044 AREA-004 repository-static model-fitness readiness contract",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "$schema",
     "schemaVersion",
     "contractId",
+    "contractVersion",
     "ownerSpec",
     "contractMode",
     "evidenceClass",
     "lifecycleState",
+    "versionHistory",
     "authoritativeCutoff",
     "authorityBoundaries",
     "runtimeBoundaries",
     "evaluationPolicy",
+    "rollbackAuthority",
+    "evaluationBindings",
     "providers",
     "roleProfiles"
   ],
@@ -24,22 +28,96 @@
       "const": "./agent-model-fitness.schema.json"
     },
     "schemaVersion": {
-      "const": 1
+      "const": 2
     },
     "contractId": {
       "const": "hy-home.k8s/agent-model-fitness"
+    },
+    "contractVersion": {
+      "const": "1.1.0"
     },
     "ownerSpec": {
       "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
     },
     "contractMode": {
-      "const": "contract-only"
+      "const": "repository-static-fitness-readiness"
     },
     "evidenceClass": {
-      "const": "repo-static"
+      "const": "repository-static"
     },
     "lifecycleState": {
-      "const": "pre-area004"
+      "const": "repository-static-fitness-ready"
+    },
+    "versionHistory": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/versionEntry"
+      }
+    },
+    "authoritativeCutoff": {
+      "$ref": "#/$defs/authoritativeCutoff"
+    },
+    "authorityBoundaries": {
+      "$ref": "#/$defs/authorityBoundaries"
+    },
+    "runtimeBoundaries": {
+      "$ref": "#/$defs/runtimeBoundaries"
+    },
+    "evaluationPolicy": {
+      "$ref": "#/$defs/evaluationPolicy"
+    },
+    "rollbackAuthority": {
+      "$ref": "#/$defs/rollbackAuthority"
+    },
+    "evaluationBindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evaluationBinding"
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/provider"
+      }
+    },
+    "roleProfiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/roleProfile"
+      }
+    }
+  },
+  "$defs": {
+    "versionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractVersion",
+        "schemaVersion",
+        "lifecycleState",
+        "disposition"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lifecycleState": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "superseded",
+            "current"
+          ]
+        }
+      }
     },
     "authoritativeCutoff": {
       "type": "object",
@@ -52,13 +130,16 @@
       ],
       "properties": {
         "authorityRef": {
-          "const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json#/cutoff"
+          "type": "string",
+          "minLength": 1
         },
         "localTime": {
-          "const": "2026-07-10T10:00:00+09:00"
+          "type": "string",
+          "format": "date-time"
         },
         "utc": {
-          "const": "2026-07-10T01:00:00Z"
+          "type": "string",
+          "format": "date-time"
         },
         "timezone": {
           "const": "Asia/Seoul"
@@ -70,6 +151,8 @@
       "additionalProperties": false,
       "required": [
         "providerRuntimeEvidenceAuthority",
+        "providerEvidenceGranularity",
+        "roleSpecificRuntimeEvidence",
         "harnessObservationRef",
         "harnessObservationUse",
         "harnessProviderModelAuthority"
@@ -78,73 +161,49 @@
         "providerRuntimeEvidenceAuthority": {
           "const": true
         },
+        "providerEvidenceGranularity": {
+          "const": "two-role-class-candidates-per-provider"
+        },
+        "roleSpecificRuntimeEvidence": {
+          "const": "DEFER"
+        },
         "harnessObservationRef": {
-          "const": "docs/00.agent-governance/contracts/harness-contract.json#/sourceObservationCutoff"
+          "type": "string",
+          "minLength": 1
         },
         "harnessObservationUse": {
-          "enum": [
-            "repository-observation-only",
-            "provider-model-authority"
-          ]
+          "const": "repository-observation-only"
         },
         "harnessProviderModelAuthority": {
-          "type": "boolean"
+          "const": false
         }
       }
     },
     "runtimeBoundaries": {
-      "$ref": "#/$defs/runtimeVerdicts"
-    },
-    "evaluationPolicy": {
-      "$ref": "#/$defs/evaluationPolicy"
-    },
-    "providers": {
-      "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
-      "items": {
-        "$ref": "#/$defs/provider"
-      }
-    },
-    "roleProfiles": {
-      "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
-      "items": {
-        "$ref": "#/$defs/roleProfile"
-      }
-    }
-  },
-  "$defs": {
-    "runtimeVerdicts": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "modelResolution",
         "authentication",
+        "hostedCI",
+        "remoteExecution",
         "liveExecution"
       ],
       "properties": {
         "modelResolution": {
-          "enum": [
-            "PASS",
-            "FAIL",
-            "DEFER"
-          ]
+          "const": "DEFER"
         },
         "authentication": {
-          "enum": [
-            "PASS",
-            "FAIL",
-            "DEFER"
-          ]
+          "const": "DEFER"
+        },
+        "hostedCI": {
+          "const": "DEFER"
+        },
+        "remoteExecution": {
+          "const": "DEFER"
         },
         "liveExecution": {
-          "enum": [
-            "PASS",
-            "FAIL",
-            "DEFER"
-          ]
+          "const": "DEFER"
         }
       }
     },
@@ -160,21 +219,21 @@
       "properties": {
         "qualityMinimum": {
           "type": "number",
-          "exclusiveMinimum": 0,
+          "minimum": 0,
           "maximum": 1
         },
         "safetyMinimum": {
           "type": "number",
-          "exclusiveMinimum": 0,
+          "minimum": 0,
           "maximum": 1
         },
         "costMaximumUsd": {
           "type": "number",
-          "exclusiveMinimum": 0
+          "minimum": 0
         },
         "latencyMaximumMs": {
           "type": "integer",
-          "exclusiveMinimum": 0
+          "minimum": 1
         }
       }
     },
@@ -187,21 +246,19 @@
         "priorityOrder",
         "thresholds",
         "promotionRequirements",
-        "fallback",
-        "rollback"
+        "validatorPassMeaning",
+        "unobservedMetricPolicy"
       ],
       "properties": {
         "policyId": {
-          "const": "quality-safety-before-cost-latency-v1"
+          "type": "string",
+          "minLength": 1
         },
         "sameSuiteRequired": {
           "const": true
         },
         "priorityOrder": {
           "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
-          "uniqueItems": true,
           "items": {
             "enum": [
               "quality",
@@ -216,87 +273,192 @@
         },
         "promotionRequirements": {
           "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
-          "uniqueItems": true,
           "items": {
-            "enum": [
-              "canary-PASS",
-              "same-suite-baseline-PASS",
-              "quality-threshold-PASS",
-              "safety-threshold-PASS"
-            ]
+            "type": "string",
+            "minLength": 1
           }
         },
-        "fallback": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "action",
-            "silentFallbackAllowed"
-          ],
-          "properties": {
-            "action": {
-              "enum": [
-                "retain-incumbent",
-                "fail-closed"
-              ]
-            },
-            "silentFallbackAllowed": {
-              "type": "boolean"
-            }
-          }
+        "validatorPassMeaning": {
+          "const": "mapping-readiness-only"
         },
-        "rollback": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "trigger",
-            "action"
-          ],
-          "properties": {
-            "trigger": {
-              "const": "quality-or-safety-regression"
-            },
-            "action": {
-              "enum": [
-                "restore-incumbent",
-                "continue-candidate"
-              ]
-            }
-          }
+        "unobservedMetricPolicy": {
+          "const": "remain-DEFER-never-synthesize"
         }
       }
     },
-    "candidateModel": {
+    "rollbackAuthority": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "modelId",
-        "lifecycle",
-        "candidateOnly",
+        "evaluationRecordsRef",
+        "admissionCandidatesRef",
+        "verifiedIncumbentRef",
+        "state",
+        "executionEvidence"
+      ],
+      "properties": {
+        "evaluationRecordsRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "admissionCandidatesRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verifiedIncumbentRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "const": "armed-not-executed"
+        },
+        "executionEvidence": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "evaluationBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleId",
+        "suiteId",
+        "suiteVersion",
+        "corpusManifestId",
+        "corpusManifestVersion",
+        "corpusManifestDigest",
+        "fixtureManifestDigest",
+        "graderVersion",
+        "rubricVersion",
+        "baselineRef",
+        "adjudicatorRef",
+        "adjudicatorId"
+      ],
+      "properties": {
+        "roleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
+        "suiteId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suiteVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpusManifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpusManifestVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpusManifestDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "fixtureManifestDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "graderVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rubricVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baselineRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adjudicatorRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adjudicatorId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "roleClassCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roleClass",
+        "candidateModel",
+        "sourceIds",
+        "sourceReasoningCandidate",
+        "reasoningSupport",
+        "providerEvidenceRef",
+        "candidateLifecycle",
+        "cutoffConfidence",
+        "mappingReadiness",
         "runtimeResolution"
       ],
       "properties": {
-        "modelId": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80
-        },
-        "lifecycle": {
+        "roleClass": {
           "enum": [
-            "repo-label",
-            "stable",
-            "preview"
+            "planning-supervisor",
+            "worker-subagent"
           ]
         },
-        "candidateOnly": {
-          "const": true
+        "candidateModel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sourceReasoningCandidate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoningSupport": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerEvidenceRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateLifecycle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoffConfidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mappingReadiness": {
+          "enum": [
+            "PASS",
+            "DEFER"
+          ]
         },
         "runtimeResolution": {
           "enum": [
             "PASS",
-            "FAIL",
             "DEFER"
           ]
         }
@@ -312,7 +474,7 @@
         "runtimeInterface",
         "modelIdentifierPlane",
         "apiVsCliBoundary",
-        "candidateModels"
+        "roleClassCandidates"
       ],
       "properties": {
         "providerId": {
@@ -329,54 +491,114 @@
         },
         "trackedSurface": {
           "type": "string",
-          "pattern": "^\\.[a-z]+/agents$"
+          "minLength": 1
         },
         "runtimeInterface": {
-          "enum": [
-            "repo-static",
-            "claude-code-cli",
-            "codex-cli",
-            "gemini-cli"
-          ]
+          "type": "string",
+          "minLength": 1
         },
         "modelIdentifierPlane": {
-          "enum": [
-            "local-repository-label",
-            "claude-code-cli-alias",
-            "codex-cli-model-id",
-            "gemini-api-id-candidate-for-cli",
-            "gemini-cli-alias"
-          ]
+          "type": "string",
+          "minLength": 1
         },
         "apiVsCliBoundary": {
           "type": "string",
-          "minLength": 16,
-          "maxLength": 160
+          "minLength": 1
         },
-        "candidateModels": {
+        "roleClassCandidates": {
           "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/candidateModel"
+            "$ref": "#/$defs/roleClassCandidate"
           }
         }
       }
     },
-    "evidenceVerdict": {
+    "tupleEvaluation": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "ref",
-        "verdict"
+        "bindingRef",
+        "baselineMetricsDigest",
+        "candidateMetricsDigest",
+        "thresholdResult",
+        "adjudicatorReadiness",
+        "evaluationDisposition"
       ],
       "properties": {
-        "ref": {
+        "bindingRef": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+          "minLength": 1
         },
-        "verdict": {
+        "baselineMetricsDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateMetricsDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "thresholdResult": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "adjudicatorReadiness": {
+          "enum": [
+            "PASS",
+            "DEFER"
+          ]
+        },
+        "evaluationDisposition": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        }
+      }
+    },
+    "decisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mappingReadiness",
+        "fitness",
+        "promotion",
+        "canary",
+        "runtime"
+      ],
+      "properties": {
+        "mappingReadiness": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "fitness": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "promotion": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "canary": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "DEFER"
+          ]
+        },
+        "runtime": {
           "enum": [
             "PASS",
             "FAIL",
@@ -389,22 +611,51 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "roleId",
         "providerId",
-        "modelCandidate",
-        "reasoningEffort",
-        "configSource",
-        "evidenceClass",
-        "state",
-        "promotionState",
-        "canary",
-        "sameSuiteBaseline",
-        "policyRef",
-        "runtime",
-        "fallback",
-        "decision",
-        "rollback"
+        "roleClass",
+        "capabilityTier",
+        "riskTier",
+        "incumbentModel",
+        "configuredValue",
+        "configuredReasoning",
+        "observedValue",
+        "candidateModel",
+        "reasoningCandidate",
+        "reasoningSupport",
+        "sourceIds",
+        "cutoffConfidence",
+        "providerEvidenceRef",
+        "configPath",
+        "evaluation",
+        "fallbackPolicy",
+        "fallbackTarget",
+        "silentFallbackAllowed",
+        "rollbackRef",
+        "rollbackState",
+        "rollbackExecutionEvidence",
+        "limitation",
+        "retryTrigger",
+        "mappingRationale",
+        "decisions"
       ],
       "properties": {
+        "roleId": {
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
+        },
         "providerId": {
           "enum": [
             "local",
@@ -413,68 +664,111 @@
             "gemini"
           ]
         },
-        "modelCandidate": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80
-        },
-        "reasoningEffort": {
+        "roleClass": {
           "enum": [
-            "medium",
+            "planning-supervisor",
+            "worker-subagent"
+          ]
+        },
+        "capabilityTier": {
+          "enum": [
+            "top",
+            "worker"
+          ]
+        },
+        "riskTier": {
+          "enum": [
             "high",
-            "xhigh"
+            "standard"
           ]
         },
-        "configSource": {
+        "incumbentModel": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 220
+          "minLength": 1
         },
-        "evidenceClass": {
-          "const": "repo-static"
+        "configuredValue": {
+          "type": "string",
+          "minLength": 1
         },
-        "state": {
-          "enum": [
-            "pending",
-            "evaluated"
-          ]
+        "configuredReasoning": {
+          "type": "string",
+          "minLength": 1
         },
-        "promotionState": {
-          "enum": [
-            "candidate-only",
-            "current"
-          ]
+        "observedValue": {
+          "type": "string",
+          "minLength": 1
         },
-        "canary": {
-          "$ref": "#/$defs/evidenceVerdict"
+        "candidateModel": {
+          "type": "string",
+          "minLength": 1
         },
-        "sameSuiteBaseline": {
-          "$ref": "#/$defs/evidenceVerdict"
+        "reasoningCandidate": {
+          "type": "string",
+          "minLength": 1
         },
-        "policyRef": {
-          "const": "#/evaluationPolicy"
+        "reasoningSupport": {
+          "type": "string",
+          "minLength": 1
         },
-        "runtime": {
-          "$ref": "#/$defs/runtimeVerdicts"
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
-        "fallback": {
-          "enum": [
-            "retain-incumbent",
-            "fail-closed"
-          ]
+        "cutoffConfidence": {
+          "type": "string",
+          "minLength": 1
         },
-        "decision": {
-          "enum": [
-            "PASS",
-            "FAIL",
-            "DEFER"
-          ]
+        "providerEvidenceRef": {
+          "type": "string",
+          "minLength": 1
         },
-        "rollback": {
-          "enum": [
-            "pending",
-            "restore-incumbent"
-          ]
+        "configPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluation": {
+          "$ref": "#/$defs/tupleEvaluation"
+        },
+        "fallbackPolicy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fallbackTarget": {
+          "type": "string",
+          "minLength": 1
+        },
+        "silentFallbackAllowed": {
+          "type": "boolean"
+        },
+        "rollbackRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rollbackState": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rollbackExecutionEvidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryTrigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mappingRationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisions": {
+          "$ref": "#/$defs/decisions"
         }
       }
     },
@@ -484,13 +778,25 @@
       "required": [
         "roleId",
         "capabilityTier",
-        "reasoningProfile",
+        "riskTier",
         "providerTuples"
       ],
       "properties": {
         "roleId": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9-]*$"
+          "enum": [
+            "supervisor",
+            "code-reviewer",
+            "doc-writer",
+            "gitops-reviewer",
+            "incident-responder",
+            "k8s-implementer",
+            "network-reviewer",
+            "observability-reviewer",
+            "security-auditor",
+            "wiki-curator",
+            "docs-researcher",
+            "quality-engineer"
+          ]
         },
         "capabilityTier": {
           "enum": [
@@ -498,17 +804,14 @@
             "worker"
           ]
         },
-        "reasoningProfile": {
+        "riskTier": {
           "enum": [
-            "medium",
             "high",
-            "xhigh"
+            "standard"
           ]
         },
         "providerTuples": {
           "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/providerTuple"
           }

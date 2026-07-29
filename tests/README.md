@@ -148,8 +148,8 @@ live readiness.
 | Agent roster admission repository check | `python3 scripts/validate-agent-roster-admission.py --root .` | Repo-static `state=repository-static-projected verdict=DEFER`, current `12/4/48`, achieved target mirror `12/4/48`; evaluation-backed final admission and provider runtime/hosted CI/remote/live promotion remain deferred |
 | Agent evaluation fixture | `python3 scripts/validate-agent-evaluations.py --self-test`; `python3 -m unittest tests/test_validate_agent_evaluations.py` | Exact 60-case closed mutation matrix plus thirty-three focused tests for exact harness suite/version binding, twelve role suites × four classes의 48 role-specific executable synthetic scenarios, stable identity/digest, generic-placeholder rejection, twelve adjudication-readiness records, roster-admission candidate/source digest에 직접 결합된 two rollback records, nine high-risk independent reviews, four promotion blockers, redacted data, four memory boundaries, raw root와 five governed inputs의 fail-closed symlink/non-regular/path-escape/sensitive-content/non-disclosing read boundaries |
 | Agent evaluation repository check | `python3 scripts/validate-agent-evaluations.py --root .` | Repo-static `roles=12 fixtureClasses=4 corpusRecords=48 highRiskRoles=9 adjudicationRecords=12 rollbackRecords=2 promotionBlocks=4 deferredEvidence=9`; readiness review alone is `PASS`, while execution, runtime, provider resolution, authentication, live action, evaluation/admission/model decisions remain `DEFER` |
-| Agent model-fitness fixture | `python3 scripts/validate-agent-model-fitness.py --self-test`; `python3 -m unittest tests/test_validate_agent_model_fitness.py` | Exact 16-case closed mutation matrix plus eighteen focused tests for authoritative cutoff, harness observation separation, local/Claude/Codex/Gemini API/CLI boundaries, candidate-only Gemini provenance, 48 provider tuples, same-suite baseline, quality/safety priority, fallback, no promotion preclaim, and fail-closed root/input symlink, intermediate-path, non-regular, containment, and non-disclosing CLI boundaries |
-| Agent model-fitness repository check | `python3 scripts/validate-agent-model-fitness.py --root .` | Repo-static `roles=12 providers=4 tuples=48 pending=48 deferred=48`; repository labels and local executable observations do not prove provider model resolution |
+| Agent model-fitness fixture | `python3 scripts/validate-agent-model-fitness.py --self-test`; `python3 -m unittest tests/test_validate_agent_model_fitness.py` | Exact 33-case closed mutation matrix plus 28 focused tests for authoritative cutoff, harness observation separation, tracked incumbent values, checked Spec 042 validator import, exact ten-source ledger and `publishedAtUtc` cutoff-day UTC semantics, provider source ownership/classification/confidence/date binding, exact quality/safety/cost/latency thresholds, checked AREA-003 validator import and nested corpus/input/fixture-manifest digest validation, suite/adjudication/rollback binding, 48 provider tuples, fallback, decision-plane separation, and fail-closed root/input symlink, intermediate-path, non-regular, containment, semantic-drift, and non-disclosing CLI boundaries |
+| Agent model-fitness repository check | `python3 scripts/validate-agent-model-fitness.py --root .` | Repository-static `roles=12 providers=4 tuples=48 mappingReady=21 mappingDeferred=27 fitnessDeferred=48 thresholdDeferred=48 promotionDeferred=48 canaryDeferred=48 runtimeDeferred=48`; local 12 and fixed-cutoff Claude high-risk 9 mappings are ready, while current-only Claude/Codex and mixed/unresolved Gemini mappings remain deferred. No result proves model execution, threshold fitness, promotion, provider runtime resolution, authentication, hosted CI, remote, or live evidence |
 | Agent loop lifecycle regression | `python3 -m unittest tests.test_validate_agent_loop_lifecycle`; `python3 scripts/validate-agent-loop-lifecycle.py --self-test`; `python3 scripts/validate-agent-loop-lifecycle.py --root .` | Focused contract, destination-ID/order/owner-reference, review, and raw-promotion mutations prove the four memory classes, atomic/redacted synthetic checkpoint boundary, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five bounded reviewed feedback destinations. PASS does not read or write ignored checkpoints or establish provider/runtime/CI/remote/live/actual checkpoint execution. |
 | Agent checkpoint lifecycle regression | `python3 scripts/validate-agent-checkpoint.py --root . --self-test` | Closed checkpoint mutations validate atomic/redacted synthetic checkpoint shape, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, and handoff. Its repo-static PASS is not provider discovery, hook delivery, permission, model, authenticated, hosted-CI, remote, credential-bearing, live, or actual checkpoint-execution evidence. |
 | Provider evidence contract fixture | `python3 scripts/validate-agent-provider-evidence.py --self-test`; `python3 -m unittest tests.test_validate_agent_provider_config tests.test_validate_agent_provider_canaries` | Seventeen focused tests plus two closed mutation sets for duplicate keys, cutoff confidence, local/prior observation provenance, current Gemini repository-static surface with absent native discovery, model/fallback/fitness gates, MCP role bounds, secret-like values, redaction, non-transitive verdicts, and no-mutation canaries |
@@ -397,16 +397,24 @@ adapter PASS does not prove provider runtime consumption.
   contract/schema/fixture/harness/roster-admission 입력과 raw repository
   root의 symlink, non-regular node, 중간 경로 symlink, `..` 탈출을 읽기
   전에 `AREA-EVAL-INPUT`으로 비노출 차단한다.
-- `tests/fixtures/agent-model-fitness.json`은 16개 closed mutation과
-  열두 role × 네 provider의 48 tuple, same-suite baseline, fallback,
+- `tests/fixtures/agent-model-fitness.json`은 33개 closed mutation과
+  열두 role × 네 provider의 48 tuple, AREA-003 same-suite/corpus/
+  adjudicator/rollback binding, configured incumbent, risk rationale,
+  fail-closed fallback, exact quality/safety/cost/latency threshold object,
   authoritative cutoff를 고정한다.
-  `tests/test_validate_agent_model_fitness.py`는
-  `2026-07-10 10:00 Asia/Seoul` provider/model authority와 이후 harness
-  repository-observation provenance를 분리하고, API/CLI identifier 혼합과
-  pending/deferred decision의 조기 승격을 거부한다. Model contract/schema/
-  fixture와 provider-evidence/harness 의존 입력 모두 root·중간·최종
-  symlink, non-regular node, containment 탈출을 `AREA-FIT-INPUT`으로
-  비노출 차단한다.
+  `tests/test_validate_agent_model_fitness.py`의 28 focused tests는
+  `2026-07-10 10:00 Asia/Seoul` provider/model authority와 harness의
+  repository-observation provenance를 분리하고, checked Spec 042 validator의
+  exact source ID set·`publishedAtUtc` cutoff-day UTC semantics와 source
+  ownership·classification·confidence·date basis에서 파생한 mapping readiness를
+  임의 승격하거나 observed fitness·threshold·promotion·canary·runtime
+  `PASS`로 전이하는 조기 승격을 거부한다. Model contract/schema/fixture,
+  provider-evidence와 checked validator/schema, checked AREA-003
+  validator/schema/evaluation/admission,
+  harness 및 48 adapter 입력은 root·중간·최종 symlink, non-regular node,
+  containment 탈출, unknown/cross-provider source-ID, stale scenario/input/
+  fixture/global digest와 semantic rollback/suite drift를 `AREA-FIT-*`
+  규칙으로 비노출 차단한다.
 - `tests/fixtures/agent-provider-runtime-evidence.json`은 provider config와
   config에는 정확한 13개, canary에는 정확한 8개 mutation과 기대
   `PNME-*` rule을 고정한다.
