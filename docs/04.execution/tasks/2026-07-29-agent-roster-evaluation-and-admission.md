@@ -3,7 +3,7 @@ title: 'Task: Agent Roster Evaluation and Admission'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-07-29
+updated: 2026-07-30
 ---
 
 # Task: Agent Roster Evaluation and Admission
@@ -37,7 +37,8 @@ AREA-003 owns the evidence required for final roster admission.
   `0129daf7d44c9308bcad63d4966e11ffa98d05af`; AREA-002 projection
   `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` and admission-boundary
   remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; AREA-003 evaluation
-  readiness `3bd5759029cc49742c12a811f8751f1609c4f330`
+  readiness `3bd5759029cc49742c12a811f8751f1609c4f330`; AREA-004 model-fitness
+  readiness `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`
 
 ## Task Table
 
@@ -47,7 +48,7 @@ AREA-003 owns the evidence required for final roster admission.
 | AREA-001 | VAL-AREA-001..008 | Implement closed admission, evaluation, and model-fitness schemas, validators, and synthetic negative fixtures before promotion | platform | Done | Closed gates preserve current `10/3/30`, target-only `12/4/48`, and all promotion/runtime lanes as `DEFER` | `0129daf7d44c9308bcad63d4966e11ffa98d05af`; focused `119`, aggregate/all-files PASS |
 | AREA-002 | VAL-AREA-001..004 | Project `docs-researcher` and `quality-engineer` with the exact 12/4/48 repository-static roster and native projections | platform | Done | Exact tracked projection is committed with admission `DEFER`; final-admission evidence remains owned by AREA-003 | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6`; boundary remediation `1d03b0b44350b26cca1f7d91ebaf8f3c66b4ce1e`; focused, aggregate, all-files, and independent review PASS |
 | AREA-003 | VAL-AREA-005, VAL-AREA-006 | Implement versioned four-class role evaluation coverage, independent adjudication, rollback records, and final admission decision | platform | Done | Repository-static evaluation readiness is complete; readiness is `PASS`, while observed evaluation and final admission remain `DEFER` | `3bd5759029cc49742c12a811f8751f1609c4f330`; 48 role-specific records, 12 adjudication-readiness records, 2 source-bound rollback records, explicit final-DEFER decision, focused/aggregate/all-files/review PASS |
-| AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Queued | Not executed | Model-fitness map, baseline/threshold/fallback records, validator, fixtures, and provider evidence links |
+| AREA-004 | VAL-AREA-006..008 | Reconcile fixed cutoff and implement risk-based provider candidate model/effort fitness without runtime preclaim | platform | Done | Repository-static mapping readiness is complete: `PASS` 21 and `DEFER` 27; all 48 fitness, threshold, promotion, canary, and runtime decisions remain `DEFER` | `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`; contract `1.1.0`, schema `2`, `repository-static-fitness-ready`; focused `28`, self-test `33`, production, aggregate, all-files, and independent review PASS |
 | AREA-005 | VAL-AREA-001..008 | Reconcile catalogs, provider notes, QA, and closure | platform | Queued | Not executed | aggregate/all-files/review/closure evidence |
 
 ## Approval and Safety Boundaries
@@ -115,10 +116,33 @@ approved with zero Critical or Important findings. Quality review's two
 Important findings—symlink-root resolution and unbound rollback references—
 were corrected and independently re-reviewed as addressed.
 
+AREA-004 commit `258955b3` completes the closed provider/model mapping-readiness
+contract without promoting a candidate or preclaiming model execution.
+Contract version `1.1.0`, schema version `2`, and lifecycle state
+`repository-static-fitness-ready` cover exactly 12 roles, 4 providers, and 48
+role/provider tuples. Mapping readiness is `PASS` for 21 tuples: all 12 local
+tuples and the 9 cutoff-applicable Claude high-risk tuples. It remains `DEFER`
+for 27 tuples: 3 current-only Claude tuples, all 12 Codex tuples, and all 12
+mixed/unresolved Gemini tuples. Every configured incumbent remains unchanged.
+
+The fixed thresholds are quality `0.9`, safety `1`, cost `1` USD, and latency
+`120000` ms. Observed fitness, threshold, promotion, canary, and runtime
+decisions remain `DEFER` for all 48 tuples. Provider runtime and
+authentication, hosted CI, remote/live execution, and model resolution remain
+`DEFER`; every tuple rollback state is `armed-not-executed` and its execution
+evidence is `DEFER`.
+Focused tests passed `28/28`, the closed self-test passed `33/33`, and
+production reported `roles=12`, `providers=4`, `tuples=48`,
+`mappingReady=21`, `mappingDeferred=27`, `fitnessDeferred=48`,
+`thresholdDeferred=48`, `promotionDeferred=48`, `canaryDeferred=48`, and
+`runtimeDeferred=48`. Staged lifecycle, strict registry over `463` tracked
+paths, repository aggregate, all-files pre-commit, and diff checks passed.
+Final independent review reported zero Critical and zero Important findings.
+
 The provider/model cutoff remains `2026-07-10 10:00 Asia/Seoul`; runtime,
-provider discovery/authentication, model resolution, agent evaluation, model
-fitness, hosted CI, remote, live, and ignored checkpoint execution remain
-`DEFER`.
+provider discovery/authentication, model resolution, agent evaluation,
+observed model fitness and promotion, hosted CI, remote, live, and ignored
+checkpoint execution remain `DEFER`.
 
 ## Traceability
 
@@ -130,5 +154,5 @@ fitness, hosted CI, remote, live, and ignored checkpoint execution remain
 | [AREA-001](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md#success-criteria--verification-plan) | Done | Closed admission/evaluation/model-fitness gates and postflight evidence in `0129daf7`; requirements `COMPLIANT`, security/model-path review `APPROVED`. |
 | N/A — AREA-002 shares the Plan source above | Done | Commits `138ce6ac` and `1d03b0b4` project exact 12/4/48 repository-static inventory while preserving admission `DEFER`; focused, aggregate, all-files, requirements, and quality review gates passed. |
 | N/A — AREA-003 shares the Plan source above | Done | Commit `3bd57590` establishes `repository-static-evaluation-ready` with 48 corpus records, 12 readiness adjudications, 2 source-bound rollback records, and explicit final admission `DEFER`; focused, aggregate, all-files, Spec, and quality review gates passed. |
-| N/A — AREA-004 shares the Plan source above | Not executed | Pending fixed-cutoff candidate model/effort fitness evidence; runtime resolution remains `DEFER`. |
+| N/A — AREA-004 shares the Plan source above | Done | Commit `258955b3` establishes `repository-static-fitness-ready` for 12 roles, 4 providers, and 48 tuples; mapping is `PASS` 21 / `DEFER` 27, configured incumbents are retained, and all 48 fitness, threshold, promotion, canary, and runtime decisions remain `DEFER`; focused, lifecycle, strict-registry, aggregate, all-files, diff, and independent-review gates passed without provider/model execution; rollback state remains `armed-not-executed` with execution evidence `DEFER`. |
 | N/A — AREA-005 shares the Plan source above | Not executed | Pending QA and independent review. |

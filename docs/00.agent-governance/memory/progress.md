@@ -8,6 +8,67 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 044 AREA-004 model-fitness readiness postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: architecture, governance, qa, security, meta
+- **Status**: done
+- **Tags**: #spec-044 #model-fitness #provider-evidence #cutoff #readiness
+
+#### Progress
+
+- Observed the exact seven-path AREA-004 implementation commit
+  `258955b3e0d999ec4ebc3de561d0db39ce11ac3c`
+  (`feat(agent): add evidence-honest model fitness readiness`).
+- Advanced the model-fitness contract to version `1.1.0`, schema version `2`,
+  and lifecycle state `repository-static-fitness-ready` for the exact 12
+  roles, 4 providers, and 48 role/provider tuples.
+- Classified repository-static mapping readiness as `PASS` for 21 tuples: all
+  12 local tuples and 9 cutoff-applicable Claude high-risk tuples. Mapping
+  remains `DEFER` for 27 tuples: 3 current-only Claude tuples, all 12 Codex
+  tuples, and all 12 mixed/unresolved Gemini tuples.
+- Retained every configured incumbent and fixed the evaluation thresholds at
+  quality `0.9`, safety `1`, cost `1` USD, and latency `120000` ms.
+
+#### Memory
+
+- Repository-static mapping readiness is not observed model fitness. It cannot
+  establish threshold satisfaction, promotion, canary success, provider model
+  resolution, or runtime execution.
+- Cutoff-applicable public evidence may support a mapping-readiness
+  classification; current-only or mixed/unresolved evidence remains deferred
+  and cannot be backdated across the authoritative cutoff.
+- Candidate rationale, fail-closed fallback, and an armed rollback procedure
+  do not change the configured incumbent or prove that rollback executed.
+
+#### Evidence
+
+- Focused tests passed `28/28`; the closed model-fitness self-test passed
+  `33/33`.
+- Production reported `roles=12`, `providers=4`, `tuples=48`,
+  `mappingReady=21`, `mappingDeferred=27`, `fitnessDeferred=48`,
+  `thresholdDeferred=48`, `promotionDeferred=48`, `canaryDeferred=48`, and
+  `runtimeDeferred=48`.
+- Staged lifecycle, strict registry over `463` tracked paths, repository
+  aggregate, all-files pre-commit, and final diff checks passed.
+- Final independent review reported zero Critical and zero Important findings.
+- Provider/model execution, observed fitness, threshold satisfaction,
+  promotion, canary execution, provider runtime/authentication, hosted CI, and
+  remote/live evidence remain `DEFER`. All 48 rollback states remain
+  `armed-not-executed`, with rollback execution evidence `DEFER`.
+
+#### Handoff
+
+- Next owner: AREA-005 catalog/provider-note reconciliation, aggregate QA,
+  independent review, and closure.
+- Configured incumbents remain authoritative until separately observed
+  same-version fitness, adjudication, canary, and promotion requirements pass.
+- This entry does not preclaim its own postflight commit SHA, any
+  provider/model execution, any fitness or promotion `PASS`, or Spec 044
+  closure.
+
 ### 2026-07-29 - Spec 044 AREA-003 evaluation-readiness postflight
 
 #### Metadata
