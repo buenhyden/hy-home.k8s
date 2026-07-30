@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import re
+import stat
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -165,12 +167,341 @@ def decode_json_text(text: str, source: str) -> Any:
         fail("PNME-JSON", f"{source}: {exc}", exit_code=2)
 
 
-def load_json(root: Path, relative: PurePosixPath) -> Any:
-    path = root / Path(relative)
+DIRECTORY_OPEN_FLAGS = (
+    os.O_RDONLY
+    | getattr(os, "O_CLOEXEC", 0)
+    | getattr(os, "O_DIRECTORY", 0)
+    | getattr(os, "O_NOFOLLOW", 0)
+)
+REGULAR_FILE_OPEN_FLAGS = (
+    os.O_RDONLY
+    | getattr(os, "O_CLOEXEC", 0)
+    | getattr(os, "O_NOFOLLOW", 0)
+    | getattr(os, "O_NONBLOCK", 0)
+)
+
+
+def _close_descriptor(descriptor: int) -> None:
+    if descriptor < 0:
+        return
     try:
-        return decode_json_text(path.read_text(encoding="utf-8"), str(relative))
-    except OSError as exc:
-        fail("PNME-MISSING-FILE", f"{relative}: {exc}")
+        os.close(descriptor)
+    except OSError:
+        pass
+
+
+def _same_identity(checked: os.stat_result, opened: os.stat_result) -> bool:
+    return (checked.st_dev, checked.st_ino) == (
+        opened.st_dev,
+        opened.st_ino,
+    )
+
+
+def _open_repository_root(root: Path) -> tuple[Path, int]:
+    raw_root = Path(root)
+    if any(part == ".." for part in raw_root.parts):
+        fail("PNME-INPUT", "repository root is invalid", exit_code=2)
+    try:
+        absolute_root = Path(os.path.abspath(os.fspath(raw_root)))
+    except (OSError, TypeError, ValueError):
+        fail("PNME-INPUT", "repository root is unavailable", exit_code=2)
+
+    root_descriptor = -1
+    next_descriptor = -1
+    try:
+        anchor = Path(absolute_root.anchor)
+        try:
+            checked = os.lstat(anchor)
+        except OSError:
+            fail("PNME-INPUT", "repository root is unavailable", exit_code=2)
+        if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(checked.st_mode):
+            fail(
+                "PNME-INPUT",
+                "repository root is not a real directory",
+                exit_code=2,
+            )
+        try:
+            root_descriptor = os.open(anchor, DIRECTORY_OPEN_FLAGS)
+            opened = os.fstat(root_descriptor)
+        except OSError:
+            fail("PNME-INPUT", "repository root is unavailable", exit_code=2)
+        if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+            checked,
+            opened,
+        ):
+            fail(
+                "PNME-INPUT",
+                "repository root identity changed",
+                exit_code=2,
+            )
+
+        for part in absolute_root.parts[1:]:
+            try:
+                checked = os.lstat(part, dir_fd=root_descriptor)
+            except OSError:
+                fail(
+                    "PNME-INPUT",
+                    "repository root is unavailable",
+                    exit_code=2,
+                )
+            if stat.S_ISLNK(checked.st_mode):
+                fail(
+                    "PNME-INPUT",
+                    "repository root path contains a symlink",
+                    exit_code=2,
+                )
+            if not stat.S_ISDIR(checked.st_mode):
+                fail(
+                    "PNME-INPUT",
+                    "repository root is not a real directory",
+                    exit_code=2,
+                )
+            try:
+                next_descriptor = os.open(
+                    part,
+                    DIRECTORY_OPEN_FLAGS,
+                    dir_fd=root_descriptor,
+                )
+                opened = os.fstat(next_descriptor)
+            except OSError:
+                fail(
+                    "PNME-INPUT",
+                    "repository root is unavailable",
+                    exit_code=2,
+                )
+            if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+                checked,
+                opened,
+            ):
+                fail(
+                    "PNME-INPUT",
+                    "repository root identity changed",
+                    exit_code=2,
+                )
+            _close_descriptor(root_descriptor)
+            root_descriptor = next_descriptor
+            next_descriptor = -1
+
+        try:
+            real_root = Path(os.path.realpath(absolute_root, strict=True))
+        except (OSError, TypeError, ValueError):
+            fail("PNME-INPUT", "repository root is unavailable", exit_code=2)
+        if real_root != absolute_root:
+            fail(
+                "PNME-INPUT",
+                "repository root path is not real",
+                exit_code=2,
+            )
+        result_descriptor = root_descriptor
+        root_descriptor = -1
+        return absolute_root, result_descriptor
+    finally:
+        _close_descriptor(next_descriptor)
+        _close_descriptor(root_descriptor)
+
+
+def _resolve_repository_root(root: Path) -> Path:
+    absolute_root, descriptor = _open_repository_root(root)
+    _close_descriptor(descriptor)
+    return absolute_root
+
+
+def _canonical_relative_path(
+    relative: PurePosixPath | str,
+) -> PurePosixPath:
+    raw = os.fspath(relative)
+    path = PurePosixPath(raw)
+    if (
+        not raw
+        or path.is_absolute()
+        or raw != path.as_posix()
+        or "\\" in raw
+        or not path.parts
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        fail("PNME-INPUT", "governed input path is invalid", exit_code=2)
+    return path
+
+
+def _open_governed_node(
+    root: Path,
+    relative: PurePosixPath | str,
+    *,
+    expected_kind: str,
+) -> int | None:
+    if expected_kind not in {"file", "directory", "absent"}:
+        fail("PNME-INPUT", "governed input kind is invalid", exit_code=2)
+    canonical = _canonical_relative_path(relative)
+    _, parent_descriptor = _open_repository_root(root)
+    next_descriptor = -1
+    final_descriptor = -1
+    try:
+        for index, part in enumerate(canonical.parts):
+            final_component = index == len(canonical.parts) - 1
+            try:
+                checked = os.lstat(part, dir_fd=parent_descriptor)
+            except FileNotFoundError:
+                if expected_kind == "absent":
+                    return None
+                fail(
+                    "PNME-INPUT",
+                    "governed input is unavailable",
+                    exit_code=2,
+                )
+            except OSError:
+                fail(
+                    "PNME-INPUT",
+                    "governed input is unavailable",
+                    exit_code=2,
+                )
+
+            if not final_component:
+                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(
+                    checked.st_mode
+                ):
+                    fail(
+                        "PNME-INPUT",
+                        "governed input parent is not a real directory",
+                        exit_code=2,
+                    )
+                try:
+                    next_descriptor = os.open(
+                        part,
+                        DIRECTORY_OPEN_FLAGS,
+                        dir_fd=parent_descriptor,
+                    )
+                    opened = os.fstat(next_descriptor)
+                except FileNotFoundError:
+                    if expected_kind == "absent":
+                        return None
+                    fail(
+                        "PNME-INPUT",
+                        "governed input is unavailable",
+                        exit_code=2,
+                    )
+                except OSError:
+                    fail(
+                        "PNME-INPUT",
+                        "governed input is unavailable",
+                        exit_code=2,
+                    )
+                if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+                    checked,
+                    opened,
+                ):
+                    fail(
+                        "PNME-INPUT",
+                        "governed input parent identity changed",
+                        exit_code=2,
+                    )
+                _close_descriptor(parent_descriptor)
+                parent_descriptor = next_descriptor
+                next_descriptor = -1
+                continue
+
+            if expected_kind == "absent":
+                fail(
+                    "PNME-INPUT",
+                    "declared-absent input has an existing final node",
+                    exit_code=2,
+                )
+            if stat.S_ISLNK(checked.st_mode):
+                fail(
+                    "PNME-INPUT",
+                    "governed input final node is a symlink",
+                    exit_code=2,
+                )
+            if expected_kind == "file" and not stat.S_ISREG(checked.st_mode):
+                fail(
+                    "PNME-INPUT",
+                    "governed input final node is not a regular file",
+                    exit_code=2,
+                )
+            if expected_kind == "directory" and not stat.S_ISDIR(
+                checked.st_mode
+            ):
+                fail(
+                    "PNME-INPUT",
+                    "governed input final node is not a real directory",
+                    exit_code=2,
+                )
+            flags = (
+                REGULAR_FILE_OPEN_FLAGS
+                if expected_kind == "file"
+                else DIRECTORY_OPEN_FLAGS
+            )
+            try:
+                final_descriptor = os.open(
+                    part,
+                    flags,
+                    dir_fd=parent_descriptor,
+                )
+                opened = os.fstat(final_descriptor)
+            except OSError:
+                fail(
+                    "PNME-INPUT",
+                    "governed input is unavailable",
+                    exit_code=2,
+                )
+            expected_mode = (
+                stat.S_ISREG(opened.st_mode)
+                if expected_kind == "file"
+                else stat.S_ISDIR(opened.st_mode)
+            )
+            if not expected_mode or not _same_identity(checked, opened):
+                fail(
+                    "PNME-INPUT",
+                    "governed input final identity changed",
+                    exit_code=2,
+                )
+            result_descriptor = final_descriptor
+            final_descriptor = -1
+            return result_descriptor
+    finally:
+        _close_descriptor(final_descriptor)
+        _close_descriptor(next_descriptor)
+        _close_descriptor(parent_descriptor)
+
+    fail("PNME-INPUT", "governed input path is invalid", exit_code=2)
+
+
+def _inspect_governed_node(
+    root: Path,
+    relative: PurePosixPath | str,
+    *,
+    expected_kind: str,
+) -> None:
+    descriptor = _open_governed_node(
+        root,
+        relative,
+        expected_kind=expected_kind,
+    )
+    if descriptor is not None:
+        _close_descriptor(descriptor)
+
+
+def _read_regular_text(root: Path, relative: PurePosixPath | str) -> str:
+    descriptor = _open_governed_node(root, relative, expected_kind="file")
+    if descriptor is None:
+        fail("PNME-INPUT", "governed input is unavailable", exit_code=2)
+    try:
+        with os.fdopen(descriptor, "r", encoding="utf-8") as stream:
+            descriptor = -1
+            return stream.read()
+    except ProviderConfigError:
+        raise
+    except (OSError, UnicodeError):
+        fail(
+            "PNME-INPUT",
+            "governed input cannot be read as UTF-8",
+            exit_code=2,
+        )
+    finally:
+        _close_descriptor(descriptor)
+
+
+def load_json(root: Path, relative: PurePosixPath) -> Any:
+    return decode_json_text(_read_regular_text(root, relative), str(relative))
 
 
 def schema_errors(contract: Any, schema: Any) -> list[str]:
@@ -401,6 +732,11 @@ def validate_surface_parity(
                 "PNME-SURFACE-PARITY",
                 f"{provider_id} expected {expected}, got {actual}",
             )
+        if surface["state"] == "current" and surface["presence"] != "present":
+            fail(
+                "PNME-SURFACE-PARITY",
+                f"{provider_id} current surface must be declared present",
+            )
 
         project_paths = [
             (
@@ -418,30 +754,29 @@ def validate_surface_parity(
             )
 
         if check_paths:
-            surface_path = root / surface_path_root
-            if surface["presence"] == "present" and not surface_path.exists():
-                fail(
-                    "PNME-SURFACE-PARITY",
-                    f"{surface['pathRoot']} declared present but is absent",
-                )
-            if surface["presence"] == "absent" and surface_path.exists():
-                fail(
-                    "PNME-SURFACE-PARITY",
-                    f"{surface['pathRoot']} declared absent but exists",
-                )
+            _inspect_governed_node(
+                root,
+                surface_path_root,
+                expected_kind=(
+                    "directory"
+                    if surface["presence"] == "present"
+                    else "absent"
+                ),
+            )
 
             for item, relative_item_path in project_paths:
-                item_path = root / relative_item_path
-                if item["state"] == "current" and not item_path.exists():
-                    fail(
-                        "PNME-SURFACE-PARITY",
-                        f"current provider path missing: {item['path']}",
+                expected_kind = "absent"
+                if item["state"] == "current":
+                    expected_kind = (
+                        "directory"
+                        if item["kind"] == "role-directory"
+                        else "file"
                     )
-                if item["state"] in {"target-only", "absent"} and item_path.exists():
-                    fail(
-                        "PNME-SURFACE-PARITY",
-                        f"non-current provider path exists: {item['path']}",
-                    )
+                _inspect_governed_node(
+                    root,
+                    relative_item_path,
+                    expected_kind=expected_kind,
+                )
 
     if providers["local"]["trackedSurface"]["pathRoot"] != ".agents/agents":
         fail(
@@ -456,11 +791,11 @@ def validate_surface_parity(
     if (
         check_paths
         and providers["gemini"]["trackedSurface"]["state"] != "current"
-        and (root / ".gemini").exists()
     ):
-        fail(
-            "PNME-SURFACE-PARITY",
-            ".gemini exists before target admission",
+        _inspect_governed_node(
+            root,
+            PurePosixPath(".gemini"),
+            expected_kind="absent",
         )
     return harness
 
@@ -686,7 +1021,7 @@ def validate_contract(
     *,
     check_paths: bool = True,
 ) -> dict[str, int]:
-    root = Path(root).resolve()
+    root = _resolve_repository_root(root)
     if contract is None:
         contract = load_json(root, CONTRACT_PATH)
     validate_schema(root, contract)
@@ -783,7 +1118,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--root", default=".")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
-    root = Path(args.root).resolve()
+    root = Path(args.root)
     try:
         cases = validate_fixture(root) if args.self_test else 0
         counts = validate_contract(root)

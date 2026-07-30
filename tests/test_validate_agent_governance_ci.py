@@ -104,7 +104,7 @@ PROVIDER_CONFIG_COMMAND = (
     "python3 scripts/validate-agent-provider-config.py --root ."
 )
 PROVIDER_AGGREGATE_SHA256 = (
-    "aa2ca862734a48398f1ff5a5ef30a91636a40fc2f16bd867284af07968f892e8"
+    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"
 )
 PROVIDER_FOCUSED_VALIDATORS = [
     "validate-agent-provider-config.py",

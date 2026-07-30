@@ -8,6 +8,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -145,6 +146,43 @@ class ProviderCanaryContractTests(unittest.TestCase):
         self.assertIn(
             "[PASS] agent provider canary self-test passed", result.stdout
         )
+
+    def test_standalone_canary_preserves_a_symlink_root(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="provider-canary-symlink-"
+        ) as directory:
+            link = Path(directory) / "repository-link"
+            link.symlink_to(REPOSITORY_ROOT, target_is_directory=True)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--root",
+                    str(link),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("PNME-INPUT:", result.stderr)
+        self.assertNotIn(str(REPOSITORY_ROOT), result.stderr)
+
+    def test_standalone_canary_preserves_a_lexical_parent_escape(self) -> None:
+        lexical_root = REPOSITORY_ROOT / "docs" / ".."
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT_PATH),
+                "--root",
+                str(lexical_root),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("PNME-INPUT:", result.stderr)
 
 
 if __name__ == "__main__":

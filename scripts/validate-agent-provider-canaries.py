@@ -45,6 +45,13 @@ def fail(code: str, detail: str, *, exit_code: int = 1) -> NoReturn:
     raise ProviderCanaryError(code, detail, exit_code=exit_code)
 
 
+def _load_config_json(root: Path, relative: Any) -> Any:
+    try:
+        return CONFIG.load_json(root, relative)
+    except CONFIG.ProviderConfigError as exc:
+        fail(exc.code, exc.detail, exit_code=exc.exit_code)
+
+
 def _provider_lanes(contract: dict[str, Any]) -> dict[tuple[str, str], str]:
     return {
         (provider["id"], lane["id"]): lane["verdict"]
@@ -57,9 +64,9 @@ def validate_canaries(
     root: Path,
     contract: dict[str, Any] | None = None,
 ) -> dict[str, int]:
-    root = Path(root).resolve()
+    root = Path(root)
     if contract is None:
-        contract = CONFIG.load_json(root, CONFIG.CONTRACT_PATH)
+        contract = _load_config_json(root, CONFIG.CONTRACT_PATH)
 
     records = contract["canaryRecords"]
     record_ids = [record["id"] for record in records]
@@ -199,8 +206,8 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
 
 
 def validate_fixture(root: Path) -> int:
-    contract = CONFIG.load_json(root, CONFIG.CONTRACT_PATH)
-    fixture = CONFIG.load_json(root, CONFIG.FIXTURE_PATH)
+    contract = _load_config_json(root, CONFIG.CONTRACT_PATH)
+    fixture = _load_config_json(root, CONFIG.FIXTURE_PATH)
     cases = fixture["canaryMutations"]
     for case in cases:
         mutated = copy.deepcopy(contract)
@@ -225,7 +232,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--root", default=".")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
-    root = Path(args.root).resolve()
+    root = Path(args.root)
     try:
         cases = validate_fixture(root) if args.self_test else 0
         counts = validate_canaries(root)

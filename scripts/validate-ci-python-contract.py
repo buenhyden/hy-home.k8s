@@ -50,6 +50,19 @@ VALIDATION_JOBS = (
     "agent-governance-static",
     "manifest-static",
 )
+STABLE_RULE_IDS = (
+    "CI-PYTHON-INPUT",
+    "CI-PYTHON-PIN",
+    "CI-PYTHON-INVENTORY",
+    "CI-PYTHON-WORKFLOW",
+    "CI-PYTHON-VERSION",
+    "CI-PRECOMMIT-ACTION",
+    "CI-PRECOMMIT-ALL-FILES",
+    "CI-PRECOMMIT-HISTORY",
+    "CI-GITLEAKS-TOOL",
+    "CI-REPOSITORY-HISTORY",
+    "CI-AGENT-GOVERNANCE-CHECKOUT",
+)
 AGENT_GOVERNANCE_JOB = "agent-governance-static"
 INSTALL_COMMAND = (
     "python -m pip install --disable-pip-version-check "
@@ -135,18 +148,215 @@ DuplicateKeyLoader.add_constructor(
 )
 
 
+DIRECTORY_OPEN_FLAGS = (
+    os.O_RDONLY
+    | getattr(os, "O_CLOEXEC", 0)
+    | getattr(os, "O_DIRECTORY", 0)
+    | getattr(os, "O_NOFOLLOW", 0)
+)
+REGULAR_FILE_OPEN_FLAGS = (
+    os.O_RDONLY
+    | getattr(os, "O_CLOEXEC", 0)
+    | getattr(os, "O_NOFOLLOW", 0)
+    | getattr(os, "O_NONBLOCK", 0)
+)
+
+
+def _close_descriptor(descriptor: int) -> None:
+    if descriptor < 0:
+        return
+    try:
+        os.close(descriptor)
+    except OSError:
+        pass
+
+
+def _same_identity(checked: os.stat_result, opened: os.stat_result) -> bool:
+    return (checked.st_dev, checked.st_ino) == (
+        opened.st_dev,
+        opened.st_ino,
+    )
+
+
+def _open_repository_root(root: Path) -> tuple[Path, int]:
+    raw_root = Path(root)
+    if any(part == ".." for part in raw_root.parts):
+        fail("CI-PYTHON-INPUT", "repository root is invalid")
+    try:
+        absolute_root = Path(os.path.abspath(os.fspath(raw_root)))
+    except (OSError, TypeError, ValueError):
+        fail("CI-PYTHON-INPUT", "repository root is unavailable")
+
+    root_descriptor = -1
+    next_descriptor = -1
+    try:
+        anchor = Path(absolute_root.anchor)
+        try:
+            checked = os.lstat(anchor)
+        except OSError:
+            fail("CI-PYTHON-INPUT", "repository root is unavailable")
+        if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(checked.st_mode):
+            fail("CI-PYTHON-INPUT", "repository root is not a real directory")
+        try:
+            root_descriptor = os.open(anchor, DIRECTORY_OPEN_FLAGS)
+            opened = os.fstat(root_descriptor)
+        except OSError:
+            fail("CI-PYTHON-INPUT", "repository root is unavailable")
+        if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+            checked,
+            opened,
+        ):
+            fail("CI-PYTHON-INPUT", "repository root identity changed")
+
+        for part in absolute_root.parts[1:]:
+            try:
+                checked = os.lstat(part, dir_fd=root_descriptor)
+            except OSError:
+                fail("CI-PYTHON-INPUT", "repository root is unavailable")
+            if stat.S_ISLNK(checked.st_mode):
+                fail(
+                    "CI-PYTHON-INPUT",
+                    "repository root path contains a symlink",
+                )
+            if not stat.S_ISDIR(checked.st_mode):
+                fail(
+                    "CI-PYTHON-INPUT",
+                    "repository root is not a real directory",
+                )
+            try:
+                next_descriptor = os.open(
+                    part,
+                    DIRECTORY_OPEN_FLAGS,
+                    dir_fd=root_descriptor,
+                )
+                opened = os.fstat(next_descriptor)
+            except OSError:
+                fail("CI-PYTHON-INPUT", "repository root is unavailable")
+            if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+                checked,
+                opened,
+            ):
+                fail("CI-PYTHON-INPUT", "repository root identity changed")
+            _close_descriptor(root_descriptor)
+            root_descriptor = next_descriptor
+            next_descriptor = -1
+
+        try:
+            real_root = Path(os.path.realpath(absolute_root, strict=True))
+        except (OSError, TypeError, ValueError):
+            fail("CI-PYTHON-INPUT", "repository root is unavailable")
+        if real_root != absolute_root:
+            fail("CI-PYTHON-INPUT", "repository root path is not real")
+        result_descriptor = root_descriptor
+        root_descriptor = -1
+        return absolute_root, result_descriptor
+    finally:
+        _close_descriptor(next_descriptor)
+        _close_descriptor(root_descriptor)
+
+
+def _resolve_repository_root(root: Path) -> Path:
+    absolute_root, descriptor = _open_repository_root(root)
+    _close_descriptor(descriptor)
+    return absolute_root
+
+
+def _canonical_relative_path(relative: Path, rule_id: str) -> Path:
+    raw = os.fspath(relative)
+    normalized = Path(raw)
+    if (
+        not raw
+        or normalized.is_absolute()
+        or raw != normalized.as_posix()
+        or "\\" in raw
+        or not normalized.parts
+        or any(part in {"", ".", ".."} for part in normalized.parts)
+    ):
+        fail(rule_id, "governed input path is invalid")
+    return normalized
+
+
+def _open_regular_file(root: Path, relative: Path, rule_id: str) -> int:
+    canonical = _canonical_relative_path(relative, rule_id)
+    _, parent_descriptor = _open_repository_root(root)
+    next_descriptor = -1
+    final_descriptor = -1
+    try:
+        for index, part in enumerate(canonical.parts):
+            final_component = index == len(canonical.parts) - 1
+            try:
+                checked = os.lstat(part, dir_fd=parent_descriptor)
+            except OSError:
+                fail(rule_id, "governed input is unavailable")
+            if not final_component:
+                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(
+                    checked.st_mode
+                ):
+                    fail(
+                        rule_id,
+                        "governed input parent is not a real directory",
+                    )
+                try:
+                    next_descriptor = os.open(
+                        part,
+                        DIRECTORY_OPEN_FLAGS,
+                        dir_fd=parent_descriptor,
+                    )
+                    opened = os.fstat(next_descriptor)
+                except OSError:
+                    fail(rule_id, "governed input is unavailable")
+                if not stat.S_ISDIR(opened.st_mode) or not _same_identity(
+                    checked,
+                    opened,
+                ):
+                    fail(rule_id, "governed input parent identity changed")
+                _close_descriptor(parent_descriptor)
+                parent_descriptor = next_descriptor
+                next_descriptor = -1
+                continue
+            if stat.S_ISLNK(checked.st_mode) or not stat.S_ISREG(
+                checked.st_mode
+            ):
+                fail(
+                    rule_id,
+                    "governed input must be a regular non-symlink file",
+                )
+            try:
+                final_descriptor = os.open(
+                    part,
+                    REGULAR_FILE_OPEN_FLAGS,
+                    dir_fd=parent_descriptor,
+                )
+                opened = os.fstat(final_descriptor)
+            except OSError:
+                fail(rule_id, "governed input is unavailable")
+            if not stat.S_ISREG(opened.st_mode) or not _same_identity(
+                checked,
+                opened,
+            ):
+                fail(rule_id, "governed input final identity changed")
+            result_descriptor = final_descriptor
+            final_descriptor = -1
+            return result_descriptor
+    finally:
+        _close_descriptor(final_descriptor)
+        _close_descriptor(next_descriptor)
+        _close_descriptor(parent_descriptor)
+    fail(rule_id, "governed input path is invalid")
+
+
 def _read_regular_text(root: Path, relative: Path, rule_id: str) -> str:
-    path = root / relative
+    descriptor = _open_regular_file(root, relative, rule_id)
     try:
-        metadata = os.lstat(path)
-    except OSError as exc:
-        fail(rule_id, f"{relative.as_posix()} is unavailable: {exc.strerror}")
-    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
-        fail(rule_id, f"{relative.as_posix()} must be a regular non-symlink file")
-    try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        fail(rule_id, f"{relative.as_posix()} cannot be read as UTF-8: {exc}")
+        with os.fdopen(descriptor, "r", encoding="utf-8") as stream:
+            descriptor = -1
+            return stream.read()
+    except ContractError:
+        raise
+    except (OSError, UnicodeError):
+        fail(rule_id, "governed input cannot be read as UTF-8")
+    finally:
+        _close_descriptor(descriptor)
 
 
 def _load_yaml(text: str, rule_id: str, source: Path) -> dict[str, Any]:
@@ -432,7 +642,7 @@ def _validate_agent_governance_checkout(
 
 
 def validate_repository(root: Path) -> int:
-    root = Path(root)
+    root = _resolve_repository_root(root)
     requirements_text = _read_regular_text(
         root,
         REQUIREMENTS_PATH,
@@ -755,7 +965,7 @@ def main() -> int:
             case_count = run_self_test()
             print(
                 "[PASS] CI Python contract self-test passed: "
-                f"rules=10 cases={case_count}"
+                f"rules={len(STABLE_RULE_IDS)} cases={case_count}"
             )
             return 0
         job_count = validate_repository(args.root)

@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import importlib.util
+import os
+import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +64,38 @@ gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
 printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
 tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
 sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks"""
+
+GOVERNED_TEXT_OWNERS = (
+    (
+        "requirements",
+        Path(".github/requirements/ci-validation.txt"),
+        "CI-PYTHON-PIN",
+    ),
+    (
+        "workflow",
+        Path(".github/workflows/ci.yml"),
+        "CI-PYTHON-WORKFLOW",
+    ),
+    (
+        "inventory",
+        Path("docs/90.references/data/tech-stack-version-inventory.md"),
+        "CI-PYTHON-INVENTORY",
+    ),
+)
+
+EXPECTED_STABLE_RULE_IDS = (
+    "CI-PYTHON-INPUT",
+    "CI-PYTHON-PIN",
+    "CI-PYTHON-INVENTORY",
+    "CI-PYTHON-WORKFLOW",
+    "CI-PYTHON-VERSION",
+    "CI-PRECOMMIT-ACTION",
+    "CI-PRECOMMIT-ALL-FILES",
+    "CI-PRECOMMIT-HISTORY",
+    "CI-GITLEAKS-TOOL",
+    "CI-REPOSITORY-HISTORY",
+    "CI-AGENT-GOVERNANCE-CHECKOUT",
+)
 
 WORKFLOW = f"""\
 name: CI
@@ -162,6 +197,17 @@ class CiPythonContractTests(unittest.TestCase):
             VALIDATOR.validate_repository(root)
         self.assertEqual(raised.exception.rule_id, rule_id)
 
+    def assert_value_free_rule(
+        self,
+        root: Path,
+        rule_id: str,
+        forbidden_value: str,
+    ) -> None:
+        with self.assertRaises(VALIDATOR.ContractError) as raised:
+            VALIDATOR.validate_repository(root)
+        self.assertEqual(raised.exception.rule_id, rule_id)
+        self.assertNotIn(forbidden_value, raised.exception.detail)
+
     def test_valid_temporary_repository_passes(self) -> None:
         self.assertEqual(VALIDATOR.validate_repository(self.make_valid_root()), 4)
 
@@ -176,6 +222,148 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("[PASS] CI Python contract validation passed", result.stdout)
+
+    def test_stable_rule_inventory_is_exact_and_duplicate_free(self) -> None:
+        self.assertEqual(
+            VALIDATOR.STABLE_RULE_IDS,
+            EXPECTED_STABLE_RULE_IDS,
+        )
+        self.assertEqual(
+            len(VALIDATOR.STABLE_RULE_IDS),
+            len(set(VALIDATOR.STABLE_RULE_IDS)),
+        )
+
+    def test_self_test_reports_the_derived_stable_rule_count(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(VALIDATOR_PATH),
+                "--root",
+                str(REPO_ROOT),
+                "--self-test",
+            ],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(
+            "[PASS] CI Python contract self-test passed: "
+            f"rules={len(EXPECTED_STABLE_RULE_IDS)} cases=14",
+            result.stdout,
+        )
+
+    def test_symlink_repository_root_fails_closed_without_target_disclosure(
+        self,
+    ) -> None:
+        root = self.make_valid_root()
+        link = root.parent / f"{root.name}-link"
+        link.symlink_to(root, target_is_directory=True)
+        self.addCleanup(link.unlink)
+        self.assert_value_free_rule(
+            link,
+            "CI-PYTHON-INPUT",
+            str(root),
+        )
+
+    def test_lexical_parent_escape_repository_root_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        escaped_root = root / "nested" / ".."
+        self.assert_rule(escaped_root, "CI-PYTHON-INPUT")
+
+    def test_each_governed_owner_rejects_a_symlink_parent(self) -> None:
+        for owner, relative, rule_id in GOVERNED_TEXT_OWNERS:
+            with self.subTest(owner=owner):
+                root = self.make_valid_root()
+                parent = root / relative.parent
+                outside = root.parent / f"{root.name}-{owner}-outside-parent"
+                parent.rename(outside)
+                self.addCleanup(shutil.rmtree, outside, True)
+                parent.symlink_to(outside, target_is_directory=True)
+                self.assert_value_free_rule(root, rule_id, str(outside))
+
+    def test_parent_directory_identity_swap_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        parent = root / ".github/requirements"
+        displaced = root / ".github/requirements-before-swap"
+        original_open = VALIDATOR.os.open
+        triggered = False
+
+        def swapping_open(path, flags, mode=0o777, *, dir_fd=None):
+            nonlocal triggered
+            if (
+                not triggered
+                and os.fspath(path) == "requirements"
+                and dir_fd is not None
+            ):
+                parent.rename(displaced)
+                parent.mkdir()
+                triggered = True
+            return original_open(path, flags, mode, dir_fd=dir_fd)
+
+        with mock.patch.object(
+            VALIDATOR.os,
+            "open",
+            side_effect=swapping_open,
+        ):
+            self.assert_rule(root, "CI-PYTHON-PIN")
+        self.assertTrue(triggered)
+
+    def test_final_regular_file_identity_swap_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        governed = root / ".github/requirements/ci-validation.txt"
+        displaced = governed.with_name(f"{governed.name}.before-swap")
+        original_open = VALIDATOR.os.open
+        trigger_paths = {str(governed), governed.name}
+        triggered = False
+
+        def swapping_open(path, flags, mode=0o777, *, dir_fd=None):
+            nonlocal triggered
+            if not triggered and os.fspath(path) in trigger_paths:
+                governed.rename(displaced)
+                shutil.copyfile(displaced, governed)
+                triggered = True
+            return original_open(path, flags, mode, dir_fd=dir_fd)
+
+        with mock.patch.object(
+            VALIDATOR.os,
+            "open",
+            side_effect=swapping_open,
+        ):
+            self.assert_rule(root, "CI-PYTHON-PIN")
+        self.assertTrue(triggered)
+
+    def test_each_governed_owner_rejects_a_final_symlink(self) -> None:
+        for owner, relative, rule_id in GOVERNED_TEXT_OWNERS:
+            with self.subTest(owner=owner):
+                root = self.make_valid_root()
+                governed = root / relative
+                outside = root.parent / f"{root.name}-{owner}-outside-file"
+                shutil.copyfile(governed, outside)
+                self.addCleanup(outside.unlink)
+                governed.unlink()
+                governed.symlink_to(outside)
+                self.assert_value_free_rule(root, rule_id, str(outside))
+
+    def test_each_governed_owner_rejects_a_final_directory(self) -> None:
+        for owner, relative, rule_id in GOVERNED_TEXT_OWNERS:
+            with self.subTest(owner=owner):
+                root = self.make_valid_root()
+                governed = root / relative
+                governed.unlink()
+                governed.mkdir()
+                self.assert_rule(root, rule_id)
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "FIFO nodes require os.mkfifo")
+    def test_each_governed_owner_rejects_a_final_fifo(self) -> None:
+        for owner, relative, rule_id in GOVERNED_TEXT_OWNERS:
+            with self.subTest(owner=owner):
+                root = self.make_valid_root()
+                governed = root / relative
+                governed.unlink()
+                os.mkfifo(governed)
+                self.assert_rule(root, rule_id)
 
     def test_requirement_must_be_exact(self) -> None:
         root = self.make_valid_root()

@@ -31,7 +31,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 def run(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
-    root = Path(args.root).resolve()
+    root = args.root
     scripts_dir = Path(__file__).resolve().parent
 
     for script_name in FOCUSED_VALIDATORS:
