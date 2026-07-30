@@ -8,6 +8,69 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-30 - Spec 045 AGQC-005 checkpoint and memory postflight
+
+#### Metadata
+
+- **Date**: 2026-07-30
+- **Layer**: automation, ci, docs, governance, qa, security
+- **Owner**: AGQC-005 postflight
+- **Canonical Owner**: Spec 045 Task and the durable shared progress ledger
+- **Provenance**: `781ebb82b64d2f63d6b9630b6b3e48115dc5a791` and
+  `4c7b87718aa41f680ef8f5e63c4396565b1c5e0b`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: working short-term is task bounded and discarded at
+  terminal; durable long-term remains under reviewed canonical-owner retention;
+  domain scoped archives on supersede or invalidation; provider-local auxiliary
+  context is garbage-collected under provider retention after repository
+  re-observation.
+- **Next Owner**: AGQC-006
+- **Status**: done
+- **Tags**: #spec-045 #agqc-005 #checkpoint #memory-lifecycle #postflight
+
+#### Progress
+
+- Recorded the independently reviewed AGQC-005 implementation commits:
+  `781ebb82b64d2f63d6b9630b6b3e48115dc5a791` for checkpoint isolation and
+  memory lifecycle, and `4c7b87718aa41f680ef8f5e63c4396565b1c5e0b` for closed
+  static CI evidence ownership.
+- The repository-static contract deterministically isolates repository,
+  worktree, task, provider surface, provider-session-instance, namespace, and
+  writer/generation/previous-checkpoint identities. Namespace and writer
+  claims use non-secret digests.
+
+#### Memory
+
+- `working-short-term` memory is task bounded and discarded at terminal.
+  `durable-long-term` memory belongs to its canonical repository owner and the
+  shared progress ledger under reviewed retention. `domain-scoped` memory
+  belongs to its canonical domain owner and archives on supersede or
+  invalidation. `provider-local-auxiliary` memory is advisory, requires
+  repository re-observation, and follows provider-retention GC.
+- This `progress.md` file is the durable shared view, not a fifth memory class.
+  Four-class sensitivity, retention/expiry, compaction source/replacement,
+  archive/GC, conflict, and handoff controls are repository-static evidence.
+
+#### Evidence
+
+- **checkpoint — PASS**: `20` focused tests and `110` negative mutations
+  passed for the four memory classes and deterministic identity isolation.
+- **loop — PASS**: `22` focused tests and `66` self-test cases passed for
+  sensitivity, retention/expiry, compaction source/replacement, archive/GC,
+  conflict, and handoff.
+- Independent review approved both implementation units. No actual ignored
+  checkpoint or provider/auth/private state was read. Actual provider
+  checkpoint/resume/handoff canaries, hosted CI, branch protection,
+  provider runtime/auth/model discovery, actual evaluation/admission/promotion,
+  remote, and live outcomes remain Spec 046 `DEFER`.
+
+#### Handoff
+
+- AGQC-006 is the next owner for semantic reconciliation, independent review,
+  full local QA, and reciprocal closure/postflight. This entry does not
+  preclaim this postflight commit SHA, an AGQC-006 result, Spec 045 closure, or
+  any Spec 046 result.
+
 ### 2026-07-30 - Spec 045 AGQC-004 canonical local QA postflight
 
 #### Metadata
