@@ -225,13 +225,6 @@ CHECKOUT_ACTION = (
 REMOTE_ACTION = re.compile(r"^[^./\s@][^\s@]*@[0-9a-f]{40}$")
 EXPECTED_DEFERRED = (
     (
-        "AGQC-005",
-        (
-            "concurrent-checkpoint-provider-identity",
-            "durable-memory-policy",
-        ),
-    ),
-    (
         "Spec046",
         (
             "hosted-ci-observation",
@@ -284,7 +277,7 @@ LOCAL_QA_INVENTORY = {
     "truthCases": 6,
     "mutationCases": 43,
     "delegatedChecks": 16,
-    "deferredOwners": 2,
+    "deferredOwners": 1,
     "qaSurfaces": 10,
     "legacyPositiveCases": 3,
     "legacyMutationCases": 22,
@@ -661,7 +654,7 @@ def validate_contract_data(
     if observed_deferred != expected_deferred:
         fail(
             "AGQC-CI-EVIDENCE",
-            "AGQC-005 or Spec046 DEFER ownership differs",
+            "Spec046 DEFER ownership differs",
         )
     expected_local_qa = {
         "owner": LOCAL_QA_OWNER,
@@ -1198,7 +1191,7 @@ def _validate_local_qa_surfaces(
     inventory_markers = (
         "truth_cases=6 mutation_cases=43",
         "delegated_checks=16",
-        "deferred_owners=2",
+        "deferred_owners=1",
         "qa_surfaces=10",
         "positive_cases=3 mutation_cases=22",
     )

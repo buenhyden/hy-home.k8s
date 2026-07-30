@@ -239,14 +239,6 @@
   },
   "deferredEvidence": [
     {
-      "owner": "AGQC-005",
-      "result": "DEFER",
-      "scope": [
-        "concurrent-checkpoint-provider-identity",
-        "durable-memory-policy"
-      ]
-    },
-    {
       "owner": "Spec046",
       "result": "DEFER",
       "scope": [
@@ -299,7 +291,7 @@
       "truthCases": 6,
       "mutationCases": 43,
       "delegatedChecks": 16,
-      "deferredOwners": 2,
+      "deferredOwners": 1,
       "qaSurfaces": 10,
       "legacyPositiveCases": 3,
       "legacyMutationCases": 22

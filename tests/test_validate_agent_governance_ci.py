@@ -213,6 +213,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         counts = self.validator.validate_repository(REPO_ROOT)
         self.assertEqual(counts["routeClasses"], 12)
         self.assertEqual(counts["delegatedChecks"], 16)
+        self.assertEqual(counts["deferredOwners"], 1)
         self.assertEqual(counts["qaSurfaces"], 10)
 
     def test_local_qa_contract_is_closed(self) -> None:
@@ -270,7 +271,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 "truthCases": 6,
                 "mutationCases": 43,
                 "delegatedChecks": 16,
-                "deferredOwners": 2,
+                "deferredOwners": 1,
                 "qaSurfaces": 10,
                 "legacyPositiveCases": 3,
                 "legacyMutationCases": 22,
@@ -667,13 +668,36 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             CONTRACT_PATH,
             "AGQC-CI-JSON",
         )
+        checkpoint_command = (
+            "python3 scripts/validate-agent-checkpoint.py --root . --self-test"
+        )
+        self.assertEqual(len(contract["delegatedChecks"]), 16)
+        self.assertEqual(
+            [
+                row["command"]
+                for row in contract["delegatedChecks"]
+                if row["command"] == checkpoint_command
+            ],
+            [checkpoint_command],
+        )
         self.assertEqual(
             [row["owner"] for row in contract["deferredEvidence"]],
-            ["AGQC-005", "Spec046"],
+            ["Spec046"],
         )
         self.assertEqual(
             {row["result"] for row in contract["deferredEvidence"]},
             {"DEFER"},
+        )
+        self.assertEqual(
+            contract["deferredEvidence"][0]["scope"],
+            [
+                "hosted-ci-observation",
+                "branch-protection",
+                "provider-runtime-auth-model-discovery",
+                "actual-evaluation-admission-promotion",
+                "provider-resume-handoff-canary",
+                "remote-live",
+            ],
         )
 
 
