@@ -7,6 +7,12 @@
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
 - **Status**: in-progress | complete | blocked
 - **Tags**: #governance #docs #validation
+- **Owner**: <current-work-owner>
+- **Canonical Owner**: <canonical-sdlc-or-domain-owner>
+- **Provenance**: <source-evidence-paths-or-commit>
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: <class-specific-policy-and-trigger>
+- **Next Owner**: <next-owner-or-none-with-disposition>
 
 #### Progress
 

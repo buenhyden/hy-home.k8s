@@ -455,6 +455,34 @@
       "expectedRule": "AHLL-CHECKPOINT-BOUNDARY"
     },
     {
+      "name": "checkpoint-schema-version-drift",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-identity-axes-drift",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-namespace-digest-disabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-single-writer-disabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-duplicate-resume-enabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-overwrite-policy-drift",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
+      "name": "checkpoint-provider-state-read-enabled",
+      "expectedRule": "AHLL-SCHEMA"
+    },
+    {
       "name": "memory-class-drift",
       "expectedRule": "AHLL-SCHEMA"
     },
@@ -523,5 +551,5 @@
       "expectedRule": "AHLL-SENSITIVE"
     }
   ],
-  "expectedCaseCount": 59
+  "expectedCaseCount": 66
 }

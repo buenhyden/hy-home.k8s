@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import re
 import stat
@@ -35,7 +36,7 @@ SPEC_PATH = PurePosixPath(
 )
 CHECKPOINT_PATH = ".agent-work/checkpoint.json"
 CONTRACT_VERSION = "1.0.0"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MAX_JSON_BYTES = 2 * 1024 * 1024
 
 MEMORY_CLASS_IDS = (
@@ -110,10 +111,26 @@ CONFLICT_POLICIES = {
         "repository-state",
     ),
 }
+RETENTION_POLICIES = {
+    "working-short-term": "discard-at-task-terminal",
+    "durable-long-term": "retain-under-canonical-owner",
+    "domain-scoped": "archive-when-superseded-or-invalidated",
+    "provider-local-auxiliary": (
+        "garbage-collect-under-provider-retention-after-repository-reobservation"
+    ),
+}
 IDENTITY_RULES = {
+    "repositoryId": "AHLL-CP-STALE-REPOSITORY",
     "taskId": "AHLL-CP-STALE-TASK",
     "specRef": "AHLL-CP-STALE-SPEC",
     "worktreeId": "AHLL-CP-STALE-WORKTREE",
+    "providerSurfaceId": "AHLL-CP-STALE-PROVIDER-SURFACE",
+    "providerSessionInstanceDigest": "AHLL-CP-STALE-PROVIDER-SESSION",
+    "namespaceDigest": "AHLL-CP-NAMESPACE-DIGEST",
+    "writerId": "AHLL-CP-WRITER-ID-COLLISION",
+    "writeGeneration": "AHLL-CP-WRITE-GENERATION",
+    "previousCheckpointDigest": "AHLL-CP-OVERWRITE",
+    "writerClaimDigest": "AHLL-CP-WRITER-CLAIM",
     "branchRef": "AHLL-CP-STALE-BRANCH",
     "baseRevision": "AHLL-CP-STALE-BASE",
     "headRevision": "AHLL-CP-STALE-HEAD",
@@ -240,9 +257,23 @@ FORBIDDEN_VALUE_PATTERNS = (
 MUTATION_RULES = (
     ("duplicate-json-key", "AHLL-CP-DUPLICATE-KEY"),
     ("unknown-checkpoint-field", "AHLL-CP-SCHEMA"),
+    ("stale-repository", "AHLL-CP-STALE-REPOSITORY"),
     ("stale-task", "AHLL-CP-STALE-TASK"),
     ("stale-spec", "AHLL-CP-STALE-SPEC"),
     ("stale-worktree", "AHLL-CP-STALE-WORKTREE"),
+    ("stale-provider-surface", "AHLL-CP-STALE-PROVIDER-SURFACE"),
+    ("stale-provider-session", "AHLL-CP-STALE-PROVIDER-SESSION"),
+    ("namespace-digest-drift", "AHLL-CP-NAMESPACE-DIGEST"),
+    ("writer-id-collision", "AHLL-CP-WRITER-ID-COLLISION"),
+    ("writer-claim-drift", "AHLL-CP-WRITER-CLAIM"),
+    ("write-generation-stale", "AHLL-CP-WRITE-GENERATION"),
+    ("previous-checkpoint-overwrite", "AHLL-CP-OVERWRITE"),
+    ("duplicate-writer", "AHLL-CP-DUPLICATE-WRITER"),
+    ("duplicate-resume", "AHLL-CP-DUPLICATE-RESUME"),
+    (
+        "provider-executor-surface-mismatch",
+        "AHLL-CP-PROVIDER-SURFACE",
+    ),
     ("stale-branch", "AHLL-CP-STALE-BRANCH"),
     ("stale-base", "AHLL-CP-STALE-BASE"),
     ("stale-head", "AHLL-CP-STALE-HEAD"),
@@ -264,6 +295,12 @@ MUTATION_RULES = (
     ("resume-repository-loses", "AHLL-CP-RESUME"),
     ("resume-conflict-order-drift", "AHLL-CP-RESUME"),
     ("resume-skips-rediscovery", "AHLL-CP-RESUME"),
+    ("resume-identity-tuple-disabled", "AHLL-CP-SCHEMA"),
+    ("resume-single-writer-disabled", "AHLL-CP-SCHEMA"),
+    ("resume-duplicate-writer-enabled", "AHLL-CP-SCHEMA"),
+    ("resume-duplicate-resume-enabled", "AHLL-CP-SCHEMA"),
+    ("resume-overwrite-policy-drift", "AHLL-CP-SCHEMA"),
+    ("resume-accepted-identity-drift", "AHLL-CP-SCHEMA"),
     ("resume-synthetic-mode-mismatch", "AHLL-CP-RESUME"),
     ("redaction-allows-token", "AHLL-CP-REDACTION"),
     ("memory-class-order", "AHLL-CP-MEMORY-CLASSES"),
@@ -288,8 +325,19 @@ MUTATION_RULES = (
         "AHLL-CP-MEMORY-ARCHIVE-GC",
     ),
     ("repository-conflict-loses", "AHLL-CP-MEMORY-CONFLICT"),
+    ("memory-sensitivity-drift", "AHLL-CP-SCHEMA"),
+    ("memory-retention-drift", "AHLL-CP-MEMORY-RETENTION"),
+    ("memory-retention-evidence-missing", "AHLL-CP-SCHEMA"),
+    ("memory-handoff-owner-missing", "AHLL-CP-MEMORY-HANDOFF"),
+    ("memory-handoff-evidence-missing", "AHLL-CP-SCHEMA"),
     ("compaction-retains-transcript", "AHLL-CP-COMPACTION"),
     ("compaction-count-drift", "AHLL-CP-COMPACTION"),
+    ("compaction-source-evidence-missing", "AHLL-CP-SCHEMA"),
+    ("compaction-replacement-evidence-missing", "AHLL-CP-SCHEMA"),
+    ("compaction-identical-digests", "AHLL-CP-COMPACTION"),
+    ("compaction-source-owner-missing", "AHLL-CP-SCHEMA"),
+    ("compaction-replacement-owner-missing", "AHLL-CP-SCHEMA"),
+    ("compaction-review-unapproved", "AHLL-CP-SCHEMA"),
     ("handoff-owner-missing", "AHLL-CP-HANDOFF"),
     ("handoff-evidence-missing", "AHLL-CP-HANDOFF"),
     ("sensitive-credential-key", "AHLL-CP-SENSITIVE"),
@@ -527,9 +575,47 @@ def _validate_atomic_write(checkpoint: dict[str, Any]) -> None:
 
 
 def _checkpoint_identity(checkpoint: dict[str, Any]) -> dict[str, Any]:
-    identity = dict(checkpoint["identity"])
+    identity = {
+        key: value
+        for key, value in checkpoint["identity"].items()
+        if key not in {"createdAtUtc", "updatedAtUtc"}
+    }
     identity["contractVersion"] = checkpoint["contractVersion"]
     return identity
+
+
+def _digest_values(*values: Any) -> str:
+    payload = "\n".join(str(value) for value in values).encode("utf-8")
+    return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _validate_isolation_digests(checkpoint: dict[str, Any]) -> None:
+    identity = checkpoint["identity"]
+    expected_namespace = _digest_values(
+        identity["repositoryId"],
+        identity["worktreeId"],
+        identity["taskId"],
+        identity["providerSurfaceId"],
+        identity["providerSessionInstanceDigest"],
+    )
+    if identity["namespaceDigest"] != expected_namespace:
+        fail(
+            "AHLL-CP-NAMESPACE-DIGEST",
+            "checkpoint namespace digest does not match the identity tuple",
+        )
+    expected_writer_claim = _digest_values(
+        identity["namespaceDigest"],
+        identity["writerId"],
+        identity["writeGeneration"],
+        identity["previousCheckpointDigest"],
+        identity["baseRevision"],
+        identity["headRevision"],
+    )
+    if identity["writerClaimDigest"] != expected_writer_claim:
+        fail(
+            "AHLL-CP-WRITER-CLAIM",
+            "checkpoint writer claim digest does not match its inputs",
+        )
 
 
 def _parse_timestamp(value: Any, code: str) -> datetime:
@@ -583,6 +669,8 @@ def validate_resume(
         "observedAtUtc",
         "identity",
         "loopState",
+        "activeWriterCount",
+        "activeResumeCount",
     }
     if (
         not isinstance(repository_state, dict)
@@ -601,8 +689,33 @@ def validate_resume(
             "AHLL-CP-RESUME",
             "checkpoint and repository synthetic modes differ",
         )
+    if (
+        type(repository_state["activeWriterCount"]) is not int
+        or repository_state["activeWriterCount"] != 1
+    ):
+        fail(
+            "AHLL-CP-DUPLICATE-WRITER",
+            "repository state does not declare exactly one active writer",
+        )
+    if (
+        type(repository_state["activeResumeCount"]) is not int
+        or repository_state["activeResumeCount"] != 1
+    ):
+        fail(
+            "AHLL-CP-DUPLICATE-RESUME",
+            "repository state does not declare exactly one active resume",
+        )
 
     _validate_freshness(checkpoint, repository_state)
+    _validate_isolation_digests(checkpoint)
+    if (
+        checkpoint["identity"]["providerSurfaceId"]
+        != checkpoint["executor"]["providerId"]
+    ):
+        fail(
+            "AHLL-CP-PROVIDER-SURFACE",
+            "checkpoint provider surface and executor differ",
+        )
 
     checkpoint_state = checkpoint["repository"]["loopState"]
     repository_loop_state = repository_state["loopState"]
@@ -622,6 +735,13 @@ def validate_resume(
         or resume["rediscoveryRequired"] is not True
         or resume["recomputeRemainingWork"] is not True
         or resume["terminalReplayAllowed"] is not False
+        or resume["identityTupleRequired"] is not True
+        or resume["singleWriterRequired"] is not True
+        or resume["duplicateWriterAllowed"] is not False
+        or resume["duplicateResumeAllowed"] is not False
+        or resume["overwritePolicy"]
+        != "compare-generation-and-previous-checkpoint-digest"
+        or resume["acceptedIdentity"] != "exact-match-only"
     ):
         fail(
             "AHLL-CP-RESUME",
@@ -674,6 +794,13 @@ def _validate_compaction(checkpoint: dict[str, Any]) -> None:
         or not compaction["validationEvidenceRefs"]
         or compaction["remainingWorkCount"]
         != len(checkpoint["remainingWork"])
+        or not compaction["source"]["owner"]
+        or not compaction["source"]["evidenceRefs"]
+        or not compaction["replacement"]["owner"]
+        or not compaction["replacement"]["evidenceRefs"]
+        or compaction["source"]["digest"]
+        == compaction["replacement"]["digest"]
+        or compaction["reviewStatus"] != "approved"
     ):
         fail(
             "AHLL-CP-COMPACTION",
@@ -788,6 +915,18 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
                 "AHLL-CP-MEMORY-REDACTION",
                 f"{memory_id} lacks redacted source evidence",
             )
+        sensitivity = record["sensitivity"]
+        if (
+            sensitivity["classification"] != "non-sensitive-redacted"
+            or sensitivity["restrictedContextAllowed"] is not False
+            or sensitivity["rawContextAllowed"] is not False
+            or sensitivity["providerPayloadAllowed"] is not False
+            or sensitivity["reviewStatus"] != "approved"
+        ):
+            fail(
+                "AHLL-CP-MEMORY-SENSITIVITY",
+                f"{memory_id} sensitivity boundary differs",
+            )
 
         _validate_promotion(memory_id, record["promotion"])
 
@@ -829,6 +968,18 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
             fail(
                 "AHLL-CP-MEMORY-EXPIRY",
                 f"{memory_id} expiry disposition is missing or inconsistent",
+            )
+        retention = record["retention"]
+        if (
+            retention["policy"] != RETENTION_POLICIES[memory_id]
+            or retention["canonicalDecisionOwner"]
+            != CANONICAL_OWNERS[memory_id]
+            or retention["reviewStatus"] != "approved"
+            or not retention["evidenceRefs"]
+        ):
+            fail(
+                "AHLL-CP-MEMORY-RETENTION",
+                f"{memory_id} retention decision differs",
             )
 
         archive_gc = record["archiveGc"]
@@ -879,6 +1030,18 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
             fail(
                 "AHLL-CP-MEMORY-CONFLICT",
                 f"{memory_id} conflict does not preserve repository authority",
+            )
+        handoff = record["handoff"]
+        if (
+            handoff["currentOwner"] != CANONICAL_OWNERS[memory_id]
+            or handoff["nextOwner"] != CANONICAL_OWNERS[memory_id]
+            or handoff["disposition"] != expected_disposition
+            or handoff["reviewStatus"] != "approved"
+            or not handoff["evidenceRefs"]
+        ):
+            fail(
+                "AHLL-CP-MEMORY-HANDOFF",
+                f"{memory_id} handoff ownership or evidence differs",
             )
 
 
@@ -971,11 +1134,26 @@ def _validate_contract_refs(root: Path, checkpoint: dict[str, Any]) -> None:
         )
     if (
         boundary.get("schemaRef") != SCHEMA_PATH.as_posix()
+        or boundary.get("checkpointSchemaVersion") != SCHEMA_VERSION
         or boundary.get("implementationOwner") != "AHLL-002"
         or boundary.get("implementationState") != "executable"
         or boundary.get("repositoryStateWins") is not True
         or boundary.get("executableValidationDelegated") is not True
         or tuple(boundary.get("memoryClassIds", ())) != MEMORY_CLASS_IDS
+        or tuple(boundary.get("identityAxes", ()))
+        != (
+            "repository-id",
+            "worktree-id",
+            "task-id",
+            "provider-surface-id",
+            "provider-session-instance-digest",
+        )
+        or boundary.get("namespaceDigestRequired") is not True
+        or boundary.get("singleWriterRequired") is not True
+        or boundary.get("duplicateResumeAllowed") is not False
+        or boundary.get("overwritePolicy")
+        != "compare-generation-and-previous-checkpoint-digest"
+        or boundary.get("actualProviderStateReadAllowed") is not False
     ):
         fail(
             "AHLL-CP-LOOP-CONTRACT",
@@ -1064,7 +1242,7 @@ def _memory_record(
 
 def apply_duplicate_key_mutation() -> None:
     decode_json_text(
-        '{"schemaVersion":1,"schemaVersion":1}',
+        '{"schemaVersion":2,"schemaVersion":2}',
         "synthetic duplicate-key mutation",
     )
     fail(
@@ -1089,6 +1267,8 @@ def apply_mutation(
 
     if name == "unknown-checkpoint-field":
         checkpoint["unexpectedField"] = True
+    elif name == "stale-repository":
+        identity["repositoryId"] = "sha256:" + ("4" * 64)
     elif name == "stale-task":
         identity["taskId"] = "AHLL-999-SYNTHETIC"
     elif name == "stale-spec":
@@ -1097,6 +1277,32 @@ def apply_mutation(
         )
     elif name == "stale-worktree":
         identity["worktreeId"] = "sha256:" + ("5" * 64)
+    elif name == "stale-provider-surface":
+        identity["providerSurfaceId"] = "claude"
+    elif name == "stale-provider-session":
+        identity["providerSessionInstanceDigest"] = (
+            "sha256:" + ("4" * 64)
+        )
+    elif name == "namespace-digest-drift":
+        checkpoint["identity"]["namespaceDigest"] = (
+            "sha256:" + ("4" * 64)
+        )
+    elif name == "writer-id-collision":
+        identity["writerId"] = "sha256:" + ("4" * 64)
+    elif name == "writer-claim-drift":
+        checkpoint["identity"]["writerClaimDigest"] = (
+            "sha256:" + ("4" * 64)
+        )
+    elif name == "write-generation-stale":
+        identity["writeGeneration"] += 1
+    elif name == "previous-checkpoint-overwrite":
+        identity["previousCheckpointDigest"] = "sha256:" + ("4" * 64)
+    elif name == "duplicate-writer":
+        repository_state["activeWriterCount"] = 2
+    elif name == "duplicate-resume":
+        repository_state["activeResumeCount"] = 2
+    elif name == "provider-executor-surface-mismatch":
+        checkpoint["executor"]["providerId"] = "claude"
     elif name == "stale-branch":
         identity["branchRef"] = "refs/heads/synthetic/stale-branch"
     elif name == "stale-base":
@@ -1147,6 +1353,18 @@ def apply_mutation(
         )
     elif name == "resume-skips-rediscovery":
         checkpoint["resume"]["rediscoveryRequired"] = False
+    elif name == "resume-identity-tuple-disabled":
+        checkpoint["resume"]["identityTupleRequired"] = False
+    elif name == "resume-single-writer-disabled":
+        checkpoint["resume"]["singleWriterRequired"] = False
+    elif name == "resume-duplicate-writer-enabled":
+        checkpoint["resume"]["duplicateWriterAllowed"] = True
+    elif name == "resume-duplicate-resume-enabled":
+        checkpoint["resume"]["duplicateResumeAllowed"] = True
+    elif name == "resume-overwrite-policy-drift":
+        checkpoint["resume"]["overwritePolicy"] = "replace-unconditionally"
+    elif name == "resume-accepted-identity-drift":
+        checkpoint["resume"]["acceptedIdentity"] = "partial-match"
     elif name == "resume-synthetic-mode-mismatch":
         repository_state["synthetic"] = False
     elif name == "redaction-allows-token":
@@ -1193,10 +1411,34 @@ def apply_mutation(
         domain["archiveGc"]["currentOrReplacementOwner"] = None
     elif name == "repository-conflict-loses":
         working["conflict"]["repositoryWins"] = False
+    elif name == "memory-sensitivity-drift":
+        working["sensitivity"]["restrictedContextAllowed"] = True
+    elif name == "memory-retention-drift":
+        working["retention"]["policy"] = "retain-under-canonical-owner"
+    elif name == "memory-retention-evidence-missing":
+        working["retention"]["evidenceRefs"] = []
+    elif name == "memory-handoff-owner-missing":
+        working["handoff"]["nextOwner"] = None
+    elif name == "memory-handoff-evidence-missing":
+        working["handoff"]["evidenceRefs"] = []
     elif name == "compaction-retains-transcript":
         checkpoint["compaction"]["fullTranscriptRetained"] = True
     elif name == "compaction-count-drift":
         checkpoint["compaction"]["remainingWorkCount"] += 1
+    elif name == "compaction-source-evidence-missing":
+        checkpoint["compaction"]["source"]["evidenceRefs"] = []
+    elif name == "compaction-replacement-evidence-missing":
+        checkpoint["compaction"]["replacement"]["evidenceRefs"] = []
+    elif name == "compaction-identical-digests":
+        checkpoint["compaction"]["replacement"]["digest"] = (
+            checkpoint["compaction"]["source"]["digest"]
+        )
+    elif name == "compaction-source-owner-missing":
+        checkpoint["compaction"]["source"].pop("owner")
+    elif name == "compaction-replacement-owner-missing":
+        checkpoint["compaction"]["replacement"].pop("owner")
+    elif name == "compaction-review-unapproved":
+        checkpoint["compaction"]["reviewStatus"] = "pending"
     elif name == "handoff-owner-missing":
         checkpoint["handoff"]["nextOwner"] = None
     elif name == "handoff-evidence-missing":
@@ -1311,7 +1553,7 @@ def _validate_fixture_shape(fixture: Any) -> None:
             "fixture envelope is not closed",
             exit_code=2,
         )
-    if fixture["fixtureVersion"] != 1:
+    if fixture["fixtureVersion"] != 2:
         fail(
             "AHLL-CP-FIXTURE",
             "fixture version differs",

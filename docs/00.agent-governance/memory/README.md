@@ -39,12 +39,15 @@ This README is primarily for:
 
 ### Four Memory Classes
 
-| Class | Use | Authority and Location |
-| --- | --- | --- |
-| `working-short-term` | Bounded context for one active task or session | Temporary and non-authoritative. The ignored `.agent-work/checkpoint.json` path is an advisory recovery carrier only. |
-| `durable-long-term` | Reviewed repository facts, decisions, task status, reusable lessons, and handoff evidence | Canonical repository records, with `docs/00.agent-governance/memory/progress.md` as the durable shared progress ledger and the owning SDLC document as applicable. |
-| `domain-scoped` | Knowledge whose meaning belongs to one product, architecture, operation, incident, or policy domain | The owning Spec, Runbook, Incident, Postmortem, or other canonical domain document, linked to related progress. It does not independently own task status. |
-| `provider-local-auxiliary` | Provider- or user-local recall that may help rediscovery | Advisory only. It must not own repository facts, decisions, task status, or durable handoff evidence. |
+Exactly four memory classes are managed. `progress.md` is the durable shared
+progress view for `durable-long-term` memory, not a fifth memory class.
+
+| Class | Authority | Refresh | Retention / expiry | Archive / GC | Promotion | Conflict | Handoff |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `working-short-term` | Temporary context owned by the active task executor; non-authoritative | Re-observe the task and repository on resume | Discard at task terminal | Discard after reviewed terminal disposition | Reviewed, redacted evidence may move to `durable-long-term` | Observed repository state wins | Active executor records the next owner or discard disposition with evidence |
+| `durable-long-term` | Canonical SDLC owner or shared progress ledger | Canonical-owner review | Retain under the canonical owner | Retain until that owner approves a replacement | No implicit onward promotion | Canonical document owner wins | Current canonical owner records the next canonical owner and evidence |
+| `domain-scoped` | Canonical domain document owner | Domain-owner review | Archive when superseded or invalidated | Archive with original and replacement ownership and provenance | Reviewed cross-domain evidence may move to `durable-long-term` | Canonical domain owner wins | Domain owner records the archive or replacement owner with evidence |
+| `provider-local-auxiliary` | Provider runtime or user-local store; advisory only | Repository re-observation before use | Garbage-collect under provider retention after repository re-observation | Provider-owned GC after reviewed re-observation | May enter `working-short-term` only after repository re-observation; never writes canonical memory directly | Observed repository state wins | Provider-local owner records the next owner or GC disposition without transferring authority |
 
 Repository state and canonical SDLC owners win every conflict with temporary or
 provider-local context. Promotion is review-gated: working context may be

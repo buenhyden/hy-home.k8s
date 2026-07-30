@@ -512,8 +512,31 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         )
         self.assertEqual(boundary["implementationOwner"], "AHLL-002")
         self.assertEqual(boundary["implementationState"], "executable")
+        self.assertEqual(boundary["checkpointSchemaVersion"], 2)
         self.assertTrue(boundary["executableValidationDelegated"])
         self.assertTrue(boundary["repositoryStateWins"])
+        self.assertEqual(
+            boundary["identityAxes"],
+            [
+                "repository-id",
+                "worktree-id",
+                "task-id",
+                "provider-surface-id",
+                "provider-session-instance-digest",
+            ],
+        )
+        self.assertTrue(boundary["namespaceDigestRequired"])
+        self.assertTrue(boundary["singleWriterRequired"])
+        self.assertFalse(boundary["duplicateResumeAllowed"])
+        self.assertEqual(
+            boundary["overwritePolicy"],
+            "compare-generation-and-previous-checkpoint-digest",
+        )
+        self.assertFalse(boundary["actualProviderStateReadAllowed"])
+        self.assertEqual(
+            self.checkpoint_schema["properties"]["schemaVersion"]["const"],
+            boundary["checkpointSchemaVersion"],
+        )
         self.assertEqual(
             tuple(boundary["memoryClassIds"]),
             self.validator.MEMORY_CLASS_IDS,
@@ -684,6 +707,20 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 mutated = self.contract_copy()
                 self.validator.apply_mutation(mutated, case["name"])
                 self.assert_rule(mutated, case["expectedRule"])
+
+    def test_checkpoint_policy_families_have_negative_mutations(self) -> None:
+        names = {case["name"] for case in self.fixture["mutations"]}
+        self.assertTrue(
+            {
+                "checkpoint-schema-version-drift",
+                "checkpoint-identity-axes-drift",
+                "checkpoint-namespace-digest-disabled",
+                "checkpoint-single-writer-disabled",
+                "checkpoint-duplicate-resume-enabled",
+                "checkpoint-overwrite-policy-drift",
+                "checkpoint-provider-state-read-enabled",
+            }.issubset(names)
+        )
 
     def test_all_fixture_decisions_match_declared_outcome(self) -> None:
         for case in self.fixture["decisionCases"]:

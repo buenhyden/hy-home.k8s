@@ -1,8 +1,8 @@
 {
-  "fixtureVersion": 1,
+  "fixtureVersion": 2,
   "syntheticCheckpoint": {
     "$schema": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "contractVersion": "1.0.0",
     "checkpointPath": ".agent-work/checkpoint.json",
     "synthetic": true,
@@ -13,9 +13,17 @@
       "partialWriteAllowed": false
     },
     "identity": {
+      "repositoryId": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "taskId": "AHLL-002-SYNTHETIC",
       "specRef": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
       "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "providerSurfaceId": "codex",
+      "providerSessionInstanceDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "namespaceDigest": "sha256:102e95149adb6c07039a01a4cbf13c9b96cefb8ff40a61e9a386ccdc189a816b",
+      "writerId": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+      "writeGeneration": 2,
+      "previousCheckpointDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "writerClaimDigest": "sha256:a8b8a0f098fee7584fe1c253c1528f4bb8348d629b7d828a04eb923a11d8ddc4",
       "branchRef": "refs/heads/feat/agent-governance-platform",
       "baseRevision": "git-sha1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "headRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -75,7 +83,13 @@
       ],
       "rediscoveryRequired": true,
       "recomputeRemainingWork": true,
-      "terminalReplayAllowed": false
+      "terminalReplayAllowed": false,
+      "identityTupleRequired": true,
+      "singleWriterRequired": true,
+      "duplicateWriterAllowed": false,
+      "duplicateResumeAllowed": false,
+      "overwritePolicy": "compare-generation-and-previous-checkpoint-digest",
+      "acceptedIdentity": "exact-match-only"
     },
     "redaction": {
       "status": "PASS",
@@ -104,7 +118,22 @@
         "tests/test_validate_agent_checkpoint.py",
         "tests/fixtures/agent-checkpoint.json"
       ],
-      "remainingWorkCount": 2
+      "remainingWorkCount": 2,
+      "source": {
+        "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "owner": "active-task-executor",
+        "evidenceRefs": [
+          "tests/fixtures/agent-checkpoint.json"
+        ]
+      },
+      "replacement": {
+        "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "owner": "active-task-executor",
+        "evidenceRefs": [
+          "tests/test_validate_agent_checkpoint.py"
+        ]
+      },
+      "reviewStatus": "approved"
     },
     "handoff": {
       "state": "ready",
@@ -130,6 +159,30 @@
           "tests/fixtures/agent-checkpoint.json"
         ],
         "redactionStatus": "PASS",
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "restrictedContextAllowed": false,
+          "rawContextAllowed": false,
+          "providerPayloadAllowed": false,
+          "reviewStatus": "approved"
+        },
+        "retention": {
+          "policy": "discard-at-task-terminal",
+          "canonicalDecisionOwner": "active-task-executor",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "handoff": {
+          "currentOwner": "active-task-executor",
+          "nextOwner": "active-task-executor",
+          "disposition": "discard",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "tests/test_validate_agent_checkpoint.py"
+          ]
+        },
         "promotion": {
           "targetClass": "durable-long-term",
           "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
@@ -196,6 +249,30 @@
           "docs/00.agent-governance/memory/progress.md"
         ],
         "redactionStatus": "PASS",
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "restrictedContextAllowed": false,
+          "rawContextAllowed": false,
+          "providerPayloadAllowed": false,
+          "reviewStatus": "approved"
+        },
+        "retention": {
+          "policy": "retain-under-canonical-owner",
+          "canonicalDecisionOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/progress.md"
+          ]
+        },
+        "handoff": {
+          "currentOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "nextOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
+          "disposition": "retain",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/progress.md"
+          ]
+        },
         "promotion": {
           "targetClass": null,
           "canonicalOwner": null,
@@ -259,6 +336,30 @@
           "docs/00.agent-governance/memory/README.md"
         ],
         "redactionStatus": "PASS",
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "restrictedContextAllowed": false,
+          "rawContextAllowed": false,
+          "providerPayloadAllowed": false,
+          "reviewStatus": "approved"
+        },
+        "retention": {
+          "policy": "archive-when-superseded-or-invalidated",
+          "canonicalDecisionOwner": "canonical-domain-document-owner",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          ]
+        },
+        "handoff": {
+          "currentOwner": "canonical-domain-document-owner",
+          "nextOwner": "canonical-domain-document-owner",
+          "disposition": "archive",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
         "promotion": {
           "targetClass": "durable-long-term",
           "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
@@ -325,6 +426,30 @@
           "docs/00.agent-governance/memory/README.md"
         ],
         "redactionStatus": "PASS",
+        "sensitivity": {
+          "classification": "non-sensitive-redacted",
+          "restrictedContextAllowed": false,
+          "rawContextAllowed": false,
+          "providerPayloadAllowed": false,
+          "reviewStatus": "approved"
+        },
+        "retention": {
+          "policy": "garbage-collect-under-provider-retention-after-repository-reobservation",
+          "canonicalDecisionOwner": "provider-runtime-or-user-local-store",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "docs/00.agent-governance/memory/README.md"
+          ]
+        },
+        "handoff": {
+          "currentOwner": "provider-runtime-or-user-local-store",
+          "nextOwner": "provider-runtime-or-user-local-store",
+          "disposition": "garbage-collect",
+          "reviewStatus": "approved",
+          "evidenceRefs": [
+            "tests/test_validate_agent_checkpoint.py"
+          ]
+        },
         "promotion": {
           "targetClass": "working-short-term",
           "canonicalOwner": "active-task-executor",
@@ -389,9 +514,17 @@
     "observed": true,
     "observedAtUtc": "2026-07-29T00:10:00Z",
     "identity": {
+      "repositoryId": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "taskId": "AHLL-002-SYNTHETIC",
       "specRef": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
       "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "providerSurfaceId": "codex",
+      "providerSessionInstanceDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "namespaceDigest": "sha256:102e95149adb6c07039a01a4cbf13c9b96cefb8ff40a61e9a386ccdc189a816b",
+      "writerId": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+      "writeGeneration": 2,
+      "previousCheckpointDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "writerClaimDigest": "sha256:a8b8a0f098fee7584fe1c253c1528f4bb8348d629b7d828a04eb923a11d8ddc4",
       "branchRef": "refs/heads/feat/agent-governance-platform",
       "baseRevision": "git-sha1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "headRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -399,7 +532,9 @@
       "workingStateDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
       "ownedPathsDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
     },
-    "loopState": "running"
+    "loopState": "running",
+    "activeWriterCount": 1,
+    "activeResumeCount": 1
   },
   "negativeMutations": [
     {
@@ -409,6 +544,10 @@
     {
       "name": "unknown-checkpoint-field",
       "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "stale-repository",
+      "expectedRule": "AHLL-CP-STALE-REPOSITORY"
     },
     {
       "name": "stale-task",
@@ -421,6 +560,46 @@
     {
       "name": "stale-worktree",
       "expectedRule": "AHLL-CP-STALE-WORKTREE"
+    },
+    {
+      "name": "stale-provider-surface",
+      "expectedRule": "AHLL-CP-STALE-PROVIDER-SURFACE"
+    },
+    {
+      "name": "stale-provider-session",
+      "expectedRule": "AHLL-CP-STALE-PROVIDER-SESSION"
+    },
+    {
+      "name": "namespace-digest-drift",
+      "expectedRule": "AHLL-CP-NAMESPACE-DIGEST"
+    },
+    {
+      "name": "writer-id-collision",
+      "expectedRule": "AHLL-CP-WRITER-ID-COLLISION"
+    },
+    {
+      "name": "writer-claim-drift",
+      "expectedRule": "AHLL-CP-WRITER-CLAIM"
+    },
+    {
+      "name": "write-generation-stale",
+      "expectedRule": "AHLL-CP-WRITE-GENERATION"
+    },
+    {
+      "name": "previous-checkpoint-overwrite",
+      "expectedRule": "AHLL-CP-OVERWRITE"
+    },
+    {
+      "name": "duplicate-writer",
+      "expectedRule": "AHLL-CP-DUPLICATE-WRITER"
+    },
+    {
+      "name": "duplicate-resume",
+      "expectedRule": "AHLL-CP-DUPLICATE-RESUME"
+    },
+    {
+      "name": "provider-executor-surface-mismatch",
+      "expectedRule": "AHLL-CP-PROVIDER-SURFACE"
     },
     {
       "name": "stale-branch",
@@ -507,6 +686,30 @@
       "expectedRule": "AHLL-CP-RESUME"
     },
     {
+      "name": "resume-identity-tuple-disabled",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "resume-single-writer-disabled",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "resume-duplicate-writer-enabled",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "resume-duplicate-resume-enabled",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "resume-overwrite-policy-drift",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "resume-accepted-identity-drift",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
       "name": "resume-synthetic-mode-mismatch",
       "expectedRule": "AHLL-CP-RESUME"
     },
@@ -591,12 +794,56 @@
       "expectedRule": "AHLL-CP-MEMORY-CONFLICT"
     },
     {
+      "name": "memory-sensitivity-drift",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "memory-retention-drift",
+      "expectedRule": "AHLL-CP-MEMORY-RETENTION"
+    },
+    {
+      "name": "memory-retention-evidence-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "memory-handoff-owner-missing",
+      "expectedRule": "AHLL-CP-MEMORY-HANDOFF"
+    },
+    {
+      "name": "memory-handoff-evidence-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
       "name": "compaction-retains-transcript",
       "expectedRule": "AHLL-CP-COMPACTION"
     },
     {
       "name": "compaction-count-drift",
       "expectedRule": "AHLL-CP-COMPACTION"
+    },
+    {
+      "name": "compaction-source-evidence-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "compaction-replacement-evidence-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "compaction-identical-digests",
+      "expectedRule": "AHLL-CP-COMPACTION"
+    },
+    {
+      "name": "compaction-source-owner-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "compaction-replacement-owner-missing",
+      "expectedRule": "AHLL-CP-SCHEMA"
+    },
+    {
+      "name": "compaction-review-unapproved",
+      "expectedRule": "AHLL-CP-SCHEMA"
     },
     {
       "name": "handoff-owner-missing",

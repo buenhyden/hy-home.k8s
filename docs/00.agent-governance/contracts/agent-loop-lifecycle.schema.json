@@ -534,15 +534,25 @@
       "additionalProperties": false,
       "required": [
         "schemaRef",
+        "checkpointSchemaVersion",
         "implementationOwner",
         "implementationState",
         "repositoryStateWins",
         "executableValidationDelegated",
-        "memoryClassIds"
+        "memoryClassIds",
+        "identityAxes",
+        "namespaceDigestRequired",
+        "singleWriterRequired",
+        "duplicateResumeAllowed",
+        "overwritePolicy",
+        "actualProviderStateReadAllowed"
       ],
       "properties": {
         "schemaRef": {
           "$ref": "#/$defs/nonEmptyString"
+        },
+        "checkpointSchemaVersion": {
+          "const": 2
         },
         "implementationOwner": {
           "$ref": "#/$defs/nonEmptyString"
@@ -569,6 +579,44 @@
               "provider-local-auxiliary"
             ]
           }
+        },
+        "identityAxes": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "repository-id"
+            },
+            {
+              "const": "worktree-id"
+            },
+            {
+              "const": "task-id"
+            },
+            {
+              "const": "provider-surface-id"
+            },
+            {
+              "const": "provider-session-instance-digest"
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "namespaceDigestRequired": {
+          "const": true
+        },
+        "singleWriterRequired": {
+          "const": true
+        },
+        "duplicateResumeAllowed": {
+          "const": false
+        },
+        "overwritePolicy": {
+          "const": "compare-generation-and-previous-checkpoint-digest"
+        },
+        "actualProviderStateReadAllowed": {
+          "const": false
         }
       }
     },

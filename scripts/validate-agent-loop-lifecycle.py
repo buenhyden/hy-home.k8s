@@ -649,15 +649,44 @@ def _validate_checkpoint_boundary(
     boundary = contract["checkpointBoundary"]
     if (
         boundary["schemaRef"] != CHECKPOINT_SCHEMA_PATH
+        or boundary["checkpointSchemaVersion"] != 2
         or boundary["implementationOwner"] != "AHLL-002"
         or boundary["implementationState"] != "executable"
         or boundary["repositoryStateWins"] is not True
         or boundary["executableValidationDelegated"] is not True
         or tuple(boundary["memoryClassIds"]) != MEMORY_CLASS_IDS
+        or tuple(boundary["identityAxes"])
+        != (
+            "repository-id",
+            "worktree-id",
+            "task-id",
+            "provider-surface-id",
+            "provider-session-instance-digest",
+        )
+        or boundary["namespaceDigestRequired"] is not True
+        or boundary["singleWriterRequired"] is not True
+        or boundary["duplicateResumeAllowed"] is not False
+        or boundary["overwritePolicy"]
+        != "compare-generation-and-previous-checkpoint-digest"
+        or boundary["actualProviderStateReadAllowed"] is not False
     ):
         fail(
             "AHLL-CHECKPOINT-BOUNDARY",
             "checkpoint reference, repository authority, or delegation differs",
+        )
+
+    checkpoint_schema = load_json(
+        root, PurePosixPath(CHECKPOINT_SCHEMA_PATH)
+    )
+    if (
+        checkpoint_schema.get("properties", {})
+        .get("schemaVersion", {})
+        .get("const")
+        != boundary["checkpointSchemaVersion"]
+    ):
+        fail(
+            "AHLL-CHECKPOINT-BOUNDARY",
+            "checkpoint schema version differs from the loop boundary",
         )
 
     harness = load_json(root, HARNESS_PATH)
@@ -1232,6 +1261,22 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["checkpointBoundary"][
             "executableValidationDelegated"
         ] = False
+    elif name == "checkpoint-schema-version-drift":
+        contract["checkpointBoundary"]["checkpointSchemaVersion"] = 1
+    elif name == "checkpoint-identity-axes-drift":
+        contract["checkpointBoundary"]["identityAxes"][0] = "repository-path"
+    elif name == "checkpoint-namespace-digest-disabled":
+        contract["checkpointBoundary"]["namespaceDigestRequired"] = False
+    elif name == "checkpoint-single-writer-disabled":
+        contract["checkpointBoundary"]["singleWriterRequired"] = False
+    elif name == "checkpoint-duplicate-resume-enabled":
+        contract["checkpointBoundary"]["duplicateResumeAllowed"] = True
+    elif name == "checkpoint-overwrite-policy-drift":
+        contract["checkpointBoundary"]["overwritePolicy"] = (
+            "replace-unconditionally"
+        )
+    elif name == "checkpoint-provider-state-read-enabled":
+        contract["checkpointBoundary"]["actualProviderStateReadAllowed"] = True
     elif name == "memory-class-drift":
         contract["checkpointBoundary"]["memoryClassIds"][-1] = (
             "provider-local-authority"

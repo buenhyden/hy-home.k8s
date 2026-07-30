@@ -274,6 +274,7 @@
   },
   "checkpointBoundary": {
     "schemaRef": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json",
+    "checkpointSchemaVersion": 2,
     "implementationOwner": "AHLL-002",
     "implementationState": "executable",
     "repositoryStateWins": true,
@@ -283,7 +284,19 @@
       "durable-long-term",
       "domain-scoped",
       "provider-local-auxiliary"
-    ]
+    ],
+    "identityAxes": [
+      "repository-id",
+      "worktree-id",
+      "task-id",
+      "provider-surface-id",
+      "provider-session-instance-digest"
+    ],
+    "namespaceDigestRequired": true,
+    "singleWriterRequired": true,
+    "duplicateResumeAllowed": false,
+    "overwritePolicy": "compare-generation-and-previous-checkpoint-digest",
+    "actualProviderStateReadAllowed": false
   },
   "feedbackRouting": {
     "trigger": "repeated-stable-failure",

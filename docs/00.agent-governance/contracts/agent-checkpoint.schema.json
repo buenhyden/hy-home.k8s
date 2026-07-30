@@ -32,7 +32,7 @@
       "const": "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
     },
     "schemaVersion": {
-      "const": 1
+      "const": 2
     },
     "contractVersion": {
       "const": "1.0.0"
@@ -198,9 +198,17 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "repositoryId",
         "taskId",
         "specRef",
         "worktreeId",
+        "providerSurfaceId",
+        "providerSessionInstanceDigest",
+        "namespaceDigest",
+        "writerId",
+        "writeGeneration",
+        "previousCheckpointDigest",
+        "writerClaimDigest",
         "branchRef",
         "baseRevision",
         "headRevision",
@@ -210,6 +218,9 @@
         "updatedAtUtc"
       ],
       "properties": {
+        "repositoryId": {
+          "$ref": "#/$defs/digest"
+        },
         "taskId": {
           "type": "string",
           "minLength": 3,
@@ -220,6 +231,33 @@
           "const": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
         },
         "worktreeId": {
+          "$ref": "#/$defs/digest"
+        },
+        "providerSurfaceId": {
+          "enum": [
+            "local",
+            "claude",
+            "codex",
+            "gemini"
+          ]
+        },
+        "providerSessionInstanceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "namespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "writerId": {
+          "$ref": "#/$defs/digest"
+        },
+        "writeGeneration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "previousCheckpointDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "writerClaimDigest": {
           "$ref": "#/$defs/digest"
         },
         "branchRef": {
@@ -380,7 +418,13 @@
         "conflictOrder",
         "rediscoveryRequired",
         "recomputeRemainingWork",
-        "terminalReplayAllowed"
+        "terminalReplayAllowed",
+        "identityTupleRequired",
+        "singleWriterRequired",
+        "duplicateWriterAllowed",
+        "duplicateResumeAllowed",
+        "overwritePolicy",
+        "acceptedIdentity"
       ],
       "properties": {
         "repositoryStateWins": {
@@ -409,6 +453,24 @@
         },
         "terminalReplayAllowed": {
           "type": "boolean"
+        },
+        "identityTupleRequired": {
+          "const": true
+        },
+        "singleWriterRequired": {
+          "const": true
+        },
+        "duplicateWriterAllowed": {
+          "const": false
+        },
+        "duplicateResumeAllowed": {
+          "const": false
+        },
+        "overwritePolicy": {
+          "const": "compare-generation-and-previous-checkpoint-digest"
+        },
+        "acceptedIdentity": {
+          "const": "exact-match-only"
         }
       }
     },
@@ -497,7 +559,10 @@
         "fullTranscriptRetained",
         "providerBodyRetained",
         "validationEvidenceRefs",
-        "remainingWorkCount"
+        "remainingWorkCount",
+        "source",
+        "replacement",
+        "reviewStatus"
       ],
       "properties": {
         "state": {
@@ -522,6 +587,41 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 12
+        },
+        "source": {
+          "$ref": "#/$defs/compactionRecord"
+        },
+        "replacement": {
+          "$ref": "#/$defs/compactionRecord"
+        },
+        "reviewStatus": {
+          "const": "approved"
+        }
+      }
+    },
+    "compactionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "digest",
+        "owner",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
         }
       }
     },
@@ -844,6 +944,114 @@
         }
       }
     },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "restrictedContextAllowed",
+        "rawContextAllowed",
+        "providerPayloadAllowed",
+        "reviewStatus"
+      ],
+      "properties": {
+        "classification": {
+          "const": "non-sensitive-redacted"
+        },
+        "restrictedContextAllowed": {
+          "const": false
+        },
+        "rawContextAllowed": {
+          "const": false
+        },
+        "providerPayloadAllowed": {
+          "const": false
+        },
+        "reviewStatus": {
+          "const": "approved"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "canonicalDecisionOwner",
+        "reviewStatus",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "policy": {
+          "enum": [
+            "discard-at-task-terminal",
+            "retain-under-canonical-owner",
+            "archive-when-superseded-or-invalidated",
+            "garbage-collect-under-provider-retention-after-repository-reobservation"
+          ]
+        },
+        "canonicalDecisionOwner": {
+          "$ref": "#/$defs/owner"
+        },
+        "reviewStatus": {
+          "const": "approved"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
+      }
+    },
+    "memoryHandoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currentOwner",
+        "nextOwner",
+        "disposition",
+        "reviewStatus",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "currentOwner": {
+          "$ref": "#/$defs/owner"
+        },
+        "nextOwner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 3,
+          "maxLength": 80,
+          "pattern": "^[a-z][a-z0-9]*(?:[-/][a-z0-9]+)*$"
+        },
+        "disposition": {
+          "enum": [
+            "discard",
+            "retain",
+            "archive",
+            "garbage-collect"
+          ]
+        },
+        "reviewStatus": {
+          "const": "approved"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
+      }
+    },
     "memoryLifecycle": {
       "type": "object",
       "additionalProperties": false,
@@ -857,7 +1065,10 @@
         "refresh",
         "expiry",
         "archiveGc",
-        "conflict"
+        "conflict",
+        "sensitivity",
+        "retention",
+        "handoff"
       ],
       "properties": {
         "classId": {
@@ -899,6 +1110,15 @@
         },
         "conflict": {
           "$ref": "#/$defs/conflict"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/sensitivity"
+        },
+        "retention": {
+          "$ref": "#/$defs/retention"
+        },
+        "handoff": {
+          "$ref": "#/$defs/memoryHandoff"
         }
       }
     }

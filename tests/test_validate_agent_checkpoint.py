@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import subprocess
@@ -99,6 +100,13 @@ class AgentCheckpointContractTests(unittest.TestCase):
         visit(self.schema)
 
     def test_valid_synthetic_checkpoint_and_resume_pass(self) -> None:
+        self.assertEqual(self.fixture["fixtureVersion"], 2)
+        self.assertEqual(
+            self.fixture["syntheticCheckpoint"]["schemaVersion"], 2
+        )
+        self.assertEqual(
+            self.fixture["syntheticCheckpoint"]["contractVersion"], "1.0.0"
+        )
         counts = self.validator.validate_checkpoint(
             REPOSITORY_ROOT,
             self.checkpoint_copy(),
@@ -182,9 +190,17 @@ class AgentCheckpointContractTests(unittest.TestCase):
 
     def test_resume_reobserves_every_repository_identity_axis(self) -> None:
         expected = {
+            "repositoryId",
             "taskId",
             "specRef",
             "worktreeId",
+            "providerSurfaceId",
+            "providerSessionInstanceDigest",
+            "namespaceDigest",
+            "writerId",
+            "writeGeneration",
+            "previousCheckpointDigest",
+            "writerClaimDigest",
             "branchRef",
             "baseRevision",
             "headRevision",
@@ -205,6 +221,54 @@ class AgentCheckpointContractTests(unittest.TestCase):
         self.assertTrue(resume["rediscoveryRequired"])
         self.assertTrue(resume["recomputeRemainingWork"])
         self.assertFalse(resume["terminalReplayAllowed"])
+        self.assertTrue(resume["identityTupleRequired"])
+        self.assertTrue(resume["singleWriterRequired"])
+        self.assertFalse(resume["duplicateWriterAllowed"])
+        self.assertFalse(resume["duplicateResumeAllowed"])
+        self.assertEqual(
+            resume["overwritePolicy"],
+            "compare-generation-and-previous-checkpoint-digest",
+        )
+        self.assertEqual(resume["acceptedIdentity"], "exact-match-only")
+        self.assertEqual(
+            self.fixture["repositoryState"]["activeWriterCount"], 1
+        )
+        self.assertEqual(
+            self.fixture["repositoryState"]["activeResumeCount"], 1
+        )
+
+    def test_namespace_and_writer_claim_digests_are_recomputed(self) -> None:
+        identity = self.fixture["syntheticCheckpoint"]["identity"]
+
+        def digest(*values):
+            payload = "\n".join(str(value) for value in values).encode()
+            return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+        self.assertEqual(
+            identity["namespaceDigest"],
+            digest(
+                identity["repositoryId"],
+                identity["worktreeId"],
+                identity["taskId"],
+                identity["providerSurfaceId"],
+                identity["providerSessionInstanceDigest"],
+            ),
+        )
+        self.assertEqual(
+            identity["writerClaimDigest"],
+            digest(
+                identity["namespaceDigest"],
+                identity["writerId"],
+                identity["writeGeneration"],
+                identity["previousCheckpointDigest"],
+                identity["baseRevision"],
+                identity["headRevision"],
+            ),
+        )
+        self.assertEqual(
+            identity["providerSurfaceId"],
+            self.fixture["syntheticCheckpoint"]["executor"]["providerId"],
+        )
 
     def test_all_terminal_states_are_rejected_for_replay(self) -> None:
         for state in self.validator.TERMINAL_STATES:
@@ -253,9 +317,20 @@ class AgentCheckpointContractTests(unittest.TestCase):
         required = {
             "duplicate-json-key",
             "unknown-checkpoint-field",
+            "stale-repository",
             "stale-task",
             "stale-spec",
             "stale-worktree",
+            "stale-provider-surface",
+            "stale-provider-session",
+            "namespace-digest-drift",
+            "writer-id-collision",
+            "writer-claim-drift",
+            "write-generation-stale",
+            "previous-checkpoint-overwrite",
+            "duplicate-writer",
+            "duplicate-resume",
+            "provider-executor-surface-mismatch",
             "stale-branch",
             "stale-base",
             "stale-head",
@@ -272,6 +347,12 @@ class AgentCheckpointContractTests(unittest.TestCase):
             "validation-summary-overflow",
             "atomic-write-disabled",
             "resume-conflict-order-drift",
+            "resume-identity-tuple-disabled",
+            "resume-single-writer-disabled",
+            "resume-duplicate-writer-enabled",
+            "resume-duplicate-resume-enabled",
+            "resume-overwrite-policy-drift",
+            "resume-accepted-identity-drift",
             "resume-synthetic-mode-mismatch",
             "promotion-evidence-missing",
             "promotion-owner-missing",
@@ -290,7 +371,18 @@ class AgentCheckpointContractTests(unittest.TestCase):
             "archive-gc-original-owner-missing",
             "archive-gc-replacement-owner-missing",
             "repository-conflict-loses",
+            "memory-sensitivity-drift",
+            "memory-retention-drift",
+            "memory-retention-evidence-missing",
+            "memory-handoff-owner-missing",
+            "memory-handoff-evidence-missing",
             "compaction-retains-transcript",
+            "compaction-source-evidence-missing",
+            "compaction-replacement-evidence-missing",
+            "compaction-identical-digests",
+            "compaction-source-owner-missing",
+            "compaction-replacement-owner-missing",
+            "compaction-review-unapproved",
             "handoff-owner-missing",
             "sensitive-credential-key",
             "sensitive-credential-value",
@@ -352,6 +444,20 @@ class AgentCheckpointContractTests(unittest.TestCase):
         for record in self.fixture["syntheticCheckpoint"]["memoryLifecycle"]:
             with self.subTest(memory_class=record["classId"]):
                 self.assertEqual(record["redactionStatus"], "PASS")
+                self.assertEqual(
+                    record["sensitivity"]["classification"],
+                    "non-sensitive-redacted",
+                )
+                self.assertFalse(
+                    record["sensitivity"]["restrictedContextAllowed"]
+                )
+                self.assertFalse(record["sensitivity"]["rawContextAllowed"])
+                self.assertFalse(
+                    record["sensitivity"]["providerPayloadAllowed"]
+                )
+                self.assertEqual(
+                    record["sensitivity"]["reviewStatus"], "approved"
+                )
                 self.assertTrue(record["canonicalOwner"])
                 self.assertTrue(record["refresh"]["basis"])
                 self.assertTrue(record["refresh"]["evidenceRefs"])
@@ -362,6 +468,21 @@ class AgentCheckpointContractTests(unittest.TestCase):
                 )
                 self.assertGreaterEqual(due, updated)
                 self.assertTrue(record["expiry"]["disposition"])
+                self.assertTrue(record["retention"]["policy"])
+                self.assertEqual(
+                    record["retention"]["canonicalDecisionOwner"],
+                    record["canonicalOwner"],
+                )
+                self.assertTrue(record["retention"]["evidenceRefs"])
+                self.assertEqual(
+                    record["handoff"]["currentOwner"],
+                    record["canonicalOwner"],
+                )
+                self.assertEqual(
+                    record["handoff"]["nextOwner"],
+                    record["canonicalOwner"],
+                )
+                self.assertTrue(record["handoff"]["evidenceRefs"])
                 self.assertTrue(record["archiveGc"]["reason"])
                 self.assertTrue(record["archiveGc"]["originalOwner"])
                 self.assertTrue(record["archiveGc"]["provenanceRefs"])
@@ -385,6 +506,17 @@ class AgentCheckpointContractTests(unittest.TestCase):
                         record["promotion"]["review"]["status"],
                         "approved",
                     )
+
+    def test_compaction_closes_source_replacement_and_review(self) -> None:
+        compaction = self.fixture["syntheticCheckpoint"]["compaction"]
+        self.assertNotEqual(
+            compaction["source"]["digest"],
+            compaction["replacement"]["digest"],
+        )
+        for record in (compaction["source"], compaction["replacement"]):
+            self.assertTrue(record["owner"])
+            self.assertTrue(record["evidenceRefs"])
+        self.assertEqual(compaction["reviewStatus"], "approved")
 
     def test_checkpoint_freshness_is_fixed_synthetic_and_ordered(self) -> None:
         identity = self.fixture["syntheticCheckpoint"]["identity"]
