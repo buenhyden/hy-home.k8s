@@ -13,7 +13,7 @@ inventory stays in `scripts/README.md`.
 #### Metadata
 
 - **Date**: 2026-07-30
-- **Layer**: automation, ci, docs, governance, qa, security
+- **Layer**: meta
 - **Owner**: AGQC-005 postflight
 - **Canonical Owner**: Spec 045 Task and the durable shared progress ledger
 - **Provenance**: `781ebb82b64d2f63d6b9630b6b3e48115dc5a791` and
@@ -25,7 +25,7 @@ inventory stays in `scripts/README.md`.
   context is garbage-collected under provider retention after repository
   re-observation.
 - **Next Owner**: AGQC-006
-- **Status**: done
+- **Status**: complete
 - **Tags**: #spec-045 #agqc-005 #checkpoint #memory-lifecycle #postflight
 
 #### Progress
