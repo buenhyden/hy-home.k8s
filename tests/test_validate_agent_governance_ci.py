@@ -216,6 +216,42 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         self.assertEqual(counts["deferredOwners"], 1)
         self.assertEqual(counts["qaSurfaces"], 10)
 
+    def test_aggregate_affected_self_test_requires_explicit_root(self) -> None:
+        root = self.make_valid_root()
+        aggregate = root / AGGREGATE_PATH.relative_to(REPO_ROOT)
+        explicit = (
+            'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" '
+            '--root "$ROOT_DIR" --self-test'
+        )
+        implicit = (
+            'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" '
+            "--self-test"
+        )
+        text = aggregate.read_text(encoding="utf-8")
+        self.assertIn(explicit, text)
+        mutated = text.replace(explicit, implicit, 1)
+        self.assertNotEqual(mutated, text)
+        aggregate.write_text(mutated, encoding="utf-8")
+        self.assert_rule(root, "AGQC-CI-DELEGATION")
+
+    def test_aggregate_provider_self_test_requires_explicit_root(self) -> None:
+        root = self.make_valid_root()
+        aggregate = root / AGGREGATE_PATH.relative_to(REPO_ROOT)
+        explicit = (
+            'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
+            '--root "$ROOT_DIR" --self-test'
+        )
+        implicit = (
+            'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
+            "--self-test"
+        )
+        text = aggregate.read_text(encoding="utf-8")
+        self.assertIn(explicit, text)
+        mutated = text.replace(explicit, implicit, 1)
+        self.assertNotEqual(mutated, text)
+        aggregate.write_text(mutated, encoding="utf-8")
+        self.assert_rule(root, "AGQC-CI-DELEGATION")
+
     def test_local_qa_contract_is_closed(self) -> None:
         contract = self.validator.load_json_document(
             CONTRACT_PATH,
@@ -276,6 +312,19 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 "legacyPositiveCases": 3,
                 "legacyMutationCases": 22,
             },
+        )
+        scripts_readme = SCRIPTS_README_PATH.read_text(encoding="utf-8")
+        implicit_provider_self_test = (
+            "python3 scripts/validate-agent-provider-evidence.py --self-test"
+        )
+        explicit_provider_self_test = (
+            "python3 scripts/validate-agent-provider-evidence.py "
+            "--root . --self-test"
+        )
+        self.assertNotIn(implicit_provider_self_test, scripts_readme)
+        self.assertEqual(
+            scripts_readme.count(explicit_provider_self_test),
+            3,
         )
 
     def test_local_qa_order_and_inventory_drift_fail_closed(self) -> None:

@@ -35,11 +35,14 @@ def run(argv: Sequence[str] | None = None) -> int:
     scripts_dir = Path(__file__).resolve().parent
 
     for script_name in FOCUSED_VALIDATORS:
-        command = [sys.executable, str(scripts_dir / script_name)]
+        command = [
+            sys.executable,
+            str(scripts_dir / script_name),
+            "--root",
+            str(root),
+        ]
         if args.self_test:
             command.append("--self-test")
-        else:
-            command.extend(("--root", str(root)))
         completed = subprocess.run(command, check=False)
         if completed.returncode != 0:
             return completed.returncode

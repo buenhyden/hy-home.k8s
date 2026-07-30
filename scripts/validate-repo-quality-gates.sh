@@ -85,7 +85,7 @@ python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR" -
 python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR"
-python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --root "$ROOT_DIR"
@@ -105,7 +105,7 @@ python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validat
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_document_lifecycle_archive_cutover.py"
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --root "$ROOT_DIR"
-python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-roster-admission.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-roster-admission.py" --root "$ROOT_DIR"

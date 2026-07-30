@@ -8,12 +8,16 @@ import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-provider-config.py"
+AGGREGATE_PATH = (
+    REPOSITORY_ROOT / "scripts/validate-agent-provider-evidence.py"
+)
 CONTRACT_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
@@ -264,6 +268,32 @@ class ProviderConfigContractTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(
             "[PASS] agent provider config self-test passed", result.stdout
+        )
+
+    def test_provider_evidence_self_test_propagates_explicit_root_from_foreign_cwd(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="provider-evidence-root-"
+        ) as directory:
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(AGGREGATE_PATH),
+                    "--root",
+                    str(REPOSITORY_ROOT),
+                    "--self-test",
+                ],
+                cwd=directory,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(
+            "[PASS] agent provider evidence aggregate passed: "
+            "mode=self-test validators=2",
+            result.stdout,
         )
 
 

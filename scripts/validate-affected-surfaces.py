@@ -58,6 +58,14 @@ EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
         "tests",
     )
 )
+CANONICAL_SHARED_SYMLINKS = {
+    ".claude/skills": "../.agents/skills",
+    ".claude/workflows": "../.agents/workflows",
+    ".claude/output-styles": "../.agents/output-styles",
+    ".codex/skills": "../.agents/skills",
+    ".codex/workflows": "../.agents/workflows",
+    ".codex/output-styles": "../.agents/output-styles",
+}
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
 )
@@ -94,10 +102,24 @@ def fail(code: str, detail: str) -> NoReturn:
     raise ContractError(code, detail)
 
 
+def _reject_duplicate_pairs(
+    pairs: list[tuple[str, Any]],
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            fail(
+                "SURFACE-JSON-DUPLICATE-KEY",
+                "JSON object contains a duplicate key",
+            )
+        result[key] = value
+    return result
+
+
 def load_json(path: Path) -> Any:
     try:
         with path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
+            return json.load(handle, object_pairs_hook=_reject_duplicate_pairs)
     except (OSError, json.JSONDecodeError) as exc:
         fail("SURFACE-JSON", f"{path}: {exc}")
 
@@ -361,19 +383,53 @@ def classify_path(contract: dict[str, Any], raw_path: str) -> dict[str, Any]:
     return matches[0]
 
 
-def reject_symlink_traversal(root: Path, raw_path: str) -> None:
-    path = PurePosixPath(normalize_path(raw_path))
+def reject_symlink_traversal(
+    root: Path,
+    raw_path: str,
+    *,
+    require_present: bool = False,
+) -> None:
+    normalized = normalize_path(raw_path)
+    path = PurePosixPath(normalized)
     current = root
     for part in path.parts[:-1]:
         current = current / part
         try:
             mode = current.lstat().st_mode
         except FileNotFoundError:
+            if require_present:
+                fail("SURFACE-PATH-MISSING", raw_path)
             return
         except OSError as exc:
-            fail("SURFACE-PATH-SYMLINK", f"{raw_path}: {exc}")
+            fail("SURFACE-PATH-NODE", f"{raw_path}: {exc}")
         if stat.S_ISLNK(mode):
             fail("SURFACE-PATH-SYMLINK", raw_path)
+        if not stat.S_ISDIR(mode):
+            fail("SURFACE-PATH-NODE", raw_path)
+
+    final = root / path
+    try:
+        mode = final.lstat().st_mode
+    except FileNotFoundError:
+        if require_present:
+            fail("SURFACE-PATH-MISSING", raw_path)
+        return
+    except OSError as exc:
+        fail("SURFACE-PATH-NODE", f"{raw_path}: {exc}")
+
+    if stat.S_ISLNK(mode):
+        expected_target = CANONICAL_SHARED_SYMLINKS.get(normalized)
+        if expected_target is None:
+            fail("SURFACE-PATH-SYMLINK", raw_path)
+        try:
+            actual_target = final.readlink().as_posix()
+        except OSError as exc:
+            fail("SURFACE-PATH-SYMLINK", f"{raw_path}: {exc}")
+        if actual_target != expected_target:
+            fail("SURFACE-PATH-SYMLINK", raw_path)
+        return
+    if not stat.S_ISREG(mode):
+        fail("SURFACE-PATH-NODE", raw_path)
 
 
 def select_paths(
@@ -1087,6 +1143,99 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     if mixed_result["unmatchedPaths"] != ["unowned/a.txt", "unowned/z.txt"]:
         fail("SURFACE-SELF-TEST", "unmatched path output is not sorted")
 
+    boundary_failures: list[str] = []
+    with tempfile.TemporaryDirectory(
+        prefix="affected-surface-input-boundary-"
+    ) as directory:
+        boundary_root = Path(directory)
+        duplicate_json = boundary_root / "duplicate.json"
+        duplicate_json.write_text(
+            '{"schemaVersion":3,"schemaVersion":4}\n',
+            encoding="utf-8",
+        )
+        try:
+            load_json(duplicate_json)
+        except ContractError as exc:
+            if exc.code != "SURFACE-JSON-DUPLICATE-KEY":
+                boundary_failures.append("duplicate-json-wrong-rule")
+        else:
+            boundary_failures.append("duplicate-json-accepted")
+
+        (boundary_root / ".agents/skills").mkdir(parents=True)
+        (boundary_root / ".claude").mkdir()
+        (boundary_root / "scripts").mkdir()
+        (boundary_root / "docs").mkdir()
+        (boundary_root / "linked-parent-target").mkdir()
+        (boundary_root / ".claude/skills").symlink_to("../.agents/skills")
+        (boundary_root / ".claude/workflows").symlink_to("../.agents/skills")
+        (boundary_root / "scripts/regular.py").write_text(
+            "# synthetic\n",
+            encoding="utf-8",
+        )
+        (boundary_root / "scripts/unexpected.py").symlink_to("regular.py")
+        (boundary_root / "scripts/non-regular.py").mkdir()
+        (boundary_root / "linked-parent").symlink_to("linked-parent-target")
+
+        try:
+            reject_symlink_traversal(boundary_root, ".claude/skills")
+        except ContractError:
+            boundary_failures.append("canonical-shared-link-rejected")
+
+        for name, path, expected_rule in (
+            (
+                "wrong-shared-link-target",
+                ".claude/workflows",
+                "SURFACE-PATH-SYMLINK",
+            ),
+            (
+                "unexpected-final-symlink",
+                "scripts/unexpected.py",
+                "SURFACE-PATH-SYMLINK",
+            ),
+            (
+                "non-regular-final-node",
+                "scripts/non-regular.py",
+                "SURFACE-PATH-NODE",
+            ),
+            (
+                "intermediate-symlink",
+                "linked-parent/proposed.md",
+                "SURFACE-PATH-SYMLINK",
+            ),
+        ):
+            try:
+                reject_symlink_traversal(boundary_root, path)
+            except ContractError as exc:
+                if exc.code != expected_rule:
+                    boundary_failures.append(f"{name}-wrong-rule")
+            else:
+                boundary_failures.append(f"{name}-accepted")
+
+        try:
+            reject_symlink_traversal(boundary_root, "docs/proposed.md")
+        except ContractError:
+            boundary_failures.append("missing-proposal-rejected")
+
+        try:
+            reject_symlink_traversal(
+                boundary_root,
+                "docs/proposed.md",
+                require_present=True,
+            )
+        except TypeError:
+            boundary_failures.append("tracked-presence-not-implemented")
+        except ContractError as exc:
+            if exc.code != "SURFACE-PATH-MISSING":
+                boundary_failures.append("tracked-missing-wrong-rule")
+        else:
+            boundary_failures.append("tracked-missing-accepted")
+
+    if boundary_failures:
+        fail(
+            "SURFACE-SELF-TEST",
+            "input/node boundary cases failed: " + ",".join(boundary_failures),
+        )
+
     with tempfile.TemporaryDirectory(prefix="affected-surface-") as directory:
         path_file = Path(directory) / "paths.nul"
         path_file.write_bytes(b"README.md\0gitops/README.md\0")
@@ -1145,7 +1294,7 @@ def main() -> int:
         paths = tracked_paths(root)
         observed_surfaces = {
             (
-                reject_symlink_traversal(root, path),
+                reject_symlink_traversal(root, path, require_present=True),
                 classify_path(contract, path)["id"],
             )[1]
             for path in paths

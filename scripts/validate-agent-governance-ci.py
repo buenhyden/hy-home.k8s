@@ -1038,19 +1038,24 @@ def _validate_integrations(
         AGGREGATE_PRODUCTION_COMMAND,
         AGGREGATE_LEGACY_SELF_TEST_COMMAND,
         AGGREGATE_LEGACY_PRODUCTION_COMMAND,
-        'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test',
+        'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" '
+        '--root "$ROOT_DIR" --self-test',
         'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"',
+        'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
+        '--root "$ROOT_DIR" --self-test',
+        'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
+        '--root "$ROOT_DIR"',
     )
     if any(aggregate_lines.count(command) != 1 for command in required_order):
         fail(
             "AGQC-CI-DELEGATION",
-            "aggregate must invoke gate and affected checks exactly once",
+            "aggregate must invoke gate, affected, and provider checks exactly once",
         )
     positions = [aggregate_lines.index(command) for command in required_order]
     if positions != sorted(positions):
         fail(
             "AGQC-CI-DELEGATION",
-            "aggregate gate self-test/production must precede affected checks",
+            "aggregate gate, affected, and provider checks are out of order",
         )
 
     repos = pre_commit.get("repos")
