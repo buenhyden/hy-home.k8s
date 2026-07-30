@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 60,
+                "helpers": 64,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 27,
-                "python": 25,
-                "json": 28,
+                "postClosureHelpers": 31,
+                "python": 27,
+                "json": 30,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,7 +179,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 60)
+        self.assertEqual(len(actual), 64)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -194,7 +194,15 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "json",
                     "closed-fixture",
                 ),
+                "tests/fixtures/agent-governance-ci.json": (
+                    "json",
+                    "closed-fixture",
+                ),
                 "tests/fixtures/agent-harness-contract.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-legacy-cutover.json": (
                     "json",
                     "closed-fixture",
                 ),
@@ -262,7 +270,15 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_governance_ci.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_agent_harness_contract.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_legacy_cutover.py": (
                     "python",
                     "regression-test",
                 ),
@@ -301,7 +317,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 27})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 31})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -327,7 +343,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
+                    "path": "tests/fixtures/agent-governance-ci.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
                     "path": "tests/fixtures/agent-harness-contract.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/agent-legacy-cutover.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -412,7 +438,17 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
+                    "path": "tests/test_validate_agent_governance_ci.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_validate_agent_harness_contract.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_legacy_cutover.py",
                     "format": "python",
                     "role": "regression-test",
                 },
