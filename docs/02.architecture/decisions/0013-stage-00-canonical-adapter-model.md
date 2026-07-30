@@ -3,7 +3,7 @@ title: 'ADR-0013: Stage 00 Canonical Adapter Model'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-30
 ---
 
 # ADR-0013: Stage 00 Canonical Adapter Model
@@ -16,10 +16,13 @@ provider별 native adapter, local adapter, 또는 symlink view를 명시적으�
 ## Context
 
 Claude, Codex, local/Antigravity adapter는 같은 워크스페이스에서 같은 SDD lifecycle,
-QA/CI/CD, Template Contract, Model Policy, GitOps-first guardrail을 따라야 한다. Gemini CLI
-native adoption도 도입될 경우 같은 공통 계약을 따라야 하지만 현재는 absent/`DEFER`이다.
-각 runtime은 서로 다른 native/local file format, hook support, agent config, permission
-surface를 가진다. Surface별 문서가 durable
+QA/CI/CD, Template Contract, Model Policy, GitOps-first guardrail을 따라야 한다. 이 ADR의
+최초 승인 시점에는 Gemini native project 파일이 없었으나, 현재 저장소에는
+`.gemini/agents/**`와 `.gemini/settings.json`이 tracked repo-static adapter surface로
+존재한다. 이 파일 존재는 Gemini가 이를 native하게 발견·파싱하거나 event/tool policy를
+강제했다는 증거가 아니며, 인증·실행·model resolution을 포함한 provider-runtime lane은
+계속 `DEFER`이다. 각 runtime은 서로 다른 native/local file format, hook support,
+agent config, permission surface를 가진다. Surface별 문서가 durable
 policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 있으므로, 정본과 adapter 책임을
 분리하는 결정이 필요하다.
 
@@ -33,9 +36,13 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   - Claude: `.claude/agents/*.md`
   - Codex: `.codex/agents/*.toml`
   - Local/Antigravity: `.agents/agents/*.md`
-- Gemini CLI native agent/settings surface는 `.gemini/agents/**`와
-  `.gemini/settings.json`이며 현재 absent/`DEFER`이다. `.agents/**`는 Gemini CLI
-  native surface의 증거가 아니다.
+- Gemini용 project adapter surface는 `.gemini/agents/**`와
+  `.gemini/settings.json`에 tracked real file로 유지한다. 이는 현재 repo-static
+  configuration evidence일 뿐이다. 최초 승인 시점의 native project surface 부재는
+  historical observation으로 보존하며, 현재 파일의 native discovery/parsing,
+  event/tool enforcement, authentication, execution, model resolution은 관찰되지
+  않았으므로 provider-runtime lane에서 계속 `DEFER`한다. `.agents/**`도 Gemini CLI
+  native consumption의 증거가 아니다.
 - Hook scripts are shared under `docs/00.agent-governance/hooks/*.sh`;
   `.codex/hooks.json` and local `.agents/hooks.json` are context/validation
   wiring, while Claude native settings/hooks retain their documented runtime
@@ -67,8 +74,9 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   - Repository validators can check catalog, hook, template, and provider config drift as static evidence.
 - **Trade-offs**:
   - Native support differs; Codex와 local/Antigravity surface는 일부 계약을
-    Claude의 native permission/output-style과 다른 방식으로 적용하며, Gemini CLI
-    native adoption은 별도 승인과 canary evidence가 필요하다.
+    Claude의 native permission/output-style과 다른 방식으로 적용한다. Gemini용
+    tracked project adapter가 있더라도 native consumption과 provider-runtime
+    readiness에는 별도의 discovery/authenticated canary evidence가 필요하다.
   - Updating shared assets can affect multiple provider views and therefore requires careful validation.
   - External requested skills must be recorded as strategy lenses or gaps rather than assumed to be local durable assets.
 

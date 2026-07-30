@@ -4086,7 +4086,7 @@ expected_claude_agent_models = {
     "quality-engineer": "Sonnet 5",
 }
 expected_claude_agent_tools = {
-    "supervisor": "Read, Grep, Glob, Bash, Edit, Write, Task",
+    "supervisor": "Read, Grep, Glob, Task",
     "code-reviewer": "Read, Grep, Glob, Bash",
     "doc-writer": "Read, Write, Edit, Grep, Glob, Bash",
     "gitops-reviewer": "Read, Grep, Glob, Bash",

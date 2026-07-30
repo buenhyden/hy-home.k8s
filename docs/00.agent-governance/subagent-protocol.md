@@ -35,7 +35,9 @@ frontmatter. Codex `.codex/agents/*.toml` and local/Antigravity
 requiring identical metadata keys; the latter is not Gemini CLI native tool
 scoping.
 
-- `supervisor`: full toolset (orchestration and delegation).
+- `supervisor`: `Read`, `Grep`, `Glob`, `Task`.
+  The supervisor delegates mutation and validation to bounded workers and has no
+  `Bash`, `Edit`, or `Write` authority.
 - Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
 - `docs-researcher`: `Read`, `Grep`, `Glob`, `WebFetch`, and `WebSearch`;
   it has no repository-write authority.

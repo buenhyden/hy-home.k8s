@@ -37,6 +37,14 @@
       "expectedRule": "HARNESS-VERSION"
     },
     {
+      "name": "stale-source-observation-cutoff",
+      "expectedRule": "HARNESS-CUTOFF"
+    },
+    {
+      "name": "stale-eval-admission-state",
+      "expectedRule": "HARNESS-EVAL"
+    },
+    {
       "name": "count-drift",
       "expectedRule": "HARNESS-SCHEMA"
     },
@@ -149,5 +157,5 @@
       "expectedRule": "HARNESS-SCHEMA"
     }
   ],
-  "expectedCaseCount": 35
+  "expectedCaseCount": 37
 }

@@ -38,6 +38,8 @@ EVAL_OWNER_SPEC = (
 )
 SCHEMA_VERSION = 1
 CONTRACT_VERSION = "1.0.0"
+SOURCE_OBSERVATION_CUTOFF = "2026-07-10T10:00:00+09:00"
+EVAL_ADMISSION_STATE = "repository-static-evaluation-ready"
 TARGET_ROLES = (
     "supervisor",
     "code-reviewer",
@@ -527,6 +529,11 @@ def _precheck_contract(contract: Any) -> None:
             "HARNESS-VERSION",
             f"unsupported contractVersion {contract.get('contractVersion')!r}",
         )
+    if contract.get("sourceObservationCutoff") != SOURCE_OBSERVATION_CUTOFF:
+        fail(
+            "HARNESS-CUTOFF",
+            "source observation cutoff differs from the authoritative instant",
+        )
 
     _identity_values(contract.get("canonicalRoles"), "id", "ROLE")
     _identity_values(contract.get("surfaces"), "id", "SURFACE")
@@ -536,6 +543,18 @@ def _precheck_contract(contract: Any) -> None:
     memory = contract.get("memory")
     if isinstance(memory, dict):
         _identity_values(memory.get("classes"), "id", "MEMORY")
+    for role in contract.get("canonicalRoles", []):
+        if not isinstance(role, dict):
+            continue
+        eval_suite = role.get("evalSuite")
+        if (
+            isinstance(eval_suite, dict)
+            and eval_suite.get("admissionState") != EVAL_ADMISSION_STATE
+        ):
+            fail(
+                "HARNESS-EVAL",
+                "role evaluation state differs from repository-static readiness",
+            )
     for inventory_name in ("currentInventory", "targetInventory"):
         inventory = contract.get(inventory_name)
         if not isinstance(inventory, dict):
@@ -829,7 +848,7 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
         if (
             role["evalSuite"]["id"] != expected_eval
             or role["evalSuite"]["ownerSpec"] != EVAL_OWNER_SPEC
-            or role["evalSuite"]["admissionState"] != "pending-spec-044"
+            or role["evalSuite"]["admissionState"] != EVAL_ADMISSION_STATE
         ):
             fail(
                 "HARNESS-EVAL",
@@ -1239,6 +1258,12 @@ def _apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["schemaVersion"] = 99
     elif name == "unsupported-contract-version":
         contract["contractVersion"] = "99.0.0"
+    elif name == "stale-source-observation-cutoff":
+        contract["sourceObservationCutoff"] = "2026-07-26 Asia/Seoul"
+    elif name == "stale-eval-admission-state":
+        contract["canonicalRoles"][0]["evalSuite"][
+            "admissionState"
+        ] = "pending-spec-044"
     elif name == "count-drift":
         contract["currentInventory"]["expectedProjectionCount"] = 29
     elif name == "current-projection-drift":

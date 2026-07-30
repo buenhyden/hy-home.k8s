@@ -36,7 +36,7 @@
       "const": "1.0.0"
     },
     "sourceObservationCutoff": {
-      "const": "2026-07-26 Asia/Seoul"
+      "const": "2026-07-10T10:00:00+09:00"
     },
     "currentOwner": {
       "$ref": "#/$defs/currentOwner"
@@ -462,7 +462,7 @@
           "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
         },
         "admissionState": {
-          "const": "pending-spec-044"
+          "const": "repository-static-evaluation-ready"
         }
       }
     },

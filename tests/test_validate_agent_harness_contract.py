@@ -4,6 +4,7 @@ import contextlib
 import copy
 import importlib.util
 import io
+import re
 import sys
 import tempfile
 import unittest
@@ -110,6 +111,132 @@ class AgentHarnessContractTests(unittest.TestCase):
             ),
         )
 
+    def test_source_observation_cutoff_matches_authoritative_instant(
+        self,
+    ) -> None:
+        self.assertEqual(
+            self.contract["sourceObservationCutoff"],
+            "2026-07-10T10:00:00+09:00",
+        )
+
+    def test_all_eval_suites_record_repository_static_readiness(self) -> None:
+        observed = tuple(
+            role["evalSuite"]["admissionState"]
+            for role in self.contract["canonicalRoles"]
+        )
+        self.assertEqual(len(observed), 12)
+        self.assertEqual(
+            observed,
+            ("repository-static-evaluation-ready",) * 12,
+        )
+
+    def test_claude_supervisor_has_orchestration_only_tools(self) -> None:
+        text = (
+            REPOSITORY_ROOT / ".claude" / "agents" / "supervisor.md"
+        ).read_text(encoding="utf-8")
+        frontmatter = text.split("---", 2)[1]
+        metadata = dict(
+            line.split(": ", 1)
+            for line in frontmatter.splitlines()
+            if ": " in line
+        )
+        self.assertEqual(metadata["tools"], "Read, Grep, Glob, Task")
+        self.assertTrue(
+            {"Bash", "Edit", "Write"}.isdisjoint(
+                item.strip() for item in metadata["tools"].split(",")
+            )
+        )
+
+    def test_supervisor_tool_owners_share_the_least_privilege_mapping(
+        self,
+    ) -> None:
+        expected_tools = ("Read", "Grep", "Glob", "Task")
+        prohibited_tools = ("Bash", "Edit", "Write")
+
+        adapter_text = (
+            REPOSITORY_ROOT / ".claude" / "agents" / "supervisor.md"
+        ).read_text(encoding="utf-8")
+        adapter_frontmatter = adapter_text.split("---", 2)[1]
+        adapter_metadata = dict(
+            line.split(": ", 1)
+            for line in adapter_frontmatter.splitlines()
+            if ": " in line
+        )
+        adapter_tools = tuple(
+            item.strip() for item in adapter_metadata["tools"].split(",")
+        )
+
+        quality_text = (
+            REPOSITORY_ROOT / "scripts" / "validate-repo-quality-gates.sh"
+        ).read_text(encoding="utf-8")
+        quality_section = quality_text.split(
+            "expected_claude_agent_tools = {", 1
+        )[1].split("}", 1)[0]
+        quality_line = next(
+            line.strip()
+            for line in quality_section.splitlines()
+            if line.strip().startswith('"supervisor": ')
+        )
+        quality_tools = tuple(
+            item.strip() for item in quality_line.split('"')[3].split(",")
+        )
+
+        protocol_text = (
+            REPOSITORY_ROOT
+            / "docs"
+            / "00.agent-governance"
+            / "subagent-protocol.md"
+        ).read_text(encoding="utf-8")
+        protocol_lines = protocol_text.splitlines()
+        protocol_index = next(
+            index
+            for index, line in enumerate(protocol_lines)
+            if line.startswith("- `supervisor`:")
+        )
+        protocol_line = protocol_lines[protocol_index]
+        protocol_context = " ".join(
+            " ".join(
+                protocol_lines[protocol_index : protocol_index + 3]
+            ).split()
+        )
+        protocol_tools = tuple(
+            re.findall(r"`([^`]+)`", protocol_line)[1:]
+        )
+
+        self.assertEqual(adapter_tools, expected_tools)
+        self.assertEqual(quality_tools, expected_tools)
+        self.assertEqual(protocol_tools, expected_tools)
+        self.assertNotIn("full toolset", protocol_context)
+        self.assertIn("delegates mutation and validation", protocol_context)
+        self.assertIn(
+            "has no `Bash`, `Edit`, or `Write` authority",
+            protocol_context,
+        )
+        self.assertTrue(
+            set(prohibited_tools).isdisjoint(
+                adapter_tools + quality_tools + protocol_tools
+            )
+        )
+
+    def test_currentness_mutations_have_stable_rule_ids(self) -> None:
+        cases = {
+            case["name"]: case["expectedRule"]
+            for case in self.fixture["mutations"]
+        }
+        self.assertEqual(
+            {
+                name: cases.get(name)
+                for name in (
+                    "stale-source-observation-cutoff",
+                    "stale-eval-admission-state",
+                )
+            },
+            {
+                "stale-source-observation-cutoff": "HARNESS-CUTOFF",
+                "stale-eval-admission-state": "HARNESS-EVAL",
+            },
+        )
+
     def test_projection_order_is_exact_role_by_surface_product(self) -> None:
         for inventory_name, roles, surfaces, state in (
             (
@@ -202,6 +329,44 @@ class AgentHarnessContractTests(unittest.TestCase):
             if "agent-harness-contract" in surface["validators"]
         )
         self.assertEqual(routed, self.validator.HARNESS_ROUTED_SURFACES)
+
+    def test_readme_owner_rows_name_exact_eight_surface_routing(self) -> None:
+        expected_surfaces = (
+            "provider-gateways",
+            "agent-shared",
+            "agent-claude",
+            "agent-codex",
+            "agent-gemini",
+            "governance-documents",
+            "scripts",
+            "tests",
+        )
+        self.assertEqual(len(expected_surfaces), 8)
+        self.assertEqual(
+            self.validator.HARNESS_ROUTED_SURFACES,
+            expected_surfaces,
+        )
+        owners = (
+            (
+                REPOSITORY_ROOT / "scripts" / "README.md",
+                "| `python3 scripts/validate-agent-harness-contract.py "
+                "--self-test`;",
+            ),
+            (
+                REPOSITORY_ROOT / "tests" / "README.md",
+                "| Agent harness contract fixture |",
+            ),
+        )
+        for path, prefix in owners:
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
+                rows = [
+                    line
+                    for line in path.read_text(encoding="utf-8").splitlines()
+                    if line.startswith(prefix)
+                ]
+                self.assertEqual(len(rows), 1)
+                self.assertIn("exact eight-surface routing", rows[0])
+                self.assertNotIn("seven-surface routing", rows[0])
 
     def test_consumer_set_is_exact_and_current(self) -> None:
         observed = tuple(
@@ -619,7 +784,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 ["--root", str(REPOSITORY_ROOT), "--self-test"]
             )
         self.assertEqual(self_test, 0)
-        self.assertIn("cases=35", stdout.getvalue())
+        self.assertIn("cases=37", stdout.getvalue())
 
 
 if __name__ == "__main__":

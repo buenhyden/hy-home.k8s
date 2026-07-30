@@ -3298,7 +3298,7 @@
         "status": "accepted",
         "owner": "platform",
         "objectMode": "index-stage-zero",
-        "objectId": "git:sha1:d357530ea99174d3beef29cdaf63c26b0399a7e5",
+        "objectId": "git:sha1:c74a491ab21f5969058415b1251ce4bb08b6be5a",
         "disposition": "retain",
         "reason": "terminal-status-alone-is-not-an-archive-predicate",
         "currentAuthority": "accepted-decision-record",

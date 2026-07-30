@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-harness",
   "contractVersion": "1.0.0",
-  "sourceObservationCutoff": "2026-07-26 Asia/Seoul",
+  "sourceObservationCutoff": "2026-07-10T10:00:00+09:00",
   "currentOwner": {
     "path": "docs/00.agent-governance/contracts/harness-contract.json",
     "contractVersion": "1.0.0",
@@ -148,7 +148,7 @@
       "evalSuite": {
         "id": "eval/supervisor/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -206,7 +206,7 @@
       "evalSuite": {
         "id": "eval/code-reviewer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -265,7 +265,7 @@
       "evalSuite": {
         "id": "eval/doc-writer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -324,7 +324,7 @@
       "evalSuite": {
         "id": "eval/gitops-reviewer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -383,7 +383,7 @@
       "evalSuite": {
         "id": "eval/incident-responder/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -442,7 +442,7 @@
       "evalSuite": {
         "id": "eval/k8s-implementer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -501,7 +501,7 @@
       "evalSuite": {
         "id": "eval/network-reviewer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -560,7 +560,7 @@
       "evalSuite": {
         "id": "eval/observability-reviewer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -618,7 +618,7 @@
       "evalSuite": {
         "id": "eval/security-auditor/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -676,7 +676,7 @@
       "evalSuite": {
         "id": "eval/wiki-curator/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -734,7 +734,7 @@
       "evalSuite": {
         "id": "eval/docs-researcher/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     },
@@ -793,7 +793,7 @@
       "evalSuite": {
         "id": "eval/quality-engineer/v1",
         "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "admissionState": "pending-spec-044"
+        "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
     }
