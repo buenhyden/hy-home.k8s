@@ -562,7 +562,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "python-version: '3.12'",
         "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
         "python3 scripts/validate-agent-harness-contract.py --root .",
-        "python3 scripts/validate-agent-provider-config.py --root .",
+        "python3 scripts/validate-agent-provider-evidence.py --root .",
         "python3 scripts/validate-agent-loop-lifecycle.py --root .",
         "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
         "python3 scripts/validate-agent-roster-admission.py --root .",
@@ -583,7 +583,6 @@ def validate_ci_workflow_selector(root: Path) -> None:
     forbidden_agent_fragments = (
         "secrets.",
         "validate-agent-provider-canaries.py",
-        "validate-agent-provider-evidence.py",
         "pull_request_target",
         "id-token:",
         "contents: write",

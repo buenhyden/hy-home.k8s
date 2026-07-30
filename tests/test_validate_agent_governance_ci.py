@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import shutil
@@ -27,6 +28,9 @@ AFFECTED_PATH = (
     / "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
 AGGREGATE_PATH = REPO_ROOT / "scripts/validate-repo-quality-gates.sh"
+PROVIDER_AGGREGATE_PATH = (
+    REPO_ROOT / "scripts/validate-agent-provider-evidence.py"
+)
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
 QUALITY_STANDARDS_PATH = (
     REPO_ROOT / "docs/00.agent-governance/rules/quality-standards.md"
@@ -67,6 +71,7 @@ REQUIRED_INPUTS = (
     Path(".pre-commit-config.yaml"),
     Path("scripts/run-validation-lane.py"),
     Path("scripts/validate-repo-quality-gates.sh"),
+    Path("scripts/validate-agent-provider-evidence.py"),
     Path("docs/00.agent-governance/rules/quality-standards.md"),
     Path("docs/00.agent-governance/rules/postflight-checklist.md"),
     Path(".agents/workflows/qa-cicd-workflow.md"),
@@ -85,6 +90,25 @@ LOCAL_QA_SEQUENCE = [
     "formatter-review",
     "rerun",
     "diff-checks",
+]
+CANONICAL_EVIDENCE_VOCABULARY = [
+    "repo-static",
+    "provider-runtime",
+    "ci",
+    "remote-live",
+]
+PROVIDER_AGGREGATE_COMMAND = (
+    "python3 scripts/validate-agent-provider-evidence.py --root ."
+)
+PROVIDER_CONFIG_COMMAND = (
+    "python3 scripts/validate-agent-provider-config.py --root ."
+)
+PROVIDER_AGGREGATE_SHA256 = (
+    "aa2ca862734a48398f1ff5a5ef30a91636a40fc2f16bd867284af07968f892e8"
+)
+PROVIDER_FOCUSED_VALIDATORS = [
+    "validate-agent-provider-config.py",
+    "validate-agent-provider-canaries.py",
 ]
 
 
@@ -216,6 +240,134 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         self.assertEqual(counts["deferredOwners"], 1)
         self.assertEqual(counts["qaSurfaces"], 10)
 
+    def test_evidence_vocabulary_matches_harness_owned_literal(self) -> None:
+        contract = self.validator.load_json_document(
+            CONTRACT_PATH,
+            "AGQC-CI-JSON",
+        )
+        self.assertEqual(
+            contract["evidenceVocabulary"],
+            CANONICAL_EVIDENCE_VOCABULARY,
+        )
+        self.assertEqual(
+            list(self.validator.EVIDENCE_VOCABULARY),
+            CANONICAL_EVIDENCE_VOCABULARY,
+        )
+
+    def test_provider_evidence_aggregate_is_dedicated_owner(self) -> None:
+        contract = self.validator.load_json_document(
+            CONTRACT_PATH,
+            "AGQC-CI-JSON",
+        )
+        delegated = {
+            row["id"]: row["command"] for row in contract["delegatedChecks"]
+        }
+        self.assertEqual(
+            delegated.get("agent-provider-evidence"),
+            PROVIDER_AGGREGATE_COMMAND,
+        )
+        self.assertNotIn(PROVIDER_CONFIG_COMMAND, delegated.values())
+
+        workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+        agent_job = workflow.split(
+            "\n  agent-governance-static:\n",
+            1,
+        )[1].split("\n  manifest-static:\n", 1)[0]
+        run_lines = [line.strip() for line in agent_job.splitlines()]
+        self.assertEqual(run_lines.count(PROVIDER_AGGREGATE_COMMAND), 1)
+        self.assertNotIn(PROVIDER_CONFIG_COMMAND, run_lines)
+
+        quality_shell = AGGREGATE_PATH.read_text(encoding="utf-8")
+        inline_checker = quality_shell.split(
+            "agent_governance_runs =",
+            1,
+        )[1].split("manifest_static_steps =", 1)[0]
+        self.assertIn(
+            f'"{PROVIDER_AGGREGATE_COMMAND}",',
+            inline_checker,
+        )
+        self.assertNotIn(
+            f'"{PROVIDER_CONFIG_COMMAND}",',
+            inline_checker,
+        )
+        self.assertIn(
+            '"validate-agent-provider-config.py",',
+            inline_checker,
+        )
+        self.assertIn(
+            '"validate-agent-provider-canaries.py",',
+            inline_checker,
+        )
+        self.assertNotIn(
+            '"validate-agent-provider-evidence.py",',
+            inline_checker,
+        )
+
+    def test_provider_aggregate_is_static_and_credential_free(self) -> None:
+        contract = self.validator.load_json_document(
+            CONTRACT_PATH,
+            "AGQC-CI-JSON",
+        )
+        aggregate_owner = next(
+            row
+            for row in contract["delegatedChecks"]
+            if row["id"] == "agent-provider-evidence"
+        )
+        self.assertEqual(aggregate_owner["evidence"], "repo-static")
+        self.assertEqual(aggregate_owner["allowedResults"], ["PASS", "FAIL"])
+        self.assertEqual(
+            contract["securityBoundary"]["providerEvidenceAggregate"],
+            {
+                "path": "scripts/validate-agent-provider-evidence.py",
+                "sha256": PROVIDER_AGGREGATE_SHA256,
+                "focusedValidators": PROVIDER_FOCUSED_VALIDATORS,
+            },
+        )
+
+        source_bytes = PROVIDER_AGGREGATE_PATH.read_bytes()
+        self.assertEqual(
+            hashlib.sha256(source_bytes).hexdigest(),
+            PROVIDER_AGGREGATE_SHA256,
+        )
+        source = source_bytes.decode("utf-8")
+        lowered = source.casefold()
+        for forbidden in (
+            "secrets.",
+            "provider_token",
+            "claude auth",
+            "codex login",
+            "gemini auth",
+            "hosted ci pass",
+            "remote-live pass",
+            "provider-runtime pass",
+            "actual checkpoint",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, lowered)
+
+    def test_provider_aggregate_source_drift_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        aggregate = root / PROVIDER_AGGREGATE_PATH.relative_to(REPO_ROOT)
+        aggregate.write_text(
+            aggregate.read_text(encoding="utf-8")
+            + "\n# source drift must fail closed\n",
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "AGQC-CI-PROVIDER-AGGREGATE")
+
+    def test_provider_aggregate_removal_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / WORKFLOW_PATH.relative_to(REPO_ROOT)
+        text = workflow.read_text(encoding="utf-8")
+        mutated = text.replace(
+            f"          {PROVIDER_AGGREGATE_COMMAND}\n",
+            "",
+            1,
+        )
+        self.assertNotEqual(mutated, text)
+        workflow.write_text(mutated, encoding="utf-8")
+        self.assert_rule(root, "AGQC-CI-DELEGATION")
+
     def test_aggregate_affected_self_test_requires_explicit_root(self) -> None:
         root = self.make_valid_root()
         aggregate = root / AGGREGATE_PATH.relative_to(REPO_ROOT)
@@ -305,7 +457,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             contract["localQa"]["inventory"],
             {
                 "truthCases": 6,
-                "mutationCases": 43,
+                "mutationCases": 45,
                 "delegatedChecks": 16,
                 "deferredOwners": 1,
                 "qaSurfaces": 10,
@@ -409,7 +561,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
     def test_self_test_executes_closed_fixture(self) -> None:
         self.assertEqual(
             self.validator.run_self_test(REPO_ROOT),
-            (6, 43),
+            (6, 45),
         )
 
     def test_unknown_contract_key_is_rejected(self) -> None:

@@ -3308,7 +3308,7 @@ for command in [
     "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
     "python3 scripts/validate-agent-governance-ci.py --root .",
     "python3 scripts/validate-agent-harness-contract.py --root .",
-    "python3 scripts/validate-agent-provider-config.py --root .",
+    "python3 scripts/validate-agent-provider-evidence.py --root .",
     "python3 scripts/validate-agent-loop-lifecycle.py --root .",
     "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
     "python3 scripts/validate-agent-roster-admission.py --root .",
@@ -3324,8 +3324,13 @@ for command in [
     if command not in agent_governance_runs:
         fail(f"{rel(ci_path)} agent-governance-static missing command: {command}")
 for forbidden_command in [
+    "validate-agent-provider-config.py",
     "validate-agent-provider-canaries.py",
-    "validate-agent-provider-evidence.py",
+    "claude ",
+    "codex ",
+    "gemini ",
+    "provider login",
+    "provider auth",
     "gitleaks/releases/download",
     "secrets.",
 ]:

@@ -45,7 +45,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+        "enum": ["repo-static", "provider-runtime", "ci", "remote-live"]
       }
     },
     "selector": {
@@ -82,7 +82,7 @@
         },
         "if": {"type": "string", "minLength": 1},
         "evidence": {
-          "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+          "enum": ["repo-static", "provider-runtime", "ci", "remote-live"]
         },
         "allowedResults": {
           "type": "array",
@@ -294,7 +294,7 @@
         "id": {"type": "string", "minLength": 1},
         "command": {"type": "string", "minLength": 1},
         "evidence": {
-          "enum": ["repo-static", "hosted-ci", "provider-runtime", "remote/live"]
+          "enum": ["repo-static", "provider-runtime", "ci", "remote-live"]
         },
         "allowedResults": {
           "type": "array",
@@ -314,6 +314,7 @@
         "checkoutAction",
         "checkout",
         "remoteUsesPin",
+        "providerEvidenceAggregate",
         "forbiddenCommandClasses"
       ],
       "properties": {
@@ -336,6 +337,32 @@
           }
         },
         "remoteUsesPin": {"type": "string", "minLength": 1},
+        "providerEvidenceAggregate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "focusedValidators"],
+          "properties": {
+            "path": {
+              "const": "scripts/validate-agent-provider-evidence.py"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "focusedValidators": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "validate-agent-provider-config.py",
+                  "validate-agent-provider-canaries.py"
+                ]
+              }
+            }
+          }
+        },
         "forbiddenCommandClasses": {
           "type": "array",
           "minItems": 1,

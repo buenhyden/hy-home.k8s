@@ -136,6 +136,15 @@
       "expectedRule": "AGQC-CI-DELEGATION"
     },
     {
+      "name": "provider-evidence-owner-missing",
+      "target": "workflow",
+      "mutation": {
+        "kind": "remove-required-validator",
+        "checkId": "agent-provider-evidence"
+      },
+      "expectedRule": "AGQC-CI-DELEGATION"
+    },
+    {
       "name": "provider-secret-injected",
       "target": "workflow",
       "mutation": {"kind": "inject-provider-secret"},
@@ -291,6 +300,12 @@
       "target": "filesystem",
       "mutation": {"kind": "duplicate-yaml-key"},
       "expectedRule": "AGQC-CI-YAML"
+    },
+    {
+      "name": "provider-aggregate-source-drift",
+      "target": "filesystem",
+      "mutation": {"kind": "drift-provider-aggregate-source"},
+      "expectedRule": "AGQC-CI-PROVIDER-AGGREGATE"
     },
     {
       "name": "local-qa-sequence-drift",

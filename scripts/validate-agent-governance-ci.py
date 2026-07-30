@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import copy
 import hashlib
 import json
@@ -32,6 +33,9 @@ FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-governance-ci.json")
 WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 PRE_COMMIT_PATH = PurePosixPath(".pre-commit-config.yaml")
 AGGREGATE_PATH = PurePosixPath("scripts/validate-repo-quality-gates.sh")
+PROVIDER_EVIDENCE_AGGREGATE_PATH = PurePosixPath(
+    "scripts/validate-agent-provider-evidence.py"
+)
 RUNNER_PATH = PurePosixPath("scripts/run-validation-lane.py")
 QUALITY_STANDARDS_PATH = PurePosixPath(
     "docs/00.agent-governance/rules/quality-standards.md"
@@ -48,13 +52,13 @@ SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
 TESTS_README_PATH = PurePosixPath("tests/README.md")
 
 SCHEMA_VERSION = 1
-CONTRACT_VERSION = "1.1.0"
+CONTRACT_VERSION = "1.2.0"
 RESULT_VOCABULARY = ("PASS", "FAIL", "SKIP", "DEFER")
 EVIDENCE_VOCABULARY = (
     "repo-static",
-    "hosted-ci",
     "provider-runtime",
-    "remote/live",
+    "ci",
+    "remote-live",
 )
 SELECTOR = {
     "jobId": "changes",
@@ -141,8 +145,8 @@ DELEGATED_COMMANDS = (
         "python3 scripts/validate-agent-legacy-cutover.py --root .",
     ),
     (
-        "agent-provider-config",
-        "python3 scripts/validate-agent-provider-config.py --root .",
+        "agent-provider-evidence",
+        "python3 scripts/validate-agent-provider-evidence.py --root .",
     ),
     (
         "agent-loop-lifecycle",
@@ -222,6 +226,50 @@ AGGREGATE_LEGACY_PRODUCTION_COMMAND = (
 CHECKOUT_ACTION = (
     "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
 )
+PROVIDER_EVIDENCE_AGGREGATE_SHA256 = (
+    "aa2ca862734a48398f1ff5a5ef30a91636a40fc2f16bd867284af07968f892e8"
+)
+PROVIDER_EVIDENCE_FOCUSED_VALIDATORS = (
+    "validate-agent-provider-config.py",
+    "validate-agent-provider-canaries.py",
+)
+PROVIDER_EVIDENCE_FORBIDDEN_FRAGMENTS = (
+    "secrets.",
+    "${{ secrets",
+    "provider_token",
+    "provider-token",
+    "provider token",
+    "api_key",
+    "api-key",
+    "api key",
+    "credential",
+    "provider login",
+    "provider auth",
+    "claude auth",
+    "codex login",
+    "gemini auth",
+    '"claude"',
+    "'claude'",
+    '"codex"',
+    "'codex'",
+    '"gemini"',
+    "'gemini'",
+    "hosted",
+    "runtime",
+    "remote",
+    "live",
+    "hosted ci pass",
+    "hosted-ci pass",
+    "provider-runtime pass",
+    "provider runtime pass",
+    "remote-live pass",
+    "remote/live pass",
+    ".agent-work",
+    "checkpoint.json",
+    "private transcript",
+    "actual checkpoint",
+    "actual state",
+)
 REMOTE_ACTION = re.compile(r"^[^./\s@][^\s@]*@[0-9a-f]{40}$")
 EXPECTED_DEFERRED = (
     (
@@ -275,7 +323,7 @@ LOCAL_QA_CONSUMERS = (
 LOCAL_QA_COMPACT_SEQUENCE = " -> ".join(LOCAL_QA_SEQUENCE)
 LOCAL_QA_INVENTORY = {
     "truthCases": 6,
-    "mutationCases": 43,
+    "mutationCases": 45,
     "delegatedChecks": 16,
     "deferredOwners": 1,
     "qaSurfaces": 10,
@@ -296,6 +344,7 @@ EXPECTED_MUTATION_NAMES = (
     "selected-cancelled-preclaim",
     "selected-missing-preclaim",
     "required-validator-missing",
+    "provider-evidence-owner-missing",
     "provider-secret-injected",
     "workflow-provider-secret-injected",
     "id-token-injected",
@@ -321,6 +370,7 @@ EXPECTED_MUTATION_NAMES = (
     "schema-non-regular",
     "duplicate-contract-key",
     "duplicate-workflow-key",
+    "provider-aggregate-source-drift",
     "local-qa-sequence-drift",
     "staged-runner-disabled",
     "formatter-rerun-evidence-missing",
@@ -335,6 +385,7 @@ INPUT_PATHS = (
     WORKFLOW_PATH,
     PRE_COMMIT_PATH,
     AGGREGATE_PATH,
+    PROVIDER_EVIDENCE_AGGREGATE_PATH,
     RUNNER_PATH,
     QUALITY_STANDARDS_PATH,
     POSTFLIGHT_PATH,
@@ -420,7 +471,7 @@ def _absolute_root(root: Path) -> Path:
     return absolute
 
 
-def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
+def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
     current = root
     for part in relative.parts[:-1]:
         current = current / part
@@ -450,8 +501,18 @@ def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
             f"{relative.as_posix()} must be a regular non-symlink file",
         )
     try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
+        return path.read_bytes()
+    except OSError as exc:
+        fail(
+            "AGQC-CI-INPUT",
+            f"{relative.as_posix()} cannot be read: {exc}",
+        )
+
+
+def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
+    try:
+        return _read_regular_bytes(root, relative).decode("utf-8")
+    except UnicodeError as exc:
         fail(
             "AGQC-CI-INPUT",
             f"{relative.as_posix()} cannot be read as UTF-8: {exc}",
@@ -510,6 +571,98 @@ def classify_conditional(selected: bool, conclusion: str) -> str:
 def _schema_error_detail(error: Any) -> str:
     location = "/".join(str(part) for part in error.absolute_path) or "<root>"
     return f"{location}: {error.message}"
+
+
+def _validate_provider_evidence_aggregate(
+    root: Path,
+    manifest: dict[str, Any],
+) -> None:
+    expected_manifest = {
+        "path": PROVIDER_EVIDENCE_AGGREGATE_PATH.as_posix(),
+        "sha256": PROVIDER_EVIDENCE_AGGREGATE_SHA256,
+        "focusedValidators": list(PROVIDER_EVIDENCE_FOCUSED_VALIDATORS),
+    }
+    if manifest != expected_manifest:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence aggregate manifest differs",
+        )
+
+    source_bytes = _read_regular_bytes(
+        root,
+        PROVIDER_EVIDENCE_AGGREGATE_PATH,
+    )
+    if hashlib.sha256(source_bytes).hexdigest() != manifest["sha256"]:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence aggregate source digest differs",
+        )
+    try:
+        source = source_bytes.decode("utf-8")
+    except UnicodeError:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence aggregate source is not UTF-8",
+        )
+
+    lowered = source.casefold()
+    present = [
+        fragment
+        for fragment in PROVIDER_EVIDENCE_FORBIDDEN_FRAGMENTS
+        if fragment in lowered
+    ]
+    if present:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence aggregate crosses the repository-static boundary",
+        )
+
+    try:
+        tree = ast.parse(
+            source,
+            filename=PROVIDER_EVIDENCE_AGGREGATE_PATH.as_posix(),
+        )
+    except SyntaxError:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence aggregate source is not valid Python",
+        )
+    assignments: list[ast.AST] = []
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name)
+            and target.id == "FOCUSED_VALIDATORS"
+            for target in node.targets
+        ):
+            assignments.append(node.value)
+        elif (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.target, ast.Name)
+            and node.target.id == "FOCUSED_VALIDATORS"
+            and node.value is not None
+        ):
+            assignments.append(node.value)
+    if len(assignments) != 1:
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence focused-validator assignment differs",
+        )
+    try:
+        observed_focused = ast.literal_eval(assignments[0])
+    except (ValueError, TypeError, SyntaxError):
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence focused-validator list is not literal",
+        )
+    if (
+        not isinstance(observed_focused, (tuple, list))
+        or any(not isinstance(item, str) for item in observed_focused)
+        or tuple(observed_focused) != PROVIDER_EVIDENCE_FOCUSED_VALIDATORS
+    ):
+        fail(
+            "AGQC-CI-PROVIDER-AGGREGATE",
+            "provider-evidence focused-validator list differs",
+        )
 
 
 def validate_contract_data(
@@ -620,6 +773,13 @@ def validate_contract_data(
         "checkoutAction": CHECKOUT_ACTION,
         "checkout": {"persistCredentials": False, "fetchDepth": 0},
         "remoteUsesPin": "full-commit-sha",
+        "providerEvidenceAggregate": {
+            "path": PROVIDER_EVIDENCE_AGGREGATE_PATH.as_posix(),
+            "sha256": PROVIDER_EVIDENCE_AGGREGATE_SHA256,
+            "focusedValidators": list(
+                PROVIDER_EVIDENCE_FOCUSED_VALIDATORS
+            ),
+        },
         "forbiddenCommandClasses": [
             "provider-auth",
             "provider-canary",
@@ -639,6 +799,10 @@ def validate_contract_data(
     }
     if contract["securityBoundary"] != expected_security:
         fail("AGQC-CI-SECURITY", "security boundary differs")
+    _validate_provider_evidence_aggregate(
+        absolute,
+        contract["securityBoundary"]["providerEvidenceAggregate"],
+    )
 
     observed_deferred = tuple(
         (
@@ -807,7 +971,6 @@ def _validate_security(
         "provider-token",
         "provider token",
         "validate-agent-provider-canaries.py",
-        "validate-agent-provider-evidence.py",
         "provider login",
         "provider auth",
         "claude auth",
@@ -1194,7 +1357,7 @@ def _validate_local_qa_surfaces(
             fail("AGQC-QA-RUNNER", f"shared QA workflow lacks {marker}")
 
     inventory_markers = (
-        "truth_cases=6 mutation_cases=43",
+        "truth_cases=6 mutation_cases=45",
         "delegated_checks=16",
         "deferred_owners=1",
         "qa_surfaces=10",
@@ -1551,6 +1714,9 @@ def _run_filesystem_mutation(
         contract_path = target_root / CONTRACT_PATH
         schema_path = target_root / SCHEMA_PATH
         workflow_path = target_root / WORKFLOW_PATH
+        provider_aggregate_path = (
+            target_root / PROVIDER_EVIDENCE_AGGREGATE_PATH
+        )
         runner_path = target_root / RUNNER_PATH
         pull_request_path = target_root / PULL_REQUEST_TEMPLATE_PATH
         scripts_readme_path = target_root / SCRIPTS_README_PATH
@@ -1577,6 +1743,12 @@ def _run_filesystem_mutation(
             text = workflow_path.read_text(encoding="utf-8")
             workflow_path.write_text(
                 text.replace("name: CI\n", "name: CI\nname: Duplicate\n", 1),
+                encoding="utf-8",
+            )
+        elif kind == "drift-provider-aggregate-source":
+            provider_aggregate_path.write_text(
+                provider_aggregate_path.read_text(encoding="utf-8")
+                + "\n# fixture source drift\n",
                 encoding="utf-8",
             )
         elif kind == "disable-staged-runner":

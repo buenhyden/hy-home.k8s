@@ -180,7 +180,7 @@ jobs:
           python3 scripts/validate-agent-harness-semantics.py --root .
           python3 scripts/validate-agent-legacy-cutover.py --root . --self-test
           python3 scripts/validate-agent-legacy-cutover.py --root .
-          python3 scripts/validate-agent-provider-config.py --root .
+          python3 scripts/validate-agent-provider-evidence.py --root .
           python3 scripts/validate-agent-loop-lifecycle.py --root .
           python3 scripts/validate-agent-checkpoint.py --root . --self-test
           python3 scripts/validate-agent-roster-admission.py --root .
