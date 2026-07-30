@@ -132,6 +132,39 @@ routed validation inputs, but no current hook, runner, aggregate, or CI
 contract enforces Prettier; do not report Prettier coverage without a separate
 approved activation.
 
+### CI Validation Supply-Chain Contract
+
+The Linux/CPython 3.12 validation lane separates dependency intent from its
+resolved artifact:
+
+- `.github/requirements/ci-validation.in` owns only the exact direct pins.
+- `.github/requirements/ci-validation.txt` is generated with Python 3.12,
+  contains every direct and transitive dependency as an exact `==` pin, and
+  carries one or more SHA-256 hashes for every package.
+- Every validation job uses exactly
+  `python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt`.
+  Hash checking is all-or-nothing and source distributions are excluded,
+  following [pip secure installs](https://pip.pypa.io/en/stable/topics/secure-installs/).
+- The inventory mirrors the lock digest, resolved package count, generation lane,
+  and direct-input/lock paths; the CI validator's reviewed runtime digest is the
+  independent authority. Refresh both only through the reviewed lock-refresh
+  change that updates the resolved lock and inventory atomically. This artifact is evidence for the Linux/CPython
+  3.12 CI lane only; it must not be represented as a portable lock for another
+  operating system or Python version.
+
+Every non-local repository in `.pre-commit-config.yaml` uses a unique full
+40-character commit. Update hooks with `pre-commit autoupdate --freeze`, retain
+the emitted `# frozen: <tag>` provenance, reconcile the exact commit and source
+tag maps in the technology inventory, and rerun the CI Python contract before
+accepting the change. This follows the official
+[pre-commit autoupdate options](https://pre-commit.com/#pre-commit-autoupdate-options).
+The `local` repository is the only rev-exempt entry.
+
+Frozen remote-hook repository commits and source tags are PASS provenance
+evidence. Their transitive hook environments and cold offline replay are DEFER:
+they require a separately owned immutable hook-artifact program and are not
+claimed closed by the base CI Python lock.
+
 ### Handoff Evidence Contract
 
 Every repo-changing agent handoff records the following fields in the owning

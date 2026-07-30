@@ -3,7 +3,7 @@ title: 'Reference: Tech Stack Version Inventory'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-07-30
 ---
 
 # Tech Stack Version Inventory
@@ -20,7 +20,7 @@ updated: 2026-07-26
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-07-26
+- Source checked: 2026-07-30
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -105,6 +105,12 @@ ci_python_dependencies:
   jsonschema: '4.26.0'
   pre-commit: '4.6.1'
   PyYAML: '6.0.3'
+ci_python_lock:
+  lane: 'linux-cpython-3.12'
+  input: '.github/requirements/ci-validation.in'
+  lock: '.github/requirements/ci-validation.txt'
+  sha256: '6d0685e84a4fb19b24e44c5ae965f16d7215e8608b210cbf0559d4a203a9cc13' # pragma: allowlist secret
+  resolved_packages: 16
 ci_gitleaks:
   version: '8.30.0'
   asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
@@ -119,6 +125,19 @@ github_actions:
   'actions/upload-artifact': '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # pragma: allowlist secret
   'orhun/git-cliff-action': 'f50e11560dce63f7c33227798f90b924471a88b5' # pragma: allowlist secret
 pre_commit:
+  'https://github.com/commitizen-tools/commitizen': 'efb1a7dc7a81934ff473100ae3a5a716f3022534' # pragma: allowlist secret
+  'https://github.com/pre-commit/pre-commit-hooks': '3e8a8703264a2f4a69428a0aa4dcb512790b2c8c' # pragma: allowlist secret
+  'https://github.com/gitleaks/gitleaks': '6eaad039603a4de39fddd1cf5f727391efe9974e' # pragma: allowlist secret
+  'https://github.com/Yelp/detect-secrets': '01886c8a910c64595c47f186ca1ffc0b77fa5458' # pragma: allowlist secret
+  'https://github.com/DavidAnson/markdownlint-cli2': '996abf60411a8d954288ac9856aae7602b80cbda' # pragma: allowlist secret
+  'https://github.com/python-jsonschema/check-jsonschema': 'f805888065fdb6162e1f800e50bb9460cbd223d6' # pragma: allowlist secret
+  'https://github.com/shellcheck-py/shellcheck-py': '745eface02aef23e168a8afb6b5737818efbea95' # pragma: allowlist secret
+  'https://github.com/scop/pre-commit-shfmt': '05c1426671b9237fb5e1444dd63aa5731bec0dfb' # pragma: allowlist secret
+  'https://github.com/zizmorcore/zizmor-pre-commit': 'a4727cbbcd26d7098e96b9cb738169b59711ae51' # pragma: allowlist secret
+  'https://github.com/hadolint/hadolint': '57e1618d78fd469a92c1e584e8c9313024656623' # pragma: allowlist secret
+  'https://github.com/rhysd/actionlint': '914e7df21a07ef503a81201c76d2b11c789d3fca' # pragma: allowlist secret
+  'https://github.com/stackrox/kube-linter': '10ae003038c81855aca8489df5e35da150f4dc2e' # pragma: allowlist secret
+pre_commit_source_tags:
   'https://github.com/commitizen-tools/commitizen': 'v4.15.1'
   'https://github.com/pre-commit/pre-commit-hooks': 'v6.0.0'
   'https://github.com/gitleaks/gitleaks': 'v8.30.0'
@@ -137,11 +156,13 @@ pre_commit:
 
 - cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
 - repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
+- [pip secure installs](https://pip.pypa.io/en/stable/topics/secure-installs/)의 all-or-nothing hash mode와 binary-only 설치 지침을 Linux/CPython 3.12 CI 잠금 계약에 적용한다.
+- [pre-commit autoupdate options](https://pre-commit.com/#pre-commit-autoupdate-options)의 `--freeze` 동작을 non-local hook commit 고정 정책에 적용한다.
 
 ## Review and Freshness
 
 - Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-07-26.
+- Last reviewed: 2026-07-30.
 - Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Related Documents

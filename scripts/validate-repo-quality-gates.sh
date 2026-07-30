@@ -3197,9 +3197,9 @@ for phrase in [
     "BRANCH_POLICY_RESULT",
     "AGENT_GOVERNANCE_STATIC_SELECTED",
     "AGENT_GOVERNANCE_STATIC_RESULT",
-    'report_conditional "branch-policy"',
-    'report_required "changes"',
-    'report_conditional "agent-governance-static"',
+    'case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in',
+    'if [ "$CHANGES_RESULT" = "success" ]; then',
+    'case "$AGENT_GOVERNANCE_STATIC_SELECTED:$AGENT_GOVERNANCE_STATIC_RESULT" in',
     'true:success)',
     'false:skipped)',
     '*)',
@@ -3215,6 +3215,8 @@ for phrase in [
 for forbidden_phrase in [
     "contains(needs.*.result",
     "continue-on-error",
+    "report_required",
+    "report_conditional",
 ]:
     if forbidden_phrase in (ci_summary_text + "\n" + ci_summary_env_text):
         fail(f"{rel(ci_path)} ci-summary contains open result contract: {forbidden_phrase}")
@@ -3304,7 +3306,7 @@ agent_governance_runs = "\n".join(
     for step in agent_governance_steps
 )
 for command in [
-    "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
+    "python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt",
     "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
     "python3 scripts/validate-agent-governance-ci.py --root .",
     "python3 scripts/validate-agent-harness-contract.py --root .",
@@ -3332,6 +3334,7 @@ for forbidden_command in [
     "provider login",
     "provider auth",
     "gitleaks/releases/download",
+    "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
     "secrets.",
 ]:
     if forbidden_command in agent_governance_runs:

@@ -48,6 +48,15 @@ SELF_TEST_COMMAND = (
     "python3 scripts/validate-agent-governance-ci.py --root . --self-test"
 )
 PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
+SECURE_DEPENDENCY_INSTALL_COMMAND = (
+    "python -m pip install --disable-pip-version-check "
+    "--only-binary :all: --require-hashes "
+    "--requirement .github/requirements/ci-validation.txt"
+)
+LEGACY_DEPENDENCY_INSTALL_COMMAND = (
+    "python -m pip install --disable-pip-version-check "
+    "--requirement .github/requirements/ci-validation.txt"
+)
 REQUIRED_ROUTE_CLASSES = {
     "root-config",
     "provider-gateways",
@@ -104,7 +113,7 @@ PROVIDER_CONFIG_COMMAND = (
     "python3 scripts/validate-agent-provider-config.py --root ."
 )
 PROVIDER_AGGREGATE_SHA256 = (
-    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"
+    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
 )
 PROVIDER_FOCUSED_VALIDATORS = [
     "validate-agent-provider-config.py",
@@ -239,6 +248,25 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         self.assertEqual(counts["delegatedChecks"], 16)
         self.assertEqual(counts["deferredOwners"], 1)
         self.assertEqual(counts["qaSurfaces"], 10)
+
+    def test_legacy_dependency_install_command_is_rejected(self) -> None:
+        root = self.make_valid_root()
+        workflow = root / WORKFLOW_PATH.relative_to(REPO_ROOT)
+        source = workflow.read_text(encoding="utf-8")
+        self.assertIn(SECURE_DEPENDENCY_INSTALL_COMMAND, source)
+        agent_job = source.index("\n  agent-governance-static:\n")
+        install = source.index(
+            SECURE_DEPENDENCY_INSTALL_COMMAND,
+            agent_job,
+        )
+        mutated = (
+            source[:install]
+            + LEGACY_DEPENDENCY_INSTALL_COMMAND
+            + source[install + len(SECURE_DEPENDENCY_INSTALL_COMMAND) :]
+        )
+        self.assertNotEqual(mutated, source)
+        workflow.write_text(mutated, encoding="utf-8")
+        self.assert_rule(root, "AGQC-CI-SECURITY")
 
     def test_evidence_vocabulary_matches_harness_owned_literal(self) -> None:
         contract = self.validator.load_json_document(
@@ -545,13 +573,13 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         text = workflow.read_text(encoding="utf-8")
         workflow.write_text(
             text.replace(
-                "              *)\n"
-                "                verdict=\"FAIL\"\n",
-                "              true:failure)\n"
-                "                verdict=\"PASS\"\n"
-                "                ;;\n"
-                "              *)\n"
-                "                verdict=\"FAIL\"\n",
+                "            *)\n"
+                "              verdict=\"FAIL\"\n",
+                "            true:failure)\n"
+                "              verdict=\"PASS\"\n"
+                "              ;;\n"
+                "            *)\n"
+                "              verdict=\"FAIL\"\n",
                 1,
             ),
             encoding="utf-8",

@@ -84,7 +84,7 @@ SUMMARY_NEEDS = (
     "manifest-static",
 )
 SUMMARY_RUN_SHA256 = (
-    "336f51c7d9cba31498d919b15333bec4207a62d913185ba608348b0dd688e423"  # pragma: allowlist secret
+    "ec09bcd7bcfba533efe328c49bb3955e6889ec43f8c3a3ec63626ca7a83890eb"  # pragma: allowlist secret
 )
 SUMMARY_ENV = {
     "EVENT_NAME": "${{ github.event_name }}",
@@ -195,6 +195,11 @@ DELEGATED_COMMANDS = (
 )
 DEPENDENCY_INSTALL_COMMAND = (
     "python -m pip install --disable-pip-version-check "
+    "--only-binary :all: --require-hashes "
+    "--requirement .github/requirements/ci-validation.txt"
+)
+LEGACY_DEPENDENCY_INSTALL_COMMAND = (
+    "python -m pip install --disable-pip-version-check "
     "--requirement .github/requirements/ci-validation.txt"
 )
 SELF_TEST_COMMAND = (
@@ -227,7 +232,7 @@ CHECKOUT_ACTION = (
     "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
 )
 PROVIDER_EVIDENCE_AGGREGATE_SHA256 = (
-    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"
+    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
 )
 PROVIDER_EVIDENCE_FOCUSED_VALIDATORS = (
     "validate-agent-provider-config.py",
@@ -981,6 +986,7 @@ def _validate_security(
         "private transcript",
         "hosted ci pass",
         "hosted-ci pass",
+        LEGACY_DEPENDENCY_INSTALL_COMMAND,
     )
     present = [item for item in forbidden_fragments if item in flattened]
     if present:

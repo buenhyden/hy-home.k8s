@@ -42,6 +42,15 @@ EXPECTED_CI_JOBS = {
     "pre-commit": "precommit",
     "repo-quality-static": "repo_quality",
 }
+SECURE_DEPENDENCY_INSTALL_COMMAND = (
+    "python -m pip install --disable-pip-version-check "
+    "--only-binary :all: --require-hashes "
+    "--requirement .github/requirements/ci-validation.txt"
+)
+LEGACY_DEPENDENCY_INSTALL_COMMAND = (
+    "python -m pip install --disable-pip-version-check "
+    "--requirement .github/requirements/ci-validation.txt"
+)
 EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
     (
         "root-config",
@@ -560,7 +569,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "fetch-depth: 0",
         "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0",
         "python-version: '3.12'",
-        "python -m pip install --disable-pip-version-check --requirement .github/requirements/ci-validation.txt",
+        SECURE_DEPENDENCY_INSTALL_COMMAND,
         "python3 scripts/validate-agent-harness-contract.py --root .",
         "python3 scripts/validate-agent-provider-evidence.py --root .",
         "python3 scripts/validate-agent-loop-lifecycle.py --root .",
@@ -587,6 +596,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "id-token:",
         "contents: write",
         "gitleaks/releases/download",
+        LEGACY_DEPENDENCY_INSTALL_COMMAND,
     )
     present_agent = [
         fragment for fragment in forbidden_agent_fragments if fragment in agent_job
@@ -605,12 +615,18 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "EVENT_NAME: ${{ github.event_name }}",
         "AGENT_GOVERNANCE_STATIC_SELECTED: ${{ needs.changes.outputs.agent_governance }}",
         "AGENT_GOVERNANCE_STATIC_RESULT: ${{ needs['agent-governance-static'].result }}",
-        'report_required "changes" "$CHANGES_RESULT"',
-        'report_conditional "branch-policy" "$branch_policy_selected" "$BRANCH_POLICY_RESULT"',
-        'report_conditional "pre-commit" "$PRE_COMMIT_SELECTED" "$PRE_COMMIT_RESULT"',
-        'report_conditional "repo-quality-static" "$REPO_QUALITY_STATIC_SELECTED" "$REPO_QUALITY_STATIC_RESULT"',
-        'report_conditional "agent-governance-static" "$AGENT_GOVERNANCE_STATIC_SELECTED" "$AGENT_GOVERNANCE_STATIC_RESULT"',
-        'report_conditional "manifest-static" "$MANIFEST_STATIC_SELECTED" "$MANIFEST_STATIC_RESULT"',
+        'case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in',
+        'if [ "$CHANGES_RESULT" = "success" ]; then',
+        'case "$PRE_COMMIT_SELECTED:$PRE_COMMIT_RESULT" in',
+        'case "$REPO_QUALITY_STATIC_SELECTED:$REPO_QUALITY_STATIC_RESULT" in',
+        'case "$AGENT_GOVERNANCE_STATIC_SELECTED:$AGENT_GOVERNANCE_STATIC_RESULT" in',
+        'case "$MANIFEST_STATIC_SELECTED:$MANIFEST_STATIC_RESULT" in',
+        "branch-policy selected=%s result=%s verdict=%s",
+        "changes selected=true result=%s verdict=%s",
+        "pre-commit selected=%s result=%s verdict=%s",
+        "repo-quality-static selected=%s result=%s verdict=%s",
+        "agent-governance-static selected=%s result=%s verdict=%s",
+        "manifest-static selected=%s result=%s verdict=%s",
         'true:success)',
         'false:skipped)',
         '*)',
@@ -629,6 +645,8 @@ def validate_ci_workflow_selector(root: Path) -> None:
     forbidden_summary_fragments = (
         "contains(needs.*.result",
         "continue-on-error",
+        "report_required",
+        "report_conditional",
     )
     present_summary = [
         fragment

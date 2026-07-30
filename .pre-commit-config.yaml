@@ -3,7 +3,7 @@ default_install_hook_types: [pre-commit, commit-msg]
 repos:
   # --- 0. 커밋 메시지 검사 ---
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.15.1
+    rev: efb1a7dc7a81934ff473100ae3a5a716f3022534 # frozen: v4.15.1
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -56,7 +56,7 @@ repos:
 
   # --- 1. 파일 시스템 및 기본 형식 검사 ---
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-added-large-files
         args: [--maxkb=5000]
@@ -73,13 +73,13 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.0
+    rev: 6eaad039603a4de39fddd1cf5f727391efe9974e # frozen: v8.30.0
     hooks:
       - id: gitleaks
         args: ['--config=.gitleaks.toml']
 
   - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
+    rev: 01886c8a910c64595c47f186ca1ffc0b77fa5458 # frozen: v1.5.0
     hooks:
       - id: detect-secrets
         args:
@@ -89,11 +89,11 @@ repos:
           # metadata. Exact payloads remain covered by gitleaks and the
           # domain validators; only canonical identity-only lines are ignored.
           - '--exclude-lines'
-          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$'
-        exclude: '^(.*/tests/.*|graphify-out/.*|docs/90\.references/data/active-corpus-(eligibility-ledger|migration-results)\.json)$'
+          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$|^rev: "[0-9a-f]{40}" # frozen: [A-Za-z0-9][A-Za-z0-9._-]*$|^    --hash=sha256:[0-9a-f]{64}(?: [\\])?$|^ {6}"sha256": "[0-9a-f]{64}",$'
+        exclude: '^(graphify-out/.*|docs/90\.references/data/active-corpus-(eligibility-ledger|migration-results)\.json)$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.22.1 # 또는 최신 릴리스
+    rev: 996abf60411a8d954288ac9856aae7602b80cbda # frozen: v0.22.1
     hooks:
       - id: markdownlint-cli2
         require_serial: true
@@ -101,18 +101,18 @@ repos:
         # args: ["**/*.md"]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
+    rev: f805888065fdb6162e1f800e50bb9460cbd223d6 # frozen: 0.37.2
     hooks:
       - id: check-dependabot
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
+    rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
     hooks:
       - id: shellcheck
         files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.1-1
+    rev: 05c1426671b9237fb5e1444dd63aa5731bec0dfb # frozen: v3.13.1-1
     hooks:
       - id: shfmt
         args: [-i, '2'] # Indent 2 spaces
@@ -120,24 +120,24 @@ repos:
 
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.24.1
+    rev: a4727cbbcd26d7098e96b9cb738169b59711ae51 # frozen: v1.24.1
     hooks:
       - id: zizmor
 
   - repo: https://github.com/hadolint/hadolint
-    rev: v2.14.0
+    rev: 57e1618d78fd469a92c1e584e8c9313024656623 # frozen: v2.14.0
     hooks:
       - id: hadolint-docker
         args: ['--config', '.hadolint.yaml']
         files: '(^|/)([Dd]ockerfile|[Dd]ockerfile\.[^/]+)$'
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.12
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
     hooks:
       - id: actionlint # GitHub Actions 워크플로우 검사
 
   - repo: https://github.com/stackrox/kube-linter
-    rev: v0.8.3
+    rev: 10ae003038c81855aca8489df5e35da150f4dc2e # frozen: v0.8.3
     hooks:
       - id: kube-linter
         args: [--config, .kube-linter.yaml]
