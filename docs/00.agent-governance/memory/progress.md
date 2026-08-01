@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 045 AGQC-006J repository candidate boundary
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, docs, governance, qa, security
+- **Owner**: AGQC-006J implementation
+- **Canonical Owner**: Spec 045 Task and the closed legacy-cutover contract
+- **Sensitivity**: non-sensitive-synthetic
+- **Next Owner**: AGQC-006 whole-branch review and postflight
+- **Status**: complete
+- **Tags**: #spec-045 #agqc-006j #git-candidates #ignored-state #tdd
+
+#### Progress
+
+- Replaced the legacy worktree-wide regular-file walk with the exact NUL-safe
+  Git cached plus non-ignored-untracked candidate source. Candidate reads are
+  descriptor-bounded; non-top-level roots, discovery failures, unsafe paths,
+  escaping parents, undeclared symlinks, and non-regular candidates fail
+  closed without opening ignored content.
+- Removed `scanAllRegularFiles` from the contract and schema with no
+  compatibility alias, closed the exact candidate-source value in the fixture,
+  and reconciled the current script/test inventories to the deterministic
+  production result.
+- Exact staged validation proved `scripts/validate-agent-governance-ci.py` is
+  an unavoidable direct consumer because its closed QA-inventory marker still
+  required the retired `positive_cases=3 mutation_cases=22` text from both
+  owned README files. The authorized consumer marker now requires `3/23`;
+  adjacent contract, schema, fixture, and focused tests required no change.
+- Link/owner strict then proved `scripts/reference_information_architecture.py`
+  is the second unavoidable direct consumer: its two closed projection digests
+  rejected the changed legacy contract/schema and surfaced the secondary
+  protected-ledger diagnostic. Only those two digest constants were refreshed;
+  the ledger and RIA contract remained unchanged.
+- Corrected the AGQC-002 affected-corpus wording without inferring staged
+  evidence, added direct `REQ-PRD-MET-11` traceability, and corrected the
+  AGQC-000-through-AGQC-004 verification-package summary.
+
+#### Memory
+
+- Whole-worktree enumeration is not repository-static evidence. Security
+  validators that admit proposed files should derive a NUL-safe tracked plus
+  non-ignored-untracked Git candidate set, validate the exact worktree root,
+  and open only validated candidates through a no-follow descriptor boundary.
+
+#### Evidence
+
+- **RED**: the focused ignored-sentinel regression failed on the legacy
+  `os.walk` reader with `AGQC-LEGACY-INPUT` and permission denied for the
+  synthetic ignored sentinel.
+- **GREEN**: `23` focused tests passed; the closed self-test passed `3`
+  positive and `23` mutation cases; production passed `809` scanned
+  candidates, `43` evidence references, and `0` active consumers.
+- Affected-surface self-test and production passed `22/22` surfaces with
+  `0/0` uncovered/ambiguous paths. Strict registry, Markdown-profile, and
+  link/owner checks passed after the proven RIA digest consumer was refreshed;
+  the migration evidence ledger remained byte-unchanged.
+
+#### Handoff
+
+- AGQC-006 owns fresh whole-branch QA, independent re-review, and reciprocal
+  closure/postflight. The scoped report records exact staged and commit
+  evidence. Hosted CI, branch protection, provider runtime/auth/model
+  discovery, actual evaluation/admission/promotion, provider resume/handoff
+  canaries, remote execution, and live outcomes remain Spec 046 `DEFER`.
+
 ### 2026-07-30 - Spec 045 AGQC-005 checkpoint and memory postflight
 
 #### Metadata
@@ -236,8 +302,10 @@ inventory stays in `scripts/README.md`.
 - Validator self-test passed `6` truth and `38` mutation cases; production
   validation passed `12` route classes and `13` delegated checks. Affected
   validation passed `22/22` surfaces, `19` selections, `6` CI ranges, `4`
-  argument cases, `37` mutations, and `811` staged paths with `0/0`
-  uncovered/ambiguous paths.
+  argument cases, `37` mutations, and an `811`-path affected-surface
+  tracked/candidate corpus with `0/0` uncovered/ambiguous paths. This affected
+  count is not retroactive staged-lane evidence; the exact staged runner and
+  plain staged pre-commit remain separately observed completion lanes.
 - CI Python and GitHub Actions security checks, active-corpus role audit,
   provider post-validation hook tests, validation-lane runner tests, the full
   aggregate quality gate, all-files pre-commit, and `git diff --check` passed.

@@ -213,7 +213,7 @@
       "__pycache__",
       "node_modules"
     ],
-    "scanAllRegularFiles": true,
+    "candidateSource": "git-ls-files-z-cached-others-exclude-standard",
     "alwaysActivePrefixes": [
       ".agents/",
       ".claude/",

@@ -1367,7 +1367,7 @@ def _validate_local_qa_surfaces(
         "delegated_checks=16",
         "deferred_owners=1",
         "qa_surfaces=10",
-        "positive_cases=3 mutation_cases=22",
+        "positive_cases=3 mutation_cases=23",
     )
     for path in (SCRIPTS_README_PATH, TESTS_README_PATH):
         text = texts[path]

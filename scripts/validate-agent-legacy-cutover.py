@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import stat
+import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn
@@ -26,7 +27,7 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-legacy-cutover.json")
 FIXTURE_SHA256 = (
-    "98a1ed58b552bfb8b6158a571161b617c6ca0573ba7c480f3a8ac1e229ab3af1"  # pragma: allowlist secret
+    "75f4b3abe381c65042b9ceb005e612b3afd8442998f21d8d1c079f976df9c1a2"  # pragma: allowlist secret
 )
 
 SCHEMA_VERSION = 1
@@ -37,6 +38,7 @@ RIA_SNAPSHOT_SOURCE_COMMIT = (
 )
 RESULT_VOCABULARY = ("PASS", "FAIL")
 EVIDENCE_VOCABULARY = ("repo-static",)
+GIT_CANDIDATE_SOURCE = "git-ls-files-z-cached-others-exclude-standard"
 RETIRED_SURFACES = (
     "docs/00.agent-governance/contracts/agent-role-semantics.json",
     "docs/00.agent-governance/contracts/agent-role-semantics.schema.json",
@@ -292,6 +294,7 @@ EXPECTED_MUTATION_CASES = (
     ("invalid-utf8-reference", "filesystem", "add-invalid-utf8-reference", "AGQC-LEGACY-INPUT"),
     ("allowed-reference-count-drift", "filesystem", "mutate-allowed-reference", "AGQC-LEGACY-CONSUMER"),
     ("current-authority-migration-drift", "contract", "change-current-authority-migration", "AGQC-LEGACY-CONTRACT"),
+    ("candidate-source-drift", "contract", "change-candidate-source", "AGQC-LEGACY-SCHEMA"),
 )
 STATUS_LINE = re.compile(r"^status\s*:\s*(.*?)\s*$", re.IGNORECASE)
 UPDATED_LINE = re.compile(r"^updated\s*:\s*(.*?)\s*$", re.IGNORECASE)
@@ -509,7 +512,7 @@ def validate_contract_data(
     expected_scan = {
         "root": ".",
         "excludedRoots": list(EXCLUDED_ROOTS),
-        "scanAllRegularFiles": True,
+        "candidateSource": GIT_CANDIDATE_SOURCE,
         "alwaysActivePrefixes": list(ALWAYS_ACTIVE_PREFIXES),
         "alwaysActiveFiles": list(ALWAYS_ACTIVE_FILES),
         "allowedInternalSymlinks": [
@@ -526,12 +529,18 @@ def validate_contract_data(
     return contract
 
 
-def _validate_replacements(root: Path) -> None:
+def _validate_replacements(root: Path, candidates: set[str]) -> None:
     for value in RETIRED_SURFACES:
         _path, mode = _path_state(root, value)
         if mode is not None:
             fail("AGQC-LEGACY-RETIRED", f"retired surface remains: {value}")
     for value in REPLACEMENT_SURFACES:
+        _require_candidate(
+            root,
+            candidates,
+            value,
+            missing_rule="AGQC-LEGACY-REPLACEMENT",
+        )
         _read_regular_text(
             root,
             value,
@@ -693,32 +702,6 @@ def _is_verified_protected_evidence(
     return True
 
 
-def _validate_protected_evidence_files(
-    root: Path,
-    protected_files: dict[str, dict[str, Any]],
-) -> None:
-    for relative, record in protected_files.items():
-        path, mode = _path_state(root, relative)
-        if mode is None or stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-            fail(
-                "AGQC-LEGACY-CONSUMER",
-                f"protected evidence is missing or not regular: {relative}",
-            )
-        try:
-            raw = path.read_bytes()
-            text = raw.decode("utf-8")
-        except (OSError, UnicodeError) as exc:
-            fail(
-                "AGQC-LEGACY-INPUT",
-                f"protected evidence is unreadable UTF-8 {relative}: {exc}",
-            )
-        if not _is_verified_protected_evidence(raw, text, record):
-            fail(
-                "AGQC-LEGACY-CONSUMER",
-                f"protected evidence relation differs: {relative}",
-            )
-
-
 def _validate_allowed_symlink(root: Path, relative: str, target: str) -> None:
     expected = dict(ALLOWED_INTERNAL_SYMLINKS).get(relative)
     if expected is None or target != expected:
@@ -740,131 +723,247 @@ def _validate_allowed_symlink(root: Path, relative: str, target: str) -> None:
         )
 
 
-def _scan_consumers(root: Path) -> tuple[int, int, list[str]]:
+def _git_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    for key in (
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_COMMON_DIR",
+        "GIT_DIR",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_WORK_TREE",
+    ):
+        environment.pop(key, None)
+    environment["GIT_OPTIONAL_LOCKS"] = "0"
+    environment["LC_ALL"] = "C"
+    return environment
+
+
+def _git_stdout(root: Path, arguments: list[str], detail: str) -> bytes:
+    try:
+        completed = subprocess.run(
+            ["git", "-C", os.fspath(root), *arguments],
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=_git_environment(),
+        )
+    except OSError as exc:
+        fail("AGQC-LEGACY-INPUT", f"{detail}: {exc.strerror}")
+    if completed.returncode != 0:
+        fail("AGQC-LEGACY-INPUT", detail)
+    return completed.stdout
+
+
+def _parse_git_candidates(raw: bytes) -> tuple[str, ...]:
+    if raw and not raw.endswith(b"\0"):
+        fail("AGQC-LEGACY-INPUT", "Git candidate output is not NUL terminated")
+    encoded = raw[:-1].split(b"\0") if raw else []
+    if len(encoded) != len(set(encoded)):
+        fail("AGQC-LEGACY-INPUT", "Git candidate output contains duplicates")
+    candidates: list[str] = []
+    for value in sorted(encoded):
+        try:
+            candidate = value.decode("utf-8")
+        except UnicodeError:
+            fail("AGQC-LEGACY-INPUT", "Git candidate path is not UTF-8")
+        candidates.append(_relative_path(candidate).as_posix())
+    return tuple(candidates)
+
+
+def _repository_candidates(root: Path) -> tuple[str, ...]:
+    top_level = _git_stdout(
+        root,
+        ["rev-parse", "--show-toplevel"],
+        "requested root is not a Git worktree top level",
+    )
+    if top_level != os.fsencode(root) + b"\n":
+        fail(
+            "AGQC-LEGACY-INPUT",
+            "requested root is not the Git worktree top level",
+        )
+    raw = _git_stdout(
+        root,
+        ["ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        "Git repository candidate discovery failed",
+    )
+    return _parse_git_candidates(raw)
+
+
+def _candidate_payload(root: Path, relative: str, *, read: bool) -> bytes | None:
+    safe = _relative_path(relative)
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    file_flags = os.O_RDONLY | os.O_NOFOLLOW
+    if hasattr(os, "O_CLOEXEC"):
+        directory_flags |= os.O_CLOEXEC
+        file_flags |= os.O_CLOEXEC
+    descriptors: list[int] = []
+    try:
+        descriptors.append(os.open(root, directory_flags))
+        for part in safe.parts[:-1]:
+            descriptors.append(
+                os.open(part, directory_flags, dir_fd=descriptors[-1])
+            )
+        parent_fd = descriptors[-1]
+        mode = os.stat(
+            safe.name,
+            dir_fd=parent_fd,
+            follow_symlinks=False,
+        ).st_mode
+        if stat.S_ISLNK(mode):
+            try:
+                target = os.readlink(safe.name, dir_fd=parent_fd)
+            except (OSError, UnicodeError) as exc:
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"cannot inspect candidate symlink {relative}: {exc}",
+                )
+            _validate_allowed_symlink(root, relative, target)
+            return None
+        if not stat.S_ISREG(mode):
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository candidate is not regular: {relative}",
+            )
+        if not read:
+            return b""
+        file_descriptor = os.open(safe.name, file_flags, dir_fd=parent_fd)
+        descriptors.append(file_descriptor)
+        if not stat.S_ISREG(os.fstat(file_descriptor).st_mode):
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository candidate changed type: {relative}",
+            )
+        chunks: list[bytes] = []
+        while chunk := os.read(file_descriptor, 1024 * 1024):
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except ContractError:
+        raise
+    except OSError as exc:
+        fail(
+            "AGQC-LEGACY-INPUT",
+            f"repository candidate is unavailable {relative}: {exc}",
+        )
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
+def _require_candidate(
+    root: Path,
+    candidates: set[str],
+    path: str,
+    *,
+    missing_rule: str = "AGQC-LEGACY-INPUT",
+) -> None:
+    if path in candidates:
+        return
+    _target, mode = _path_state(root, path)
+    if mode is None:
+        fail(
+            missing_rule,
+            f"required repository path is missing: {path}",
+        )
+    fail(
+        "AGQC-LEGACY-INPUT",
+        f"required repository path is outside the Git candidate set: {path}",
+    )
+
+
+def _scan_consumers(
+    root: Path,
+    candidates: tuple[str, ...] | None = None,
+) -> tuple[int, int, list[str]]:
+    if candidates is None:
+        candidates = _repository_candidates(root)
     allowed_counts = dict(ALLOWED_REFERENCE_COUNTS)
     protected_files = {
         record["path"]: record for record in PROTECTED_EVIDENCE_FILES
     }
-    _validate_protected_evidence_files(root, protected_files)
+    candidate_set = set(candidates)
+    for relative in allowed_counts:
+        _require_candidate(root, candidate_set, relative)
+    for relative in protected_files:
+        _require_candidate(
+            root,
+            candidate_set,
+            relative,
+            missing_rule="AGQC-LEGACY-CONSUMER",
+        )
     excluded_roots = set(EXCLUDED_ROOTS)
     scanned = 0
     evidence = 0
     consumers: list[str] = []
 
-    for relative in allowed_counts:
-        _read_regular_text(root, relative)
-
-    for current, directory_names, file_names in os.walk(
-        root,
-        topdown=True,
-        followlinks=False,
-    ):
-        current_path = Path(current)
-        current_relative = current_path.relative_to(root).as_posix()
-        if current_relative == ".":
-            current_relative = ""
-
-        retained_directories: list[str] = []
-        for name in sorted(directory_names):
-            path = current_path / name
-            relative = (
-                f"{current_relative}/{name}" if current_relative else name
-            )
-            if name in excluded_roots or any(
-                _under_prefix(relative, value) for value in excluded_roots
-            ):
-                continue
-            if path.is_symlink():
-                try:
-                    target = os.readlink(path)
-                except OSError as exc:
-                    fail(
-                        "AGQC-LEGACY-INPUT",
-                        f"cannot inspect symlink {relative}: {exc}",
-                    )
-                _validate_allowed_symlink(root, relative, target)
-                continue
-            retained_directories.append(name)
-        directory_names[:] = retained_directories
-
-        for name in sorted(file_names):
-            path = current_path / name
-            relative = (
-                f"{current_relative}/{name}" if current_relative else name
-            )
-            if any(_under_prefix(relative, value) for value in excluded_roots):
-                continue
-            if path.is_symlink():
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"undeclared symlink file in scan surface: {relative}",
+    for relative in candidates:
+        excluded = any(
+            _under_prefix(relative, value) for value in excluded_roots
+        )
+        raw = _candidate_payload(root, relative, read=not excluded)
+        if raw is None or excluded:
+            continue
+        scanned += 1
+        observed_counts = tuple(
+            raw.count(token.encode("utf-8"))
+            for token in RETIRED_SURFACES
+        )
+        retired = [
+            token
+            for token, count in zip(RETIRED_SURFACES, observed_counts)
+            if count
+        ]
+        expected_counts = allowed_counts.get(relative)
+        if expected_counts is not None:
+            if observed_counts == expected_counts:
+                if retired:
+                    evidence += 1
+            else:
+                consumers.append(
+                    f"{relative}:allowed-reference-count-drift"
                 )
-            try:
-                mode = path.lstat().st_mode
-            except OSError as exc:
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"scan input unavailable {relative}: {exc.strerror}",
-                )
-            if not stat.S_ISREG(mode):
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"scan input is not regular: {relative}",
-                )
-            try:
-                raw = path.read_bytes()
-            except OSError as exc:
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"scan input unreadable {relative}: {exc}",
-                )
-            scanned += 1
-            retired = [
-                token
-                for token in RETIRED_SURFACES
-                if token.encode("utf-8") in raw
-            ]
-            if not retired:
-                continue
+            continue
+        protected_record = protected_files.get(relative)
+        if protected_record is not None:
             try:
                 text = raw.decode("utf-8")
             except UnicodeError as exc:
                 fail(
                     "AGQC-LEGACY-INPUT",
-                    f"candidate consumer is not UTF-8 {relative}: {exc}",
+                    f"protected evidence is not UTF-8 {relative}: {exc}",
                 )
-            expected_counts = allowed_counts.get(relative)
-            if expected_counts is not None:
-                observed_counts = tuple(
-                    raw.count(token.encode("utf-8"))
-                    for token in RETIRED_SURFACES
-                )
-                if observed_counts == expected_counts:
-                    evidence += 1
-                else:
-                    consumers.append(
-                        f"{relative}:allowed-reference-count-drift"
-                    )
-                continue
-            protected_record = protected_files.get(relative)
-            if protected_record is not None and _is_verified_protected_evidence(
+            if not _is_verified_protected_evidence(
                 raw,
                 text,
                 protected_record,
             ):
+                consumers.append(f"{relative}:protected-evidence-drift")
+            else:
                 evidence += 1
-                continue
-            always_active = (
-                relative in ALWAYS_ACTIVE_FILES
-                or any(
-                    relative.startswith(prefix)
-                    for prefix in ALWAYS_ACTIVE_PREFIXES
-                )
+            continue
+        if not retired:
+            continue
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeError as exc:
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"candidate consumer is not UTF-8 {relative}: {exc}",
             )
-            if not always_active and _is_terminal_document(text):
-                evidence += 1
-                continue
-            consumers.append(f"{relative}:{retired[0]}")
+        always_active = (
+            relative in ALWAYS_ACTIVE_FILES
+            or any(
+                relative.startswith(prefix)
+                for prefix in ALWAYS_ACTIVE_PREFIXES
+            )
+        )
+        if not always_active and _is_terminal_document(text):
+            evidence += 1
+            continue
+        consumers.append(f"{relative}:{retired[0]}")
     return scanned, evidence, consumers
 
 
@@ -872,11 +971,15 @@ def validate_repository(root: Path) -> dict[str, int]:
     """Validate a completed cutover using repository-static evidence only."""
 
     absolute = _absolute_root(root)
+    candidates = _repository_candidates(absolute)
+    candidate_set = set(candidates)
+    for required in (CONTRACT_PATH.as_posix(), SCHEMA_PATH.as_posix()):
+        _require_candidate(absolute, candidate_set, required)
     contract, schema = load_contract_documents(absolute)
     validate_contract_data(contract, schema)
-    _validate_replacements(absolute)
+    _validate_replacements(absolute, candidate_set)
     _validate_harness(absolute)
-    scanned, evidence, consumers = _scan_consumers(absolute)
+    scanned, evidence, consumers = _scan_consumers(absolute, candidates)
     if consumers:
         fail(
             "AGQC-LEGACY-CONSUMER",
@@ -968,6 +1071,11 @@ def _create_baseline(source_root: Path, target_root: Path) -> None:
     _write_text(target_root, REPLACEMENT_SURFACES[2], "replacement\n")
     _write_text(target_root, REPLACEMENT_SURFACES[3], "{}\n")
     _write_text(target_root, REPLACEMENT_SURFACES[4], "replacement hub\n")
+    _git_stdout(
+        target_root,
+        ["init", "--quiet"],
+        "synthetic Git repository initialization failed",
+    )
 
 
 def _load_fixture(root: Path) -> dict[str, Any]:
@@ -1065,6 +1173,8 @@ def _mutate_contract(contract: dict[str, Any], mutation: dict[str, Any]) -> None
         contract["currentAuthorityMigrations"][mutation["index"]][
             mutation["field"]
         ] = mutation["value"]
+    elif kind == "change-candidate-source":
+        contract["scanPolicy"]["candidateSource"] = mutation["value"]
     else:
         fail("AGQC-LEGACY-FIXTURE", f"unknown contract mutation: {kind}")
 

@@ -228,6 +228,15 @@
         "value": 4
       },
       "expectedRule": "AGQC-LEGACY-CONTRACT"
+    },
+    {
+      "name": "candidate-source-drift",
+      "target": "contract",
+      "mutation": {
+        "kind": "change-candidate-source",
+        "value": "filesystem-walk"
+      },
+      "expectedRule": "AGQC-LEGACY-SCHEMA"
     }
   ]
 }

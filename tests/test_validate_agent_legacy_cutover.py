@@ -6,7 +6,9 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -115,6 +117,13 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 target.write_text("{}\n", encoding="utf-8")
             else:
                 target.write_text("canonical replacement\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "init", "--quiet"],
+            cwd=root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         return root
 
     def assert_rule(self, root: Path, rule_id: str) -> None:
@@ -130,7 +139,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
 
     def test_self_test_is_deterministic_and_repo_is_unchanged(self) -> None:
         before = CONTRACT_PATH.read_bytes()
-        self.assertEqual(self.validator.run_self_test(REPO_ROOT), (3, 22))
+        self.assertEqual(self.validator.run_self_test(REPO_ROOT), (3, 23))
         self.assertEqual(CONTRACT_PATH.read_bytes(), before)
 
     def test_closed_schema_rejects_unknown_contract_key(self) -> None:
@@ -141,6 +150,60 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         with self.assertRaises(self.validator.ContractError) as raised:
             self.validator.validate_contract_data(mutated, schema)
         self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
+
+        mutated = copy.deepcopy(contract)
+        mutated["scanPolicy"]["scanAllRegularFiles"] = True
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator.validate_contract_data(mutated, schema)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
+
+    def test_repository_root_and_candidate_paths_fail_closed(self) -> None:
+        directory = tempfile.TemporaryDirectory(prefix="agent-legacy-nongit-")
+        self.addCleanup(directory.cleanup)
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator.validate_repository(Path(directory.name))
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+
+        root = self.make_valid_root()
+        nested = root / "nested"
+        nested.mkdir()
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator.validate_repository(nested)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+
+        for payload in (b"../outside\0", b"unterminated", b"invalid-\xff\0"):
+            with self.subTest(payload=payload):
+                with self.assertRaises(self.validator.ContractError) as raised:
+                    self.validator._parse_git_candidates(payload)
+                self.assertEqual(
+                    raised.exception.rule_id,
+                    "AGQC-LEGACY-INPUT",
+                )
+
+    def test_nul_safe_candidate_and_candidate_types_fail_closed(self) -> None:
+        root = self.make_valid_root()
+        proposed = root / "proposed\nconsumer.txt"
+        proposed.write_text(
+            f"use {RETIRED_CONTRACT.as_posix()}\n",
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+        proposed.unlink()
+        link = root / "proposed-link"
+        link.symlink_to("AGENTS.md")
+        self.assert_rule(root, "AGQC-LEGACY-INPUT")
+
+        link.unlink()
+        fifo = root / "proposed-fifo"
+        os.mkfifo(fifo)
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator._candidate_payload(
+                root,
+                fifo.name,
+                read=True,
+            )
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
 
     def test_retained_surface_is_rejected(self) -> None:
         root = self.make_valid_root()
@@ -157,6 +220,32 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
     def test_stale_current_consumer_is_rejected(self) -> None:
         root = self.make_valid_root()
         (root / "AGENTS.md").write_text(
+            f"use {RETIRED_CONTRACT.as_posix()}\n",
+            encoding="utf-8",
+        )
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_ignored_unreadable_file_is_not_opened_or_counted(self) -> None:
+        root = self.make_valid_root()
+        (root / ".gitignore").write_text(
+            "ignored-private/\n",
+            encoding="utf-8",
+        )
+        baseline = self.validator.validate_repository(root)
+        sentinel = root / "ignored-private/retired-token.txt"
+        sentinel.parent.mkdir()
+        sentinel.write_text(
+            f"private {RETIRED_CONTRACT.as_posix()}\n",
+            encoding="utf-8",
+        )
+        sentinel.chmod(0)
+        self.addCleanup(sentinel.chmod, 0o600)
+
+        ignored = self.validator.validate_repository(root)
+        self.assertEqual(ignored, baseline)
+
+        proposed = root / "proposed-consumer.txt"
+        proposed.write_text(
             f"use {RETIRED_CONTRACT.as_posix()}\n",
             encoding="utf-8",
         )

@@ -336,7 +336,7 @@
       "required": [
         "root",
         "excludedRoots",
-        "scanAllRegularFiles",
+        "candidateSource",
         "alwaysActivePrefixes",
         "alwaysActiveFiles",
         "allowedInternalSymlinks"
@@ -353,8 +353,8 @@
             "$ref": "#/$defs/repositoryPath"
           }
         },
-        "scanAllRegularFiles": {
-          "const": true
+        "candidateSource": {
+          "const": "git-ls-files-z-cached-others-exclude-standard"
         },
         "alwaysActivePrefixes": {
           "type": "array",

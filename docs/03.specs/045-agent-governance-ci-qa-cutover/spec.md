@@ -392,7 +392,7 @@ and the required QA ordering/formatter rerun.
 | N/A — VAL-AGQC-008 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-008 | Historical scans prove intentional records remain non-current. |
 | N/A — VAL-AGQC-009 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-009 | Checkpoint identity and durable memory fixtures prove repository-static isolation and lifecycle policy. |
 | N/A — VAL-AGQC-005 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-005 | Task evidence proves the mandatory QA lane ordering. |
-| N/A — VAL-AGQC-006 shares the REQ-PRD-MET-11 source linked above | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
+| [REQ-PRD-MET-11](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
 | N/A — repeated VAL-AGQC-007 metric shares the PRD-003 source linked above | VAL-AGQC-007 | Active-corpus scans report zero stale current claim. |
 | N/A — repeated VAL-AGQC-008 metric shares the PRD-003 source linked above | VAL-AGQC-008 | Historical relation validation prevents old evidence from becoming current. |
 | N/A — repeated VAL-AGQC-009 metric shares the PRD-003 source linked above | VAL-AGQC-009 | Synthetic isolation and memory-policy fixtures preserve the Spec 043 runtime boundary. |

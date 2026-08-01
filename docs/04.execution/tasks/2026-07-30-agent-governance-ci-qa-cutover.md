@@ -73,7 +73,7 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 | --- | --- | --- | --- | --- | --- | --- |
 | AGQC-000 | VAL-AGQC-001, VAL-AGQC-010 | Activate the reciprocal Spec/Plan/Task path and single program-lineage relation after observed Spec 044 closure/postflight | platform | Done | Exact eight-file activation committed and clean-tree postflight observed | Activation `c677321d9c0afee2cce7a8485c58e23d4a3bf18c`; focused, aggregate, all-files, diff, and final independent review PASS |
 | AGQC-001 | VAL-AGQC-001, VAL-AGQC-002 | Add dedicated agent-governance selector output, static job, and `ci-summary` topology | platform | Done | Four-job selector/workflow/summary topology is repository-statically enforced and all required owner classes select the lane | `12c5578747ef37afb9a1e65afe41bee6aca0e473`; affected `22/22`, `19` selections, `6` CI ranges, `37` mutations, `806` paths, `0/0`; focused/aggregate/all-files/review PASS |
-| AGQC-002 | VAL-AGQC-001..004 | Implement closed `validate-agent-governance-ci.py` contract/schema/fixture/tests and route it through local/CI owners | platform | Done | Closed Draft 2020-12 contract, exact CI topology and command sequence, delegated checks, result/evidence vocabularies, and fail-closed security controls are repository-statically enforced | `be0a12ecd8d51b73f251004b34be6e8288159eb5`; `22` focused tests, `6` truth and `38` mutation self-test cases, `12` route classes, `13` delegated checks, affected `22/22` and `811` staged paths with `0/0` uncovered/ambiguous; aggregate/all-files/diff/final review PASS |
+| AGQC-002 | VAL-AGQC-001..004 | Implement closed `validate-agent-governance-ci.py` contract/schema/fixture/tests and route it through local/CI owners | platform | Done | Closed Draft 2020-12 contract, exact CI topology and command sequence, delegated checks, result/evidence vocabularies, and fail-closed security controls are repository-statically enforced | `be0a12ecd8d51b73f251004b34be6e8288159eb5`; `22` focused tests, `6` truth and `38` mutation self-test cases, `12` route classes, `13` delegated checks, affected `22/22` with an `811`-path affected-surface tracked/candidate corpus and `0/0` uncovered/ambiguous; aggregate/all-files/diff/final review PASS |
 | AGQC-003 | VAL-AGQC-007, VAL-AGQC-008 | Implement consumer-first `validate-agent-legacy-cutover.py`, prove zero consumers, remove legacy role-semantics ownership/tests, and establish `.github/README.md` as the canonical GitHub hub | platform | Done | Consumer-first removal and canonical hub cutover are closed; exact active references are zero and protected historical evidence requires a verified superseding relation before scanning | `38a2fe6b90bad694d0a9a021c7edce8d800e03ea`; `20` focused tests, `3` positive/`22` mutation self-test cases, `810` scanned files, `43` evidence references, `0` active consumers; RIA `87`, aggregate/all-files/diff/requirements/security/integration PASS |
 | AGQC-004 | VAL-AGQC-005, VAL-AGQC-006 | Align local QA order, repository-quality/pre-commit behavior, and script/test/GitHub/docs inventories | platform | Done | The canonical eight-step order, exact affected/staged runner behavior, plain staged/all-files pre-commit boundaries, formatter rerun rule, both diff checks, and current inventories are closed and fail-closed validated | `baf4df962cb70c55eefd20b5fe76ee07e7ff8be0`; runner `22`, CI `24`, self-test `6/43`, production `12/16/6/2/10`, legacy `3/22` and `810/43/0`; affected/staged `15` paths, aggregate/plain pre-commit/all-files/diff/final reviews PASS |
 | AGQC-005 | VAL-AGQC-009 | Add repository-static concurrent checkpoint/provider identity and durable memory retention/compaction/archive policy | platform | Done | Repository-static checkpoint/provider identity and four-class memory lifecycle policy are closed; independent review approved | `781ebb82b64d2f63d6b9630b6b3e48115dc5a791` checkpoint: `20` focused tests, `110` negative mutations, four memory classes; `4c7b87718aa41f680ef8f5e63c4396565b1c5e0b` loop: `22` focused tests, `66` self-test cases; deterministic repository, worktree, task, provider surface, provider-session-instance, namespace, writer/generation/previous-checkpoint isolation; four-class sensitivity, retention/expiry, compaction source/replacement, archive/GC, conflict, and handoff |
@@ -120,7 +120,7 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 
 ## Verification Summary
 
-AGQC-000 through AGQC-003 are complete at activation `c677321d`, CI topology
+AGQC-000 through AGQC-004 are complete at activation `c677321d`, CI topology
 implementation `12c55787`, closed CI contract implementation `be0a12ec`,
 consumer-first cutover `38a2fe6b`, and local QA closure `baf4df96`.
 The affected-surface contract owns four CI jobs and all required
@@ -132,8 +132,10 @@ closed otherwise.
 
 The AGQC-003 legacy-cutover contract, schema, fixture, tests, and validator
 prove zero active consumers before the atomic legacy deletion and GitHub hub
-rename. Protected historical snapshots are accepted only through exact digest,
-lifecycle, source, retired-reference count, and superseding-replacement
+rename. The corrected production boundary scans only the deterministic,
+NUL-safe Git cached plus non-ignored-untracked candidate set and never opens
+ignored paths. Protected historical snapshots are accepted only through exact
+digest, lifecycle, source, retired-reference count, and superseding-replacement
 evidence. Missing evidence and retired-reference removal fail closed.
 
 AGQC-004 adds `staged` to the closed local runner, propagates exact staged
@@ -164,7 +166,7 @@ only in AGQC-006.
 | --- | --- | --- |
 | [AGQC-000](../plans/2026-07-30-agent-governance-ci-qa-cutover.md#work-breakdown) | Done | Activation `c677321d`; lifecycle, strict registry `465` with `0/0` uncovered/ambiguous, Markdown, link/owner, JSON, aggregate, all-files pre-commit, diff, and final independent review PASS. |
 | [AGQC-001](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md#success-criteria--verification-plan) | Done | `12c55787`; affected `22/22`, `19` selections, `6` CI ranges, `37` mutations, `806` paths, `4` jobs, `0/0`; CI Python/GitHub security/aggregate/all-files/final review PASS. |
-| N/A — AGQC-002 shares the Plan and Spec sources above | Done | `be0a12ec`; `22` focused tests, self-test `6` truth/`38` mutation cases, production `12` route classes/`13` delegated checks, affected `22/22` and `811` staged paths with `0/0`, aggregate/all-files/diff/final review PASS. |
+| N/A — AGQC-002 shares the Plan and Spec sources above | Done | `be0a12ec`; `22` focused tests, self-test `6` truth/`38` mutation cases, production `12` route classes/`13` delegated checks, affected `22/22` with an `811`-path affected-surface tracked/candidate corpus and `0/0`, aggregate/all-files/diff/final review PASS. |
 | N/A — AGQC-003 shares the Plan and Spec sources above | Done | `38a2fe6b`; `20` focused tests, self-test `3/22`, production `810` scanned files/`43` evidence references/`0` active consumers, RIA `87`, aggregate/all-files/diff/final requirements/security/integration review PASS. |
 | N/A — AGQC-004 shares the Plan and Spec sources above | Done | `baf4df96`; runner `22`, CI `24`, self-test `6/43`, production `12/16/6/2/10`, legacy `3/22` and `810/43/0`, affected/staged `15` paths, aggregate/plain pre-commit/all-files/diff/final review PASS, formatter mutation `0`. |
 | N/A — AGQC-005 shares the Plan and Spec sources above | Done | `781ebb82`; checkpoint `20` focused tests/`110` negative mutations/four memory classes. `4c7b8771`; loop `22` focused tests/`66` self-test cases, deterministic identity isolation and four-class sensitivity, retention/expiry, compaction source/replacement, archive/GC, conflict, and handoff; independent review approved. |
