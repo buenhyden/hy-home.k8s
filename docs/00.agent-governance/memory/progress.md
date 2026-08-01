@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 045 AGQC-006L terminal authority and cleanup closure
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, governance, qa, security
+- **Status**: complete
+- **Tags**: #spec-045 #agqc-006l #git-index #process-group #dirfd
+- **Owner**: AGQC-006L implementation
+- **Canonical Owner**: Spec 045 Task and the closed legacy-cutover contract
+- **Sensitivity**: non-sensitive-synthetic
+- **Next Owner**: AGQC-006 whole-branch review and postflight
+
+#### Progress
+
+- Self-test source admission now resolves the held-reader cached Git index
+  before any source content read and requires every contract, schema, fixture,
+  package/migration reference, and protected-evidence source to be an admitted
+  regular candidate.
+- Bounded Git failures now kill the child session/process group before reaping
+  the direct leader. The held reader compares stable regular-file metadata
+  (device, inode, mode, size, mtime, and ctime) both post-open and post-read,
+  and closes an opened root or parent descriptor exactly once when validation
+  raises before ownership transfer.
+- Replaced the older AGQC-002 contradictory staged-evidence wording. The
+  historical exact staged runner and plain staged pre-commit remain `DEFER`;
+  affected-corpus evidence is not staged evidence, while AGQC-006K/final-HEAD
+  observations retain their own closure authority.
+
+#### Evidence
+
+- **RED**: synthetic index removal opened the still-present fixture before
+  admission; same-inode equal-size hide/read/restore passed; and an fd opened
+  before `fstat()` failed was not closed. Descendant PID assertions exposed
+  process-group cleanup coverage for timeout and both pipe-overflow paths.
+- **GREEN targeted**: 36 focused legacy unit tests passed. The production
+  self-test passed `3/24`; production validation passed `809` scanned files,
+  `43` evidence references, and `0` active consumers.
+
+#### Handoff
+
+- The AGQC-006 parent owns aggregate/all-files validation and whole-branch
+  review. Hosted CI, provider runtime/auth/model discovery, remote execution,
+  and live outcomes remain `DEFER`.
+
 ### 2026-08-01 - Spec 045 AGQC-006K hermetic tracked reader closure
 
 #### Metadata
@@ -378,8 +423,9 @@ inventory stays in `scripts/README.md`.
   validation passed `22/22` surfaces, `19` selections, `6` CI ranges, `4`
   argument cases, `37` mutations, and an `811`-path affected-surface
   tracked/candidate corpus with `0/0` uncovered/ambiguous paths. This affected
-  count is not retroactive staged-lane evidence; the exact staged runner and
-  plain staged pre-commit remain separately observed completion lanes.
+  count is not staged-lane evidence. The historical exact staged-runner and
+  plain staged-pre-commit evidence is unavailable and remains `DEFER`; the
+  later AGQC-006K/final-HEAD lanes own any newly observed closure evidence.
 - CI Python and GitHub Actions security checks, active-corpus role audit,
   provider post-validation hook tests, validation-lane runner tests, the full
   aggregate quality gate, all-files pre-commit, and `git diff --check` passed.

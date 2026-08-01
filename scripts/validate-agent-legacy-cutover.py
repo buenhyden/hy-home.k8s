@@ -10,6 +10,7 @@ import json
 import os
 import re
 import selectors
+import signal
 import shutil
 import stat
 import subprocess
@@ -428,6 +429,29 @@ def _same_identity(first: os.stat_result, second: os.stat_result) -> bool:
     )
 
 
+def _same_stable_file_state(
+    first: os.stat_result,
+    second: os.stat_result,
+) -> bool:
+    """Compare all metadata that must not change across a bounded read."""
+
+    return (
+        first.st_dev,
+        first.st_ino,
+        first.st_mode,
+        first.st_size,
+        first.st_mtime_ns,
+        first.st_ctime_ns,
+    ) == (
+        second.st_dev,
+        second.st_ino,
+        second.st_mode,
+        second.st_size,
+        second.st_mtime_ns,
+        second.st_ctime_ns,
+    )
+
+
 class _RepositoryReader:
     """One root-dirfd, no-follow, bounded reader for repository content."""
 
@@ -436,21 +460,29 @@ class _RepositoryReader:
         flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
         if hasattr(os, "O_CLOEXEC"):
             flags |= os.O_CLOEXEC
+        root_fd: int | None = None
         try:
-            self.root_fd = os.open(self.root_path, flags)
-            root_state = os.fstat(self.root_fd)
+            root_fd = os.open(self.root_path, flags)
+            root_state = os.fstat(root_fd)
         except OSError as exc:
+            if root_fd is not None:
+                try:
+                    os.close(root_fd)
+                except OSError:
+                    pass
             fail(
                 "AGQC-LEGACY-INPUT",
                 f"repository root is unavailable: {exc.strerror}",
             )
+        self.root_fd = root_fd
+        self._closed = False
         if not stat.S_ISDIR(root_state.st_mode):
             os.close(self.root_fd)
+            self._closed = True
             fail(
                 "AGQC-LEGACY-INPUT",
                 "repository root must be a non-symlink directory",
             )
-        self._closed = False
 
     def __enter__(self) -> _RepositoryReader:
         return self
@@ -483,25 +515,32 @@ class _RepositoryReader:
         current = self.root_fd
         descriptors: list[int] = []
         edges: list[tuple[int, str, int]] = []
+        pending_descriptor: int | None = None
         try:
             for part in relative.parts[:-1]:
-                child = os.open(part, directory_flags, dir_fd=current)
-                child_state = os.fstat(child)
+                pending_descriptor = os.open(
+                    part,
+                    directory_flags,
+                    dir_fd=current,
+                )
+                child_state = os.fstat(pending_descriptor)
                 entry_state = os.stat(part, dir_fd=current, follow_symlinks=False)
                 if (
                     not stat.S_ISDIR(child_state.st_mode)
                     or not _same_identity(child_state, entry_state)
                 ):
-                    os.close(child)
                     fail(
                         "AGQC-LEGACY-INPUT",
                         f"repository parent changed or is unsafe: {relative.as_posix()}",
                     )
-                descriptors.append(child)
-                edges.append((current, part, child))
-                current = child
+                descriptors.append(pending_descriptor)
+                edges.append((current, part, pending_descriptor))
+                current = pending_descriptor
+                pending_descriptor = None
             return current, descriptors, edges
         except FileNotFoundError:
+            if pending_descriptor is not None:
+                self._close_descriptors([pending_descriptor])
             self._close_descriptors(descriptors)
             if missing_ok:
                 return None, [], []
@@ -510,9 +549,13 @@ class _RepositoryReader:
                 f"repository parent is missing: {relative.as_posix()}",
             )
         except ContractError:
+            if pending_descriptor is not None:
+                self._close_descriptors([pending_descriptor])
             self._close_descriptors(descriptors)
             raise
         except OSError as exc:
+            if pending_descriptor is not None:
+                self._close_descriptors([pending_descriptor])
             self._close_descriptors(descriptors)
             fail(
                 "AGQC-LEGACY-INPUT",
@@ -651,7 +694,7 @@ class _RepositoryReader:
             opened = os.fstat(file_descriptor)
             if (
                 not stat.S_ISREG(opened.st_mode)
-                or not _same_identity(before, opened)
+                or not _same_stable_file_state(before, opened)
             ):
                 fail(
                     "AGQC-LEGACY-INPUT",
@@ -689,8 +732,8 @@ class _RepositoryReader:
             )
             if (
                 final_state.st_size > MAX_REGULAR_FILE_BYTES
-                or not _same_identity(opened, final_state)
-                or not _same_identity(final_state, final_entry)
+                or not _same_stable_file_state(opened, final_state)
+                or not _same_stable_file_state(final_state, final_entry)
             ):
                 fail(
                     "AGQC-LEGACY-INPUT",
@@ -1068,6 +1111,12 @@ def _validate_allowed_symlink(relative: str, target: str) -> None:
 
 
 def _terminate_process(process: subprocess.Popen[bytes]) -> None:
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    except OSError:
+        pass
     if process.poll() is None:
         try:
             process.kill()
@@ -1558,6 +1607,27 @@ def _load_fixture(root: Path) -> dict[str, Any]:
         return _load_fixture_with_reader(reader)
 
 
+def _require_self_test_sources(
+    reader: _RepositoryReader,
+    candidates: tuple[str, ...],
+) -> None:
+    """Admit every self-test source before its first content read."""
+
+    candidate_set = set(candidates)
+    required = dict.fromkeys(
+        (
+            CONTRACT_PATH.as_posix(),
+            SCHEMA_PATH.as_posix(),
+            FIXTURE_PATH.as_posix(),
+            *PACKAGE_REFERENCES,
+            *MIGRATION_REFERENCES,
+            *(record["path"] for record in PROTECTED_EVIDENCE_FILES),
+        )
+    )
+    for relative in required:
+        _require_candidate(reader, candidate_set, relative)
+
+
 def _apply_positive(root: Path, kind: str) -> None:
     if kind == "none":
         return
@@ -1723,6 +1793,8 @@ def run_self_test(root: Path) -> tuple[int, int]:
     """Execute deterministic fixtures in temporary repositories only."""
 
     with _RepositoryReader(root) as source_reader:
+        candidates = _repository_candidates(source_reader)
+        _require_self_test_sources(source_reader, candidates)
         contract, schema = _load_contract_documents(source_reader)
         validate_contract_data(contract, schema)
         fixture = _load_fixture_with_reader(source_reader)

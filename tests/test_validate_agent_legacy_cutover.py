@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -161,6 +162,39 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         before = CONTRACT_PATH.read_bytes()
         self.assertEqual(self.validator.run_self_test(REPO_ROOT), (3, 24))
         self.assertEqual(CONTRACT_PATH.read_bytes(), before)
+
+    def test_self_test_requires_index_admission_before_source_reads(self) -> None:
+        root = self.make_valid_root()
+        sentinel = self.validator.FIXTURE_PATH.as_posix()
+        subprocess.run(
+            ["/usr/bin/git", "rm", "--cached", "--", sentinel],
+            cwd=root,
+            check=True,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=self.validator.GIT_ENVIRONMENT,
+        )
+        self.assertTrue((root / sentinel).is_file())
+        original_read_bytes = self.validator._RepositoryReader.read_bytes
+
+        def reject_sentinel(reader, value, **kwargs):
+            if reader.root_path == root and value == sentinel:
+                raise AssertionError("unadmitted source sentinel was opened")
+            return original_read_bytes(reader, value, **kwargs)
+
+        with mock.patch.object(
+            self.validator._RepositoryReader,
+            "read_bytes",
+            autospec=True,
+            side_effect=reject_sentinel,
+        ):
+            self.assert_rule_for_self_test(root, "AGQC-LEGACY-INPUT")
+
+    def assert_rule_for_self_test(self, root: Path, rule_id: str) -> None:
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator.run_self_test(root)
+        self.assertEqual(raised.exception.rule_id, rule_id)
 
     def test_closed_schema_rejects_unknown_contract_key(self) -> None:
         root = self.make_valid_root()
@@ -547,27 +581,38 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.assertNotIn("GIT_NAMESPACE", options["env"])
             self.assertEqual(len(options["pass_fds"]), 1)
 
-    def test_git_pipe_timeout_and_overflow_reap_children(self) -> None:
+    def test_git_pipe_timeout_and_overflow_reap_process_groups(self) -> None:
         cases = (
             (
                 "timeout",
-                "import time; time.sleep(30)",
+                "import subprocess,sys,time; "
+                "child=subprocess.Popen([sys.executable, '-c', "
+                "'import time; time.sleep(30)']); "
+                "print(child.pid, flush=True); time.sleep(30)",
                 1024,
                 1024,
                 0.05,
             ),
             (
                 "stdout",
-                "import sys,time; sys.stdout.buffer.write(b'x'*4096); "
-                "sys.stdout.flush(); time.sleep(30)",
+                "import subprocess,sys,time; "
+                "child=subprocess.Popen([sys.executable, '-c', "
+                "'import time; time.sleep(30)']); "
+                "print(child.pid, flush=True); "
+                "sys.stdout.buffer.write(b'x'*4096); sys.stdout.flush(); "
+                "time.sleep(30)",
                 64,
                 1024,
                 2.0,
             ),
             (
                 "stderr",
-                "import sys,time; sys.stderr.buffer.write(b'x'*4096); "
-                "sys.stderr.flush(); time.sleep(30)",
+                "import subprocess,sys,time; "
+                "child=subprocess.Popen([sys.executable, '-c', "
+                "'import time; time.sleep(30)']); "
+                "print(child.pid, flush=True); "
+                "sys.stderr.buffer.write(b'x'*4096); sys.stderr.flush(); "
+                "time.sleep(30)",
                 1024,
                 64,
                 2.0,
@@ -575,12 +620,23 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         )
         for name, program, stdout_limit, stderr_limit, timeout in cases:
             with self.subTest(name=name):
+                pid_file = Path(tempfile.mkstemp(prefix="agent-legacy-child-")[1])
+                self.addCleanup(pid_file.unlink, missing_ok=True)
+                program = program.replace(
+                    "child=subprocess.Popen([sys.executable, '-c', ",
+                    "child=subprocess.Popen([sys.executable, '-c', ",
+                ).replace(
+                    "print(child.pid, flush=True)",
+                    f"open({os.fspath(pid_file)!r}, 'w').write(str(child.pid)); "
+                    "print(child.pid, flush=True)",
+                )
                 process = subprocess.Popen(
                     [sys.executable, "-c", program],
                     stdin=subprocess.DEVNULL,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     shell=False,
+                    start_new_session=True,
                 )
                 with self.assertRaises(self.validator.ContractError) as raised:
                     self.validator._drain_process(
@@ -592,6 +648,138 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
                 self.assertIsNotNone(process.poll())
+                child_pid = int(pid_file.read_text(encoding="utf-8"))
+                self.assert_process_gone(child_pid)
+
+    def test_git_cleanup_kills_descendant_after_leader_exits(self) -> None:
+        pid_file = Path(tempfile.mkstemp(prefix="agent-legacy-child-")[1])
+        self.addCleanup(pid_file.unlink, missing_ok=True)
+        process = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                "import subprocess,sys; "
+                "child=subprocess.Popen([sys.executable, '-c', "
+                "'import time; time.sleep(30)']); "
+                f"open({os.fspath(pid_file)!r}, 'w').write(str(child.pid)); "
+                "print(child.pid, flush=True)",
+            ],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=False,
+            start_new_session=True,
+        )
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator._drain_process(
+                process,
+                timeout_seconds=0.05,
+                stdout_limit=1024,
+                stderr_limit=1024,
+                detail="synthetic Git boundary",
+            )
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+        self.assertIsNotNone(process.poll())
+        self.assert_process_gone(int(pid_file.read_text(encoding="utf-8")))
+
+    def assert_process_gone(self, process_id: int) -> None:
+        deadline = time.monotonic() + self.validator.GIT_CLEANUP_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            try:
+                os.kill(process_id, 0)
+            except ProcessLookupError:
+                return
+            time.sleep(0.01)
+        self.fail(f"synthetic descendant remains alive: {process_id}")
+
+    def test_equal_size_same_inode_content_restore_fails_closed(self) -> None:
+        directory = tempfile.TemporaryDirectory(prefix="agent-legacy-stable-")
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        payload = root / "payload.txt"
+        original = b"safe content\n"
+        payload.write_bytes(original)
+        original_read = os.read
+        restored = False
+
+        def hide_read_restore(descriptor: int, size: int) -> bytes:
+            nonlocal restored
+            chunk = original_read(descriptor, size)
+            if chunk and not restored:
+                restored = True
+                payload.write_bytes(b"stale-token\n")
+                payload.write_bytes(original)
+            return chunk
+
+        with (
+            self.validator._RepositoryReader(root) as reader,
+            mock.patch.object(self.validator.os, "read", side_effect=hide_read_restore),
+        ):
+            with self.assertRaises(self.validator.ContractError) as raised:
+                reader.read_bytes(payload.name)
+        self.assertTrue(restored)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+
+    def test_reader_closes_opened_descriptors_once_when_validation_raises(self) -> None:
+        directory = tempfile.TemporaryDirectory(prefix="agent-legacy-fd-")
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        safe = root / "safe"
+        safe.mkdir()
+        (safe / "payload.txt").write_text("inside\n", encoding="utf-8")
+
+        with mock.patch.object(self.validator.os, "open", return_value=731), mock.patch.object(
+            self.validator.os,
+            "fstat",
+            side_effect=OSError("synthetic root fstat failure"),
+        ), mock.patch.object(self.validator.os, "close") as close:
+            with self.assertRaises(self.validator.ContractError) as raised:
+                self.validator._RepositoryReader(root)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+        self.assertEqual(close.call_args_list, [mock.call(731)])
+
+        original_open = os.open
+        original_fstat = os.fstat
+        original_close = os.close
+        closed: list[int] = []
+
+        def record_close(descriptor: int) -> None:
+            closed.append(descriptor)
+            original_close(descriptor)
+
+        with self.validator._RepositoryReader(root) as reader:
+            def fail_child_fstat(descriptor: int):
+                if descriptor != reader.root_fd:
+                    raise OSError("synthetic child fstat failure")
+                return original_fstat(descriptor)
+
+            with (
+                mock.patch.object(self.validator.os, "open", side_effect=original_open),
+                mock.patch.object(self.validator.os, "fstat", side_effect=fail_child_fstat),
+                mock.patch.object(self.validator.os, "close", side_effect=record_close),
+            ):
+                with self.assertRaises(self.validator.ContractError) as raised:
+                    reader.read_bytes("safe/payload.txt")
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+        self.assertEqual(len(closed), 1)
+
+        original_stat = os.stat
+        closed = []
+
+        with self.validator._RepositoryReader(root) as reader:
+            def fail_parent_entry(path, *args, **kwargs):
+                if path == "safe" and kwargs.get("dir_fd") == reader.root_fd:
+                    raise OSError("synthetic parent entry stat failure")
+                return original_stat(path, *args, **kwargs)
+
+            with (
+                mock.patch.object(self.validator.os, "stat", side_effect=fail_parent_entry),
+                mock.patch.object(self.validator.os, "close", side_effect=record_close),
+            ):
+                with self.assertRaises(self.validator.ContractError) as raised:
+                    reader.read_bytes("safe/payload.txt")
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+        self.assertEqual(len(closed), 1)
 
     def test_git_dual_pipe_drain_is_deadlock_safe(self) -> None:
         process = subprocess.Popen(
