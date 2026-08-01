@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import itertools
 import hashlib
 import json
 import os
@@ -670,6 +671,17 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertEqual(outcome.status, "pipe_failure")
         self.assertTrue(outcome.cleanup_complete)
 
+    def test_missing_ownership_primitives_fail_closed_before_spawn(self):
+        with (
+            patch.object(RUNNER, "_ownership_primitives_available", return_value=False),
+            patch.object(RUNNER.subprocess, "Popen") as launched,
+        ):
+            outcome = self._run_python("raise AssertionError('must not run')")
+
+        launched.assert_not_called()
+        self.assertEqual(outcome.status, "ownership_unavailable")
+        self.assertTrue(outcome.cleanup_complete)
+
     def test_interrupted_collection_fails_closed_and_reaps_the_child(self):
         class _InterruptedSelector:
             def register(self, *_args):
@@ -738,6 +750,42 @@ class BoundedValidationCommandTest(unittest.TestCase):
                     except ProcessLookupError:
                         pass
                     process.wait(timeout=2)
+
+    def test_spawn_assignment_interrupt_reaps_child_and_closes_owned_fds(self):
+        real_popen = RUNNER.subprocess.Popen
+        spawned = []
+        baseline_fds = len(os.listdir("/proc/self/fd"))
+
+        def spawn_then_interrupt(*args, **kwargs):
+            process = real_popen(*args, **kwargs)
+            spawned.append(process)
+            raise KeyboardInterrupt("synthetic pre-assignment interrupt")
+
+        try:
+            with (
+                patch.object(
+                    RUNNER.subprocess,
+                    "Popen",
+                    side_effect=spawn_then_interrupt,
+                ),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                self._run_python("import signal; signal.pause()")
+
+            self.assertEqual(len(spawned), 1)
+            with self.assertRaises(ProcessLookupError):
+                os.kill(spawned[0].pid, 0)
+            # The synthetic wrapper retained a Popen object that the runner
+            # could not receive; mirror the external waitpid result so its
+            # destructor does not emit a false live-process warning.
+            spawned[0].returncode = -signal.SIGKILL
+            self.assertEqual(len(os.listdir("/proc/self/fd")), baseline_fds)
+        finally:
+            for process in spawned:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
     def test_stdout_overflow_fails_closed_without_retaining_over_limit(self):
         outcome = self._run_python(
@@ -895,7 +943,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
                 self.assertEqual(outcome.status, "completed")
                 self.assertTrue(outcome.cleanup_complete)
-                self._wait_for_process_exit(process_ids["pid"], timeout_seconds=0.2)
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(process_ids["pid"], 0)
+                self.assertTrue(RUNNER._process_group_absent(process_ids["pgid"]))
             finally:
                 if process_ids:
                     try:
@@ -914,8 +964,13 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 "signal.pause()"
             )
             leader_source = (
-                "import subprocess, sys; "
-                f"subprocess.Popen([sys.executable, '-I', '-c', {child_source!r}])"
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                f"subprocess.Popen([sys.executable, '-I', '-c', {child_source!r}]); "
+                "deadline=time.monotonic()+2.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
             )
             escaped: dict[str, int] = {}
             try:
@@ -924,7 +979,45 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
                 self.assertEqual(outcome.status, "descendant_pipe_hold")
                 self.assertFalse(outcome.cleanup_complete)
-                os.kill(escaped["pid"], 0)
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(escaped["pid"], 0)
+            finally:
+                if escaped:
+                    try:
+                        os.killpg(escaped["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    self._wait_for_process_exit(escaped["pid"])
+
+    def test_escaped_devnull_descendant_is_killed_and_not_reported_completed(self):
+        with tempfile.TemporaryDirectory(prefix="runner-escaped-devnull-") as temporary:
+            pid_path = Path(temporary) / "escaped.json"
+            child_source = (
+                "import json, os, signal; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()})); "
+                "signal.pause()"
+            )
+            leader_source = (
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                "subprocess.Popen([sys.executable, '-I', '-c', "
+                f"{child_source!r}], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                "deadline=time.monotonic()+2.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
+            )
+            escaped: dict[str, int] = {}
+            try:
+                outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+                escaped = json.loads(pid_path.read_text(encoding="utf-8"))
+
+                self.assertEqual(outcome.status, "descendant_cleanup")
+                self.assertTrue(outcome.cleanup_complete)
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(escaped["pid"], 0)
             finally:
                 if escaped:
                     try:
@@ -995,7 +1088,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 raise subprocess.TimeoutExpired(("synthetic",), timeout)
 
         process = _Process()
-        clock = iter((10.0, 10.1))
+        clock = itertools.chain((10.0, 10.1, 10.2, 10.3, 10.4), itertools.repeat(10.5))
         with (
             patch.object(RUNNER.time, "monotonic", side_effect=lambda: next(clock)),
             patch.object(RUNNER.os, "killpg", side_effect=ProcessLookupError),
@@ -1003,9 +1096,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
             complete = RUNNER.cleanup_process_group(process, 0.5)
 
         self.assertFalse(complete)
-        self.assertEqual(len(process.wait_timeouts), 1)
-        self.assertGreater(process.wait_timeouts[0], 0)
-        self.assertLessEqual(process.wait_timeouts[0], 0.5)
+        self.assertGreaterEqual(len(process.wait_timeouts), 1)
+        self.assertTrue(all(value >= 0 for value in process.wait_timeouts))
+        self.assertTrue(all(value <= 0.5 for value in process.wait_timeouts))
         self.assertTrue(process.stdout.closed)
         self.assertTrue(process.stderr.closed)
 
@@ -1033,6 +1126,123 @@ class BoundedValidationCommandTest(unittest.TestCase):
             complete = RUNNER.cleanup_process_group(_Process(), 0.5)
 
         self.assertFalse(complete)
+
+    def test_pre_effect_group_interrupt_reuses_deadline_and_finishes_tree(self):
+        with tempfile.TemporaryDirectory(prefix="runner-group-interrupt-") as temporary:
+            pid_path = Path(temporary) / "child.json"
+            source = (
+                "import json, os, signal, subprocess, sys; "
+                "child=subprocess.Popen([sys.executable, '-I', '-c', "
+                "'import signal; signal.pause()'], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': child.pid, 'pgid': os.getpgrp()})); "
+                "signal.pause()"
+            )
+            real_cleanup = RUNNER.cleanup_process_group
+            real_killpg = RUNNER.os.killpg
+            real_popen = RUNNER.subprocess.Popen
+            deadlines = []
+            signal_returncodes = []
+            spawned = []
+            child = {}
+
+            def capture_spawn(*args, **kwargs):
+                process = real_popen(*args, **kwargs)
+                spawned.append(process)
+                return process
+
+            def observed_cleanup(*args, **kwargs):
+                deadlines.append(kwargs.get("deadline"))
+                return real_cleanup(*args, **kwargs)
+
+            def interrupt_before_effect(pgid, sig):
+                signal_returncodes.append(spawned[0].returncode)
+                if len(signal_returncodes) == 1:
+                    raise KeyboardInterrupt("synthetic pre-effect interrupt")
+                return real_killpg(pgid, sig)
+
+            try:
+                with (
+                    patch.object(RUNNER.subprocess, "Popen", side_effect=capture_spawn),
+                    patch.object(RUNNER, "cleanup_process_group", side_effect=observed_cleanup),
+                    patch.object(RUNNER.os, "killpg", side_effect=interrupt_before_effect),
+                    self.assertRaises(KeyboardInterrupt),
+                ):
+                    self._run_python(source, timeout_seconds=0.2)
+
+                child = json.loads(pid_path.read_text(encoding="utf-8"))
+                self.assertGreaterEqual(len(signal_returncodes), 2)
+                self.assertTrue(all(value is None for value in signal_returncodes))
+                self.assertGreaterEqual(len(deadlines), 2)
+                self.assertIsNotNone(deadlines[0])
+                self.assertTrue(all(value == deadlines[0] for value in deadlines))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(child["pid"], 0)
+                self.assertTrue(RUNNER._process_group_absent(child["pgid"]))
+            finally:
+                if child:
+                    try:
+                        real_killpg(child["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+
+    def test_two_wait_interrupts_still_reap_without_post_reap_group_signal(self):
+        process = subprocess.Popen(
+            [sys.executable, "-I", "-c", "import signal; signal.pause()"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+        real_killpg = RUNNER.os.killpg
+        wait_calls = 0
+        signal_returncodes = []
+
+        class _InterruptingWaitProcess:
+            def __init__(self, delegate):
+                self._delegate = delegate
+                self.pid = delegate.pid
+                self.stdout = delegate.stdout
+                self.stderr = delegate.stderr
+
+            @property
+            def returncode(self):
+                return self._delegate.returncode
+
+            def wait(self, timeout=None):
+                nonlocal wait_calls
+                wait_calls += 1
+                if wait_calls <= 2:
+                    raise KeyboardInterrupt("synthetic wait interrupt")
+                return self._delegate.wait(timeout=timeout)
+
+        wrapped = _InterruptingWaitProcess(process)
+
+        def observed_killpg(pgid, sig):
+            signal_returncodes.append(process.returncode)
+            return real_killpg(pgid, sig)
+
+        try:
+            with (
+                patch.object(RUNNER.os, "killpg", side_effect=observed_killpg),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                RUNNER.cleanup_process_group(wrapped, 0.5)
+
+            self.assertGreaterEqual(wait_calls, 3)
+            self.assertIsNotNone(process.returncode)
+            self.assertTrue(signal_returncodes)
+            self.assertTrue(all(value is None for value in signal_returncodes))
+            self.assertTrue(process.stdout.closed)
+            self.assertTrue(process.stderr.closed)
+        finally:
+            if process.returncode is None:
+                try:
+                    real_killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                process.wait(timeout=2)
 
     def test_group_signal_precedes_reap_and_is_never_repeated_after_reap(self):
         real_popen = RUNNER.subprocess.Popen
@@ -1098,6 +1308,53 @@ class BoundedValidationCommandTest(unittest.TestCase):
         group_signal.assert_not_called()
         self.assertTrue(process.stdout.closed)
         self.assertTrue(process.stderr.closed)
+
+    def test_reaped_leader_requires_signal_free_group_absence_proof(self):
+        with tempfile.TemporaryDirectory(prefix="runner-reaped-leader-") as temporary:
+            pid_path = Path(temporary) / "child.json"
+            source = (
+                "import json, os, signal, subprocess, sys, time; "
+                "child=subprocess.Popen([sys.executable, '-I', '-c', "
+                "'import signal; signal.pause()'], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': child.pid, 'pgid': os.getpgrp()})); "
+                "time.sleep(0.05)"
+            )
+            process = subprocess.Popen(
+                [sys.executable, "-I", "-c", source],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                start_new_session=True,
+            )
+            child = {}
+            try:
+                process.wait(timeout=2)
+                child = json.loads(pid_path.read_text(encoding="utf-8"))
+                with patch.object(RUNNER.os, "killpg") as group_signal:
+                    complete = RUNNER.cleanup_process_group(process, 0.1)
+
+                self.assertFalse(complete)
+                group_signal.assert_not_called()
+                os.kill(child["pid"], 0)
+            finally:
+                if child:
+                    try:
+                        os.killpg(child["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+
+    def test_subreaper_and_interrupt_mask_are_restored(self):
+        before_subreaper = RUNNER._get_subreaper_state()
+        before_mask = signal.pthread_sigmask(signal.SIG_BLOCK, set())
+
+        outcome = self._run_python("pass")
+
+        after_mask = signal.pthread_sigmask(signal.SIG_BLOCK, set())
+        self.assertEqual(outcome.status, "completed")
+        self.assertEqual(RUNNER._get_subreaper_state(), before_subreaper)
+        self.assertEqual(after_mask, before_mask)
 
     def test_repeated_cleanup_interrupts_do_not_skip_close_or_reap(self):
         process = subprocess.Popen(

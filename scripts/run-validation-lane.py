@@ -4,18 +4,21 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import importlib.util
 import json
 import math
 import os
 import pwd
+import select
 import selectors
 import signal
 import shutil
 import stat
 import subprocess
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -39,6 +42,20 @@ VALIDATOR_STDERR_LIMIT_BYTES = 1 * 1024 * 1024
 VALIDATOR_CLEANUP_SECONDS = 2.0
 VALIDATOR_PIPE_POLL_SECONDS = 0.05
 VALIDATOR_READ_CHUNK_BYTES = 64 * 1024
+VALIDATOR_OWNED_PROCESS_POLL_SECONDS = 0.01
+PR_GET_CHILD_SUBREAPER = 37
+PR_SET_CHILD_SUBREAPER = 36
+_INTERRUPT_SIGNALS = tuple(
+    sig
+    for sig in (
+        getattr(signal, "SIGINT", None),
+        getattr(signal, "SIGTERM", None),
+        getattr(signal, "SIGHUP", None),
+        getattr(signal, "SIGQUIT", None),
+    )
+    if sig is not None
+)
+_PROCESS_OWNERSHIP_LOCK = threading.Lock()
 SYSTEM_GITLEAKS_CANDIDATES = tuple(
     Path(directory) / "gitleaks" for directory in TRUSTED_SEARCH_DIRECTORIES
 )
@@ -325,106 +342,431 @@ def _leader_exited_without_reap(process: subprocess.Popen[bytes]) -> bool:
     return os.waitid(os.P_PID, process.pid, flags) is not None
 
 
-def cleanup_process_group(
-    process: subprocess.Popen[bytes], cleanup_seconds: float
-) -> bool:
-    """Kill one owned group, close pipes, and reap under one total deadline.
+def _recorded_returncode(process: subprocess.Popen[bytes]) -> int | None:
+    """Read only Popen's recorded state; polling here would reap the leader."""
 
-    Group signaling intentionally precedes the only direct-leader reap.  A
-    deferred asynchronous exception is re-raised only after every cleanup step
-    received a best-effort attempt.
+    return getattr(process, "returncode", None)
+
+
+def _remaining_seconds(deadline: float) -> float:
+    return max(0.0, deadline - time.monotonic())
+
+
+def _status_ppid(pid: int) -> int | None:
+    try:
+        with open(Path("/proc") / str(pid) / "status", encoding="utf-8") as handle:
+            for line in handle:
+                if line.startswith("PPid:"):
+                    return int(line.split()[1])
+    except (FileNotFoundError, ProcessLookupError, PermissionError, OSError, ValueError):
+        return None
+    return None
+
+
+def _direct_child_pids() -> set[int]:
+    parent_pid = os.getpid()
+    children: set[int] = set()
+    try:
+        entries = os.scandir("/proc")
+    except OSError:
+        return children
+    with entries:
+        for entry in entries:
+            if not entry.name.isdecimal():
+                continue
+            pid = int(entry.name)
+            if _status_ppid(pid) == parent_pid:
+                children.add(pid)
+    return children
+
+
+def _process_children_map() -> dict[int, set[int]]:
+    children: dict[int, set[int]] = {}
+    try:
+        entries = os.scandir("/proc")
+    except OSError:
+        return children
+    with entries:
+        for entry in entries:
+            if not entry.name.isdecimal():
+                continue
+            pid = int(entry.name)
+            ppid = _status_ppid(pid)
+            if ppid is not None:
+                children.setdefault(ppid, set()).add(pid)
+    return children
+
+
+def _discover_owned_pids(leader_pid: int, baseline_direct_children: set[int]) -> set[int]:
+    """Find the leader, its descendants, and subreaper-adopted owned children."""
+
+    children = _process_children_map()
+    roots = {leader_pid}
+    roots.update(_direct_child_pids() - baseline_direct_children)
+    owned: set[int] = set()
+    stack = list(roots)
+    while stack:
+        pid = stack.pop()
+        if pid <= 0 or pid in owned:
+            continue
+        if not (Path("/proc") / str(pid)).exists():
+            continue
+        owned.add(pid)
+        stack.extend(children.get(pid, ()))
+    return owned
+
+
+def _process_group_id(pid: int) -> int | None:
+    try:
+        return os.getpgid(pid)
+    except (ProcessLookupError, PermissionError, OSError):
+        return None
+
+
+def _process_group_absent(process_group_id: int) -> bool:
+    """Observe group absence without signaling a possibly recycled identity."""
+
+    try:
+        entries = os.scandir("/proc")
+    except OSError:
+        return False
+    with entries:
+        for entry in entries:
+            if not entry.name.isdecimal():
+                continue
+            if _process_group_id(int(entry.name)) == process_group_id:
+                return False
+    return True
+
+
+def _has_cross_session_owned_descendant(
+    leader_pid: int, baseline_direct_children: set[int]
+) -> bool:
+    owned = _discover_owned_pids(leader_pid, baseline_direct_children)
+    for pid in owned - {leader_pid}:
+        if _process_group_id(pid) not in (None, leader_pid):
+            return True
+    return False
+
+
+def _close_pidfds(pidfds: dict[int, int]) -> None:
+    for fd in pidfds.values():
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+    pidfds.clear()
+
+
+def _signal_pidfd(fd: int, sig: signal.Signals) -> bool:
+    """Signal one stable process identity; numeric-PID fallback is forbidden."""
+
+    sender = getattr(signal, "pidfd_send_signal", None)
+    if sender is None:
+        return False
+    try:
+        sender(fd, sig)
+    except ProcessLookupError:
+        return True
+    except OSError:
+        return False
+    return True
+
+
+def _pidfds_exited(pidfds: dict[int, int]) -> bool:
+    if not pidfds:
+        return True
+    try:
+        readable, _writable, _exceptional = select.select(
+            list(pidfds.values()), (), (), 0.0
+        )
+    except (OSError, ValueError):
+        return False
+    return len(readable) == len(pidfds)
+
+
+def _reap_direct_children(candidate_pids: set[int]) -> bool:
+    complete = True
+    for pid in candidate_pids:
+        try:
+            while True:
+                reaped, _status = os.waitpid(pid, os.WNOHANG)
+                if reaped == 0:
+                    break
+                if reaped == pid:
+                    break
+        except ChildProcessError:
+            continue
+        except OSError:
+            complete = False
+    return complete
+
+
+def _get_subreaper_state() -> int | None:
+    try:
+        state = ctypes.c_int()
+        result = ctypes.CDLL(None, use_errno=True).prctl(
+            PR_GET_CHILD_SUBREAPER, ctypes.byref(state), 0, 0, 0
+        )
+    except (AttributeError, OSError):
+        return None
+    if result != 0:
+        return None
+    return int(state.value)
+
+
+def _set_subreaper_state(enabled: int) -> bool:
+    try:
+        result = ctypes.CDLL(None, use_errno=True).prctl(
+            PR_SET_CHILD_SUBREAPER, int(bool(enabled)), 0, 0, 0
+        )
+    except (AttributeError, OSError):
+        return False
+    return result == 0
+
+
+def _block_interrupt_signals() -> set[signal.Signals] | None:
+    masker = getattr(signal, "pthread_sigmask", None)
+    if masker is None or not _INTERRUPT_SIGNALS:
+        return None
+    return masker(signal.SIG_BLOCK, _INTERRUPT_SIGNALS)
+
+
+def _restore_interrupt_signals(previous_mask: set[signal.Signals] | None) -> None:
+    masker = getattr(signal, "pthread_sigmask", None)
+    if masker is None or previous_mask is None:
+        return
+    masker(signal.SIG_SETMASK, previous_mask)
+
+
+def _ownership_primitives_available() -> bool:
+    return (
+        sys.platform.startswith("linux")
+        and Path("/proc/self/fd").is_dir()
+        and callable(getattr(os, "pidfd_open", None))
+        and callable(getattr(signal, "pidfd_send_signal", None))
+        and callable(getattr(signal, "pthread_sigmask", None))
+        and _get_subreaper_state() is not None
+    )
+
+
+def _close_fd(fd: int | None) -> bool:
+    if fd is None:
+        return True
+    try:
+        os.close(fd)
+    except OSError:
+        return False
+    return True
+
+
+def cleanup_process_group(
+    process: subprocess.Popen[bytes],
+    cleanup_seconds: float,
+    *,
+    deadline: float | None = None,
+    baseline_direct_children: set[int] | None = None,
+) -> bool:
+    """Terminate and prove absence of one owned process tree.
+
+    Retries reuse the caller-provided absolute deadline.  The original numeric
+    process group is signaled only before direct-leader reap; descendants that
+    escape the session are held by pidfds and reaped through the subreaper.
     """
 
     cleanup_complete = True
     deferred: BaseException | None = None
+    baseline_direct_children = set(baseline_direct_children or ())
+    if deadline is None:
+        try:
+            deadline = time.monotonic() + max(0.0, cleanup_seconds)
+        except BaseException as exc:
+            deadline = 0.0
+            cleanup_complete = False
+            deferred = exc
 
-    # Idempotent finalization must never signal a numeric process-group ID
-    # after its direct leader has already been reaped.
-    if getattr(process, "returncode", None) is not None:
+    previous_mask: set[signal.Signals] | None = None
+    pidfds: dict[int, int] = {}
+    leader_pidfd = getattr(process, "_validation_leader_pidfd", None)
+    if isinstance(leader_pidfd, int):
+        pidfds[process.pid] = leader_pidfd
+        process._validation_leader_pidfd = None
+    try:
+        try:
+            previous_mask = _block_interrupt_signals()
+        except BaseException as exc:
+            cleanup_complete = False
+            deferred = deferred or exc
+
         for pipe in (process.stdout, process.stderr):
-            try:
-                if not _close_pipe(pipe):
+            while pipe is not None and not getattr(pipe, "closed", False):
+                try:
+                    if not _close_pipe(pipe):
+                        cleanup_complete = False
+                    break
+                except BaseException as exc:
                     cleanup_complete = False
+                    deferred = deferred or exc
+                    if _remaining_seconds(deadline) <= 0:
+                        break
+
+        group_signal_effective = False
+        group_signal_failed = False
+        while _remaining_seconds(deadline) > 0:
+            owned = _discover_owned_pids(process.pid, baseline_direct_children)
+            for pid in owned - set(pidfds):
+                try:
+                    pidfds[pid] = os.pidfd_open(pid, 0)
+                except ProcessLookupError:
+                    continue
+                except (AttributeError, OSError):
+                    cleanup_complete = False
+
+            leader_reaped = _recorded_returncode(process) is not None
+            if not leader_reaped and not group_signal_effective:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                    group_signal_effective = True
+                except ProcessLookupError:
+                    group_signal_effective = _process_group_absent(process.pid)
+                except Exception:
+                    cleanup_complete = False
+                    group_signal_failed = True
+                except BaseException as exc:
+                    cleanup_complete = False
+                    deferred = deferred or exc
+                    continue
+
+            for pid, pidfd in tuple(pidfds.items()):
+                if pid != process.pid and not _signal_pidfd(pidfd, signal.SIGKILL):
+                    cleanup_complete = False
+
+            if (
+                _recorded_returncode(process) is None
+                and (group_signal_effective or group_signal_failed)
+            ):
+                if group_signal_failed:
+                    leader_pidfd = pidfds.get(process.pid)
+                    if leader_pidfd is not None and not _signal_pidfd(
+                        leader_pidfd, signal.SIGKILL
+                    ):
+                        cleanup_complete = False
+                try:
+                    process.wait(
+                        timeout=min(
+                            VALIDATOR_OWNED_PROCESS_POLL_SECONDS,
+                            _remaining_seconds(deadline),
+                        )
+                    )
+                except subprocess.TimeoutExpired:
+                    pass
+                except InterruptedError as exc:
+                    cleanup_complete = False
+                    deferred = deferred or exc
+                    continue
+                except Exception:
+                    cleanup_complete = False
+                except BaseException as exc:
+                    cleanup_complete = False
+                    deferred = deferred or exc
+                    continue
+
+            try:
+                if not _reap_direct_children(set(pidfds) - {process.pid}):
+                    cleanup_complete = False
+            except BaseException as exc:
+                cleanup_complete = False
+                deferred = deferred or exc
+                continue
+
+            owned = _discover_owned_pids(process.pid, baseline_direct_children)
+            if (
+                _recorded_returncode(process) is not None
+                and _process_group_absent(process.pid)
+                and not owned
+                and _pidfds_exited(pidfds)
+            ):
+                _close_pidfds(pidfds)
+                if deferred is not None:
+                    raise deferred
+                return cleanup_complete and not group_signal_failed
+
+            try:
+                time.sleep(
+                    min(
+                        VALIDATOR_OWNED_PROCESS_POLL_SECONDS,
+                        _remaining_seconds(deadline),
+                    )
+                )
+            except InterruptedError as exc:
+                cleanup_complete = False
+                deferred = deferred or exc
+            except BaseException as exc:
+                cleanup_complete = False
+                deferred = deferred or exc
+
+        if _recorded_returncode(process) is None:
+            try:
+                process.wait(timeout=0)
+            except Exception:
+                cleanup_complete = False
             except BaseException as exc:
                 cleanup_complete = False
                 deferred = deferred or exc
         if deferred is not None:
             raise deferred
-        return cleanup_complete
+        return False
+    finally:
+        _close_pidfds(pidfds)
+        _restore_interrupt_signals(previous_mask)
 
+
+def cleanup_spawn_failure(
+    *,
+    deadline: float,
+    baseline_direct_children: set[int],
+) -> bool:
+    """Kill and reap children created before a Popen handle was acquired."""
+
+    cleanup_complete = True
+    pidfds: dict[int, int] = {}
     try:
-        deadline = time.monotonic() + max(0.0, cleanup_seconds)
-    except Exception:
-        deadline = None
-        cleanup_complete = False
-    except BaseException as exc:
-        deadline = None
-        cleanup_complete = False
-        deferred = exc
-
-    group_signal_succeeded = False
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-        group_signal_succeeded = True
-    except ProcessLookupError:
-        # A caller may provide an already-reaped synthetic process.  The
-        # absence is safe only when a return code is already recorded.
-        if getattr(process, "returncode", None) is None:
-            cleanup_complete = False
-    except Exception:
-        cleanup_complete = False
-    except BaseException as exc:
-        cleanup_complete = False
-        deferred = deferred or exc
-
-    if not group_signal_succeeded:
-        try:
-            process.kill()
-        except ProcessLookupError:
-            pass
-        except Exception:
-            cleanup_complete = False
-        except BaseException as exc:
-            cleanup_complete = False
-            deferred = deferred or exc
-
-    for pipe in (process.stdout, process.stderr):
-        try:
-            if not _close_pipe(pipe):
+        while _remaining_seconds(deadline) > 0:
+            owned = _discover_owned_pids(0, baseline_direct_children)
+            for pid in owned - set(pidfds):
+                try:
+                    pidfds[pid] = os.pidfd_open(pid, 0)
+                except ProcessLookupError:
+                    continue
+                except (AttributeError, OSError):
+                    cleanup_complete = False
+            for fd in tuple(pidfds.values()):
+                if not _signal_pidfd(fd, signal.SIGKILL):
+                    cleanup_complete = False
+            try:
+                if not _reap_direct_children(set(pidfds)):
+                    cleanup_complete = False
+            except BaseException:
                 cleanup_complete = False
-        except BaseException as exc:
-            # A custom/test pipe may close successfully and then interrupt.
-            # Continue so the other pipe and leader are still finalized.
-            cleanup_complete = False
-            deferred = deferred or exc
-
-    if getattr(process, "returncode", None) is None:
-        try:
-            if deadline is None:
-                remaining = max(0.0, cleanup_seconds)
-            else:
-                remaining = max(0.0, deadline - time.monotonic())
-        except Exception:
-            remaining = 0.0
-            cleanup_complete = False
-        except BaseException as exc:
-            remaining = 0.0
-            cleanup_complete = False
-            deferred = deferred or exc
-        try:
-            process.wait(timeout=remaining)
-        except Exception:
-            cleanup_complete = False
-        except BaseException as exc:
-            cleanup_complete = False
-            deferred = deferred or exc
-
-    if deferred is not None:
-        raise deferred
-    return cleanup_complete
+                continue
+            owned = _discover_owned_pids(0, baseline_direct_children)
+            if not owned and _pidfds_exited(pidfds):
+                return cleanup_complete
+            try:
+                time.sleep(
+                    min(
+                        VALIDATOR_OWNED_PROCESS_POLL_SECONDS,
+                        _remaining_seconds(deadline),
+                    )
+                )
+            except BaseException:
+                cleanup_complete = False
+    finally:
+        _close_pidfds(pidfds)
+    return False
 
 
-def run_bounded_command(
+def _run_bounded_command_locked(
     argv: Sequence[str],
     *,
     cwd: Path,
@@ -461,35 +803,110 @@ def run_bounded_command(
             stderr=accumulators["stderr"].result(complete=False),
             cleanup_complete=True,
         )
+    if not _ownership_primitives_available():
+        selector_ok, deferred = _close_selector(selector)
+        if deferred is not None:
+            raise deferred
+        return BoundedCommandResult(
+            status="ownership_unavailable",
+            returncode=None,
+            stdout=accumulators["stdout"].result(complete=False),
+            stderr=accumulators["stderr"].result(complete=False),
+            cleanup_complete=selector_ok,
+        )
+
     process: subprocess.Popen[bytes] | None = None
+    baseline_direct_children = _direct_child_pids()
+    subreaper_previous = _get_subreaper_state()
+    subreaper_enabled = bool(
+        subreaper_previous is not None and _set_subreaper_state(1)
+    )
+    stdout_read: BinaryIO | None = None
+    stderr_read: BinaryIO | None = None
+    stdout_read_fd: int | None = None
+    stderr_read_fd: int | None = None
+    stdout_write_fd: int | None = None
+    stderr_write_fd: int | None = None
+    cleanup_deadline: float | None = None
     status = "start_failure"
     cleanup_complete = True
     try:
-        try:
-            process = subprocess.Popen(
-                list(argv),
-                cwd=cwd,
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                shell=False,
-                env=env,
-                text=False,
-                bufsize=0,
-                close_fds=True,
-                start_new_session=True,
+        if not subreaper_enabled:
+            return BoundedCommandResult(
+                status="ownership_unavailable",
+                returncode=None,
+                stdout=accumulators["stdout"].result(complete=False),
+                stderr=accumulators["stderr"].result(complete=False),
+                cleanup_complete=True,
             )
-        except OSError:
+
+        spawn_exception: BaseException | None = None
+        try:
+            previous_mask = _block_interrupt_signals()
+            try:
+                stdout_read_fd, stdout_write_fd = os.pipe2(os.O_CLOEXEC)
+                stdout_read = os.fdopen(stdout_read_fd, "rb", buffering=0)
+                stdout_read_fd = None
+                stderr_read_fd, stderr_write_fd = os.pipe2(os.O_CLOEXEC)
+                stderr_read = os.fdopen(stderr_read_fd, "rb", buffering=0)
+                stderr_read_fd = None
+                process = subprocess.Popen(
+                    list(argv),
+                    cwd=cwd,
+                    stdin=subprocess.DEVNULL,
+                    stdout=stdout_write_fd,
+                    stderr=stderr_write_fd,
+                    shell=False,
+                    env=env,
+                    text=False,
+                    bufsize=0,
+                    close_fds=True,
+                    start_new_session=True,
+                )
+                _close_fd(stdout_write_fd)
+                stdout_write_fd = None
+                _close_fd(stderr_write_fd)
+                stderr_write_fd = None
+                process.stdout = stdout_read
+                process.stderr = stderr_read
+                # Pin the leader identity before unmasking.  Cleanup assumes
+                # ownership of this descriptor and closes it exactly once.
+                process._validation_leader_pidfd = os.pidfd_open(process.pid, 0)
+            finally:
+                _restore_interrupt_signals(previous_mask)
+        except BaseException as exc:
+            spawn_exception = exc
+
+        if spawn_exception is not None and process is None:
+            _close_pipe(stdout_read)
+            _close_pipe(stderr_read)
+            _close_fd(stdout_read_fd)
+            stdout_read_fd = None
+            _close_fd(stderr_read_fd)
+            stderr_read_fd = None
+            _close_fd(stdout_write_fd)
+            stdout_write_fd = None
+            _close_fd(stderr_write_fd)
+            stderr_write_fd = None
+            cleanup_deadline = time.monotonic() + max(0.0, cleanup_seconds)
+            spawn_cleanup = cleanup_spawn_failure(
+                deadline=cleanup_deadline,
+                baseline_direct_children=baseline_direct_children,
+            )
             selector_ok, deferred = _close_selector(selector)
             if deferred is not None:
                 raise deferred
+            if not isinstance(spawn_exception, OSError):
+                raise spawn_exception
             return BoundedCommandResult(
                 status="start_failure" if selector_ok else "pipe_failure",
                 returncode=None,
                 stdout=accumulators["stdout"].result(complete=False),
                 stderr=accumulators["stderr"].result(complete=False),
-                cleanup_complete=selector_ok,
+                cleanup_complete=selector_ok and spawn_cleanup,
             )
+        if spawn_exception is not None:
+            raise spawn_exception
 
         # The ownership bracket is already active before this first
         # interruptible post-spawn operation.
@@ -603,9 +1020,23 @@ def run_bounded_command(
 
         # Every path, including normal leader exit, closes the owned process
         # group while the unreaped leader still pins its numeric identity.
-        cleanup_complete = cleanup_process_group(process, cleanup_seconds)
+        cross_session_descendant = _has_cross_session_owned_descendant(
+            process.pid, baseline_direct_children
+        )
+        cleanup_deadline = time.monotonic() + max(0.0, cleanup_seconds)
+        cleanup_complete = cleanup_process_group(
+            process,
+            cleanup_seconds,
+            deadline=cleanup_deadline,
+            baseline_direct_children=baseline_direct_children,
+        )
         if status == "ready_for_completion":
-            status = "completed" if cleanup_complete else "cleanup_failure"
+            if cleanup_complete and not cross_session_descendant:
+                status = "completed"
+            elif cleanup_complete:
+                status = "descendant_cleanup"
+            else:
+                status = "cleanup_failure"
         elif status == "descendant_pipe_hold":
             # A pipe holder can deliberately escape the owned group.  The
             # command is already failing, and cleanup completeness cannot be
@@ -621,7 +1052,16 @@ def run_bounded_command(
     except BaseException:
         if process is not None:
             try:
-                cleanup_process_group(process, cleanup_seconds)
+                if cleanup_deadline is None:
+                    cleanup_deadline = time.monotonic() + max(
+                        0.0, cleanup_seconds
+                    )
+                cleanup_process_group(
+                    process,
+                    cleanup_seconds,
+                    deadline=cleanup_deadline,
+                    baseline_direct_children=baseline_direct_children,
+                )
             except BaseException:
                 pass
         _close_selector(selector)
@@ -634,6 +1074,18 @@ def run_bounded_command(
                     _close_pipe(pipe)
                 except BaseException:
                     pass
+            leader_pidfd = getattr(process, "_validation_leader_pidfd", None)
+            if isinstance(leader_pidfd, int):
+                _close_fd(leader_pidfd)
+                process._validation_leader_pidfd = None
+        _close_pipe(stdout_read)
+        _close_pipe(stderr_read)
+        _close_fd(stdout_read_fd)
+        _close_fd(stderr_read_fd)
+        _close_fd(stdout_write_fd)
+        _close_fd(stderr_write_fd)
+        if subreaper_previous is not None and subreaper_enabled:
+            _set_subreaper_state(subreaper_previous)
 
     return BoundedCommandResult(
         status=status,
@@ -646,6 +1098,30 @@ def run_bounded_command(
         ),
         cleanup_complete=cleanup_complete,
     )
+
+
+def run_bounded_command(
+    argv: Sequence[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    timeout_seconds: float = VALIDATOR_TIMEOUT_SECONDS,
+    stdout_limit_bytes: int = VALIDATOR_STDOUT_LIMIT_BYTES,
+    stderr_limit_bytes: int = VALIDATOR_STDERR_LIMIT_BYTES,
+    cleanup_seconds: float = VALIDATOR_CLEANUP_SECONDS,
+) -> BoundedCommandResult:
+    """Serialize the process-wide subreaper ownership boundary."""
+
+    with _PROCESS_OWNERSHIP_LOCK:
+        return _run_bounded_command_locked(
+            argv,
+            cwd=cwd,
+            env=env,
+            timeout_seconds=timeout_seconds,
+            stdout_limit_bytes=stdout_limit_bytes,
+            stderr_limit_bytes=stderr_limit_bytes,
+            cleanup_seconds=cleanup_seconds,
+        )
 
 
 def validator_argv(
