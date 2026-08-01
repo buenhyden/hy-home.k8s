@@ -1111,6 +1111,22 @@ def _validate_allowed_symlink(relative: str, target: str) -> None:
 
 
 def _terminate_process(process: subprocess.Popen[bytes]) -> None:
+    cleanup_deadline = time.monotonic() + GIT_CLEANUP_TIMEOUT_SECONDS
+    remaining_wait_allowance = GIT_CLEANUP_TIMEOUT_SECONDS
+
+    def reap_with_remaining_allowance() -> bool:
+        nonlocal remaining_wait_allowance
+        remaining_deadline = cleanup_deadline - time.monotonic()
+        timeout = min(remaining_wait_allowance, remaining_deadline)
+        if timeout <= 0:
+            return False
+        remaining_wait_allowance -= timeout
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            return False
+        return True
+
     try:
         os.killpg(process.pid, signal.SIGKILL)
     except ProcessLookupError:
@@ -1122,17 +1138,11 @@ def _terminate_process(process: subprocess.Popen[bytes]) -> None:
             process.kill()
         except ProcessLookupError:
             pass
-    try:
-        process.wait(timeout=GIT_CLEANUP_TIMEOUT_SECONDS)
-    except subprocess.TimeoutExpired:
-        try:
-            process.kill()
-        except ProcessLookupError:
-            pass
-        try:
-            process.wait(timeout=GIT_CLEANUP_TIMEOUT_SECONDS)
-        except subprocess.TimeoutExpired:
-            fail("AGQC-LEGACY-INPUT", "Git process cleanup timed out")
+    if reap_with_remaining_allowance() or process.poll() is not None:
+        return
+    if reap_with_remaining_allowance() or process.poll() is not None:
+        return
+    fail("AGQC-LEGACY-INPUT", "Git process cleanup timed out")
 
 
 def _close_process_pipes(process: subprocess.Popen[bytes]) -> None:

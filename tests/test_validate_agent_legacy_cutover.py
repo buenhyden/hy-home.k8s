@@ -620,7 +620,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         )
         for name, program, stdout_limit, stderr_limit, timeout in cases:
             with self.subTest(name=name):
-                pid_file = Path(tempfile.mkstemp(prefix="agent-legacy-child-")[1])
+                pid_fd, pid_path = tempfile.mkstemp(prefix="agent-legacy-child-")
+                os.close(pid_fd)
+                pid_file = Path(pid_path)
                 self.addCleanup(pid_file.unlink, missing_ok=True)
                 program = program.replace(
                     "child=subprocess.Popen([sys.executable, '-c', ",
@@ -638,6 +640,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                     shell=False,
                     start_new_session=True,
                 )
+                child_pid = self.wait_for_published_pid(pid_file)
                 with self.assertRaises(self.validator.ContractError) as raised:
                     self.validator._drain_process(
                         process,
@@ -648,11 +651,12 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
                 self.assertIsNotNone(process.poll())
-                child_pid = int(pid_file.read_text(encoding="utf-8"))
                 self.assert_process_gone(child_pid)
 
     def test_git_cleanup_kills_descendant_after_leader_exits(self) -> None:
-        pid_file = Path(tempfile.mkstemp(prefix="agent-legacy-child-")[1])
+        pid_fd, pid_path = tempfile.mkstemp(prefix="agent-legacy-child-")
+        os.close(pid_fd)
+        pid_file = Path(pid_path)
         self.addCleanup(pid_file.unlink, missing_ok=True)
         process = subprocess.Popen(
             [
@@ -670,6 +674,12 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             shell=False,
             start_new_session=True,
         )
+        child_pid = self.wait_for_published_pid(pid_file)
+        self.assertEqual(
+            process.wait(timeout=self.validator.GIT_CLEANUP_TIMEOUT_SECONDS),
+            0,
+        )
+        self.assertIsNotNone(process.poll())
         with self.assertRaises(self.validator.ContractError) as raised:
             self.validator._drain_process(
                 process,
@@ -680,7 +690,39 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             )
         self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
         self.assertIsNotNone(process.poll())
-        self.assert_process_gone(int(pid_file.read_text(encoding="utf-8")))
+        self.assert_process_gone(child_pid)
+
+    def test_git_cleanup_wait_allowance_uses_one_deadline(self) -> None:
+        class TimedOutProcess:
+            pid = 123
+
+            def __init__(self) -> None:
+                self.wait_timeouts: list[float] = []
+
+            def poll(self) -> None:
+                return None
+
+            def kill(self) -> None:
+                pass
+
+            def wait(self, *, timeout: float) -> None:
+                self.wait_timeouts.append(timeout)
+                clock[0] += timeout
+                raise subprocess.TimeoutExpired("synthetic Git", timeout)
+
+        clock = [0.0]
+        process = TimedOutProcess()
+        with (
+            mock.patch.object(self.validator.os, "killpg"),
+            mock.patch.object(self.validator.time, "monotonic", side_effect=lambda: clock[0]),
+            self.assertRaises(self.validator.ContractError) as raised,
+        ):
+            self.validator._terminate_process(process)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+        self.assertLessEqual(
+            sum(process.wait_timeouts),
+            self.validator.GIT_CLEANUP_TIMEOUT_SECONDS,
+        )
 
     def assert_process_gone(self, process_id: int) -> None:
         deadline = time.monotonic() + self.validator.GIT_CLEANUP_TIMEOUT_SECONDS
@@ -691,6 +733,15 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 return
             time.sleep(0.01)
         self.fail(f"synthetic descendant remains alive: {process_id}")
+
+    def wait_for_published_pid(self, pid_file: Path) -> int:
+        deadline = time.monotonic() + self.validator.GIT_CLEANUP_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            published = pid_file.read_text(encoding="utf-8").strip()
+            if published:
+                return int(published)
+            time.sleep(0.01)
+        self.fail(f"synthetic child PID was not published: {pid_file}")
 
     def test_equal_size_same_inode_content_restore_fails_closed(self) -> None:
         directory = tempfile.TemporaryDirectory(prefix="agent-legacy-stable-")
