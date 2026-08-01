@@ -1,9 +1,9 @@
 ---
 title: 'Agent Governance CI and QA Cutover Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-01
 ---
 
 # Agent Governance CI and QA Cutover Technical Specification (Spec)
@@ -38,6 +38,18 @@ promotion, remote execution, live systems, and provider resume/handoff
 canaries remain `DEFER` here and belong to the successor Spec 046
 workstream. A repository-static PASS never proves that Claude, Codex, Gemini,
 or a hosted runner consumed or executed the tracked configuration.
+
+The repository-static cutover is complete through terminal implementation
+HEAD `ed89228546501dd11a7f4abad28e8ebb094fbd97`. At implementation baseline
+`a886e061`, the terminal Python suite passed `741` tests and the repository
+aggregate, all-files pre-commit, formatter review, and both diff checks passed
+with a clean tracked tree. The test-only terminal delta then passed all `49`
+related tests, the nested-subreaper isolation probe, file pre-commit, and
+requirements/quality/security review. Whole-branch and successive remediation
+reviews cover the complete base-to-HEAD range with
+requirements `COMPLIANT` and quality/security `APPROVED`, all at Critical `0`,
+Important `0`, and Minor `0`. The reciprocal closure commit identity is
+intentionally left for the separately observed postflight record.
 
 ## Strategic Boundaries & Non-goals
 
@@ -392,7 +404,7 @@ and the required QA ordering/formatter rerun.
 | N/A — VAL-AGQC-008 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-008 | Historical scans prove intentional records remain non-current. |
 | N/A — VAL-AGQC-009 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-009 | Checkpoint identity and durable memory fixtures prove repository-static isolation and lifecycle policy. |
 | N/A — VAL-AGQC-005 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-005 | Task evidence proves the mandatory QA lane ordering. |
-| [REQ-PRD-MET-11](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
+| N/A — REQ-PRD-MET-11 shares the PRD-003 source linked in VAL-AGQC-001 | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
 | N/A — repeated VAL-AGQC-007 metric shares the PRD-003 source linked above | VAL-AGQC-007 | Active-corpus scans report zero stale current claim. |
 | N/A — repeated VAL-AGQC-008 metric shares the PRD-003 source linked above | VAL-AGQC-008 | Historical relation validation prevents old evidence from becoming current. |
 | N/A — repeated VAL-AGQC-009 metric shares the PRD-003 source linked above | VAL-AGQC-009 | Synthetic isolation and memory-policy fixtures preserve the Spec 043 runtime boundary. |

@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 045 AGQC-006 repository-static closure
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-045 #agqc-006 #closure #bounded-validation #postflight
+- **Owner**: AGQC-006 closure
+- **Canonical Owner**: Spec 045 reciprocal Spec, Plan, and Task
+- **Provenance**: implementation baseline
+  `a886e0616526eaf2905e9d90dc8d6be6a627b481` and terminal test-only
+  correction `ed89228546501dd11a7f4abad28e8ebb094fbd97`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: Spec 045 postflight, then Spec 046 activation
+
+#### Progress
+
+- Completed AGQC-006 repository-static semantic reconciliation, terminal
+  bounded-runner remediation, full local QA, independent review, and the
+  reciprocal eight-file `done` transition.
+- The complete review chain covers the base-to-HEAD branch and every
+  successive bounded-runner remediation range. Requirements finished
+  `COMPLIANT`; quality and security finished `APPROVED`; all final severities
+  are Critical `0`, Important `0`, and Minor `0`.
+- Kept the fixed provider/model/source cutoff at
+  `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z` and retained hosted
+  CI, branch protection, provider runtime/auth/model discovery, actual
+  evaluation/admission/promotion, provider resume/handoff, remote, and live
+  evidence as Spec 046-owned `DEFER`.
+
+#### Evidence
+
+- Focused bounded-runner tests passed `30/30`; its requirements, quality, and
+  security rereviews approved the final ownership, signal, subreaper, pidfd,
+  cleanup-deadline, output-limit, and post-reap discovery behavior.
+- Terminal Python discovery passed `741` tests in `557.634s`.
+- The terminal test-only correction passed all `49` related tests, the nested
+  outer-subreaper isolation probe, file pre-commit, and requirements,
+  quality, and security review with no findings.
+- The repository aggregate and `pre-commit run --all-files` passed; formatter
+  review found no retained mutation, both diff checks passed, and the tracked
+  worktree was clean at the implementation baseline.
+
+#### Handoff
+
+- The next postflight record observes this closure commit and its sole parent;
+  this entry does not preclaim its own content-addressed commit identity.
+- Spec 046 may activate only after that observation and must not promote a
+  repository-static PASS into provider, hosted, actual evaluation/model,
+  remote, or live PASS.
+
 ### 2026-08-01 - Spec 045 AGQC-006L terminal authority and cleanup closure
 
 #### Metadata

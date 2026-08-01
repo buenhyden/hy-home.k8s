@@ -1,9 +1,9 @@
 ---
 title: 'Agent Governance CI and QA Cutover Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-01
 ---
 
 # Agent Governance CI and QA Cutover Implementation Plan
@@ -103,6 +103,15 @@ results.
 | AGQC-004 | Align local QA ordering and repository inventories | AGQC-001, AGQC-002, AGQC-003 | New and retired command surfaces are known | Quality owner, affected/staged runner, `.pre-commit-config.yaml`, repository-quality gate, scripts/tests/GitHub/docs inventories, and formatter-rerun evidence express one targeted-to-diff order without dangling commands |
 | AGQC-005 | Add repository-static concurrent checkpoint/provider identity and durable memory policy | AGQC-000, Spec 043 | Current loop/checkpoint/memory contracts and synthetic fixtures pass | Synthetic collisions and cross-worktree/task/provider resumes fail closed; durable retention, sensitivity, compaction replacement, archive/GC, conflict, and handoff policy validate; actual provider checkpoint/resume/handoff remains `DEFER` |
 | AGQC-006 | Reconcile semantics, obtain independent reviews, run full QA, and close/postflight | AGQC-001 through AGQC-005 | Focused package gates pass and zero-consumer deletion is observed | Requirements are compliant, quality/security are approved, affected/staged/tests/all-files/formatter-rerun/diff gates pass, exact reciprocal closure/postflight are recorded, and every Spec 046 external/actual lane remains `DEFER` |
+
+AGQC-000 through AGQC-006 are complete at the repository-static boundary.
+Baseline `a886e061` passed Python `741`, aggregate, all-files,
+formatter-review, worktree-diff, and cached-diff gates. Terminal test-only
+HEAD `ed892285` passed `49` related tests, the nested-subreaper isolation
+probe, file pre-commit, and independent requirements/quality/security review.
+The combined coverage ended `COMPLIANT` / `APPROVED` / `APPROVED` with no
+findings. The content-addressed closure SHA is recorded only after this
+transition is committed and observed.
 
 ## Verification Plan
 

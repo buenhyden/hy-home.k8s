@@ -1,7 +1,7 @@
 ---
 title: 'Task: Agent Governance CI and QA Cutover'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-01
 ---
@@ -18,8 +18,8 @@ policy.
 
 The fixed provider/model/source cutoff remains
 `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z`. The date
-`2026-07-30` is the activation observation only. AGQC-000 through AGQC-005 are
-complete and AGQC-006 is the active package. The closed
+`2026-07-30` is the activation observation only. AGQC-000 through AGQC-006 are
+complete at the repository-static boundary. The closed
 `validate-agent-governance-ci.py` and `validate-agent-legacy-cutover.py`
 owners exist. The consumer-first cutover proves zero active consumers, retains
 only closed superseding/archive evidence, removes legacy role-semantics
@@ -77,7 +77,7 @@ provider resume/handoff canaries, remote execution, and live evidence remain
 | AGQC-003 | VAL-AGQC-007, VAL-AGQC-008 | Implement consumer-first `validate-agent-legacy-cutover.py`, prove zero consumers, remove legacy role-semantics ownership/tests, and establish `.github/README.md` as the canonical GitHub hub | platform | Done | Consumer-first removal and canonical hub cutover are closed; exact active references are zero and protected historical evidence requires a verified superseding relation before scanning | `38a2fe6b90bad694d0a9a021c7edce8d800e03ea`; `20` focused tests, `3` positive/`22` mutation self-test cases, `810` scanned files, `43` evidence references, `0` active consumers; RIA `87`, aggregate/all-files/diff/requirements/security/integration PASS |
 | AGQC-004 | VAL-AGQC-005, VAL-AGQC-006 | Align local QA order, repository-quality/pre-commit behavior, and script/test/GitHub/docs inventories | platform | Done | The canonical eight-step order, exact affected/staged runner behavior, plain staged/all-files pre-commit boundaries, formatter rerun rule, both diff checks, and current inventories are closed and fail-closed validated | `baf4df962cb70c55eefd20b5fe76ee07e7ff8be0`; runner `22`, CI `24`, self-test `6/43`, production `12/16/6/2/10`, legacy `3/22` and `810/43/0`; affected/staged `15` paths, aggregate/plain pre-commit/all-files/diff/final reviews PASS |
 | AGQC-005 | VAL-AGQC-009 | Add repository-static concurrent checkpoint/provider identity and durable memory retention/compaction/archive policy | platform | Done | Repository-static checkpoint/provider identity and four-class memory lifecycle policy are closed; independent review approved | `781ebb82b64d2f63d6b9630b6b3e48115dc5a791` checkpoint: `20` focused tests, `110` negative mutations, four memory classes; `4c7b87718aa41f680ef8f5e63c4396565b1c5e0b` loop: `22` focused tests, `66` self-test cases; deterministic repository, worktree, task, provider surface, provider-session-instance, namespace, writer/generation/previous-checkpoint isolation; four-class sensitivity, retention/expiry, compaction source/replacement, archive/GC, conflict, and handoff |
-| AGQC-006 | VAL-AGQC-001..010 | Reconcile semantic owners, complete independent reviews and full local QA, then record reciprocal closure/postflight | platform | In Progress | Active package; results not yet claimed | Requirements/quality/security verdicts; focused/affected/staged/tests/all-files/formatter-rerun/diff results; exact closure/postflight identities; Spec 046 limitations |
+| AGQC-006 | VAL-AGQC-001..010 | Reconcile semantic owners, complete independent reviews and full local QA, then record reciprocal closure/postflight | platform | Done | Repository-static reconciliation, remediation, independent review, and full local QA are complete; closure SHA remains postflight-observed | Baseline `a886e061`: Python `741`, aggregate, all-files, formatter review and both diff checks PASS. Terminal test-only `ed892285`: related `49`, nested-subreaper isolation, file pre-commit and requirements/quality/security review PASS, all `0/0/0`; Spec 046 external/actual lanes remain `DEFER` |
 
 ## Approval and Safety Boundaries
 
@@ -169,6 +169,21 @@ auxiliary memory lifecycle policy. Checkpoint evidence reports `20` focused
 tests and `110` negative mutations; loop evidence reports `22` focused tests
 and `66` self-test cases. Independent review approved the implementation.
 
+AGQC-006 completes through terminal implementation HEAD
+`ed89228546501dd11a7f4abad28e8ebb094fbd97`. At baseline `a886e061`, the
+terminal Python discovery suite passed `741` tests in `557.634s`;
+`scripts/validate-repo-quality-gates.sh .` and `pre-commit run --all-files`
+passed, no formatter mutation remained, and both worktree and cached diff
+checks were clean. The test-only terminal delta passed all `49` related tests,
+the nested-subreaper isolation probe, file pre-commit, and three independent
+reviews. Requirements review is
+complete through the terminal whole-branch review plus the contiguous
+`24ddb1a0..cbe059d2`, `cbe059d2..8e52d52c`, `8e52d52c..eb064108`, and
+`eb064108..a886e061` remediation reviews plus the `ed892285` delta review; its
+terminal disposition is `COMPLIANT`. Quality and security are `APPROVED`
+through the same terminal delta. Every review reports Critical `0`, Important
+`0`, and Minor `0` after remediation.
+
 The provider/model/source cutoff remains the fixed 2026-07-10 timestamp.
 Hosted CI, branch protection, provider runtime/auth/model discovery, actual
 evaluation/admission/promotion, provider resume/handoff canaries, remote, and
@@ -189,4 +204,4 @@ only in AGQC-006.
 | N/A — AGQC-003 shares the Plan and Spec sources above | Done | `38a2fe6b`; `20` focused tests, self-test `3/22`, production `810` scanned files/`43` evidence references/`0` active consumers, RIA `87`, aggregate/all-files/diff/final requirements/security/integration review PASS. |
 | N/A — AGQC-004 shares the Plan and Spec sources above | Done | `baf4df96`; runner `22`, CI `24`, self-test `6/43`, production `12/16/6/2/10`, legacy `3/22` and `810/43/0`, affected/staged `15` paths, aggregate/plain pre-commit/all-files/diff/final review PASS, formatter mutation `0`. |
 | N/A — AGQC-005 shares the Plan and Spec sources above | Done | `781ebb82`; checkpoint `20` focused tests/`110` negative mutations/four memory classes. `4c7b8771`; loop `22` focused tests/`66` self-test cases, deterministic identity isolation and four-class sensitivity, retention/expiry, compaction source/replacement, archive/GC, conflict, and handoff; independent review approved. |
-| N/A — AGQC-006 shares the Plan and Spec sources above | In Progress | Active package; pending semantic reconciliation, independent reviews, full QA, reciprocal closure/postflight, and explicit Spec 046 handoff. |
+| N/A — AGQC-006 shares the Plan and Spec sources above | Done | Baseline `a886e061`: Python `741`, aggregate, all-files, formatter review and both diff checks PASS. Terminal test-only `ed892285`: related `49`, nested-subreaper isolation, file pre-commit and three independent reviews PASS, all `0/0/0`. Reciprocal closure SHA is postflight-owned; hosted/provider/actual/remote/live lanes remain Spec 046 `DEFER`. |
