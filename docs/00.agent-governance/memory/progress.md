@@ -8,6 +8,81 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 045 AGQC-006K hermetic tracked reader closure
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, docs, governance, qa, security
+- **Status**: complete
+- **Tags**: #spec-045 #agqc-006k #git-index #dirfd #resource-bounds
+- **Owner**: AGQC-006K implementation
+- **Canonical Owner**: Spec 045 Task and the closed legacy-cutover contract
+- **Provenance**: AGQC-006J requirements, quality, and security rereviews
+- **Sensitivity**: non-sensitive-synthetic
+- **Retention / Expiry**: durable until Spec 045 successor evidence supersedes
+  the repository-static legacy-cutover contract
+- **Next Owner**: AGQC-006 whole-branch review and postflight
+
+#### Progress
+
+- Replaced cached-plus-untracked discovery with the exact tracked-only Git
+  index authority. A proposed consumer becomes enforceable only when admitted
+  to the index; ignored and non-ignored untracked sentinels are never opened or
+  counted.
+- Closed the absolute Git executable, argv, constructed environment,
+  dual-pipe draining, timeout/overflow cleanup, and candidate output parsing.
+  One root-dirfd no-follow reader now owns contract, schema, fixture,
+  replacement, harness, protected evidence, allowed reference, and candidate
+  content routes and rejects parent/final swaps without following an outside
+  target.
+- Added exact reviewed bounds: 10-second Git execution, 2-second cleanup,
+  262144-byte stdout, 16384-byte stderr, 2048 candidates, 1024-byte candidate
+  paths, 8388608-byte regular files, and 512-byte diagnostic detail. The
+  measured tracked corpus was 815 candidates, 43240 candidate-output bytes, a
+  97-byte maximum path, and a 3755212-byte maximum blob.
+
+#### Memory
+
+- Repository-static candidate authority is the Git index, not the surrounding
+  worktree. Every governed content read must remain beneath the same held root
+  descriptor, use no-follow component opens and post-open identity checks, and
+  bound both process output and file growth.
+- The historical AGQC-002 exact staged path set, staged-runner result, and
+  plain staged pre-commit result are unavailable in canonical records. That
+  historical staged sub-lane is `DEFER`; the `811` affected corpus cannot be
+  promoted into staged evidence, and the recorded AGQC-002 result is unchanged.
+
+#### Evidence
+
+- **RED**: 32 focused cases exposed three failures and eleven errors on the
+  inherited/PATH Git runner, untracked candidate admission, Path content
+  routes, absent dirfd swap closure, missing process/file bounds, and unbounded
+  diagnostics.
+- **GREEN targeted**: 32 focused cases passed; the closed self-test passed
+  three positive and 24 mutation cases; production passed 809 regular files,
+  43 evidence references, and zero active consumers.
+- **GREEN selection**: affected-surface self-test and production passed `22/22`
+  surfaces with `815` tracked paths and `0/0` uncovered/ambiguous; the exact
+  11-path affected runner passed all 18 selected validators. Strict registry,
+  Markdown-profile, and links/owners checks passed, and the focused RIA
+  proposed-index digest-pin test passed.
+- **GREEN staged**: the exact 11-path staged runner passed all 18 selected
+  validators, followed by plain staged `pre-commit run` with every applicable
+  hook passing. Non-applicable file-type hooks reported `SKIP`; formatter
+  review found no mutation. The first sandboxed plain pre-commit launch could
+  not create the linked-worktree index lock; the identical approved run passed.
+- Final affected/staged/plain-pre-commit reruns and worktree/cached diff checks
+  are required after this evidence update. Broad aggregate/all-files validation
+  remains owned by the parent AGQC-006 whole-branch lane and is not preclaimed.
+
+#### Handoff
+
+- AGQC-006 owns whole-branch review and postflight after AGQC-006K records its
+  exact HEAD staged and final QA evidence. Hosted CI, branch protection,
+  provider runtime/auth/model discovery, actual evaluation/admission/promotion,
+  remote execution, and live outcomes remain Spec 046 `DEFER`.
+
 ### 2026-08-01 - Spec 045 AGQC-006J repository candidate boundary
 
 #### Metadata
@@ -23,11 +98,10 @@ inventory stays in `scripts/README.md`.
 
 #### Progress
 
-- Replaced the legacy worktree-wide regular-file walk with the exact NUL-safe
-  Git cached plus non-ignored-untracked candidate source. Candidate reads are
-  descriptor-bounded; non-top-level roots, discovery failures, unsafe paths,
-  escaping parents, undeclared symlinks, and non-regular candidates fail
-  closed without opening ignored content.
+- AGQC-006J replaced the legacy worktree-wide regular-file walk with its then
+  reviewed NUL-safe cached-plus-untracked candidate source. AGQC-006K now
+  supersedes that candidate authority with the Git index only; untracked paths
+  are not repository evidence and are never opened or counted.
 - Removed `scanAllRegularFiles` from the contract and schema with no
   compatibility alias, closed the exact candidate-source value in the fixture,
   and reconciled the current script/test inventories to the deterministic
@@ -48,10 +122,10 @@ inventory stays in `scripts/README.md`.
 
 #### Memory
 
-- Whole-worktree enumeration is not repository-static evidence. Security
-  validators that admit proposed files should derive a NUL-safe tracked plus
-  non-ignored-untracked Git candidate set, validate the exact worktree root,
-  and open only validated candidates through a no-follow descriptor boundary.
+- Whole-worktree enumeration is not repository-static evidence. The AGQC-006K
+  successor correction establishes the Git index as the only candidate
+  authority and routes every validated content read through one bounded
+  no-follow root descriptor.
 
 #### Evidence
 

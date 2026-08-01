@@ -337,6 +337,7 @@
         "root",
         "excludedRoots",
         "candidateSource",
+        "resourceLimits",
         "alwaysActivePrefixes",
         "alwaysActiveFiles",
         "allowedInternalSymlinks"
@@ -354,7 +355,10 @@
           }
         },
         "candidateSource": {
-          "const": "git-ls-files-z-cached-others-exclude-standard"
+          "const": "git-ls-files-z-cached"
+        },
+        "resourceLimits": {
+          "$ref": "#/$defs/resourceLimits"
         },
         "alwaysActivePrefixes": {
           "type": "array",
@@ -380,6 +384,46 @@
           "items": {
             "$ref": "#/$defs/internalSymlink"
           }
+        }
+      }
+    },
+    "resourceLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gitTimeoutSeconds",
+        "gitCleanupTimeoutSeconds",
+        "gitStdoutBytes",
+        "gitStderrBytes",
+        "candidateCount",
+        "candidatePathBytes",
+        "regularFileBytes",
+        "diagnosticDetailBytes"
+      ],
+      "properties": {
+        "gitTimeoutSeconds": {
+          "const": 10
+        },
+        "gitCleanupTimeoutSeconds": {
+          "const": 2
+        },
+        "gitStdoutBytes": {
+          "const": 262144
+        },
+        "gitStderrBytes": {
+          "const": 16384
+        },
+        "candidateCount": {
+          "const": 2048
+        },
+        "candidatePathBytes": {
+          "const": 1024
+        },
+        "regularFileBytes": {
+          "const": 8388608
+        },
+        "diagnosticDetailBytes": {
+          "const": 512
         }
       }
     },

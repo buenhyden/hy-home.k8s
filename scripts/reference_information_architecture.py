@@ -36,10 +36,10 @@ AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
 AGENT_LEGACY_CUTOVER_SHA256 = (
-    "c4dd313f139cbb5940c1130009570b7b880a83c25ea4ed22741653febed2f7d0"  # pragma: allowlist secret
+    "38f52aa1f4bd831d4fbea4bf267f57b6a0c74af85f54daa3c000e134217f4982"  # pragma: allowlist secret
 )
 AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = (
-    "786a6bea1d08255a8699804666572c8d155bc94ee4a991030bf3f3afa326d7a8"  # pragma: allowlist secret
+    "46bccd56161a4f80969f6cea87c69a9a0826f5a4009b6009d0ce04f9183c2d38"  # pragma: allowlist secret
 )
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"

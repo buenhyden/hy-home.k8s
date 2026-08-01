@@ -3,7 +3,7 @@ title: 'Task: Agent Governance CI and QA Cutover'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-01
 ---
 
 # Task: Agent Governance CI and QA Cutover
@@ -132,11 +132,30 @@ closed otherwise.
 
 The AGQC-003 legacy-cutover contract, schema, fixture, tests, and validator
 prove zero active consumers before the atomic legacy deletion and GitHub hub
-rename. The corrected production boundary scans only the deterministic,
-NUL-safe Git cached plus non-ignored-untracked candidate set and never opens
-ignored paths. Protected historical snapshots are accepted only through exact
-digest, lifecycle, source, retired-reference count, and superseding-replacement
-evidence. Missing evidence and retired-reference removal fail closed.
+rename. The AGQC-006K successor boundary derives candidates only from the Git
+index through a closed absolute Git runner; ignored and non-ignored untracked
+paths are never opened or counted, while a staged consumer is enforceable. One
+root-dirfd no-follow reader owns every content route and rejects parent/final
+swap, symlink/type, oversized-file, and mid-read growth drift. Closed limits
+cover Git time and cleanup, stdout/stderr, candidate count/path bytes,
+regular-file bytes, and bounded escaped single-line diagnostics. Protected
+historical snapshots are accepted only through exact digest, lifecycle,
+source, retired-reference count, and superseding-replacement evidence. Missing
+evidence and retired-reference removal fail closed.
+
+The historical AGQC-002 exact staged path set, staged-runner result, and plain
+staged pre-commit result are unavailable in canonical records; that historical
+staged sub-lane is therefore `DEFER`. The `811`-path affected-surface corpus is
+affected evidence only and cannot be used to infer staged completion. This
+does not change the recorded AGQC-002 implementation result. AGQC-006K closure
+instead uses newly observed HEAD evidence: affected-surface self-test and
+production passed `22/22` over `815` tracked paths with `0/0`
+uncovered/ambiguous; the exact 11-path affected and staged runners passed all
+18 selected validators; focused/closed legacy and governance-CI suites, strict
+registry/Markdown/links, and the RIA digest-pin test passed; and plain staged
+pre-commit passed every applicable hook with no formatter mutation. The scoped
+successor report records the final reruns and diff evidence without
+retroactively changing the historical AGQC-002 result.
 
 AGQC-004 adds `staged` to the closed local runner, propagates exact staged
 Markdown paths to every selected document validator, and makes

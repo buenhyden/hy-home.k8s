@@ -9,10 +9,12 @@ import hashlib
 import json
 import os
 import re
+import selectors
 import shutil
 import stat
 import subprocess
 import tempfile
+import time
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn
 
@@ -27,7 +29,7 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-legacy-cutover.json")
 FIXTURE_SHA256 = (
-    "75f4b3abe381c65042b9ceb005e612b3afd8442998f21d8d1c079f976df9c1a2"  # pragma: allowlist secret
+    "8a03f0722cc27c76152b09038d70d0fa95f9497a3b514c2036547a38b045b893"  # pragma: allowlist secret
 )
 
 SCHEMA_VERSION = 1
@@ -38,7 +40,48 @@ RIA_SNAPSHOT_SOURCE_COMMIT = (
 )
 RESULT_VOCABULARY = ("PASS", "FAIL")
 EVIDENCE_VOCABULARY = ("repo-static",)
-GIT_CANDIDATE_SOURCE = "git-ls-files-z-cached-others-exclude-standard"
+GIT_CANDIDATE_SOURCE = "git-ls-files-z-cached"
+GIT_EXECUTABLE = "/usr/bin/git"
+GIT_TIMEOUT_SECONDS = 10
+GIT_CLEANUP_TIMEOUT_SECONDS = 2
+MAX_GIT_STDOUT_BYTES = 262_144
+MAX_GIT_STDERR_BYTES = 16_384
+MAX_CANDIDATES = 2_048
+MAX_CANDIDATE_PATH_BYTES = 1_024
+MAX_REGULAR_FILE_BYTES = 8_388_608
+MAX_DIAGNOSTIC_DETAIL_BYTES = 512
+READ_CHUNK_BYTES = 65_536
+RESOURCE_LIMITS = {
+    "gitTimeoutSeconds": GIT_TIMEOUT_SECONDS,
+    "gitCleanupTimeoutSeconds": GIT_CLEANUP_TIMEOUT_SECONDS,
+    "gitStdoutBytes": MAX_GIT_STDOUT_BYTES,
+    "gitStderrBytes": MAX_GIT_STDERR_BYTES,
+    "candidateCount": MAX_CANDIDATES,
+    "candidatePathBytes": MAX_CANDIDATE_PATH_BYTES,
+    "regularFileBytes": MAX_REGULAR_FILE_BYTES,
+    "diagnosticDetailBytes": MAX_DIAGNOSTIC_DETAIL_BYTES,
+}
+GIT_ENVIRONMENT = {
+    "GIT_ASKPASS": "/bin/false",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_SYSTEM": "/dev/null",
+    "GIT_LITERAL_PATHSPECS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GCM_INTERACTIVE": "never",
+    "HOME": "/dev/null",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "SSH_ASKPASS": "/bin/false",
+    "XDG_CONFIG_HOME": "/dev/null",
+}
+GIT_ARGUMENT_ALLOWLIST = {
+    ("rev-parse", "--show-toplevel"),
+    ("ls-files", "-z", "--cached"),
+}
 RETIRED_SURFACES = (
     "docs/00.agent-governance/contracts/agent-role-semantics.json",
     "docs/00.agent-governance/contracts/agent-role-semantics.schema.json",
@@ -295,9 +338,37 @@ EXPECTED_MUTATION_CASES = (
     ("allowed-reference-count-drift", "filesystem", "mutate-allowed-reference", "AGQC-LEGACY-CONSUMER"),
     ("current-authority-migration-drift", "contract", "change-current-authority-migration", "AGQC-LEGACY-CONTRACT"),
     ("candidate-source-drift", "contract", "change-candidate-source", "AGQC-LEGACY-SCHEMA"),
+    ("resource-limit-drift", "contract", "change-resource-limit", "AGQC-LEGACY-SCHEMA"),
 )
 STATUS_LINE = re.compile(r"^status\s*:\s*(.*?)\s*$", re.IGNORECASE)
 UPDATED_LINE = re.compile(r"^updated\s*:\s*(.*?)\s*$", re.IGNORECASE)
+
+
+def _bounded_diagnostic(detail: str) -> str:
+    escaped: list[str] = []
+    for character in str(detail):
+        codepoint = ord(character)
+        if character == "\n":
+            escaped.append("\\n")
+        elif character == "\r":
+            escaped.append("\\r")
+        elif character == "\t":
+            escaped.append("\\t")
+        elif codepoint < 0x20 or 0x7F <= codepoint <= 0x9F:
+            escaped.append(f"\\x{codepoint:02x}")
+        elif not character.isprintable():
+            if codepoint <= 0xFFFF:
+                escaped.append(f"\\u{codepoint:04x}")
+            else:
+                escaped.append(f"\\U{codepoint:08x}")
+        else:
+            escaped.append(character)
+    encoded = "".join(escaped).encode("utf-8")
+    if len(encoded) <= MAX_DIAGNOSTIC_DETAIL_BYTES:
+        return encoded.decode("utf-8")
+    suffix = b"..."
+    prefix = encoded[: MAX_DIAGNOSTIC_DETAIL_BYTES - len(suffix)]
+    return prefix.decode("utf-8", errors="ignore") + suffix.decode("ascii")
 
 
 class ContractError(ValueError):
@@ -305,8 +376,8 @@ class ContractError(ValueError):
 
     def __init__(self, rule_id: str, detail: str):
         self.rule_id = rule_id
-        self.detail = detail
-        super().__init__(f"{rule_id}: {detail}")
+        self.detail = _bounded_diagnostic(detail)
+        super().__init__(f"{rule_id}: {self.detail}")
 
 
 class DuplicateKeyError(ValueError):
@@ -333,23 +404,6 @@ def _parse_json(text: str, source: str) -> Any:
         fail("AGQC-LEGACY-JSON", f"{source}: {exc}")
 
 
-def _absolute_root(root: Path) -> Path:
-    absolute = Path(os.path.abspath(os.fspath(root)))
-    try:
-        mode = absolute.lstat().st_mode
-    except OSError as exc:
-        fail(
-            "AGQC-LEGACY-INPUT",
-            f"repository root is unavailable: {exc.strerror}",
-        )
-    if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
-        fail(
-            "AGQC-LEGACY-INPUT",
-            "repository root must be a non-symlink directory",
-        )
-    return absolute
-
-
 def _relative_path(value: str) -> PurePosixPath:
     if (
         not value
@@ -362,82 +416,365 @@ def _relative_path(value: str) -> PurePosixPath:
     return PurePosixPath(value)
 
 
-def _walk_parents(root: Path, relative: PurePosixPath) -> Path:
-    current = root
-    for part in relative.parts[:-1]:
-        current = current / part
+def _same_identity(first: os.stat_result, second: os.stat_result) -> bool:
+    return (
+        first.st_dev,
+        first.st_ino,
+        stat.S_IFMT(first.st_mode),
+    ) == (
+        second.st_dev,
+        second.st_ino,
+        stat.S_IFMT(second.st_mode),
+    )
+
+
+class _RepositoryReader:
+    """One root-dirfd, no-follow, bounded reader for repository content."""
+
+    def __init__(self, root: Path):
+        self.root_path = Path(os.path.abspath(os.fspath(root)))
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            flags |= os.O_CLOEXEC
         try:
-            mode = current.lstat().st_mode
-        except FileNotFoundError:
-            return root / relative
+            self.root_fd = os.open(self.root_path, flags)
+            root_state = os.fstat(self.root_fd)
         except OSError as exc:
             fail(
                 "AGQC-LEGACY-INPUT",
-                f"{relative.as_posix()} parent is unavailable: {exc.strerror}",
+                f"repository root is unavailable: {exc.strerror}",
             )
-        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+        if not stat.S_ISDIR(root_state.st_mode):
+            os.close(self.root_fd)
             fail(
                 "AGQC-LEGACY-INPUT",
-                f"{relative.as_posix()} has a non-directory or symlink parent",
+                "repository root must be a non-symlink directory",
             )
-    return root / relative
+        self._closed = False
 
+    def __enter__(self) -> _RepositoryReader:
+        return self
 
-def _path_state(root: Path, value: str) -> tuple[Path, int | None]:
-    relative = _relative_path(value)
-    path = _walk_parents(root, relative)
-    try:
-        return path, path.lstat().st_mode
-    except FileNotFoundError:
-        return path, None
-    except OSError as exc:
-        fail(
-            "AGQC-LEGACY-INPUT",
-            f"{value} is unavailable: {exc.strerror}",
+    def __exit__(self, _type: object, _value: object, _traceback: object) -> None:
+        self.close()
+
+    def close(self) -> None:
+        if not self._closed:
+            os.close(self.root_fd)
+            self._closed = True
+
+    @staticmethod
+    def _close_descriptors(descriptors: list[int]) -> None:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+    def _open_parents(
+        self,
+        relative: PurePosixPath,
+        *,
+        missing_ok: bool,
+    ) -> tuple[int | None, list[int], list[tuple[int, str, int]]]:
+        directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            directory_flags |= os.O_CLOEXEC
+        current = self.root_fd
+        descriptors: list[int] = []
+        edges: list[tuple[int, str, int]] = []
+        try:
+            for part in relative.parts[:-1]:
+                child = os.open(part, directory_flags, dir_fd=current)
+                child_state = os.fstat(child)
+                entry_state = os.stat(part, dir_fd=current, follow_symlinks=False)
+                if (
+                    not stat.S_ISDIR(child_state.st_mode)
+                    or not _same_identity(child_state, entry_state)
+                ):
+                    os.close(child)
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"repository parent changed or is unsafe: {relative.as_posix()}",
+                    )
+                descriptors.append(child)
+                edges.append((current, part, child))
+                current = child
+            return current, descriptors, edges
+        except FileNotFoundError:
+            self._close_descriptors(descriptors)
+            if missing_ok:
+                return None, [], []
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository parent is missing: {relative.as_posix()}",
+            )
+        except ContractError:
+            self._close_descriptors(descriptors)
+            raise
+        except OSError as exc:
+            self._close_descriptors(descriptors)
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository parent is unavailable {relative.as_posix()}: {exc.strerror}",
+            )
+
+    @staticmethod
+    def _verify_edges(edges: list[tuple[int, str, int]], relative: str) -> None:
+        try:
+            for parent_fd, name, child_fd in edges:
+                entry_state = os.stat(
+                    name,
+                    dir_fd=parent_fd,
+                    follow_symlinks=False,
+                )
+                child_state = os.fstat(child_fd)
+                if (
+                    not stat.S_ISDIR(entry_state.st_mode)
+                    or not _same_identity(entry_state, child_state)
+                ):
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"repository parent changed during read: {relative}",
+                    )
+        except ContractError:
+            raise
+        except OSError as exc:
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository parent changed during read {relative}: {exc.strerror}",
+            )
+
+    def state(self, value: str) -> int | None:
+        safe = _relative_path(value)
+        parent_fd, descriptors, edges = self._open_parents(
+            safe,
+            missing_ok=True,
         )
+        if parent_fd is None:
+            return None
+        try:
+            try:
+                state = os.stat(
+                    safe.name,
+                    dir_fd=parent_fd,
+                    follow_symlinks=False,
+                )
+            except FileNotFoundError:
+                return None
+            self._verify_edges(edges, value)
+            return state.st_mode
+        except ContractError:
+            raise
+        except OSError as exc:
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository path is unavailable {value}: {exc.strerror}",
+            )
+        finally:
+            self._close_descriptors(descriptors)
 
-
-def _read_regular_text(
-    root: Path,
-    value: str,
-    *,
-    missing_rule: str = "AGQC-LEGACY-INPUT",
-) -> str:
-    path, mode = _path_state(root, value)
-    if mode is None:
-        fail(missing_rule, f"{value} is missing")
-    if stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-        fail(
-            "AGQC-LEGACY-INPUT",
-            f"{value} must be a regular non-symlink file",
+    def _payload(
+        self,
+        value: str,
+        *,
+        read: bool,
+        allow_declared_symlink: bool,
+        missing_rule: str,
+    ) -> bytes | None:
+        safe = _relative_path(value)
+        parent_fd, descriptors, edges = self._open_parents(
+            safe,
+            missing_ok=False,
         )
-    try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        fail("AGQC-LEGACY-INPUT", f"{value} is not readable UTF-8: {exc}")
+        assert parent_fd is not None
+        file_descriptor: int | None = None
+        try:
+            try:
+                before = os.stat(
+                    safe.name,
+                    dir_fd=parent_fd,
+                    follow_symlinks=False,
+                )
+            except FileNotFoundError:
+                fail(missing_rule, f"required repository path is missing: {value}")
+            if stat.S_ISLNK(before.st_mode):
+                if not allow_declared_symlink:
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"repository path must be a regular non-symlink file: {value}",
+                    )
+                try:
+                    target = os.readlink(safe.name, dir_fd=parent_fd)
+                except (OSError, UnicodeError) as exc:
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"cannot inspect repository symlink {value}: {exc}",
+                    )
+                _validate_allowed_symlink(value, target)
+                after = os.stat(
+                    safe.name,
+                    dir_fd=parent_fd,
+                    follow_symlinks=False,
+                )
+                if not _same_identity(before, after):
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"repository symlink changed during inspection: {value}",
+                    )
+                self._verify_edges(edges, value)
+                return None
+            if not stat.S_ISREG(before.st_mode):
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"repository path is not regular: {value}",
+                )
+            if before.st_size > MAX_REGULAR_FILE_BYTES:
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"repository file exceeds the byte limit: {value}",
+                )
+            if not read:
+                self._verify_edges(edges, value)
+                return b""
+
+            file_flags = os.O_RDONLY | os.O_NOFOLLOW
+            if hasattr(os, "O_NONBLOCK"):
+                file_flags |= os.O_NONBLOCK
+            if hasattr(os, "O_CLOEXEC"):
+                file_flags |= os.O_CLOEXEC
+            file_descriptor = os.open(
+                safe.name,
+                file_flags,
+                dir_fd=parent_fd,
+            )
+            opened = os.fstat(file_descriptor)
+            if (
+                not stat.S_ISREG(opened.st_mode)
+                or not _same_identity(before, opened)
+            ):
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"repository file changed type or identity: {value}",
+                )
+            if opened.st_size > MAX_REGULAR_FILE_BYTES:
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"repository file exceeds the byte limit: {value}",
+                )
+
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                remaining = MAX_REGULAR_FILE_BYTES - total
+                chunk = os.read(
+                    file_descriptor,
+                    min(READ_CHUNK_BYTES, remaining + 1),
+                )
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_REGULAR_FILE_BYTES:
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"repository file grew beyond the byte limit: {value}",
+                    )
+                chunks.append(chunk)
+
+            final_state = os.fstat(file_descriptor)
+            final_entry = os.stat(
+                safe.name,
+                dir_fd=parent_fd,
+                follow_symlinks=False,
+            )
+            if (
+                final_state.st_size > MAX_REGULAR_FILE_BYTES
+                or not _same_identity(opened, final_state)
+                or not _same_identity(final_state, final_entry)
+            ):
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"repository file changed or grew during read: {value}",
+                )
+            self._verify_edges(edges, value)
+            return b"".join(chunks)
+        except ContractError:
+            raise
+        except OSError as exc:
+            fail(
+                "AGQC-LEGACY-INPUT",
+                f"repository file is unavailable {value}: {exc.strerror}",
+            )
+        finally:
+            if file_descriptor is not None:
+                try:
+                    os.close(file_descriptor)
+                except OSError:
+                    pass
+            self._close_descriptors(descriptors)
+
+    def read_bytes(
+        self,
+        value: str,
+        *,
+        missing_rule: str = "AGQC-LEGACY-INPUT",
+    ) -> bytes:
+        payload = self._payload(
+            value,
+            read=True,
+            allow_declared_symlink=False,
+            missing_rule=missing_rule,
+        )
+        assert payload is not None
+        return payload
+
+    def read_text(
+        self,
+        value: str,
+        *,
+        missing_rule: str = "AGQC-LEGACY-INPUT",
+    ) -> str:
+        try:
+            return self.read_bytes(value, missing_rule=missing_rule).decode("utf-8")
+        except UnicodeError as exc:
+            fail("AGQC-LEGACY-INPUT", f"repository file is not UTF-8 {value}: {exc}")
+
+    def candidate_payload(self, value: str, *, read: bool) -> bytes | None:
+        return self._payload(
+            value,
+            read=read,
+            allow_declared_symlink=True,
+            missing_rule="AGQC-LEGACY-INPUT",
+        )
 
 
 def _load_json_regular(
-    root: Path,
+    reader: _RepositoryReader,
     value: str,
     *,
     missing_rule: str = "AGQC-LEGACY-INPUT",
 ) -> Any:
     return _parse_json(
-        _read_regular_text(root, value, missing_rule=missing_rule),
+        reader.read_text(value, missing_rule=missing_rule),
         value,
     )
 
 
-def load_contract_documents(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load the contract and schema from regular contained files."""
-
-    absolute = _absolute_root(root)
-    contract = _load_json_regular(absolute, CONTRACT_PATH.as_posix())
-    schema = _load_json_regular(absolute, SCHEMA_PATH.as_posix())
+def _load_contract_documents(
+    reader: _RepositoryReader,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    contract = _load_json_regular(reader, CONTRACT_PATH.as_posix())
+    schema = _load_json_regular(reader, SCHEMA_PATH.as_posix())
     if not isinstance(contract, dict) or not isinstance(schema, dict):
         fail("AGQC-LEGACY-JSON", "contract and schema roots must be objects")
     return contract, schema
+
+
+def load_contract_documents(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Load the contract and schema through one bounded repository reader."""
+
+    with _RepositoryReader(root) as reader:
+        return _load_contract_documents(reader)
 
 
 def _schema_error_detail(error: Any) -> str:
@@ -513,6 +850,7 @@ def validate_contract_data(
         "root": ".",
         "excludedRoots": list(EXCLUDED_ROOTS),
         "candidateSource": GIT_CANDIDATE_SOURCE,
+        "resourceLimits": RESOURCE_LIMITS,
         "alwaysActivePrefixes": list(ALWAYS_ACTIVE_PREFIXES),
         "alwaysActiveFiles": list(ALWAYS_ACTIVE_FILES),
         "allowedInternalSymlinks": [
@@ -529,20 +867,22 @@ def validate_contract_data(
     return contract
 
 
-def _validate_replacements(root: Path, candidates: set[str]) -> None:
+def _validate_replacements(
+    reader: _RepositoryReader,
+    candidates: set[str],
+) -> None:
     for value in RETIRED_SURFACES:
-        _path, mode = _path_state(root, value)
-        if mode is not None:
+        if value in candidates:
+            reader.state(value)
             fail("AGQC-LEGACY-RETIRED", f"retired surface remains: {value}")
     for value in REPLACEMENT_SURFACES:
         _require_candidate(
-            root,
+            reader,
             candidates,
             value,
             missing_rule="AGQC-LEGACY-REPLACEMENT",
         )
-        _read_regular_text(
-            root,
+        reader.read_text(
             value,
             missing_rule="AGQC-LEGACY-REPLACEMENT",
         )
@@ -552,7 +892,7 @@ def _validate_replacements(root: Path, candidates: set[str]) -> None:
         REPLACEMENT_SURFACES[3],
     ):
         _load_json_regular(
-            root,
+            reader,
             value,
             missing_rule="AGQC-LEGACY-REPLACEMENT",
         )
@@ -572,9 +912,9 @@ def _all_strings(value: Any) -> list[str]:
     return values
 
 
-def _validate_harness(root: Path) -> None:
+def _validate_harness(reader: _RepositoryReader) -> None:
     harness = _load_json_regular(
-        root,
+        reader,
         REPLACEMENT_SURFACES[0],
         missing_rule="AGQC-LEGACY-REPLACEMENT",
     )
@@ -702,67 +1042,193 @@ def _is_verified_protected_evidence(
     return True
 
 
-def _validate_allowed_symlink(root: Path, relative: str, target: str) -> None:
+def _validate_allowed_symlink(relative: str, target: str) -> None:
     expected = dict(ALLOWED_INTERNAL_SYMLINKS).get(relative)
     if expected is None or target != expected:
         fail(
             "AGQC-LEGACY-INPUT",
             f"undeclared or changed symlink: {relative} -> {target}",
         )
-    lexical_target = Path(
-        os.path.abspath(os.fspath(root / PurePosixPath(relative).parent / target))
-    )
-    try:
-        common = os.path.commonpath((os.fspath(root), os.fspath(lexical_target)))
-    except ValueError:
-        common = ""
-    if common != os.fspath(root):
+    lexical_parts = list(PurePosixPath(relative).parent.parts)
+    for part in PurePosixPath(target).parts:
+        if part == "..":
+            if not lexical_parts:
+                fail(
+                    "AGQC-LEGACY-INPUT",
+                    f"allowed symlink escapes repository: {relative}",
+                )
+            lexical_parts.pop()
+        elif part not in ("", "."):
+            lexical_parts.append(part)
+    if not lexical_parts:
         fail(
             "AGQC-LEGACY-INPUT",
             f"allowed symlink escapes repository: {relative}",
         )
 
 
-def _git_environment() -> dict[str, str]:
-    environment = os.environ.copy()
-    for key in (
-        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
-        "GIT_COMMON_DIR",
-        "GIT_DIR",
-        "GIT_INDEX_FILE",
-        "GIT_OBJECT_DIRECTORY",
-        "GIT_WORK_TREE",
-    ):
-        environment.pop(key, None)
-    environment["GIT_OPTIONAL_LOCKS"] = "0"
-    environment["LC_ALL"] = "C"
-    return environment
-
-
-def _git_stdout(root: Path, arguments: list[str], detail: str) -> bytes:
+def _terminate_process(process: subprocess.Popen[bytes]) -> None:
+    if process.poll() is None:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
     try:
-        completed = subprocess.run(
-            ["git", "-C", os.fspath(root), *arguments],
-            check=False,
+        process.wait(timeout=GIT_CLEANUP_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+        try:
+            process.wait(timeout=GIT_CLEANUP_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            fail("AGQC-LEGACY-INPUT", "Git process cleanup timed out")
+
+
+def _close_process_pipes(process: subprocess.Popen[bytes]) -> None:
+    for stream in (process.stdout, process.stderr):
+        if stream is not None:
+            try:
+                stream.close()
+            except OSError:
+                pass
+
+
+def _drain_process(
+    process: subprocess.Popen[bytes],
+    *,
+    timeout_seconds: float,
+    stdout_limit: int,
+    stderr_limit: int,
+    detail: str,
+) -> tuple[bytes, bytes, int]:
+    """Drain both process pipes with closed memory, time, and cleanup bounds."""
+
+    if process.stdout is None or process.stderr is None:
+        _terminate_process(process)
+        fail("AGQC-LEGACY-INPUT", f"{detail}: Git pipes are unavailable")
+    streams = {
+        process.stdout.fileno(): ("stdout", process.stdout, stdout_limit),
+        process.stderr.fileno(): ("stderr", process.stderr, stderr_limit),
+    }
+    buffers = {"stdout": bytearray(), "stderr": bytearray()}
+    deadline = time.monotonic() + timeout_seconds
+    selector = selectors.DefaultSelector()
+    try:
+        for descriptor, (_name, stream, _limit) in streams.items():
+            os.set_blocking(descriptor, False)
+            selector.register(stream, selectors.EVENT_READ)
+        active = set(streams)
+        while active:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                fail("AGQC-LEGACY-INPUT", f"{detail}: Git command timed out")
+            events = selector.select(remaining)
+            if not events:
+                fail("AGQC-LEGACY-INPUT", f"{detail}: Git command timed out")
+            for key, _mask in events:
+                descriptor = key.fileobj.fileno()
+                name, stream, limit = streams[descriptor]
+                allowance = limit - len(buffers[name])
+                try:
+                    chunk = os.read(
+                        descriptor,
+                        min(READ_CHUNK_BYTES, allowance + 1),
+                    )
+                except BlockingIOError:
+                    continue
+                if not chunk:
+                    selector.unregister(stream)
+                    active.remove(descriptor)
+                    continue
+                buffers[name].extend(chunk)
+                if len(buffers[name]) > limit:
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"{detail}: Git {name} exceeded the byte limit",
+                    )
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            fail("AGQC-LEGACY-INPUT", f"{detail}: Git command timed out")
+        try:
+            returncode = process.wait(timeout=remaining)
+        except subprocess.TimeoutExpired:
+            fail("AGQC-LEGACY-INPUT", f"{detail}: Git command timed out")
+        return bytes(buffers["stdout"]), bytes(buffers["stderr"]), returncode
+    except ContractError:
+        _terminate_process(process)
+        raise
+    except OSError as exc:
+        _terminate_process(process)
+        fail("AGQC-LEGACY-INPUT", f"{detail}: Git pipe failure: {exc.strerror}")
+    finally:
+        selector.close()
+        _close_process_pipes(process)
+
+
+def _git_stdout(
+    reader: _RepositoryReader,
+    arguments: tuple[str, ...],
+    detail: str,
+) -> bytes:
+    if arguments not in GIT_ARGUMENT_ALLOWLIST:
+        fail("AGQC-LEGACY-INPUT", "Git argument vector is not allowlisted")
+    root_fd_path = f"/proc/self/fd/{reader.root_fd}"
+    command = [
+        GIT_EXECUTABLE,
+        "--no-pager",
+        "--no-optional-locks",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "-c",
+        "core.attributesFile=/dev/null",
+        "-c",
+        "core.excludesFile=/dev/null",
+        "-C",
+        root_fd_path,
+        *arguments,
+    ]
+    try:
+        process = subprocess.Popen(
+            command,
+            stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env=_git_environment(),
+            shell=False,
+            env=dict(GIT_ENVIRONMENT),
+            pass_fds=(reader.root_fd,),
+            close_fds=True,
+            start_new_session=True,
         )
     except OSError as exc:
         fail("AGQC-LEGACY-INPUT", f"{detail}: {exc.strerror}")
-    if completed.returncode != 0:
+    stdout, _stderr, returncode = _drain_process(
+        process,
+        timeout_seconds=GIT_TIMEOUT_SECONDS,
+        stdout_limit=MAX_GIT_STDOUT_BYTES,
+        stderr_limit=MAX_GIT_STDERR_BYTES,
+        detail=detail,
+    )
+    if returncode != 0:
         fail("AGQC-LEGACY-INPUT", detail)
-    return completed.stdout
+    return stdout
 
 
 def _parse_git_candidates(raw: bytes) -> tuple[str, ...]:
     if raw and not raw.endswith(b"\0"):
         fail("AGQC-LEGACY-INPUT", "Git candidate output is not NUL terminated")
     encoded = raw[:-1].split(b"\0") if raw else []
+    if len(encoded) > MAX_CANDIDATES:
+        fail("AGQC-LEGACY-INPUT", "Git candidate count exceeded the limit")
     if len(encoded) != len(set(encoded)):
         fail("AGQC-LEGACY-INPUT", "Git candidate output contains duplicates")
     candidates: list[str] = []
     for value in sorted(encoded):
+        if len(value) > MAX_CANDIDATE_PATH_BYTES:
+            fail("AGQC-LEGACY-INPUT", "Git candidate path exceeded the byte limit")
         try:
             candidate = value.decode("utf-8")
         except UnicodeError:
@@ -771,125 +1237,68 @@ def _parse_git_candidates(raw: bytes) -> tuple[str, ...]:
     return tuple(candidates)
 
 
-def _repository_candidates(root: Path) -> tuple[str, ...]:
+def _repository_candidates(reader: _RepositoryReader) -> tuple[str, ...]:
     top_level = _git_stdout(
-        root,
-        ["rev-parse", "--show-toplevel"],
+        reader,
+        ("rev-parse", "--show-toplevel"),
         "requested root is not a Git worktree top level",
     )
-    if top_level != os.fsencode(root) + b"\n":
+    if top_level != os.fsencode(reader.root_path) + b"\n":
         fail(
             "AGQC-LEGACY-INPUT",
             "requested root is not the Git worktree top level",
         )
     raw = _git_stdout(
-        root,
-        ["ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        reader,
+        ("ls-files", "-z", "--cached"),
         "Git repository candidate discovery failed",
     )
     return _parse_git_candidates(raw)
 
 
 def _candidate_payload(root: Path, relative: str, *, read: bool) -> bytes | None:
-    safe = _relative_path(relative)
-    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
-    file_flags = os.O_RDONLY | os.O_NOFOLLOW
-    if hasattr(os, "O_CLOEXEC"):
-        directory_flags |= os.O_CLOEXEC
-        file_flags |= os.O_CLOEXEC
-    descriptors: list[int] = []
-    try:
-        descriptors.append(os.open(root, directory_flags))
-        for part in safe.parts[:-1]:
-            descriptors.append(
-                os.open(part, directory_flags, dir_fd=descriptors[-1])
-            )
-        parent_fd = descriptors[-1]
-        mode = os.stat(
-            safe.name,
-            dir_fd=parent_fd,
-            follow_symlinks=False,
-        ).st_mode
-        if stat.S_ISLNK(mode):
-            try:
-                target = os.readlink(safe.name, dir_fd=parent_fd)
-            except (OSError, UnicodeError) as exc:
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"cannot inspect candidate symlink {relative}: {exc}",
-                )
-            _validate_allowed_symlink(root, relative, target)
-            return None
-        if not stat.S_ISREG(mode):
-            fail(
-                "AGQC-LEGACY-INPUT",
-                f"repository candidate is not regular: {relative}",
-            )
-        if not read:
-            return b""
-        file_descriptor = os.open(safe.name, file_flags, dir_fd=parent_fd)
-        descriptors.append(file_descriptor)
-        if not stat.S_ISREG(os.fstat(file_descriptor).st_mode):
-            fail(
-                "AGQC-LEGACY-INPUT",
-                f"repository candidate changed type: {relative}",
-            )
-        chunks: list[bytes] = []
-        while chunk := os.read(file_descriptor, 1024 * 1024):
-            chunks.append(chunk)
-        return b"".join(chunks)
-    except ContractError:
-        raise
-    except OSError as exc:
-        fail(
-            "AGQC-LEGACY-INPUT",
-            f"repository candidate is unavailable {relative}: {exc}",
-        )
-    finally:
-        for descriptor in reversed(descriptors):
-            try:
-                os.close(descriptor)
-            except OSError:
-                pass
+    with _RepositoryReader(root) as reader:
+        return reader.candidate_payload(relative, read=read)
 
 
 def _require_candidate(
-    root: Path,
+    reader: _RepositoryReader,
     candidates: set[str],
     path: str,
     *,
     missing_rule: str = "AGQC-LEGACY-INPUT",
 ) -> None:
-    if path in candidates:
-        return
-    _target, mode = _path_state(root, path)
-    if mode is None:
+    if path not in candidates:
         fail(
             missing_rule,
-            f"required repository path is missing: {path}",
+            f"required repository path is absent from the Git index: {path}",
         )
-    fail(
-        "AGQC-LEGACY-INPUT",
-        f"required repository path is outside the Git candidate set: {path}",
-    )
+    mode = reader.state(path)
+    if mode is None:
+        fail(missing_rule, f"required repository path is missing: {path}")
+    if stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
+        fail(
+            "AGQC-LEGACY-INPUT",
+            f"required repository path is not a regular file: {path}",
+        )
 
 
-def _scan_consumers(
-    root: Path,
+def _scan_consumers_with_reader(
+    reader: _RepositoryReader,
     candidates: tuple[str, ...] | None = None,
 ) -> tuple[int, int, list[str]]:
     if candidates is None:
-        candidates = _repository_candidates(root)
+        candidates = _repository_candidates(reader)
     allowed_counts = dict(ALLOWED_REFERENCE_COUNTS)
     protected_files = {
         record["path"]: record for record in PROTECTED_EVIDENCE_FILES
     }
     candidate_set = set(candidates)
     for relative in allowed_counts:
-        _require_candidate(root, candidate_set, relative)
+        _require_candidate(reader, candidate_set, relative)
     for relative in protected_files:
         _require_candidate(
-            root,
+            reader,
             candidate_set,
             relative,
             missing_rule="AGQC-LEGACY-CONSUMER",
@@ -903,7 +1312,7 @@ def _scan_consumers(
         excluded = any(
             _under_prefix(relative, value) for value in excluded_roots
         )
-        raw = _candidate_payload(root, relative, read=not excluded)
+        raw = reader.candidate_payload(relative, read=not excluded)
         if raw is None or excluded:
             continue
         scanned += 1
@@ -967,24 +1376,35 @@ def _scan_consumers(
     return scanned, evidence, consumers
 
 
+def _scan_consumers(
+    root: Path,
+    candidates: tuple[str, ...] | None = None,
+) -> tuple[int, int, list[str]]:
+    with _RepositoryReader(root) as reader:
+        return _scan_consumers_with_reader(reader, candidates)
+
+
 def validate_repository(root: Path) -> dict[str, int]:
     """Validate a completed cutover using repository-static evidence only."""
 
-    absolute = _absolute_root(root)
-    candidates = _repository_candidates(absolute)
-    candidate_set = set(candidates)
-    for required in (CONTRACT_PATH.as_posix(), SCHEMA_PATH.as_posix()):
-        _require_candidate(absolute, candidate_set, required)
-    contract, schema = load_contract_documents(absolute)
-    validate_contract_data(contract, schema)
-    _validate_replacements(absolute, candidate_set)
-    _validate_harness(absolute)
-    scanned, evidence, consumers = _scan_consumers(absolute, candidates)
-    if consumers:
-        fail(
-            "AGQC-LEGACY-CONSUMER",
-            "active consumer retains a retired token: " + consumers[0],
+    with _RepositoryReader(root) as reader:
+        candidates = _repository_candidates(reader)
+        candidate_set = set(candidates)
+        for required in (CONTRACT_PATH.as_posix(), SCHEMA_PATH.as_posix()):
+            _require_candidate(reader, candidate_set, required)
+        contract, schema = _load_contract_documents(reader)
+        validate_contract_data(contract, schema)
+        _validate_replacements(reader, candidate_set)
+        _validate_harness(reader)
+        scanned, evidence, consumers = _scan_consumers_with_reader(
+            reader,
+            candidates,
         )
+        if consumers:
+            fail(
+                "AGQC-LEGACY-CONSUMER",
+                "active consumer retains a retired token: " + consumers[0],
+            )
     return {
         "retiredSurfaces": len(RETIRED_SURFACES),
         "replacementSurfaces": len(REPLACEMENT_SURFACES),
@@ -1030,7 +1450,11 @@ def _write_bytes(root: Path, relative: str, payload: bytes) -> Path:
 
 
 def _fixture_regular_file(root: Path, relative: str) -> Path:
-    path, mode = _path_state(root, relative)
+    path = root / _relative_path(relative)
+    try:
+        mode = path.lstat().st_mode
+    except OSError:
+        mode = None
     if mode is None or stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
         fail(
             "AGQC-LEGACY-FIXTURE",
@@ -1039,18 +1463,36 @@ def _fixture_regular_file(root: Path, relative: str) -> Path:
     return path
 
 
-def _create_baseline(source_root: Path, target_root: Path) -> None:
+def _synthetic_git(target_root: Path, arguments: tuple[str, ...]) -> None:
+    if arguments not in (("init", "--quiet"), ("add", "--all")):
+        fail("AGQC-LEGACY-FIXTURE", "synthetic Git argv is not allowlisted")
+    try:
+        completed = subprocess.run(
+            [GIT_EXECUTABLE, *arguments],
+            cwd=target_root,
+            check=False,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            shell=False,
+            env=dict(GIT_ENVIRONMENT),
+            timeout=GIT_TIMEOUT_SECONDS,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        fail("AGQC-LEGACY-FIXTURE", f"synthetic Git setup failed: {exc}")
+    if completed.returncode != 0:
+        fail("AGQC-LEGACY-FIXTURE", "synthetic Git setup failed")
+
+
+def _create_baseline(
+    source_reader: _RepositoryReader,
+    target_root: Path,
+) -> None:
     for relative in dict.fromkeys(PACKAGE_REFERENCES + MIGRATION_REFERENCES):
-        source = source_root / PurePosixPath(relative)
-        target = target_root / PurePosixPath(relative)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source, target)
+        _write_bytes(target_root, relative, source_reader.read_bytes(relative))
     for record in PROTECTED_EVIDENCE_FILES:
         relative = record["path"]
-        source = source_root / PurePosixPath(relative)
-        target = target_root / PurePosixPath(relative)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source, target)
+        _write_bytes(target_root, relative, source_reader.read_bytes(relative))
     _write_text(
         target_root,
         REPLACEMENT_SURFACES[0],
@@ -1071,24 +1513,17 @@ def _create_baseline(source_root: Path, target_root: Path) -> None:
     _write_text(target_root, REPLACEMENT_SURFACES[2], "replacement\n")
     _write_text(target_root, REPLACEMENT_SURFACES[3], "{}\n")
     _write_text(target_root, REPLACEMENT_SURFACES[4], "replacement hub\n")
-    _git_stdout(
-        target_root,
-        ["init", "--quiet"],
-        "synthetic Git repository initialization failed",
-    )
+    _synthetic_git(target_root, ("init", "--quiet"))
+    _synthetic_git(target_root, ("add", "--all"))
 
 
-def _load_fixture(root: Path) -> dict[str, Any]:
-    path, mode = _path_state(root, FIXTURE_PATH.as_posix())
-    if mode is None or stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-        fail(
-            "AGQC-LEGACY-FIXTURE",
-            "fixture must be a regular non-symlink file",
-        )
+def _load_fixture_with_reader(reader: _RepositoryReader) -> dict[str, Any]:
     try:
-        raw = path.read_bytes()
+        raw = reader.read_bytes(FIXTURE_PATH.as_posix())
         text = raw.decode("utf-8")
-    except (OSError, UnicodeError) as exc:
+    except (ContractError, UnicodeError) as exc:
+        if isinstance(exc, ContractError):
+            raise
         fail("AGQC-LEGACY-FIXTURE", f"fixture is unreadable: {exc}")
     if hashlib.sha256(raw).hexdigest() != FIXTURE_SHA256:
         fail("AGQC-LEGACY-FIXTURE", "fixture bytes differ from the closed set")
@@ -1116,6 +1551,11 @@ def _load_fixture(root: Path) -> dict[str, Any]:
     if positives != EXPECTED_POSITIVE_CASES or mutations != EXPECTED_MUTATION_CASES:
         fail("AGQC-LEGACY-FIXTURE", "fixture case set or order differs")
     return fixture
+
+
+def _load_fixture(root: Path) -> dict[str, Any]:
+    with _RepositoryReader(root) as reader:
+        return _load_fixture_with_reader(reader)
 
 
 def _apply_positive(root: Path, kind: str) -> None:
@@ -1175,6 +1615,10 @@ def _mutate_contract(contract: dict[str, Any], mutation: dict[str, Any]) -> None
         ] = mutation["value"]
     elif kind == "change-candidate-source":
         contract["scanPolicy"]["candidateSource"] = mutation["value"]
+    elif kind == "change-resource-limit":
+        contract["scanPolicy"]["resourceLimits"][mutation["field"]] = mutation[
+            "value"
+        ]
     else:
         fail("AGQC-LEGACY-FIXTURE", f"unknown contract mutation: {kind}")
 
@@ -1278,51 +1722,53 @@ def _mutate_filesystem(root: Path, mutation: dict[str, Any]) -> None:
 def run_self_test(root: Path) -> tuple[int, int]:
     """Execute deterministic fixtures in temporary repositories only."""
 
-    absolute = _absolute_root(root)
-    contract, schema = load_contract_documents(absolute)
-    validate_contract_data(contract, schema)
-    fixture = _load_fixture(absolute)
+    with _RepositoryReader(root) as source_reader:
+        contract, schema = _load_contract_documents(source_reader)
+        validate_contract_data(contract, schema)
+        fixture = _load_fixture_with_reader(source_reader)
 
-    for case in fixture["positiveCases"]:
-        with tempfile.TemporaryDirectory(
-            prefix="agent-legacy-cutover-positive-"
-        ) as directory:
-            target = Path(directory)
-            _create_baseline(absolute, target)
-            _apply_positive(target, case["mutation"]["kind"])
-            validate_repository(target)
+        for case in fixture["positiveCases"]:
+            with tempfile.TemporaryDirectory(
+                prefix="agent-legacy-cutover-positive-"
+            ) as directory:
+                target = Path(directory)
+                _create_baseline(source_reader, target)
+                _apply_positive(target, case["mutation"]["kind"])
+                _synthetic_git(target, ("add", "--all"))
+                validate_repository(target)
 
-    for case in fixture["mutationCases"]:
-        expected = case["expectedRule"]
-        try:
-            if case["target"] == "contract":
-                mutated = copy.deepcopy(contract)
-                _mutate_contract(mutated, case["mutation"])
-                validate_contract_data(mutated, schema)
-            elif case["target"] == "filesystem":
-                with tempfile.TemporaryDirectory(
-                    prefix="agent-legacy-cutover-negative-"
-                ) as directory:
-                    target = Path(directory)
-                    _create_baseline(absolute, target)
-                    _mutate_filesystem(target, case["mutation"])
-                    validate_repository(target)
+        for case in fixture["mutationCases"]:
+            expected = case["expectedRule"]
+            try:
+                if case["target"] == "contract":
+                    mutated = copy.deepcopy(contract)
+                    _mutate_contract(mutated, case["mutation"])
+                    validate_contract_data(mutated, schema)
+                elif case["target"] == "filesystem":
+                    with tempfile.TemporaryDirectory(
+                        prefix="agent-legacy-cutover-negative-"
+                    ) as directory:
+                        target = Path(directory)
+                        _create_baseline(source_reader, target)
+                        _mutate_filesystem(target, case["mutation"])
+                        _synthetic_git(target, ("add", "--all"))
+                        validate_repository(target)
+                else:
+                    fail(
+                        "AGQC-LEGACY-FIXTURE",
+                        f"unknown mutation target: {case['target']}",
+                    )
+            except ContractError as exc:
+                if exc.rule_id != expected:
+                    fail(
+                        "AGQC-LEGACY-FIXTURE",
+                        f"{case['name']}: expected {expected}, got {exc.rule_id}",
+                    )
             else:
                 fail(
                     "AGQC-LEGACY-FIXTURE",
-                    f"unknown mutation target: {case['target']}",
+                    f"{case['name']}: mutation was accepted",
                 )
-        except ContractError as exc:
-            if exc.rule_id != expected:
-                fail(
-                    "AGQC-LEGACY-FIXTURE",
-                    f"{case['name']}: expected {expected}, got {exc.rule_id}",
-                )
-        else:
-            fail(
-                "AGQC-LEGACY-FIXTURE",
-                f"{case['name']}: mutation was accepted",
-            )
     return len(fixture["positiveCases"]), len(fixture["mutationCases"])
 
 

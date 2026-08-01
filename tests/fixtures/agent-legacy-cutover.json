@@ -237,6 +237,16 @@
         "value": "filesystem-walk"
       },
       "expectedRule": "AGQC-LEGACY-SCHEMA"
+    },
+    {
+      "name": "resource-limit-drift",
+      "target": "contract",
+      "mutation": {
+        "kind": "change-resource-limit",
+        "field": "gitTimeoutSeconds",
+        "value": 11
+      },
+      "expectedRule": "AGQC-LEGACY-SCHEMA"
     }
   ]
 }

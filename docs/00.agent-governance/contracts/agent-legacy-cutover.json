@@ -213,7 +213,17 @@
       "__pycache__",
       "node_modules"
     ],
-    "candidateSource": "git-ls-files-z-cached-others-exclude-standard",
+    "candidateSource": "git-ls-files-z-cached",
+    "resourceLimits": {
+      "gitTimeoutSeconds": 10,
+      "gitCleanupTimeoutSeconds": 2,
+      "gitStdoutBytes": 262144,
+      "gitStderrBytes": 16384,
+      "candidateCount": 2048,
+      "candidatePathBytes": 1024,
+      "regularFileBytes": 8388608,
+      "diagnosticDetailBytes": 512
+    },
     "alwaysActivePrefixes": [
       ".agents/",
       ".claude/",
