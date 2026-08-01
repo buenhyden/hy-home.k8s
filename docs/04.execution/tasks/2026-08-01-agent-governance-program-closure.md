@@ -32,12 +32,15 @@ approved action observes them.
   postflight `060396112abaddbbcf79a33c8a04ae775cce66a1`
 - Fixed cutoff `2026-07-10T10:00:00+09:00` /
   `2026-07-10T01:00:00Z`
+- Observed Spec 046 activation
+  `c6bae0227acd3e4f57b591c14a88e31b6f2e553f` with sole parent
+  `060396112abaddbbcf79a33c8a04ae775cce66a1`
 
 ## Task Table
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| AGPC-000 | VAL-AGPC-001, VAL-AGPC-010 | Activate reciprocal Spec/Plan/Task, three indexes, program lineage, and progress | platform | In Progress | Exact eight-file activation is under validation; activation SHA is not preclaimed | Current Spec, Plan, Task, indexes, profile registry, and progress entry |
+| AGPC-000 | VAL-AGPC-001, VAL-AGPC-010 | Activate reciprocal Spec/Plan/Task, three indexes, program lineage, and progress | platform | Done | Exact eight-file activation is committed and observed without a self-SHA preclaim in the activation content | `c6bae0227acd3e4f57b591c14a88e31b6f2e553f`; sole parent `060396112abaddbbcf79a33c8a04ae775cce66a1`; staged lifecycle/runner, strict docs, pre-commit, all-files, and diff PASS |
 | AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Pending | Not executed | Planned `agent-governance-closure` package |
 | AGPC-002 | VAL-AGPC-003..007 | Route closure gate and reconcile harness/provider/loop/roster/model/memory owners | platform | Pending | Not executed | Planned validation-surface, CI/QA, implementation-map, catalog, and provider-note updates |
 | AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Pending | Not executed | Planned focused, aggregate, all-files, diff, and independent review evidence |
@@ -70,11 +73,12 @@ approved action observes them.
 
 ## Verification Summary
 
-AGPC-000 starts from clean branch HEAD
-`060396112abaddbbcf79a33c8a04ae775cce66a1`. It observes the Spec 045 closure
-edge, retains the fixed cutoff, and activates only the reciprocal SDLC path.
-It does not claim its own content-addressed SHA or any AGPC-001 through
-AGPC-005 result.
+AGPC-000 activation `c6bae0227acd3e4f57b591c14a88e31b6f2e553f`
+has sole parent `060396112abaddbbcf79a33c8a04ae775cce66a1` and exactly eight
+paths. Staged lifecycle, strict registry/Markdown/links, the exact-path staged
+runner, plain staged pre-commit, repository-wide all-files pre-commit, and both
+diff checks passed without formatter mutation. The activation content did not
+preclaim its own SHA, and no AGPC-001 through AGPC-005 result is inferred.
 
 The closure design preserves working short-term, durable long-term,
 domain-scoped, and provider-local auxiliary memory as the four classes. It
@@ -91,8 +95,8 @@ actual evaluation, fitness, admission, and promotion.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [AGPC-000](../plans/2026-08-01-agent-governance-program-closure.md#work-breakdown) | In Progress | Activation document set is being validated; commit SHA is not yet claimed. |
-| [VAL-AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | In Progress | Spec 046 activation criterion shares AGPC-000 evidence. |
+| [AGPC-000](../plans/2026-08-01-agent-governance-program-closure.md#work-breakdown) | Done | Activation `c6bae022`; exact eight paths, sole parent `06039611`, staged lifecycle/runner, strict docs, staged/all-files pre-commit, and diff PASS. |
+| [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Pending | Closure contract package pending. |
 | N/A — AGPC-002 shares the Plan and Spec sources above | Pending | Routing and evidence-owner reconciliation pending. |
 | N/A — AGPC-003 shares the Plan and Spec sources above | Pending | Final QA and independent reviews pending. |
 | N/A — AGPC-004 shares the Plan and Spec sources above | Pending | Reciprocal closure and postflight pending. |

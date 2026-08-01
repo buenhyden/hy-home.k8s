@@ -8,6 +8,45 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 activation postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-000 #activation #postflight #exact-eight
+- **Owner**: AGPC-000 postflight
+- **Canonical Owner**: Spec 046 Task and durable progress ledger
+- **Provenance**: activation
+  `c6bae0227acd3e4f57b591c14a88e31b6f2e553f` with sole parent
+  `060396112abaddbbcf79a33c8a04ae775cce66a1`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-001 closure contract package
+
+#### Progress
+
+- Observed the exact eight-file Spec 046 activation after the Spec 045
+  postflight. The activation advances only Spec 046 and its reciprocal
+  execution path to `active` and contains no self-claimed commit identity.
+- Preserved repository-static, provider/runtime, hosted, actual evaluation,
+  remote, and live result lanes without cross-lane promotion.
+
+#### Evidence
+
+- The activation commit contains exactly the Spec body/index, Plan body/index,
+  Task body/index, program-lineage state, and progress entry.
+- Staged lifecycle, strict document registry/Markdown/links, exact-path staged
+  validation, plain staged pre-commit, all-files pre-commit, formatter review,
+  and worktree/cached diff checks passed. The worktree was clean after commit.
+
+#### Handoff
+
+- AGPC-001 may implement the closed closure contract package. Provider/auth,
+  hosted, remote, live, actual evaluation/admission/promotion, and provider-
+  local memory values remain outside this observed postflight.
+- This evidence update does not preclaim its own content-addressed commit SHA.
+
 ### 2026-08-01 - Spec 046 program closure activation
 
 #### Metadata
