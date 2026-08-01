@@ -1421,6 +1421,53 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertEqual(RUNNER._get_subreaper_state(), before_subreaper)
         self.assertEqual(after_mask, before_mask)
 
+    def test_subreaper_restore_failure_cannot_return_success(self):
+        with (
+            patch.object(RUNNER, "_set_subreaper_state", side_effect=(True, False)),
+            self.assertRaisesRegex(RuntimeError, "subreaper state restoration"),
+        ):
+            self._run_python("pass")
+
+    def test_reaped_leader_numeric_pid_is_not_reused_as_discovery_root(self):
+        class _Pipe:
+            closed = False
+
+            def close(self):
+                self.closed = True
+
+        class _Process:
+            pid = 424244
+
+            def __init__(self):
+                self.stdout = _Pipe()
+                self.stderr = _Pipe()
+                self.returncode = None
+
+            def wait(self, timeout=None):
+                del timeout
+                self.returncode = 0
+                return 0
+
+        process = _Process()
+        discovery_roots = []
+
+        def observe_discovery(leader_pid, _baseline):
+            discovery_roots.append(leader_pid)
+            return set()
+
+        with (
+            patch.object(RUNNER, "_discover_owned_pids", side_effect=observe_discovery),
+            patch.object(RUNNER, "_process_group_absent", return_value=True),
+            patch.object(RUNNER.os, "killpg"),
+        ):
+            complete = RUNNER.cleanup_process_group(process, 0.5)
+
+        self.assertTrue(complete)
+        self.assertEqual(discovery_roots[0], process.pid)
+        self.assertIn(0, discovery_roots[1:])
+        first_adopted_scan = discovery_roots.index(0)
+        self.assertNotIn(process.pid, discovery_roots[first_adopted_scan:])
+
     def test_repeated_cleanup_interrupts_do_not_skip_close_or_reap(self):
         process = subprocess.Popen(
             [sys.executable, "-I", "-c", "import signal; signal.pause()"],

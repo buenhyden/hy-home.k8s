@@ -613,7 +613,11 @@ def cleanup_process_group(
         group_signal_effective = False
         group_signal_failed = False
         while _remaining_seconds(deadline) > 0:
-            owned = _discover_owned_pids(process.pid, baseline_direct_children)
+            leader_reaped = _recorded_returncode(process) is not None
+            owned = _discover_owned_pids(
+                0 if leader_reaped else process.pid,
+                baseline_direct_children,
+            )
             for pid in owned - set(pidfds):
                 try:
                     pidfds[pid] = os.pidfd_open(pid, 0)
@@ -626,7 +630,6 @@ def cleanup_process_group(
                     deferred = deferred or exc
                     continue
 
-            leader_reaped = _recorded_returncode(process) is not None
             if not leader_reaped and not group_signal_effective:
                 try:
                     os.killpg(process.pid, signal.SIGKILL)
@@ -683,9 +686,13 @@ def cleanup_process_group(
                 deferred = deferred or exc
                 continue
 
-            owned = _discover_owned_pids(process.pid, baseline_direct_children)
+            leader_reaped = _recorded_returncode(process) is not None
+            owned = _discover_owned_pids(
+                0 if leader_reaped else process.pid,
+                baseline_direct_children,
+            )
             if (
-                _recorded_returncode(process) is not None
+                leader_reaped
                 and _process_group_absent(process.pid)
                 and not owned
                 and _pidfds_exited(pidfds)
@@ -1118,7 +1125,10 @@ def _run_bounded_command_locked(
             _restore_interrupt_signals(previous_mask)
         finally:
             if subreaper_previous is not None and subreaper_enabled:
-                _set_subreaper_state(subreaper_previous)
+                if not _set_subreaper_state(subreaper_previous):
+                    raise RuntimeError(
+                        "validator subreaper state restoration failed"
+                    )
 
     return BoundedCommandResult(
         status=status,
