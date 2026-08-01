@@ -229,8 +229,17 @@ TAR_EXECUTION_LONG_OPTIONS = frozenset(
     }
 )
 GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND = {
-    "cat-file": frozenset({"--filters", "--textconv"}),
-    "diff": frozenset({"--ext-diff", "--textconv"}),
+    "cat-file": {
+        "--filters": "--fi",
+        "--textconv": "--t",
+    },
+    "diff": {
+        "--ext-diff": "--ext",
+        "--textconv": "--textc",
+    },
+}
+GIT_EXACT_SAFE_LONG_OPTIONS_BY_SUBCOMMAND = {
+    "diff": frozenset({"--text"}),
 }
 INSTALL_EXECUTION_LONG_OPTIONS = frozenset({"--strip", "--strip-program"})
 PIP_GLOBAL_OPTIONS_WITH_VALUE = frozenset(
@@ -748,12 +757,22 @@ def _git_has_execution_option(
 ) -> bool:
     forbidden = GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND.get(
         subcommand,
+        {},
+    )
+    exact_safe = GIT_EXACT_SAFE_LONG_OPTIONS_BY_SUBCOMMAND.get(
+        subcommand,
         frozenset(),
     )
     for argument in arguments:
+        if argument == "--":
+            break
         option_name = argument.split("=", 1)[0]
-        if len(option_name) > 2 and any(
-            dangerous.startswith(option_name) for dangerous in forbidden
+        if option_name in exact_safe:
+            continue
+        if any(
+            len(option_name) >= len(minimum_prefix)
+            and dangerous.startswith(option_name)
+            for dangerous, minimum_prefix in forbidden.items()
         ):
             return True
     return False

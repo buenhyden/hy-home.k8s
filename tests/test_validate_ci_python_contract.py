@@ -499,8 +499,14 @@ SAFE_COMMAND_EXECUTION_OPTIONS = (
 )
 
 GIT_EXECUTION_OPTIONS_BY_SUBCOMMAND = {
-    "cat-file": ("--filters", "--textconv"),
-    "diff": ("--ext-diff", "--textconv"),
+    "cat-file": {
+        "--filters": "--fi",
+        "--textconv": "--t",
+    },
+    "diff": {
+        "--ext-diff": "--ext",
+        "--textconv": "--textc",
+    },
 }
 
 GIT_SAFE_COMMANDS = (
@@ -520,6 +526,21 @@ GIT_REVIEWED_WRAPPER_PREFIXES = (
     "nice",
     "setsid",
     "timeout 30",
+)
+
+GIT_SAFE_OPTION_GRAMMAR_COMMANDS = (
+    "git cat-file --f HEAD:path",
+    "git diff --e HEAD^ HEAD",
+    "git diff --ex HEAD^ HEAD",
+    "git diff --t HEAD^ HEAD",
+    "git diff --te HEAD^ HEAD",
+    "git diff --tex HEAD^ HEAD",
+    "git diff --text HEAD^ HEAD",
+    "git diff --no-ext-diff --no-textconv HEAD^ HEAD",
+    "git cat-file -e -- --filters",
+    "git cat-file -e -- --textconv=value",
+    "git diff HEAD^ HEAD -- --ext-diff",
+    "git diff HEAD^ HEAD -- --textconv=value",
 )
 
 
@@ -1320,8 +1341,8 @@ class CiPythonContractTests(unittest.TestCase):
     ) -> None:
         for subcommand, options in GIT_EXECUTION_OPTIONS_BY_SUBCOMMAND.items():
             operand = "HEAD:path" if subcommand == "cat-file" else "HEAD^ HEAD"
-            for option in options:
-                for length in range(3, len(option) + 1):
+            for option, minimum_prefix in options.items():
+                for length in range(len(minimum_prefix), len(option) + 1):
                     prefix = option[:length]
                     for spelling in (prefix, f"{prefix}=value"):
                         command = f"git {subcommand} {spelling} {operand}"
@@ -1331,6 +1352,16 @@ class CiPythonContractTests(unittest.TestCase):
                             spelling=spelling,
                         ):
                             self.assert_command_rejected_in_all_job_classes(command)
+
+    def test_git_option_grammar_preserves_safe_controls_in_all_jobs(self) -> None:
+        for command in GIT_SAFE_OPTION_GRAMMAR_COMMANDS:
+            with self.subTest(command=command):
+                root = self.make_valid_root()
+                self.inject_validation_step(root, command)
+                self.assertEqual(VALIDATOR.validate_repository(root), 4)
+                root = self.make_valid_root()
+                self.inject_non_validation_job(root, command)
+                self.assertEqual(VALIDATOR.validate_repository(root), 4)
 
     def test_git_execution_options_resist_normalized_obfuscation(self) -> None:
         commands = [
