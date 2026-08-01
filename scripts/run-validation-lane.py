@@ -621,6 +621,10 @@ def cleanup_process_group(
                     continue
                 except (AttributeError, OSError):
                     cleanup_complete = False
+                except BaseException as exc:
+                    cleanup_complete = False
+                    deferred = deferred or exc
+                    continue
 
             leader_reaped = _recorded_returncode(process) is not None
             if not leader_reaped and not group_signal_effective:
@@ -740,6 +744,9 @@ def cleanup_spawn_failure(
                     continue
                 except (AttributeError, OSError):
                     cleanup_complete = False
+                except BaseException:
+                    cleanup_complete = False
+                    continue
             for fd in tuple(pidfds.values()):
                 if not _signal_pidfd(fd, signal.SIGKILL):
                     cleanup_complete = False
@@ -905,13 +912,31 @@ def _run_bounded_command_locked(
                 stderr=accumulators["stderr"].result(complete=False),
                 cleanup_complete=selector_ok and spawn_cleanup,
             )
+        if spawn_exception is not None:
+            if cleanup_deadline is None:
+                cleanup_deadline = time.monotonic() + max(0.0, cleanup_seconds)
+            cleanup_complete = cleanup_process_group(
+                process,
+                cleanup_seconds,
+                deadline=cleanup_deadline,
+                baseline_direct_children=baseline_direct_children,
+            )
+            try:
+                _restore_interrupt_signals(previous_mask)
+                previous_mask = None
+            except BaseException as exc:
+                spawn_exception = spawn_exception or exc
+            selector_ok, deferred = _close_selector(selector)
+            if not selector_ok:
+                cleanup_complete = False
+            if deferred is not None:
+                raise deferred
+            raise spawn_exception
         try:
             _restore_interrupt_signals(previous_mask)
             previous_mask = None
         except BaseException as exc:
             spawn_exception = spawn_exception or exc
-        if spawn_exception is not None:
-            raise spawn_exception
 
         # The ownership bracket is already active before this first
         # interruptible post-spawn operation.

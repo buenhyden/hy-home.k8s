@@ -803,6 +803,55 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 except ProcessLookupError:
                     pass
 
+    def test_handle_acquisition_failure_keeps_mask_until_child_cleanup(self):
+        real_popen = RUNNER.subprocess.Popen
+        real_pidfd_open = RUNNER.os.pidfd_open
+        real_restore = RUNNER._restore_interrupt_signals
+        spawned = []
+        child_alive_at_restore = []
+
+        def capture_spawn(*args, **kwargs):
+            process = real_popen(*args, **kwargs)
+            spawned.append(process)
+            return process
+
+        def fail_leader_pidfd(pid, flags=0):
+            if spawned and pid == spawned[0].pid:
+                raise KeyboardInterrupt("synthetic leader pidfd interrupt")
+            return real_pidfd_open(pid, flags)
+
+        def observe_restore(mask):
+            if spawned:
+                child_alive_at_restore.append(
+                    (Path("/proc") / str(spawned[0].pid)).exists()
+                )
+            return real_restore(mask)
+
+        try:
+            with (
+                patch.object(RUNNER.subprocess, "Popen", side_effect=capture_spawn),
+                patch.object(RUNNER.os, "pidfd_open", side_effect=fail_leader_pidfd),
+                patch.object(
+                    RUNNER,
+                    "_restore_interrupt_signals",
+                    side_effect=observe_restore,
+                ),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                self._run_python("import signal; signal.pause()")
+
+            self.assertEqual(len(spawned), 1)
+            with self.assertRaises(ProcessLookupError):
+                os.kill(spawned[0].pid, 0)
+            self.assertTrue(child_alive_at_restore)
+            self.assertFalse(any(child_alive_at_restore))
+        finally:
+            for process in spawned:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+
     def test_stdout_overflow_fails_closed_without_retaining_over_limit(self):
         outcome = self._run_python(
             "import os; os.write(1, b'x' * 129)",
