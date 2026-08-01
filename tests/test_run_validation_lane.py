@@ -753,7 +753,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
     def test_spawn_assignment_interrupt_reaps_child_and_closes_owned_fds(self):
         real_popen = RUNNER.subprocess.Popen
+        real_restore = RUNNER._restore_interrupt_signals
         spawned = []
+        child_alive_at_restore = []
         baseline_fds = len(os.listdir("/proc/self/fd"))
 
         def spawn_then_interrupt(*args, **kwargs):
@@ -761,12 +763,24 @@ class BoundedValidationCommandTest(unittest.TestCase):
             spawned.append(process)
             raise KeyboardInterrupt("synthetic pre-assignment interrupt")
 
+        def observe_restore(mask):
+            if spawned:
+                child_alive_at_restore.append(
+                    (Path("/proc") / str(spawned[0].pid)).exists()
+                )
+            return real_restore(mask)
+
         try:
             with (
                 patch.object(
                     RUNNER.subprocess,
                     "Popen",
                     side_effect=spawn_then_interrupt,
+                ),
+                patch.object(
+                    RUNNER,
+                    "_restore_interrupt_signals",
+                    side_effect=observe_restore,
                 ),
                 self.assertRaises(KeyboardInterrupt),
             ):
@@ -779,6 +793,8 @@ class BoundedValidationCommandTest(unittest.TestCase):
             # could not receive; mirror the external waitpid result so its
             # destructor does not emit a false live-process warning.
             spawned[0].returncode = -signal.SIGKILL
+            self.assertTrue(child_alive_at_restore)
+            self.assertFalse(any(child_alive_at_restore))
             self.assertEqual(len(os.listdir("/proc/self/fd")), baseline_fds)
         finally:
             for process in spawned:

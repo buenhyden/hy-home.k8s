@@ -828,6 +828,7 @@ def _run_bounded_command_locked(
     stdout_write_fd: int | None = None
     stderr_write_fd: int | None = None
     cleanup_deadline: float | None = None
+    previous_mask: set[signal.Signals] | None = None
     status = "start_failure"
     cleanup_complete = True
     try:
@@ -843,37 +844,34 @@ def _run_bounded_command_locked(
         spawn_exception: BaseException | None = None
         try:
             previous_mask = _block_interrupt_signals()
-            try:
-                stdout_read_fd, stdout_write_fd = os.pipe2(os.O_CLOEXEC)
-                stdout_read = os.fdopen(stdout_read_fd, "rb", buffering=0)
-                stdout_read_fd = None
-                stderr_read_fd, stderr_write_fd = os.pipe2(os.O_CLOEXEC)
-                stderr_read = os.fdopen(stderr_read_fd, "rb", buffering=0)
-                stderr_read_fd = None
-                process = subprocess.Popen(
-                    list(argv),
-                    cwd=cwd,
-                    stdin=subprocess.DEVNULL,
-                    stdout=stdout_write_fd,
-                    stderr=stderr_write_fd,
-                    shell=False,
-                    env=env,
-                    text=False,
-                    bufsize=0,
-                    close_fds=True,
-                    start_new_session=True,
-                )
-                _close_fd(stdout_write_fd)
-                stdout_write_fd = None
-                _close_fd(stderr_write_fd)
-                stderr_write_fd = None
-                process.stdout = stdout_read
-                process.stderr = stderr_read
-                # Pin the leader identity before unmasking.  Cleanup assumes
-                # ownership of this descriptor and closes it exactly once.
-                process._validation_leader_pidfd = os.pidfd_open(process.pid, 0)
-            finally:
-                _restore_interrupt_signals(previous_mask)
+            stdout_read_fd, stdout_write_fd = os.pipe2(os.O_CLOEXEC)
+            stdout_read = os.fdopen(stdout_read_fd, "rb", buffering=0)
+            stdout_read_fd = None
+            stderr_read_fd, stderr_write_fd = os.pipe2(os.O_CLOEXEC)
+            stderr_read = os.fdopen(stderr_read_fd, "rb", buffering=0)
+            stderr_read_fd = None
+            process = subprocess.Popen(
+                list(argv),
+                cwd=cwd,
+                stdin=subprocess.DEVNULL,
+                stdout=stdout_write_fd,
+                stderr=stderr_write_fd,
+                shell=False,
+                env=env,
+                text=False,
+                bufsize=0,
+                close_fds=True,
+                start_new_session=True,
+            )
+            _close_fd(stdout_write_fd)
+            stdout_write_fd = None
+            _close_fd(stderr_write_fd)
+            stderr_write_fd = None
+            process.stdout = stdout_read
+            process.stderr = stderr_read
+            # Pin the leader identity before unmasking.  Cleanup assumes
+            # ownership of this descriptor and closes it exactly once.
+            process._validation_leader_pidfd = os.pidfd_open(process.pid, 0)
         except BaseException as exc:
             spawn_exception = exc
 
@@ -893,6 +891,8 @@ def _run_bounded_command_locked(
                 deadline=cleanup_deadline,
                 baseline_direct_children=baseline_direct_children,
             )
+            _restore_interrupt_signals(previous_mask)
+            previous_mask = None
             selector_ok, deferred = _close_selector(selector)
             if deferred is not None:
                 raise deferred
@@ -905,6 +905,11 @@ def _run_bounded_command_locked(
                 stderr=accumulators["stderr"].result(complete=False),
                 cleanup_complete=selector_ok and spawn_cleanup,
             )
+        try:
+            _restore_interrupt_signals(previous_mask)
+            previous_mask = None
+        except BaseException as exc:
+            spawn_exception = spawn_exception or exc
         if spawn_exception is not None:
             raise spawn_exception
 
@@ -1084,8 +1089,11 @@ def _run_bounded_command_locked(
         _close_fd(stderr_read_fd)
         _close_fd(stdout_write_fd)
         _close_fd(stderr_write_fd)
-        if subreaper_previous is not None and subreaper_enabled:
-            _set_subreaper_state(subreaper_previous)
+        try:
+            _restore_interrupt_signals(previous_mask)
+        finally:
+            if subreaper_previous is not None and subreaper_enabled:
+                _set_subreaper_state(subreaper_previous)
 
     return BoundedCommandResult(
         status=status,
