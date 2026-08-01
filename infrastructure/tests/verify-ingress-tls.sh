@@ -39,10 +39,10 @@ tls_host="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.tls[
 [ "$tls_host" = "$ARGOCD_HOST" ] || fail "argocd ingress tls host mismatch (actual=$tls_host)"
 
 tls_secret="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
-[ "$tls_secret" = "argocd-local-tls" ] || fail "argocd ingress tls secret mismatch (actual=$tls_secret)"
+[ "$tls_secret" = "argocd-local-tls" ] || fail "argocd ingress tls secret mismatch (actual=$tls_secret)" # pragma: allowlist secret
 
 secret_type="$(kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}' 2>/dev/null || true)"
-[ "$secret_type" = "kubernetes.io/tls" ] || fail "argocd-local-tls type mismatch (actual=$secret_type)"
+[ "$secret_type" = "kubernetes.io/tls" ] || fail "argocd-local-tls type mismatch (actual=$secret_type)" # pragma: allowlist secret
 
 curl -kIs --max-time 5 \
   --resolve "${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}:${ARGOCD_FALLBACK_IP}" \
@@ -75,11 +75,13 @@ rg -q 'path "secret/data/platform/postgres-app"' "$ROOT_DIR/infrastructure/vault
 echo "[INFO] Checking Headlamp and Kiali ingress TLS"
 
 headlamp_tls_secret="$(kubectl -n headlamp get ingress headlamp -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
-[ "$headlamp_tls_secret" = "headlamp-tls" ] || \
+[ "$headlamp_tls_secret" = "headlamp-tls" ] || { # pragma: allowlist secret
   echo "[WARN] headlamp ingress tls secret not found or mismatch (actual=$headlamp_tls_secret)"
+}
 
 kiali_tls_secret="$(kubectl -n istio-system get ingress kiali -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
-[ "$kiali_tls_secret" = "kiali-tls" ] || \
+[ "$kiali_tls_secret" = "kiali-tls" ] || { # pragma: allowlist secret
   echo "[WARN] kiali ingress tls secret not found or mismatch (actual=$kiali_tls_secret)"
+}
 
 echo "[PASS] ingress/TLS contract checks passed"
