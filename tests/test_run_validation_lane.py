@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+import json
 import os
 import pwd
 import re
+import signal
 import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from types import SimpleNamespace
 from contextlib import redirect_stdout
@@ -60,6 +64,27 @@ CONTRACT = {
 }
 
 
+def bounded_result(
+    stdout: str = "", stderr: str = "", returncode: int = 0
+) -> object:
+    def stream(value: str):
+        payload = value.encode("utf-8")
+        return RUNNER.StreamObservation(
+            observed_bytes=len(payload),
+            sha256=hashlib.sha256(payload).hexdigest(),
+            retained=payload,
+            complete=True,
+        )
+
+    return RUNNER.BoundedCommandResult(
+        status="completed",
+        returncode=returncode,
+        stdout=stream(stdout),
+        stderr=stream(stderr),
+        cleanup_complete=True,
+    )
+
+
 class ProductionRunnerIsolationTest(unittest.TestCase):
     def _run(
         self,
@@ -68,14 +93,12 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         *,
         stdout: str = QUALITY_MARKER + "\n",
     ):
-        completed = subprocess.CompletedProcess(
-            CONTRACT["validators"][0]["argv"], 0, stdout, ""
-        )
+        completed = bounded_result(stdout)
         output = StringIO()
         with (
             patch.dict(os.environ, environment, clear=False),
             patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
-            patch.object(RUNNER.subprocess, "run", return_value=completed) as invoked,
+            patch.object(RUNNER, "run_bounded_command", return_value=completed) as invoked,
             redirect_stdout(output),
         ):
             result = RUNNER.run_selected(
@@ -102,6 +125,17 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 self.assertEqual(result, 1)
                 invoked.assert_called_once()
                 self.assertIn("[FAIL] repository-quality ", output)
+
+    def test_repository_quality_preserves_text_splitline_marker_semantics(self):
+        result, output, invoked = self._run(
+            "affected",
+            {},
+            stdout=QUALITY_MARKER + "\u2028",
+        )
+
+        self.assertEqual(result, 0)
+        invoked.assert_called_once()
+        self.assertIn("[PASS] repository-quality ", output)
 
     def test_subprocess_uses_closed_environment_and_absolute_tool(self):
         hostile = {
@@ -517,7 +551,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         }
         output = StringIO()
         with (
-            patch.object(RUNNER.subprocess, "run") as invoked,
+            patch.object(RUNNER, "run_bounded_command") as invoked,
             redirect_stdout(output),
         ):
             result = RUNNER.run_selected(
@@ -540,18 +574,264 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         )
 
 
+class BoundedValidationCommandTest(unittest.TestCase):
+    @staticmethod
+    def _run_python(
+        source: str,
+        *,
+        timeout_seconds: float = 2.0,
+        stdout_limit_bytes: int = 128,
+        stderr_limit_bytes: int = 128,
+        cleanup_seconds: float = 0.5,
+    ):
+        return RUNNER.run_bounded_command(
+            [sys.executable, "-I", "-c", source],
+            cwd=ROOT,
+            env=RUNNER.closed_subprocess_environment(),
+            timeout_seconds=timeout_seconds,
+            stdout_limit_bytes=stdout_limit_bytes,
+            stderr_limit_bytes=stderr_limit_bytes,
+            cleanup_seconds=cleanup_seconds,
+        )
+
+    @staticmethod
+    def _wait_for_process_exit(pid: int, timeout_seconds: float = 2.0) -> None:
+        deadline = time.monotonic() + timeout_seconds
+        while time.monotonic() < deadline:
+            try:
+                os.kill(pid, 0)
+            except ProcessLookupError:
+                return
+            status_path = Path("/proc") / str(pid) / "status"
+            try:
+                status = status_path.read_text(encoding="utf-8")
+            except (FileNotFoundError, ProcessLookupError):
+                return
+            if "\nState:\tZ" in f"\n{status}":
+                return
+            time.sleep(0.01)
+        raise AssertionError(f"process {pid} survived bounded cleanup")
+
+    def test_normal_completion_drains_both_pipes_and_records_only_metadata(self):
+        outcome = self._run_python(
+            "import os; os.write(1, b'normal-out\\n'); os.write(2, b'normal-err\\n')"
+        )
+
+        self.assertEqual(outcome.status, "completed")
+        self.assertEqual(outcome.returncode, 0)
+        self.assertEqual(outcome.stdout.observed_bytes, len(b"normal-out\n"))
+        self.assertEqual(outcome.stderr.observed_bytes, len(b"normal-err\n"))
+        rendered = RUNNER.observation(outcome)
+        self.assertNotIn("normal-out", rendered)
+        self.assertNotIn("normal-err", rendered)
+        self.assertRegex(rendered, r"stdout_sha256=[0-9a-f]{64}")
+        self.assertRegex(rendered, r"stderr_sha256=[0-9a-f]{64}")
+
+    def test_reviewed_limits_match_the_sole_quality_owner(self):
+        owner = (
+            ROOT / "docs/00.agent-governance/rules/quality-standards.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
+        self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
+        self.assertEqual(RUNNER.VALIDATOR_STDERR_LIMIT_BYTES, 1 * 1024 * 1024)
+        self.assertEqual(RUNNER.VALIDATOR_CLEANUP_SECONDS, 2.0)
+        for phrase in (
+            "1,200 seconds maximum execution time per child",
+            "4 MiB maximum retained stdout",
+            "1 MiB maximum retained stderr",
+            "2 seconds total cleanup time",
+        ):
+            self.assertIn(phrase, owner)
+
+    def test_timeout_fails_closed_and_reaps_direct_child(self):
+        outcome = self._run_python(
+            "import signal; signal.pause()",
+            timeout_seconds=0.1,
+        )
+
+        self.assertEqual(outcome.status, "timeout")
+        self.assertTrue(outcome.cleanup_complete)
+        self.assertIsNotNone(outcome.returncode)
+
+    def test_selector_start_failure_does_not_launch_a_child(self):
+        with (
+            patch.object(
+                RUNNER.selectors,
+                "DefaultSelector",
+                side_effect=OSError("synthetic-selector-failure"),
+            ),
+            patch.object(RUNNER.subprocess, "Popen") as launched,
+        ):
+            outcome = self._run_python("raise AssertionError('must not run')")
+
+        launched.assert_not_called()
+        self.assertEqual(outcome.status, "pipe_failure")
+        self.assertTrue(outcome.cleanup_complete)
+
+    def test_interrupted_collection_fails_closed_and_reaps_the_child(self):
+        class _InterruptedSelector:
+            def register(self, *_args):
+                return None
+
+            def get_map(self):
+                return {"registered": True}
+
+            def select(self, timeout):
+                self.timeout = timeout
+                raise InterruptedError
+
+            def close(self):
+                return None
+
+        selector = _InterruptedSelector()
+        with patch.object(
+            RUNNER.selectors, "DefaultSelector", return_value=selector
+        ):
+            outcome = self._run_python("import signal; signal.pause()")
+
+        self.assertEqual(outcome.status, "collection_interrupted")
+        self.assertTrue(outcome.cleanup_complete)
+        self.assertIsNotNone(outcome.returncode)
+        self.assertLessEqual(selector.timeout, RUNNER.VALIDATOR_PIPE_POLL_SECONDS)
+
+    def test_stdout_overflow_fails_closed_without_retaining_over_limit(self):
+        outcome = self._run_python(
+            "import os; os.write(1, b'x' * 129)",
+            stdout_limit_bytes=128,
+        )
+
+        self.assertEqual(outcome.status, "stdout_overflow")
+        self.assertGreater(outcome.stdout.observed_bytes, 128)
+        self.assertLessEqual(len(outcome.stdout.retained), 128)
+        self.assertTrue(outcome.cleanup_complete)
+
+    def test_stderr_overflow_fails_closed_without_retaining_over_limit(self):
+        outcome = self._run_python(
+            "import os; os.write(2, b'y' * 129)",
+            stderr_limit_bytes=128,
+        )
+
+        self.assertEqual(outcome.status, "stderr_overflow")
+        self.assertGreater(outcome.stderr.observed_bytes, 128)
+        self.assertLessEqual(len(outcome.stderr.retained), 128)
+        self.assertTrue(outcome.cleanup_complete)
+
+    def test_descendant_held_pipes_fail_closed_and_process_group_is_killed(self):
+        with tempfile.TemporaryDirectory(prefix="runner-descendant-") as temporary:
+            pid_path = Path(temporary) / "descendant.json"
+            source = (
+                "import json, subprocess, sys; "
+                "child=subprocess.Popen([sys.executable, '-I', '-c', "
+                "'import signal; signal.pause()']); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': child.pid})); "
+                "print('leader-exit')"
+            )
+            outcome = self._run_python(source)
+
+            self.assertEqual(outcome.status, "descendant_pipe_hold")
+            self.assertTrue(outcome.cleanup_complete)
+            descendant_pid = json.loads(pid_path.read_text(encoding="utf-8"))["pid"]
+            self._wait_for_process_exit(descendant_pid)
+
+    def test_timeout_kills_ready_process_tree(self):
+        with tempfile.TemporaryDirectory(prefix="runner-tree-") as temporary:
+            pid_path = Path(temporary) / "tree.json"
+            source = (
+                "import json, os, signal, subprocess, sys; "
+                "child=subprocess.Popen([sys.executable, '-I', '-c', "
+                "'import signal; signal.pause()']); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'leader': os.getpid(), 'child': child.pid})); "
+                "signal.pause()"
+            )
+            outcome = self._run_python(source, timeout_seconds=0.5)
+
+            self.assertEqual(outcome.status, "timeout")
+            self.assertTrue(pid_path.is_file(), "PID ledger is the readiness barrier")
+            process_ids = json.loads(pid_path.read_text(encoding="utf-8"))
+            self._wait_for_process_exit(process_ids["leader"])
+            self._wait_for_process_exit(process_ids["child"])
+
+    def test_cleanup_waits_under_one_total_monotonic_deadline(self):
+        class _Pipe:
+            def __init__(self):
+                self.closed = False
+
+            def close(self):
+                self.closed = True
+
+        class _Process:
+            pid = 424242
+
+            def __init__(self):
+                self.stdout = _Pipe()
+                self.stderr = _Pipe()
+                self.wait_timeouts: list[float] = []
+                self.killed = 0
+
+            def poll(self):
+                return None
+
+            def kill(self):
+                self.killed += 1
+
+            def wait(self, timeout):
+                self.wait_timeouts.append(timeout)
+                raise subprocess.TimeoutExpired(("synthetic",), timeout)
+
+        process = _Process()
+        clock = iter((10.0, 10.1))
+        with (
+            patch.object(RUNNER.time, "monotonic", side_effect=lambda: next(clock)),
+            patch.object(RUNNER.os, "killpg", side_effect=ProcessLookupError),
+        ):
+            complete = RUNNER.cleanup_process_group(process, 0.5)
+
+        self.assertFalse(complete)
+        self.assertEqual(len(process.wait_timeouts), 1)
+        self.assertGreater(process.wait_timeouts[0], 0)
+        self.assertLessEqual(process.wait_timeouts[0], 0.5)
+        self.assertTrue(process.stdout.closed)
+        self.assertTrue(process.stderr.closed)
+
+    def test_cleanup_reports_unexpected_process_group_signal_failure(self):
+        class _Pipe:
+            def close(self):
+                return None
+
+        class _Process:
+            pid = 424243
+            stdout = _Pipe()
+            stderr = _Pipe()
+
+            def poll(self):
+                return -signal.SIGKILL
+
+            def kill(self):
+                return None
+
+        with patch.object(
+            RUNNER.os,
+            "killpg",
+            side_effect=PermissionError("synthetic-permission-failure"),
+        ):
+            complete = RUNNER.cleanup_process_group(_Process(), 0.5)
+
+        self.assertFalse(complete)
+
+
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
     @staticmethod
     def _run(paths: list[str], lane: str = "affected"):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
-        completed = subprocess.CompletedProcess(
-            ["validator"], 0, QUALITY_MARKER + "\n", ""
-        )
+        completed = bounded_result(QUALITY_MARKER + "\n")
         output = StringIO()
         with (
             patch.object(RUNNER.shutil, "which", return_value="/usr/bin/bash"),
-            patch.object(RUNNER.subprocess, "run", return_value=completed) as invoked,
+            patch.object(RUNNER, "run_bounded_command", return_value=completed) as invoked,
             redirect_stdout(output),
         ):
             result = RUNNER.run_selected(

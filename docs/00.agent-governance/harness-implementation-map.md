@@ -45,7 +45,7 @@ where is the evidence recorded?_
 | Provider evidence contract | [`contracts/provider-runtime-evidence.json`](contracts/provider-runtime-evidence.json) | Fixed-cutoff source confidence, local executable observations, model candidates, native surface status, and redacted canary verdicts | provider config and canary validators | Spec 042 Task; provider runtime PASS remains separate |
 | Runtime catalog view | [`harness-catalog.md`](harness-catalog.md)                           | Human-readable agents, skills, adapters, and matrices derived from the machine contract | repo-quality-static (adapter + matrix checks) | `memory/progress.md` |
 | Model tier policy   | `model-policy.md`                                                    | Supervisor/worker model tiers      | repo-quality-static                          | catalog              |
-| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Native Claude/Codex plus local/Antigravity adapters; static parity only | agent adapter checks in repo-quality-static  | catalog              |
+| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md`, `.agents/agents/*.md` | Native Claude/Codex/Gemini plus local/Antigravity adapters; static parity only | agent adapter checks in repo-quality-static  | catalog              |
 | Shared assets       | `.agents/{skills,workflows,output-styles}`                           | Provider-neutral SSoT via symlinks | repo-quality-static                          | catalog              |
 
 ## Current Contract
@@ -90,7 +90,7 @@ where is the evidence recorded?_
 
 | Surface     | Source                             | Role                                                            | Required Validation | Evidence      |
 | ----------- | ---------------------------------- | --------------------------------------------------------------- | ------------------- | ------------- |
-| CI gates    | `.github/workflows/ci.yml`         | Collect push/PR paths as NUL records with rename detection disabled so old/new protection domains are retained, select pre-commit, repo-quality-static, and manifest-static from the affected-surface contract, then aggregate unchanged job results in ci-summary | affected-surface rename proof plus actionlint; remote execution remains separate evidence | GitHub checks |
+| CI gates    | `.github/workflows/ci.yml`         | Collect push/PR paths as NUL records with rename detection disabled so old/new protection domains are retained, select pre-commit, repo-quality-static, agent-governance-static, and manifest-static from the affected-surface contract, then aggregate unchanged job results in ci-summary | affected-surface rename proof plus actionlint; remote execution remains separate evidence | GitHub checks |
 | PR contract | `.github/PULL_REQUEST_TEMPLATE.md` | Harness Impact + static/live evidence split                     | repo-quality-static | PR body       |
 
 ### Affected-Surface Selection

@@ -98,6 +98,27 @@ lanes:
 - `DEFER`: the lane requires unavailable authority, environment, provider, or
   remote/live evidence. `DEFER` is a visible limitation, never a pass.
 
+### Local Validator Resource Limits
+
+Every repository-static child selected by the validation-surface contract runs
+through `scripts/run-validation-lane.py` with one reviewed finite envelope:
+
+- 1,200 seconds maximum execution time per child;
+- 4 MiB maximum retained stdout and 1 MiB maximum retained stderr per child;
+- 2 seconds total cleanup time under one monotonic deadline; and
+- 64 KiB maximum read chunks with concurrent stdout/stderr draining.
+
+The runner starts each child in its own session/process group. Timeout, either
+pipe overflow, pipe failure, or pipes held by descendants after the direct
+leader exits is `FAIL`: the runner kills the process group and direct leader,
+closes both read ends, and reaps the leader within the single cleanup deadline.
+Result lines expose only observed byte counts, SHA-256 digests, completion
+flags, the stable boundary status, and the return code; child payload is never
+copied into evidence. Repository quality still requires return code zero and
+exactly one complete `[PASS] repository quality gates passed` stdout line
+within the bounded stdout envelope. These limits govern local child execution
+only and are not hosted CI, provider-runtime, remote, or live evidence.
+
 ### Canonical Completion Sequence
 
 Every repo-changing task follows this ordered completion sequence. Consumers

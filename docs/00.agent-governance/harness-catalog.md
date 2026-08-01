@@ -522,7 +522,7 @@ symmetry from static files.
 These two dimensions complete the ten-dimension capability set and are provider-agnostic.
 
 - **QA**: Common contract = `rules/quality-standards.md` + repo validators (`scripts/*.sh`, `infrastructure/tests/*.sh`). Claude runs them via the PostToolUse hook; Codex uses its context/validation wiring; a compatible local/Antigravity runtime may use `.agents/hooks.json`. All runtimes must still run explicit validation before handoff, and Gemini CLI native hook delivery remains `DEFER`. Status: repo-static Ready.
-- **CI/static validation**: Common contract = GitHub Actions plus local validators (`.github/workflows/ci.yml` branch-policy, pre-commit, repo-quality-static, manifest-static gates). CI is provider-agnostic and runs on every PR regardless of which harness authored the change. It is not live deployment CD unless a separate approved deploy workflow records live evidence. Status: Ready.
+- **CI/static validation**: Common contract = GitHub Actions plus local validators (`.github/workflows/ci.yml` branch-policy, pre-commit, repo-quality-static, agent-governance-static, manifest-static gates). CI is provider-agnostic and runs on every PR regardless of which harness authored the change. It is not live deployment CD unless a separate approved deploy workflow records live evidence. Status: Ready.
 
 ### Output-style Contract
 
