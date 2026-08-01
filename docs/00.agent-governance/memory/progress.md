@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 program closure activation
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: governance, qa, meta
+- **Status**: active
+- **Tags**: #spec-046 #agpc-000 #program-closure #activation
+- **Owner**: AGPC-000 activation
+- **Canonical Owner**: Spec 046 reciprocal Spec, Plan, and Task
+- **Provenance**: Spec 045 closure
+  `de9a88e4550b87542eb7221c5ae7416fe5075763` and postflight
+  `060396112abaddbbcf79a33c8a04ae775cce66a1`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-001 closure matrix contract
+
+#### Progress
+
+- Activated Spec 046 as the final repository-local agent-governance program
+  closure tranche after observing Spec 045 closure and postflight.
+- Corrected the Spec 046 provider/model/source cutoff to the fixed
+  `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z` baseline.
+- Preserved the non-transitive evidence boundary: repository-static PASS lanes
+  may close locally, while provider runtime/auth/model discovery, hosted CI,
+  branch protection, actual evaluation/admission/promotion, remote, and live
+  lanes require independent `PASS`, `ABSENT`, or `DEFER` classification.
+- Preserved the four-class shared-memory hierarchy: working short-term,
+  durable long-term, domain-scoped, and provider-local auxiliary. Closure will
+  validate owner, sensitivity, promotion, retention/expiry, compaction
+  replacement, archive/GC, conflict, and handoff rules without reading ignored
+  checkpoints or provider-local values.
+
+#### Evidence
+
+- Activation scope is limited to the Spec, reciprocal Plan and Task, three
+  indexes, document profile program-lineage state, and this progress entry.
+- The activation record does not preclaim its own content-addressed commit SHA.
+
+#### Handoff
+
+- AGPC-001 must implement the closed closure matrix contract, schema, fixture,
+  validator, and tests before any reciprocal `done` transition.
+
 ### 2026-08-01 - Spec 045 reciprocal closure postflight
 
 #### Metadata
