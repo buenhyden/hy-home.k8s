@@ -228,9 +228,10 @@ TAR_EXECUTION_LONG_OPTIONS = frozenset(
         "--use-compress-program",
     }
 )
-GIT_EXECUTION_LONG_OPTIONS = frozenset(
-    {"--ext-diff", "--filters", "--textconv"}
-)
+GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND = {
+    "cat-file": frozenset({"--filters", "--textconv"}),
+    "diff": frozenset({"--ext-diff", "--textconv"}),
+}
 INSTALL_EXECUTION_LONG_OPTIONS = frozenset({"--strip", "--strip-program"})
 PIP_GLOBAL_OPTIONS_WITH_VALUE = frozenset(
     {
@@ -741,6 +742,23 @@ def _arguments_have_long_option(
     return any(argument.split("=", 1)[0] in forbidden for argument in arguments)
 
 
+def _git_has_execution_option(
+    subcommand: str,
+    arguments: list[str],
+) -> bool:
+    forbidden = GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND.get(
+        subcommand,
+        frozenset(),
+    )
+    for argument in arguments:
+        option_name = argument.split("=", 1)[0]
+        if len(option_name) > 2 and any(
+            dangerous.startswith(option_name) for dangerous in forbidden
+        ):
+            return True
+    return False
+
+
 def _simple_command_is_allowed(executable: str, arguments: list[str]) -> bool:
     if executable not in SHELL_EXPLICIT_SAFE_COMMANDS:
         return False
@@ -854,10 +872,7 @@ def _simple_command_contains_pip_install(
             "diff",
             "ls-tree",
         }:
-            if _arguments_have_long_option(
-                arguments[1:],
-                GIT_EXECUTION_LONG_OPTIONS,
-            ):
+            if _git_has_execution_option(arguments[0], arguments[1:]):
                 _shell_guard_error()
             return False
         _shell_guard_error()

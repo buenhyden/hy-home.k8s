@@ -496,10 +496,30 @@ SAFE_COMMAND_EXECUTION_OPTIONS = (
     "install --strip-program=sh source target",
     "install -s --strip-program sh source target",
     "sudo install --strip-program=sh source target",
-    "git diff --ext-diff HEAD^ HEAD",
-    "git diff --textconv HEAD^ HEAD",
-    "git cat-file --filters HEAD:path",
-    "git cat-file --textconv HEAD:path",
+)
+
+GIT_EXECUTION_OPTIONS_BY_SUBCOMMAND = {
+    "cat-file": ("--filters", "--textconv"),
+    "diff": ("--ext-diff", "--textconv"),
+}
+
+GIT_SAFE_COMMANDS = (
+    'git cat-file -e "$BEFORE_SHA^{commit}"',
+    'git diff --no-renames --name-only -z "$BEFORE_SHA" "$HEAD_SHA"',
+    'git ls-tree -r --name-only -z "$HEAD_SHA"',
+    "git diff --no-ext-diff --no-textconv HEAD^ HEAD",
+)
+
+GIT_REVIEWED_WRAPPER_PREFIXES = (
+    "command",
+    "env MODE=ci",
+    "exec",
+    "nohup",
+    "sudo",
+    "time",
+    "nice",
+    "setsid",
+    "timeout 30",
 )
 
 
@@ -1294,6 +1314,53 @@ class CiPythonContractTests(unittest.TestCase):
         for command in SAFE_COMMAND_EXECUTION_OPTIONS:
             with self.subTest(command=command):
                 self.assert_command_rejected_in_all_job_classes(command)
+
+    def test_git_execution_long_option_prefixes_fail_closed_in_all_jobs(
+        self,
+    ) -> None:
+        for subcommand, options in GIT_EXECUTION_OPTIONS_BY_SUBCOMMAND.items():
+            operand = "HEAD:path" if subcommand == "cat-file" else "HEAD^ HEAD"
+            for option in options:
+                for length in range(3, len(option) + 1):
+                    prefix = option[:length]
+                    for spelling in (prefix, f"{prefix}=value"):
+                        command = f"git {subcommand} {spelling} {operand}"
+                        with self.subTest(
+                            subcommand=subcommand,
+                            option=option,
+                            spelling=spelling,
+                        ):
+                            self.assert_command_rejected_in_all_job_classes(command)
+
+    def test_git_execution_options_resist_normalized_obfuscation(self) -> None:
+        commands = [
+            '"git" "cat-file" "--textc" HEAD:path',
+            "GIT_EXTERNAL_DIFF=sh git diff --ext-d HEAD^ HEAD",
+            (
+                "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.demo.textconv "
+                "GIT_CONFIG_VALUE_0=sh git cat-file --textc HEAD:path"
+            ),
+            (
+                "env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=filter.demo.smudge "
+                "GIT_CONFIG_VALUE_0=sh git cat-file --filt HEAD:path"
+            ),
+        ]
+        commands.extend(
+            f"{wrapper} git diff --ext-d HEAD^ HEAD"
+            for wrapper in GIT_REVIEWED_WRAPPER_PREFIXES
+        )
+        for command in commands:
+            with self.subTest(command=command):
+                self.assert_command_rejected_in_all_job_classes(command)
+
+        for command in GIT_SAFE_COMMANDS:
+            with self.subTest(safe_command=command):
+                root = self.make_valid_root()
+                self.inject_validation_step(root, command)
+                self.assertEqual(VALIDATOR.validate_repository(root), 4)
+                root = self.make_valid_root()
+                self.inject_non_validation_job(root, command)
+                self.assertEqual(VALIDATOR.validate_repository(root), 4)
 
     def test_ci_summary_preserves_pass_skip_fail_missing_and_cancelled(self) -> None:
         workflow = VALIDATOR.yaml.safe_load(
