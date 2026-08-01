@@ -124,11 +124,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 64,
+                "helpers": 66,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 31,
-                "python": 27,
-                "json": 30,
+                "postClosureHelpers": 33,
+                "python": 28,
+                "json": 31,
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -179,7 +179,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 64)
+        self.assertEqual(len(actual), 66)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -195,6 +195,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "closed-fixture",
                 ),
                 "tests/fixtures/agent-governance-ci.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-governance-closure.json": (
                     "json",
                     "closed-fixture",
                 ),
@@ -274,6 +278,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "python",
                     "regression-test",
                 ),
+                "tests/test_validate_agent_governance_closure.py": (
+                    "python",
+                    "regression-test",
+                ),
                 "tests/test_validate_agent_harness_contract.py": (
                     "python",
                     "regression-test",
@@ -317,7 +325,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 31})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 33})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -344,6 +352,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/fixtures/agent-governance-ci.json",
+                    "format": "json",
+                    "role": "closed-fixture",
+                },
+                {
+                    "path": "tests/fixtures/agent-governance-closure.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -439,6 +452,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/test_validate_agent_governance_ci.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_governance_closure.py",
                     "format": "python",
                     "role": "regression-test",
                 },

@@ -85,11 +85,12 @@ repos:
         args:
           - '--baseline'
           - '.secrets.baseline'
-          # ArchiveEnvelope and ACER census Git/SHA identities are integrity
-          # metadata. Exact payloads remain covered by gitleaks and the
-          # domain validators; only canonical identity-only lines are ignored.
+          # ArchiveEnvelope, ACER census, and Spec 046 closure Git/SHA
+          # identities are integrity metadata. Exact payloads remain covered
+          # by gitleaks and domain validators; only canonical identity-key
+          # lines are ignored.
           - '--exclude-lines'
-          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$|^rev: "[0-9a-f]{40}" # frozen: [A-Za-z0-9][A-Za-z0-9._-]*$|^    --hash=sha256:[0-9a-f]{64}(?: [\\])?$|^ {6}"sha256": "[0-9a-f]{64}",$'
+          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {4}"(candidateBaselineCommit|activationCommit)": "[0-9a-f]{40}",$|^ {8}"sourceBlob": "[0-9a-f]{40}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$|^rev: "[0-9a-f]{40}" # frozen: [A-Za-z0-9][A-Za-z0-9._-]*$|^    --hash=sha256:[0-9a-f]{64}(?: [\\])?$|^ {6}"sha256": "[0-9a-f]{64}",$|^ +"implementationRef": "git-sha1:[0-9a-f]{40}",$|^ +"(?:evidenceSha256|sourceSha256)": "[0-9a-f]{64}",$|^ +"sourceSha256": \{"const": "[0-9a-f]{64}"\},$'
         exclude: '^(graphify-out/.*|docs/90\.references/data/active-corpus-(eligibility-ledger|migration-results)\.json)$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2

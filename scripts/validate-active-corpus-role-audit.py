@@ -169,6 +169,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/fixtures/agent-governance-closure.json": (
+        "json",
+        "closed-fixture",
+    ),
     "tests/fixtures/agent-harness-contract.json": (
         "json",
         "closed-fixture",
@@ -242,6 +246,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
     "tests/test_validate_agent_governance_ci.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_governance_closure.py": (
         "python",
         "regression-test",
     ),

@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/contracts/agent-governance-closure.schema.json",
+  "title": "Agent governance program closure contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "contractId",
+    "contractVersion",
+    "ownerSpec",
+    "cutoff",
+    "resultVocabulary",
+    "laneVocabulary",
+    "crossLanePromotion",
+    "durableEvidencePolicy",
+    "predecessorCriteria",
+    "providerCanaries",
+    "rosterSummary",
+    "modelProfileSummary",
+    "memoryLayers",
+    "qaEvidence",
+    "reviewEvidence",
+    "handoff"
+  ],
+  "properties": {
+    "$schema": {"const": "./agent-governance-closure.schema.json"},
+    "schemaVersion": {"type": "integer", "const": 1},
+    "contractId": {"const": "hy-home.k8s/agent-governance-closure"},
+    "contractVersion": {"const": "1.0.0"},
+    "ownerSpec": {"const": "docs/03.specs/046-agent-governance-program-closure/spec.md"},
+    "cutoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localTime", "utc", "timezone"],
+      "properties": {
+        "localTime": {"const": "2026-07-10T10:00:00+09:00"},
+        "utc": {"const": "2026-07-10T01:00:00Z"},
+        "timezone": {"const": "Asia/Seoul"}
+      }
+    },
+    "resultVocabulary": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "PASS"},
+        {"const": "FAIL"},
+        {"const": "ABSENT"},
+        {"const": "DEFER"}
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "laneVocabulary": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/lane"}
+    },
+    "crossLanePromotion": {"const": false},
+    "durableEvidencePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summaryOnly", "prohibitedContent"],
+      "properties": {
+        "summaryOnly": {"const": true},
+        "prohibitedContent": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "secret-values"},
+            {"const": "credential-values"},
+            {"const": "token-values"},
+            {"const": "auth-cache-paths"},
+            {"const": "auth-cache-bodies"},
+            {"const": "provider-response-bodies"},
+            {"const": "prompt-transcripts"},
+            {"const": "environment-dumps"},
+            {"const": "shell-history"}
+          ],
+          "items": false,
+          "minItems": 9,
+          "maxItems": 9
+        }
+      }
+    },
+    "predecessorCriteria": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/criterion"}
+    },
+    "providerCanaries": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/providerCanary"}
+    },
+    "rosterSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roleCount", "surfaceCount", "adapterCount", "repositoryStaticResult", "actualAdmissionResult", "owner", "limitation", "retryTrigger"],
+      "properties": {
+        "roleCount": {"const": 12},
+        "surfaceCount": {"const": 4},
+        "adapterCount": {"const": 48},
+        "repositoryStaticResult": {"const": "PASS"},
+        "actualAdmissionResult": {"enum": ["ABSENT", "DEFER"]},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 160},
+        "limitation": {"type": "string", "minLength": 1, "maxLength": 512},
+        "retryTrigger": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "modelProfileSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRef", "sourceSha256", "validatorPassMeaning", "roleCount", "providerCount", "tupleCount", "mappingReady", "mappingDeferred", "fitnessDeferred", "thresholdDeferred", "promotionDeferred", "canaryDeferred", "runtimeDeferred", "configuredProfileResult", "actualFitnessResult", "actualPromotionResult", "owner", "limitation", "retryTrigger"],
+      "properties": {
+        "sourceRef": {"const": "docs/00.agent-governance/contracts/agent-model-fitness.json"},
+        "sourceSha256": {"const": "0b8725777f029d84e689f2eb8713c0b04197e6f9def39fe502a431560b369fab"},
+        "validatorPassMeaning": {"const": "mapping-readiness-only"},
+        "roleCount": {"const": 12},
+        "providerCount": {"const": 4},
+        "tupleCount": {"const": 48},
+        "mappingReady": {"const": 21},
+        "mappingDeferred": {"const": 27},
+        "fitnessDeferred": {"const": 48},
+        "thresholdDeferred": {"const": 48},
+        "promotionDeferred": {"const": 48},
+        "canaryDeferred": {"const": 48},
+        "runtimeDeferred": {"const": 48},
+        "configuredProfileResult": {"const": "PASS"},
+        "actualFitnessResult": {"enum": ["ABSENT", "DEFER"]},
+        "actualPromotionResult": {"enum": ["ABSENT", "DEFER"]},
+        "owner": {"type": "string", "minLength": 1},
+        "limitation": {"type": "string", "minLength": 1},
+        "retryTrigger": {"type": "string", "minLength": 1}
+      }
+    },
+    "memoryLayers": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/memoryLayer"}
+    },
+    "qaEvidence": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/laneResult"}
+    },
+    "reviewEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirements", "qualitySecurity"],
+      "properties": {
+        "requirements": {"$ref": "#/$defs/reviewResult"},
+        "qualitySecurity": {"$ref": "#/$defs/reviewResult"}
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localMerge", "remoteAction", "worktreeCleanup"],
+      "properties": {
+        "localMerge": {"enum": ["planned", "done"]},
+        "remoteAction": {"const": "not-authorized"},
+        "worktreeCleanup": {"enum": ["planned", "done"]}
+      }
+    }
+  },
+  "$defs": {
+    "lane": {
+      "enum": [
+        "repository_static",
+        "local_validation",
+        "local_review",
+        "provider_runtime",
+        "hosted_ci",
+        "remote_action",
+        "live_platform",
+        "actual_evaluation"
+      ]
+    },
+    "result": {"enum": ["PASS", "FAIL", "ABSENT", "DEFER"]},
+    "criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "expectedStatus", "implementationRef", "validatorCommand", "lane", "result", "evidence", "evidenceSha256", "reviewerVerdict", "residualRisk", "limitation", "retryTrigger", "rollbackPath"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 80},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 240},
+        "expectedStatus": {"enum": ["active", "draft", "done"]},
+        "implementationRef": {"type": "string", "pattern": "^git-sha1:[0-9a-f]{40}$"},
+        "validatorCommand": {"const": "python3 scripts/validate-markdown-profiles.py --root . --mode strict"},
+        "lane": {"$ref": "#/$defs/lane"},
+        "result": {"$ref": "#/$defs/result"},
+        "evidence": {"type": "string", "minLength": 1, "maxLength": 512},
+        "evidenceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "reviewerVerdict": {"const": "PASS"},
+        "residualRisk": {"type": "string", "minLength": 1, "maxLength": 512},
+        "limitation": {"type": ["string", "null"], "maxLength": 512},
+        "retryTrigger": {"type": ["string", "null"], "maxLength": 512},
+        "rollbackPath": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "providerCanary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "observedAt", "sourceCutoff", "sourceRef", "sourceSha256", "instructionSources", "discoveredRoleSurface", "configuredModel", "configuredReasoning", "modelPolicyRef", "authClass", "mcpPolicySummary", "installation", "runtimeResult", "authResult", "modelDiscoveryResult", "canaryResult", "owner", "limitation", "retryTrigger", "rollbackCleanup"],
+      "properties": {
+        "provider": {"enum": ["claude", "codex", "gemini"]},
+        "observedAt": {"const": "2026-07-28"},
+        "sourceCutoff": {"const": "2026-07-10T10:00:00+09:00"},
+        "sourceRef": {"const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json"},
+        "sourceSha256": {"const": "7b51324f7af9ac088898d48ea0f5255150ef399e92731da5953483bb6e281e93"},
+        "instructionSources": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
+        "discoveredRoleSurface": {"type": "string", "minLength": 1, "maxLength": 240},
+        "configuredModel": {"const": "role-specific-current-policy"},
+        "configuredReasoning": {"const": "role-specific-current-policy-or-provider-native-equivalent"},
+        "modelPolicyRef": {"const": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles"},
+        "authClass": {"const": "not-inspected"},
+        "mcpPolicySummary": {"const": "tracked-policy-summary-only; runtime-resolution-not-inferred"},
+        "installation": {"enum": ["present", "absent", "not-observed"]},
+        "runtimeResult": {"enum": ["ABSENT", "DEFER"]},
+        "authResult": {"enum": ["ABSENT", "DEFER"]},
+        "modelDiscoveryResult": {"enum": ["ABSENT", "DEFER"]},
+        "canaryResult": {"enum": ["ABSENT", "DEFER"]},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 160},
+        "limitation": {"type": "string", "minLength": 1, "maxLength": 512},
+        "retryTrigger": {"type": "string", "minLength": 1, "maxLength": 512},
+        "rollbackCleanup": {"const": "no provider mutation; discard transient canary output"}
+      }
+    },
+    "memoryLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "sensitivity", "promotion", "retention", "compaction", "archiveGc", "conflictHandling", "handoff"],
+      "properties": {
+        "id": {"enum": ["working-short-term", "durable-long-term", "domain-scoped", "provider-local-auxiliary"]},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 240},
+        "sensitivity": {"type": "string", "minLength": 1, "maxLength": 512},
+        "promotion": {"type": "string", "minLength": 1, "maxLength": 512},
+        "retention": {"type": "string", "minLength": 1, "maxLength": 512},
+        "compaction": {"type": "string", "minLength": 1, "maxLength": 512},
+        "archiveGc": {"type": "string", "minLength": 1, "maxLength": 512},
+        "conflictHandling": {"type": "string", "minLength": 1, "maxLength": 512},
+        "handoff": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "laneResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lane", "result", "owner", "limitation", "retryTrigger"],
+      "properties": {
+        "lane": {"$ref": "#/$defs/lane"},
+        "result": {"$ref": "#/$defs/result"},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 160},
+        "limitation": {"type": ["string", "null"], "maxLength": 512},
+        "retryTrigger": {"type": ["string", "null"], "maxLength": 512}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"result": {"const": "PASS"}}},
+          "then": {
+            "properties": {
+              "limitation": {"type": "null"},
+              "retryTrigger": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "limitation": {"type": "string", "minLength": 1},
+              "retryTrigger": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    },
+    "reviewResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result", "owner", "critical", "important", "minor", "limitation", "retryTrigger"],
+      "properties": {
+        "result": {"enum": ["PASS", "DEFER"]},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 160},
+        "critical": {"type": "integer", "minimum": 0},
+        "important": {"type": "integer", "minimum": 0},
+        "minor": {"type": "integer", "minimum": 0},
+        "limitation": {"type": ["string", "null"], "maxLength": 512},
+        "retryTrigger": {"type": ["string", "null"], "maxLength": 512}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"result": {"const": "PASS"}}},
+          "then": {
+            "properties": {
+              "limitation": {"type": "null"},
+              "retryTrigger": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "limitation": {"type": "string", "minLength": 1},
+              "retryTrigger": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
