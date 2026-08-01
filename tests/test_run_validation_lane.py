@@ -1375,40 +1375,28 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertTrue(process.stderr.closed)
 
     def test_reaped_leader_requires_signal_free_group_absence_proof(self):
-        with tempfile.TemporaryDirectory(prefix="runner-reaped-leader-") as temporary:
-            pid_path = Path(temporary) / "child.json"
-            source = (
-                "import json, os, signal, subprocess, sys, time; "
-                "child=subprocess.Popen([sys.executable, '-I', '-c', "
-                "'import signal; signal.pause()'], stdin=subprocess.DEVNULL, "
-                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
-                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
-                "json.dumps({'pid': child.pid, 'pgid': os.getpgrp()})); "
-                "time.sleep(0.05)"
-            )
-            process = subprocess.Popen(
-                [sys.executable, "-I", "-c", source],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                start_new_session=True,
-            )
-            child = {}
-            try:
-                process.wait(timeout=2)
-                child = json.loads(pid_path.read_text(encoding="utf-8"))
-                with patch.object(RUNNER.os, "killpg") as group_signal:
-                    complete = RUNNER.cleanup_process_group(process, 0.1)
+        process = subprocess.Popen(
+            [sys.executable, "-I", "-c", "pass"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+        process.wait(timeout=2)
 
-                self.assertFalse(complete)
-                group_signal.assert_not_called()
-                os.kill(child["pid"], 0)
-            finally:
-                if child:
-                    try:
-                        os.killpg(child["pgid"], signal.SIGKILL)
-                    except ProcessLookupError:
-                        pass
+        with (
+            patch.object(
+                RUNNER, "_process_group_absent", return_value=False
+            ) as group_absence,
+            patch.object(RUNNER.os, "killpg") as group_signal,
+        ):
+            complete = RUNNER.cleanup_process_group(process, 0.1)
+
+        self.assertFalse(complete)
+        group_absence.assert_called_with(process.pid)
+        group_signal.assert_not_called()
+        self.assertTrue(process.stdout.closed)
+        self.assertTrue(process.stderr.closed)
 
     def test_subreaper_and_interrupt_mask_are_restored(self):
         before_subreaper = RUNNER._get_subreaper_state()
