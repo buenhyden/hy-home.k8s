@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 AGPC-001 closure contract postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-001 #closure-contract #memory-lifecycle #postflight
+- **Owner**: AGPC-001 postflight
+- **Canonical Owner**: Spec 046 Task and `agent-governance-closure` contract
+- **Provenance**: implementation
+  `c4457fa01ae41013ba56db3d3591da845529cf2b`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-002 CI/QA routing and evidence-owner reconciliation
+
+#### Progress
+
+- Implemented the closed closure contract, schema, fixture, production
+  validator, focused regression suite, and active-corpus registration.
+- Bound all eleven predecessor rows and the fixed-cutoff provider/model source
+  projections to tracked files, expected lifecycle states, full Git commit
+  identities, and SHA-256 digests through descriptor-relative no-follow reads.
+- Preserved the four memory classes: working short-term, durable long-term,
+  domain-scoped, and provider-local auxiliary. Each class now carries owner,
+  sensitivity, promotion, retention/expiry, compaction replacement,
+  archive/GC, conflict, and handoff rules; repository authority wins and raw
+  provider-local values are neither read nor promoted.
+- Kept provider runtime/auth/model discovery, hosted CI, branch protection,
+  actual evaluation/admission/promotion/fitness, remote, and live evidence as
+  explicit `ABSENT` or `DEFER` results with owner, limitation, and retry data.
+
+#### Evidence
+
+- The 28 focused closure tests, active-corpus unit/self-test/production checks,
+  Ruff check and format review, strict Markdown/link/registry checks, exact
+  ten-path staged validation lane, full staged pre-commit, and both diff checks
+  passed without retained formatter mutation.
+- Independent requirements and quality reviews both returned `APPROVED` after
+  exact provider canary/source binding, model-count, descriptor-read, and
+  value-free diagnostic findings were corrected and re-reviewed.
+- `detect-secrets` passes with narrow key-specific exclusions for Git/SHA-256
+  integrity metadata; no baseline rewrite or secret-value exception was kept.
+
+#### Handoff
+
+- AGPC-002 owns routing closure self-test and production validation through the
+  existing single agent-governance CI job and pre-commit surface, plus canonical
+  harness/provider/loop/roster/model/memory owner reconciliation.
+- This postflight observes the AGPC-001 implementation commit and does not
+  preclaim its own content-addressed commit SHA or any AGPC-002 result.
+
 ### 2026-08-01 - Spec 046 activation postflight
 
 #### Metadata

@@ -41,7 +41,7 @@ approved action observes them.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | AGPC-000 | VAL-AGPC-001, VAL-AGPC-010 | Activate reciprocal Spec/Plan/Task, three indexes, program lineage, and progress | platform | Done | Exact eight-file activation is committed and observed without a self-SHA preclaim in the activation content | `c6bae0227acd3e4f57b591c14a88e31b6f2e553f`; sole parent `060396112abaddbbcf79a33c8a04ae775cce66a1`; staged lifecycle/runner, strict docs, pre-commit, all-files, and diff PASS |
-| AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Pending | Not executed | Planned `agent-governance-closure` package |
+| AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Done | Closed repository-static contract package with fail-closed schema, source-bound predecessor/provider/model projections, four-class memory lifecycle, and value-free diagnostics | `c4457fa01ae41013ba56db3d3591da845529cf2b`; focused 28/28, staged lane, full pre-commit, Ruff, diff, requirements review, and quality review PASS |
 | AGPC-002 | VAL-AGPC-003..007 | Route closure gate and reconcile harness/provider/loop/roster/model/memory owners | platform | Pending | Not executed | Planned validation-surface, CI/QA, implementation-map, catalog, and provider-note updates |
 | AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Pending | Not executed | Planned focused, aggregate, all-files, diff, and independent review evidence |
 | AGPC-004 | VAL-AGPC-010 | Record reciprocal closure and observed postflight | platform | Pending | Not executed | Planned exact closure and postflight commits |
@@ -78,7 +78,18 @@ has sole parent `060396112abaddbbcf79a33c8a04ae775cce66a1` and exactly eight
 paths. Staged lifecycle, strict registry/Markdown/links, the exact-path staged
 runner, plain staged pre-commit, repository-wide all-files pre-commit, and both
 diff checks passed without formatter mutation. The activation content did not
-preclaim its own SHA, and no AGPC-001 through AGPC-005 result is inferred.
+preclaim its own SHA.
+
+AGPC-001 implementation `c4457fa01ae41013ba56db3d3591da845529cf2b`
+adds the closure contract, closed schema, production validator, duplicate-safe
+fixture, focused tests, corpus-role registration, and narrowly scoped
+secret-scanner exclusions for integrity metadata. The package binds actual
+predecessor files and provider/model evidence by descriptor-relative reads and
+SHA-256, keeps every non-repository lane `ABSENT` or `DEFER`, and rejects
+secret-like durable keys or values without echoing them. The 28 focused tests,
+exact ten-path staged lane, full pre-commit suite, Ruff, both diff checks, and
+independent requirements and quality reviews passed. AGPC-002 through AGPC-005
+remain pending.
 
 The closure design preserves working short-term, durable long-term,
 domain-scoped, and provider-local auxiliary memory as the four classes. It
@@ -96,7 +107,7 @@ actual evaluation, fitness, admission, and promotion.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [AGPC-000](../plans/2026-08-01-agent-governance-program-closure.md#work-breakdown) | Done | Activation `c6bae022`; exact eight paths, sole parent `06039611`, staged lifecycle/runner, strict docs, staged/all-files pre-commit, and diff PASS. |
-| [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Pending | Closure contract package pending. |
+| [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Done | Implementation `c4457fa0`; closed contract/schema/fixture/validator/tests, exact ten-path staged lane, full pre-commit, focused 28/28, Ruff, diff, and both independent reviews PASS. |
 | N/A — AGPC-002 shares the Plan and Spec sources above | Pending | Routing and evidence-owner reconciliation pending. |
 | N/A — AGPC-003 shares the Plan and Spec sources above | Pending | Final QA and independent reviews pending. |
 | N/A — AGPC-004 shares the Plan and Spec sources above | Pending | Reciprocal closure and postflight pending. |
