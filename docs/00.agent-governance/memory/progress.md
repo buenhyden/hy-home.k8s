@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 045 reciprocal closure postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-045 #agqc-006 #closure #postflight #explicit-ref
+- **Owner**: AGQC-006 postflight
+- **Canonical Owner**: Spec 045 Task and durable progress ledger
+- **Provenance**: closure `de9a88e4550b87542eb7221c5ae7416fe5075763`
+  with sole parent `ed89228546501dd11a7f4abad28e8ebb094fbd97`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: Spec 046 activation
+
+#### Progress
+
+- Observed the exact eight-file reciprocal Spec 045 `done` transition after
+  the terminal hermetic test correction. The closure contains no self-claimed
+  SHA and advances only Spec 045 from `active` to `done`; Spec 046 remains
+  `draft`.
+- Preserved the fixed provider/model/source cutoff and the non-transitive
+  repository-static evidence boundary. Hosted CI, branch protection,
+  provider runtime/auth/model discovery, actual evaluation/admission/
+  promotion, provider resume/handoff, remote, and live results remain
+  explicit Spec 046-owned `DEFER`.
+
+#### Evidence
+
+- Explicit-ref lifecycle validation passed for
+  `ed89228546501dd11a7f4abad28e8ebb094fbd97` to
+  `de9a88e4550b87542eb7221c5ae7416fe5075763`.
+- The post-closure clean-tree repository aggregate and
+  `pre-commit run --all-files` passed. The exact closure range passed
+  `git diff --check`, and the tracked worktree remained clean.
+
+#### Handoff
+
+- Spec 046 may now activate from this observed predecessor edge. It must
+  separately classify every external/provider/hosted/actual/remote/live lane
+  and must not infer PASS from Spec 045 repository-static closure.
+- This evidence update does not preclaim its own content-addressed commit SHA.
+
 ### 2026-08-01 - Spec 045 AGQC-006 repository-static closure
 
 #### Metadata
