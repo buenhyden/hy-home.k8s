@@ -8,6 +8,7 @@ import json
 import os
 import pwd
 import re
+import selectors
 import signal
 import stat
 import subprocess
@@ -695,6 +696,49 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertIsNotNone(outcome.returncode)
         self.assertLessEqual(selector.timeout, RUNNER.VALIDATOR_PIPE_POLL_SECONDS)
 
+    def test_post_spawn_interrupt_still_finalizes_owned_child(self):
+        real_popen = RUNNER.subprocess.Popen
+        real_monotonic = RUNNER.time.monotonic
+        spawned = []
+        clock_calls = 0
+
+        def capture_spawn(*args, **kwargs):
+            process = real_popen(*args, **kwargs)
+            spawned.append(process)
+            return process
+
+        def interrupt_before_collection():
+            nonlocal clock_calls
+            clock_calls += 1
+            if clock_calls == 1:
+                raise KeyboardInterrupt("post-spawn synthetic interrupt")
+            return real_monotonic()
+
+        try:
+            with (
+                patch.object(RUNNER.subprocess, "Popen", side_effect=capture_spawn),
+                patch.object(
+                    RUNNER.time,
+                    "monotonic",
+                    side_effect=interrupt_before_collection,
+                ),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                self._run_python("import signal; signal.pause()")
+
+            self.assertEqual(len(spawned), 1)
+            self.assertIsNotNone(spawned[0].returncode)
+            self.assertTrue(spawned[0].stdout.closed)
+            self.assertTrue(spawned[0].stderr.closed)
+        finally:
+            for process in spawned:
+                if process.poll() is None:
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    process.wait(timeout=2)
+
     def test_stdout_overflow_fails_closed_without_retaining_over_limit(self):
         outcome = self._run_python(
             "import os; os.write(1, b'x' * 129)",
@@ -717,6 +761,104 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertLessEqual(len(outcome.stderr.retained), 128)
         self.assertTrue(outcome.cleanup_complete)
 
+    def test_zero_and_inclusive_pipe_limits_are_exact(self):
+        empty = self._run_python(
+            "pass", stdout_limit_bytes=0, stderr_limit_bytes=0
+        )
+        inclusive = self._run_python(
+            "import os; os.write(1, b'x' * 128); os.write(2, b'y' * 128)",
+            stdout_limit_bytes=128,
+            stderr_limit_bytes=128,
+        )
+        overflow = self._run_python(
+            "import os; os.write(1, b'x')",
+            stdout_limit_bytes=0,
+        )
+
+        self.assertEqual(empty.status, "completed")
+        self.assertEqual(inclusive.status, "completed")
+        self.assertEqual(inclusive.stdout.observed_bytes, 128)
+        self.assertEqual(inclusive.stderr.observed_bytes, 128)
+        self.assertEqual(overflow.status, "stdout_overflow")
+
+    def test_selector_unregister_oserror_is_bounded_pipe_failure(self):
+        real_selector = selectors.DefaultSelector()
+
+        class _UnregisterFailureSelector:
+            def register(self, *args):
+                return real_selector.register(*args)
+
+            def get_map(self):
+                return real_selector.get_map()
+
+            def select(self, timeout):
+                return real_selector.select(timeout)
+
+            def unregister(self, _pipe):
+                raise OSError("synthetic-unregister-failure")
+
+            def close(self):
+                real_selector.close()
+
+        with patch.object(
+            RUNNER.selectors,
+            "DefaultSelector",
+            return_value=_UnregisterFailureSelector(),
+        ):
+            outcome = self._run_python("pass")
+
+        self.assertEqual(outcome.status, "pipe_failure")
+        self.assertTrue(outcome.cleanup_complete)
+
+    def test_selector_close_failure_occurs_only_after_process_cleanup(self):
+        real_popen = RUNNER.subprocess.Popen
+        spawned = []
+        close_returncodes = []
+
+        def capture_spawn(*args, **kwargs):
+            process = real_popen(*args, **kwargs)
+            spawned.append(process)
+            return process
+
+        class _CloseFailureSelector:
+            def register(self, *_args):
+                return None
+
+            def get_map(self):
+                return {"registered": True}
+
+            def select(self, _timeout):
+                raise OSError("synthetic-select-failure")
+
+            def close(self):
+                close_returncodes.append(spawned[0].returncode)
+                raise OSError("synthetic-close-failure")
+
+        try:
+            with (
+                patch.object(RUNNER.subprocess, "Popen", side_effect=capture_spawn),
+                patch.object(
+                    RUNNER.selectors,
+                    "DefaultSelector",
+                    return_value=_CloseFailureSelector(),
+                ),
+            ):
+                outcome = self._run_python("import signal; signal.pause()")
+
+            self.assertEqual(outcome.status, "pipe_failure")
+            self.assertFalse(outcome.cleanup_complete)
+            self.assertTrue(close_returncodes)
+            self.assertTrue(all(value is not None for value in close_returncodes))
+            self.assertIsNotNone(spawned[0].returncode)
+        finally:
+            for process in spawned:
+                if process.poll() is None:
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    process.wait(timeout=2)
+
     def test_descendant_held_pipes_fail_closed_and_process_group_is_killed(self):
         with tempfile.TemporaryDirectory(prefix="runner-descendant-") as temporary:
             pid_path = Path(temporary) / "descendant.json"
@@ -731,9 +873,65 @@ class BoundedValidationCommandTest(unittest.TestCase):
             outcome = self._run_python(source)
 
             self.assertEqual(outcome.status, "descendant_pipe_hold")
-            self.assertTrue(outcome.cleanup_complete)
+            self.assertFalse(outcome.cleanup_complete)
             descendant_pid = json.loads(pid_path.read_text(encoding="utf-8"))["pid"]
             self._wait_for_process_exit(descendant_pid)
+
+    def test_successful_leader_closes_silent_owned_process_group(self):
+        with tempfile.TemporaryDirectory(prefix="runner-silent-descendant-") as temporary:
+            pid_path = Path(temporary) / "descendant.json"
+            source = (
+                "import json, os, signal, subprocess, sys; "
+                "child=subprocess.Popen([sys.executable, '-I', '-c', "
+                "'import signal; signal.pause()'], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': child.pid, 'pgid': os.getpgrp()}))"
+            )
+            process_ids: dict[str, int] = {}
+            try:
+                outcome = self._run_python(source)
+                process_ids = json.loads(pid_path.read_text(encoding="utf-8"))
+
+                self.assertEqual(outcome.status, "completed")
+                self.assertTrue(outcome.cleanup_complete)
+                self._wait_for_process_exit(process_ids["pid"], timeout_seconds=0.2)
+            finally:
+                if process_ids:
+                    try:
+                        os.killpg(process_ids["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    self._wait_for_process_exit(process_ids["pid"])
+
+    def test_escaped_descendant_is_failed_without_post_reap_group_signal(self):
+        with tempfile.TemporaryDirectory(prefix="runner-escaped-descendant-") as temporary:
+            pid_path = Path(temporary) / "escaped.json"
+            child_source = (
+                "import json, os, signal; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()})); "
+                "signal.pause()"
+            )
+            leader_source = (
+                "import subprocess, sys; "
+                f"subprocess.Popen([sys.executable, '-I', '-c', {child_source!r}])"
+            )
+            escaped: dict[str, int] = {}
+            try:
+                outcome = self._run_python(leader_source, cleanup_seconds=0.2)
+                escaped = json.loads(pid_path.read_text(encoding="utf-8"))
+
+                self.assertEqual(outcome.status, "descendant_pipe_hold")
+                self.assertFalse(outcome.cleanup_complete)
+                os.kill(escaped["pid"], 0)
+            finally:
+                if escaped:
+                    try:
+                        os.killpg(escaped["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    self._wait_for_process_exit(escaped["pid"])
 
     def test_timeout_kills_ready_process_tree(self):
         with tempfile.TemporaryDirectory(prefix="runner-tree-") as temporary:
@@ -746,10 +944,25 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 "json.dumps({'leader': os.getpid(), 'child': child.pid})); "
                 "signal.pause()"
             )
-            outcome = self._run_python(source, timeout_seconds=0.5)
+            real_monotonic = RUNNER.time.monotonic
+            virtual_start = real_monotonic()
+            barrier_observed = False
+
+            def readiness_gated_clock():
+                nonlocal barrier_observed
+                try:
+                    barrier_observed = pid_path.stat().st_size > 0
+                except FileNotFoundError:
+                    barrier_observed = False
+                return virtual_start + (1.0 if barrier_observed else 0.0)
+
+            with patch.object(
+                RUNNER.time, "monotonic", side_effect=readiness_gated_clock
+            ):
+                outcome = self._run_python(source, timeout_seconds=0.5)
 
             self.assertEqual(outcome.status, "timeout")
-            self.assertTrue(pid_path.is_file(), "PID ledger is the readiness barrier")
+            self.assertTrue(barrier_observed)
             process_ids = json.loads(pid_path.read_text(encoding="utf-8"))
             self._wait_for_process_exit(process_ids["leader"])
             self._wait_for_process_exit(process_ids["child"])
@@ -820,6 +1033,122 @@ class BoundedValidationCommandTest(unittest.TestCase):
             complete = RUNNER.cleanup_process_group(_Process(), 0.5)
 
         self.assertFalse(complete)
+
+    def test_group_signal_precedes_reap_and_is_never_repeated_after_reap(self):
+        real_popen = RUNNER.subprocess.Popen
+        real_killpg = RUNNER.os.killpg
+        events = []
+
+        class _ObservedProcess:
+            def __init__(self, process):
+                self._process = process
+                self.pid = process.pid
+                self.stdout = process.stdout
+                self.stderr = process.stderr
+
+            @property
+            def returncode(self):
+                return self._process.returncode
+
+            def poll(self):
+                events.append("reap")
+                return self._process.poll()
+
+            def wait(self, timeout=None):
+                events.append("reap")
+                return self._process.wait(timeout=timeout)
+
+            def kill(self):
+                return self._process.kill()
+
+        def observed_spawn(*args, **kwargs):
+            return _ObservedProcess(real_popen(*args, **kwargs))
+
+        def observed_group_signal(pgid, sig):
+            if sig != 0:
+                events.append("group-signal")
+            return real_killpg(pgid, sig)
+
+        with (
+            patch.object(RUNNER.subprocess, "Popen", side_effect=observed_spawn),
+            patch.object(RUNNER.os, "killpg", side_effect=observed_group_signal),
+        ):
+            outcome = self._run_python("pass")
+
+        self.assertEqual(outcome.status, "completed")
+        self.assertIn("group-signal", events)
+        first_reap = events.index("reap")
+        self.assertLess(events.index("group-signal"), first_reap)
+        self.assertNotIn("group-signal", events[first_reap + 1 :])
+
+    def test_idempotent_cleanup_never_signals_after_leader_is_reaped(self):
+        process = subprocess.Popen(
+            [sys.executable, "-I", "-c", "pass"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+        process.wait(timeout=2)
+
+        with patch.object(RUNNER.os, "killpg") as group_signal:
+            complete = RUNNER.cleanup_process_group(process, 0.5)
+
+        self.assertTrue(complete)
+        group_signal.assert_not_called()
+        self.assertTrue(process.stdout.closed)
+        self.assertTrue(process.stderr.closed)
+
+    def test_repeated_cleanup_interrupts_do_not_skip_close_or_reap(self):
+        process = subprocess.Popen(
+            [sys.executable, "-I", "-c", "import signal; signal.pause()"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+        real_killpg = RUNNER.os.killpg
+
+        class _InterruptingPipe:
+            def __init__(self, pipe):
+                self._pipe = pipe
+
+            @property
+            def closed(self):
+                return self._pipe.closed
+
+            def fileno(self):
+                return self._pipe.fileno()
+
+            def close(self):
+                self._pipe.close()
+                raise KeyboardInterrupt("synthetic pipe-close interrupt")
+
+        process.stdout = _InterruptingPipe(process.stdout)
+
+        def interrupting_group_signal(pgid, sig):
+            real_killpg(pgid, sig)
+            raise KeyboardInterrupt("synthetic group-signal interrupt")
+
+        try:
+            with (
+                patch.object(
+                    RUNNER.os, "killpg", side_effect=interrupting_group_signal
+                ),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                RUNNER.cleanup_process_group(process, 0.5)
+
+            self.assertIsNotNone(process.returncode)
+            self.assertTrue(process.stdout.closed)
+            self.assertTrue(process.stderr.closed)
+        finally:
+            if process.poll() is None:
+                try:
+                    real_killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                process.wait(timeout=2)
 
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):

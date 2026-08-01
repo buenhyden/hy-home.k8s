@@ -294,47 +294,133 @@ def exact_success_marker_count(stdout: str | bytes, marker: str) -> int:
     return sum(line == marker for line in stdout.splitlines())
 
 
-def _close_pipe(pipe: BinaryIO | None) -> None:
+def _close_pipe(pipe: BinaryIO | None) -> bool:
+    """Close one pipe without letting an ordinary close failure escape."""
+
     if pipe is None:
-        return
+        return True
     try:
         pipe.close()
-    except OSError:
-        pass
+    except Exception:
+        return False
+    return True
+
+
+def _close_selector(selector: selectors.BaseSelector) -> tuple[bool, BaseException | None]:
+    """Close a selector after child cleanup and defer asynchronous exceptions."""
+
+    try:
+        selector.close()
+    except Exception:
+        return False, None
+    except BaseException as exc:
+        return False, exc
+    return True, None
+
+
+def _leader_exited_without_reap(process: subprocess.Popen[bytes]) -> bool:
+    """Observe direct-child exit while retaining its PID/process-group identity."""
+
+    flags = os.WEXITED | os.WNOHANG | os.WNOWAIT
+    return os.waitid(os.P_PID, process.pid, flags) is not None
 
 
 def cleanup_process_group(
     process: subprocess.Popen[bytes], cleanup_seconds: float
 ) -> bool:
-    """Kill one validator tree and reap its leader under one total deadline."""
+    """Kill one owned group, close pipes, and reap under one total deadline.
 
-    deadline = time.monotonic() + max(0.0, cleanup_seconds)
+    Group signaling intentionally precedes the only direct-leader reap.  A
+    deferred asynchronous exception is re-raised only after every cleanup step
+    received a best-effort attempt.
+    """
+
     cleanup_complete = True
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
-    except OSError:
-        cleanup_complete = False
-    try:
-        process.kill()
-    except ProcessLookupError:
-        pass
-    except OSError:
-        cleanup_complete = False
+    deferred: BaseException | None = None
 
-    _close_pipe(process.stdout)
-    _close_pipe(process.stderr)
-    if process.poll() is not None:
+    # Idempotent finalization must never signal a numeric process-group ID
+    # after its direct leader has already been reaped.
+    if getattr(process, "returncode", None) is not None:
+        for pipe in (process.stdout, process.stderr):
+            try:
+                if not _close_pipe(pipe):
+                    cleanup_complete = False
+            except BaseException as exc:
+                cleanup_complete = False
+                deferred = deferred or exc
+        if deferred is not None:
+            raise deferred
         return cleanup_complete
 
-    remaining = max(0.0, deadline - time.monotonic())
-    if remaining == 0.0:
-        return False
     try:
-        process.wait(timeout=remaining)
-    except (OSError, subprocess.TimeoutExpired):
-        return False
+        deadline = time.monotonic() + max(0.0, cleanup_seconds)
+    except Exception:
+        deadline = None
+        cleanup_complete = False
+    except BaseException as exc:
+        deadline = None
+        cleanup_complete = False
+        deferred = exc
+
+    group_signal_succeeded = False
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+        group_signal_succeeded = True
+    except ProcessLookupError:
+        # A caller may provide an already-reaped synthetic process.  The
+        # absence is safe only when a return code is already recorded.
+        if getattr(process, "returncode", None) is None:
+            cleanup_complete = False
+    except Exception:
+        cleanup_complete = False
+    except BaseException as exc:
+        cleanup_complete = False
+        deferred = deferred or exc
+
+    if not group_signal_succeeded:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+        except Exception:
+            cleanup_complete = False
+        except BaseException as exc:
+            cleanup_complete = False
+            deferred = deferred or exc
+
+    for pipe in (process.stdout, process.stderr):
+        try:
+            if not _close_pipe(pipe):
+                cleanup_complete = False
+        except BaseException as exc:
+            # A custom/test pipe may close successfully and then interrupt.
+            # Continue so the other pipe and leader are still finalized.
+            cleanup_complete = False
+            deferred = deferred or exc
+
+    if getattr(process, "returncode", None) is None:
+        try:
+            if deadline is None:
+                remaining = max(0.0, cleanup_seconds)
+            else:
+                remaining = max(0.0, deadline - time.monotonic())
+        except Exception:
+            remaining = 0.0
+            cleanup_complete = False
+        except BaseException as exc:
+            remaining = 0.0
+            cleanup_complete = False
+            deferred = deferred or exc
+        try:
+            process.wait(timeout=remaining)
+        except Exception:
+            cleanup_complete = False
+        except BaseException as exc:
+            cleanup_complete = False
+            deferred = deferred or exc
+
+    if deferred is not None:
+        raise deferred
     return cleanup_complete
 
 
@@ -375,34 +461,40 @@ def run_bounded_command(
             stderr=accumulators["stderr"].result(complete=False),
             cleanup_complete=True,
         )
-    try:
-        process = subprocess.Popen(
-            list(argv),
-            cwd=cwd,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=False,
-            env=env,
-            text=False,
-            bufsize=0,
-            close_fds=True,
-            start_new_session=True,
-        )
-    except OSError:
-        selector.close()
-        return BoundedCommandResult(
-            status="start_failure",
-            returncode=None,
-            stdout=accumulators["stdout"].result(complete=False),
-            stderr=accumulators["stderr"].result(complete=False),
-            cleanup_complete=True,
-        )
-
-    status = "collecting"
+    process: subprocess.Popen[bytes] | None = None
+    status = "start_failure"
     cleanup_complete = True
-    execution_deadline = time.monotonic() + timeout_seconds
     try:
+        try:
+            process = subprocess.Popen(
+                list(argv),
+                cwd=cwd,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=False,
+                env=env,
+                text=False,
+                bufsize=0,
+                close_fds=True,
+                start_new_session=True,
+            )
+        except OSError:
+            selector_ok, deferred = _close_selector(selector)
+            if deferred is not None:
+                raise deferred
+            return BoundedCommandResult(
+                status="start_failure" if selector_ok else "pipe_failure",
+                returncode=None,
+                stdout=accumulators["stdout"].result(complete=False),
+                stderr=accumulators["stderr"].result(complete=False),
+                cleanup_complete=selector_ok,
+            )
+
+        # The ownership bracket is already active before this first
+        # interruptible post-spawn operation.
+        execution_deadline = time.monotonic() + timeout_seconds
+        status = "collecting"
         for name, pipe in (("stdout", process.stdout), ("stderr", process.stderr)):
             if pipe is None:
                 status = "pipe_failure"
@@ -413,14 +505,22 @@ def run_bounded_command(
                 status = "pipe_failure"
                 break
 
-        while status == "collecting" and selector.get_map():
+        while status == "collecting":
+            try:
+                active_streams = bool(selector.get_map())
+            except (OSError, ValueError):
+                status = "pipe_failure"
+                break
+            if not active_streams:
+                break
+
             remaining = execution_deadline - time.monotonic()
             if remaining <= 0:
                 status = "timeout"
                 break
             try:
                 events = selector.select(
-                    timeout=min(VALIDATOR_PIPE_POLL_SECONDS, remaining)
+                    min(VALIDATOR_PIPE_POLL_SECONDS, remaining)
                 )
             except InterruptedError:
                 status = "collection_interrupted"
@@ -430,7 +530,15 @@ def run_bounded_command(
                 break
 
             if not events:
-                if process.poll() is not None:
+                try:
+                    leader_exited = _leader_exited_without_reap(process)
+                except InterruptedError:
+                    status = "collection_interrupted"
+                    break
+                except (ChildProcessError, OSError, ValueError):
+                    status = "pipe_failure"
+                    break
+                if leader_exited:
                     status = "descendant_pipe_hold"
                     break
                 continue
@@ -457,10 +565,12 @@ def run_bounded_command(
                 if not payload:
                     try:
                         selector.unregister(pipe)
-                    except (KeyError, ValueError):
+                    except (KeyError, OSError, ValueError):
                         status = "pipe_failure"
                         break
-                    _close_pipe(pipe)
+                    if not _close_pipe(pipe):
+                        status = "pipe_failure"
+                        break
                     stream_complete[name] = True
                     continue
 
@@ -469,34 +579,65 @@ def run_bounded_command(
                     break
 
         if status == "collecting":
-            remaining = execution_deadline - time.monotonic()
-            if remaining <= 0:
-                status = "timeout"
-            else:
-                try:
-                    process.wait(timeout=remaining)
-                except subprocess.TimeoutExpired:
+            while status == "collecting":
+                remaining = execution_deadline - time.monotonic()
+                if remaining <= 0:
                     status = "timeout"
-                except OSError:
+                    break
+                try:
+                    leader_exited = _leader_exited_without_reap(process)
+                except InterruptedError:
+                    status = "collection_interrupted"
+                    break
+                except (ChildProcessError, OSError, ValueError):
                     status = "pipe_failure"
-                else:
-                    status = "completed"
+                    break
+                if leader_exited:
+                    status = "ready_for_completion"
+                    break
+                try:
+                    time.sleep(min(VALIDATOR_PIPE_POLL_SECONDS, remaining))
+                except InterruptedError:
+                    status = "collection_interrupted"
+                    break
 
-        if status != "completed":
-            selector.close()
-            cleanup_complete = cleanup_process_group(process, cleanup_seconds)
+        # Every path, including normal leader exit, closes the owned process
+        # group while the unreaped leader still pins its numeric identity.
+        cleanup_complete = cleanup_process_group(process, cleanup_seconds)
+        if status == "ready_for_completion":
+            status = "completed" if cleanup_complete else "cleanup_failure"
+        elif status == "descendant_pipe_hold":
+            # A pipe holder can deliberately escape the owned group.  The
+            # command is already failing, and cleanup completeness cannot be
+            # promoted solely from the original-group kill.
+            cleanup_complete = False
+
+        selector_ok, deferred = _close_selector(selector)
+        if not selector_ok:
+            cleanup_complete = False
+            status = "pipe_failure"
+        if deferred is not None:
+            raise deferred
     except BaseException:
-        selector.close()
-        cleanup_process_group(process, cleanup_seconds)
+        if process is not None:
+            try:
+                cleanup_process_group(process, cleanup_seconds)
+            except BaseException:
+                pass
+        _close_selector(selector)
         raise
     finally:
-        selector.close()
-        _close_pipe(process.stdout)
-        _close_pipe(process.stderr)
+        _close_selector(selector)
+        if process is not None:
+            for pipe in (process.stdout, process.stderr):
+                try:
+                    _close_pipe(pipe)
+                except BaseException:
+                    pass
 
     return BoundedCommandResult(
         status=status,
-        returncode=process.poll(),
+        returncode=process.returncode,
         stdout=accumulators["stdout"].result(
             complete=stream_complete["stdout"]
         ),
@@ -656,8 +797,11 @@ def run_selected(
             if marker is not None and completed.status == "completed"
             else None
         )
-        passed = completed.status == "completed" and completed.returncode == 0 and (
-            marker_count == 1 if marker is not None else True
+        passed = (
+            completed.status == "completed"
+            and completed.returncode == 0
+            and completed.cleanup_complete
+            and (marker_count == 1 if marker is not None else True)
         )
         status = "PASS" if passed else "FAIL"
         limitation = observation(completed)
