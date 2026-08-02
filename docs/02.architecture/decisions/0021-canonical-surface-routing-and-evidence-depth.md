@@ -1,7 +1,7 @@
 ---
 title: 'ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture'
 type: sdlc/adr
-status: draft
+status: active
 owner: platform
 updated: 2026-08-02
 ---
@@ -10,7 +10,7 @@ updated: 2026-08-02
 
 ## Overview
 
-This draft decision selects a reference-based projection architecture for
+This active decision selects a reference-based projection architecture for
 repository delivery and platform assurance. The existing validation-surface
 contract remains the sole affected-path and validator owner; two new closed
 contracts project GitHub routing and platform evidence depth without copying
