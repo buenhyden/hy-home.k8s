@@ -161,7 +161,7 @@ state that current `main` has already superseded.
 | REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 is the planned downstream owner and is not yet authored. |
 | REQ-RDPA-003 | ACC-RDPA-002 | [Spec 048](../03.specs/048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
 | REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the planned downstream owner stated in REQ-RDPA-003. |
-| REQ-RDPA-005 | ACC-RDPA-003 | N/A — Spec 049 is the planned downstream owner and is not yet authored. |
+| REQ-RDPA-005 | ACC-RDPA-003 | [Spec 049](../03.specs/049-platform-validation-and-security-evidence/spec.md) owns layered platform evidence. |
 | REQ-RDPA-006 | ACC-RDPA-004 | N/A — Spec 049 shares the planned downstream owner stated in REQ-RDPA-005. |
 | REQ-RDPA-007 | ACC-RDPA-005 | N/A — Spec 050 is the planned downstream owner and is not yet authored. |
 | REQ-RDPA-008 | ACC-RDPA-006 | N/A — Specs 049 and 050 are planned downstream owners and are not yet authored. |

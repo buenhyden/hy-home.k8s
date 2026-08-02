@@ -134,6 +134,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 048-github-routing-and-ci-evidence/
 │   └── spec.md
+├── 049-platform-validation-and-security-evidence/
+│   └── spec.md
 └── README.md
 ```
 
@@ -212,6 +214,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-003/ARD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
 | [`./047-current-surface-and-stash-reconciliation/spec.md`](./047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 planned Specs 048–050에 남긴다. | 2026-08-02 |
 | [`./048-github-routing-and-ci-evidence/spec.md`](./048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Draft | validation-surface ID를 참조하는 단일 projection contract와 native GitHub 정합성을 소유하며 branch protection 및 hosted rerun은 별도 권한으로 남긴다. | 2026-08-02 |
+| [`./049-platform-validation-and-security-evidence/spec.md`](./049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
 
 ### Helper Templates
 

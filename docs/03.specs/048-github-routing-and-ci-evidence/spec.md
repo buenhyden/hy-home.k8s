@@ -227,7 +227,8 @@ observed repository and SHA.
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 047](../047-current-surface-and-stash-reconciliation/spec.md)
-- **Successor**: planned Spec 049
+- **Successor**:
+  [Spec 049](../049-platform-validation-and-security-evidence/spec.md)
 
 ### Lifecycle Traceability
 
