@@ -130,6 +130,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 046-agent-governance-program-closure/
 │   └── spec.md
+├── 047-current-surface-and-stash-reconciliation/
+│   └── spec.md
 └── README.md
 ```
 
@@ -206,6 +208,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./044-agent-roster-evaluation-and-admission/spec.md`](./044-agent-roster-evaluation-and-admission/spec.md) | Agent roster evaluation and admission specification | Done | 구현 `258955b3`, AREA-004 postflight `a15d5e10`, AREA-005 semantic reconciliation `7891368e`로 exact 12-role/4-provider-surface/48-tuple repository-static readiness와 gate enforcement를 닫았다. Mapping은 `PASS` 21 / `DEFER` 27이고 configured incumbent는 유지된다. AREA-003 evaluation readiness는 완료됐지만 observed evaluation/final admission/model fitness/threshold/promotion/canary/runtime/provider auth/hosted CI/remote/live는 해당 범위에서 계속 `DEFER`다. 다음 handoff는 Spec 045다. | 2026-07-30 |
 | [`./045-agent-governance-ci-qa-cutover/spec.md`](./045-agent-governance-ci-qa-cutover/spec.md) | Agent governance CI and QA cutover specification | Done | AGQC-000~006 repository-static CI/QA cutover를 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`에서 Python `741`, aggregate, all-files, formatter review 및 diff가 PASS했고 test-only delta는 관련 `49`, nested-subreaper probe, file pre-commit 및 세 독립 검토를 통과했다(모두 `0/0/0`). 고정 cutoff는 `2026-07-10T10:00:00+09:00`이며 hosted CI, branch protection, provider runtime/auth/model discovery, actual eval/admission/promotion, remote/live 및 provider resume/handoff canary는 Spec 046 범위로 `DEFER`한다. | 2026-08-01 |
 | [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-003/ARD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
+| [`./047-current-surface-and-stash-reconciliation/spec.md`](./047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 planned Specs 048–050에 남긴다. | 2026-08-02 |
 
 ### Helper Templates
 
