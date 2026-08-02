@@ -355,7 +355,7 @@ the authority.
 - [ ] Remove the clean isolated worktree and its merged local branch.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s worktree remove /home/hy/projects/hy-home.k8s/.worktrees/repository-delivery-platform-assurance
+  rtk git -C /home/hy/projects/hy-home.k8s worktree remove .worktrees/repository-delivery-platform-assurance
   rtk git -C /home/hy/projects/hy-home.k8s branch -d program/repository-delivery-platform-assurance
   rtk git -C /home/hy/projects/hy-home.k8s worktree list --porcelain
   ```
