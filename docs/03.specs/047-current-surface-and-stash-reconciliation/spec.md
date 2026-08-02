@@ -219,7 +219,8 @@ or `git stash drop` in this tranche.
   [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
-- **Successor**: planned Spec 048
+- **Successor**:
+  [Spec 048](../048-github-routing-and-ci-evidence/spec.md)
 
 ### Lifecycle Traceability
 

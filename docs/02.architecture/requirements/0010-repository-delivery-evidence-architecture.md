@@ -132,7 +132,7 @@ Vault/ESO's explicit authentication and CA boundaries.
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
 | [REQ-RDPA-001](../../01.requirements/007-repository-delivery-and-platform-assurance.md#functional-requirements) | Single current inventory, evidence-backed no-change, and protected-surface boundary | [ADR-0021](../decisions/0021-canonical-surface-routing-and-evidence-depth.md) and [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md) |
-| N/A — REQ-RDPA-003 shares the PRD-007 source linked in REQ-RDPA-001. | Non-duplicative GitHub projection and independent CI lanes | N/A — Spec 048 is planned and not yet authored. |
+| N/A — REQ-RDPA-003 shares the PRD-007 source linked in REQ-RDPA-001. | Non-duplicative GitHub projection and independent CI lanes | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md) |
 | N/A — REQ-RDPA-005 shares the PRD-007 source linked in REQ-RDPA-001. | Layered platform evidence and product semantics | N/A — Spec 049 is planned and not yet authored. |
 | N/A — REQ-RDPA-007 shares the PRD-007 source linked in REQ-RDPA-001. | Provider-native IaC validation and deterministic fallbacks | N/A — Spec 050 is planned and not yet authored. |
 | N/A — REQ-RDPA-009 shares the PRD-007 source linked in REQ-RDPA-001. | Approval boundary, rollback, closure, and no-change evidence | N/A — Spec 051 is planned and not yet authored. |

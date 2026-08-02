@@ -111,4 +111,4 @@ state with an older snapshot.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD-0010](../requirements/0010-repository-delivery-evidence-architecture.md) | N/A — first repository-delivery assurance decision; preserves accepted ADR-0014 as the platform topology owner | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md) is authored; Specs 048 through 051 remain planned. |
+| [ARD-0010](../requirements/0010-repository-delivery-evidence-architecture.md) | N/A — first repository-delivery assurance decision; preserves accepted ADR-0014 as the platform topology owner | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md) and [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md) are authored; Specs 049 through 051 remain planned. |

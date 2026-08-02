@@ -159,7 +159,7 @@ state that current `main` has already superseded.
 | --- | --- | --- |
 | REQ-RDPA-001 | ACC-RDPA-001 | [ARD-0010](../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
 | REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 is the planned downstream owner and is not yet authored. |
-| REQ-RDPA-003 | ACC-RDPA-002 | N/A — Spec 048 is the planned downstream owner and is not yet authored. |
+| REQ-RDPA-003 | ACC-RDPA-002 | [Spec 048](../03.specs/048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
 | REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the planned downstream owner stated in REQ-RDPA-003. |
 | REQ-RDPA-005 | ACC-RDPA-003 | N/A — Spec 049 is the planned downstream owner and is not yet authored. |
 | REQ-RDPA-006 | ACC-RDPA-004 | N/A — Spec 049 shares the planned downstream owner stated in REQ-RDPA-005. |
