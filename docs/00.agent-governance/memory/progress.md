@@ -8,7 +8,7 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-08-01 - Spec 046 AGPC-004 terminal document transition
+### 2026-08-01 - Spec 046 AGPC-004 terminal transition postflight
 
 #### Metadata
 
@@ -16,16 +16,18 @@ inventory stays in `scripts/README.md`.
 - **Layer**: architecture, governance, qa, meta
 - **Status**: complete
 - **Tags**: #spec-046 #agpc-004 #adr-0019 #terminal-documents #closure
-- **Owner**: AGPC-004 terminal document transition
+- **Owner**: AGPC-004 terminal transition and observed postflight
 - **Canonical Owner**: accepted ADR-0019, Spec 046 Task, and
   `agent-governance-closure` contract
-- **Provenance**: terminal document proposal; terminal commit identity is
-  intentionally unclaimed pending a separate observed postflight
+- **Provenance**: observed terminal commit
+  `0a9e10324b552079fdd212683570e08a19878376` with sole parent
+  `e84393af5d6196ec352307b3af21b3790e108794`; this postflight does not
+  preclaim its own commit SHA
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: retain as durable program-closure evidence until a
   newer canonical owner supersedes current status without deleting provenance
-- **Next Owner**: AGPC-004 observed terminal postflight, then the post-terminal
-  root finishing handoff performs local integration and cleanup
+- **Next Owner**: post-terminal root finishing handoff for the still-planned
+  local integration and cleanup
 
 #### Progress
 
@@ -35,13 +37,16 @@ inventory stays in `scripts/README.md`.
   reciprocal Spec 046, Plan, and Task to `done`, reconciled their indexes, and
   closed the Spec 046 profile-lineage state while preserving ADR-0013 as its
   historical governing decision. Accepted ADR-0019 owns present-tense current
-  architecture. The closure contract/schema/fixture advanced to `1.2.0` with
-  synchronized predecessor status and source digests.
-- Marked AGPC-004 terminal document work complete without inventing its commit
-  SHA. A separate postflight must observe the terminal commit. The AGPC-005
-  Task row is `Archived` and transfers local `main` integration plus
-  worktree/branch cleanup to the post-terminal root finishing handoff; those
-  actions remain planned and unexecuted.
+  architecture. The terminal proposal advanced the closure
+  contract/schema/fixture to `1.2.0` with synchronized predecessor status and
+  source digests.
+- Observed terminal commit `0a9e10324b552079fdd212683570e08a19878376`
+  and its sole parent `e84393af5d6196ec352307b3af21b3790e108794`, then
+  advanced the postflight package to `1.2.1` and bound ADR-0019's
+  `implementationRef` to the observed commit without changing its source
+  digest. The AGPC-005 Task row remains `Archived` and transfers local `main`
+  integration plus worktree/branch cleanup to the post-terminal root finishing
+  handoff; those actions remain planned and unexecuted.
 - Preserved provider/runtime, hosted, actual-evaluation, remote, and live lanes
   as `DEFER` or `ABSENT`, plus handoff values `planned`, `not-authorized`, and
   `planned`.
@@ -56,21 +61,49 @@ inventory stays in `scripts/README.md`.
 #### Evidence
 
 - The 29 focused closure tests, closure self-test, and production validation
-  passed after the `1.2.0` synchronization.
+  passed after the terminal synchronization.
 - Strict document registry validation covered 467 paths with zero uncovered or
   ambiguous routes; strict Markdown profiles reported zero violations; strict
   cross-document links and body contracts were valid; `git diff --check`
   reported no whitespace errors.
+- The observed terminal commit has the expected sole-parent edge and exactly
+  these 21 paths:
+  - `docs/00.agent-governance/contracts/agent-governance-closure.json`
+  - `docs/00.agent-governance/contracts/agent-governance-closure.schema.json`
+  - `docs/00.agent-governance/memory/progress.md`
+  - `docs/01.requirements/003-workspace-agent-governance-platform.md`
+  - `docs/01.requirements/README.md`
+  - `docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md`
+  - `docs/02.architecture/decisions/README.md`
+  - `docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md`
+  - `docs/02.architecture/requirements/README.md`
+  - `docs/03.specs/041-stage-00-agent-governance-contract/agent-design.md`
+  - `docs/03.specs/041-stage-00-agent-governance-contract/spec.md`
+  - `docs/03.specs/046-agent-governance-program-closure/spec.md`
+  - `docs/03.specs/README.md`
+  - `docs/04.execution/plans/2026-08-01-agent-governance-program-closure.md`
+  - `docs/04.execution/plans/README.md`
+  - `docs/04.execution/tasks/2026-08-01-agent-governance-program-closure.md`
+  - `docs/04.execution/tasks/README.md`
+  - `docs/99.templates/support/document-profiles.json`
+  - `scripts/validate-agent-governance-closure.py`
+  - `tests/fixtures/agent-governance-closure.json`
+  - `tests/test_validate_agent_governance_closure.py`
+- The final v4 review diff was 86,731 bytes with SHA-256
+  `806a76eb7587f764c996412cee1290e138934d898ad2c209f5ec2d0ad5b0e8ab`.
+  Independent requirements review returned `COMPLIANT`; independent
+  quality/security review returned `APPROVED`; explicit-ref lifecycle
+  validation and the clean-tree repository quality aggregate both passed.
 - AGPC-003 remains the owner of its previously observed affected, staged,
   aggregate, all-files, formatter, and independent-review evidence. AGPC-004
   does not reclassify those prior observations or infer external-lane PASS.
 
 #### Handoff
 
-- The next postflight must observe the AGPC-004 terminal commit, its sole
-  parent, exact changed paths, explicit-ref lifecycle result, and clean-tree
+- This postflight records the observed terminal commit, sole parent, exact
+  changed paths, final reviews, explicit-ref lifecycle result, and clean-tree
   aggregate without preclaiming the postflight's own SHA.
-- The post-terminal root handoff may then perform the separately authorized
+- The post-terminal root handoff may now perform the separately authorized
   local `main` integration and safe worktree/branch cleanup. No push, PR,
   remote merge, hosted/provider
   run, credential access, provider-local memory read, ignored checkpoint read,

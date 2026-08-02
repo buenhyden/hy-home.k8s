@@ -15,8 +15,10 @@ closure-contract implementation, QA routing, final independent review,
 reciprocal closure/postflight, local `main` merge, and isolated-worktree
 cleanup.
 
-AGPC-004 has completed the terminal document transition without inventing its
-commit SHA. A separate AGPC-004 postflight must observe that commit. The
+AGPC-004 completed the terminal document transition in observed commit
+`0a9e10324b552079fdd212683570e08a19878376`, whose sole parent is
+`e84393af5d6196ec352307b3af21b3790e108794`. This separate postflight binds
+that observation without inventing the postflight commit's own SHA. The
 AGPC-005 row is `Archived`: it transfers still-unexecuted local `main`
 integration and worktree/branch cleanup to the post-terminal root finishing
 handoff. Accordingly, those actions remain planned operational evidence rather
@@ -46,6 +48,9 @@ approved action observes them.
   `ff66dd933e00def085b4c0319a67c6651356b116`
 - Observed AGPC-003 evidence commit
   `666e814a65303fe297cf07fab4112720bea62f0a`
+- Observed AGPC-004 terminal commit
+  `0a9e10324b552079fdd212683570e08a19878376` with sole parent
+  `e84393af5d6196ec352307b3af21b3790e108794`
 
 ## Task Table
 
@@ -55,7 +60,7 @@ approved action observes them.
 | AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Done | Closed repository-static contract package with fail-closed schema, source-bound predecessor/provider/model projections, four-class memory lifecycle, and value-free diagnostics | `c4457fa01ae41013ba56db3d3591da845529cf2b`; focused 28/28, staged lane, full pre-commit, Ruff, diff, requirements review, and quality review PASS |
 | AGPC-002 | VAL-AGPC-003..007 | Route closure gate and reconcile harness/provider/loop/roster/model/memory owners | platform | Done | One existing CI job now owns 18 delegated checks; validation remains 22 surfaces with 22 validators and exactly 12 closure route classes; human owner docs point to one closure classification contract without external-lane promotion | `4fdea6a068aec6c65681bae32c44b67a5e95f09e`; focused, 20-path staged, aggregate, full pre-commit, requirements, and quality/security review PASS |
 | AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Done | Verified local QA and independent review evidence is recorded without external-lane promotion; the observed evidence commit's scoped review returned SPEC PASS, QUALITY PASS, and no findings | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; observed evidence `666e814a65303fe297cf07fab4112720bea62f0a`; 774 Python tests, 15 Spec 046 validators, affected/staged/aggregate/pre-commit/Ruff/diff PASS, and resolved re-review PASS |
-| AGPC-004 | VAL-AGPC-010 | Close reciprocal terminal documents and hand off observed postflight | platform | Done | Spec 046, Plan, Task, ADR-0019, indexes, profile lineage, progress, and closure contract are terminally reconciled while the Spec 041 agent-design remains active as current design owner | No self-commit SHA is claimed; separate AGPC-004 postflight observation remains pending |
+| AGPC-004 | VAL-AGPC-010 | Close reciprocal terminal documents and hand off observed postflight | platform | Done | Spec 046, Plan, Task, ADR-0019, indexes, profile lineage, progress, and closure contract are terminally reconciled while the Spec 041 agent-design remains active as current design owner | Terminal commit `0a9e10324b552079fdd212683570e08a19878376`; sole parent `e84393af5d6196ec352307b3af21b3790e108794`; exact 21-path scope, final v4 reviews, explicit-ref lifecycle, and clean-tree aggregate PASS |
 | AGPC-005 | VAL-AGPC-010 | Transfer local `main` integration and isolated worktree/branch cleanup to the post-terminal root finishing handoff | platform | Archived | Operational action transferred out of this terminal Task without claiming execution | Closure handoff remains `localMerge: planned`, `worktreeCleanup: planned`, and `remoteAction: not-authorized` |
 
 ## Approval and Safety Boundaries
@@ -157,22 +162,55 @@ requirements `COMPLIANT`, and quality/security `APPROVED`. This postflight
 records the observed activation SHA; it does not accept ADR-0019 or make it the
 current decision.
 
-AGPC-004 terminal document work accepts ADR-0019 as the current decision,
-keeps the Spec 041 agent-design active as current design owner, closes the
-reciprocal Spec 046/Plan/Task documents, reconciles current-owner indexes and
-profile lineage, and advances the closure contract package to `1.2.0`. It
-preserves ADR-0013 as accepted historical predecessor evidence and does not
-claim this transition's future commit SHA.
-A focused 29-test suite, closure self-test/production, strict 467-path document
-registry, strict Markdown profile, strict link/body-contract checks, and
-`git diff --check` passed.
+AGPC-004 terminal document commit
+`0a9e10324b552079fdd212683570e08a19878376`, with sole parent
+`e84393af5d6196ec352307b3af21b3790e108794`, accepts ADR-0019 as the current
+decision, keeps the Spec 041 agent-design active as current design owner,
+closes the reciprocal Spec 046/Plan/Task documents, and reconciles
+current-owner indexes and profile lineage. This postflight advances the closure
+contract package to `1.2.1` and binds ADR-0019's implementation reference to
+that observed terminal commit while preserving its source digest and ADR-0013
+as accepted historical predecessor evidence.
+
+The terminal commit contains exactly these 21 paths:
+
+- `docs/00.agent-governance/contracts/agent-governance-closure.json`
+- `docs/00.agent-governance/contracts/agent-governance-closure.schema.json`
+- `docs/00.agent-governance/memory/progress.md`
+- `docs/01.requirements/003-workspace-agent-governance-platform.md`
+- `docs/01.requirements/README.md`
+- `docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md`
+- `docs/02.architecture/decisions/README.md`
+- `docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md`
+- `docs/02.architecture/requirements/README.md`
+- `docs/03.specs/041-stage-00-agent-governance-contract/agent-design.md`
+- `docs/03.specs/041-stage-00-agent-governance-contract/spec.md`
+- `docs/03.specs/046-agent-governance-program-closure/spec.md`
+- `docs/03.specs/README.md`
+- `docs/04.execution/plans/2026-08-01-agent-governance-program-closure.md`
+- `docs/04.execution/plans/README.md`
+- `docs/04.execution/tasks/2026-08-01-agent-governance-program-closure.md`
+- `docs/04.execution/tasks/README.md`
+- `docs/99.templates/support/document-profiles.json`
+- `scripts/validate-agent-governance-closure.py`
+- `tests/fixtures/agent-governance-closure.json`
+- `tests/test_validate_agent_governance_closure.py`
+
+The final v4 review package was 86,731 bytes with SHA-256
+`806a76eb7587f764c996412cee1290e138934d898ad2c209f5ec2d0ad5b0e8ab`;
+independent requirements review returned `COMPLIANT` and independent
+quality/security review returned `APPROVED`. Explicit-ref lifecycle validation
+over the sole-parent edge passed, and the clean-tree repository quality
+aggregate passed. The focused 29-test suite, closure self-test/production,
+strict 467-path document registry, strict Markdown profile, strict
+link/body-contract checks, and `git diff --check` also passed.
+
 AGPC-003 remains the owner of its previously observed affected, staged,
 aggregate, all-files, formatter, and independent-review evidence; AGPC-004
-does not reclassify those observations.
-A separate AGPC-004 postflight must observe the terminal commit. The AGPC-005
-row archives local `main` integration and worktree/branch cleanup into the
-post-terminal root finishing handoff; both remain planned and unexecuted.
-External lanes remain `DEFER` or `ABSENT`.
+does not reclassify those observations. This postflight does not preclaim its
+own commit SHA. The AGPC-005 row continues to archive local `main` integration
+and worktree/branch cleanup into the post-terminal root finishing handoff; both
+remain planned and unexecuted. External lanes remain `DEFER` or `ABSENT`.
 
 The closure design preserves working short-term, durable long-term,
 domain-scoped, and provider-local auxiliary memory as the four classes. It
@@ -183,8 +221,8 @@ actual evaluation, fitness, admission, and promotion.
 
 - **Spec**: Agent Governance Program Closure
 - **Plan**: Agent Governance Program Closure Implementation Plan
-- **Successor state**: AGPC-004 observed terminal postflight, then the
-  post-terminal root handoff performs local merge and worktree/branch cleanup
+- **Successor state**: the post-terminal root handoff performs the still-planned
+  local merge and worktree/branch cleanup
 
 ### Lifecycle Traceability
 
@@ -194,5 +232,5 @@ actual evaluation, fitness, admission, and promotion.
 | [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Done | Implementation `c4457fa0`; closed contract/schema/fixture/validator/tests, exact ten-path staged lane, full pre-commit, focused 28/28, Ruff, diff, and both independent reviews PASS. |
 | N/A — AGPC-002 shares the Plan and Spec sources above | Done | Implementation `4fdea6a0`; one CI job, 18 delegated checks, 22/22 surface-validator inventory, exact 12 closure routes, 20-path staged/aggregate/pre-commit PASS, and final reviews approved. |
 | N/A — AGPC-003 shares the Plan and Spec sources above | Done | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; observed evidence `666e814a65303fe297cf07fab4112720bea62f0a` with scoped review `SPEC PASS`, `QUALITY PASS`, and no findings; 774-test suite, 15 Spec 046 validators, affected/staged/aggregate/all-files/Ruff/diff PASS, and scoped re-review approval with no blocking finding. |
-| N/A — AGPC-004 shares the Plan and Spec sources above | Done | Terminal document transition complete without a self-SHA; separate observed postflight pending. |
+| N/A — AGPC-004 shares the Plan and Spec sources above | Done | Observed terminal commit `0a9e10324b552079fdd212683570e08a19878376` with sole parent `e84393af5d6196ec352307b3af21b3790e108794`; exact 21 paths, v4 requirements `COMPLIANT`, quality/security `APPROVED`, explicit-ref lifecycle PASS, and clean-tree aggregate PASS. This postflight does not claim its own SHA. |
 | N/A — AGPC-005 shares the Plan and Spec sources above | Archived | Planned local merge and cleanup transferred to the post-terminal root finishing handoff without an execution claim. |

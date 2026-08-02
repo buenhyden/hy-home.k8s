@@ -103,13 +103,13 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         }
         for candidate in (self.fixture, contract):
             with self.subTest(contractVersion=candidate["contractVersion"]):
-                self.assertEqual(candidate["contractVersion"], "1.2.0")
+                self.assertEqual(candidate["contractVersion"], "1.2.1")
                 adr = candidate["predecessorCriteria"][2]
                 self.assertEqual(adr["id"], "adr-0019")
                 self.assertEqual(adr["expectedStatus"], "accepted")
                 self.assertEqual(
                     adr["implementationRef"],
-                    "git-sha1:ff66dd933e00def085b4c0319a67c6651356b116",
+                    "git-sha1:0a9e10324b552079fdd212683570e08a19878376",
                 )
                 self.assertEqual(
                     {row["owner"] for row in candidate["reviewEvidence"].values()},
