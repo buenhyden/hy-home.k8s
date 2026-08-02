@@ -475,9 +475,9 @@ copied.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-PVSE-001](../../03.specs/049-platform-validation-and-security-evidence/spec.md#success-criteria--verification-plan) | PVSE-001, PVSE-002 | Contract/schema mutation and source-parity results |
-| N/A — VAL-PVSE-002 and VAL-PVSE-003 share the Spec source above | PVSE-002 | Exact-tool thirteen-root render and per-GVK schema evidence |
-| N/A — VAL-PVSE-004 shares the Spec source above | PVSE-003 | Traefik positive/negative graph results |
-| N/A — VAL-PVSE-005 and VAL-PVSE-006 share the Spec source above | PVSE-004 | Canonical focused security/fallback regression results |
-| N/A — VAL-PVSE-007 shares the Spec source above | PVSE-002, PVSE-003, PVSE-006 | Exception and remote/live DEFER matrix |
-| N/A — VAL-PVSE-008 shares the Spec source above | PVSE-005, PVSE-006 | Routing, CI, QA, review, and closure evidence |
+| [VAL-PVSE-001](../../03.specs/049-platform-validation-and-security-evidence/spec.md#success-criteria--verification-plan) | PVSE-001, PVSE-002 | [Contract/schema mutation and source-parity results](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |
+| N/A — VAL-PVSE-002 and VAL-PVSE-003 share the Spec source above | PVSE-002 | [Exact-tool thirteen-root render and per-GVK schema evidence](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |
+| N/A — VAL-PVSE-004 shares the Spec source above | PVSE-003 | [Traefik positive/negative graph results](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |
+| N/A — VAL-PVSE-005 and VAL-PVSE-006 share the Spec source above | PVSE-004 | [Canonical focused security/fallback regression results](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |
+| N/A — VAL-PVSE-007 shares the Spec source above | PVSE-002, PVSE-003, PVSE-006 | [Exception and remote/live DEFER matrix](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |
+| N/A — VAL-PVSE-008 shares the Spec source above | PVSE-005, PVSE-006 | [Routing, CI, QA, review, and closure evidence](../tasks/2026-08-02-platform-validation-and-security-evidence.md#task-table) |

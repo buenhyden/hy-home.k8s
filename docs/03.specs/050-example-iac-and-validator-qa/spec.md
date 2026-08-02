@@ -192,20 +192,20 @@ deployment what-if guidance:
 ## Verification Commands
 
 ```bash
-python3 scripts/validate-example-iac.py --root . --self-test
-python3 scripts/validate-example-iac.py --root .
-python3 -m unittest tests/test_validate_example_iac.py
-terraform fmt -check -recursive examples/aws/terraform
-terraform -chdir=examples/aws/terraform init -backend=false -input=false -lockfile=readonly
-terraform -chdir=examples/aws/terraform validate -no-color
-bicep lint examples/azure/infrastructure/main.bicep
-bicep build examples/azure/infrastructure/main.bicep --stdout
-bash scripts/validate-k8s-manifests.sh .
-bash scripts/validate-policy-gates.sh .
-bash scripts/check-secret-handling.sh .
-bash scripts/validate-repo-quality-gates.sh .
-pre-commit run --all-files
-git diff --check
+rtk python3 scripts/validate-example-iac.py --root . --self-test
+rtk python3 scripts/validate-example-iac.py --root .
+rtk python3 -m unittest tests/test_validate_example_iac.py
+rtk terraform fmt -check -recursive examples/aws/terraform
+rtk terraform -chdir=examples/aws/terraform init -backend=false -input=false -lockfile=readonly
+rtk terraform -chdir=examples/aws/terraform validate -no-color
+rtk bicep lint examples/azure/infrastructure/main.bicep
+rtk bicep build examples/azure/infrastructure/main.bicep --stdout
+rtk bash scripts/validate-k8s-manifests.sh .
+rtk bash scripts/validate-policy-gates.sh .
+rtk bash scripts/check-secret-handling.sh .
+rtk bash scripts/validate-repo-quality-gates.sh .
+rtk pre-commit run --all-files
+rtk git diff --check
 ```
 
 The focused validator and native tool commands become executable only after
@@ -241,6 +241,10 @@ isolated environment described above, not an unreviewed ambient configuration.
   [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Plan**:
+  [Example IaC and Validator QA Implementation Plan](../../04.execution/plans/2026-08-02-example-iac-and-validator-qa.md)
+- **Task**:
+  [Example IaC and Validator QA Task](../../04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md)
 - **Predecessor**:
   [Spec 049](../049-platform-validation-and-security-evidence/spec.md)
 - **Successor**:
