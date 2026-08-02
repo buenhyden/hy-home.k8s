@@ -8,6 +8,42 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 AGPC-003 evidence postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-003 #qa #review #evidence #postflight
+- **Owner**: AGPC-003 evidence postflight
+- **Canonical Owner**: Spec 046 Task and `agent-governance-closure` contract
+- **Provenance**: observed evidence commit
+  `666e814a65303fe297cf07fab4112720bea62f0a` for final fix
+  `1e2bd0744b5213d5004c34aac028b9642cc60028`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-004 reciprocal closure and observed postflight
+
+#### Progress
+
+- Recorded the observed AGPC-003 evidence commit and retained repository-local
+  QA/review evidence without promoting any provider/runtime, hosted,
+  actual-evaluation, remote, or live result.
+- The scoped review for the evidence commit returned `SPEC PASS`, `QUALITY
+  PASS`, and no findings.
+
+#### Evidence
+
+- Observed evidence commit `666e814a65303fe297cf07fab4112720bea62f0a`
+  records final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`.
+- Its scoped review returned `SPEC PASS`, `QUALITY PASS`, and no findings.
+
+#### Handoff
+
+- AGPC-004 owns reciprocal closure and observed postflight. This entry does
+  not preclaim this postflight's own commit SHA, ADR acceptance, terminal
+  document closure, local merge, worktree cleanup, or external-lane evidence.
+
 ### 2026-08-01 - Spec 046 AGPC-003 verified local QA and review evidence
 
 #### Metadata
