@@ -108,6 +108,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-08-02-example-iac-and-validator-qa.md
 ├── 2026-08-02-github-routing-and-ci-evidence.md
 ├── 2026-08-02-platform-validation-and-security-evidence.md
+├── 2026-08-02-repository-assurance-integration-and-closure.md
 └── README.md
 ```
 
@@ -198,6 +199,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-08-02-example-iac-and-validator-qa.md`](./2026-08-02-example-iac-and-validator-qa.md) | [Spec 050](../../03.specs/050-example-iac-and-validator-qa/spec.md)과 reciprocal [Plan](../plans/2026-08-02-example-iac-and-validator-qa.md)의 exact tools, provider lock, Terraform/Bicep native QA, CI, guidance, cleanup, review, and closure evidence를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-github-routing-and-ci-evidence.md)의 contract, native projection, CI routing, remote metadata, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-platform-validation-and-security-evidence.md)의 exact-tool, render/schema/GVK, Traefik, security regression, CI, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
+| [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)과 reciprocal [Plan](../plans/2026-08-02-repository-assurance-integration-and-closure.md)의 계약 통합, QA, 검토, 로컬 fast-forward, stash 및 worktree 정리, 수명주기 종결 증거를 추적한다. | Draft | 2026-08-02 |
 
 ## Related Documents
 

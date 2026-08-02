@@ -107,6 +107,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-08-02-example-iac-and-validator-qa.md
 ├── 2026-08-02-github-routing-and-ci-evidence.md
 ├── 2026-08-02-platform-validation-and-security-evidence.md
+├── 2026-08-02-repository-assurance-integration-and-closure.md
 └── README.md
 ```
 
@@ -195,6 +196,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-08-02-example-iac-and-validator-qa.md`](./2026-08-02-example-iac-and-validator-qa.md) | [Spec 050](../../03.specs/050-example-iac-and-validator-qa/spec.md)의 exact-tool Terraform/Bicep contract extension, provider lock, native non-deploy QA, CI routing, guidance, and cleanup 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)의 surface-ID projection contract, native GitHub parity, CI lane preservation, and read-only remote evidence 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)의 depth-aware platform evidence, exact-tool Kustomize/schema validation, Traefik semantics, security regressions, and CI ownership 실행 계획이다. | Draft | 2026-08-02 |
+| [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)의 계약 통합, 전체 QA와 독립 검토, 로컬 fast-forward, 정확한 stash 폐기, worktree 정리, 수명주기 종결 실행 계획이다. | Draft | 2026-08-02 |
 
 ## Related Documents
 

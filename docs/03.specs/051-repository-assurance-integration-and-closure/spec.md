@@ -178,23 +178,23 @@ identifiers required for review.
 ## Verification Commands
 
 ```bash
-python3 scripts/validate-github-surface-routing.py --root .
-python3 scripts/validate-platform-evidence.py --root .
-python3 scripts/validate-traefik-contracts.py --root .
-python3 scripts/validate-example-iac.py --root .
-python3 scripts/validate-document-contract-registry.py --root . --self-test
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-bash scripts/validate-gitops-structure.sh
-bash scripts/validate-k8s-manifests.sh .
-bash scripts/validate-policy-gates.sh .
-bash scripts/check-secret-handling.sh .
-python3 scripts/validate-vault-eso-contracts.py --root .
-python3 -m unittest discover -s tests -p 'test_*.py'
-bash scripts/validate-repo-quality-gates.sh .
-pre-commit run --all-files
-git diff --check
+rtk python3 scripts/validate-github-surface-routing.py --root .
+rtk python3 scripts/validate-platform-evidence.py --root .
+rtk python3 scripts/validate-traefik-contracts.py --root .
+rtk python3 scripts/validate-example-iac.py --root .
+rtk python3 scripts/validate-document-contract-registry.py --root . --self-test
+rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
+rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
+rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
+rtk bash scripts/validate-gitops-structure.sh
+rtk bash scripts/validate-k8s-manifests.sh .
+rtk bash scripts/validate-policy-gates.sh .
+rtk bash scripts/check-secret-handling.sh .
+rtk python3 scripts/validate-vault-eso-contracts.py --root .
+rtk python3 -m unittest discover -s tests -p 'test_*.py'
+rtk bash scripts/validate-repo-quality-gates.sh .
+rtk pre-commit run --all-files
+rtk git diff --check
 ```
 
 The first four commands are predecessor deliverables. The Task records
@@ -235,6 +235,10 @@ read-only remote metadata commands in addition to this terminal sequence.
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 050](../050-example-iac-and-validator-qa/spec.md)
+- **Implementation Plan**:
+  [Repository Assurance Integration and Closure Implementation Plan](../../04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md)
+- **Execution Task**:
+  [Task: Repository Assurance Integration and Closure](../../04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md)
 
 ### Lifecycle Traceability
 
