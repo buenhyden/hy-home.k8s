@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-01
 ---
 
 # Reference: Local Harness Catalog
@@ -119,7 +119,8 @@ same policy in different words.
 | Model tier vocabulary and per-tuple state | `model-policy.md` owns `top` / `worker` and reasoning vocabulary; `contracts/agent-model-fitness.json` owns each role/provider incumbent, configured and observed value, candidate, reasoning, fallback, and decision state; `contracts/provider-runtime-evidence.json` owns cutoff/current source confidence | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
-| Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
+| Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, roster, and program-closure validators |
+| Program closure result classification     | `contracts/agent-governance-closure.json` and adjacent schema                     | Provider notes, implementation map, pre-commit, and the existing agent-governance CI job | Closure self-test and production validator; repository-static PASS never promotes provider, hosted, actual-evaluation, remote, or live lanes |
 | Template contract                         | `docs/99.templates/support/template-routing.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
 | Work evidence                             | `docs/04.execution/tasks/**` and `memory/progress.md`                             | Provider final responses and PR descriptions                                    | Task verification summary and progress ledger                                      |
 

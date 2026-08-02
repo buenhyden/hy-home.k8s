@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-governance-ci.schema.json",
   "schemaVersion": 1,
-  "contractVersion": "1.2.0",
+  "contractVersion": "1.3.0",
   "resultVocabulary": ["PASS", "FAIL", "SKIP", "DEFER"],
   "evidenceVocabulary": [
     "repo-static",
@@ -132,6 +132,18 @@
     {
       "id": "agent-legacy-cutover-production",
       "command": "python3 scripts/validate-agent-legacy-cutover.py --root .",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
+      "id": "agent-governance-closure-self-test",
+      "command": "python3 scripts/validate-agent-governance-closure.py --root . --self-test",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
+      "id": "agent-governance-closure-production",
+      "command": "python3 scripts/validate-agent-governance-closure.py --root .",
       "evidence": "repo-static",
       "allowedResults": ["PASS", "FAIL"]
     },
@@ -298,7 +310,7 @@
     "inventory": {
       "truthCases": 6,
       "mutationCases": 45,
-      "delegatedChecks": 16,
+      "delegatedChecks": 18,
       "deferredOwners": 1,
       "qaSurfaces": 10,
       "legacyPositiveCases": 3,

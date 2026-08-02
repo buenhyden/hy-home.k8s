@@ -67,6 +67,7 @@ EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
         "tests",
     )
 )
+EXPECTED_AGENT_GOVERNANCE_CLOSURE_SURFACES = EXPECTED_AGENT_GOVERNANCE_SURFACES
 CANONICAL_SHARED_SYMLINKS = {
     ".claude/skills": "../.agents/skills",
     ".claude/workflows": "../.agents/workflows",
@@ -355,13 +356,26 @@ def validate_contract(
             "SURFACE-AGENT-GOVERNANCE-CI",
             "agent-governance-static surface ownership differs from the exact contract",
         )
+    closure_surfaces = {
+        identifier
+        for identifier, surface in surfaces.items()
+        if "agent-governance-closure" in surface["validators"]
+    }
+    if closure_surfaces != EXPECTED_AGENT_GOVERNANCE_CLOSURE_SURFACES:
+        fail(
+            "SURFACE-AGENT-GOVERNANCE-CLOSURE",
+            "agent-governance closure surface ownership differs from the exact contract",
+        )
     return contract
 
 
 def _case_alias(contract: dict[str, Any], path: str) -> bool:
     for surface in contract["surfaces"]:
         for route in surface["routes"]:
-            if route["kind"] == "exact" and route["value"].casefold() == path.casefold():
+            if (
+                route["kind"] == "exact"
+                and route["value"].casefold() == path.casefold()
+            ):
                 return route["value"] != path
             if route["kind"] == "regex":
                 pattern = route["value"]
@@ -499,9 +513,9 @@ def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
 def validate_ci_workflow_selector(root: Path) -> None:
     try:
         workflow = (root / CI_WORKFLOW_PATH).read_text(encoding="utf-8")
-        changes = workflow.split("\n  changes:\n", 1)[1].split(
-            "\n  pre-commit:\n", 1
-        )[0]
+        changes = workflow.split("\n  changes:\n", 1)[1].split("\n  pre-commit:\n", 1)[
+            0
+        ]
     except (OSError, UnicodeError, IndexError) as exc:
         fail("SURFACE-LOCAL-CI-MISMATCH", f"cannot read changes job: {exc}")
 
@@ -532,7 +546,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "--lane ci \\",
         '--paths-file "$RUNNER_TEMP/changed-paths.nul" \\',
         "--delimiter nul \\",
-        "--format github-output >> \"$GITHUB_OUTPUT\"",
+        '--format github-output >> "$GITHUB_OUTPUT"',
     )
     missing = [fragment for fragment in required_fragments if fragment not in changes]
     forbidden_fragments = (
@@ -580,6 +594,8 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "python3 scripts/validate-agent-roster-currentness.py .",
         "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
         "python3 scripts/validate-agent-governance-ci.py --root .",
+        "python3 scripts/validate-agent-governance-closure.py --root . --self-test",
+        "python3 scripts/validate-agent-governance-closure.py --root .",
         "python3 scripts/validate-affected-surfaces.py --root . --self-test",
         "python3 scripts/validate-affected-surfaces.py --root .",
         "python3 scripts/validate-ci-python-contract.py --root . --self-test",
@@ -627,9 +643,9 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "repo-quality-static selected=%s result=%s verdict=%s",
         "agent-governance-static selected=%s result=%s verdict=%s",
         "manifest-static selected=%s result=%s verdict=%s",
-        'true:success)',
-        'false:skipped)',
-        '*)',
+        "true:success)",
+        "false:skipped)",
+        "*)",
         'verdict="PASS"',
         'verdict="SKIP"',
         'verdict="FAIL"',
@@ -649,9 +665,7 @@ def validate_ci_workflow_selector(root: Path) -> None:
         "report_conditional",
     )
     present_summary = [
-        fragment
-        for fragment in forbidden_summary_fragments
-        if fragment in summary_job
+        fragment for fragment in forbidden_summary_fragments if fragment in summary_job
     ]
     if missing_summary or present_summary:
         detail = []
@@ -825,6 +839,18 @@ def _mutate(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
         )
         surface["validators"].append(mutation["validatorId"])
         return
+    if mutation["kind"] == "remove-validator-reference":
+        surface = next(
+            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
+        )
+        try:
+            surface["validators"].remove(mutation["validatorId"])
+        except ValueError:
+            fail(
+                "SURFACE-FIXTURE",
+                f"{mutation['surfaceId']} does not reference {mutation['validatorId']}",
+            )
+        return
     if mutation["kind"] == "append-ci-job-reference":
         surface = next(
             row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
@@ -946,9 +972,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
         ),
         "agent-governance-scripts": ("scripts/validate-agent-governance-ci.py",),
-        "agent-governance-tests": (
-            "tests/test_validate_agent_governance_ci.py",
-        ),
+        "agent-governance-tests": ("tests/test_validate_agent_governance_ci.py",),
     }
     for name, paths in required_agent_selection_paths.items():
         case = selection_by_name.get(name)
@@ -958,6 +982,8 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             or tuple(case.get("paths", ())) != paths
             or "agent-governance-static"
             not in case.get("expected", {}).get("ciJobs", ())
+            or "agent-governance-closure"
+            not in case.get("expected", {}).get("validators", ())
         ):
             fail("SURFACE-FIXTURE", f"{name}: broad CI route coverage differs")
 
@@ -1108,9 +1134,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "remove-agent-governance-scripts": "scripts",
         "remove-agent-governance-tests": "tests",
     }
-    mutations_by_name = {
-        case.get("name"): case for case in fixture["mutationCases"]
-    }
+    mutations_by_name = {case.get("name"): case for case in fixture["mutationCases"]}
     for name, surface_id in required_agent_mutations.items():
         case = mutations_by_name.get(name)
         if (
@@ -1124,6 +1148,24 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
             or case.get("expectedError") != "SURFACE-AGENT-GOVERNANCE-CI"
         ):
             fail("SURFACE-FIXTURE", f"{name}: mutation coverage differs")
+
+    closure_mutation = mutations_by_name.get(
+        "remove-agent-governance-closure-governance-documents"
+    )
+    if (
+        closure_mutation is None
+        or closure_mutation.get("mutation")
+        != {
+            "kind": "remove-validator-reference",
+            "surfaceId": "governance-documents",
+            "validatorId": "agent-governance-closure",
+        }
+        or closure_mutation.get("expectedError") != "SURFACE-AGENT-GOVERNANCE-CLOSURE"
+    ):
+        fail(
+            "SURFACE-FIXTURE",
+            "agent-governance closure mutation coverage differs",
+        )
 
     for case in fixture["mutationCases"]:
         mutated = copy.deepcopy(contract)
@@ -1141,13 +1183,13 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     if json_output(root_result) != (
         '{"ciJobs":["agent-governance-static","pre-commit","repo-quality-static"],'
         '"protectedLevel":"review","unmatchedPaths":[],'
-        '"validators":["agent-governance-ci","agent-legacy-cutover",'
+        '"validators":["agent-governance-ci","agent-governance-closure",'
+        '"agent-legacy-cutover",'
         '"repository-quality"]}'
     ):
         fail("SURFACE-SELF-TEST", "stable JSON output differs")
     if github_output(contract, root_result) != (
-        "agent_governance=true\nmanifests=false\n"
-        "precommit=true\nrepo_quality=true"
+        "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
     ):
         fail("SURFACE-SELF-TEST", "stable GitHub output differs")
     mixed_result = select_paths(

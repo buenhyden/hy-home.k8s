@@ -142,8 +142,8 @@
     },
     "delegatedChecks": {
       "type": "array",
-      "minItems": 16,
-      "maxItems": 16,
+      "minItems": 18,
+      "maxItems": 18,
       "items": {"$ref": "#/$defs/delegatedCheck"}
     },
     "gateCommands": {

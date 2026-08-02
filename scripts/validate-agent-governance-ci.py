@@ -43,16 +43,14 @@ QUALITY_STANDARDS_PATH = PurePosixPath(
 POSTFLIGHT_PATH = PurePosixPath(
     "docs/00.agent-governance/rules/postflight-checklist.md"
 )
-SHARED_QA_WORKFLOW_PATH = PurePosixPath(
-    ".agents/workflows/qa-cicd-workflow.md"
-)
+SHARED_QA_WORKFLOW_PATH = PurePosixPath(".agents/workflows/qa-cicd-workflow.md")
 PULL_REQUEST_TEMPLATE_PATH = PurePosixPath(".github/PULL_REQUEST_TEMPLATE.md")
 GITHUB_README_PATH = PurePosixPath(".github/README.md")
 SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
 TESTS_README_PATH = PurePosixPath("tests/README.md")
 
 SCHEMA_VERSION = 1
-CONTRACT_VERSION = "1.2.0"
+CONTRACT_VERSION = "1.3.0"
 RESULT_VOCABULARY = ("PASS", "FAIL", "SKIP", "DEFER")
 EVIDENCE_VOCABULARY = (
     "repo-static",
@@ -83,9 +81,7 @@ SUMMARY_NEEDS = (
     "agent-governance-static",
     "manifest-static",
 )
-SUMMARY_RUN_SHA256 = (
-    "ec09bcd7bcfba533efe328c49bb3955e6889ec43f8c3a3ec63626ca7a83890eb"  # pragma: allowlist secret
-)
+SUMMARY_RUN_SHA256 = "ec09bcd7bcfba533efe328c49bb3955e6889ec43f8c3a3ec63626ca7a83890eb"  # pragma: allowlist secret
 SUMMARY_ENV = {
     "EVENT_NAME": "${{ github.event_name }}",
     "BRANCH_POLICY_RESULT": "${{ needs['branch-policy'].result }}",
@@ -93,9 +89,7 @@ SUMMARY_ENV = {
     "PRE_COMMIT_SELECTED": "${{ needs.changes.outputs.precommit }}",
     "PRE_COMMIT_RESULT": "${{ needs['pre-commit'].result }}",
     "REPO_QUALITY_STATIC_SELECTED": "${{ needs.changes.outputs.repo_quality }}",
-    "REPO_QUALITY_STATIC_RESULT": (
-        "${{ needs['repo-quality-static'].result }}"
-    ),
+    "REPO_QUALITY_STATIC_RESULT": ("${{ needs['repo-quality-static'].result }}"),
     "AGENT_GOVERNANCE_STATIC_SELECTED": (
         "${{ needs.changes.outputs.agent_governance }}"
     ),
@@ -143,6 +137,14 @@ DELEGATED_COMMANDS = (
     (
         "agent-legacy-cutover-production",
         "python3 scripts/validate-agent-legacy-cutover.py --root .",
+    ),
+    (
+        "agent-governance-closure-self-test",
+        "python3 scripts/validate-agent-governance-closure.py --root . --self-test",
+    ),
+    (
+        "agent-governance-closure-production",
+        "python3 scripts/validate-agent-governance-closure.py --root .",
     ),
     (
         "agent-provider-evidence",
@@ -209,31 +211,29 @@ PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
 LEGACY_SELF_TEST_COMMAND = (
     "python3 scripts/validate-agent-legacy-cutover.py --root . --self-test"
 )
-LEGACY_PRODUCTION_COMMAND = (
-    "python3 scripts/validate-agent-legacy-cutover.py --root ."
+LEGACY_PRODUCTION_COMMAND = "python3 scripts/validate-agent-legacy-cutover.py --root ."
+CLOSURE_SELF_TEST_COMMAND = (
+    "python3 scripts/validate-agent-governance-closure.py --root . --self-test"
+)
+CLOSURE_PRODUCTION_COMMAND = (
+    "python3 scripts/validate-agent-governance-closure.py --root ."
 )
 AGGREGATE_SELF_TEST_COMMAND = (
     'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
     '--root "$ROOT_DIR" --self-test'
 )
 AGGREGATE_PRODUCTION_COMMAND = (
-    'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
-    '--root "$ROOT_DIR"'
+    'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" --root "$ROOT_DIR"'
 )
 AGGREGATE_LEGACY_SELF_TEST_COMMAND = (
     'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" '
     '--root "$ROOT_DIR" --self-test'
 )
 AGGREGATE_LEGACY_PRODUCTION_COMMAND = (
-    'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" '
-    '--root "$ROOT_DIR"'
+    'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR"'
 )
-CHECKOUT_ACTION = (
-    "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
-)
-PROVIDER_EVIDENCE_AGGREGATE_SHA256 = (
-    "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
-)
+CHECKOUT_ACTION = "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+PROVIDER_EVIDENCE_AGGREGATE_SHA256 = "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
 PROVIDER_EVIDENCE_FOCUSED_VALIDATORS = (
     "validate-agent-provider-config.py",
     "validate-agent-provider-canaries.py",
@@ -329,7 +329,7 @@ LOCAL_QA_COMPACT_SEQUENCE = " -> ".join(LOCAL_QA_SEQUENCE)
 LOCAL_QA_INVENTORY = {
     "truthCases": 6,
     "mutationCases": 45,
-    "delegatedChecks": 16,
+    "delegatedChecks": 18,
     "deferredOwners": 1,
     "qaSurfaces": 10,
     "legacyPositiveCases": 3,
@@ -635,8 +635,7 @@ def _validate_provider_evidence_aggregate(
     assignments: list[ast.AST] = []
     for node in tree.body:
         if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name)
-            and target.id == "FOCUSED_VALIDATORS"
+            isinstance(target, ast.Name) and target.id == "FOCUSED_VALIDATORS"
             for target in node.targets
         ):
             assignments.append(node.value)
@@ -781,9 +780,7 @@ def validate_contract_data(
         "providerEvidenceAggregate": {
             "path": PROVIDER_EVIDENCE_AGGREGATE_PATH.as_posix(),
             "sha256": PROVIDER_EVIDENCE_AGGREGATE_SHA256,
-            "focusedValidators": list(
-                PROVIDER_EVIDENCE_FOCUSED_VALIDATORS
-            ),
+            "focusedValidators": list(PROVIDER_EVIDENCE_FOCUSED_VALIDATORS),
         },
         "forbiddenCommandClasses": [
             "provider-auth",
@@ -829,9 +826,7 @@ def validate_contract_data(
         "owner": LOCAL_QA_OWNER,
         "sequence": list(LOCAL_QA_SEQUENCE),
         "commands": LOCAL_QA_COMMANDS,
-        "consumerSurfaces": [
-            path.as_posix() for path in LOCAL_QA_CONSUMERS
-        ],
+        "consumerSurfaces": [path.as_posix() for path in LOCAL_QA_CONSUMERS],
         "formatterCompletion": {
             "mutationResult": "not-completion-evidence",
             "requiredFinalResult": "PASS",
@@ -856,9 +851,7 @@ def _normalize_needs(value: Any) -> list[str]:
 
 def _job_steps(job: dict[str, Any], rule_id: str) -> list[dict[str, Any]]:
     steps = job.get("steps")
-    if not isinstance(steps, list) or any(
-        not isinstance(step, dict) for step in steps
-    ):
+    if not isinstance(steps, list) or any(not isinstance(step, dict) for step in steps):
         fail(rule_id, "job steps must be a mapping list")
     return steps
 
@@ -918,9 +911,7 @@ def _validate_security(
                 "AGQC-CI-SECURITY",
                 "workflow-level provider or secret env must not reach the static job",
             )
-    if "permissions" in agent_job and agent_job["permissions"] != {
-        "contents": "read"
-    }:
+    if "permissions" in agent_job and agent_job["permissions"] != {"contents": "read"}:
         fail(
             "AGQC-CI-SECURITY",
             "agent-governance-static must not add write or OIDC permissions",
@@ -937,11 +928,7 @@ def _validate_security(
             "AGQC-CI-SECURITY",
             "agent-governance-static must not override run defaults or shell",
         )
-    if any(
-        ("if" in step or "shell" in step)
-        for step in steps
-        if "run" in step
-    ):
+    if any(("if" in step or "shell" in step) for step in steps if "run" in step):
         fail(
             "AGQC-CI-SECURITY",
             "agent-governance static run steps must not be skipped or override shell",
@@ -957,7 +944,9 @@ def _validate_security(
             "every remote Action must use a full forty-character commit SHA",
         )
     checkout_steps = [
-        step for step in steps if step.get("uses") == contract["securityBoundary"]["checkoutAction"]
+        step
+        for step in steps
+        if step.get("uses") == contract["securityBoundary"]["checkoutAction"]
     ]
     if len(checkout_steps) != 1 or checkout_steps[0].get("with") != {
         "persist-credentials": False,
@@ -1009,9 +998,10 @@ def validate_workflow_data(
     if not isinstance(changes, dict):
         fail("AGQC-CI-SELECTOR", "changes job is missing")
     outputs = changes.get("outputs")
-    if not isinstance(outputs, dict) or outputs.get(selector["output"]) != selector[
-        "expression"
-    ]:
+    if (
+        not isinstance(outputs, dict)
+        or outputs.get(selector["output"]) != selector["expression"]
+    ):
         fail("AGQC-CI-SELECTOR", "agent_governance selector output is missing")
     output_owners = [
         job_id
@@ -1081,9 +1071,7 @@ def validate_workflow_data(
         fail("AGQC-CI-SUMMARY", "ci-summary needs differs")
     if str(summary.get("if") or "") != contract["summary"]["if"]:
         fail("AGQC-CI-SUMMARY", "ci-summary if differs")
-    if summary.get("runs-on") != "ubuntu-latest" or summary.get(
-        "timeout-minutes"
-    ) != 5:
+    if summary.get("runs-on") != "ubuntu-latest" or summary.get("timeout-minutes") != 5:
         fail("AGQC-CI-TRUTH", "ci-summary runner or timeout differs")
     summary_steps = _job_steps(summary, "AGQC-CI-SUMMARY")
     if len(summary_steps) != 1:
@@ -1111,9 +1099,7 @@ def validate_workflow_data(
     if summary_step.get("name") != "Summarize CI result" or env != SUMMARY_ENV:
         fail("AGQC-CI-TRUTH", "ci-summary verdict step or env differs")
     summary_run = str(summary_step.get("run") or "")
-    observed_digest = hashlib.sha256(
-        summary_run.encode("utf-8")
-    ).hexdigest()
+    observed_digest = hashlib.sha256(summary_run.encode("utf-8")).hexdigest()
     if observed_digest != contract["summary"]["runSha256"]:
         fail("AGQC-CI-TRUTH", "ci-summary full-script digest differs")
 
@@ -1147,27 +1133,46 @@ def validate_affected_data(
         not isinstance(row, dict) for row in validators
     ):
         fail("AGQC-CI-ROUTE", "affected validators must be a mapping list")
-    registrations = [
-        row for row in validators if row.get("id") == "agent-governance-ci"
-    ]
-    expected_registration = {
-        "id": "agent-governance-ci",
-        "argv": [
-            "python3",
-            "scripts/validate-agent-governance-ci.py",
-            "--root",
-            ".",
-        ],
-        "lanes": ["affected", "staged", "all-files", "ci"],
-        "optional": False,
-        "fallback": {
-            "status": "FAIL",
-            "reason": "Agent-governance CI topology validation is required.",
+    expected_registrations = (
+        {
+            "id": "agent-governance-ci",
+            "argv": [
+                "python3",
+                "scripts/validate-agent-governance-ci.py",
+                "--root",
+                ".",
+            ],
+            "lanes": ["affected", "staged", "all-files", "ci"],
+            "optional": False,
+            "fallback": {
+                "status": "FAIL",
+                "reason": "Agent-governance CI topology validation is required.",
+            },
+            "evidenceLane": "repo-static",
         },
-        "evidenceLane": "repo-static",
-    }
-    if registrations != [expected_registration]:
-        fail("AGQC-CI-ROUTE", "affected validator registration differs")
+        {
+            "id": "agent-governance-closure",
+            "argv": [
+                "python3",
+                "scripts/validate-agent-governance-closure.py",
+                "--root",
+                ".",
+            ],
+            "lanes": ["affected", "staged", "all-files", "ci"],
+            "optional": False,
+            "fallback": {
+                "status": "FAIL",
+                "reason": "Agent-governance closure validation is required.",
+            },
+            "evidenceLane": "repo-static",
+        },
+    )
+    for expected_registration in expected_registrations:
+        registrations = [
+            row for row in validators if row.get("id") == expected_registration["id"]
+        ]
+        if registrations != [expected_registration]:
+            fail("AGQC-CI-ROUTE", "affected validator registration differs")
 
     surfaces = affected.get("surfaces")
     if not isinstance(surfaces, list) or any(
@@ -1187,11 +1192,20 @@ def validate_affected_data(
         for surface_id, surface in by_id.items()
         if "agent-governance-ci" in surface.get("validators", [])
     }
+    selected_closure = {
+        surface_id
+        for surface_id, surface in by_id.items()
+        if "agent-governance-closure" in surface.get("validators", [])
+    }
     expected = set(ROUTE_CLASSES)
-    if selected_job != expected or selected_validator != expected:
+    if (
+        selected_job != expected
+        or selected_validator != expected
+        or selected_closure != expected
+    ):
         fail(
             "AGQC-CI-ROUTE",
-            "required route classes must select exactly one static job and gate",
+            "required route classes must select exactly one static job and both gates",
         )
 
 
@@ -1237,18 +1251,38 @@ def _validate_integrations(
         fail("AGQC-CI-DELEGATION", "pre-commit local hook owner differs")
     hooks = local[0]["hooks"]
     expected_hooks = (
-        ("validate-agent-governance-ci-self-test", SELF_TEST_COMMAND),
-        ("validate-agent-governance-ci", PRODUCTION_COMMAND),
+        (
+            "validate-agent-governance-ci-self-test",
+            "self-test agent-governance CI contract",
+            SELF_TEST_COMMAND,
+        ),
+        (
+            "validate-agent-governance-ci",
+            "validate agent-governance CI contract",
+            PRODUCTION_COMMAND,
+        ),
         (
             "validate-agent-legacy-cutover-self-test",
+            "self-test agent legacy cutover contract",
             LEGACY_SELF_TEST_COMMAND,
         ),
         (
             "validate-agent-legacy-cutover",
+            "validate agent legacy cutover contract",
             LEGACY_PRODUCTION_COMMAND,
         ),
+        (
+            "validate-agent-governance-closure-self-test",
+            "self-test agent-governance closure contract",
+            CLOSURE_SELF_TEST_COMMAND,
+        ),
+        (
+            "validate-agent-governance-closure",
+            "validate agent-governance closure contract",
+            CLOSURE_PRODUCTION_COMMAND,
+        ),
     )
-    for hook_id, entry in expected_hooks:
+    for hook_id, hook_name, entry in expected_hooks:
         matches = [
             hook
             for hook in hooks
@@ -1256,15 +1290,7 @@ def _validate_integrations(
         ]
         if len(matches) != 1 or matches[0] != {
             "id": hook_id,
-            "name": (
-                "self-test agent-governance CI contract"
-                if hook_id == "validate-agent-governance-ci-self-test"
-                else "validate agent-governance CI contract"
-                if hook_id == "validate-agent-governance-ci"
-                else "self-test agent legacy cutover contract"
-                if hook_id == "validate-agent-legacy-cutover-self-test"
-                else "validate agent legacy cutover contract"
-            ),
+            "name": hook_name,
             "entry": entry,
             "language": "system",
             "pass_filenames": False,
@@ -1275,14 +1301,14 @@ def _validate_integrations(
                 "AGQC-CI-DELEGATION",
                 f"pre-commit hook differs: {hook_id}",
             )
-    hook_ids = [
-        hook.get("id") for hook in hooks if isinstance(hook, dict)
-    ]
+    hook_ids = [hook.get("id") for hook in hooks if isinstance(hook, dict)]
     required_hook_order = [
         "validate-agent-governance-ci-self-test",
         "validate-agent-governance-ci",
         "validate-agent-legacy-cutover-self-test",
         "validate-agent-legacy-cutover",
+        "validate-agent-governance-closure-self-test",
+        "validate-agent-governance-closure",
         "validate-affected-surfaces",
         "strict-repository-quality",
     ]
@@ -1304,9 +1330,7 @@ def _validate_local_qa_surfaces(
     texts: dict[PurePosixPath, str],
 ) -> None:
     local_qa = contract["localQa"]
-    expected_consumers = [
-        path.as_posix() for path in LOCAL_QA_CONSUMERS
-    ]
+    expected_consumers = [path.as_posix() for path in LOCAL_QA_CONSUMERS]
     if local_qa["owner"] != LOCAL_QA_OWNER:
         fail("AGQC-QA-OWNER", "canonical local QA owner differs")
     if local_qa["consumerSurfaces"] != expected_consumers:
@@ -1364,7 +1388,7 @@ def _validate_local_qa_surfaces(
 
     inventory_markers = (
         "truth_cases=6 mutation_cases=45",
-        "delegated_checks=16",
+        "delegated_checks=18",
         "deferred_owners=1",
         "qa_surfaces=10",
         "positive_cases=3 mutation_cases=24",
@@ -1410,14 +1434,11 @@ def _validate_fixture_shape(fixture: dict[str, Any]) -> None:
     if fixture["truthTableCases"] != expected_truth:
         fail("AGQC-CI-FIXTURE", "truth-table fixture differs")
     mutation_names = tuple(
-        case.get("name")
-        for case in fixture["mutationCases"]
-        if isinstance(case, dict)
+        case.get("name") for case in fixture["mutationCases"] if isinstance(case, dict)
     )
-    if (
-        mutation_names != EXPECTED_MUTATION_NAMES
-        or len(fixture["mutationCases"]) != len(EXPECTED_MUTATION_NAMES)
-    ):
+    if mutation_names != EXPECTED_MUTATION_NAMES or len(
+        fixture["mutationCases"]
+    ) != len(EXPECTED_MUTATION_NAMES):
         fail("AGQC-CI-FIXTURE", "mutation fixture names or order differ")
     for case in fixture["mutationCases"]:
         if set(case) != {"name", "target", "mutation", "expectedRule"}:
@@ -1426,7 +1447,9 @@ def _validate_fixture_shape(fixture: dict[str, Any]) -> None:
             fail("AGQC-CI-FIXTURE", f"{case['name']}: mutation must be a mapping")
 
 
-def _load_repository_inputs(root: Path) -> tuple[
+def _load_repository_inputs(
+    root: Path,
+) -> tuple[
     dict[str, Any],
     dict[str, Any],
     dict[str, Any],
@@ -1586,9 +1609,7 @@ def _mutate_workflow(
             "PROVIDER_TOKEN": "${{ secrets.PROVIDER_TOKEN }}"
         }
     elif kind == "inject-workflow-provider-secret":
-        workflow["env"] = {
-            "PROVIDER_TOKEN": "${{ secrets.PROVIDER_TOKEN }}"
-        }
+        workflow["env"] = {"PROVIDER_TOKEN": "${{ secrets.PROVIDER_TOKEN }}"}
     elif kind == "inject-id-token":
         jobs["agent-governance-static"]["permissions"] = {
             "contents": "read",
@@ -1639,19 +1660,14 @@ def _mutate_workflow(
     elif kind == "set-workflow-default-shell":
         workflow["defaults"] = {"run": {"shell": "bash {0}"}}
     elif kind == "set-agent-job-default-shell":
-        jobs["agent-governance-static"]["defaults"] = {
-            "run": {"shell": "bash {0}"}
-        }
+        jobs["agent-governance-static"]["defaults"] = {"run": {"shell": "bash {0}"}}
     elif kind == "inject-extra-run-command":
         step = next(
             item
             for item in jobs["agent-governance-static"]["steps"]
             if contract["gateCommands"]["selfTest"] in str(item.get("run") or "")
         )
-        step["run"] = (
-            str(step["run"])
-            + "touch .agent-governance-ci-bypass\n"
-        )
+        step["run"] = str(step["run"]) + "touch .agent-governance-ci-bypass\n"
     elif kind == "set-summary-step-if":
         jobs["ci-summary"]["steps"][0]["if"] = False
     elif kind == "set-summary-step-shell":
@@ -1690,9 +1706,7 @@ def _mutate_affected(
         )
     elif kind == "remove-route-job":
         surface = next(
-            row
-            for row in affected["surfaces"]
-            if row["id"] == mutation["surfaceId"]
+            row for row in affected["surfaces"] if row["id"] == mutation["surfaceId"]
         )
         surface["ciJobs"].remove("agent-governance-static")
     else:
@@ -1720,9 +1734,7 @@ def _run_filesystem_mutation(
         contract_path = target_root / CONTRACT_PATH
         schema_path = target_root / SCHEMA_PATH
         workflow_path = target_root / WORKFLOW_PATH
-        provider_aggregate_path = (
-            target_root / PROVIDER_EVIDENCE_AGGREGATE_PATH
-        )
+        provider_aggregate_path = target_root / PROVIDER_EVIDENCE_AGGREGATE_PATH
         runner_path = target_root / RUNNER_PATH
         pull_request_path = target_root / PULL_REQUEST_TEMPLATE_PATH
         scripts_readme_path = target_root / SCRIPTS_README_PATH
@@ -1781,7 +1793,7 @@ def _run_filesystem_mutation(
             text = scripts_readme_path.read_text(encoding="utf-8")
             scripts_readme_path.write_text(
                 text.replace(
-                    "delegated_checks=16",
+                    "delegated_checks=18",
                     "delegated_checks=13",
                     1,
                 ),

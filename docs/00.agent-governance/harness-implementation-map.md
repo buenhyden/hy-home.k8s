@@ -3,7 +3,7 @@ title: 'Reference: Harness Implementation Map'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 # Reference: Harness Implementation Map
@@ -108,6 +108,7 @@ where is the evidence recorded?_
 | Role semantics | `contracts/harness-contract.json` `adapterSemantics`, forty-eight tracked role adapters | Own shared responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims across `local`, `claude`, `codex`, and `gemini` without copying surface model/tool/effort metadata | `python3 scripts/validate-agent-harness-semantics.py --self-test` and `--root .` | Spec 041 Task |
 | Surface metadata and roster | `contracts/harness-contract.json`, native Claude/Codex/Gemini plus local/Antigravity adapters | Preserve surface-owned model/tool/effort fields, exact twelve-role stems, forty-eight current adapters, scope imports, and the repo-static/runtime evidence boundary | harness validator, repository quality gate, and roster-currentness validator | Spec 044 Task |
 | Legacy cutover | `contracts/agent-legacy-cutover.json` and adjacent schema | Record the zero-consumer proof, retired surfaces, canonical replacements, and historical evidence boundary without restoring a compatibility owner | `python3 scripts/validate-agent-legacy-cutover.py --self-test` and `--root .` | Spec 045 Task |
+| Program closure classification | `contracts/agent-governance-closure.json` and adjacent schema | Integrate predecessor lineage, independent provider canaries, exact roster/model summaries, four-class memory lifecycle, QA/review evidence, limitations, and handoff without promoting repository-static evidence across lanes | `python3 scripts/validate-agent-governance-closure.py --self-test` and `--root .`; routed through affected/staged, pre-commit, and the existing agent-governance CI job | Spec 046 Task and `memory/progress.md` |
 | Lane, result, and handoff contract | `rules/quality-standards.md`, `rules/postflight-checklist.md` | Define `affected`, `staged`, `all-files`, `message/manual`, `ci`, `remote/live`; require `PASS`/`SKIP`/`FAIL`/`DEFER` and complete handoff fields | postflight review and repository quality gate | owning Task and `memory/progress.md` |
 
 Tracked gateway, hook, and role-adapter files are repository configuration.

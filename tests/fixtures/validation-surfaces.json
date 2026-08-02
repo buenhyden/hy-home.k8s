@@ -31,7 +31,7 @@
       "lane": "affected",
       "paths": [".env.example", ".gitignore", "_workspace/README.md"],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -42,7 +42,7 @@
       "lane": "affected",
       "paths": ["AGENTS.md", ".agents/agents/supervisor.md"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -53,7 +53,7 @@
       "lane": "affected",
       "paths": ["docs/00.agent-governance/contracts/harness-contract.json"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -64,7 +64,7 @@
       "lane": "affected",
       "paths": ["docs/00.agent-governance/contracts/agent-loop-lifecycle.json", "scripts/validate-agent-checkpoint.py"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -75,7 +75,7 @@
       "lane": "ci",
       "paths": [".github/workflows/ci.yml"],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -86,7 +86,7 @@
       "lane": "ci",
       "paths": [".pre-commit-config.yaml"],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -97,7 +97,7 @@
       "lane": "ci",
       "paths": ["docs/99.templates/support/template-routing.md"],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -115,7 +115,7 @@
         "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md"
       ],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -126,7 +126,7 @@
       "lane": "ci",
       "paths": ["scripts/validate-agent-governance-ci.py"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -137,7 +137,7 @@
       "lane": "ci",
       "paths": ["tests/test_validate_agent_governance_ci.py"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "repository-quality"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -177,7 +177,7 @@
         "traefik/traefik.yaml"
       ],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -195,7 +195,7 @@
         "tests/fixtures/links-and-owners.json"
       ],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
         "ciJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -217,7 +217,7 @@
       "lane": "affected",
       "paths": [".gitignore"],
       "expected": {
-        "validators": ["agent-governance-ci", "agent-legacy-cutover", "repository-quality"],
+        "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -239,7 +239,7 @@
       "lane": "affected",
       "paths": [".agents/agents/network-reviewer.md"],
       "expected": {
-        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "validators": ["agent-checkpoint", "agent-evaluations", "agent-governance-ci", "agent-governance-closure", "agent-harness-contract", "agent-legacy-cutover", "agent-loop-lifecycle", "agent-model-fitness", "agent-provider-evidence", "agent-roster-admission", "agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -267,6 +267,7 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
+          "agent-governance-closure",
           "agent-legacy-cutover",
           "document-contract-registry",
           "links-and-owners",
@@ -769,6 +770,16 @@
       },
       "paths": ["tests/test_validate_ci_python_contract.py"],
       "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+    },
+    {
+      "name": "remove-agent-governance-closure-governance-documents",
+      "mutation": {
+        "kind": "remove-validator-reference",
+        "surfaceId": "governance-documents",
+        "validatorId": "agent-governance-closure"
+      },
+      "paths": ["docs/00.agent-governance/contracts/agent-governance-closure.json"],
+      "expectedError": "SURFACE-AGENT-GOVERNANCE-CLOSURE"
     }
   ]
 }

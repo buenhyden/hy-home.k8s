@@ -26,6 +26,7 @@ PROVIDERS = {
 EXPECTED_VALIDATORS = {
     "docs": {
         "agent-governance-ci",
+        "agent-governance-closure",
         "agent-legacy-cutover",
         "document-contract-registry",
         "links-and-owners",

@@ -66,9 +66,7 @@ CONTRACT = {
 }
 
 
-def bounded_result(
-    stdout: str = "", stderr: str = "", returncode: int = 0
-) -> object:
+def bounded_result(stdout: str = "", stderr: str = "", returncode: int = 0) -> object:
     def stream(value: str):
         payload = value.encode("utf-8")
         return RUNNER.StreamObservation(
@@ -100,7 +98,9 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         with (
             patch.dict(os.environ, environment, clear=False),
             patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
-            patch.object(RUNNER, "run_bounded_command", return_value=completed) as invoked,
+            patch.object(
+                RUNNER, "run_bounded_command", return_value=completed
+            ) as invoked,
             redirect_stdout(output),
         ):
             result = RUNNER.run_selected(
@@ -698,9 +698,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 return None
 
         selector = _InterruptedSelector()
-        with patch.object(
-            RUNNER.selectors, "DefaultSelector", return_value=selector
-        ):
+        with patch.object(RUNNER.selectors, "DefaultSelector", return_value=selector):
             outcome = self._run_python("import signal; signal.pause()")
 
         self.assertEqual(outcome.status, "collection_interrupted")
@@ -875,9 +873,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertTrue(outcome.cleanup_complete)
 
     def test_zero_and_inclusive_pipe_limits_are_exact(self):
-        empty = self._run_python(
-            "pass", stdout_limit_bytes=0, stderr_limit_bytes=0
-        )
+        empty = self._run_python("pass", stdout_limit_bytes=0, stderr_limit_bytes=0)
         inclusive = self._run_python(
             "import os; os.write(1, b'x' * 128); os.write(2, b'y' * 128)",
             stdout_limit_bytes=128,
@@ -991,7 +987,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
             self._wait_for_process_exit(descendant_pid)
 
     def test_successful_leader_closes_silent_owned_process_group(self):
-        with tempfile.TemporaryDirectory(prefix="runner-silent-descendant-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="runner-silent-descendant-"
+        ) as temporary:
             pid_path = Path(temporary) / "descendant.json"
             source = (
                 "import json, os, signal, subprocess, sys; "
@@ -1020,7 +1018,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
                     self._wait_for_process_exit(process_ids["pid"])
 
     def test_escaped_descendant_is_failed_without_post_reap_group_signal(self):
-        with tempfile.TemporaryDirectory(prefix="runner-escaped-descendant-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="runner-escaped-descendant-"
+        ) as temporary:
             pid_path = Path(temporary) / "escaped.json"
             child_source = (
                 "import json, os, signal; os.setsid(); "
@@ -1230,8 +1230,12 @@ class BoundedValidationCommandTest(unittest.TestCase):
             try:
                 with (
                     patch.object(RUNNER.subprocess, "Popen", side_effect=capture_spawn),
-                    patch.object(RUNNER, "cleanup_process_group", side_effect=observed_cleanup),
-                    patch.object(RUNNER.os, "killpg", side_effect=interrupt_before_effect),
+                    patch.object(
+                        RUNNER, "cleanup_process_group", side_effect=observed_cleanup
+                    ),
+                    patch.object(
+                        RUNNER.os, "killpg", side_effect=interrupt_before_effect
+                    ),
                     self.assertRaises(KeyboardInterrupt),
                 ):
                     self._run_python(source, timeout_seconds=0.2)
@@ -1517,7 +1521,9 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         output = StringIO()
         with (
             patch.object(RUNNER.shutil, "which", return_value="/usr/bin/bash"),
-            patch.object(RUNNER, "run_bounded_command", return_value=completed) as invoked,
+            patch.object(
+                RUNNER, "run_bounded_command", return_value=completed
+            ) as invoked,
             redirect_stdout(output),
         ):
             result = RUNNER.run_selected(
@@ -1566,6 +1572,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             statuses,
             {
                 "agent-governance-ci": "PASS",
+                "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
                 "links-and-owners": "PASS",
@@ -1573,7 +1580,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 6)
+        self.assertEqual(invoked.call_count, 7)
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
@@ -1585,6 +1592,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             statuses,
             {
                 "agent-governance-ci": "PASS",
+                "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
                 "links-and-owners": "PASS",
@@ -1592,12 +1600,10 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 6)
+        self.assertEqual(invoked.call_count, 7)
         self.assertIn('scope="staged:paths=1"', output)
         propagated = [
-            call.args[0]
-            for call in invoked.call_args_list
-            if path in call.args[0]
+            call.args[0] for call in invoked.call_args_list if path in call.args[0]
         ]
         self.assertEqual(len(propagated), 3)
         for argv in propagated:

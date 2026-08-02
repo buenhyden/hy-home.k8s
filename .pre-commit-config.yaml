@@ -39,6 +39,20 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit, manual]
+      - id: validate-agent-governance-closure-self-test
+        name: self-test agent-governance closure contract
+        entry: python3 scripts/validate-agent-governance-closure.py --root . --self-test
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
+      - id: validate-agent-governance-closure
+        name: validate agent-governance closure contract
+        entry: python3 scripts/validate-agent-governance-closure.py --root .
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, manual]
       - id: validate-affected-surfaces
         name: validate affected-surface contract
         entry: python3 scripts/validate-affected-surfaces.py --root .

@@ -44,7 +44,7 @@ source of truth.
 
 ## Workflow Roles
 
-- `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`; its dedicated agent-governance lane enforces the closed CI, harness-semantics, and legacy-cutover contracts.
+- `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`; its single dedicated agent-governance lane enforces the closed CI, harness-semantics, legacy-cutover, and Spec 046 program-closure contracts without treating a tracked workflow as hosted-run evidence.
 - `generate-changelog.yml` creates transient seven-day release-evidence artifacts for version tags. It does not commit, push, or publish.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
 - Clear separation of concerns is maintained: local pre-commit handles fast linting and formatting, local repo-static scripts reproduce CI/debug evidence when needed, and GitHub CI performs the required remote gate verdict. Helm chart rendering remains a manual review helper for platform AppProject allow-list changes.

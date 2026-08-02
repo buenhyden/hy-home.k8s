@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-01
 ---
 
 # Gemini Provider Notes
@@ -157,6 +157,10 @@ or model resolution.
 - Spec 045 retired the former role-semantics compatibility inputs after
   zero-consumer proof; the harness contract and harness-semantics validator
   are the current semantic owners.
+- `contracts/agent-governance-closure.json` is the single Spec 046 program
+  result-classification owner. Its repository-static PASS cannot promote
+  Gemini CLI installation, discovery, auth, model resolution, event/tool
+  enforcement, hosted, remote, live, or actual evaluation evidence.
 - Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
   `remote/live` semantics plus handoff fields from
   [`rules/quality-standards.md`](../rules/quality-standards.md).
@@ -180,6 +184,7 @@ python3 scripts/validate-agent-provider-canaries.py --root .
 python3 scripts/validate-agent-model-fitness.py --root .
 python3 scripts/validate-agent-harness-semantics.py --root .
 python3 scripts/validate-agent-roster-currentness.py .
+python3 scripts/validate-agent-governance-closure.py --root .
 bash scripts/validate-repo-quality-gates.sh .
 ```
 
