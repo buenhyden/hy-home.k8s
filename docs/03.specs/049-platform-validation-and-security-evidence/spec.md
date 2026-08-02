@@ -251,7 +251,8 @@ commands and tool identities selected by the approved Plan.
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 048](../048-github-routing-and-ci-evidence/spec.md)
-- **Successor**: planned Spec 050
+- **Successor**:
+  [Spec 050](../050-example-iac-and-validator-qa/spec.md)
 
 ### Lifecycle Traceability
 

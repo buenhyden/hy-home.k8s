@@ -136,6 +136,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 049-platform-validation-and-security-evidence/
 │   └── spec.md
+├── 050-example-iac-and-validator-qa/
+│   └── spec.md
 └── README.md
 ```
 
@@ -215,6 +217,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./047-current-surface-and-stash-reconciliation/spec.md`](./047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 planned Specs 048–050에 남긴다. | 2026-08-02 |
 | [`./048-github-routing-and-ci-evidence/spec.md`](./048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Draft | validation-surface ID를 참조하는 단일 projection contract와 native GitHub 정합성을 소유하며 branch protection 및 hosted rerun은 별도 권한으로 남긴다. | 2026-08-02 |
 | [`./049-platform-validation-and-security-evidence/spec.md`](./049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
+| [`./050-example-iac-and-validator-qa/spec.md`](./050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Provider-native non-deploy validation과 exact tool/fallback evidence를 소유하며 cloud login, plan/apply, deploy, what-if 및 live readiness는 범위 밖이다. | 2026-08-02 |
 
 ### Helper Templates
 
