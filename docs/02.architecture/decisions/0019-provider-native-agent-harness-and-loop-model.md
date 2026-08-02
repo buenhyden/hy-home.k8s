@@ -1,9 +1,9 @@
 ---
 title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
 type: sdlc/adr
-status: draft
+status: active
 owner: platform
-updated: 2026-07-29
+updated: 2026-08-01
 ---
 
 # ADR-0019: Provider-Native Agent Harness and Loop Model
@@ -12,11 +12,13 @@ updated: 2026-07-29
 
 이 ADR은 Stage 00 canonical governance를 local/Antigravity, Claude, Codex, Gemini의 네
 surface에 투영하고, 단일 machine harness contract, 역할별 model/effort, bounded execution
-loop, eval과 strict runtime evidence로 운영한다는 제안을 기록한다. 현재 상태는 `draft`다.
+loop, eval과 strict runtime evidence로 운영한다는 결정을 기록한다. 현재 상태는 `active`이며
+아직 current accepted decision은 아니다.
 ADR-0013은 계속 `accepted`이며, Specs 041–046을 구현하고 Spec 046의 모든 closure gate가
 PASS한 뒤에만 이 결정이 ADR-0013의 current decision을 대체할 수 있다.
 
-현재 외부 사실 관찰 기준은 **2026-07-26 Asia/Seoul**이다.
+고정 외부 사실 관찰 기준은 **2026-07-10 10:00 Asia/Seoul**
+(`2026-07-10T01:00:00Z`)이다.
 
 ## Context
 
@@ -53,8 +55,9 @@ cutover를 시작하지 않는다.
 
 ## Decision
 
-Spec 046 closure 전까지 다음을 **proposed architecture**로 채택하고, Specs 041–046에서
-foundation-first 순서로 구현·검증한다.
+Spec 046 closure 전까지 다음을 **active candidate architecture**로 유지하고, Specs 041–046에서
+foundation-first 순서로 구현·검증한다. `accepted` 전이는 모든 closure gate와 독립 검토가
+PASS한 뒤 별도 lifecycle change로 수행한다.
 
 ### Canonical contract and four projections
 
@@ -145,7 +148,7 @@ eval/model fitness, zero stale legacy, clean tree를 모두 증명하기 전에�
 
 ## Explicit Non-goals
 
-- ADR-0013의 historical context를 다시 쓰거나 draft 결정으로 즉시 supersede 처리하는 것.
+- ADR-0013의 historical context를 다시 쓰거나 active candidate 결정으로 즉시 supersede 처리하는 것.
 - 네 provider별 독립 governance, roster 또는 QA/model vocabulary를 만드는 것.
 - Unverified field/model을 provider config에 추측으로 추가하는 것.
 - Provider CLI/auth 전환을 우회하거나 credential을 repository/CI에 저장하는 것.
@@ -174,7 +177,7 @@ eval/model fitness, zero stale legacy, clean tree를 모두 증명하기 전에�
 
 ### Operational implications
 
-- ADR-0019가 draft인 동안 current runtime claim은 구현된 repository evidence를 따라야 한다.
+- ADR-0019가 accepted되기 전까지 current runtime claim은 구현된 repository evidence를 따라야 한다.
 - Spec별 implementer, requirements reviewer, quality/security reviewer와 root verification을 분리한다.
 - Model/effort 또는 canary 결과는 provider note와 evaluation evidence를 함께 갱신한다.
 - External facts가 기준 시점 이후 변경되어도 기록을 소급 수정하지 않고 새 evidence refresh를 남긴다.
@@ -217,16 +220,16 @@ eval/model fitness, zero stale legacy, clean tree를 모두 증명하기 전에�
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | [ADR 0013](0013-stage-00-canonical-adapter-model.md)을 Spec 046 strict closure 후에만 대체; 현재는 draft/accepted 병존 | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md) |
-| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Provider adoption은 accepted history를 보존하는 conditional replacement다. | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md) |
-| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Loop lifecycle은 ADR-0019 acceptance 전 제안 상태다. | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md) |
-| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | Roster/eval은 exact parity evidence가 있어야 replacement에 포함된다. | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md) |
+| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | [ADR 0013](0013-stage-00-canonical-adapter-model.md)을 Spec 046 strict closure와 ADR-0019 acceptance 후에만 대체; 현재는 active/accepted 병존 | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md) |
+| N/A — shared ARD 0006 source above | Provider adoption은 accepted history를 보존하는 conditional replacement다. | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md) |
+| N/A — shared ARD 0006 source above | Loop lifecycle은 ADR-0019 acceptance 전 제안 상태다. | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md) |
+| N/A — shared ARD 0006 source above | Roster/eval은 exact parity evidence가 있어야 replacement에 포함된다. | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md) |
 | [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Consumer-first cutover 후 old 3-surface 결정을 historical record로 보존한다. | [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md) |
-| [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Spec 046가 모든 strict gate를 증명할 때만 current decision을 ADR-0019로 전환한다. | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md) |
+| N/A — shared ADR 0013 source above | Spec 046가 모든 strict gate를 증명할 때만 current decision을 ADR-0019로 전환한다. | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md) |
 
 - **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **ARD**: [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md)
-- **Current accepted predecessor**: [ADR 0013](0013-stage-00-canonical-adapter-model.md)
+- **ARD**: ARD 0006 (linked in the lifecycle table above)
+- **Current accepted predecessor**: ADR 0013 (linked in the lifecycle table above)
 - **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
   [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
   [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)

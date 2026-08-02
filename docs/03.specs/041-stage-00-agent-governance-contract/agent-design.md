@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Agent Governance Program Design'
 type: sdlc/agent-design
-status: draft
+status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-08-01
 ---
 
 # Workspace Agent Governance Program Design
@@ -20,8 +20,9 @@ behavior, roster admission, CI/QA cutover, and repository-local closure.
 
 The design fixes the target at 12 canonical roles and four projections per role
 while preserving the implemented 10-role/30-adapter baseline until consumer
-migration is complete. The external-source observation cutoff for this
-rebaseline is **2026-07-26 Asia/Seoul**. Repository state and separately
+migration is complete. The fixed external-source observation cutoff for this
+rebaseline is **2026-07-10 10:00 Asia/Seoul**
+(`2026-07-10T01:00:00Z`). Repository state and separately
 classified runtime evidence remain authoritative over model-name inference.
 
 ## Scope & Non-goals
@@ -206,9 +207,9 @@ prompts, full transcripts, credentials, or secret-bearing tool output.
 ## Traceability
 
 - **Parent Spec**: [Spec 041](./spec.md)
-- **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
+- **Program requirement**: PRD 003 (linked in the lifecycle table below)
 - **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
-- **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Active successor candidate**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Foundation**: [Spec 039](../039-github-ci-qa-evidence/spec.md) and
   [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Provider evidence**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
@@ -222,5 +223,5 @@ prompts, full transcripts, credentials, or secret-bearing tool output.
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-PRD-FUN-12](../../01.requirements/003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-AD-001 | Exact-set fixtures prove 12 canonical roles and one projection per role per surface. |
-| [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-SAGC-AD-002 | Roster/schema validators reject missing, extra, duplicate, or orphan adapters. |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-SAGC-AD-003 | Role eval and model-fitness records prove structured semantics and provider-specific selection. |
+| N/A — shared PRD 003 source above | VAL-SAGC-AD-002 | Roster/schema validators reject missing, extra, duplicate, or orphan adapters. |
+| N/A — shared PRD 003 source above | VAL-SAGC-AD-003 | Role eval and model-fitness records prove structured semantics and provider-specific selection. |

@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-07-29
+updated: 2026-08-01
 ---
 
 # Workspace Agent Governance Platform Architecture Reference Document (ARD)
@@ -13,7 +13,8 @@ updated: 2026-07-29
 이 문서는 Stage 00 canonical governance를 네 provider surface에 투영하고, runtime evidence와
 feedback loop로 닫는 참조 아키텍처를 정의한다. 핵심 구조는
 `canonical policy + machine harness contract + provider projection + execution loop + evidence gate`다.
-설계의 현재 외부 사실 관찰 기준은 **2026-07-26 Asia/Seoul**이며, concrete provider schema와
+설계의 고정 외부 사실 관찰 기준은 **2026-07-10 10:00 Asia/Seoul**
+(`2026-07-10T01:00:00Z`)이며, concrete provider schema와
 model 값은 official primary source와 native parse/runtime evidence가 함께 입증할 때만
 provider-runtime current가 된다.
 
@@ -198,9 +199,9 @@ remaining work만 보존하고 secret, auth data, raw/full transcript를 버린�
 
 ### Lifecycle Traceability
 
-The table below maps the proposed delta to draft ADR-0019; it is not a current-
-decision map. Accepted ADR-0013 remains the current implementation decision
-until Spec 046 closes and the lifecycle transition is approved.
+The table below maps the implemented delta to active candidate ADR-0019; it is
+not yet a current-decision map. Accepted ADR-0013 remains the current
+implementation decision until Spec 046 closes and ADR-0019 is accepted.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -234,7 +235,7 @@ until Spec 046 closes and the lifecycle transition is approved.
 
 - **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **Current decision**: [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md)
-- **Proposed successor decision**: [Proposed ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Active successor candidate**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
   [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
   [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)

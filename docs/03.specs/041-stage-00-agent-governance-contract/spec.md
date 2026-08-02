@@ -3,7 +3,7 @@ title: 'Stage 00 Agent Governance Contract Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 # Stage 00 Agent Governance Contract Specification
@@ -49,13 +49,14 @@ lifecycle and clean-tree aggregate passed after that commit.
 ### Activation and lineage contract
 
 1. Specs 038, 039, and 040 must be `done` with their closure evidence committed.
-2. ADR-0019 remains `draft` and ADR-0013 remains the accepted current baseline
-   until the new program is implemented.
+2. At Spec 041 activation ADR-0019 was `draft` and ADR-0013 was the accepted
+   current baseline. Later ADR-0019 lifecycle states are owned by Spec 046 and
+   do not retroactively change this activation evidence.
 3. At Spec 041 activation, the registry adds one PRD `003` / ARD `0006`
    program with Specs 041–046 as ordered tranches and accepted ADR `0013` as
-   its governing decision. Draft ADR `0019` remains the proposed successor
-   linked by PRD/ARD/Spec traceability and may replace that registry relation
-   only with its Spec 046 acceptance evidence.
+   its governing decision. ADR `0019` is the conditional successor linked by
+   PRD/ARD/Spec traceability and may replace that registry relation only with
+   its Spec 046 acceptance evidence.
 4. Only Spec 041 may own the first execution Plan/Task pair; later tranches
    remain blocked until their predecessor's tranche-owned criteria are `done`.
    Provider-runtime results recorded by Spec 042 may remain explicit
@@ -233,7 +234,7 @@ now part of the repository-static aggregate lane.
 
 - **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
-- **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Active successor candidate**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Agent design**: [Agent Design](./agent-design.md)
 - **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](../../04.execution/plans/2026-07-28-stage-00-agent-governance-contract.md)

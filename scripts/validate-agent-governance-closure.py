@@ -69,7 +69,7 @@ EXPECTED_PREDECESSORS = (
         "docs/01.requirements/003-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "56f19c27-2052da00-a2f5428c-80a2388d-f2fc2e14".replace("-", ""),
-        "24942404-8b6ff7cd-72939341-05fcc198-cdc490cc-8f130c63-2f11a73d-0011f9fa".replace(
+        "bf6ea5ba-32ef638b-c1f0ecc2-0a057f0d-a5001995-33191154-280efa5e-4987ee3a".replace(
             "-", ""
         ),
     ),
@@ -78,16 +78,16 @@ EXPECTED_PREDECESSORS = (
         "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "61e6f3e1-dc0ae546-72161971-abe6e64e-905e4ed3-9dbed21e-35abf7fa-99036702".replace(
+        "904ae578-333e9aae-bc8ac5d8-16a1bc08-e4c21a89-ebd62345-028445b5-c7c4a270".replace(
             "-", ""
         ),
     ),
     (
         "adr-0019",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "draft",
+        "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "e5a3389a-2e6aa40e-c6761d53-d003680c-7a86b161-6985927c-12a20ff9-8ab0086d".replace(
+        "0fe9a243-91156b55-b93bc349-429b162e-19b618be-98c4eb1c-6ed81e20-5dfc04c8".replace(
             "-", ""
         ),
     ),
@@ -123,7 +123,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
         "done",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "50c43ec3-c070910a-388fe267-df8ac1a8-38f81ce5-a09fc12f-560f72b4-e821935d".replace(
+        "324115f4-90ae108c-493b41db-e0d3485a-f11f3624-3e9e86ad-05f81f99-e554e346".replace(
             "-", ""
         ),
     ),
@@ -141,7 +141,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
         "done",
         "git-sha1:" + "a0bc3565-988e2919-80320dec-8442405c-7ef16eb6".replace("-", ""),
-        "45c34a06-94c45c5e-9a9d2199-2086241a-a5185a2a-9ab0c71e-9f5b7bf0-25abee26".replace(
+        "841b7b7a-bbc022c3-0288ccab-55e00813-7784906f-7cc584f2-1a48e9c3-d4bef1c4".replace(
             "-", ""
         ),
     ),

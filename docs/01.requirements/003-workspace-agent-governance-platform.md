@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-08-01
 ---
 
 # Workspace Agent Governance Platform Product Requirements
@@ -22,7 +22,8 @@ gateway, 기계 검증 가능한 harness contract, provider-native adapter, 반�
 | `.codex/**` | Codex native agent와 project config adapter | 정적 형식과 실제 discovery/authenticated run 증거를 분리한다. |
 | `.gemini/**` | Gemini CLI native agent와 project setting adapter | 도입 후에도 provider transition/auth 조건과 canary 증거를 별도로 관리한다. |
 
-설계의 현재 외부 사실 관찰 기준은 **2026-07-26 Asia/Seoul**이다. 이후의 모델명, CLI 동작,
+설계의 고정 외부 사실 관찰 기준은 **2026-07-10 10:00 Asia/Seoul**
+(`2026-07-10T01:00:00Z`)이다. 이후의 모델명, CLI 동작,
 인증 정책은 별도 evidence refresh로 다루며, repository-static 구현과 provider-runtime
 readiness를 분리한다.
 
@@ -152,8 +153,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   evidence lane에서 실행하고 secret-free 결과만 기록한다.
 - `.agent-work/checkpoint.json`은 ignore된 transient recovery state이며 durable SDLC, credential
   store 또는 full transcript가 아니다.
-- ADR-0019는 draft 동안 ADR-0013을 대체하지 않는다. Spec 046의 repository-local closure와
-  명시적 external-lane limitations가 검증된 뒤에만 replacement state를 확정한다.
+- ADR-0019는 active candidate인 동안에도 ADR-0013을 대체하지 않는다. Spec 046의
+  repository-local closure와 명시적 external-lane limitations가 검증되고 ADR-0019가
+  `accepted`로 전이된 뒤에만 replacement state를 확정한다.
 
 ### Research and provider evidence baseline
 
