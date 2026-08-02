@@ -135,4 +135,4 @@ Vault/ESO's explicit authentication and CA boundaries.
 | N/A — REQ-RDPA-003 shares the PRD-007 source linked in REQ-RDPA-001. | Non-duplicative GitHub projection and independent CI lanes | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md) |
 | N/A — REQ-RDPA-005 shares the PRD-007 source linked in REQ-RDPA-001. | Layered platform evidence and product semantics | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md) |
 | N/A — REQ-RDPA-007 shares the PRD-007 source linked in REQ-RDPA-001. | Provider-native IaC validation and deterministic fallbacks | [Spec 050](../../03.specs/050-example-iac-and-validator-qa/spec.md) |
-| N/A — REQ-RDPA-009 shares the PRD-007 source linked in REQ-RDPA-001. | Approval boundary, rollback, closure, and no-change evidence | N/A — Spec 051 is planned and not yet authored. |
+| N/A — REQ-RDPA-009 shares the PRD-007 source linked in REQ-RDPA-001. | Approval boundary, rollback, closure, and no-change evidence | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md) |

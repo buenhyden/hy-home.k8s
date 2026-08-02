@@ -243,7 +243,8 @@ isolated environment described above, not an unreviewed ambient configuration.
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 049](../049-platform-validation-and-security-evidence/spec.md)
-- **Successor**: planned Spec 051
+- **Successor**:
+  [Spec 051](../051-repository-assurance-integration-and-closure/spec.md)
 
 ### Lifecycle Traceability
 

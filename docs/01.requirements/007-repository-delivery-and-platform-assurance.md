@@ -158,14 +158,14 @@ state that current `main` has already superseded.
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
 | REQ-RDPA-001 | ACC-RDPA-001 | [ARD-0010](../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
-| REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 is the planned downstream owner and is not yet authored. |
+| REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 shares the downstream owner linked in REQ-RDPA-001. |
 | REQ-RDPA-003 | ACC-RDPA-002 | [Spec 048](../03.specs/048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
-| REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the planned downstream owner stated in REQ-RDPA-003. |
+| REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the downstream owner stated in REQ-RDPA-003. |
 | REQ-RDPA-005 | ACC-RDPA-003 | [Spec 049](../03.specs/049-platform-validation-and-security-evidence/spec.md) owns layered platform evidence. |
-| REQ-RDPA-006 | ACC-RDPA-004 | N/A — Spec 049 shares the planned downstream owner stated in REQ-RDPA-005. |
+| REQ-RDPA-006 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-RDPA-005. |
 | REQ-RDPA-007 | ACC-RDPA-005 | [Spec 050](../03.specs/050-example-iac-and-validator-qa/spec.md) owns provider-native example validation. |
-| REQ-RDPA-008 | ACC-RDPA-006 | N/A — Specs 049 and 050 are planned downstream owners and are not yet authored. |
-| REQ-RDPA-009 | ACC-RDPA-009 | N/A — Specs 047 through 051 share this boundary and are not yet authored. |
-| REQ-RDPA-010 | ACC-RDPA-008 | N/A — Spec 051 is the planned downstream owner and is not yet authored. |
-| REQ-RDPA-011 | ACC-RDPA-004 | N/A — Spec 049 shares the planned downstream owner stated in REQ-RDPA-005. |
-| REQ-RDPA-012 | ACC-RDPA-001 | N/A — Specs 047 and 051 are planned downstream owners and are not yet authored. |
+| REQ-RDPA-008 | ACC-RDPA-006 | N/A — Specs 049 and 050 share the downstream owners linked in REQ-RDPA-005 and REQ-RDPA-007. |
+| REQ-RDPA-009 | ACC-RDPA-009 | N/A — Specs 047 through 051 share this approval boundary through the linked tranche owners. |
+| REQ-RDPA-010 | ACC-RDPA-008 | [Spec 051](../03.specs/051-repository-assurance-integration-and-closure/spec.md) owns terminal integration and closure. |
+| REQ-RDPA-011 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-RDPA-005. |
+| REQ-RDPA-012 | ACC-RDPA-001 | N/A — Specs 047 and 051 share the downstream owners linked in REQ-RDPA-001 and REQ-RDPA-010. |
