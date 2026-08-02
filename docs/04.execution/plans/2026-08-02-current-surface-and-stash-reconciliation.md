@@ -124,7 +124,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
 - `document_contracts.py::{_program_lineage_from_mapping, _program_structure_diagnostics}`
 - `validate-active-corpus-residue-closure.py` self-test and production modes
 
-### CSASR-000: activate the program foundation
+### Task 1: CSASR-000 — activate the program foundation
 
 - [ ] Verify clean branch, baseline, stash identity, and existing program list.
 
@@ -162,7 +162,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   rtk git commit -m "docs: activate repository delivery program lineage"
   ```
 
-### CSASR-001 and CSASR-002: inventory and disposition
+### Task 2: CSASR-001 and CSASR-002 — inventory and disposition
 
 - [ ] Record the exact tracked target list in the Task, with one row per path.
 
@@ -190,7 +190,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   rtk git commit -m "docs: record current surface disposition matrix"
   ```
 
-### CSASR-003 and CSASR-004: reconcile tracked stash intent
+### Task 3: CSASR-003 and CSASR-004 — reconcile tracked stash intent
 
 - [ ] Re-resolve the full stash object and parents using metadata only.
 
@@ -229,7 +229,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   rtk git commit -m "docs: record stash reconciliation ledger"
   ```
 
-### CSASR-005: review and close the foundation
+### Task 4: CSASR-005 — review and close the foundation
 
 - [ ] Run focused, document, affected, aggregate, all-files, formatter, and
   diff gates; inspect any formatter mutation before proceeding.

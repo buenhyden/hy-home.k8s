@@ -140,7 +140,7 @@ the authority.
 - `document_lifecycle.py::{compare_lifecycle, validate_transition_evidence}`
   and `document_contracts.py::_program_structure_diagnostics`.
 
-### RAIC-000: activate the terminal execution path
+### Task 1: RAIC-000 — activate the terminal execution path
 
 - [ ] Verify predecessor states and the clean branch.
 
@@ -173,7 +173,7 @@ the authority.
   rtk git commit -m "docs: activate repository assurance closure"
   ```
 
-### RAIC-001: integrate the contract and target evidence
+### Task 2: RAIC-001 — integrate the contract and target evidence
 
 - [ ] Run each predecessor contract self-test and production validator.
 
@@ -211,7 +211,7 @@ the authority.
   rtk git commit -m "docs: record repository assurance integration evidence"
   ```
 
-### RAIC-002: run QA and independent review
+### Task 3: RAIC-002 — run QA and independent review
 
 - [ ] Run focused predecessor tests.
 
@@ -255,7 +255,7 @@ the authority.
   rtk git commit -m "docs: record repository assurance final review"
   ```
 
-### RAIC-003: prove local-integration readiness
+### Task 4: RAIC-003 — prove local-integration readiness
 
 - [ ] Record the current branch HEAD, baseline, commit list, and clean status.
 
@@ -289,7 +289,7 @@ the authority.
   rtk bash scripts/validate-repo-quality-gates.sh .
   ```
 
-### RAIC-004: finish the local branch
+### Task 5: RAIC-004 — finish the local branch
 
 - [ ] Invoke `superpowers:finishing-a-development-branch`, use the already
   approved local integration option, and capture the linked-worktree
@@ -360,7 +360,7 @@ the authority.
   rtk git -C /home/hy/projects/hy-home.k8s worktree list --porcelain
   ```
 
-### RAIC-005: close lifecycle and postflight
+### Task 6: RAIC-005 — close lifecycle and postflight
 
 - [ ] On local main, set Specs 047-051 and all five Plans/Tasks to `done`, keep
   PRD-007 and ARD-0010 `active`, set ADR-0021 to `accepted`, mark all five

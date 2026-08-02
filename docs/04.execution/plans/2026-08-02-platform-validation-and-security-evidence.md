@@ -168,7 +168,7 @@ from `validate-gitops-change-set.py` may be refactored into import-safe public
 helpers only when a regression test proves parity; route or policy data is not
 copied.
 
-### PVSE-000: activate the reciprocal execution path
+### Task 1: PVSE-000 — activate the reciprocal execution path
 
 - [ ] Confirm Spec 048 closure, clean worktree, and first-unfinished relation.
 
@@ -191,7 +191,7 @@ copied.
   rtk git commit -m "docs: activate platform validation evidence plan"
   ```
 
-### PVSE-001: define focused RED behavior
+### Task 2: PVSE-001 — define focused RED behavior
 
 - [ ] Create the contract fixture and `tests/test_validate_platform_evidence.py`.
   Cover duplicate JSON keys, unknown keys, copied route values, unknown or
@@ -224,7 +224,7 @@ copied.
 - [ ] Keep tests and GREEN implementation in one rollback-safe commit; the
   Task records the observed RED command/result.
 
-### PVSE-002: implement the evidence contract and layered validator
+### Task 3: PVSE-002 — implement the evidence contract and layered validator
 
 - [ ] Add a Draft 2020-12 closed schema whose enums are exactly the five
   depths and four results from Spec 049. Require `limitation`, `owner`, and
@@ -271,7 +271,7 @@ copied.
   rtk git commit -m "feat: add layered platform validation evidence"
   ```
 
-### PVSE-003: implement Traefik product-semantic validation
+### Task 4: PVSE-003 — implement Traefik product-semantic validation
 
 - [ ] Create `tests/test_validate_traefik_contracts.py` and fixtures for one
   valid cross-file graph plus undefined service/transport, duplicate qualified
@@ -299,7 +299,7 @@ copied.
   rtk git commit -m "feat: validate traefik reference contracts"
   ```
 
-### PVSE-004: prove focused security and fallback behavior
+### Task 5: PVSE-004 — prove focused security and fallback behavior
 
 - [ ] Extend the platform evidence test fixture trees to run the real shell
   gates against minimal temporary repository roots. Cover malformed YAML,
@@ -338,7 +338,7 @@ copied.
 
   Omit unchanged paths from the actual staged set.
 
-### PVSE-005: wire routing, aggregate, and CI once
+### Task 6: PVSE-005 — wire routing, aggregate, and CI once
 
 - [ ] Register platform contract, tool/schema inputs, Traefik inputs, and both
   focused validators in the existing `manifests` surface and fixture. Keep the
@@ -378,7 +378,7 @@ copied.
 
   Omit unchanged files from the actual staged set.
 
-### PVSE-006: review, close, and hand off
+### Task 7: PVSE-006 — review, close, and hand off
 
 - [ ] Run focused, all-test, platform-static, strict-document, aggregate,
   all-files, formatter, and diff gates using the verified tool cache.

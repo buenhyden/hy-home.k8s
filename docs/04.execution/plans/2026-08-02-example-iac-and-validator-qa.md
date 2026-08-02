@@ -172,7 +172,7 @@ codes fail; an explicitly allowlisted warning requires rationale, owner, retry
 trigger, and expiry/refresh condition in the platform contract. Full command
 stdout/stderr is not durable evidence.
 
-### EIVQ-000: activate the reciprocal execution path
+### Task 1: EIVQ-000 — activate the reciprocal execution path
 
 - [ ] Confirm Spec 049 closure, clean worktree, and first-unfinished relation.
 
@@ -195,7 +195,7 @@ stdout/stderr is not durable evidence.
   rtk git commit -m "docs: activate example iac validation plan"
   ```
 
-### EIVQ-001: define focused RED behavior
+### Task 2: EIVQ-001 — define focused RED behavior
 
 - [ ] Create `tests/test_validate_example_iac.py` with isolated example roots
   and fake Terraform/Bicep executables that record argv and selected safe
@@ -226,7 +226,7 @@ stdout/stderr is not durable evidence.
   rtk python3 -m unittest tests/test_validate_example_iac.py
   ```
 
-### EIVQ-002: extend the contract and implement the validator
+### Task 3: EIVQ-002 — extend the contract and implement the validator
 
 - [ ] Extend the Spec 049 contract/schema/fixture with exact Terraform/Bicep
   tools and targets, required native argv, prohibited verbs, network/cache
@@ -266,7 +266,7 @@ stdout/stderr is not durable evidence.
   rtk git commit -m "feat: add example iac validation contract"
   ```
 
-### EIVQ-003: generate and validate the Terraform lock
+### Task 4: EIVQ-003 — generate and validate the Terraform lock
 
 - [ ] Confirm the exact prepared binary and absence of tracked runtime output.
 
@@ -309,7 +309,7 @@ stdout/stderr is not durable evidence.
   The tracked-artifact scan is expected to return no matching path. Omit
   `.gitignore` from staging if no evidence-backed change is required.
 
-### EIVQ-004: validate Bicep and align example guidance
+### Task 5: EIVQ-004 — validate Bicep and align example guidance
 
 - [ ] Run the exact standalone binary against every declared source. Use lint
   for each file, build the entrypoint to stdout, and build direct module
@@ -345,7 +345,7 @@ stdout/stderr is not durable evidence.
 
   Omit unchanged Bicep source files from the actual staged set.
 
-### EIVQ-005: wire routing, CI, inventories, and cleanup once
+### Task 6: EIVQ-005 — wire routing, CI, inventories, and cleanup once
 
 - [ ] Register the focused validator and all Terraform/Bicep contract/tool/
   source inputs in the existing `examples` surface and fixture. Add the
@@ -393,7 +393,7 @@ stdout/stderr is not durable evidence.
 
   Omit unchanged files from the actual staged set.
 
-### EIVQ-006: review, close, and hand off
+### Task 7: EIVQ-006 — review, close, and hand off
 
 - [ ] Run focused, platform regression, all-test, static security, strict
   documents, aggregate, all-files, formatter, and diff gates.

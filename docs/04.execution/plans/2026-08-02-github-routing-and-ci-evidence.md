@@ -142,7 +142,7 @@ The implementation may reuse `normalize_path`, `match_route`, and path
 classification semantics from `validate-affected-surfaces.py`, but must not
 import CLI side effects or duplicate route data.
 
-### GRCE-000: activate the reciprocal execution path
+### Task 1: GRCE-000 — activate the reciprocal execution path
 
 - [ ] Confirm Spec 047 closure, clean worktree, and first-unfinished relation.
 
@@ -165,7 +165,7 @@ import CLI side effects or duplicate route data.
   rtk git commit -m "docs: activate github routing evidence plan"
   ```
 
-### GRCE-001: define focused RED behavior
+### Task 2: GRCE-001 — define focused RED behavior
 
 - [ ] Create `tests/test_validate_github_surface_routing.py` and the mutation
   fixture. Cover missing artifacts, unknown surface, duplicate mapping, copied
@@ -196,7 +196,7 @@ import CLI side effects or duplicate route data.
   retain the observed RED result in the Task rather than committing a broken
   branch.
 
-### GRCE-002: implement the contract package
+### Task 3: GRCE-002 — implement the contract package
 
 - [ ] Add Draft 2020-12 schema objects with `additionalProperties: false` and
   the exact top-level fields `schemaVersion`, `contractVersion`, `contractId`,
@@ -228,7 +228,7 @@ import CLI side effects or duplicate route data.
   rtk git commit -m "feat: add github surface routing validator"
   ```
 
-### GRCE-003 and GRCE-004: align native projections and routing
+### Task 4: GRCE-003 and GRCE-004 — align native projections and routing
 
 - [ ] Add `.agents/**` and `.gemini/**` to `area/agent`; preserve the existing
   `.claude/**`, `.codex/**`, gateways, and Stage 00 rules.
@@ -266,7 +266,7 @@ import CLI side effects or duplicate route data.
   rtk git commit -m "ci: align github projection evidence"
   ```
 
-### GRCE-005: record remote evidence and close
+### Task 5: GRCE-005 — record remote evidence and close
 
 - [ ] Refresh metadata only; bind every observation to time and exact SHA.
 
