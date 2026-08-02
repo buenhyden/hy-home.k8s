@@ -104,6 +104,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-30-agent-governance-ci-qa-cutover.md
 ├── 2026-08-01-agent-governance-program-closure.md
 ├── 2026-08-02-current-surface-and-stash-reconciliation.md
+├── 2026-08-02-github-routing-and-ci-evidence.md
 └── README.md
 ```
 
@@ -189,6 +190,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-30-agent-governance-ci-qa-cutover.md`](./2026-07-30-agent-governance-ci-qa-cutover.md) | [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md)의 AGQC-000~006을 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`의 Python `741`/aggregate/all-files/diff와 test-only delta의 관련 `49`/nested-subreaper probe/file pre-commit/세 독립 검토가 PASS했고 모두 `0/0/0`이다. Hosted CI, branch protection, provider runtime/auth/model discovery, actual evaluation/admission/promotion, remote/live, provider resume/handoff canary는 Spec 046에 `DEFER`한다. | Done | 2026-08-01 |
 | [`./2026-08-01-agent-governance-program-closure.md`](./2026-08-01-agent-governance-program-closure.md) | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)의 repository-local terminal document closure를 AGPC-004까지 완료했다. ADR-0019는 accepted current decision이고 ADR-0013은 historical predecessor다. Separate AGPC-004 postflight가 남고, AGPC-005 Task 행은 planned local merge/worktree cleanup을 post-terminal root handoff로 이관해 `Archived`이며 provider/hosted/actual/remote/live lane은 `DEFER`/`ABSENT`다. | Done | 2026-08-01 |
 | [`./2026-08-02-current-surface-and-stash-reconciliation.md`](./2026-08-02-current-surface-and-stash-reconciliation.md) | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)의 current tracked target disposition, program activation, stash semantic ledger, and successor handoff 실행 계획이다. | Draft | 2026-08-02 |
+| [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)의 surface-ID projection contract, native GitHub parity, CI lane preservation, and read-only remote evidence 실행 계획이다. | Draft | 2026-08-02 |
 
 ## Related Documents
 
