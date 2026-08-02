@@ -105,6 +105,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-08-01-agent-governance-program-closure.md
 ├── 2026-08-02-current-surface-and-stash-reconciliation.md
 ├── 2026-08-02-github-routing-and-ci-evidence.md
+├── 2026-08-02-platform-validation-and-security-evidence.md
 └── README.md
 ```
 
@@ -191,6 +192,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-08-01-agent-governance-program-closure.md`](./2026-08-01-agent-governance-program-closure.md) | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)의 repository-local terminal document closure를 AGPC-004까지 완료했다. ADR-0019는 accepted current decision이고 ADR-0013은 historical predecessor다. Separate AGPC-004 postflight가 남고, AGPC-005 Task 행은 planned local merge/worktree cleanup을 post-terminal root handoff로 이관해 `Archived`이며 provider/hosted/actual/remote/live lane은 `DEFER`/`ABSENT`다. | Done | 2026-08-01 |
 | [`./2026-08-02-current-surface-and-stash-reconciliation.md`](./2026-08-02-current-surface-and-stash-reconciliation.md) | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)의 current tracked target disposition, program activation, stash semantic ledger, and successor handoff 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)의 surface-ID projection contract, native GitHub parity, CI lane preservation, and read-only remote evidence 실행 계획이다. | Draft | 2026-08-02 |
+| [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)의 depth-aware platform evidence, exact-tool Kustomize/schema validation, Traefik semantics, security regressions, and CI ownership 실행 계획이다. | Draft | 2026-08-02 |
 
 ## Related Documents
 

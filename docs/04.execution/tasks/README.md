@@ -106,6 +106,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-08-01-agent-governance-program-closure.md
 ├── 2026-08-02-current-surface-and-stash-reconciliation.md
 ├── 2026-08-02-github-routing-and-ci-evidence.md
+├── 2026-08-02-platform-validation-and-security-evidence.md
 └── README.md
 ```
 
@@ -194,6 +195,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-08-01-agent-governance-program-closure.md`](./2026-08-01-agent-governance-program-closure.md) | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)과 reciprocal [Plan](../plans/2026-08-01-agent-governance-program-closure.md)의 terminal document transition을 AGPC-004까지 완료했다. Commit observation은 separate AGPC-004 postflight에 남고 AGPC-005 Task 행은 planned local merge/worktree cleanup을 post-terminal root handoff로 이관해 `Archived`다. Provider/hosted/actual/remote/live lane은 `DEFER`/`ABSENT`를 유지한다. | Done | 2026-08-01 |
 | [`./2026-08-02-current-surface-and-stash-reconciliation.md`](./2026-08-02-current-surface-and-stash-reconciliation.md) | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)과 reciprocal [Plan](../plans/2026-08-02-current-surface-and-stash-reconciliation.md)의 program activation, target disposition, stash reconciliation, QA, and handoff evidence를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-github-routing-and-ci-evidence.md)의 contract, native projection, CI routing, remote metadata, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
+| [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-platform-validation-and-security-evidence.md)의 exact-tool, render/schema/GVK, Traefik, security regression, CI, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
 
 ## Related Documents
 
