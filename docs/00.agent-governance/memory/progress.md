@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 AGPC-003 verified local QA and review evidence
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-003 #qa #review #evidence
+- **Owner**: AGPC-003 verified evidence recording
+- **Canonical Owner**: Spec 046 Task and `agent-governance-closure` contract
+- **Provenance**: observed final fix
+  `1e2bd0744b5213d5004c34aac028b9642cc60028` and independent reviews/tests
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-004 reciprocal closure and observed postflight
+
+#### Progress
+
+- Advanced the closure contract, schema, and positive fixture to `1.1.0` for
+  verified local QA and review evidence. The local-validation and both review
+  rows are `PASS` with zero findings and null limitation/retry fields.
+- Preserved provider/runtime, hosted, actual-evaluation, remote, and live
+  results as `DEFER` or `ABSENT`, and retained the planned local merge and
+  worktree cleanup plus the unauthorized remote-action boundary.
+
+#### Evidence
+
+- The full Python suite passed 774 tests with zero failures or errors. All 15
+  explicit Spec 046 validator commands, affected-surface production (822 paths,
+  22/22 surfaces, 22 validators), exact 12-path staged and affected lanes, the
+  repository aggregate with its unique PASS marker, staged/all-files
+  pre-commit without formatter mutation, scoped Ruff for amended Python files,
+  and both diff checks passed.
+- Four E702 findings remain only in unchanged
+  `scripts/validate-active-corpus-eligibility.py`; independent adjudication
+  found them non-blocking for the fix diff. The final fix resolved the initial
+  current-owner and pathname-reopen TOCTOU review findings plus two
+  branch-introduced Ruff findings. Scoped re-review approved all three original
+  findings as resolved with no new blocking finding; independent security
+  review found no blocking issue.
+
+#### Handoff
+
+- AGPC-004 owns reciprocal closure and observed postflight. This entry cites
+  the observed final fix and its reviews/tests, but does not preclaim its own
+  commit SHA, local merge, worktree cleanup, hosted/provider/runtime, remote,
+  live, or actual-evaluation evidence.
+
 ### 2026-08-01 - Spec 046 decision-readiness activation postflight
 
 #### Metadata

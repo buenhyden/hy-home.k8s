@@ -2,7 +2,7 @@
   "$schema": "./agent-governance-closure.schema.json",
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-governance-closure",
-  "contractVersion": "1.0.2",
+  "contractVersion": "1.1.0",
   "ownerSpec": "docs/03.specs/046-agent-governance-program-closure/spec.md",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
@@ -407,22 +407,22 @@
   ],
   "reviewEvidence": {
     "requirements": {
-      "result": "DEFER",
+      "result": "PASS",
       "owner": "fixture",
       "critical": 0,
       "important": 0,
       "minor": 0,
-      "limitation": "Fixture limitation.",
-      "retryTrigger": "Fixture retry trigger."
+      "limitation": null,
+      "retryTrigger": null
     },
     "qualitySecurity": {
-      "result": "DEFER",
+      "result": "PASS",
       "owner": "fixture",
       "critical": 0,
       "important": 0,
       "minor": 0,
-      "limitation": "Fixture limitation.",
-      "retryTrigger": "Fixture retry trigger."
+      "limitation": null,
+      "retryTrigger": null
     }
   },
   "handoff": {

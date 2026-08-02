@@ -28,7 +28,7 @@
     "$schema": {"const": "./agent-governance-closure.schema.json"},
     "schemaVersion": {"type": "integer", "const": 1},
     "contractId": {"const": "hy-home.k8s/agent-governance-closure"},
-    "contractVersion": {"const": "1.0.2"},
+    "contractVersion": {"const": "1.1.0"},
     "ownerSpec": {"const": "docs/03.specs/046-agent-governance-program-closure/spec.md"},
     "cutoff": {
       "type": "object",

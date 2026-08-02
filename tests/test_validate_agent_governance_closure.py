@@ -76,6 +76,19 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
         self.assertEqual(self.module.validate_contract(self.fixture, self.schema), [])
         self.assertEqual(self.module.validate_contract(contract, self.schema), [])
+        for review in self.fixture["reviewEvidence"].values():
+            self.assertEqual(
+                review,
+                {
+                    "result": "PASS",
+                    "owner": "fixture",
+                    "critical": 0,
+                    "important": 0,
+                    "minor": 0,
+                    "limitation": None,
+                    "retryTrigger": None,
+                },
+            )
         self.assertEqual(
             self.module.validate_repository(REPO_ROOT, contract, self.schema),
             [],
@@ -205,9 +218,7 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         mutations = (
             lambda item: item["rosterSummary"].__setitem__("retryTrigger", ""),
             lambda item: item["modelProfileSummary"].__setitem__("owner", ""),
-            lambda item: item["reviewEvidence"]["requirements"].__setitem__(
-                "limitation", ""
-            ),
+            lambda item: item["qaEvidence"][1].__setitem__("owner", ""),
             lambda item: item["qaEvidence"][1].__setitem__("retryTrigger", ""),
         )
         for mutation in mutations:

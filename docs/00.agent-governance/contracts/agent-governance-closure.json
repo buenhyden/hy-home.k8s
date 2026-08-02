@@ -2,7 +2,7 @@
   "$schema": "./agent-governance-closure.schema.json",
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-governance-closure",
-  "contractVersion": "1.0.2",
+  "contractVersion": "1.1.0",
   "ownerSpec": "docs/03.specs/046-agent-governance-program-closure/spec.md",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
@@ -365,7 +365,7 @@
     {
       "lane": "local_validation",
       "result": "PASS",
-      "owner": "AGPC-001",
+      "owner": "AGPC-003",
       "limitation": null,
       "retryTrigger": null
     },
@@ -407,22 +407,22 @@
   ],
   "reviewEvidence": {
     "requirements": {
-      "result": "DEFER",
+      "result": "PASS",
       "owner": "AGPC-003",
       "critical": 0,
       "important": 0,
       "minor": 0,
-      "limitation": "Independent whole-branch requirements review has not run yet.",
-      "retryTrigger": "Run AGPC-003 requirements review after routing and final QA."
+      "limitation": null,
+      "retryTrigger": null
     },
     "qualitySecurity": {
-      "result": "DEFER",
+      "result": "PASS",
       "owner": "AGPC-003",
       "critical": 0,
       "important": 0,
       "minor": 0,
-      "limitation": "Independent whole-branch quality and security review has not run yet.",
-      "retryTrigger": "Run AGPC-003 quality and security review after routing and final QA."
+      "limitation": null,
+      "retryTrigger": null
     }
   },
   "handoff": {

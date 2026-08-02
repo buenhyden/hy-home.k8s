@@ -45,7 +45,7 @@ approved action observes them.
 | AGPC-000 | VAL-AGPC-001, VAL-AGPC-010 | Activate reciprocal Spec/Plan/Task, three indexes, program lineage, and progress | platform | Done | Exact eight-file activation is committed and observed without a self-SHA preclaim in the activation content | `c6bae0227acd3e4f57b591c14a88e31b6f2e553f`; sole parent `060396112abaddbbcf79a33c8a04ae775cce66a1`; staged lifecycle/runner, strict docs, pre-commit, all-files, and diff PASS |
 | AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Done | Closed repository-static contract package with fail-closed schema, source-bound predecessor/provider/model projections, four-class memory lifecycle, and value-free diagnostics | `c4457fa01ae41013ba56db3d3591da845529cf2b`; focused 28/28, staged lane, full pre-commit, Ruff, diff, requirements review, and quality review PASS |
 | AGPC-002 | VAL-AGPC-003..007 | Route closure gate and reconcile harness/provider/loop/roster/model/memory owners | platform | Done | One existing CI job now owns 18 delegated checks; validation remains 22 surfaces with 22 validators and exactly 12 closure route classes; human owner docs point to one closure classification contract without external-lane promotion | `4fdea6a068aec6c65681bae32c44b67a5e95f09e`; focused, 20-path staged, aggregate, full pre-commit, requirements, and quality/security review PASS |
-| AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Pending | Not executed | Planned focused, aggregate, all-files, diff, and independent review evidence |
+| AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Done | Verified local QA and independent review evidence is recorded without external-lane promotion | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; 774 Python tests, 15 Spec 046 validators, affected/staged/aggregate/pre-commit/Ruff/diff PASS, and resolved re-review PASS |
 | AGPC-004 | VAL-AGPC-010 | Record reciprocal closure and observed postflight | platform | Pending | Not executed | Planned exact closure and postflight commits |
 | AGPC-005 | VAL-AGPC-010 | Locally merge to `main` and clean isolated worktree/branch | platform | Pending | Not executed | Planned local-only integration evidence; no push or remote action |
 
@@ -110,6 +110,24 @@ aggregate, exact 20-path staged lane, full pre-commit, Ruff, diff checks, and
 final requirements plus quality/security re-reviews passed. AGPC-003 through
 AGPC-005 remain pending.
 
+AGPC-003 final QA/review fix `1e2bd0744b5213d5004c34aac028b9642cc60028`
+passed the full Python suite (774 tests with zero failures or errors), all 15
+explicit Spec 046 validator commands, and affected-surface production (822
+paths, 22/22 surfaces, 22 validators). The exact 12-path staged and affected
+lanes passed, as did the repository aggregate with its unique PASS marker,
+staged and all-files pre-commit without formatter mutation, and both diff
+checks. Scoped Ruff was clean for every amended Python file; four E702
+findings remain only in unchanged
+`scripts/validate-active-corpus-eligibility.py` and were independently
+adjudicated non-blocking for this fix diff. Initial whole-branch requirements
+review found one current-owner issue, initial quality review found one
+pathname-reopen TOCTOU issue, and independent security review found no blocking
+issue. The final fix resolved those findings and two branch-introduced Ruff
+findings; one scoped re-review approved all three original findings as resolved
+with no new blocking finding. Provider/runtime, hosted, actual-evaluation,
+remote, and live results remain `DEFER` or `ABSENT`; AGPC-004 and AGPC-005
+remain pending.
+
 Decision-readiness activation `ff66dd933e00def085b4c0319a67c6651356b116`
 used the governed `draft -> active` edge for ADR-0019 and the program
 agent-design while retaining accepted ADR-0013 as the current decision. It
@@ -140,6 +158,6 @@ actual evaluation, fitness, admission, and promotion.
 | [AGPC-000](../plans/2026-08-01-agent-governance-program-closure.md#work-breakdown) | Done | Activation `c6bae022`; exact eight paths, sole parent `06039611`, staged lifecycle/runner, strict docs, staged/all-files pre-commit, and diff PASS. |
 | [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Done | Implementation `c4457fa0`; closed contract/schema/fixture/validator/tests, exact ten-path staged lane, full pre-commit, focused 28/28, Ruff, diff, and both independent reviews PASS. |
 | N/A — AGPC-002 shares the Plan and Spec sources above | Done | Implementation `4fdea6a0`; one CI job, 18 delegated checks, 22/22 surface-validator inventory, exact 12 closure routes, 20-path staged/aggregate/pre-commit PASS, and final reviews approved. |
-| N/A — AGPC-003 shares the Plan and Spec sources above | Pending | Final QA and independent reviews pending. |
+| N/A — AGPC-003 shares the Plan and Spec sources above | Done | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; 774-test suite, 15 Spec 046 validators, affected/staged/aggregate/all-files/Ruff/diff PASS, and scoped re-review approval with no blocking finding. |
 | N/A — AGPC-004 shares the Plan and Spec sources above | Pending | Reciprocal closure and postflight pending. |
 | N/A — AGPC-005 shares the Plan and Spec sources above | Pending | Local merge and cleanup pending. |
