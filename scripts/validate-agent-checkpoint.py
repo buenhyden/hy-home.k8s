@@ -7,6 +7,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import re
 import stat
 import sys
@@ -422,65 +423,143 @@ def decode_json_text(text: str, source: str = "<memory>") -> Any:
         )
 
 
-def _safe_regular_file(root: Path, relative: PurePosixPath) -> Path:
-    if relative.is_absolute() or ".." in relative.parts:
+def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
         fail(
             "AHLL-CP-PATH",
             "contract input path is unsafe",
             exit_code=2,
         )
     try:
-        root = root.resolve(strict=True)
+        root_metadata = os.lstat(root)
     except OSError:
         fail(
             "AHLL-CP-ROOT",
             "repository root is unavailable",
             exit_code=2,
         )
-    current = root
-    for part in relative.parts:
-        current = current / part
-        try:
-            mode = current.lstat().st_mode
-        except OSError:
-            fail(
-                "AHLL-CP-MISSING-FILE",
-                f"required input {relative} is unavailable",
-                exit_code=2,
-            )
-        if stat.S_ISLNK(mode):
-            fail(
-                "AHLL-CP-PATH",
-                f"required input {relative} crosses a symlink",
-                exit_code=2,
-            )
-    if not stat.S_ISREG(mode):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+        root_metadata.st_mode
+    ):
         fail(
-            "AHLL-CP-PATH",
-            f"required input {relative} is not a regular file",
+            "AHLL-CP-ROOT",
+            "repository root is unavailable",
             exit_code=2,
         )
-    return current
 
-
-def load_json(root: Path, relative: PurePosixPath) -> Any:
-    path = _safe_regular_file(root, relative)
+    descriptors: list[int] = []
     try:
-        size = path.stat().st_size
-        if size > MAX_JSON_BYTES:
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        root_descriptor = os.open(root, directory_flags)
+        descriptors.append(root_descriptor)
+        opened_root = os.fstat(root_descriptor)
+        if (
+            not stat.S_ISDIR(opened_root.st_mode)
+            or opened_root.st_dev != root_metadata.st_dev
+            or opened_root.st_ino != root_metadata.st_ino
+        ):
+            fail(
+                "AHLL-CP-ROOT",
+                "repository root identity changed during read",
+                exit_code=2,
+            )
+
+        parent_descriptor = root_descriptor
+        for part in relative.parts[:-1]:
+            child_descriptor = os.open(
+                part,
+                directory_flags,
+                dir_fd=parent_descriptor,
+            )
+            descriptors.append(child_descriptor)
+            if not stat.S_ISDIR(os.fstat(child_descriptor).st_mode):
+                fail(
+                    "AHLL-CP-PATH",
+                    f"required input {relative} crosses a non-directory",
+                    exit_code=2,
+                )
+            parent_descriptor = child_descriptor
+
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        if hasattr(os, "O_NONBLOCK"):
+            file_flags |= os.O_NONBLOCK
+        file_descriptor = os.open(
+            relative.parts[-1],
+            file_flags,
+            dir_fd=parent_descriptor,
+        )
+        descriptors.append(file_descriptor)
+        opened_file = os.fstat(file_descriptor)
+        if not stat.S_ISREG(opened_file.st_mode):
+            fail(
+                "AHLL-CP-PATH",
+                f"required input {relative} is not a regular file",
+                exit_code=2,
+            )
+        if opened_file.st_size > MAX_JSON_BYTES:
             fail(
                 "AHLL-CP-BOUNDS",
                 f"required input {relative} exceeds the read bound",
                 exit_code=2,
             )
-        text = path.read_text(encoding="utf-8")
+
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(file_descriptor, 65536)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_JSON_BYTES:
+                fail(
+                    "AHLL-CP-BOUNDS",
+                    f"required input {relative} exceeds the read bound",
+                    exit_code=2,
+                )
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except CheckpointError:
+        raise
     except OSError:
         fail(
             "AHLL-CP-MISSING-FILE",
             f"required input {relative} cannot be read",
             exit_code=2,
         )
-    return decode_json_text(text, str(relative))
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
+def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
+    try:
+        return _read_regular_bytes(root, relative).decode("utf-8")
+    except UnicodeError:
+        fail(
+            "AHLL-CP-JSON",
+            f"required input {relative} is not valid UTF-8",
+            exit_code=2,
+        )
+
+
+def load_json(root: Path, relative: PurePosixPath) -> Any:
+    return decode_json_text(_read_regular_text(root, relative), str(relative))
 
 
 def _normalized_key(key: str) -> str:
@@ -1091,20 +1170,15 @@ def _validate_contract_refs(root: Path, checkpoint: dict[str, Any]) -> None:
                 f"{memory_id} lifecycle boundary drifted from the harness",
             )
 
-    _safe_regular_file(root, MEMORY_README_PATH)
-    gitignore = _safe_regular_file(root, PurePosixPath(".gitignore"))
-    try:
-        ignored_lines = {
-            line.strip()
-            for line in gitignore.read_text(encoding="utf-8").splitlines()
-            if line.strip() and not line.lstrip().startswith("#")
-        }
-    except OSError:
-        fail(
-            "AHLL-CP-HARNESS-CONTRACT",
-            "root ignore policy cannot be read",
-            exit_code=2,
-        )
+    _read_regular_bytes(root, MEMORY_README_PATH)
+    ignored_lines = {
+        line.strip()
+        for line in _read_regular_text(
+            root,
+            PurePosixPath(".gitignore"),
+        ).splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
     if ".agent-work/" not in ignored_lines:
         fail(
             "AHLL-CP-HARNESS-CONTRACT",

@@ -20,7 +20,6 @@ import pwd
 import re
 import stat
 import subprocess
-import sys
 from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence

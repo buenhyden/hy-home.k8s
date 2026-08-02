@@ -6,11 +6,14 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
+import stat
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
+from unittest import mock
 
 from jsonschema import Draft202012Validator
 
@@ -622,6 +625,45 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                         self.validator.load_json(root, relative)
                     self.assertEqual(raised.exception.code, "AHLL-PATH")
                     self.assertEqual(raised.exception.exit_code, 2)
+
+    def test_json_read_uses_opened_descriptor_after_final_path_swap(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "nested"
+            nested.mkdir()
+            payload = nested / "input.json"
+            payload.write_text('{"source":"inside"}\n', encoding="utf-8")
+            outside = root / "outside.json"
+            outside.write_text('{"source":"outside"}\n', encoding="utf-8")
+            payload_inode = payload.stat().st_ino
+            original_fstat = os.fstat
+            swapped = False
+
+            def swap_after_check(descriptor: int):
+                nonlocal swapped
+                metadata = original_fstat(descriptor)
+                if (
+                    not swapped
+                    and stat.S_ISREG(metadata.st_mode)
+                    and metadata.st_ino == payload_inode
+                ):
+                    swapped = True
+                    payload.rename(nested / "input-original.json")
+                    payload.symlink_to(outside)
+                return metadata
+
+            with mock.patch.object(
+                self.validator.os,
+                "fstat",
+                side_effect=swap_after_check,
+            ):
+                loaded = self.validator.load_json(
+                    root,
+                    PurePosixPath("nested/input.json"),
+                )
+
+            self.assertTrue(swapped)
+            self.assertEqual(loaded, {"source": "inside"})
 
     def test_sensitive_scanner_accepts_policy_labels_and_rejects_values(
         self,

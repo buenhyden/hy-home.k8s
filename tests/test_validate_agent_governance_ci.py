@@ -7,11 +7,14 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
+import stat
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -654,6 +657,45 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         contract.unlink()
         contract.symlink_to(copy_path)
         self.assert_rule(root, "AGQC-CI-INPUT")
+
+    def test_json_read_uses_opened_descriptor_after_final_path_swap(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "nested"
+            nested.mkdir()
+            payload = nested / "input.json"
+            payload.write_text('{"source":"inside"}\n', encoding="utf-8")
+            outside = root / "outside.json"
+            outside.write_text('{"source":"outside"}\n', encoding="utf-8")
+            payload_inode = payload.stat().st_ino
+            original_fstat = os.fstat
+            swapped = False
+
+            def swap_after_check(descriptor: int):
+                nonlocal swapped
+                metadata = original_fstat(descriptor)
+                if (
+                    not swapped
+                    and stat.S_ISREG(metadata.st_mode)
+                    and metadata.st_ino == payload_inode
+                ):
+                    swapped = True
+                    payload.rename(nested / "input-original.json")
+                    payload.symlink_to(outside)
+                return metadata
+
+            with mock.patch.object(
+                self.validator.os,
+                "fstat",
+                side_effect=swap_after_check,
+            ):
+                loaded = self.validator.load_json_document(
+                    payload,
+                    "AGQC-CI-JSON",
+                )
+
+            self.assertTrue(swapped)
+            self.assertEqual(loaded, {"source": "inside"})
 
     def test_schema_input_must_be_regular(self) -> None:
         root = self.make_valid_root()

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import errno
 import hashlib
 import json
 import os
@@ -357,66 +358,149 @@ def decode_json_text(text: str, source: str = "<memory>") -> Any:
         fail("AHLL-JSON", f"{source}: {exc}", exit_code=2)
 
 
-def _safe_regular_file(root: Path, relative: PurePosixPath) -> Path:
-    if relative.is_absolute() or ".." in relative.parts:
+def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
         fail(
             "AHLL-PATH",
             "contract input path is unsafe",
             exit_code=2,
         )
     try:
-        root = Path(root).resolve(strict=True)
+        root_metadata = os.lstat(root)
     except OSError:
         fail(
             "AHLL-ROOT",
             "repository root is unavailable",
             exit_code=2,
         )
-
-    current = root
-    mode: int | None = None
-    for part in relative.parts:
-        current = current / part
-        try:
-            mode = current.lstat().st_mode
-        except OSError:
-            fail(
-                "AHLL-MISSING-FILE",
-                f"required input {relative} is unavailable",
-                exit_code=2,
-            )
-        if stat.S_ISLNK(mode):
-            fail(
-                "AHLL-PATH",
-                f"required input {relative} crosses a symlink",
-                exit_code=2,
-            )
-    if mode is None or not stat.S_ISREG(mode):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+        root_metadata.st_mode
+    ):
         fail(
-            "AHLL-PATH",
-            f"required input {relative} is not a regular file",
+            "AHLL-ROOT",
+            "repository root is unavailable",
             exit_code=2,
         )
-    return current
 
-
-def load_json(root: Path, relative: PurePosixPath) -> Any:
-    path = _safe_regular_file(root, relative)
+    descriptors: list[int] = []
     try:
-        if path.stat().st_size > MAX_JSON_BYTES:
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        root_descriptor = os.open(root, directory_flags)
+        descriptors.append(root_descriptor)
+        opened_root = os.fstat(root_descriptor)
+        if (
+            not stat.S_ISDIR(opened_root.st_mode)
+            or opened_root.st_dev != root_metadata.st_dev
+            or opened_root.st_ino != root_metadata.st_ino
+        ):
+            fail(
+                "AHLL-ROOT",
+                "repository root identity changed during read",
+                exit_code=2,
+            )
+
+        parent_descriptor = root_descriptor
+        for part in relative.parts[:-1]:
+            child_descriptor = os.open(
+                part,
+                directory_flags,
+                dir_fd=parent_descriptor,
+            )
+            descriptors.append(child_descriptor)
+            if not stat.S_ISDIR(os.fstat(child_descriptor).st_mode):
+                fail(
+                    "AHLL-PATH",
+                    f"required input {relative} crosses a non-directory",
+                    exit_code=2,
+                )
+            parent_descriptor = child_descriptor
+
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        if hasattr(os, "O_NONBLOCK"):
+            file_flags |= os.O_NONBLOCK
+        file_descriptor = os.open(
+            relative.parts[-1],
+            file_flags,
+            dir_fd=parent_descriptor,
+        )
+        descriptors.append(file_descriptor)
+        opened_file = os.fstat(file_descriptor)
+        if not stat.S_ISREG(opened_file.st_mode):
+            fail(
+                "AHLL-PATH",
+                f"required input {relative} is not a regular file",
+                exit_code=2,
+            )
+        if opened_file.st_size > MAX_JSON_BYTES:
             fail(
                 "AHLL-BOUNDS",
                 f"required input {relative} exceeds the read bound",
                 exit_code=2,
             )
-        text = path.read_text(encoding="utf-8")
-    except OSError:
+
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(file_descriptor, 65536)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_JSON_BYTES:
+                fail(
+                    "AHLL-BOUNDS",
+                    f"required input {relative} exceeds the read bound",
+                    exit_code=2,
+                )
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except LoopLifecycleError:
+        raise
+    except OSError as exc:
+        if exc.errno in {errno.ELOOP, errno.ENOTDIR}:
+            fail(
+                "AHLL-PATH",
+                f"required input {relative} crosses a symlink or non-directory",
+                exit_code=2,
+            )
         fail(
             "AHLL-MISSING-FILE",
             f"required input {relative} cannot be read",
             exit_code=2,
         )
-    return decode_json_text(text, str(relative))
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
+def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
+    try:
+        return _read_regular_bytes(root, relative).decode("utf-8")
+    except UnicodeError:
+        fail(
+            "AHLL-JSON",
+            f"required input {relative} is not valid UTF-8",
+            exit_code=2,
+        )
+
+
+def load_json(root: Path, relative: PurePosixPath) -> Any:
+    return decode_json_text(_read_regular_text(root, relative), str(relative))
 
 
 def _normalized_key(key: str) -> str:

@@ -463,6 +463,119 @@ def _safe_repo_regular_file(
     )
 
 
+def _read_repo_regular_bytes(
+    root: Path,
+    relative: PurePosixPath | str,
+    code: str,
+    detail: str,
+    *,
+    exit_code: int = 1,
+) -> bytes:
+    candidate_relative = PurePosixPath(relative)
+    if (
+        candidate_relative.is_absolute()
+        or not candidate_relative.parts
+        or any(
+            segment in {"", ".", ".."}
+            for segment in candidate_relative.parts
+        )
+    ):
+        fail(
+            code,
+            f"{detail}: expected a normalized repository-relative path",
+            exit_code=exit_code,
+        )
+    absolute_root = root.absolute()
+    try:
+        root_metadata = os.lstat(absolute_root)
+    except OSError as exc:
+        fail(code, f"repository root: {exc}", exit_code=exit_code)
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+        root_metadata.st_mode
+    ):
+        fail(
+            code,
+            "repository root: expected a directory that is not a symlink",
+            exit_code=exit_code,
+        )
+
+    descriptors: list[int] = []
+    try:
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        root_descriptor = os.open(absolute_root, directory_flags)
+        descriptors.append(root_descriptor)
+        opened_root = os.fstat(root_descriptor)
+        if (
+            not stat.S_ISDIR(opened_root.st_mode)
+            or opened_root.st_dev != root_metadata.st_dev
+            or opened_root.st_ino != root_metadata.st_ino
+        ):
+            fail(
+                code,
+                "repository root identity changed during read",
+                exit_code=exit_code,
+            )
+
+        parent_descriptor = root_descriptor
+        for segment in candidate_relative.parts[:-1]:
+            child_descriptor = os.open(
+                segment,
+                directory_flags,
+                dir_fd=parent_descriptor,
+            )
+            descriptors.append(child_descriptor)
+            if not stat.S_ISDIR(os.fstat(child_descriptor).st_mode):
+                fail(
+                    code,
+                    f"{detail}: parent component {segment!r} is not a directory",
+                    exit_code=exit_code,
+                )
+            parent_descriptor = child_descriptor
+
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        if hasattr(os, "O_NONBLOCK"):
+            file_flags |= os.O_NONBLOCK
+        file_descriptor = os.open(
+            candidate_relative.parts[-1],
+            file_flags,
+            dir_fd=parent_descriptor,
+        )
+        descriptors.append(file_descriptor)
+        if not stat.S_ISREG(os.fstat(file_descriptor).st_mode):
+            fail(
+                code,
+                f"{detail}: expected a regular non-symlink file",
+                exit_code=exit_code,
+            )
+
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(file_descriptor, 65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except HarnessError:
+        raise
+    except OSError as exc:
+        fail(code, f"{detail}: {exc}", exit_code=exit_code)
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
 def _safe_repo_directory(
     root: Path,
     relative: PurePosixPath | str,
@@ -485,18 +598,17 @@ def load_json(
     code: str = "HARNESS-INPUT",
     exit_code: int = 2,
 ) -> Any:
-    path = _safe_repo_regular_file(
-        root,
-        relative,
-        code,
-        f"JSON input {relative}",
-        exit_code=exit_code,
-    )
     try:
-        text = path.read_text(encoding="utf-8")
-    except OSError as exc:
-        fail(code, f"{path}: {exc}", exit_code=exit_code)
-    return decode_json_text(text, str(path))
+        text = _read_repo_regular_bytes(
+            root,
+            relative,
+            code,
+            f"JSON input {relative}",
+            exit_code=exit_code,
+        ).decode("utf-8")
+    except UnicodeError as exc:
+        fail(code, f"JSON input {relative}: {exc}", exit_code=exit_code)
+    return decode_json_text(text, str(relative))
 
 
 def _identity_values(

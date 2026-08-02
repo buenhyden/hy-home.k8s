@@ -477,41 +477,102 @@ def _absolute_root(root: Path) -> Path:
 
 
 def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
-    current = root
-    for part in relative.parts[:-1]:
-        current = current / part
-        try:
-            mode = current.lstat().st_mode
-        except OSError as exc:
-            fail(
-                "AGQC-CI-INPUT",
-                f"{relative.as_posix()} is unavailable: {exc.strerror}",
-            )
-        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
-            fail(
-                "AGQC-CI-INPUT",
-                f"{relative.as_posix()} has a non-directory or symlink parent",
-            )
-    path = root / relative
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        fail("AGQC-CI-INPUT", "repository input path is unsafe")
     try:
-        mode = path.lstat().st_mode
+        root_metadata = os.lstat(root)
     except OSError as exc:
         fail(
             "AGQC-CI-INPUT",
-            f"{relative.as_posix()} is unavailable: {exc.strerror}",
+            f"repository root is unavailable: {exc.strerror}",
         )
-    if stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+        root_metadata.st_mode
+    ):
         fail(
             "AGQC-CI-INPUT",
-            f"{relative.as_posix()} must be a regular non-symlink file",
+            "repository root must be a regular non-symlink directory",
         )
+
+    descriptors: list[int] = []
     try:
-        return path.read_bytes()
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        root_descriptor = os.open(root, directory_flags)
+        descriptors.append(root_descriptor)
+        opened_root = os.fstat(root_descriptor)
+        if (
+            not stat.S_ISDIR(opened_root.st_mode)
+            or opened_root.st_dev != root_metadata.st_dev
+            or opened_root.st_ino != root_metadata.st_ino
+        ):
+            fail(
+                "AGQC-CI-INPUT",
+                "repository root identity changed during read",
+            )
+
+        parent_descriptor = root_descriptor
+        for part in relative.parts[:-1]:
+            child_descriptor = os.open(
+                part,
+                directory_flags,
+                dir_fd=parent_descriptor,
+            )
+            descriptors.append(child_descriptor)
+            if not stat.S_ISDIR(os.fstat(child_descriptor).st_mode):
+                fail(
+                    "AGQC-CI-INPUT",
+                    f"{relative.as_posix()} has a non-directory parent",
+                )
+            parent_descriptor = child_descriptor
+
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        if hasattr(os, "O_NONBLOCK"):
+            file_flags |= os.O_NONBLOCK
+        file_descriptor = os.open(
+            relative.parts[-1],
+            file_flags,
+            dir_fd=parent_descriptor,
+        )
+        descriptors.append(file_descriptor)
+        if not stat.S_ISREG(os.fstat(file_descriptor).st_mode):
+            fail(
+                "AGQC-CI-INPUT",
+                f"{relative.as_posix()} must be a regular non-symlink file",
+            )
+
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(file_descriptor, 65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except ContractError:
+        raise
     except OSError as exc:
         fail(
             "AGQC-CI-INPUT",
             f"{relative.as_posix()} cannot be read: {exc}",
         )
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
 
 
 def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
@@ -525,19 +586,9 @@ def _read_regular_text(root: Path, relative: PurePosixPath) -> str:
 
 
 def _read_path_regular_text(path: Path) -> str:
-    try:
-        mode = path.lstat().st_mode
-    except OSError as exc:
-        fail("AGQC-CI-INPUT", f"{path.name} is unavailable: {exc.strerror}")
-    if stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-        fail(
-            "AGQC-CI-INPUT",
-            f"{path.name} must be a regular non-symlink file",
-        )
-    try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        fail("AGQC-CI-INPUT", f"{path.name} cannot be read as UTF-8: {exc}")
+    absolute = Path(os.path.abspath(os.fspath(path)))
+    relative = PurePosixPath(*absolute.parts[1:])
+    return _read_regular_text(Path(absolute.anchor), relative)
 
 
 def _parse_json(text: str, rule_id: str, source: str) -> Any:

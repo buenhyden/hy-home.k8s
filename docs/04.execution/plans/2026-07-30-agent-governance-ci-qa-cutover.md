@@ -204,7 +204,8 @@ canaries are not completion commands for this Plan and remain `DEFER`.
 - **Spec**: [Agent Governance CI and QA Cutover](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md)
 - **Task**: [Agent Governance CI and QA Cutover Task](../tasks/2026-07-30-agent-governance-ci-qa-cutover.md)
 - **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
-- **Governing decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
+- **Active successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **CI foundation**: Spec 039
 - **Loop foundation**: Spec 043
 - **Observed prerequisite**: Spec 044 closure `42864832` and postflight

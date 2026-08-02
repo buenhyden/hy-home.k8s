@@ -7,12 +7,15 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from jsonschema import Draft202012Validator
 
@@ -585,6 +588,45 @@ class ModelFitnessContractTests(unittest.TestCase):
                         raised.exception.code, "AREA-FIT-INPUT"
                     )
                     self.assertNotIn(str(outside), raised.exception.detail)
+
+    def test_json_read_uses_opened_descriptor_after_final_path_swap(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "nested"
+            nested.mkdir()
+            payload = nested / "input.json"
+            payload.write_text('{"source":"inside"}\n', encoding="utf-8")
+            outside = root / "outside.json"
+            outside.write_text('{"source":"outside"}\n', encoding="utf-8")
+            payload_inode = payload.stat().st_ino
+            original_fstat = os.fstat
+            swapped = False
+
+            def swap_after_check(descriptor: int):
+                nonlocal swapped
+                metadata = original_fstat(descriptor)
+                if (
+                    not swapped
+                    and stat.S_ISREG(metadata.st_mode)
+                    and metadata.st_ino == payload_inode
+                ):
+                    swapped = True
+                    payload.rename(nested / "input-original.json")
+                    payload.symlink_to(outside)
+                return metadata
+
+            with mock.patch.object(
+                self.validator.os,
+                "fstat",
+                side_effect=swap_after_check,
+            ):
+                loaded = self.validator.load_json(
+                    root,
+                    self.validator.PurePosixPath("nested/input.json"),
+                )
+
+            self.assertTrue(swapped)
+            self.assertEqual(loaded, {"source": "inside"})
 
     def test_adapter_symlink_is_rejected_before_model_read(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

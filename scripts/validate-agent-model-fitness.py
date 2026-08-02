@@ -231,7 +231,7 @@ def parse_json_text(text: str, label: str) -> Any:
         fail("AREA-FIT-JSON", f"{label}: {exc}", exit_code=2)
 
 
-def _resolve_regular_file(root: Path, relative: PurePosixPath) -> Path:
+def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
     try:
         root_metadata = os.lstat(root)
     except OSError:
@@ -240,66 +240,129 @@ def _resolve_regular_file(root: Path, relative: PurePosixPath) -> Path:
         root_metadata.st_mode
     ):
         fail("AREA-FIT-INPUT", "repository root is not a directory", exit_code=2)
-    try:
-        repository_root = root.resolve(strict=True)
-    except OSError:
-        fail("AREA-FIT-INPUT", "repository root is unavailable", exit_code=2)
-    if relative.is_absolute() or ".." in relative.parts:
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
         fail("AREA-FIT-INPUT", "governed input path is outside scope", exit_code=2)
 
-    candidate = repository_root.joinpath(*relative.parts)
-    cursor = repository_root
-    for index, part in enumerate(relative.parts):
-        cursor = cursor / part
-        try:
-            metadata = os.lstat(cursor)
-        except OSError:
+    descriptors: list[int] = []
+    try:
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        root_descriptor = os.open(root, directory_flags)
+        descriptors.append(root_descriptor)
+        opened_root = os.fstat(root_descriptor)
+        if (
+            not stat.S_ISDIR(opened_root.st_mode)
+            or opened_root.st_dev != root_metadata.st_dev
+            or opened_root.st_ino != root_metadata.st_ino
+        ):
             fail(
                 "AREA-FIT-INPUT",
-                f"required input is unavailable: {relative}",
+                "repository root identity changed during read",
                 exit_code=2,
             )
-        is_last = index == len(relative.parts) - 1
-        if stat.S_ISLNK(metadata.st_mode):
-            fail(
-                "AREA-FIT-INPUT",
-                f"required input is unavailable: {relative}",
-                exit_code=2,
+
+        parent_descriptor = root_descriptor
+        for part in relative.parts[:-1]:
+            child_descriptor = os.open(
+                part,
+                directory_flags,
+                dir_fd=parent_descriptor,
             )
-        if not is_last and not stat.S_ISDIR(metadata.st_mode):
-            fail(
-                "AREA-FIT-INPUT",
-                f"required input is unavailable: {relative}",
-                exit_code=2,
-            )
-        if is_last and not stat.S_ISREG(metadata.st_mode):
+            descriptors.append(child_descriptor)
+            if not stat.S_ISDIR(os.fstat(child_descriptor).st_mode):
+                fail(
+                    "AREA-FIT-INPUT",
+                    f"required input is unavailable: {relative}",
+                    exit_code=2,
+                )
+            parent_descriptor = child_descriptor
+
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        if hasattr(os, "O_NONBLOCK"):
+            file_flags |= os.O_NONBLOCK
+        file_descriptor = os.open(
+            relative.parts[-1],
+            file_flags,
+            dir_fd=parent_descriptor,
+        )
+        descriptors.append(file_descriptor)
+        if not stat.S_ISREG(os.fstat(file_descriptor).st_mode):
             fail(
                 "AREA-FIT-INPUT",
                 f"required input is not a regular file: {relative}",
                 exit_code=2,
             )
 
-    try:
-        candidate.resolve(strict=True).relative_to(repository_root)
-    except (OSError, ValueError):
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(file_descriptor, 65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except ModelFitnessError:
+        raise
+    except OSError:
         fail(
             "AREA-FIT-INPUT",
             f"required input is unavailable: {relative}",
             exit_code=2,
         )
-    return candidate
+    finally:
+        for descriptor in reversed(descriptors):
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
 
 
 def load_text(root: Path, relative: PurePosixPath) -> str:
-    path = _resolve_regular_file(root, relative)
     try:
-        return path.read_text(encoding="utf-8")
-    except OSError:
+        return _read_regular_bytes(root, relative).decode("utf-8")
+    except UnicodeError:
         fail(
             "AREA-FIT-INPUT",
             f"required input cannot be read: {relative}",
             exit_code=2,
         )
+
+
+def _load_validator_module(
+    root: Path,
+    relative: PurePosixPath,
+    module_name: str,
+    failure_code: str,
+    failure_detail: str,
+) -> Any:
+    source = _read_regular_bytes(root, relative)
+    spec = importlib.util.spec_from_loader(
+        module_name,
+        loader=None,
+        origin=relative.as_posix(),
+    )
+    if spec is None:
+        fail(failure_code, failure_detail, exit_code=2)
+    module = importlib.util.module_from_spec(spec)
+    try:
+        exec(
+            compile(source, relative.as_posix(), "exec"),
+            module.__dict__,
+        )
+    except Exception:
+        fail(failure_code, failure_detail, exit_code=2)
+    return module
 
 
 def load_json(root: Path, relative: PurePosixPath) -> Any:
@@ -617,27 +680,14 @@ def _validate_full_provider_source(
     root: Path,
     evidence: dict[str, Any],
 ) -> tuple[str, ...]:
-    _resolve_regular_file(root, PROVIDER_EVIDENCE_SCHEMA_PATH)
-    validator_path = _resolve_regular_file(root, PROVIDER_CONFIG_VALIDATOR_PATH)
-    spec = importlib.util.spec_from_file_location(
+    _read_regular_bytes(root, PROVIDER_EVIDENCE_SCHEMA_PATH)
+    module = _load_validator_module(
+        root,
+        PROVIDER_CONFIG_VALIDATOR_PATH,
         "hy_home_agent_provider_config_validator",
-        validator_path,
+        "AREA-FIT-PROVIDER-EVIDENCE",
+        "Spec 042 provider validator failed closed",
     )
-    if spec is None or spec.loader is None:
-        fail(
-            "AREA-FIT-PROVIDER-EVIDENCE",
-            "Spec 042 provider validator cannot be loaded",
-            exit_code=2,
-        )
-    module = importlib.util.module_from_spec(spec)
-    try:
-        spec.loader.exec_module(module)
-    except Exception:
-        fail(
-            "AREA-FIT-PROVIDER-EVIDENCE",
-            "Spec 042 provider validator failed closed",
-            exit_code=2,
-        )
 
     expected_source_ids = getattr(module, "SOURCE_IDS", None)
     validate_provider_contract = getattr(module, "validate_contract", None)
@@ -829,20 +879,14 @@ def _validate_full_evaluation_source(
     harness: dict[str, Any],
     admission: dict[str, Any],
 ) -> None:
-    validator_path = _resolve_regular_file(root, EVALUATIONS_VALIDATOR_PATH)
-    spec = importlib.util.spec_from_file_location(
+    module = _load_validator_module(
+        root,
+        EVALUATIONS_VALIDATOR_PATH,
         "hy_home_agent_evaluations_validator",
-        validator_path,
+        "AREA-FIT-EVALUATION-SOURCE",
+        "AREA-003 validator cannot be loaded",
     )
-    if spec is None or spec.loader is None:
-        fail(
-            "AREA-FIT-EVALUATION-SOURCE",
-            "AREA-003 validator cannot be loaded",
-            exit_code=2,
-        )
-    module = importlib.util.module_from_spec(spec)
     try:
-        spec.loader.exec_module(module)
         module.validate_contract(
             root,
             evaluations,
@@ -1449,7 +1493,6 @@ def _validate_tuple(
     if parsed_path.is_absolute() or ".." in parsed_path.parts:
         fail("AREA-FIT-SCOPE", f"{role_id}/{provider_id} config path escapes scope")
 
-    suite = evaluations["suites"][role_index]
     expected_evaluation = {
         "bindingRef": f"#/evaluationBindings/{role_index}",
         "baselineMetricsDigest": "DEFER",
