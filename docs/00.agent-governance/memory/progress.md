@@ -17,7 +17,8 @@ inventory stays in `scripts/README.md`.
 - **Status**: in-progress
 - **Tags**: #prd-007 #ard-0010 #adr-0021 #repository-delivery #platform-assurance
 - **Owner**: Repository delivery and platform assurance design
-- **Canonical Owner**: PRD-007, ARD-0010, ADR-0021, and planned Specs 047-051
+- **Canonical Owner**: PRD-007, ARD-0010, ADR-0021, and authored draft Specs
+  047-051
 - **Provenance**: approved five-section design, clean local `main` at
   `6523fd59c9e9cd3cfcef304428ec2297e46fb8e5`, Current audit pack, and
   read-only remote GitHub observation on 2026-08-02
@@ -34,6 +35,9 @@ inventory stays in `scripts/README.md`.
 - Approved a foundation-first sequence: current-surface and stash
   reconciliation, GitHub routing and CI evidence, platform validation,
   examples and IaC QA, then integration closure.
+- Authored that sequence as five independently reviewable draft Specs without
+  changing any active GitHub, platform, IaC, validator, policy, secret, or
+  infrastructure surface.
 - Preserved one saved stash as a semantic-reconciliation input, not an
   apply-ready patch. Its durable disposition and eventual drop remain owned by
   Spec 047 and Spec 051.
@@ -56,15 +60,22 @@ inventory stays in `scripts/README.md`.
   their owning Stage README in the same change.
 - Current target READMEs and GitHub-native Markdown forms already passed their
   selected profiles; the design requires evidence before modifying them.
+- Six logical design commits (`87980b7`, `aae899b`, `e184055`, `5bbe073`,
+  `967766b`, and `0bc329b`) record the program foundation and Specs 047-051.
+  Strict document-registry, Markdown-profile, owner/cross-link, legacy-cutover,
+  staged-diff, and whole-repository pre-commit gates passed for the authored
+  design.
+- Two bounded, read-only independent cross-checks found no material design or
+  official-source correction before interruption. They were not exhaustive
+  approvals and do not replace the required human written-Spec review.
 - No ignored/private file, credential, cluster, Vault, ESO, cloud resource,
   remote workflow, branch rule, or GitHub setting was read or changed.
 
 #### Handoff
 
-- Author Specs 047-051 as separate draft technical contracts, validate and
-  independently review the complete written design, then request human review
-  before Plan authoring or implementation. No push or live action is
-  authorized.
+- Complete independent review of the authored draft Specs, then request human
+  written-Spec review before Plan authoring or implementation. No push or live
+  action is authorized.
 
 ### 2026-08-01 - Spec 046 AGPC-004 terminal transition postflight
 
