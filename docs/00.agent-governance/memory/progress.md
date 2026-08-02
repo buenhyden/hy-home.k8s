@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-02 - Repository delivery and platform assurance design baseline
+
+#### Metadata
+
+- **Date**: 2026-08-02
+- **Layer**: product, architecture, infra, qa, security, meta
+- **Status**: in-progress
+- **Tags**: #prd-007 #ard-0010 #adr-0021 #repository-delivery #platform-assurance
+- **Owner**: Repository delivery and platform assurance design
+- **Canonical Owner**: PRD-007, ARD-0010, ADR-0021, and planned Specs 047-051
+- **Provenance**: approved five-section design, clean local `main` at
+  `6523fd59c9e9cd3cfcef304428ec2297e46fb8e5`, Current audit pack, and
+  read-only remote GitHub observation on 2026-08-02
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain until Spec 051 closure records the terminal
+  local integration and durable successor owners
+- **Next Owner**: written Spec review, then Plan authoring and Spec 047
+
+#### Progress
+
+- Defined a new PRD/ARD/ADR lineage for repository delivery and platform
+  assurance without replacing the PRD-004 current platform topology or the
+  completed document and agent-governance programs.
+- Approved a foundation-first sequence: current-surface and stash
+  reconciliation, GitHub routing and CI evidence, platform validation,
+  examples and IaC QA, then integration closure.
+- Preserved one saved stash as a semantic-reconciliation input, not an
+  apply-ready patch. Its durable disposition and eventual drop remain owned by
+  Spec 047 and Spec 051.
+
+#### Memory
+
+- A dated audit or remote workflow result is observation evidence for its exact
+  SHA, not permission to overwrite current repository contracts or promote a
+  local PASS into hosted or live readiness.
+- Cross-surface assurance should project stable surface identifiers from one
+  path owner and record validation depth separately; copying path regexes or
+  collapsing independent CI lanes creates hidden drift.
+
+#### Evidence
+
+- The working tree was clean on `main`; local HEAD was 128 commits ahead of the
+  observed remote main, and `stash@{0}` remained present.
+- Current profile inspection confirmed that new PRD, ARD, ADR, and Spec
+  documents start in `draft`, use the five-key frontmatter contract, and update
+  their owning Stage README in the same change.
+- Current target READMEs and GitHub-native Markdown forms already passed their
+  selected profiles; the design requires evidence before modifying them.
+- No ignored/private file, credential, cluster, Vault, ESO, cloud resource,
+  remote workflow, branch rule, or GitHub setting was read or changed.
+
+#### Handoff
+
+- Author Specs 047-051 as separate draft technical contracts, validate and
+  independently review the complete written design, then request human review
+  before Plan authoring or implementation. No push or live action is
+  authorized.
+
 ### 2026-08-01 - Spec 046 AGPC-004 terminal transition postflight
 
 #### Metadata

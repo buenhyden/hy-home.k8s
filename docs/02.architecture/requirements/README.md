@@ -46,6 +46,7 @@ ARD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선�
 ├── 0007-current-local-gitops-platform.md
 ├── 0008-workspace-document-assurance-operating-model.md
 ├── 0009-document-lifecycle-evidence-operating-model.md
+├── 0010-repository-delivery-evidence-architecture.md
 └── README.md
 ```
 
@@ -76,6 +77,7 @@ ARD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선�
 | [`./0007-current-local-gitops-platform.md`](./0007-current-local-gitops-platform.md) | 현재 local GitOps platform reference architecture | Active | Current repo-backed baseline. Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 경계를 소유한다. | [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md) |
 | [`./0008-workspace-document-assurance-operating-model.md`](./0008-workspace-document-assurance-operating-model.md) | Workspace document assurance 운영 모델 | Accepted | Registry, template, authored document, validation, CI/QA, provider, protected-surface 책임과 데이터 흐름을 정의한다. | [`../../03.specs/026-document-contract-registry/spec.md`](../../03.specs/026-document-contract-registry/spec.md) |
 | [`./0009-document-lifecycle-evidence-operating-model.md`](./0009-document-lifecycle-evidence-operating-model.md) | Document lifecycle, full-body archive, reference currentness, and QA evidence 운영 모델 | Accepted | 2026-07-28 exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`에서 Specs 034–040 repository-static contract와 `0/0·6/3·3` frontier를 종료하고, reciprocal accepted ADR-0020을 same-diff role-decision evidence로 사용한다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 external security/provider/remote/live evidence는 `DEFER`다. | [`ADR-0020`](../decisions/0020-document-lifecycle-program-closure-evidence.md) 및 [`Spec 040`](../../03.specs/040-contract-cutover-and-program-closure/spec.md) |
+| [`./0010-repository-delivery-evidence-architecture.md`](./0010-repository-delivery-evidence-architecture.md) | Repository delivery routing, layered validation evidence, and local integration reference architecture | Draft | Existing validation-surface and platform topology owners remain canonical; two reference-based machine contracts close GitHub projection and platform evidence-depth gaps. | [`ADR-0021`](../decisions/0021-canonical-surface-routing-and-evidence-depth.md) 및 planned Specs 047–051 |
 
 ## Related Documents
 
