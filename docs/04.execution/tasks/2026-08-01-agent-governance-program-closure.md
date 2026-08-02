@@ -35,6 +35,8 @@ approved action observes them.
 - Observed Spec 046 activation
   `c6bae0227acd3e4f57b591c14a88e31b6f2e553f` with sole parent
   `060396112abaddbbcf79a33c8a04ae775cce66a1`
+- Observed ADR-0019 and program-design activation
+  `ff66dd933e00def085b4c0319a67c6651356b116`
 
 ## Task Table
 
@@ -107,6 +109,18 @@ expectations were corrected, the affected 49 and 3 tests passed, and the full
 aggregate, exact 20-path staged lane, full pre-commit, Ruff, diff checks, and
 final requirements plus quality/security re-reviews passed. AGPC-003 through
 AGPC-005 remain pending.
+
+Decision-readiness activation `ff66dd933e00def085b4c0319a67c6651356b116`
+used the governed `draft -> active` edge for ADR-0019 and the program
+agent-design while retaining accepted ADR-0013 as the current decision. It
+reconciled the fixed `2026-07-10T10:00:00+09:00` /
+`2026-07-10T01:00:00Z` source cutoff across current program authorities and
+updated five source-bound predecessor digests. The exact 14-path unit passed
+closure 28/28, staged lifecycle, strict documents, affected 22/22, the full
+repository aggregate, staged pre-commit, Ruff, both diff checks, independent
+requirements `COMPLIANT`, and quality/security `APPROVED`. This postflight
+records the observed activation SHA; it does not accept ADR-0019 or make it the
+current decision.
 
 The closure design preserves working short-term, durable long-term,
 domain-scoped, and provider-local auxiliary memory as the four classes. It

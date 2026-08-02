@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 decision-readiness activation postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: architecture, governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-046 #adr-0019 #agent-design #lifecycle #cutoff #postflight
+- **Owner**: Spec 046 decision-readiness postflight
+- **Canonical Owner**: ADR-0019, Spec 046 Task, and agent-governance closure contract
+- **Provenance**: implementation
+  `ff66dd933e00def085b4c0319a67c6651356b116`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: AGPC-003 final whole-branch QA and independent review
+
+#### Progress
+
+- Transitioned ADR-0019 and the program agent-design through the governed
+  `draft -> active` edge while retaining accepted ADR-0013 as the current
+  decision until Spec 046 closure and a separate ADR acceptance transition.
+- Reconciled the fixed external-source cutoff to
+  `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z` in the current PRD,
+  ARD, ADR, agent-design, and loop-lifecycle Spec without rewriting historical
+  execution dates.
+- Advanced the closure contract through `1.0.1` for active status and five
+  updated source digests. This postflight advances it to `1.0.2` so the ADR
+  implementation reference points to the observed activation commit.
+- Preserved provider-runtime, auth, model discovery, hosted, remote, live, and
+  actual-evaluation lanes as `DEFER` or `ABSENT`; no repository-static result
+  was promoted across evidence lanes.
+
+#### Evidence
+
+- Exact 14-path activation `ff66dd933e00def085b4c0319a67c6651356b116`
+  passed closure self-test/production and 28/28 focused tests, staged document
+  lifecycle, strict profiles/registry/links, affected 22/22, the full
+  repository aggregate, staged pre-commit, Ruff, and both diff checks.
+- The lifecycle gate initially rejected duplicate relationship targets in the
+  two promoted documents. Traceability rows were normalized to one rendered
+  source per target while preserving explicit shared-source exclusions; the
+  staged lifecycle then passed.
+- Independent requirements review returned `COMPLIANT`; independent
+  quality/security review returned `APPROVED` with no findings.
+
+#### Handoff
+
+- AGPC-003 owns final whole-branch QA and independent review from the fixed
+  program base through this postflight. ADR-0019 remains active but non-current.
+- This entry observes the activation and does not preclaim this postflight's
+  own commit SHA, ADR acceptance, terminal Spec/Plan/Task closure, local merge,
+  hosted/provider/remote/live evidence, or worktree cleanup.
+
 ### 2026-08-01 - Spec 046 AGPC-002 closure routing postflight
 
 #### Metadata

@@ -86,7 +86,7 @@ EXPECTED_PREDECESSORS = (
         "adr-0019",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
         "active",
-        "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
+        "git-sha1:" + "ff66dd93-3e00def0-85b4c031-9a67c665-1356b116".replace("-", ""),
         "0fe9a243-91156b55-b93bc349-429b162e-19b618be-98c4eb1c-6ed81e20-5dfc04c8".replace(
             "-", ""
         ),

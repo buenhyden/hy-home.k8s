@@ -2,7 +2,7 @@
   "$schema": "./agent-governance-closure.schema.json",
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-governance-closure",
-  "contractVersion": "1.0.1",
+  "contractVersion": "1.0.2",
   "ownerSpec": "docs/03.specs/046-agent-governance-program-closure/spec.md",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
@@ -72,7 +72,7 @@
       "id": "adr-0019",
       "owner": "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
       "expectedStatus": "active",
-      "implementationRef": "git-sha1:38a2fe6b90bad694d0a9a021c7edce8d800e03ea",
+      "implementationRef": "git-sha1:ff66dd933e00def085b4c0319a67c6651356b116",
       "validatorCommand": "python3 scripts/validate-markdown-profiles.py --root . --mode strict",
       "lane": "repository_static",
       "result": "PASS",
