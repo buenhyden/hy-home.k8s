@@ -219,6 +219,10 @@ or `git stash drop` in this tranche.
   [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Plan**:
+  [Current Surface and Stash Reconciliation Implementation Plan](../../04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md)
+- **Task**:
+  [Current Surface and Stash Reconciliation Task](../../04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md)
 - **Successor**:
   [Spec 048](../048-github-routing-and-ci-evidence/spec.md)
 

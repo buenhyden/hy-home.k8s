@@ -104,6 +104,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-29-agent-roster-evaluation-and-admission.md
 ├── 2026-07-30-agent-governance-ci-qa-cutover.md
 ├── 2026-08-01-agent-governance-program-closure.md
+├── 2026-08-02-current-surface-and-stash-reconciliation.md
 └── README.md
 ```
 
@@ -190,6 +191,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-29-agent-roster-evaluation-and-admission.md`](./2026-07-29-agent-roster-evaluation-and-admission.md) | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md)과 reciprocal [Plan](../plans/2026-07-29-agent-roster-evaluation-and-admission.md)의 AREA-000~005 완료 증거를 추적한다. 구현 `258955b3`, AREA-004 postflight `a15d5e10`, AREA-005 reconciliation `7891368e`, focused model/staged lifecycle/strict registry `463`/aggregate/all-files/diff PASS와 요구사항 `COMPLIANT`, 품질·보안 `APPROVED`를 기록한다. Closure SHA/postflight와 observed admission/promotion/runtime 외부 lane은 preclaim하지 않으며 다음 owner는 Spec 045다. | Done | 2026-07-30 |
 | [`./2026-07-30-agent-governance-ci-qa-cutover.md`](./2026-07-30-agent-governance-ci-qa-cutover.md) | [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md)과 reciprocal [Plan](../plans/2026-07-30-agent-governance-ci-qa-cutover.md)의 AGQC-000~006 repository-static 실행을 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`의 Python `741`/aggregate/all-files/diff와 test-only delta의 관련 `49`/nested-subreaper probe/file pre-commit/세 독립 검토가 PASS했고 모두 `0/0/0`이다. Hosted CI, branch protection, provider runtime/auth/model discovery, actual evaluation/admission/promotion, remote/live, provider resume/handoff canary는 Spec 046에 `DEFER`한다. | Done | 2026-08-01 |
 | [`./2026-08-01-agent-governance-program-closure.md`](./2026-08-01-agent-governance-program-closure.md) | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)과 reciprocal [Plan](../plans/2026-08-01-agent-governance-program-closure.md)의 terminal document transition을 AGPC-004까지 완료했다. Commit observation은 separate AGPC-004 postflight에 남고 AGPC-005 Task 행은 planned local merge/worktree cleanup을 post-terminal root handoff로 이관해 `Archived`다. Provider/hosted/actual/remote/live lane은 `DEFER`/`ABSENT`를 유지한다. | Done | 2026-08-01 |
+| [`./2026-08-02-current-surface-and-stash-reconciliation.md`](./2026-08-02-current-surface-and-stash-reconciliation.md) | [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)과 reciprocal [Plan](../plans/2026-08-02-current-surface-and-stash-reconciliation.md)의 program activation, target disposition, stash reconciliation, QA, and handoff evidence를 추적한다. | Draft | 2026-08-02 |
 
 ## Related Documents
 
