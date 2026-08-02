@@ -6256,7 +6256,7 @@
           {
             "spec": "046",
             "order": 6,
-            "state": "active",
+            "state": "done",
             "reason": "Agent governance program closure",
             "decision": "0013"
           }

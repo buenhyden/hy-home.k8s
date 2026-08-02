@@ -2,7 +2,7 @@
   "$schema": "./agent-governance-closure.schema.json",
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-governance-closure",
-  "contractVersion": "1.1.0",
+  "contractVersion": "1.2.0",
   "ownerSpec": "docs/03.specs/046-agent-governance-program-closure/spec.md",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
@@ -45,7 +45,7 @@
       "lane": "repository_static",
       "result": "PASS",
       "evidence": "PRD 003 is the current product-requirement owner for the program lineage.",
-      "evidenceSha256": "bf6ea5ba32ef638bc1f0ecc20a057f0da500199533191154280efa5e4987ee3a",
+      "evidenceSha256": "1b696204f94d66327bf6241b00c64a36e95801769f884c8e2ed00de22838fbe8",
       "reviewerVerdict": "PASS",
       "residualRisk": "External runtime, hosted, remote, and live lanes remain non-transitive.",
       "limitation": null,
@@ -61,7 +61,7 @@
       "lane": "repository_static",
       "result": "PASS",
       "evidence": "ARD 0006 is the current architecture-requirement owner for the program lineage.",
-      "evidenceSha256": "904ae578333e9aaebc8ac5d816a1bc08e4c21a89ebd62345028445b5c7c4a270",
+      "evidenceSha256": "27bfa25633d94bd3dc92c95cd8937ec6efd875d7c4e5f1f1ead87d1ceeae66f2",
       "reviewerVerdict": "PASS",
       "residualRisk": "External runtime, hosted, remote, and live lanes remain non-transitive.",
       "limitation": null,
@@ -71,18 +71,18 @@
     {
       "id": "adr-0019",
       "owner": "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-      "expectedStatus": "active",
+      "expectedStatus": "accepted",
       "implementationRef": "git-sha1:ff66dd933e00def085b4c0319a67c6651356b116",
       "validatorCommand": "python3 scripts/validate-markdown-profiles.py --root . --mode strict",
       "lane": "repository_static",
       "result": "PASS",
-      "evidence": "ADR 0019 is the active conditional decision owner linked to Spec 046 closure.",
-      "evidenceSha256": "0fe9a24391156b55b93bc349429b162e19b618be98c4eb1c6ed81e205dfc04c8",
+      "evidence": "ADR 0019 is the accepted current decision after the Spec 046 repository-local terminal transition.",
+      "evidenceSha256": "d1e67aad49b6c62ad4e2ae6ef50476f4cbf12b24fd5a3d7fcd16c43a32b3c0eb",
       "reviewerVerdict": "PASS",
-      "residualRisk": "ADR 0019 remains non-current until the Spec 046 terminal transition accepts it; ADR 0013 remains the accepted predecessor.",
+      "residualRisk": "ADR 0013 remains accepted historical predecessor evidence; external runtime and AGPC-005 operational handoff lanes remain non-transitive.",
       "limitation": null,
       "retryTrigger": null,
-      "rollbackPath": "Revert the reviewed ADR 0019 activation unit and retain ADR 0013 as the accepted current decision."
+      "rollbackPath": "Author a reviewed successor ADR for any changed decision while preserving ADR 0019 and ADR 0013 as accepted history."
     },
     {
       "id": "spec-038",
@@ -141,7 +141,7 @@
       "lane": "repository_static",
       "result": "PASS",
       "evidence": "Harness contract foundation is closed at repository-static boundary.",
-      "evidenceSha256": "324115f490ae108c493b41dbe0d3485af11f36243e9e86ad05f81f99e554e346",
+      "evidenceSha256": "ca96a95ab6d2ea9c261cfcaee7c5467b6eae25cb656a6a6b78692723c435c9ed",
       "reviewerVerdict": "PASS",
       "residualRisk": "External runtime, hosted, remote, and live lanes remain non-transitive.",
       "limitation": null,
@@ -408,7 +408,7 @@
   "reviewEvidence": {
     "requirements": {
       "result": "PASS",
-      "owner": "AGPC-003",
+      "owner": "AGPC-004",
       "critical": 0,
       "important": 0,
       "minor": 0,
@@ -417,7 +417,7 @@
     },
     "qualitySecurity": {
       "result": "PASS",
-      "owner": "AGPC-003",
+      "owner": "AGPC-004",
       "critical": 0,
       "important": 0,
       "minor": 0,

@@ -8,6 +8,74 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 AGPC-004 terminal document transition
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: architecture, governance, qa, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-004 #adr-0019 #terminal-documents #closure
+- **Owner**: AGPC-004 terminal document transition
+- **Canonical Owner**: accepted ADR-0019, Spec 046 Task, and
+  `agent-governance-closure` contract
+- **Provenance**: terminal document proposal; terminal commit identity is
+  intentionally unclaimed pending a separate observed postflight
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain as durable program-closure evidence until a
+  newer canonical owner supersedes current status without deleting provenance
+- **Next Owner**: AGPC-004 observed terminal postflight, then the post-terminal
+  root finishing handoff performs local integration and cleanup
+
+#### Progress
+
+- Accepted ADR-0019 as the current program decision while preserving accepted
+  ADR-0013 as the historical predecessor that governed the earlier tranches.
+- Kept the Spec 041 agent-design `active` as current design owner, transitioned
+  reciprocal Spec 046, Plan, and Task to `done`, reconciled their indexes, and
+  closed the Spec 046 profile-lineage state while preserving ADR-0013 as its
+  historical governing decision. Accepted ADR-0019 owns present-tense current
+  architecture. The closure contract/schema/fixture advanced to `1.2.0` with
+  synchronized predecessor status and source digests.
+- Marked AGPC-004 terminal document work complete without inventing its commit
+  SHA. A separate postflight must observe the terminal commit. The AGPC-005
+  Task row is `Archived` and transfers local `main` integration plus
+  worktree/branch cleanup to the post-terminal root finishing handoff; those
+  actions remain planned and unexecuted.
+- Preserved provider/runtime, hosted, actual-evaluation, remote, and live lanes
+  as `DEFER` or `ABSENT`, plus handoff values `planned`, `not-authorized`, and
+  `planned`.
+
+#### Memory
+
+- Terminal Spec/Plan/Task documents may be `done` before a separately owned
+  local integration and cleanup handoff only when the owning criterion, Task,
+  contract handoff, and progress ledger all distinguish completed document
+  lifecycle evidence from planned post-terminal operational action.
+
+#### Evidence
+
+- The 29 focused closure tests, closure self-test, and production validation
+  passed after the `1.2.0` synchronization.
+- Strict document registry validation covered 467 paths with zero uncovered or
+  ambiguous routes; strict Markdown profiles reported zero violations; strict
+  cross-document links and body contracts were valid; `git diff --check`
+  reported no whitespace errors.
+- AGPC-003 remains the owner of its previously observed affected, staged,
+  aggregate, all-files, formatter, and independent-review evidence. AGPC-004
+  does not reclassify those prior observations or infer external-lane PASS.
+
+#### Handoff
+
+- The next postflight must observe the AGPC-004 terminal commit, its sole
+  parent, exact changed paths, explicit-ref lifecycle result, and clean-tree
+  aggregate without preclaiming the postflight's own SHA.
+- The post-terminal root handoff may then perform the separately authorized
+  local `main` integration and safe worktree/branch cleanup. No push, PR,
+  remote merge, hosted/provider
+  run, credential access, provider-local memory read, ignored checkpoint read,
+  or live action occurred in AGPC-004.
+
 ### 2026-08-01 - Spec 046 AGPC-003 evidence postflight
 
 #### Metadata

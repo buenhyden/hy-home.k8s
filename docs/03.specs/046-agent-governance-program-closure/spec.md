@@ -1,7 +1,7 @@
 ---
 title: 'Agent Governance Program Closure Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-08-01
 ---
@@ -27,6 +27,16 @@ The fixed provider/model/source observation cutoff remains
 `2026-07-10T10:00:00+09:00` / `2026-07-10T01:00:00Z`, as owned by
 `provider-runtime-evidence.json`. The Spec 046 activation date is not a new
 provider or model freshness cutoff.
+
+AGPC-004 closes this Spec and its reciprocal Plan and Task as terminal
+repository documents, accepts ADR-0019 as the current decision, and keeps the
+Spec 041 agent-design `active` as the current design owner. This transition
+intentionally does not claim its own commit SHA. A separate AGPC-004 postflight
+must observe that terminal commit. The AGPC-005 Task row is `Archived` because
+local `main` integration and worktree/branch cleanup moved to the post-terminal
+root finishing handoff; those actions remain planned and unexecuted. The `done`
+document state does not promote any provider/runtime, hosted, actual-evaluation,
+remote, or live lane.
 
 ## Strategic Boundaries & Non-goals
 
@@ -246,9 +256,12 @@ tests.
   all-files pre-commit, formatter rerun, and diff checks pass.
 - **VAL-AGPC-009**: Whole-branch requirements and quality/security review are
   approved with no open findings.
-- **VAL-AGPC-010**: Reciprocal Spec/Plan/Task closure, progress postflight,
-  logical commits, clean worktree, local main merge, and worktree cleanup are
-  complete without remote action.
+- **VAL-AGPC-010**: AGPC-004 owns reciprocal terminal documents and the
+  separate observed postflight. The AGPC-005 Task row archives local `main`
+  integration plus worktree/branch cleanup into the post-terminal root
+  finishing handoff. The terminal document portion is complete without a
+  self-SHA preclaim, while commit observation and the planned local finishing
+  actions remain unexecuted; no remote action is authorized.
 
 ## Traceability
 
@@ -281,4 +294,4 @@ tests.
 | N/A — shared PRD 003 source above | VAL-AGPC-007 | Memory lifecycle validation proves four-class ownership and handoff rules. |
 | N/A — shared PRD 003 source above | VAL-AGPC-008 | Local QA commands prove repository-static completion gates. |
 | N/A — shared PRD 003 source above | VAL-AGPC-009 | Independent whole-branch review prevents waiver or catalog-only closure. |
-| N/A — local completion constraint | VAL-AGPC-010 | Reciprocal closure, postflight, local merge, and worktree cleanup complete the approved handoff. |
+| N/A — local completion constraint | VAL-AGPC-010 | AGPC-004 terminal documents are complete; separate commit observation and the archived-to-handoff local merge/worktree cleanup remain planned and unexecuted. |

@@ -1,7 +1,7 @@
 ---
 title: 'Task: Agent Governance Program Closure'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-01
 ---
@@ -14,6 +14,13 @@ This Task is the canonical execution-evidence owner for Spec 046 activation,
 closure-contract implementation, QA routing, final independent review,
 reciprocal closure/postflight, local `main` merge, and isolated-worktree
 cleanup.
+
+AGPC-004 has completed the terminal document transition without inventing its
+commit SHA. A separate AGPC-004 postflight must observe that commit. The
+AGPC-005 row is `Archived`: it transfers still-unexecuted local `main`
+integration and worktree/branch cleanup to the post-terminal root finishing
+handoff. Accordingly, those actions remain planned operational evidence rather
+than completed evidence in this terminal Task.
 
 Provider runtime/auth/model discovery, hosted CI, branch protection, remote
 execution, live platform state, actual evaluation/admission/promotion, and
@@ -48,8 +55,8 @@ approved action observes them.
 | AGPC-001 | VAL-AGPC-002 | Implement closure contract/schema/fixture/validator/tests | platform | Done | Closed repository-static contract package with fail-closed schema, source-bound predecessor/provider/model projections, four-class memory lifecycle, and value-free diagnostics | `c4457fa01ae41013ba56db3d3591da845529cf2b`; focused 28/28, staged lane, full pre-commit, Ruff, diff, requirements review, and quality review PASS |
 | AGPC-002 | VAL-AGPC-003..007 | Route closure gate and reconcile harness/provider/loop/roster/model/memory owners | platform | Done | One existing CI job now owns 18 delegated checks; validation remains 22 surfaces with 22 validators and exactly 12 closure route classes; human owner docs point to one closure classification contract without external-lane promotion | `4fdea6a068aec6c65681bae32c44b67a5e95f09e`; focused, 20-path staged, aggregate, full pre-commit, requirements, and quality/security review PASS |
 | AGPC-003 | VAL-AGPC-008, VAL-AGPC-009 | Run local QA and whole-branch requirements plus quality/security review | platform | Done | Verified local QA and independent review evidence is recorded without external-lane promotion; the observed evidence commit's scoped review returned SPEC PASS, QUALITY PASS, and no findings | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; observed evidence `666e814a65303fe297cf07fab4112720bea62f0a`; 774 Python tests, 15 Spec 046 validators, affected/staged/aggregate/pre-commit/Ruff/diff PASS, and resolved re-review PASS |
-| AGPC-004 | VAL-AGPC-010 | Record reciprocal closure and observed postflight | platform | Pending | Not executed | Planned exact closure and postflight commits |
-| AGPC-005 | VAL-AGPC-010 | Locally merge to `main` and clean isolated worktree/branch | platform | Pending | Not executed | Planned local-only integration evidence; no push or remote action |
+| AGPC-004 | VAL-AGPC-010 | Close reciprocal terminal documents and hand off observed postflight | platform | Done | Spec 046, Plan, Task, ADR-0019, indexes, profile lineage, progress, and closure contract are terminally reconciled while the Spec 041 agent-design remains active as current design owner | No self-commit SHA is claimed; separate AGPC-004 postflight observation remains pending |
+| AGPC-005 | VAL-AGPC-010 | Transfer local `main` integration and isolated worktree/branch cleanup to the post-terminal root finishing handoff | platform | Archived | Operational action transferred out of this terminal Task without claiming execution | Closure handoff remains `localMerge: planned`, `worktreeCleanup: planned`, and `remoteAction: not-authorized` |
 
 ## Approval and Safety Boundaries
 
@@ -150,6 +157,23 @@ requirements `COMPLIANT`, and quality/security `APPROVED`. This postflight
 records the observed activation SHA; it does not accept ADR-0019 or make it the
 current decision.
 
+AGPC-004 terminal document work accepts ADR-0019 as the current decision,
+keeps the Spec 041 agent-design active as current design owner, closes the
+reciprocal Spec 046/Plan/Task documents, reconciles current-owner indexes and
+profile lineage, and advances the closure contract package to `1.2.0`. It
+preserves ADR-0013 as accepted historical predecessor evidence and does not
+claim this transition's future commit SHA.
+A focused 29-test suite, closure self-test/production, strict 467-path document
+registry, strict Markdown profile, strict link/body-contract checks, and
+`git diff --check` passed.
+AGPC-003 remains the owner of its previously observed affected, staged,
+aggregate, all-files, formatter, and independent-review evidence; AGPC-004
+does not reclassify those observations.
+A separate AGPC-004 postflight must observe the terminal commit. The AGPC-005
+row archives local `main` integration and worktree/branch cleanup into the
+post-terminal root finishing handoff; both remain planned and unexecuted.
+External lanes remain `DEFER` or `ABSENT`.
+
 The closure design preserves working short-term, durable long-term,
 domain-scoped, and provider-local auxiliary memory as the four classes. It
 also distinguishes configured provider model/reasoning completeness from
@@ -159,7 +183,8 @@ actual evaluation, fitness, admission, and promotion.
 
 - **Spec**: Agent Governance Program Closure
 - **Plan**: Agent Governance Program Closure Implementation Plan
-- **Successor state**: repository-local closure, local merge, and worktree cleanup
+- **Successor state**: AGPC-004 observed terminal postflight, then the
+  post-terminal root handoff performs local merge and worktree/branch cleanup
 
 ### Lifecycle Traceability
 
@@ -169,5 +194,5 @@ actual evaluation, fitness, admission, and promotion.
 | [AGPC-001](../../03.specs/046-agent-governance-program-closure/spec.md#success-criteria--verification-plan) | Done | Implementation `c4457fa0`; closed contract/schema/fixture/validator/tests, exact ten-path staged lane, full pre-commit, focused 28/28, Ruff, diff, and both independent reviews PASS. |
 | N/A — AGPC-002 shares the Plan and Spec sources above | Done | Implementation `4fdea6a0`; one CI job, 18 delegated checks, 22/22 surface-validator inventory, exact 12 closure routes, 20-path staged/aggregate/pre-commit PASS, and final reviews approved. |
 | N/A — AGPC-003 shares the Plan and Spec sources above | Done | Final fix `1e2bd0744b5213d5004c34aac028b9642cc60028`; observed evidence `666e814a65303fe297cf07fab4112720bea62f0a` with scoped review `SPEC PASS`, `QUALITY PASS`, and no findings; 774-test suite, 15 Spec 046 validators, affected/staged/aggregate/all-files/Ruff/diff PASS, and scoped re-review approval with no blocking finding. |
-| N/A — AGPC-004 shares the Plan and Spec sources above | Pending | Reciprocal closure and postflight pending. |
-| N/A — AGPC-005 shares the Plan and Spec sources above | Pending | Local merge and cleanup pending. |
+| N/A — AGPC-004 shares the Plan and Spec sources above | Done | Terminal document transition complete without a self-SHA; separate observed postflight pending. |
+| N/A — AGPC-005 shares the Plan and Spec sources above | Archived | Planned local merge and cleanup transferred to the post-terminal root finishing handoff without an execution claim. |

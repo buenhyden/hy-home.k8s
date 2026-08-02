@@ -81,7 +81,7 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                 review,
                 {
                     "result": "PASS",
-                    "owner": "fixture",
+                    "owner": "AGPC-004",
                     "critical": 0,
                     "important": 0,
                     "minor": 0,
@@ -92,6 +92,33 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         self.assertEqual(
             self.module.validate_repository(REPO_ROOT, contract, self.schema),
             [],
+        )
+
+    def test_terminal_transition_metadata_is_exact(self) -> None:
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        expected_handoff = {
+            "localMerge": "planned",
+            "remoteAction": "not-authorized",
+            "worktreeCleanup": "planned",
+        }
+        for candidate in (self.fixture, contract):
+            with self.subTest(contractVersion=candidate["contractVersion"]):
+                self.assertEqual(candidate["contractVersion"], "1.2.0")
+                adr = candidate["predecessorCriteria"][2]
+                self.assertEqual(adr["id"], "adr-0019")
+                self.assertEqual(adr["expectedStatus"], "accepted")
+                self.assertEqual(
+                    adr["implementationRef"],
+                    "git-sha1:ff66dd933e00def085b4c0319a67c6651356b116",
+                )
+                self.assertEqual(
+                    {row["owner"] for row in candidate["reviewEvidence"].values()},
+                    {"AGPC-004"},
+                )
+                self.assertEqual(candidate["handoff"], expected_handoff)
+        self.assertIn(
+            "accepted",
+            self.schema["$defs"]["criterion"]["properties"]["expectedStatus"]["enum"],
         )
 
     def test_fixed_cutoff_and_cross_lane_boundary_are_exact(self) -> None:

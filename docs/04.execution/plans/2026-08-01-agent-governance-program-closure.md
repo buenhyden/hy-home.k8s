@@ -1,7 +1,7 @@
 ---
 title: 'Agent Governance Program Closure Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-08-01
 ---
@@ -12,10 +12,13 @@ updated: 2026-08-01
 
 This Plan executes
 [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md) as the
-final repository-local closure tranche. It activates the reciprocal execution
-path, implements one closed closure contract, routes it through local QA/CI,
-runs independent whole-branch review, records reciprocal closure, and finishes
-the already-authorized local `main` merge and isolated-worktree cleanup.
+final repository-local closure tranche. It activated the reciprocal execution
+path, implemented one closed closure contract, routed it through local QA/CI,
+ran independent whole-branch review, and closed the reciprocal terminal
+documents through AGPC-004. The terminal commit observation remains a separate
+AGPC-004 postflight. The AGPC-005 Task row archives local `main` integration
+and isolated-worktree cleanup into the post-terminal root finishing handoff;
+those actions remain planned and unexecuted.
 
 ## Context
 
@@ -41,8 +44,10 @@ evaluation/admission/promotion, remote execution, or live platform state.
   the four memory classes without reading private state.
 - Route one closure owner through validation surfaces, pre-commit, CI, and
   script/test documentation.
-- Complete local QA, independent review, reciprocal closure/postflight, local
-  merge, and safe worktree cleanup as separate logical commits.
+- Complete local QA and independent review, close reciprocal terminal
+  documents, then hand terminal-commit observation to the separate AGPC-004
+  postflight and archive local merge/cleanup into the post-terminal root
+  finishing handoff.
 
 ## Non-Goals & Out-of-Scope
 
@@ -63,8 +68,8 @@ evaluation/admission/promotion, remote execution, or live platform state.
 | AGPC-001 | Implement closure contract package | AGPC-000 | Current contract/schema/test patterns are reviewed | Contract, schema, fixture, self-test, validator, and focused tests pass |
 | AGPC-002 | Route the gate and reconcile evidence owners | AGPC-001 | Closure validator passes | Validation surfaces, CI/QA, inventories, implementation map, catalog, and provider notes point to one owner |
 | AGPC-003 | Run final QA and independent reviews | AGPC-002 | Focused and routed gates pass | Affected/staged/all-files/aggregate/diff gates pass and reviewers approve |
-| AGPC-004 | Close reciprocal documents and postflight | AGPC-003 | No open findings or formatter mutation | Exact lifecycle closure and observed postflight are recorded without self-SHA preclaim |
-| AGPC-005 | Finish the local branch | AGPC-004 | Clean worktree and safe dirty-main assessment | `main` contains the branch locally; isolated worktree and finished branch are cleaned safely |
+| AGPC-004 | Close reciprocal documents and hand off observed postflight | AGPC-003 | No open findings or formatter mutation | Terminal document work is complete without self-SHA preclaim; a separate postflight observes the commit |
+| AGPC-005 | Transfer local branch finish to the post-terminal root handoff | AGPC-004 | Terminal Task must contain no pending row | Task row is archived with explicit planned/unexecuted local merge and cleanup evidence |
 
 ## Verification Plan
 
@@ -105,15 +110,21 @@ external/runtime PASS.
 
 ## Completion Criteria
 
-- Spec 046 activates and closes through separate, validated lifecycle commits.
+- Spec 046 activated and its reciprocal documents reached terminal lifecycle
+  states through AGPC-004 without a self-commit SHA claim.
 - The closure contract package rejects missing, duplicate, stale, ownerless,
   and cross-lane-promoted evidence.
 - Provider, hosted, remote, live, and actual-evaluation results stay honestly
   classified.
 - Four memory classes and provider model/reasoning configuration validate at
   their repository-static boundary.
-- Final reviews approve, `main` is locally integrated, no push occurs, and the
-  isolated worktree/finished branch are cleaned when safe.
+- Final reviews approved. A separate AGPC-004 postflight still must observe the
+  terminal commit. The AGPC-005 Task row is archived into the post-terminal
+  root handoff; local `main` integration and safe isolated-worktree/
+  finished-branch cleanup remain planned and unexecuted, and no push is
+  authorized.
+- This Plan's `done` state records terminal document closure only and does not
+  claim the remaining portion of VAL-AGPC-010 as observed.
 
 ## Traceability
 
@@ -132,4 +143,5 @@ external/runtime PASS.
 | N/A — VAL-AGPC-002 shares the Spec source above | AGPC-001 | N/A — reciprocal Task is linked in VAL-AGPC-001 |
 | N/A — VAL-AGPC-003 through VAL-AGPC-007 share the Spec source above | AGPC-002 | N/A — reciprocal Task is linked in VAL-AGPC-001 |
 | N/A — VAL-AGPC-008 and VAL-AGPC-009 share the Spec source above | AGPC-003 | N/A — reciprocal Task is linked in VAL-AGPC-001 |
-| N/A — VAL-AGPC-010 shares the Spec source above | AGPC-004, AGPC-005 | N/A — reciprocal Task is linked in VAL-AGPC-001 |
+| N/A — VAL-AGPC-010 shares the Spec source above | AGPC-004 | N/A — terminal documents are complete; reciprocal Task records the pending observed postflight |
+| N/A — remaining VAL-AGPC-010 operational handoff | AGPC-005 | N/A — reciprocal Task archives planned local integration and cleanup into the post-terminal root handoff |

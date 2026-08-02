@@ -28,7 +28,7 @@
     "$schema": {"const": "./agent-governance-closure.schema.json"},
     "schemaVersion": {"type": "integer", "const": 1},
     "contractId": {"const": "hy-home.k8s/agent-governance-closure"},
-    "contractVersion": {"const": "1.1.0"},
+    "contractVersion": {"const": "1.2.0"},
     "ownerSpec": {"const": "docs/03.specs/046-agent-governance-program-closure/spec.md"},
     "cutoff": {
       "type": "object",
@@ -195,7 +195,7 @@
       "properties": {
         "id": {"type": "string", "minLength": 1, "maxLength": 80},
         "owner": {"type": "string", "minLength": 1, "maxLength": 240},
-        "expectedStatus": {"enum": ["active", "draft", "done"]},
+        "expectedStatus": {"enum": ["active", "draft", "done", "accepted"]},
         "implementationRef": {"type": "string", "pattern": "^git-sha1:[0-9a-f]{40}$"},
         "validatorCommand": {"const": "python3 scripts/validate-markdown-profiles.py --root . --mode strict"},
         "lane": {"$ref": "#/$defs/lane"},
@@ -288,7 +288,7 @@
       "required": ["result", "owner", "critical", "important", "minor", "limitation", "retryTrigger"],
       "properties": {
         "result": {"enum": ["PASS", "DEFER"]},
-        "owner": {"type": "string", "minLength": 1, "maxLength": 160},
+        "owner": {"const": "AGPC-004"},
         "critical": {"type": "integer", "minimum": 0},
         "important": {"type": "integer", "minimum": 0},
         "minor": {"type": "integer", "minimum": 0},

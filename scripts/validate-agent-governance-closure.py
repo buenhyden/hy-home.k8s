@@ -69,7 +69,7 @@ EXPECTED_PREDECESSORS = (
         "docs/01.requirements/003-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "56f19c27-2052da00-a2f5428c-80a2388d-f2fc2e14".replace("-", ""),
-        "bf6ea5ba-32ef638b-c1f0ecc2-0a057f0d-a5001995-33191154-280efa5e-4987ee3a".replace(
+        "1b696204-f94d6632-7bf6241b-00c64a36-e9580176-9f884c8e-2ed00de2-2838fbe8".replace(
             "-", ""
         ),
     ),
@@ -78,16 +78,16 @@ EXPECTED_PREDECESSORS = (
         "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "904ae578-333e9aae-bc8ac5d8-16a1bc08-e4c21a89-ebd62345-028445b5-c7c4a270".replace(
+        "27bfa256-33d94bd3-dc92c95c-d8937ec6-efd875d7-c4e5f1f1-ead87d1c-eeae66f2".replace(
             "-", ""
         ),
     ),
     (
         "adr-0019",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "active",
+        "accepted",
         "git-sha1:" + "ff66dd93-3e00def0-85b4c031-9a67c665-1356b116".replace("-", ""),
-        "0fe9a243-91156b55-b93bc349-429b162e-19b618be-98c4eb1c-6ed81e20-5dfc04c8".replace(
+        "d1e67aad-49b6c62a-d4e2ae6e-f50476f4-cbf12b24-fd5a3d7f-cd16c43a-32b3c0eb".replace(
             "-", ""
         ),
     ),
@@ -123,7 +123,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
         "done",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "324115f4-90ae108c-493b41db-e0d3485a-f11f3624-3e9e86ad-05f81f99-e554e346".replace(
+        "ca96a95a-b6d2ea9c-261cfcae-e7c5467b-6eae25cb-656a6a6b-78692723-c435c9ed".replace(
             "-", ""
         ),
     ),

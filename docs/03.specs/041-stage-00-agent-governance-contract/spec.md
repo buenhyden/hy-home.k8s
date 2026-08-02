@@ -234,7 +234,7 @@ now part of the repository-static aggregate lane.
 
 - **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
-- **Active successor candidate**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Current accepted decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Agent design**: [Agent Design](./agent-design.md)
 - **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](../../04.execution/plans/2026-07-28-stage-00-agent-governance-contract.md)

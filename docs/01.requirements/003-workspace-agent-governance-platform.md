@@ -153,9 +153,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   evidence lane에서 실행하고 secret-free 결과만 기록한다.
 - `.agent-work/checkpoint.json`은 ignore된 transient recovery state이며 durable SDLC, credential
   store 또는 full transcript가 아니다.
-- ADR-0019는 active candidate인 동안에도 ADR-0013을 대체하지 않는다. Spec 046의
-  repository-local closure와 명시적 external-lane limitations가 검증되고 ADR-0019가
-  `accepted`로 전이된 뒤에만 replacement state를 확정한다.
+- ADR-0019는 Spec 046의 repository-local closure와 명시적 external-lane limitation을
+  보존한 terminal transition에서 `accepted` current decision이 되었다. ADR-0013은
+  earlier tranche 실행을 지배한 accepted historical predecessor로 유지한다.
 
 ### Research and provider evidence baseline
 
