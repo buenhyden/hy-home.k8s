@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-01 - Spec 046 AGPC-002 closure routing postflight
+
+#### Metadata
+
+- **Date**: 2026-08-01
+- **Layer**: automation, governance, qa, security, meta
+- **Status**: complete
+- **Tags**: #spec-046 #agpc-002 #ci #pre-commit #routing #postflight
+- **Owner**: AGPC-002 postflight
+- **Canonical Owner**: Spec 046 Task and validation-surface/CI contracts
+- **Provenance**: implementation
+  `4fdea6a068aec6c65681bae32c44b67a5e95f09e`
+- **Sensitivity**: non-sensitive-redacted
+- **Next Owner**: ADR-0019 draft-to-active reconciliation, then AGPC-003 final QA and review
+
+#### Progress
+
+- Kept the single existing `agent-governance-static` job and routed exactly
+  closure self-test and production commands through it.
+- Advanced the closed CI contract to `1.3.0` with 18 delegated checks and
+  retained 22 validation surfaces while adding the twenty-second validator.
+  Exactly the 12 established agent-governance route classes select closure.
+- Ordered closure self-test and production hooks before affected-surface and
+  repository-quality pre-commit hooks without adding a recursive aggregate or
+  a second CI job.
+- Reconciled the implementation map, harness catalog, four provider notes, and
+  GitHub hub to the single program result-classification owner without
+  recreating a retired GitHub hub owner.
+- Preserved the summary script digest and provider-evidence aggregate digest,
+  and did not promote repository-static PASS into hosted, provider runtime,
+  auth, model resolution, actual evaluation, remote, or live evidence.
+
+#### Evidence
+
+- CI contract unit tests passed 32/32; CI self-test passed 45 mutations and
+  production reported 12 route classes with 18 delegated checks.
+- Affected-surface self-test passed 38 mutations and production reported
+  822 paths, 22/22 surfaces, 22 validators, and no uncovered or ambiguous path.
+- The repository aggregate exposed two stale runner expected maps and one
+  shared provider-hook expected set. After correction, runner tests passed
+  49/49, provider-hook tests passed 3/3, and the aggregate passed.
+- The exact 20-path staged lane, full pre-commit including closure hooks,
+  secret scanners, markdownlint, zizmor and workflow lint, Ruff, strict docs,
+  and both diff checks passed without retained formatter mutation.
+- Independent requirements review returned `COMPLIANT`; quality/security
+  review returned `APPROVED`, including both final remediation deltas.
+
+#### Handoff
+
+- Before the terminal decision is accepted, ADR-0019 must follow the governed
+  `draft -> active -> accepted` path. Its stale observation-time wording must
+  be reconciled to the fixed `2026-07-10T10:00:00+09:00` cutoff, with the
+  source-bound closure projection updated in the same logical unit.
+- AGPC-003 then owns final whole-branch local QA and independent review. This
+  postflight observes AGPC-002 and does not preclaim its own commit SHA or any
+  later lifecycle result.
+
 ### 2026-08-01 - Spec 046 AGPC-001 closure contract postflight
 
 #### Metadata
