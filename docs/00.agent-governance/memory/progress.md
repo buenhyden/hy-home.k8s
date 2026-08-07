@@ -63,9 +63,9 @@ inventory stays in `scripts/README.md`.
 - Registry-declared paths and frozen helper scripts are compared against the
   Git index, not the working tree. Staging is a precondition for validation,
   not only for committing.
-- Repository validator output uses an `ERR ` prefix that a case-insensitive
-  `error` filter does not match. Filter on the exact prefixes when reading
-  gate output.
+- Repository validator output uses an `ERR` prefix followed by a space, which a
+  case-insensitive `error` filter does not match. Filter on the exact prefixes
+  when reading gate output.
 - The local formatter hook rewrites YAML quoting and blank lines, and the
   affected-surface contract asserts one workflow string byte-exactly. Verify
   formatter mutations against contract assertions after every workflow edit.
