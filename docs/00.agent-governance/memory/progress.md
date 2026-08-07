@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - WDTC-000 reciprocal execution path activation
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #docs #sdlc #taxonomy #lifecycle
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
+- **Next Owner**: platform — execute WDTC-001.
+
+#### Progress
+
+Activated the Spec 052 execution path and suspended the PRD-007 delivery
+assurance program. PRD-008, ARD-0011, Spec 052, and the Spec 052 plan and task
+are now `active`. Spec 047 and its plan and task returned to `draft`, and
+PRD-007 records the suspension rationale and the resumption route.
+
+The reciprocal task document and the Spec 052 Implementation Plan and Execution
+Task traceability bullets already existed from the plan-authoring commit and
+were verified rather than recreated. No file was migrated, renamed, or deleted,
+and nothing under `docs/98.archive/**` was touched.
+
+#### Memory
+
+A lifecycle status flip on a Stage 03 tranche is not a document-local edit. The
+program lineage registry in `docs/99.templates/support/document-profiles.json`
+declares the expected state of every registered Spec, so a status change without
+the matching registry edit fails `PROGRAM-LINEAGE-STATE` and
+`REGISTRY_PROGRAM_STATE`.
+
+An `active` Plan or Task must belong to a registered program relation. The
+`PROGRAM-LINEAGE-EXECUTION-GATE` check rejects any active Plan/Task component
+that no registry Spec seeds, and it additionally requires the Plan and the Task
+to carry the same status as the registry relation state. Activating a Plan
+therefore forces the sibling Task to the same status and forces the owning
+PRD/ARD/Spec triple into the registry.
+
+Stage README index rows are enforced for the specs, plans, and tasks stages: the
+third table cell must equal the target document's frontmatter `status`.
+
+#### Evidence
+
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` — PASS.
+- `python3 scripts/validate-markdown-profiles.py --root .` — PASS, 0 violations.
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` — PASS, `programs=5`, uncovered=0, ambiguous=0.
+- `bash scripts/validate-repo-quality-gates.sh .` — see the commit gate result.
+- All results are repository-static. No hosted CI, provider-runtime, remote, or live evidence is claimed.
+
+#### Handoff
+
+platform — WDTC-000 is closed. Proceed to WDTC-001, deleting the completed
+migration census, its five exclusive validators, their tests, and the
+zero-referent cutover manifest script, with the quality gate run before the
+commit.
+
 ### 2026-08-07 - Document taxonomy consolidation plan and task authoring
 
 #### Metadata

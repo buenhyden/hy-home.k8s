@@ -2051,6 +2051,12 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
             ),
             (),
         ),
+        (
+            "008",
+            "0011",
+            (("052", 1, "0021"),),
+            (),
+        ),
     )
 
     def assert_immutable_projection(candidate: Registry) -> None:

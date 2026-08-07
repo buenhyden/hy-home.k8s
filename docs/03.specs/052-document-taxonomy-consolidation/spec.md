@@ -1,7 +1,7 @@
 ---
 title: 'Document Taxonomy Consolidation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-07
 ---

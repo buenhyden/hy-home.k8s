@@ -1,9 +1,9 @@
 ---
 title: 'Task: Current Surface and Stash Reconciliation'
 type: sdlc/task
-status: active
+status: draft
 owner: platform
-updated: 2026-08-02
+updated: 2026-08-07
 ---
 
 # Task: Current Surface and Stash Reconciliation

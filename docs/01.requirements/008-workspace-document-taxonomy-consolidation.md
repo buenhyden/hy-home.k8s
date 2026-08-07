@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Document Taxonomy Consolidation Product Requirements'
 type: sdlc/prd
-status: draft
+status: active
 owner: platform
 updated: 2026-08-07
 ---

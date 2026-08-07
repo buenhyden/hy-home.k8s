@@ -1,7 +1,7 @@
 ---
 title: 'Document Taxonomy Consolidation Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
 updated: 2026-08-07
 ---

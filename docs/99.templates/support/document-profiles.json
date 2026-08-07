@@ -6373,7 +6373,7 @@
           {
             "spec": "047",
             "order": 1,
-            "state": "active",
+            "state": "draft",
             "reason": "Current surface and stash reconciliation",
             "decision": "0021"
           },
@@ -6403,6 +6403,20 @@
             "order": 5,
             "state": "draft",
             "reason": "Repository assurance integration and closure",
+            "decision": "0021"
+          }
+        ],
+        "followUps": []
+      },
+      {
+        "prd": "008",
+        "ard": "0011",
+        "tranches": [
+          {
+            "spec": "052",
+            "order": 1,
+            "state": "active",
+            "reason": "Document taxonomy consolidation",
             "decision": "0021"
           }
         ],

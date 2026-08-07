@@ -1,9 +1,9 @@
 ---
 title: 'Current Surface and Stash Reconciliation Implementation Plan'
 type: sdlc/plan
-status: active
+status: draft
 owner: platform
-updated: 2026-08-02
+updated: 2026-08-07
 ---
 
 # Current Surface and Stash Reconciliation Implementation Plan

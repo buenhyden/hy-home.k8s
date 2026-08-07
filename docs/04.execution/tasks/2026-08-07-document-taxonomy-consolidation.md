@@ -1,7 +1,7 @@
 ---
 title: 'Task: Document Taxonomy Consolidation'
 type: sdlc/task
-status: draft
+status: active
 owner: platform
 updated: 2026-08-07
 ---

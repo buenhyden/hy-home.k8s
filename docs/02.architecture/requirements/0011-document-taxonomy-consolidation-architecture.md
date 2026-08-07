@@ -1,7 +1,7 @@
 ---
 title: 'Document Taxonomy Consolidation Architecture Reference Document'
 type: sdlc/ard
-status: draft
+status: active
 owner: platform
 updated: 2026-08-07
 ---
