@@ -705,6 +705,26 @@
       "new": false
     },
     {
+      "path": "docs/90.references/workspace-research/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": true
+    },
+    {
       "path": "docs/98.archive/README.md",
       "profile": "readme/stage-index",
       "requiredH2": [
