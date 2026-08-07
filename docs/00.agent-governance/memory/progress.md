@@ -8,6 +8,89 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Research collection consolidation and supersession map
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #research #consolidation #supersession #stage90
+- **Owner**: Research consolidation pass
+- **Canonical Owner**: `docs/90.references/workspace-research/research-consolidation-and-supersession-map.md`
+- **Provenance**: heading-level and claim-level comparison of the two dated
+  research packs, plus working-tree verification of every superseded claim on
+  2026-08-07
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain under the collection owner; refresh when a new
+  dated pack appears or a superseded-claim row is invalidated
+- **Next Owner**: none
+
+#### Progress
+
+- Consolidated the same-purpose documents under `docs/90.references/research/`
+  into one supersession map rather than merging files, because every file
+  there is byte-frozen.
+- Recorded the verdict for all seven same-named pairs: two fully superseded,
+  five superseded with named residual items.
+- Carried forward eleven still-valid 2026-07-04 facts that the 2026-07-07 pack
+  dropped, each routed to a current owner, and recorded one intentional drop.
+- Recorded eight Current-pack claims that the 2026-08-07 observation
+  supersedes, each with both dated claims and a working-tree verification.
+- Recorded the topic-ownership boundary between the two collections from
+  2026-08-07 forward.
+
+#### Memory
+
+- Content consolidation between the two research packs was already complete
+  before this pass. The 2026-07-07 pack refreshed the 2026-07-04 pack document
+  by document with explicit lineage links. The real defect was currency, not
+  duplication.
+- The 2026-07-07 pack README carries a pack-wide contradiction closure section
+  that presents pin state, CI job count, adapter inventory, and Gemini surface
+  absence as settled. All four are now wrong. A closure section that reads as
+  resolution rather than as a dated observation ages badly; prefer wording that
+  keeps the observation date attached to the verdict.
+- Verified against the working tree on 2026-08-07: `.gemini/agents/` holds 12
+  files with a tracked `.gemini/settings.json`; the roster is 12 roles across 4
+  surfaces with 48 projections; `ci.yml` has 7 jobs; the `supervisor` Claude
+  adapter allows Read, Grep, Glob, Task; every remote action reference is a
+  full commit SHA.
+- The repository forbids active documents from carrying retired tokens.
+  Quoting a retired path verbatim in a new reference fails
+  `AGQC-LEGACY-CONSUMER`; describe the retired surface instead of naming it.
+- Within `2026-07-07-wer/` no two documents share a purpose. The format ledger
+  is keyed by template family and the migration ledger by file path, and each
+  declares the boundary.
+
+#### Evidence
+
+- `targeted`: `bash scripts/validate-repo-quality-gates.sh .`:
+  `[PASS] repository quality gates passed`.
+- `affected`: `python3 scripts/run-validation-lane.py --lane affected` over the
+  two changed paths: PASS for `agent-governance-ci`,
+  `agent-governance-closure`, `agent-legacy-cutover`,
+  `document-contract-registry`, `links-and-owners`, `markdown-profiles`, and
+  `repository-quality`.
+- Immutability evidence: a one-byte change to a historical member produced
+  `RIA-SNAPSHOT ... protected snapshot`; edits to the Current pack README and
+  the collection README produced `RIA-OVERLAY ... protected Current bytes
+  differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
+  were reverted byte-exactly.
+- `staged`: recorded by the committing step.
+- `ci`: repository-static only; `DEFER`.
+- `remote/live`: `DEFER`. No cluster, provider runtime, or remote action.
+
+#### Handoff
+
+- The frozen packs were not modified. Readers of the Current pack should
+  consult the superseded-claim table before relying on its contradiction
+  closure section.
+- The ISO 42010 and 29148 sourcing defect stays routed as gaps DOC-G8 and
+  DOC-G9; it cannot be corrected in the frozen ledger.
+- Push, PR, merge, hosted CI, and live verification remain pending human
+  authorization.
+
 ### 2026-08-07 - Workspace engineering research refresh and Stage 90 collection admission
 
 #### Metadata
