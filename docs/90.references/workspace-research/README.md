@@ -8,11 +8,12 @@
 ## Overview
 
 `workspace-research/`는 `hy-home.k8s`를 대상으로 2026-08-07에 수행한 외부 1차
-소스 조사와 워크스페이스 현황 대조 분석을 보존한다. 다섯 개 reference는
+소스 조사와 워크스페이스 현황 대조 분석을 보존한다. 다섯 개 주제 reference는
 인접한 [research](../research/README.md) 컬렉션의 Current pack이 다루지 않은
 영역을 채운다: Diátaxis 문서 아키텍처와 SDLC 문서 타입 역할, LLM 지식 인덱스
 규약과 에이전트 지식 라우팅, GitHub Actions 규칙과 CI 증적 레인, 작업 특성별
-모델·추론 설정 라우팅, 그리고 기억 계층이다.
+모델·추론 설정 라우팅, 그리고 기억 계층이다. 여섯 번째 문서는 `research/`의
+동일 목적 문서 간 대체 관계와 최신 관측이 뒤집은 주장을 정리한 통합 기록이다.
 
 이 컬렉션이 `research/` 안의 dated pack이 아닌 형제 컬렉션인 이유는 명시적이다.
 `docs/90.references/data/reference-information-architecture.json`이 Current
@@ -57,7 +58,8 @@ workspace-research/
 ├── agent-model-routing-and-configuration.md   # 작업 특성별 모델·추론 설정 라우팅
 ├── documentation-architecture-and-diataxis.md # Diátaxis 4-mode 및 SDLC 문서 역할
 ├── github-actions-and-ci-evidence.md          # Actions 규칙, CI 선택 계약, 증적 레인
-└── llm-wiki-and-knowledge-routing.md          # LLM 지식 인덱스 규약 및 드리프트 분류
+├── llm-wiki-and-knowledge-routing.md          # LLM 지식 인덱스 규약 및 드리프트 분류
+└── research-consolidation-and-supersession-map.md # 리서치 통합·대체 관계 및 초과 주장 정리
 ```
 
 ### Item Registry
@@ -70,6 +72,7 @@ workspace-research/
 | [documentation-architecture-and-diataxis.md](./documentation-architecture-and-diataxis.md) | Included | Diátaxis 4-mode 문서 아키텍처와 SDLC 문서 타입별 역할·금지·구조·수명주기      | 설명용 매핑; 템플릿 route, heading 계약, status domain은 Stage 99가 소유      |
 | [github-actions-and-ci-evidence.md](./github-actions-and-ci-evidence.md)                   | Included | Actions 보안 규칙, CI 선택 계약, 검증기 소유권, 증적 레인 분리                | 워크플로우 분석; pin 선택과 lane 정의는 `.github/`와 quality-standards가 소유 |
 | [llm-wiki-and-knowledge-routing.md](./llm-wiki-and-knowledge-routing.md)                   | Included | llms.txt/MCP/지시 파일 규약과 생성 인덱스의 결정성 및 드리프트 3분류          | 인덱스 분석; 생성기 내용과 JIT 로딩 순서는 각 canonical owner가 소유          |
+| [research-consolidation-and-supersession-map.md](./research-consolidation-and-supersession-map.md) | Included | `research/` 동일 목적 문서의 대체 관계, 이월 사실, 최신 관측이 뒤집은 Current 팩 주장 | 통합 기록; 동결 문서의 내용을 수정하거나 무효화하지 않음 |
 
 ### Source Priority
 
