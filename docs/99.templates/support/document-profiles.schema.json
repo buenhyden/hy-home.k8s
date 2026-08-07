@@ -63,11 +63,7 @@
     "governanceCurrentOwners": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "profileId",
-        "allowedStates",
-        "paths"
-      ],
+      "required": ["profileId", "allowedStates", "paths"],
       "properties": {
         "profileId": {
           "const": "governance/reference"
@@ -100,17 +96,14 @@
     "referenceCurrentPacks": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "profileId",
-        "packs"
-      ],
+      "required": ["profileId", "packs"],
       "properties": {
         "profileId": {
           "const": "content/reference"
         },
         "packs": {
           "type": "array",
-          "minItems": 2,
+          "minItems": 1,
           "maxItems": 2,
           "items": {
             "$ref": "#/$defs/referenceCurrentPack"
@@ -121,11 +114,7 @@
     "referenceCurrentPack": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "allowedStates",
-        "members"
-      ],
+      "required": ["id", "allowedStates", "members"],
       "properties": {
         "id": {
           "type": "string",
@@ -153,10 +142,7 @@
     "baseline": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "sha",
-        "count"
-      ],
+      "required": ["sha", "count"],
       "properties": {
         "sha": {
           "type": "string",
@@ -171,10 +157,7 @@
     "target": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "roots",
-        "rootFiles"
-      ],
+      "required": ["roots", "rootFiles"],
       "properties": {
         "roots": {
           "$ref": "#/$defs/nonEmptyStringArray"
@@ -187,9 +170,7 @@
     "programLineage": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "programs"
-      ],
+      "required": ["programs"],
       "properties": {
         "programs": {
           "type": "array",
@@ -203,12 +184,7 @@
     "program": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "prd",
-        "ard",
-        "tranches",
-        "followUps"
-      ],
+      "required": ["prd", "ard", "tranches", "followUps"],
       "properties": {
         "prd": {
           "type": "string",
@@ -236,13 +212,7 @@
     "programRelation": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "spec",
-        "order",
-        "state",
-        "reason",
-        "decision"
-      ],
+      "required": ["spec", "order", "state", "reason", "decision"],
       "properties": {
         "spec": {
           "type": "string",
@@ -253,12 +223,7 @@
           "minimum": 1
         },
         "state": {
-          "enum": [
-            "draft",
-            "active",
-            "done",
-            "archived"
-          ]
+          "enum": ["draft", "active", "done", "archived"]
         },
         "reason": {
           "type": "string",
@@ -273,14 +238,7 @@
     "programFollowUp": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "spec",
-        "order",
-        "state",
-        "reason",
-        "decision",
-        "evidenceMode"
-      ],
+      "required": ["spec", "order", "state", "reason", "decision", "evidenceMode"],
       "properties": {
         "spec": {
           "type": "string",
@@ -291,12 +249,7 @@
           "minimum": 1
         },
         "state": {
-          "enum": [
-            "draft",
-            "active",
-            "done",
-            "archived"
-          ]
+          "enum": ["draft", "active", "done", "archived"]
         },
         "reason": {
           "type": "string",
@@ -307,10 +260,7 @@
           "pattern": "^[0-9]{4}$"
         },
         "evidenceMode": {
-          "enum": [
-            "reciprocal-body",
-            "successor-record"
-          ]
+          "enum": ["reciprocal-body", "successor-record"]
         }
       }
     },
@@ -416,9 +366,7 @@
     "keyValueContract": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "key", "kind", "nullable", "constant", "enum", "pattern", "conditional"
-      ],
+      "required": ["key", "kind", "nullable", "constant", "enum", "pattern", "conditional"],
       "properties": {
         "key": { "type": "string", "minLength": 1 },
         "kind": { "enum": ["string", "date", "integer", "number", "boolean"] },
@@ -447,7 +395,11 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "profileIds", "role", "sourceProfileId", "relationshipSection", "bodyRequirement"
+        "profileIds",
+        "role",
+        "sourceProfileId",
+        "relationshipSection",
+        "bodyRequirement"
       ],
       "properties": {
         "profileIds": { "$ref": "#/$defs/nonEmptyStringArray" },
@@ -474,7 +426,13 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id", "profileIds", "create", "delete", "rename", "profileChange", "baselinePaths"
+        "id",
+        "profileIds",
+        "create",
+        "delete",
+        "rename",
+        "profileChange",
+        "baselinePaths"
       ],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
@@ -536,8 +494,14 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id", "profileEdges", "evidence", "relationship", "cardinality",
-        "sameDiff", "bodyRequirement", "capabilities"
+        "id",
+        "profileEdges",
+        "evidence",
+        "relationship",
+        "cardinality",
+        "sameDiff",
+        "bodyRequirement",
+        "capabilities"
       ],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
@@ -550,7 +514,9 @@
           "type": "array",
           "items": { "$ref": "#/$defs/evidenceRequirement" }
         },
-        "relationship": { "enum": ["self", "role-decision", "pair", "program-lineage", "archive-source"] },
+        "relationship": {
+          "enum": ["self", "role-decision", "pair", "program-lineage", "archive-source"]
+        },
         "cardinality": {
           "type": "object",
           "additionalProperties": false,
@@ -562,9 +528,12 @@
         },
         "sameDiff": {
           "enum": [
-            "self-status-and-body", "pair-created-or-status-changed",
-            "target-and-last-relation-changed", "target-and-evidence-status-body-changed",
-            "target-plan-task-status-changed", "pair-status-changed",
+            "self-status-and-body",
+            "pair-created-or-status-changed",
+            "target-and-last-relation-changed",
+            "target-and-evidence-status-body-changed",
+            "target-plan-task-status-changed",
+            "pair-status-changed",
             "source-removed-and-mirror-created"
           ]
         },
@@ -574,8 +543,12 @@
           "uniqueItems": true,
           "items": {
             "enum": [
-              "rendered-link", "reciprocal-link", "program-lineage-closed",
-              "task-terminal-evidence", "same-diff", "archive-envelope",
+              "rendered-link",
+              "reciprocal-link",
+              "program-lineage-closed",
+              "task-terminal-evidence",
+              "same-diff",
+              "archive-envelope",
               "source-removal"
             ]
           }
@@ -585,16 +558,10 @@
     "route": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "kind",
-        "value"
-      ],
+      "required": ["kind", "value"],
       "properties": {
         "kind": {
-          "enum": [
-            "exact",
-            "regex"
-          ]
+          "enum": ["exact", "regex"]
         },
         "value": {
           "type": "string",
@@ -605,19 +572,10 @@
     "frontmatter": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "mode",
-        "required",
-        "allowed",
-        "order"
-      ],
+      "required": ["mode", "required", "allowed", "order"],
       "properties": {
         "mode": {
-          "enum": [
-            "required",
-            "forbidden",
-            "not-applicable"
-          ]
+          "enum": ["required", "forbidden", "not-applicable"]
         },
         "required": {
           "$ref": "#/$defs/stringArray"
@@ -633,10 +591,7 @@
     "headings": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "required",
-        "allowed"
-      ],
+      "required": ["required", "allowed"],
       "properties": {
         "required": {
           "$ref": "#/$defs/stringArray"
@@ -679,21 +634,14 @@
     "identifierColumn": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "column",
-        "kind"
-      ],
+      "required": ["column", "kind"],
       "properties": {
         "column": {
           "type": "string",
           "minLength": 1
         },
         "kind": {
-          "enum": [
-            "requirement",
-            "criterion",
-            "work-item"
-          ]
+          "enum": ["requirement", "criterion", "work-item"]
         }
       }
     },
@@ -736,17 +684,11 @@
           }
         },
         "sourceLinkColumn": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "minLength": 1
         },
         "targetLinkColumn": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "minLength": 1
         },
         "allowedSourceProfileIds": {
@@ -786,13 +728,7 @@
           "minLength": 1
         },
         "class": {
-          "enum": [
-            "sdlc",
-            "common",
-            "governance",
-            "readme",
-            "exception"
-          ]
+          "enum": ["sdlc", "common", "governance", "readme", "exception"]
         },
         "mode": {
           "enum": [
@@ -821,19 +757,13 @@
           "$ref": "#/$defs/headings"
         },
         "template": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "sourceProfileIds": {
           "$ref": "#/$defs/stringArray"
         },
         "placeholderPolicy": {
-          "enum": [
-            "forbidden",
-            "template-only"
-          ]
+          "enum": ["forbidden", "template-only"]
         },
         "appendContract": {
           "oneOf": [

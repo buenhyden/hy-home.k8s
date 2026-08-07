@@ -2480,11 +2480,11 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
         )
     collections = [pack_id.split("/", 1)[0] for pack_id in normalized_pack_ids]
-    if collections != ["audits", "research"]:
+    if collections not in (["audits", "research"], ["audits"]):
         diagnostics.append(
             _diagnostic(
                 "REGISTRY_REFERENCE_CURRENT_PACK_ID",
-                expected="exactly one audits pack followed by one research pack",
+                expected="one audits pack, optionally followed by one research pack",
                 actual="pack collections differ",
             )
         )

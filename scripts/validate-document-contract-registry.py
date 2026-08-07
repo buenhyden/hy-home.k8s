@@ -42,8 +42,7 @@ GEMINI_NATIVE_CURRENT_SURFACE_ERROR = (
     "a closed repository-static current projection"
 )
 DOCUMENT_REGISTRY_ROOT_ERROR = (
-    "REGISTRY_ROOT_BOUNDARY: repository root must be an existing "
-    "non-symlink directory"
+    "REGISTRY_ROOT_BOUNDARY: repository root must be an existing non-symlink directory"
 )
 GEMINI_SETTINGS_SCHEMA_URL = (
     "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/"
@@ -1527,7 +1526,29 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         del raw_registry["governanceCurrentOwners"]["allowedStates"]
         return
     packs = raw_registry["referenceCurrentPacks"]["packs"]
-    research = next(item for item in packs if item["id"].startswith("research/"))
+    research = next(
+        (item for item in packs if item["id"].startswith("research/")), None
+    )
+    if research is None:
+        # The research collection is retired from the Current-pack registry.
+        # Mutation proofs still need a second pack, so rebuild the retired one
+        # from its tracked members for the mutated copy only.
+        research = {
+            "id": "research/2026-07-07-wer",
+            "allowedStates": ["active", "accepted"],
+            "members": [
+                "ai-agents-roster-and-gap-analysis.md",
+                "automation-pipeline-workflow-qa.md",
+                "document-migration-evidence-ledger.md",
+                "document-type-format-and-evidence-contract.md",
+                "harness-and-loop-engineering.md",
+                "kubernetes-infrastructure-security.md",
+                "provider-implementation-status.md",
+                "spec-sdlc-ci-qa-formatting.md",
+                "workspace-governance-baseline.md",
+            ],
+        }
+        packs.append(research)
     if mutation == "malform-reference-current-packs":
         raw_registry["referenceCurrentPacks"] = []
         return
@@ -1538,7 +1559,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         packs[1] = copy.deepcopy(packs[0])
         return
     if mutation == "missing-reference-pack-collection":
-        packs.pop()
+        packs.clear()
         return
     if mutation == "extra-reference-pack-collection":
         packs.append(copy.deepcopy(packs[1]))

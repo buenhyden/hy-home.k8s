@@ -2056,10 +2056,6 @@
         {
           "kind": "exact",
           "value": "docs/90.references/cloud-examples/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/workspace-research/README.md"
         }
       ],
       "frontmatter": {
@@ -4758,24 +4754,6 @@
           "kubernetes-infrastructure-security.md",
           "remediation-roadmap.md",
           "sdlc-document-lifecycle-frontmatter.md"
-        ]
-      },
-      {
-        "id": "research/2026-07-07-wer",
-        "allowedStates": [
-          "active",
-          "accepted"
-        ],
-        "members": [
-          "ai-agents-roster-and-gap-analysis.md",
-          "automation-pipeline-workflow-qa.md",
-          "document-migration-evidence-ledger.md",
-          "document-type-format-and-evidence-contract.md",
-          "harness-and-loop-engineering.md",
-          "kubernetes-infrastructure-security.md",
-          "provider-implementation-status.md",
-          "spec-sdlc-ci-qa-formatting.md",
-          "workspace-governance-baseline.md"
         ]
       }
     ]

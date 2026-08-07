@@ -15,22 +15,10 @@
     ]
   },
   "currentPackBaselines": {
-    "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
-    "research/2026-07-07-wer": "git-sha1:f8ad39de4017e399df26625fe72ec97204dce88e"
+    "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
   },
   "baselineTransitions": [],
-  "baselineSettlements": [
-    {
-      "id": "ria-007-postflight-ledger",
-      "packId": "research/2026-07-07-wer",
-      "fromCommit": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
-      "targetSha256": "4c68a3d7c944a36ef7d01e0aee80de8cff8caeef43fa7c1c7544c06c905bce96",
-      "subject": "document-migration-evidence-ledger",
-      "targetByteLength": 638722,
-      "reason": "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b lifecycle closure and repository-static postflight evidence in the protected migration ledger",
-      "transitionCommit": "git-sha1:f8ad39de4017e399df26625fe72ec97204dce88e"
-    }
-  ],
+  "baselineSettlements": [],
   "mutableIndexProjections": [
     {
       "path": "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
@@ -44,37 +32,17 @@
       }
     },
     {
-      "path": "docs/90.references/research/README.md",
-      "table": {
-        "section": "Research Pack Index",
-        "columns": ["Status"]
-      }
-    },
-    {
       "path": "docs/90.references/audits/2026-07-11-weia/README.md",
       "table": {
         "section": "Report Index",
         "columns": ["Lifecycle", "Actionable disposition"]
-      }
-    },
-    {
-      "path": "docs/90.references/research/2026-07-07-wer/README.md",
-      "table": {
-        "section": "Report Index",
-        "columns": ["Lifecycle"]
-      },
-      "navigationReplacement": {
-        "visibleText": "../README.md",
-        "destination": "docs/90.references/research/README.md"
       }
     }
   ],
   "dataAssets": [
     {
       "id": "active-corpus-retention-census",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-retention-census.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/active-corpus-retention-census.json"],
       "refreshTrigger": "ACER-002 eligibility evidence, Spec 037 closure, ACER-004 role evidence, pinned object drift, proposal delta, or methodology-source change",
       "sources": [
         {
@@ -101,9 +69,7 @@
     },
     {
       "id": "active-corpus-eligibility-ledger",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-eligibility-ledger.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/active-corpus-eligibility-ledger.json"],
       "refreshTrigger": "ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change",
       "sources": [
         {
@@ -120,9 +86,7 @@
     },
     {
       "id": "active-corpus-migration-results",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-migration-results.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/active-corpus-migration-results.json"],
       "refreshTrigger": "Archive or index drift, consumer repair, validation-result change, or rollback-parent change",
       "sources": [
         {
@@ -139,9 +103,7 @@
     },
     {
       "id": "active-corpus-role-audit",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-role-audit.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/active-corpus-role-audit.json"],
       "refreshTrigger": "Stage 05 authored-record change, frozen helper drift, post-closure manifest drift, README safety drift, or Spec 037 closure",
       "sources": [
         {
@@ -158,9 +120,7 @@
     },
     {
       "id": "active-corpus-residue-closure",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-residue-closure.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/active-corpus-residue-closure.json"],
       "refreshTrigger": "Successor migration evidence, Plan or Task inventory, migration result, ADR or Spec authority, ACER-004 input, link evidence, or closure result changes",
       "sources": [
         {
@@ -187,17 +147,13 @@
     },
     {
       "id": "agent-reference-index",
-      "repositoryEvidence": [
-        "docs/90.references/data/agent-reference-index.md"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/agent-reference-index.md"],
       "refreshTrigger": "Agent reference addition, provider adapter change, runtime roster movement, or Stage 00 routing change",
       "sources": [
         {
           "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
           "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Codex project-instruction discovery and scoped AGENTS.md context"
-          ],
+          "adoptedScope": ["Codex project-instruction discovery and scoped AGENTS.md context"],
           "rejectedScope": [
             "Current local Codex runtime, model, tool, permission, or provider-parity claims"
           ]
@@ -215,9 +171,7 @@
         {
           "url": "https://geminicli.com/docs/cli/gemini-md/",
           "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Gemini CLI context hierarchy and GEMINI.md instruction discovery"
-          ],
+          "adoptedScope": ["Gemini CLI context hierarchy and GEMINI.md instruction discovery"],
           "rejectedScope": [
             "Current local Gemini installation, runtime, model, tool, or execution evidence"
           ]
@@ -226,9 +180,7 @@
     },
     {
       "id": "reference-information-architecture-contract",
-      "repositoryEvidence": [
-        "docs/90.references/data/reference-information-architecture.json"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/reference-information-architecture.json"],
       "refreshTrigger": "Current-pack registry, protected observation bytes, declared projection, source ledger, generated relation, duplicate rule, or baseline-state change",
       "sources": [
         {
@@ -247,9 +199,7 @@
           "adoptedScope": [
             "Exact stage-zero index identity and blob evidence for proposed repository files"
           ],
-          "rejectedScope": [
-            "Remote branch, CI, deployment, or live-environment status"
-          ]
+          "rejectedScope": ["Remote branch, CI, deployment, or live-environment status"]
         }
       ]
     },
@@ -284,9 +234,7 @@
     },
     {
       "id": "tech-stack-version-inventory",
-      "repositoryEvidence": [
-        "docs/90.references/data/tech-stack-version-inventory.md"
-      ],
+      "repositoryEvidence": ["docs/90.references/data/tech-stack-version-inventory.md"],
       "refreshTrigger": "Manifest or config version change, GitHub Actions or pre-commit pin change, cloud example target change, or official support-range change",
       "sources": [
         {
@@ -305,9 +253,7 @@
           "adoptedScope": [
             "AWS EKS Kubernetes support-range context for the repository example snapshot"
           ],
-          "rejectedScope": [
-            "Live AWS account state, deployed EKS version, or upgrade approval"
-          ]
+          "rejectedScope": ["Live AWS account state, deployed EKS version, or upgrade approval"]
         },
         {
           "url": "https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions",

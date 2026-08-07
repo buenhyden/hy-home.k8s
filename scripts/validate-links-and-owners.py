@@ -65,9 +65,7 @@ OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-07-07-wer"
 LEDGER_SETTLEMENT_SUBJECT = "document-migration-evidence-ledger"
-LEDGER_SETTLEMENT_FROM_COMMIT = (
-    "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
-)
+LEDGER_SETTLEMENT_FROM_COMMIT = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 LEDGER_SETTLEMENT_REASON = (
     "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b "
     "lifecycle closure and repository-static postflight evidence in the "
@@ -199,9 +197,7 @@ RETIRED_REFERENCE_ALIASES = {
     ): PurePosixPath("docs/00.agent-governance/contracts/harness-contract.json"),
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-    ): PurePosixPath(
-        "docs/00.agent-governance/contracts/harness-contract.schema.json"
-    ),
+    ): PurePosixPath("docs/00.agent-governance/contracts/harness-contract.schema.json"),
     PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
         "scripts/validate-agent-harness-semantics.py"
     ),
@@ -212,16 +208,14 @@ RETIRED_REFERENCE_ALIASES = {
 }
 RETIRED_REFERENCE_PROTECTED_FILES = {
     PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/"
-        "sdlc-ci-qa-formatting-automation.md"
+        "docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md"
     ): "c81e25e2346241c4ffcb83fb073ba2d7c147541dbfeadd0bdeb21bc13e004bb8",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/audits/2026-07-03-wdgh/"
         "workspace-document-governance-hardening-audit.md"
     ): "16ebdfce8fcb4f2e82cfd47e76962b0509385c30823b3d4ece23c1b130994b4f",  # pragma: allowlist secret
     PurePosixPath(
-        "docs/90.references/research/2026-07-04-wer/"
-        "automation-pipeline-workflow-qa.md"
+        "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md"
     ): "9e4b828aae5e631ff5cf3daf6bc88223ecdb17ce377914b5e9b2f1a2af2601ab",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/audits/2026-07-04-wdcn/"
@@ -4134,10 +4128,7 @@ def _unowned_active_execution_diagnostics(
     diagnostics: list[Diagnostic] = []
     reported_components: set[PurePosixPath] = set()
     for path in sorted(execution_index.graph, key=lambda item: item.as_posix()):
-        if (
-            _program_status(context, path) != "active"
-            or path in program_owned_paths
-        ):
+        if _program_status(context, path) != "active" or path in program_owned_paths:
             continue
         component = execution_index.component_by_node[path]
         representative = component[0]
@@ -5281,7 +5272,14 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             )
     counter = collections.Counter(ledger_paths)
     if not protected:
-        inventory_paths = {path.as_posix() for path in context.paths}
+        # The ledger records one authored-document migration. Its coverage
+        # obligation is the baseline corpus that migration moved, not documents
+        # authored by later programs. Scoping to the baseline keeps the ledger a
+        # record of what happened instead of forcing invented rows for paths
+        # that were never migrated.
+        inventory_paths = {
+            path.as_posix() for path in context.paths if path in context.baseline_paths
+        }
         for missing in sorted(inventory_paths - set(counter)):
             diagnostics.append(
                 _diag(
@@ -5292,7 +5290,8 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                     "inventory row is missing",
                 )
             )
-        for unknown in sorted(set(counter) - inventory_paths):
+        known_paths = inventory_paths | {path.as_posix() for path in context.paths}
+        for unknown in sorted(set(counter) - known_paths):
             diagnostics.append(
                 _diag(
                     "LEDGER-UNKNOWN-PATH",
@@ -7612,16 +7611,12 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             evidence_source = PurePosixPath(
                 "docs/90.references/audits/2026-07-11-weia/audit.md"
             )
-            texts[evidence_source] += (
-                "\n[retired hub](../../../../.github/ABOUT.md)\n"
-            )
+            texts[evidence_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
         elif mutation == "link-retired-current-reference":
             reference_source = PurePosixPath(
                 "docs/90.references/research/2026-07-07-wer/accepted.md"
             )
-            texts[reference_source] += (
-                "\n[retired hub](../../../../.github/ABOUT.md)\n"
-            )
+            texts[reference_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
         else:
             texts[source] += "\n[retired hub](../../../.github/ABOUT.md)\n"
     elif mutation == "link-absolute":
@@ -7783,9 +7778,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             )
             additions = (
                 (
-                    PurePosixPath(
-                        "docs/05.operations/guides/10000-post-settlement.md"
-                    ),
+                    PurePosixPath("docs/05.operations/guides/10000-post-settlement.md"),
                     ProfileView("sdlc/guide", "sdlc", "authored"),
                     {
                         "title": "Post-settlement Guide",
@@ -8127,11 +8120,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         context.governance_current_states,
         reference_current_packs,
         tracked_regular_paths,
-        (
-            texts[LEDGER_PATH].encode("utf-8")
-            if LEDGER_PATH in texts
-            else None
-        ),
+        (texts[LEDGER_PATH].encode("utf-8") if LEDGER_PATH in texts else None),
         ria_contract_text,
     )
 

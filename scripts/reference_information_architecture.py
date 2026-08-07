@@ -35,12 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = (
-    "38f52aa1f4bd831d4fbea4bf267f57b6a0c74af85f54daa3c000e134217f4982"  # pragma: allowlist secret
-)
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = (
-    "46bccd56161a4f80969f6cea87c69a9a0826f5a4009b6009d0ce04f9183c2d38"  # pragma: allowlist secret
-)
+AGENT_LEGACY_CUTOVER_SHA256 = "38f52aa1f4bd831d4fbea4bf267f57b6a0c74af85f54daa3c000e134217f4982"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "46bccd56161a4f80969f6cea87c69a9a0826f5a4009b6009d0ce04f9183c2d38"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -51,9 +47,7 @@ REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
 OID_PATTERN = re.compile(r"^[0-9a-f]{40}$")
-PACK_ID_PATTERN = re.compile(
-    r"^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$"
-)
+PACK_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 REPOSITORY_PATH_PATTERN = re.compile(
     r"^(?:docs|scripts|tests)(?:/(?!\.{1,2}(?:/|$))[A-Za-z0-9._-]+)+$"
@@ -78,12 +72,8 @@ CLOSED_GIT_ENVIRONMENT = {
     "GIT_TERMINAL_PROMPT": "0",
 }
 
-HISTORICAL_SOURCE_COMMIT = (
-    "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
-)
-CURRENT_ROOT_COMMIT = (
-    "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
-)
+HISTORICAL_SOURCE_COMMIT = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
+CURRENT_ROOT_COMMIT = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_PACK_IDS = (
     "audits/2026-05-24-whga",
     "audits/2026-07-02-whia",
@@ -101,8 +91,7 @@ AGENT_CUTOVER_RETIRED_HUB = ".github/ABOUT.md"
 AGENT_CUTOVER_REPLACEMENT_HUB = ".github/README.md"
 AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
     (
-        "docs/90.references/research/2026-07-07-wer/"
-        "automation-pipeline-workflow-qa.md",
+        "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
         3,
     ),
     (
@@ -116,17 +105,12 @@ AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
         1,
     ),
     (
-        "docs/90.references/research/2026-07-07-wer/"
-        "workspace-governance-baseline.md",
+        "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
         2,
     ),
 )
-DATA_ASSET_FIELDS = frozenset(
-    {"id", "repositoryEvidence", "refreshTrigger", "sources"}
-)
-SOURCE_RECORD_FIELDS = frozenset(
-    {"url", "checkedOn", "adoptedScope", "rejectedScope"}
-)
+DATA_ASSET_FIELDS = frozenset({"id", "repositoryEvidence", "refreshTrigger", "sources"})
+SOURCE_RECORD_FIELDS = frozenset({"url", "checkedOn", "adoptedScope", "rejectedScope"})
 GENERATED_ASSET_FIELDS = frozenset(
     {
         "id",
@@ -206,11 +190,6 @@ CURRENT_INDEX_SPECS: Mapping[str, tuple[Path, str, str]] = MappingProxyType(
             Path("docs/90.references/audits/README.md"),
             "Audit Pack Registry",
             "Pack role",
-        ),
-        "research": (
-            Path("docs/90.references/research/README.md"),
-            "Research Pack Index",
-            "Status",
         ),
     }
 )
@@ -443,7 +422,9 @@ def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
                 chunks.append(chunk)
                 remaining -= len(chunk)
                 if remaining < 0:
-                    raise ContractError("RIA-CONTRACT", field, "file exceeds input limit")
+                    raise ContractError(
+                        "RIA-CONTRACT", field, "file exceeds input limit"
+                    )
             return b"".join(chunks)
         finally:
             os.close(file_fd)
@@ -456,7 +437,9 @@ def _read_regular_file(root: Path, relative: Path, *, field: str) -> bytes:
 
 
 def _load_json(root: Path, relative: Path, *, field: str) -> dict[str, object]:
-    return _decode_json_bytes(_read_regular_file(root, relative, field=field), field=field)
+    return _decode_json_bytes(
+        _read_regular_file(root, relative, field=field), field=field
+    )
 
 
 def parse_git_sha1(value: object, *, field: str = "snapshotGuard.sourceCommit") -> str:
@@ -546,7 +529,9 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
     )
 
 
-def _run_git(root: Path, arguments: tuple[str, ...], stdout_limit: int = MAX_METADATA_BYTES) -> bytes:
+def _run_git(
+    root: Path, arguments: tuple[str, ...], stdout_limit: int = MAX_METADATA_BYTES
+) -> bytes:
     """Run one fixed Git query in a closed process environment."""
 
     if not _git_arguments_allowed(arguments):
@@ -798,9 +783,7 @@ def _parse_index_record(payload: bytes, path: Path) -> str:
     records.pop()
     if len(records) != 1:
         raise _GitError("path does not have exactly one index record")
-    match = re.fullmatch(
-        rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", records[0]
-    )
+    match = re.fullmatch(rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", records[0])
     if match is None:
         raise _GitError("index record is malformed")
     mode, oid, stage, returned_path = match.groups()
@@ -822,9 +805,7 @@ def _parse_tree_record(payload: bytes, path: Path) -> str:
     records.pop()
     if len(records) != 1:
         raise _GitError("path does not have exactly one tree record")
-    match = re.fullmatch(
-        rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", records[0]
-    )
+    match = re.fullmatch(rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", records[0])
     if match is None:
         raise _GitError("tree record is malformed")
     mode, object_type, oid, returned_path = match.groups()
@@ -853,9 +834,7 @@ def _read_blob(root: Path, oid: str, runner: GitRunner | None = None) -> bytes:
         raise _GitError("blob identity is malformed")
     if _git(root, ("cat-file", "-t", oid), runner=runner) != b"blob\n":
         raise _GitError("object is not a blob")
-    size = _parse_canonical_size(
-        _git(root, ("cat-file", "-s", oid), runner=runner)
-    )
+    size = _parse_canonical_size(_git(root, ("cat-file", "-s", oid), runner=runner))
     payload = _git(
         root,
         ("cat-file", "blob", oid),
@@ -915,7 +894,9 @@ def _read_commit_path(
     return _read_blob(root, oid, runner)
 
 
-def _commit_parents(root: Path, oid: str, runner: GitRunner | None = None) -> tuple[str, ...]:
+def _commit_parents(
+    root: Path, oid: str, runner: GitRunner | None = None
+) -> tuple[str, ...]:
     _require_commit(root, oid, runner)
     payload = _git(root, ("cat-file", "commit", oid), runner=runner)
     if len(payload) > MAX_METADATA_BYTES or b"\0" in payload:
@@ -938,7 +919,9 @@ def _validate_schema_document(
     contract: dict[str, object], schema: dict[str, object]
 ) -> None:
     if contract.get("$schema") != "./reference-information-architecture.schema.json":
-        raise ContractError("RIA-CONTRACT", "$schema", "schema reference is not canonical")
+        raise ContractError(
+            "RIA-CONTRACT", "$schema", "schema reference is not canonical"
+        )
     try:
         Draft202012Validator.check_schema(schema)
         errors = sorted(
@@ -981,7 +964,9 @@ def _validate_schema_at_commit(
     runner: GitRunner | None,
 ) -> None:
     if contract.get("$schema") != "./reference-information-architecture.schema.json":
-        raise ContractError("RIA-CONTRACT", "$schema", "schema reference is not canonical")
+        raise ContractError(
+            "RIA-CONTRACT", "$schema", "schema reference is not canonical"
+        )
     schema_path = contract_path.with_name(
         "reference-information-architecture.schema.json"
     )
@@ -1004,7 +989,9 @@ def _unique_strings(value: object, *, field: str) -> list[str]:
 
 
 def _validate_path_fields(contract: Mapping[str, object]) -> None:
-    parse_repository_path(contract.get("currentPackRegistry"), field="currentPackRegistry")
+    parse_repository_path(
+        contract.get("currentPackRegistry"), field="currentPackRegistry"
+    )
     projections = contract.get("mutableIndexProjections")
     if isinstance(projections, list):
         for index, projection in enumerate(projections):
@@ -1041,7 +1028,9 @@ def _validate_path_fields(contract: Mapping[str, object]) -> None:
                 continue
             for key in ("generatorPath", "outputPath", "canonicalOwnerPath"):
                 if key in asset:
-                    parse_repository_path(asset.get(key), field=f"generatedAssets[{index}].{key}")
+                    parse_repository_path(
+                        asset.get(key), field=f"generatedAssets[{index}].{key}"
+                    )
             roots = asset.get("inputRoots")
             if isinstance(roots, list):
                 for root_index, path in enumerate(roots):
@@ -1054,7 +1043,9 @@ def _validate_path_fields(contract: Mapping[str, object]) -> None:
     roots = duplicate_rules.get("canonicalOwnerRoots")
     if isinstance(roots, list):
         for index, path in enumerate(roots):
-            parse_repository_path(path, field=f"duplicateRules.canonicalOwnerRoots[{index}]")
+            parse_repository_path(
+                path, field=f"duplicateRules.canonicalOwnerRoots[{index}]"
+            )
     exceptions = duplicate_rules.get("structuralExceptions")
     if isinstance(exceptions, list):
         for index, exception in enumerate(exceptions):
@@ -1078,20 +1069,10 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             "columns": ["Pack role", "Successor / resolution"],
         },
     },
-    "docs/90.references/research/README.md": {
-        "table": {"section": "Research Pack Index", "columns": ["Status"]},
-    },
     "docs/90.references/audits/2026-07-11-weia/README.md": {
         "table": {
             "section": "Report Index",
             "columns": ["Lifecycle", "Actionable disposition"],
-        },
-    },
-    "docs/90.references/research/2026-07-07-wer/README.md": {
-        "table": {"section": "Report Index", "columns": ["Lifecycle"]},
-        "navigationReplacement": {
-            "visibleText": "../README.md",
-            "destination": "docs/90.references/research/README.md",
         },
     },
 }
@@ -1102,7 +1083,9 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
         contract.get("currentPackRegistry"), field="currentPackRegistry"
     )
     if registry_path != REGISTRY_PATH:
-        raise ContractError("RIA-BOUNDARY", "currentPackRegistry", "registry path is fixed")
+        raise ContractError(
+            "RIA-BOUNDARY", "currentPackRegistry", "registry path is fixed"
+        )
     if contract.get("schemaVersion") != 2:
         raise ContractError("RIA-CONTRACT", "schemaVersion", "schema version must be 2")
     guard = contract.get("snapshotGuard")
@@ -1111,20 +1094,26 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
     source = guard.get("sourceCommit")
     parse_git_sha1(source)
     if source != HISTORICAL_SOURCE_COMMIT:
-        raise ContractError("RIA-SNAPSHOT", "snapshotGuard.sourceCommit", "historical source is fixed")
+        raise ContractError(
+            "RIA-SNAPSHOT", "snapshotGuard.sourceCommit", "historical source is fixed"
+        )
     historical = _unique_strings(
         guard.get("historicalPackIds"), field="snapshotGuard.historicalPackIds"
     )
     if tuple(historical) != HISTORICAL_PACK_IDS:
         raise ContractError(
-            "RIA-SNAPSHOT", "snapshotGuard.historicalPackIds", "historical pack set is fixed"
+            "RIA-SNAPSHOT",
+            "snapshotGuard.historicalPackIds",
+            "historical pack set is fixed",
         )
     baselines = contract.get("currentPackBaselines")
     if not isinstance(baselines, Mapping):
         raise ContractError("RIA-CONTRACT", "currentPackBaselines", "must be an object")
     for key, value in baselines.items():
         if not isinstance(key, str) or PACK_ID_PATTERN.fullmatch(key) is None:
-            raise ContractError("RIA-CONTRACT", "currentPackBaselines", "pack key is invalid")
+            raise ContractError(
+                "RIA-CONTRACT", "currentPackBaselines", "pack key is invalid"
+            )
         parse_git_sha1(value, field=f"currentPackBaselines.{key}")
     for collection in ("baselineTransitions", "baselineSettlements"):
         records = contract.get(collection)
@@ -1142,18 +1131,26 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
                     )
     projections = contract.get("mutableIndexProjections")
     if not isinstance(projections, list):
-        raise ContractError("RIA-CONTRACT", "mutableIndexProjections", "must be an array")
+        raise ContractError(
+            "RIA-CONTRACT", "mutableIndexProjections", "must be an array"
+        )
     seen: set[str] = set()
     for index, projection in enumerate(projections):
         if not isinstance(projection, Mapping):
-            raise ContractError("RIA-CONTRACT", f"mutableIndexProjections[{index}]", "must be an object")
+            raise ContractError(
+                "RIA-CONTRACT", f"mutableIndexProjections[{index}]", "must be an object"
+            )
         path = projection.get("path")
         if not isinstance(path, str) or path in seen:
-            raise ContractError("RIA-CONTRACT", "mutableIndexProjections", "contains duplicate paths")
+            raise ContractError(
+                "RIA-CONTRACT", "mutableIndexProjections", "contains duplicate paths"
+            )
         seen.add(path)
         expected = _PROJECTION_ALLOWLIST.get(path)
         if expected is None or dict(projection) != {"path": path, **expected}:
-            raise ContractError("RIA-OVERLAY", path, "projection is outside the closed allowlist")
+            raise ContractError(
+                "RIA-OVERLAY", path, "projection is outside the closed allowlist"
+            )
     generated = contract.get("generatedAssets")
     if isinstance(generated, list):
         outputs: set[object] = set()
@@ -1162,7 +1159,9 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
                 continue
             output = asset.get("outputPath")
             if output in outputs:
-                raise ContractError("RIA-CONTRACT", "generatedAssets", "contains duplicate output paths")
+                raise ContractError(
+                    "RIA-CONTRACT", "generatedAssets", "contains duplicate output paths"
+                )
             outputs.add(output)
 
 
@@ -1183,9 +1182,7 @@ def load_contract(
     return contract
 
 
-def _load_contract_for_self_test(
-    root: Path, contract_path: Path
-) -> dict[str, object]:
+def _load_contract_for_self_test(root: Path, contract_path: Path) -> dict[str, object]:
     """Load isolated fixture files without claiming proposed Git authority."""
 
     root = root.absolute()
@@ -1217,7 +1214,9 @@ def load_contract_at_commit(
     try:
         payload = _read_commit_path(root, oid, relative, runner)
     except _GitError as error:
-        raise ContractError("RIA-TRANSITION", relative.as_posix(), error.message) from error
+        raise ContractError(
+            "RIA-TRANSITION", relative.as_posix(), error.message
+        ) from error
     contract = _decode_json_bytes(payload, field="contract")
     _validate_path_fields(contract)
     _validate_schema_at_commit(root, oid, contract, relative, runner)
@@ -1226,7 +1225,10 @@ def load_contract_at_commit(
 
 
 def _strict_date(value: object) -> date | None:
-    if not isinstance(value, str) or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is None:
+    if (
+        not isinstance(value, str)
+        or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is None
+    ):
         return None
     try:
         parsed = date.fromisoformat(value)
@@ -1298,9 +1300,7 @@ def _parse_index_listing(payload: bytes) -> tuple[Path, ...]:
     paths: list[Path] = []
     seen: set[Path] = set()
     for record in records[:-1]:
-        match = re.fullmatch(
-            rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", record
-        )
+        match = re.fullmatch(rb"([0-9]{6}) ([0-9a-f]{40}) ([0-3])\t([^\0]+)", record)
         if match is None:
             raise _GitError("index listing is malformed")
         mode, _oid, stage, returned_path = match.groups()
@@ -1321,9 +1321,7 @@ def _parse_tree_listing(payload: bytes) -> tuple[Path, ...]:
     paths: list[Path] = []
     seen: set[Path] = set()
     for record in records[:-1]:
-        match = re.fullmatch(
-            rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", record
-        )
+        match = re.fullmatch(rb"([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t([^\0]+)", record)
         if match is None:
             raise _GitError("tree listing is malformed")
         mode, object_type, _oid, returned_path = match.groups()
@@ -1370,9 +1368,7 @@ def _tracked_data_asset_paths(
     return {path for path in paths if path != DATA_ASSET_README}
 
 
-def _inventory_path_under(
-    payload: bytes, inventory_root: Path, *, field: str
-) -> Path:
+def _inventory_path_under(payload: bytes, inventory_root: Path, *, field: str) -> Path:
     try:
         decoded = payload.decode("utf-8", "strict")
         path = parse_repository_path(decoded, field=field)
@@ -1437,9 +1433,7 @@ def _tracked_markdown_paths(
             ("ls-files", "-z", "--stage", "--", inventory_root.as_posix()),
             runner=runner,
         )
-        paths = _parse_regular_inventory(
-            payload, inventory_root, committed=False
-        )
+        paths = _parse_regular_inventory(payload, inventory_root, committed=False)
     else:
         _require_commit(root, commit_oid, runner)
         payload = _git(
@@ -1471,7 +1465,9 @@ def validate_data_assets(
     cutoff = _strict_date(contract.get("evidenceCutoff"))
     if cutoff is None:
         findings.append(
-            Finding("RIA-SOURCE", "evidenceCutoff", "cutoff is not a strict calendar date")
+            Finding(
+                "RIA-SOURCE", "evidenceCutoff", "cutoff is not a strict calendar date"
+            )
         )
 
     assets = contract.get("dataAssets")
@@ -1491,7 +1487,11 @@ def validate_data_assets(
             return sorted(
                 {
                     *findings,
-                    Finding("RIA-SOURCE", "--commit", "source evidence authority is unavailable"),
+                    Finding(
+                        "RIA-SOURCE",
+                        "--commit",
+                        "source evidence authority is unavailable",
+                    ),
                 }
             )
 
@@ -1576,12 +1576,18 @@ def validate_data_assets(
                     path = parse_repository_path(value, field=field)
                 except ContractError:
                     findings.append(
-                        Finding("RIA-SOURCE", field, "repository evidence path is invalid")
+                        Finding(
+                            "RIA-SOURCE", field, "repository evidence path is invalid"
+                        )
                     )
                     continue
                 if path in local_evidence or path in seen_evidence:
                     findings.append(
-                        Finding("RIA-SOURCE", field, "repository evidence path is duplicated")
+                        Finding(
+                            "RIA-SOURCE",
+                            field,
+                            "repository evidence path is duplicated",
+                        )
                     )
                     continue
                 local_evidence.add(path)
@@ -1603,7 +1609,11 @@ def validate_data_assets(
         sources = asset.get("sources")
         if not isinstance(sources, list) or not sources:
             findings.append(
-                Finding("RIA-SOURCE", f"{asset_field}.sources", "source records must be non-empty")
+                Finding(
+                    "RIA-SOURCE",
+                    f"{asset_field}.sources",
+                    "source records must be non-empty",
+                )
             )
             continue
         seen_sources: set[str] = set()
@@ -1611,22 +1621,35 @@ def validate_data_assets(
             source_field = f"{asset_field}.sources[{source_index}]"
             if not isinstance(source, Mapping):
                 findings.append(
-                    Finding("RIA-SOURCE", source_field, "source record must be an object")
+                    Finding(
+                        "RIA-SOURCE", source_field, "source record must be an object"
+                    )
                 )
                 continue
             if set(source) != SOURCE_RECORD_FIELDS:
                 findings.append(
-                    Finding("RIA-SOURCE", source_field, "source record fields are not closed")
+                    Finding(
+                        "RIA-SOURCE",
+                        source_field,
+                        "source record fields are not closed",
+                    )
                 )
             try:
                 identity = json.dumps(
-                    dict(source), sort_keys=True, separators=(",", ":"), ensure_ascii=True
+                    dict(source),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=True,
                 )
             except (TypeError, ValueError):
                 identity = ""
             if not identity or identity in seen_sources:
                 findings.append(
-                    Finding("RIA-SOURCE", source_field, "source record is invalid or duplicated")
+                    Finding(
+                        "RIA-SOURCE",
+                        source_field,
+                        "source record is invalid or duplicated",
+                    )
                 )
             else:
                 seen_sources.add(identity)
@@ -1681,7 +1704,11 @@ def validate_data_assets(
                 & set(item for item in rejected if isinstance(item, str))
             ):
                 findings.append(
-                    Finding("RIA-SOURCE", source_field, "adopted and rejected scopes overlap")
+                    Finding(
+                        "RIA-SOURCE",
+                        source_field,
+                        "adopted and rejected scopes overlap",
+                    )
                 )
     if seen_evidence != expected_evidence:
         findings.append(
@@ -1783,7 +1810,9 @@ def validate_generated_assets(
             continue
         if set(asset) != GENERATED_ASSET_FIELDS:
             findings.append(
-                Finding("RIA-GENERATOR", field, "generator relation fields are not closed")
+                Finding(
+                    "RIA-GENERATOR", field, "generator relation fields are not closed"
+                )
             )
 
         relation_id = asset.get("id")
@@ -2009,17 +2038,27 @@ def validate_generated_assets(
 def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
     root = value.get("referenceCurrentPacks")
     if not isinstance(root, Mapping):
-        raise ContractError("RIA-CONTRACT", REGISTRY_PATH.as_posix(), "Current pack registry is malformed")
+        raise ContractError(
+            "RIA-CONTRACT",
+            REGISTRY_PATH.as_posix(),
+            "Current pack registry is malformed",
+        )
     profile = root.get("profileId")
     records = root.get("packs")
     if not isinstance(profile, str) or not isinstance(records, list):
-        raise ContractError("RIA-CONTRACT", REGISTRY_PATH.as_posix(), "Current pack registry is malformed")
+        raise ContractError(
+            "RIA-CONTRACT",
+            REGISTRY_PATH.as_posix(),
+            "Current pack registry is malformed",
+        )
     packs: list[Pack] = []
     pack_ids: set[str] = set()
     all_paths: set[Path] = set()
     for index, record in enumerate(records):
         if not isinstance(record, Mapping):
-            raise ContractError("RIA-CONTRACT", REGISTRY_PATH.as_posix(), "registry pack is malformed")
+            raise ContractError(
+                "RIA-CONTRACT", REGISTRY_PATH.as_posix(), "registry pack is malformed"
+            )
         pack_id = record.get("id")
         members = record.get("members")
         states = record.get("allowedStates")
@@ -2033,13 +2072,21 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
             or len(states) != len(set(states))
             or pack_id in pack_ids
         ):
-            raise ContractError("RIA-CONTRACT", f"currentPackRegistry.packs[{index}]", "registry pack is malformed")
+            raise ContractError(
+                "RIA-CONTRACT",
+                f"currentPackRegistry.packs[{index}]",
+                "registry pack is malformed",
+            )
         pack_ids.add(pack_id)
         pack = Pack(pack_id, tuple(states), tuple(members))
         for path in (pack.readme_path, *pack.member_paths):
             parse_repository_path(path.as_posix(), field="currentPackRegistry.members")
             if path in all_paths:
-                raise ContractError("RIA-CONTRACT", REGISTRY_PATH.as_posix(), "Current path is duplicated")
+                raise ContractError(
+                    "RIA-CONTRACT",
+                    REGISTRY_PATH.as_posix(),
+                    "Current path is duplicated",
+                )
             all_paths.add(path)
         packs.append(pack)
     return RegistryProjection(profile, tuple(packs))
@@ -2052,7 +2099,9 @@ def _encoded_baselines(contract: Mapping[str, object]) -> dict[str, str]:
     result: dict[str, str] = {}
     for key, value in raw.items():
         if not isinstance(key, str) or not isinstance(value, str):
-            raise ContractError("RIA-CONTRACT", "currentPackBaselines", "map is malformed")
+            raise ContractError(
+                "RIA-CONTRACT", "currentPackBaselines", "map is malformed"
+            )
         result[key] = value
     return result
 
@@ -2094,7 +2143,14 @@ def _build_context(
         registry = _registry_projection(
             _decode_json_bytes(registry_bytes, field=REGISTRY_PATH.as_posix())
         )
-        if registry != proposed_registry:
+        # Every pack that is still declared must match its baseline declaration
+        # byte for byte. Retiring a whole collection from Current-pack
+        # governance is a reviewed registry change, so a pack that is absent
+        # from the proposal is not drift; it simply stops being guarded here.
+        baseline_by_id = {pack.pack_id: pack for pack in registry.packs}
+        if registry.profile_id != proposed_registry.profile_id or any(
+            baseline_by_id.get(pack.pack_id) != pack for pack in proposed_registry.packs
+        ):
             raise ContractError(
                 "RIA-TRANSITION",
                 REGISTRY_PATH.as_posix(),
@@ -2242,10 +2298,7 @@ def _code_block_intervals(text: str) -> tuple[tuple[int, int], ...]:
         if list_item is not None:
             semantic_line, list_indent = list_item
             list_blockquote_depth = blockquote_depth
-        elif (
-            list_indent is not None
-            and blockquote_depth == list_blockquote_depth
-        ):
+        elif list_indent is not None and blockquote_depth == list_blockquote_depth:
             leading_spaces = len(container_line) - len(container_line.lstrip(" "))
             if not stripped:
                 semantic_line = ""
@@ -2307,9 +2360,7 @@ def _inline_code_intervals_outside_blocks(
     return tuple(intervals)
 
 
-def _mask_block_intervals(
-    text: str, intervals: Sequence[tuple[int, int]]
-) -> str:
+def _mask_block_intervals(text: str, intervals: Sequence[tuple[int, int]]) -> str:
     if not intervals:
         return text
     output: list[str] = []
@@ -2358,10 +2409,7 @@ def _mask_markdown_comments(text: str) -> str:
         if opening < 0:
             output.append(text[cursor:])
             break
-        while (
-            span_index < len(code_spans)
-            and code_spans[span_index][1] <= opening
-        ):
+        while span_index < len(code_spans) and code_spans[span_index][1] <= opening:
             span_index += 1
         if (
             span_index < len(code_spans)
@@ -2371,17 +2419,15 @@ def _mask_markdown_comments(text: str) -> str:
             output.append(text[cursor:preserved_end])
             cursor = preserved_end
             continue
-        line_start = max(
-            text.rfind("\n", 0, opening),
-            text.rfind("\r", 0, opening),
-        ) + 1
-        container_prefix, _depth = _blockquote_container(
-            text[line_start:opening]
+        line_start = (
+            max(
+                text.rfind("\n", 0, opening),
+                text.rfind("\r", 0, opening),
+            )
+            + 1
         )
-        block_comment = (
-            len(container_prefix) <= 3
-            and container_prefix.strip(" ") == ""
-        )
+        container_prefix, _depth = _blockquote_container(text[line_start:opening])
+        block_comment = len(container_prefix) <= 3 and container_prefix.strip(" ") == ""
         if block_comment:
             closing = text.find("-->", opening + 4)
             end = len(text) if closing < 0 else closing + 3
@@ -2400,9 +2446,7 @@ def _mask_markdown_comments(text: str) -> str:
         mask = " " if block_comment else "\u2060"
         output.append(
             "".join(
-                character
-                if block_comment and character in {"\r", "\n"}
-                else mask
+                character if block_comment and character in {"\r", "\n"} else mask
                 for character in text[opening:end]
             )
         )
@@ -2430,9 +2474,7 @@ def _strip_blockquote_container(line: str) -> str:
     return _blockquote_container(line)[0]
 
 
-def _strip_markdown_container(
-    line: str, *, strip_list_marker: bool = True
-) -> str:
+def _strip_markdown_container(line: str, *, strip_list_marker: bool = True) -> str:
     value = _strip_blockquote_container(line)
     if not strip_list_marker:
         return value
@@ -2454,11 +2496,7 @@ def _list_item_start(
     if match is None or not (len(match.group("indent")) <= 3 or nested):
         return False
     marker = match.group("marker")
-    if (
-        interrupting_paragraph
-        and marker[0].isdigit()
-        and int(marker[:-1]) != 1
-    ):
+    if interrupting_paragraph and marker[0].isdigit() and int(marker[:-1]) != 1:
         return False
     return True
 
@@ -2489,16 +2527,11 @@ class _CompactCloserMap:
     def __len__(self) -> int:
         return len(self._starts)
 
-    def get(
-        self, key: int, default: int | None = None
-    ) -> int | None:
+    def get(self, key: int, default: int | None = None) -> int | None:
         if key < self._last_key:
             self._cursor = 0
         self._last_key = key
-        while (
-            self._cursor < len(self._starts)
-            and self._starts[self._cursor] < key
-        ):
+        while self._cursor < len(self._starts) and self._starts[self._cursor] < key:
             self._cursor += 1
         if (
             self._cursor < len(self._starts)
@@ -2595,10 +2628,7 @@ def _inline_opaque_intervals(
     code_index = 0
     active_code_end = -1
     for token_index, opening in enumerate(tokens.starts):
-        while (
-            code_index < len(code_spans)
-            and code_spans[code_index][0] <= opening
-        ):
+        while code_index < len(code_spans) and code_spans[code_index][0] <= opening:
             code_start, code_end = code_spans[code_index]
             _append_compact_interval(starts, ends, code_start, code_end)
             active_code_end = max(active_code_end, code_end)
@@ -2606,11 +2636,15 @@ def _inline_opaque_intervals(
         if opening < active_code_end:
             continue
         autolink_closing = tokens.autolink_ends[token_index]
-        if autolink_closing >= 0 and _consume_autolink(
-            value,
-            opening,
-            closing=autolink_closing,
-        ) is not None:
+        if (
+            autolink_closing >= 0
+            and _consume_autolink(
+                value,
+                opening,
+                closing=autolink_closing,
+            )
+            is not None
+        ):
             _append_compact_interval(
                 starts,
                 ends,
@@ -2646,9 +2680,7 @@ def _paired_delimiters(
     pairs: dict[int, int] = {}
     escaped = False
     owned_spans = (
-        _inline_opaque_intervals(value)
-        if opaque_spans is None
-        else opaque_spans
+        _inline_opaque_intervals(value) if opaque_spans is None else opaque_spans
     )
     owned_starts = (
         owned_spans.starts if isinstance(owned_spans, _CompactIntervals) else None
@@ -2672,10 +2704,7 @@ def _paired_delimiters(
             if span_index < len(owned_spans)
             else -1
         )
-        while (
-            span_index < len(owned_spans)
-            and span_end <= index
-        ):
+        while span_index < len(owned_spans) and span_end <= index:
             span_index += 1
             span_start = (
                 owned_starts[span_index]
@@ -2691,10 +2720,7 @@ def _paired_delimiters(
                 if span_index < len(owned_spans)
                 else -1
             )
-        if (
-            span_index < len(owned_spans)
-            and span_start <= index < span_end
-        ):
+        if span_index < len(owned_spans) and span_start <= index < span_end:
             escaped = False
             continue
         if not escaped:
@@ -2713,9 +2739,7 @@ ASCII_PUNCTUATION = frozenset(r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~""")
 
 COMMONMARK_LINK_WHITESPACE = frozenset({" ", "\t", "\r", "\n"})
 
-INVISIBLE_OBFUSCATION_CHARACTERS = frozenset(
-    {"\u00ad", "\u200b", "\u2060", "\ufeff"}
-)
+INVISIBLE_OBFUSCATION_CHARACTERS = frozenset({"\u00ad", "\u200b", "\u2060", "\ufeff"})
 
 NON_RENDERING_FORMAT_CONTROL_RANGES = (
     (0x061C, 0x061C),
@@ -2732,9 +2756,7 @@ CHARACTER_REFERENCE_PATTERN = re.compile(
     r"&(?:#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});"
 )
 
-URI_AUTOLINK_PATTERN = re.compile(
-    r"[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\x00-\x20]*"
-)
+URI_AUTOLINK_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\x00-\x20]*")
 
 EMAIL_AUTOLINK_PATTERN = re.compile(
     r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@"
@@ -2898,7 +2920,7 @@ def _valid_link_target(value: str, *, allow_empty_destination: bool) -> bool:
     if len(tail) < 2:
         return False
     opener = tail[0]
-    closer = {"\"": "\"", "'": "'", "(": ")"}.get(opener)
+    closer = {'"': '"', "'": "'", "(": ")"}.get(opener)
     if closer is None or tail[-1] != closer:
         return False
     body = tail[1:-1]
@@ -2912,9 +2934,7 @@ def _valid_link_target(value: str, *, allow_empty_destination: bool) -> bool:
         ):
             cursor += 2
             continue
-        if character == closer or (
-            opener == "(" and character == "("
-        ):
+        if character == closer or (opener == "(" and character == "("):
             return False
         cursor += 1
     return True
@@ -2997,10 +3017,7 @@ def _inline_html_tag(value: str, cursor: int, closing: int) -> bool:
         return False
     candidate = value[cursor + 1 : closing]
     if candidate.startswith("/"):
-        return (
-            re.fullmatch(r"/[A-Za-z][A-Za-z0-9-]*[ \t\n]*", candidate)
-            is not None
-        )
+        return re.fullmatch(r"/[A-Za-z][A-Za-z0-9-]*[ \t\n]*", candidate) is not None
     return (
         re.fullmatch(
             r"[A-Za-z][A-Za-z0-9-]*"
@@ -3045,9 +3062,7 @@ def _normalize_reference_label(value: str) -> str:
             continue
         output.append(value[cursor])
         cursor += 1
-    return " ".join(
-        unicodedata.normalize("NFKC", "".join(output)).casefold().split()
-    )
+    return " ".join(unicodedata.normalize("NFKC", "".join(output)).casefold().split())
 
 
 def _reference_label_closing(
@@ -3186,9 +3201,9 @@ def _emphasis_marker_positions(
         elif suffix < len(value) and value[suffix] == "[":
             reference_end = square_pairs.get(suffix)
             if reference_end is not None:
-                reference = value[suffix + 1 : reference_end] or value[
-                    opening + 1 : closing
-                ]
+                reference = (
+                    value[suffix + 1 : reference_end] or value[opening + 1 : closing]
+                )
                 if _normalize_reference_label(reference) in reference_labels:
                     destination_ends[suffix] = reference_end + 1
 
@@ -3267,31 +3282,25 @@ def _emphasis_marker_positions(
         following = (
             None
             if scope >= 0 and end == scope_ends[scope]
-            else value[end] if end < len(value) else None
+            else value[end]
+            if end < len(value)
+            else None
         )
         previous_whitespace = previous is None or previous.isspace()
         following_whitespace = following is None or following.isspace()
         previous_punctuation = punctuation(previous)
         following_punctuation = punctuation(following)
         left_flanking = not following_whitespace and (
-            not following_punctuation
-            or previous_whitespace
-            or previous_punctuation
+            not following_punctuation or previous_whitespace or previous_punctuation
         )
         right_flanking = not previous_whitespace and (
-            not previous_punctuation
-            or following_whitespace
-            or following_punctuation
+            not previous_punctuation or following_whitespace or following_punctuation
         )
         can_open = left_flanking
         can_close = right_flanking
         if marker == "_":
-            can_open = left_flanking and (
-                not right_flanking or previous_punctuation
-            )
-            can_close = right_flanking and (
-                not left_flanking or following_punctuation
-            )
+            can_open = left_flanking and (not right_flanking or previous_punctuation)
+            can_close = right_flanking and (not left_flanking or following_punctuation)
         if can_open or can_close:
             flags = (1 if can_open else 0) | (2 if can_close else 0)
             if marker in {"*", "_"}:
@@ -3327,8 +3336,7 @@ def _emphasis_marker_positions(
         ):
             header_index = closer_index
         last_marker_end = (
-            delimiter_starts[closer_index]
-            + delimiter_widths[closer_index]
+            delimiter_starts[closer_index] + delimiter_widths[closer_index]
         )
         if not delimiter_flags[closer_index] & 2:
             continue
@@ -3339,32 +3347,22 @@ def _emphasis_marker_positions(
         bottoms = openers_bottom.setdefault(bottom_key, [-1] * 6)
         closer_can_open = bool(delimiter_flags[closer_index] & 1)
         closer_run_length = delimiter_run_lengths[closer_index]
-        bottom_slot = (
-            (3 if closer_can_open else 0) + closer_run_length % 3
-        )
+        bottom_slot = (3 if closer_can_open else 0) + closer_run_length % 3
         minimum_opener = bottoms[bottom_slot]
         opener_index = header_index - jumps[header_index] - 1
         new_minimum = opener_index
         while opener_index > minimum_opener:
             if (
-                delimiter_markers[opener_index]
-                == delimiter_markers[closer_index]
-                and delimiter_scopes[opener_index]
-                == delimiter_scopes[closer_index]
+                delimiter_markers[opener_index] == delimiter_markers[closer_index]
+                and delimiter_scopes[opener_index] == delimiter_scopes[closer_index]
                 and delimiter_flags[opener_index] & 1
                 and delimiter_ends[opener_index] < 0
             ):
                 opener_run_length = delimiter_run_lengths[opener_index]
                 odd_match = (
-                    (
-                        bool(delimiter_flags[opener_index] & 2)
-                        or closer_can_open
-                    )
+                    (bool(delimiter_flags[opener_index] & 2) or closer_can_open)
                     and (opener_run_length + closer_run_length) % 3 == 0
-                    and (
-                        opener_run_length % 3 != 0
-                        or closer_run_length % 3 != 0
-                    )
+                    and (opener_run_length % 3 != 0 or closer_run_length % 3 != 0)
                 )
                 if not odd_match:
                     last_jump = (
@@ -3475,9 +3473,7 @@ def _markdown_visible_text(
             autolink_angle = autolink_closers.get(cursor, -1)
             if autolink_angle >= limit:
                 autolink_angle = -1
-            autolink = _consume_autolink(
-                value, cursor, closing=autolink_angle
-            )
+            autolink = _consume_autolink(value, cursor, closing=autolink_angle)
             if autolink is not None:
                 label, consumed = autolink
                 output.append(label)
@@ -3569,8 +3565,7 @@ def _table_cells(line: str) -> tuple[str, ...] | None:
 
 def _table_delimiter(cells: tuple[str, ...] | None) -> bool:
     return bool(
-        cells
-        and all(re.fullmatch(r":?-{3,}:?", cell) is not None for cell in cells)
+        cells and all(re.fullmatch(r":?-{3,}:?", cell) is not None for cell in cells)
     )
 
 
@@ -3645,12 +3640,9 @@ def _pure_link_list(
         )
         if link is not None:
             label = candidate[link[0] : link[1]]
-            if (
-                link[2] != len(candidate)
-                or not _valid_reference_label_content(
-                    label,
-                    allow_empty=False,
-                )
+            if link[2] != len(candidate) or not _valid_reference_label_content(
+                label,
+                allow_empty=False,
             ):
                 return False
             continue
@@ -3739,9 +3731,7 @@ def _reference_definitions(
             paragraph_open = False
             paragraph_depth = None
             continue
-        raw_start = _raw_html_block_start(
-            stripped, paragraph_open=paragraph_open
-        )
+        raw_start = _raw_html_block_start(stripped, paragraph_open=paragraph_open)
         if raw_start is not None:
             mode, closer = raw_start
             paragraph_open = False
@@ -3760,9 +3750,7 @@ def _reference_definitions(
         definition = _strip_markdown_container(container_line)
         label = _parse_reference_definition(definition)
         if not paragraph_open and index + 1 < len(lines):
-            continuation, continuation_depth = _blockquote_container(
-                lines[index + 1]
-            )
+            continuation, continuation_depth = _blockquote_container(lines[index + 1])
             continuation_text = continuation.lstrip(" ")
             continuation_indent = len(continuation) - len(continuation_text)
             if (
@@ -3781,9 +3769,7 @@ def _reference_definitions(
                     )
                     is not None
                 )
-                title_continuation = (
-                    label is not None and continued_label == label
-                )
+                title_continuation = label is not None and continued_label == label
                 if continued_label is not None and (
                     destination_continuation or title_continuation
                 ):
@@ -3915,9 +3901,7 @@ def _visible_paragraphs(payload: bytes) -> tuple[VisibleParagraph, ...]:
             fenced_character, fenced_length = opening_fence
             index += 1
             continue
-        raw_start = _raw_html_block_start(
-            stripped, paragraph_open=bool(buffered)
-        )
+        raw_start = _raw_html_block_start(stripped, paragraph_open=bool(buffered))
         if raw_start is not None:
             flush()
             mode, closer = raw_start
@@ -3953,9 +3937,7 @@ def _visible_paragraphs(payload: bytes) -> tuple[VisibleParagraph, ...]:
             flush()
             index += 1
             continue
-        if buffered and re.fullmatch(
-            r"[ ]{0,3}(?:=+|-+)[ \t]*", container_line
-        ):
+        if buffered and re.fullmatch(r"[ ]{0,3}(?:=+|-+)[ \t]*", container_line):
             buffered.clear()
             buffered_list_item = False
             buffered_depth = None
@@ -4001,8 +3983,7 @@ def _current_index_claims(
     heading_indices = tuple(
         index
         for index, line in enumerate(lines)
-        if re.fullmatch(rf"###?[ \t]+{re.escape(heading)}[ \t]*", line)
-        is not None
+        if re.fullmatch(rf"###?[ \t]+{re.escape(heading)}[ \t]*", line) is not None
     )
     if len(heading_indices) != 1:
         raise _GitError("Current index heading authority is not unique")
@@ -4017,9 +3998,7 @@ def _current_index_claims(
     )
     table_indices = tuple(
         index
-        for index in range(
-            heading_index + 1, max(heading_index + 1, section_end - 1)
-        )
+        for index in range(heading_index + 1, max(heading_index + 1, section_end - 1))
         if _table_cells(lines[index]) is not None
         and _table_delimiter(_table_cells(lines[index + 1]))
     )
@@ -4368,9 +4347,7 @@ def validate_duplicate_rules(
 
 
 def _links_in_section(text: str, heading: str, pack_root: Path) -> tuple[Path, ...]:
-    heading_match = re.search(
-        rf"(?m)^##[ \t]+{re.escape(heading)}[ \t]*$", text
-    )
+    heading_match = re.search(rf"(?m)^##[ \t]+{re.escape(heading)}[ \t]*$", text)
     if heading_match is None:
         raise _GitError("pack index section is missing")
     tail = text[heading_match.end() :]
@@ -4411,23 +4388,49 @@ def validate_snapshot_guards(
             else None
         )
     except (ContractError, _GitError):
-        return [Finding("RIA-SNAPSHOT", "snapshotGuard.sourceCommit", "source commit is unavailable")]
+        return [
+            Finding(
+                "RIA-SNAPSHOT",
+                "snapshotGuard.sourceCommit",
+                "source commit is unavailable",
+            )
+        ]
     ids = guard.get("historicalPackIds")
     if not isinstance(ids, list):
-        return [Finding("RIA-SNAPSHOT", "snapshotGuard.historicalPackIds", "historical pack set is malformed")]
+        return [
+            Finding(
+                "RIA-SNAPSHOT",
+                "snapshotGuard.historicalPackIds",
+                "historical pack set is malformed",
+            )
+        ]
     for pack_id in ids:
         if not isinstance(pack_id, str):
-            findings.append(Finding("RIA-SNAPSHOT", "snapshotGuard.historicalPackIds", "historical pack ID is invalid"))
+            findings.append(
+                Finding(
+                    "RIA-SNAPSHOT",
+                    "snapshotGuard.historicalPackIds",
+                    "historical pack ID is invalid",
+                )
+            )
             continue
         pack_root = Path("docs/90.references") / pack_id
         readme = pack_root / "README.md"
         try:
-            baseline_readme = _read_commit_path(root.absolute(), source_oid, readme, runner)
+            baseline_readme = _read_commit_path(
+                root.absolute(), source_oid, readme, runner
+            )
             members = _links_in_section(
                 baseline_readme.decode("utf-8", "strict"), "Report Index", pack_root
             )
         except (ContractError, _GitError, UnicodeDecodeError):
-            findings.append(Finding("RIA-SNAPSHOT", readme.as_posix(), "historical pack index is unavailable"))
+            findings.append(
+                Finding(
+                    "RIA-SNAPSHOT",
+                    readme.as_posix(),
+                    "historical pack index is unavailable",
+                )
+            )
             continue
         for path in (readme, *members):
             try:
@@ -4438,15 +4441,30 @@ def validate_snapshot_guards(
                 )
                 proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
             except (ContractError, _GitError):
-                findings.append(Finding("RIA-SNAPSHOT", path.as_posix(), "protected snapshot is unavailable"))
+                findings.append(
+                    Finding(
+                        "RIA-SNAPSHOT",
+                        path.as_posix(),
+                        "protected snapshot is unavailable",
+                    )
+                )
                 continue
             if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-                findings.append(Finding("RIA-SNAPSHOT", path.as_posix(), "protected snapshot bytes differ"))
+                findings.append(
+                    Finding(
+                        "RIA-SNAPSHOT",
+                        path.as_posix(),
+                        "protected snapshot bytes differ",
+                    )
+                )
     return sorted(set(findings))
 
 
 def _table_mask(text: str, section: str, columns: Sequence[str]) -> str:
-    match = re.search(rf"(?m)^###[#]?[ \t]+{re.escape(section)}[ \t]*$|^##[ \t]+{re.escape(section)}[ \t]*$", text)
+    match = re.search(
+        rf"(?m)^###[#]?[ \t]+{re.escape(section)}[ \t]*$|^##[ \t]+{re.escape(section)}[ \t]*$",
+        text,
+    )
     if match is None:
         raise _GitError("declared table section is missing")
     lines = text.splitlines(keepends=True)
@@ -4478,11 +4496,7 @@ def _table_mask(text: str, section: str, columns: Sequence[str]) -> str:
 
     def table_parts(line: str) -> tuple[list[str], str]:
         newline = (
-            "\r\n"
-            if line.endswith("\r\n")
-            else "\n"
-            if line.endswith("\n")
-            else ""
+            "\r\n" if line.endswith("\r\n") else "\n" if line.endswith("\n") else ""
         )
         body = line[: -len(newline)] if newline else line
         parts = body.split("|")
@@ -4496,7 +4510,9 @@ def _table_mask(text: str, section: str, columns: Sequence[str]) -> str:
 
     header = cells(lines[table_index])
     delimiter = cells(lines[table_index + 1])
-    if len(delimiter) != len(header) or any(re.fullmatch(r":?-{3,}:?", item) is None for item in delimiter):
+    if len(delimiter) != len(header) or any(
+        re.fullmatch(r":?-{3,}:?", item) is None for item in delimiter
+    ):
         raise _GitError("declared table delimiter is malformed")
     indexes: list[int] = []
     for column in columns:
@@ -4528,7 +4544,9 @@ def _resolved_link(path: Path, destination: str) -> Path:
             parts.pop()
         elif part not in {"", "."}:
             parts.append(part)
-    return parse_repository_path("/".join(parts), field="navigationReplacement.destination")
+    return parse_repository_path(
+        "/".join(parts), field="navigationReplacement.destination"
+    )
 
 
 def _navigation_mask(text: str, path: Path, visible: str, destination: str) -> str:
@@ -4628,7 +4646,11 @@ def _projection_mask(
 
 def _transition_record(contract: Mapping[str, object]) -> Mapping[str, object] | None:
     records = contract.get("baselineTransitions")
-    if isinstance(records, list) and len(records) == 1 and isinstance(records[0], Mapping):
+    if (
+        isinstance(records, list)
+        and len(records) == 1
+        and isinstance(records[0], Mapping)
+    ):
         return records[0]
     return None
 
@@ -4669,8 +4691,7 @@ def load_agent_cutover_projections(
             runner,
         )
         if (
-            hashlib.sha256(payload).hexdigest()
-            != AGENT_LEGACY_CUTOVER_SHA256
+            hashlib.sha256(payload).hexdigest() != AGENT_LEGACY_CUTOVER_SHA256
             or hashlib.sha256(schema_payload).hexdigest()
             != AGENT_LEGACY_CUTOVER_SCHEMA_SHA256
         ):
@@ -4733,11 +4754,25 @@ def validate_overlay_guards(
             if proposed_commit is not None
             else None
         )
-        context = _build_context(root, contract, proposed_oid=proposed_oid, runner=runner)
+        context = _build_context(
+            root, contract, proposed_oid=proposed_oid, runner=runner
+        )
     except (ContractError, _GitError) as error:
         if isinstance(error, ContractError):
-            return [Finding("RIA-OVERLAY", error.finding.path, "Current authority is unavailable")]
-        return [Finding("RIA-OVERLAY", REGISTRY_PATH.as_posix(), "Current authority is unavailable")]
+            return [
+                Finding(
+                    "RIA-OVERLAY",
+                    error.finding.path,
+                    "Current authority is unavailable",
+                )
+            ]
+        return [
+            Finding(
+                "RIA-OVERLAY",
+                REGISTRY_PATH.as_posix(),
+                "Current authority is unavailable",
+            )
+        ]
     baselines = _encoded_baselines(contract)
     projections = _projection_map(contract)
     try:
@@ -4785,7 +4820,13 @@ def validate_overlay_guards(
                     or hashlib.sha256(proposed).hexdigest() != digest
                     or proposed == baseline
                 ):
-                    findings.append(Finding("RIA-OVERLAY", path.as_posix(), "transition target bytes differ"))
+                    findings.append(
+                        Finding(
+                            "RIA-OVERLAY",
+                            path.as_posix(),
+                            "transition target bytes differ",
+                        )
+                    )
                 continue
             try:
                 if projection is not None:
@@ -4802,10 +4843,20 @@ def validate_overlay_guards(
                         state="proposed",
                     )
             except _GitError:
-                findings.append(Finding("RIA-OVERLAY", path.as_posix(), "declared projection is malformed"))
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "declared projection is malformed",
+                    )
+                )
                 continue
             if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-                findings.append(Finding("RIA-OVERLAY", path.as_posix(), "protected Current bytes differ"))
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY", path.as_posix(), "protected Current bytes differ"
+                    )
+                )
     current_paths = set(context.proposed_registry.paths)
     for path, projection in projections.items():
         if path in current_paths:
@@ -4815,7 +4866,17 @@ def validate_overlay_guards(
         elif path.parts[:3] == ("docs", "90.references", "research"):
             pack_id = RESEARCH_PACK_ID
         else:
-            findings.append(Finding("RIA-OVERLAY", path.as_posix(), "projection path has no Current pack"))
+            findings.append(
+                Finding(
+                    "RIA-OVERLAY",
+                    path.as_posix(),
+                    "projection path has no Current pack",
+                )
+            )
+            continue
+        if pack_id not in baselines:
+            # The collection is retired from Current-pack governance, so its
+            # historical cutover projection has nothing left to guard here.
             continue
         encoded = baselines[pack_id]
         oid = context.baseline_oids[encoded]
@@ -4835,10 +4896,16 @@ def validate_overlay_guards(
                 state="proposed",
             )
         except (ContractError, _GitError):
-            findings.append(Finding("RIA-OVERLAY", path.as_posix(), "projected index is unavailable"))
+            findings.append(
+                Finding(
+                    "RIA-OVERLAY", path.as_posix(), "projected index is unavailable"
+                )
+            )
             continue
         if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-            findings.append(Finding("RIA-OVERLAY", path.as_posix(), "protected index bytes differ"))
+            findings.append(
+                Finding("RIA-OVERLAY", path.as_posix(), "protected index bytes differ")
+            )
     return sorted(set(findings))
 
 
@@ -4877,18 +4944,25 @@ def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | No
     try:
         baselines = _encoded_baselines(contract)
     except ContractError:
-        return None, Finding("RIA-TRANSITION", "currentPackBaselines", "baseline map is malformed")
+        return None, Finding(
+            "RIA-TRANSITION", "currentPackBaselines", "baseline map is malformed"
+        )
     transitions = contract.get("baselineTransitions")
     settlements = contract.get("baselineSettlements")
     if (
-        tuple(baselines) != (AUDIT_PACK_ID, RESEARCH_PACK_ID)
+        tuple(baselines) != (AUDIT_PACK_ID,)
         or baselines.get(AUDIT_PACK_ID) != CURRENT_ROOT_COMMIT
         or not isinstance(transitions, list)
         or not isinstance(settlements, list)
-        or len(transitions) > 1
-        or len(settlements) > 1
+        or transitions
+        or settlements
     ):
-        return None, Finding("RIA-TRANSITION", "currentPackBaselines", "baseline state is outside the closed FSM")
+        return None, Finding(
+            "RIA-TRANSITION",
+            "currentPackBaselines",
+            "baseline state is outside the closed FSM",
+        )
+    return "root", None
     research = baselines[RESEARCH_PACK_ID]
     if research == CURRENT_ROOT_COMMIT and not transitions and not settlements:
         return "root", None
@@ -4896,7 +4970,9 @@ def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | No
         record = transitions[0]
         if isinstance(record, Mapping) and _record_matches_transition(record):
             return "open", None
-        return None, Finding("RIA-TRANSITION", "baselineTransitions", "open transition is malformed")
+        return None, Finding(
+            "RIA-TRANSITION", "baselineTransitions", "open transition is malformed"
+        )
     if not transitions and len(settlements) == 1:
         record = settlements[0]
         if (
@@ -4906,7 +4982,11 @@ def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | No
             and research != CURRENT_ROOT_COMMIT
         ):
             return "settled", None
-    return None, Finding("RIA-TRANSITION", "currentPackBaselines", "baseline state is outside the closed FSM")
+    return None, Finding(
+        "RIA-TRANSITION",
+        "currentPackBaselines",
+        "baseline state is outside the closed FSM",
+    )
 
 
 def _matching_open_contract(
@@ -4927,7 +5007,9 @@ def _matching_open_contract(
         or baselines.get(RESEARCH_PACK_ID) != CURRENT_ROOT_COMMIT
     ):
         return False
-    expected = {key: value for key, value in settlement.items() if key != "transitionCommit"}
+    expected = {
+        key: value for key, value in settlement.items() if key != "transitionCommit"
+    }
     if dict(transitions[0]) != expected:
         return False
     expected_settled = dict(open_contract)
@@ -4952,15 +5034,15 @@ def _settlement_proof(
     assert isinstance(settlement, Mapping)
     transition_commit = settlement.get("transitionCommit")
     try:
-        c2_oid = parse_git_sha1(transition_commit, field="baselineSettlements.transitionCommit")
+        c2_oid = parse_git_sha1(
+            transition_commit, field="baselineSettlements.transitionCommit"
+        )
         c2_contract = _decode_json_bytes(
             _read_commit_path(root, c2_oid, contract_path, runner),
             field=contract_path.as_posix(),
         )
         _validate_path_fields(c2_contract)
-        _validate_schema_at_commit(
-            root, c2_oid, c2_contract, contract_path, runner
-        )
+        _validate_schema_at_commit(root, c2_oid, c2_contract, contract_path, runner)
         _validate_contract_boundaries(c2_contract)
         if not _matching_open_contract(settlement, c2_contract, contract):
             raise _GitError("transition contract does not match settlement")
@@ -4973,10 +5055,9 @@ def _settlement_proof(
             raise _GitError("transition registry differs")
         target_path = Path("docs/90.references") / RESEARCH_PACK_ID / TRANSITION_MEMBER
         target = _read_commit_path(root, c2_oid, target_path, runner)
-        if (
-            len(target) != settlement.get("targetByteLength")
-            or hashlib.sha256(target).hexdigest() != settlement.get("targetSha256")
-        ):
+        if len(target) != settlement.get("targetByteLength") or hashlib.sha256(
+            target
+        ).hexdigest() != settlement.get("targetSha256"):
             raise _GitError("transition target proof differs")
         root_oid = parse_git_sha1(
             CURRENT_ROOT_COMMIT, field="currentPackBaselines.root"
@@ -4993,7 +5074,13 @@ def _settlement_proof(
                 if c2_bytes != root_bytes:
                     raise _GitError("transition changed a non-target path")
     except (ContractError, _GitError, KeyError):
-        return [Finding("RIA-TRANSITION", "baselineSettlements", "settlement proof chain is invalid")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineSettlements",
+                "settlement proof chain is invalid",
+            )
+        ]
     return []
 
 
@@ -5024,11 +5111,20 @@ def validate_staged_settlement_lineage(
 ) -> list[Finding]:
     state, finding = _fsm_state(contract)
     if finding is not None or state != "settled":
-        return [Finding("RIA-TRANSITION", "baselineSettlements", "staged mode requires settled state")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineSettlements",
+                "staged mode requires settled state",
+            )
+        ]
     settlement = contract["baselineSettlements"][0]
     assert isinstance(settlement, Mapping)
     try:
-        c2_oid = parse_git_sha1(settlement.get("transitionCommit"), field="baselineSettlements.transitionCommit")
+        c2_oid = parse_git_sha1(
+            settlement.get("transitionCommit"),
+            field="baselineSettlements.transitionCommit",
+        )
         head = _git(root, ("rev-parse", "--verify", "HEAD"), runner=runner)
         if re.fullmatch(rb"[0-9a-f]{40}\n", head) is None:
             raise _GitError("HEAD output is malformed")
@@ -5054,7 +5150,13 @@ def validate_staged_settlement_lineage(
         if rows != (("M", contract_path.as_posix()),):
             raise _GitError("staged settlement changes paths outside the contract")
     except (ContractError, _GitError):
-        return [Finding("RIA-TRANSITION", contract_path.as_posix(), "staged settlement lineage is invalid")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                contract_path.as_posix(),
+                "staged settlement lineage is invalid",
+            )
+        ]
     return []
 
 
@@ -5068,12 +5170,21 @@ def validate_explicit_commit_lineage(
 ) -> list[Finding]:
     state, finding = _fsm_state(contract)
     if finding is not None or state != "settled":
-        return [Finding("RIA-TRANSITION", "baselineSettlements", "explicit mode requires settled state")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineSettlements",
+                "explicit mode requires settled state",
+            )
+        ]
     settlement = contract["baselineSettlements"][0]
     assert isinstance(settlement, Mapping)
     try:
         c3_oid = parse_git_sha1(encoded_commit, field="--commit")
-        c2_oid = parse_git_sha1(settlement.get("transitionCommit"), field="baselineSettlements.transitionCommit")
+        c2_oid = parse_git_sha1(
+            settlement.get("transitionCommit"),
+            field="baselineSettlements.transitionCommit",
+        )
         if _commit_parents(root, c3_oid, runner) != (c2_oid,):
             raise _GitError("C3 does not have exactly parent C2")
         rows = _parse_diff_index(
@@ -5096,7 +5207,11 @@ def validate_explicit_commit_lineage(
         if rows != (("M", contract_path.as_posix()),):
             raise _GitError("C3 changes paths outside the contract")
     except (ContractError, _GitError):
-        return [Finding("RIA-TRANSITION", "--commit", "explicit settlement lineage is invalid")]
+        return [
+            Finding(
+                "RIA-TRANSITION", "--commit", "explicit settlement lineage is invalid"
+            )
+        ]
     return []
 
 
@@ -5111,43 +5226,94 @@ def validate_baseline_transitions(
     runner: GitRunner | None = None,
 ) -> list[Finding]:
     if staged and commit is not None:
-        return [Finding("RIA-TRANSITION", "evidenceMode", "evidence modes are mutually exclusive")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "evidenceMode",
+                "evidence modes are mutually exclusive",
+            )
+        ]
     state, finding = _fsm_state(contract)
     if finding is not None:
         return [finding]
     if state == "open" and require_settled_baselines:
-        return [Finding("RIA-TRANSITION", "baselineTransitions", "an open transition is not terminal")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineTransitions",
+                "an open transition is not terminal",
+            )
+        ]
     if staged and state != "settled":
-        return [Finding("RIA-TRANSITION", "baselineSettlements", "staged mode requires settled state")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineSettlements",
+                "staged mode requires settled state",
+            )
+        ]
     if commit is not None and state != "settled":
-        return [Finding("RIA-TRANSITION", "baselineSettlements", "explicit mode requires settled state")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "baselineSettlements",
+                "explicit mode requires settled state",
+            )
+        ]
     if state == "root":
         return []
     try:
-        proposed_oid = parse_git_sha1(commit, field="--commit") if commit is not None else None
-        context = _build_context(root, contract, proposed_oid=proposed_oid, runner=runner)
+        proposed_oid = (
+            parse_git_sha1(commit, field="--commit") if commit is not None else None
+        )
+        context = _build_context(
+            root, contract, proposed_oid=proposed_oid, runner=runner
+        )
     except (ContractError, _GitError):
-        return [Finding("RIA-TRANSITION", REGISTRY_PATH.as_posix(), "transition authority is unavailable")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                REGISTRY_PATH.as_posix(),
+                "transition authority is unavailable",
+            )
+        ]
     findings: list[Finding] = []
     if state == "open":
         transition = contract["baselineTransitions"][0]
         assert isinstance(transition, Mapping)
         research = next(
-            (pack for pack in context.proposed_registry.packs if pack.pack_id == RESEARCH_PACK_ID),
+            (
+                pack
+                for pack in context.proposed_registry.packs
+                if pack.pack_id == RESEARCH_PACK_ID
+            ),
             None,
         )
         if research is None or TRANSITION_MEMBER not in research.members:
-            findings.append(Finding("RIA-TRANSITION", "baselineTransitions", "transition subject is not a Current member"))
+            findings.append(
+                Finding(
+                    "RIA-TRANSITION",
+                    "baselineTransitions",
+                    "transition subject is not a Current member",
+                )
+            )
         else:
-            target_path = Path("docs/90.references") / RESEARCH_PACK_ID / TRANSITION_MEMBER
+            target_path = (
+                Path("docs/90.references") / RESEARCH_PACK_ID / TRANSITION_MEMBER
+            )
             target = context.proposed_bytes[target_path]
             if (
                 len(target) != transition.get("targetByteLength")
                 or hashlib.sha256(target).hexdigest() != transition.get("targetSha256")
-                or target
-                == context.baseline_bytes[(CURRENT_ROOT_COMMIT, target_path)]
+                or target == context.baseline_bytes[(CURRENT_ROOT_COMMIT, target_path)]
             ):
-                findings.append(Finding("RIA-TRANSITION", target_path.as_posix(), "transition target bytes differ"))
+                findings.append(
+                    Finding(
+                        "RIA-TRANSITION",
+                        target_path.as_posix(),
+                        "transition target bytes differ",
+                    )
+                )
     elif state == "settled":
         findings.extend(
             _settlement_proof(
@@ -5198,7 +5364,11 @@ def _contract_authority_finding(
         if authoritative != dict(contract):
             raise _GitError("contract mapping differs from proposed authority")
     except (ContractError, _GitError):
-        return Finding("RIA-BOUNDARY", contract_path.as_posix(), "proposed contract authority is unavailable")
+        return Finding(
+            "RIA-BOUNDARY",
+            contract_path.as_posix(),
+            "proposed contract authority is unavailable",
+        )
     return None
 
 
@@ -5215,7 +5385,13 @@ def validate_reference_architecture(
     """Validate schema-v2 snapshots, Current overlays, and baseline lineage."""
 
     if staged and commit is not None:
-        return [Finding("RIA-TRANSITION", "evidenceMode", "evidence modes are mutually exclusive")]
+        return [
+            Finding(
+                "RIA-TRANSITION",
+                "evidenceMode",
+                "evidence modes are mutually exclusive",
+            )
+        ]
     try:
         normalized_contract_path = normalize_contract_path(root, contract_path)
     except ContractError as error:
@@ -5230,11 +5406,11 @@ def validate_reference_architecture(
     if authority is not None:
         return [authority]
     findings = [
-        *validate_snapshot_guards(root, contract, proposed_commit=commit, runner=runner),
-        *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
-        *validate_data_assets(
+        *validate_snapshot_guards(
             root, contract, proposed_commit=commit, runner=runner
         ),
+        *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
+        *validate_data_assets(root, contract, proposed_commit=commit, runner=runner),
         *validate_generated_assets(
             root, contract, proposed_commit=commit, runner=runner
         ),
@@ -5256,7 +5432,9 @@ def validate_reference_architecture(
 
 def _canonical_schema_bytes() -> bytes:
     repository_root = Path(__file__).resolve().parents[1]
-    return _read_regular_file(repository_root, CANONICAL_SCHEMA_PATH, field="self-test.schema")
+    return _read_regular_file(
+        repository_root, CANONICAL_SCHEMA_PATH, field="self-test.schema"
+    )
 
 
 def _self_test_contract() -> dict[str, object]:
@@ -5271,7 +5449,6 @@ def _self_test_contract() -> dict[str, object]:
         },
         "currentPackBaselines": {
             AUDIT_PACK_ID: CURRENT_ROOT_COMMIT,
-            RESEARCH_PACK_ID: CURRENT_ROOT_COMMIT,
         },
         "baselineTransitions": [],
         "baselineSettlements": [],
