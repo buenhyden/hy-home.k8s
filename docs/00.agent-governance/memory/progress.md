@@ -8,6 +8,84 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Document taxonomy consolidation program definition
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs
+- **Status**: in-progress
+- **Tags**: #governance #docs #sdlc #taxonomy #validation
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
+- **Provenance**: `docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md`, external SDD and documentation-IA research checked 2026-08-07, repository measurement of 2026-08-07
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
+- **Next Owner**: platform — author the Spec 052 implementation plan and task evidence.
+
+#### Progress
+
+Defined a new document taxonomy consolidation program as PRD-008, ARD-0011, and
+Spec 052. The program retires the execution stage as a separate live tree,
+co-locates each work unit's specification, plan, and task evidence under one
+numbered Stage 03 folder, renumbers the operations stage to keep the active
+sequence contiguous, removes dates from authored filenames in favor of
+frontmatter, moves cross-stage lineage into machine-readable frontmatter
+fields, collapses ten authoring-rule documents into three, and reduces the
+machine contract, migration census, and validator corpus.
+
+Recorded PRD-007 as suspended for the duration of this program because Specs
+049 and 050 would author validators against a surface this program
+consolidates. Spec 047 returns to draft in the program's first structural
+commit, not in this definition commit.
+
+Affected paths in this commit:
+`docs/01.requirements/008-workspace-document-taxonomy-consolidation.md`,
+`docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md`,
+`docs/03.specs/052-document-taxonomy-consolidation/spec.md`, and the three
+stage README indexes.
+
+#### Memory
+
+External research checked 2026-08-07 found no primary source that endorses or
+forbids repository-wide numbered stage folders. Diátaxis scopes itself to
+user-facing content types, arc42 numbers sections inside one document rather
+than across sibling trees, C4 states it implies nothing about delivery process,
+and ISO catalog pages were unreachable or paywalled. The numbered stage-prefix
+scheme is therefore retained as a local choice, and the rewrite cost of
+removing it is unjustified.
+
+By contrast, all five spec-driven development toolchains examined co-locate a
+work unit's specification, design, and task list in one folder and none
+partitions them by artifact type, so the current three-tree split is
+externally contradicted.
+
+Archive records are safe to leave untouched during any path migration:
+`scripts/archive_validation.py` resolves payload links against the record's
+`source_commit` in the Git tree rather than the working tree, and the payload
+is sealed by `content_sha256`. Rewriting inside an archive payload would break
+the seal without any correctness benefit.
+
+The cross-document validator enforces link target profiles per stage. A PRD
+Traceability row may link only `sdlc/ard` or `sdlc/spec`; an ARD Traceability
+row may link only `sdlc/adr` or `sdlc/spec`. Upstream PRD references belong in
+the Lifecycle Traceability upstream column with a `#functional-requirements`
+anchor, or as an `N/A —` exclusion sentence.
+
+#### Evidence
+
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` — PASS, 495 paths, uncovered=0, ambiguous=0.
+- `python3 scripts/validate-markdown-profiles.py --root .` — PASS, 0 violations.
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` — PASS after correcting five contract violations the validator caught on first run.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS in 2m24s, 37 gate results.
+- All results above are repository-static. No hosted CI, provider-runtime, remote, or live evidence is claimed.
+
+#### Handoff
+
+platform — author the Spec 052 implementation plan and task evidence, then
+execute the ordered migration commits with the repository quality gate run at
+each logical commit.
+
 ### 2026-08-07 - Research collection file merge and Current-pack retirement
 
 #### Metadata
