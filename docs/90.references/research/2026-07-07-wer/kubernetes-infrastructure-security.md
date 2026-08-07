@@ -3,7 +3,7 @@ title: 'Reference: Kubernetes Infrastructure Security Research'
 type: content/reference
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-07
 ---
 
 # Reference: Kubernetes Infrastructure Security Research
@@ -338,6 +338,14 @@ topology is coherent and already has deterministic static checks; the gaps are
 cross-owner enforcement and live-evidence depth. A full platform replacement
 would expand trust, credential, runtime, and migration risk without repository
 evidence that the existing tree itself is the root cause.
+
+### Merged 2026-07-04 Facts
+
+| ID | Fact | Current owner to consult |
+| -- | ---- | ------------------------ |
+| CF-07 | Argo Rollouts progressive delivery: the Rollout and AnalysisTemplate pattern and its workload example. This pack retains only the two kind names inside an AppProject allow-list. | `gitops/` manifests, `docs/05.operations/runbooks/` |
+| CF-08 | Namespace ownership model: steady-state `CreateNamespace=true` is removed and namespaces stay in explicit desired-state manifests or bootstrap boundaries, with a per-namespace owner matrix. | `gitops/`, `docs/05.operations/policies/` |
+| CF-09 | Example placeholder images under `examples/sample-app/*` are allowed as template placeholders only and never imply production readiness. | `docs/05.operations/policies/` |
 
 ## Sources
 

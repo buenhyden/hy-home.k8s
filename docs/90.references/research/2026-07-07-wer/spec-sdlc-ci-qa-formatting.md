@@ -3,7 +3,7 @@ title: 'Reference: Spec SDLC CI QA Formatting Research'
 type: content/reference
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-07
 ---
 
 # Reference: Spec SDLC CI QA Formatting Research
@@ -498,6 +498,13 @@ approved tabletop/exercise 증적도 0개이므로 response readiness는
   hook·validator·toolchain·global-format 변경 후에는
   `pre-commit run --all-files`와 skipped/unavailable 기록을 남긴다.
 - Stage 90 reference의 권고를 구현 완료로 해석하지 않는다.
+
+### Merged 2026-07-04 Facts
+
+| ID | Fact | Current owner to consult |
+| -- | ---- | ------------------------ |
+| CF-05 | The generated-index freshness gate `bash scripts/generate-llm-wiki-index.sh --check` is a repository-static validation lane. The QA evidence lane matrix here omits it. | [LLM Wiki and Agent Knowledge Routing](../2026-08-07-wer/llm-wiki-and-knowledge-routing.md) |
+| CF-06 | SLSA v1.2 is the current specification and the v1.1 page is retired. This pack keeps SLSA only inside the Kubernetes reference, without the retirement note. | [GitHub Actions and CI Evidence](../2026-08-07-wer/github-actions-and-ci-evidence.md) |
 
 ## Sources
 

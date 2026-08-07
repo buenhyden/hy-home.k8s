@@ -3,7 +3,7 @@ title: 'Reference: Automation Pipeline Workflow QA Research'
 type: content/reference
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-07
 ---
 
 # Reference: Automation Pipeline Workflow QA Research
@@ -282,6 +282,13 @@ the named active files.
 ownership, incomplete filter dependency mapping, and ambiguous optional-tool
 evidence. The repository has no build/publish/deploy pipeline or telemetry
 consumer that justifies a full supply-chain/formatter/metrics redesign today.
+
+### Merged 2026-07-04 Facts
+
+| ID | Fact | Current owner to consult |
+| -- | ---- | ------------------------ |
+| CF-10 | Artifact, dependency-cache, and reusable-workflow analysis of the CI workflows. This pack keeps one artifact retention row and drops caching and reusable-workflow analysis. | [GitHub Actions and CI Evidence](../2026-08-07-wer/github-actions-and-ci-evidence.md), gaps CI-G3 and CI-G4 |
+| CF-11 | A retired `.github` about-file routed version inventory and action tag policy to the tech-stack version inventory. `.github/README.md` replaced that retired hub. | `.github/README.md` |
 
 ## Sources
 

@@ -3,7 +3,7 @@ title: 'Reference: Harness and Loop Engineering Research'
 type: content/reference
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-07
 ---
 
 # Reference: Harness and Loop Engineering Research
@@ -266,6 +266,15 @@ recommendations and canonical follow-up routes; it does not mutate the owners.
 | HL-005 | Open / runtime Unverified | Unverified | High | Tracked Codex hook JSON and payload simulations can be mistaken for runtime-consumption evidence. `.agents/agents/*.md` and `.agents/hooks.json` are not native Gemini CLI registration/settings paths, so they cannot prove Gemini agent or hook consumption. | Keep status at declared local wiring plus validator evidence until provider-native canaries record discovery, event handling, permission behavior, and managed/user precedence. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
 | HL-006 | Open / live Unverified | Unverified | High | Repo-static PASS or opt-in probe wiring can be promoted incorrectly to live provider, MCP, cluster, CI, credential, or remote readiness. | Preserve separate evidence lanes and require an explicitly approved operator/runtime check before any live/remote readiness claim. | [Harness Implementation Map: Live Runtime Evidence](../../../00.agent-governance/harness-implementation-map.md#live-runtime-evidence). |
 | HL-007 | Open | Implementation gap | High | No tracked MCP configuration or inventory proves server trust, command visibility, transport, scope, token audience, or egress controls against the current official taxonomy. | Do not enable or describe MCP servers as ready; require a separate approved provider/security task to inventory each server against the eight official categories above. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
+
+### Merged 2026-07-04 Facts
+
+| ID | Fact | Current owner to consult |
+| -- | ---- | ------------------------ |
+| CF-04 | Task-by-task commit discipline: logical units are committed separately, with the task record naming evidence per unit. Isolated worktrees are part of the harness pattern. The control-loop matrix here covers Observe, Plan, Act, Verify, and Learn but does not mention worktrees or per-unit commits. | `docs/00.agent-governance/rules/quality-standards.md` |
+
+The 2026-07-04 five-primitive convergence market scan is deliberately not merged.
+This reference uses no market-scan source as authority.
 
 ## Sources
 

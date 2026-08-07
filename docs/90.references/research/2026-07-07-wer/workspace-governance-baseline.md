@@ -3,7 +3,7 @@ title: 'Reference: Workspace Governance Baseline Research'
 type: content/reference
 status: accepted
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-07
 ---
 
 # Reference: Workspace Governance Baseline Research
@@ -197,6 +197,18 @@ inside `Risk`, and each row names the canonical route for a later scoped task.
 | Lifecycle lineage is link-only at the semantic layer | Templates and Stage READMEs require related-document links, and the quality gate checks deterministic routes/headings/links. The lifecycle implementation plan records that semantic duplicate lineage cannot be inferred safely; no stable lineage ID is enforced across PRD/ARD/ADR/Spec/Plan/Task. | **Medium** — links may resolve while representing incomplete or mismatched feature lineage, leaving reviewers to reconstruct traceability manually. | Evaluate a stable lineage identifier or a narrowly deterministic cross-stage validator before changing frontmatter or templates. | New Stage 03 traceability spec, followed by Stage 99 frontmatter/template support, Stage README contracts, and `scripts/validate-repo-quality-gates.sh`. |
 | Audit currentness labels drift | `docs/90.references/audits/README.md` labels several 2026-07-02/04 reports and the 2026-07-05 pack as `Current`; the 2026-07-05 audit pack still benchmarks the now-Historical `2026-07-04-wer` research pack, while `2026-07-07-wer` is the Current research pack. | **Medium** — readers can mistake multiple dated snapshots for one current implementation verdict and miss newer source evidence. | Establish one explicit current-audit pointer and label older packs as dated or resolved snapshots; refresh audits only against current canonical evidence. | Stage 90 audit index and reference-maintenance runbook through a Stage 03/04 audit-currentness task. |
 | Graphify snapshot is stale | `graphify-out/GRAPH_REPORT.md` is dated 2026-06-04 and says it was built from commit `e8a99671`; at the fixed audit snapshot, `git rev-list --count e8a99671..ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` returns 220. | **Low** — optional graph navigation may omit newer governance and agent surfaces, but canonical repo files still control decisions. | Regenerate the tracked Graphify artifacts when the optional tool is intentionally available, review the diff, and record the source commit; never use the stale graph as current proof. | Graphify generated-artifact maintenance task with `graphify-out/**` review and Stage 04 evidence; no active-policy change. |
+
+### Merged 2026-07-04 Facts
+
+These statements were recorded in the 2026-07-04 pack, remain valid, and had no
+counterpart here until this merge. They are 2026-07-04 observations; consult the
+named owner before relying on one.
+
+| ID | Fact | Current owner to consult |
+| -- | ---- | ------------------------ |
+| CF-01 | Stage language policy: governance documents under `docs/00.agent-governance/**` are English-only; human-facing README and overview text may use Korean; reference metadata, source, freshness, authority boundary, generated-index contracts, and agent routing notes are English-first. | `docs/00.agent-governance/rules/`, `docs/99.templates/support/` |
+| CF-02 | `.env` key-only parity counts as repository-static security evidence alongside the plaintext secret scan, policy gates, workflow permission checks, and the approval-boundary matrix. | `scripts/check-secret-handling.sh` |
+| CF-03 | `bash scripts/validate-harness.sh` bundles repository-static gates and adds no live checks. This pack otherwise mentions the script only negatively. | `scripts/validate-harness.sh` |
 
 ## Sources
 
