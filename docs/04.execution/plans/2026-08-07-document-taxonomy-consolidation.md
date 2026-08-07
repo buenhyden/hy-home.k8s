@@ -76,6 +76,21 @@ Traceability row may link only `sdlc/adr` or `sdlc/spec`.
   remote, or live evidence.
 - No push, no remote mutation, no cluster action, no credential read.
 - One logical unit per commit, using conventional commit format.
+- The repository has no `pytest`. Tests run with
+  `python3 -m unittest discover`. The repository quality gate runs only four
+  named test files, so a passing gate does not mean the suite is green.
+- Pre-existing suite state observed on the base commit `c62a5cd9` and confirmed
+  unchanged at `7ec233a3`: `Ran 775 tests`, 7 failures and 1 error, all in
+  `tests/test_reference_information_architecture.py` and
+  `tests/test_active_corpus_retention.py`. These predate this program. No
+  package is required to fix them, and no package may add to the list. Compare
+  against the list, never against zero.
+- This plan and its task document migrate themselves. WDTC-006 moves
+  `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` to
+  `docs/03.specs/052-document-taxonomy-consolidation/plan.md` and the task
+  document to `.../tasks.md`. From WDTC-007 onward, write execution evidence to
+  the new path. Task briefs are extracted to the SDD workspace before dispatch,
+  so a running package never depends on the plan file's live location.
 
 ## Goals & In-Scope
 
@@ -685,10 +700,11 @@ if __name__ == "__main__":
 - [ ] **Step 2: Run the tests to verify they fail**
 
 ```bash
-python3 -m pytest tests/test_migrate_document_paths.py -v
+python3 -m unittest discover -s tests -p test_migrate_document_paths.py -v
 ```
 
-Expected: collection error, `ModuleNotFoundError: scripts.migrate_document_paths`.
+Expected: an import error naming `scripts.migrate_document_paths`; the suite
+reports `ERROR`, not `OK`.
 
 - [ ] **Step 3: Implement the tool**
 
@@ -703,10 +719,10 @@ planned rewrite file.
 - [ ] **Step 4: Run the tests to verify they pass**
 
 ```bash
-python3 -m pytest tests/test_migrate_document_paths.py -v
+python3 -m unittest discover -s tests -p test_migrate_document_paths.py -v
 ```
 
-Expected: 8 passed.
+Expected: `Ran 8 tests` and `OK`.
 
 - [ ] **Step 5: Register the tool and commit**
 
@@ -976,10 +992,11 @@ if __name__ == "__main__":
 - [ ] **Step 2: Run the tests to verify they fail**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -v
+python3 -m unittest discover -s tests -p test_validate_document_taxonomy.py -v
 ```
 
-Expected: collection error, `ModuleNotFoundError`.
+Expected: a load error because `scripts/validate-document-taxonomy.py` does not
+exist; the suite reports `ERROR`, not `OK`.
 
 - [ ] **Step 3: Implement the validator**
 
@@ -991,10 +1008,10 @@ repository's existing `FAIL <CODE> <path> ...` format.
 - [ ] **Step 4: Run the tests to verify they pass**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -v
+python3 -m unittest discover -s tests -p test_validate_document_taxonomy.py -v
 ```
 
-Expected: 9 passed.
+Expected: `Ran 9 tests` and `OK`.
 
 - [ ] **Step 5: Retire the date-based rule**
 
@@ -1081,7 +1098,7 @@ validator filename is hyphenated and is not an importable module name.
 - [ ] **Step 2: Run the tests to verify they fail**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -k Lineage -v
+python3 -m unittest tests.test_validate_document_taxonomy.LineageTest -v
 ```
 
 Expected: `AttributeError: module has no attribute 'validate_lineage'`.
@@ -1096,11 +1113,11 @@ frontmatter in `document-profiles.json`.
 - [ ] **Step 4: Run the tests and the validator**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -v
+python3 -m unittest discover -s tests -p test_validate_document_taxonomy.py -v
 python3 scripts/validate-document-taxonomy.py --root .
 ```
 
-Expected: 13 passed, validator PASS. A `LINEAGE-NO-BACKLINK` diagnostic names a
+Expected: `Ran 13 tests` and `OK`, validator PASS. A `LINEAGE-NO-BACKLINK` diagnostic names a
 specification whose upstream document does not list it; fix the upstream
 document rather than removing the field.
 
@@ -1269,12 +1286,13 @@ is unchanged: the same path inventory reports uncovered=0 ambiguous=0."
 - [ ] **Step 1: Capture the assertion inventory before the change**
 
 ```bash
-python3 -m pytest tests -q > /tmp/wdtc-012-before.txt 2>&1
+python3 -m unittest discover -s tests -p 'test_*.py' > /tmp/wdtc-012-before.txt 2>&1
 tail -3 /tmp/wdtc-012-before.txt
 ```
 
-Record the passing test count. That count is the floor: consolidation may not
-reduce it.
+Record the `Ran N tests` count and the exact failure and error list. Both form
+the floor: consolidation may not reduce the count or add a new entry to the
+list.
 
 - [ ] **Step 2: Merge the role evaluation contracts**
 
@@ -1288,12 +1306,14 @@ validator's assertions intact.
 - [ ] **Step 3: Prove the assertion set is unchanged**
 
 ```bash
-python3 -m pytest tests -q > /tmp/wdtc-012-after.txt 2>&1
+python3 -m unittest discover -s tests -p 'test_*.py' > /tmp/wdtc-012-after.txt 2>&1
 tail -3 /tmp/wdtc-012-after.txt
 ```
 
-Expected: the passing count is greater than or equal to the Step 1 floor. A
-lower count means an assertion was lost; find it before proceeding.
+Expected: the `Ran N tests` count is at or above the Step 1 floor and the
+failure and error list is unchanged. A lower count means an assertion was
+lost; a new list entry means the merge broke something. Either blocks the
+commit.
 
 - [ ] **Step 4: Record the size delta**
 
@@ -1449,7 +1469,7 @@ class EnforcementClosureTest(unittest.TestCase):
 - [ ] **Step 2: Run the tests to verify they fail**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -k Enforcement -v
+python3 -m unittest tests.test_validate_document_taxonomy.EnforcementClosureTest -v
 ```
 
 Expected: `AttributeError: module has no attribute
@@ -1472,7 +1492,7 @@ the equality check.
 - [ ] **Step 4: Run the tests and the gate**
 
 ```bash
-python3 -m pytest tests/test_validate_document_taxonomy.py -v
+python3 -m unittest discover -s tests -p test_validate_document_taxonomy.py -v
 bash scripts/validate-repo-quality-gates.sh .
 ```
 
@@ -1577,10 +1597,10 @@ assurance program in the consolidated structure."
 | WDTC-002     | `python3 scripts/archive_validation.py --root .` plus the full gate                         | repo-static   |
 | WDTC-003     | `python3 scripts/archive_recovery.py --list` plus archive validation                        | repo-static   |
 | WDTC-004     | Status enumeration, archive validation, and the full gate                                   | repo-static   |
-| WDTC-005     | `python3 -m pytest tests/test_migrate_document_paths.py -v`                                 | repo-static   |
+| WDTC-005     | `python3 -m unittest discover -s tests -p test_migrate_document_paths.py -v`                                 | repo-static   |
 | WDTC-006     | Dry-run exit code, zero live `04.execution` hits, full gate                                 | repo-static   |
 | WDTC-007     | Zero live `05.operations` hits outside annotated Stage 90 text, full gate                   | repo-static   |
-| WDTC-008     | `python3 -m pytest tests/test_validate_document_taxonomy.py -v`, zero retired-sentence hits | repo-static   |
+| WDTC-008     | `python3 -m unittest discover -s tests -p test_validate_document_taxonomy.py -v`, zero retired-sentence hits | repo-static   |
 | WDTC-009     | Lineage validator over the full corpus                                                      | repo-static   |
 | WDTC-010     | Rule-uniqueness check                                                                       | repo-static   |
 | WDTC-011     | Route coverage diff before and after                                                        | repo-static   |
