@@ -3238,7 +3238,7 @@ changes_steps = changes_job.get("steps") or []
 changes_checkout_steps = [
     step
     for step in changes_steps
-    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 ]
 if len(changes_checkout_steps) != 1:
     fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")
@@ -3274,7 +3274,7 @@ agent_governance_steps = (ci_jobs.get("agent-governance-static") or {}).get("ste
 agent_governance_checkout_steps = [
     step
     for step in agent_governance_steps
-    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 ]
 if len(agent_governance_checkout_steps) != 1:
     fail(f"{rel(ci_path)} agent-governance-static must have exactly one pinned checkout step")
@@ -3292,7 +3292,7 @@ else:
 agent_governance_setup_steps = [
     step
     for step in agent_governance_steps
-    if step.get("uses") == "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1"
+    if step.get("uses") == "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
 ]
 if len(agent_governance_setup_steps) != 1:
     fail(f"{rel(ci_path)} agent-governance-static must have exactly one pinned setup-python step")
@@ -3347,7 +3347,7 @@ manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or [
 manifest_checkout_steps = [
     step
     for step in manifest_static_steps
-    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 ]
 if len(manifest_checkout_steps) != 1:
     fail(f"{rel(ci_path)} manifest-static must have exactly one pinned checkout step")

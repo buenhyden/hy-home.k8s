@@ -232,7 +232,7 @@ AGGREGATE_LEGACY_SELF_TEST_COMMAND = (
 AGGREGATE_LEGACY_PRODUCTION_COMMAND = (
     'python3 "$ROOT_DIR/scripts/validate-agent-legacy-cutover.py" --root "$ROOT_DIR"'
 )
-CHECKOUT_ACTION = "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 PROVIDER_EVIDENCE_AGGREGATE_SHA256 = "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
 PROVIDER_EVIDENCE_FOCUSED_VALIDATORS = (
     "validate-agent-provider-config.py",
