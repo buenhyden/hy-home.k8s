@@ -38,12 +38,8 @@ TERMINAL_PLAN = f"docs/04.execution/plans/{TERMINAL_LINEAGE}.md"
 TERMINAL_TASK = f"docs/04.execution/tasks/{TERMINAL_LINEAGE}.md"
 TERMINAL_SUCCESSOR_SPEC = "docs/03.specs/039-github-ci-qa-evidence/spec.md"
 TERMINAL_SUCCESSOR_LINEAGE = "2026-07-26-github-ci-qa-evidence"
-TERMINAL_SUCCESSOR_PLAN = (
-    f"docs/04.execution/plans/{TERMINAL_SUCCESSOR_LINEAGE}.md"
-)
-TERMINAL_SUCCESSOR_TASK = (
-    f"docs/04.execution/tasks/{TERMINAL_SUCCESSOR_LINEAGE}.md"
-)
+TERMINAL_SUCCESSOR_PLAN = f"docs/04.execution/plans/{TERMINAL_SUCCESSOR_LINEAGE}.md"
+TERMINAL_SUCCESSOR_TASK = f"docs/04.execution/tasks/{TERMINAL_SUCCESSOR_LINEAGE}.md"
 TERMINAL_FRONTIER_SPEC = (
     "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
 )
@@ -57,8 +53,7 @@ TERMINAL_PROGRAM_TASK_PATHS = frozenset(
     {TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK, TERMINAL_FRONTIER_TASK}
 )
 TERMINAL_PROGRAM_CLOSURE_ADR = (
-    "docs/02.architecture/decisions/"
-    "0020-document-lifecycle-program-closure-evidence.md"
+    "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md"
 )
 FROZEN_ACCEPTED_ADR_PATHS = (
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
@@ -110,6 +105,8 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
     {
         "docs/02.architecture/decisions/"
         "0019-provider-native-agent-harness-and-loop-model.md",
+        "docs/02.architecture/decisions/"
+        "0021-canonical-surface-routing-and-evidence-depth.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -882,9 +879,7 @@ def _active_control_lineage(path: str, kind: str) -> str:
     return lineage
 
 
-def _terminal_program_control_scope(
-    paths: Sequence[str], *, kind: str
-) -> list[str]:
+def _terminal_program_control_scope(paths: Sequence[str], *, kind: str) -> list[str]:
     """Select only the PRD-006 execution controls owned by ACER-006."""
 
     if kind == "plan":
@@ -1407,9 +1402,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
         if not isinstance(rows, list) or any(
             not isinstance(row, Mapping) for row in rows
         ):
-            raise ClosureError(
-                "CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC
-            )
+            raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC)
         return rows
 
     active_rows = rows_for("activeControlRows")
@@ -1452,9 +1445,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
 
     def object_identity_is_indexed(row: Mapping[str, Any]) -> bool:
         value = row.get("objectId")
-        if row.get("objectMode") != "index-stage-zero" or not isinstance(
-            value, str
-        ):
+        if row.get("objectMode") != "index-stage-zero" or not isinstance(value, str):
             return False
         parts = value.split(":")
         return (
@@ -1603,11 +1594,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
             [pair_signature(row) for row in active_pairs],
             expected_active_pairs,
             active_pairs,
-            {
-                str(path)
-                for row in expected_active_pairs
-                for path in (row[2], row[3])
-            },
+            {str(path) for row in expected_active_pairs for path in (row[2], row[3])},
             True,
         ),
         (
@@ -1621,11 +1608,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
             [pair_signature(row) for row in terminal_pairs],
             expected_terminal_pairs,
             terminal_pairs,
-            {
-                str(path)
-                for row in expected_terminal_pairs
-                for path in (row[2], row[3])
-            },
+            {str(path) for row in expected_terminal_pairs for path in (row[2], row[3])},
             True,
         ),
         (
@@ -1658,20 +1641,16 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
     )
     actual_terminal_authority: list[tuple[Any, ...] | None] = []
     for row in terminal_authority:
-        if (
-            set(row)
-            != {
-                "path",
-                "profile",
-                "status",
-                "owner",
-                "objectMode",
-                "objectId",
-                "authorityRole",
-                "frontierSpecPath",
-            }
-            or not object_identity_is_indexed(row)
-        ):
+        if set(row) != {
+            "path",
+            "profile",
+            "status",
+            "owner",
+            "objectMode",
+            "objectId",
+            "authorityRole",
+            "frontierSpecPath",
+        } or not object_identity_is_indexed(row):
             actual_terminal_authority.append(None)
             continue
         actual_terminal_authority.append(
@@ -2664,17 +2643,10 @@ def _self_test_observed() -> dict[str, Any]:
 def _self_test_terminal_frontier() -> int:
     def payload(profile: str, status: str) -> bytes:
         return (
-            "---\n"
-            f"type: {profile}\n"
-            f"status: {status}\n"
-            "owner: platform\n"
-            "---\n"
-            "# Fixture\n"
+            f"---\ntype: {profile}\nstatus: {status}\nowner: platform\n---\n# Fixture\n"
         ).encode()
 
-    def registry(
-        successor_state: str, frontier_state: str
-    ) -> dict[str, Any]:
+    def registry(successor_state: str, frontier_state: str) -> dict[str, Any]:
         return {
             "programLineage": {
                 "programs": [
@@ -2731,8 +2703,7 @@ def _self_test_terminal_frontier() -> int:
         or active["planPaths"] != [TERMINAL_SUCCESSOR_PLAN]
         or active["taskPaths"] != [TERMINAL_SUCCESSOR_TASK]
         or len(active["terminalControlRows"]) != 2
-        or [row["path"] for row in active["terminalSpecRows"]]
-        != [TERMINAL_SPEC]
+        or [row["path"] for row in active["terminalSpecRows"]] != [TERMINAL_SPEC]
     ):
         raise AssertionError("active terminal frontier partition drift")
     cases += 1
