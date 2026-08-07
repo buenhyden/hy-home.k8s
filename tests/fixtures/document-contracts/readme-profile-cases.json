@@ -685,6 +685,28 @@
       "new": false
     },
     {
+      "path": "docs/90.references/research/2026-08-07-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": true
+    },
+    {
       "path": "docs/90.references/research/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [
@@ -703,26 +725,6 @@
         "Selection Rules"
       ],
       "new": false
-    },
-    {
-      "path": "docs/90.references/workspace-research/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": true
     },
     {
       "path": "docs/98.archive/README.md",

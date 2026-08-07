@@ -281,7 +281,7 @@ value.
 ## Related Documents
 
 - [Research Pack Index](README.md)
-- [Document Type Format and Evidence Contract](../research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
-- [Spec, SDLC, CI, QA, and Formatting Reference](../research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)
-- [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- [SDLC Governance](../../99.templates/support/sdlc-governance.md)
+- [Document Type Format and Evidence Contract](../2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec, SDLC, CI, QA, and Formatting Reference](../2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)
+- [Stage Authoring Matrix](../../../00.agent-governance/rules/stage-authoring-matrix.md)
+- [SDLC Governance](../../../99.templates/support/sdlc-governance.md)

@@ -337,7 +337,7 @@ canary, baseline, candidate, and threshold values.
 ## Related Documents
 
 - [Research Pack Index](README.md)
-- [Provider Implementation Status](../research/2026-07-07-wer/provider-implementation-status.md)
-- [Harness and Loop Engineering](../research/2026-07-07-wer/harness-and-loop-engineering.md)
-- [AI Agents Roster and Gap Analysis](../research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)
-- [Model Policy](../../00.agent-governance/model-policy.md)
+- [Provider Implementation Status](../2026-07-07-wer/provider-implementation-status.md)
+- [Harness and Loop Engineering](../2026-07-07-wer/harness-and-loop-engineering.md)
+- [AI Agents Roster and Gap Analysis](../2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)
+- [Model Policy](../../../00.agent-governance/model-policy.md)

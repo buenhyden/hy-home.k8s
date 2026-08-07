@@ -343,7 +343,7 @@ present on a clean checkout and were resolved by adding `fetch-depth: 0` to the
 ## Related Documents
 
 - [Research Pack Index](README.md)
-- [Automation, Pipeline, Workflow, and QA Reference](../research/2026-07-07-wer/automation-pipeline-workflow-qa.md)
-- [Spec, SDLC, CI, QA, and Formatting Reference](../research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)
-- [Kubernetes, Infrastructure, and Security Reference](../research/2026-07-07-wer/kubernetes-infrastructure-security.md)
-- [Agent Quality Standards](../../00.agent-governance/rules/quality-standards.md)
+- [Automation, Pipeline, Workflow, and QA Reference](../2026-07-07-wer/automation-pipeline-workflow-qa.md)
+- [Spec, SDLC, CI, QA, and Formatting Reference](../2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)
+- [Kubernetes, Infrastructure, and Security Reference](../2026-07-07-wer/kubernetes-infrastructure-security.md)
+- [Agent Quality Standards](../../../00.agent-governance/rules/quality-standards.md)

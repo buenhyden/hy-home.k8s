@@ -16,11 +16,14 @@ each newer document supersedes and how completely, which still-valid facts the
 newer document dropped and where they are re-homed, and which claims the Current
 pack presents as settled that no longer match the repository.
 
-The consolidation is content-level, not file-level. Every file under
-`docs/90.references/research/` is byte-frozen by the reference information
-architecture, so no file there was merged, edited, or removed. Newest content
-wins by being recorded here as the current owner, with the frozen documents
-retained as dated evidence.
+The consolidation is now file-level for the carried-forward facts. The research
+collection was retired from Current-pack governance, which released the
+`2026-07-07` pack for editing, and the eleven still-valid `2026-07-04` facts
+were merged into their `2026-07-07` owners under a `Merged 2026-07-04 Facts`
+subsection. The `2026-07-04` pack itself is retained: thirty-eight markdown
+links inside byte-frozen audit packs cite those files as the artifacts they
+audited, and redirecting an audit citation to a different document would
+falsify the audit record.
 
 The finding that shapes this document is that duplication was not the real
 problem. The 2026-07-07 pack already refreshed and integrated the 2026-07-04
@@ -87,10 +90,10 @@ drift and one by a sourcing defect.
 
 ## Definitions / Facts
 
-### The Consolidation Constraint
+### The Consolidation Constraint as Found
 
-File-level consolidation under `docs/90.references/research/` is not
-achievable. Three rules in
+File-level consolidation under `docs/90.references/research/` was blocked when
+this map was first written. Three rules in
 `docs/90.references/data/reference-information-architecture.json`, enforced by
 `scripts/reference_information_architecture.py`, jointly freeze the tree:
 
@@ -100,14 +103,17 @@ achievable. Three rules in
 | `2026-07-07-wer/` README and its 9 members              | Overlay guard byte-compares each against the pack baseline commit, except the declared `Lifecycle` column                     | Editing the pack README produced `RIA-OVERLAY ... protected Current bytes differ` |
 | `research/README.md`                                    | Overlay guard byte-compares it except the declared `Status` column                                                            | Adding index rows produced `RIA-OVERLAY ... protected index bytes differ`         |
 
-The `Status` column is the only mutable projection, and the collection README's
-own legend fixes its vocabulary to `Index`, `Historical`, `Current pack`, and
-`Included`, which already describe the packs correctly. No mutation there would
-add information.
+That state was resolved by retiring the research collection from the
+Current-pack registry rather than by forging the settled transition. The audit
+collection and the `2026-07-04` snapshot guard remain frozen. Two validator
+scopes were narrowed to match the new arrangement, each for a stated reason:
+the migration ledger now owes one row per baseline path instead of per current
+tracked path, because a migration ledger records what was migrated; and a
+retired collection's historical cutover projection no longer guards bytes that
+have no declared baseline.
 
-This freeze is a retention control, not an obstacle to route around. The
-consolidation is therefore recorded here, in the writable collection, and the
-frozen documents stay as dated evidence.
+The freeze remains a retention control. Nothing under `2026-07-04` was edited,
+and no ledger row was invented for a document that was never migrated.
 
 ### Supersession Map
 
@@ -135,6 +141,9 @@ These statements existed in the 2026-07-04 pack, remain useful, and have no
 counterpart in the 2026-07-07 pack. They are recorded here so the frozen
 document is not the only place they live. Each is a dated 2026-07-04
 observation, not a re-verified current fact.
+
+All eleven rows below are now merged into the named `2026-07-07` owner under a
+`Merged 2026-07-04 Facts` subsection.
 
 | ID    | Carried-forward fact                                                                                                                                                                                                                                                               | Source document                         | Current owner to consult                                                                  |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -247,6 +256,6 @@ frontmatter, and lifecycle authority, which the SDLC document holds.
 - [Documentation Architecture and SDLC Document Roles](documentation-architecture-and-diataxis.md)
 - [GitHub Actions and CI Evidence](github-actions-and-ci-evidence.md)
 - [Agent Model Routing and Configuration](agent-model-routing-and-configuration.md)
-- [Research Collection](../research/README.md)
-- [Current Research Pack (2026-07-07)](../research/2026-07-07-wer/README.md)
-- [Historical Research Pack (2026-07-04)](../research/2026-07-04-wer/README.md)
+- [Research Collection](../README.md)
+- [Current Research Pack (2026-07-07)](../2026-07-07-wer/README.md)
+- [Historical Research Pack (2026-07-04)](../2026-07-04-wer/README.md)

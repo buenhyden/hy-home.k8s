@@ -69,6 +69,14 @@ research/
 │   ├── document-type-format-and-evidence-contract.md
 │   ├── document-migration-evidence-ledger.md
 │   └── ai-agents-roster-and-gap-analysis.md
+├── 2026-08-07-wer/
+│   ├── README.md
+│   ├── agent-memory-tiers-and-management.md
+│   ├── agent-model-routing-and-configuration.md
+│   ├── documentation-architecture-and-diataxis.md
+│   ├── github-actions-and-ci-evidence.md
+│   ├── llm-wiki-and-knowledge-routing.md
+│   └── research-consolidation-and-supersession-map.md
 └── README.md                            # This file
 ```
 
@@ -85,7 +93,7 @@ research/
 | [kubernetes-infrastructure-security.md](./2026-07-04-wer/kubernetes-infrastructure-security.md) | Historical  | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes                |
 | [automation-pipeline-workflow-qa.md](./2026-07-04-wer/automation-pipeline-workflow-qa.md)       | Historical  | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference  | Descriptive reference only; no CI workflow or runtime changes                               |
 | [ai-agents-roster-and-gap-analysis.md](./2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)   | Historical  | Workspace agent roster snapshot, external agent-catalog market scan, and gap analysis     | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
-| [2026-07-07-wer/README.md](./2026-07-07-wer/README.md)                                          | Current pack | Refreshed workspace engineering research pack entry point                                | Authoritative for dated pack routing only; not active policy                                |
+| [2026-07-07-wer/README.md](./2026-07-07-wer/README.md)                                          | Dated pack   | Refreshed workspace engineering research pack entry point                                | Authoritative for dated pack routing only; not active policy                                |
 | [workspace-governance-baseline.md](./2026-07-07-wer/workspace-governance-baseline.md)           | Included    | Durable workspace governance baseline reference (2026-07-07)                                | Summarizes canonical governance owners; does not replace them                               |
 | [harness-and-loop-engineering.md](./2026-07-07-wer/harness-and-loop-engineering.md)             | Included    | Harness and feedback-loop engineering reference (2026-07-07)                                | Summarizes source-backed patterns; does not define runtime procedure                        |
 | [provider-implementation-status.md](./2026-07-07-wer/provider-implementation-status.md)         | Included    | Provider implementation status and source ledger (2026-07-07)                               | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
@@ -95,10 +103,19 @@ research/
 | [document-type-format-and-evidence-contract.md](./2026-07-07-wer/document-type-format-and-evidence-contract.md) | Included | Document type format and evidence contract (2026-07-12) | Dated format evidence only; route, frontmatter, lifecycle, and enforcement authority remain with canonical Stage 00/99 owners |
 | [document-migration-evidence-ledger.md](./2026-07-07-wer/document-migration-evidence-ledger.md) | Included | Durable document-migration disposition and evidence ledger | Migration evidence owner only; does not replace source facts, accepted decisions, provider contracts, or runtime state |
 | [ai-agents-roster-and-gap-analysis.md](./2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)   | Included    | Workspace agent roster, agency-agents comparison, and gap-closure (2026-07-07)              | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
+| [2026-08-07-wer/README.md](./2026-08-07-wer/README.md) | Dated pack | 2026-08-07 workspace engineering research pack entry point | Authoritative for dated pack routing only; not active policy |
+| [agent-memory-tiers-and-management.md](./2026-08-07-wer/agent-memory-tiers-and-management.md) | Included | Agent memory tiers and validator enforcement (2026-08-07) | Descriptive reference only; memory classes and retention stay with the Stage 00 contract |
+| [agent-model-routing-and-configuration.md](./2026-08-07-wer/agent-model-routing-and-configuration.md) | Included | Task-characteristic model and reasoning-effort routing (2026-08-07) | Descriptive reference only; model values, tiers, and promotion stay with Stage 00 contracts |
+| [documentation-architecture-and-diataxis.md](./2026-08-07-wer/documentation-architecture-and-diataxis.md) | Included | Diátaxis documentation architecture and SDLC document roles (2026-08-07) | Descriptive mapping only; template routing and heading contracts stay with Stage 99 |
+| [github-actions-and-ci-evidence.md](./2026-08-07-wer/github-actions-and-ci-evidence.md) | Included | GitHub Actions rules, CI selection contract, and evidence lanes (2026-08-07) | Repository-static observation only; no hosted-run or deployment claim |
+| [llm-wiki-and-knowledge-routing.md](./2026-08-07-wer/llm-wiki-and-knowledge-routing.md) | Included | LLM knowledge-index conventions and generated-index drift (2026-08-07) | Descriptive reference only; generator content stays with its canonical owner |
+| [research-consolidation-and-supersession-map.md](./2026-08-07-wer/research-consolidation-and-supersession-map.md) | Included | Supersession map, carried-forward facts, and superseded pack claims (2026-08-07) | Consolidation record only; it does not amend or invalidate an earlier pack document |
 
-`Current pack`, `Historical`, `Included`, and `Index` are collection roles,
-not report lifecycle values. The Current pointer is mirrored from the
-registry; report lifecycle is owned by the selected pack's `## Report Index`.
+`Dated pack`, `Historical`, `Included`, and `Index` are collection roles,
+not report lifecycle values. This collection declares no Current pack in the
+document-profile registry; report lifecycle is owned by the selected pack's
+`## Report Index`, and cross-pack supersession is owned by the
+[supersession map](./2026-08-07-wer/research-consolidation-and-supersession-map.md).
 
 Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
 inside a pack use semantic topic names only; do not use `part-*.md` or numeric

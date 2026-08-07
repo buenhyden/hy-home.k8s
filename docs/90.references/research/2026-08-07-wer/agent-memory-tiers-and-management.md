@@ -372,7 +372,7 @@ PreCompact hook is advisory and does not block.
 ## Related Documents
 
 - [Research Pack Index](README.md)
-- [Harness and Loop Engineering](../research/2026-07-07-wer/harness-and-loop-engineering.md)
+- [Harness and Loop Engineering](../2026-07-07-wer/harness-and-loop-engineering.md)
 - [LLM Wiki and Agent Knowledge Routing](llm-wiki-and-knowledge-routing.md)
-- [Provider Implementation Status](../research/2026-07-07-wer/provider-implementation-status.md)
-- [Memory Collection](../../00.agent-governance/memory/README.md)
+- [Provider Implementation Status](../2026-07-07-wer/provider-implementation-status.md)
+- [Memory Collection](../../../00.agent-governance/memory/README.md)

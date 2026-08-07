@@ -284,6 +284,6 @@ path it was built to serve.
 
 - [Research Pack Index](README.md)
 - [Agent Memory Tiers and Management](agent-memory-tiers-and-management.md)
-- [Workspace Governance Baseline](../research/2026-07-07-wer/workspace-governance-baseline.md)
-- [LLM Wiki Collection](../llm-wiki/README.md)
-- [LLM Wiki Curation Guide](../../05.operations/guides/0009-llm-wiki-curation-guide.md)
+- [Workspace Governance Baseline](../2026-07-07-wer/workspace-governance-baseline.md)
+- [LLM Wiki Collection](../../llm-wiki/README.md)
+- [LLM Wiki Curation Guide](../../../05.operations/guides/0009-llm-wiki-curation-guide.md)
