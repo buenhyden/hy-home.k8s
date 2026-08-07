@@ -132,9 +132,13 @@ archive mirror path is derived from their original path, so it retains the
 retired execution-stage segment; that is the historically correct mirror and is
 not a contract violation.
 
-Two `04.execution` documents carry an unreadable status and two carry `active`
-or `draft` beyond the suspended program's set. Each is dispositioned
-individually against C-1 before migration rather than by bulk rule.
+Every authored plan and task outside the suspended program carries
+`status: done`. The ten exceptions are exactly the suspended program's set: the
+Spec 047 plan and task are `active`, and the Spec 048 through 051 plans and
+tasks are `draft`. The two remaining non-conforming files are the plan and task
+stage README indexes, which carry a README profile rather than an execution
+status and are retired with their stage rather than migrated. No document
+therefore requires individual status disposition before migration.
 
 ### Stage renumbering
 
