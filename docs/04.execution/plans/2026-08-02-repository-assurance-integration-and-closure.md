@@ -272,7 +272,7 @@ the authority.
   resolves, using metadata only.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s rev-parse main
+  rtk git -C "$REPO_ROOT" rev-parse main
   rtk git rev-parse refs/stash
   rtk git stash list --format='%gd %H'
   ```
@@ -310,27 +310,27 @@ the authority.
   integration path over the already reviewed local refs.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s status --short --branch
-  rtk git -C /home/hy/projects/hy-home.k8s branch --show-current
-  rtk git -C /home/hy/projects/hy-home.k8s switch main
-  rtk git -C /home/hy/projects/hy-home.k8s branch --show-current
-  rtk git -C /home/hy/projects/hy-home.k8s merge-base --is-ancestor main program/repository-delivery-platform-assurance
+  rtk git -C "$REPO_ROOT" status --short --branch
+  rtk git -C "$REPO_ROOT" branch --show-current
+  rtk git -C "$REPO_ROOT" switch main
+  rtk git -C "$REPO_ROOT" branch --show-current
+  rtk git -C "$REPO_ROOT" merge-base --is-ancestor main program/repository-delivery-platform-assurance
   ```
 
 - [ ] Fast-forward local main and record the integrated commit.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s merge --ff-only program/repository-delivery-platform-assurance
-  rtk git -C /home/hy/projects/hy-home.k8s rev-parse HEAD
+  rtk git -C "$REPO_ROOT" merge --ff-only program/repository-delivery-platform-assurance
+  rtk git -C "$REPO_ROOT" rev-parse HEAD
   ```
 
 - [ ] Run main postflight before touching the stash.
 
   Execute this block with the command workdir set to the root main worktree
-  `/home/hy/projects/hy-home.k8s`, not the isolated implementation worktree.
+  the primary repository checkout root, not the isolated implementation worktree.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s status --short
+  rtk git -C "$REPO_ROOT" status --short
   rtk bash scripts/validate-repo-quality-gates.sh .
   rtk pre-commit run --all-files
   rtk git diff --check
@@ -355,9 +355,9 @@ the authority.
 - [ ] Remove the clean isolated worktree and its merged local branch.
 
   ```bash
-  rtk git -C /home/hy/projects/hy-home.k8s worktree remove .worktrees/repository-delivery-platform-assurance
-  rtk git -C /home/hy/projects/hy-home.k8s branch -d program/repository-delivery-platform-assurance
-  rtk git -C /home/hy/projects/hy-home.k8s worktree list --porcelain
+  rtk git -C "$REPO_ROOT" worktree remove "$REPO_ROOT"/.worktrees/repository-delivery-platform-assurance
+  rtk git -C "$REPO_ROOT" branch -d program/repository-delivery-platform-assurance
+  rtk git -C "$REPO_ROOT" worktree list --porcelain
   ```
 
 ### Task 6: RAIC-005 — close lifecycle and postflight

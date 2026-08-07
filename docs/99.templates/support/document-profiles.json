@@ -2056,6 +2056,10 @@
         {
           "kind": "exact",
           "value": "docs/90.references/cloud-examples/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/workspace-research/README.md"
         }
       ],
       "frontmatter": {

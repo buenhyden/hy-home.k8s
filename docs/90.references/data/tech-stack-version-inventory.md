@@ -117,11 +117,11 @@ ci_gitleaks:
   sha256: '79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e' # pragma: allowlist secret
   install_path: '/usr/local/bin/gitleaks'
 github_actions:
-  'actions/checkout': '9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' # pragma: allowlist secret
+  'actions/checkout': '3d3c42e5aac5ba805825da76410c181273ba90b1' # pragma: allowlist secret
   'actions/first-interaction': '1c4688942c71f71d4f5502a26ea67c331730fa4d' # pragma: allowlist secret
-  'actions/labeler': 'f27b608878404679385c85cfa523b85ccb86e213' # pragma: allowlist secret
-  'actions/setup-python': 'ece7cb06caefa5fff74198d8649806c4678c61a1' # pragma: allowlist secret
-  'actions/stale': 'eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899' # pragma: allowlist secret
+  'actions/labeler': 'bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13' # pragma: allowlist secret
+  'actions/setup-python': '5fda3b95a4ea91299a34e894583c3862153e4b97' # pragma: allowlist secret
+  'actions/stale': '1e223db275d687790206a7acac4d1a11bd6fe629' # pragma: allowlist secret
   'actions/upload-artifact': '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # pragma: allowlist secret
   'orhun/git-cliff-action': 'f50e11560dce63f7c33227798f90b924471a88b5' # pragma: allowlist secret
 pre_commit:

@@ -578,10 +578,10 @@ def validate_ci_workflow_selector(root: Path) -> None:
     required_agent_fragments = (
         "needs: changes",
         "if: needs.changes.outputs.agent_governance == 'true'",
-        "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0",
+        "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1",
         "persist-credentials: false",
         "fetch-depth: 0",
-        "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0",
+        "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0",
         "python-version: '3.12'",
         SECURE_DEPENDENCY_INSTALL_COMMAND,
         "python3 scripts/validate-agent-harness-contract.py --root .",

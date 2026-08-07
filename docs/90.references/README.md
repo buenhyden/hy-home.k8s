@@ -50,6 +50,7 @@ docs/90.references/
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
 ├── llm-wiki/                            # LLM-readable generated Markdown link map
 ├── research/                            # Dated workspace engineering research pack references and source ledgers
+├── workspace-research/                  # 2026-08-07 workspace engineering research references
 └── README.md                            # This file
 ```
 
@@ -72,6 +73,7 @@ docs/90.references/
 | [audits/README.md](./audits/README.md) | durable-concept index / audit snapshot index | dated implementation audit reports, status vocabulary, evidence rules, and static-vs-live boundary | audit report 추가/이동, status vocabulary 변경, evidence rule 변경 시 |
 | [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
 | [research/README.md](./research/README.md) | durable-concept index / source-ledger index | dated workspace engineering research pack 하위 폴더의 범위, source priority, planned/current reference structure | research reference 문서 추가/이동, source priority 변경, parent spec/plan 변경 시 |
+| [workspace-research/README.md](./workspace-research/README.md) | durable-concept index / source-ledger index | 2026-08-07 workspace engineering research collection entry point | Authoritative for collection routing only; not active policy |
 
 ## Authoring Workflow
 
@@ -85,7 +87,7 @@ docs/90.references/
 
 이 README의 링크 기준 위치는 `docs/90.references/`다.
 
-- 하위 reference folder는 `./audits/`, `./cloud-examples/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`로 연결한다.
+- 하위 reference folder는 `./audits/`, `./cloud-examples/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`, `./workspace-research/`로 연결한다.
 - consumer stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`, `../04.execution/`, `../05.operations/`로 연결한다.
 - root-level source file은 이 README 기준으로 `../../<path>`를 사용한다.
 - 새 reference 문서 안의 링크는 최종 reference 파일 위치 기준으로 다시 계산하고, optional target은 code literal로 남긴다.
@@ -123,6 +125,7 @@ docs/90.references/
 | `data/` | repo-backed version contracts, durable Agent reference catalog boundaries, and factual lookup tables | 사람용 설명은 한국어 가능, source-checked values, freshness triggers, and canonical owner boundaries는 영어-first |
 | `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
+| `workspace-research/` | 2026-08-07 workspace engineering research reference와 source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source 인용은 원문 유지 |
 | `research/` | Dated workspace engineering research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
 
 ### Dated Pack Naming
@@ -177,5 +180,6 @@ README 인덱스는 frontmatter를 요구하지 않지만, authored reference �
 - [Templates README](../99.templates/README.md)
 - [Audit Reference README](./audits/README.md)
 - [Research Reference README](./research/README.md)
+- [Workspace Research README](./workspace-research/README.md)
 - [Tech Stack Version Inventory](./data/tech-stack-version-inventory.md)
 - [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)

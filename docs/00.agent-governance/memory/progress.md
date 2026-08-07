@@ -8,6 +8,186 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Research collection consolidation and supersession map
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #research #consolidation #supersession #stage90
+- **Owner**: Research consolidation pass
+- **Canonical Owner**: `docs/90.references/workspace-research/research-consolidation-and-supersession-map.md`
+- **Provenance**: heading-level and claim-level comparison of the two dated
+  research packs, plus working-tree verification of every superseded claim on
+  2026-08-07
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain under the collection owner; refresh when a new
+  dated pack appears or a superseded-claim row is invalidated
+- **Next Owner**: none
+
+#### Progress
+
+- Consolidated the same-purpose documents under `docs/90.references/research/`
+  into one supersession map rather than merging files, because every file
+  there is byte-frozen.
+- Recorded the verdict for all seven same-named pairs: two fully superseded,
+  five superseded with named residual items.
+- Carried forward eleven still-valid 2026-07-04 facts that the 2026-07-07 pack
+  dropped, each routed to a current owner, and recorded one intentional drop.
+- Recorded eight Current-pack claims that the 2026-08-07 observation
+  supersedes, each with both dated claims and a working-tree verification.
+- Recorded the topic-ownership boundary between the two collections from
+  2026-08-07 forward.
+
+#### Memory
+
+- Content consolidation between the two research packs was already complete
+  before this pass. The 2026-07-07 pack refreshed the 2026-07-04 pack document
+  by document with explicit lineage links. The real defect was currency, not
+  duplication.
+- The 2026-07-07 pack README carries a pack-wide contradiction closure section
+  that presents pin state, CI job count, adapter inventory, and Gemini surface
+  absence as settled. All four are now wrong. A closure section that reads as
+  resolution rather than as a dated observation ages badly; prefer wording that
+  keeps the observation date attached to the verdict.
+- Verified against the working tree on 2026-08-07: `.gemini/agents/` holds 12
+  files with a tracked `.gemini/settings.json`; the roster is 12 roles across 4
+  surfaces with 48 projections; `ci.yml` has 7 jobs; the `supervisor` Claude
+  adapter allows Read, Grep, Glob, Task; every remote action reference is a
+  full commit SHA.
+- The repository forbids active documents from carrying retired tokens.
+  Quoting a retired path verbatim in a new reference fails
+  `AGQC-LEGACY-CONSUMER`; describe the retired surface instead of naming it.
+- Within `2026-07-07-wer/` no two documents share a purpose. The format ledger
+  is keyed by template family and the migration ledger by file path, and each
+  declares the boundary.
+
+#### Evidence
+
+- `targeted`: `bash scripts/validate-repo-quality-gates.sh .`:
+  `[PASS] repository quality gates passed`.
+- `affected`: `python3 scripts/run-validation-lane.py --lane affected` over the
+  two changed paths: PASS for `agent-governance-ci`,
+  `agent-governance-closure`, `agent-legacy-cutover`,
+  `document-contract-registry`, `links-and-owners`, `markdown-profiles`, and
+  `repository-quality`.
+- Immutability evidence: a one-byte change to a historical member produced
+  `RIA-SNAPSHOT ... protected snapshot`; edits to the Current pack README and
+  the collection README produced `RIA-OVERLAY ... protected Current bytes
+  differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
+  were reverted byte-exactly.
+- `staged`: recorded by the committing step.
+- `ci`: repository-static only; `DEFER`.
+- `remote/live`: `DEFER`. No cluster, provider runtime, or remote action.
+
+#### Handoff
+
+- The frozen packs were not modified. Readers of the Current pack should
+  consult the superseded-claim table before relying on its contradiction
+  closure section.
+- The ISO 42010 and 29148 sourcing defect stays routed as gaps DOC-G8 and
+  DOC-G9; it cannot be corrected in the frozen ledger.
+- Push, PR, merge, hosted CI, and live verification remain pending human
+  authorization.
+
+### 2026-08-07 - Workspace engineering research refresh and Stage 90 collection admission
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs, meta, qa, security
+- **Status**: complete
+- **Tags**: #research #stage90 #diataxis #llm-wiki #github-actions #model-routing #memory-tiers
+- **Owner**: Workspace engineering research refresh
+- **Canonical Owner**: `docs/90.references/workspace-research/README.md`
+- **Provenance**: five parallel primary-source research passes checked
+  2026-08-07, the Diátaxis authoring repository source files, and repository
+  reads across Stage 00, Stage 99, `.github/`, and `scripts/`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain under the collection owner; refresh when any
+  cited external source publishes a revision or the referenced repository
+  contract changes
+- **Next Owner**: none; follow-up gaps are routed inside each reference
+
+#### Progress
+
+- Added five Stage 90 references under a new
+  `docs/90.references/workspace-research/` collection: Diátaxis documentation
+  architecture with SDLC document roles, LLM knowledge-index conventions and
+  drift classification, GitHub Actions rules with CI evidence lanes,
+  task-characteristic model and reasoning-effort routing, and the four-class
+  agent memory hierarchy.
+- Admitted the collection through the document contract registry: a new
+  `readme/collection-index` route, a README fixture row, and the coupled
+  program-created README counts.
+- Indexed the collection from `docs/90.references/README.md`.
+- Unified GitHub Action pins on the newer released SHAs and refreshed the
+  recorded version inventory, then aligned the validator constants and the
+  CI topology contract that had pinned the superseded SHAs.
+- Added `fetch-depth: 0` to the `pre-commit` and `repo-quality-static` checkout
+  steps, which the CI Python contract requires because gitleaks needs full
+  history.
+- Replaced leaked absolute host paths in the draft repository-assurance plan
+  with a `"$REPO_ROOT"` marker.
+
+#### Memory
+
+- The Current research pack is frozen by construction. The reference
+  information architecture compares the proposed `referenceCurrentPacks`
+  projection against the baseline commit projection, so adding a member to
+  `docs/90.references/research/2026-07-07-wer/` and creating a new dated pack
+  under `docs/90.references/research/` both fail. The overlay guard also pins
+  the bytes of `docs/90.references/research/README.md` except its declared
+  mutable `Status` column, while the cross-document validator requires that
+  same file to index any new sibling path. Those two rules are jointly
+  unsatisfiable, so new Stage 90 research evidence needs a collection outside
+  the registered packs.
+- Registry-declared paths and frozen helper scripts are compared against the
+  Git index, not the working tree. Staging is a precondition for validation,
+  not only for committing.
+- Repository validator output uses an `ERR` prefix followed by a space, which a
+  case-insensitive `error` filter does not match. Filter on the exact prefixes
+  when reading gate output.
+- The local formatter hook rewrites YAML quoting and blank lines, and the
+  affected-surface contract asserts one workflow string byte-exactly. Verify
+  formatter mutations against contract assertions after every workflow edit.
+- Provider documentation observed on 2026-08-07 conflicts with the fixed
+  `2026-07-10` cutoff in four recorded places, including a documented Claude
+  subagent `effort` field where the contract records reasoning as not
+  configurable. Those are recorded as conflicts and are not resolved here.
+
+#### Evidence
+
+- `targeted`: `python3 scripts/validate-links-and-owners.py --root . --mode strict`
+  and `python3 scripts/validate-document-contract-registry.py --root . --mode strict`
+  run repeatedly during authoring: FAIL then PASS after each fix.
+- `affected`: `python3 scripts/run-validation-lane.py --lane affected` over the
+  changed path set: PASS for `agent-governance-ci`,
+  `agent-governance-closure`, `agent-legacy-cutover`,
+  `document-contract-registry`, `links-and-owners`, and `markdown-profiles`.
+- `targeted`: `bash scripts/validate-repo-quality-gates.sh .`:
+  `[PASS] repository quality gates passed`.
+- `staged`, `tests`, `all-files`, `message/manual`: recorded by the committing
+  step; `pre-commit` runs the repository quality gate and the staged hooks at
+  commit time.
+- `ci`: repository-static only. No hosted run was triggered; `DEFER`.
+- `remote/live`: `DEFER`. No cluster, Argo CD, Vault, ESO, cloud, provider
+  runtime, authentication, or deployment action was performed.
+- Source retrieval limitations recorded in the references: `diataxis.fr`
+  returned HTTP 429 on 2026-08-07 and was replaced by the framework's authoring
+  repository sources; Argo CD documentation returned HTTP 429 on four attempts;
+  ISO/IEC/IEEE 42010 and 29148 remain paywalled and unobserved;
+  arXiv:2404.13501 body was unreachable and is cited by identifier only.
+
+#### Handoff
+
+- The five references own their own follow-up gap lists and route each gap to
+  the repository path that owns it. No gap was auto-applied.
+- The Current research pack freeze is recorded as a finding for a future
+  governance decision; it was not worked around.
+- Push, PR, merge, hosted CI, provider runtime, and live verification remain
+  pending human authorization.
 ### 2026-08-02 - PRD-007 program foundation activation
 
 #### Metadata
