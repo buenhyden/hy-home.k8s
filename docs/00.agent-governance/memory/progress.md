@@ -8,6 +8,104 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Workspace engineering research refresh and Stage 90 collection admission
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs, meta, qa, security
+- **Status**: complete
+- **Tags**: #research #stage90 #diataxis #llm-wiki #github-actions #model-routing #memory-tiers
+- **Owner**: Workspace engineering research refresh
+- **Canonical Owner**: `docs/90.references/workspace-research/README.md`
+- **Provenance**: five parallel primary-source research passes checked
+  2026-08-07, the Diátaxis authoring repository source files, and repository
+  reads across Stage 00, Stage 99, `.github/`, and `scripts/`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain under the collection owner; refresh when any
+  cited external source publishes a revision or the referenced repository
+  contract changes
+- **Next Owner**: none; follow-up gaps are routed inside each reference
+
+#### Progress
+
+- Added five Stage 90 references under a new
+  `docs/90.references/workspace-research/` collection: Diátaxis documentation
+  architecture with SDLC document roles, LLM knowledge-index conventions and
+  drift classification, GitHub Actions rules with CI evidence lanes,
+  task-characteristic model and reasoning-effort routing, and the four-class
+  agent memory hierarchy.
+- Admitted the collection through the document contract registry: a new
+  `readme/collection-index` route, a README fixture row, and the coupled
+  program-created README counts.
+- Indexed the collection from `docs/90.references/README.md`.
+- Unified GitHub Action pins on the newer released SHAs and refreshed the
+  recorded version inventory, then aligned the validator constants and the
+  CI topology contract that had pinned the superseded SHAs.
+- Added `fetch-depth: 0` to the `pre-commit` and `repo-quality-static` checkout
+  steps, which the CI Python contract requires because gitleaks needs full
+  history.
+- Replaced leaked absolute host paths in the draft repository-assurance plan
+  with a `"$REPO_ROOT"` marker.
+
+#### Memory
+
+- The Current research pack is frozen by construction. The reference
+  information architecture compares the proposed `referenceCurrentPacks`
+  projection against the baseline commit projection, so adding a member to
+  `docs/90.references/research/2026-07-07-wer/` and creating a new dated pack
+  under `docs/90.references/research/` both fail. The overlay guard also pins
+  the bytes of `docs/90.references/research/README.md` except its declared
+  mutable `Status` column, while the cross-document validator requires that
+  same file to index any new sibling path. Those two rules are jointly
+  unsatisfiable, so new Stage 90 research evidence needs a collection outside
+  the registered packs.
+- Registry-declared paths and frozen helper scripts are compared against the
+  Git index, not the working tree. Staging is a precondition for validation,
+  not only for committing.
+- Repository validator output uses an `ERR ` prefix that a case-insensitive
+  `error` filter does not match. Filter on the exact prefixes when reading
+  gate output.
+- The local formatter hook rewrites YAML quoting and blank lines, and the
+  affected-surface contract asserts one workflow string byte-exactly. Verify
+  formatter mutations against contract assertions after every workflow edit.
+- Provider documentation observed on 2026-08-07 conflicts with the fixed
+  `2026-07-10` cutoff in four recorded places, including a documented Claude
+  subagent `effort` field where the contract records reasoning as not
+  configurable. Those are recorded as conflicts and are not resolved here.
+
+#### Evidence
+
+- `targeted`: `python3 scripts/validate-links-and-owners.py --root . --mode strict`
+  and `python3 scripts/validate-document-contract-registry.py --root . --mode strict`
+  run repeatedly during authoring: FAIL then PASS after each fix.
+- `affected`: `python3 scripts/run-validation-lane.py --lane affected` over the
+  changed path set: PASS for `agent-governance-ci`,
+  `agent-governance-closure`, `agent-legacy-cutover`,
+  `document-contract-registry`, `links-and-owners`, and `markdown-profiles`.
+- `targeted`: `bash scripts/validate-repo-quality-gates.sh .`:
+  `[PASS] repository quality gates passed`.
+- `staged`, `tests`, `all-files`, `message/manual`: recorded by the committing
+  step; `pre-commit` runs the repository quality gate and the staged hooks at
+  commit time.
+- `ci`: repository-static only. No hosted run was triggered; `DEFER`.
+- `remote/live`: `DEFER`. No cluster, Argo CD, Vault, ESO, cloud, provider
+  runtime, authentication, or deployment action was performed.
+- Source retrieval limitations recorded in the references: `diataxis.fr`
+  returned HTTP 429 on 2026-08-07 and was replaced by the framework's authoring
+  repository sources; Argo CD documentation returned HTTP 429 on four attempts;
+  ISO/IEC/IEEE 42010 and 29148 remain paywalled and unobserved;
+  arXiv:2404.13501 body was unreachable and is cited by identifier only.
+
+#### Handoff
+
+- The five references own their own follow-up gap lists and route each gap to
+  the repository path that owns it. No gap was auto-applied.
+- The Current research pack freeze is recorded as a finding for a future
+  governance decision; it was not worked around.
+- Push, PR, merge, hosted CI, provider runtime, and live verification remain
+  pending human authorization.
+
 ### 2026-08-02 - Repository delivery and platform assurance design baseline
 
 #### Metadata
