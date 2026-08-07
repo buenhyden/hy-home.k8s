@@ -1,7 +1,7 @@
 ---
 title: 'Repository Delivery and Platform Assurance Product Requirements'
 type: sdlc/prd
-status: draft
+status: active
 owner: platform
 updated: 2026-08-02
 ---
@@ -16,6 +16,9 @@ desired state, infrastructure examples, policy, scripts, tests, secret
 boundaries, and Traefik dynamic configuration. It complements rather than
 replaces the current local platform baseline owned by PRD-004, ARD-0007,
 ADR-0014, and Spec 008.
+
+PRD-007 is active with Spec 047 as its only active unfinished tranche; Specs
+048-051 remain planned draft successors.
 
 The program starts from the clean local `main` baseline observed on
 2026-08-02. It preserves the Current audit pack as observation evidence, uses

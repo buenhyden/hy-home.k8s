@@ -81,7 +81,8 @@ advances. Draft status is not completion evidence.
 
 - **Spec**: [Repository Assurance Integration and Closure](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)
 - **Plan**: [Repository Assurance Integration and Closure Implementation Plan](../plans/2026-08-02-repository-assurance-integration-and-closure.md)
-- **Predecessor**: [Spec 050 Example IaC and Validator QA](../../03.specs/050-example-iac-and-validator-qa/spec.md)
+- **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-007 program
+  lineage
 - **Successor state**: local repository program closure; hosted/provider/live
   readiness remains separately approval-gated
 

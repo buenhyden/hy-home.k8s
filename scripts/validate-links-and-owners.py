@@ -4092,17 +4092,24 @@ def _program_execution_diagnostics(
             and tasks[0] in graph[plans[0]]
             and plans[0] in graph[tasks[0]]
         )
+        valid_execution_pair = (
+            len(plans) == 1
+            and len(tasks) == 1
+            and direct_spec_links
+            and execution_state_matches
+            and reciprocal_pair
+        )
         valid_ready_state = relation == dependency_ready and (
+            not component or valid_execution_pair
+        )
+        valid_blocked_state = relation != dependency_ready and (
             not component
             or (
-                len(plans) == 1
-                and len(tasks) == 1
-                and direct_spec_links
-                and execution_state_matches
-                and reciprocal_pair
+                not isinstance(relation, ProgramFollowUp)
+                and relation.state == "draft"
+                and valid_execution_pair
             )
         )
-        valid_blocked_state = relation != dependency_ready and not component
         if valid_ready_state or valid_blocked_state:
             continue
         diagnostics.append(
@@ -4110,7 +4117,7 @@ def _program_execution_diagnostics(
                 "PROGRAM-LINEAGE-EXECUTION-GATE",
                 spec,
                 context.profiles[spec].profile_id,
-                "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links and relation-state parity for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
+                "zero current execution component; or one closed reciprocal Plan/Task component with direct own-Spec links and relation-state parity for the first unfinished original tranche; draft original successors may retain one such draft pair while follow-ups remain component-free",
                 f"component={len(component)}, plans={len(plans)}, tasks={len(tasks)}, direct-spec={direct_spec_links}, execution-state={execution_state_matches}, reciprocal={reciprocal_pair}, dependency-ready-original={relation == dependency_ready}",
             )
         )
@@ -5744,7 +5751,9 @@ def _mutated_program_lineage_fixture(
         mutated.metadata.pop(path)
         mutated.texts.pop(path)
 
-    def add_execution_pair(suffix: str, spec_id: str) -> None:
+    def add_execution_pair(
+        suffix: str, spec_id: str, *, status: str = "active"
+    ) -> None:
         plan = PurePosixPath(f"docs/04.execution/plans/2026-07-15-fixture-{suffix}.md")
         task = PurePosixPath(f"docs/04.execution/tasks/2026-07-15-fixture-{suffix}.md")
 
@@ -5753,20 +5762,28 @@ def _mutated_program_lineage_fixture(
             "sdlc/plan",
             f"[Spec](../../03.specs/{spec_id}-fixture/spec.md)\n"
             f"[Task](../tasks/2026-07-15-fixture-{suffix}.md)",
+            status=status,
         )
         add_execution_node(
             task,
             "sdlc/task",
             f"[Spec](../../03.specs/{spec_id}-fixture/spec.md)\n"
             f"[Plan](../plans/2026-07-15-fixture-{suffix}.md)",
+            status=status,
         )
 
-    def add_execution_node(path: PurePosixPath, profile_id: str, body: str) -> None:
+    def add_execution_node(
+        path: PurePosixPath,
+        profile_id: str,
+        body: str,
+        *,
+        status: str = "active",
+    ) -> None:
         nonlocal paths, tracked_regular_paths
         paths = tuple(sorted((*paths, path), key=lambda item: item.as_posix()))
         tracked_regular_paths = frozenset((*tracked_regular_paths, path))
         mutated.profiles[path] = ProfileView(profile_id, "sdlc", "authored")
-        mutated.metadata[path] = {"type": profile_id, "status": "active"}
+        mutated.metadata[path] = {"type": profile_id, "status": status}
         mutated.texts[path] = body
 
     def close_original_034() -> None:
@@ -5781,6 +5798,7 @@ def _mutated_program_lineage_fixture(
         remove_execution_path(task_034)
         program = programs[1]
         first = program.tranches[0]
+        successor = program.tranches[1]
         closed = ProgramRelation(
             spec_id=first.spec_id,
             order=first.order,
@@ -5788,12 +5806,21 @@ def _mutated_program_lineage_fixture(
             reason=first.reason,
             decision_id=first.decision_id,
         )
+        activated_successor = ProgramRelation(
+            spec_id=successor.spec_id,
+            order=successor.order,
+            state="active",
+            reason=successor.reason,
+            decision_id=successor.decision_id,
+        )
+        successor_spec = PurePosixPath("docs/03.specs/035-fixture/spec.md")
+        mutated.metadata[successor_spec]["status"] = "active"
         programs = (
             programs[0],
             ProgramLineage(
                 prd_id=program.prd_id,
                 ard_id=program.ard_id,
-                tranches=(closed, *program.tranches[1:]),
+                tranches=(closed, activated_successor, *program.tranches[2:]),
                 follow_ups=program.follow_ups,
             ),
             *programs[2:],
@@ -6729,6 +6756,44 @@ def _mutated_program_lineage_fixture(
             mutated.texts[roadmap] = f"{heading}\n\n#### Evidence\n{evidence}"
         else:
             mutated.texts[roadmap] = f"{heading}\n\n{evidence}"
+    elif mutation == "program-execution-draft-preplanning":
+        add_execution_pair("035", "035", status="draft")
+    elif mutation == "program-execution-draft-plan-only":
+        add_execution_node(
+            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md"),
+            "sdlc/plan",
+            "[Spec](../../03.specs/035-fixture/spec.md)",
+            status="draft",
+        )
+    elif mutation == "program-execution-draft-task-only":
+        add_execution_node(
+            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md"),
+            "sdlc/task",
+            "[Spec](../../03.specs/035-fixture/spec.md)",
+            status="draft",
+        )
+    elif mutation == "program-execution-draft-nonreciprocal":
+        add_execution_pair("035", "035", status="draft")
+        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
+        mutated.texts[plan] = mutated.texts[plan].replace(
+            "[Task](../tasks/2026-07-15-fixture-035.md)",
+            "Task pending",
+        )
+    elif mutation == "program-execution-draft-multiple":
+        add_execution_pair("035", "035", status="draft")
+        add_execution_pair("035-extra", "035", status="draft")
+    elif mutation == "program-execution-draft-connected-extra":
+        add_execution_pair("035", "035", status="draft")
+        add_execution_node(
+            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035-extra.md"),
+            "sdlc/task",
+            "[Plan](../plans/2026-07-15-fixture-035.md)",
+            status="draft",
+        )
+    elif mutation == "program-execution-draft-status-mismatch":
+        add_execution_pair("035", "035", status="draft")
+        task = PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md")
+        mutated.metadata[task]["status"] = "active"
     elif mutation == "program-execution-gate":
         plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
         task = PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md")
@@ -8764,6 +8829,13 @@ def _self_test(root: Path) -> list[str]:
             "program-lineage-quote-depth-reference-is-not-evidence",
             "program-lineage-same-quote-reference-soft-break-is-evidence",
             "program-lineage-blocked-successor-execution",
+            "program-lineage-draft-successor-preplanning",
+            "program-lineage-draft-successor-plan-only",
+            "program-lineage-draft-successor-task-only",
+            "program-lineage-draft-successor-nonreciprocal-pair",
+            "program-lineage-draft-successor-multiple-pairs",
+            "program-lineage-draft-successor-connected-extra",
+            "program-lineage-draft-successor-status-mismatch",
             "program-lineage-ready-preplanning-gap",
             "program-lineage-successor-closure-gap",
             "program-lineage-successor-planning-gate",
@@ -9582,7 +9654,7 @@ def _self_test(root: Path) -> list[str]:
                         "PROGRAM-LINEAGE-EXECUTION-GATE",
                         "docs/03.specs/034-fixture/spec.md",
                         "sdlc/spec",
-                        "zero current execution component or one closed reciprocal current Plan/Task component with direct Spec links and relation-state parity for the first unfinished original tranche, and none for remaining original tranches or follow-ups",
+                        "zero current execution component; or one closed reciprocal Plan/Task component with direct own-Spec links and relation-state parity for the first unfinished original tranche; draft original successors may retain one such draft pair while follow-ups remain component-free",
                         "component=3, plans=1, tasks=2, direct-spec=False, execution-state=True, reciprocal=False, dependency-ready-original=True",
                         OWNER,
                     ),

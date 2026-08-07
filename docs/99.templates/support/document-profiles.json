@@ -6383,6 +6383,48 @@
           }
         ],
         "followUps": []
+      },
+      {
+        "prd": "007",
+        "ard": "0010",
+        "tranches": [
+          {
+            "spec": "047",
+            "order": 1,
+            "state": "active",
+            "reason": "Current surface and stash reconciliation",
+            "decision": "0021"
+          },
+          {
+            "spec": "048",
+            "order": 2,
+            "state": "draft",
+            "reason": "GitHub routing and CI evidence",
+            "decision": "0021"
+          },
+          {
+            "spec": "049",
+            "order": 3,
+            "state": "draft",
+            "reason": "Platform validation and security evidence",
+            "decision": "0021"
+          },
+          {
+            "spec": "050",
+            "order": 4,
+            "state": "draft",
+            "reason": "Example IaC and validator QA",
+            "decision": "0021"
+          },
+          {
+            "spec": "051",
+            "order": 5,
+            "state": "draft",
+            "reason": "Repository assurance integration and closure",
+            "decision": "0021"
+          }
+        ],
+        "followUps": []
       }
     ]
   }

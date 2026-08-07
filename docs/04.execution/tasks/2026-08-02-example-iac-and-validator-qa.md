@@ -84,8 +84,10 @@ current PASS evidence.
 
 - **Spec**: [Example IaC and Validator QA](../../03.specs/050-example-iac-and-validator-qa/spec.md)
 - **Plan**: [Example IaC and Validator QA Implementation Plan](../plans/2026-08-02-example-iac-and-validator-qa.md)
-- **Predecessor**: [Spec 049 Platform Validation and Security Evidence](../../03.specs/049-platform-validation-and-security-evidence/spec.md)
-- **Successor**: [Spec 051 Repository Assurance Integration and Closure](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)
+- **Predecessor**: Spec 049 Platform Validation and Security Evidence in the
+  PRD-007 program lineage
+- **Successor**: Spec 051 Repository Assurance Integration and Closure in the
+  PRD-007 program lineage
 
 ### Lifecycle Traceability
 

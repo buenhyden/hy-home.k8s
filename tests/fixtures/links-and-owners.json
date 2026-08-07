@@ -58,7 +58,7 @@
       {"path": "docs/03.specs/026-fixture/spec.md", "profile": "sdlc/spec", "status": "done", "body": "Historical original tranche."},
       {"path": "docs/03.specs/033-fixture/spec.md", "profile": "sdlc/spec", "status": "done", "body": "Historical follow-up body remains immutable."},
       {"path": "docs/03.specs/034-fixture/spec.md", "profile": "sdlc/spec", "status": "active", "body": "[PRD](../../01.requirements/006-fixture.md)\n[ARD](../../02.architecture/requirements/0009-fixture.md)\n[Plan](../../04.execution/plans/2026-07-15-fixture-034.md)"},
-      {"path": "docs/03.specs/035-fixture/spec.md", "profile": "sdlc/spec", "status": "active", "body": "[PRD](../../01.requirements/006-fixture.md)\n[ARD](../../02.architecture/requirements/0009-fixture.md)"},
+      {"path": "docs/03.specs/035-fixture/spec.md", "profile": "sdlc/spec", "status": "draft", "body": "[PRD](../../01.requirements/006-fixture.md)\n[ARD](../../02.architecture/requirements/0009-fixture.md)"},
       {"path": "docs/03.specs/041-fixture/spec.md", "profile": "sdlc/spec", "status": "done", "body": "Completed original tranche."},
       {"path": "docs/03.specs/042-fixture/spec.md", "profile": "sdlc/spec", "status": "active", "body": "[PRD](../../01.requirements/007-fixture.md)\n[ARD](../../02.architecture/requirements/0010-fixture.md)\n[Decision](../../02.architecture/decisions/0019-fixture.md)"},
       {"path": "docs/04.execution/plans/2026-07-15-fixture-034.md", "profile": "sdlc/plan", "status": "active", "body": "[Spec](../../03.specs/034-fixture/spec.md)\n[Task](../tasks/2026-07-15-fixture-034.md)"},
@@ -67,7 +67,7 @@
     ],
     "programs": [
       {"prd": "005", "ard": "0008", "tranches": [{"spec": "026", "order": 1, "state": "done", "reason": "Historical original", "decision": "0016"}], "followUps": [{"spec": "033", "order": 1, "state": "done", "reason": "Historical follow-up", "decision": "0017", "evidenceMode": "successor-record"}]},
-      {"prd": "006", "ard": "0009", "tranches": [{"spec": "034", "order": 1, "state": "active", "reason": "Dependency-ready", "decision": "0017"}, {"spec": "035", "order": 2, "state": "active", "reason": "Blocked successor", "decision": "0017"}], "followUps": []},
+      {"prd": "006", "ard": "0009", "tranches": [{"spec": "034", "order": 1, "state": "active", "reason": "Dependency-ready", "decision": "0017"}, {"spec": "035", "order": 2, "state": "draft", "reason": "Blocked successor", "decision": "0017"}], "followUps": []},
       {"prd": "007", "ard": "0010", "tranches": [{"spec": "041", "order": 1, "state": "done", "reason": "Completed original", "decision": "0019"}], "followUps": [{"spec": "042", "order": 1, "state": "active", "reason": "Mutable reciprocal follow-up", "decision": "0019", "evidenceMode": "reciprocal-body"}]}
     ]
   },
@@ -334,6 +334,13 @@
     {"name": "program-lineage-unmatched-code-next-container-historical", "mutation": "program-historical-code-container-recovery", "expected_rule_ids": []},
     {"name": "program-lineage-soft-break-code-span-is-not-evidence", "mutation": "program-historical-code-soft-break", "expected_rule_ids": ["PROGRAM-LINEAGE-HISTORICAL-EXCEPTION"]},
     {"name": "program-lineage-blocked-successor-execution", "mutation": "program-execution-gate", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-preplanning", "mutation": "program-execution-draft-preplanning", "expected_rule_ids": []},
+    {"name": "program-lineage-draft-successor-plan-only", "mutation": "program-execution-draft-plan-only", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-task-only", "mutation": "program-execution-draft-task-only", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-nonreciprocal-pair", "mutation": "program-execution-draft-nonreciprocal", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-multiple-pairs", "mutation": "program-execution-draft-multiple", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-connected-extra", "mutation": "program-execution-draft-connected-extra", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
+    {"name": "program-lineage-draft-successor-status-mismatch", "mutation": "program-execution-draft-status-mismatch", "expected_rule_ids": ["PROGRAM-LINEAGE-EXECUTION-GATE"]},
     {"name": "program-lineage-ready-preplanning-gap", "mutation": "program-execution-no-pair", "expected_rule_ids": []},
     {"name": "program-lineage-successor-closure-gap", "mutation": "program-execution-closure-gap", "expected_rule_ids": []},
     {"name": "program-lineage-successor-planning-gate", "mutation": "program-execution-closure-planning-gate", "expected_rule_ids": []},

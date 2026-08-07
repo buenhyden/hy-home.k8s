@@ -1,7 +1,7 @@
 ---
 title: 'Repository Delivery Evidence Architecture Reference Document'
 type: sdlc/ard
-status: draft
+status: active
 owner: platform
 updated: 2026-08-02
 ---
@@ -15,6 +15,9 @@ delivery and platform surfaces covered by PRD-007. It layers routing,
 projection, validation depth, evidence classification, review, and rollback on
 top of the current platform and document contracts without creating a second
 platform topology owner.
+
+ARD-0010 is active for the accepted ADR-0021 program decision and the active
+Spec 047 foundation tranche.
 
 The architecture consumes the existing validation-surface registry, document
 profiles, current local GitOps baseline, protected-surface validators, CI

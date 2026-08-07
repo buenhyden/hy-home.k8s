@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-02 - PRD-007 program foundation activation
+
+#### Metadata
+
+- **Date**: 2026-08-02
+- **Layer**: product, architecture, qa, meta
+- **Status**: active
+- **Tags**: #prd-007 #spec-047 #csasr-000 #program-activation
+- **Owner**: CSASR-000 activation
+- **Canonical Owner**: PRD-007 reciprocal PRD, ARD, ADR, Spec 047, Plan, and
+  Task
+- **Provenance**: approved written Plan at
+  `7a1923d0a93143e3f8d106e98ac5bee25e2a10b5` and preserved stash object
+  `6370311e020620cc2743005896cc88db97d15465`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain until Spec 051 records terminal integration
+  and stash disposition evidence
+- **Next Owner**: CSASR-001 tracked target inventory
+
+#### Progress
+
+- Activated PRD-007 and ARD-0010 with accepted ADR-0021 and enrolled ordered
+  Specs 047-051 under decision `0021`.
+- Made Spec 047 the only active unfinished relation; Specs 048-051 remain
+  planned draft successors.
+- Activated the reciprocal Spec 047 Plan and Task path without changing
+  downstream delivery, platform, IaC, provider, remote, live, or stash state.
+- Extended the registry self-test's exact immutable projection and proved that
+  a missing PRD-007 tranche mutation is rejected.
+- Preserved one reciprocal draft Plan/Task pair per successor tranche while
+  removing cross-tranche rendered Spec links, and extended the execution gate
+  with focused positive and negative draft-preplanning mutations.
+
+#### Evidence
+
+- Activation scope is limited to the reciprocal lifecycle documents and
+  indexes, program registry, registry self-test, and this progress entry.
+- The activation record does not preclaim its own content-addressed commit SHA.
+- The preserved stash remains unchanged and its untracked-parent payload was
+  not inspected.
+
+#### Handoff
+
+- CSASR-001 must enumerate the tracked target population through the current
+  validation-surface owner before any target disposition is recorded.
+
 ### 2026-08-02 - Repository delivery and platform assurance design baseline
 
 #### Metadata

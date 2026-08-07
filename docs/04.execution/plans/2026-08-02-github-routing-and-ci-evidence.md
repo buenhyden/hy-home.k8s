@@ -356,8 +356,10 @@ rtk git diff --cached --check
 - **Program**: [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
-- **Predecessor**: [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)
-- **Successor**: [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)
+- **Predecessor**: Spec 047 Current Surface and Stash Reconciliation in the
+  PRD-007 program lineage
+- **Successor**: Spec 049 Platform Validation and Security Evidence in the
+  PRD-007 program lineage
 
 ### Lifecycle Traceability
 

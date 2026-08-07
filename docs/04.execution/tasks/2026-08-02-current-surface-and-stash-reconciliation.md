@@ -1,7 +1,7 @@
 ---
 title: 'Task: Current Surface and Stash Reconciliation'
 type: sdlc/task
-status: draft
+status: active
 owner: platform
 updated: 2026-08-02
 ---
@@ -14,9 +14,9 @@ This Task is the durable execution ledger for Spec 047. It will record the
 PRD-007 program activation, current tracked target inventory, canonical
 surface/owner mapping, one disposition per target, tracked stash reconciliation
 categories, any current-generated residue evidence, reviews, validation, and
-the handoff to Spec 048. All rows are queued and this draft claims no
-implementation, stash content adoption, stash apply/pop/drop, remote, or live
-result.
+the handoff to Spec 048. CSASR-000 is in progress and all later rows remain
+queued. This activation claims no target implementation, stash content
+adoption, stash apply/pop/drop, remote, or live result.
 
 ## Inputs
 
@@ -35,7 +35,7 @@ result.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| CSASR-000 | VAL-CSASR-001, VAL-CSASR-009 | Activate PRD-007 lineage and reciprocal Spec/Plan/Task path | platform | Queued | Not executed | Program registry, projection validator, indexes, staged lifecycle, and activation commit |
+| CSASR-000 | VAL-CSASR-001, VAL-CSASR-009 | Activate PRD-007 lineage and reciprocal Spec/Plan/Task path | platform | In Progress | Exact activation set is under validation; activation SHA is not preclaimed | Program registry, projection validator, indexes, staged lifecycle, and activation commit |
 | CSASR-001 | VAL-CSASR-001, VAL-CSASR-002, VAL-CSASR-006 | Inventory every tracked target and resolve one surface/owner | platform | Queued | Not executed | Exact `git ls-files` population and affected-surface classification |
 | CSASR-002 | VAL-CSASR-002, VAL-CSASR-003 | Record audit delta and `change|no-change|defer` matrix | platform | Queued | Not executed | One Task row per target with observation, disposition, evidence, and successor |
 | CSASR-003 | VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007 | Record tracked stash hunk categories without applying or dropping stash | platform | Queued | Not executed | Full stash object/parent metadata, tracked path list, hunk categories, destination owner, and review |
@@ -70,15 +70,20 @@ result.
 
 ## Verification Summary
 
-Not executed. During implementation this section will contain the exact target
-disposition matrix, stash ledger, current-generator decision, logical commits,
-validator results, review outcomes, formatter effects, limitations, and
-successor handoff. Draft rows and planned commands are not PASS evidence.
+CSASR-000 starts from clean branch HEAD
+`7a1923d0a93143e3f8d106e98ac5bee25e2a10b5` and observes preserved stash
+object `6370311e020620cc2743005896cc88db97d15465`. It activates only the PRD-007
+lineage and reciprocal SDLC path; it does not preclaim its own commit SHA or
+any CSASR-001 through CSASR-005 result.
+
+Later work will add the exact target disposition matrix, stash ledger,
+current-generator decision, logical commits, validator results, review
+outcomes, formatter effects, limitations, and successor handoff.
 
 ## Traceability
 
-- **Spec**: Current Surface and Stash Reconciliation
-- **Plan**: Current Surface and Stash Reconciliation Implementation Plan
+- **Spec**: [Current Surface and Stash Reconciliation](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md)
+- **Plan**: [Current Surface and Stash Reconciliation Implementation Plan](../plans/2026-08-02-current-surface-and-stash-reconciliation.md)
 - **Successor**: Spec 048 GitHub Routing and CI Evidence
 - **Stash state**: preserved until Spec 051 finishing gate
 
@@ -86,7 +91,7 @@ successor handoff. Draft rows and planned commands are not PASS evidence.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [CSASR-000](../plans/2026-08-02-current-surface-and-stash-reconciliation.md#work-breakdown) | Not executed | Queued activation evidence. |
+| [CSASR-000](../plans/2026-08-02-current-surface-and-stash-reconciliation.md#work-breakdown) | In Progress | The reciprocal activation set is being validated; commit SHA is not yet claimed. |
 | N/A — CSASR-001 shares the Plan and Spec sources above | Not executed | Queued tracked inventory evidence. |
 | N/A — CSASR-002 shares the Plan and Spec sources above | Not executed | Queued disposition matrix evidence. |
 | N/A — CSASR-003 shares the Plan and Spec sources above | Not executed | Queued tracked stash reconciliation evidence. |

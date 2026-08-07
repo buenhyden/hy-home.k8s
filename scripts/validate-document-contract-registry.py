@@ -1981,30 +1981,6 @@ def _assert_inventory_safety(root: Path) -> None:
 
 
 def _assert_program_lineage_projection(registry: Registry) -> None:
-    immutable_actual = tuple(
-        (
-            program.prd_id,
-            program.ard_id,
-            tuple(
-                (
-                    relation.spec_id,
-                    relation.order,
-                    relation.decision_id,
-                )
-                for relation in program.tranches
-            ),
-            tuple(
-                (
-                    relation.spec_id,
-                    relation.order,
-                    relation.decision_id,
-                    relation.evidence_mode,
-                )
-                for relation in program.follow_ups
-            ),
-        )
-        for program in registry.program_lineage
-    )
     immutable_expected = (
         (
             "003",
@@ -2042,9 +2018,72 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
             ),
             (),
         ),
+        (
+            "007",
+            "0010",
+            (
+                ("047", 1, "0021"),
+                ("048", 2, "0021"),
+                ("049", 3, "0021"),
+                ("050", 4, "0021"),
+                ("051", 5, "0021"),
+            ),
+            (),
+        ),
     )
-    if immutable_actual != immutable_expected:
-        raise AssertionError("production program-lineage immutable projection differs")
+
+    def assert_immutable_projection(candidate: Registry) -> None:
+        immutable_actual = tuple(
+            (
+                program.prd_id,
+                program.ard_id,
+                tuple(
+                    (
+                        relation.spec_id,
+                        relation.order,
+                        relation.decision_id,
+                    )
+                    for relation in program.tranches
+                ),
+                tuple(
+                    (
+                        relation.spec_id,
+                        relation.order,
+                        relation.decision_id,
+                        relation.evidence_mode,
+                    )
+                    for relation in program.follow_ups
+                ),
+            )
+            for program in candidate.program_lineage
+        )
+        if immutable_actual != immutable_expected:
+            raise AssertionError(
+                "production program-lineage immutable projection differs"
+            )
+
+    assert_immutable_projection(registry)
+
+    program_007 = next(
+        program for program in registry.program_lineage if program.prd_id == "007"
+    )
+    missing_tranche_program = replace(
+        program_007,
+        tranches=program_007.tranches[:-1],
+    )
+    missing_tranche_candidate = replace(
+        registry,
+        program_lineage=tuple(
+            missing_tranche_program if program.prd_id == "007" else program
+            for program in registry.program_lineage
+        ),
+    )
+    try:
+        assert_immutable_projection(missing_tranche_candidate)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("missing PRD-007 tranche mutation accepted")
 
     def assert_state_contract(candidate: Registry) -> None:
         for program in candidate.program_lineage:

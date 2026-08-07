@@ -1,7 +1,7 @@
 ---
 title: 'Current Surface and Stash Reconciliation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-02
 ---
@@ -16,6 +16,9 @@ against current `main`, assigns one canonical owner and disposition, activates
 the ordered program lineage after written-plan approval, and reconciles saved
 stash object `6370311e...` without applying an obsolete snapshot over current
 contracts.
+
+Spec 047 is active as the program's only unfinished execution tranche; its
+successors remain draft and blocked from active execution.
 
 Spec 047 is an evidence and ownership foundation. It does not implement the
 GitHub routing, platform validation, or IaC validation gaps assigned to Specs
