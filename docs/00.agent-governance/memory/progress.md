@@ -8,6 +8,70 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Document taxonomy consolidation plan and task authoring
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs
+- **Status**: in-progress
+- **Tags**: #governance #docs #sdlc #taxonomy #planning
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
+- **Next Owner**: platform — execute WDTC-000 through WDTC-015.
+
+#### Progress
+
+Authored the Spec 052 implementation plan and its reciprocal task document.
+The plan decomposes the program into sixteen work packages, WDTC-000 through
+WDTC-015, ordered by ascending risk so that low-risk deletions shrink the file
+population that later high-blast-radius packages traverse. Each package is one
+revertible commit gated on the full repository quality gate.
+
+Restored the Spec 052 reciprocal plan and task links and added index rows to
+the plans and tasks stage READMEs.
+
+The plan declares one migration tool with an enumerated mapping and an explicit
+exclusion set, one taxonomy validator covering contracts C-1 through C-5, and
+an enforcement closure check for C-6. Package WDTC-012 is isolated because the
+majority of declared validators depend on the contracts it merges.
+
+#### Memory
+
+The repository uses two Python import conventions and mixing them breaks tests
+silently at collection time. Underscore-named library modules such as
+`scripts/archive_cutover.py` are imported plainly with `from scripts.X import`.
+Hyphen-named executable validators such as `scripts/validate-agent-checkpoint.py`
+are not importable module names and must be loaded through
+`importlib.util.spec_from_file_location` with a local `load_module()` helper.
+Plan and test authoring must pick the convention that matches the target
+filename.
+
+The cross-document validator enforces reciprocity and link-target profiles in
+both directions. A plan's Lifecycle Traceability `Expected Task` cell must be a
+repository-local link, its `Spec criterion` cell must resolve to a spec anchor,
+and the referenced spec must link back to the plan. A task's
+`Criterion / work item` cell follows the same rule against its plan. Only the
+first row carries the link; later rows use an `N/A — <ID> shares the ... source
+above` exclusion sentence.
+
+#### Evidence
+
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` — PASS after correcting three reciprocity and link-profile violations the validator caught.
+- `python3 scripts/validate-markdown-profiles.py --root .` — PASS, 0 violations.
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` — PASS, 497 paths, uncovered=0, ambiguous=0.
+- `bash scripts/validate-repo-quality-gates.sh .` — see the commit gate result.
+- All results are repository-static. No hosted CI, provider-runtime, remote, or live evidence is claimed.
+
+#### Handoff
+
+platform — execute WDTC-000 first to activate the reciprocal path and suspend
+PRD-007, then proceed in package order with the quality gate run before every
+commit.
+
 ### 2026-08-07 - Document taxonomy consolidation program definition
 
 #### Metadata

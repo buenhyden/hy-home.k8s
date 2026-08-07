@@ -108,6 +108,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-08-02-github-routing-and-ci-evidence.md
 ├── 2026-08-02-platform-validation-and-security-evidence.md
 ├── 2026-08-02-repository-assurance-integration-and-closure.md
+├── 2026-08-07-document-taxonomy-consolidation.md
 └── README.md
 ```
 
@@ -197,6 +198,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)의 surface-ID projection contract, native GitHub parity, CI lane preservation, and read-only remote evidence 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)의 depth-aware platform evidence, exact-tool Kustomize/schema validation, Traefik semantics, security regressions, and CI ownership 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)의 계약 통합, 전체 QA와 독립 검토, 로컬 fast-forward, 정확한 stash 폐기, worktree 정리, 수명주기 종결 실행 계획이다. | Draft | 2026-08-02 |
+| [`./2026-08-07-document-taxonomy-consolidation.md`](./2026-08-07-document-taxonomy-consolidation.md) | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)의 execution stage 폐지, work unit 통합, operations stage 재번호, 파일명 날짜 제거, lineage frontmatter, 규칙 문서 통합, machine contract 및 validator 감축 실행 계획이다. WDTC-000부터 WDTC-015까지 위험 오름차순 논리 커밋으로 진행하며 archive 불가침을 전 구간 제약으로 둔다. | Draft | 2026-08-07 |
 
 ## Related Documents
 
