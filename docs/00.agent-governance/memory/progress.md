@@ -8,6 +8,84 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-07 - Research collection file merge and Current-pack retirement
+
+#### Metadata
+
+- **Date**: 2026-08-07
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #research #consolidation #ria-cutover #stage90
+- **Owner**: Research collection file merge
+- **Canonical Owner**: `docs/90.references/research/2026-08-07-wer/research-consolidation-and-supersession-map.md`
+- **Provenance**: reference information architecture contract and validators,
+  the two dated research packs, and working-tree validation on 2026-08-07
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: retain under the collection owner; refresh when a new
+  dated pack appears or a Current-pack registry decision changes
+- **Next Owner**: none
+
+#### Progress
+
+- Retired the research collection from the Current-pack registry so its packs
+  became ordinary Stage 90 references. The audit collection and the
+  `2026-07-04` snapshot guard stay frozen.
+- Moved the six `2026-08-07` references from the interim `workspace-research`
+  collection into `docs/90.references/research/2026-08-07-wer`, the originally
+  requested location, and removed the interim collection.
+- Merged the eleven carried-forward `2026-07-04` facts into their `2026-07-07`
+  owners under a `Merged 2026-07-04 Facts` subsection.
+- Narrowed two validator scopes with stated reasons: the migration ledger owes
+  one row per baseline path, and a retired collection's cutover projection
+  guards nothing without a declared baseline.
+
+#### Memory
+
+- The reference information architecture is a closed, non-forgeable FSM. Its
+  settlement proof requires the current contract to equal the contract at the
+  settled commit with only three fields differing, so any other contract field
+  change invalidates it permanently. The safe way to release a collection is to
+  retire it from the Current-pack registry, not to rewrite the settlement.
+- Unfreezing cascades. Releasing the pack surfaced, in order: the registry
+  schema `minItems`, the audits-then-research ordering rule, the mutation
+  harness that assumed two packs, the migration ledger's whole-inventory
+  coverage rule, the Current-owner singularity check, the registry projection
+  equality check, and the historical cutover projection lookup. Budget for the
+  chain, not for one gate.
+- A migration ledger records what was migrated. When its coverage rule was
+  scoped to the whole current inventory it demanded 46 rows for documents that
+  no migration ever touched; writing them would have falsified the record.
+  Scoping coverage to the baseline corpus is the honest fix.
+- Audit records cite the artifacts they audited. Thirty-eight links inside
+  frozen audit packs point at `2026-07-04` files, so that pack is retained as
+  cited evidence even though its content is now merged forward.
+- Validator and contract edits are blocked for opaque shell rewrites but
+  allowed through the file-editing tools, and the pre-edit hook blocks edits
+  inside `.worktrees/`. Edit on the main checkout instead.
+
+#### Evidence
+
+- `targeted`: `python3 scripts/validate-reference-information-architecture.py --root .`
+  and `python3 scripts/validate-links-and-owners.py --root . --mode strict`:
+  FAIL then PASS after each scoped fix; final strict link run reported zero
+  diagnostics.
+- `targeted`: `bash scripts/validate-repo-quality-gates.sh .`:
+  `[PASS] repository quality gates passed` before each of the three commits.
+- `staged`: recorded by each committing step.
+- `all-files`: pending the closing run; the previously recorded
+  `detect-secrets` finding on the assurance plan is unrelated to this change.
+- `ci`: repository-static only; `DEFER`.
+- `remote/live`: `DEFER`. No cluster, provider runtime, push, or remote action.
+
+#### Handoff
+
+- `docs/90.references/research/` now holds `2026-07-04-wer`, `2026-07-07-wer`,
+  and `2026-08-07-wer`; `workspace-research` no longer exists.
+- The collection declares no Current pack. If a future program needs one, add
+  it back to `referenceCurrentPacks` and restore the ordering expectation.
+- Push, PR, merge, hosted CI, and live verification remain pending human
+  authorization.
+
 ### 2026-08-07 - Research collection consolidation and supersession map
 
 #### Metadata
