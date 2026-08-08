@@ -55,7 +55,7 @@ keys, states, headings, and templates must be read from the registry rather
 than copied into a Markdown table.
 
 The [Document Type Format and Evidence
-Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+Contract](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 records why the repository adopted these metadata roles and which external
 guidance it rejected; it is evidence, not a second schema owner.
 
@@ -102,7 +102,7 @@ has exactly one frontmatter profile. The gate rejects:
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)

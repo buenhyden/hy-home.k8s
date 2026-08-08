@@ -13,14 +13,14 @@
   },
   "runbook": {
     "canonicalPath": "docs/05.operations/runbooks/0099-example-runbook.md",
-    "referencePath": "docs/90.references/research/2026-07-07-wer/runbook-copy.md",
+    "referencePath": "docs/90.references/research/2026-08-08-wer/runbook-copy.md",
     "canonicalParagraph": "Before recovery begins, capture the current symptoms and immutable identifiers, verify prerequisites without exposing secret values, execute only the approved bounded commands, compare the result with the acceptance criteria, and record rollback or escalation evidence when any check fails.",
     "referenceParagraph": "Before recovery begins, capture the current symptoms and immutable identifiers, verify prerequisites without exposing `secret values`, execute only the approved bounded commands, compare the result with the acceptance criteria, and record rollback or escalation evidence when any check fails."
   },
   "structural": {
     "canonicalPath": "docs/00.agent-governance/rules/navigation-policy.md",
-    "referencePath": "docs/90.references/research/2026-07-07-wer/navigation-copy.md",
-    "secondReferencePath": "docs/90.references/research/2026-07-07-wer/navigation-copy-two.md",
+    "referencePath": "docs/90.references/research/2026-08-08-wer/navigation-copy.md",
+    "secondReferencePath": "docs/90.references/research/2026-08-08-wer/navigation-copy-two.md",
     "canonicalParagraph": "See the [canonical governance owner](../README.md) for the complete approval, evidence, rollback, and escalation contract; this dated reference supplies comparison context only and must never become an alternate policy, implementation contract, operational procedure, or runtime authority.",
     "referenceParagraph": "See the [canonical governance owner](../../../../00.agent-governance/README.md) for the complete approval, evidence, rollback, and escalation contract; this dated reference supplies comparison context only and must never become an alternate policy, implementation contract, operational procedure, or runtime authority.",
     "normalizedVisible": "see the canonical governance owner for the complete approval, evidence, rollback, and escalation contract; this dated reference supplies comparison context only and must never become an alternate policy, implementation contract, operational procedure, or runtime authority."

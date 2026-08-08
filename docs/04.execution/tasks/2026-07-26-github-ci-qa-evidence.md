@@ -77,7 +77,7 @@ claim its own commit.
 - [Git workflow](../../00.agent-governance/rules/git-workflow.md)
 - [GitHub configuration hub](../../../.github/README.md)
 - [Technology version inventory](../../90.references/data/tech-stack-version-inventory.md)
-- [Settled migration snapshot](../../90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
 - [Predecessor Spec 038 Task](./2026-07-22-reference-information-architecture.md)
 
 ## Task Table

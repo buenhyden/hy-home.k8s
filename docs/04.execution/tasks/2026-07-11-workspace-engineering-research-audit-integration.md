@@ -21,7 +21,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
   research and audit integration.
 - **Parent Plan**: [Workspace Engineering Research and Implementation Audit Integration Plan](../plans/2026-07-11-workspace-engineering-research-audit-integration.md).
 - **Current Audit Pack**: [2026-07-11 Workspace Engineering Implementation Audit](../../90.references/audits/2026-07-11-weia/README.md).
-- **Current Research Pack**: [2026-07-07 Workspace Engineering Research](../../90.references/research/2026-07-07-wer/README.md).
+- **Current Research Pack**: `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md).
 
 ## Task Table
 
@@ -118,4 +118,4 @@ third-party mutation check or action was performed.
 - [Plan](../plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Audits Index](../../90.references/audits/README.md)
-- [Current Research Pack](../../90.references/research/2026-07-07-wer/README.md)
+- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)

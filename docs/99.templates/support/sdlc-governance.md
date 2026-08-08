@@ -34,7 +34,7 @@ another.
 
 The research basis and local adoption decisions for those families are recorded
 in the [Document Type Format and Evidence
-Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md).
+Contract](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md).
 
 Incident folders are created only for real incidents. The incident fact record
 uses a filename that matches the incident folder, and the postmortem is always
@@ -125,7 +125,7 @@ postmortems own retrospective analysis and prevention actions.
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [Template Routing](./template-routing.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

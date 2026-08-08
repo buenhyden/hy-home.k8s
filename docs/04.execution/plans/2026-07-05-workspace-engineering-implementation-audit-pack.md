@@ -910,7 +910,7 @@ Expected: commit succeeds and the worktree is clean.
 - **Research Pack Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Prior Audit Pack Spec**: [../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
 - **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md)
-- **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
+- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)

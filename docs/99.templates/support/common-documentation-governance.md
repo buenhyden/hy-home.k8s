@@ -36,7 +36,7 @@ selected research and audit packs, their allowed lifecycle states, and exact
 member basenames. Collection and pack READMEs are validated human mirrors.
 
 The [Document Type Format and Evidence
-Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+Contract](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 records the external and local evidence behind these role decisions.
 
 ## Authoring Rules
@@ -161,7 +161,7 @@ record those boundaries separately when they apply.
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

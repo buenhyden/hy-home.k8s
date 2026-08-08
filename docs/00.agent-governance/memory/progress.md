@@ -8,6 +8,102 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-007 research-pack consumer migration
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #migration #reference-ia #links #contracts
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-007 repository-static RED/GREEN migration evidence
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure and preserve the sourceCommit-bounded classifications afterward.
+- **Next Owner**: platform — execute WERPC-008 exact predecessor readiness proof and deletion.
+
+#### Progress
+
+Migrated the surviving `2026-08-08-wer` navigation and the RIA, agent-cutover,
+active-corpus, README/profile, validation-surface, template, Guide 0010, and
+archive-cutover projections with their schemas, producers, fixtures, and
+tests. The exact Plan Step 1 scan moved from 819 lines/87 files to 732 lines/70
+files; the surviving ledger has one exact file/class/count/owner row for every
+remaining hit and the table sums to the same 732/70 result. Three old-pack
+README fixture rows remain solely to preserve the exact pre-deletion active54
+inventory and are an atomic WERPC-008 row-plus-file removal obligation, not
+current navigation or Current-pack authority.
+
+#### Memory
+
+RIA `snapshotGuard` and `currentPackBaselines` documents are immutable
+sourceCommit-pinned evidence, so current-link rewrites cannot alter their
+bytes. A missing predecessor target is accepted only when the source is an
+exact protected Git blob/current-byte match and the complete 25-path WERPC
+disposition table maps that exact old path to an existing tracked new owner.
+Unprotected sources, unknown targets, incomplete or mismatched dispositions,
+wrong commits, and byte drift retain `LINK-BROKEN`.
+
+#### Evidence
+
+- Initial RIA RED: 88 tests, 10 failures and one error, including stale
+  transition/current-owner/count assumptions. Initial agent-cutover RED: 37
+  tests with one `AGQC-LEGACY-FIXTURE` error.
+- Protected-link TDD RED: the valid protected historical case still returned
+  `LINK-BROKEN`. GREEN fixtures cover Current and snapshot valid cases plus
+  unprotected-source, disposition-drift, wrong-sourceCommit, and protected-byte
+  drift negatives.
+- GREEN: isolated staged RIA 88/88; agent cutover 37/37; active-corpus 19/19;
+  direct RIA validator; document registry self-test and strict 514; links
+  strict and self-test; archive validation; changed-Python compile; and
+  `git diff --check` PASS. A migration reviewer staged the exact 53-file scope
+  while proving index authority; cached diff/scope checks and the actual staged
+  RIA 88/88 plus direct validator pass, and forbidden Stage 98/predecessor-root
+  diffs are zero. The reviewer also started harness/full-gate commands outside
+  its read-only brief; both were interrupted with exit 130 and are not PASS
+  evidence. The controller owns the required clean reruns.
+- The first pre-review harness attempt correctly failed on the three removed
+  predecessor README fixture rows. Restoring them as phase-bounded synthetic
+  pre-deletion inventory made the focused registry self-test PASS; the harness
+  and complete gate rerun remain pending fresh review.
+- Fresh review exposed an exact-header mismatch: the validator expected
+  `Topic scope` while the production disposition table owns `Topic or
+  heading`. Updating the fixture and adding a production-table parse assertion
+  produced four focused RED findings, then the unified header made links
+  self-test/strict PASS. A fresh isolated clone with all 25 predecessor files
+  removed also passes strict links/owners.
+- Python review then exposed inherited Git configuration in the fixture commit
+  and provenance reads. A hostile global hooks/signing probe failed before the
+  fix; production reads now use the hardened RIA commit reader, and fixture Git
+  uses `/usr/bin/git`, a closed environment, an exact argv allowlist, disabled
+  hooks/signing, bounded output, and a timeout. The hostile probe, Python
+  compile, links self-test/strict, and diff check now PASS; Python review and
+  QA re-review are Approved with no remaining Critical or Important finding.
+- The controller-owned complete gate initially exposed
+  `CLOSURE-SOURCE-DRIFT`, then exact current/guard identity drift after the
+  source projection was refreshed. Updating the one migration-source object
+  and eleven exact current/guard object IDs made the residue-closure self-test
+  and production check PASS.
+- A temporary broad currentness exception added outside a read-only review
+  brief was independently audited and removed. The final gate reuses the
+  reviewed exact 25-row disposition parser, requires every replacement owner
+  to exist and remain tracked, and exempts only the old
+  `document-migration-evidence-ledger.md` until WERPC-008 deletes it; the other
+  24 predecessor documents remain inside the normal stale-currentness scan.
+- `bash scripts/validate-repo-quality-gates.sh .` and
+  `bash scripts/validate-harness.sh` both PASS on the final staged tree. The
+  harness includes the repository gate plus GitOps structure, Kubernetes
+  syntax/kube-linter, secret handling, Vault/ESO, policy fallback, static
+  infrastructure contracts, and diff hygiene.
+
+#### Handoff
+
+WERPC-007 is complete. WERPC-008 owns the exact 25-file deletion and the atomic
+removal of the three phase-bounded README fixture rows. Provider/runtime,
+hosted, remote, credential, secret, and live actions were not performed or
+claimed.
+
 ### 2026-08-08 - WERPC-006 AI agents, model routing, and memory research
 
 #### Metadata
@@ -5581,7 +5677,7 @@ each logical commit.
 - `bash scripts/validate-repo-quality-gates.sh .` PASS with
   `[PASS] repository quality gates passed`.
 - Incomplete-marker scan across the
-  [Current pack](../../90.references/research/2026-07-07-wer/README.md), Plan,
+  `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md), Plan,
   and Task found no matches and returned the expected exit 1.
 - Installed `pre-commit run --all-files` PASS for every applicable hook; the
   Dockerfile-only hook skipped because it had no files.

@@ -57,9 +57,9 @@ results.
 - [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
 - [Current audit pack](../../90.references/audits/2026-07-11-weia/README.md)
-- [Current research pack](../../90.references/research/2026-07-07-wer/README.md)
+- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [Document profile registry](../../99.templates/support/document-profiles.json)
-- [Migration evidence ledger](../../90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
 - [Predecessor Spec 037 Task](./2026-07-18-active-corpus-and-execution-retention.md)
 
 ## Task Table

@@ -41,7 +41,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/README.md",
         "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [
@@ -96,7 +96,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/README.md",
         "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [
@@ -150,7 +150,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/README.md",
         "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [
@@ -205,7 +205,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
         "docs/04.execution/tasks/README.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [
@@ -259,7 +259,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
         "docs/04.execution/tasks/README.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [
@@ -314,7 +314,7 @@
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
         "docs/04.execution/tasks/README.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
       ],
       "validationResult": "PASS",
       "records": [

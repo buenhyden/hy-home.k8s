@@ -1207,7 +1207,7 @@ mapping. The implementation must re-verify every finding before publication.
 
 - **Spec**: [Workspace Engineering Research Pack Specification](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Task**: [../tasks/2026-07-10-current-research-pack-fact-first-hardening.md](../tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
-- **Current Research Pack**: [2026-07-07 Current WER Pack](../../90.references/research/2026-07-07-wer/README.md)
-- **Historical Research Pack**: [2026-07-04 Historical WER Pack](../../90.references/research/2026-07-04-wer/README.md)
+- **Current Research Pack**: `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
+- **Historical Research Pack**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Reference Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)
 - **Task Template**: [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

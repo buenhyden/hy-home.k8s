@@ -88,7 +88,7 @@ excluded.
 ### Sources
 
 - [Approved pack design](../../90.references/audits/2026-07-11-weia/README.md)
-- [Current research pack](../../90.references/research/2026-07-07-wer/README.md)
+- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [Research index](../../90.references/research/README.md)
 - [Audit index](../../90.references/audits/README.md)
 - [Reference template](../../99.templates/templates/common/reference.template.md)
@@ -1039,6 +1039,6 @@ advancing. This checklist is the durable execution ledger.
 
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Audit Integration Task](../tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
-- [Current Research Pack](../../90.references/research/2026-07-07-wer/README.md)
+- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [Audits Index](../../90.references/audits/README.md)
 - [Research Index](../../90.references/research/README.md)

@@ -142,7 +142,7 @@
       "target": "filesystem",
       "mutation": {
         "kind": "add-active-reference",
-        "path": "docs/90.references/research/2026-07-07-wer/unowned-accepted.md",
+        "path": "docs/90.references/research/2026-08-08-wer/unowned-accepted.md",
         "status": "accepted"
       },
       "expectedRule": "AGQC-LEGACY-CONSUMER"

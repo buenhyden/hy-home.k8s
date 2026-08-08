@@ -30,7 +30,7 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-legacy-cutover.json")
 FIXTURE_SHA256 = (
-    "8a03f0722cc27c76152b09038d70d0fa95f9497a3b514c2036547a38b045b893"  # pragma: allowlist secret
+    "c38a84bf4a2abe9c3571df0c0b97125a3ba386c8fc81ae57f5e9b3d565fbce7f"  # pragma: allowlist secret
 )
 
 SCHEMA_VERSION = 1
@@ -111,26 +111,7 @@ HARNESS_CUTOVER = {
 CURRENT_AUTHORITY_MIGRATIONS = (
     {
         "path": (
-            "docs/90.references/research/2026-07-07-wer/"
-            "automation-pipeline-workflow-qa.md"
-        ),
-        "from": RETIRED_SURFACES[4],
-        "to": REPLACEMENT_SURFACES[4],
-        "count": 3,
-    },
-    {
-        "path": (
-            "docs/90.references/research/2026-07-07-wer/"
-            "document-migration-evidence-ledger.md"
-        ),
-        "from": RETIRED_SURFACES[4],
-        "to": REPLACEMENT_SURFACES[4],
-        "count": 3,
-    },
-    {
-        "path": (
-            "docs/90.references/research/2026-07-07-wer/"
-            "kubernetes-infrastructure-security.md"
+            "docs/90.references/research/2026-08-08-wer/README.md"
         ),
         "from": RETIRED_SURFACES[4],
         "to": REPLACEMENT_SURFACES[4],
@@ -138,12 +119,21 @@ CURRENT_AUTHORITY_MIGRATIONS = (
     },
     {
         "path": (
-            "docs/90.references/research/2026-07-07-wer/"
-            "workspace-governance-baseline.md"
+            "docs/90.references/research/2026-08-08-wer/"
+            "ci-cd-github-actions-and-qa.md"
         ),
         "from": RETIRED_SURFACES[4],
         "to": REPLACEMENT_SURFACES[4],
         "count": 2,
+    },
+    {
+        "path": (
+            "docs/90.references/research/2026-08-08-wer/"
+            "source-coverage-and-migration-ledger.md"
+        ),
+        "from": RETIRED_SURFACES[4],
+        "to": REPLACEMENT_SURFACES[4],
+        "count": 1,
     },
 )
 PACKAGE_REFERENCES = (
@@ -163,7 +153,7 @@ MIGRATION_REFERENCES = (
     "docs/00.agent-governance/memory/progress.md",
 )
 ALLOWED_REFERENCE_COUNTS = (
-    (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 9)),
+    (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 8)),
     (SCHEMA_PATH.as_posix(), (0, 0, 0, 0, 0)),
     ("scripts/validate-agent-legacy-cutover.py", (1, 1, 1, 1, 1)),
     ("scripts/validate-links-and-owners.py", (1, 1, 1, 1, 4)),

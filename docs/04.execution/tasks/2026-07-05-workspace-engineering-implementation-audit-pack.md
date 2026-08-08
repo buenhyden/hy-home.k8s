@@ -21,7 +21,7 @@ and closes validation through local static checks.
 - **Parent Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Parent Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
-- **Research Pack**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
+- **Research Pack**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits Index**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 
 ## Task Table
@@ -420,6 +420,6 @@ mutation.
 
 - **Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)
-- **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
+- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Task Index**: [README.md](./README.md)

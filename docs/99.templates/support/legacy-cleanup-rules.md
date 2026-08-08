@@ -22,7 +22,7 @@ roles, or obsolete sections as current rules.
 The closed v8 [Document Profile Registry](./document-profiles.json) owns current
 machine values. This document is the single support owner for the migration and
 removal policy used to identify and dispose of legacy representations. The [Document Type Format and Evidence
-Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+Contract](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 records the research basis for the replacement families without becoming an
 enforcement source.
 
@@ -99,7 +99,7 @@ template-use instructions; authored docs must not retain those markers.
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Template Routing](./template-routing.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

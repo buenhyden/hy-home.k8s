@@ -23,9 +23,9 @@ live runtime or remote readiness.
 - **Parent Plan**:
   [Current Research Pack Fact-First Hardening Implementation Plan](../plans/2026-07-10-current-research-pack-fact-first-hardening.md)
 - **Current Pack**:
-  [2026-07-07 Workspace Engineering Research Pack](../../90.references/research/2026-07-07-wer/README.md)
+  `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Historical Context**:
-  [2026-07-04 Workspace Engineering Research Pack](../../90.references/research/2026-07-04-wer/README.md)
+  `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Provider-model source cutoff**: `2026-07-10 10:00 KST`
 
 ## Task Table
@@ -840,9 +840,9 @@ live runtime or remote readiness.
 - **Plan**:
   [Current Research Pack Fact-First Hardening Implementation Plan](../plans/2026-07-10-current-research-pack-fact-first-hardening.md)
 - **Current Research Pack**:
-  [2026-07-07 WER](../../90.references/research/2026-07-07-wer/README.md)
+  `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Historical Research Pack**:
-  [2026-07-04 WER](../../90.references/research/2026-07-04-wer/README.md)
+  `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Task Template**:
   [Stage 04 Task Template](../../99.templates/templates/sdlc/execution/task.template.md)
 - **Task Index**: [Stage 04 Tasks](./README.md)

@@ -16,7 +16,7 @@
   },
   "currentPackBaselines": {
     "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
-    "research/2026-07-07-wer": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+    "research/2026-08-08-wer": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
   },
   "baselineTransitions": [],
   "baselineSettlements": [],

@@ -16,6 +16,7 @@ import os
 import posixpath
 import re
 import stat
+import subprocess
 import sys
 import tempfile
 import time
@@ -50,6 +51,7 @@ from document_contracts import (
 from reference_information_architecture import (
     ContractError as RiaContractError,
     _GitError as RiaGitError,
+    _read_commit_path as _read_ria_commit_path,
     load_agent_cutover_projections,
 )
 
@@ -57,15 +59,18 @@ from reference_information_architecture import (
 FIXTURE_PATH = Path("tests/fixtures/links-and-owners.json")
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 LEDGER_PATH = PurePosixPath(
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
 )
 RIA_CONTRACT_PATH = PurePosixPath(
     "docs/90.references/data/reference-information-architecture.json"
 )
+DOCUMENT_PROFILES_PATH = PurePosixPath(
+    "docs/99.templates/support/document-profiles.json"
+)
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
-LEDGER_SETTLEMENT_PACK_ID = "research/2026-07-07-wer"
-LEDGER_SETTLEMENT_SUBJECT = "document-migration-evidence-ledger"
+LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
+LEDGER_SETTLEMENT_SUBJECT = "source-coverage-and-migration-ledger"
 LEDGER_SETTLEMENT_FROM_COMMIT = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 LEDGER_SETTLEMENT_REASON = (
     "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b "
@@ -103,6 +108,70 @@ LEDGER_COLUMNS = (
     "reviewer",
     "result",
 )
+WERPC_DISPOSITION_COLUMNS = (
+    "old path",
+    "source commit",
+    "topic or heading",
+    "verification",
+    "new owner",
+    "disposition",
+    "reason and evidence",
+)
+WERPC_DELETION_DISPOSITION = "Delete in WERPC-008 after cutover gate"
+FIXTURE_GIT_EXECUTABLE = "/usr/bin/git"
+FIXTURE_GIT_TIMEOUT_SECONDS = 10
+FIXTURE_GIT_MAX_STDOUT = 65_536
+FIXTURE_GIT_MAX_STDERR = 16_384
+FIXTURE_GIT_ENVIRONMENT = {
+    "HOME": "/nonexistent",
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_LITERAL_PATHSPECS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+}
+FIXTURE_GIT_ARGUMENTS = frozenset(
+    {
+        ("init", "-q"),
+        ("add", "--", "."),
+        ("commit", "-q", "-m", "fixture baseline"),
+        ("rev-parse", "HEAD"),
+    }
+)
+WERPC_PREDECESSOR_PATHS = frozenset(
+    {
+        "docs/90.references/research/2026-07-04-wer/README.md",
+        "docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md",
+        "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md",
+        "docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md",
+        "docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md",
+        "docs/90.references/research/2026-07-04-wer/provider-implementation-status.md",
+        "docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md",
+        "docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md",
+        "docs/90.references/research/2026-07-07-wer/README.md",
+        "docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md",
+        "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
+        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+        "docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md",
+        "docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md",
+        "docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md",
+        "docs/90.references/research/2026-07-07-wer/provider-implementation-status.md",
+        "docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md",
+        "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+        "docs/90.references/research/2026-08-07-wer/README.md",
+        "docs/90.references/research/2026-08-07-wer/agent-memory-tiers-and-management.md",
+        "docs/90.references/research/2026-08-07-wer/agent-model-routing-and-configuration.md",
+        "docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md",
+        "docs/90.references/research/2026-08-07-wer/github-actions-and-ci-evidence.md",
+        "docs/90.references/research/2026-08-07-wer/llm-wiki-and-knowledge-routing.md",
+        "docs/90.references/research/2026-08-07-wer/research-consolidation-and-supersession-map.md",
+    }
+)
 DEBT_LITERAL = {
     "ruleId": "LEDGER-MISSING",
     "path": LEDGER_PATH.as_posix(),
@@ -136,6 +205,7 @@ IMPLEMENTED_RULES = frozenset(
         "LEDGER-MISSING",
         "LEDGER-INCOMPLETE",
         "LEDGER-UNKNOWN-PATH",
+        "LEDGER-PREDECESSOR-DISPOSITION",
         "LEDGER-PROTECTED-DRIFT",
         "DEBT-UNUSED",
         "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
@@ -308,7 +378,7 @@ COLLECTION_INDEXES = (
         PurePosixPath("docs/90.references/research"),
         re.compile(
             r"^docs/90\.references/research/(?:README\.md|"
-            r"[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/[^/]+\.md)$"
+            r"2026-08-08-wer/[^/]+\.md)$"
         ),
         "## Item Index",
         "research/",
@@ -317,11 +387,11 @@ COLLECTION_INDEXES = (
         True,
     ),
     CollectionIndex(
-        PurePosixPath("docs/90.references/research/2026-07-07-wer/README.md"),
-        PurePosixPath("docs/90.references/research/2026-07-07-wer"),
-        re.compile(r"^docs/90\.references/research/2026-07-07-wer/[^/]+\.md$"),
+        PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"),
+        PurePosixPath("docs/90.references/research/2026-08-08-wer"),
+        re.compile(r"^docs/90\.references/research/2026-08-08-wer/[^/]+\.md$"),
         "### Structure",
-        "2026-07-07-wer/",
+        "2026-08-08-wer/",
         "## Report Index",
         "section",
         False,
@@ -2331,6 +2401,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             if not _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
+                if _protected_historical_predecessor_link(context, source, target):
+                    continue
                 replacement = _retired_reference_replacement(
                     context,
                     source,
@@ -5242,6 +5314,178 @@ def _ledger_rows(text: str) -> tuple[tuple[str, ...] | None, list[list[str]]]:
     return None, []
 
 
+def _werpc_predecessor_disposition_map(
+    text: str,
+) -> dict[PurePosixPath, PurePosixPath] | None:
+    """Return exact predecessor-to-current owners for a complete deletion ledger."""
+
+    lines = _visible_markdown(text).splitlines()
+    rows: list[list[str]] | None = None
+    for index, line in enumerate(lines):
+        if not line.startswith("|"):
+            continue
+        columns = tuple(cell.strip().casefold() for cell in line.strip("|").split("|"))
+        if columns != WERPC_DISPOSITION_COLUMNS:
+            continue
+        rows = []
+        for row_line in lines[index + 2 :]:
+            if not row_line.startswith("|"):
+                break
+            rows.append([cell.strip() for cell in row_line.strip("|").split("|")])
+        break
+    if rows is None:
+        return None
+    dispositions: dict[PurePosixPath, PurePosixPath] = {}
+    for row in rows:
+        if len(row) != 7:
+            return None
+        raw_path, source_commit, _topic, verification, new_owner, disposition, reason = row
+        if (
+            not raw_path.startswith("`")
+            or not raw_path.endswith("`")
+            or not source_commit.startswith("`")
+            or not source_commit.endswith("`")
+            or re.fullmatch(r"[0-9a-f]{40}", source_commit[1:-1]) is None
+            or not verification
+            or not new_owner.startswith("`")
+            or not new_owner.endswith("`")
+            or not new_owner[1:-1]
+            or disposition != WERPC_DELETION_DISPOSITION
+            or not reason
+        ):
+            return None
+        old_path = PurePosixPath(raw_path[1:-1])
+        owner_name = new_owner[1:-1]
+        owner_path = PurePosixPath(
+            "docs/90.references/research/2026-08-08-wer"
+        ) / owner_name
+        if (
+            old_path in dispositions
+            or owner_name != PurePosixPath(owner_name).name
+            or owner_path.suffix != ".md"
+        ):
+            return None
+        dispositions[old_path] = owner_path
+    if frozenset(path.as_posix() for path in dispositions) != WERPC_PREDECESSOR_PATHS:
+        return None
+    return dispositions
+
+
+def _werpc_predecessor_dispositions(text: str) -> frozenset[str] | None:
+    """Return the exact predecessor set only for a complete deletion ledger."""
+
+    dispositions = _werpc_predecessor_disposition_map(text)
+    if dispositions is None:
+        return None
+    return frozenset(path.as_posix() for path in dispositions)
+
+
+def _protected_historical_predecessor_link(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> bool:
+    """Prove one missing target is immutable RIA-protected historical evidence."""
+
+    if (
+        target.as_posix() not in WERPC_PREDECESSOR_PATHS
+        or context.ria_contract_text is None
+        or LEDGER_PATH not in context.texts
+    ):
+        return False
+    dispositions = _werpc_predecessor_disposition_map(context.texts[LEDGER_PATH])
+    if dispositions is None:
+        return False
+    new_owner = dispositions.get(target)
+    if (
+        new_owner is None
+        or new_owner not in context.paths
+        or new_owner not in context.tracked_regular_paths
+    ):
+        return False
+    try:
+        contract = json.loads(context.ria_contract_text)
+    except (json.JSONDecodeError, UnicodeError):
+        return False
+    baselines = contract.get("currentPackBaselines")
+    if not isinstance(baselines, dict):
+        return False
+    for pack in context.reference_current_packs.packs:
+        protected_paths = (pack.pack_readme, *pack.member_paths)
+        if source not in protected_paths:
+            continue
+        encoded = baselines.get(pack.id)
+        if not isinstance(encoded, str) or GIT_SHA1_PATTERN.fullmatch(encoded) is None:
+            return False
+        oid = encoded.removeprefix("git-sha1:")
+        try:
+            registry_bytes = _read_ria_commit_path(
+                context.root,
+                oid,
+                Path(DOCUMENT_PROFILES_PATH.as_posix()),
+            )
+            source_bytes = _read_ria_commit_path(
+                context.root,
+                oid,
+                Path(source.as_posix()),
+            )
+            baseline_registry = json.loads(registry_bytes.decode("utf-8", "strict"))
+        except (
+            RiaContractError,
+            RiaGitError,
+            UnicodeDecodeError,
+            json.JSONDecodeError,
+        ):
+            return False
+        reference_packs = baseline_registry.get("referenceCurrentPacks")
+        if not isinstance(reference_packs, dict):
+            return False
+        if reference_packs.get("profileId") != context.reference_current_packs.profile_id:
+            return False
+        raw_packs = reference_packs.get("packs")
+        if not isinstance(raw_packs, list):
+            return False
+        expected_pack = {
+            "id": pack.id,
+            "allowedStates": list(pack.allowed_states),
+            "members": list(pack.members),
+        }
+        if expected_pack not in raw_packs:
+            return False
+        return source_bytes == context.texts[source].encode("utf-8")
+    guard = contract.get("snapshotGuard")
+    if not isinstance(guard, dict):
+        return False
+    encoded = guard.get("sourceCommit")
+    historical_pack_ids = guard.get("historicalPackIds")
+    if (
+        not isinstance(encoded, str)
+        or GIT_SHA1_PATTERN.fullmatch(encoded) is None
+        or not isinstance(historical_pack_ids, list)
+        or not historical_pack_ids
+        or any(not isinstance(pack_id, str) for pack_id in historical_pack_ids)
+        or len(historical_pack_ids) != len(set(historical_pack_ids))
+    ):
+        return False
+    matching_packs = [
+        pack_id
+        for pack_id in historical_pack_ids
+        if source.is_relative_to(PurePosixPath("docs/90.references") / pack_id)
+    ]
+    if len(matching_packs) != 1:
+        return False
+    oid = encoded.removeprefix("git-sha1:")
+    try:
+        source_bytes = _read_ria_commit_path(
+            context.root,
+            oid,
+            Path(source.as_posix()),
+        )
+    except (RiaContractError, RiaGitError):
+        return False
+    return source_bytes == context.texts[source].encode("utf-8")
+
+
 def _ledger_protected_drift() -> Diagnostic:
     return _diag(
         "LEDGER-PROTECTED-DRIFT",
@@ -5427,7 +5671,22 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 )
             )
         known_paths = inventory_paths | {path.as_posix() for path in context.paths}
-        for unknown in sorted(set(counter) - known_paths):
+        unknown_paths = set(counter) - known_paths
+        predecessor_unknown = unknown_paths & WERPC_PREDECESSOR_PATHS
+        if predecessor_unknown:
+            dispositions = _werpc_predecessor_dispositions(context.texts[LEDGER_PATH])
+            if dispositions is None or not predecessor_unknown <= dispositions:
+                diagnostics.append(
+                    _diag(
+                        "LEDGER-PREDECESSOR-DISPOSITION",
+                        LEDGER_PATH,
+                        "content/reference",
+                        "complete exact predecessor source, owner, and deletion dispositions",
+                        "historical predecessor disposition is missing or malformed",
+                    )
+                )
+            unknown_paths -= predecessor_unknown
+        for unknown in sorted(unknown_paths):
             diagnostics.append(
                 _diag(
                     "LEDGER-UNKNOWN-PATH",
@@ -5755,6 +6014,18 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         )
         adapter_targets[adapter_path] = PurePosixPath(normalized)
     metadata = {path: _frontmatter(texts[path]) for path in paths}
+    fixture_baseline_commit = _fixture_baseline_commit(
+        root,
+        (
+            PurePosixPath(
+                "docs/90.references/audits/2026-07-05-wea/historical.md"
+            ),
+            PurePosixPath(
+                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            ),
+        ),
+        reference_current_packs,
+    )
     return Context(
         root,
         paths,
@@ -5768,7 +6039,111 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         reference_current_packs,
         frozenset((*paths, *collection_artifacts)),
         texts[LEDGER_PATH].encode("utf-8"),
+        json.dumps(
+            {
+                "currentPackBaselines": {
+                    "audits/2026-07-11-weia": "git-sha1:"
+                    + fixture_baseline_commit
+                },
+                "snapshotGuard": {
+                    "sourceCommit": "git-sha1:" + fixture_baseline_commit,
+                    "historicalPackIds": ["audits/2026-07-05-wea"],
+                },
+            }
+        ),
     )
+
+
+def _fixture_baseline_commit(
+    root: Path,
+    protected_sources: tuple[PurePosixPath, ...],
+    reference_current_packs: ReferenceCurrentPacks,
+) -> str:
+    """Create one closed baseline commit for protected-link self-tests."""
+
+    source_bytes = {
+        protected_source: (root / protected_source).read_bytes()
+        for protected_source in protected_sources
+    }
+    registry_path = root / DOCUMENT_PROFILES_PATH
+    original_registry_bytes = registry_path.read_bytes()
+    predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
+    for protected_source, original_bytes in source_bytes.items():
+        relative_target = posixpath.relpath(
+            predecessor,
+            start=protected_source.parent.as_posix(),
+        )
+        (root / protected_source).write_bytes(
+            original_bytes
+            + f"\n[historical predecessor]({relative_target})\n".encode()
+        )
+    registry_path.write_text(
+        json.dumps(
+            {
+                "referenceCurrentPacks": {
+                    "profileId": reference_current_packs.profile_id,
+                    "packs": [
+                        {
+                            "id": pack.id,
+                            "allowedStates": list(pack.allowed_states),
+                            "members": list(pack.members),
+                        }
+                        for pack in reference_current_packs.packs
+                    ],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    _run_fixture_git(root, ("init", "-q"))
+    _run_fixture_git(root, ("add", "--", "."))
+    _run_fixture_git(root, ("commit", "-q", "-m", "fixture baseline"))
+    commit = _run_fixture_git(root, ("rev-parse", "HEAD")).decode("ascii").strip()
+    for protected_source, original_bytes in source_bytes.items():
+        (root / protected_source).write_bytes(original_bytes)
+    registry_path.write_bytes(original_registry_bytes)
+    return commit
+
+
+def _run_fixture_git(root: Path, arguments: tuple[str, ...]) -> bytes:
+    """Run one fixed self-test Git command without user config, hooks, or signing."""
+
+    if arguments not in FIXTURE_GIT_ARGUMENTS:
+        raise ValueError("fixture Git argv is outside the closed allowlist")
+    command = [
+        FIXTURE_GIT_EXECUTABLE,
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-c",
+        "commit.gpgSign=false",
+        "-c",
+        "user.name=fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        *arguments,
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=root,
+        env=FIXTURE_GIT_ENVIRONMENT,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+        timeout=FIXTURE_GIT_TIMEOUT_SECONDS,
+    )
+    if (
+        completed.returncode != 0
+        or len(completed.stdout) > FIXTURE_GIT_MAX_STDOUT
+        or len(completed.stderr) > FIXTURE_GIT_MAX_STDERR
+    ):
+        raise subprocess.CalledProcessError(
+            completed.returncode or 1,
+            command,
+            output=completed.stdout[:FIXTURE_GIT_MAX_STDOUT],
+            stderr=completed.stderr[:FIXTURE_GIT_MAX_STDERR],
+        )
+    return completed.stdout
 
 
 def _program_lineage_fixture_context(
@@ -7863,6 +8238,59 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     if mutation == "link-broken":
         texts[source] += "\n[bad](./missing.md)\n"
     elif mutation in {
+        "link-protected-historical-predecessor",
+        "link-protected-historical-unprotected-source",
+        "link-protected-historical-disposition-drift",
+        "link-protected-historical-byte-drift",
+        "link-snapshot-historical-predecessor",
+        "link-snapshot-historical-source-commit-drift",
+        "link-snapshot-historical-byte-drift",
+    }:
+        predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
+        protected_source = PurePosixPath(
+            "docs/90.references/audits/2026-07-11-weia/audit.md"
+        )
+        snapshot_source = PurePosixPath(
+            "docs/90.references/audits/2026-07-05-wea/historical.md"
+        )
+        if mutation == "link-protected-historical-unprotected-source":
+            link_source = source
+        elif mutation.startswith("link-snapshot-historical"):
+            link_source = snapshot_source
+        else:
+            link_source = protected_source
+        relative_target = posixpath.relpath(
+            predecessor,
+            start=link_source.parent.as_posix(),
+        )
+        texts[link_source] += f"\n[historical predecessor]({relative_target})\n"
+        if mutation == "link-protected-historical-byte-drift":
+            texts[protected_source] += "\nprotected byte drift\n"
+        elif mutation == "link-snapshot-historical-byte-drift":
+            texts[snapshot_source] += "\nsnapshot byte drift\n"
+        elif mutation == "link-snapshot-historical-source-commit-drift":
+            contract = json.loads(ria_contract_text or "{}")
+            contract["snapshotGuard"]["sourceCommit"] = "git-sha1:" + "1" * 40
+            ria_contract_text = json.dumps(contract)
+        disposition_rows = [
+            "| Old path | Source commit | Topic or heading | Verification | New owner | "
+            "Disposition | Reason and evidence |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
+        ]
+        for index, path in enumerate(sorted(WERPC_PREDECESSOR_PATHS)):
+            new_owner = (
+                ""
+                if mutation == "link-protected-historical-disposition-drift"
+                and index == 0
+                else "source-coverage-and-migration-ledger.md"
+            )
+            disposition_rows.append(
+                f"| `{path}` | `{'0' * 40}` | historical fixture | "
+                f"sourceCommit-pinned | `{new_owner}` | "
+                f"{WERPC_DELETION_DISPOSITION} | fixture disposition |"
+            )
+        texts[LEDGER_PATH] += "\n\n" + "\n".join(disposition_rows) + "\n"
+    elif mutation in {
         "link-retired-evidence",
         "link-retired-active",
         "link-retired-current-reference",
@@ -7877,7 +8305,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             texts[evidence_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
         elif mutation == "link-retired-current-reference":
             reference_source = PurePosixPath(
-                "docs/90.references/research/2026-07-07-wer/accepted.md"
+                "docs/90.references/research/2026-08-08-wer/accepted.md"
             )
             texts[reference_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
         else:
@@ -8083,6 +8511,37 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             )
         elif mutation == "ledger-settled-byte-drift":
             texts[LEDGER_PATH] += "\n<!-- protected byte drift -->\n"
+    elif mutation in {
+        "ledger-predecessor-disposition-valid",
+        "ledger-predecessor-disposition-missing",
+        "ledger-predecessor-disposition-mismatched",
+    }:
+        predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
+        texts[LEDGER_PATH] = texts[LEDGER_PATH].rstrip() + (
+            f"\n| `{predecessor}` | Historical predecessor | content/reference | | "
+            f"preserve | `{predecessor}` | sourceCommit-pinned WERPC evidence | "
+            "none | 2026-08-08 | historical | retain | source changes | platform | "
+            "inventory-reviewed |\n"
+        )
+        if mutation != "ledger-predecessor-disposition-missing":
+            disposition_rows = [
+                "| Old path | Source commit | Topic or heading | Verification | New owner | "
+                "Disposition | Reason and evidence |",
+                "| --- | --- | --- | --- | --- | --- | --- |",
+            ]
+            for index, path in enumerate(sorted(WERPC_PREDECESSOR_PATHS)):
+                source_commit = "0" * 40
+                if (
+                    mutation == "ledger-predecessor-disposition-mismatched"
+                    and index == 0
+                ):
+                    source_commit = "mismatched"
+                disposition_rows.append(
+                    f"| `{path}` | `{source_commit}` | historical fixture | "
+                    "sourceCommit-pinned | `source-coverage-and-migration-ledger.md` | "
+                    f"{WERPC_DELETION_DISPOSITION} | fixture disposition |"
+                )
+            texts[LEDGER_PATH] += "\n\n" + "\n".join(disposition_rows) + "\n"
     elif mutation == "ledger-missing-row":
         texts[LEDGER_PATH] = "\n".join(
             line
@@ -8190,7 +8649,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     }:
         target = {
             "reference-research-draft": PurePosixPath(
-                "docs/90.references/research/2026-07-07-wer/accepted.md"
+                "docs/90.references/research/2026-08-08-wer/accepted.md"
             ),
             "reference-audit-draft": PurePosixPath(
                 "docs/90.references/audits/2026-07-11-weia/audit.md"
@@ -8209,7 +8668,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         )
     elif mutation == "reference-active-undeclared":
         target = PurePosixPath(
-            "docs/90.references/research/2026-07-07-wer/undeclared.md"
+            "docs/90.references/research/2026-08-08-wer/undeclared.md"
         )
         paths = tuple(sorted((*paths, target), key=lambda item: item.as_posix()))
         profiles[target] = ProfileView("content/reference", "common", "authored")
@@ -8223,7 +8682,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[target] = "# Undeclared\n"
         tracked_regular_paths = frozenset((*tracked_regular_paths, target))
     elif mutation == "reference-declared-missing":
-        target = PurePosixPath("docs/90.references/research/2026-07-07-wer/accepted.md")
+        target = PurePosixPath("docs/90.references/research/2026-08-08-wer/accepted.md")
         paths = tuple(path for path in paths if path != target)
         profiles.pop(target)
         metadata.pop(target)
@@ -8233,7 +8692,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         )
     elif mutation.startswith("reference-collection-"):
         owner = PurePosixPath("docs/90.references/research/README.md")
-        row = "| [current](./2026-07-07-wer/README.md) | Current pack |"
+        row = "| [current](./2026-08-08-wer/README.md) | Current pack |"
         if mutation == "reference-collection-missing":
             texts[owner] = texts[owner].replace(row + "\n", "")
         elif mutation == "reference-collection-stale":
@@ -8255,7 +8714,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
                 + "\n```\n"
             )
     elif mutation.startswith("reference-index-"):
-        owner = PurePosixPath("docs/90.references/research/2026-07-07-wer/README.md")
+        owner = PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md")
         accepted = "| [accepted](accepted.md) | `accepted` |"
         active = "| [active](active.md) | `active` |"
         if mutation == "reference-index-missing":
@@ -8288,10 +8747,10 @@ def _mutated_context(context: Context, mutation: str) -> Context:
                 + "\n```markdown\n## Report Index\n```\n"
             )
     elif mutation == "reference-wrong-profile-member":
-        target = PurePosixPath("docs/90.references/research/2026-07-07-wer/accepted.md")
+        target = PurePosixPath("docs/90.references/research/2026-08-08-wer/accepted.md")
         profiles[target] = ProfileView("content/archive", "common", "authored")
     elif mutation.startswith("collection-"):
-        owner = PurePosixPath("docs/90.references/research/2026-07-07-wer/README.md")
+        owner = PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md")
         tree_line = "├── accepted.md"
         row = "| [accepted](accepted.md) | `accepted` |"
         ghost_line = "├── ghost.md"
@@ -8344,7 +8803,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         elif mutation == "collection-tree-comment":
             texts[owner] = texts[owner].replace(tree_line, tree_line + " # retained")
         elif mutation == "collection-tree-comment-hidden":
-            block = "```text\n2026-07-07-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── document-migration-evidence-ledger.md\n```"
+            block = "```text\n2026-08-08-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── source-coverage-and-migration-ledger.md\n```"
             texts[owner] = texts[owner].replace(block, f"<!--\n{block}\n-->")
         elif mutation == "collection-h1-status-prose":
             variants = (
@@ -8360,8 +8819,8 @@ def _mutated_context(context: Context, mutation: str) -> Context:
                 ),
                 (
                     PurePosixPath("docs/90.references/research/README.md"),
-                    "| [active](./2026-07-07-wer/active.md) | Included |",
-                    "| [active](./2026-07-07-wer/active.md) | Included | ignored |",
+                    "| [active](./2026-08-08-wer/active.md) | Included |",
+                    "| [active](./2026-08-08-wer/active.md) | Included | ignored |",
                 ),
             )
             for target, before, after in variants:
@@ -8736,6 +9195,13 @@ def _self_test(root: Path) -> list[str]:
     required = {
         "valid-tree",
         "broken-link",
+        "protected-historical-predecessor-link",
+        "unprotected-historical-predecessor-link",
+        "protected-historical-predecessor-disposition-drift",
+        "protected-historical-predecessor-byte-drift",
+        "snapshot-historical-predecessor-link",
+        "snapshot-historical-predecessor-source-commit-drift",
+        "snapshot-historical-predecessor-byte-drift",
         "retired-evidence-link",
         "retired-active-link",
         "retired-current-reference-link",
@@ -8821,6 +9287,38 @@ def _self_test(root: Path) -> list[str]:
     ):
         failures.append("GFM body rows are not padded/truncated to the header")
     ledger_existed_before = (root / LEDGER_PATH).exists()
+    with tempfile.TemporaryDirectory(prefix="smdv-cross-hostile-git-") as hostile:
+        hostile_root = Path(hostile)
+        hooks = hostile_root / "hooks"
+        hooks.mkdir()
+        pre_commit = hooks / "pre-commit"
+        pre_commit.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        pre_commit.chmod(0o700)
+        false_gpg = hostile_root / "false-gpg"
+        false_gpg.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        false_gpg.chmod(0o700)
+        hostile_config = hostile_root / "global.gitconfig"
+        hostile_config.write_text(
+            "[core]\n"
+            f"\thooksPath = {hooks.as_posix()}\n"
+            "[commit]\n"
+            "\tgpgSign = true\n"
+            "[gpg]\n"
+            f"\tprogram = {false_gpg.as_posix()}\n",
+            encoding="utf-8",
+        )
+        previous_global = os.environ.get("GIT_CONFIG_GLOBAL")
+        os.environ["GIT_CONFIG_GLOBAL"] = hostile_config.as_posix()
+        try:
+            try:
+                _fixture_context(hostile_root / "fixture", fixture["baseTree"])
+            except subprocess.CalledProcessError:
+                failures.append("fixture Git boundary inherited hostile global config")
+        finally:
+            if previous_global is None:
+                os.environ.pop("GIT_CONFIG_GLOBAL", None)
+            else:
+                os.environ["GIT_CONFIG_GLOBAL"] = previous_global
     with tempfile.TemporaryDirectory(prefix="smdv-cross-") as temporary:
         context = _fixture_context(Path(temporary), fixture["baseTree"])
         for case in fixture["cases"]:
@@ -10208,6 +10706,13 @@ def _self_test(root: Path) -> list[str]:
         if (root / path).is_file()
     )
     production_context = _build_context(root, include_paths=proposed_forms)
+    if (
+        _werpc_predecessor_disposition_map(
+            production_context.texts.get(LEDGER_PATH, "")
+        )
+        is None
+    ):
+        failures.append("production predecessor disposition table is unavailable")
     production = validate_cross_document_contracts(
         root,
         "strict",

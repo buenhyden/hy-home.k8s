@@ -114,7 +114,7 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 ### Parent Documents
 
 - **Spec**: [./spec.md](./spec.md)
-- **Gap-analysis reference**: [../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md](../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)
+- **Gap-analysis reference**: `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`; [current lookup](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
 
 ### Delivery and Governance
 

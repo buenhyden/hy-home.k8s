@@ -39,7 +39,7 @@ PROPOSED_FIFTH_BATCH = {
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
         "docs/04.execution/tasks/README.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
     ],
     "validationResult": "PASS",
     "records": [
@@ -91,7 +91,7 @@ PROPOSED_SIXTH_BATCH = {
         "docs/04.execution/plans/README.md",
         "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
         "docs/04.execution/tasks/README.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
     ],
     "validationResult": "PASS",
     "records": [
@@ -326,7 +326,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
 
         self.assertEqual(
             hashlib.sha256(canonical).hexdigest(),
-            "5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b",  # pragma: allowlist secret
+            "49c48db3bd1fbe975f91881a7e47ba857661e467b6cde210abc6efb1f9e95fb0",  # pragma: allowlist secret
         )
 
     def test_wrong_second_rollback_parent_fails_closed(self) -> None:

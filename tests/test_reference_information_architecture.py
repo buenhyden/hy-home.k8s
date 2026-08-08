@@ -92,7 +92,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
         self.contract_path.parent.mkdir(parents=True, exist_ok=True)
         self._write_contract(self._minimal_contract())
-        self._write_registry(["audits/2026-07-11-weia", "research/2026-07-07-wer"])
+        self._write_registry(["audits/2026-07-11-weia", "research/2026-08-08-wer"])
         schema_path = self.contract_path.with_name(
             "reference-information-architecture.schema.json"
         )
@@ -217,7 +217,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             *(
                 Path(path).name
                 for path in extra_current_members
-                if "/research/2026-07-07-wer/" in path
+                if "/research/2026-08-08-wer/" in path
             ),
         ]
         payloads = {
@@ -232,7 +232,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                                 "allowedStates": ["done"],
                             },
                             {
-                                "id": "research/2026-07-07-wer",
+                                "id": "research/2026-08-08-wer",
                                 "members": research_members,
                                 "allowedStates": ["active", "accepted"],
                             },
@@ -247,7 +247,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             else owners["auditIndex"],
             "docs/90.references/research/README.md": owners["researchIndex"],
             "docs/90.references/audits/2026-07-11-weia/README.md": "# Audit pack\n",
-            "docs/90.references/research/2026-07-07-wer/README.md": "# Research pack\n",
+            "docs/90.references/research/2026-08-08-wer/README.md": "# Research pack\n",
             copies["stage00"]["canonicalPath"]: copies["stage00"][
                 "canonicalParagraph"
             ]
@@ -359,9 +359,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def _transition(target: bytes = b"x") -> dict[str, object]:
         return {
             "id": "ria-007-postflight-ledger",
-            "packId": "research/2026-07-07-wer",
+            "packId": "research/2026-08-08-wer",
             "fromCommit": ROOT_BASELINE,
-            "subject": "document-migration-evidence-ledger",
+            "subject": "source-coverage-and-migration-ledger",
             "targetSha256": hashlib.sha256(target).hexdigest(),
             "targetByteLength": len(target),
             "reason": "postflight evidence",
@@ -371,7 +371,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self, transition_commit: str = "git-sha1:" + "b" * 40, target: bytes = b"x"
     ) -> dict[str, object]:
         contract = self._minimal_contract()
-        contract["currentPackBaselines"]["research/2026-07-07-wer"] = (
+        contract["currentPackBaselines"]["research/2026-08-08-wer"] = (
             transition_commit
         )
         contract["baselineTransitions"] = []
@@ -386,7 +386,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         loaded = self._load()
         self.assertEqual(
             tuple(loaded["currentPackBaselines"]),
-            ("audits/2026-07-11-weia", "research/2026-07-07-wer"),
+            ("audits/2026-07-11-weia", "research/2026-08-08-wer"),
         )
         self.assertEqual(
             loaded["snapshotGuard"]["historicalPackIds"],
@@ -466,7 +466,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                         "profileId": "reference-current-pack",
                         "packs": [
                             {
-                                "id": "research/2026-07-07-wer",
+                                "id": "research/2026-08-08-wer",
                                 "members": [hostile.removeprefix("docs/")],
                                 "allowedStates": ["active"],
                             }
@@ -1468,12 +1468,34 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     {"RIA-DUPLICATE"},
                 )
 
+    def test_retired_research_pack_navigation_is_not_current(self) -> None:
+        owners = json.loads(CURRENT_OWNER.read_text(encoding="utf-8"))
+        for stale_index in owners["retiredResearchIndexes"]:
+            with self.subTest(stale_index=stale_index.split("README.md", 1)[0]):
+                root, contract, _owners, _copies = self._duplicate_repository()
+                index_path = root / "docs/90.references/research/README.md"
+                index_path.write_text(stale_index, encoding="utf-8")
+                self._git_in(
+                    root,
+                    "add",
+                    "--",
+                    index_path.relative_to(root).as_posix(),
+                )
+
+                findings = ria.validate_duplicate_rules(root, contract)
+
+                self.assertTrue(findings)
+                self.assertEqual(
+                    {finding.rule_id for finding in findings},
+                    {"RIA-DUPLICATE"},
+                )
+
     def test_policy_paragraph_copy_fails(self) -> None:
         copies = json.loads(POLICY_COPY.read_text(encoding="utf-8"))
         ignored_path = (
-            "docs/90.references/research/2026-07-07-wer/ignored-structures.md"
+            "docs/90.references/research/2026-08-08-wer/ignored-structures.md"
         )
-        short_path = "docs/90.references/research/2026-07-07-wer/short-copy.md"
+        short_path = "docs/90.references/research/2026-08-08-wer/short-copy.md"
         copied = copies["stage00"]["canonicalParagraph"]
         ignored = (
             f"# {copied}\n\n"
@@ -3027,31 +3049,28 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         loaded = self._load()
         self.assertEqual(
             set(loaded["currentPackBaselines"]),
-            {"audits/2026-07-11-weia", "research/2026-07-07-wer"},
+            {"audits/2026-07-11-weia", "research/2026-08-08-wer"},
         )
 
-    def test_original_and_corrected_current_research_baselines(self) -> None:
+    def test_production_baseline_registry_remains_audit_only(self) -> None:
         contract = json.loads(
             (
                 REPOSITORY_ROOT
                 / "docs/90.references/data/reference-information-architecture.json"
             ).read_text(encoding="utf-8")
         )
-        stale = json.loads(json.dumps(contract))
-        stale["currentPackBaselines"]["research/2026-07-07-wer"] = (
-            HISTORICAL_BASELINE
+        self.assertEqual(
+            contract["currentPackBaselines"],
+            {
+                "audits/2026-07-11-weia": (
+                    "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+                )
+            },
         )
-        stale_findings = ria.validate_overlay_guards(REPOSITORY_ROOT, stale)
-        corrected = json.loads(json.dumps(contract))
-        corrected_findings = ria.validate_overlay_guards(REPOSITORY_ROOT, corrected)
-        self.assertTrue(
-            any(
-                finding.rule_id == "RIA-OVERLAY"
-                and "document-migration-evidence-ledger.md" in finding.path
-                for finding in stale_findings
-            )
+        self.assertNotIn(
+            "research/2026-08-08-wer", contract["currentPackBaselines"]
         )
-        self.assertEqual(corrected_findings, [])
+        self.assertEqual(ria.validate_overlay_guards(REPOSITORY_ROOT, contract), [])
 
     def test_snapshot_mutation_fixture_requires_immutable_body_guard(self) -> None:
         mutation = json.loads(SNAPSHOT_MUTATION.read_text(encoding="utf-8"))
@@ -3108,32 +3127,30 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(mutation["expectedRule"], "RIA-OVERLAY")
         target = Path(mutation["path"])
         replacement = mutation["replacement"].encode("utf-8")
-        contract = json.loads(
-            (
-                REPOSITORY_ROOT
-                / "docs/90.references/data/reference-information-architecture.json"
-            ).read_text(encoding="utf-8")
+        contract = self._minimal_contract()
+        pack = ria.Pack(
+            "research/2026-08-08-wer",
+            ("Current",),
+            (target.name,),
         )
-
-        def proposed(
-            root: Path,
-            path: Path,
-            proposed_oid: str | None,
-            runner: ria.GitRunner | None,
-        ) -> bytes:
-            if path == target:
-                return replacement
-            pack_id = (
-                "audits/2026-07-11-weia"
-                if path.parts[2] == "audits"
-                else "research/2026-07-07-wer"
-            )
-            oid = contract["currentPackBaselines"][pack_id].removeprefix(
-                "git-sha1:"
-            )
-            return ria._read_commit_path(root, oid, path, runner)  # noqa: SLF001
-
-        with mock.patch.object(ria, "_proposed_path", side_effect=proposed):
+        baseline_id = contract["currentPackBaselines"][pack.pack_id]
+        baseline = b"unchanged baseline\n"
+        registry = ria.RegistryProjection("document-profile-routing", (pack,))
+        context = ria.ValidationContext(
+            registry,
+            {pack.readme_path: baseline, target: replacement},
+            {baseline_id: registry},
+            {
+                (baseline_id, pack.readme_path): baseline,
+                (baseline_id, target): baseline,
+            },
+            {baseline_id: baseline_id.removeprefix("git-sha1:")},
+            None,
+        )
+        with (
+            mock.patch.object(ria, "_build_context", return_value=context),
+            mock.patch.object(ria, "load_agent_cutover_projections", return_value={}),
+        ):
             findings = ria.validate_overlay_guards(REPOSITORY_ROOT, contract)
         self.assertTrue(
             any(
@@ -3208,7 +3225,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     ) -> None:
         projection = {
             "path": (
-                "docs/90.references/research/2026-07-07-wer/"
+                "docs/90.references/research/2026-08-08-wer/"
                 "automation-pipeline-workflow-qa.md"
             ),
             "literalReplacements": [
@@ -3283,13 +3300,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         contract = self._minimal_contract()
         contract["baselineTransitions"] = [self._transition()]
         target_path = Path(
-            "docs/90.references/research/2026-07-07-wer/"
-            "document-migration-evidence-ledger.md"
+            "docs/90.references/research/2026-08-08-wer/"
+            "source-coverage-and-migration-ledger.md"
         )
         research = ria.Pack(
-            "research/2026-07-07-wer",
+            "research/2026-08-08-wer",
             ("active",),
-            ("document-migration-evidence-ledger.md",),
+            ("source-coverage-and-migration-ledger.md",),
         )
         context = ria.ValidationContext(
             ria.RegistryProjection("content/reference", (research,)),
@@ -3352,7 +3369,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         nonmember = ria.ValidationContext(
             ria.RegistryProjection(
                 "content/reference",
-                (ria.Pack("research/2026-07-07-wer", ("active",), ()),),
+                (ria.Pack("research/2026-08-08-wer", ("active",), ()),),
             ),
             {},
             {},
@@ -3391,7 +3408,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
     def test_direct_baseline_jump_is_rejected(self) -> None:
         contract = self._minimal_contract()
-        contract["currentPackBaselines"]["research/2026-07-07-wer"] = (
+        contract["currentPackBaselines"]["research/2026-08-08-wer"] = (
             "git-sha1:" + "c" * 40
         )
         findings = ria.validate_baseline_transitions(self.root, contract)
@@ -3408,9 +3425,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
         audit = ria.Pack("audits/2026-07-11-weia", ("done",), ())
         research = ria.Pack(
-            "research/2026-07-07-wer",
+            "research/2026-08-08-wer",
             ("active", "accepted"),
-            ("document-migration-evidence-ledger.md",),
+            ("source-coverage-and-migration-ledger.md",),
         )
         registry = ria.RegistryProjection("content/reference", (audit, research))
         transition_path = research.member_paths[0]
@@ -3587,9 +3604,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         open_contract["baselineTransitions"] = [self._transition(target)]
         audit = ria.Pack("audits/2026-07-11-weia", ("done",), ())
         research = ria.Pack(
-            "research/2026-07-07-wer",
+            "research/2026-08-08-wer",
             ("active", "accepted"),
-            ("document-migration-evidence-ledger.md",),
+            ("source-coverage-and-migration-ledger.md",),
         )
         registry = ria.RegistryProjection(
             "content/reference", (audit, research)

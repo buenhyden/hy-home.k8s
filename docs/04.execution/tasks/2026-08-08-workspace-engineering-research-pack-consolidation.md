@@ -49,7 +49,7 @@ or live-cluster result is produced or claimed.
 | WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | docs-researcher | Done | Primary-source and repository-static analysis is complete: layered platform/trust-boundary model, control/evidence matrix, As-Is/gap/target matrix, and deferred-validation backlog; `SRC-WERPC-023`–`034` and `CLM-WERPC-004-01`–`11` preserve source, claim, and evidence-depth limits | Focused worktree diff, Markdown profiles, strict links/owners, and harness validation PASS; fresh content review Approved with no finding; exact staged Reference IA, cached diff, and complete repository quality gate PASS; hosted CI, remote/live, secret, credential, and cluster evidence remain DEFER; this logical commit. |
 | WERPC-005 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research CI/CD, GitHub Actions, and QA | quality-engineer | Done | Static delivery/QA analysis, five-workflow control inventory, lane/failure/evidence taxonomy, security/supply-chain boundary, and adoption matrix are complete; `SRC-WERPC-035`–`044` and `CLM-WERPC-005-01`–`10` preserve source and evidence limits | Actions security, CI Python contract, affected-surface, Markdown profile, strict links/owners, and worktree diff checks PASS; fresh review Approved with no finding; exact staged Reference IA, cached diff, and complete repository quality gate PASS; hosted CI, branch/ruleset, secret, artifact, OIDC, deployment, remote, and live evidence remain DEFER; this logical commit. |
 | WERPC-006 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research AI agents, pinned agency-agents, model routing, and memory tiers | docs-researcher | Done | Three references separate local static roster/model/memory contracts from provider/runtime evidence; the Agency Agents comparison is pinned to `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052` and `CLM-WERPC-006-01`–`08` record limits | Focused diff/profile/strict-link/harness-semantics/model-fitness checks PASS; fresh review Approved; full-gate RED for two upstream script URLs misclassified as local paths was fixed by one pinned upstream-directory link; exact staged Reference IA, cached diff, and complete repository gate PASS; no provider execution, install, credential, remote, hosted, or live action occurred; this logical commit. |
-| WERPC-007 | VAL-WER-008, VAL-WER-010, VAL-WER-011 | Migrate links, observations, indexes, machine contracts, validators, and fixtures | platform | Queued | Not executed | Classified occurrence ledger, focused RED/GREEN, strict/reference-IA/archive/full gates |
+| WERPC-007 | VAL-WER-008, VAL-WER-010, VAL-WER-011 | Migrate links, observations, indexes, machine contracts, validators, and fixtures | platform | Done | Current research navigation, RIA/agent/active-corpus contracts, validators, schemas, projections, fixtures, templates, Guide 0010, and mutable historical links are migrated; RIA-protected audit bytes remain exact and their future predecessor targets require a fail-closed sourceCommit/byte/disposition proof | Initial RIA RED: 88 tests with 10 failures/1 error; initial agent cutover RED: 37 tests with one fixture error; protected-link RED: expected no finding but got `LINK-BROKEN`; the pre-review harness attempt exposed the phase-bounded README fixture cardinality RED. Fresh review found the production disposition-header mismatch and inherited Git configuration; exact production-table and hostile-config probes failed before their fixes. The final gate then exposed closure source/current identity drift and a stale-currentness hit in the predecessor migration ledger; exact projection refresh plus a parser-gated, single-file transition exception closed them without widening to the other 24 predecessor files. GREEN: isolated staged RIA 88/88 and direct validator, agent cutover 37/37, active-corpus 19/19, registry self-test/strict, links strict/self-test, archive validation, hardened Git boundary, exact-delete-clone strict links, Python compile, cached diff, complete repository quality gate, and complete harness PASS; exact occurrence closure 732 lines/70 files and 70 reviewed rows. Three README fixture rows remain only for exact pre-deletion active54 equality and must be removed atomically in WERPC-008; Python and QA re-reviews Approved; this logical commit. |
 | WERPC-008 | VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010 | Prove readiness and delete the 25 predecessor files | platform | Queued | Not executed | 25/25 pre-gate, three absence checks, post-deletion validation, deletion commit |
 | WERPC-009 | VAL-WER-001–012 | Run final audit/review/cleanup and close reciprocal lifecycle | supervisor | Queued | Not executed | Criterion walk, final QA, whole-branch review, residue scan, closure commit |
 
@@ -123,8 +123,26 @@ remote, or live evidence. WERPC-006 is done: its exact Agency Agents pin, eight
 dated sources, and eight bounded claims distinguish role/model/memory static
 contracts from provider/runtime behavior. Focused checks passed, fresh review
 was Approved, the upstream-script-path RED was corrected, and Reference IA plus
-the complete repository gate passed on the exact staged tree. WERPC-007
-through WERPC-009 are not executed. Each
+the complete repository gate passed on the exact staged tree. WERPC-007 is
+implemented and ready for fresh review: its exact tracked occurrence inventory
+is 732 lines across 70 files, every hit has one reviewed classification row,
+and focused RIA, agent-cutover, active-corpus, registry, link, archive, compile,
+and diff validations pass. RIA production was first proven in an isolated
+clone. A migration reviewer later staged the exact 53-file scope while proving
+index authority; cached scope/diff checks and the actual staged RIA 88/88 plus
+direct validator pass, with no forbidden diff. Its unrequested harness and
+full-gate starts were interrupted with exit 130 and are not PASS evidence. The
+pre-review harness attempt exposed and led to restoration of the
+three phase-bounded README fixture rows; its focused registry self-test now
+passes. Fresh review then found and closed the production disposition-header
+and inherited Git-configuration defects; an exact-delete clone passes strict
+links, and Python plus QA re-review are Approved. The controller then audited
+and replaced an over-broad 25-file currentness exception with the reviewed
+exact disposition parser and a single predecessor-ledger exception, refreshed
+the exact active-corpus closure identities, and reran both the complete
+repository quality gate and full harness successfully. WERPC-007 is done.
+WERPC-008 and WERPC-009 are
+not executed. Each
 remaining row will record exact command results, review disposition, commit,
 limitation, `SKIP`, or `DEFER` without converting repository-static evidence
 into a deeper claim.
@@ -143,6 +161,6 @@ into a deeper claim.
 | N/A — WERPC-004 shares the Plan and Spec sources above | Done. | `SRC-WERPC-023`–`034`, `CLM-WERPC-004-01`–`11`, platform/security reference, REQ-WERPC-008/009/025 status cells, focused checks PASS, fresh content review Approved, and final staged Reference IA/cached-diff/complete quality gate PASS. |
 | N/A — WERPC-005 shares the Plan and Spec sources above | Done. | CI/CD/GitHub Actions/QA reference, REQ-WERPC-022–024 coverage status, `SRC-WERPC-035`–`044`, and `CLM-WERPC-005-01`–`10`; focused checks PASS; fresh review Approved; exact staged Reference IA/cached diff/complete quality gate PASS. |
 | N/A — WERPC-006 shares the Plan and Spec sources above | Done. | Three detailed references; fixed Agency Agents source pin `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052`; `CLM-WERPC-006-01`–`08`; focused checks PASS; fresh review Approved; upstream-path RED fixed; staged Reference IA/cached diff/complete quality gate PASS. |
-| N/A — WERPC-007 shares the Plan and Spec sources above | Not executed. | Link/contract/fixture migration evidence pending. |
+| N/A — WERPC-007 shares the Plan and Spec sources above | Done. | RED/GREEN migration evidence; RIA-protected historical-link proof with valid and fail-closed negative fixtures; 732/70 exact occurrence closure and 70-row classification; isolated staged RIA 88/88 plus direct validator; agent 37/37; active corpus 19/19; registry self-test/strict; links strict/self-test; exact production disposition parse and post-delete clone; hardened Git hostile-config probe; archive validation; Python compile; cached diff; complete repository gate; and full harness PASS. The three phase-bounded README fixture rows remain until atomic WERPC-008 deletion. Python and QA re-reviews Approved; this logical commit. |
 | N/A — WERPC-008 shares the Plan and Spec sources above | Not executed. | Readiness and deletion evidence pending. |
 | N/A — WERPC-009 shares the Plan and Spec sources above | Not executed. | Final criterion, QA, review, residue, and closure evidence pending. |

@@ -54,7 +54,7 @@ surface domain validators owned by Spec 032.
 - **Key Dependencies**: Strict document validation from Spec 029 and migrated
   paths from Spec 030. After Spec 030 strict cutover, every program-created
   authored document must add its exact fourteen-column row to the durable
-  [Document Migration Evidence Ledger](../../90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md)
+  `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
   in the same creation commit; validator or ledger coverage must not be weakened
   to admit an unaccounted path.
 - **Tech Stack**: JSON contract, repository scripts, pre-commit, GitHub Actions,

@@ -65,7 +65,7 @@ FOURTH_ROLLBACK_PARENT = "fdb65db785a4518836ddf22a102b30eb7c9c1d61"  # pragma: a
 FIFTH_ROLLBACK_PARENT = "4de4c3e9ddb44949157399a1c71de788511d8a56"  # pragma: allowlist secret
 SIXTH_ROLLBACK_PARENT = "420f8a582dee69f3c0902026b49667af803a96c1"  # pragma: allowlist secret
 FIVE_BATCH_PREFIX_SHA256 = (
-    "5e5e4eea447ac514734aacaa9d6bcd3a26824c3a88a1daa8343094034babb50b"  # pragma: allowlist secret
+    "49c48db3bd1fbe975f91881a7e47ba857661e467b6cde210abc6efb1f9e95fb0"  # pragma: allowlist secret
 )
 ACCEPTED_BATCHES = 6
 BASE_RECORDS = 31
@@ -185,7 +185,7 @@ FIRST_REPAIRED_CONSUMERS = (
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/README.md",
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 SECOND_REPAIRED_CONSUMERS = (
     "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
@@ -193,14 +193,14 @@ SECOND_REPAIRED_CONSUMERS = (
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/README.md",
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 THIRD_REPAIRED_CONSUMERS = (
     "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/README.md",
     "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 FOURTH_REPAIRED_CONSUMERS = (
     "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
@@ -208,14 +208,14 @@ FOURTH_REPAIRED_CONSUMERS = (
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
     "docs/04.execution/tasks/README.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 FIFTH_REPAIRED_CONSUMERS = (
     "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
     "docs/04.execution/tasks/README.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 SIXTH_REPAIRED_CONSUMERS = (
     "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
@@ -223,7 +223,7 @@ SIXTH_REPAIRED_CONSUMERS = (
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
     "docs/04.execution/tasks/README.md",
-    "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
 )
 REPAIRED_CONSUMERS_BY_SEQUENCE = (
     FIRST_REPAIRED_CONSUMERS,

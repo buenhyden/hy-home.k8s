@@ -376,7 +376,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 root = self.make_valid_root()
                 reference = (
                     root
-                    / "docs/90.references/research/2026-07-07-wer"
+                    / "docs/90.references/research/2026-08-08-wer"
                     / f"unowned-{status}.md"
                 )
                 reference.parent.mkdir(parents=True, exist_ok=True)

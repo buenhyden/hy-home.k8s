@@ -16,6 +16,25 @@ not a policy, runtime, provider, or deployment control surface.
 - **Status vocabulary**: initial implementation findings are `Unverified` unless
   a later WERPC work package records supporting evidence.
 
+### Structure
+
+```text
+2026-08-08-wer/
+├── README.md
+├── agent-memory-tiers-and-management.md
+├── agent-model-routing-and-configuration.md
+├── ai-agents-and-agency-agents.md
+├── ci-cd-github-actions-and-qa.md
+├── documentation-architecture-and-diataxis.md
+├── harness-and-loop-engineering.md
+├── kubernetes-infrastructure-and-security.md
+├── llm-wiki-and-knowledge-routing.md
+├── provider-implementation-status.md
+├── source-coverage-and-migration-ledger.md
+├── spec-driven-sdlc-and-document-contracts.md
+└── workspace-governance-and-common-agent-environment.md
+```
+
 ## Report Index
 
 | Reference | Role |

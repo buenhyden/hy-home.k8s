@@ -351,7 +351,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Prior Audit Pack Spec**: [../010-workspace-harness-implementation-audit-pack/spec.md](../010-workspace-harness-implementation-audit-pack/spec.md)
 - **Plan**: `../../04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md`
 - **Tasks**: `../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
-- **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
+- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **CI/CD QA Guide**: [../../05.operations/guides/0010-ci-cd-qa-reference-guide.md](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
@@ -370,7 +370,7 @@ bash scripts/validate-repo-quality-gates.sh .
 Repository inputs:
 
 - [Audits README](../../90.references/audits/README.md)
-- [Research Pack README](../../90.references/research/2026-07-04-wer/README.md)
+- `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [90.references README](../../90.references/README.md)
 - [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)

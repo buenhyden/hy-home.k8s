@@ -39,7 +39,7 @@ The template system has separate surfaces:
   template paths. This support contract owns rationale and examples only; it
   must not become a second machine contract.
 - The
-  [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+  [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
   records the research basis for profile-family decisions without owning their
   machine values.
 - README files are entrypoints and inventories. They should summarize where to
@@ -165,5 +165,5 @@ in [Template Routing](./template-routing.md) and
 - [Template Routing](./template-routing.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

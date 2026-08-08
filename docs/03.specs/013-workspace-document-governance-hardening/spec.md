@@ -368,8 +368,8 @@ bash scripts/validate-policy-gates.sh .
   - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
   - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
 - **Research and Audit Inputs**:
-  - [Workspace Governance Baseline Research](../../90.references/research/2026-07-04-wer/workspace-governance-baseline.md)
-  - [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)
+  - `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`; [current lookup](../../90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md)
+  - `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`; [current lookup](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
   - [Workspace Governance Implementation Audit](../../90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md)
   - [SDLC Delivery Practices Implementation Audit](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md)
 

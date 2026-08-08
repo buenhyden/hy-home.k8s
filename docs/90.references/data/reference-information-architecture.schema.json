@@ -160,9 +160,9 @@
       "required": ["id", "packId", "fromCommit", "subject", "targetSha256", "targetByteLength", "reason"],
       "properties": {
         "id": {"const": "ria-007-postflight-ledger"},
-        "packId": {"const": "research/2026-07-07-wer"},
+        "packId": {"const": "research/2026-08-08-wer"},
         "fromCommit": {"$ref": "#/$defs/commit"},
-        "subject": {"const": "document-migration-evidence-ledger"},
+        "subject": {"const": "source-coverage-and-migration-ledger"},
         "targetSha256": {"$ref": "#/$defs/sha256"},
         "targetByteLength": {"type": "integer", "minimum": 1, "maximum": 2000000},
         "reason": {"$ref": "#/$defs/reason"}
@@ -174,9 +174,9 @@
       "required": ["id", "packId", "fromCommit", "subject", "targetSha256", "targetByteLength", "reason", "transitionCommit"],
       "properties": {
         "id": {"const": "ria-007-postflight-ledger"},
-        "packId": {"const": "research/2026-07-07-wer"},
+        "packId": {"const": "research/2026-08-08-wer"},
         "fromCommit": {"$ref": "#/$defs/commit"},
-        "subject": {"const": "document-migration-evidence-ledger"},
+        "subject": {"const": "source-coverage-and-migration-ledger"},
         "targetSha256": {"$ref": "#/$defs/sha256"},
         "targetByteLength": {"type": "integer", "minimum": 1, "maximum": 2000000},
         "reason": {"$ref": "#/$defs/reason"},

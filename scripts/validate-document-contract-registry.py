@@ -1664,18 +1664,21 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         # Mutation proofs still need a second pack, so rebuild the retired one
         # from its tracked members for the mutated copy only.
         research = {
-            "id": "research/2026-07-07-wer",
+            "id": "research/2026-08-08-wer",
             "allowedStates": ["active", "accepted"],
             "members": [
-                "ai-agents-roster-and-gap-analysis.md",
-                "automation-pipeline-workflow-qa.md",
-                "document-migration-evidence-ledger.md",
-                "document-type-format-and-evidence-contract.md",
+                "agent-memory-tiers-and-management.md",
+                "agent-model-routing-and-configuration.md",
+                "ai-agents-and-agency-agents.md",
+                "ci-cd-github-actions-and-qa.md",
+                "documentation-architecture-and-diataxis.md",
                 "harness-and-loop-engineering.md",
-                "kubernetes-infrastructure-security.md",
+                "kubernetes-infrastructure-and-security.md",
+                "llm-wiki-and-knowledge-routing.md",
                 "provider-implementation-status.md",
-                "spec-sdlc-ci-qa-formatting.md",
-                "workspace-governance-baseline.md",
+                "source-coverage-and-migration-ledger.md",
+                "spec-driven-sdlc-and-document-contracts.md",
+                "workspace-governance-and-common-agent-environment.md",
             ],
         }
         packs.append(research)

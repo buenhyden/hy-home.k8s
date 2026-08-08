@@ -31,7 +31,7 @@ remote, live-cluster, or credential-bearing result is produced or claimed.
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **External evidence**:
-  [Documentation Architecture and SDLC Document Roles Reference](../../90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md)
+  `docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md`; [current lookup](../../90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md)
 - **Baseline commit**: `dd54f844` — the program definition commit against which
   every per-asset reduction delta is measured.
 

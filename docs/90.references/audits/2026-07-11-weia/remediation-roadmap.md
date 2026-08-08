@@ -10,6 +10,12 @@ updated: 2026-07-15
 
 ## Overview
 
+> [!NOTE]
+> Predecessor research paths retained as literal observation text below are
+> source-commit-bounded historical provenance. Rendered research links route to
+> the 2026-08-08 successor owner for current lookup; this does not rewrite the
+> dated audit finding or upgrade its evidence depth.
+
 이 문서는 2026-07-11 implementation audit의 5개 보고서에서 나온 실행 가능
 행 80개를 근본 원인과 후속 소유자 기준으로 32개 canonical finding으로
 정규화한 통합 로드맵이다. 원 보고서는 관찰 SHA의 사실과 점수를 계속
@@ -371,7 +377,7 @@ remain code literals until created.
 - [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md)
 - [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md)
 - [AI Agents, Model Routing, and Vibe Coding](ai-agents-model-routing-vibe-coding.md)
-- [Current research pack](../../research/2026-07-07-wer/README.md)
+- [Current research pack](../../research/2026-08-08-wer/README.md)
 - [Historical 2026-07-05 roadmap](../2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md)
 
 ## Review and Freshness

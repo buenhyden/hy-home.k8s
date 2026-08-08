@@ -35,8 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = "38f52aa1f4bd831d4fbea4bf267f57b6a0c74af85f54daa3c000e134217f4982"  # pragma: allowlist secret
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "46bccd56161a4f80969f6cea87c69a9a0826f5a4009b6009d0ce04f9183c2d38"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SHA256 = "2f12a5a509b9f0af007caa8febd5e0f83818e0d6085009661a99b29318334b47"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "4e0b7e55ee399eee5274f2b2156993da1826f1a5a53addae36b885d963828f57"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -83,30 +83,26 @@ HISTORICAL_PACK_IDS = (
     "research/2026-07-04-wer",
 )
 AUDIT_PACK_ID = "audits/2026-07-11-weia"
-RESEARCH_PACK_ID = "research/2026-07-07-wer"
+RESEARCH_PACK_ID = "research/2026-08-08-wer"
 TRANSITION_ID = "ria-007-postflight-ledger"
-TRANSITION_SUBJECT = "document-migration-evidence-ledger"
-TRANSITION_MEMBER = "document-migration-evidence-ledger.md"
+TRANSITION_SUBJECT = "source-coverage-and-migration-ledger"
+TRANSITION_MEMBER = "source-coverage-and-migration-ledger.md"
 AGENT_CUTOVER_RETIRED_HUB = ".github/ABOUT.md"
 AGENT_CUTOVER_REPLACEMENT_HUB = ".github/README.md"
 AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
     (
-        "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
-        3,
-    ),
-    (
-        "docs/90.references/research/2026-07-07-wer/"
-        "document-migration-evidence-ledger.md",
-        3,
-    ),
-    (
-        "docs/90.references/research/2026-07-07-wer/"
-        "kubernetes-infrastructure-security.md",
+        "docs/90.references/research/2026-08-08-wer/README.md",
         1,
     ),
     (
-        "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+        "docs/90.references/research/2026-08-08-wer/"
+        "ci-cd-github-actions-and-qa.md",
         2,
+    ),
+    (
+        "docs/90.references/research/2026-08-08-wer/"
+        "source-coverage-and-migration-ledger.md",
+        1,
     ),
 )
 DATA_ASSET_FIELDS = frozenset({"id", "repositoryEvidence", "refreshTrigger", "sources"})
@@ -190,6 +186,11 @@ CURRENT_INDEX_SPECS: Mapping[str, tuple[Path, str, str]] = MappingProxyType(
             Path("docs/90.references/audits/README.md"),
             "Audit Pack Registry",
             "Pack role",
+        ),
+        "research": (
+            Path("docs/90.references/research/README.md"),
+            "Research Pack Index",
+            "Status",
         ),
     }
 )
@@ -4122,7 +4123,7 @@ def validate_duplicate_rules(
             for pack in registry.packs
             if pack.pack_id.split("/", 1)[0] == collection
         )
-        if len(expected) != 1:
+        if len(expected) != 1 and not (collection == "research" and not expected):
             findings.append(
                 Finding(
                     "RIA-DUPLICATE",
@@ -4800,7 +4801,7 @@ def validate_overlay_guards(
     projections.update(cutover_projections)
     transition = _transition_record(contract)
     transition_path = (
-        Path("docs/90.references/research") / "2026-07-07-wer" / TRANSITION_MEMBER
+        Path("docs/90.references") / RESEARCH_PACK_ID / TRANSITION_MEMBER
         if transition is not None
         else None
     )
@@ -4949,20 +4950,33 @@ def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | No
         )
     transitions = contract.get("baselineTransitions")
     settlements = contract.get("baselineSettlements")
+    if not isinstance(transitions, list) or not isinstance(settlements, list):
+        return None, Finding(
+            "RIA-TRANSITION",
+            "currentPackBaselines",
+            "baseline state is outside the closed FSM",
+        )
+    if tuple(baselines) == (AUDIT_PACK_ID,):
+        if (
+            baselines.get(AUDIT_PACK_ID) == CURRENT_ROOT_COMMIT
+            and not transitions
+            and not settlements
+        ):
+            return "root", None
+        return None, Finding(
+            "RIA-TRANSITION",
+            "currentPackBaselines",
+            "baseline state is outside the closed FSM",
+        )
     if (
-        tuple(baselines) != (AUDIT_PACK_ID,)
+        tuple(baselines) != (AUDIT_PACK_ID, RESEARCH_PACK_ID)
         or baselines.get(AUDIT_PACK_ID) != CURRENT_ROOT_COMMIT
-        or not isinstance(transitions, list)
-        or not isinstance(settlements, list)
-        or transitions
-        or settlements
     ):
         return None, Finding(
             "RIA-TRANSITION",
             "currentPackBaselines",
             "baseline state is outside the closed FSM",
         )
-    return "root", None
     research = baselines[RESEARCH_PACK_ID]
     if research == CURRENT_ROOT_COMMIT and not transitions and not settlements:
         return "root", None

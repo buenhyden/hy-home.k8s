@@ -41,28 +41,22 @@
   },
   "currentAuthorityMigrations": [
     {
-      "path": "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
-      "from": ".github/ABOUT.md",
-      "to": ".github/README.md",
-      "count": 3
-    },
-    {
-      "path": "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
-      "from": ".github/ABOUT.md",
-      "to": ".github/README.md",
-      "count": 3
-    },
-    {
-      "path": "docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md",
+      "path": "docs/90.references/research/2026-08-08-wer/README.md",
       "from": ".github/ABOUT.md",
       "to": ".github/README.md",
       "count": 1
     },
     {
-      "path": "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+      "path": "docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md",
       "from": ".github/ABOUT.md",
       "to": ".github/README.md",
       "count": 2
+    },
+    {
+      "path": "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
+      "from": ".github/ABOUT.md",
+      "to": ".github/README.md",
+      "count": 1
     }
   ],
   "referencePolicy": {
@@ -85,7 +79,7 @@
     "allowedReferenceCounts": [
       {
         "path": "docs/00.agent-governance/contracts/agent-legacy-cutover.json",
-        "counts": [1, 1, 1, 2, 9]
+        "counts": [1, 1, 1, 2, 8]
       },
       {
         "path": "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json",

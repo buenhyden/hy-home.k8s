@@ -369,7 +369,7 @@ execution, provider runtime discovery, or remote repository state.
 - **Suspended program**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **External evidence**:
-  [Documentation Architecture and SDLC Document Roles Reference](../../90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md)
+  `docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md`; [current lookup](../../90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md)
 - **Implementation Plan**:
   [Document Taxonomy Consolidation Implementation Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
 - **Execution Task**:

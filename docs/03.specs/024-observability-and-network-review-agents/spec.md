@@ -138,7 +138,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Agent Design**: [./agent-design.md](./agent-design.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md)
 - **Task**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md)
-- **Gap-analysis reference**: [../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md](../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)
+- **Gap-analysis reference**: `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`; [current lookup](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)
 - **Current implementation contract**: This completed role-delivery evidence is an input to [Spec 025](../025-governance-owner-and-roster-currentness/spec.md).

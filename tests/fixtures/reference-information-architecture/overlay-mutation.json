@@ -1,6 +1,6 @@
 {
   "kind": "protected-byte-mutation",
-  "path": "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+  "path": "docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md",
   "replacement": "current overlay mutation\n",
   "expectedRule": "RIA-OVERLAY"
 }
