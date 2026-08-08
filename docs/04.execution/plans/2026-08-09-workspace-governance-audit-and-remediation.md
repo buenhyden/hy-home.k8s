@@ -366,18 +366,18 @@ roadmap/ledger rows, Task and progress evidence.
 **Files:** `ci-cd-github-actions-qa-and-validation.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Inventory workflow triggers/jobs/actions/pins/permissions/concurrency,
+- [x] Inventory workflow triggers/jobs/actions/pins/permissions/concurrency,
   pre-commit lanes, affected surfaces, formatting, linting, syntax, unit,
   integration, contract, security, and policy checks.
-- [ ] Map each lane to trigger, exact command/tool, result class, evidence depth,
+- [x] Map each lane to trigger, exact command/tool, result class, evidence depth,
   fallback/SKIP semantics, artifact, and remediation owner.
-- [ ] Write a failing evidence probe for any current claim that treats dormant
+- [x] Write a failing evidence probe for any current claim that treats dormant
   Prettier configuration or a non-invoked tool as coverage; otherwise record a
   reviewed dormant `DEFER` without manufacturing a failure.
-- [ ] Preserve distinct Validation and Verification results across report rows.
-- [ ] Run Actions security, CI Python contract, affected surfaces, profiles,
+- [x] Preserve distinct Validation and Verification results across report rows.
+- [x] Run Actions security, CI Python contract, affected surfaces, profiles,
   links, and relevant workflow tests; review against VAL-WGA-005.
-- [ ] Record remediation candidates and commit `docs: audit ci and qa controls`.
+- [x] Record remediation candidates and commit `docs: audit ci and qa controls`.
 
 #### WGIA-005 — Harness, loop, fixtures, scripts, and blockers
 

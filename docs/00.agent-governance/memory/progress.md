@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-004 CI and QA audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #ci #qa #validation
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-004 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted delivery-owner change.
+- **Next Owner**: WGIA-009 integration and WGIA-014 whole-branch closure.
+
+#### Progress
+
+Audited five workflows, eleven jobs, fifteen full-SHA Action uses, permissions,
+concurrency, changelog artifact retention, pre-commit, affected-surface routing,
+formatting/lint/syntax/test/contract/security/policy checks, and the Validation/
+Verification boundary. Actions and lane contracts align repository-statically;
+Prettier remains accurately dormant; hosted workflow, deployment CD, and live
+evidence remain `DEFER`. No canonical remediation candidate was identified.
+
+#### Memory
+
+Configuration presence and affected-surface routing are not execution coverage.
+Before manufacturing a RED for dormant tooling, check the current semantic
+owner: here it already declares Prettier dormant and forbids a coverage claim.
+Keep selected-job syntax, local Validation, hosted Verification, deployment CD,
+and live reconciliation as separately identified evidence lanes.
+
+#### Evidence
+
+- Workflow proof: five workflows, eleven jobs, fifteen of fifteen full-SHA uses,
+  seven unique Actions, five concurrency blocks, and five read-only roots.
+- Dormant proof: two Prettier configs, two routed inputs, zero consumers, exact
+  dormant owner claim, and no TDD RED required.
+- Actions security, CI Python, affected surfaces, and agent-governance CI
+  self-test/production checks pass; two relevant workflow modules pass 110 tests.
+- Four complete findings are recorded; focused document/link/diff evidence and
+  the complete repository quality-gate PASS are in the active Task. No hosted,
+  remote, provider-runtime, credential, secret, or live action occurred.
+
+#### Handoff
+
+WGIA-004 is complete. Specification/content and quality reviews are Approved
+with no Critical or Important finding, and the complete repository quality gate
+passes against the exact staged scope. WGIA-009 may integrate the reviewed
+no-remediation result, while the current workflow, selection, quality, test,
+hook, and script owners remain unchanged; WGIA-014 owns terminal completion
+evidence.
+
 ### 2026-08-09 - WGIA-003 SDLC and documentation audit
 
 #### Metadata
