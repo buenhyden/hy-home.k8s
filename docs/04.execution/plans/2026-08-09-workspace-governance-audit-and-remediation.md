@@ -334,15 +334,15 @@ finding/request schemas; Task/progress evidence.
 coverage/verdict cells, roadmap/ledger rows needed by the findings, Task and
 progress evidence.
 
-- [ ] Inspect root purpose and root/provider shim routing, Stage 00 authority,
+- [x] Inspect root purpose and root/provider shim routing, Stage 00 authority,
   approval boundaries, operating rules, role owners, and overview consistency.
-- [ ] Derive a canonical-owner matrix and identify duplication, stale routing,
+- [x] Derive a canonical-owner matrix and identify duplication, stale routing,
   missing authority, and purpose conflicts without changing owners yet.
-- [ ] Populate full finding rows and As-Is/Gap/Target analysis; keep provider
+- [x] Populate full finding rows and As-Is/Gap/Target analysis; keep provider
   discovery/auth/runtime claims separate from tracked adapters.
-- [ ] Run governance/closure, registry, profile, links, and harness-focused
+- [x] Run governance/closure, registry, profile, links, and harness-focused
   checks; review content against VAL-WGA-003.
-- [ ] Record remediation candidates in the roadmap/ledger and commit
+- [x] Record remediation candidates in the roadmap/ledger and commit
   `docs: audit workspace governance contracts`.
 
 #### WGIA-003 — Spec-driven SDLC, documentation, and templates

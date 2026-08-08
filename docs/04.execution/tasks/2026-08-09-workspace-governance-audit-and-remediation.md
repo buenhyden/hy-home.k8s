@@ -38,7 +38,7 @@ limitations, logical commits, and unresolved blockers.
 | --- | --- | --- | --- | --- | --- | --- |
 | WGIA-000 | VAL-WGA-001, VAL-WGA-012 | Activate Spec/Plan/Task and standalone execution relation | primary agent | Done | Active reciprocal execution is registered. Approval-date regression reproduced RED and is GREEN after exact ISO calendar-date parsing; focused checks and the complete repository quality gate pass. | Spec 054, ADR-0022, reciprocal Plan/Task, indexes, `standaloneExecutions` row, links/owners fixture/self-test; strict registry 492 paths; Markdown profiles 0; strict links PASS; Ruff/compile/diff PASS; Python review Approved; Spec review finding fixed. |
 | WGIA-001 | VAL-WGA-001, VAL-WGA-002 | Freeze observation identity and establish exact pack/finding contracts | assigned worker | Done | Bounded draft successor foundation is complete: ten declared files, 30 sequential request rows with one linked report/heading owner and current evidence each, nine profile-compliant report forms, closed finding/source/review/freshness conventions, and no Current-pointer or Stage 98 change. | [Focused evidence](#wgia-001-focused-evidence): initial exact pack/request probe RED at 0/0; malformed missing/duplicate/unknown member, duplicate-owner, incomplete-field, invalid-vocabulary, and Stage 98 fixtures rejected; GREEN 10 files/30 rows/9 reports/14 conceptual finding fields/8 verdicts/4 depths; exact evidence-path existence, strict registry 502 paths, Markdown profiles 0, strict links/owners and complete repository quality gate PASS; specification, quality, and Python reviews Approved. |
-| WGIA-002 | VAL-WGA-002, VAL-WGA-003 | Audit purpose, roles, governance, operating contracts, and provider shims | assigned worker | Queued | Not executed. | Governance report, owner matrix, finding register, focused gates and reviews. |
+| WGIA-002 | VAL-WGA-002, VAL-WGA-003 | Audit purpose, roles, governance, operating contracts, and provider shims | assigned worker | Done | Repository-static audit is complete: purpose/JIT/approval/role-owner separation aligns; two root README summaries conflict with current authority and adapter classification; provider runtime remains `DEFER`. | [Focused evidence](#wgia-002-focused-evidence); four complete findings, exact owner and As-Is/Gap/Target matrices, one reviewed provisional WGIA-009 roadmap input, focused and complete repository gates PASS; specification and quality reviews Approved. |
 | WGIA-003 | VAL-WGA-002, VAL-WGA-004 | Audit SDD, SDLC, documentation, templates, README rules, and guides | assigned worker | Queued | Not executed. | Documentation report, registry/template evidence, focused gates and reviews. |
 | WGIA-004 | VAL-WGA-002, VAL-WGA-005 | Audit CI/CD, GitHub Actions, QA, formatting, lint, syntax, tests, fixtures, Validation and Verification | assigned worker | Queued | Not executed. | Delivery/QA report, lane matrix, dormant-control disposition, gates and reviews. |
 | WGIA-005 | VAL-WGA-002, VAL-WGA-006 | Audit harness, loop, scripts, fixtures, checkpoints, blockers, recovery, and handoff | assigned worker | Queued | Not executed. | Harness/loop report, state/owner matrices, focused gates and reviews. |
@@ -93,6 +93,14 @@ WGIA-001 is complete as a bounded draft successor foundation. Its conservative
 and complete repository validation pass, and specification, quality, and
 Python reviews are Approved. It does not complete WGIA-002 through WGIA-009 or
 promote any scope to `Aligned`.
+
+WGIA-002 is complete. The pinned repository-static comparison found one
+aligned purpose/JIT/approval/role-owner control, two root README conflicts, and
+one provider-runtime `DEFER`. Focused and complete repository gates pass, and
+specification and quality reviews are Approved. It did not change any active canonical owner,
+Current pointer, disposition-ledger decision, historical audit body, or Stage
+98 path. WGIA-009 owns provisional roadmap admission and WGIA-010 owns any
+later root README correction.
 
 ### WGIA-001 Focused Evidence
 
@@ -165,6 +173,53 @@ promote any scope to `Aligned`.
   incomplete topical analysis. WGIA-002 through WGIA-009 own audit/review;
   WGIA-012 alone owns Current cutover.
 
+### WGIA-002 Focused Evidence
+
+- **Scope and changed paths**: the purpose/governance report, the
+  `REQ-WGA-001`, `REQ-WGA-002`, and `REQ-WGA-012` pack cells, one provisional
+  roadmap row, this Task, one top durable progress entry, and ignored worker
+  state. The disposition ledger has no WGIA-002 candidate because no reviewed
+  artifact met the Legacy/Deprecated/one-shot threshold.
+- **Acceptance IDs**: VAL-WGA-002 and VAL-WGA-003 at repository-static depth.
+- **Pinned-source identity**: active governance owners are identical between
+  observation commit `50628b84165479b03efc0a25be075a49c91a9aef` and the
+  WGIA-002 starting HEAD; only the durable progress ledger differs under Stage
+  00 because WGIA-001 recorded its completed evidence.
+- **Contradiction probe**: the pre-edit Node probe exited 1 with
+  `WGIA-GOV-ROOT-ROUTING FAIL` and exact findings
+  `THIN_GATEWAY_AS_CANONICAL_OWNER,GEMINI_NATIVE_SURFACE_OMITTED`. The root
+  canonical-owner list names thin `AGENTS.md` rather than the Stage 00 policy
+  SSoT, while the top-level area summary omits `.gemini/` and blurs the
+  `.agents/` local/shared boundary.
+- **No-conflict proof**: the corrected deterministic probe returned
+  `WGIA-GOV-NO-CONFLICT PASS explicit_jit=7/7 delegated_jit=1/1 roles=12
+  surfaces=4 adapters=48`. Purpose, canonical JIT order, approval owner,
+  completion owner, machine role owner, and readable role view therefore have
+  no separately identified repository-static conflict.
+- **Findings and candidate**: `WGA-GOV-001` is `Aligned` at
+  `repository-static`; `WGA-GOV-002` and `WGA-GOV-003` are `Conflict`;
+  `WGA-GOV-004` is `DEFER` at `provider-runtime`. `WGA-RMP-GOV-001` combines
+  only the two root README corrections as a provisional WGIA-009 input; it is
+  not implementation approval.
+- **Focused validation**: `python3 scripts/validate-agent-governance-closure.py
+  --root .` passed; harness contract passed at 12/4/48 with four evidence and
+  four memory classes; harness semantics passed at 12 roles/48 adapters/eight
+  categories; roster currentness passed; strict document registry passed at
+  502 paths with zero uncovered/ambiguous; strict Markdown profiles reported
+  zero violations; strict links/owners returned `PASS CROSS-DOCUMENT`; `git
+  diff --check` passed; the Stage 98 path diff is empty.
+- **Lanes and limitations**: targeted repository-static, affected/staged, and
+  complete `bash scripts/validate-repo-quality-gates.sh .` checks `PASS` with
+  final exit 0. Formatter-review and rerun are `SKIP` because no formatter
+  ran. Hosted CI, provider-runtime, authenticated, credential-bearing, remote,
+  and live lanes remain `DEFER`; no secret or runtime state was accessed.
+- **Review, rollback, and next owner**: specification and quality reviews are
+  `Approved` with no Critical or Important finding; quality review also
+  resolved 43 unique cited `path#selector` values in the pinned/current trees
+  with zero invalid. Rollback is limited to the WGIA-002 report/cell/roadmap/
+  Task/progress edits. WGIA-009 owns candidate admission, WGIA-010 owns any
+  accepted root README correction, and WGIA-014 owns whole-branch review.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -173,7 +228,7 @@ promote any scope to `Aligned`.
 | --- | --- | --- |
 | [WGIA-000](../plans/2026-08-09-workspace-governance-audit-and-remediation.md#work-breakdown) | Done. | RED: the different valid approval date was rejected with `STANDALONE-EXECUTION-APPROVAL`. GREEN: links/owners self-test accepts both valid dates and rejects the invalid calendar date. Strict registry reports 492 paths with 0 uncovered/ambiguous; Markdown profiles report 0 violations; strict links, Ruff, Python compile, cached diff, and complete repository quality gate pass. Python review is Approved; the Spec review's sole index-drift finding was fixed and no other Critical/Important finding remained. |
 | N/A — WGIA-001 shares the Plan and Spec sources above | Done as a bounded draft foundation. | Exact observation SHA; RED 0/0 pack/request probe and README current-inventory mismatch; malformed-fixture rejection; GREEN 10 files, 30 sequential request rows, 9 reports, 14 conceptual finding fields, 8 verdicts, 4 evidence depths, and exact observation-commit evidence paths; strict registry 502 paths, Markdown profiles 0, strict links/owners, cached/worktree diff, and complete repository quality gate PASS; specification, quality, and Python reviews Approved; Stage 98 and Current-pointer boundaries preserved. WGIA-014 owns whole-branch review. |
-| N/A — WGIA-002 shares the Plan and Spec sources above | Queued. | Governance audit and review evidence will be recorded here. |
+| N/A — WGIA-002 shares the Plan and Spec sources above | Done. | Four complete findings: one repository-static `Aligned`, two root README `Conflict`, and one provider-runtime `DEFER`; one reviewed provisional WGIA-009 roadmap input; focused governance/closure, 12/4/48 harness contract, 12-role/48-adapter semantics, roster currentness, strict registry/profile/link, diff, Stage 98, and complete repository gate checks PASS. Specification and quality reviews Approved. |
 | N/A — WGIA-003 shares the Plan and Spec sources above | Queued. | SDLC/document/template audit evidence will be recorded here. |
 | N/A — WGIA-004 shares the Plan and Spec sources above | Queued. | CI/QA/Validation/Verification audit evidence will be recorded here. |
 | N/A — WGIA-005 shares the Plan and Spec sources above | Queued. | Harness/loop/script/blocker audit evidence will be recorded here. |

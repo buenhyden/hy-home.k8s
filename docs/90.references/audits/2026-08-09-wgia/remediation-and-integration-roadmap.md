@@ -63,6 +63,16 @@ conflicts fail closed to `DEFER`.
 | Cleanup | Proof-complete `Delete` rows | Exact removals in WGIA-013 | `DEFER` pending zero-consumer proof. |
 | Closure | Re-audit, full QA, reviews, and logical history | WGIA-014 terminal handoff | `DEFER` pending all prior work. |
 
+### WGIA-002 Provisional Inputs
+
+These rows are candidate inputs for WGIA-009, not implementation approval.
+Their source findings remain authoritative until independent review and
+integrated admission complete.
+
+| Candidate ID | Source findings | Request IDs | Problem | Dependency | Priority | Target state | Canonical implementation owner | Validation | Verification | Rollback | Blocker | Evidence depth | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| WGA-RMP-GOV-001 | `WGA-GOV-002`, `WGA-GOV-003` | `REQ-WGA-001`, `REQ-WGA-002`, `REQ-WGA-012` | Root `README.md` presents thin `AGENTS.md` as a canonical owner and omits/misclassifies the `.gemini/` versus `.agents/` adapter boundary. | WGIA-002 reviews Approved; WGIA-009 deduplication/admission remains required before WGIA-010. | P1 owner-routing integrity | `README.md#canonical-owners` points to the Stage 00 policy SSoT; `README.md#top-level-areas` names all four tracked surface classes without promoting provider runtime. | `README.md` human onboarding owner; Stage 00 and `harness-contract.json` remain classification sources. | Deterministic root-routing regression plus governance closure, harness contract/semantics/currentness, strict profile, and strict link checks. | Reviewer confirms the human overview resolves to one policy owner, retains thin gateways, includes `.gemini/`, distinguishes `.agents/`, and keeps runtime claims `DEFER`. | Revert only the later bounded `README.md` correction; current Stage 00 and adapter files require no rollback. | WGIA-009 admission pending. | `repository-static` | `Provisional` |
+
 ### Finding Convention
 
 Every material roadmap finding keeps the complete pack field set and closed

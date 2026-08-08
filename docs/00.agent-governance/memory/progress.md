@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-002 purpose and governance audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #authority #provider-boundary
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-002 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or accepted owner remediation.
+- **Next Owner**: WGIA-009 for roadmap admission; WGIA-010 only for an accepted canonical correction.
+
+#### Progress
+
+Audited workspace purpose, Stage 00 authority, JIT and approval routing,
+completion semantics, machine/readable role ownership, root/provider shims,
+and provider evidence boundaries. The reviewed report has four findings:
+one repository-static alignment, two root README conflicts, and one provider-
+runtime `DEFER`. One combined root README correction is a provisional roadmap
+input only; no active owner or disposition ledger was changed.
+
+#### Memory
+
+A thin gateway can remain operationally correct while a human index still
+misclassifies it as authority. Audit root navigation separately from gateway
+content, and keep `.agents/` local/shared ownership distinct from `.gemini/`
+repo-static project surfaces. Tracked parity never proves provider discovery,
+authentication, hook delivery, role consumption, or model resolution.
+
+#### Evidence
+
+- Pre-edit contradiction probe exited 1 with
+  `THIN_GATEWAY_AS_CANONICAL_OWNER,GEMINI_NATIVE_SURFACE_OMITTED`.
+- Corrected no-conflict proof passed at explicit JIT 7/7, delegated JIT 1/1,
+  12 roles, four surfaces, and 48 unique current adapters.
+- Governance closure, harness contract/semantics, roster currentness, strict
+  registry, strict Markdown profiles, strict links/owners, diff whitespace,
+  and the zero Stage 98 path-diff checks pass.
+- The complete repository quality gate passes at the exact staged scope.
+  Specification and quality reviews are Approved with no Critical or
+  Important finding; 43 unique cited path/selectors resolve in the pinned and
+  current trees with zero invalid.
+- Hosted CI, provider-runtime, authenticated, credential-bearing, remote, and
+  live evidence remains `DEFER`; no secrets or runtime state were accessed.
+
+#### Handoff
+
+WGIA-002 is complete. WGIA-009 may admit or reject the reviewed provisional
+roadmap input; WGIA-010 alone owns any accepted root README correction.
+WGIA-014 owns final branch review and closure.
+
 ### 2026-08-09 - WGIA-001 governance audit-pack foundation
 
 #### Metadata

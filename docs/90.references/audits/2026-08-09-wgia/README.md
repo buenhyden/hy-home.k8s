@@ -44,8 +44,8 @@ later topic audit and independent review are still pending.
 
 | Request ID | Requested scope | Primary owner | Workspace evidence | Evidence depth | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| REQ-WGA-001 | Purpose | [Workspace purpose](workspace-purpose-governance-and-operating-contracts.md#workspace-purpose) | `README.md`; `docs/00.agent-governance/rules/bootstrap.md` | `repository-static` | `Partial` |
-| REQ-WGA-002 | Roles | [Workspace roles](workspace-purpose-governance-and-operating-contracts.md#workspace-roles) | `docs/00.agent-governance/contracts/harness-contract.json`; `docs/00.agent-governance/harness-catalog.md` | `repository-static` | `Partial` |
+| REQ-WGA-001 | Purpose | [Workspace purpose](workspace-purpose-governance-and-operating-contracts.md#workspace-purpose) | `README.md`; `docs/00.agent-governance/rules/bootstrap.md` | `repository-static` | `Aligned` |
+| REQ-WGA-002 | Roles | [Workspace roles](workspace-purpose-governance-and-operating-contracts.md#workspace-roles) | `docs/00.agent-governance/contracts/harness-contract.json`; `docs/00.agent-governance/harness-catalog.md`; `README.md` | `repository-static` | `Partial` |
 | REQ-WGA-003 | CI/CD | [CI/CD](ci-cd-github-actions-qa-and-validation.md#cicd) | `.github/workflows/ci.yml`; `docs/00.agent-governance/contracts/validation-surfaces.json` | `repository-static` | `Partial` |
 | REQ-WGA-004 | GitHub Actions | [GitHub Actions](ci-cd-github-actions-qa-and-validation.md#github-actions) | `.github/workflows/`; `scripts/validate-github-actions-security.py` | `repository-static` | `Partial` |
 | REQ-WGA-005 | Spec-driven development | [Spec-driven development](spec-driven-sdlc-documentation-and-templates.md#spec-driven-development) | `docs/03.specs/`; `docs/00.agent-governance/rules/agentic.md` | `repository-static` | `Partial` |
@@ -55,7 +55,7 @@ later topic audit and independent review are still pending.
 | REQ-WGA-009 | Formatting | [Formatting](ci-cd-github-actions-qa-and-validation.md#formatting) | `.editorconfig`; `.prettierignore`; `.prettierrc.json` | `repository-static` | `Partial` |
 | REQ-WGA-010 | Linting | [Linting](ci-cd-github-actions-qa-and-validation.md#linting) | `.pre-commit-config.yaml`; `scripts/validate-repo-quality-gates.sh` | `repository-static` | `Partial` |
 | REQ-WGA-011 | Overview | [Overview](README.md#overview) | `README.md`; `docs/90.references/audits/README.md` | `repository-static` | `Partial` |
-| REQ-WGA-012 | Operating contracts | [Operating contracts](workspace-purpose-governance-and-operating-contracts.md#operating-contracts) | `AGENTS.md`; `.codex/CODEX.md`; `docs/00.agent-governance/rules/quality-standards.md` | `repository-static` | `Partial` |
+| REQ-WGA-012 | Operating contracts | [Operating contracts](workspace-purpose-governance-and-operating-contracts.md#operating-contracts) | `AGENTS.md`; `README.md`; `docs/00.agent-governance/rules/bootstrap.md`; `docs/00.agent-governance/rules/approval-boundaries.md`; `docs/00.agent-governance/rules/quality-standards.md` | `repository-static` | `Partial` |
 | REQ-WGA-013 | Fixtures | [Fixtures](harness-loop-fixtures-scripts-and-blockers.md#fixtures) | `tests/fixtures/`; `docs/00.agent-governance/contracts/` | `repository-static` | `Partial` |
 | REQ-WGA-014 | Blockers | [Blockers](harness-loop-fixtures-scripts-and-blockers.md#blockers) | `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md`; `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md` | `repository-static` | `Partial` |
 | REQ-WGA-015 | General checks | [General checks](ci-cd-github-actions-qa-and-validation.md#general-checks) | `scripts/validate-repo-quality-gates.sh`; `scripts/run-validation-lane.py` | `repository-static` | `Partial` |
