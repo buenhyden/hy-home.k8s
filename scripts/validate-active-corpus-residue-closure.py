@@ -109,6 +109,8 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0021-canonical-surface-routing-and-evidence-depth.md",
         "docs/02.architecture/decisions/"
         "0022-direct-approval-standalone-execution-lineage.md",
+        "docs/02.architecture/decisions/"
+        "0023-work-unit-document-taxonomy-and-governance-authority.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -2794,6 +2796,8 @@ def _self_test_post_closure_adr_scope() -> int:
             "0021-canonical-surface-routing-and-evidence-depth.md",
             "docs/02.architecture/decisions/"
             "0022-direct-approval-standalone-execution-lineage.md",
+            "docs/02.architecture/decisions/"
+            "0023-work-unit-document-taxonomy-and-governance-authority.md",
         }
     )
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:

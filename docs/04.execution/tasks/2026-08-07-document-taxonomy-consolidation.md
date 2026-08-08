@@ -40,7 +40,7 @@ is performed or claimed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-100 | VAL-WDTC-004 | Accept ADR-0023 and atomically replace the erroneous PRD-008 decision projection. | platform | Queued | Not executed | Lifecycle, registry self-test, strict registry, and commit evidence |
+| WORK-100 | VAL-WDTC-004 | Accept ADR-0023 and atomically replace the erroneous PRD-008 decision projection. | platform | Done | ADR-0023 accepted; PRD-008/ARD-0011/Spec-052 now project decision 0023. | Staged lifecycle, registry self-test, strict registry, links/owners, and commit evidence |
 | WORK-101 | VAL-WDTC-010 | Repair the three recorded all-files baseline failures without suppressing checks. | platform | Queued | Not executed | Focused hook results and `TMPDIR=/tmp` all-files PASS |
 | WORK-102 | VAL-WDTC-001, VAL-WDTC-003, VAL-WDTC-006 | Add legacy/transition/terminal route semantics and a reviewed 132-document manifest/tool. | platform | Queued | Not executed | RED/GREEN route fixtures, `132/82/50` manifest counts, dry-run result |
 | WORK-103 | VAL-WDTC-006 | Archive the 50 unmatched execution documents and remove their live sources. | platform | Queued | Not executed | 50 added envelopes, 93-record index, prior-43 immutable diff, archive tests |
@@ -81,10 +81,11 @@ is performed or claimed.
 
 ## Verification Summary
 
-The written design and implementation plan are approved. WORK-100 through
-WORK-110 are not executed. Pre-change evidence establishes that strict registry,
-Markdown, links/owners, lifecycle, and aggregate lanes pass with `TMPDIR=/tmp`;
-the raw all-files baseline has three named defects assigned to WORK-101.
+The written design and implementation plan were reviewed. WORK-100 is complete;
+WORK-101 through WORK-110 remain queued. Staged lifecycle, registry self-test,
+strict registry, and strict links/owners validate the accepted ADR-0023 and its
+atomic PRD-008 projection. The raw all-files baseline has three named defects
+assigned to WORK-101.
 
 The earlier proposal to renumber operations or delete active-corpus validators
 is withdrawn. Stage 05 remains stable, Release is excluded, and the five
@@ -97,7 +98,7 @@ zero consumers and no unique semantics.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-100](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-004 accepted ADR and corrected machine projection are pending. |
+| [WORK-100](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Complete. | VAL-WDTC-004 accepted ADR-0023 and corrected immutable PRD-008 machine projection passed staged lifecycle, registry self-test/strict, and strict links/owners validation. |
 | [WORK-101](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-010 baseline repair and all-files evidence are pending. |
 | [WORK-102](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-001/003/006 transition routes, manifest, and dry-run evidence are pending. |
 | [WORK-103](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-006 additive archive and immutable-base evidence are pending. |

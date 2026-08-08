@@ -1,7 +1,7 @@
 ---
 title: 'ADR-0023: Work-Unit Document Taxonomy and Governance Authority'
 type: sdlc/adr
-status: active
+status: accepted
 owner: platform
 updated: 2026-08-09
 ---
@@ -10,12 +10,12 @@ updated: 2026-08-09
 
 ## Overview
 
-This active decision records the human-approved work-unit-centered document
+This accepted decision records the human-approved work-unit-centered document
 topology with a stable Stage 05 operations path and one authority plane for
-document and AI-agent governance. The written design and implementation plan
-have received their required human review. Lifecycle acceptance and the
-program registry correction from unrelated ADR-0021 occur atomically in the
-first implementation work package.
+document and AI-agent governance. The written design and implementation
+planning were reviewed. Lifecycle acceptance and the program registry
+correction from unrelated ADR-0021 occur atomically in the first implementation
+work package.
 
 ## Context
 

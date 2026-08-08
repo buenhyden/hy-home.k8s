@@ -14980,3 +14980,43 @@ section separating static from live evidence.
   legacy Stage 04 Plan/Task with an execution plan for the approved topology.
 - No push, merge, publication, provider action, credential access, deployment,
   or live mutation was performed.
+
+## 2026-08-09 - WORK-100 accepted ADR-0023 and corrected PRD-008 lineage
+
+### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, architecture, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #lineage #validation
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: Reviewed written design and implementation planning
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
+- **Next Owner**: WORK-101 baseline repair
+
+### Progress
+
+- Accepted ADR-0023 after written-design and implementation-planning review.
+- Corrected only the PRD-008/ARD-0011/Spec-052 registry tranche decision from
+  unrelated ADR-0021 to ADR-0023; ADR-0021 and its original program scope are
+  unchanged.
+- Updated the immutable program-lineage projection and downstream Spec/Task
+  execution record to require accepted ADR-0023.
+
+### Evidence
+
+- RED: `python3 scripts/validate-document-contract-registry.py --root . --self-test`
+  failed as expected with `production program-lineage immutable projection
+  differs` before the registry correction.
+- GREEN: staged lifecycle, registry self-test, strict registry, and strict
+  links/owners validation each passed after the atomic correction. The strict
+  registry reported zero failures, uncovered paths, and ambiguous paths.
+- All results are repository-static; no remote, provider, credential, hosted,
+  or live action was performed or claimed.
+
+### Handoff
+
+- Continue with WORK-101. The known all-files baseline defects remain assigned
+  to that separate work package.
