@@ -8,6 +8,7 @@ import bisect
 import collections
 import contextlib
 import copy
+import datetime
 import hashlib
 import html
 import io
@@ -4230,9 +4231,24 @@ def _unowned_active_execution_diagnostics(
 STANDALONE_APPROVAL_STATEMENT = (
     "Direct human approval on 2026-08-08 authorizes this standalone execution relation."
 )
+STANDALONE_APPROVAL_PATTERN = re.compile(
+    r"^Direct human approval on (?P<date>\d{4}-\d{2}-\d{2}) "
+    r"authorizes this standalone execution relation\.$",
+    re.MULTILINE,
+)
 STANDALONE_LIFECYCLE_EXCLUSION = (
     "No separate PRD or ARD is required or part of this standalone lifecycle."
 )
+
+
+def _has_standalone_approval_statement(text: str) -> bool:
+    for match in STANDALONE_APPROVAL_PATTERN.finditer(text):
+        try:
+            datetime.date.fromisoformat(match.group("date"))
+        except ValueError:
+            continue
+        return True
+    return False
 
 
 def _standalone_execution_diagnostics(
@@ -4288,7 +4304,7 @@ def _standalone_execution_diagnostics(
             )
         spec_text = context.texts[spec]
         if (
-            STANDALONE_APPROVAL_STATEMENT not in spec_text
+            not _has_standalone_approval_statement(spec_text)
             or STANDALONE_LIFECYCLE_EXCLUSION not in spec_text
         ):
             diagnostics.append(
@@ -6320,6 +6336,20 @@ def _mutated_standalone_execution_fixture(
         assert spec is not None
         mutated.texts[spec] = mutated.texts[spec].replace(
             STANDALONE_APPROVAL_STATEMENT, "Direct approval statement omitted."
+        )
+    elif mutation == "standalone-different-valid-approval-date":
+        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
+        assert spec is not None
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            STANDALONE_APPROVAL_STATEMENT,
+            "Direct human approval on 2026-08-09 authorizes this standalone execution relation.",
+        )
+    elif mutation == "standalone-invalid-approval-date":
+        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
+        assert spec is not None
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            STANDALONE_APPROVAL_STATEMENT,
+            "Direct human approval on 2026-02-30 authorizes this standalone execution relation.",
         )
     elif mutation == "standalone-lifecycle-exclusion":
         spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
@@ -9348,6 +9378,8 @@ def _self_test(root: Path) -> list[str]:
             "standalone-execution-valid",
             "standalone-execution-wrong-state",
             "standalone-execution-missing-direct-approval",
+            "standalone-execution-different-valid-approval-date",
+            "standalone-execution-invalid-approval-date",
             "standalone-execution-missing-lifecycle-exclusion",
             "standalone-execution-missing-adr-reciprocal",
             "standalone-execution-missing-plan-task-reciprocal",

@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Governance Audit and Remediation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-09
 ---
@@ -29,12 +29,17 @@ audit pointer. Earlier audit packs remain immutable, source-commit-bounded
 historical evidence rather than active policy or compatibility owners.
 
 The primary consumers are developers, operators, documentation writers,
-governance stewards, quality and security reviewers, and AI agents. Direct
-human approval on 2026-08-09 authorizes this design. A later implementation
-Plan and Task may activate the existing direct-approval standalone execution
-relation governed by
+governance stewards, quality and security reviewers, and AI agents.
+
+Direct human approval on 2026-08-09 authorizes this standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle. The
+same approval authorizes this design and its reciprocal
+[Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+and
+[Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).
+The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
-this draft Spec does not itself activate execution.
+No separate PRD or ARD program authority is asserted.
 
 ## Strategic Boundaries & Non-goals
 
@@ -529,7 +534,7 @@ live results remain `DEFER` unless independently observed and approved.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — direct human approval on 2026-08-09 authorizes the design only; no separate PRD/ARD program owner is asserted | VAL-WGA-001 | Exact ten-file pack and 30-row coverage audit. |
+| N/A — direct human approval and Spec approval on 2026-08-09 authorize this standalone design and active execution; no separate PRD/ARD program owner is asserted | VAL-WGA-001 | Exact ten-file pack and 30-row coverage audit. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-002 | Finding-field completeness audit and independent content review. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-003 | Purpose, authority, operating-contract, and canonical-owner evidence. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-004 | Registry, template/source, Markdown profile, and SDLC evidence. |

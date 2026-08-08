@@ -110,6 +110,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-08-02-repository-assurance-integration-and-closure.md
 ├── 2026-08-07-document-taxonomy-consolidation.md
 ├── 2026-08-08-workspace-engineering-research-pack-consolidation.md
+├── 2026-08-09-workspace-governance-audit-and-remediation.md
 └── README.md
 ```
 
@@ -201,6 +202,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)의 계약 통합, 전체 QA와 독립 검토, 로컬 fast-forward, 정확한 stash 폐기, worktree 정리, 수명주기 종결 실행 계획이다. | Draft | 2026-08-02 |
 | [`./2026-08-07-document-taxonomy-consolidation.md`](./2026-08-07-document-taxonomy-consolidation.md) | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)의 execution stage 폐지, work unit 통합, operations stage 재번호, 파일명 날짜 제거, lineage frontmatter, 규칙 문서 통합, machine contract 및 validator 감축 실행 계획이다. WDTC-002는 Spec 053에 supersede되고 나머지 패키지는 유지되며 archive 불가침을 전 구간 제약으로 둔다. | Active | 2026-08-08 |
 | [`./2026-08-08-workspace-engineering-research-pack-consolidation.md`](./2026-08-08-workspace-engineering-research-pack-consolidation.md) | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)의 신규 13-file 연구 팩, 25-file disposition, 외부·워크스페이스 재조사, mutable consumer 이관, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 폐쇄 검증을 완료한 계획이다. | Done | 2026-08-09 |
+| [`./2026-08-09-workspace-governance-audit-and-remediation.md`](./2026-08-09-workspace-governance-audit-and-remediation.md) | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)의 10-file Current 감사 팩, 30-scope owner matrix, canonical-owner remediation, RIA Current 전환, proof-complete cleanup, review와 repository-static 폐쇄 검증 실행 계획이다. | Active | 2026-08-09 |
 
 ## Related Documents
 

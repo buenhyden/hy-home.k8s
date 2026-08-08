@@ -6433,6 +6433,15 @@
       "reason": "Direct human-approved research-pack consolidation without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "054",
+      "plan": "docs/04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md",
+      "task": "docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md",
+      "state": "active",
+      "reason": "Direct human-approved workspace governance audit and remediation without separate PRD/ARD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }

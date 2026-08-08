@@ -3,7 +3,7 @@ title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # ADR-0022: Direct-Approval Standalone Execution Lineage
@@ -17,10 +17,11 @@ PRD or ARD owner.
 
 ## Context
 
-Spec 053 was approved directly by the human on 2026-08-08 with an explicit
-no-separate-PRD/ARD boundary. The existing `programLineage` contract correctly
-requires PRD/ARD-backed program membership and must remain unchanged, while the
-unowned-active-component gate correctly rejects the Spec 053 Plan/Task pair
+Spec 053 was approved directly by the human on 2026-08-08 and Spec 054 was
+approved directly on 2026-08-09, each with an explicit no-separate-PRD/ARD
+boundary. The existing `programLineage` contract correctly requires
+PRD/ARD-backed program membership and must remain unchanged, while the
+unowned-active-component gate correctly rejects either active Plan/Task pair
 without a separate typed owner.
 
 ## Decision
@@ -50,12 +51,13 @@ without a separate typed owner.
 
 ## Consequences
 
-Spec 053 and its exact WERPC Plan/Task pair gain deterministic registry
-ownership while remaining independent from the Spec 052 program component.
-Validators reject missing approval fields, identity overlap, wrong owners or
-states, incomplete reciprocal evidence, foreign-Spec links, and extra active
-component nodes. Terminal standalone relations can support later archival
-eligibility without false upstream authority.
+Spec 053 and Spec 054, with each exact Plan/Task pair, gain deterministic
+registry ownership without a fabricated program component. Validators accept
+an exact ISO-date direct-approval statement, reject invalid calendar dates,
+missing approval fields, identity overlap, wrong owners or states, incomplete
+reciprocal evidence, foreign-Spec links, and extra active component nodes.
+Terminal standalone relations can support later archival eligibility without
+false upstream authority.
 
 ## Alternatives
 
@@ -75,3 +77,4 @@ eligibility without false upstream authority.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — second typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md) |

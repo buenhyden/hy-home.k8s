@@ -85,6 +85,8 @@
     {"name": "standalone-execution-valid", "mutation": "none", "expected_rule_ids": []},
     {"name": "standalone-execution-wrong-state", "mutation": "standalone-state", "expected_rule_ids": ["STANDALONE-EXECUTION-STATE"]},
     {"name": "standalone-execution-missing-direct-approval", "mutation": "standalone-direct-approval", "expected_rule_ids": ["STANDALONE-EXECUTION-APPROVAL"]},
+    {"name": "standalone-execution-different-valid-approval-date", "mutation": "standalone-different-valid-approval-date", "expected_rule_ids": []},
+    {"name": "standalone-execution-invalid-approval-date", "mutation": "standalone-invalid-approval-date", "expected_rule_ids": ["STANDALONE-EXECUTION-APPROVAL"]},
     {"name": "standalone-execution-missing-lifecycle-exclusion", "mutation": "standalone-lifecycle-exclusion", "expected_rule_ids": ["STANDALONE-EXECUTION-APPROVAL"]},
     {"name": "standalone-execution-missing-adr-reciprocal", "mutation": "standalone-adr-reciprocal", "expected_rule_ids": ["STANDALONE-EXECUTION-ADR"]},
     {"name": "standalone-execution-missing-plan-task-reciprocal", "mutation": "standalone-plan-task-reciprocal", "expected_rule_ids": ["STANDALONE-EXECUTION-RECIPROCAL"]},
