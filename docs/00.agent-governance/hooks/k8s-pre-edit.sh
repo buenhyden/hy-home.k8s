@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # k8s-pre-edit.sh — warn before editing Kubernetes, secrets, or authored docs.
 # Runs at PreToolUse for Write|Edit|MultiEdit. Invalid path transport fails closed.
+# Accept boundary: any path inside this repository, including any of its linked
+# worktrees. Everything outside this repository is rejected. A worktree path is
+# resolved against its own worktree root, never against PROJECT_DIR.
+# Trust boundary: every program this hook runs comes from PROJECT_DIR. A root
+# derived from tool input selects data only; it never selects an executable.
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
@@ -27,7 +32,9 @@ if not raw:
 
 paths: list[str] = []
 absolute_roots: set[str] = set()
-_project_identity: list[str] = []
+_git_cache: dict[tuple[str, ...], str] = {}
+
+GIT_TIMEOUT_SECONDS = 5
 
 
 def reject(code: str) -> None:
@@ -36,30 +43,35 @@ def reject(code: str) -> None:
 
 
 def git_value(directory: str, *arguments: str) -> str:
-    """Return one trimmed `git rev-parse` value, or an empty string."""
+    """Return one trimmed `git rev-parse` value, or an empty string.
+
+    Every query is bounded and memoized, so one directory costs at most one git
+    process per query no matter how many edited paths share it."""
+    key = (directory, *arguments)
+    if key in _git_cache:
+        return _git_cache[key]
     try:
         completed = subprocess.run(
             ("git", "-C", directory, "rev-parse", *arguments),
             capture_output=True,
             text=True,
             check=True,
+            timeout=GIT_TIMEOUT_SECONDS,
         )
     except (OSError, subprocess.SubprocessError):
+        # subprocess.TimeoutExpired is a SubprocessError, so a hung or missing
+        # git degrades to the same fail-closed path as any other failure.
+        _git_cache[key] = ""
         return ""
-    return completed.stdout.strip()
+    value = completed.stdout.strip()
+    _git_cache[key] = value
+    return value
 
 
 def repository_identity(directory: str) -> str:
     """Return the shared common git directory identifying one repository."""
     value = git_value(directory, "--path-format=absolute", "--git-common-dir")
     return os.path.realpath(value) if value else ""
-
-
-def project_identity() -> str:
-    """Return the cached repository identity of PROJECT_DIR."""
-    if not _project_identity:
-        _project_identity.append(repository_identity(project_dir))
-    return _project_identity[0]
 
 
 def nearest_existing_directory(path: str) -> str:
@@ -84,7 +96,7 @@ def repository_relative(path: str) -> str:
         reject("HOOK-PATH-ROOT")
     directory = nearest_existing_directory(path)
     worktree_root = ""
-    if directory and repository_identity(directory) == project_identity() != "":
+    if directory and repository_identity(directory) == repository_identity(project_dir) != "":
         worktree_root = git_value(directory, "--show-toplevel").rstrip("/")
     if worktree_root and path.startswith(worktree_root + "/"):
         absolute_roots.add(worktree_root)
@@ -318,7 +330,10 @@ if [ -s "$ROOT_FILE" ]; then
   RESOLVED_ROOT="$(cat "$ROOT_FILE")"
 fi
 
-if ! python3 "$RESOLVED_ROOT/scripts/select-affected-surfaces.py" \
+# The program always comes from PROJECT_DIR. RESOLVED_ROOT is derived from tool
+# input, so it may select data only; letting it select the executable would make
+# this guard run code from the tree it is guarding.
+if ! python3 "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
   --root "$RESOLVED_ROOT" --lane affected --paths-file "$PATHS_FILE" \
   --delimiter nul --format json >"$SELECT_LOG" 2>&1; then
   python3 - <<'PY'
