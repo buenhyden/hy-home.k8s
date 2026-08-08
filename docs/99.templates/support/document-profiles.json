@@ -6423,5 +6423,16 @@
         "followUps": []
       }
     ]
-  }
+  },
+  "standaloneExecutions": [
+    {
+      "spec": "053",
+      "plan": "docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "task": "docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "state": "active",
+      "reason": "Direct human-approved research-pack consolidation without separate PRD/ARD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
+    }
+  ]
 }

@@ -439,9 +439,8 @@ they recorded is complete and its outcome is the current tree."
 
 - [ ] **Step 1: Record the handoff without executing it**
 
-Set WORK-002 to `Superseded` and link
-[Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
-[WERPC-008](2026-08-08-workspace-engineering-research-pack-consolidation.md#task-9-werpc-008--delete-predecessor-packs-after-fail-closed-readiness).
+Set WORK-002 to `Superseded` and route it to `Spec 053` and `WERPC-008` in
+`docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`.
 The WERPC ledger, not WDTC, owns the 25-file
 and section-level disposition evidence.
 

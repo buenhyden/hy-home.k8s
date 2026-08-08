@@ -120,8 +120,29 @@ LINEAGE_FIXTURE_DOCUMENTS = {
     "docs/03.specs/033-fixture/spec.md": ("sdlc/spec", "done", "2026-07-15"),
     "docs/03.specs/034-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/035-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/037-fixture/spec.md": ("sdlc/spec", "active", "2026-07-18"),
     "docs/03.specs/038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/04.execution/plans/2026-07-18-fixture-037.md": (
+        "sdlc/plan",
+        "active",
+        "2026-07-18",
+    ),
+    "docs/04.execution/tasks/2026-07-18-fixture-037.md": (
+        "sdlc/task",
+        "active",
+        "2026-07-18",
+    ),
+    "docs/04.execution/plans/2026-07-18-fixture-038.md": (
+        "sdlc/plan",
+        "active",
+        "2026-07-18",
+    ),
+    "docs/04.execution/tasks/2026-07-18-fixture-038.md": (
+        "sdlc/task",
+        "active",
+        "2026-07-18",
+    ),
 }
 LINEAGE_INVALID_FIXTURE_DOCUMENTS = {
     "docs/02.architecture/decisions/0019-fixture.md": (
@@ -163,6 +184,71 @@ README_FIXTURE_PATH = PurePosixPath(
 )
 EXPECTED_CASES = (
     ("valid-minimal", "none", ()),
+    (
+        "standalone-missing-approval-mode",
+        "standalone-missing-approval-mode",
+        ("REGISTRY_STANDALONE_APPROVAL_MODE",),
+    ),
+    (
+        "standalone-duplicate-spec",
+        "standalone-duplicate-spec",
+        ("REGISTRY_STANDALONE_DUPLICATE",),
+    ),
+    (
+        "standalone-program-overlap",
+        "standalone-program-overlap",
+        ("REGISTRY_STANDALONE_OVERLAP",),
+    ),
+    (
+        "standalone-wrong-plan-path",
+        "standalone-wrong-plan-path",
+        ("REGISTRY_STANDALONE_PATH",),
+    ),
+    (
+        "standalone-missing-plan-owner",
+        "standalone-missing-plan-owner",
+        ("REGISTRY_STANDALONE_PATH",),
+    ),
+    (
+        "standalone-missing-task-owner",
+        "standalone-missing-task-owner",
+        ("REGISTRY_STANDALONE_PATH",),
+    ),
+    (
+        "standalone-task-profile-mismatch",
+        "standalone-task-profile-mismatch",
+        ("REGISTRY_STANDALONE_PATH",),
+    ),
+    (
+        "standalone-missing-decision-owner",
+        "standalone-missing-decision-owner",
+        ("REGISTRY_STANDALONE_PATH",),
+    ),
+    (
+        "standalone-unsorted-specs",
+        "standalone-unsorted-specs",
+        ("REGISTRY_STANDALONE_ORDER",),
+    ),
+    (
+        "standalone-duplicate-plan",
+        "standalone-duplicate-plan",
+        ("REGISTRY_STANDALONE_DUPLICATE",),
+    ),
+    (
+        "standalone-duplicate-task",
+        "standalone-duplicate-task",
+        ("REGISTRY_STANDALONE_DUPLICATE",),
+    ),
+    (
+        "standalone-state-drift",
+        "standalone-state-drift",
+        ("REGISTRY_STANDALONE_STATE",),
+    ),
+    (
+        "standalone-decision-not-accepted",
+        "standalone-decision-not-accepted",
+        ("REGISTRY_STANDALONE_DECISION",),
+    ),
     ("duplicate-profile-id", "duplicate-profile-id", ("REGISTRY_PROFILE_ID",)),
     ("unsupported-route-kind", "route-kind-glob", ("REGISTRY_ROUTE_KIND",)),
     ("unanchored-regex", "drop-regex-end-anchor", ("REGISTRY_ROUTE_ANCHOR",)),
@@ -827,6 +913,8 @@ def _fixture_document_contracts() -> dict[str, Any]:
         "sdlc/ard",
         "sdlc/adr",
         "sdlc/spec",
+        "sdlc/plan",
+        "sdlc/task",
     ]
     snapshot = [
         "test/sample",
@@ -858,6 +946,8 @@ def _fixture_document_contracts() -> dict[str, Any]:
                     "sdlc/ard",
                     "sdlc/adr",
                     "sdlc/spec",
+                    "sdlc/plan",
+                    "sdlc/task",
                 ],
                 "role": "fixture-authored",
                 "sourceProfileId": None,
@@ -875,10 +965,27 @@ def _fixture_document_contracts() -> dict[str, Any]:
         "admissionPolicies": [
             {
                 "id": "authored-draft-only",
-                "profileIds": list(authored),
+                "profileIds": [
+                    profile_id
+                    for profile_id in authored
+                    if profile_id not in {"sdlc/plan", "sdlc/task"}
+                ],
                 "create": {
                     "mode": "states",
                     "states": ["draft"],
+                    "evidencePredicateId": None,
+                },
+                "delete": "deny",
+                "rename": "deny",
+                "profileChange": "deny",
+                "baselinePaths": [],
+            },
+            {
+                "id": "execution-reciprocal-pair",
+                "profileIds": ["sdlc/plan", "sdlc/task"],
+                "create": {
+                    "mode": "paired",
+                    "states": ["draft", "active"],
                     "evidencePredicateId": None,
                 },
                 "delete": "deny",
@@ -922,6 +1029,8 @@ def _fixture_document_contracts() -> dict[str, Any]:
                     "sdlc/ard",
                     "sdlc/adr",
                     "sdlc/spec",
+                    "sdlc/plan",
+                    "sdlc/task",
                 ],
                 "terminalStates": [],
                 "edges": [],
@@ -1149,6 +1258,16 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "^docs/03\\.specs/[0-9]{3}-fixture/spec\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
+            _fixture_lineage_profile(
+                "sdlc/plan",
+                "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                ["draft", "active", "done", "archived"],
+            ),
+            _fixture_lineage_profile(
+                "sdlc/task",
+                "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                ["draft", "active", "done", "archived"],
+            ),
         ],
         "governanceCurrentOwners": {
             "profileId": "governance/reference",
@@ -1212,6 +1331,17 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 },
             ]
         },
+        "standaloneExecutions": [
+            {
+                "spec": "037",
+                "plan": "docs/04.execution/plans/2026-07-18-fixture-037.md",
+                "task": "docs/04.execution/tasks/2026-07-18-fixture-037.md",
+                "state": "active",
+                "reason": "Direct approval fixture",
+                "decision": "0022",
+                "approvalMode": "spec-body-record",
+            }
+        ],
     }
 
 
@@ -1748,6 +1878,76 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
                 "evidenceMode": "reciprocal-body",
             },
         ]
+        return
+    standalone = raw_registry.get("standaloneExecutions", [])
+    if mutation == "standalone-missing-approval-mode":
+        del standalone[0]["approvalMode"]
+        return
+    if mutation == "standalone-duplicate-spec":
+        duplicate = copy.deepcopy(standalone[0])
+        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-039.md"
+        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-039.md"
+        standalone.append(duplicate)
+        return
+    if mutation == "standalone-program-overlap":
+        standalone[0]["spec"] = "034"
+        return
+    if mutation == "standalone-wrong-plan-path":
+        standalone[0]["plan"] = "docs/04.execution/tasks/2026-07-18-fixture-037.md"
+        return
+    if mutation == "standalone-missing-plan-owner":
+        standalone[0]["plan"] = "docs/04.execution/plans/2026-07-18-fixture-099.md"
+        return
+    if mutation == "standalone-missing-task-owner":
+        standalone[0]["task"] = "docs/04.execution/tasks/2026-07-18-fixture-099.md"
+        return
+    if mutation == "standalone-task-profile-mismatch":
+        target = standalone[0]["task"]
+        plan_profile = next(
+            item for item in raw_registry["profiles"] if item["id"] == "sdlc/plan"
+        )
+        task_profile = next(
+            item for item in raw_registry["profiles"] if item["id"] == "sdlc/task"
+        )
+        plan_profile["routes"].append({"kind": "exact", "value": target})
+        task_profile["routes"] = [
+            {
+                "kind": "exact",
+                "value": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+            }
+        ]
+        return
+    if mutation == "standalone-missing-decision-owner":
+        standalone[0]["decision"] = "0099"
+        return
+    if mutation == "standalone-unsorted-specs":
+        earlier = copy.deepcopy(standalone[0])
+        earlier.update(
+            {
+                "spec": "038",
+                "plan": "docs/04.execution/plans/2026-07-18-fixture-038.md",
+                "task": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+            }
+        )
+        standalone.insert(0, earlier)
+        return
+    if mutation == "standalone-duplicate-plan":
+        duplicate = copy.deepcopy(standalone[0])
+        duplicate["spec"] = "038"
+        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-038.md"
+        standalone.append(duplicate)
+        return
+    if mutation == "standalone-duplicate-task":
+        duplicate = copy.deepcopy(standalone[0])
+        duplicate["spec"] = "038"
+        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-038.md"
+        standalone.append(duplicate)
+        return
+    if mutation == "standalone-state-drift":
+        standalone[0]["state"] = "done"
+        return
+    if mutation == "standalone-decision-not-accepted":
+        standalone[0]["decision"] = "0018"
         return
     contracts = raw_registry.get("documentContracts")
     if mutation == "unknown-document-contract-field":

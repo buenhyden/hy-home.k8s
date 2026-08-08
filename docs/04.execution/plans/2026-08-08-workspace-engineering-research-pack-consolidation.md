@@ -94,6 +94,11 @@ package, while its WDTC-002/WORK-002 route becomes `Superseded` and points to
 WERPC-008. PRD-008 and ARD-0011 receive a bounded exception note so two active
 programs do not prescribe incompatible retention behavior.
 
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+records the approved standalone relation between Spec 053 and this exact
+Plan/Task pair. No separate PRD or ARD is part of that lifecycle, and the
+existing `programLineage` contract remains unchanged.
+
 The project-local `deep-research` workflow applies. Exa and Firecrawl are not
 callable in the current session, so workers use the available web-search and
 page-open tools while preserving the same primary-source, full-page reading,
@@ -1007,23 +1012,26 @@ be reverted without altering Stage 98 or Git history.
 ## Traceability
 
 - [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
+- [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [WERPC Task](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md)
-- [Predecessor Spec 017](../../03.specs/017-workspace-engineering-research-pack/spec.md)
-- [Conflicting Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- Predecessor `Spec 017` at
+  `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+- Conflicting `Spec 052` at
+  `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 
 ### Lifecycle Traceability
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WER-001](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md#success-criteria--verification-plan) | WERPC-001, WERPC-009 | Exact thirteen-file inventory |
-| N/A — VAL-WER-002 shares the Spec source above | WERPC-001, WERPC-009 | Unique request-to-primary-owner matrix |
-| N/A — VAL-WER-003 shares the Spec source above | WERPC-001–009 | 25-file and split-section disposition ledger |
-| N/A — VAL-WER-004 shares the Spec source above | WERPC-002–006, WERPC-009 | Source register and per-reference freshness review |
-| N/A — VAL-WER-005 shares the Spec source above | WERPC-002–006, WERPC-009 | Workspace evidence and five-state status review |
-| N/A — VAL-WER-006 shares the Spec source above | WERPC-002 | Provider/common-environment surface matrix review |
-| N/A — VAL-WER-007 shares the Spec source above | WERPC-002–006 | Requirement owner matrix and task reviews |
-| N/A — VAL-WER-008 shares the Spec source above | WERPC-007 | Focused tests and classified occurrence closure |
-| N/A — VAL-WER-009 shares the Spec source above | WERPC-008, WERPC-009 | Exact path absence and residue scan |
-| N/A — VAL-WER-010 shares the Spec source above | WERPC-007–009 | Archive diff and archive validation |
-| N/A — VAL-WER-011 shares the Spec source above | All packages | SDD ledger, per-task reports/reviews, commit and gate inventory |
-| N/A — VAL-WER-012 shares the Spec source above | WERPC-009 | Whole-branch review, full QA, and evidence-depth audit |
+| [VAL-WER-001](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md#success-criteria--verification-plan) | WERPC-001, WERPC-009 | [Exact thirteen-file inventory](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-002 shares the Spec source above | WERPC-001, WERPC-009 | [Unique request-to-primary-owner matrix](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-003 shares the Spec source above | WERPC-001–009 | [25-file and split-section disposition ledger](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-004 shares the Spec source above | WERPC-002–006, WERPC-009 | [Source register and per-reference freshness review](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-005 shares the Spec source above | WERPC-002–006, WERPC-009 | [Workspace evidence and five-state status review](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-006 shares the Spec source above | WERPC-002 | [Provider/common-environment surface matrix review](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-007 shares the Spec source above | WERPC-002–006 | [Requirement owner matrix and task reviews](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-008 shares the Spec source above | WERPC-007 | [Focused tests and classified occurrence closure](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-009 shares the Spec source above | WERPC-008, WERPC-009 | [Exact path absence and residue scan](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-010 shares the Spec source above | WERPC-007–009 | [Archive diff and archive validation](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-011 shares the Spec source above | All packages | [SDD ledger, per-task reports/reviews, commit and gate inventory](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |
+| N/A — VAL-WER-012 shares the Spec source above | WERPC-009 | [Whole-branch review, full QA, and evidence-depth audit](../tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-table) |

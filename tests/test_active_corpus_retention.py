@@ -1506,16 +1506,20 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.validator._terminal_program_control_scope([], kind="spec")
 
     def test_frozen_authority_scope_excludes_later_program_authority(self) -> None:
-        future_adr = (
+        expected_future_adrs = [
             "docs/02.architecture/decisions/"
-            "0019-provider-native-agent-harness-and-loop-model.md"
-        )
+            "0019-provider-native-agent-harness-and-loop-model.md",
+            "docs/02.architecture/decisions/"
+            "0021-canonical-surface-routing-and-evidence-depth.md",
+            "docs/02.architecture/decisions/"
+            "0022-direct-approval-standalone-execution-lineage.md",
+        ]
         future_spec = (
             "docs/03.specs/041-stage-00-agent-governance-contract/spec.md"
         )
         future_adrs = sorted(self.validator.POST_CLOSURE_ADR_AUTHORITY_PATHS)
         future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
-        self.assertEqual(future_adrs, [future_adr])
+        self.assertEqual(future_adrs, expected_future_adrs)
         self.assertIn(future_spec, future_specs)
         accepted_payload = (
             b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
@@ -2523,7 +2527,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self,
     ) -> None:
         self.assertEqual(self.validator._self_test_terminal_frontier(), 4)
-        self.assertEqual(self.validator.run_self_test(), 23)
+        self.assertEqual(self.validator.run_self_test(), 25)
 
     def test_spec038_terminal_partition_rejects_rogue_done_stage04(self) -> None:
         rogue_plan = "docs/04.execution/plans/2099-01-01-rogue-done.md"

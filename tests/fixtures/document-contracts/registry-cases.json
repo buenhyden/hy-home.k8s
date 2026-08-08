@@ -8,6 +8,71 @@
       "expected": []
     },
     {
+      "name": "standalone-missing-approval-mode",
+      "mutation": "standalone-missing-approval-mode",
+      "expected": ["REGISTRY_STANDALONE_APPROVAL_MODE"]
+    },
+    {
+      "name": "standalone-duplicate-spec",
+      "mutation": "standalone-duplicate-spec",
+      "expected": ["REGISTRY_STANDALONE_DUPLICATE"]
+    },
+    {
+      "name": "standalone-program-overlap",
+      "mutation": "standalone-program-overlap",
+      "expected": ["REGISTRY_STANDALONE_OVERLAP"]
+    },
+    {
+      "name": "standalone-wrong-plan-path",
+      "mutation": "standalone-wrong-plan-path",
+      "expected": ["REGISTRY_STANDALONE_PATH"]
+    },
+    {
+      "name": "standalone-missing-plan-owner",
+      "mutation": "standalone-missing-plan-owner",
+      "expected": ["REGISTRY_STANDALONE_PATH"]
+    },
+    {
+      "name": "standalone-missing-task-owner",
+      "mutation": "standalone-missing-task-owner",
+      "expected": ["REGISTRY_STANDALONE_PATH"]
+    },
+    {
+      "name": "standalone-task-profile-mismatch",
+      "mutation": "standalone-task-profile-mismatch",
+      "expected": ["REGISTRY_STANDALONE_PATH"]
+    },
+    {
+      "name": "standalone-missing-decision-owner",
+      "mutation": "standalone-missing-decision-owner",
+      "expected": ["REGISTRY_STANDALONE_PATH"]
+    },
+    {
+      "name": "standalone-unsorted-specs",
+      "mutation": "standalone-unsorted-specs",
+      "expected": ["REGISTRY_STANDALONE_ORDER"]
+    },
+    {
+      "name": "standalone-duplicate-plan",
+      "mutation": "standalone-duplicate-plan",
+      "expected": ["REGISTRY_STANDALONE_DUPLICATE"]
+    },
+    {
+      "name": "standalone-duplicate-task",
+      "mutation": "standalone-duplicate-task",
+      "expected": ["REGISTRY_STANDALONE_DUPLICATE"]
+    },
+    {
+      "name": "standalone-state-drift",
+      "mutation": "standalone-state-drift",
+      "expected": ["REGISTRY_STANDALONE_STATE"]
+    },
+    {
+      "name": "standalone-decision-not-accepted",
+      "mutation": "standalone-decision-not-accepted",
+      "expected": ["REGISTRY_STANDALONE_DECISION"]
+    },
+    {
       "name": "duplicate-profile-id",
       "mutation": "duplicate-profile-id",
       "expected": [

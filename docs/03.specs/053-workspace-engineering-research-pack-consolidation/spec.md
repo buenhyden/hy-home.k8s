@@ -34,6 +34,11 @@ Git history and the new migration ledger. The affected mutable requirements,
 architecture, plans, contracts, validators, and fixtures must be reconciled
 before deletion.
 
+Direct human approval on 2026-08-08 authorizes this standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle. The
+typed relationship is governed by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+
 ## Strategic Boundaries & Non-goals
 
 ### Authorized scope
@@ -400,6 +405,8 @@ secret-value check is part of acceptance.
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
 - **Approved requirement source**: the 2026-08-08 human request and explicit
   approval in the current Codex task.
+- **Governing standalone decision**:
+  [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - **Execution artifacts**:
   [Plan](../../04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)
   and

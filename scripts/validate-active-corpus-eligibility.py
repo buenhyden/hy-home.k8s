@@ -84,6 +84,10 @@ REQUIRED_SELF_TEST_CASES = frozenset({
     "missing-eligible-reverse-spec", "missing-eligible-migration-row",
     "wrong-eligible-migration-decision", "empty-eligible-owner-relation",
     "wrong-control-activation-identity",
+    "terminal-standalone-lineage",
+    "terminal-standalone-wrong-pair",
+    "terminal-standalone-wrong-task",
+    "terminal-standalone-malformed-relation",
 })
 
 
@@ -336,7 +340,12 @@ def _migration_rows(text: str) -> dict[str, dict[str, str]]:
     return rows
 
 
-def _program_membership(profile: Any, spec_path: str) -> Mapping[str, Any] | None:
+def _program_membership(
+    profile: Any,
+    spec_path: str,
+    plan_path: str | None = None,
+    task_path: str | None = None,
+) -> Mapping[str, Any] | None:
     match = re.fullmatch(r"docs/03\.specs/([0-9]{3})-[A-Za-z0-9._-]+/spec\.md", spec_path)
     if match is None:
         return None
@@ -357,6 +366,50 @@ def _program_membership(profile: Any, spec_path: str) -> Mapping[str, Any] | Non
                 value = _require_mapping(entry, "ELIGIBILITY-LINEAGE")
                 if value.get("spec") == number:
                     matches.append({"prd": item.get("prd"), "ard": item.get("ard"), "state": value.get("state"), "kind": section})
+    standalone = top.get("standaloneExecutions", [])
+    if not isinstance(standalone, list):
+        raise EligibilityError("ELIGIBILITY-LINEAGE")
+    for relation in standalone:
+        value = _require_mapping(relation, "ELIGIBILITY-LINEAGE")
+        if set(value) != {
+            "spec",
+            "plan",
+            "task",
+            "state",
+            "reason",
+            "decision",
+            "approvalMode",
+        }:
+            raise EligibilityError("ELIGIBILITY-LINEAGE")
+        if (
+            not isinstance(value.get("spec"), str)
+            or re.fullmatch(r"[0-9]{3}", value["spec"]) is None
+            or not isinstance(value.get("plan"), str)
+            or re.fullmatch(
+                r"docs/04\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-[A-Za-z0-9][A-Za-z0-9._-]*\.md",
+                value["plan"],
+            )
+            is None
+            or not isinstance(value.get("task"), str)
+            or re.fullmatch(
+                r"docs/04\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-[A-Za-z0-9][A-Za-z0-9._-]*\.md",
+                value["task"],
+            )
+            is None
+            or value.get("state") not in {"active", "done", "archived"}
+            or not isinstance(value.get("reason"), str)
+            or not value["reason"]
+            or not isinstance(value.get("decision"), str)
+            or re.fullmatch(r"[0-9]{4}", value["decision"]) is None
+            or value.get("approvalMode") != "spec-body-record"
+        ):
+            raise EligibilityError("ELIGIBILITY-LINEAGE")
+        if (
+            value["spec"] == number
+            and value["plan"] == plan_path
+            and value["task"] == task_path
+        ):
+            matches.append({"state": value.get("state"), "kind": "standalone"})
     return matches[0] if len(matches) == 1 else None
 
 
@@ -370,6 +423,8 @@ def _defer_evidence(
     path, kind, key = str(source["path"]), str(source["kind"]), str(source["pairKey"])
     links = _link_targets(source_text, path)
     counterpart = f"{TASK_ROOT if kind == 'plan' else PLAN_ROOT}/{key}.md"
+    plan_path = path if kind == "plan" else counterpart
+    task_path = counterpart if kind == "plan" else path
     specs = sorted(target for target in links if re.fullmatch(r"docs/03\.specs/[0-9]{3}-[A-Za-z0-9._-]+/spec\.md", target))
     axes: list[str] = []
     if source.get("pairState") != "paired" or counterpart not in candidate_paths:
@@ -378,7 +433,12 @@ def _defer_evidence(
         axes.append("authoritative-upstream-spec")
     if counterpart not in links:
         axes.append("reciprocal-plan-task-link")
-    if len(specs) != 1 or _program_membership(profile, specs[0]) is None or _program_membership(profile, specs[0]).get("state") != "done":
+    membership = (
+        _program_membership(profile, specs[0], plan_path, task_path)
+        if len(specs) == 1
+        else None
+    )
+    if membership is None or membership.get("state") != "done":
         axes.append("program-lineage-completion")
     if len(specs) != 1 or specs[0] not in links:
         axes.append("reciprocal-spec-link")
@@ -826,6 +886,97 @@ def targeted_runner_case_results(root: str | os.PathLike[str]) -> dict[str, tupl
 def _run_self_test(root: str | os.PathLike[str], executed: set[str] | None = None) -> int:
     expected = build_expected_ledger(root)
     validate_ledger(copy.deepcopy(expected), expected)
+    standalone_profile = {
+        "programLineage": {"programs": []},
+        "standaloneExecutions": [
+            {
+                "spec": "053",
+                "plan": "docs/04.execution/plans/2026-08-08-fixture.md",
+                "task": "docs/04.execution/tasks/2026-08-08-fixture.md",
+                "state": "done",
+                "reason": "Direct approval fixture",
+                "decision": "0022",
+                "approvalMode": "spec-body-record",
+            }
+        ],
+    }
+    if _program_membership(
+        standalone_profile,
+        "docs/03.specs/053-fixture/spec.md",
+        "docs/04.execution/plans/2026-08-08-fixture.md",
+        "docs/04.execution/tasks/2026-08-08-fixture.md",
+    ) != {"state": "done", "kind": "standalone"}:
+        raise AssertionError("self-test terminal standalone lineage failed")
+    if executed is not None:
+        executed.add("terminal-standalone-lineage")
+    standalone_plan = "docs/04.execution/plans/2026-08-08-fixture.md"
+    standalone_task = "docs/04.execution/tasks/2026-08-08-fixture.md"
+    standalone_source = {
+        "path": standalone_plan,
+        "kind": "plan",
+        "pairKey": "2026-08-08-fixture",
+        "pairState": "paired",
+    }
+    standalone_text = (
+        "[Spec](../../03.specs/053-fixture/spec.md)\n"
+        "[Task](../tasks/2026-08-08-fixture.md)"
+    )
+    standalone_migration = {
+        standalone_plan: {
+            "relation": "standalone-owner",
+            "decision": "preserve",
+            "canonicalPath": standalone_plan,
+        }
+    }
+    wrong_pair_profile = copy.deepcopy(standalone_profile)
+    wrong_pair_profile["standaloneExecutions"][0]["plan"] = (
+        "docs/04.execution/plans/2026-08-08-wrong.md"
+    )
+    axes, _ = _defer_evidence(
+        standalone_source,
+        standalone_text,
+        wrong_pair_profile,
+        standalone_migration,
+        {standalone_plan, standalone_task},
+    )
+    if axes != ["program-lineage-completion"]:
+        raise AssertionError("self-test terminal standalone wrong pair passed")
+    if executed is not None:
+        executed.add("terminal-standalone-wrong-pair")
+    wrong_task_profile = copy.deepcopy(standalone_profile)
+    wrong_task_profile["standaloneExecutions"][0]["task"] = (
+        "docs/04.execution/tasks/2026-08-08-wrong.md"
+    )
+    axes, _ = _defer_evidence(
+        standalone_source,
+        standalone_text,
+        wrong_task_profile,
+        standalone_migration,
+        {standalone_plan, standalone_task},
+    )
+    if axes != ["program-lineage-completion"]:
+        raise AssertionError("self-test terminal standalone wrong task passed")
+    if executed is not None:
+        executed.add("terminal-standalone-wrong-task")
+    malformed_standalone_profile = copy.deepcopy(standalone_profile)
+    del malformed_standalone_profile["standaloneExecutions"][0]["approvalMode"]
+    try:
+        _defer_evidence(
+            standalone_source,
+            standalone_text,
+            malformed_standalone_profile,
+            standalone_migration,
+            {standalone_plan, standalone_task},
+        )
+    except EligibilityError as exc:
+        if exc.code != "ELIGIBILITY-LINEAGE":
+            raise AssertionError(
+                "self-test terminal standalone malformed relation wrong diagnostic"
+            ) from exc
+    else:
+        raise AssertionError("self-test terminal standalone malformed relation passed")
+    if executed is not None:
+        executed.add("terminal-standalone-malformed-relation")
     cases: list[tuple[str, Callable[[dict[str, Any]], None]]] = [
         ("missing row", lambda item: item["candidateRows"].pop()),
         ("extra row", lambda item: item["candidateRows"].append(copy.deepcopy(item["candidateRows"][0]))),
@@ -880,6 +1031,14 @@ def _run_self_test(root: str | os.PathLike[str], executed: set[str] | None = Non
             continue
         raise AssertionError(f"self-test negative passed: {name}")
     case_names = {name.replace(" ", "-") for name, _ in cases}
+    case_names.update(
+        {
+            "terminal-standalone-lineage",
+            "terminal-standalone-wrong-pair",
+            "terminal-standalone-wrong-task",
+            "terminal-standalone-malformed-relation",
+        }
+    )
     for invalid in ("", "/absolute", "../parent", "docs//empty", "_workspace/sentinel", "hostile\npath"):
         try:
             validate_path(invalid)

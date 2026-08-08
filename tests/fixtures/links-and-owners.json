@@ -71,6 +71,25 @@
       {"prd": "007", "ard": "0010", "tranches": [{"spec": "041", "order": 1, "state": "done", "reason": "Completed original", "decision": "0019"}], "followUps": [{"spec": "042", "order": 1, "state": "active", "reason": "Mutable reciprocal follow-up", "decision": "0019", "evidenceMode": "reciprocal-body"}]}
     ]
   },
+  "standaloneExecutionTree": {
+    "spec": "043",
+    "plan": "docs/04.execution/plans/2026-07-18-fixture-043.md",
+    "task": "docs/04.execution/tasks/2026-07-18-fixture-043.md",
+    "state": "active",
+    "reason": "Direct approval fixture",
+    "decision": "0022",
+    "approvalMode": "spec-body-record"
+  },
+  "standaloneExecutionCases": [
+    {"name": "standalone-execution-valid", "mutation": "none", "expected_rule_ids": []},
+    {"name": "standalone-execution-wrong-state", "mutation": "standalone-state", "expected_rule_ids": ["STANDALONE-EXECUTION-STATE"]},
+    {"name": "standalone-execution-missing-direct-approval", "mutation": "standalone-direct-approval", "expected_rule_ids": ["STANDALONE-EXECUTION-APPROVAL"]},
+    {"name": "standalone-execution-missing-lifecycle-exclusion", "mutation": "standalone-lifecycle-exclusion", "expected_rule_ids": ["STANDALONE-EXECUTION-APPROVAL"]},
+    {"name": "standalone-execution-missing-adr-reciprocal", "mutation": "standalone-adr-reciprocal", "expected_rule_ids": ["STANDALONE-EXECUTION-ADR"]},
+    {"name": "standalone-execution-missing-plan-task-reciprocal", "mutation": "standalone-plan-task-reciprocal", "expected_rule_ids": ["STANDALONE-EXECUTION-RECIPROCAL"]},
+    {"name": "standalone-execution-foreign-spec-link", "mutation": "standalone-foreign-spec", "expected_rule_ids": ["STANDALONE-EXECUTION-SPEC-BOUNDARY"]},
+    {"name": "standalone-execution-extra-component-node", "mutation": "standalone-extra-component", "expected_rule_ids": ["STANDALONE-EXECUTION-COMPONENT"]}
+  ],
   "programLineageCases": [
     {"name": "program-lineage-valid", "mutation": "none", "expected_rule_ids": []},
     {"name": "program-lineage-state-mismatch", "mutation": "program-state", "expected_rule_ids": ["PROGRAM-LINEAGE-STATE"]},

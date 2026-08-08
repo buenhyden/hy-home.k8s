@@ -107,6 +107,8 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0019-provider-native-agent-harness-and-loop-model.md",
         "docs/02.architecture/decisions/"
         "0021-canonical-surface-routing-and-evidence-depth.md",
+        "docs/02.architecture/decisions/"
+        "0022-direct-approval-standalone-execution-lineage.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -2782,11 +2784,68 @@ def _self_test_terminal_frontier() -> int:
     return cases
 
 
+def _self_test_post_closure_adr_scope() -> int:
+    expected_later = frozenset(
+        {
+            "docs/02.architecture/decisions/"
+            "0019-provider-native-agent-harness-and-loop-model.md",
+            "docs/02.architecture/decisions/"
+            "0021-canonical-surface-routing-and-evidence-depth.md",
+            "docs/02.architecture/decisions/"
+            "0022-direct-approval-standalone-execution-lineage.md",
+        }
+    )
+    if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:
+        raise AssertionError("post-closure ADR authority set drift")
+
+    def accepted_payload() -> bytes:
+        return b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n# ADR\n"
+
+    known_paths = [*FROZEN_ACCEPTED_ADR_PATHS, *sorted(expected_later)]
+    payloads = {path: accepted_payload() for path in known_paths}
+    index = {path: "0" * 40 for path in known_paths}
+    rows = _frozen_authority_entries(
+        known_paths,
+        index,
+        payloads,
+        kind="adr",
+    )
+    if tuple(row["path"] for row in rows) != FROZEN_ACCEPTED_ADR_PATHS:
+        raise AssertionError("frozen accepted ADR guard drift")
+    cases = 1
+
+    unknown = (
+        "docs/02.architecture/decisions/"
+        "9999-unknown-post-closure-authority.md"
+    )
+    unknown_paths = [*known_paths, unknown]
+    unknown_payloads = {**payloads, unknown: accepted_payload()}
+    unknown_index = {**index, unknown: "0" * 40}
+    try:
+        _frozen_authority_entries(
+            unknown_paths,
+            unknown_index,
+            unknown_payloads,
+            kind="adr",
+        )
+    except ClosureError as exc:
+        if exc.code != "CLOSURE-AUTHORITY-SCOPE" or exc.path != unknown:
+            raise
+        cases += 1
+    else:
+        raise AssertionError("unknown post-closure ADR authority was accepted")
+    return cases
+
+
 def run_self_test() -> int:
     observed = _self_test_observed()
     ledger = _ledger_from_observed(observed)
     validate_ledger(ledger, observed)
-    cases = 1 + _self_test_terminal_frontier()
+    cases = (
+        1
+        + _self_test_terminal_frontier()
+        + _self_test_post_closure_adr_scope()
+    )
     mutations: list[tuple[str, Callable[[dict[str, Any]], None]]] = [
         ("CLOSURE-SCHEMA", lambda item: item.__setitem__("schemaVersion", 2)),
         ("CLOSURE-SOURCE-DRIFT", lambda item: item["sourceLedgers"].pop()),

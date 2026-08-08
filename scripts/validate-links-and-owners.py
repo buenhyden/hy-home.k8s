@@ -20,7 +20,7 @@ import sys
 import tempfile
 import time
 import unicodedata
-from dataclasses import dataclass, field as dataclass_field
+from dataclasses import dataclass, field as dataclass_field, replace
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Any, Iterable, Mapping, Sequence
@@ -38,6 +38,7 @@ from document_contracts import (
     ReferenceCurrentPack,
     ReferenceCurrentPacks,
     Registry,
+    StandaloneExecution,
     _parse_ls_files_stage_z,
     _run_git,
     classify_path,
@@ -4154,8 +4155,135 @@ def _unowned_active_execution_diagnostics(
     return diagnostics
 
 
+STANDALONE_APPROVAL_STATEMENT = (
+    "Direct human approval on 2026-08-08 authorizes this standalone execution relation."
+)
+STANDALONE_LIFECYCLE_EXCLUSION = (
+    "No separate PRD or ARD is required or part of this standalone lifecycle."
+)
+
+
+def _standalone_execution_diagnostics(
+    context: Context,
+    standalone_executions: Sequence[StandaloneExecution],
+    graph: dict[PurePosixPath, frozenset[PurePosixPath]],
+    execution_index: CurrentExecutionIndex,
+) -> tuple[list[Diagnostic], set[PurePosixPath]]:
+    diagnostics: list[Diagnostic] = []
+    owned_paths: set[PurePosixPath] = set()
+    for relation in standalone_executions:
+        spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
+        decision = _program_owner_path(context, "sdlc/adr", relation.decision_id)
+        plan = relation.plan_path
+        task = relation.task_path
+        owners = (
+            (spec, "sdlc/spec"),
+            (decision, "sdlc/adr"),
+            (plan, "sdlc/plan"),
+            (task, "sdlc/task"),
+        )
+        if any(
+            path is None
+            or path not in context.profiles
+            or context.profiles[path].profile_id != profile_id
+            for path, profile_id in owners
+        ):
+            continue
+        assert spec is not None and decision is not None
+        for path in (spec, plan, task):
+            actual_state = _program_status(context, path)
+            if actual_state != relation.state:
+                diagnostics.append(
+                    _diag(
+                        "STANDALONE-EXECUTION-STATE",
+                        path,
+                        context.profiles[path].profile_id,
+                        relation.state,
+                        actual_state,
+                    )
+                )
+        spec_targets = _program_local_targets(context, spec)
+        decision_targets = _program_local_targets(context, decision)
+        if decision not in spec_targets or spec not in decision_targets:
+            diagnostics.append(
+                _diag(
+                    "STANDALONE-EXECUTION-ADR",
+                    spec,
+                    "sdlc/spec",
+                    "reciprocal rendered Spec/accepted-ADR links",
+                    "standalone decision reciprocity is incomplete",
+                )
+            )
+        spec_text = context.texts[spec]
+        if (
+            STANDALONE_APPROVAL_STATEMENT not in spec_text
+            or STANDALONE_LIFECYCLE_EXCLUSION not in spec_text
+        ):
+            diagnostics.append(
+                _diag(
+                    "STANDALONE-EXECUTION-APPROVAL",
+                    spec,
+                    "sdlc/spec",
+                    "the exact direct-human approval and no-separate-PRD/ARD statements",
+                    "one or both standalone approval statements are absent",
+                )
+            )
+        plan_targets = _program_local_targets(context, plan)
+        task_targets = _program_local_targets(context, task)
+        reciprocal = task in plan_targets and plan in task_targets
+        own_spec = spec in plan_targets and spec in task_targets
+        if not reciprocal or not own_spec:
+            diagnostics.append(
+                _diag(
+                    "STANDALONE-EXECUTION-RECIPROCAL",
+                    plan,
+                    "sdlc/plan",
+                    "the exact reciprocal Plan/Task pair with direct owning-Spec links",
+                    f"plan-task-reciprocal={reciprocal}, direct-own-spec={own_spec}",
+                )
+            )
+        foreign_specs = sorted(
+            {
+                target
+                for target in (*plan_targets, *task_targets)
+                if target in context.profiles
+                and context.profiles[target].profile_id == "sdlc/spec"
+                and target != spec
+            },
+            key=lambda item: item.as_posix(),
+        )
+        if foreign_specs:
+            diagnostics.append(
+                _diag(
+                    "STANDALONE-EXECUTION-SPEC-BOUNDARY",
+                    plan,
+                    "sdlc/plan",
+                    "no rendered Plan/Task link to another Spec",
+                    repr([path.as_posix() for path in foreign_specs]),
+                )
+            )
+        if relation.state == "active":
+            component = _current_execution_component(context, spec, execution_index)
+            owned_paths.update(component)
+            if set(component) != {plan, task}:
+                diagnostics.append(
+                    _diag(
+                        "STANDALONE-EXECUTION-COMPONENT",
+                        spec,
+                        "sdlc/spec",
+                        "exactly the declared active Plan and Task execution component",
+                        repr([path.as_posix() for path in component]),
+                    )
+                )
+        else:
+            owned_paths.update({plan, task})
+    return diagnostics, owned_paths
+
+
 def _program_lineage_diagnostics(
-    context: Context, program_lineage: Sequence[ProgramLineage]
+    context: Context,
+    program_lineage: Sequence[ProgramLineage],
+    standalone_executions: Sequence[StandaloneExecution] = (),
 ) -> list[Diagnostic]:
     """Validate registry relations against immutable bodies and current evidence."""
 
@@ -4170,6 +4298,14 @@ def _program_lineage_diagnostics(
                 program_owned_paths.update(
                     _current_execution_component(context, spec, execution_index)
                 )
+    standalone_diagnostics, standalone_owned_paths = _standalone_execution_diagnostics(
+        context,
+        standalone_executions,
+        graph,
+        execution_index,
+    )
+    diagnostics.extend(standalone_diagnostics)
+    program_owned_paths.update(standalone_owned_paths)
     for program in program_lineage:
         for relation in (*program.tranches, *program.follow_ups):
             spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
@@ -5375,7 +5511,13 @@ def _raw_diagnostics(
     diagnostics.extend(_reference_current_pack_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     diagnostics.extend(_ledger_diagnostics(context))
-    diagnostics.extend(_program_lineage_diagnostics(context, registry.program_lineage))
+    diagnostics.extend(
+        _program_lineage_diagnostics(
+            context,
+            registry.program_lineage,
+            registry.standalone_executions,
+        )
+    )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -5727,6 +5869,127 @@ def _program_lineage_fixture_context(
         frozenset(paths),
     )
     return context, tuple(programs)
+
+
+def _standalone_execution_fixture_context(
+    context: Context, raw_relation: Mapping[str, Any]
+) -> tuple[Context, StandaloneExecution]:
+    mutated = copy.deepcopy(context)
+    decision = PurePosixPath("docs/02.architecture/decisions/0022-fixture.md")
+    spec = PurePosixPath("docs/03.specs/043-fixture/spec.md")
+    plan = PurePosixPath(raw_relation["plan"])
+    task = PurePosixPath(raw_relation["task"])
+    additions = {
+        decision: (
+            "sdlc/adr",
+            "accepted",
+            "[Spec](../../03.specs/043-fixture/spec.md)",
+        ),
+        spec: (
+            "sdlc/spec",
+            raw_relation["state"],
+            f"{STANDALONE_APPROVAL_STATEMENT}\n{STANDALONE_LIFECYCLE_EXCLUSION}\n"
+            "[Decision](../../02.architecture/decisions/0022-fixture.md)\n"
+            "[Plan](../../04.execution/plans/2026-07-18-fixture-043.md)\n"
+            "[Task](../../04.execution/tasks/2026-07-18-fixture-043.md)",
+        ),
+        plan: (
+            "sdlc/plan",
+            raw_relation["state"],
+            "[Spec](../../03.specs/043-fixture/spec.md)\n"
+            "[Task](../tasks/2026-07-18-fixture-043.md)",
+        ),
+        task: (
+            "sdlc/task",
+            raw_relation["state"],
+            "[Spec](../../03.specs/043-fixture/spec.md)\n"
+            "[Plan](../plans/2026-07-18-fixture-043.md)",
+        ),
+    }
+    for path, (profile_id, status, body) in additions.items():
+        mutated.profiles[path] = ProfileView(profile_id, "sdlc", "authored")
+        mutated.metadata[path] = {"type": profile_id, "status": status}
+        mutated.texts[path] = body
+    mutated = replace(
+        mutated,
+        paths=tuple(
+            sorted((*mutated.paths, *additions), key=lambda item: item.as_posix())
+        ),
+        tracked_regular_paths=frozenset(
+            (*mutated.tracked_regular_paths, *additions)
+        ),
+    )
+    return mutated, StandaloneExecution(
+        spec_id=raw_relation["spec"],
+        plan_path=plan,
+        task_path=task,
+        state=raw_relation["state"],
+        reason=raw_relation["reason"],
+        decision_id=raw_relation["decision"],
+        approval_mode=raw_relation["approvalMode"],
+    )
+
+
+def _mutated_standalone_execution_fixture(
+    context: Context,
+    relation: StandaloneExecution,
+    mutation: str,
+) -> tuple[Context, StandaloneExecution]:
+    mutated = copy.deepcopy(context)
+    if mutation == "none":
+        return mutated, relation
+    if mutation == "standalone-state":
+        mutated.metadata[relation.task_path]["status"] = "draft"
+    elif mutation == "standalone-direct-approval":
+        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
+        assert spec is not None
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            STANDALONE_APPROVAL_STATEMENT, "Direct approval statement omitted."
+        )
+    elif mutation == "standalone-lifecycle-exclusion":
+        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
+        assert spec is not None
+        mutated.texts[spec] = mutated.texts[spec].replace(
+            STANDALONE_LIFECYCLE_EXCLUSION,
+            "Standalone lifecycle exclusion statement omitted.",
+        )
+    elif mutation == "standalone-adr-reciprocal":
+        decision = _program_owner_path(mutated, "sdlc/adr", relation.decision_id)
+        assert decision is not None
+        mutated.texts[decision] = "Accepted standalone decision without reverse link."
+    elif mutation == "standalone-plan-task-reciprocal":
+        mutated.texts[relation.plan_path] = mutated.texts[relation.plan_path].replace(
+            "[Task](../tasks/2026-07-18-fixture-043.md)", "Task path omitted"
+        )
+    elif mutation == "standalone-foreign-spec":
+        mutated.texts[relation.plan_path] += (
+            "\n[Foreign Spec](../../03.specs/034-fixture/spec.md)"
+        )
+    elif mutation == "standalone-extra-component":
+        extra = PurePosixPath(
+            "docs/04.execution/tasks/2026-07-18-fixture-043-extra.md"
+        )
+        mutated = replace(
+            mutated,
+            paths=tuple(
+                sorted((*mutated.paths, extra), key=lambda item: item.as_posix())
+            ),
+            tracked_regular_paths=frozenset(
+                (*mutated.tracked_regular_paths, extra)
+            ),
+        )
+        mutated.profiles[extra] = ProfileView("sdlc/task", "sdlc", "authored")
+        mutated.metadata[extra] = {"type": "sdlc/task", "status": "active"}
+        mutated.texts[extra] = (
+            "[Spec](../../03.specs/043-fixture/spec.md)\n"
+            "[Plan](../plans/2026-07-18-fixture-043.md)"
+        )
+        mutated.texts[relation.plan_path] += (
+            "\n[Extra Task](../tasks/2026-07-18-fixture-043-extra.md)"
+        )
+    else:
+        raise ConfigurationError(f"unknown standalone fixture mutation: {mutation}")
+    return mutated, relation
 
 
 def _mutated_program_lineage_fixture(
@@ -8460,6 +8723,8 @@ def _self_test(root: Path) -> list[str]:
             "schemaVersion",
             "baseTree",
             "programLineageTree",
+            "standaloneExecutionTree",
+            "standaloneExecutionCases",
             "programLineageCases",
             "bodyContractTree",
             "bodyContractCases",
@@ -8579,6 +8844,61 @@ def _self_test(root: Path) -> list[str]:
         program_context, program_lineage = _program_lineage_fixture_context(
             Path(temporary), fixture["programLineageTree"]
         )
+        standalone_cases = fixture.get("standaloneExecutionCases")
+        standalone_validator = globals().get("_standalone_execution_diagnostics")
+        required_standalone_cases = {
+            "standalone-execution-valid",
+            "standalone-execution-wrong-state",
+            "standalone-execution-missing-direct-approval",
+            "standalone-execution-missing-lifecycle-exclusion",
+            "standalone-execution-missing-adr-reciprocal",
+            "standalone-execution-missing-plan-task-reciprocal",
+            "standalone-execution-foreign-spec-link",
+            "standalone-execution-extra-component-node",
+        }
+        if (
+            not isinstance(standalone_cases, list)
+            or {case.get("name") for case in standalone_cases}
+            != required_standalone_cases
+        ):
+            failures.append("required unique standalone-execution cases are incomplete")
+        elif standalone_validator is None:
+            failures.append("standalone-execution diagnostics are unimplemented")
+        else:
+            standalone_context, standalone_relation = (
+                _standalone_execution_fixture_context(
+                    program_context,
+                    fixture["standaloneExecutionTree"],
+                )
+            )
+            for case in standalone_cases:
+                if list(case) != ["name", "mutation", "expected_rule_ids"]:
+                    failures.append(
+                        f"{case.get('name')}: standalone-execution case schema differs"
+                    )
+                    continue
+                mutated, relation = _mutated_standalone_execution_fixture(
+                    standalone_context,
+                    standalone_relation,
+                    case["mutation"],
+                )
+                graph = _current_execution_link_graph(mutated)
+                execution_index = _current_execution_index(graph)
+                diagnostics, _ = standalone_validator(
+                    mutated,
+                    (relation,),
+                    graph,
+                    execution_index,
+                )
+                actual = [
+                    item.rule_id
+                    for item in sorted(diagnostics, key=diagnostic_sort_key)
+                ]
+                if actual != case["expected_rule_ids"]:
+                    failures.append(
+                        f"{case['name']}: expected {case['expected_rule_ids']}, "
+                        f"actual {actual}"
+                    )
         program_case_names = [
             case.get("name") for case in fixture["programLineageCases"]
         ]

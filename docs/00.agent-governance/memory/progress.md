@@ -8,6 +8,103 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-000A standalone execution lineage
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: architecture, backend, qa, docs
+- **Status**: done
+- **Tags**: #governance #lineage #standalone-execution #tdd
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: direct human approval, Spec 053, and ADR-0022
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 053 closure.
+- **Next Owner**: docs-researcher — validate and commit the WERPC-001 pack baseline.
+
+#### Progress
+
+Added an optional closed schema-v8 `standaloneExecutions` relation with typed
+projection, uniqueness and disjointness rules, exact tracked-owner and state
+validation, rendered-link/component checks, and terminal active-corpus
+eligibility. ADR-0022 records the direct-approval/no-PRD-or-ARD decision. The
+existing `programLineage` behavior was not weakened or refactored.
+
+#### Memory
+
+Direct approval needs a typed registry relation, not a path exception. Keeping
+the standalone and program identities disjoint preserves the existing program
+contract while giving execution and archival validators a deterministic owner.
+
+#### Evidence
+
+- RED: registry self-test rejected a valid standalone fixture with `REGISTRY_SCHEMA`.
+- RED: active-corpus self-test rejected terminal standalone lineage with an `AssertionError` at line 848.
+- GREEN: missing Task owner and genuine Task-profile mismatch produce exact `REGISTRY_STANDALONE_PATH` results; duplicate Plan and duplicate Task independently produce `REGISTRY_STANDALONE_DUPLICATE` in the fixture phase. The isolated standalone link fixture passed 8 cases; active-corpus eligibility self-test passed 58 cases, including independent wrong-Plan, wrong-Task, and malformed-row rejection.
+- GREEN: the staged registry self-test passed 132 cases and strict registry validation passed with 501 paths, zero uncovered routes, and zero ambiguous routes.
+- Fix-round RED: exact-pair eligibility initially raised `_program_membership() takes 2 positional arguments but 4 were given`; new registry/link mutations initially failed as unsupported.
+- Pre-fix aggregate RED: `ERR CLOSURE-AUTHORITY-SCOPE docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`.
+- After the bounded post-closure ADR authority patch, `python3 scripts/validate-active-corpus-residue-closure.py --root . --self-test` passes 25 cases.
+- GREEN: staged production residue closure passed with the frozen 13-ADR and 29-Spec guards unchanged; the two affected unit tests passed.
+- GREEN: links/owners self-test and strict mode, eligibility self-test and production mode, Markdown profiles, cached diff check, and the complete repository quality gate passed on the reviewed staged tree.
+- Reviews: Python and governance reviewers approved the final implementation after five bounded fix rounds; only pre-existing Ruff `E702` findings outside this diff remain.
+
+#### Handoff
+
+docs-researcher — resume WERPC-001 from its completed content baseline, rerun
+its exact pack checks on a staged tree, and commit that logical unit.
+
+### 2026-08-08 - WERPC-001 research-pack contract baseline
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: in-progress
+- **Tags**: #research #workspace-engineering #migration #provenance
+- **Owner**: docs-researcher
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-001 file inventory and full Git provenance in `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure; successor ledger entries supersede only their named observations.
+- **Next Owner**: docs-researcher — rerun strict/full validation and commit the pack baseline.
+
+#### Progress
+
+Created and content-audited the exact thirteen-file `2026-08-08-wer` research pack. Its README
+assigns REQ-WERPC-001 through REQ-WERPC-032 in required topic order, with one
+primary reference heading and current workspace-evidence path for each request.
+The source and migration ledger preserves the full 25-file predecessor listing,
+the required 8/10/7 directory split, full 40-character content-bearing Git
+provenance per path, and 35 text-exact H3 split dispositions. No predecessor
+file was changed or deleted. Task 1A has resolved the upstream execution-lineage
+and link defects; WERPC-001 now awaits its own staged strict/full validation and
+logical commit.
+
+#### Memory
+
+A lossless research-pack replacement needs two independent interfaces before
+topical authoring: a mechanically unique request-to-primary-heading matrix and
+a full-path provenance ledger. Historical URLs remain dated predecessor evidence
+until a later task rechecks them; local paths and static validators do not prove
+current external facts or runtime behavior.
+
+#### Evidence
+
+- `test "$(find docs/90.references/research/2026-08-08-wer -maxdepth 1 -type f | wc -l)" -eq 13` — PASS.
+- `test "$(git ls-files 'docs/90.references/research/2026-07-04-wer/**' 'docs/90.references/research/2026-07-07-wer/**' 'docs/90.references/research/2026-08-07-wer/**' | wc -l)" -eq 25` — PASS.
+- `python3 scripts/validate-markdown-profiles.py --root .` — PASS, 0 violations; `git diff --check` — PASS.
+- Content audit — PASS: 32 sequential unique primary-owner links, no missing workspace-evidence path or owner anchor, 25/25 exact old paths, 25 matching full source commits, 35 text-exact H3 rows, and no empty section, author prompt, or future marker.
+- Upstream unblock — PASS: Task 1A strict links/owners and complete repository quality gate passed on its reviewed staged tree.
+- WERPC-001 final staged strict/full validation and commit remain pending; no result is claimed yet.
+- Results are repository-static only. Hosted CI, provider-runtime, remote, credential-bearing, secret-value, and live evidence remain `DEFER`.
+
+#### Handoff
+
+docs-researcher — stage only the thirteen pack files plus WERPC-001 evidence,
+rerun strict/full validation, and create the one logical baseline commit.
+
 ### 2026-08-08 - WERPC specification approval and execution planning
 
 #### Metadata

@@ -358,6 +358,17 @@ class ProgramLineage:
 
 
 @dataclass(frozen=True)
+class StandaloneExecution:
+    spec_id: str
+    plan_path: PurePosixPath
+    task_path: PurePosixPath
+    state: str
+    reason: str
+    decision_id: str
+    approval_mode: Literal["spec-body-record"]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     baseline_sha: str
@@ -366,6 +377,7 @@ class Registry:
     governance_current_owners: GovernanceCurrentOwners
     reference_current_packs: ReferenceCurrentPacks
     program_lineage: tuple[ProgramLineage, ...]
+    standalone_executions: tuple[StandaloneExecution, ...]
     evidence_predicates: tuple[EvidencePredicate, ...]
 
 
@@ -850,6 +862,17 @@ def _schema_rule_id(error: Any) -> str:
         if "state" in path or "state" in messages:
             return "REGISTRY_PROGRAM_STATE"
         return "REGISTRY_SCHEMA"
+    if path and path[0] == "standaloneExecutions":
+        messages = " ".join(item.message for item in nested_errors)
+        if "approvalMode" in path or "approvalMode" in messages:
+            return "REGISTRY_STANDALONE_APPROVAL_MODE"
+        if "decision" in path or "decision" in messages:
+            return "REGISTRY_STANDALONE_DECISION"
+        if "state" in path or "state" in messages:
+            return "REGISTRY_STANDALONE_STATE"
+        if "plan" in path or "task" in path or "plan" in messages or "task" in messages:
+            return "REGISTRY_STANDALONE_PATH"
+        return "REGISTRY_SCHEMA"
     if len(path) >= 4 and path[-1] == "kind" and "routes" in path:
         return "REGISTRY_ROUTE_KIND"
     return "REGISTRY_SCHEMA"
@@ -1096,6 +1119,62 @@ def _program_lineage_from_mapping(raw: Mapping[str, Any]) -> ProgramLineage:
             _program_follow_up_from_mapping(item) for item in raw["followUps"]
         ),
     )
+
+
+def _standalone_execution_from_mapping(
+    raw: Mapping[str, Any],
+) -> StandaloneExecution:
+    return StandaloneExecution(
+        spec_id=raw["spec"],
+        plan_path=_normalize_relative_path(raw["plan"]),
+        task_path=_normalize_relative_path(raw["task"]),
+        state=raw["state"],
+        reason=raw["reason"],
+        decision_id=raw["decision"],
+        approval_mode=raw["approvalMode"],
+    )
+
+
+def _standalone_structure_diagnostics(
+    raw_standalones: Sequence[Mapping[str, Any]],
+    raw_programs: Sequence[Mapping[str, Any]],
+) -> tuple[Diagnostic, ...]:
+    diagnostics: list[Diagnostic] = []
+    spec_ids = [item["spec"] for item in raw_standalones]
+    plan_paths = [item["plan"] for item in raw_standalones]
+    task_paths = [item["task"] for item in raw_standalones]
+    if spec_ids != sorted(spec_ids, key=int):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_STANDALONE_ORDER",
+                expected="standalone relations sorted by numeric Spec identifier",
+                actual=repr(spec_ids),
+            )
+        )
+    if any(len(values) != len(set(values)) for values in (spec_ids, plan_paths, task_paths)):
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_STANDALONE_DUPLICATE",
+                expected="unique standalone Spec, Plan, and Task identities",
+                actual="a standalone identity is declared more than once",
+            )
+        )
+    program_specs = {
+        relation["spec"]
+        for program in raw_programs
+        for section in ("tranches", "followUps")
+        for relation in program[section]
+    }
+    overlap = program_specs & set(spec_ids)
+    if overlap:
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_STANDALONE_OVERLAP",
+                expected="standalone Specs disjoint from program tranches and follow-ups",
+                actual=repr(sorted(overlap)),
+            )
+        )
+    return tuple(diagnostics)
 
 
 def _program_structure_diagnostics(
@@ -1372,6 +1451,67 @@ def _program_repository_diagnostics(
         decision_keys[decision_id] = key
         return key
 
+    def standalone_numeric_owner(
+        kind: Literal["adr", "spec"], numeric_id: str
+    ) -> PurePosixPath | None:
+        path, owner_diagnostics = _resolve_program_owner(
+            root, registry, kind, numeric_id
+        )
+        for diagnostic in owner_diagnostics:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_STANDALONE_PATH",
+                    path=diagnostic.path,
+                    profile=diagnostic.profile,
+                    expected=diagnostic.expected,
+                    actual=diagnostic.actual,
+                )
+            )
+        return path
+
+    def standalone_execution_owner(
+        path: PurePosixPath, expected_profile: Literal["sdlc/plan", "sdlc/task"]
+    ) -> PurePosixPath | None:
+        entries = _parse_ls_files_stage_z(
+            _run_git(root, ("ls-files", "--stage", "-z", "--", path.as_posix()))
+        )
+        try:
+            file_mode = _lstat_named_path(root, path)
+        except ValueError:
+            file_mode = 0
+        if (
+            not stat.S_ISREG(file_mode)
+            or len(entries) != 1
+            or entries[0].path != path
+            or entries[0].stage != 0
+            or not entries[0].mode.startswith("100")
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_STANDALONE_PATH",
+                    path=path,
+                    expected=f"one tracked regular {expected_profile} owner",
+                    actual="declared path is missing, untracked, or non-regular",
+                )
+            )
+            return None
+        try:
+            actual_profile = classify_path(registry, path)
+        except DocumentContractError:
+            actual_profile = None
+        if actual_profile is None or actual_profile.profile_id != expected_profile:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_STANDALONE_PATH",
+                    path=path,
+                    profile=actual_profile.profile_id if actual_profile else "",
+                    expected=expected_profile,
+                    actual=actual_profile.profile_id if actual_profile else "unclassified",
+                )
+            )
+            return None
+        return path
+
     for program in registry.program_lineage:
         owner("prd", program.prd_id)
         owner("ard", program.ard_id)
@@ -1431,6 +1571,44 @@ def _program_repository_diagnostics(
                             f"PRD-{program.prd_id} Spec-{follow_up.spec_id} "
                             f"key={key!r} does not follow Spec-"
                             f"{previous_follow_up.spec_id} key={previous_key!r}"
+                        ),
+                    )
+                )
+    for relation in registry.standalone_executions:
+        spec_path = standalone_numeric_owner("spec", relation.spec_id)
+        plan_path = standalone_execution_owner(relation.plan_path, "sdlc/plan")
+        task_path = standalone_execution_owner(relation.task_path, "sdlc/task")
+        for path in (spec_path, plan_path, task_path):
+            if path is None:
+                continue
+            actual_metadata = metadata(path)
+            actual_state = (
+                actual_metadata.get("status") if actual_metadata is not None else None
+            )
+            if actual_state != relation.state:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_STANDALONE_STATE",
+                        path=path,
+                        profile=classify_path(registry, path).profile_id,
+                        expected=relation.state,
+                        actual=repr(actual_state),
+                    )
+                )
+        decision_path = standalone_numeric_owner("adr", relation.decision_id)
+        if decision_path is not None:
+            decision_metadata = metadata(decision_path)
+            if decision_metadata is None or decision_metadata.get("status") != "accepted":
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_STANDALONE_DECISION",
+                        path=decision_path,
+                        profile="sdlc/adr",
+                        expected="an accepted standalone-execution ADR",
+                        actual=(
+                            "unreadable frontmatter"
+                            if decision_metadata is None
+                            else repr(decision_metadata.get("status"))
                         ),
                     )
                 )
@@ -2525,7 +2703,9 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             )
 
     raw_programs = raw_registry["programLineage"]["programs"]
+    raw_standalones = raw_registry.get("standaloneExecutions", [])
     diagnostics.extend(_program_structure_diagnostics(raw_programs))
+    diagnostics.extend(_standalone_structure_diagnostics(raw_standalones, raw_programs))
     (
         contract_diagnostics,
         value_contracts_by_profile,
@@ -2566,6 +2746,9 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
         ),
         program_lineage=tuple(
             _program_lineage_from_mapping(program) for program in raw_programs
+        ),
+        standalone_executions=tuple(
+            _standalone_execution_from_mapping(item) for item in raw_standalones
         ),
         evidence_predicates=evidence_predicates,
     )
