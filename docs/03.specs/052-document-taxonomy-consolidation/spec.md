@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-08-08
 ---
 
 # Document Taxonomy Consolidation Technical Specification (Spec)
@@ -181,7 +181,7 @@ surviving owners, the duplication cannot recur.
 | --- | --------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
 | R-1 | `90.references/data/active-corpus-*.json` (3 files) | 14,142 lines                  | Delete with their five exclusive validators                                                        |
 | R-2 | `scripts/archive_cutover_manifest.py`               | 108 lines                     | Delete; zero referents observed                                                                    |
-| R-3 | `90.references/research/2026-07-04-wer/`            | 6 files                       | Archive; facts already merged into the 2026-07-07 pack                                             |
+| R-3 | `90.references/research/2026-07-04-wer/`            | 8 files                       | Superseded by human-approved [Spec 053](../053-workspace-engineering-research-pack-consolidation/spec.md); WERPC validates and integrates this pack with the 2026-07-07 and 2026-08-07 packs, preserves Git/ledger provenance, and removes all three without new Stage 98 records |
 | R-4 | `00.agent-governance/memory/progress.md`            | 13,920 lines                  | Rotate to a bounded live window; closed periods to archive                                         |
 | R-5 | `99.templates/support/document-profiles.json`       | 6,413 lines, 64 profiles      | Remove the 24 `template/*` mirror profiles; validate template forms against their authored profile |
 | R-6 | `00.agent-governance/contracts/*.json` (21 files)   | 18,199 lines                  | Consolidate into fewer rule-family owners with colocated schemas                                   |

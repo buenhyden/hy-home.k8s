@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Research Pack Consolidation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-08
 ---
@@ -400,10 +400,10 @@ secret-value check is part of acceptance.
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
 - **Approved requirement source**: the 2026-08-08 human request and explicit
   approval in the current Codex task.
-- **Planned execution artifacts**:
-  `docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Execution artifacts**:
+  [Plan](../../04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)
   and
-  `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`.
+  [Task](../../04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md).
 
 ### Lifecycle Traceability
 

@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-08-08
 ---
 
 # Document Taxonomy Consolidation Implementation Plan
@@ -104,7 +104,8 @@ Traceability row may link only `sdlc/adr` or `sdlc/spec`.
 - Add and enforce contracts C-1 through C-6 from Spec 052.
 - Delete the `active-corpus-*` census, its five exclusive validators, and
   `scripts/archive_cutover_manifest.py`.
-- Archive the superseded `2026-07-04-wer` research pack.
+- Defer the three-pack research consolidation and removal to human-approved
+  Spec 053; WDTC-002 performs no archive write.
 - Rotate `docs/00.agent-governance/memory/progress.md` to a bounded window.
 - Collapse the ten authoring-rule documents into three.
 - Remove the 24 `template/*` mirror profiles from the profile registry.
@@ -129,7 +130,7 @@ Traceability row may link only `sdlc/adr` or `sdlc/spec`.
 | -------- | -------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | WDTC-000 | Activate the reciprocal execution path and pause PRD-007 execution                     | None               | Spec 052 approved                                    | Spec 052 `active` with plan and task links; Spec 047 draft and the PRD-007 execution pause recorded |
 | WDTC-001 | Delete the completed migration census, its exclusive validators, and the orphan script | WDTC-000           | Zero-referent proof for each deleted asset           | Gate passes with the assets removed and no dangling reference                       |
-| WDTC-002 | Archive the superseded research pack                                                   | WDTC-000           | Supersession already recorded in the 2026-07-07 pack | Envelope records present; live pack removed                                         |
+| WDTC-002 | Superseded — delegate the three-pack research cutover to Spec 053                      | WDTC-000           | Human-approved Spec 053 and WERPC execution path     | WORK-002 records supersession; no archive action occurs in this program              |
 | WDTC-003 | Rotate the shared progress ledger                                                      | WDTC-000           | Current period boundary chosen                       | Live ledger bounded; closed periods recoverable through the archive index           |
 | WDTC-004 | Archive the 27 orphan execution documents                                              | WDTC-001           | All 27 confirmed `status: done`                      | Envelope records present; live documents removed                                    |
 | WDTC-005 | Build and prove the migration tool                                                     | WDTC-004           | Failing tests exist first                            | Tool passes its unit tests including every abort condition                          |
@@ -424,66 +425,31 @@ they recorded is complete and its outcome is the current tree."
 
 ---
 
-### Task 3: WDTC-002 — archive the superseded research pack
+### Task 3: WDTC-002 — record supersession by the three-pack research cutover
 
 **Files:**
 
-- Archive: the six files under `docs/90.references/research/2026-07-04-wer/`
-- Modify: `docs/90.references/research/README.md`
+- Modify: this Plan and the reciprocal Spec 052 Task only
+- Do not modify: `docs/98.archive/**` or any research pack in WDTC-002
 
 **Interfaces:**
 
-- Consumes: WDTC-000.
-- Produces: one live research pack per subject.
+- Consumes: WDTC-000 and human-approved Spec 053.
+- Produces: an explicit no-execution handoff to WERPC-008.
 
-- [ ] **Step 1: Confirm the supersession is already recorded**
+- [ ] **Step 1: Record the handoff without executing it**
 
-```bash
-grep -n "2026-07-04" docs/90.references/research/2026-08-07-wer/research-consolidation-and-supersession-map.md
-```
+Set WORK-002 to `Superseded` and link
+[Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
+[WERPC-008](2026-08-08-workspace-engineering-research-pack-consolidation.md#task-9-werpc-008--delete-predecessor-packs-after-fail-closed-readiness).
+The WERPC ledger, not WDTC, owns the 25-file
+and section-level disposition evidence.
 
-Expected: the map names each 2026-07-04 file and its surviving owner. If a file
-has no recorded successor, stop and record one before archiving it.
+- [ ] **Step 2: Preserve all other taxonomy work**
 
-- [ ] **Step 2: Archive each file through the envelope route**
-
-```bash
-for f in docs/90.references/research/2026-07-04-wer/*.md; do
-  python3 scripts/archive_cutover.py --root . --source "$f" \
-    --reason superseded \
-    --replacement docs/90.references/research/2026-07-07-wer/"$(basename "$f")"
-done
-```
-
-For `README.md`, use the 2026-07-07 pack README as the replacement. If a
-2026-07-07 counterpart does not exist, use the supersession map as the
-replacement.
-
-- [ ] **Step 3: Update the research index**
-
-Remove the 2026-07-04 pack rows and tree entries from
-`docs/90.references/research/README.md` and add one sentence pointing readers
-to the archive index for the retired pack.
-
-- [ ] **Step 4: Run the gate and archive validation**
-
-```bash
-python3 scripts/archive_validation.py --root .
-bash scripts/validate-repo-quality-gates.sh .
-```
-
-Expected: both PASS.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add -A
-git commit -m "docs: archive the superseded 2026-07-04 research pack
-
-The pack's facts were merged into the 2026-07-07 owners and the supersession is
-recorded in the 2026-08-07 consolidation map. Retire the duplicate live pack
-through the archive envelope route."
-```
+Confirm that WDTC-001 and WDTC-003 through WDTC-015 remain unchanged and
+queued. WERPC does not authorize execution-stage retirement, operations
+renumbering, rule consolidation, progress rotation, or validator deletion.
 
 ---
 
@@ -1598,7 +1564,7 @@ assurance program in the consolidated structure."
 | ------------ | ------------------------------------------------------------------------------------------- | ------------- |
 | WDTC-000     | `bash scripts/validate-repo-quality-gates.sh .`                                             | repo-static   |
 | WDTC-001     | Zero-referent grep plus the full gate                                                       | repo-static   |
-| WDTC-002     | `python3 scripts/archive_validation.py --root .` plus the full gate                         | repo-static   |
+| WDTC-002     | Supersession link and zero Stage 98 diff; execution belongs to WERPC-008                    | repo-static   |
 | WDTC-003     | `python3 scripts/archive_recovery.py --list` plus archive validation                        | repo-static   |
 | WDTC-004     | Status enumeration, archive validation, and the full gate                                   | repo-static   |
 | WDTC-005     | `python3 -m unittest discover -s tests -p test_migrate_document_paths.py -v`                                 | repo-static   |
@@ -1670,6 +1636,6 @@ evidence is produced or claimed by this plan.
 | N/A — VAL-WDTC-006 shares the Spec source above | WDTC-001, WDTC-003, WDTC-011, WDTC-012 | [Consolidated per-asset reduction delta table](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |
 | N/A — VAL-WDTC-007 shares the Spec source above | WDTC-013 | [Per-gap implemented control or dated recorded decision evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |
 | N/A — VAL-WDTC-008 shares the Spec source above | WDTC-014 | [Declared-versus-executable enforcement closure evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |
-| N/A — VAL-WDTC-009 shares the Spec source above | WDTC-002, WDTC-003, WDTC-004, WDTC-015 | [Archive validation result and zero-modification archive diff evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |
+| N/A — VAL-WDTC-009 shares the Spec source above | WDTC-003, WDTC-004, WDTC-015 | [Archive validation result and zero-modification archive diff evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table); WDTC-002 is superseded by Spec 053 and performs no archive action. |
 | N/A — VAL-WDTC-010 shares the Spec source above | WDTC-000, WDTC-015 | [Suspension and resumption status diff evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |
 | N/A — VAL-WDTC-011 shares the Spec source above | All packages | [Per-commit repository quality gate result evidence](../tasks/2026-08-07-document-taxonomy-consolidation.md#task-table) |

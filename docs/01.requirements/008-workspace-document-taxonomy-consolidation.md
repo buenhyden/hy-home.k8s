@@ -3,7 +3,7 @@ title: 'Workspace Document Taxonomy Consolidation Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-08-08
 ---
 
 # Workspace Document Taxonomy Consolidation Product Requirements
@@ -26,6 +26,14 @@ PRD-007 remains active and governing; its execution is paused for the duration
 of this program. Spec 047 returns to `draft` and Specs 048 through 051 remain
 planned draft successors, because Specs 049 and 050 add validators that this
 program consolidates.
+
+The direct human-approved
+[Spec 053](../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
+creates one bounded exception to REQ-WDTC-011: the three named workspace
+engineering research packs are consolidated into `2026-08-08-wer` and removed
+from the live tree without new Stage 98 copies after its lossless disposition
+and reference gates pass. Spec 053 owns that replacement and deletion; every
+other PRD-008 requirement remains unchanged and active.
 
 ## Vision
 
@@ -124,7 +132,7 @@ resolving against the commit at which it was archived.
 | REQ-WDTC-008   | Reduce the document profile registry by removing profiles that exist only to validate template forms.                                                                        | Must     | Template forms are validated through their corresponding authored profile, the registry is materially smaller, and route coverage rejects no previously covered path.          |
 | REQ-WDTC-009   | Consolidate the agent governance machine contracts and their schemas into fewer owners without losing an enforced rule.                                                      | Must     | Every rule enforced before consolidation is still enforced after it, and the contract corpus is materially smaller.                                                            |
 | REQ-WDTC-010   | Delete completed one-shot migration census data and the validators that read only that data.                                                                                 | Must     | The census files and their exclusive validators are removed, and no remaining validator or document references them.                                                           |
-| REQ-WDTC-011   | Consolidate duplicated research and audit packs into their surviving owners.                                                                                                 | Should   | Superseded pack members are archived with an explicit supersession link, and no two live reference documents claim the same observation ownership.                             |
+| REQ-WDTC-011   | Consolidate duplicated research and audit packs into their surviving owners. The human-approved Spec 053 exception uses reviewed Git provenance and a migration ledger instead of new Stage 98 copies for its three named research packs. | Should   | Superseded material has an explicit surviving owner and recoverable provenance, and no two live reference documents claim the same observation ownership.                      |
 | REQ-WDTC-012   | Close the ten recorded documentation gaps by either implementing the control or recording an evidence-backed decision not to.                                                | Must     | Each gap identifier has an implemented control or a dated recorded decision naming its rationale and owner.                                                                    |
 | REQ-WDTC-013   | Align the script surface with the canonical validator selection contract so that no validator exists outside a declared lane and no declared lane names a missing validator. | Must     | The declared validator set and the executable validator set agree, and the repository quality gate passes.                                                                     |
 | REQ-WDTC-014   | Preserve archive records as inviolable.                                                                                                                                      | Must     | No archive record payload, digest, or envelope field is modified, and archive validation passes unchanged.                                                                     |

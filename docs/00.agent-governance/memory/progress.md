@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC specification approval and execution planning
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #workspace-engineering #harness #sdlc #consolidation
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: direct human request and approval; Spec 053; design commit `37c714d04e1ab20816f2719fdc09f6dc42acef72`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 053 closure; summarize in the terminal Task evidence.
+- **Next Owner**: platform — dispatch WERPC-001 through subagent-driven development.
+
+#### Progress
+
+The human approved Spec 053 after selecting the new
+`docs/90.references/research/2026-08-08-wer/` pack and complete integration and
+deletion of the three predecessor packs. The reciprocal Plan and Task divide
+execution into ten logical packages: lifecycle reconciliation, pack and ledger
+contracts, five focused research packages, consumer and machine-contract
+migration, fail-closed deletion, and final closure.
+
+Spec 052's unexecuted WDTC-002/WORK-002 route is superseded only for the named
+research packs. PRD-008 and ARD-0011 record the bounded exception, while every
+other taxonomy package remains active and queued. No research file, current
+consumer, validator, or predecessor pack has been changed or deleted by this
+planning entry.
+
+#### Memory
+
+A dated research-pack replacement crosses three independent evidence domains:
+source currentness, local implementation status, and provenance-preserving
+path migration. Deletion is safe only after all three have explicit ledgers and
+the machine projections that encode old paths migrate with their tests.
+
+Direct human approval can authorize a bounded successor specification even
+when an existing program prescribes a conflicting default route. The successor
+must name the exact superseded work item and preserve all unrelated program
+requirements rather than silently treating the whole prior program as obsolete.
+
+#### Evidence
+
+- Spec 053 design commit: `37c714d04e1ab20816f2719fdc09f6dc42acef72`.
+- Approved specification: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md`.
+- Execution artifacts: the reciprocal WERPC Plan and Task dated 2026-08-08.
+- WERPC-000 strict lifecycle checks and the repository quality gate passed on
+  the final pre-commit tree; its self-review corrected the WERPC-008 handoff
+  target and the execution-branch base.
+- No hosted CI, provider-runtime, remote, credential-bearing, secret-value, or live evidence is claimed.
+
+#### Handoff
+
+platform — WERPC-000 is complete. Execute WERPC-001 with a fresh worker and
+the required two-stage review.
+
 ### 2026-08-07 - WDTC-000 reciprocal execution path activation
 
 #### Metadata

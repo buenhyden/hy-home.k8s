@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-08-08
 ---
 
 # Document Taxonomy Consolidation Architecture Reference Document (ARD)
@@ -47,6 +47,16 @@ observations. Rewriting a path inside a dated observation falsifies the record.
 Path rewrites in these packs are limited to navigational cross-links, and any
 observation text that names a retired path keeps that path with an explicit
 historical annotation.
+
+The human-approved
+[Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
+is a bounded replacement architecture for the `2026-07-04-wer`,
+`2026-07-07-wer`, and `2026-08-07-wer` packs. It preserves dated-observation
+meaning through Git source commits, a reviewed file/section disposition ledger,
+and annotated mutable consumers, then removes the three live directories
+without appending Stage 98 records. This exception supersedes only the
+unexecuted WDTC-002 archive route; the archive envelope and every other target
+architecture in this ARD remain unchanged.
 
 **Stage identifier stability.** No PRD, ARD, ADR, or specification number is
 reassigned. Decision-record practice treats a record number as identity that is

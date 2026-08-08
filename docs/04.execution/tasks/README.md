@@ -110,6 +110,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-08-02-platform-validation-and-security-evidence.md
 ├── 2026-08-02-repository-assurance-integration-and-closure.md
 ├── 2026-08-07-document-taxonomy-consolidation.md
+├── 2026-08-08-workspace-engineering-research-pack-consolidation.md
 └── README.md
 ```
 
@@ -201,7 +202,8 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-08-02-github-routing-and-ci-evidence.md`](./2026-08-02-github-routing-and-ci-evidence.md) | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-github-routing-and-ci-evidence.md)의 contract, native projection, CI routing, remote metadata, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-02-platform-validation-and-security-evidence.md`](./2026-08-02-platform-validation-and-security-evidence.md) | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md)과 reciprocal [Plan](../plans/2026-08-02-platform-validation-and-security-evidence.md)의 exact-tool, render/schema/GVK, Traefik, security regression, CI, QA, and closure evidence를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)과 reciprocal [Plan](../plans/2026-08-02-repository-assurance-integration-and-closure.md)의 계약 통합, QA, 검토, 로컬 fast-forward, stash 및 worktree 정리, 수명주기 종결 증거를 추적한다. | Draft | 2026-08-02 |
-| [`./2026-08-07-document-taxonomy-consolidation.md`](./2026-08-07-document-taxonomy-consolidation.md) | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)와 reciprocal [Plan](../plans/2026-08-07-document-taxonomy-consolidation.md)의 WORK-000–WORK-015 실행 증거, 자산별 감축 delta, archive 불가침 증명, 독립 검토 처분을 추적한다. WORK-000은 구현 commit `b5d7d07b`으로 완료됐고 WORK-001 이후 rows는 queued 상태다. | Active | 2026-08-07 |
+| [`./2026-08-07-document-taxonomy-consolidation.md`](./2026-08-07-document-taxonomy-consolidation.md) | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)와 reciprocal [Plan](../plans/2026-08-07-document-taxonomy-consolidation.md)의 WORK-000–WORK-015 실행 증거를 추적한다. WORK-000은 완료됐고 WORK-002는 Spec 053으로 supersede됐으며 나머지 rows는 queued 상태다. | Active | 2026-08-08 |
+| [`./2026-08-08-workspace-engineering-research-pack-consolidation.md`](./2026-08-08-workspace-engineering-research-pack-consolidation.md) | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)과 reciprocal [Plan](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)의 WERPC-000–009 외부·워크스페이스 조사, 통합, consumer 이관, 삭제, 검증 및 review evidence를 추적한다. | Active | 2026-08-08 |
 
 ## Related Documents
 

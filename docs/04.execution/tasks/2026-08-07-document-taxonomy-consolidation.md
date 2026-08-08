@@ -3,7 +3,7 @@ title: 'Task: Document Taxonomy Consolidation'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-08-08
 ---
 
 # Task: Document Taxonomy Consolidation
@@ -41,7 +41,7 @@ remote, live-cluster, or credential-bearing result is produced or claimed.
 | -------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ | ------------ | ------------------------------------------------------------------------------- |
 | WORK-000 | VAL-WDTC-010               | Activate the Spec 052 reciprocal execution path and record the PRD-007 execution pause                                           | platform | Done   | PRD-008, ARD-0011, Spec 052, and the Spec 052 plan and task are `active`; Spec 047 and its plan and task are `draft`; PRD-007 stays `active` and records why its execution is paused and how it resumes; no PRD-007 tranche executed | Implementation commit `b5d7d07b`; program lineage registry now declares the PRD-008/ARD-0011/Spec-052 relation; repository quality gate PASS |
 | WORK-001 | VAL-WDTC-006               | Delete the completed migration census, its five exclusive validators, their tests, and the zero-referent cutover manifest script | platform | Queued | Not executed | Zero-referent search output and the deletion commit                             |
-| WORK-002 | VAL-WDTC-006               | Archive the superseded 2026-07-04 research pack through the envelope route                                                       | platform | Queued | Not executed | Archive validation result and the supersession map reference                    |
+| WORK-002 | VAL-WDTC-006               | Superseded — delegate the 2026-07-04, 2026-07-07, and 2026-08-07 research-pack replacement to Spec 053                           | platform | Superseded | No WDTC execution; human-approved Spec 053 owns integration, Git/ledger provenance, and deletion in WERPC-008 without new Stage 98 copies | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md) and [WERPC-008](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md#task-9-werpc-008--delete-predecessor-packs-after-fail-closed-readiness) |
 | WORK-003 | VAL-WDTC-006               | Rotate the shared progress ledger to a bounded retention window                                                                  | platform | Queued | Not executed | Recovery listing per rotated period and archive validation result               |
 | WORK-004 | VAL-WDTC-001               | Archive the 24 orphan plans and 3 orphan tasks                                                                                   | platform | Queued | Not executed | Status enumeration proving every member is done, plus archive validation        |
 | WORK-005 | VAL-WDTC-001               | Build the enumerated migration tool with one test per abort condition                                                            | platform | Queued | Not executed | Focused unit test result showing RED before GREEN                               |
@@ -94,7 +94,7 @@ Known limitations declared in advance:
 | --------------------- | ------------- | -------------------------------------------------------------------- |
 | [WORK-000](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Done. | Status diff for PRD-007, Spec 047, and the Spec 052 triad in commit `b5d7d07b`, with the repository quality gate PASS. |
 | N/A — WORK-001 shares the Plan and Spec sources above | Not executed. | Zero-referent search output and the deletion commit. |
-| N/A — WORK-002 shares the Plan and Spec sources above | Not executed. | Archive validation result and the supersession map reference. |
+| N/A — WORK-002 shares the Plan and Spec sources above | Superseded; no WDTC execution. | Spec 053 and WERPC-008 own the reviewed three-pack cutover. |
 | N/A — WORK-003 shares the Plan and Spec sources above | Not executed. | Recovery listing per rotated period and archive validation result. |
 | N/A — WORK-004 shares the Plan and Spec sources above | Not executed. | Status enumeration and archive validation result. |
 | N/A — WORK-005 shares the Plan and Spec sources above | Not executed. | Focused unit test result showing RED before GREEN. |
