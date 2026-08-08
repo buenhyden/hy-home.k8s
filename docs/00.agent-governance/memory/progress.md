@@ -8,6 +8,68 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-004 Kubernetes, infrastructure, and security research
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #kubernetes #infrastructure #gitops #security
+- **Owner**: docs-researcher
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-004; official primary sources checked 2026-08-08 and direct repository-static contract observation
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
+- **Next Owner**: quality-engineer — implement WERPC-005 from its completed CI/CD/GitHub Actions/QA research handoff.
+
+#### Progress
+
+Expanded only the Kubernetes/infrastructure/security reference, its assigned
+README requirement cells, WERPC-004 source/claim rows, and WERPC Task evidence.
+The reference separates desired state, static validation, hosted CI, remote
+GitOps, live Kubernetes/secret backend, and external gateway/cloud evidence.
+It records Git-to-Argo-to-API/controller/CNI and Vault-to-ESO-to-Secret trust
+flows; it distinguishes static Conftest from PSA/native admission/Gatekeeper
+and CNI enforcement; and it records workspace As-Is/gap/target and deferred
+validation owners without selecting or implementing a future control.
+
+#### Memory
+
+NetworkPolicy resources require a supporting CNI and controlled traffic
+evidence; a static policy cannot establish runtime admission or network effect.
+The local Vault HTTP annotation is a local-only declared exception, never a
+production transport claim. Argo auto-sync with self-heal/prune changes recovery
+design: an approved Git-revert-first path needs separately observed sync/health
+evidence. Tag hygiene is neither digest immutability nor supply-chain
+provenance/verification.
+
+#### Evidence
+
+- Official primary observations: Kubernetes NetworkPolicy, Secrets, Pod
+  Security Admission, admission, and RBAC guidance; Argo CD auto-sync and
+  bootstrapping; Gatekeeper; ESO/Vault Kubernetes auth; SLSA v1.2; and NIST
+  SSDF. All are checked 2026-08-08 and registered as
+  `SRC-WERPC-023`–`034` with limitation and refresh boundaries.
+- Workspace observation: root Application/AppProjects/ApplicationSet, egress
+  NetworkPolicies, ESO/Vault contracts, static/live infrastructure split,
+  selected workload hardening, Conftest rules, recovery runbooks, and
+  reference-only Traefik boundary. Cluster, CNI, admission, RBAC, Vault/ESO,
+  secret, hosted CI, registry, gateway, and cloud runtime remain `DEFER`.
+- Focused pre-review validation PASS: `git diff --check`,
+  `python3 scripts/validate-markdown-profiles.py --root . --mode strict` (zero
+  violations), `python3 scripts/validate-links-and-owners.py --root . --mode
+  strict`, and `bash scripts/validate-harness.sh`.
+- Fresh content review Approved with no Critical, Important, or Minor finding.
+  On the exact five-file staged scope, cached diff, Reference IA production,
+  and the complete repository quality gate passed.
+
+#### Handoff
+
+WERPC-004 is ready for its logical commit. No live cluster, secret, credential,
+remote, hosted-CI, push, merge, or deployment action was performed; those
+evidence depths remain `DEFER` for separately authorized work.
+
 ### 2026-08-08 - WERPC-003 SDLC documents, Diátaxis, and LLM-WIKI research
 
 #### Metadata

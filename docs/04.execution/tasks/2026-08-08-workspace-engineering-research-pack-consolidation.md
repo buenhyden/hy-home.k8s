@@ -46,7 +46,7 @@ or live-cluster result is produced or claimed.
 | WERPC-001 | VAL-WER-001, VAL-WER-002, VAL-WER-003 | Create exact pack shape, coverage matrix, source register, and predecessor disposition baseline | docs-researcher | Done | Created the exact thirteen-file pack with REQ-WERPC-001 through REQ-WERPC-032, one primary file-and-heading owner per request, current workspace evidence, three dated predecessor source-register entries, 25 full-hash file dispositions, and 35 text-exact H3 split rows | Exact 13/25 counts, Markdown profiles, strict registry, strict links/owners, diff check, full repository quality gate, self-review, and this logical commit |
 | WERPC-002 | VAL-WER-004, VAL-WER-005, VAL-WER-006, VAL-WER-007 | Research governance, harness, loop, Claude, Codex, and common environment | docs-researcher | Done | Three detailed references define the harness/loop machine, workspace control plane, and Claude/Codex surface matrix; ten dated official primary-source rows and nine bounded claim rows distinguish static configuration, native discovery, and authenticated/runtime evidence; the collection index and README inventory contract include the new pack | Fresh-review RED: strict links/owners reported 26 collection-index omissions. Fix-round RED: the full gate exposed the missing new-pack README inventory row. GREEN: exact 13-file tree/table projections, active54/new7 README contract, Markdown profiles, registry self-test/strict, strict links, harness semantics, Reference IA production, cached diff, and the full repository gate PASS; documentation and Python fresh reviews Approved; this logical commit. |
 | WERPC-003 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research spec-driven SDLC, document families, Diátaxis, and LLM-WIKI | docs-researcher | Done | Three references record dated primary-source support, a complete document-family matrix, Diátaxis scope rules, LLM-WIKI generator/drift boundary, and a Release absence finding; `SRC-WERPC-014`–`022` and `CLM-WERPC-003-01`–`13` preserve claim limits | Source/claim audit, Markdown profiles, registry self-test/strict, strict links, LLM-WIKI check, Reference IA production, cached diff, and complete repository quality gate PASS; fresh review Approved with no finding; this logical commit |
-| WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | security-auditor | Queued | Not executed | Platform/security reference, source and evidence-depth review, harness/full gates |
+| WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | docs-researcher | Done | Primary-source and repository-static analysis is complete: layered platform/trust-boundary model, control/evidence matrix, As-Is/gap/target matrix, and deferred-validation backlog; `SRC-WERPC-023`–`034` and `CLM-WERPC-004-01`–`11` preserve source, claim, and evidence-depth limits | Focused worktree diff, Markdown profiles, strict links/owners, and harness validation PASS; fresh content review Approved with no finding; exact staged Reference IA, cached diff, and complete repository quality gate PASS; hosted CI, remote/live, secret, credential, and cluster evidence remain DEFER; this logical commit. |
 | WERPC-005 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research CI/CD, GitHub Actions, and QA | quality-engineer | Queued | Not executed | Delivery/QA reference, workflow inventory, source review, full gate |
 | WERPC-006 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research AI agents, pinned agency-agents, model routing, and memory tiers | docs-researcher | Queued | Not executed | Three references, pinned upstream commit, provider and local-contract review |
 | WERPC-007 | VAL-WER-008, VAL-WER-010, VAL-WER-011 | Migrate links, observations, indexes, machine contracts, validators, and fixtures | platform | Queued | Not executed | Classified occurrence ledger, focused RED/GREEN, strict/reference-IA/archive/full gates |
@@ -107,11 +107,16 @@ Plan's production `--root .` command passed. WERPC-003 is done: its nine dated
 source rows and thirteen bounded claim rows support the complete document-family
 matrix, Release absence gap, Diátaxis mapping, and LLM-WIKI boundary. Fresh
 review returned Approved with no finding, and Reference IA production plus the
-complete repository quality gate passed on the exact staged tree. WERPC-004
-through WERPC-009 are not executed. Each remaining
-row will record exact command results, review disposition, commit, limitation,
-`SKIP`, or `DEFER` without converting repository-static evidence into a deeper
-claim.
+complete repository quality gate passed on the exact staged tree. WERPC-004 is
+done: its 12 dated source rows and 11 bounded claims cover the
+platform hierarchy, GitOps/secret trust boundaries, static-versus-runtime
+controls, and As-Is/gap/target matrix. Focused checks passed, fresh content
+review was Approved with no finding, and Reference IA production plus the
+complete repository quality gate passed on the exact staged tree. All
+remote/live/secret evidence remains `DEFER`.
+WERPC-005 through WERPC-009 are not executed. Each remaining row will record
+exact command results, review disposition, commit, limitation, `SKIP`, or
+`DEFER` without converting repository-static evidence into a deeper claim.
 
 ## Traceability
 
@@ -124,7 +129,7 @@ claim.
 | N/A — WERPC-001 shares the Plan and Spec sources above | Done. | Exact thirteen-file pack; 32 unique request-primary-owner rows; three dated predecessor source entries; 25 file rows with matching full source commits; 35 text-exact H3 split dispositions; strict registry, strict links/owners, cached diff, and full repository quality gate PASS on the staged tree. |
 | N/A — WERPC-002 shares the Plan and Spec sources above | Done. | Dated source/claim ledger (SRC-WERPC-004–013; CLM-WERPC-002-01–009); detailed harness/loop, provider-surface, and common-control-plane references; exact 13 tree/row collection projections; active54/new7 README inventory contract with baseline67/active47/retired20 preserved; documentation and Python fresh reviews Approved; final Reference IA production and complete repository quality gate PASS. |
 | N/A — WERPC-003 shares the Plan and Spec sources above | Done. | Three detailed references; `SRC-WERPC-014`–`022` and `CLM-WERPC-003-01`–`13`; complete family matrix with Release absence gap; Diátaxis partial application/tutorial-explanation gap; LLM-WIKI generator/schema/drift/freshness and llms.txt/MCP/search/RAG boundaries; fresh review Approved; final Reference IA production and complete repository quality gate PASS. |
-| N/A — WERPC-004 shares the Plan and Spec sources above | Not executed. | Kubernetes/infrastructure/security research evidence pending. |
+| N/A — WERPC-004 shares the Plan and Spec sources above | Done. | `SRC-WERPC-023`–`034`, `CLM-WERPC-004-01`–`11`, platform/security reference, REQ-WERPC-008/009/025 status cells, focused checks PASS, fresh content review Approved, and final staged Reference IA/cached-diff/complete quality gate PASS. |
 | N/A — WERPC-005 shares the Plan and Spec sources above | Not executed. | CI/CD/GitHub Actions/QA research evidence pending. |
 | N/A — WERPC-006 shares the Plan and Spec sources above | Not executed. | Agents/agency/model/memory research evidence pending. |
 | N/A — WERPC-007 shares the Plan and Spec sources above | Not executed. | Link/contract/fixture migration evidence pending. |
