@@ -43,7 +43,7 @@ or live-cluster result is produced or claimed.
 | --- | --- | --- | --- | --- | --- | --- |
 | WERPC-000 | VAL-WER-008, VAL-WER-011 | Activate reciprocal execution and supersede only WDTC-002/WORK-002 | platform | Done | Active reciprocal lifecycle is recorded; WDTC-002/WORK-002 is superseded to Spec 053 and WERPC-008; all required focused, diff, and repository quality checks passed before this logical commit | Design commit; strict registry, Markdown profile, and links/owners checks; repository quality gate; optional all-files pre-commit INTERRUPTED/SKIP with required-gate fallback; self-review; this logical commit |
 | WERPC-000A | VAL-WER-008, VAL-WER-011 | Add typed direct-approval standalone execution lineage without changing program lineage | platform | Done | Closed schema-v8 relation, parser projection, structural/link/eligibility diagnostics, ADR-0022, exact-pair terminal eligibility, disjoint rendered execution graphs, and bounded post-closure ADR handling are implemented without changing existing program-lineage semantics | RED/GREEN mutation history remains in the progress ledger. Final staged evidence: registry self-test 132 cases and strict 501 paths; standalone link fixture 8 cases and full links self-test/strict PASS; eligibility 58 cases and production PASS; residue closure 25 cases and production PASS with frozen guards 13/29; affected unit tests 2/2 PASS; Markdown profiles and cached diff PASS; complete repository quality gate PASS; Python and governance reviews Approved. |
-| WERPC-001 | VAL-WER-001, VAL-WER-002, VAL-WER-003 | Create exact pack shape, coverage matrix, source register, and predecessor disposition baseline | docs-researcher | In Progress | The owned thirteen-file content is complete with REQ-WERPC-001 through REQ-WERPC-032, current workspace evidence, 25 full-hash file dispositions, and 35 exact H3 split rows; Task 1A resolved the upstream execution-lineage and link blockers | Exact 13/25 counts, Markdown profiles, content audit, and diff check PASS; final WERPC-001 staged strict/full validation and logical commit pending |
+| WERPC-001 | VAL-WER-001, VAL-WER-002, VAL-WER-003 | Create exact pack shape, coverage matrix, source register, and predecessor disposition baseline | docs-researcher | Done | Created the exact thirteen-file pack with REQ-WERPC-001 through REQ-WERPC-032, one primary file-and-heading owner per request, current workspace evidence, three dated predecessor source-register entries, 25 full-hash file dispositions, and 35 text-exact H3 split rows | Exact 13/25 counts, Markdown profiles, strict registry, strict links/owners, diff check, full repository quality gate, self-review, and this logical commit |
 | WERPC-002 | VAL-WER-004, VAL-WER-005, VAL-WER-006, VAL-WER-007 | Research governance, harness, loop, Claude, Codex, and common environment | docs-researcher | Queued | Not executed | Three references, source/claim review, provider-surface matrix, harness/full gates |
 | WERPC-003 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research spec-driven SDLC, document families, Diátaxis, and LLM-WIKI | docs-researcher | Queued | Not executed | Three references, complete document-family matrix, wiki/profile/link/full gates |
 | WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | security-auditor | Queued | Not executed | Platform/security reference, source and evidence-depth review, harness/full gates |
@@ -87,11 +87,11 @@ optional lane is `SKIP`, not `PASS`. The passing required strict, diff, and full
 repository gate results are the fallback evidence. The results are
 repository-static only; provider-runtime, hosted CI, remote, and live
 validation remain `DEFER`.
-WERPC-001-owned content is complete with the thirteen-file shape, request-owner
-matrix, dated predecessor source-register interface, and lossless 25-file
-baseline. It does not claim external currentness: later topical work must
-recheck predecessor URLs. WERPC-001 is unblocked and awaits its own staged
-strict/full validation and logical commit.
+WERPC-001 is done with the thirteen-file shape, request-owner matrix, dated
+predecessor source-register interface, 25 full-hash file dispositions, and 35
+text-exact H3 split rows. It does not claim external currentness: later topical
+work must recheck predecessor URLs. Its strict registry, strict links/owners,
+and full repository quality-gate results are repository-static only.
 WERPC-000A implements the approved typed standalone-execution contract without
 changing `programLineage`. Registry, links/owners, eligibility, residue closure,
 the affected unit tests, Markdown profiles, cached diff, and the complete
@@ -108,7 +108,7 @@ without converting repository-static evidence into a deeper claim.
 | --- | --- | --- |
 | [WERPC-000](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md#work-breakdown) | Done. | Active Spec/Plan/Task and collection indexes; bounded PRD-008/ARD-0011 exception; superseded WDTC-002/WORK-002 route; required strict, diff, and repository-quality checks passed; optional all-files pre-commit INTERRUPTED/SKIP with required-gate fallback; self-review. |
 | N/A — WERPC-000A shares the Plan and Spec sources above | Done. | Typed standalone execution, exact-pair/approval/owner/state/overlap/terminal tests, bounded closure authority, two independent reviews, and the complete repository quality gate PASS. |
-| N/A — WERPC-001 shares the Plan and Spec sources above | In progress. | Owned content checks PASS: exact thirteen-file pack; 32 unique request-primary-owner rows; three dated predecessor source entries; 25 file rows with matching full source commits; 35 exact H3 split dispositions. Upstream lineage is green; final staged strict/full validation and commit remain pending. |
+| N/A — WERPC-001 shares the Plan and Spec sources above | Done. | Exact thirteen-file pack; 32 unique request-primary-owner rows; three dated predecessor source entries; 25 file rows with matching full source commits; 35 text-exact H3 split dispositions; strict registry, strict links/owners, cached diff, and full repository quality gate PASS on the staged tree. |
 | N/A — WERPC-002 shares the Plan and Spec sources above | Not executed. | Governance/harness/loop/provider research evidence pending. |
 | N/A — WERPC-003 shares the Plan and Spec sources above | Not executed. | SDLC/document/Diátaxis/LLM-WIKI research evidence pending. |
 | N/A — WERPC-004 shares the Plan and Spec sources above | Not executed. | Kubernetes/infrastructure/security research evidence pending. |

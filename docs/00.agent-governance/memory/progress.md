@@ -61,14 +61,14 @@ its exact pack checks on a staged tree, and commit that logical unit.
 
 - **Date**: 2026-08-08
 - **Layer**: docs
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #research #workspace-engineering #migration #provenance
 - **Owner**: docs-researcher
 - **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
 - **Provenance**: WERPC-001 file inventory and full Git provenance in `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; successor ledger entries supersede only their named observations.
-- **Next Owner**: docs-researcher — rerun strict/full validation and commit the pack baseline.
+- **Next Owner**: docs-researcher — begin WERPC-002 using the established source and owner interfaces.
 
 #### Progress
 
@@ -78,9 +78,9 @@ primary reference heading and current workspace-evidence path for each request.
 The source and migration ledger preserves the full 25-file predecessor listing,
 the required 8/10/7 directory split, full 40-character content-bearing Git
 provenance per path, and 35 text-exact H3 split dispositions. No predecessor
-file was changed or deleted. Task 1A has resolved the upstream execution-lineage
-and link defects; WERPC-001 now awaits its own staged strict/full validation and
-logical commit.
+file was changed or deleted. Task 1A resolved the upstream execution-lineage
+and link defects; WERPC-001 strict/full validation then passed on its staged
+tree and this logical commit records the completed baseline.
 
 #### Memory
 
@@ -96,14 +96,14 @@ current external facts or runtime behavior.
 - `test "$(git ls-files 'docs/90.references/research/2026-07-04-wer/**' 'docs/90.references/research/2026-07-07-wer/**' 'docs/90.references/research/2026-08-07-wer/**' | wc -l)" -eq 25` — PASS.
 - `python3 scripts/validate-markdown-profiles.py --root .` — PASS, 0 violations; `git diff --check` — PASS.
 - Content audit — PASS: 32 sequential unique primary-owner links, no missing workspace-evidence path or owner anchor, 25/25 exact old paths, 25 matching full source commits, 35 text-exact H3 rows, and no empty section, author prompt, or future marker.
-- Upstream unblock — PASS: Task 1A strict links/owners and complete repository quality gate passed on its reviewed staged tree.
-- WERPC-001 final staged strict/full validation and commit remain pending; no result is claimed yet.
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` — PASS, 501 paths; `python3 scripts/validate-links-and-owners.py --root . --mode strict` — PASS.
+- `git diff --cached --check` — PASS; `bash scripts/validate-repo-quality-gates.sh .` — PASS on the WERPC-001 staged tree.
 - Results are repository-static only. Hosted CI, provider-runtime, remote, credential-bearing, secret-value, and live evidence remain `DEFER`.
 
 #### Handoff
 
-docs-researcher — stage only the thirteen pack files plus WERPC-001 evidence,
-rerun strict/full validation, and create the one logical baseline commit.
+docs-researcher — execute WERPC-002 source review using the baseline headings,
+source-register schema, and evidence-depth boundary.
 
 ### 2026-08-08 - WERPC specification approval and execution planning
 
