@@ -233,6 +233,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
+    "tests/test_k8s_pre_edit_hook.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_reference_information_architecture.py": (
         "python",
         "regression-test",

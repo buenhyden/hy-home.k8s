@@ -83,6 +83,7 @@ tests/test_archive_validation.py
 tests/test_document_lifecycle_agent_roster_cutover.py
 tests/test_document_lifecycle_archive_cutover.py
 tests/test_document_strict_cutover.py
+tests/test_k8s_pre_edit_hook.py
 tests/test_post_validate_runner_result.py
 tests/test_provider_post_validate_hook.py
 tests/test_reference_information_architecture.py

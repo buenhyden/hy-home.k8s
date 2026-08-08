@@ -302,7 +302,7 @@ after the External evidence bullet:
 
 Set this plan's frontmatter `status: active`.
 
-- [ ] **Step 3: Record the PRD-007 suspension**
+- [ ] **Step 3: Record the PRD-007 execution pause**
 
 In `docs/01.requirements/007-repository-delivery-and-platform-assurance.md`,
 replace the sentence "PRD-007 is active with Spec 047 as its only active
@@ -345,12 +345,12 @@ validator.
 
 ```bash
 git add -A docs/
-git commit -m "docs: activate spec 052 and suspend the delivery assurance program
+git commit -m "docs: activate spec 052 and pause the delivery assurance program
 
 Activate PRD-008, ARD-0011, and Spec 052 with reciprocal plan and task
-evidence. Record PRD-007 as suspended and return Spec 047 and its execution
-pair to draft, because Specs 049 and 050 would author validators against a
-surface this program consolidates."
+evidence. Record the PRD-007 execution pause and return Spec 047 and its
+execution pair to draft, because Specs 049 and 050 would author validators
+against a surface this program consolidates."
 ```
 
 ---

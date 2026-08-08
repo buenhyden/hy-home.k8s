@@ -355,7 +355,7 @@ execution, provider runtime discovery, or remote repository state.
 | VAL-WDTC-007 | Every gap identifier has an implemented control or a dated recorded decision naming rationale and owner.                                          | Gap disposition table with per-row evidence link.                            |
 | VAL-WDTC-008 | The declared and executable validator sets are equal.                                                                                             | C-6 validation.                                                              |
 | VAL-WDTC-009 | Archive validation passes with no archive payload, digest, or envelope field modified.                                                            | Archive validation result plus a diff proving zero archive-path changes.     |
-| VAL-WDTC-010 | The suspended program is recorded as suspended with rationale and resumption route, and no suspended tranche executed.                            | PRD-007 and Spec 047 status diff plus commit inventory.                      |
+| VAL-WDTC-010 | The suspended program is recorded as suspended with rationale and resumption route, and no suspended tranche executed.                            | Spec 047 and execution-pair status diff, the PRD-007 execution-pause prose and its README row, plus commit inventory. PRD-007 keeps `status: active`, so no PRD status diff is expected. |
 | VAL-WDTC-011 | The repository quality gate passes at every logical commit.                                                                                       | Per-commit gate result recorded in the task evidence.                        |
 
 ## Traceability

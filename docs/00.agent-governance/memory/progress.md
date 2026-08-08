@@ -36,9 +36,15 @@ Task traceability bullets already existed from the plan-authoring commit and
 were verified rather than recreated. No file was migrated, renamed, or deleted,
 and nothing under `docs/98.archive/**` was touched.
 
-Review round 1 corrected the prose so that no live document claims the PRD
-itself is suspended, and reconciled the WORK-000 row, its stage README row, and
-this ledger on one state now that the implementation commit exists.
+Review rounds 1 and 2 corrected the prose so that no live Stage 01 to 04
+document claims the PRD document itself is suspended. Program-scoped and
+tranche-scoped wording is retained wherever it is accurate, and dated ledger
+entries written before this one stand as historical records. The WORK-000 row,
+its stage README row, and this ledger were reconciled on one state now that the
+implementation commit exists.
+
+The executed commit `b5d7d07b` carries the pre-correction wording in its own
+message; only the documents it produced were corrected.
 
 #### Memory
 
