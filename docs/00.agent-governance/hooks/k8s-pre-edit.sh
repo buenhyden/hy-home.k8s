@@ -7,27 +7,92 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null |
 INPUT_FILE="$(mktemp)"
 PATHS_FILE="$(mktemp --suffix=.nul)"
 SELECT_LOG="$(mktemp)"
-trap 'rm -f "$INPUT_FILE" "$PATHS_FILE" "$SELECT_LOG"' EXIT
+ROOT_FILE="$(mktemp)"
+trap 'rm -f "$INPUT_FILE" "$PATHS_FILE" "$SELECT_LOG" "$ROOT_FILE"' EXIT
 cat >"$INPUT_FILE"
-export PROJECT_DIR INPUT_FILE PATHS_FILE CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+export PROJECT_DIR INPUT_FILE PATHS_FILE ROOT_FILE CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
 
 python3 - <<'PY'
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
-project_dir = os.environ.get("PROJECT_DIR", "")
+project_dir = os.environ.get("PROJECT_DIR", "").rstrip("/")
 raw = Path(os.environ["INPUT_FILE"]).read_text(encoding="utf-8")
 if not raw:
     raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
 
 paths: list[str] = []
+absolute_roots: set[str] = set()
+_project_identity: list[str] = []
 
 
 def reject(code: str) -> None:
     print(f"[FAIL] {code}", file=sys.stderr)
+    raise SystemExit(2)
+
+
+def git_value(directory: str, *arguments: str) -> str:
+    """Return one trimmed `git rev-parse` value, or an empty string."""
+    try:
+        completed = subprocess.run(
+            ("git", "-C", directory, "rev-parse", *arguments),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return completed.stdout.strip()
+
+
+def repository_identity(directory: str) -> str:
+    """Return the shared common git directory identifying one repository."""
+    value = git_value(directory, "--path-format=absolute", "--git-common-dir")
+    return os.path.realpath(value) if value else ""
+
+
+def project_identity() -> str:
+    """Return the cached repository identity of PROJECT_DIR."""
+    if not _project_identity:
+        _project_identity.append(repository_identity(project_dir))
+    return _project_identity[0]
+
+
+def nearest_existing_directory(path: str) -> str:
+    """Return the closest existing ancestor directory of a possibly new file."""
+    cursor = os.path.dirname(path)
+    while cursor and not os.path.isdir(cursor):
+        parent = os.path.dirname(cursor)
+        if parent == cursor:
+            return ""
+        cursor = parent
+    return cursor
+
+
+def repository_relative(path: str) -> str:
+    """Accept an absolute path only inside PROJECT_DIR or a linked worktree of
+    the same repository, and return it relative to its own worktree root.
+
+    Worktree resolution is tried first, because a linked worktree may live
+    under PROJECT_DIR and a plain prefix strip would then yield a path that is
+    relative to the wrong tree."""
+    if not project_dir:
+        reject("HOOK-PATH-ROOT")
+    directory = nearest_existing_directory(path)
+    worktree_root = ""
+    if directory and repository_identity(directory) == project_identity() != "":
+        worktree_root = git_value(directory, "--show-toplevel").rstrip("/")
+    if worktree_root and path.startswith(worktree_root + "/"):
+        absolute_roots.add(worktree_root)
+        return path[len(worktree_root) + 1 :]
+    if path.startswith(project_dir + "/"):
+        absolute_roots.add(project_dir)
+        return path[len(project_dir) + 1 :]
+    reject("HOOK-PATH-ROOT")
     raise SystemExit(2)
 
 
@@ -41,10 +106,7 @@ def add_path(value):
 
     path = value
     if path.startswith("/"):
-        prefix = project_dir.rstrip("/") + "/"
-        if not project_dir or not path.startswith(prefix):
-            reject("HOOK-PATH-ROOT")
-        path = path[len(prefix) :]
+        path = repository_relative(path)
     posix = PurePosixPath(path)
     if (
         not path
@@ -59,11 +121,6 @@ def add_path(value):
     ):
         reject("HOOK-PATH-NORMALIZATION")
 
-    cursor = Path(project_dir)
-    for part in posix.parts:
-        cursor /= part
-        if cursor.is_symlink():
-            reject("HOOK-PATH-SYMLINK")
     if path not in paths:
         paths.append(path)
 
@@ -118,6 +175,18 @@ if "edits" in tool_input:
 environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
 if environment_path:
     add_path(environment_path)
+if len(absolute_roots) > 1:
+    reject("HOOK-PATH-ROOT")
+resolved_root = next(iter(absolute_roots), project_dir)
+
+for candidate in paths:
+    cursor = Path(resolved_root)
+    for part in PurePosixPath(candidate).parts:
+        cursor /= part
+        if cursor.is_symlink():
+            reject("HOOK-PATH-SYMLINK")
+
+Path(os.environ["ROOT_FILE"]).write_text(resolved_root, encoding="utf-8")
 Path(os.environ["PATHS_FILE"]).write_bytes(
     b"".join(path.encode("utf-8") + b"\0" for path in paths)
 )
@@ -244,8 +313,13 @@ if messages:
     print(json.dumps({"systemMessage": "\n\n".join(messages)}))
 PY
 
-if ! python3 "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
-  --root "$PROJECT_DIR" --lane affected --paths-file "$PATHS_FILE" \
+RESOLVED_ROOT="$PROJECT_DIR"
+if [ -s "$ROOT_FILE" ]; then
+  RESOLVED_ROOT="$(cat "$ROOT_FILE")"
+fi
+
+if ! python3 "$RESOLVED_ROOT/scripts/select-affected-surfaces.py" \
+  --root "$RESOLVED_ROOT" --lane affected --paths-file "$PATHS_FILE" \
   --delimiter nul --format json >"$SELECT_LOG" 2>&1; then
   python3 - <<'PY'
 import json
