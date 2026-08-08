@@ -25,15 +25,20 @@ inventory stays in `scripts/README.md`.
 
 #### Progress
 
-Activated the Spec 052 execution path and suspended the PRD-007 delivery
-assurance program. PRD-008, ARD-0011, Spec 052, and the Spec 052 plan and task
-are now `active`. Spec 047 and its plan and task returned to `draft`, and
-PRD-007 records the suspension rationale and the resumption route.
+Activated the Spec 052 execution path and paused execution of the PRD-007
+delivery assurance program. PRD-008, ARD-0011, Spec 052, and the Spec 052 plan
+and task are now `active`. Spec 047 and its plan and task returned to `draft`.
+PRD-007 itself stays `active` and governing, because `draft` means not yet
+approved; it records why its execution is paused and how it resumes.
 
 The reciprocal task document and the Spec 052 Implementation Plan and Execution
 Task traceability bullets already existed from the plan-authoring commit and
 were verified rather than recreated. No file was migrated, renamed, or deleted,
 and nothing under `docs/98.archive/**` was touched.
+
+Review round 1 corrected the prose so that no live document claims the PRD
+itself is suspended, and reconciled the WORK-000 row, its stage README row, and
+this ledger on one state now that the implementation commit exists.
 
 #### Memory
 

@@ -17,11 +17,12 @@ boundaries, and Traefik dynamic configuration. It complements rather than
 replaces the current local platform baseline owned by PRD-004, ARD-0007,
 ADR-0014, and Spec 008.
 
-PRD-007 is suspended as of 2026-08-07 for the duration of the PRD-008 document
-taxonomy consolidation program, because Specs 049 and 050 would author
-validators against a surface that program consolidates. Spec 047 returns to
-draft and Specs 048-051 remain planned draft successors. The program resumes in
-the consolidated structure when Spec 052 reaches `done`.
+PRD-007 remains active and governing. Its execution is paused as of 2026-08-07
+for the duration of the PRD-008 document taxonomy consolidation program, because
+Specs 049 and 050 would author validators against a surface that program
+consolidates. Spec 047 returns to draft and Specs 048-051 remain planned draft
+successors. Execution resumes in the consolidated structure when Spec 052
+reaches `done`.
 
 The program starts from the clean local `main` baseline observed on
 2026-08-02. It preserves the Current audit pack as observation evidence, uses

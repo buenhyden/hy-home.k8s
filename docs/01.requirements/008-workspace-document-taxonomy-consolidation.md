@@ -22,9 +22,10 @@ harness roles. It changes where authored documents live, what identifies them,
 which document owns each rule, and how much machine contract the repository
 carries to enforce those rules.
 
-PRD-007 is suspended for the duration of this program. Spec 047 returns to
-`draft` and Specs 048 through 051 remain planned draft successors, because
-Specs 049 and 050 add validators that this program consolidates.
+PRD-007 remains active and governing; its execution is paused for the duration
+of this program. Spec 047 returns to `draft` and Specs 048 through 051 remain
+planned draft successors, because Specs 049 and 050 add validators that this
+program consolidates.
 
 ## Vision
 

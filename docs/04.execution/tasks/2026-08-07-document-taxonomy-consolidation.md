@@ -39,7 +39,7 @@ remote, live-cluster, or credential-bearing result is produced or claimed.
 
 | ID       | Upstream criterion         | Work item                                                                                                                        | Owner    | Status | Result       | Evidence                                                                        |
 | -------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ | ------------ | ------------------------------------------------------------------------------- |
-| WORK-000 | VAL-WDTC-010               | Activate the Spec 052 reciprocal execution path and record the PRD-007 suspension                                                | platform | Queued | Not executed | Status diff for PRD-007, Spec 047, and the Spec 052 triad                       |
+| WORK-000 | VAL-WDTC-010               | Activate the Spec 052 reciprocal execution path and record the PRD-007 execution pause                                           | platform | Done   | PRD-008, ARD-0011, Spec 052, and the Spec 052 plan and task are `active`; Spec 047 and its plan and task are `draft`; PRD-007 stays `active` and records why its execution is paused and how it resumes; no PRD-007 tranche executed | Implementation commit `b5d7d07b`; program lineage registry now declares the PRD-008/ARD-0011/Spec-052 relation; repository quality gate PASS |
 | WORK-001 | VAL-WDTC-006               | Delete the completed migration census, its five exclusive validators, their tests, and the zero-referent cutover manifest script | platform | Queued | Not executed | Zero-referent search output and the deletion commit                             |
 | WORK-002 | VAL-WDTC-006               | Archive the superseded 2026-07-04 research pack through the envelope route                                                       | platform | Queued | Not executed | Archive validation result and the supersession map reference                    |
 | WORK-003 | VAL-WDTC-006               | Rotate the shared progress ledger to a bounded retention window                                                                  | platform | Queued | Not executed | Recovery listing per rotated period and archive validation result               |
@@ -69,8 +69,12 @@ remote, live-cluster, or credential-bearing result is produced or claimed.
 
 ## Verification Summary
 
-Not executed. Each package records its own lane outcome here as it closes,
-including any limitation, SKIP, or DEFER with its reason and owner.
+WORK-000 is closed. `bash scripts/validate-repo-quality-gates.sh .` returned
+PASS on the staged WORK-000 tree, and the strict links/owners, Markdown profile,
+and document contract registry lanes each returned PASS. The result is
+repository-static. WORK-001 through WORK-015 are not executed. Each remaining
+package records its own lane outcome here as it closes, including any
+limitation, SKIP, or DEFER with its reason and owner.
 
 Known limitations declared in advance:
 
@@ -88,7 +92,7 @@ Known limitations declared in advance:
 
 | Criterion / work item | Result        | Evidence                                                             |
 | --------------------- | ------------- | -------------------------------------------------------------------- |
-| [WORK-000](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | Status diff for PRD-007, Spec 047, and the Spec 052 triad. |
+| [WORK-000](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Done. | Status diff for PRD-007, Spec 047, and the Spec 052 triad in commit `b5d7d07b`, with the repository quality gate PASS. |
 | N/A — WORK-001 shares the Plan and Spec sources above | Not executed. | Zero-referent search output and the deletion commit. |
 | N/A — WORK-002 shares the Plan and Spec sources above | Not executed. | Archive validation result and the supersession map reference. |
 | N/A — WORK-003 shares the Plan and Spec sources above | Not executed. | Recovery listing per rotated period and archive validation result. |

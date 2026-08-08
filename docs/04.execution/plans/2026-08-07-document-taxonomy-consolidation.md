@@ -127,7 +127,7 @@ Traceability row may link only `sdlc/adr` or `sdlc/spec`.
 
 | ID       | Work package                                                                           | Depends on         | Entry gate                                           | Exit evidence                                                                       |
 | -------- | -------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| WDTC-000 | Activate the reciprocal execution path and suspend PRD-007                             | None               | Spec 052 approved                                    | Spec 052 `active` with plan and task links; Spec 047 and PRD-007 recorded suspended |
+| WDTC-000 | Activate the reciprocal execution path and pause PRD-007 execution                     | None               | Spec 052 approved                                    | Spec 052 `active` with plan and task links; Spec 047 draft and the PRD-007 execution pause recorded |
 | WDTC-001 | Delete the completed migration census, its exclusive validators, and the orphan script | WDTC-000           | Zero-referent proof for each deleted asset           | Gate passes with the assets removed and no dangling reference                       |
 | WDTC-002 | Archive the superseded research pack                                                   | WDTC-000           | Supersession already recorded in the 2026-07-07 pack | Envelope records present; live pack removed                                         |
 | WDTC-003 | Rotate the shared progress ledger                                                      | WDTC-000           | Current period boundary chosen                       | Live ledger bounded; closed periods recoverable through the archive index           |
@@ -309,16 +309,20 @@ replace the sentence "PRD-007 is active with Spec 047 as its only active
 unfinished tranche; Specs 048-051 remain planned draft successors." with:
 
 ```markdown
-PRD-007 is suspended as of 2026-08-07 for the duration of the PRD-008 document
-taxonomy consolidation program, because Specs 049 and 050 would author
-validators against a surface that program consolidates. Spec 047 returns to
-draft and Specs 048-051 remain planned draft successors. The program resumes in
-the consolidated structure when Spec 052 reaches `done`.
+PRD-007 remains active and governing. Its execution is paused as of 2026-08-07
+for the duration of the PRD-008 document taxonomy consolidation program, because
+Specs 049 and 050 would author validators against a surface that program
+consolidates. Spec 047 returns to draft and Specs 048-051 remain planned draft
+successors. Execution resumes in the consolidated structure when Spec 052
+reaches `done`.
 ```
 
-Set `status: draft` on Spec 047 and on its plan and task. Update the
-`docs/01.requirements/README.md` and `docs/03.specs/README.md` index rows for
-PRD-007 and Spec 047 to state Draft and cite the suspension.
+Set `status: draft` on Spec 047 and on its plan and task. PRD-007 itself stays
+`active`, because `draft` means not yet approved and PRD-007 is an approved
+program whose execution is only paused. Update the
+`docs/01.requirements/README.md` index row for PRD-007 to keep `Active` and cite
+the execution pause, and update the `docs/03.specs/README.md` index row for
+Spec 047 to state Draft and cite the same pause.
 
 - [ ] **Step 4: Set Spec 052 and PRD-008 to active**
 
