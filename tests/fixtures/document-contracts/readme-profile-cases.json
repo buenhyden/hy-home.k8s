@@ -497,6 +497,28 @@
       "new": false
     },
     {
+      "path": "docs/90.references/audits/2026-08-09-wgia/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": true
+    },
+    {
       "path": "docs/90.references/audits/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [

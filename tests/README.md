@@ -330,9 +330,9 @@ adapter PASS does not prove provider runtime consumption.
   포함하지 않으며 registry/config self-test의 repo-static 입력으로만
   사용한다.
 - `tests/fixtures/document-contracts/readme-profile-cases.json` schema v3는
-  현재 `activePaths` 51개와 `retiredPaths` 23개를 분리해 보존한다. Active
+  현재 `activePaths` 52개와 `retiredPaths` 23개를 분리해 보존한다. Active
   baseline 45개와 retired baseline 22개가 immutable baseline 67개를
-  재구성하며, program-created handoff는 active 6개와 retired 1개다.
+  재구성하며, program-created handoff는 active 7개와 retired 1개다.
   ADM-006의 20행은 provider-correct snapshot destination과 uncovered route를
   유지하고, WERPC-008의 3행은 삭제된 predecessor README 경로와 새 pack
   README 목적지 및 snapshot route를 보존한다. 여덟 parser 사례는 active

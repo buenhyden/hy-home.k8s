@@ -1,0 +1,119 @@
+---
+title: 'Audit: Remediation and Integration Roadmap'
+type: content/reference
+status: draft
+owner: platform
+updated: 2026-08-09
+---
+
+# Audit: Remediation and Integration Roadmap
+
+## Overview
+
+This report owns cross-report finding normalization, dependencies, priorities,
+target state, canonical implementation owners, cutover sequence, rollback, and
+the residual `DEFER` backlog. WGIA-001 establishes the integration form only;
+WGIA-009 populates the reviewed roadmap after the topical audits.
+
+## Reference Type
+
+Dated repository-static integrated audit roadmap. It is not an implementation
+owner, permission grant, deletion authority, Current-pointer owner, or approval
+to change active policy and operations.
+
+## Authority Boundary
+
+Source reports retain their findings and evidence. This roadmap may deduplicate
+and order only reviewed findings, then route accepted work to canonical owners.
+It cannot rescore source evidence, resolve an ambiguous approved decision,
+change Current navigation, or promote deeper evidence.
+
+## Scope
+
+Included: cross-report identifiers, dependencies, priorities, target-state
+outcomes, implementation owners, verification, blockers, cutover, rollback,
+and residual uncertainty. Excluded: unreviewed topic conclusions, direct
+canonical remediation, Current cutover, deletion, remote actions, and closure.
+
+## Definitions / Facts
+
+### Integration Inputs
+
+The eight focused reports are draft inputs. Each currently contains one
+foundation finding and a report-local owner/source boundary. WGIA-009 may admit
+a finding here only after its required fields and source-report review are
+complete.
+
+### Roadmap Record Convention
+
+Each integrated row requires: integrated ID, source finding IDs, affected
+request scopes, problem statement, dependency, priority, target state,
+canonical implementation owner, validation, verification, rollback, blocker,
+evidence depth, and status. Unknown owners or unresolved approved-decision
+conflicts fail closed to `DEFER`.
+
+### Foundation Dependency Map
+
+| Phase | Inputs | Output boundary | Initial state |
+| --- | --- | --- | --- |
+| Topical audit | WGIA-002 through WGIA-008 | Reviewed report-local findings | `DEFER` pending those tasks. |
+| Integrated disposition | Reviewed source findings plus cleanup candidates | Deduplicated roadmap and candidate decisions in WGIA-009 | `DEFER` pending review. |
+| Canonical remediation | Accepted unambiguous roadmap rows | Owner changes in WGIA-010 and WGIA-011 | `DEFER` pending approval/evidence. |
+| Atomic cutover | Complete pack plus machine/current projections | Sole Current transition in WGIA-012 | `DEFER` pending cutover gates. |
+| Cleanup | Proof-complete `Delete` rows | Exact removals in WGIA-013 | `DEFER` pending zero-consumer proof. |
+| Closure | Re-audit, full QA, reviews, and logical history | WGIA-014 terminal handoff | `DEFER` pending all prior work. |
+
+### Finding Convention
+
+Every material roadmap finding keeps the complete pack field set and closed
+audit verdict/depth vocabularies. Integrated priority and status never replace
+the source verdict, evidence, uncertainty, blocker, or canonical owner.
+
+#### WGA-RMP-001 — Integrated roadmap foundation established
+
+- **Request IDs**: all request rows through their primary source-report owners.
+- **Scope**: cross-report admission, dependency, remediation, cutover, rollback, and residual-backlog structure.
+- **Expected state**: WGIA-009 can integrate only complete, reviewed source findings and route each accepted action to one current owner.
+- **Observed state**: source-report identities, execution dependencies, and fail-closed admission rules are established; no topical finding is yet integrated.
+- **Evidence**: `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md#audit-pack-components`; `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md#success-criteria--verification-plan`; `docs/04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md#detailed-tasks`; `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table`.
+- **Evidence depth**: `repository-static`.
+- **Verdict**: `Partial`.
+- **Impact**: later integration has a bounded structure, but no remediation, cutover, deletion, or closure conclusion is approved.
+- **Disposition**: `Keep`.
+- **Canonical owner**: source reports for findings; current Stage 00-05/90/99, workflow, script, test, and manifest surfaces for implementation.
+- **Verification**: finding-field completeness, unique owner, dependency, strict link, rollback, blocker, and independent roadmap review in WGIA-009.
+- **Uncertainty**: topical findings, deduplication, priority, accepted target states, blockers, and remediation deltas are pending.
+- **Blocker**: none for the foundation; all downstream roadmap phases remain explicit `DEFER`.
+
+## Sources
+
+Source roles are closed to `policy owner`, `machine owner`, `human index`,
+`evidence producer`, and `historical snapshot`.
+
+| Source ID | Source role | Evidence at the observation commit | Use |
+| --- | --- | --- | --- |
+| SRC-WGA-RMP-001 | policy owner | `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md#c-wga-003--canonical-authority-preservation`; `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md#finding-record` | Admission and implementation boundary. |
+| SRC-WGA-RMP-002 | human index | `docs/90.references/audits/README.md#audit-pack-registry`; `docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md#traceability`; `docs/04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md#new-audit-pack` | Request routing and planned report ownership. |
+| SRC-WGA-RMP-003 | evidence producer | `scripts/validate-document-contract-registry.py#main`; `scripts/validate-markdown-profiles.py#main`; `scripts/validate-links-and-owners.py#main`; `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md#verification-summary` | Admission and closure evidence. |
+| SRC-WGA-RMP-004 | historical snapshot | `docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md#target-operating-model` | Dated comparison only; no current priority authority. |
+
+## Review and Freshness
+
+- Review status: `Pending` for WGIA-009 independent integration review.
+- Review disposition: `DEFER`; no topical roadmap item is admitted yet.
+- Evidence observed: 2026-08-09 at the exact observation commit.
+- Current-truth owners: source reports for dated findings and canonical active
+  surfaces for implementation.
+- Refresh triggers: source finding, review, dependency, priority, target state,
+  canonical owner, validation, verification, rollback, blocker, cutover,
+  deletion, observation commit, or residual-risk change.
+- Hosted, provider-runtime, remote, credential-bearing, and live evidence
+  remains `DEFER`.
+
+## Related Documents
+
+- [Pack Index](README.md)
+- [Spec 054](../../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)
+- [Implementation Plan](../../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md)

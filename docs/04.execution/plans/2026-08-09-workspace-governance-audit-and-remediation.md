@@ -311,18 +311,21 @@ durable progress only if activation evidence is recorded.
 for draft discovery; focused fixtures/tests that own exact membership and
 finding/request schemas; Task/progress evidence.
 
-- [ ] Capture the activation commit with `git rev-parse HEAD`, enumerate all
+- [x] Capture the activation commit with `git rev-parse HEAD`, enumerate all
   tracked files with `git ls-files`, and record inventory commands and counts.
-- [ ] Write failing tests or deterministic probes for missing/duplicate/unknown
+- [x] Write failing tests or deterministic probes for missing/duplicate/unknown
   member, wrong 30-row sequence, duplicate owner, incomplete finding fields,
   invalid verdict/evidence depth, and forbidden Stage 98 delta.
-- [ ] Create exactly ten files with final frontmatter, headings, report-local
-  finding registers, Sources, Review and Freshness, and Related Documents.
-- [ ] Populate README with exact `REQ-WGA-001`–`030` primary owners and current
+- [x] Create exactly ten files in profile-compliant final form: `README.md`
+  uses the frontmatter-free `readme/snapshot-pack` contract and its required
+  headings, while the nine non-README reports use required final frontmatter,
+  final `content/reference` headings, report-local finding registers, Sources,
+  Review and Freshness, and Related Documents.
+- [x] Populate README with exact `REQ-WGA-001`–`030` primary owners and current
   workspace evidence; do not mark unreviewed report findings `Aligned`.
-- [ ] Build canonical-owner/source inventories from the observation commit and
+- [x] Build canonical-owner/source inventories from the observation commit and
   label unavailable hosted/provider/live evidence `DEFER`.
-- [ ] Make focused pack checks GREEN; run profiles, strict links, diff, and full
+- [x] Make focused pack checks GREEN; run profiles, strict links, diff, and full
   gate; complete both reviews; commit `docs: establish governance audit pack`.
 
 #### WGIA-002 — Purpose, roles, governance, and operating contracts

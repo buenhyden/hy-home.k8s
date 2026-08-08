@@ -8,6 +8,75 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-001 governance audit-pack foundation
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #documentation #validation
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-001 at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; later topical and cutover tasks refresh the owning audit reports and Task evidence.
+- **Next Owner**: WGIA-002 through WGIA-009 topic-audit owners; WGIA-014 retains whole-branch review.
+
+#### Progress
+
+Prepared the exact ten-file draft audit pack with a 30-row sequential request
+matrix, one linked report/heading owner and current repository evidence per row,
+nine final-form report shells with substantive source inventories, and closed
+finding, source, review, freshness, verdict, evidence-depth, and blocker
+conventions. The bounded foundation passed controlling validation and its
+specification, quality, and Python reviews. No audit collection Current pointer, document-profile
+`referenceCurrentPacks`, RIA owner/schema/producer/test, historical pack body,
+or Stage 98 path changed.
+
+#### Memory
+
+A successor audit foundation must remain explicitly non-current and
+conservative: tracked owner presence supports at most a bounded inventory, not
+an `Aligned` topic verdict or provider/live claim. Keep one primary
+report-and-heading owner per request, represent unavailable deeper lanes as
+`DEFER`, and reserve machine-current projection, deletion, and closure for
+their separately gated tasks.
+
+#### Evidence
+
+- Initial exact pack/request probe reproduced RED at 0 files and 0 rows.
+- In-memory negative probes rejected missing, duplicate, and unknown members;
+  duplicate owner; incomplete finding; invalid verdict/depth; and Stage 98
+  delta without adding a tracked validator or fixture.
+- GREEN parser reports exact 10 files, 30 request rows, 9 reports, 14
+  conceptual finding fields, 8 verdicts, and 4 evidence depths.
+- Quality-review fix round 2 normalized every finding/source Evidence value in
+  the nine reports. The pinned-tree probe passes 203 references over 94 unique
+  paths with zero missing/broad values, and 122 unique selectors pass exact
+  heading, JSON-key, script, workflow, manifest, or configuration checks.
+- Strict Markdown profiles report zero violations; strict links/owners reports
+  `PASS CROSS-DOCUMENT`. Focused diff and final scope checks are recorded in
+  the paired Task and ignored worker report.
+- RTK 0.34.3 is available, but `rtk gain` cannot initialize its tracking
+  database (error 14); underlying focused commands were used without inspecting
+  private state.
+- The first complete gate run reproduced the README program-created inventory
+  mismatch. The TDD fix added the exact WGIA README handoff row and changed
+  active/program-created counts from 51/6 to 52/7 without changing immutable
+  or retired counts. Registry and Markdown self-tests, strict registry at 502
+  paths, strict profiles/links, cached/worktree diff checks, and the complete
+  repository quality gate pass. Specification, final quality, and Python
+  reviews are Approved with no remaining Critical or Important finding.
+- Hosted/provider-runtime, remote, credential-bearing, and live lanes remain
+  `DEFER` to later task owners.
+
+#### Handoff
+
+WGIA-001 is complete as a bounded draft foundation. WGIA-002 through WGIA-009
+own topical audit and review, WGIA-012 alone may make the pack Current, and
+WGIA-014 owns whole-branch review.
+
 ### 2026-08-09 - WERPC-009 lifecycle closure
 
 #### Metadata
