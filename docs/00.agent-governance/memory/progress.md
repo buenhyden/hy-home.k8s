@@ -8,6 +8,70 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-003 SDLC and documentation audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #sdlc #documentation #templates
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-003 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or accepted documentation remediation.
+- **Next Owner**: WGIA-009 for candidate admission and deduplication; the WDTC program retains WORK-013 implementation ownership, and WGIA-014 owns whole-branch closure.
+
+#### Progress
+
+Audited the requested document families, Stage 01-05 lifecycle, Stage 99
+profiles/templates, README forms, integration guides, Diátaxis mapping, and
+generated-document boundary. Eleven requested families are contract-aligned;
+the broad Release request has no active contract or explicit mapping to
+approved DOC-G5's narrower negative release-notes decision; approved DOC-G1's
+Guide Type enum is not yet enforced; and eight integration guides conform
+statically while live usability remains `DEFER`. Two WGIA-009 candidates now
+deduplicate and route to queued WORK-013 rather than seeking new decisions.
+
+#### Memory
+
+Template presence is not a family contract by itself: route, source profile,
+physical template, template profile, lifecycle projection, relationship role,
+index, and validator admission must move atomically. Before declaring a missing
+decision, resolve approved specifications and queued execution: Spec 052 already
+owns DOC-G1/DOC-G5 and WORK-013 owns their implementation. Static guide
+conformance never proves operator success or live safety.
+
+#### Evidence
+
+- Release probe: `profile_route=0 template=0 lifecycle=0 role_validator=0`.
+- Spec 052 DOC-G5 already rejects a narrower release-notes type; the remaining
+  gap is broader semantic mapping plus queued deliberate-absence execution.
+- Existing-family proof: 11/11 profiles, templates, and lifecycle projections;
+  six README profiles; eight indexed guides.
+- DOC-G1 already approves `how-to`, `tutorial`, `concept`; the required heading,
+  template prompt, and eight `how-to` values exist, while deterministic enum
+  enforcement and migration evidence remain queued in WORK-013.
+- Four complete findings and two provisional decision inputs are recorded in
+  the dated draft pack; focused registry/profile/lifecycle/link/diff results
+  are recorded in the active Task.
+- The first quality review's two Important findings are fixed: active approved
+  DOC-G1/DOC-G5 and queued WORK-013 now own both dependencies, and the final
+  pinned selector probe resolves all 49 evidence references with zero missing
+  paths or invalid selectors.
+- No canonical owner, disposition-ledger row, Current pointer, historical pack
+  body, Stage 98 path, remote resource, secret, provider runtime, or live state
+  changed.
+
+#### Handoff
+
+WGIA-003 is complete. Specification review and fix-round quality re-review are
+Approved with no remaining Critical or Important finding, and the complete
+repository quality gate passes against the exact staged scope. WGIA-009 may
+deduplicate and admit the two provisional routing rows; the WDTC program owns
+queued WORK-013 implementation, and WGIA-014 owns final closure.
+
 ### 2026-08-09 - WGIA-002 purpose and governance audit
 
 #### Metadata

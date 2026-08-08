@@ -350,15 +350,15 @@ progress evidence.
 **Files:** `spec-driven-sdlc-documentation-and-templates.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Inventory Stage 01-05 routes, PRD/ARD/ADR/Spec/Plan/Task/Guide/Incident/
+- [x] Inventory Stage 01-05 routes, PRD/ARD/ADR/Spec/Plan/Task/Guide/Incident/
   Postmortem/Policy/Release/Runbook roles, lifecycle rules, indexes, and owners.
-- [ ] Compare document profiles, schema, templates, source/template parity,
+- [x] Compare document profiles, schema, templates, source/template parity,
   README rules, integration guides, Diataxis routing, and generated documents.
-- [ ] Record gaps such as an absent active profile or unsupported lifecycle as
+- [x] Record gaps such as an absent active profile or unsupported lifecycle as
   findings rather than inventing a template or route.
-- [ ] Run document registry self-tests/strict production, Markdown profiles,
+- [x] Run document registry self-tests/strict production, Markdown profiles,
   lifecycle, and strict links; review against VAL-WGA-004.
-- [ ] Record remediation candidates and commit
+- [x] Record remediation candidates and commit
   `docs: audit spec driven documentation system`.
 
 #### WGIA-004 — CI/CD, GitHub Actions, QA, Validation, and Verification
