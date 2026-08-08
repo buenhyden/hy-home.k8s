@@ -8,6 +8,10 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Implementation Plan
 
+## Global Constraints
+
+<!-- Author prompt: copy exact project-wide constraints from the approved Spec. Every work package implicitly inherits them. -->
+
 ## Overview
 
 <!-- Author prompt: identify the specification being executed and the intended completion state. -->

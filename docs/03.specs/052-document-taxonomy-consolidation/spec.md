@@ -13,7 +13,7 @@ updated: 2026-08-09
 This specification implements
 [PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md),
 [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md),
-and the human-approved direction recorded in draft
+and the human-approved direction recorded in active
 [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
 It replaces the earlier Spec 052 direction that would have renumbered
 `05.operations` and deleted several validator families without current
@@ -84,7 +84,7 @@ and lifecycle rationale. README files are navigation and inventory only.
 Existing identifiers are unchanged. Program and standalone lineage remains in
 the closed registry relations and reciprocal lifecycle tables; no competing
 frontmatter lineage keys are added. The current unrelated ADR-0021 association
-remains a named defect until draft ADR-0023 passes lifecycle review; the
+remains a named defect until active ADR-0023 reaches accepted status; the
 registry and immutable self-test projection then change atomically to ADR-0023.
 
 ### DTC-6 Route transition
@@ -429,9 +429,9 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
-- **Draft decision awaiting written-design review**:
+- **Active decision awaiting atomic lifecycle acceptance**:
   [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
-- **Current planning input, to be replaced after written-Spec approval**:
+- **Approved implementation Plan and Task, to move during transition**:
   [legacy Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
   and [legacy Task](../../04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md)
 - **External evidence boundary**:

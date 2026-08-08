@@ -195,20 +195,20 @@ distinct validators merely to reduce file count.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-WDTC-001 | ACC-WDTC-001 | [ARD-0011](../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md) and [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) own the target and migration contract; draft ADR-0023 records the human-approved target but does not yet own machine lineage. |
+| REQ-WDTC-001 | ACC-WDTC-001 | [ARD-0011](../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md) and [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) own the target and migration contract; active ADR-0023 records the human-approved target but does not own machine lineage until its atomic accepted transition. |
 | REQ-WDTC-002 | ACC-WDTC-003 | N/A — the same ARD, ADR, and Spec own stable filenames and explicit date-identity exceptions. |
-| REQ-WDTC-003 | ACC-WDTC-002 | N/A — draft ADR-0023 proposes the approved Stage 05 stability target for later lifecycle acceptance. |
+| REQ-WDTC-003 | ACC-WDTC-002 | N/A — active ADR-0023 records the approved Stage 05 stability target for atomic lifecycle acceptance. |
 | REQ-WDTC-004 | ACC-WDTC-004 | N/A — ARD-0011 owns identifier and registry-lineage boundaries. |
 | REQ-WDTC-005 | ACC-WDTC-004 | N/A — Spec 052 owns prose and machine-authority consolidation. |
 | REQ-WDTC-006 | ACC-WDTC-004 | N/A — Spec 052 owns template and current-consumer migration. |
-| REQ-WDTC-007 | ACC-WDTC-002 | N/A — draft ADR-0023 records the explicit Release-family exclusion target. |
+| REQ-WDTC-007 | ACC-WDTC-002 | N/A — active ADR-0023 records the explicit Release-family exclusion target. |
 | REQ-WDTC-008 | ACC-WDTC-005 | N/A — Spec 052 owns disposition classification and evidence. |
 | REQ-WDTC-009 | ACC-WDTC-008 | N/A — ARD-0011 owns archive inviolability and append-only boundaries. |
 | REQ-WDTC-010 | ACC-WDTC-007 | N/A — Spec 052 owns transitional and terminal validator modes. |
 | REQ-WDTC-011 | ACC-WDTC-005 | N/A — Spec 052 owns script and validator reconciliation. |
 | REQ-WDTC-012 | ACC-WDTC-005 | N/A — Spec 052 owns consumer and fixture disposition gates. |
 | REQ-WDTC-013 | ACC-WDTC-006 | N/A — ARD-0011 and Spec 052 own harness-contract extension. |
-| REQ-WDTC-014 | ACC-WDTC-006 | N/A — draft ADR-0023 proposes the non-promotable evidence-depth decision. |
+| REQ-WDTC-014 | ACC-WDTC-006 | N/A — active ADR-0023 records the non-promotable evidence-depth decision. |
 | REQ-WDTC-015 | ACC-WDTC-009 | N/A — Spec 052 owns memory and generated-output cleanup. |
 | REQ-WDTC-016 | ACC-WDTC-007 | N/A — Spec 052 owns the named baseline remediation. |
 | REQ-WDTC-017 | ACC-WDTC-010 | N/A — Spec 052 owns suspension and resumption evidence. |

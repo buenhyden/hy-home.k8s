@@ -894,6 +894,7 @@
           "Traceability"
         ],
         "allowed": [
+          "Global Constraints",
           "Overview",
           "Context",
           "Goals & In-Scope",
@@ -3267,6 +3268,7 @@
           "Traceability"
         ],
         "allowed": [
+          "Global Constraints",
           "Overview",
           "Context",
           "Goals & In-Scope",

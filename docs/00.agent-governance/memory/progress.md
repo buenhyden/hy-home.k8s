@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WDTC implementation plan approval and activation
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: active
+- **Tags**: #sdlc #spec-driven #document-governance #agent-governance #planning
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: Human approval of the complete design and implementation-plan direction after design baseline commit `14a0a75c`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WDTC-110 lifecycle closure; the terminal owner becomes the Spec 052 sibling `tasks.md` after WDTC-104.
+- **Next Owner**: supervisor — execute WORK-100 through WORK-110 with a fresh implementation worker and two-stage review per logical commit.
+
+#### Progress
+
+Replaced the superseded sixteen-package plan with eleven dependency-ordered
+packages aligned to the approved design. The active path keeps Stage 05 stable,
+excludes Release, archives unmatched execution history, migrates retained
+Plan/Task pairs into Stage 03, consolidates Stage 00/99 authority, extends the
+existing harness rather than creating another registry, preserves distinct
+validators, and assigns baseline/generated/memory cleanup explicit gates.
+The Plan canonical form and both Plan profiles now allow the mandatory
+`Global Constraints` section used by the approved agentic planning workflow;
+legacy Plans are not retroactively required to add it.
+
+ADR-0023 advanced from `draft` to `active` after human review. Its
+`active -> accepted` transition and the PRD-008 registry correction from
+unrelated ADR-0021 remain the first atomic implementation package.
+
+#### Memory
+
+The 2026-08-09 planning census observes 49 Specs, 65 Plans, 67 Tasks, 41 exact
+same-slug triads, and 50 unmatched execution documents. The latter count is 24
+unmatched Plans plus 26 unmatched Tasks; 23 slugs overlap, leaving one
+plan-only and three task-only records. The earlier 39-triad/27-orphan plan was
+stale and must not drive migration.
+
+Independent audits found that all five active-corpus validators remain live and
+semantically distinct, `archive_cutover_manifest.py` has active import
+consumers, and `validate-harness.sh` is only a wrapper but still has current
+README/PR-template consumers. The implementation therefore retains the first
+two families and retires the wrapper only after zero-consumer proof.
+
+#### Evidence
+
+- Approved written design: PRD-008, ARD-0011, active ADR-0023, and Spec 052.
+- Approved implementation plan: WORK-100 through WORK-110 with one logical
+  commit, focused RED/GREEN, aggregate gate, and two-stage review per package.
+- Baseline design commit: `14a0a75c`.
+- Repository-static limitation: provider-runtime, hosted CI, remote,
+  credential-bearing, Release, and live results are not claimed.
+
+#### Handoff
+
+Begin WORK-100 by accepting ADR-0023 and atomically changing only the PRD-008
+decision projection. Do not renumber Stage 05, create Release artifacts, delete
+active-corpus validators, or remove `archive_cutover_manifest.py`.
+
 ### 2026-08-09 - WERPC-009 lifecycle closure
 
 #### Metadata

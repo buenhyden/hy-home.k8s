@@ -3,20 +3,21 @@ title: 'Task: Document Taxonomy Consolidation'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Task: Document Taxonomy Consolidation
 
 ## Overview
 
-This task records execution evidence for the sixteen work packages of the
-document taxonomy consolidation program. Each row closes when its package is
-committed with a passing repository quality gate and its named evidence is
-recorded here.
+This Task records execution evidence for the approved work-unit-centered SDLC,
+document-governance, and AI-agent-governance consolidation. The eleven work
+packages are dependency ordered and each closes through one reviewed logical
+commit. The active Plan and Task move into the Spec 052 folder during WDTC-104.
 
-Completion evidence is repository-static. No hosted CI, provider-runtime,
-remote, live-cluster, or credential-bearing result is produced or claimed.
+All results are repository-static. No provider-runtime enforcement, hosted CI,
+remote state, credential-bearing action, release action, or live-cluster result
+is performed or claimed.
 
 ## Inputs
 
@@ -29,82 +30,81 @@ remote, live-cluster, or credential-bearing result is produced or claimed.
 - **Architecture**:
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
 - **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
 - **External evidence**:
-  `docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md`; [current lookup](../../90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md)
-- **Baseline commit**: `dd54f844` — the program definition commit against which
-  every per-asset reduction delta is measured.
+  [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
+- **Design baseline**: commit `14a0a75c` (`docs: rebaseline SDLC governance design`).
 
 ## Task Table
 
-| ID       | Upstream criterion         | Work item                                                                                                                        | Owner    | Status | Result       | Evidence                                                                        |
-| -------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ | ------------ | ------------------------------------------------------------------------------- |
-| WORK-000 | VAL-WDTC-010               | Activate the Spec 052 reciprocal execution path and record the PRD-007 execution pause                                           | platform | Done   | PRD-008, ARD-0011, Spec 052, and the Spec 052 plan and task are `active`; Spec 047 and its plan and task are `draft`; PRD-007 stays `active` and records why its execution is paused and how it resumes; no PRD-007 tranche executed | Implementation commit `b5d7d07b`; program lineage registry now declares the PRD-008/ARD-0011/Spec-052 relation; repository quality gate PASS |
-| WORK-001 | VAL-WDTC-006               | Delete the completed migration census, its five exclusive validators, their tests, and the zero-referent cutover manifest script | platform | Queued | Not executed | Zero-referent search output and the deletion commit                             |
-| WORK-002 | VAL-WDTC-006               | Superseded — delegate the 2026-07-04, 2026-07-07, and 2026-08-07 research-pack replacement to Spec 053                           | platform | Superseded | No WDTC execution; human-approved Spec 053 owns integration, Git/ledger provenance, and deletion in WERPC-008 without new Stage 98 copies | `Spec 053` and `WERPC-008` in `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md` |
-| WORK-003 | VAL-WDTC-006               | Rotate the shared progress ledger to a bounded retention window                                                                  | platform | Queued | Not executed | Recovery listing per rotated period and archive validation result               |
-| WORK-004 | VAL-WDTC-001               | Archive the 24 orphan plans and 3 orphan tasks                                                                                   | platform | Queued | Not executed | Status enumeration proving every member is done, plus archive validation        |
-| WORK-005 | VAL-WDTC-001               | Build the enumerated migration tool with one test per abort condition                                                            | platform | Queued | Not executed | Focused unit test result showing RED before GREEN                               |
-| WORK-006 | VAL-WDTC-001               | Co-locate the 39 work units and retire the execution stage                                                                       | platform | Queued | Not executed | Dry-run change set, post-migration inventory, zero live execution-path search   |
-| WORK-007 | VAL-WDTC-003               | Renumber the operations stage and rewrite every non-archive reference                                                            | platform | Queued | Not executed | Reference counts before and after with the archive exclusion set enumerated     |
-| WORK-008 | VAL-WDTC-002, VAL-WDTC-005 | Enforce work-unit locality, filename dates, and stage sequence; retire the date-based rule                                       | platform | Queued | Not executed | Focused test result and zero-hit search for the retired sentence                |
-| WORK-009 | VAL-WDTC-004               | Declare and validate reciprocal cross-stage lineage in frontmatter                                                               | platform | Queued | Not executed | Lineage validation over the full Stage 03 corpus                                |
-| WORK-010 | VAL-WDTC-005               | Collapse the ten authoring-rule documents into three owners                                                                      | platform | Queued | Not executed | Sentence-level rule inventory and the rule-uniqueness check result              |
-| WORK-011 | VAL-WDTC-006               | Remove the 24 template mirror profiles and route template forms to their authored profile                                        | platform | Queued | Not executed | Route coverage diff proving unchanged uncovered and ambiguous counts            |
-| WORK-012 | VAL-WDTC-006               | Consolidate the agent governance role evaluation contracts                                                                       | platform | Queued | Not executed | Test count floor comparison and the recorded size delta                         |
-| WORK-013 | VAL-WDTC-007               | Disposition documentation gaps DOC-G1 through DOC-G10                                                                            | platform | Queued | Not executed | Per-gap implemented control or dated recorded decision                          |
-| WORK-014 | VAL-WDTC-008               | Reconcile the script surface with the validator selection contract                                                               | platform | Queued | Not executed | Enforcement closure check result                                                |
-| WORK-015 | VAL-WDTC-009, VAL-WDTC-011 | Measure per-asset deltas, verify every criterion, prove archive inviolability, review, and close                                 | platform | Queued | Not executed | Delta table, criterion walk, zero-modification archive diff, review disposition |
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-100 | VAL-WDTC-004 | Accept ADR-0023 and atomically replace the erroneous PRD-008 decision projection. | platform | Queued | Not executed | Lifecycle, registry self-test, strict registry, and commit evidence |
+| WORK-101 | VAL-WDTC-010 | Repair the three recorded all-files baseline failures without suppressing checks. | platform | Queued | Not executed | Focused hook results and `TMPDIR=/tmp` all-files PASS |
+| WORK-102 | VAL-WDTC-001, VAL-WDTC-003, VAL-WDTC-006 | Add legacy/transition/terminal route semantics and a reviewed 132-document manifest/tool. | platform | Queued | Not executed | RED/GREEN route fixtures, `132/82/50` manifest counts, dry-run result |
+| WORK-103 | VAL-WDTC-006 | Archive the 50 unmatched execution documents and remove their live sources. | platform | Queued | Not executed | 50 added envelopes, 93-record index, prior-43 immutable diff, archive tests |
+| WORK-104 | VAL-WDTC-001 | Move 82 retained Plan/Task documents into 41 Spec work units and repair reciprocal links. | platform | Queued | Not executed | 41/41 inventory, transition registry, Markdown and link results |
+| WORK-105 | VAL-WDTC-002, VAL-WDTC-003, VAL-WDTC-005 | Consolidate Stage 00/99 authority, update forms, remove template mirrors, and activate terminal taxonomy. | platform | Queued | Not executed | Three prose owners, 26 mirror-profile retirement, Stage 04 absence, Stage 05/Release assertions |
+| WORK-106 | VAL-WDTC-008, VAL-WDTC-012 | Atomically activate harness risk, trust, oversight, approval, trace, evaluation, provenance, and evidence-owner controls. | platform | Queued | Not executed | Harness/provider schema and semantic negative fixtures; runtime evidence remains DEFER |
+| WORK-107 | VAL-WDTC-007 | Consolidate pre-commit/aggregate orchestration and retire `validate-harness.sh` after zero consumers. | platform | Queued | Not executed | Governance-CI topology, affected-surface parity, retain-contract ledger, all-files result |
+| WORK-108 | VAL-WDTC-006, VAL-WDTC-009 | Archive and rotate the progress ledger, then remove and ignore stale tracked graph output. | platform | Queued | Not executed | Recovery proof, bounded live ledger, zero tracked graph files, ignore result |
+| WORK-109 | VAL-WDTC-001, VAL-WDTC-010 | Delete migration-only assets and prove the complete terminal repository state. | platform | Queued | Not executed | Zero scaffolding/residue, strict terminal bundle, aggregate and all-files PASS |
+| WORK-110 | VAL-WDTC-001 through VAL-WDTC-012 | Complete the criterion walk, independent reviews, lifecycle closure, and PRD-007 resumption handoff. | platform | Queued | Not executed | Per-criterion evidence, two-stage review, final lifecycle/aggregate/all-files results |
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `docs/**` except `docs/98.archive/**` for modification, `scripts/**`, `tests/**`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.claude/**`, `.agents/**`, `.codex/**`, `.gemini/**`
-- **Forbidden Paths**: `docs/98.archive/**` for modification of existing records, `gitops/**`, `infrastructure/**`, `traefik/**`, `policy/**`, `secrets/**`
-- **Approval Required**: Human approval before modifying any existing archive record, renumbering any existing stage identifier, removing an enforced rule whose negative fixture cannot be located, or taking any action outside the local repository.
-- **Static Validation**: `bash scripts/validate-repo-quality-gates.sh .` before every commit; expected PASS. Package-specific focused checks are listed in the Plan's Verification Plan.
-- **Live Validation**: DEFER — this program performs no live, hosted, remote, or credential-bearing action, and claims no such evidence.
-- **Secret / Vault Handling**: No secret, token, kubeconfig, credential file, or ignored state is read or printed. Secret-handling gates run unchanged.
-- **Rollback Plan**: Each work package is one revertible commit. Migration packages run only against a clean working tree, so `git checkout` of the affected paths restores the prior state. WORK-012 is isolated so it can be reverted without disturbing any predecessor.
-- **Evidence Location**: This task document and `docs/00.agent-governance/memory/progress.md`.
+- **Allowed Paths**: `docs/**` with existing Stage 98 envelopes read-only,
+  repository-local gateway/provider projections, `.github/**`, `.pre-commit-config.yaml`,
+  `.gitignore`, `scripts/**`, and `tests/**` named by the Plan.
+- **Forbidden Paths**: modification/deletion of an existing
+  `docs/98.archive/**` envelope or payload; `gitops/**`, `infrastructure/**`,
+  `traefik/**`, `policy/**`, `secrets/**`, provider credentials, remote systems,
+  and live-cluster state.
+- **Approval Required**: new document families, Stage 05 or lifecycle-ID
+  renumbering, uncertain historical disposition, unique rule/fixture removal,
+  evidence-class promotion, existing archive mutation, secret/credential access,
+  external write, remote action, or live mutation.
+- **Static Validation**: focused commands in each Plan task, strict document
+  lanes, `git diff --check`, `bash scripts/validate-repo-quality-gates.sh .`,
+  and terminal `TMPDIR=/tmp pre-commit run --all-files` must pass.
+- **Live Validation**: `DEFER` — the program performs and claims no provider,
+  hosted, remote, credential-bearing, Release, or live action.
+- **Secret / Vault Handling**: scanner findings are adjudicated by exact
+  location without printing values. No token, secret, kubeconfig, Vault value,
+  provider body, prompt body, or credential file is read or retained.
+- **Rollback Plan**: each WORK item is one revertible commit. A failing
+  uncommitted tranche is reversed only with a reviewed patch; broad reset and
+  archive-payload repair are prohibited.
+- **Evidence Location**: this Task, the corresponding logical commits, new
+  archive index entries, and `docs/00.agent-governance/memory/progress.md`.
 
 ## Verification Summary
 
-WORK-000 is closed. `bash scripts/validate-repo-quality-gates.sh .` returned
-PASS on the staged WORK-000 tree, and the strict links/owners, Markdown profile,
-and document contract registry lanes each returned PASS. The result is
-repository-static. WORK-001 through WORK-015 are not executed. Each remaining
-package records its own lane outcome here as it closes, including any
-limitation, SKIP, or DEFER with its reason and owner.
+The written design and implementation plan are approved. WORK-100 through
+WORK-110 are not executed. Pre-change evidence establishes that strict registry,
+Markdown, links/owners, lifecycle, and aggregate lanes pass with `TMPDIR=/tmp`;
+the raw all-files baseline has three named defects assigned to WORK-101.
 
-Known limitations declared in advance:
-
-- Hosted CI, provider-runtime, remote, and live evidence are `DEFER` for the
-  whole program.
-- Archive records are excluded from every rewrite; their historical links
-  resolve against each record's `source_commit` and are not re-verified against
-  the working tree.
-- Stage 90 dated observations retain retired paths by design; those retained
-  paths are annotated, not corrected.
+The earlier proposal to renumber operations or delete active-corpus validators
+is withdrawn. Stage 05 remains stable, Release is excluded, and the five
+active-corpus validators remain `retain-contract` unless later evidence proves
+zero consumers and no unique semantics.
 
 ## Traceability
 
 ### Lifecycle Traceability
 
-| Criterion / work item | Result        | Evidence                                                             |
-| --------------------- | ------------- | -------------------------------------------------------------------- |
-| [WORK-000](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Done. | Status diff for PRD-007, Spec 047, and the Spec 052 triad in commit `b5d7d07b`, with the repository quality gate PASS. |
-| N/A — WORK-001 shares the Plan and Spec sources above | Not executed. | Zero-referent search output and the deletion commit. |
-| N/A — WORK-002 shares the Plan and Spec sources above | Superseded; no WDTC execution. | Spec 053 and WERPC-008 own the reviewed three-pack cutover. |
-| N/A — WORK-003 shares the Plan and Spec sources above | Not executed. | Recovery listing per rotated period and archive validation result. |
-| N/A — WORK-004 shares the Plan and Spec sources above | Not executed. | Status enumeration and archive validation result. |
-| N/A — WORK-005 shares the Plan and Spec sources above | Not executed. | Focused unit test result showing RED before GREEN. |
-| N/A — WORK-006 shares the Plan and Spec sources above | Not executed. | Dry-run change set and zero live execution-path search. |
-| N/A — WORK-007 shares the Plan and Spec sources above | Not executed. | Reference counts before and after with the exclusion set enumerated. |
-| N/A — WORK-008 shares the Plan and Spec sources above | Not executed. | Focused test result and zero-hit retired-sentence search. |
-| N/A — WORK-009 shares the Plan and Spec sources above | Not executed. | Lineage validation over the full Stage 03 corpus. |
-| N/A — WORK-010 shares the Plan and Spec sources above | Not executed. | Rule inventory and rule-uniqueness check result. |
-| N/A — WORK-011 shares the Plan and Spec sources above | Not executed. | Route coverage diff with unchanged uncovered and ambiguous counts. |
-| N/A — WORK-012 shares the Plan and Spec sources above | Not executed. | Test count floor comparison and recorded size delta. |
-| N/A — WORK-013 shares the Plan and Spec sources above | Not executed. | Per-gap implemented control or dated recorded decision. |
-| N/A — WORK-014 shares the Plan and Spec sources above | Not executed. | Enforcement closure check result. |
-| N/A — WORK-015 shares the Plan and Spec sources above | Not executed. | Delta table, criterion walk, archive diff, and review disposition. |
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [WORK-100](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-004 accepted ADR and corrected machine projection are pending. |
+| [WORK-101](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-010 baseline repair and all-files evidence are pending. |
+| [WORK-102](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-001/003/006 transition routes, manifest, and dry-run evidence are pending. |
+| [WORK-103](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-006 additive archive and immutable-base evidence are pending. |
+| [WORK-104](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-001 work-unit move and reciprocal-link evidence are pending. |
+| [WORK-105](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-002/003/005 authority, template, terminal-route, Stage 05, and Release evidence are pending. |
+| [WORK-106](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-008/012 agent-system schema/semantic and evidence-class results are pending. |
+| [WORK-107](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-007 orchestration and validator-disposition results are pending. |
+| [WORK-108](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-006/009 progress recovery and generated-output cleanup results are pending. |
+| [WORK-109](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-001/010 terminal residue and all-files results are pending. |
+| [WORK-110](../plans/2026-08-07-document-taxonomy-consolidation.md#work-breakdown) | Not executed. | VAL-WDTC-001 through VAL-WDTC-012 criterion walk, reviews, lifecycle closure, and resumption evidence are pending. |
