@@ -3,360 +3,425 @@ title: 'Document Taxonomy Consolidation Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Document Taxonomy Consolidation Technical Specification (Spec)
 
 ## Overview
 
-This specification implements the consolidated document taxonomy, lineage
-model, rule-ownership topology, and validator surface defined by
-[ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md).
-It retires the execution stage as a separate top-level tree, co-locates each
-work unit's specification, plan, and task evidence, renumbers the operations
-stage to keep the sequence contiguous, removes dates from authored filenames,
-moves cross-stage lineage into machine-readable frontmatter, collapses ten
-authoring-rule documents into three, and reduces the machine contract, census,
-and validator corpus.
+This specification implements
+[PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md),
+[ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md),
+and the human-approved direction recorded in draft
+[ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
+It replaces the earlier Spec 052 direction that would have renumbered
+`05.operations` and deleted several validator families without current
+consumer proof.
 
-The design is grounded in two dated external research results and one measured
-repository baseline, all from 2026-08-07. The research is recorded in Stage 90
-and is descriptive; this specification is the first document that turns it into
-an enforced contract.
+The terminal result co-locates each retained Spec/Plan/Task work unit in Stage
+03, removes the Stage 04 execution tree, preserves Stage 05, excludes a Release
+family, consolidates document and AI-agent governance authorities, reconciles
+validators and scripts by behavior, disposes of legacy material with explicit
+provenance, and closes the observed pre-change validation failures.
 
-Consumers are the governance steward, platform maintainer, quality engineer,
-technical writer, and AI agent personas. The verification outcome is a
-repository whose declared rules, stating documents, and enforcing validators
-are in one-to-one correspondence, and whose governance corpus is measurably
-smaller with a recorded per-asset delta.
+This is an implementation-ready repository-static contract. It does not claim
+that a provider consumed an adapter, enforced a policy, executed an approved
+action, ran hosted CI, or changed remote/live infrastructure.
 
 ## Strategic Boundaries & Non-goals
 
-Authorized scope is authored Markdown under `docs/`, the machine contracts that
-classify and validate it, the shared progress ledger, the reference data and
-research packs, and the scripts and tests that enforce those contracts.
+Authorized paths are `docs/**`, repository-local agent/provider instruction
+projections, document and harness contracts, templates, scripts, tests,
+fixtures, generated documentation outputs, indexes, and cross-links affected
+by the migration. Git history may be read to establish provenance.
 
-Three protected surfaces bound the work.
+Existing `docs/98.archive/**` envelopes and payloads are read-only. New unique
+history may be appended through the existing ArchiveEnvelope mechanism and
+indexed, but no existing digest-sealed record may change. Dated Stage 90
+observation bodies retain their historical meaning; only contract-permitted
+navigation or explicit annotations may change.
 
-**The archive stage is inviolable.** Archive records carry the exact original
-Git blob bytes after the `archive-envelope:v1` marker, sealed by
-`content_sha256`, and `scripts/archive_validation.py` resolves their payload
-links against `source_commit` in the Git tree. The 60 archive files that
-reference retired live paths are correct as written and are excluded from every
-rewrite. Any change inside an archive payload is a specification violation, not
-a migration detail.
-
-**Dated observations are not rewritten.** Reference and audit packs under Stage
-90 record point-in-time facts. Only navigational cross-links are rewritten.
-Observation text naming a retired path retains that path with an explicit
-historical annotation.
-
-**Stage identifiers are stable.** No PRD, ARD, ADR, or specification number is
-reassigned. The only path-identity changes authorized are the retirement of the
-execution stage and the renumbering of the operations stage.
-
-Explicit non-goals: removing the numbered stage-prefix scheme; adding tutorial
-or explanation document routes; creating a release-notes stage; changing agent
-role semantics, provider adapters, or the platform's desired state; and any
-live, hosted, remote, or credential-bearing action.
+The implementation must not renumber Stage 05 or any lifecycle identifier,
+create a Release family, create tutorial/explanation families, change platform
+desired state, inspect secret values, authenticate providers, mutate hosted CI,
+publish, push, merge, deploy, or operate live infrastructure.
 
 ## Contracts
 
-### C-1 Work unit locality
+### DTC-1 Work-unit topology
 
-A Stage 03 work unit is one directory `docs/03.specs/<NNN>-<slug>/` holding at
-most three fixed-name documents: `spec.md`, `plan.md`, `tasks.md`. A work unit
-may exist with `spec.md` alone. A `plan.md` without a sibling `spec.md`, or a
-`tasks.md` without a sibling `plan.md`, is invalid.
+The terminal live route is `docs/03.specs/<NNN>-<slug>/`. `spec.md` is the work
+unit owner. `plan.md` is optional but requires the Spec. `tasks.md` is optional
+but requires both Spec and Plan. No live Spec, Plan, Task, or index remains
+under `docs/04.execution/`.
 
-### C-2 Filename date prohibition
+### DTC-2 Stable identity and date exceptions
 
-No authored document filename under stages 01 through 04 begins with a date.
-The authoring and modification dates are carried by frontmatter `updated` only.
-Archive records and Stage 90 dated pack directories are exempt, because their
-date is part of the record identity rather than a mutable attribute.
+Mutable PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, and Runbook filenames
+use stable identifiers or slugs and carry authoring dates in frontmatter.
+Dates remain in paths only for dated Stage 90 observation/snapshot identity,
+real Incident/Postmortem identity, and Stage 98 historical mirrors. The
+registry owns the exact path classes and exceptions.
 
-### C-3 Stage sequence
+### DTC-3 Stage and document-family boundary
 
-The active stage sequence is `00`, `01`, `02`, `03`, `04`, followed by the
-reserved tail `90`, `98`, `99`. Stage `04` denotes operations. The execution
-stage does not exist as a live path.
+`docs/05.operations/` remains the only live operations stage and contains
+guides, incidents, policies, and runbooks. Stage 04 is unused after execution
+retirement. No Release profile, template, folder, lifecycle, or validator is
+introduced.
 
-### C-4 Lineage declaration
+### DTC-4 Authority uniqueness
 
-Every Stage 03 `spec.md` declares `lineage` naming its owning PRD and `ard`
-naming its owning ARD. Optional `adr` and `predecessor` fields name decision
-dependencies and ordered-program antecedents. A declared upstream owner that
-does not link back to the declaring specification is a validation failure.
+`document-profiles.json` and its schema are the sole machine owner of routes,
+profile IDs, frontmatter keys and states, headings, canonical forms,
+relationships, and exceptions. Stage 00 owns agent-facing authoring policy.
+Stage 99 `document-contract.md` and `document-lifecycle.md` explain template
+and lifecycle rationale. README files are navigation and inventory only.
 
-### C-5 Rule uniqueness
+### DTC-5 Lineage integrity
 
-Each authoring rule is stated by exactly one live document. A document may name
-the owner of an adjacent subject; it may not restate that owner's rule text. A
-literal search for a retired rule sentence returns zero live hits.
+Existing identifiers are unchanged. Program and standalone lineage remains in
+the closed registry relations and reciprocal lifecycle tables; no competing
+frontmatter lineage keys are added. The current unrelated ADR-0021 association
+remains a named defect until draft ADR-0023 passes lifecycle review; the
+registry and immutable self-test projection then change atomically to ADR-0023.
 
-### C-6 Enforcement closure
+### DTC-6 Route transition
 
-The validator set declared in
-`docs/00.agent-governance/contracts/validation-surfaces.json` and the executable
-validator set under `scripts/` are equal. Every declared validator maps to one
-rule family and one evidence lane. No enforced rule has two enforcing
-validators.
+The registry and validators implement explicit `legacy`, `transition`, and
+`terminal` route modes. Transition accepts only the enumerated mapping and
+rejects duplicate active ownership. Terminal mode rejects every live Stage 04
+execution path and every mutable consumer of that path.
 
-### C-7 Evidence lane honesty
+### DTC-7 Disposition evidence
 
-Repository-static results are never reported as hosted CI, provider-runtime,
-remote, or live evidence. Every result this specification produces is
-repository-static unless separately labelled.
+Each retired document, contract, script, test, fixture, or generated artifact
+has exactly one reviewed disposition: `move-current`, `archive-unique`,
+`retain-observation`, `merge-successor`, `delete-redundant`, or
+`retain-contract`. Deletion requires a named successor or reproducibility,
+zero live consumers, and no unique negative fixture or rule.
+
+### DTC-8 Agent-governance control
+
+The existing harness contract and schema gain a closed `agentSystems` policy
+and record-shape section covering purpose, intended/prohibited use,
+accountable owner, lifecycle, contextual risk, treatment, residual risk,
+review cadence, tool/data trust, oversight, stop conditions, approval/trace
+evidence references, evaluation, and component provenance. Actual runtime
+records remain at their approved Task, Runbook, Incident, or provider-evidence
+owner. Provider adapters contain provider-native deltas only.
+
+The current approval-boundary `Evidence Location` column is the human routing
+input. The target harness selects one closed `evidenceOwnerPolicy` whose owner
+type is `task`, `runbook-record`, `incident`, or `provider-runtime-record`.
+The policy binds a canonical owner reference, allowed append principal class,
+immutability rule, retention class, validator, and trust anchor. Missing or
+self-asserted identity cannot close approval. The harness schema,
+approval-boundary projection, provider evidence contract, and validators must
+activate atomically; until then this control remains designed, not enforced.
+
+### DTC-9 Approval and trust boundary
+
+An action requiring approval records `approvalPolicyRef`, `actionClass`,
+`approvalId`, `actionFingerprint`, `requesterPrincipal`,
+`approverPrincipal`, normalized/redacted target metadata plus digest,
+`argumentsDigest`, `authorityScope`, `issuedAt`, `expiresAt`, `decision`,
+`approvalEvidenceRef`, and `resultEvidenceRef`. Untrusted prompts, retrieved
+context, and tool output remain untrusted until a named control validates or
+isolates them. General conversation approval cannot authorize a different
+target, arguments, action class, or authority scope.
+
+### DTC-10 Evidence non-promotion
+
+Repository declaration, provider-runtime enforcement, hosted-CI observation,
+and authorized remote/live observation are separate states. Each control
+separates `designEnforcementDisposition` from
+`observedEnforcementEvidenceRef`; the latter remains `DEFER` without matching
+provider-runtime evidence. Static schema or adapter validation cannot satisfy
+an enforcement or execution state.
+
+### DTC-11 Validator semantic preservation
+
+The aggregate quality gate remains. Selection/orchestration duplication is
+consolidated through `validation-surfaces.json`. Registry, Markdown,
+links/owners, archive, security, CI, and agent-semantic validators remain
+separate where inputs, negative fixtures, failures, or evidence differ.
+`validate-harness.sh` is removed only after its live consumers migrate.
+
+### DTC-12 Green terminal baseline
+
+The program closes the recorded registry self-test memory allocation failure,
+detect-secrets false-positive/baseline drift, and Markdown heading failure
+without disabling the corresponding checks. Every logical commit records
+focused and aggregate results; terminal acceptance requires all-files PASS.
 
 ## Core Design
 
-### Migration groups
+### Tranche dependency graph
 
-The 47 specifications, 63 plans, and 65 tasks observed on 2026-08-07 partition
-into four disjoint groups by slug correspondence.
+```text
+approved design and recorded baseline
+  -> transition fixtures and route support
+  -> explicit work-unit mapping and git moves
+  -> unique-history archive / redundant-material disposition
+  -> Stage 00 and Stage 99 authority consolidation
+  -> harness-contract and provider-projection alignment
+  -> validator orchestration and generated/memory cleanup
+  -> terminal route cutover and PRD-007 resumption handoff
+```
 
-| Group           | Count | Source                                                             | Target                                                             |
-| --------------- | ----- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| G-A triad       | 39    | `03.specs/<NNN>-<slug>/spec.md` plus same-slug dated plan and task | `03.specs/<NNN>-<slug>/{spec,plan,tasks}.md`                       |
-| G-B spec only   | 8     | `03.specs/<NNN>-<slug>/spec.md` with no live same-slug plan        | Unchanged path; archived plan referenced through the archive index |
-| G-C orphan plan | 24    | `04.execution/plans/<date>-<slug>.md` with no specification        | `98.archive/04.execution/plans/<date>-<slug>.md`                   |
-| G-D orphan task | 3     | `04.execution/tasks/<date>-<slug>.md` with no live plan            | `98.archive/04.execution/tasks/<date>-<slug>.md`                   |
+Tests and fixtures precede each production contract change. Later tranches may
+depend on earlier path moves, but archive creation, rule consolidation,
+agent-governance extension, and script retirement remain separate logical
+commits so each can be reviewed or reverted independently.
 
-Every G-C and G-D member was verified on 2026-08-07 to carry `status: done`,
-which makes them complete historical records rather than interrupted work. They
-are archived through the existing `ArchiveEnvelope.v1` route, which preserves
-their exact bytes and resolves their links against their source commit. Their
-archive mirror path is derived from their original path, so it retains the
-retired execution-stage segment; that is the historically correct mirror and is
-not a contract violation.
+### Work-unit inventory and mapping
 
-Every authored plan and task outside the suspended program carries
-`status: done`. The ten exceptions are exactly the suspended program's set: the
-Spec 047 plan and task are `active`, and the Spec 048 through 051 plans and
-tasks are `draft`. The two remaining non-conforming files are the plan and task
-stage README indexes, which carry a README profile rather than an execution
-status and are retired with their stage rather than migrated. No document
-therefore requires individual status disposition before migration.
+The 2026-08-09 baseline contains 49 `spec.md` files, 65 authored Plans, and 67
+authored Tasks. The earlier 39-triad/24-orphan/3-orphan-task classification is
+a candidate inventory, not an execution truth; it is regenerated from current
+HEAD before migration because Spec 053 completed after the earlier census.
 
-### Stage renumbering
+The committed mapping enumerates every source, target, work-unit ID, slug,
+current status, and disposition. Same-slug correspondence is evidence for
+review, not an automatic move rule. A source cannot appear twice, a target
+cannot appear twice, and an existing target blocks application.
 
-`docs/05.operations/` becomes `docs/04.operations/`. The move is a rename of
-one directory plus a rewrite of every tracked reference to the old segment
-outside the archive and dated-observation domains.
+### Document-governance consolidation
 
-### Path rewrite execution
+Stage 00's target `rules/document-authoring.md` absorbs the current stage
+routing, authoring matrix, checklist, and documentation-protocol rules that
+govern agent timing and execution. Stage 99's target
+`support/document-contract.md` absorbs template selection, body, frontmatter,
+and profile rationale; `support/document-lifecycle.md` absorbs lifecycle,
+supersession, retention, archive, and legacy-disposition rationale.
 
-The rewrite is scripted, never manual. Its input is the tracked file set; its
-exclusion set is `docs/98.archive/**`, generated output, and the observation
-bodies of Stage 90 dated packs. Measured reference counts on 2026-08-07:
+The migration first builds a rule-to-owner ledger. A source document is
+deleted only after every non-duplicate rule maps to one target section and all
+consumers route to that target. Machine values are removed from prose when the
+registry already owns them.
 
-| Retired segment | Tracked files | Occurrences | Excluded (archive) |
-| --------------- | ------------- | ----------- | ------------------ |
-| `04.execution`  | 321           | 8,995       | 40 files           |
-| `05.operations` | 203           | 6,937       | 20 files           |
+### AI-agent governance integration
 
-The rewrite runs as one operation per segment, followed immediately by the full
-quality gate. A partial rewrite that leaves both segments live is not a valid
-intermediate state and is not committed.
+The harness contract remains the provider-neutral owner. Its role roster is
+not duplicated inside `agentSystems`; systems reference roles, permission
+classes, evidence classes, evaluation suites, and provider surfaces by ID.
+New schema definitions are closed and have positive and negative fixtures for
+risk owner, prohibited use, untrusted data, tool coverage, oversight, stop,
+approval binding, trace availability, evaluation adjudication, component
+digest, and evidence-class non-promotion.
 
-### Rule consolidation
+Existing `current` and `repository-static-evaluation-ready` values are renamed
+or explicitly scoped so a reader cannot interpret them as provider enforced.
+Consumer docs and adapters migrate in the same logical change as the schema.
 
-| Target document                                   | Absorbs                                                                                                           | Current lines |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------- |
-| `00.agent-governance/rules/document-authoring.md` | `stage-authoring-matrix.md`, `document-stage-routing.md`, `stage-checklists.md`, `documentation-protocol.md`      | 637           |
-| `99.templates/support/document-contract.md`       | `documentation-contract.md`, `template-routing.md`, `frontmatter-schema.md`, `common-documentation-governance.md` | 546           |
-| `99.templates/support/document-lifecycle.md`      | `sdlc-governance.md`, `legacy-cleanup-rules.md`                                                                   | 237           |
+### Validator and script disposition
 
-The sentence "Stage 04 plans and tasks stay date-based execution records"
-appears verbatim in `stage-authoring-matrix.md`, `document-stage-routing.md`,
-and `sdlc-governance.md`. It contradicts C-1 and C-2 and is deleted from all
-three during consolidation. Because those three files collapse into two
-surviving owners, the duplication cannot recur.
+The script audit starts from command consumers in pre-commit, workflows,
+`validation-surfaces.json`, root/Stage 00 docs, tests, and active execution
+records. Similar names do not establish duplication. For each candidate pair,
+the audit compares rule owner, accepted arguments, input domain, exit behavior,
+diagnostics, negative fixtures, lane, and downstream evidence.
 
-### Corpus reduction
+`validate-repo-quality-gates.sh` is retained. Pre-commit and affected selection
+use one declared orchestration path. `validate-harness.sh` is a retire
+candidate after root README, PR template, tests, scripts index, and current
+work-unit consumers migrate. Active-corpus validators remain until their
+current rule and fixture dispositions are proved; historical lifecycle checks
+may be quarantined from the hot path but are not deleted without the same
+proof.
 
-| ID  | Asset                                               | Before                        | Action                                                                                             |
-| --- | --------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
-| R-1 | `90.references/data/active-corpus-*.json` (3 files) | 14,142 lines                  | Delete with their five exclusive validators                                                        |
-| R-2 | `scripts/archive_cutover_manifest.py`               | 108 lines                     | Delete; zero referents observed                                                                    |
-| R-3 | `90.references/research/2026-07-04-wer/`            | 8 files                       | Superseded by human-approved Spec 053 at `docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md`; WERPC validates and integrates this pack with the 2026-07-07 and 2026-08-07 packs, preserves Git/ledger provenance, and removes all three without new Stage 98 records |
-| R-4 | `00.agent-governance/memory/progress.md`            | 13,920 lines                  | Rotate to a bounded live window; closed periods to archive                                         |
-| R-5 | `99.templates/support/document-profiles.json`       | 6,413 lines, 64 profiles      | Remove the 24 `template/*` mirror profiles; validate template forms against their authored profile |
-| R-6 | `00.agent-governance/contracts/*.json` (21 files)   | 18,199 lines                  | Consolidate into fewer rule-family owners with colocated schemas                                   |
-| R-7 | `scripts/`                                          | 48 executables vs 22 declared | Reconcile to enforcement closure under C-6                                                         |
+### One-time and generated cleanup
 
-R-1 through R-4 are deletions and relocations whose contracts are already
-complete; they run first and shrink the file population that later steps
-traverse. R-5 and R-6 change enforced contracts and run last, R-6 in its own
-revertible commit.
-
-### Recorded documentation gap disposition
-
-| Gap     | Disposition                                                                                                                                                   |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DOC-G1  | Constrain `Guide Type` to the enumeration `how-to`, `tutorial`, `concept` in the profile registry and template.                                               |
-| DOC-G2  | No tutorial route is created. Diátaxis states that empty structures must not be created in advance; the decision and its source are recorded.                 |
-| DOC-G3  | No explanation route is created, on the same recorded basis. Explanation remains inside ADR context and reference sub-types.                                  |
-| DOC-G4  | The guide-versus-runbook boundary becomes a decidable test in `document-lifecycle.md`, and the active-surface duplicate rule extends to the operations stage. |
-| DOC-G5  | No release-notes type is created. Zero references exist and the repository declares no public API; the decision is recorded.                                  |
-| DOC-G6  | Postmortem trigger thresholds are defined in an operations policy, satisfying the primary source requirement that triggers be defined in advance.             |
-| DOC-G7  | `api-spec`, `data-model`, and `tests` templates are retained; their unused mirror profiles are removed under R-5.                                             |
-| DOC-G8  | The ARD row of the format ledger gains an explicit "normative text not observed" boundary for ISO/IEC/IEEE 42010.                                             |
-| DOC-G9  | The PRD row is relabelled as inference rather than standard-grounded, for ISO/IEC/IEEE 29148.                                                                 |
-| DOC-G10 | The runbook template gains the automation counter-rule stated by its primary source.                                                                          |
-
-### Suspended program handling
-
-Spec 047 returns to `status: draft` with a recorded suspension rationale before
-the first structural commit. Its plan and task return to `draft` with it. Specs
-048 through 051 remain draft. PRD-007 records the suspension and the resumption
-route. No suspended tranche executes during this program. On completion, the
-suspended tranches resume in the consolidated structure, where Specs 049 and
-050 author their validators against the reconciled surface rather than the
-pre-consolidation one.
+The progress ledger is rotated only after archived sections are recoverable
+and linked. Stale tracked `graphify-out/**` content is treated as a generated
+snapshot, verified for consumers and reproducibility, then removed or admitted
+through an explicit governed snapshot route. Future scratch output is ignored.
+Tracked `__pycache__` or equivalent one-time runtime residue is removed only by
+exact path inventory; broad recursive deletion is forbidden.
 
 ## Data Modeling & Storage Strategy
 
-### Frontmatter lineage fields
+### Migration mapping
 
-```yaml
-lineage: PRD-008 # required on every Stage 03 spec.md
-ard: ARD-0011 # required on every Stage 03 spec.md
-adr: [ADR-0021] # optional, ordered, may be empty
-predecessor: Spec-051 # optional, single antecedent
+```json
+{
+  "schemaVersion": 1,
+  "mode": "transition",
+  "entries": [
+    {
+      "source": "docs/04.execution/plans/<legacy-name>.md",
+      "target": "docs/03.specs/<NNN>-<slug>/plan.md",
+      "workUnit": "Spec-<NNN>",
+      "disposition": "move-current",
+      "sourceBlob": "<git-blob-sha>",
+      "reviewed": true
+    }
+  ]
+}
 ```
 
-Values are symbolic identifiers, not paths, so that a stage rename does not
-invalidate them. Resolution from identifier to path is owned by the profile
-registry. The reciprocal check resolves the declared upstream document and
-asserts that it links back to the declaring specification.
+The production artifact may use the existing registry or a temporary ignored
+review artifact as selected by the implementation plan. If tracked, it needs a
+canonical profile and lifecycle; no unprofiled one-shot file is committed.
 
-### Progress ledger retention
+### Disposition ledger
 
-The live ledger holds the current period only. A closed period becomes one
-archive record whose payload is the exact bytes of the removed section, with
-`original_path` naming the ledger and `archive_reason` recording rotation. The
-ledger remains the single durable owner of shared progress; only its window
-changes. Recovery is through the existing archive index and recovery script.
+The ledger records path, blob identity, classification, current consumer count,
+unique rule/fixture count, successor or archive target, reviewer, and result.
+Generated output additionally records generator, reproducibility command, and
+whether the terminal output is tracked or ignored.
 
-### Contract consolidation invariants
+### Harness data
 
-Consolidation of the agent governance contracts preserves the assertion set,
-not the file layout. For each rule enforced before consolidation there must
-exist, after consolidation, a validator assertion that fails on the same
-negative fixture. Fixtures are the migration's proof obligation: a rule whose
-negative fixture cannot be located is not silently dropped but recorded as an
-open item.
+`agentSystems` references existing role, permission, evidence, evaluation, and
+surface IDs rather than copying their values. The contract stores policy,
+required record shapes, digests, redacted metadata, and immutable evidence
+references; actual approval/trace/action records live append-only at the
+approved Task, Runbook, Incident, or provider evidence owner. Approval argument
+bodies, raw targets, and secret-bearing payloads are never stored. Trace policy
+records `traceAvailability`, risk tier, and whether audit evidence is required.
+A required but unavailable trace stops or stays `DEFER` unless an approved
+operator Runbook records a bounded exception.
+
+`evidenceOwnerPolicies` is a closed list keyed by the canonical
+approval-boundary surface. Each entry names the owner type and canonical ID,
+append principal class, Git or provider trust anchor, immutability rule,
+retention class, and validator. Repository evidence is integrity-bound to a
+reviewed Git blob and commit. Provider evidence resolves through
+`provider-runtime-evidence.json`; a provider claim without its required
+observed identity remains `DEFER`.
+
+### Archive and memory
+
+New ArchiveEnvelope payloads preserve exact source blob bytes and source
+commits. Existing envelopes remain unchanged. Progress rotation uses the same
+append-only mechanism; the live ledger contains only the approved current
+window after recovery validation passes.
 
 ## Interfaces & Data Structures
 
-### Migration tooling interface
+### Route validator interface
 
-Migration is performed by a single-purpose script that takes an explicit
-mapping and an explicit exclusion set, and that refuses to run when the working
-tree is dirty. It performs no inference: every source-to-target pair is
-enumerated by the plan, never derived at run time from a pattern that could
-match an unintended path.
+The document validators accept an explicit contract mode or derive it from one
+closed registry state. They report the mode, selected profile, legacy target,
+and ambiguity reason. They never choose a path by declaration order.
 
+```text
+validate-document-contract-registry --root . --mode strict --route-state legacy
+validate-document-contract-registry --root . --mode strict --route-state transition
+validate-document-contract-registry --root . --mode strict --route-state terminal
 ```
-migrate --map <mapping.json> --exclude <exclusions.txt> --dry-run
-migrate --map <mapping.json> --exclude <exclusions.txt> --apply
-```
 
-`--dry-run` prints the full change set and exits non-zero if any target already
-exists, if any source is inside the exclusion set, or if any rewrite would
-touch a file whose path matches an archive route.
+Exact command-line spelling is finalized by the implementation plan and tests;
+the three-state behavior and fail-closed results are normative.
 
-### Validator selection contract
+### Approval evidence interface
 
-`validation-surfaces.json` remains the sole owner of validator identity, argv,
-lane membership, evidence lane, and fallback status. C-6 adds one assertion to
-it: the declared set and the executable set under `scripts/` must be equal,
-checked by a validator that is itself declared.
+An approval record is created at its approved evidence owner before the action,
+binds policy, action class, requester and approver principals, authority scope,
+target and arguments digests, expires, and links the later result. Reject,
+expiry, principal/scope/target/argument mismatch, missing immutable evidence,
+or missing result produces a non-approved state; there is no fallback to a
+broader task approval or self-asserted approver string. The owner policy
+resolver also rejects an owner class inconsistent with the approval-boundary
+surface, a writer outside `appendPrincipalClass`, or an unverifiable Git or
+provider trust anchor.
+
+### Validation selection interface
+
+`validation-surfaces.json` remains the only machine owner of surface IDs,
+tracked path selection, argv, lane, evidence class, and fallback. Wrappers call
+that contract or the aggregate gate; they do not maintain a second validator
+inventory.
 
 ## Edge Cases & Error Handling
 
-| Condition                                                                    | Deterministic behavior                                                                                       |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| A rewrite target path already exists                                         | Migration aborts before any write; no partial state is produced.                                             |
-| A source path resolves inside `docs/98.archive/**`                           | Migration aborts and names the offending path; archive exclusion is fail-closed, never best-effort.          |
-| A Stage 90 dated observation names a retired path                            | The path is retained and annotated; the file is not rewritten. Only navigational link targets are rewritten. |
-| A `plan.md` has no sibling `spec.md` after migration                         | C-1 validation fails the commit.                                                                             |
-| A specification declares a lineage identifier that does not resolve          | C-4 validation fails with the unresolved identifier named.                                                   |
-| A declared upstream owner does not link back                                 | C-4 reciprocal validation fails and names both endpoints.                                                    |
-| A retired rule sentence survives in a live document                          | C-5 validation fails and names the file and line.                                                            |
-| A validator exists in `scripts/` but not in the selection contract           | C-6 validation fails and names the undeclared executable.                                                    |
-| A declared validator names a missing executable                              | C-6 validation fails and names the missing path.                                                             |
-| A contract consolidation drops a rule whose negative fixture cannot be found | The rule is recorded as an open item; it is not silently dropped and the commit states it.                   |
-| The working tree is dirty when migration starts                              | Migration refuses to run.                                                                                    |
+| Condition | Deterministic behavior |
+| --- | --- |
+| Mapping source is missing, duplicated, or changed from its reviewed blob | Stop before writes and report the source entry. |
+| Mapping target already exists or is named by another entry | Stop before writes and report both owners. |
+| Transition produces both legacy and target active owners | Fail route validation; do not commit. |
+| Plan lacks a sibling Spec, or Task lacks Spec/Plan | Fail work-unit validation with the missing sibling. |
+| A date-prefixed mutable file has no registered identity exception | Fail profile validation and name the matched family. |
+| Any existing Stage 98 path changes | Stop the tranche; separate new archive/index additions from existing records. |
+| A Stage 90 observation body would be rewritten | Stop and require retain/annotation/merge disposition review. |
+| A deleted script still has a consumer or unique negative fixture | Retain it and record `retain-contract`. |
+| A static record claims provider enforcement or action execution | Fail evidence non-promotion validation. |
+| Approval policy, principals, scope, target, argument digest, expiry, or result does not match | Reject the action evidence and require a new approval. |
+| Approval evidence owner, append principal, retention, validator, or trust anchor does not match the surface policy | Reject the record; retain `DEFER` and require the canonical owner/controller. |
+| Required high-risk trace collection is unavailable | Stop or retain `DEFER`; only a separately approved operator-Runbook exception may proceed. |
+| Baseline gate fails for a new reason | Stop and isolate the regression from the recorded pre-change failures. |
+| Baseline defect remains at terminal cutover | Do not mark the program done. |
 
 ## Failure Modes & Fallback / Human Escalation
 
-Every logical commit must leave the repository quality gate passing. A failing
-gate blocks the commit; it is never deferred to a later step.
+Each logical commit must pass its focused tests, affected lane, registry and
+document checks, archive diff boundary, `git diff --check`, and the aggregate
+gate applicable to its scope. The final state additionally requires
+`pre-commit run --all-files` PASS. Recorded baseline failures are not accepted
+terminal exceptions.
 
-The reduction steps are ordered so that failure is contained. R-1 through R-4
-are independent deletions and relocations: a failure in one does not invalidate
-the others. R-6, the agent governance contract consolidation, is the highest
-risk step because the majority of declared validators depend on those
-contracts; it occupies a single commit that can be reverted without disturbing
-any predecessor. If R-6 cannot reach a passing gate within the plan's bounded
-attempts, it is reverted and recorded as deferred, and the program completes
-without it.
+If a tranche fails, retain its evidence, reverse only that uncommitted tranche
+with a reviewed patch or revert its isolated commit, and re-run the last known
+green state. Never use a broad destructive reset. Contract consolidation that
+cannot preserve a rule or fixture is deferred as `retain-contract`, not forced
+through for line-count reduction.
 
-The path rewrite is the highest-blast-radius step. Its fallback is
-`git checkout` of the affected paths, which is safe because the rewrite runs
-only against a clean working tree and produces exactly one commit.
-
-Human escalation is required before: any change inside the archive stage; any
-removal of an enforced rule whose negative fixture cannot be located; any
-change that would renumber an existing stage identifier; and any action outside
-the local repository.
+Human escalation is required for any proposed edit to an existing archive
+record, uncertain historical disposition, removal of a unique rule or fixture,
+unapproved lifecycle identifier change, new document family, evidence-class
+promotion, credential or secret access, external write, remote action, or live
+mutation.
 
 ## Verification Commands
 
 ```bash
-# Full repository gate. Observed baseline 2026-08-07: PASS in 1m59s.
-bash scripts/validate-repo-quality-gates.sh .
-
-# Document classification, links, ownership, and profile conformance.
+# Document profile, route, body, and link contracts.
+python3 scripts/validate-document-contract-registry.py --root . --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root .
 
-# Archive inviolability. Must pass unchanged before and after every step.
-python3 scripts/archive_validation.py --root .
-
-# Agent governance contracts, after R-6.
+# Archive integrity and agent-governance contracts.
+python3 -m unittest tests/test_archive_validation.py
+python3 scripts/archive_cutover.py --root .
 python3 scripts/validate-agent-harness-contract.py --root .
 python3 scripts/validate-agent-harness-semantics.py --root .
-python3 scripts/validate-agent-governance-closure.py --root .
 
-# Validator tests.
-python3 -m pytest tests -q
+# Aggregate and all-files repository-static evidence.
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
+pre-commit run --all-files
 ```
 
-Evidence limits: every command above is repository-static. None of them proves
-live cluster state, Argo CD reconciliation, Vault or ESO behavior, hosted CI
-execution, provider runtime discovery, or remote repository state.
+The recorded pre-change all-files run failed before design edits: the document
+registry self-test could not allocate its configured temporary directory,
+detect-secrets reported three existing findings and tried to rewrite its
+baseline, and Markdown lint found an H1-to-H3 increment in the completed Spec
+053 Plan. The hook-created baseline change was reverted and the isolated
+worktree returned to clean. These results are baseline evidence only.
+
+All commands above are repository-static. They do not prove provider runtime,
+hosted CI, remote settings, secret safety, deployment, or live operation.
 
 ## Success Criteria & Verification Plan
 
-| Criterion ID | Criterion                                                                                                                                         | Evidence                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| VAL-WDTC-001 | Every G-A work unit resolves to one folder holding `spec.md`, `plan.md`, and `tasks.md`, and no live path contains the retired execution segment. | Directory inventory diff plus C-1 validation.                                |
-| VAL-WDTC-002 | No authored filename under stages 01 through 04 begins with a date, and every migrated document retains its original `updated` value.             | Filename inventory plus frontmatter diff across the migration commit.        |
-| VAL-WDTC-003 | The operations stage resolves at its new number and no tracked non-archive reference to the old segment remains.                                  | Reference count before and after, with the archive exclusion set enumerated. |
-| VAL-WDTC-004 | Every Stage 03 specification declares resolvable lineage, and every declared upstream owner links back.                                           | C-4 reciprocal validation over the full corpus.                              |
-| VAL-WDTC-005 | Three documents own the authoring rules, and the retired date-based execution sentence returns zero live hits.                                    | Literal search plus rule-ownership inventory.                                |
-| VAL-WDTC-006 | Each reduced asset has a recorded before-and-after line count.                                                                                    | Measurement table committed with the work unit's task evidence.              |
-| VAL-WDTC-007 | Every gap identifier has an implemented control or a dated recorded decision naming rationale and owner.                                          | Gap disposition table with per-row evidence link.                            |
-| VAL-WDTC-008 | The declared and executable validator sets are equal.                                                                                             | C-6 validation.                                                              |
-| VAL-WDTC-009 | Archive validation passes with no archive payload, digest, or envelope field modified.                                                            | Archive validation result plus a diff proving zero archive-path changes.     |
-| VAL-WDTC-010 | The suspended program is recorded as suspended with rationale and resumption route, and no suspended tranche executed.                            | Spec 047 and execution-pair status diff, the PRD-007 execution-pause prose and its README row, plus commit inventory. PRD-007 keeps `status: active`, so no PRD status diff is expected. |
-| VAL-WDTC-011 | The repository quality gate passes at every logical commit.                                                                                       | Per-commit gate result recorded in the task evidence.                        |
+| Criterion ID | Criterion | Evidence |
+| --- | --- | --- |
+| VAL-WDTC-001 | Every retained Spec/Plan/Task resolves in one Stage 03 work unit and no live Stage 04 execution path remains. | Reviewed mapping, terminal inventory, locality and route negative fixtures. |
+| VAL-WDTC-002 | Stage 05 remains stable and no Release-family route or artifact exists. | Path inventory and focused registry/residue search. |
+| VAL-WDTC-003 | Mutable authored filenames are date-free and every date-identity exception is registered. | Profile inventory, exception fixtures, and frontmatter preservation diff. |
+| VAL-WDTC-004 | PRD-008 lineage uses ADR-0023 and all active relations are reciprocal without renumbering. | Registry, strict links/owners, and lifecycle traceability results. |
+| VAL-WDTC-005 | Stage 00/99 prose and the document registry have disjoint human and machine authority. | Rule-to-owner ledger, duplicate-rule scan, profile/template validation. |
+| VAL-WDTC-006 | Every removed path has a reviewed disposition and existing Stage 98 records are unchanged. | Disposition ledger, source blobs, archive validation, zero existing-archive diff. |
+| VAL-WDTC-007 | Validator/script reduction removes no live consumer, rule, or unique negative fixture. | Consumer graph, semantic comparison, fixture mutation results, declared/executable parity. |
+| VAL-WDTC-008 | Harness systems record risk, trust, oversight, approval, trace, evaluation, and provenance with non-promotable evidence. | Schema positive/negative fixtures and agent-governance semantic validation. |
+| VAL-WDTC-009 | Progress and generated-output cleanup is recoverable and leaves no unowned tracked artifact. | Archive recovery, consumer/reproducibility checks, ignored-path and registry results. |
+| VAL-WDTC-010 | The three pre-change validation failures and all migration regressions are closed. | Aggregate and all-files PASS with explicit secret-finding adjudication. |
+| VAL-WDTC-011 | Specs 047–051 remain unexecuted during migration and have a valid consolidated resumption route. | Status, task evidence, and final path inventory. |
+| VAL-WDTC-012 | No provider, hosted, remote, credential-bearing, or live result is claimed or performed. | Handoff evidence-class report and change inventory. |
 
 ## Traceability
 
@@ -364,29 +429,30 @@ execution, provider runtime discovery, or remote repository state.
   [PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
-- **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Draft decision awaiting written-design review**:
+  [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
+- **Current planning input, to be replaced after written-Spec approval**:
+  [legacy Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
+  and [legacy Task](../../04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md)
+- **External evidence boundary**:
+  [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
 - **Suspended program**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
-- **External evidence**:
-  `docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md`; [current lookup](../../90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md)
-- **Implementation Plan**:
-  [Document Taxonomy Consolidation Implementation Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
-- **Execution Task**:
-  [Task: Document Taxonomy Consolidation](../../04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md)
 
 ### Lifecycle Traceability
 
-| PRD requirement                                                                                                | Spec criterion | Verification method                                                                                     |
-| -------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------- |
-| [REQ-WDTC-001](../../01.requirements/008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001   | Directory inventory and work-unit locality validation prove co-location and execution-stage retirement. |
-| N/A — REQ-WDTC-002 shares the PRD-008 source linked above.                                                     | VAL-WDTC-002   | Filename inventory and frontmatter diff prove date removal with preserved dates.                        |
-| N/A — REQ-WDTC-003 shares the PRD-008 source linked above.                                                     | VAL-WDTC-003   | Reference counting with an enumerated archive exclusion set proves complete renumbering.                |
-| N/A — REQ-WDTC-004 and REQ-WDTC-016 share the PRD-008 source linked above.                                     | VAL-WDTC-004   | Reciprocal lineage validation proves resolvable cross-stage lineage without renumbering.                |
-| N/A — REQ-WDTC-005 and REQ-WDTC-006 share the PRD-008 source linked above.                                     | VAL-WDTC-005   | Literal search and ownership inventory prove rule uniqueness and rule retirement.                       |
-| N/A — REQ-WDTC-007 through REQ-WDTC-011 share the PRD-008 source linked above.                                 | VAL-WDTC-006   | Recorded per-asset line deltas prove corpus reduction.                                                  |
-| N/A — REQ-WDTC-012 shares the PRD-008 source linked above.                                                     | VAL-WDTC-007   | Per-gap evidence links prove implemented control or recorded decision.                                  |
-| N/A — REQ-WDTC-013 shares the PRD-008 source linked above.                                                     | VAL-WDTC-008   | Declared-versus-executable equality validation proves enforcement closure.                              |
-| N/A — REQ-WDTC-014 shares the PRD-008 source linked above.                                                     | VAL-WDTC-009   | Archive validation and a zero-change archive diff prove inviolability.                                  |
-| N/A — REQ-WDTC-015 shares the PRD-008 source linked above.                                                     | VAL-WDTC-010   | Status diff and commit inventory prove suspension without execution.                                    |
-| N/A — REQ-WDTC-001 through REQ-WDTC-016 share the PRD-008 source linked above.                                 | VAL-WDTC-011   | Per-commit repository quality gate results prove continuous green state.                                |
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-WDTC-001](../../01.requirements/008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
+| N/A — REQ-WDTC-002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |
+| N/A — REQ-WDTC-003 and REQ-WDTC-007 share the PRD source above. | VAL-WDTC-002 | Residue and registry checks prove Stage 05 stability and Release exclusion. |
+| N/A — REQ-WDTC-004 shares the PRD source above. | VAL-WDTC-004 | Registry and reciprocal-link validation prove stable lineage. |
+| N/A — REQ-WDTC-005 and REQ-WDTC-006 share the PRD source above. | VAL-WDTC-005 | Rule-owner and profile/template checks prove authority separation. |
+| N/A — REQ-WDTC-008 through REQ-WDTC-010 share the PRD source above. | VAL-WDTC-006 | Disposition, source-blob, archive, and path results prove safe migration. |
+| N/A — REQ-WDTC-011 and REQ-WDTC-012 share the PRD source above. | VAL-WDTC-007 | Consumer, rule, fixture, and parity evidence prove safe script reconciliation. |
+| N/A — REQ-WDTC-013 and REQ-WDTC-014 share the PRD source above. | VAL-WDTC-008 | Harness schema and semantic fixtures prove governance and evidence boundaries. |
+| N/A — REQ-WDTC-015 shares the PRD source above. | VAL-WDTC-009 | Recovery and reproducibility evidence prove bounded cleanup. |
+| N/A — REQ-WDTC-016 shares the PRD source above. | VAL-WDTC-010 | Aggregate and all-files PASS prove baseline and regression closure. |
+| N/A — REQ-WDTC-017 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
+| N/A — REQ-WDTC-018 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |

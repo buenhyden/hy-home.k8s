@@ -152,7 +152,7 @@ Spec은 실행 기준을 소유하는 문서다.
 1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
-4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
+4. Spec 052 terminal cutover 전까지 현재 구현 및 검증 추적은 `04.execution/tasks/`로 연결하며, 새 Stage 03 Plan/Task route를 조기 사용하지 않는다. Cutover 후에는 같은 work-unit의 `plan.md`와 `tasks.md`가 실행 정본이 된다.
 5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 full-body Archive Record로 보존하며 `../98.archive/README.md`의 중앙 인덱스로만 분리한다.
 
 ### Relative Link Rules
@@ -161,7 +161,7 @@ Spec은 실행 기준을 소유하는 문서다.
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 같은 stage의 spec은 `./<###-Numbering>-<feature-id>/spec.md`로 연결한다.
-- 실행 문서는 `../04.execution/`, 운영 문서는 `../05.operations/`로 연결한다.
+- Spec 052 terminal cutover 전의 current 실행 문서는 `../04.execution/`, 운영 문서는 `../05.operations/`로 연결한다. Terminal route는 같은 work-unit의 `plan.md`와 `tasks.md`다.
 - feature-local helper 문서 링크는 `docs/03.specs/<###-Numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
 ### Spec Authoring Rules
@@ -171,7 +171,7 @@ Spec은 실행 기준을 소유하는 문서다.
 3. Acceptance Criteria와 테스트는 PRD에서 이어지고, 구현 검증은 Task와 연결된다.
 4. API가 있다면 API Spec 또는 계약 파일을 함께 둔다.
 5. Agent 설계가 있다면 Role, Tool, Policy, Memory, Guardrail, Evaluation, Fallback을 명시한다.
-6. feature-local `tasks.md` 또는 `tests.md`는 설계 보조 문서이며, 실행 추적 정본은 `../04.execution/tasks/`다.
+6. Spec 052 terminal cutover 전에는 feature-local `tasks.md`가 설계 보조 문서이고 실행 추적 정본은 `../04.execution/tasks/`다. Cutover 후 `tasks.md`가 해당 work-unit의 실행 정본이 되며 `tests.md`만 보조 문서로 남는다.
 7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/ARD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
 
 ### Current Spec Index
@@ -225,7 +225,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./049-platform-validation-and-security-evidence/spec.md`](./049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
 | [`./050-example-iac-and-validator-qa/spec.md`](./050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Provider-native non-deploy validation과 exact tool/fallback evidence를 소유하며 cloud login, plan/apply, deploy, what-if 및 live readiness는 범위 밖이다. | 2026-08-02 |
 | [`./051-repository-assurance-integration-and-closure/spec.md`](./051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Draft | 두 machine contract와 최종 target matrix를 통합하고 전체 QA/review 후 local-only fast-forward 및 cleanup을 수행하며 hosted/provider/remote/live 증거는 분리한다. | 2026-08-02 |
-| [`./052-document-taxonomy-consolidation/spec.md`](./052-document-taxonomy-consolidation/spec.md) | Document taxonomy consolidation, work-unit co-location, lineage metadata, rule-ownership collapse, and validator reconciliation specification | Active | 2026-08-07 외부 SDD/문서 IA 조사와 측정 baseline을 근거로 execution stage 폐지, operations stage 재번호, 파일명 날짜 제거, frontmatter lineage, 규칙 문서 10→3 통합, machine contract 및 validator 감축을 소유한다. Archive payload 불가침과 dated observation 무결성은 보존하며 hosted/provider/remote/live 증거는 주장하지 않는다. 2026-08-07 기준 reciprocal Plan/Task 실행 경로가 active로 전환됐고 PRD-007은 active로 유지된 채 같은 기간 실행만 일시 중단된다. | 2026-08-07 |
+| [`./052-document-taxonomy-consolidation/spec.md`](./052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Active | 2026-08-09 승인 설계에 따라 Stage 03에 Spec/Plan/Task를 통합하고 Stage 04 execution을 폐지하되 Stage 05를 유지한다. Release 제외, stable filename/date 예외, fail-closed transition, Archive/observation 무결성, harness-contract 확장, script/validator 의미 보존 및 기준선 실패 해결을 소유한다. | 2026-08-09 |
 | [`./053-workspace-engineering-research-pack-consolidation/spec.md`](./053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
 
 ### Helper Templates

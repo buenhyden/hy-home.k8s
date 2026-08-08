@@ -3,208 +3,213 @@ title: 'Workspace Document Taxonomy Consolidation Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Workspace Document Taxonomy Consolidation Product Requirements
 
 ## Overview
 
-This program consolidates the repository's document taxonomy, identifier
-schemes, governance rule set, and validator surface into one coherent contract,
-and reduces the governance corpus to a size proportional to the platform it
-governs. It is grounded in dated external research into spec-driven development
-folder contracts and documentation information architecture, and in measured
-repository evidence observed on 2026-08-07.
+This program consolidates the repository's SDLC document topology, authoring
+rules, templates, agent-governance controls, and validator orchestration into a
+single traceable operating model. The human approved the target direction on
+2026-08-09: co-locate each work unit's `spec.md`, `plan.md`, and `tasks.md`
+under Stage 03; retire `docs/04.execution/`; keep `docs/05.operations/` at its
+stable path; and do not create a Release document family or releases folder.
 
-The program does not redesign the platform, the GitOps model, or the agent
-harness roles. It changes where authored documents live, what identifies them,
-which document owns each rule, and how much machine contract the repository
-carries to enforce those rules.
+The design is a local architecture choice, not an ISO, NIST, or tool-vendor
+conformance claim. [ISO/IEC/IEEE 12207:2026](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/09/02/90219.html)
+provides a common lifecycle-process framework without prescribing one lifecycle
+model or document format, while
+[ISO/IEC/IEEE 15289:2019](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/07/49/74909.html)
+allows lifecycle information items to be combined or split for the selected
+model. [GitHub Spec Kit](https://github.com/github/spec-kit/blob/main/docs/index.md)
+and [OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md)
+provide bounded implementation examples in which specification, design or
+plan, and tasks are organized around one change. The local research boundary
+is recorded in the [Spec-driven SDLC reference](../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md).
 
-PRD-007 remains active and governing; its execution is paused for the duration
-of this program. Spec 047 returns to `draft` and Specs 048 through 051 remain
-planned draft successors, because Specs 049 and 050 add validators that this
-program consolidates.
-
-The direct human-approved
-[Spec 053](../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)
-creates one bounded exception to REQ-WDTC-011: the three named workspace
-engineering research packs are consolidated into `2026-08-08-wer` and removed
-from the live tree without new Stage 98 copies after its lossless disposition
-and reference gates pass. Spec 053 owns that replacement and deletion; every
-other PRD-008 requirement remains unchanged and active.
+PRD-007 remains the product authority for repository delivery assurance, but
+its Specs 047 through 051 stay suspended while this program changes their
+document and validator paths. Completed Spec 053 remains the authority for the
+already-finished research-pack consolidation and is not reopened.
 
 ## Vision
 
-A maintainer or AI agent can name one work unit, find its requirement,
-architecture, specification, plan, and task evidence through one identifier and
-one folder, and read exactly one document that owns each authoring rule. The
-governance corpus stays small enough that a reader can hold the whole contract
-in working memory, and every rule that exists is enforced by exactly one
-validator.
+A maintainer or AI agent can start from one stable work-unit folder, follow
+requirements and decisions to implementation evidence, and identify exactly
+one human rule owner and one machine enforcement owner for every governed
+behavior. The current operating topology stays legible, historical evidence
+stays recoverable, and repository-static readiness is never confused with
+provider-runtime enforcement.
 
 ## Problem Statement
 
-Measured on 2026-08-07, the repository carries 154,499 lines under `docs/`,
-78,352 lines under `scripts/`, and 36,154 lines of validator tests, against
-4,574 lines of actual platform assets in `gitops/`, `infrastructure/`,
-`traefik/`, and `policy/`. The governance machinery is roughly fifty-nine times
-the size of the system it governs.
+The clean pre-change 2026-08-09 repository audit found 458 tracked files under
+`docs/`: 52 in Stage 03,
+135 in Stage 04, 29 in Stage 05, 58 in Stage 90, 44 in Stage 98, and 41 in
+Stage 99. Stage 03 contains 49 specifications, while Stage 04 contains 65 Plan
+and 67 Task documents plus three indexes. Most execution pairs duplicate the
+same work-unit slug but live in separate trees and carry a date-based filename
+identity unrelated to their stable Spec identifier.
 
-Four structural defects drive that ratio and are independently confirmed by
-external evidence.
+The active contracts also disagree with current implementation. Spec 052 and
+its upstream design still require `05.operations` to become `04.operations`,
+although the approved direction keeps Stage 05 stable. They assume one-shot
+active-corpus data and validators can be deleted wholesale, while the current
+script audit found distinct remaining contracts that require consumer and
+negative-fixture proof before retirement. The document-profile registry is the
+declared machine authority, yet Stage 00 and Stage 99 prose still restate
+heading, route, and lifecycle ownership in several places.
 
-First, one unit of work is split across three trees with three unrelated
-identifier schemes. 39 of 47 specifications have exactly one same-slug plan and
-one same-slug task, yet the specification is addressed as
-`03.specs/047-<slug>/spec.md` while its plan and task are addressed as
-`04.execution/plans/2026-08-02-<slug>.md` and
-`04.execution/tasks/2026-08-02-<slug>.md`. All five spec-driven development
-toolchains examined co-locate a work unit's specification, plan, and task list
-in one folder; none splits them by artifact type.
+The agent harness has strong repository-static role and adapter coverage, but
+its static `current` or `ready` states can be mistaken for provider-enforced
+behavior. It does not yet bind actual action approval to the target and
+arguments, classify untrusted context and tool output, record system-level risk
+and oversight, or preserve provenance and trace availability for admitted
+agent components. NIST AI RMF, NIST AI 600-1, OWASP agentic guidance, OpenAI
+tool/HITL/tracing guidance, Anthropic agent-evaluation guidance, and SLSA
+provenance support those control objectives without proving local enforcement.
 
-Second, a single lineage carries three unrelated numbers. PRD-001 maps to
-ARD-0004 and Spec 004; PRD-003 maps to ARD-0006 and Specs 038 through 046;
-PRD-004 maps to ARD-0007 and Spec 008. Three independent counters advance in
-parallel, so `004` names one lineage in Stage 01 and a different lineage in
-Stage 03. Established decision-record practice treats a record number as stable
-identity that is never reused; this repository treats it as a per-stage
-sequence position.
-
-Third, ten documents totalling 1,428 lines govern how to author a document, and
-each spends part of its budget declaring what it does not own. The same rule
-that Stage 04 plans and tasks remain date-based appears verbatim in three
-separate files, and no validator checks that those three copies agree.
-
-Fourth, one-shot migration artifacts were never retired. Three
-`active-corpus-*` census files hold 14,142 lines and are read by five
-validators totalling roughly 8,000 lines, all produced for a migration that has
-completed. The shared progress ledger has grown to 13,920 lines in a single
-file that every agent session reads.
-
-Leaving these unresolved keeps drift risk high, because a rule copied into
-three files silently becomes false when one copy changes, and keeps agent
-context cost high, because the governance corpus must be traversed before any
-authored change.
+Finally, the clean pre-change worktree does not have a green all-files
+baseline. The observed failures are a registry self-test temporary-memory
+allocation error, three detect-secrets false positives or baseline drifts, and
+one Markdown heading defect. These are recorded baseline defects and must be
+closed by the program; they may not be hidden by weakening a gate.
 
 ## Personas
 
-| Persona             | Goal                                                                                     | Constraint or authority boundary                                                             |
-| ------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Governance steward  | Own one document per authoring rule and retire duplicated rule text.                     | May restructure governance documents; may not weaken GitOps, secret, or approval boundaries. |
-| Platform maintainer | Locate a work unit's requirement, design, plan, and evidence from one identifier.        | Approves protected-surface changes; does not authorize remote or live mutation.              |
-| Quality engineer    | Keep one validator per enforced rule and delete validators whose contract is retired.    | Owns validator and fixture changes; may not remove a gate without retiring its rule.         |
-| Technical writer    | Author a document without reading ten overlapping rule files first.                      | Follows the selected profile; does not invent new document types.                            |
-| AI agent            | Load a bounded governance context and resolve the correct target path deterministically. | Must follow bootstrap JIT loading, approval boundaries, and archive inviolability.           |
+| Persona | Goal | Constraint or authority boundary |
+| --- | --- | --- |
+| Governance steward | Maintain one coherent SDLC and agent-governance rule system. | May consolidate owners but may not weaken approval, archive, or evidence boundaries. |
+| Platform maintainer | Locate and evolve one work unit through a stable folder and lineage. | Approves protected local changes; does not implicitly authorize remote or live mutation. |
+| Quality engineer | Preserve deterministic gates while removing redundant orchestration. | May retire a validator only after consumer, rule, and negative-fixture disposition. |
+| Technical writer | Select one template and author to one current document contract. | Must preserve historical observation meaning and documented exceptions. |
+| AI agent operator | Route each provider-specific agent through shared workspace governance. | Static configuration is not evidence of provider enforcement or runtime execution. |
+| Auditor | Recover decisions, retired evidence, approvals, and validation results. | Existing archive payloads and digests are immutable. |
 
 ## Key Use Cases
 
-An engineer starting a new work unit creates one numbered folder under the
-specification stage and authors the specification, plan, and task evidence
-inside it, without choosing between three filename conventions.
+A new work unit is created at `docs/03.specs/<NNN>-<slug>/`; its fixed-name
+Spec, Plan, and Task files express one lifecycle without a separate execution
+stage or date-based mutable identity.
 
-A reviewer tracing a requirement to its verification reads the lineage fields
-in the specification's frontmatter and follows one link per hop, with a
-validator proving that each hop is reciprocal.
+A reviewer follows registry-owned reciprocal relations from a PRD and ARD to
+an accepted ADR, Spec criteria, Plan work packages, Task results, and
+operations feedback. A link establishes traceability, while the named test or
+review evidence establishes the claim.
 
-A governance steward changing an authoring rule edits exactly one file and
-knows that no other file restates the same rule.
+A governance steward changes an authoring or lifecycle rule at one canonical
+owner. Template forms and provider adapters project that owner, and validators
+fail when a projection drifts.
 
-An agent resuming work reads a bounded current progress ledger rather than a
-14,000-line append-only history.
+A quality engineer migrates old and new routes through an explicit transition
+window. The gate accepts only the declared transition state, rejects ambiguous
+dual ownership, and removes old-route support only after the live inventory is
+zero.
 
-An auditor inspecting a retired document reads its archive record and finds the
-payload byte-identical to the original Git blob, with its historical links
-resolving against the commit at which it was archived.
+An AI agent requests an external or destructive action. The approval evidence
+binds the action fingerprint, target, argument digest, approver, expiry,
+decision, and execution result instead of treating a general conversation
+approval as reusable authority.
+
+An auditor distinguishes a unique historical record that requires a new
+ArchiveEnvelope from duplicate, generated, or zero-consumer material that can
+be deleted with provenance and disposition evidence.
 
 ## Functional Requirements
 
-| Requirement ID | Requirement                                                                                                                                                                  | Priority | Verification intent                                                                                                                                                            |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| REQ-WDTC-001   | Co-locate each work unit's specification, plan, and task evidence in one numbered folder under the specification stage, and retire the separate execution stage.             | Must     | Every work unit that had a same-slug plan and task resolves to `spec.md`, `plan.md`, and `tasks.md` in one folder, and no live path under the retired execution stage remains. |
-| REQ-WDTC-002   | Remove dates from authored document filenames and retain the date in frontmatter only.                                                                                       | Must     | No live authored document filename under stages 01 through 04 begins with a date, and every migrated document preserves its original `updated` value.                          |
-| REQ-WDTC-003   | Renumber the operations stage so that the stage sequence is contiguous after the execution stage is retired.                                                                 | Must     | The operations stage resolves at its new number, and every tracked reference to the former number is rewritten.                                                                |
-| REQ-WDTC-004   | Keep per-stage identifier sequences stable and express cross-stage lineage in machine-readable frontmatter fields.                                                           | Must     | No existing PRD, ARD, ADR, or specification number changes, and a validator rejects a specification whose declared lineage lacks a reciprocal upstream link.                   |
-| REQ-WDTC-005   | Reduce the authoring rule set to one owning document per rule family and delete restated rule text.                                                                          | Must     | The document-authoring rule corpus is three documents, each rule appears once, and no document declares an authority boundary for a rule another document also states.         |
-| REQ-WDTC-006   | Retire the rule that execution records remain date-based from every document that states it.                                                                                 | Must     | The retired sentence appears in no live governance document, and validators no longer encode a date-based execution path.                                                      |
-| REQ-WDTC-007   | Rotate the shared progress ledger so that the live file holds only the current period and prior periods move to archive records.                                             | Must     | The live ledger is materially smaller, the archived periods are recoverable, and progress-ledger validation passes.                                                            |
-| REQ-WDTC-008   | Reduce the document profile registry by removing profiles that exist only to validate template forms.                                                                        | Must     | Template forms are validated through their corresponding authored profile, the registry is materially smaller, and route coverage rejects no previously covered path.          |
-| REQ-WDTC-009   | Consolidate the agent governance machine contracts and their schemas into fewer owners without losing an enforced rule.                                                      | Must     | Every rule enforced before consolidation is still enforced after it, and the contract corpus is materially smaller.                                                            |
-| REQ-WDTC-010   | Delete completed one-shot migration census data and the validators that read only that data.                                                                                 | Must     | The census files and their exclusive validators are removed, and no remaining validator or document references them.                                                           |
-| REQ-WDTC-011   | Consolidate duplicated research and audit packs into their surviving owners. The human-approved Spec 053 exception uses reviewed Git provenance and a migration ledger instead of new Stage 98 copies for its three named research packs. | Should   | Superseded material has an explicit surviving owner and recoverable provenance, and no two live reference documents claim the same observation ownership.                      |
-| REQ-WDTC-012   | Close the ten recorded documentation gaps by either implementing the control or recording an evidence-backed decision not to.                                                | Must     | Each gap identifier has an implemented control or a dated recorded decision naming its rationale and owner.                                                                    |
-| REQ-WDTC-013   | Align the script surface with the canonical validator selection contract so that no validator exists outside a declared lane and no declared lane names a missing validator. | Must     | The declared validator set and the executable validator set agree, and the repository quality gate passes.                                                                     |
-| REQ-WDTC-014   | Preserve archive records as inviolable.                                                                                                                                      | Must     | No archive record payload, digest, or envelope field is modified, and archive validation passes unchanged.                                                                     |
-| REQ-WDTC-015   | Suspend the in-flight delivery assurance program for the duration of this work and resume it in the consolidated structure.                                                  | Must     | The suspended program's active tranche returns to draft, its rationale is recorded, and no suspended tranche is executed during this program.                                  |
-| REQ-WDTC-016   | Keep the numbered stage-prefix taxonomy unchanged apart from the retirement and renumbering this program authorizes.                                                         | Must     | No stage prefix is added or removed beyond the authorized change, and the decision to retain the scheme cites the external evidence that neither endorses nor forbids it.      |
+| Requirement ID | Requirement | Priority | Verification intent |
+| --- | --- | --- | --- |
+| REQ-WDTC-001 | Co-locate each live work unit's Spec, Plan, and Task under `docs/03.specs/<NNN>-<slug>/` and retire `docs/04.execution/`. | Must | Every retained execution record maps to `spec.md`, `plan.md`, or `tasks.md` in one work unit, and no live Stage 04 execution route remains. |
+| REQ-WDTC-002 | Use stable identifiers or slugs for mutable authored filenames and retain dates in frontmatter; allow dates only when they are part of immutable observation or event identity. | Must | No mutable live PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, or Runbook filename begins with a date; Stage 90 snapshots, real incidents, postmortems, and Stage 98 mirrors are explicitly classified exceptions. |
+| REQ-WDTC-003 | Keep `docs/05.operations/` and its guide, incident, policy, and runbook collections at the current stage number. | Must | No `docs/04.operations/` route or link is introduced and every current Stage 05 consumer remains resolvable. |
+| REQ-WDTC-004 | Preserve existing PRD, ARD, ADR, and Spec identifiers and use registry-owned reciprocal relationships for cross-stage lineage. | Must | No identity is renumbered; every active lineage resolves with required reciprocal evidence. |
+| REQ-WDTC-005 | Consolidate human authoring rules into disjoint Stage 00 and Stage 99 owners without duplicating machine-owned routes, headings, states, or schemas. | Must | Each rule family has one prose owner and the document-profile registry remains the sole machine contract. |
+| REQ-WDTC-006 | Update template forms and support contracts for the approved SDLC, including Stage 03 Plan/Task placement and the date exception policy. | Must | Every physical form has one registry owner and current consumers pass template/profile parity checks. |
+| REQ-WDTC-007 | Do not create a Release document type, Release template, releases folder, or release lifecycle in this program. | Must | Registry, templates, indexes, and live operations paths contain no new Release-family owner. |
+| REQ-WDTC-008 | Classify retired material before disposition: archive unique history, preserve dated observations, and delete only duplicate, generated, superseded, or zero-consumer material with evidence. | Must | Every removed path has a reviewed archive, successor, provenance, or deletion disposition. |
+| REQ-WDTC-009 | Preserve every existing Stage 98 envelope, payload, digest, and source reference; new archive records are append-only. | Must | Archive validation passes and existing archive-path diffs are zero. |
+| REQ-WDTC-010 | Introduce old/new route compatibility before migration and remove old-route support only after an explicit zero-consumer cutover. | Must | Negative fixtures reject uncovered or ambiguous states in both transition and terminal modes. |
+| REQ-WDTC-011 | Consolidate validator orchestration and duplicate-purpose scripts without merging validators that enforce distinct contracts. | Must | One declared lane owns selection/orchestration; registry, Markdown, link/owner, security, CI, and archive contracts retain independent evidence where their semantics differ. |
+| REQ-WDTC-012 | Retire `validate-harness.sh` only after all consumers migrate, and retain active-corpus or lifecycle validators until rule, consumer, and fixture audits prove retirement safe. | Must | No deleted executable has a live consumer or unique negative fixture; the declared/executable inventory agrees. |
+| REQ-WDTC-013 | Extend the existing harness contract, rather than creating a parallel governance registry, with system risk policy, tool/data trust, oversight, stop, approval/trace record shapes, evaluation, and component-provenance controls. | Must | Schema negative tests reject missing high-risk policy or evidence-reference fields and static evidence cannot satisfy runtime-enforcement fields. |
+| REQ-WDTC-014 | Distinguish repository-declared, provider-runtime-enforced, hosted-CI, and authorized remote/live evidence states. | Must | No state transition or report promotes evidence across classes without a matching observed record. |
+| REQ-WDTC-015 | Rotate the shared progress ledger and remove tracked stale generated graph output only after recoverability and consumer checks pass. | Should | Current memory is bounded, retained history is indexed, generated graph output is reproducible or ignored, and no consumer breaks. |
+| REQ-WDTC-016 | Resolve the recorded pre-change validator failures without weakening the corresponding contracts. | Must | The final all-files gate passes with explicit false-positive adjudication and deterministic temporary-directory behavior. |
+| REQ-WDTC-017 | Keep PRD-007 Specs 047–051 suspended until the consolidated topology and validator owners are active, then provide a reviewed resumption route. | Must | No suspended tranche executes during migration and every path is valid at resumption. |
+| REQ-WDTC-018 | Keep platform desired state, remote services, credentials, provider runtime, and live cluster changes outside this program. | Must | Handoff reports these evidence classes as not performed or separately deferred. |
 
 ## Success / Acceptance Criteria
 
-| Acceptance ID | Criterion                                                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ACC-WDTC-001  | One work unit resolves to one folder and one identifier, with no authored filename carrying a date under stages 01 through 04.                         |
-| ACC-WDTC-002  | Cross-stage lineage is machine-readable and reciprocally validated, with no existing stage identifier renumbered.                                      |
-| ACC-WDTC-003  | Each authoring rule is stated in exactly one live document, and the retired date-based execution rule appears nowhere.                                 |
-| ACC-WDTC-004  | The governance corpus, machine contracts, and validator surface are measurably smaller, with a recorded before-and-after line count per reduced asset. |
-| ACC-WDTC-005  | Every recorded documentation gap is closed by an implemented control or a dated recorded decision.                                                     |
-| ACC-WDTC-006  | The declared and executable validator sets agree, and the repository quality gate passes at every logical commit.                                      |
-| ACC-WDTC-007  | Archive validation passes with no archive payload, digest, or envelope field modified.                                                                 |
-| ACC-WDTC-008  | The suspended delivery assurance program is recorded as suspended with rationale and a resumption route.                                               |
+| Acceptance ID | Criterion |
+| --- | --- |
+| ACC-WDTC-001 | Stage 03 is the only live Spec/Plan/Task work-unit owner and `docs/04.execution/` is absent. |
+| ACC-WDTC-002 | `docs/05.operations/` remains stable and no Release-family surface is created. |
+| ACC-WDTC-003 | Mutable active filenames are date-free, while every date-identity exception is explicit and validated. |
+| ACC-WDTC-004 | Registry-owned lineage, route, template, heading, and lifecycle contracts have no competing prose or machine owner. |
+| ACC-WDTC-005 | Every removed document or script has a reviewed archive, successor, provenance, consumer, and fixture disposition. |
+| ACC-WDTC-006 | Agent governance records risk, trust boundaries, tool-bound approval, oversight, provenance, and evidence depth without claiming provider enforcement from static files. |
+| ACC-WDTC-007 | Baseline validator defects and migration regressions are closed; aggregate and all-files repository-static gates pass. |
+| ACC-WDTC-008 | Existing archive payloads remain byte-stable and dated observation bodies preserve their historical meaning. |
+| ACC-WDTC-009 | Logical-unit commits remain independently reviewable and revertible, with measured before/after inventories. |
+| ACC-WDTC-010 | PRD-007 has a valid consolidated resumption route and no remote or live action is implied. |
 
 ## Scope and Non-goals
 
-In scope: the authored document taxonomy under `docs/`, authored document
-filenames and identifiers, the governance rule corpus, the document profile
-registry, the agent governance machine contracts, the shared progress ledger,
-the reference data and research packs, the recorded documentation gaps, and the
-validator and script surface that enforces those contracts.
+In scope are `docs/**`, the document-profile registry and templates, Stage 00
+agent-governance prose and machine contracts, repository-local validation and
+orchestration scripts, their tests and fixtures, the shared progress ledger,
+tracked generated documentation artifacts, and all affected cross-links and
+indexes.
 
-Out of scope: the platform's desired state under `gitops/` and
-`infrastructure/`; the agent role roster and its provider adapters; the subject
-matter of the suspended delivery assurance program; any live cluster, hosted
-CI, remote, or credential-bearing action; and the creation of new document
-types for currently unoccupied documentation modes.
+Out of scope are platform behavior and manifests under `gitops/`,
+`infrastructure/`, `traefik/`, or `policy/`; provider authentication or
+runtime execution; hosted CI settings; credentials or secret values; remote
+publication; live cluster mutation; and public release management.
 
-Explicit non-goals: this program does not remove the numbered stage-prefix
-scheme, because the external research found no primary source that endorses or
-forbids repository-wide numbered stage folders and the rewrite cost is
-therefore unjustified. It does not create a release-notes stage, because no
-reference to one exists and the repository declares no public API. It does not
-renumber any existing PRD, ARD, ADR, or specification identifier.
+Explicit non-goals are renumbering `05.operations`, removing the numbered
+stage-prefix taxonomy, inventing Release/tutorial/explanation families,
+renumbering existing lifecycle records, rewriting historical Stage 90
+observations, modifying existing Stage 98 records, or collapsing semantically
+distinct validators merely to reduce file count.
 
 ## Risks, Dependencies, and Assumptions
 
-| ID            | Risk, dependency, or assumption                                                                                                                    | Owner               | Mitigation or validation                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| RISK-WDTC-001 | The execution-stage retirement touches 321 tracked files and the operations renumbering touches 203, so a manual rewrite would be unreliable.      | Platform maintainer | Scripted rewrite with an explicit exclusion set, verified by the full quality gate at each logical commit.                                             |
-| RISK-WDTC-002 | Archive payloads are digest-sealed and their links resolve against historical commits, so any rewrite inside them breaks validation irrecoverably. | Governance steward  | Archive paths are excluded from every rewrite; archive validation runs as a separate gate.                                                             |
-| RISK-WDTC-003 | Dated reference and audit packs record point-in-time observations, so rewriting paths inside them would falsify the record.                        | Technical writer    | Reference pack path rewrites are limited to navigational links and recorded as such, or the pack is left unchanged and its historical paths annotated. |
-| RISK-WDTC-004 | Consolidating the agent governance machine contracts affects the majority of declared validators and can fail closed across the whole gate.        | Quality engineer    | The contract consolidation is a single isolated logical commit that can be reverted without disturbing earlier commits.                                |
-| RISK-WDTC-005 | Reducing the profile registry can silently drop route coverage and let an uncovered path pass.                                                     | Quality engineer    | Route coverage is asserted before and after with the same path inventory, and uncovered paths remain a hard failure.                                   |
-| DEP-WDTC-001  | The repository quality gate is the safety net for every step and takes about two minutes on the observed baseline.                                 | Quality engineer    | The gate is run at each logical commit; a failing gate blocks the commit rather than being deferred.                                                   |
-| ASM-WDTC-001  | All 24 plans and 23 tasks that have no matching specification are complete historical records.                                                     | Platform maintainer | Verified on 2026-08-07: every one of them carries `status: done`.                                                                                      |
-| ASM-WDTC-002  | The suspended program's tranches have no subject overlap with this program.                                                                        | Platform maintainer | Verified by reading each tranche overview; the overlap is structural path and validator ownership only.                                                |
+| ID | Risk, dependency, or assumption | Owner | Mitigation or validation |
+| --- | --- | --- | --- |
+| RISK-WDTC-001 | A broad path rewrite can silently corrupt links or create dual ownership. | Platform maintainer | Enumerated `git mv` map, transitional negative fixtures, zero-consumer cutoff, and affected/all-files validation. |
+| RISK-WDTC-002 | Archived or dated observation content can be falsified by a global rewrite. | Governance steward | Exclude existing Stage 98 and observation bodies; permit only reviewed indexes, annotations, and append-only archive records. |
+| RISK-WDTC-003 | Script reduction can delete a unique contract behind a similar filename. | Quality engineer | Consumer graph, rule comparison, negative-fixture comparison, and explicit retain/merge/retire disposition. |
+| RISK-WDTC-004 | Contract consolidation can turn static declarations into false runtime-readiness claims. | AI agent operator | Separate evidence classes and enforcement availability; require observed provider or action records for promotion. |
+| RISK-WDTC-005 | The design could be presented as standards conformance. | Governance steward | Cite only bounded external claims; record every path and filename rule as a local decision. |
+| DEP-WDTC-001 | The document-profile registry and its validators are the migration control plane. | Quality engineer | Tests change before production routes and fail closed on zero or multiple profile matches. |
+| DEP-WDTC-002 | Existing baseline gates are not fully green. | Quality engineer | Record failures before edits and close them as named implementation work rather than normalizing failure. |
+| ASM-WDTC-001 | Existing identifiers are more valuable than a cosmetically contiguous stage sequence. | Platform maintainer | Human-approved direction A keeps Stage 05 stable and leaves the retired Stage 04 slot unused. |
+| ASM-WDTC-002 | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/07/20/72089.html) supports requirements information but does not mandate this repository's folder names. | Governance steward | Keep requirements traceable and testable while treating physical routing as local architecture. |
+| ASM-WDTC-003 | [NIST SSDF](https://csrc.nist.gov/pubs/sp/800/218/final) practices can integrate with the local SDLC but do not make Markdown or a passing template a security outcome. | Security reviewer | Bind security claims to named controls and separately observable evidence. |
 
 ## Traceability
 
 ### Lifecycle Traceability
 
-| Requirement ID | Acceptance criterion | Downstream owner                                                                                                                                                                                                |
-| -------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| REQ-WDTC-001   | ACC-WDTC-001         | [ARD-0011](../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md) and [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) own the taxonomy and migration design. |
-| REQ-WDTC-002   | ACC-WDTC-001         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-003   | ACC-WDTC-001         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-004   | ACC-WDTC-002         | N/A — ARD-0011 owns the lineage model linked in REQ-WDTC-001.                                                                                                                                                   |
-| REQ-WDTC-005   | ACC-WDTC-003         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-006   | ACC-WDTC-003         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-007   | ACC-WDTC-004         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-008   | ACC-WDTC-004         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-009   | ACC-WDTC-004         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-010   | ACC-WDTC-004         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-011   | ACC-WDTC-004         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-012   | ACC-WDTC-005         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-013   | ACC-WDTC-006         | N/A — Spec 052 shares the downstream owner linked in REQ-WDTC-001.                                                                                                                                              |
-| REQ-WDTC-014   | ACC-WDTC-007         | N/A — ARD-0011 owns the archive inviolability boundary linked in REQ-WDTC-001.                                                                                                                                  |
-| REQ-WDTC-015 | ACC-WDTC-008 | N/A — Spec 052 owns the suspension and resumption route for the delivery assurance program named in the Overview. |
-| REQ-WDTC-016   | ACC-WDTC-002         | N/A — ARD-0011 owns the retained taxonomy boundary linked in REQ-WDTC-001.                                                                                                                                      |
+| Requirement ID | Acceptance criterion | Downstream owner |
+| --- | --- | --- |
+| REQ-WDTC-001 | ACC-WDTC-001 | [ARD-0011](../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md) and [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) own the target and migration contract; draft ADR-0023 records the human-approved target but does not yet own machine lineage. |
+| REQ-WDTC-002 | ACC-WDTC-003 | N/A — the same ARD, ADR, and Spec own stable filenames and explicit date-identity exceptions. |
+| REQ-WDTC-003 | ACC-WDTC-002 | N/A — draft ADR-0023 proposes the approved Stage 05 stability target for later lifecycle acceptance. |
+| REQ-WDTC-004 | ACC-WDTC-004 | N/A — ARD-0011 owns identifier and registry-lineage boundaries. |
+| REQ-WDTC-005 | ACC-WDTC-004 | N/A — Spec 052 owns prose and machine-authority consolidation. |
+| REQ-WDTC-006 | ACC-WDTC-004 | N/A — Spec 052 owns template and current-consumer migration. |
+| REQ-WDTC-007 | ACC-WDTC-002 | N/A — draft ADR-0023 records the explicit Release-family exclusion target. |
+| REQ-WDTC-008 | ACC-WDTC-005 | N/A — Spec 052 owns disposition classification and evidence. |
+| REQ-WDTC-009 | ACC-WDTC-008 | N/A — ARD-0011 owns archive inviolability and append-only boundaries. |
+| REQ-WDTC-010 | ACC-WDTC-007 | N/A — Spec 052 owns transitional and terminal validator modes. |
+| REQ-WDTC-011 | ACC-WDTC-005 | N/A — Spec 052 owns script and validator reconciliation. |
+| REQ-WDTC-012 | ACC-WDTC-005 | N/A — Spec 052 owns consumer and fixture disposition gates. |
+| REQ-WDTC-013 | ACC-WDTC-006 | N/A — ARD-0011 and Spec 052 own harness-contract extension. |
+| REQ-WDTC-014 | ACC-WDTC-006 | N/A — draft ADR-0023 proposes the non-promotable evidence-depth decision. |
+| REQ-WDTC-015 | ACC-WDTC-009 | N/A — Spec 052 owns memory and generated-output cleanup. |
+| REQ-WDTC-016 | ACC-WDTC-007 | N/A — Spec 052 owns the named baseline remediation. |
+| REQ-WDTC-017 | ACC-WDTC-010 | N/A — Spec 052 owns suspension and resumption evidence. |
+| REQ-WDTC-018 | ACC-WDTC-010 | N/A — ARD-0011 owns the local-only system boundary. |

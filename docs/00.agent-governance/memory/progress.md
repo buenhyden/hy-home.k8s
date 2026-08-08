@@ -14839,3 +14839,84 @@ section separating static from live evidence.
   the controller creates the WERPC-005 logical commit.
 - Rollback unit after commit: revert only the WERPC-005 logical commit before
   any dependent link migration. No runtime workflow or platform state changed.
+
+## 2026-08-09 - Document SDLC and agent-governance design approved
+
+### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, architecture, agent-governance, validation
+- **Status**: in-progress
+- **Tags**: #sdlc #spec-driven #agent-governance #taxonomy #validation
+- **Owner**: Codex root agent
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: Human-approved direction A and 2026-08-09 external/local audit
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
+- **Next Owner**: Human reviewer for the written design; writing-plans follows approval
+
+### Progress
+
+- Recorded the approved terminal topology: Stage 03 co-locates Spec, Plan, and
+  Task; Stage 04 execution retires; Stage 05 operations stays stable; and no
+  Release document family or releases folder is created.
+- Rebased PRD-008, ARD-0011, and Spec 052 on the current repository audit and
+  added draft ADR-0023 instead of overwriting unrelated accepted ADR-0021.
+- Defined stable filename/date exceptions, fail-closed legacy/transition/
+  terminal routing, reviewed archive/delete/retain dispositions, Stage 00/99
+  authority consolidation, harness-contract risk/approval/trust/provenance
+  extension, validator semantic preservation, and baseline failure closure.
+- Recorded the current incorrect program-lineage association to ADR-0021 as a
+  defect. Registry and immutable-projection changes wait until ADR-0023 passes
+  lifecycle acceptance after written-design review.
+
+### Memory
+
+- ISO lifecycle standards support lifecycle and information-item tailoring but
+  do not mandate this repository's directory or filename scheme. Stable slugs,
+  date-in-frontmatter, and the unused Stage 04 slot are local architecture
+  decisions and must be reported as such.
+- Accepted ADRs are append-only. A mistaken program association is corrected by
+  a new draft decision, required review, later lifecycle promotion, and an
+  atomic registry projection; it does not authorize rewriting an unrelated
+  accepted ADR.
+- Similar validator names do not prove duplicate behavior. Consumer, rule,
+  negative-fixture, diagnostic, and evidence-lane equivalence are required
+  before merge or retirement.
+
+### Evidence
+
+- Clean pre-change `pre-commit run --all-files`: FAIL with a registry self-test
+  temporary-memory allocation error, three existing detect-secrets findings or
+  baseline drifts, and one existing Markdown heading violation. The hook's
+  `.secrets.baseline` mutation was reverted; these are named program defects,
+  not accepted terminal exceptions.
+- Registry self-test with `TMPDIR=/tmp`: PASS, 132 cases, 64 profiles, 30
+  templates, and all mutation probes passed.
+- Strict registry: PASS, 490 paths, zero uncovered or ambiguous routes.
+- Strict Markdown profiles: PASS with zero violations.
+- Strict links/owners: PASS with a valid cross-document result.
+- Staged lifecycle: PASS after routing new ADR-0023 through required `draft`
+  admission and deferring its registry projection until lifecycle review.
+- `git diff --check`: PASS.
+- `TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .`: PASS with the
+  final `[PASS] repository quality gates passed`; this isolates the recorded
+  default temporary-directory baseline defect without claiming it is fixed.
+- Independent staged-diff re-reviews by the taxonomy, template/registry, and
+  AI-governance auditors reported no remaining Critical or Important finding
+  after Stage 03 transition wording, ADR lifecycle, archive command, runtime
+  evidence owner, approval principal/scope, trace, and enforcement-boundary
+  corrections.
+- These results are repository-static. The raw default all-files baseline
+  failures remain named implementation work; no provider, hosted, remote, or
+  live evidence is claimed.
+
+### Handoff
+
+- Complete design self-review and repository gates, then commit this logical
+  design unit. The human must review the written Spec before implementation
+  planning begins.
+- After written-Spec approval, use `superpowers:writing-plans` to replace the
+  legacy Stage 04 Plan/Task with an execution plan for the approved topology.
+- No push, merge, publication, provider action, credential access, deployment,
+  or live mutation was performed.
