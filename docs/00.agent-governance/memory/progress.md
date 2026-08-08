@@ -14531,3 +14531,52 @@ section separating static from live evidence.
   unnecessary.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish,
   merge, deployment, or third-party mutation was performed or evidenced.
+
+## 2026-08-08 - WERPC-005 CI/CD, GitHub Actions, and QA research
+
+### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: documentation, quality, delivery, security
+- **Status**: done
+- **Tags**: #research-pack #werpc-005 #ci-cd #github-actions #qa
+
+### Progress
+
+- Reconciled the successor delivery/QA owner with the five tracked Actions
+  workflows, `.github` routing, pre-commit configuration, validation-surface
+  contract, quality-standard lane vocabulary, CI Python lock contract, and
+  predecessor routing rows.
+- Recorded current official primary-source findings as `SRC-WERPC-035` through
+  `SRC-WERPC-044` and bounded repository/product findings as
+  `CLM-WERPC-005-01` through `CLM-WERPC-005-10`.
+- The reference now separates static workflow/validator declarations from
+  hosted CI, GitHub administration, credentials/secrets, artifacts, OIDC,
+  deployment, GitOps reconciliation, and live operations. The latter classes
+  remain `DEFER`.
+
+### Evidence
+
+- Read-only inspection found five tracked workflows: `ci.yml`, changelog,
+  labeler, greetings, and stale maintenance. `ci-summary` is fail-closed for a
+  selected job and visible `SKIP` for an unselected conditional job; the
+  changelog artifact is review-only with seven-day retention.
+- Direct 2026-08-08 primary-source review covered GitHub Actions syntax,
+  secure use, concurrency, artifacts, OIDC, attestations/SLSA, environments,
+  pre-commit update provenance, and secure pip installation. No hosted API/UI
+  observation, workflow dispatch, credential inspection, artifact retrieval,
+  deployment, or live check was performed.
+- Focused local validation passed: Actions security, CI Python contract
+  (`jobs=4 pins=3`), affected-surface selection (`870` paths, `22/22`
+  surfaces/validators, four CI jobs), strict Markdown profiles, strict
+  links/owners, and `git diff --check`. Independent fresh review was Approved
+  with no Critical, Important, or Minor finding. On the exact five-file staged
+  scope, cached diff, Reference IA production, and the complete repository
+  quality gate passed; this remains repository-static, not hosted CI evidence.
+
+### Handoff
+
+- Next owner: docs-researcher for WERPC-006 agents/model/memory research after
+  the controller creates the WERPC-005 logical commit.
+- Rollback unit after commit: revert only the WERPC-005 logical commit before
+  any dependent link migration. No runtime workflow or platform state changed.
