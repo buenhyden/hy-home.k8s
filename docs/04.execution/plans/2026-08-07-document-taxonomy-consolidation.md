@@ -312,11 +312,21 @@ Their body and link guidance changes to sibling `spec.md`, `plan.md`, and
 - Modify: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 - Modify: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
+- Modify: `scripts/validate-active-corpus-residue-closure.py`
+- Modify: `tests/test_active_corpus_retention.py`
+- Modify: `scripts/README.md`
 
 **Interfaces:**
 
 - Consumes: ADR-0023 `status: active` from the approved planning commit.
 - Produces: accepted decision `0023` as the sole PRD-008 tranche decision.
+
+**Approved atomic consumer amendment (2026-08-09):** accepting ADR-0023 adds
+one new accepted ADR to the active-corpus residue-closure input. Update only
+the closed post-closure ADR allowlist, its self-test and covering retention
+test, and the script inventory wording to admit ADR-0023. The frozen accepted
+ADR guard and exact `13/29` guard count remain unchanged; no other authority
+path is admitted.
 
 - [ ] **Step 1: Change the immutable projection expectation first**
 
@@ -339,6 +349,10 @@ to state that written design and implementation planning were reviewed. Change
 only the PRD-008 tranche's `decision` from `0021` to `0023`. Preserve accepted
 ADR-0021 and its original scope.
 
+Update the approved active-corpus residue-closure consumer amendment in the
+same work package so the new accepted ADR-0023 is the only added post-closure
+authority path; retain the frozen `13/29` guard contract.
+
 - [ ] **Step 4: Run lifecycle and registry GREEN checks**
 
 ```bash
@@ -346,6 +360,9 @@ python3 scripts/validate-document-lifecycle.py --root . --mode staged
 python3 scripts/validate-document-contract-registry.py --root . --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/validate-active-corpus-residue-closure.py --root . --self-test
+python3 scripts/validate-active-corpus-residue-closure.py --root .
+python3 -m unittest tests/test_active_corpus_retention.py
 ```
 
 Expected: lifecycle accepts `active -> accepted`; self-test and strict registry
@@ -354,7 +371,7 @@ report zero failures, zero uncovered paths, and zero ambiguous paths.
 - [ ] **Step 5: Record evidence and commit**
 
 ```bash
-git add docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md docs/02.architecture/decisions/README.md docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py tests/fixtures/document-contracts/registry-cases.json docs/03.specs/052-document-taxonomy-consolidation/spec.md docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md docs/00.agent-governance/memory/progress.md
+git add docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md docs/02.architecture/decisions/README.md docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py tests/fixtures/document-contracts/registry-cases.json docs/03.specs/052-document-taxonomy-consolidation/spec.md docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md docs/00.agent-governance/memory/progress.md scripts/validate-active-corpus-residue-closure.py tests/test_active_corpus_retention.py scripts/README.md
 git commit -m "docs: accept the document taxonomy decision"
 ```
 

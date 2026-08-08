@@ -36,6 +36,13 @@ from document_contracts import (
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 LOCAL_AGENT_FIXTURE_FIELD = "localAgentFixtureSamplePath"
+PROGRAM_LINEAGE_PROJECTION_FIXTURE_FIELD = "productionProgramLineageProjection"
+PRD_008_IMMUTABLE_PROJECTION = (
+    "008",
+    "0011",
+    (("052", 1, "0023"),),
+    (),
+)
 GEMINI_NATIVE_CURRENT_SURFACE_RULE = "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
 GEMINI_NATIVE_CURRENT_SURFACE_ERROR = (
     f"{GEMINI_NATIVE_CURRENT_SURFACE_RULE}: Gemini CLI native surface must be "
@@ -2204,7 +2211,10 @@ def _assert_inventory_safety(root: Path) -> None:
             raise AssertionError(f"unsafe explicit include was accepted: {path}")
 
 
-def _assert_program_lineage_projection(registry: Registry) -> None:
+def _assert_program_lineage_projection(
+    registry: Registry,
+    fixture_prd_008_projection: tuple[Any, ...],
+) -> None:
     immutable_expected = (
         (
             "003",
@@ -2255,12 +2265,12 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
             (),
         ),
         (
-            "008",
-            "0011",
-            (("052", 1, "0023"),),
-            (),
+            *fixture_prd_008_projection,
         ),
     )
+
+    if fixture_prd_008_projection != PRD_008_IMMUTABLE_PROJECTION:
+        raise AssertionError("production PRD-008 lineage fixture differs")
 
     def assert_immutable_projection(candidate: Registry) -> None:
         immutable_actual = tuple(
@@ -4790,6 +4800,40 @@ def _assert_readme_fixture_mutation_proofs(
     )
 
 
+def _fixture_prd_008_immutable_projection(
+    fixture: dict[str, Any],
+) -> tuple[Any, ...]:
+    projection = fixture.get(PROGRAM_LINEAGE_PROJECTION_FIXTURE_FIELD)
+    if not isinstance(projection, dict) or set(projection) != {
+        "prd",
+        "ard",
+        "tranches",
+        "followUps",
+    }:
+        raise AssertionError("production PRD-008 lineage fixture shape differs")
+    tranches = projection["tranches"]
+    follow_ups = projection["followUps"]
+    if (
+        not isinstance(projection["prd"], str)
+        or not isinstance(projection["ard"], str)
+        or not isinstance(tranches, list)
+        or len(tranches) != 1
+        or not isinstance(tranches[0], dict)
+        or set(tranches[0]) != {"spec", "order", "decision"}
+        or not isinstance(tranches[0]["spec"], str)
+        or type(tranches[0]["order"]) is not int
+        or not isinstance(tranches[0]["decision"], str)
+        or follow_ups != []
+    ):
+        raise AssertionError("production PRD-008 lineage fixture shape differs")
+    return (
+        projection["prd"],
+        projection["ard"],
+        ((tranches[0]["spec"], tranches[0]["order"], tranches[0]["decision"]),),
+        (),
+    )
+
+
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
     fixture = _load_json(root / FIXTURE_PATH)
@@ -4803,6 +4847,11 @@ def _self_test(root: Path) -> int:
         or actual_contract != EXPECTED_CASES
     ):
         print("FAIL document contract registry self-test: fixture contract mismatch")
+        return 1
+    try:
+        fixture_prd_008_projection = _fixture_prd_008_immutable_projection(fixture)
+    except AssertionError as exc:
+        print(f"FAIL document contract registry self-test: {exc}")
         return 1
 
     with tempfile.TemporaryDirectory(prefix="document-registry-current-owner-") as tmp:
@@ -4980,7 +5029,7 @@ def _self_test(root: Path) -> int:
             root, raw_registry, fixture
         )
         registry = validate_registry(root, raw_registry)
-        _assert_program_lineage_projection(registry)
+        _assert_program_lineage_projection(registry, fixture_prd_008_projection)
         _assert_document_contract_projection(registry)
         readme_fixture = _load_json(root / README_FIXTURE_PATH)
         inventory = enumerate_target_markdown(root)

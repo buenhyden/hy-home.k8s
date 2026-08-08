@@ -1,6 +1,18 @@
 {
   "schemaVersion": 8,
   "localAgentFixtureSamplePath": ".agents/GEMINI.md",
+  "productionProgramLineageProjection": {
+    "prd": "008",
+    "ard": "0011",
+    "tranches": [
+      {
+        "spec": "052",
+        "order": 1,
+        "decision": "0023"
+      }
+    ],
+    "followUps": []
+  },
   "cases": [
     {
       "name": "valid-minimal",
