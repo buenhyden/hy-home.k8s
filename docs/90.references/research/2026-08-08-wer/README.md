@@ -33,7 +33,7 @@ not a policy, runtime, provider, or deployment control surface.
 | [memory](agent-memory-tiers-and-management.md) | Memory-class lifecycle |
 | [source and migration ledger](source-coverage-and-migration-ledger.md) | Sources, predecessor disposition, and cutover evidence |
 
-## Requirement Coverage Matrix
+### Requirement Coverage Matrix
 
 Each request has one and only one primary research owner. Workspace evidence is
 current local evidence; it does not establish external product or live-runtime
@@ -41,12 +41,12 @@ claims.
 
 | Request ID | Requested topic | Primary owner | Workspace evidence | External source class | Status |
 | --- | --- | --- | --- | --- | --- |
-| REQ-WERPC-001 | Harness | [Harness baseline](harness-and-loop-engineering.md#harness-baseline) | `.codex/CODEX.md` | Later primary research | Unverified |
-| REQ-WERPC-002 | Loop | [Loop baseline](harness-and-loop-engineering.md#loop-baseline) | `docs/00.agent-governance/rules/agentic.md` | Later primary research | Unverified |
-| REQ-WERPC-003 | Workspace application | [Workspace application baseline](workspace-governance-and-common-agent-environment.md#workspace-application-baseline) | `AGENTS.md` | Later primary research | Unverified |
-| REQ-WERPC-004 | Claude | [Claude baseline](provider-implementation-status.md#claude-baseline) | `.claude/` | Later official provider research | Unverified |
-| REQ-WERPC-005 | Codex | [Codex baseline](provider-implementation-status.md#codex-baseline) | `.codex/CODEX.md` | Later official provider research | Unverified |
-| REQ-WERPC-006 | Common system | [Common-system baseline](workspace-governance-and-common-agent-environment.md#common-system-baseline) | `docs/00.agent-governance/harness-catalog.md` | Later primary research | Unverified |
+| REQ-WERPC-001 | Harness | [Harness baseline](harness-and-loop-engineering.md#harness-baseline) | `.codex/CODEX.md` | Official OpenAI primary sources plus repository-static contracts, checked 2026-08-08 | Verified — static harness implementation; provider/runtime delivery remains DEFER |
+| REQ-WERPC-002 | Loop | [Loop baseline](harness-and-loop-engineering.md#loop-baseline) | `docs/00.agent-governance/rules/agentic.md` | Repository-static machine contract plus official OpenAI product context, checked 2026-08-08 | Verified — local state/retry contract; actual provider execution remains DEFER |
+| REQ-WERPC-003 | Workspace application | [Workspace application baseline](workspace-governance-and-common-agent-environment.md#workspace-application-baseline) | `AGENTS.md` | Official Anthropic/OpenAI sources plus repository-static owners, checked 2026-08-08 | Verified — static control-plane application; native discovery/authentication remains DEFER |
+| REQ-WERPC-004 | Claude | [Claude baseline](provider-implementation-status.md#claude-baseline) | `.claude/` | Official Anthropic provider documentation, checked 2026-08-08 | Verified — bounded product surfaces and static adapter; local discovery/runtime remains DEFER |
+| REQ-WERPC-005 | Codex | [Codex baseline](provider-implementation-status.md#codex-baseline) | `.codex/CODEX.md` | Official OpenAI provider documentation (manual cache first), checked 2026-08-08 | Verified — bounded product surfaces and static adapter; local discovery/runtime remains DEFER |
+| REQ-WERPC-006 | Common system | [Common-system baseline](workspace-governance-and-common-agent-environment.md#common-system-baseline) | `docs/00.agent-governance/harness-catalog.md` | Official provider sources plus repository-static control-plane evidence, checked 2026-08-08 | Partial — static shared controls verified; provider parity/effective runtime remains DEFER |
 | REQ-WERPC-007 | Spec-driven development | [Spec-driven baseline](spec-driven-sdlc-and-document-contracts.md#spec-driven-development-baseline) | `docs/03.specs/` | Later primary research | Unverified |
 | REQ-WERPC-008 | Kubernetes | [Kubernetes baseline](kubernetes-infrastructure-and-security.md#kubernetes-baseline) | `gitops/` | Later primary research | Unverified |
 | REQ-WERPC-009 | Infrastructure | [Infrastructure baseline](kubernetes-infrastructure-and-security.md#infrastructure-baseline) | `infrastructure/` | Later primary research | Unverified |

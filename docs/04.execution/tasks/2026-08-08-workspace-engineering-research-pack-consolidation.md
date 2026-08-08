@@ -44,7 +44,7 @@ or live-cluster result is produced or claimed.
 | WERPC-000 | VAL-WER-008, VAL-WER-011 | Activate reciprocal execution and supersede only WDTC-002/WORK-002 | platform | Done | Active reciprocal lifecycle is recorded; WDTC-002/WORK-002 is superseded to Spec 053 and WERPC-008; all required focused, diff, and repository quality checks passed before this logical commit | Design commit; strict registry, Markdown profile, and links/owners checks; repository quality gate; optional all-files pre-commit INTERRUPTED/SKIP with required-gate fallback; self-review; this logical commit |
 | WERPC-000A | VAL-WER-008, VAL-WER-011 | Add typed direct-approval standalone execution lineage without changing program lineage | platform | Done | Closed schema-v8 relation, parser projection, structural/link/eligibility diagnostics, ADR-0022, exact-pair terminal eligibility, disjoint rendered execution graphs, and bounded post-closure ADR handling are implemented without changing existing program-lineage semantics | RED/GREEN mutation history remains in the progress ledger. Final staged evidence: registry self-test 132 cases and strict 501 paths; standalone link fixture 8 cases and full links self-test/strict PASS; eligibility 58 cases and production PASS; residue closure 25 cases and production PASS with frozen guards 13/29; affected unit tests 2/2 PASS; Markdown profiles and cached diff PASS; complete repository quality gate PASS; Python and governance reviews Approved. |
 | WERPC-001 | VAL-WER-001, VAL-WER-002, VAL-WER-003 | Create exact pack shape, coverage matrix, source register, and predecessor disposition baseline | docs-researcher | Done | Created the exact thirteen-file pack with REQ-WERPC-001 through REQ-WERPC-032, one primary file-and-heading owner per request, current workspace evidence, three dated predecessor source-register entries, 25 full-hash file dispositions, and 35 text-exact H3 split rows | Exact 13/25 counts, Markdown profiles, strict registry, strict links/owners, diff check, full repository quality gate, self-review, and this logical commit |
-| WERPC-002 | VAL-WER-004, VAL-WER-005, VAL-WER-006, VAL-WER-007 | Research governance, harness, loop, Claude, Codex, and common environment | docs-researcher | Queued | Not executed | Three references, source/claim review, provider-surface matrix, harness/full gates |
+| WERPC-002 | VAL-WER-004, VAL-WER-005, VAL-WER-006, VAL-WER-007 | Research governance, harness, loop, Claude, Codex, and common environment | docs-researcher | Done | Three detailed references define the harness/loop machine, workspace control plane, and Claude/Codex surface matrix; ten dated official primary-source rows and nine bounded claim rows distinguish static configuration, native discovery, and authenticated/runtime evidence; the collection index and README inventory contract include the new pack | Fresh-review RED: strict links/owners reported 26 collection-index omissions. Fix-round RED: the full gate exposed the missing new-pack README inventory row. GREEN: exact 13-file tree/table projections, active54/new7 README contract, Markdown profiles, registry self-test/strict, strict links, harness semantics, Reference IA production, cached diff, and the full repository gate PASS; documentation and Python fresh reviews Approved; this logical commit. |
 | WERPC-003 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research spec-driven SDLC, document families, Diátaxis, and LLM-WIKI | docs-researcher | Queued | Not executed | Three references, complete document-family matrix, wiki/profile/link/full gates |
 | WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | security-auditor | Queued | Not executed | Platform/security reference, source and evidence-depth review, harness/full gates |
 | WERPC-005 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research CI/CD, GitHub Actions, and QA | quality-engineer | Queued | Not executed | Delivery/QA reference, workflow inventory, source review, full gate |
@@ -96,9 +96,18 @@ WERPC-000A implements the approved typed standalone-execution contract without
 changing `programLineage`. Registry, links/owners, eligibility, residue closure,
 the affected unit tests, Markdown profiles, cached diff, and the complete
 repository quality gate passed on the final reviewed staged tree.
-WERPC-002 through WERPC-009 are not executed. Each row will record exact
-command results, review disposition, commit, limitation, `SKIP`, or `DEFER`
-without converting repository-static evidence into a deeper claim.
+WERPC-002 is done: its source ledger has official, dated primary sources with
+refresh triggers and claim boundaries; the topical references retain `DEFER`
+for native discovery, authenticated/runtime, hosted CI, remote, and live
+claims. The collection-index and README-inventory REDs were closed without
+changing the immutable baseline, and both fresh reviews plus the final staged
+Reference IA and complete repository quality gate passed. The attempted
+Reference IA `--staged` variant is recorded as an inapplicable-mode `SKIP`; the
+Plan's production `--root .` command passed. WERPC-003 through WERPC-009 are
+not executed. Each remaining
+row will record exact command results, review disposition, commit, limitation,
+`SKIP`, or `DEFER` without converting repository-static evidence into a deeper
+claim.
 
 ## Traceability
 
@@ -109,7 +118,7 @@ without converting repository-static evidence into a deeper claim.
 | [WERPC-000](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md#work-breakdown) | Done. | Active Spec/Plan/Task and collection indexes; bounded PRD-008/ARD-0011 exception; superseded WDTC-002/WORK-002 route; required strict, diff, and repository-quality checks passed; optional all-files pre-commit INTERRUPTED/SKIP with required-gate fallback; self-review. |
 | N/A — WERPC-000A shares the Plan and Spec sources above | Done. | Typed standalone execution, exact-pair/approval/owner/state/overlap/terminal tests, bounded closure authority, two independent reviews, and the complete repository quality gate PASS. |
 | N/A — WERPC-001 shares the Plan and Spec sources above | Done. | Exact thirteen-file pack; 32 unique request-primary-owner rows; three dated predecessor source entries; 25 file rows with matching full source commits; 35 text-exact H3 split dispositions; strict registry, strict links/owners, cached diff, and full repository quality gate PASS on the staged tree. |
-| N/A — WERPC-002 shares the Plan and Spec sources above | Not executed. | Governance/harness/loop/provider research evidence pending. |
+| N/A — WERPC-002 shares the Plan and Spec sources above | Done. | Dated source/claim ledger (SRC-WERPC-004–013; CLM-WERPC-002-01–009); detailed harness/loop, provider-surface, and common-control-plane references; exact 13 tree/row collection projections; active54/new7 README inventory contract with baseline67/active47/retired20 preserved; documentation and Python fresh reviews Approved; final Reference IA production and complete repository quality gate PASS. |
 | N/A — WERPC-003 shares the Plan and Spec sources above | Not executed. | SDLC/document/Diátaxis/LLM-WIKI research evidence pending. |
 | N/A — WERPC-004 shares the Plan and Spec sources above | Not executed. | Kubernetes/infrastructure/security research evidence pending. |
 | N/A — WERPC-005 shares the Plan and Spec sources above | Not executed. | CI/CD/GitHub Actions/QA research evidence pending. |

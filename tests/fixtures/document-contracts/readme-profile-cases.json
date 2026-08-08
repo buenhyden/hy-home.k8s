@@ -707,6 +707,28 @@
       "new": true
     },
     {
+      "path": "docs/90.references/research/2026-08-08-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": true
+    },
+    {
       "path": "docs/90.references/research/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [

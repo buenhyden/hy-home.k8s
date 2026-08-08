@@ -2074,11 +2074,11 @@ def _self_test(root: Path) -> list[str]:
     readme_paths = [row.get("path") for row in readme_path_rows]
     retired_readme_paths = [row.get("path") for row in retired_readme_rows]
     if (
-        len(readme_paths) != 52
+        len(readme_paths) != 54
         or len(readme_paths) != len(set(readme_paths))
         or readme_paths != sorted(readme_paths)
     ):
-        failures.append("README activePaths must contain 52 sorted unique entries")
+        failures.append("README activePaths must contain 54 sorted unique entries")
     if (
         len(retired_readme_paths) != 20
         or len(retired_readme_paths) != len(set(retired_readme_paths))
@@ -2106,12 +2106,12 @@ def _self_test(root: Path) -> list[str]:
     if (
         len(baseline_readmes) != 67
         or len(active_baseline) != 47
-        or len(active_program_created) != 5
+        or len(active_program_created) != 7
         or active_baseline | set(retired_readme_paths) != baseline_readmes
         or set(retired_readme_paths) - baseline_readmes
     ):
         failures.append(
-            "README handoff must reconstruct baseline67 as active47 plus retired20 and active-new5"
+            "README handoff must reconstruct baseline67 as active47 plus retired20 and active-new7"
         )
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}

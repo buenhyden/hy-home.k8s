@@ -8,6 +8,80 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-002 governance, harness, loop, and provider research
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #harness #agent-loop #claude #codex #evidence-depth
+- **Owner**: docs-researcher
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-002 / VAL-WER-004 through VAL-WER-007; official primary sources checked 2026-08-08; direct repository observation in the WERPC worktree
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure; refresh individual source rows on their named provider/control trigger.
+- **Next Owner**: docs-researcher — implement WERPC-003 from its completed read-only research handoff.
+
+#### Progress
+
+Expanded the three WERPC-002 topical references from baseline routes into
+source-backed research. The harness reference now defines the six control
+components, local loop machine, terminal states, retry/no-progress/escalation
+rules, evidence lanes, observability, and target-state application. Provider
+status compares Claude and Codex across instructions, configuration, hooks,
+subagents, MCP, sandbox/approval, memory, models, and runtime. The common
+environment reference defines a provider-neutral control plane and application
+rules at work-item, session, project, provider, and CI scope.
+
+The ledger adds ten 2026-08-08 official primary source rows, refresh triggers,
+and nine claim rows. It explicitly separates tracked static configuration from
+native discovery and authenticated/runtime evidence. No credentials, private
+configuration, provider account state, hosted CI, remote execution, or live
+cluster state was inspected.
+
+#### Memory
+
+Provider documentation and tracked adapters answer different questions. A
+current official page can verify a bounded product surface; a repository file
+can verify a static declaration. Neither closes discovery, hook delivery,
+authentication, effective permissions, model resolution, MCP execution, or live
+readiness. Use `DEFER` for that missing evidence rather than promoting an
+inference. A common control plane should own task acceptance, security, recovery,
+evaluation, and durable knowledge once; provider adapters should own only their
+native edge semantics.
+
+#### Evidence
+
+- Official source review: Anthropic memory/settings/hooks/subagents/MCP and
+  OpenAI Codex AGENTS/config-sandbox-approval/subagents/hooks/MCP, checked
+  2026-08-08. The supplied `/tmp/openai-docs-cache/codex-manual.md` and outline
+  were read before OpenAI source supplementation.
+- Workspace review: `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `.codex/**`, Stage
+  00 bootstrap/provider/quality/loop contracts, `harness-catalog.md`, Task, and
+  progress ledger. Static configuration was not reported as runtime evidence.
+- Focused source/claim, profile, strict-registry, strict-links, harness-semantics,
+  and diff checks passed. Fresh review first reproduced 26 strict
+  collection-index omissions for all new-pack targets in
+  `docs/90.references/research/README.md`; the exact 13-file tree and table
+  projections then closed that RED. The first complete gate exposed a second
+  RED: the README fixture omitted the new pack. A bounded TDD fix added the
+  `readme/snapshot-pack` row and aligned active/new expectations to 54/7 while
+  preserving baseline67, active-baseline47, and retired20. The documentation
+  and Python fresh reviews both returned Approved with no Critical or Important
+  finding. On the final exact 11-file index, Reference IA production,
+  registry self-test/strict, Markdown profiles, strict links, harness semantics,
+  cached diff, and the complete repository quality gate passed. The attempted
+  Reference IA `--staged` variant rejected the unsettled-transition mode and is
+  `SKIP`; the Plan's production `--root .` invocation passed. CI and remote/live
+  remain `DEFER`.
+
+#### Handoff
+
+docs-researcher — use the completed WERPC-003 research handoff, retain the
+evidence-depth vocabulary, and begin the next logical research unit only after
+the WERPC-002 commit.
+
 ### 2026-08-08 - WERPC-000A standalone execution lineage
 
 #### Metadata

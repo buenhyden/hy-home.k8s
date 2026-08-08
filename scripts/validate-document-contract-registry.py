@@ -4297,8 +4297,8 @@ def _assert_readme_family_contract(
         set(retired_order)
     ):
         raise AssertionError("README retiredPaths must be sorted and unique")
-    if len(active_rows) != 53 or len(retired_rows) != 20:
-        raise AssertionError("README fixture must contain exact active53 and retired20")
+    if len(active_rows) != 54 or len(retired_rows) != 20:
+        raise AssertionError("README fixture must contain exact active54 and retired20")
 
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
@@ -4431,9 +4431,9 @@ def _assert_readme_family_contract(
     active_program_created = active_paths - baseline_readmes
     if len(baseline_readmes) != 67:
         raise AssertionError("README immutable baseline must contain exact 67 paths")
-    if len(active_baseline) != 47 or len(active_program_created) != 6:
+    if len(active_baseline) != 47 or len(active_program_created) != 7:
         raise AssertionError(
-            "README activePaths must contain 47 baseline and six program-created paths"
+            "README activePaths must contain 47 baseline and seven program-created paths"
         )
     if retired_paths - baseline_readmes:
         raise AssertionError(
@@ -4657,9 +4657,9 @@ def _assert_readme_fixture_mutation_proofs(
         ),
         key=lambda path: path.as_posix(),
     )
-    if len(declared_new_paths) != 6:
+    if len(declared_new_paths) != 7:
         raise AssertionError(
-            "README fixture mutation proof requires exact six program-created paths"
+            "README fixture mutation proof requires exact seven program-created paths"
         )
     missing_paths = set(declared_new_paths[:2])
     missing_declared_inventory = TargetInventory(

@@ -77,6 +77,20 @@ research/
 │   ├── github-actions-and-ci-evidence.md
 │   ├── llm-wiki-and-knowledge-routing.md
 │   └── research-consolidation-and-supersession-map.md
+├── 2026-08-08-wer/
+│   ├── README.md
+│   ├── agent-memory-tiers-and-management.md
+│   ├── agent-model-routing-and-configuration.md
+│   ├── ai-agents-and-agency-agents.md
+│   ├── ci-cd-github-actions-and-qa.md
+│   ├── documentation-architecture-and-diataxis.md
+│   ├── harness-and-loop-engineering.md
+│   ├── kubernetes-infrastructure-and-security.md
+│   ├── llm-wiki-and-knowledge-routing.md
+│   ├── provider-implementation-status.md
+│   ├── source-coverage-and-migration-ledger.md
+│   ├── spec-driven-sdlc-and-document-contracts.md
+│   └── workspace-governance-and-common-agent-environment.md
 └── README.md                            # This file
 ```
 
@@ -110,6 +124,19 @@ research/
 | [github-actions-and-ci-evidence.md](./2026-08-07-wer/github-actions-and-ci-evidence.md) | Included | GitHub Actions rules, CI selection contract, and evidence lanes (2026-08-07) | Repository-static observation only; no hosted-run or deployment claim |
 | [llm-wiki-and-knowledge-routing.md](./2026-08-07-wer/llm-wiki-and-knowledge-routing.md) | Included | LLM knowledge-index conventions and generated-index drift (2026-08-07) | Descriptive reference only; generator content stays with its canonical owner |
 | [research-consolidation-and-supersession-map.md](./2026-08-07-wer/research-consolidation-and-supersession-map.md) | Included | Supersession map, carried-forward facts, and superseded pack claims (2026-08-07) | Consolidation record only; it does not amend or invalidate an earlier pack document |
+| [2026-08-08-wer/README.md](./2026-08-08-wer/README.md) | Active pack | Successor workspace engineering research pack entry point | Dated research routing and coverage only; canonical owners retain current policy/runtime authority |
+| [agent-memory-tiers-and-management.md](./2026-08-08-wer/agent-memory-tiers-and-management.md) | Active pack | Working, durable, domain-scoped, and provider-local memory research | Descriptive reference only; memory lifecycle contract remains with Stage 00 |
+| [agent-model-routing-and-configuration.md](./2026-08-08-wer/agent-model-routing-and-configuration.md) | Active pack | Model-routing and configuration research | Descriptive reference only; provider availability and observed model resolution require separate evidence |
+| [ai-agents-and-agency-agents.md](./2026-08-08-wer/ai-agents-and-agency-agents.md) | Active pack | AI-agent-system and agency-agents research | Descriptive reference only; roster and admission remain with canonical Stage 00 owners |
+| [ci-cd-github-actions-and-qa.md](./2026-08-08-wer/ci-cd-github-actions-and-qa.md) | Active pack | CI/CD, GitHub Actions, and QA research | Descriptive reference only; static validation does not prove hosted CI or deployment |
+| [documentation-architecture-and-diataxis.md](./2026-08-08-wer/documentation-architecture-and-diataxis.md) | Active pack | Documentation architecture and Diátaxis research | Descriptive mapping only; document profiles and templates remain canonical |
+| [harness-and-loop-engineering.md](./2026-08-08-wer/harness-and-loop-engineering.md) | Active pack | Harness components, loop state machine, recovery, and evaluation research | Descriptive reference only; Stage 00 contracts remain the executable control owners |
+| [kubernetes-infrastructure-and-security.md](./2026-08-08-wer/kubernetes-infrastructure-and-security.md) | Active pack | Kubernetes, infrastructure, GitOps, and security research | Descriptive reference only; no live-cluster or active security-policy claim |
+| [llm-wiki-and-knowledge-routing.md](./2026-08-08-wer/llm-wiki-and-knowledge-routing.md) | Active pack | LLM-WIKI routing and knowledge-management research | Descriptive reference only; generated/index owners remain canonical |
+| [provider-implementation-status.md](./2026-08-08-wer/provider-implementation-status.md) | Active pack | Claude/Codex product-surface and static-adapter status research | Product and static evidence only; native discovery/authenticated runtime remain separate |
+| [source-coverage-and-migration-ledger.md](./2026-08-08-wer/source-coverage-and-migration-ledger.md) | Active pack | Source, claim, predecessor-disposition, and cutover ledger | Ledger preserves provenance; it does not make external/runtime claims authoritative |
+| [spec-driven-sdlc-and-document-contracts.md](./2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md) | Active pack | Spec-driven SDLC and document-contract research | Descriptive reference only; lifecycle documents and templates retain authority |
+| [workspace-governance-and-common-agent-environment.md](./2026-08-08-wer/workspace-governance-and-common-agent-environment.md) | Active pack | Provider-neutral workspace control-plane research | Descriptive reference only; provider permissions and active governance remain canonical elsewhere |
 
 `Dated pack`, `Historical`, `Included`, and `Index` are collection roles,
 not report lifecycle values. This collection declares no Current pack in the
@@ -164,6 +191,7 @@ owners.
 - [90.references README](../README.md)
 - [Workspace Engineering Research Pack (2026-07-07)](./2026-07-07-wer/README.md)
 - [Workspace Engineering Research Pack (2026-07-04)](./2026-07-04-wer/README.md)
+- [Workspace Engineering Research Pack (2026-08-08)](./2026-08-08-wer/README.md)
 - [Workspace Engineering Research Pack Spec](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - [Workspace Engineering Research Pack Plan](../../04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md)
 - [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md)
