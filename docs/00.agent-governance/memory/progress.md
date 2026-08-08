@@ -8,6 +8,68 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-003 SDLC documents, Diátaxis, and LLM-WIKI research
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #sdd #sdlc #document-contracts #diataxis #llm-wiki
+- **Owner**: docs-researcher
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-003; official primary sources checked 2026-08-08 and direct repository-static contract observation
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
+- **Next Owner**: docs-researcher — implement WERPC-004 from its completed Kubernetes/infrastructure/security research handoff.
+
+#### Progress
+
+Expanded the three WERPC-003 references and only the corresponding README and
+source/claim ledger rows. The SDLC reference defines intent-to-operations
+authority/evidence flow and a full family matrix for PRD, ARD, ADR, Guide,
+Incident, Postmortem, Policy, Release, and Runbook. It records the Release gap
+honestly: no typed profile, template, path/index, lifecycle/status domain, or
+validator surface was found. The Diátaxis reference preserves its four reader
+needs without mapping them one-to-one onto SDLC families, and records tutorial
+and explanation as gaps. The LLM-WIKI reference defines the existing generated
+canonical-owner link map and separates it from llms.txt, MCP Resources, search,
+and RAG.
+
+#### Memory
+
+Document family, reader purpose, and retrieval mechanism are different axes.
+Profiles/templates/validators establish a static structural contract; they do
+not prove semantic quality, approval, runtime behavior, safety, conformance,
+or fresh retrieval. A Release family cannot be inferred from workflows or
+SemVer; it needs an approved cross-stage contract. A generated owner-link map
+is valuable precisely because it remains narrow and does not copy operational
+content or imply an MCP/search/RAG service.
+
+#### Evidence
+
+- Official primary observations: GitHub Spec Kit, NIST SSDF, ISO official
+  abstract, AWS ADR, Google SRE incident/postmortem guidance, SemVer,
+  Diátaxis, llms.txt proposal, and MCP server/Resources specifications; all
+  checked 2026-08-08 and registered as `SRC-WERPC-014`–`022` with limitation
+  and refresh boundaries.
+- Workspace observation: profiles/schema, selected templates, Stage routing,
+  profile/registry/link validators, LLM-WIKI README/generated index/generator
+  and curation guide. Static evidence remains separate from live incident,
+  release, deployment, search, RAG, MCP, or provider behavior.
+- Fresh review returned Approved with no Critical, Important, or Minor finding.
+  On the exact staged seven-file tree, source/claim audit, registry self-test and
+  strict validation, Markdown profiles, strict links/owners, LLM-WIKI generated
+  index check, Reference IA production, cached diff, and the complete repository
+  quality gate passed. No remote, secret, provider-runtime, hosted CI, or live
+  action occurred.
+
+#### Handoff
+
+docs-researcher — use the completed WERPC-004 research handoff while retaining
+the static-versus-live evidence boundary and keeping all live cluster/secret
+validation `DEFER`.
+
 ### 2026-08-08 - WERPC-002 governance, harness, loop, and provider research
 
 #### Metadata
