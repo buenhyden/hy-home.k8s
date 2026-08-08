@@ -117,7 +117,7 @@ WERPC_DISPOSITION_COLUMNS = (
     "disposition",
     "reason and evidence",
 )
-WERPC_DELETION_DISPOSITION = "Delete in WERPC-008 after cutover gate"
+WERPC_DELETION_DISPOSITION = "Deleted in WERPC-008 after cutover gate"
 FIXTURE_GIT_EXECUTABLE = "/usr/bin/git"
 FIXTURE_GIT_TIMEOUT_SECONDS = 10
 FIXTURE_GIT_MAX_STDOUT = 65_536

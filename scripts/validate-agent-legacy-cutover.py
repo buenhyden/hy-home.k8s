@@ -153,7 +153,7 @@ MIGRATION_REFERENCES = (
     "docs/00.agent-governance/memory/progress.md",
 )
 ALLOWED_REFERENCE_COUNTS = (
-    (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 8)),
+    (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 7)),
     (SCHEMA_PATH.as_posix(), (0, 0, 0, 0, 0)),
     ("scripts/validate-agent-legacy-cutover.py", (1, 1, 1, 1, 1)),
     ("scripts/validate-links-and-owners.py", (1, 1, 1, 1, 4)),
@@ -211,20 +211,6 @@ PROTECTED_EVIDENCE_FILES = (
         "retiredReference": RETIRED_SURFACES[4],
         "supersededBy": REPLACEMENT_SURFACES[4],
         "count": 2,
-    },
-    {
-        "path": (
-            "docs/90.references/research/2026-07-04-wer/"
-            "automation-pipeline-workflow-qa.md"
-        ),
-        "sha256": "9e4b828aae5e631ff5cf3daf6bc88223ecdb17ce377914b5e9b2f1a2af2601ab",  # pragma: allowlist secret
-        "evidenceKind": "pinned-ria-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-05",
-        "sourceCommit": RIA_SNAPSHOT_SOURCE_COMMIT,
-        "retiredReference": RETIRED_SURFACES[4],
-        "supersededBy": REPLACEMENT_SURFACES[4],
-        "count": 6,
     },
     {
         "path": (

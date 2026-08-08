@@ -35,8 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = "2f12a5a509b9f0af007caa8febd5e0f83818e0d6085009661a99b29318334b47"  # pragma: allowlist secret
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "4e0b7e55ee399eee5274f2b2156993da1826f1a5a53addae36b885d963828f57"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SHA256 = "3284adc4d41dc4c430ed36c50055800c8b1f9cd61b5af8cde67abe71edc6f0aa"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "cc47f9265e4c3f5bf5d305c232b395940ff691940f4ff8407dc1f8c8ebe0e42e"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -80,7 +80,6 @@ HISTORICAL_PACK_IDS = (
     "audits/2026-07-03-wdgh",
     "audits/2026-07-04-wdcn",
     "audits/2026-07-05-wea",
-    "research/2026-07-04-wer",
 )
 AUDIT_PACK_ID = "audits/2026-07-11-weia"
 RESEARCH_PACK_ID = "research/2026-08-08-wer"

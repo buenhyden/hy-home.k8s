@@ -330,12 +330,13 @@ adapter PASS does not prove provider runtime consumption.
   포함하지 않으며 registry/config self-test의 repo-static 입력으로만
   사용한다.
 - `tests/fixtures/document-contracts/readme-profile-cases.json` schema v3는
-  현재 `activePaths` 52개와 ADM-006 `retiredPaths` 20개를 분리해 보존한다.
-  active baseline 47개와 retired baseline 20개가 immutable baseline 67개를
-  재구성하고, 나머지 active 5개는 program-created handoff다. Retired 행은
-  historical profile/heading disposition과 `retiredBy`, provider-correct
-  snapshot destination을 유지하되 현재 registry에서는 반드시 uncovered로
-  남는다. 여덟 parser 사례는 active 경로만 참조한다.
+  현재 `activePaths` 51개와 `retiredPaths` 23개를 분리해 보존한다. Active
+  baseline 45개와 retired baseline 22개가 immutable baseline 67개를
+  재구성하며, program-created handoff는 active 6개와 retired 1개다.
+  ADM-006의 20행은 provider-correct snapshot destination과 uncovered route를
+  유지하고, WERPC-008의 3행은 삭제된 predecessor README 경로와 새 pack
+  README 목적지 및 snapshot route를 보존한다. 여덟 parser 사례는 active
+  경로만 참조한다.
 - `tests/fixtures/document-contracts/template-compatibility.json`은 Spec 033
   소유의 finite no-growth retirement guard다. Schema v2는
   `compatibilityDebt`와 `semanticDebtCaps`가 퇴역 필드로 계속 부재함을

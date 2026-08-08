@@ -236,8 +236,8 @@
         },
         "protectedEvidenceFiles": {
           "type": "array",
-          "minItems": 5,
-          "maxItems": 5,
+          "minItems": 4,
+          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/protectedEvidenceFile"
           }

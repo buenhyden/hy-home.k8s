@@ -79,7 +79,7 @@
     "allowedReferenceCounts": [
       {
         "path": "docs/00.agent-governance/contracts/agent-legacy-cutover.json",
-        "counts": [1, 1, 1, 2, 8]
+        "counts": [1, 1, 1, 2, 7]
       },
       {
         "path": "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json",
@@ -159,17 +159,6 @@
         "retiredReference": ".github/ABOUT.md",
         "supersededBy": ".github/README.md",
         "count": 2
-      },
-      {
-        "path": "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md",
-        "sha256": "9e4b828aae5e631ff5cf3daf6bc88223ecdb17ce377914b5e9b2f1a2af2601ab",
-        "evidenceKind": "pinned-ria-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-05",
-        "sourceCommit": "8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
-        "retiredReference": ".github/ABOUT.md",
-        "supersededBy": ".github/README.md",
-        "count": 6
       },
       {
         "path": "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md",

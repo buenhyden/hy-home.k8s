@@ -641,72 +641,6 @@
       "new": false
     },
     {
-      "path": "docs/90.references/research/2026-07-04-wer/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/research/2026-07-07-wer/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/research/2026-08-07-wer/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": true
-    },
-    {
       "path": "docs/90.references/research/2026-08-08-wer/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
@@ -1149,6 +1083,78 @@
     }
   ],
   "retiredPaths": [
+    {
+      "path": "docs/90.references/research/2026-07-04-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "WERPC-008",
+      "destination": "docs/90.references/research/2026-08-08-wer/README.md"
+    },
+    {
+      "path": "docs/90.references/research/2026-07-07-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "WERPC-008",
+      "destination": "docs/90.references/research/2026-08-08-wer/README.md"
+    },
+    {
+      "path": "docs/90.references/research/2026-08-07-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": true,
+      "retiredBy": "WERPC-008",
+      "destination": "docs/90.references/research/2026-08-08-wer/README.md"
+    },
     {
       "path": "examples/aws/docs/01.requirements/README.md",
       "profile": "readme/snapshot-pack",

@@ -823,7 +823,7 @@ Canonical follow-up owner | Refresh trigger
   ledger, and occurrence classification.
 - Produces: one live `2026-08-08-wer` pack and three absent predecessor roots.
 
-- [ ] **Step 1: Re-run pre-deletion gates**
+- [x] **Step 1: Re-run pre-deletion gates**
 
   ```bash
   test "$(git ls-files 'docs/90.references/research/2026-07-04-wer/**' 'docs/90.references/research/2026-07-07-wer/**' 'docs/90.references/research/2026-08-07-wer/**' | wc -l)" -eq 25
@@ -836,12 +836,12 @@ Canonical follow-up owner | Refresh trigger
   deletion if any migration row, section disposition, source, or occurrence
   classification is incomplete.
 
-- [ ] **Step 2: Delete only the enumerated predecessor files**
+- [x] **Step 2: Delete only the enumerated predecessor files**
 
   Use `apply_patch` to delete the 25 files from the tracked baseline. Do not
   issue recursive filesystem deletion and do not create redirects.
 
-- [ ] **Step 3: Prove exact absence and pack shape**
+- [x] **Step 3: Prove exact absence and pack shape**
 
   ```bash
   test ! -e docs/90.references/research/2026-07-04-wer
@@ -850,7 +850,7 @@ Canonical follow-up owner | Refresh trigger
   test "$(find docs/90.references/research/2026-08-08-wer -maxdepth 1 -type f | wc -l)" -eq 13
   ```
 
-- [ ] **Step 4: Run post-deletion validation**
+- [x] **Step 4: Run post-deletion validation**
 
   ```bash
   git diff --check
@@ -865,7 +865,7 @@ Canonical follow-up owner | Refresh trigger
   unit before commit, correct the missing migration, and repeat; never weaken a
   gate.
 
-- [ ] **Step 5: Record deletion evidence and commit**
+- [x] **Step 5: Record deletion evidence and commit**
 
   ```bash
   git add docs/90.references/research \

@@ -396,7 +396,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 "audits/2026-07-03-wdgh",
                 "audits/2026-07-04-wdcn",
                 "audits/2026-07-05-wea",
-                "research/2026-07-04-wer",
             ],
         )
 

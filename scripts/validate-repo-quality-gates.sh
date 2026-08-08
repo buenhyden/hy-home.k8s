@@ -131,7 +131,6 @@ import json
 import os
 import pathlib
 import re
-import runpy
 import subprocess
 import sys
 import tempfile
@@ -2382,49 +2381,14 @@ migration_evidence_ledger_path = (
     root
     / "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
 )
-predecessor_migration_evidence_ledger_path = (
-    root
-    / "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
-)
-link_contract = runpy.run_path(str(root / "scripts/validate-links-and-owners.py"))
-werpc_disposition_map = link_contract["_werpc_predecessor_disposition_map"](
-    read_text(migration_evidence_ledger_path)
-)
-werpc_expected_predecessors = link_contract["WERPC_PREDECESSOR_PATHS"]
-werpc_disposition_ready = werpc_disposition_map is not None
-if werpc_disposition_ready:
-    werpc_disposition_ready = (
-        frozenset(path.as_posix() for path in werpc_disposition_map)
-        == werpc_expected_predecessors
-        and all(
-            owner.as_posix() in tracked and (root / owner).is_file()
-            for owner in werpc_disposition_map.values()
-        )
-    )
-if not werpc_disposition_ready:
-    fail(
-        "WERPC predecessor currentness exception requires the exact 25-file "
-        "deletion disposition and tracked current owners"
-    )
-
-
 def is_currentness_evidence_only(path: pathlib.Path) -> bool:
-    return path == migration_evidence_ledger_path or (
-        path == predecessor_migration_evidence_ledger_path
-        and werpc_disposition_ready
-    )
+    return path == migration_evidence_ledger_path
 
 
 if not is_currentness_evidence_only(migration_evidence_ledger_path):
     fail("migration evidence ledger currentness exception must match its exact path")
-if not is_currentness_evidence_only(predecessor_migration_evidence_ledger_path):
-    fail("predecessor migration ledger currentness exception must match its exact path")
 if is_currentness_evidence_only(root / "docs/90.references/README.md"):
     fail("migration evidence ledger currentness exception must not widen to Stage 90")
-if is_currentness_evidence_only(
-    root / "docs/90.references/research/2026-07-07-wer/README.md"
-):
-    fail("predecessor migration ledger currentness exception must not widen to its pack")
 
 stale_provider_hook_path = "." + "claude/hooks"
 stale_shell_job_name = "shell" + "-static"

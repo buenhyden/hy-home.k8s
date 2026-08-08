@@ -8,6 +8,62 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-008 predecessor research-pack retirement
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #retirement #reference-ia #cleanup #validation
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-008 exact pre/post-deletion evidence
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure and keep sourceCommit dispositions afterward.
+- **Next Owner**: supervisor — execute WERPC-009 final criterion audit, review, cleanup, and lifecycle closure.
+
+#### Progress
+
+Confirmed the exact 25-file tracked predecessor baseline and passed the
+pre-deletion RIA, strict links/owners, and archive gates. Deleted only the 25
+enumerated files, removed the three verified-empty directories with nonrecursive
+`rmdir`, and proved all three roots absent while the surviving
+`2026-08-08-wer` pack remains exactly 13 files.
+
+#### Memory
+
+Deletion changes a repository contract, not just the filesystem. The README
+handoff moved three paths from active to WERPC-retired and now closes at
+active51/retired23. RIA removed the deleted research pack from the current
+snapshotGuard set while retaining sourceCommit provenance in the migration
+ledger. Agent legacy cutover removed the deleted protected-evidence member,
+closed its schema at four current protected records, refreshed the exact
+reference count, and re-pinned its RIA authority digests.
+
+#### Evidence
+
+- Exact pre-gate: 25 tracked predecessor files; RIA, strict links/owners, and
+  archive validation PASS.
+- Exact post-delete shape: three predecessor roots absent; new pack file count
+  exactly 13; disposition rows `Deleted in WERPC-008 after cutover gate` 25/25.
+- README registry and Markdown self-tests PASS with active51/retired23,
+  active-new6/retired-new1, and three WERPC-retired rows.
+- RIA production PASS and one staged 88/88 suite PASS. Later optional reruns
+  reached 36/37 agent tests and 86/88 RIA tests; their only failures were
+  environment-dependent FIFO creation `Errno 95` and one load-sensitive
+  1.5-second performance bound. These optional reruns are not claimed as PASS.
+- Agent legacy-cutover self-test and production PASS with 839 scanned files,
+  42 evidence references, and zero active consumers.
+- Links self-test/strict, archive, cached diff, the complete repository quality
+  gate, and the full harness PASS. No live, hosted, remote, credential, secret,
+  or provider-runtime action occurred.
+
+#### Handoff
+
+WERPC-008 is complete. WERPC-009 owns the whole-branch criterion audit,
+fresh review, residue scan, terminal lifecycle transition, and closure commit.
+
 ### 2026-08-08 - WERPC-007 research-pack consumer migration
 
 #### Metadata

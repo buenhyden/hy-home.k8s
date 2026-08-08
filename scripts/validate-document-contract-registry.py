@@ -4300,8 +4300,8 @@ def _assert_readme_family_contract(
         set(retired_order)
     ):
         raise AssertionError("README retiredPaths must be sorted and unique")
-    if len(active_rows) != 54 or len(retired_rows) != 20:
-        raise AssertionError("README fixture must contain exact active54 and retired20")
+    if len(active_rows) != 51 or len(retired_rows) != 23:
+        raise AssertionError("README fixture must contain exact active51 and retired23")
 
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
@@ -4362,19 +4362,31 @@ def _assert_readme_family_contract(
                         f"{path}: retired README historical profile must be readme/snapshot-pack"
                     )
                 profile = readme_profiles[row["profile"]]
-                try:
-                    classify_path(registry, path)
-                except DocumentContractError as exc:
-                    if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(
-                        exc.diagnostics
-                    ):
+                if row["retiredBy"] == "WERPC-008":
+                    try:
+                        routed_profile = classify_path(registry, path)
+                    except DocumentContractError as exc:
                         raise AssertionError(
-                            f"{path}: retired README returned wrong route rule"
+                            f"{path}: WERPC retired README route is invalid"
                         ) from exc
+                    if routed_profile.profile_id != row["profile"]:
+                        raise AssertionError(
+                            f"{path}: WERPC retired README route differs from profile"
+                        )
                 else:
-                    raise AssertionError(
-                        f"{path}: retired README must remain uncovered"
-                    )
+                    try:
+                        classify_path(registry, path)
+                    except DocumentContractError as exc:
+                        if "REGISTRY_ROUTE_UNCOVERED" not in _ordered_rule_ids(
+                            exc.diagnostics
+                        ):
+                            raise AssertionError(
+                                f"{path}: retired README returned wrong route rule"
+                            ) from exc
+                    else:
+                        raise AssertionError(
+                            f"{path}: retired README must remain uncovered"
+                        )
             if list(profile.headings.required) != row["requiredH2"]:
                 raise AssertionError(
                     f"{path}: README required headings differ from registry"
@@ -4394,8 +4406,6 @@ def _assert_readme_family_contract(
                 if path not in tracked_readmes or not (root / path).is_file():
                     raise AssertionError(f"README active path is absent: {path}")
                 continue
-            if row["retiredBy"] != "ADM-006":
-                raise AssertionError(f"{path}: README retirement owner must be ADM-006")
             destination = row["destination"]
             if not isinstance(destination, str) or not destination:
                 raise AssertionError(
@@ -4410,6 +4420,32 @@ def _assert_readme_family_contract(
             ):
                 raise AssertionError(
                     f"{path}: README retirement destination is missing or invalid"
+                )
+            if row["retiredBy"] == "WERPC-008":
+                expected_destination = PurePosixPath(
+                    "docs/90.references/research/2026-08-08-wer/README.md"
+                )
+                expected_paths = {
+                    PurePosixPath(
+                        "docs/90.references/research/2026-07-04-wer/README.md"
+                    ),
+                    PurePosixPath(
+                        "docs/90.references/research/2026-07-07-wer/README.md"
+                    ),
+                    PurePosixPath(
+                        "docs/90.references/research/2026-08-07-wer/README.md"
+                    ),
+                }
+                if path not in expected_paths or destination_path != expected_destination:
+                    raise AssertionError(
+                        f"{path}: WERPC README retirement destination is invalid"
+                    )
+                if path in tracked_readmes or (root / path).exists():
+                    raise AssertionError(f"README retired path is still current: {path}")
+                continue
+            if row["retiredBy"] != "ADM-006":
+                raise AssertionError(
+                    f"{path}: README retirement owner must be ADM-006 or WERPC-008"
                 )
             if raw_path.startswith("examples/aws/docs/"):
                 provider = "aws"
@@ -4434,15 +4470,18 @@ def _assert_readme_family_contract(
     active_program_created = active_paths - baseline_readmes
     if len(baseline_readmes) != 67:
         raise AssertionError("README immutable baseline must contain exact 67 paths")
-    if len(active_baseline) != 47 or len(active_program_created) != 7:
+    retired_baseline = retired_paths & baseline_readmes
+    retired_program_created = retired_paths - baseline_readmes
+    if (
+        len(active_baseline) != 45
+        or len(active_program_created) != 6
+        or len(retired_baseline) != 22
+        or len(retired_program_created) != 1
+    ):
         raise AssertionError(
-            "README activePaths must contain 47 baseline and seven program-created paths"
+            "README handoff must contain active45+new6 and retired22+new1"
         )
-    if retired_paths - baseline_readmes:
-        raise AssertionError(
-            "README retiredPaths must belong to the immutable baseline"
-        )
-    if active_baseline | retired_paths != baseline_readmes:
+    if active_baseline | retired_baseline != baseline_readmes:
         raise AssertionError(
             "README active baseline plus retired paths must reconstruct baseline67"
         )
@@ -4660,9 +4699,9 @@ def _assert_readme_fixture_mutation_proofs(
         ),
         key=lambda path: path.as_posix(),
     )
-    if len(declared_new_paths) != 7:
+    if len(declared_new_paths) != 6:
         raise AssertionError(
-            "README fixture mutation proof requires exact seven program-created paths"
+            "README fixture mutation proof requires exact six active program-created paths"
         )
     missing_paths = set(declared_new_paths[:2])
     missing_declared_inventory = TargetInventory(
