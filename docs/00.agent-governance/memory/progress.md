@@ -14131,3 +14131,51 @@ section separating static from live evidence.
   secrets, push, publish, merge, and deployment remain `DEFER` or pending human
   authorization. No such action was performed; a local main merge remains a
   later step after final branch review.
+
+## 2026-08-08 - Workspace engineering research pack consolidation design approved
+
+### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: documentation, research, governance, validation
+- **Status**: in-progress
+- **Tags**: #research-pack #consolidation #harness #sdlc #cross-link
+
+### Progress
+
+- The human approved a new dated pack at
+  `docs/90.references/research/2026-08-08-wer/`, full validation and
+  integration of the three predecessor packs, and deletion of all three old
+  live directories after fail-closed migration gates pass.
+- Created successor Spec 053 instead of reopening terminal Spec 017. The
+  successor defines one index, twelve scope owners, a 25-file disposition
+  ledger, external and workspace evidence classes, five current-status values,
+  mutable-link and reference-information-architecture migration, logical-unit
+  commits, subagent-driven task review, and whole-branch verification.
+- Preserved existing Stage 98 archive immutability. The replacement creates no
+  new archive copy of the predecessor research packs; Git history and the
+  reviewed migration ledger own provenance after live-path deletion.
+
+### Evidence
+
+- Repository observation found 8 files in `2026-07-04-wer`, 10 in
+  `2026-07-07-wer`, and 7 in `2026-08-07-wer` for an exact 25-file migration
+  baseline.
+- Design self-review found and corrected a lifecycle conflict: completed Spec
+  017 remains unchanged and the approved follow-up is routed through draft
+  Spec 053 with the registry-selected Spec headings and lifecycle table.
+- Placeholder scan, strict registry, Markdown profile, cross-document,
+  `git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .`:
+  PASS on the isolated design worktree. External research, implementation,
+  cross-link migration, and deletion have not started and are not claimed by
+  this entry.
+
+### Handoff
+
+- The human must review written Spec 053 before the implementation-plan stage.
+- After approval, `superpowers:writing-plans` creates the Stage 04 plan and
+  task. Execution then uses `superpowers:subagent-driven-development` because
+  subagents are available; the separate-session executing-plans route remains
+  unnecessary.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish,
+  merge, deployment, or third-party mutation was performed or evidenced.
