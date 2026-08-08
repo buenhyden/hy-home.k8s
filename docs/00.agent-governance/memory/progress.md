@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-08 - WERPC-006 AI agents, model routing, and memory research
+
+#### Metadata
+
+- **Date**: 2026-08-08
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #research #ai-agents #agency-agents #model-routing #memory
+- **Owner**: docs-researcher
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Provenance**: WERPC-006; official and upstream primary sources checked 2026-08-08; direct repository-static contract observation
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
+- **Next Owner**: platform — execute WERPC-007 mutable link/index/contract migration.
+
+#### Progress
+
+Expanded only the AI-agent/Agency Agents, model-routing, and memory references;
+the assigned README coverage cells; WERPC-006 ledger source/claim rows; and
+Task evidence. The Agency Agents comparison is fixed to full commit
+`ebe9c99acb5c96f9468de368d8bead775387d1a7`; scripts were inspected but never
+run. The references keep local role, model, and memory contracts distinct from
+provider configuration/runtime, account, tool, remote, hosted, and live claims.
+
+#### Memory
+
+An external persona catalog is comparison input, never admission authority.
+Choose role/tier from task risk and review burden before provider-model values;
+model reasoning configuration does not establish quality or fitness. Preserve
+four memory classes only: working-short-term, durable-long-term, domain-scoped,
+and provider-local-auxiliary. Repository state and canonical owner win every
+conflict; provider-local memory and MCP resources require re-observation and
+review before promotion.
+
+#### Evidence
+
+- Official/current source observations: OpenAI Codex subagents/configuration,
+  OpenAI Agents SDK sessions, Anthropic subagents/memory, and MCP Resources;
+  fixed upstream tree/license/converter/installer observations. All are checked
+  2026-08-08 and registered as `SRC-WERPC-045`–`052`.
+- Workspace observation: static 12-role/four-surface harness, model-policy and
+  model-fitness contracts, redacted checkpoint schema, and four-tier memory
+  contract. No ignored checkpoint, provider memory, credentials, account,
+  model-resolution, install, connected MCP, remote, hosted, or live state was
+  read or changed.
+- Focused `git diff --check`, Markdown profiles strict, strict links/owners,
+  harness semantics, and model-fitness checks passed. Fresh review was Approved.
+  The first complete gate rejected upstream converter/installer URLs as missing
+  local script paths; replacing them with the single pinned upstream scripts
+  directory link closed that RED. Exact staged Reference IA, cached diff, and
+  the complete repository quality gate then passed.
+
+#### Handoff
+
+WERPC-006 is ready for its logical commit. No provider/runtime/install/
+credential/remote/hosted/live action was performed or implied.
+
 ### 2026-08-08 - WERPC-004 Kubernetes, infrastructure, and security research
 
 #### Metadata

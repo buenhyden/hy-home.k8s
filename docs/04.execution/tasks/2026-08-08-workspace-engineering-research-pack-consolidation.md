@@ -48,7 +48,7 @@ or live-cluster result is produced or claimed.
 | WERPC-003 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research spec-driven SDLC, document families, Diátaxis, and LLM-WIKI | docs-researcher | Done | Three references record dated primary-source support, a complete document-family matrix, Diátaxis scope rules, LLM-WIKI generator/drift boundary, and a Release absence finding; `SRC-WERPC-014`–`022` and `CLM-WERPC-003-01`–`13` preserve claim limits | Source/claim audit, Markdown profiles, registry self-test/strict, strict links, LLM-WIKI check, Reference IA production, cached diff, and complete repository quality gate PASS; fresh review Approved with no finding; this logical commit |
 | WERPC-004 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research Kubernetes, infrastructure, GitOps, and security | docs-researcher | Done | Primary-source and repository-static analysis is complete: layered platform/trust-boundary model, control/evidence matrix, As-Is/gap/target matrix, and deferred-validation backlog; `SRC-WERPC-023`–`034` and `CLM-WERPC-004-01`–`11` preserve source, claim, and evidence-depth limits | Focused worktree diff, Markdown profiles, strict links/owners, and harness validation PASS; fresh content review Approved with no finding; exact staged Reference IA, cached diff, and complete repository quality gate PASS; hosted CI, remote/live, secret, credential, and cluster evidence remain DEFER; this logical commit. |
 | WERPC-005 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research CI/CD, GitHub Actions, and QA | quality-engineer | Done | Static delivery/QA analysis, five-workflow control inventory, lane/failure/evidence taxonomy, security/supply-chain boundary, and adoption matrix are complete; `SRC-WERPC-035`–`044` and `CLM-WERPC-005-01`–`10` preserve source and evidence limits | Actions security, CI Python contract, affected-surface, Markdown profile, strict links/owners, and worktree diff checks PASS; fresh review Approved with no finding; exact staged Reference IA, cached diff, and complete repository quality gate PASS; hosted CI, branch/ruleset, secret, artifact, OIDC, deployment, remote, and live evidence remain DEFER; this logical commit. |
-| WERPC-006 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research AI agents, pinned agency-agents, model routing, and memory tiers | docs-researcher | Queued | Not executed | Three references, pinned upstream commit, provider and local-contract review |
+| WERPC-006 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research AI agents, pinned agency-agents, model routing, and memory tiers | docs-researcher | Done | Three references separate local static roster/model/memory contracts from provider/runtime evidence; the Agency Agents comparison is pinned to `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052` and `CLM-WERPC-006-01`–`08` record limits | Focused diff/profile/strict-link/harness-semantics/model-fitness checks PASS; fresh review Approved; full-gate RED for two upstream script URLs misclassified as local paths was fixed by one pinned upstream-directory link; exact staged Reference IA, cached diff, and complete repository gate PASS; no provider execution, install, credential, remote, hosted, or live action occurred; this logical commit. |
 | WERPC-007 | VAL-WER-008, VAL-WER-010, VAL-WER-011 | Migrate links, observations, indexes, machine contracts, validators, and fixtures | platform | Queued | Not executed | Classified occurrence ledger, focused RED/GREEN, strict/reference-IA/archive/full gates |
 | WERPC-008 | VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010 | Prove readiness and delete the 25 predecessor files | platform | Queued | Not executed | 25/25 pre-gate, three absence checks, post-deletion validation, deletion commit |
 | WERPC-009 | VAL-WER-001–012 | Run final audit/review/cleanup and close reciprocal lifecycle | supervisor | Queued | Not executed | Criterion walk, final QA, whole-branch review, residue scan, closure commit |
@@ -119,10 +119,15 @@ analysis passed focused validation, fresh review returned Approved with no
 finding, and Reference IA production plus the complete repository quality gate
 passed on the exact staged tree. It does not promote repository-static workflow
 evidence to hosted CI, administration, credential, artifact, OIDC, deployment,
-remote, or live evidence. WERPC-006 through WERPC-009 are not
-executed. Each remaining row will record exact command results, review
-disposition, commit, limitation, `SKIP`, or `DEFER` without converting
-repository-static evidence into a deeper claim.
+remote, or live evidence. WERPC-006 is done: its exact Agency Agents pin, eight
+dated sources, and eight bounded claims distinguish role/model/memory static
+contracts from provider/runtime behavior. Focused checks passed, fresh review
+was Approved, the upstream-script-path RED was corrected, and Reference IA plus
+the complete repository gate passed on the exact staged tree. WERPC-007
+through WERPC-009 are not executed. Each
+remaining row will record exact command results, review disposition, commit,
+limitation, `SKIP`, or `DEFER` without converting repository-static evidence
+into a deeper claim.
 
 ## Traceability
 
@@ -137,7 +142,7 @@ repository-static evidence into a deeper claim.
 | N/A — WERPC-003 shares the Plan and Spec sources above | Done. | Three detailed references; `SRC-WERPC-014`–`022` and `CLM-WERPC-003-01`–`13`; complete family matrix with Release absence gap; Diátaxis partial application/tutorial-explanation gap; LLM-WIKI generator/schema/drift/freshness and llms.txt/MCP/search/RAG boundaries; fresh review Approved; final Reference IA production and complete repository quality gate PASS. |
 | N/A — WERPC-004 shares the Plan and Spec sources above | Done. | `SRC-WERPC-023`–`034`, `CLM-WERPC-004-01`–`11`, platform/security reference, REQ-WERPC-008/009/025 status cells, focused checks PASS, fresh content review Approved, and final staged Reference IA/cached-diff/complete quality gate PASS. |
 | N/A — WERPC-005 shares the Plan and Spec sources above | Done. | CI/CD/GitHub Actions/QA reference, REQ-WERPC-022–024 coverage status, `SRC-WERPC-035`–`044`, and `CLM-WERPC-005-01`–`10`; focused checks PASS; fresh review Approved; exact staged Reference IA/cached diff/complete quality gate PASS. |
-| N/A — WERPC-006 shares the Plan and Spec sources above | Not executed. | Agents/agency/model/memory research evidence pending. |
+| N/A — WERPC-006 shares the Plan and Spec sources above | Done. | Three detailed references; fixed Agency Agents source pin `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052`; `CLM-WERPC-006-01`–`08`; focused checks PASS; fresh review Approved; upstream-path RED fixed; staged Reference IA/cached diff/complete quality gate PASS. |
 | N/A — WERPC-007 shares the Plan and Spec sources above | Not executed. | Link/contract/fixture migration evidence pending. |
 | N/A — WERPC-008 shares the Plan and Spec sources above | Not executed. | Readiness and deletion evidence pending. |
 | N/A — WERPC-009 shares the Plan and Spec sources above | Not executed. | Final criterion, QA, review, residue, and closure evidence pending. |
