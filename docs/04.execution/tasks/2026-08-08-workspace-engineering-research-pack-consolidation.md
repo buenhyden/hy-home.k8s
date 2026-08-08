@@ -1,9 +1,9 @@
 ---
 title: 'Task: Workspace Engineering Research Pack Consolidation'
 type: sdlc/task
-status: active
+status: done
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Task: Workspace Engineering Research Pack Consolidation
@@ -51,7 +51,7 @@ or live-cluster result is produced or claimed.
 | WERPC-006 | VAL-WER-004, VAL-WER-005, VAL-WER-007 | Research AI agents, pinned agency-agents, model routing, and memory tiers | docs-researcher | Done | Three references separate local static roster/model/memory contracts from provider/runtime evidence; the Agency Agents comparison is pinned to `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052` and `CLM-WERPC-006-01`–`08` record limits | Focused diff/profile/strict-link/harness-semantics/model-fitness checks PASS; fresh review Approved; full-gate RED for two upstream script URLs misclassified as local paths was fixed by one pinned upstream-directory link; exact staged Reference IA, cached diff, and complete repository gate PASS; no provider execution, install, credential, remote, hosted, or live action occurred; this logical commit. |
 | WERPC-007 | VAL-WER-008, VAL-WER-010, VAL-WER-011 | Migrate links, observations, indexes, machine contracts, validators, and fixtures | platform | Done | Current research navigation, RIA/agent/active-corpus contracts, validators, schemas, projections, fixtures, templates, Guide 0010, and mutable historical links are migrated; RIA-protected audit bytes remain exact and their future predecessor targets require a fail-closed sourceCommit/byte/disposition proof | Initial RIA RED: 88 tests with 10 failures/1 error; initial agent cutover RED: 37 tests with one fixture error; protected-link RED: expected no finding but got `LINK-BROKEN`; the pre-review harness attempt exposed the phase-bounded README fixture cardinality RED. Fresh review found the production disposition-header mismatch and inherited Git configuration; exact production-table and hostile-config probes failed before their fixes. The final gate then exposed closure source/current identity drift and a stale-currentness hit in the predecessor migration ledger; exact projection refresh plus a parser-gated, single-file transition exception closed them without widening to the other 24 predecessor files. GREEN: isolated staged RIA 88/88 and direct validator, agent cutover 37/37, active-corpus 19/19, registry self-test/strict, links strict/self-test, archive validation, hardened Git boundary, exact-delete-clone strict links, Python compile, cached diff, complete repository quality gate, and complete harness PASS; exact occurrence closure 732 lines/70 files and 70 reviewed rows. Three README fixture rows remain only for exact pre-deletion active54 equality and must be removed atomically in WERPC-008; Python and QA re-reviews Approved; this logical commit. |
 | WERPC-008 | VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010 | Prove readiness and delete the 25 predecessor files | platform | Done | The exact 25 tracked predecessor files and three now-empty roots are deleted without redirects; the surviving pack remains exactly 13 files; README/RIA/agent-cutover contracts are settled to the post-deletion state while sourceCommit provenance remains | Pre-gate exact25, RIA, strict links/owners, and archive PASS; three root-absence checks and exact13 shape PASS; README active51/retired23 contract; RIA production and one staged 88/88 run PASS; agent cutover self-test/production PASS; links self-test/strict PASS; complete repository gate and harness PASS. Later optional unit reruns encountered only environment-dependent FIFO `Errno 95` and one load-sensitive 1.5-second bound and are not claimed as PASS; required lanes passed; this logical commit. |
-| WERPC-009 | VAL-WER-001–012 | Run final audit/review/cleanup and close reciprocal lifecycle | supervisor | Queued | Not executed | Criterion walk, final QA, whole-branch review, residue scan, closure commit |
+| WERPC-009 | VAL-WER-001–012 | Run final audit/review/cleanup and close reciprocal lifecycle | supervisor | Done | All twelve criteria have deterministic terminal evidence; Spec/Plan/Task, indexes, and standalone execution state are reciprocal `done`; no Stage 98 or scratch residue was introduced | Exact 13/32/25/35/52/51 counts; 49 current source rows dated 2026-08-08; 12/12 reference source/freshness sections; post-deletion 732-line/66-file classification equality; three absent roots; closure RED `CLOSURE-AUTHORITY-SCOPE` for Spec 053 followed by an exact one-path allowlist/test GREEN; archive, harness, and required full gate PASS; fresh whole-branch read-only review Approved; optional all-files pre-commit INTERRUPTED/SKIP at strict repository quality after earlier hooks passed and no worktree mutation; this logical closure commit |
 
 ## Approval and Safety Boundaries
 
@@ -144,11 +144,42 @@ repository quality gate and full harness successfully. WERPC-007 is done.
 WERPC-008 is done: all 25 enumerated predecessor files and the three empty
 directories are absent, the new pack remains exactly 13 files, all 25
 dispositions are completed, and post-deletion README, RIA, and agent-cutover
-contracts pass the required repository-static gates. WERPC-009 is not
-executed. Each
-remaining row will record exact command results, review disposition, commit,
-limitation, `SKIP`, or `DEFER` without converting repository-static evidence
-into a deeper claim.
+contracts pass the required repository-static gates. WERPC-009 closes the
+reciprocal lifecycle: deterministic audit confirmed exact 13 pack files, 32
+unique request-owner rows, 52 source rows, 51 bounded claim rows, 25 completed
+file dispositions, 35 split dispositions, three absent predecessor roots, zero
+Stage 98 branch diff, no tracked temporary/scratch residue, no unsupported
+deep-evidence success claim, and 11 logical pre-closure
+implementation commits. The post-deletion occurrence table exactly matches 732
+lines across 66 files. Required repository-static validation passed with
+strict links/owners, Reference IA, archive validation, harness, and the complete
+repository quality gate. The first terminal harness run exposed
+`CLOSURE-AUTHORITY-SCOPE` for newly done Spec 053; an exact-set unit test
+reproduced the missing post-closure authority, and the bounded one-path registry
+addition made the targeted test, closure self-test, production closure check,
+and full harness pass without accepting any unknown Spec. The optional
+all-files pre-commit run passed its early
+hooks but was interrupted at the long-running strict repository-quality hook;
+it is `SKIP`, not `PASS`, and made no worktree change. Push, merge, PR creation,
+worktree removal, hosted CI, provider-runtime, remote, credential, secret, and
+live validation remain outside the approved scope.
+
+### Terminal Acceptance Matrix
+
+| Criterion | Result | Deterministic terminal evidence |
+| --- | --- | --- |
+| VAL-WER-001 | PASS | The tracked successor pack contains exactly 13 files: one README and twelve declared references. |
+| VAL-WER-002 | PASS | The README contains 32 sequential, unique request rows; every row has one linked primary owner and one nonempty workspace-evidence cell. |
+| VAL-WER-003 | PASS | The ledger contains 25 unique file dispositions with full 40-hex source commits and 35 reviewed section-split rows. |
+| VAL-WER-004 | PASS | The source register has 52 rows; SRC-WERPC-004–052 are 49 current rows with URLs, 2026-08-08 checks, adopted/rejected scopes, and refresh triggers; all twelve references expose Sources and Review and Freshness sections. |
+| VAL-WER-005 | PASS | The 32 requirement states and 51 claim rows use only the five-state vocabulary and retain repository evidence plus uncertainty boundaries. |
+| VAL-WER-006 | PASS | Provider and common-environment references keep Claude, Codex, shared static controls, native discovery, authentication, and runtime evidence as separate surfaces. |
+| VAL-WER-007 | PASS | The 32-owner matrix covers every requested harness, loop, SDLC/document, documentation, platform, delivery, security, agent, model, and memory topic. |
+| VAL-WER-008 | PASS | Current navigation and machine consumers route to the successor; strict links/owners and RIA pass; every remaining predecessor-token line is classified by an exact 732-line/66-file table. |
+| VAL-WER-009 | PASS | All 25 predecessor files and all three roots are absent; the successor remains exactly 13 files; residue scan found no task-created scratch artifact. |
+| VAL-WER-010 | PASS | The branch diff contains zero `docs/98.archive/**` path changes and archive validation passes. |
+| VAL-WER-011 | PASS | Eleven logical commits before closure, eleven work-package SDD reports, and one bounded WERPC-002 fix report preserve per-unit evidence and review history. |
+| VAL-WER-012 | PASS | Fresh whole-branch review is Approved and required Reference IA, strict links, archive, harness, diff, and complete repository-static quality gates pass; deeper evidence remains DEFER. |
 
 ## Traceability
 
@@ -166,4 +197,4 @@ into a deeper claim.
 | N/A — WERPC-006 shares the Plan and Spec sources above | Done. | Three detailed references; fixed Agency Agents source pin `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052`; `CLM-WERPC-006-01`–`08`; focused checks PASS; fresh review Approved; upstream-path RED fixed; staged Reference IA/cached diff/complete quality gate PASS. |
 | N/A — WERPC-007 shares the Plan and Spec sources above | Done. | RED/GREEN migration evidence; RIA-protected historical-link proof with valid and fail-closed negative fixtures; 732/70 exact occurrence closure and 70-row classification; isolated staged RIA 88/88 plus direct validator; agent 37/37; active corpus 19/19; registry self-test/strict; links strict/self-test; exact production disposition parse and post-delete clone; hardened Git hostile-config probe; archive validation; Python compile; cached diff; complete repository gate; and full harness PASS. The three phase-bounded README fixture rows remain until atomic WERPC-008 deletion. Python and QA re-reviews Approved; this logical commit. |
 | N/A — WERPC-008 shares the Plan and Spec sources above | Done. | Exact25 pre-gate; three absent predecessor roots; exact13 surviving pack; completed 25-row disposition table; README active51/retired23; RIA production; agent-cutover self-test/production; links self-test/strict; archive; cached diff; complete repository gate; and full harness PASS. Optional filesystem-sensitive unit reruns are recorded honestly and do not replace the passing required lanes; this logical commit. |
-| N/A — WERPC-009 shares the Plan and Spec sources above | Not executed. | Final criterion, QA, review, residue, and closure evidence pending. |
+| N/A — WERPC-009 shares the Plan and Spec sources above | Done. | VAL-WER-001–012 criterion walk, exact13/32/52/25 counts, three absent roots, zero Stage 98 diff, no tracked residue, no unsupported deep-evidence PASS claim, strict links/owners, Reference IA, archive, harness, complete quality gate, lifecycle/index/registry `done` transition, and branch-finishing handoff. |

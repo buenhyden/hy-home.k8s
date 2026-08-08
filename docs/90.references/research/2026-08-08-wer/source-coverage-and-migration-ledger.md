@@ -3,16 +3,17 @@ title: 'Reference: Source Coverage and Migration Ledger'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Reference: Source Coverage and Migration Ledger
 
 ## Overview
 
-This ledger preserves source, coverage, and predecessor-disposition evidence
-for the consolidated WER pack. It establishes a lossless baseline; it does not
-delete, rewrite, or revalidate the predecessor material.
+This ledger preserves source, coverage, predecessor-disposition, consumer
+cutover, and terminal audit evidence for the consolidated WER pack. It records
+the lossless baseline and the completed deletion without rewriting historical
+source facts or treating them as current external verification.
 
 ## Reference Type
 
@@ -303,15 +304,17 @@ The enumeration count is 25: eight files under `2026-07-04-wer`, ten under
 WERPC-007 reran the Plan Step 1 tracked search over the complete mutable domain.
 The baseline was 819 matching lines across 87 files. After migrating mutable
 navigation and machine owners while preserving RIA-protected audit bytes, 732
-matching lines remain across 70 files; every remaining line is classified
-below. Counts are matching-line occurrences from the exact Plan command, so a
-line containing more than one predecessor token is counted once. The table is
-the WERPC-008 cutover interface: an unlisted file or an occurrence that no
-longer fits its recorded class blocks deletion.
+matching lines remained across 70 files before deletion. The WERPC-009
+post-deletion rescan still finds 732 matching lines, now across 66 files after
+six retired machine consumers stopped carrying the predecessor tokens and two
+post-deletion README-retirement validators began carrying three exact paths
+each. Every remaining line is classified below. Counts are matching-line
+occurrences from the exact Plan command, so a line containing more than one
+predecessor token is counted once. An unlisted file or an occurrence that no
+longer fits its recorded class blocks terminal closure.
 
 | Exact file | Class | Occurrence count | Owner / disposition |
 | --- | --- | ---: | --- |
-| `docs/00.agent-governance/contracts/agent-legacy-cutover.json` | source-commit-pinned cutover evidence | 1 | agent legacy cutover owner; preserve protected historical evidence only |
 | `docs/00.agent-governance/memory/progress.md` | historical progress observation | 25 | progress ledger owner; preserve completed-task facts and add only the current WERPC result |
 | `docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md` | historical SDLC provenance | 2 | owning dated Spec, Plan, Task, or architecture record; retain fact text and current lookup where a rendered link existed |
 | `docs/03.specs/013-workspace-document-governance-hardening/spec.md` | historical SDLC provenance | 2 | owning dated Spec, Plan, Task, or architecture record; retain fact text and current lookup where a rendered link existed |
@@ -370,17 +373,14 @@ longer fits its recorded class blocks deletion.
 | `docs/90.references/audits/2026-07-11-weia/kubernetes-infrastructure-security.md` | source-commit-pinned historical audit evidence | 3 | RIA currentPackBaselines owner; preserve exact baseline bytes and resolve predecessor targets only through the fail-closed disposition map |
 | `docs/90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md` | source-commit-pinned historical audit evidence | 3 | RIA currentPackBaselines owner; preserve exact baseline bytes and resolve predecessor targets only through the fail-closed disposition map |
 | `docs/90.references/data/active-corpus-eligibility-ledger.json` | source-commit-pinned machine projection | 160 | ACER-002 owns; preserve the frozen evidence-commit projection |
-| `docs/90.references/data/reference-information-architecture.json` | source-commit-pinned machine contract | 1 | RIA owner; preserve historical snapshot IDs while current production registry remains audit-only |
 | `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md` | new migration-ledger and cutover provenance | 106 | WERPC-007 owns; preserve predecessor dispositions, imported ADM history, and this reviewed classification |
-| `scripts/reference_information_architecture.py` | source-commit-pinned machine contract | 1 | RIA owner; preserve historical snapshot IDs while current production registry remains audit-only |
 | `scripts/validate-active-corpus-eligibility.py` | source-commit-pinned producer | 1 | ACER validator owner; preserve commit-scoped lookup into the historical tree |
 | `scripts/validate-active-corpus-retention.py` | source-commit-pinned producer | 1 | ACER validator owner; preserve commit-scoped lookup into the historical tree |
-| `scripts/validate-agent-legacy-cutover.py` | source-commit-pinned cutover evidence | 1 | agent legacy cutover owner; preserve protected historical evidence only |
+| `scripts/validate-document-contract-registry.py` | post-deletion retirement validator | 3 | document-contract registry owner; preserve the exact three retired README paths and WERPC-008 route checks |
 | `scripts/validate-links-and-owners.py` | machine contract and predecessor allowlist | 26 | cross-document validator owns; preserve exact deletion-disposition gate and pinned digest evidence |
+| `scripts/validate-markdown-profiles.py` | post-deletion retirement validator | 3 | Markdown-profile owner; preserve the exact three retired README paths and WERPC-008 handoff checks |
 | `tests/fixtures/document-contracts/readme-profile-cases.json` | post-deletion retirement inventory | 3 | README fixture owner; the three predecessor README rows are retired by WERPC-008, map to the surviving pack README, and preserve exact post-deletion active51/retired23 cardinality |
 | `tests/fixtures/reference-information-architecture/current-owner.json` | synthetic negative fixture | 3 | RIA test owner; preserve all three stale-current navigation probes |
-| `tests/fixtures/reference-information-architecture/minimal-valid.json` | source-commit-pinned synthetic evidence | 1 | RIA test owner; preserve historical baseline coverage |
-| `tests/test_reference_information_architecture.py` | source-commit-pinned synthetic evidence | 1 | RIA test owner; preserve historical baseline coverage |
 
 ### Historical authored-document migration inventory
 
@@ -931,6 +931,28 @@ provenance. Post-deletion strict validators, the complete repository quality
 gate, and the full harness passed; provider/runtime, hosted, remote, secret,
 credential, and live evidence remain outside this result.
 
+### WERPC-009 closure result
+
+On 2026-08-09 the final repository-static audit confirmed the pack still
+contains exactly 13 files, the request matrix still has 32 unique owners, the
+source register has 52 source rows, its 49 current-source rows remain dated
+2026-08-08 with refresh triggers, and all twelve references retain Sources and
+Review and Freshness sections. All 25 file dispositions and 35 split-section
+dispositions remain complete; 51 bounded claim rows use the five-state
+vocabulary. The post-deletion predecessor-token rescan exactly equals the
+66-row classification table at 732 lines. The three predecessor roots remain
+absent, the branch has no `docs/98.archive/**` diff from the recorded base, and
+there is no tracked temporary/scratch residue.
+
+The Spec, Plan, Task, execution indexes, and standalone execution registry are
+terminal `done`. Strict links/owners, Reference IA, archive validation,
+harness, and the complete repository quality gate passed for the closure
+state. The first terminal harness run rejected Spec 053 with
+`CLOSURE-AUTHORITY-SCOPE`; the closure validator now admits only that exact
+additional done Spec, with an exact-set test and unknown-Spec negative coverage
+retained. The closure does not claim hosted CI, provider-runtime, remote,
+credential, secret, or live-platform evidence.
+
 ## Sources
 
 The source register above is the interface for later research. Its three
@@ -939,9 +961,10 @@ external checks.
 
 ## Review and Freshness
 
-Refresh source rows when WERPC-002 through WERPC-006 record a checked source.
-Refresh provenance only if the predecessor path or its content-bearing Git
-history changes before cutover.
+Refresh source rows when a named external source, local canonical owner, or
+claim boundary changes. The completed predecessor provenance is immutable;
+future routing changes update the surviving owner and evidence without
+rewriting sourceCommit facts.
 
 ## Related Documents
 

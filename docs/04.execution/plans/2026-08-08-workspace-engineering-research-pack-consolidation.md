@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Engineering Research Pack Consolidation Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Workspace Engineering Research Pack Consolidation Implementation Plan
@@ -889,7 +889,7 @@ Canonical follow-up owner | Refresh trigger
 - Produces: VAL-WER-001 through VAL-WER-012 evidence, terminal lifecycle, and
   a clean branch ready for the finishing skill.
 
-- [ ] **Step 1: Run criterion-by-criterion deterministic checks**
+- [x] **Step 1: Run criterion-by-criterion deterministic checks**
 
   Verify exact 13-file shape, unique request ownership, 25/25 plus split-section
   disposition coverage, source-date/refresh-trigger coverage, five-state
@@ -898,7 +898,7 @@ Canonical follow-up owner | Refresh trigger
   and SDD review packages. Record results against VAL-WER-001 through
   VAL-WER-012 in the Task.
 
-- [ ] **Step 2: Run optional and required QA with honest outcomes**
+- [x] **Step 2: Run optional and required QA with honest outcomes**
 
   ```bash
   git diff --check
@@ -913,14 +913,14 @@ Canonical follow-up owner | Refresh trigger
   Expected: required commands PASS. If pre-commit is unavailable, record
   `SKIP` and the exact fallback lanes; do not record it as PASS.
 
-- [ ] **Step 3: Run whole-branch specification review**
+- [x] **Step 3: Run whole-branch specification review**
 
   Dispatch a fresh strongest-available reviewer over the complete branch diff,
   Spec 053, this Plan, the task evidence, and the SDD ledger. Fix every Critical
   or Important finding through the bounded SDD fix loop and re-run affected
   gates.
 
-- [ ] **Step 4: Scan for residue and evidence overclaims**
+- [x] **Step 4: Scan for residue and evidence overclaims**
 
   ```bash
   git status --short
@@ -935,7 +935,7 @@ Canonical follow-up owner | Refresh trigger
   evidence-depth PASS claim. Existing unrelated residue is reported, not
   deleted.
 
-- [ ] **Step 5: Close reciprocal lifecycle and commit**
+- [x] **Step 5: Close reciprocal lifecycle and commit**
 
   Set Spec 053, this Plan, and its Task to `done`; update collection indexes,
   WERPC evidence rows, source/migration cutover evidence, and progress. Run the
@@ -947,7 +947,7 @@ Canonical follow-up owner | Refresh trigger
   git commit -m "docs: close research pack consolidation"
   ```
 
-- [ ] **Step 6: Hand off to branch finishing**
+- [x] **Step 6: Hand off to branch finishing**
 
   Invoke `superpowers:finishing-a-development-branch`. Do not push, merge,
   create a PR, or remove the worktree until the human selects a finishing

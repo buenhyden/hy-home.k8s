@@ -10,11 +10,14 @@ not a policy, runtime, provider, or deployment control surface.
 ## Snapshot Contract
 
 - **Pack date**: 2026-08-08.
-- **Baseline**: 25 tracked predecessor files, retained in place until WERPC-008.
+- **Baseline**: 25 predecessor files deleted by WERPC-008 after exact
+  disposition and consumer-cutover proof; Git history and the surviving ledger
+  retain their provenance.
 - **Authority**: the named canonical workspace documents remain current truth;
   this pack records dated research and routing evidence.
-- **Status vocabulary**: initial implementation findings are `Unverified` unless
-  a later WERPC work package records supporting evidence.
+- **Status vocabulary**: findings use only `Verified`, `Partial`, `Unverified`,
+  `DEFER`, or `Contradicted`; the completed WERPC work packages record the
+  supporting evidence and remaining limits.
 
 ### Structure
 

@@ -1514,13 +1514,19 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "docs/02.architecture/decisions/"
             "0022-direct-approval-standalone-execution-lineage.md",
         ]
-        future_spec = (
-            "docs/03.specs/041-stage-00-agent-governance-contract/spec.md"
-        )
+        expected_future_specs = [
+            "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
+            "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
+            "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+            "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+            "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+            "docs/03.specs/046-agent-governance-program-closure/spec.md",
+            "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
+        ]
         future_adrs = sorted(self.validator.POST_CLOSURE_ADR_AUTHORITY_PATHS)
         future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
         self.assertEqual(future_adrs, expected_future_adrs)
-        self.assertIn(future_spec, future_specs)
+        self.assertEqual(future_specs, expected_future_specs)
         accepted_payload = (
             b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
         )

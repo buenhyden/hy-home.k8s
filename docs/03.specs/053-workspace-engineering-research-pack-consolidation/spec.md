@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Engineering Research Pack Consolidation Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-09
 ---
 
 # Workspace Engineering Research Pack Consolidation Technical Specification (Spec)
