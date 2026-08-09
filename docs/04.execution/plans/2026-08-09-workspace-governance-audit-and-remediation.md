@@ -416,18 +416,18 @@ roadmap/ledger rows, Task and progress evidence.
 **Files:** `ai-agents-integrated-and-role-specific-agents.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Derive the exact role inventory, adapter surfaces, and model/evaluation/
+- [x] Derive the exact role inventory, adapter surfaces, and model/evaluation/
   admission state from current machine owners at the observation commit.
-- [ ] Give every role one responsibility, inputs, outputs, prohibited actions,
+- [x] Give every role one responsibility, inputs, outputs, prohibited actions,
   stop conditions, downstream handoff, adapters, model rule, evaluation state,
   and evidence boundary.
-- [ ] Audit integrated supervisor orchestration, delegation, isolation,
+- [x] Audit integrated supervisor orchestration, delegation, isolation,
   checkpointing, escalation, and completion gates separately from workers.
-- [ ] Keep repo-static adapter parity separate from native/provider discovery,
+- [x] Keep repo-static adapter parity separate from native/provider discovery,
   authenticated execution, and effective model resolution.
-- [ ] Run roster currentness/admission/evaluation, harness semantics, model
+- [x] Run roster currentness/admission/evaluation, harness semantics, model
   fitness, provider config/evidence/canary checks; review VAL-WGA-008.
-- [ ] Record candidates and commit `docs: audit agent system and roles`.
+- [x] Record candidates and commit `docs: audit agent system and roles`.
 
 #### WGIA-008 — Security and approval boundaries
 

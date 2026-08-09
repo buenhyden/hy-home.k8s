@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-007 AI-agent system audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #agents #orchestration #evaluation
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-007 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted agent-system owner change.
+- **Next Owner**: WGIA-014 whole-branch closure; no WGIA-011 correction was accepted.
+
+#### Progress
+
+Derived the exact 12-role/four-surface/48-projection inventory and one complete
+matrix row per role, including machine-equal permission class and required
+evidence. Repository-static role/adaptor semantics and integrated
+supervisor delegation, isolation, checkpoint, escalation, and completion align.
+Model mapping is 21 `PASS`/27 `DEFER`; all 48 effective fitness/promotion/
+canary/runtime decisions and all executed evaluation/final admission decisions
+remain `DEFER`. No remediation or disposition candidate is warranted.
+
+#### Memory
+
+`admissionState: current` on a tracked adapter is inventory state, not runtime
+admission. Static corpus readiness and adjudicator readiness likewise cannot be
+promoted to executed evaluation, effective model fitness, native discovery, or
+delegated execution. Historical candidate records for `docs-researcher` and
+`quality-engineer` preserve rationale/rollback while all four projections are
+current and final admission remains `DEFER`.
+
+#### Evidence
+
+- Harness contract/semantics, roster currentness/admission, evaluations, model
+  fitness, and provider config/evidence/canary self-tests and production checks
+  pass.
+- Exact production state is 12 roles, four surfaces, 48 projections, 12 ready
+  corpora, 21 mapping-ready/27 mapping-deferred tuples, and 48 runtime-deferred
+  tuples; six focused modules pass 150 tests.
+- Four complete findings and one complete provider-runtime evidence limitation
+  are in the dated report; no roadmap or disposition-ledger row was added.
+- The first quality review's one Important matrix-completeness finding is fixed
+  by adding exact `permissionClass` and `requiredEvidence` values for all 12
+  roles. The observation-contract equality probe reports 12 expected/12 actual
+  roles and zero malformed, missing, unknown, permission, or evidence mismatch;
+  specification/content and fix-round quality reviews are Approved.
+- The complete repository quality gate passes against the staged WGIA-007
+  scope; no full-gate limitation remains for this work item.
+
+#### Handoff
+
+WGIA-007 is complete. Specification/content and fix-round quality reviews are
+Approved, the complete repository quality gate passes against the staged scope,
+and no correction or candidate was accepted. WGIA-014 owns final whole-branch
+review and commit integration. No provider/runtime/authenticated/hosted/remote/
+live action or canonical owner change belongs to this handoff.
+
 ### 2026-08-09 - WGIA-006 LLM-WIKI and memory audit
 
 #### Metadata
