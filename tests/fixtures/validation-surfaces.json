@@ -21,7 +21,7 @@
     {"name": "examples", "path": "examples/sample-app/deployment.yaml", "expectedSurface": "examples"},
     {"name": "authored-doc", "path": "docs/03.specs/031-affected-surface-agent-qa/spec.md", "expectedSurface": "authored-documents"},
     {"name": "current-research-report", "path": "docs/90.references/research/2026-08-08-wer/provider-implementation-status.md", "expectedSurface": "authored-documents"},
-    {"name": "current-audit-pack", "path": "docs/90.references/audits/2026-07-11-weia/README.md", "expectedSurface": "authored-documents"},
+    {"name": "current-audit-pack", "path": "docs/90.references/audits/2026-08-09-wgia/README.md", "expectedSurface": "authored-documents"},
     {"name": "generated-record", "path": "graphify-out/GRAPH_REPORT.md", "expectedSurface": "generated-tooling"},
     {"name": "root-config", "path": ".pre-commit-config.yaml", "expectedSurface": "root-config"}
   ],

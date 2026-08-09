@@ -14,28 +14,108 @@
     ]
   },
   "currentPackBaselines": {
-    "audits/2026-07-11-weia": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
+    "audits/2026-08-09-wgia": "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
   },
+  "retiredCurrentPackBaselines": [
+    {
+      "id": "audits/2026-07-11-weia",
+      "sourceCommit": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
+      "allowedStates": ["done"],
+      "members": [
+        "ai-agents-model-routing-vibe-coding.md",
+        "ci-qa-automation-pipeline-workflow.md",
+        "governance-harness-loop-providers.md",
+        "kubernetes-infrastructure-security.md",
+        "remediation-roadmap.md",
+        "sdlc-document-lifecycle-frontmatter.md"
+      ],
+      "retiredBy": "audits/2026-08-09-wgia",
+      "reason": "Superseded by the 2026-08-09 workspace governance implementation audit."
+    }
+  ],
   "baselineTransitions": [],
-  "baselineSettlements": [],
+  "baselineSettlements": [
+    {
+      "id": "wgia-012-current-audit-cutover",
+      "fromPackId": "audits/2026-07-11-weia",
+      "toPackId": "audits/2026-08-09-wgia",
+      "fromCommit": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
+      "toCommit": "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588",
+      "fromMemberCount": 6,
+      "toMemberCount": 9,
+      "reason": "Retire the prior Current audit and activate its reviewed successor atomically."
+    }
+  ],
   "mutableIndexProjections": [
     {
-      "path": "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
-      "completeBody": true
-    },
-    {
       "path": "docs/90.references/audits/README.md",
-      "table": {
-        "section": "Audit Pack Registry",
-        "columns": ["Pack role", "Successor / resolution"]
-      }
+      "literalReplacements": [
+        {
+          "from": "├── 2026-07-11-weia/\n└── README.md",
+          "to": "├── 2026-07-11-weia/\n├── 2026-08-09-wgia/\n└── README.md",
+          "count": 1
+        },
+        {
+          "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |",
+          "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md) and [Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md). |",
+          "count": 1
+        },
+        {
+          "from": "- [Current Audit Pack](./2026-07-11-weia/README.md)",
+          "to": "- [Current Audit Pack](./2026-08-09-wgia/README.md)",
+          "count": 1
+        },
+        {
+          "from": "- [Current Audit Integration Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)",
+          "to": "- [Current Audit Integration Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)",
+          "count": 1
+        },
+        {
+          "from": "- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)",
+          "to": "- [Current Audit Integration Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)",
+          "count": 1
+        },
+        {
+          "from": "Current comparison owner: [2026-07-11-weia](./2026-07-11-weia/README.md).",
+          "to": "Current comparison owner: [2026-08-09-wgia](./2026-08-09-wgia/README.md).",
+          "count": 1
+        }
+      ]
     },
     {
-      "path": "docs/90.references/audits/2026-07-11-weia/README.md",
-      "table": {
-        "section": "Report Index",
-        "columns": ["Lifecycle", "Actionable disposition"]
-      }
+      "path": "docs/90.references/audits/2026-08-09-wgia/README.md",
+      "literalReplacements": [
+        {
+          "from": "This Stage 90 pack is the draft successor foundation for a repository-wide\nworkspace governance audit.",
+          "to": "This Stage 90 pack is the Current repository-wide evidence owner for a\nworkspace governance audit.",
+          "count": 1
+        },
+        {
+          "from": "The collection's Current pointer remains the 2026-07-11 audit until WGIA-012\nperforms the separately validated atomic cutover. A draft report records only\nthe initial repository-static inventory and a conservative verdict; its topic\nis not complete and is never treated as `Aligned` merely because an owner or\nsupporting surface exists.",
+          "to": "The collection's sole Current pointer is this 2026-08-09 audit. The prior\n2026-07-11 audit remains source-commit-bounded historical evidence. A report's\nverdict remains bounded by its recorded evidence depth and cannot become\n`Aligned` merely because an owner or supporting surface exists.",
+          "count": 1
+        },
+        {
+          "from": "- Pack role: Draft successor foundation; not Current.",
+          "to": "- Pack role: Current audit pack; descriptive evidence only.",
+          "count": 1
+        },
+        {
+          "from": "- Current-audit transition owner: WGIA-012, not this foundation task.",
+          "to": "- Current-audit transition: WGIA-012 atomically retired the 2026-07-11 pointer.",
+          "count": 1
+        },
+        {
+          "from": "WGIA-011 own accepted canonical remediation. WGIA-012 alone may change Current\nnavigation and machine projections, WGIA-013 owns proof-gated deletion, and",
+          "to": "WGIA-011 own accepted canonical remediation. WGIA-012 owns the completed Current\nnavigation and machine-projection cutover, WGIA-013 owns proof-gated deletion, and",
+          "count": 1
+        },
+        {
+          "from": "| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |",
+          "to": "| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |",
+          "count": 1
+        }
+      ]
     }
   ],
   "dataAssets": [

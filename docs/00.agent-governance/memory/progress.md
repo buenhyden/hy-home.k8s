@@ -8,6 +8,99 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-012 atomic Current audit cutover
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, governance, validation
+- **Status**: in-review
+- **Tags**: #governance #audit #ria #current-cutover #tdd
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-012 implementation of VAL-WGA-011 from source tree `e09a0b976a555c5200cdab2aeb9abf6759b77588`
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh on Current pack, retired baseline, RIA settlement, report membership, or mutable navigation change.
+- **Next Owner**: primary agent for the atomic commit; then WGIA-013.
+
+#### Progress
+
+Changed the audit collection, document-profile registry, RIA contract/schema/
+producer, current-pack navigation, and exact fixtures as one proposed unit. The
+2026-08-09 pack is the sole Current identity with nine draft members. The
+2026-07-11 pack is no longer Current and has one closed retired baseline whose
+source registry remains pinned to `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`.
+Its unchanged final repository bytes are separately protected at the cutover
+source `e09a0b976a555c5200cdab2aeb9abf6759b77588` through the typed audit
+settlement. Current navigation uses exact counted literal replacements; there
+is no whole-body projection.
+
+#### Memory
+
+A newly Current pack can be source-bounded before its registry row exists by
+using a non-self-referential source commit plus a closed settlement. A retired
+pack whose original source later gained reviewed overlays needs two explicit
+proof points: the original Current registry commit and the final pre-cutover
+byte commit. Conflating them either rejects legitimate historical overlays or
+permits future drift.
+
+#### Evidence
+
+- RED: the production contract still selected the old ID/hash; later isolated
+  probes exposed an incomplete README literal projection and Report Index
+  order drift.
+- GREEN: five focused tests and the final 94 full RIA tests pass. Negative coverage
+  rejects malformed/duplicate/overlapping retired records, bad commits or
+  members, noncanonical settlements/transitions, source registry drift, and
+  final-byte drift.
+- Fresh exact-index clone PASS: RIA self/settled production, registry self and
+  strict 502-path production, profiles zero, links self/strict, affected
+  858-path 22/22 selection, archive, LLM-WIKI check, and cached diff. Stage 98
+  has no diff; the contract has one Current, one retired baseline, no open
+  transition, one settlement, and no `completeBody` projection.
+- Fresh-review fix round 1 RED reproduced three Important findings: the audit
+  collection still named the retired pack as Current comparison owner; real
+  `e09a0b9...` loading stopped at `RIA-CONTRACT` before the original explicit
+  FSM result; and the missing-final-blob link fixture had no typed settlement.
+  GREEN routes that one mutable collection literal to the WGIA pack, keeps
+  proposed schema-v2 loading strict while historical commit loading uses its
+  anchored schema/projections, and reads retired registry membership at
+  `15bba3d...` but protected final bytes at settlement `toCommit=e09a0b9...`.
+  Seven focused RIA tests, link self-test, strict 502-path registry, Markdown
+  profiles with zero violations, strict links, and `git diff --check` pass.
+- Fresh-review fix round 2 RED showed the link fixture used one OID for retired
+  registry authority and protected final bytes; its missing-final mutation
+  stopped before any Git read. GREEN creates distinct fixture commits C1 and
+  C2, asserts the valid read sequence `C1 registry -> C2 retired body`, and
+  keeps Current baseline and settlement `toCommit` aligned on an unreadable OID
+  so the missing-final case attempts that exact body read and fails closed.
+  Link self/strict, three focused RIA tests, pycompile, Ruff, and diff-check pass.
+- Primary final evidence began with an exact 15-file index and expanded to 17
+  only after pre-commit formatter/QA review. The two accepted files are
+  `.secrets.baseline` and
+  `docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md`.
+  The first plain pre-commit failed on detect-secrets baseline mutation and
+  WGIA Plan MD001; the WGIA `Global Constraints` heading became a
+  profile-compatible bold label, and baseline formatter security review was
+  Approved. The first all-files lane then failed on eight reviewed
+  false-positive metadata/prose candidates and pre-existing WERPC Plan MD001.
+  The regenerated baseline has exactly 18 entries across seven paths, every
+  `is_secret` is false, no detector was weakened, security review is Approved,
+  and the WERPC `Global Constraints` heading is now bold.
+- Final primary validation PASS: affected paths=17; staged paths=17; plain
+  pre-commit; RIA 94/94; production RIA settled; LLM-WIKI; archive; direct
+  repository gate; full harness; final all-files; formatter-review; and rerun.
+  Primary final diff-checks remain pending. Hosted, remote, and live evidence
+  remains `DEFER`.
+
+#### Handoff
+
+WGIA-012 remains `In Review`. Fresh specification/content and Python/quality
+reviews, including clean fix rounds 1-2, are Approved with no remaining
+Critical/Important. Only the atomic logical commit is still required.
+Repository-static evidence does not claim hosted, provider, remote, credential,
+secret, Kubernetes, GitOps, or live behavior.
+
 ### 2026-08-09 - WGIA-011 script inventory and Claude approval remediation
 
 #### Metadata

@@ -2690,7 +2690,13 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
     )
     for raw_pack in raw_packs:
         collection = raw_pack["id"].split("/", 1)[0]
-        expected_states = ["done"] if collection == "audits" else ["active", "accepted"]
+        expected_states = (
+            ["draft"]
+            if raw_pack["id"] == "audits/2026-08-09-wgia"
+            else ["done"]
+            if collection == "audits"
+            else ["active", "accepted"]
+        )
         if raw_pack["allowedStates"] != expected_states or not set(
             raw_pack["allowedStates"]
         ).issubset(status_domain):

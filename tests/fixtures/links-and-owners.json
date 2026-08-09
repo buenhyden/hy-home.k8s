@@ -19,7 +19,9 @@
       {"path": "docs/90.references/audits/2026-07-05-wea/historical.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Fixture Historical Audit", "type": "content/reference", "status": "done", "body": "Completed historical audit."},
       {"path": "docs/90.references/audits/2026-07-11-weia/README.md", "profile": "readme/snapshot-pack", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Audit pack\n\n## Report Index\n\n| Completed artifact | Lifecycle | Scope |\n| --- | --- | --- |\n| [audit](audit.md) | `done` | fixture |\n| [plan](../../../04.execution/plans/2026-07-12-fixture.md) | `active` | external row ignored |\n"},
       {"path": "docs/90.references/audits/2026-07-11-weia/audit.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Fixture Audit", "type": "content/reference", "status": "done", "body": "Completed audit."},
-      {"path": "docs/90.references/audits/README.md", "profile": "readme/collection-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# audits\n\n## Item Index\n\n### Audit Pack Registry\n\n| Pack | Pack role |\n| --- | --- |\n| [current](./2026-07-11-weia/README.md) | Current pack |\n"},
+      {"path": "docs/90.references/audits/2026-08-09-wgia/README.md", "profile": "readme/snapshot-pack", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Current audit pack\n\n## Report Index\n\n| Completed artifact | Lifecycle | Scope |\n| --- | --- | --- |\n| [audit](audit.md) | `draft` | fixture |\n| [plan](../../../04.execution/plans/2026-07-12-fixture.md) | `active` | external row ignored |\n"},
+      {"path": "docs/90.references/audits/2026-08-09-wgia/audit.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Current Fixture Audit", "type": "content/reference", "status": "draft", "body": "Current audit evidence."},
+      {"path": "docs/90.references/audits/README.md", "profile": "readme/collection-index", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# audits\n\n## Item Index\n\n### Audit Pack Registry\n\n| Pack | Pack role |\n| --- | --- |\n| [historical](./2026-07-11-weia/README.md) | Historical |\n| [current](./2026-08-09-wgia/README.md) | Current pack |\n"},
       {"path": "docs/90.references/research/2026-08-08-wer/README.md", "profile": "readme/snapshot-pack", "profileClass": "readme", "mode": "frontmatter-free", "title": "", "type": "", "status": "", "body": "# Research pack\n\n### Structure\n\n```text\n2026-08-08-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── source-coverage-and-migration-ledger.md\n```\n\n## Report Index\n\n| Reference | Lifecycle |\n| --- | --- |\n| [accepted](accepted.md) | `accepted` |\n| [active](active.md) | `active` |\n| [ledger](source-coverage-and-migration-ledger.md) | `active` |\n"},
       {"path": "docs/90.references/research/2026-08-08-wer/accepted.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Accepted Reference", "type": "content/reference", "status": "accepted", "body": "Stable reference."},
       {"path": "docs/90.references/research/2026-08-08-wer/active.md", "profile": "content/reference", "profileClass": "common", "mode": "authored", "title": "Active Reference", "type": "content/reference", "status": "active", "body": "Living evidence."},
@@ -39,7 +41,7 @@
     "referenceCurrentPacks": {
       "profileId": "content/reference",
       "packs": [
-        {"id": "audits/2026-07-11-weia", "allowedStates": ["done"], "members": ["audit.md"]},
+        {"id": "audits/2026-08-09-wgia", "allowedStates": ["draft"], "members": ["audit.md"]},
         {"id": "research/2026-08-08-wer", "allowedStates": ["active", "accepted"], "members": ["accepted.md", "active.md", "source-coverage-and-migration-ledger.md"]}
       ]
     }
@@ -530,6 +532,7 @@
     {"name": "unprotected-historical-predecessor-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-protected-historical-unprotected-source"}, "expected_rule_ids": ["LINK-BROKEN"]},
     {"name": "protected-historical-predecessor-disposition-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-protected-historical-disposition-drift"}, "expected_rule_ids": ["LINK-BROKEN"]},
     {"name": "protected-historical-predecessor-byte-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-protected-historical-byte-drift"}, "expected_rule_ids": ["LINK-BROKEN"]},
+    {"name": "protected-historical-predecessor-final-blob-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-protected-historical-final-blob-missing"}, "expected_rule_ids": ["LINK-BROKEN"]},
     {"name": "snapshot-historical-predecessor-link", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-snapshot-historical-predecessor"}, "expected_rule_ids": []},
     {"name": "snapshot-historical-predecessor-source-commit-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-snapshot-historical-source-commit-drift"}, "expected_rule_ids": ["LINK-BROKEN"]},
     {"name": "snapshot-historical-predecessor-byte-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "link-snapshot-historical-byte-drift"}, "expected_rule_ids": ["LINK-BROKEN"]},
@@ -595,7 +598,7 @@
     {"name": "settled-ledger-reason-drift", "tree": {"base": "baseTree"}, "mutation": {"kind": "ledger-settled-reason-drift"}, "expected_rule_ids": ["LEDGER-PROTECTED-DRIFT"]},
     {"name": "reference-valid", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-valid"}, "expected_rule_ids": []},
     {"name": "reference-research-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-research-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
-    {"name": "reference-audit-draft", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-draft"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
+    {"name": "reference-audit-done", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-done"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
     {"name": "reference-audit-active", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-audit-active"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-STATUS"]},
     {"name": "reference-active-undeclared", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-active-undeclared"}, "expected_rule_ids": ["REFERENCE-PACK-OWNER-UNDECLARED"]},
     {"name": "reference-declared-missing", "tree": {"base": "baseTree"}, "mutation": {"kind": "reference-declared-missing"}, "expected_rule_ids": ["REFERENCE-PACK-INDEX-STATUS", "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE"]},

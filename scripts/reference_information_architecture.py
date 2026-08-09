@@ -82,6 +82,36 @@ HISTORICAL_PACK_IDS = (
     "audits/2026-07-05-wea",
 )
 AUDIT_PACK_ID = "audits/2026-07-11-weia"
+WGIA_PACK_ID = "audits/2026-08-09-wgia"
+WGIA_SOURCE_COMMIT = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
+WGIA_ALLOWED_STATES = ("draft",)
+WGIA_MEMBERS = (
+    "ai-agents-integrated-and-role-specific-agents.md",
+    "ci-cd-github-actions-qa-and-validation.md",
+    "harness-loop-fixtures-scripts-and-blockers.md",
+    "legacy-deprecated-and-one-shot-disposition-ledger.md",
+    "llm-wiki-memory-and-knowledge-management.md",
+    "remediation-and-integration-roadmap.md",
+    "security-and-approval-boundaries.md",
+    "spec-driven-sdlc-documentation-and-templates.md",
+    "workspace-purpose-governance-and-operating-contracts.md",
+)
+RETIRED_AUDIT_ALLOWED_STATES = ("done",)
+RETIRED_AUDIT_MEMBERS = (
+    "ai-agents-model-routing-vibe-coding.md",
+    "ci-qa-automation-pipeline-workflow.md",
+    "governance-harness-loop-providers.md",
+    "kubernetes-infrastructure-security.md",
+    "remediation-roadmap.md",
+    "sdlc-document-lifecycle-frontmatter.md",
+)
+AUDIT_SETTLEMENT_ID = "wgia-012-current-audit-cutover"
+AUDIT_RETIREMENT_REASON = (
+    "Superseded by the 2026-08-09 workspace governance implementation audit."
+)
+AUDIT_SETTLEMENT_REASON = (
+    "Retire the prior Current audit and activate its reviewed successor atomically."
+)
 RESEARCH_PACK_ID = "research/2026-08-08-wer"
 TRANSITION_ID = "ria-007-postflight-ledger"
 TRANSITION_SUBJECT = "source-coverage-and-migration-ledger"
@@ -1060,25 +1090,85 @@ def _validate_path_fields(contract: Mapping[str, object]) -> None:
 
 
 _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
-    "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md": {
-        "completeBody": True,
-    },
     "docs/90.references/audits/README.md": {
-        "table": {
-            "section": "Audit Pack Registry",
-            "columns": ["Pack role", "Successor / resolution"],
-        },
+        "literalReplacements": [
+            {
+                "from": "├── 2026-07-11-weia/\n└── README.md",
+                "to": "├── 2026-07-11-weia/\n├── 2026-08-09-wgia/\n└── README.md",
+                "count": 1,
+            },
+            {
+                "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |",
+                "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md) and [Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md). |",
+                "count": 1,
+            },
+            {
+                "from": "- [Current Audit Pack](./2026-07-11-weia/README.md)",
+                "to": "- [Current Audit Pack](./2026-08-09-wgia/README.md)",
+                "count": 1,
+            },
+            {
+                "from": "- [Current Audit Integration Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)",
+                "to": "- [Current Audit Integration Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)",
+                "count": 1,
+            },
+            {
+                "from": "- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)",
+                "to": "- [Current Audit Integration Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)",
+                "count": 1,
+            },
+            {
+                "from": "Current comparison owner: [2026-07-11-weia](./2026-07-11-weia/README.md).",
+                "to": "Current comparison owner: [2026-08-09-wgia](./2026-08-09-wgia/README.md).",
+                "count": 1,
+            },
+        ],
     },
-    "docs/90.references/audits/2026-07-11-weia/README.md": {
-        "table": {
-            "section": "Report Index",
-            "columns": ["Lifecycle", "Actionable disposition"],
-        },
+    "docs/90.references/audits/2026-08-09-wgia/README.md": {
+        "literalReplacements": [
+            {
+                "from": "This Stage 90 pack is the draft successor foundation for a repository-wide\nworkspace governance audit.",
+                "to": "This Stage 90 pack is the Current repository-wide evidence owner for a\nworkspace governance audit.",
+                "count": 1,
+            },
+            {
+                "from": "The collection's Current pointer remains the 2026-07-11 audit until WGIA-012\nperforms the separately validated atomic cutover. A draft report records only\nthe initial repository-static inventory and a conservative verdict; its topic\nis not complete and is never treated as `Aligned` merely because an owner or\nsupporting surface exists.",
+                "to": "The collection's sole Current pointer is this 2026-08-09 audit. The prior\n2026-07-11 audit remains source-commit-bounded historical evidence. A report's\nverdict remains bounded by its recorded evidence depth and cannot become\n`Aligned` merely because an owner or supporting surface exists.",
+                "count": 1,
+            },
+            {
+                "from": "- Pack role: Draft successor foundation; not Current.",
+                "to": "- Pack role: Current audit pack; descriptive evidence only.",
+                "count": 1,
+            },
+            {
+                "from": "- Current-audit transition owner: WGIA-012, not this foundation task.",
+                "to": "- Current-audit transition: WGIA-012 atomically retired the 2026-07-11 pointer.",
+                "count": 1,
+            },
+            {
+                "from": "WGIA-011 own accepted canonical remediation. WGIA-012 alone may change Current\nnavigation and machine projections, WGIA-013 owns proof-gated deletion, and",
+                "to": "WGIA-011 own accepted canonical remediation. WGIA-012 owns the completed Current\nnavigation and machine-projection cutover, WGIA-013 owns proof-gated deletion, and",
+                "count": 1,
+            },
+            {
+                "from": "| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |",
+                "to": "| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |",
+                "count": 1,
+            },
+        ],
     },
 }
 
 
-def _validate_contract_boundaries(contract: dict[str, object]) -> None:
+def _validate_contract_boundaries(
+    contract: dict[str, object], *, allow_historical_v2: bool = False
+) -> None:
+    legacy_v2 = (
+        allow_historical_v2
+        and contract.get("schemaVersion") == 2
+        and "retiredCurrentPackBaselines" not in contract
+    )
     registry_path = parse_repository_path(
         contract.get("currentPackRegistry"), field="currentPackRegistry"
     )
@@ -1115,6 +1205,42 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
                 "RIA-CONTRACT", "currentPackBaselines", "pack key is invalid"
             )
         parse_git_sha1(value, field=f"currentPackBaselines.{key}")
+    retired = contract.get("retiredCurrentPackBaselines")
+    if retired is None and legacy_v2:
+        retired = []
+    if not isinstance(retired, list):
+        raise ContractError(
+            "RIA-CONTRACT", "retiredCurrentPackBaselines", "must be an array"
+        )
+    retired_ids: set[str] = set()
+    for index, record in enumerate(retired):
+        field = f"retiredCurrentPackBaselines[{index}]"
+        if not isinstance(record, Mapping):
+            raise ContractError("RIA-CONTRACT", field, "must be an object")
+        pack_id = record.get("id")
+        retired_by = record.get("retiredBy")
+        if (
+            not isinstance(pack_id, str)
+            or PACK_ID_PATTERN.fullmatch(pack_id) is None
+            or pack_id in retired_ids
+            or not isinstance(retired_by, str)
+            or PACK_ID_PATTERN.fullmatch(retired_by) is None
+        ):
+            raise ContractError(
+                "RIA-CONTRACT", "retiredCurrentPackBaselines", "pack identity is invalid"
+            )
+        retired_ids.add(pack_id)
+        parse_git_sha1(record.get("sourceCommit"), field=f"{field}.sourceCommit")
+        _unique_strings(record.get("allowedStates"), field=f"{field}.allowedStates")
+        members = _unique_strings(record.get("members"), field=f"{field}.members")
+        if not members or any(
+            PurePosixPath(member).name != member or not member.endswith(".md")
+            for member in members
+        ):
+            raise ContractError("RIA-CONTRACT", f"{field}.members", "member is invalid")
+        reason = record.get("reason")
+        if not isinstance(reason, str) or not reason.strip() or len(reason) > 512:
+            raise ContractError("RIA-CONTRACT", f"{field}.reason", "reason is invalid")
     for collection in ("baselineTransitions", "baselineSettlements"):
         records = contract.get(collection)
         if not isinstance(records, list):
@@ -1125,9 +1251,12 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
                     record.get("fromCommit"), field=f"{collection}[{index}].fromCommit"
                 )
                 if collection == "baselineSettlements":
+                    commit_key = (
+                        "toCommit" if "toCommit" in record else "transitionCommit"
+                    )
                     parse_git_sha1(
-                        record.get("transitionCommit"),
-                        field=f"{collection}[{index}].transitionCommit",
+                        record.get(commit_key),
+                        field=f"{collection}[{index}].{commit_key}",
                     )
     projections = contract.get("mutableIndexProjections")
     if not isinstance(projections, list):
@@ -1147,7 +1276,9 @@ def _validate_contract_boundaries(contract: dict[str, object]) -> None:
             )
         seen.add(path)
         expected = _PROJECTION_ALLOWLIST.get(path)
-        if expected is None or dict(projection) != {"path": path, **expected}:
+        if not legacy_v2 and (
+            expected is None or dict(projection) != {"path": path, **expected}
+        ):
             raise ContractError(
                 "RIA-OVERLAY", path, "projection is outside the closed allowlist"
             )
@@ -1220,7 +1351,7 @@ def load_contract_at_commit(
     contract = _decode_json_bytes(payload, field="contract")
     _validate_path_fields(contract)
     _validate_schema_at_commit(root, oid, contract, relative, runner)
-    _validate_contract_boundaries(contract)
+    _validate_contract_boundaries(contract, allow_historical_v2=True)
     return contract
 
 
@@ -2148,8 +2279,23 @@ def _build_context(
         # governance is a reviewed registry change, so a pack that is absent
         # from the proposal is not drift; it simply stops being guarded here.
         baseline_by_id = {pack.pack_id: pack for pack in registry.packs}
+        source_bounded_successor = Pack(
+            WGIA_PACK_ID, WGIA_ALLOWED_STATES, WGIA_MEMBERS
+        )
+
+        def baseline_matches(pack: Pack) -> bool:
+            baseline_pack = baseline_by_id.get(pack.pack_id)
+            if baseline_pack == pack:
+                return True
+            return (
+                pack == source_bounded_successor
+                and encoded == WGIA_SOURCE_COMMIT
+                and _audit_cutover_state(contract, baselines)
+                == ("audit-settled", None)
+            )
+
         if registry.profile_id != proposed_registry.profile_id or any(
-            baseline_by_id.get(pack.pack_id) != pack for pack in proposed_registry.packs
+            not baseline_matches(pack) for pack in proposed_registry.packs
         ):
             raise ContractError(
                 "RIA-TRANSITION",
@@ -2193,6 +2339,120 @@ def validate_proposed_registry_authority(
             return [error.finding]
         return [Finding("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), error.message)]
     return []
+
+
+def validate_retired_current_baselines(
+    root: Path,
+    contract: Mapping[str, object],
+    *,
+    proposed_commit: object | None = None,
+    runner: GitRunner | None = None,
+) -> list[Finding]:
+    """Guard a retired Current pack against registry or byte drift."""
+
+    records = contract.get("retiredCurrentPackBaselines")
+    if records is None or records == []:
+        return []
+    if not isinstance(records, list):
+        return [
+            Finding(
+                "RIA-SNAPSHOT",
+                "retiredCurrentPackBaselines",
+                "retired baseline registry is malformed",
+            )
+        ]
+    try:
+        proposed_oid = (
+            parse_git_sha1(proposed_commit, field="--commit")
+            if proposed_commit is not None
+            else None
+        )
+        proposed_registry = _registry_projection(
+            _decode_json_bytes(
+                _proposed_path(root.absolute(), REGISTRY_PATH, proposed_oid, runner),
+                field=REGISTRY_PATH.as_posix(),
+            )
+        )
+        current_ids = set(proposed_registry.pack_ids)
+        findings: list[Finding] = []
+        seen: set[str] = set()
+        for record in records:
+            if not isinstance(record, Mapping):
+                raise _GitError("retired baseline record is malformed")
+            pack_id = str(record.get("id"))
+            retired_by = str(record.get("retiredBy"))
+            if (
+                pack_id in seen
+                or pack_id in current_ids
+                or retired_by not in current_ids
+                or pack_id == retired_by
+            ):
+                findings.append(
+                    Finding(
+                        "RIA-SNAPSHOT",
+                        "retiredCurrentPackBaselines",
+                        "retired and Current pack identities overlap",
+                    )
+                )
+                continue
+            seen.add(pack_id)
+            encoded = record.get("sourceCommit")
+            oid = parse_git_sha1(encoded, field="retiredCurrentPackBaselines.sourceCommit")
+            baseline_registry = _registry_projection(
+                _decode_json_bytes(
+                    _read_commit_path(root.absolute(), oid, REGISTRY_PATH, runner),
+                    field=REGISTRY_PATH.as_posix(),
+                )
+            )
+            expected_pack = Pack(
+                pack_id,
+                tuple(record.get("allowedStates", ())),
+                tuple(record.get("members", ())),
+            )
+            source_matches = (
+                baseline_registry.profile_id == proposed_registry.profile_id
+                and expected_pack in baseline_registry.packs
+            )
+            if not source_matches:
+                findings.append(
+                    Finding(
+                        "RIA-SNAPSHOT",
+                        pack_id,
+                        "retired baseline registry differs",
+                    )
+                )
+                continue
+            protected_oid = oid
+            state, state_finding = _fsm_state(contract)
+            if state == "audit-settled" and state_finding is None:
+                settlement = contract["baselineSettlements"][0]
+                assert isinstance(settlement, Mapping)
+                protected_oid = parse_git_sha1(
+                    settlement.get("toCommit"),
+                    field="baselineSettlements[0].toCommit",
+                )
+            for path in (expected_pack.readme_path, *expected_pack.member_paths):
+                baseline = _read_commit_path(
+                    root.absolute(), protected_oid, path, runner
+                )
+                proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
+                if baseline != proposed:
+                    findings.append(
+                        Finding(
+                            "RIA-SNAPSHOT",
+                            path.as_posix(),
+                            "retired Current bytes differ",
+                        )
+                    )
+        return sorted(set(findings))
+    except (ContractError, _GitError, TypeError):
+        return [
+            Finding(
+                "RIA-SNAPSHOT",
+                "retiredCurrentPackBaselines",
+                "retired baseline authority is unavailable",
+            )
+        ]
 
 
 def _code_span_intervals(
@@ -4862,7 +5122,17 @@ def validate_overlay_guards(
         if path in current_paths:
             continue
         if path.parts[:3] == ("docs", "90.references", "audits"):
-            pack_id = AUDIT_PACK_ID
+            audit_ids = [pack_id for pack_id in baselines if pack_id.startswith("audits/")]
+            if len(audit_ids) != 1:
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "projection path has ambiguous Current audit ownership",
+                    )
+                )
+                continue
+            pack_id = audit_ids[0]
         elif path.parts[:3] == ("docs", "90.references", "research"):
             pack_id = RESEARCH_PACK_ID
         else:
@@ -4940,6 +5210,53 @@ def _record_matches_transition(
     )
 
 
+def _audit_cutover_state(
+    contract: Mapping[str, object], baselines: Mapping[str, str]
+) -> tuple[str | None, Finding | None] | None:
+    retired = contract.get("retiredCurrentPackBaselines")
+    settlements = contract.get("baselineSettlements")
+    audit_settlement_present = isinstance(settlements, list) and any(
+        isinstance(record, Mapping) and record.get("id") == AUDIT_SETTLEMENT_ID
+        for record in settlements
+    )
+    if (
+        WGIA_PACK_ID not in baselines
+        and not retired
+        and not audit_settlement_present
+    ):
+        return None
+    expected_retired = {
+        "id": AUDIT_PACK_ID,
+        "sourceCommit": CURRENT_ROOT_COMMIT,
+        "allowedStates": list(RETIRED_AUDIT_ALLOWED_STATES),
+        "members": list(RETIRED_AUDIT_MEMBERS),
+        "retiredBy": WGIA_PACK_ID,
+        "reason": AUDIT_RETIREMENT_REASON,
+    }
+    expected_settlement = {
+        "id": AUDIT_SETTLEMENT_ID,
+        "fromPackId": AUDIT_PACK_ID,
+        "toPackId": WGIA_PACK_ID,
+        "fromCommit": CURRENT_ROOT_COMMIT,
+        "toCommit": WGIA_SOURCE_COMMIT,
+        "fromMemberCount": len(RETIRED_AUDIT_MEMBERS),
+        "toMemberCount": len(WGIA_MEMBERS),
+        "reason": AUDIT_SETTLEMENT_REASON,
+    }
+    if (
+        dict(baselines) != {WGIA_PACK_ID: WGIA_SOURCE_COMMIT}
+        or retired != [expected_retired]
+        or contract.get("baselineTransitions") != []
+        or settlements != [expected_settlement]
+    ):
+        return None, Finding(
+            "RIA-TRANSITION",
+            "currentPackBaselines",
+            "audit baseline state is outside the closed FSM",
+        )
+    return "audit-settled", None
+
+
 def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | None]:
     try:
         baselines = _encoded_baselines(contract)
@@ -4955,6 +5272,9 @@ def _fsm_state(contract: Mapping[str, object]) -> tuple[str | None, Finding | No
             "currentPackBaselines",
             "baseline state is outside the closed FSM",
         )
+    audit_state = _audit_cutover_state(contract, baselines)
+    if audit_state is not None:
+        return audit_state
     if tuple(baselines) == (AUDIT_PACK_ID,):
         if (
             baselines.get(AUDIT_PACK_ID) == CURRENT_ROOT_COMMIT
@@ -5056,7 +5376,7 @@ def _settlement_proof(
         )
         _validate_path_fields(c2_contract)
         _validate_schema_at_commit(root, c2_oid, c2_contract, contract_path, runner)
-        _validate_contract_boundaries(c2_contract)
+        _validate_contract_boundaries(c2_contract, allow_historical_v2=True)
         if not _matching_open_contract(settlement, c2_contract, contract):
             raise _GitError("transition contract does not match settlement")
         c2_registry_bytes = _read_commit_path(root, c2_oid, REGISTRY_PATH, runner)
@@ -5422,6 +5742,9 @@ def validate_reference_architecture(
         *validate_snapshot_guards(
             root, contract, proposed_commit=commit, runner=runner
         ),
+        *validate_retired_current_baselines(
+            root, contract, proposed_commit=commit, runner=runner
+        ),
         *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
         *validate_data_assets(root, contract, proposed_commit=commit, runner=runner),
         *validate_generated_assets(
@@ -5463,6 +5786,7 @@ def _self_test_contract() -> dict[str, object]:
         "currentPackBaselines": {
             AUDIT_PACK_ID: CURRENT_ROOT_COMMIT,
         },
+        "retiredCurrentPackBaselines": [],
         "baselineTransitions": [],
         "baselineSettlements": [],
         "mutableIndexProjections": [],

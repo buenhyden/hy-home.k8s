@@ -25,7 +25,7 @@ import unicodedata
 from dataclasses import dataclass, field as dataclass_field, replace
 from pathlib import Path
 from pathlib import PurePosixPath
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote
 
 import yaml
@@ -5400,8 +5400,13 @@ def _protected_historical_predecessor_link(
     context: Context,
     source: PurePosixPath,
     target: PurePosixPath,
+    *,
+    read_commit_path: Callable[[Path, str, Path], bytes] | None = None,
 ) -> bool:
     """Prove one missing target is immutable RIA-protected historical evidence."""
+
+    if read_commit_path is None:
+        read_commit_path = _read_ria_commit_path
 
     if (
         target.as_posix() not in WERPC_PREDECESSOR_PATHS
@@ -5435,12 +5440,12 @@ def _protected_historical_predecessor_link(
             return False
         oid = encoded.removeprefix("git-sha1:")
         try:
-            registry_bytes = _read_ria_commit_path(
+            registry_bytes = read_commit_path(
                 context.root,
                 oid,
                 Path(DOCUMENT_PROFILES_PATH.as_posix()),
             )
-            source_bytes = _read_ria_commit_path(
+            source_bytes = read_commit_path(
                 context.root,
                 oid,
                 Path(source.as_posix()),
@@ -5469,6 +5474,136 @@ def _protected_historical_predecessor_link(
         if expected_pack not in raw_packs:
             return False
         return source_bytes == context.texts[source].encode("utf-8")
+    retired = contract.get("retiredCurrentPackBaselines")
+    if isinstance(retired, list):
+        matching = [
+            record
+            for record in retired
+            if isinstance(record, dict)
+            and isinstance(record.get("id"), str)
+            and source.is_relative_to(
+                PurePosixPath("docs/90.references") / record["id"]
+            )
+        ]
+        if len(matching) == 1:
+            record = matching[0]
+            expected_keys = {
+                "id",
+                "sourceCommit",
+                "allowedStates",
+                "members",
+                "retiredBy",
+                "reason",
+            }
+            encoded = record.get("sourceCommit")
+            retired_by = record.get("retiredBy")
+            allowed_states = record.get("allowedStates")
+            members = record.get("members")
+            if (
+                set(record) != expected_keys
+                or not isinstance(encoded, str)
+                or GIT_SHA1_PATTERN.fullmatch(encoded) is None
+                or not isinstance(retired_by, str)
+                or retired_by
+                not in {pack.id for pack in context.reference_current_packs.packs}
+                or not isinstance(allowed_states, list)
+                or not allowed_states
+                or any(not isinstance(state, str) for state in allowed_states)
+                or len(allowed_states) != len(set(allowed_states))
+                or not isinstance(members, list)
+                or not members
+                or any(
+                    not isinstance(member, str)
+                    or PurePosixPath(member).name != member
+                    for member in members
+                )
+                or len(members) != len(set(members))
+                or not isinstance(record.get("reason"), str)
+                or not record["reason"].strip()
+            ):
+                return False
+            current_pack = next(
+                (
+                    pack
+                    for pack in context.reference_current_packs.packs
+                    if pack.id == retired_by
+                ),
+                None,
+            )
+            settlements = contract.get("baselineSettlements")
+            baselines = contract.get("currentPackBaselines")
+            if (
+                contract.get("baselineTransitions") != []
+                or current_pack is None
+                or not isinstance(settlements, list)
+                or len(settlements) != 1
+                or not isinstance(settlements[0], dict)
+                or not isinstance(baselines, dict)
+            ):
+                return False
+            settlement = settlements[0]
+            protected_encoded = settlement.get("toCommit")
+            if (
+                set(settlement)
+                != {
+                    "id",
+                    "fromPackId",
+                    "toPackId",
+                    "fromCommit",
+                    "toCommit",
+                    "fromMemberCount",
+                    "toMemberCount",
+                    "reason",
+                }
+                or settlement.get("id") != "wgia-012-current-audit-cutover"
+                or settlement.get("fromPackId") != record["id"]
+                or settlement.get("toPackId") != retired_by
+                or settlement.get("fromCommit") != encoded
+                or not isinstance(protected_encoded, str)
+                or GIT_SHA1_PATTERN.fullmatch(protected_encoded) is None
+                or baselines.get(retired_by) != protected_encoded
+                or settlement.get("fromMemberCount") != len(members)
+                or settlement.get("toMemberCount") != len(current_pack.members)
+                or not isinstance(settlement.get("reason"), str)
+                or not settlement["reason"].strip()
+            ):
+                return False
+            registry_oid = encoded.removeprefix("git-sha1:")
+            protected_oid = protected_encoded.removeprefix("git-sha1:")
+            try:
+                registry_bytes = read_commit_path(
+                    context.root,
+                    registry_oid,
+                    Path(DOCUMENT_PROFILES_PATH.as_posix()),
+                )
+                source_bytes = read_commit_path(
+                    context.root,
+                    protected_oid,
+                    Path(source.as_posix()),
+                )
+                baseline_registry = json.loads(registry_bytes.decode("utf-8", "strict"))
+            except (
+                RiaContractError,
+                RiaGitError,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+            ):
+                return False
+            reference_packs = baseline_registry.get("referenceCurrentPacks")
+            expected_pack = {
+                "id": record["id"],
+                "allowedStates": allowed_states,
+                "members": members,
+            }
+            if (
+                not isinstance(reference_packs, dict)
+                or reference_packs.get("profileId")
+                != context.reference_current_packs.profile_id
+                or not isinstance(reference_packs.get("packs"), list)
+                or expected_pack not in reference_packs["packs"]
+            ):
+                return False
+            return source_bytes == context.texts[source].encode("utf-8")
     guard = contract.get("snapshotGuard")
     if not isinstance(guard, dict):
         return False
@@ -5492,7 +5627,7 @@ def _protected_historical_predecessor_link(
         return False
     oid = encoded.removeprefix("git-sha1:")
     try:
-        source_bytes = _read_ria_commit_path(
+        source_bytes = read_commit_path(
             context.root,
             oid,
             Path(source.as_posix()),
@@ -5564,6 +5699,8 @@ def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]
     ):
         return True, _ledger_protected_drift()
     settlement = settlements[0]
+    if settlement.get("id") != LEDGER_SETTLEMENT_ID:
+        return False, None
     transition_commit = settlement.get("transitionCommit")
     target_sha256 = settlement.get("targetSha256")
     target_byte_length = settlement.get("targetByteLength")
@@ -6030,7 +6167,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         )
         adapter_targets[adapter_path] = PurePosixPath(normalized)
     metadata = {path: _frontmatter(texts[path]) for path in paths}
-    fixture_baseline_commit = _fixture_baseline_commit(
+    fixture_registry_commit, fixture_final_commit = _fixture_baseline_commits(
         root,
         (
             PurePosixPath(
@@ -6058,11 +6195,34 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         json.dumps(
             {
                 "currentPackBaselines": {
-                    "audits/2026-07-11-weia": "git-sha1:"
-                    + fixture_baseline_commit
+                    "audits/2026-08-09-wgia": "git-sha1:"
+                    + fixture_final_commit
                 },
+                "retiredCurrentPackBaselines": [
+                    {
+                        "id": "audits/2026-07-11-weia",
+                        "sourceCommit": "git-sha1:" + fixture_registry_commit,
+                        "allowedStates": ["done"],
+                        "members": ["audit.md"],
+                        "retiredBy": "audits/2026-08-09-wgia",
+                        "reason": "Fixture Current audit retirement.",
+                    }
+                ],
+                "baselineTransitions": [],
+                "baselineSettlements": [
+                    {
+                        "id": "wgia-012-current-audit-cutover",
+                        "fromPackId": "audits/2026-07-11-weia",
+                        "toPackId": "audits/2026-08-09-wgia",
+                        "fromCommit": "git-sha1:" + fixture_registry_commit,
+                        "toCommit": "git-sha1:" + fixture_final_commit,
+                        "fromMemberCount": 1,
+                        "toMemberCount": 1,
+                        "reason": "Fixture Current audit cutover.",
+                    }
+                ],
                 "snapshotGuard": {
-                    "sourceCommit": "git-sha1:" + fixture_baseline_commit,
+                    "sourceCommit": "git-sha1:" + fixture_final_commit,
                     "historicalPackIds": ["audits/2026-07-05-wea"],
                 },
             }
@@ -6070,12 +6230,12 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
     )
 
 
-def _fixture_baseline_commit(
+def _fixture_baseline_commits(
     root: Path,
     protected_sources: tuple[PurePosixPath, ...],
     reference_current_packs: ReferenceCurrentPacks,
-) -> str:
-    """Create one closed baseline commit for protected-link self-tests."""
+) -> tuple[str, str]:
+    """Create distinct registry-source and final-byte fixture commits."""
 
     source_bytes = {
         protected_source: (root / protected_source).read_bytes()
@@ -6083,6 +6243,38 @@ def _fixture_baseline_commit(
     }
     registry_path = root / DOCUMENT_PROFILES_PATH
     original_registry_bytes = registry_path.read_bytes()
+    registry_path.write_text(
+        json.dumps(
+            {
+                "referenceCurrentPacks": {
+                    "profileId": reference_current_packs.profile_id,
+                    "packs": [
+                        {
+                            "id": "audits/2026-07-11-weia",
+                            "allowedStates": ["done"],
+                            "members": ["audit.md"],
+                        },
+                        *[
+                            {
+                                "id": pack.id,
+                                "allowedStates": list(pack.allowed_states),
+                                "members": list(pack.members),
+                            }
+                            for pack in reference_current_packs.packs
+                            if not pack.id.startswith("audits/")
+                        ],
+                    ],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    _run_fixture_git(root, ("init", "-q"))
+    _run_fixture_git(root, ("add", "--", "."))
+    _run_fixture_git(root, ("commit", "-q", "-m", "fixture baseline"))
+    registry_commit = (
+        _run_fixture_git(root, ("rev-parse", "HEAD")).decode("ascii").strip()
+    )
     predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
     for protected_source, original_bytes in source_bytes.items():
         relative_target = posixpath.relpath(
@@ -6093,32 +6285,15 @@ def _fixture_baseline_commit(
             original_bytes
             + f"\n[historical predecessor]({relative_target})\n".encode()
         )
-    registry_path.write_text(
-        json.dumps(
-            {
-                "referenceCurrentPacks": {
-                    "profileId": reference_current_packs.profile_id,
-                    "packs": [
-                        {
-                            "id": pack.id,
-                            "allowedStates": list(pack.allowed_states),
-                            "members": list(pack.members),
-                        }
-                        for pack in reference_current_packs.packs
-                    ],
-                }
-            }
-        ),
-        encoding="utf-8",
-    )
-    _run_fixture_git(root, ("init", "-q"))
+    registry_path.write_bytes(original_registry_bytes)
     _run_fixture_git(root, ("add", "--", "."))
     _run_fixture_git(root, ("commit", "-q", "-m", "fixture baseline"))
-    commit = _run_fixture_git(root, ("rev-parse", "HEAD")).decode("ascii").strip()
+    final_commit = (
+        _run_fixture_git(root, ("rev-parse", "HEAD")).decode("ascii").strip()
+    )
     for protected_source, original_bytes in source_bytes.items():
         (root / protected_source).write_bytes(original_bytes)
-    registry_path.write_bytes(original_registry_bytes)
-    return commit
+    return registry_commit, final_commit
 
 
 def _run_fixture_git(root: Path, arguments: tuple[str, ...]) -> bytes:
@@ -6160,6 +6335,75 @@ def _run_fixture_git(root: Path, arguments: tuple[str, ...]) -> bytes:
             stderr=completed.stderr[:FIXTURE_GIT_MAX_STDERR],
         )
     return completed.stdout
+
+
+def _retired_fixture_read_path_failures(context: Context) -> list[str]:
+    """Prove the fixture exercises distinct retired registry/final authorities."""
+
+    source = PurePosixPath("docs/90.references/audits/2026-07-11-weia/audit.md")
+    target = PurePosixPath(sorted(WERPC_PREDECESSOR_PATHS)[0])
+    failures: list[str] = []
+
+    def exercise(mutation: str) -> tuple[bool, list[tuple[str, Path]], dict[str, Any]]:
+        selected = _mutated_context(context, mutation)
+        contract = json.loads(selected.ria_contract_text or "{}")
+        reads: list[tuple[str, Path]] = []
+
+        def traced_reader(root: Path, oid: str, path: Path) -> bytes:
+            reads.append((oid, path))
+            return _read_ria_commit_path(root, oid, path)
+
+        result = _protected_historical_predecessor_link(
+            selected,
+            source,
+            target,
+            read_commit_path=traced_reader,
+        )
+        return result, reads, contract
+
+    valid, valid_reads, valid_contract = exercise(
+        "link-protected-historical-predecessor"
+    )
+    retired = valid_contract["retiredCurrentPackBaselines"][0]
+    settlement = valid_contract["baselineSettlements"][0]
+    source_oid = retired["sourceCommit"].removeprefix("git-sha1:")
+    final_oid = settlement["toCommit"].removeprefix("git-sha1:")
+    if source_oid == final_oid:
+        failures.append("retired link fixture source and final commits are conflated")
+    expected_valid_reads = [
+        (source_oid, Path(DOCUMENT_PROFILES_PATH.as_posix())),
+        (final_oid, Path(source.as_posix())),
+    ]
+    if not valid or valid_reads != expected_valid_reads:
+        failures.append(
+            "retired link fixture valid read path differs: "
+            f"expected {expected_valid_reads}, actual {valid_reads}"
+        )
+
+    missing, missing_reads, missing_contract = exercise(
+        "link-protected-historical-final-blob-missing"
+    )
+    missing_retired = missing_contract["retiredCurrentPackBaselines"][0]
+    missing_settlement = missing_contract["baselineSettlements"][0]
+    missing_source_oid = missing_retired["sourceCommit"].removeprefix("git-sha1:")
+    missing_final_oid = missing_settlement["toCommit"].removeprefix("git-sha1:")
+    expected_missing_reads = [
+        (missing_source_oid, Path(DOCUMENT_PROFILES_PATH.as_posix())),
+        (missing_final_oid, Path(source.as_posix())),
+    ]
+    if (
+        missing_contract["currentPackBaselines"].get(
+            missing_settlement["toPackId"]
+        )
+        != missing_settlement["toCommit"]
+        or missing
+        or missing_reads != expected_missing_reads
+    ):
+        failures.append(
+            "retired link fixture missing-final read path differs: "
+            f"expected {expected_missing_reads}, actual {missing_reads}"
+        )
+    return failures
 
 
 def _program_lineage_fixture_context(
@@ -8272,6 +8516,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         "link-protected-historical-unprotected-source",
         "link-protected-historical-disposition-drift",
         "link-protected-historical-byte-drift",
+        "link-protected-historical-final-blob-missing",
         "link-snapshot-historical-predecessor",
         "link-snapshot-historical-source-commit-drift",
         "link-snapshot-historical-byte-drift",
@@ -8296,6 +8541,13 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[link_source] += f"\n[historical predecessor]({relative_target})\n"
         if mutation == "link-protected-historical-byte-drift":
             texts[protected_source] += "\nprotected byte drift\n"
+        elif mutation == "link-protected-historical-final-blob-missing":
+            contract = json.loads(ria_contract_text or "{}")
+            settlement = contract["baselineSettlements"][0]
+            missing_commit = "git-sha1:" + "1" * 40
+            settlement["toCommit"] = missing_commit
+            contract["currentPackBaselines"][settlement["toPackId"]] = missing_commit
+            ria_contract_text = json.dumps(contract)
         elif mutation == "link-snapshot-historical-byte-drift":
             texts[snapshot_source] += "\nsnapshot byte drift\n"
         elif mutation == "link-snapshot-historical-source-commit-drift":
@@ -8674,21 +8926,21 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         pass
     elif mutation in {
         "reference-research-draft",
-        "reference-audit-draft",
+        "reference-audit-done",
         "reference-audit-active",
     }:
         target = {
             "reference-research-draft": PurePosixPath(
                 "docs/90.references/research/2026-08-08-wer/accepted.md"
             ),
-            "reference-audit-draft": PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            "reference-audit-done": PurePosixPath(
+                "docs/90.references/audits/2026-08-09-wgia/audit.md"
             ),
             "reference-audit-active": PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
+                "docs/90.references/audits/2026-08-09-wgia/audit.md"
             ),
         }[mutation]
-        status = "active" if mutation == "reference-audit-active" else "draft"
+        status = "active" if mutation == "reference-audit-active" else "done"
         old_status = str(metadata[target]["status"])
         metadata[target]["status"] = status
         pack_readme = target.parent / "README.md"
@@ -9268,7 +9520,7 @@ def _self_test(root: Path) -> list[str]:
         "settled-ledger-reason-drift",
         "reference-valid",
         "reference-research-draft",
-        "reference-audit-draft",
+        "reference-audit-done",
         "reference-audit-active",
         "reference-active-undeclared",
         "reference-declared-missing",
@@ -9351,6 +9603,7 @@ def _self_test(root: Path) -> list[str]:
                 os.environ["GIT_CONFIG_GLOBAL"] = previous_global
     with tempfile.TemporaryDirectory(prefix="smdv-cross-") as temporary:
         context = _fixture_context(Path(temporary), fixture["baseTree"])
+        failures.extend(_retired_fixture_read_path_failures(context))
         for case in fixture["cases"]:
             if case.get("tree") != {"base": "baseTree"} or list(case) != [
                 "name",

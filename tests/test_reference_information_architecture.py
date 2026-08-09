@@ -70,6 +70,7 @@ POLICY_COPY = (
 )
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
+WGIA_BASELINE = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
 
 
 def _load_cli_module():
@@ -378,6 +379,32 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         contract["baselineSettlements"] = [
             {**self._transition(target), "transitionCommit": transition_commit}
         ]
+        return contract
+
+    def _audit_settled_contract(self) -> dict[str, object]:
+        contract = self._minimal_contract()
+        retired = {
+            "id": ria.AUDIT_PACK_ID,
+            "sourceCommit": ROOT_BASELINE,
+            "allowedStates": list(ria.RETIRED_AUDIT_ALLOWED_STATES),
+            "members": list(ria.RETIRED_AUDIT_MEMBERS),
+            "retiredBy": ria.WGIA_PACK_ID,
+            "reason": ria.AUDIT_RETIREMENT_REASON,
+        }
+        settlement = {
+            "id": ria.AUDIT_SETTLEMENT_ID,
+            "fromPackId": ria.AUDIT_PACK_ID,
+            "toPackId": ria.WGIA_PACK_ID,
+            "fromCommit": ROOT_BASELINE,
+            "toCommit": WGIA_BASELINE,
+            "fromMemberCount": len(ria.RETIRED_AUDIT_MEMBERS),
+            "toMemberCount": len(ria.WGIA_MEMBERS),
+            "reason": ria.AUDIT_SETTLEMENT_REASON,
+        }
+        contract["currentPackBaselines"] = {ria.WGIA_PACK_ID: WGIA_BASELINE}
+        contract["retiredCurrentPackBaselines"] = [retired]
+        contract["baselineTransitions"] = []
+        contract["baselineSettlements"] = [settlement]
         return contract
 
     def test_minimal_contract_loads_and_references_registered_current_packs(
@@ -3038,6 +3065,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         self.assertEqual(schema["properties"]["schemaVersion"]["const"], 2)
         self.assertIn("currentPackBaselines", schema["required"])
+        self.assertIn("retiredCurrentPackBaselines", schema["required"])
         self.assertIn("baselineTransitions", schema["required"])
         self.assertIn("baselineSettlements", schema["required"])
         snapshot_properties = schema["properties"]["snapshotGuard"]["properties"]
@@ -3051,7 +3079,243 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             {"audits/2026-07-11-weia", "research/2026-08-08-wer"},
         )
 
-    def test_production_baseline_registry_remains_audit_only(self) -> None:
+    def test_production_current_audit_cutover_is_closed_and_source_bounded(self) -> None:
+        contract = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/90.references/data/reference-information-architecture.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            contract["currentPackBaselines"],
+            {"audits/2026-08-09-wgia": WGIA_BASELINE},
+        )
+        self.assertEqual(contract["baselineTransitions"], [])
+        self.assertEqual(
+            contract["retiredCurrentPackBaselines"],
+            [
+                {
+                    "id": "audits/2026-07-11-weia",
+                    "sourceCommit": ROOT_BASELINE,
+                    "allowedStates": ["done"],
+                    "members": [
+                        "ai-agents-model-routing-vibe-coding.md",
+                        "ci-qa-automation-pipeline-workflow.md",
+                        "governance-harness-loop-providers.md",
+                        "kubernetes-infrastructure-security.md",
+                        "remediation-roadmap.md",
+                        "sdlc-document-lifecycle-frontmatter.md",
+                    ],
+                    "retiredBy": "audits/2026-08-09-wgia",
+                    "reason": "Superseded by the 2026-08-09 workspace governance implementation audit.",
+                }
+            ],
+        )
+        self.assertEqual(
+            contract["baselineSettlements"],
+            [
+                {
+                    "id": "wgia-012-current-audit-cutover",
+                    "fromPackId": "audits/2026-07-11-weia",
+                    "toPackId": "audits/2026-08-09-wgia",
+                    "fromCommit": ROOT_BASELINE,
+                    "toCommit": WGIA_BASELINE,
+                    "fromMemberCount": 6,
+                    "toMemberCount": 9,
+                    "reason": "Retire the prior Current audit and activate its reviewed successor atomically.",
+                }
+            ],
+        )
+
+    def test_production_audit_collection_routes_current_comparison_to_wgia(self) -> None:
+        collection = (
+            REPOSITORY_ROOT / "docs/90.references/audits/README.md"
+        ).read_text(encoding="utf-8")
+        expected = (
+            "| [2026-07-04-wdcn](./2026-07-04-wdcn/README.md) | Resolved | "
+            "Workspace document-contract normalization audit. | Current comparison owner: "
+            "[2026-08-09-wgia](./2026-08-09-wgia/README.md). |"
+        )
+        stale = (
+            "Current comparison owner: "
+            "[2026-07-11-weia](./2026-07-11-weia/README.md)."
+        )
+        replacement = (
+            "Current comparison owner: "
+            "[2026-08-09-wgia](./2026-08-09-wgia/README.md)."
+        )
+        self.assertIn(expected, collection)
+        self.assertNotIn(stale, collection)
+        projection = next(
+            item
+            for item in json.loads(
+                (
+                    REPOSITORY_ROOT
+                    / "docs/90.references/data/reference-information-architecture.json"
+                ).read_text(encoding="utf-8")
+            )["mutableIndexProjections"]
+            if item["path"] == "docs/90.references/audits/README.md"
+        )
+        self.assertIn(
+            {"from": stale, "to": replacement, "count": 1},
+            projection["literalReplacements"],
+        )
+
+    def test_retired_current_baseline_schema_rejects_hostile_records(self) -> None:
+        mutations = (
+            lambda row: row.update({"unknown": True}),
+            lambda row: row.update({"sourceCommit": "git-sha1:" + "A" * 40}),
+            lambda row: row.update({"members": ["../escape.md"]}),
+            lambda row: row.update({"members": ["duplicate.md", "duplicate.md"]}),
+            lambda row: row.update({"allowedStates": []}),
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                contract = self._audit_settled_contract()
+                mutation(contract["retiredCurrentPackBaselines"][0])
+                self._write_contract(contract)
+                with self.assertRaisesRegex(ContractError, "RIA-(?:CONTRACT|SNAPSHOT)"):
+                    self._load()
+        duplicate = self._audit_settled_contract()
+        duplicate["retiredCurrentPackBaselines"].append(
+            dict(duplicate["retiredCurrentPackBaselines"][0])
+        )
+        self._write_contract(duplicate)
+        with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+            self._load()
+
+    def test_audit_cutover_fsm_rejects_overlap_and_noncanonical_settlement(self) -> None:
+        current_overlap = self._audit_settled_contract()
+        current_overlap["retiredCurrentPackBaselines"][0]["id"] = ria.WGIA_PACK_ID
+        wrong_member = self._audit_settled_contract()
+        wrong_member["retiredCurrentPackBaselines"][0]["members"][-1] = "other.md"
+        wrong_commit = self._audit_settled_contract()
+        wrong_commit["baselineSettlements"][0]["toCommit"] = "git-sha1:" + "a" * 40
+        wrong_count = self._audit_settled_contract()
+        wrong_count["baselineSettlements"][0]["toMemberCount"] = 8
+        open_transition = self._audit_settled_contract()
+        open_transition["baselineTransitions"] = [self._transition()]
+        for contract in (
+            current_overlap,
+            wrong_member,
+            wrong_commit,
+            wrong_count,
+            open_transition,
+        ):
+            with self.subTest(contract=contract):
+                state, finding = ria._fsm_state(contract)  # noqa: SLF001
+                self.assertIsNone(state)
+                self.assertEqual(finding.rule_id, "RIA-TRANSITION")
+
+        state, finding = ria._fsm_state(self._audit_settled_contract())  # noqa: SLF001
+        self.assertEqual(state, "audit-settled")
+        self.assertIsNone(finding)
+
+    def test_retired_current_baseline_rejects_byte_and_registry_drift(self) -> None:
+        contract = self._audit_settled_contract()
+        current_registry = {
+            "referenceCurrentPacks": {
+                "profileId": "content/reference",
+                "packs": [
+                    {
+                        "id": ria.WGIA_PACK_ID,
+                        "allowedStates": list(ria.WGIA_ALLOWED_STATES),
+                        "members": list(ria.WGIA_MEMBERS),
+                    }
+                ],
+            }
+        }
+        historical_registry = {
+            "referenceCurrentPacks": {
+                "profileId": "content/reference",
+                "packs": [
+                    {
+                        "id": ria.AUDIT_PACK_ID,
+                        "allowedStates": list(ria.RETIRED_AUDIT_ALLOWED_STATES),
+                        "members": list(ria.RETIRED_AUDIT_MEMBERS),
+                    }
+                ],
+            }
+        }
+        target = ria.Pack(
+            ria.AUDIT_PACK_ID,
+            ria.RETIRED_AUDIT_ALLOWED_STATES,
+            ria.RETIRED_AUDIT_MEMBERS,
+        ).member_paths[0]
+        baseline_reads: list[tuple[str, Path]] = []
+
+        def proposed(
+            root: Path,
+            path: Path,
+            proposed_oid: str | None,
+            runner: ria.GitRunner | None,
+        ) -> bytes:
+            del root, proposed_oid, runner
+            if path == ria.REGISTRY_PATH:
+                return json.dumps(current_registry).encode()
+            return b"drift" if path == target else b"protected"
+
+        def baseline(
+            root: Path,
+            oid: str,
+            path: Path,
+            runner: ria.GitRunner | None,
+        ) -> bytes:
+            del root, runner
+            baseline_reads.append((oid, path))
+            if path == ria.REGISTRY_PATH:
+                return json.dumps(historical_registry).encode()
+            return b"protected"
+
+        with (
+            mock.patch.object(ria, "_proposed_path", side_effect=proposed),
+            mock.patch.object(ria, "_read_commit_path", side_effect=baseline),
+        ):
+            findings = ria.validate_retired_current_baselines(self.root, contract)
+        self.assertEqual(
+            findings,
+            [
+                ria.Finding(
+                    "RIA-SNAPSHOT",
+                    target.as_posix(),
+                    "retired Current bytes differ",
+                )
+            ],
+        )
+        self.assertIn(
+            (ROOT_BASELINE.removeprefix("git-sha1:"), ria.REGISTRY_PATH),
+            baseline_reads,
+        )
+        self.assertTrue(
+            all(
+                oid == WGIA_BASELINE.removeprefix("git-sha1:")
+                for oid, path in baseline_reads
+                if path != ria.REGISTRY_PATH
+            )
+        )
+
+        missing = json.loads(json.dumps(historical_registry))
+        missing["referenceCurrentPacks"]["packs"][0]["members"].pop()
+
+        def missing_baseline(
+            root: Path,
+            oid: str,
+            path: Path,
+            runner: ria.GitRunner | None,
+        ) -> bytes:
+            del root, oid, runner
+            if path == ria.REGISTRY_PATH:
+                return json.dumps(missing).encode()
+            return b"protected"
+
+        with (
+            mock.patch.object(ria, "_proposed_path", side_effect=proposed),
+            mock.patch.object(ria, "_read_commit_path", side_effect=missing_baseline),
+        ):
+            findings = ria.validate_retired_current_baselines(self.root, contract)
+        self.assertEqual([finding.rule_id for finding in findings], ["RIA-SNAPSHOT"])
+
+    def test_production_baseline_registry_remains_single_audit_only(self) -> None:
         contract = json.loads(
             (
                 REPOSITORY_ROOT
@@ -3061,15 +3325,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(
             contract["currentPackBaselines"],
             {
-                "audits/2026-07-11-weia": (
-                    "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
-                )
+                "audits/2026-08-09-wgia": WGIA_BASELINE
             },
         )
         self.assertNotIn(
             "research/2026-08-08-wer", contract["currentPackBaselines"]
         )
-        self.assertEqual(ria.validate_overlay_guards(REPOSITORY_ROOT, contract), [])
+        self.assertEqual(ria._fsm_state(contract), ("audit-settled", None))  # noqa: SLF001
 
     def test_snapshot_mutation_fixture_requires_immutable_body_guard(self) -> None:
         mutation = json.loads(SNAPSHOT_MUTATION.read_text(encoding="utf-8"))
@@ -4378,6 +4640,40 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(terminal.returncode, 0, terminal.stderr)
         self.assertEqual(conflict.returncode, 2)
         self.assertEqual(malformed.returncode, 2)
+
+    def test_historical_e09_contract_reaches_original_explicit_fsm_result(self) -> None:
+        historical = ria.load_contract_at_commit(REPOSITORY_ROOT, WGIA_BASELINE)
+        self.assertNotIn("retiredCurrentPackBaselines", historical)
+        self.assertEqual(
+            ria.validate_reference_architecture(
+                REPOSITORY_ROOT,
+                historical,
+                commit=WGIA_BASELINE,
+            ),
+            [
+                ria.Finding(
+                    "RIA-TRANSITION",
+                    "baselineSettlements",
+                    "explicit mode requires settled state",
+                )
+            ],
+        )
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(CLI),
+                "--root",
+                str(REPOSITORY_ROOT),
+                "--commit",
+                WGIA_BASELINE,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 1, completed.stderr)
+        self.assertIn("RIA-TRANSITION baselineSettlements", completed.stdout)
+        self.assertEqual(completed.stderr, "")
 
     def test_aggregate_runs_self_test_before_production(self) -> None:
         aggregate = AGGREGATE.read_text(encoding="utf-8")

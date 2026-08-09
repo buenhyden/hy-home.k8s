@@ -2,22 +2,21 @@
 
 ## Overview
 
-This Stage 90 pack is the draft successor foundation for a repository-wide
+This Stage 90 pack is the Current repository-wide evidence owner for a
 workspace governance audit. It routes each requested scope to one report and
 heading, freezes repository evidence to one exact Git tree, and establishes
 finding, source, review, and freshness conventions for the later topic audits.
 It is descriptive evidence and cannot redefine current policy, machine
 contracts, workflows, permissions, document routes, or operations.
 
-The collection's Current pointer remains the 2026-07-11 audit until WGIA-012
-performs the separately validated atomic cutover. A draft report records only
-the initial repository-static inventory and a conservative verdict; its topic
-is not complete and is never treated as `Aligned` merely because an owner or
-supporting surface exists.
+The collection's sole Current pointer is this 2026-08-09 audit. The prior
+2026-07-11 audit remains source-commit-bounded historical evidence. A report's
+verdict remains bounded by its recorded evidence depth and cannot become
+`Aligned` merely because an owner or supporting surface exists.
 
 ## Snapshot Contract
 
-- Pack role: Draft successor foundation; not Current.
+- Pack role: Current audit pack; descriptive evidence only.
 - Observation date: 2026-08-09.
 - Observation commit: `50628b84165479b03efc0a25be075a49c91a9aef`.
 - Observation tree: 848 tracked files, including 461 under `docs/`, 48 under
@@ -25,7 +24,7 @@ supporting surface exists.
 - Protected boundary: the observation tree contains 44 Stage 98 files; this
   work does not modify any `docs/98.archive/**` path.
 - Completion owner: the paired [Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).
-- Current-audit transition owner: WGIA-012, not this foundation task.
+- Current-audit transition: WGIA-012 atomically retired the 2026-07-11 pointer.
 
 ### Inventory Method
 
@@ -79,21 +78,21 @@ later topic audit and independent review are still pending.
 
 | Report | Lifecycle | Foundation responsibility |
 | --- | --- | --- |
-| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |
-| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |
+| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |
 | [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |
 | [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |
-| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |
-| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |
-| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |
 | [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |
+| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |
 | [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |
+| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |
+| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |
+| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |
 
 ## Refresh and Succession
 
 WGIA-002 through WGIA-009 own topical findings and review. WGIA-010 and
-WGIA-011 own accepted canonical remediation. WGIA-012 alone may change Current
-navigation and machine projections, WGIA-013 owns proof-gated deletion, and
+WGIA-011 own accepted canonical remediation. WGIA-012 owns the completed Current
+navigation and machine-projection cutover, WGIA-013 owns proof-gated deletion, and
 WGIA-014 owns re-audit and closure. Refresh this foundation when the observation
 commit, exact member set, request owner, canonical evidence surface, verdict,
 or evidence depth changes.

@@ -34,7 +34,7 @@ unittest fixtures, shell validation entrypoints, GitHub Actions YAML, the
 existing RIA producer, document-profile registry, LLM-WIKI generator, agent
 harness validators, pre-commit when available, and logical Git commits.
 
-### Global Constraints
+**Global Constraints**
 
 - The approved specification is
   [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md).
@@ -512,19 +512,44 @@ pass. Provider-native permission loading and effective enforcement remain
 schema/producer/validator, RIA tests/fixtures, links/owners and validation-
 surface fixtures as affected, mutable current links, Task/progress evidence.
 
-- [ ] Write RED cases for sole new Current selection, exact nine non-README
+- [x] Write RED cases for sole new Current selection, exact nine non-README
   members, old-Current historical preservation, baseline byte drift, missing/
   duplicate members, stale current navigation, and broken mutable links.
-- [ ] Replace the Current registry ID with `audits/2026-08-09-wgia`, preserve
+- [x] Replace the Current registry ID with `audits/2026-08-09-wgia`, preserve
   `audits/2026-07-11-weia` as source-commit-bounded historical evidence, and
   update the collection README in the same index state.
-- [ ] Update RIA canonical data and producer, extending its schema only if the
+- [x] Update RIA canonical data and producer, extending its schema only if the
   existing shape cannot preserve the old historical baseline without loss.
-- [ ] Migrate mutable links and fixtures to exact new headings; retain dated or
+- [x] Migrate mutable links and fixtures to exact new headings; retain dated or
   source-commit-pinned historical observations without rewriting their truth.
-- [ ] Make focused RIA/registry/profile/link tests GREEN in a staged or isolated
-  tree; run LLM-WIKI check, archive validation, full gate, harness, both reviews.
+- [x] Make focused RIA/registry/profile/link tests GREEN in staged or isolated
+  trees; run LLM-WIKI check, archive validation, full gate, and harness.
+- [x] Complete fresh specification/content and Python/quality review; both are
+  Approved after clean fix rounds 1-2 with no remaining Critical/Important.
 - [ ] Commit `docs: cut over current governance audit` as one atomic unit.
+
+WGIA-012 is `In Review`: the sole-Current, exact-member, retired-baseline,
+audit-settlement, literal-projection, registry, profile, link, affected,
+archive, generator, and isolated exact-index RIA checks pass. Fresh reviews,
+including clean fix rounds 1-2, are Approved. The final 17-path affected and
+staged lanes, plain pre-commit, direct repository gate, full harness, all-files,
+formatter-review, and rerun pass. Only the logical commit remains owned by the
+primary agent; hosted, remote, and live evidence remains `DEFER`.
+
+Primary final evidence expanded the initial exact 15-file index to 17 only
+after formatter/QA review. The accepted additions are `.secrets.baseline` and
+`docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md`.
+The first plain pre-commit failed on detect-secrets baseline mutation plus WGIA
+Plan MD001; the WGIA `Global Constraints` heading became a profile-compatible
+bold label, and baseline formatter security review was Approved. The first
+all-files lane failed on eight reviewed false-positive metadata/prose candidates
+plus pre-existing WERPC Plan MD001. The regenerated baseline has exactly 18
+entries across seven paths, every `is_secret` is false, no detector was
+weakened, security review is Approved, and WERPC `Global Constraints` is bold.
+Final PASS covers affected paths=17, staged paths=17, plain pre-commit, RIA
+94/94, production RIA settled, LLM-WIKI, archive, direct repository gate, full
+harness, final all-files, formatter-review, and rerun. Primary final diff-checks
+remain pending.
 
 #### WGIA-013 — Evidence-gated deletion
 
