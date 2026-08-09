@@ -30,7 +30,8 @@ keeping accepted ADR-0023 as the transition program-decision registry
 projection. This completed documentation package is `WDTC-AMEND-001`; it is
 not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
 terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
-the WORK-105 retirement of authored `sdlc/api-spec`, preservation of separate
+the WORK-105 eight-record ARD-to-AD conversion and retirement of authored
+`sdlc/api-spec`, preservation of separate
 native API-contract evidence, the closed mandatory/prohibited outer-ID grammar,
 virtual Stage 98 change identity, stable archive topology, 14-field recovery
 ledger, direct-link corpus, and exact `scripts/` closure.
@@ -46,6 +47,22 @@ date/mirror-path immutability. Full-body payload, provenance, retention,
 recovery, transition safety, and unrelated decisions remain intact. Active
 ARD-0011 is a conflicting transition predecessor and must atomically become
 AD-0011 with archive-invariant replacement before ADR-0024 acceptance.
+
+Architecture review at clean base `833995d1` found that the current
+active/accepted `sdlc/ard` corpus is not one record but exactly eight:
+ARD-0004/0005/0006/0007/0010/0011 are active and ARD-0008/0009 are accepted.
+WORK-105 maps them one-to-one to AD-0004 through AD-0011, preserving the
+current filename slug and lifecycle state. The exact source/target paths are
+closed in ADR-0024 and Spec 052. Its full-repository classifier covers every
+ARD profile/template/route/relationship, lifecycle, registry, navigation,
+authoring, validator/script/test/fixture, skill, issue-form, execution,
+operations, and generated-current consumer. Current matches migrate to AD;
+only immutable or explicit history may use `retain-history`. Acceptance
+requires zero unconverted current ARDs and zero live or unclassified ARD
+consumers. Inside that full migration, the AD-0011 invariant replacement,
+ADR-0024 acceptance, and registry projection change remain a separate atomic
+authority gate. WORK-108 backfills AD `artifact_id` fields only after the
+complete WORK-105 conversion.
 
 Every declared `artifact_id` is globally unique. PRD, SRS, Interface
 Requirement, AD, ADR, the six Stage 03 work-unit forms, the five Stage 05
@@ -87,12 +104,14 @@ paths, so stable paths are never many-to-one. The ledger distinguishes original
 dual recovery evidence.
 
 The successor sequence is closed: WORK-104 owns 82 moves and destination
-Plan/Task rebaseline; WORK-105 owns AD/Stage99 core forms, AD-0011 invariant
-replacement, authored API Spec zero-instance plus complete consumer
-disposition gates, negative fixtures and native/history preservation,
-ADR-0024 acceptance, and registry projection; WORK-106 owns artifact/ledger
+Plan/Task rebaseline; WORK-105 owns the exact eight-record AD/Stage99 core-form
+conversion, complete ARD consumer closure, the separate AD-0011 invariant /
+ADR-0024 acceptance / registry projection authority gate, authored API Spec
+zero-instance plus complete consumer-disposition gates, negative fixtures,
+and native/history preservation; WORK-106 owns artifact/ledger
 transition validators; WORK-107 owns the 93-record rehome and cannot start
-before WORK-105; WORK-108 through WORK-115 own ID backfill,
+before WORK-105; WORK-108 begins ID backfill only after the full AD conversion;
+WORK-109 through WORK-115 own
 document authority/routes, agent governance, the full script ledger,
 orchestration and the 49 count, progress/graph cleanup, transition asset
 retirement and the 47 count, and independent closure respectively. The
@@ -199,6 +218,31 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
   zero diff. Final lane evidence remains in the ignored report; implementer
   all-files is controller-owned `DEFER`.
 - The controller then ran the final Important-fix
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point. It exited 0 with every
+  applicable hook passing and no mutation. Post-run scope remained exactly the
+  five owned tracked files staged with zero unstaged paths. This controller
+  PASS is distinct from the implementer's all-files `DEFER`.
+- Architecture-review RED found one remaining Critical: earlier text assigned
+  WORK-105 only ARD-0011, leaving seven other current active/accepted
+  `sdlc/ard` records without terminal dispositions. Read-only census at
+  `833995d1` proved the exact eight IDs, source slugs, and states recorded
+  above. The correction closes the one-to-one AD mapping, complete ARD
+  classifier, zero-unconverted/zero-live-or-unclassified acceptance gates,
+  separate AD-0011 authority gate, and WORK-105-before-WORK-108 ordering. No
+  ARD or consumer is physically moved in this design amendment.
+- Architecture Critical focused GREEN: the read-only frontmatter/path census
+  returned exactly the eight mapped records and statuses; registry self-test
+  passed `132/65/30`; strict transition registry passed `491/0/0`; strict
+  Markdown and links/owners passed with zero findings; migration remained
+  `132/82/50`; protected Stage 04/98, registry/templates, manifest/tool, and
+  frozen surfaces retained zero diff.
+- Architecture Critical implementer fixed point: exact-five affected and
+  staged lanes both exited 0 and each repository-quality invocation emitted
+  one success marker; plain exact-index `pre-commit run` exited 0 with every
+  applicable hook passing and no mutation; direct aggregate exited 0 with the
+  terminal repository-quality PASS marker. Final strict/scope evidence is in
+  the ignored report. Implementer all-files remains controller-owned `DEFER`.
+- The controller then ran the Architecture Critical-fix
   `TMPDIR=/tmp pre-commit run --all-files` fixed point. It exited 0 with every
   applicable hook passing and no mutation. Post-run scope remained exactly the
   five owned tracked files staged with zero unstaged paths. This controller

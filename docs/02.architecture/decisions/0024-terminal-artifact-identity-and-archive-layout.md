@@ -44,6 +44,12 @@ also treats ARD and the mirror archive invariant as current. Those path/form
 constraints conflict with the approved terminal topology, although their
 payload, provenance, recovery, and transition-safety purposes remain valid.
 
+The read-only census at review base `833995d1` found exactly eight tracked
+current `sdlc/ard` records: active ARD-0004 through ARD-0007, accepted
+ARD-0008 and ARD-0009, and active ARD-0010 and ARD-0011. A terminal AD form
+cannot be accepted by converting only ARD-0011; every active or accepted ARD
+and every live consumer of the ARD form requires an exact disposition.
+
 [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) specifies
 the structure and expression of an Architecture Description and distinguishes
 architecture from the AD, but does not prescribe recording format or media.
@@ -61,10 +67,44 @@ human-approved repository decision, not a standards-conformance claim.
 Terminal active requirement forms are PRD, optional SRS, and optional
 Interface Requirement. Terminal active architecture forms are Architecture
 Description (AD) and ADR. AD uses `sdlc/ad` at
-`docs/02.architecture/descriptions/ad-<id>-<slug>.md`. ARD-0011 becomes
-AD-0011 without renumbering. ARD and RFC have no terminal active profile,
-template, route, relationship, or navigation; immutable historical payload
-text may retain those terms.
+`docs/02.architecture/descriptions/ad-<id>-<slug>.md`. WORK-105 converts the
+complete eight-record current ARD corpus one-to-one, preserves every numeric
+identifier and filename slug, and preserves each record's active or accepted
+lifecycle state:
+
+| Current ID | Current status | Exact current path | Terminal ID and exact WORK-105 path |
+| --- | --- | --- | --- |
+| ARD-0004 | active | `docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md` | AD-0004 at `docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md` |
+| ARD-0005 | active | `docs/02.architecture/requirements/0005-argo-notifications-slack.md` | AD-0005 at `docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md` |
+| ARD-0006 | active | `docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md` | AD-0006 at `docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md` |
+| ARD-0007 | active | `docs/02.architecture/requirements/0007-current-local-gitops-platform.md` | AD-0007 at `docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md` |
+| ARD-0008 | accepted | `docs/02.architecture/requirements/0008-workspace-document-assurance-operating-model.md` | AD-0008 at `docs/02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md` |
+| ARD-0009 | accepted | `docs/02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md` | AD-0009 at `docs/02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md` |
+| ARD-0010 | active | `docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md` | AD-0010 at `docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md` |
+| ARD-0011 | active | `docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md` | AD-0011 at `docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md` |
+
+These ARD/AD labels are lifecycle document identities; WORK-105 preserves the
+four-digit identity and WORK-108 later backfills the mandatory `artifact_id`
+field after the full conversion. WORK-105 MUST NOT leave a ninth implicit
+mapping, renumber a record, change a slug, or change an active/accepted state.
+
+The full conversion includes a complete tracked full-repository `git grep`
+classifier for ARD profile, template, route, relationship, lifecycle,
+registry, navigation, authoring, validation, test, fixture, skill, issue-form,
+execution, operations, and generated-current consumers. Every match is either
+`migrate-current` to AD terminology/routes or `retain-history` only when the
+containing surface is immutable or explicitly historical. Terminal acceptance
+requires both zero unconverted current ARDs and zero live or unclassified ARD
+consumers. Literal matches may remain only in reviewed `retain-history`
+surfaces. ARD and RFC then have no terminal active profile, template, route,
+relationship, or navigation.
+
+Within that full-corpus migration, the ARD-0011 authority conflict is a
+separate atomic gate: AD-0011 must contain the replacement archive invariant,
+ADR-0024 must be accepted, and the PRD-008 registry projection must change
+from ADR-0023 to ADR-0024 in the same reviewed change. That authority gate
+cannot pass early or substitute for the eight-record conversion and complete
+consumer disposition.
 
 The current transition registry also exposes the human-authored profile
 `sdlc/api-spec` at `docs/03.specs/<ddd>-<slug>/api-spec.md` and its authored
@@ -241,13 +281,17 @@ index and provenance. Every other current document may link only to
 
 The successor schedule in Spec 052 is closed at WORK-104 through WORK-115.
 WORK-104 performs the 82 moves and rebases the destination Plan/Task; WORK-105
-creates the AD route and Stage 99 core forms, atomically converts active
-ARD-0011 to AD-0011 with its archive-invariant replacement, retires authored
+creates the AD route and Stage 99 core forms, atomically converts all eight
+current ARD records under the closed mapping, closes every live ARD consumer,
+and separately gates AD-0011's archive-invariant replacement with ADR-0024
+acceptance and the registry projection change. It also retires authored
 `sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` with zero authored
 instance proof, complete consumer disposition, and terminal negative fixtures,
-accepts ADR-0024, and changes the registry projection. It preserves the native
+and preserves the native
 OpenAPI/GraphQL/Protobuf evidence contracts and classified immutable history.
 Stage 98 rehome in WORK-107 is forbidden before that WORK-105 acceptance. The
+WORK-108 `artifact_id` backfill is forbidden until the full WORK-105 AD
+conversion and both ARD closure gates pass. The
 destination Plan/Task rebaseline explicitly supersedes their old WORK-105
 through WORK-110 meanings.
 
@@ -267,10 +311,12 @@ mirror-original-path requirement and Tombstone prohibition, plus ADR-0023's
 Stage 98 date/mirror-path immutability. ADR-0018's full-body payload,
 provenance, retention, and recovery invariants and ADR-0023's transition
 safety and all unrelated decisions remain preserved. Active ARD-0011 is a
-conflicting transition predecessor: it MUST be converted to AD-0011 and its
-mirror-path archive invariant MUST be replaced atomically before ADR-0024 can
-be accepted. Until then ADR-0018 and ADR-0023 remain accepted predecessors,
-ARD-0011 remains active, and ADR-0023 remains the registry projection.
+conflicting transition predecessor inside the eight-record ARD conversion: its
+AD-0011 target, replacement archive invariant, ADR-0024 acceptance, and
+registry projection change form the separate atomic authority gate. Until the
+full eight-record and consumer closure plus that authority gate pass,
+ADR-0018 and ADR-0023 remain accepted predecessors, the current ARD records
+retain their reviewed states, and ADR-0023 remains the registry projection.
 
 ## Explicit Non-goals
 
@@ -279,6 +325,8 @@ ARD-0011 remains active, and ADR-0023 remains the registry projection.
   schema-versioned ledger, validators, recovery proof, and bounded cutover.
 - Changing the current registry, profile, template, relationship, navigation,
   migration manifest, or script inventory in `WDTC-AMEND-001`.
+- Moving any of the eight current ARDs or rewriting one of their consumers in
+  `WDTC-AMEND-001`; WORK-105 owns the physical full-corpus conversion.
 - Retiring the current authored API Spec surface before WORK-105 performs its
   atomic forms cutover, zero-instance proof, complete consumer disposition,
   and terminal negative fixtures.
@@ -295,9 +343,10 @@ ARD-0011 remains active, and ADR-0023 remains the registry projection.
 
 Architecture and requirement authors gain a smaller terminal form vocabulary,
 and AD naming follows the Architecture Description concept without claiming a
-standards-mandated Markdown representation. Preserving the number in
-ARD-0011-to-AD-0011 keeps lineage stable but makes the WORK-105 conversion and
-archive-invariant replacement a hard acceptance gate.
+standards-mandated Markdown representation. Preserving ARD-0004 through
+ARD-0011 as AD-0004 through AD-0011 keeps every lineage stable. It also makes
+the complete eight-record/consumer closure and the separate AD-0011 authority
+gate mandatory WORK-105 acceptance evidence.
 
 Retiring the empty authored API Spec route removes a second human interface
 form without deleting machine-readable API contracts. Authors use Stage 01
@@ -331,7 +380,8 @@ schema, validators continue to enforce transition-state paths and profiles.
 - **Rename Stage 98 records without an old-object ledger**: rejected because a
   path-only rewrite weakens provenance and recovery evidence.
 - **Allocate new AD numbers during ARD conversion**: rejected because it would
-  break existing lineage for a form-name migration.
+  break existing lineage for a form-name migration across the complete
+  eight-record current corpus.
 - **Reduce scripts by combining similar filenames**: rejected because names do
   not prove equal contracts, arguments, diagnostics, fixtures, or recovery
   behavior.
