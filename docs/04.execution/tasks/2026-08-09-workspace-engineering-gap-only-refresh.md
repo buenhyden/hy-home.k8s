@@ -41,7 +41,7 @@ edit begins.
 | WERG-000 | VAL-WERG-010 | After execution-mode selection, atomically activate Spec 055, Plan, Task, indexes, and one ADR-0022 standalone registry relation. | primary agent | Completed | Activated and validated | Human selected subagent-driven execution on 2026-08-09; exact nine changed paths are Spec 055, ADR-0022, Spec index, WERG Plan, Plan index, WERG Task, Task index, document-profiles registry, and durable progress. After adding the exact Spec approval statements, reciprocal ADR row, and rendered Spec criterion link, focused registry/profile/link/diff checks, both independent reviews, exact-index RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass. No formatter or detect-secrets mutation occurred. |
 | WERG-001 | VAL-WERG-001 | Classify every requested category through the four-state gap-admission gate and obtain independent admission review. | primary agent + content reviewer | Completed | Admission matrix reviewed and closed | The deterministic checker reproduced the six expected baseline gaps, then accepted exactly 33 unique topic rows: 18 `complete-existing`, seven `admit-under-sourced-partial`, one `admit-unresearched`, and seven `exclude-deep-evidence`. Full-pack content and checker-quality reviews are Approved; no source or claim row was added or changed. |
 | WERG-002 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-005, VAL-WERG-006 | Research and integrate admitted document-family and Verification/Validation gaps using official sources. | documentation researchers + content/quality reviewers | Completed | Researched, reviewed, validated, and committed as one logical unit | Official primary-source rows `SRC-WERPC-053`–`059`, claims `CLM-WERPC-007-01`–`08`, request `REQ-WERPC-033`, the five admitted document-family mappings, and the seven-column Verification/Validation matrix are integrated with truthful 2026-08-10 check dates. Content and quality reviews are Approved; the exact eight-path index passes focused evidence/admission/integration, RIA, affected/staged, aggregate, plain/all-files pre-commit, formatter, and diff gates without mutation. |
-| WERG-003 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-007 | Research only exact non-duplicate Kubernetes security deltas, or record a reviewed no-op. | Kubernetes researcher + security/content reviewers | Queued | Not executed | Planned line-level admission, official sources, workspace selectors, and no-live boundary. |
+| WERG-003 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-007 | Research only exact non-duplicate Kubernetes security deltas, or record a reviewed no-op. | Kubernetes researcher + security/content reviewers | Completed | Three admitted non-duplicate deltas researched, reviewed, validated, and committed | Official rows `SRC-WERPC-060`–`065` and claims `CLM-WERPC-008-01`–`06`, checked 2026-08-10, cover only kube-state-metrics Secret RBAC/metrics, Adminer ServiceAccount/token and Pod hardening, and immutable Git/chart/image plus signature/attestation/provenance distinctions. Reviews are Approved; the exact six-path index passes focused Kubernetes/integration, RIA, affected/staged, aggregate, plain/all-files pre-commit, formatter, and diff gates without mutation. Namespace ingress/default-deny remains a duplicate stop. |
 | WERG-004 | VAL-WERG-002, VAL-WERG-008, VAL-WERG-009 | Reconcile the five research owners, IDs, dates, links, and one-off cleanup. | primary agent + integration reviewer | Queued | Not executed | Planned integration/residue probes and canonical commit gates. |
 | WERG-005 | VAL-WERG-008, VAL-WERG-010 | Run whole-branch review, terminal validation, lifecycle closure, and branch finishing workflow. | primary agent + specification/quality/security reviewers | Queued | Not executed | Planned terminal evidence or exact blocked handoff; no silent validator expansion. |
 
@@ -164,6 +164,35 @@ Plan and Task, durable progress, pack README, SDLC report, QA report, and the
 source/claim ledger. Hosted, provider-runtime, remote, credential-bearing, and
 live evidence remains `DEFER`.
 
+WERG-003 compared each admitted line-level question against the existing
+report, source/claim rows, and exact repository selectors. The exact planned
+`kubernetes` command returned `PASS kubernetes` before editing because its
+contract verifies the admission markers and existing NetworkPolicy boundary;
+the companion content-absence probe for `SRC-WERPC-060`,
+`CLM-WERPC-008-01`, and the dated subsection returned exit 1. Official sources
+checked on 2026-08-10 produced only `SRC-WERPC-060`–`065` and
+`CLM-WERPC-008-01`–`06`. The report explicitly rejects repeat research for
+Namespace ingress/default-deny and preserves effective RBAC, actual metrics,
+Adminer compatibility/admission, Argo reconciliation, artifacts, trust policy,
+registry, hosted, remote, and live results as `DEFER`. Independent Kubernetes
+security/content review and commit gates remain pending.
+
+Independent WERG-003 content review is Approved with no Critical or Important
+finding. The first security review identified one inaccurate phrase that called
+the default-mounted ServiceAccount token unrestricted even though modern
+Kubernetes uses bounded, rotating projected tokens and default permissions are
+separate from mount behavior. The corrected report now distinguishes the
+default automatic credential mount from a deliberately bounded projected
+token. Final security re-review is Approved with no remaining Critical or
+Important finding.
+
+The exact six-path WERG-003 index then passed RIA self-test and production,
+affected and staged lanes, the direct repository aggregate, plain pre-commit,
+all-files pre-commit, formatter review, and both worktree/cached diff checks.
+No hook or formatter changed a tracked file. The six paths are the WERG Plan,
+Task, durable progress, pack README, Kubernetes/Security report, and
+source/claim ledger.
+
 Before each logical commit, the implementation owner must record the exact
 RED/GREEN result, independent specification/content and quality disposition,
 affected/staged paths, aggregate and pre-commit outcomes, formatter mutations,
@@ -234,7 +263,7 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 | --- | --- | --- | --- | --- | --- | --- |
 | kube-state-metrics cluster-wide Secret metadata `list/watch` and dependent metric surface | Admit | Missing for the precise metric and RBAC claim | `gitops/platform/monitoring/kube-state-metrics.yaml` | Present: no effective permission or collected-metric inference | Missing for this precise question | General RBAC guidance does not establish whether this exact permission is required or which metric surface depends on it. |
 | Namespace ingress and default-deny semantics | Reject duplicate | `SRC-WERPC-023` | `gitops/platform/network-policies/` and `gitops/platform/namespaces/` | Present: CNI and effective traffic remain `DEFER` | Present: CNI, namespace posture, or policy design change | The report already records egress-only intent, absent default-deny proof, CNI dependency, exact directories, and the live-test boundary. |
-| Adminer Pod Security, pod/container hardening, and service-account token boundary | Admit | Missing for the exact workload comparison | `gitops/apps/adminer/` | Present: no admission or runtime behavior inference | Missing for this exact workload question | General Pod Security and two monitoring examples do not establish the Adminer selector, token posture, or workload-specific delta. |
+| Adminer Pod Security, pod/container hardening, and service-account token boundary | Admit | Missing for the exact workload comparison | `gitops/workloads/adminer/rollout.yaml` | Present: no admission or runtime behavior inference | Missing for this exact workload question | General Pod Security and two monitoring examples do not establish the Adminer selector, token posture, or workload-specific delta. |
 | Immutable Git revision, image digest, Helm provenance, and signed/provenance evidence | Admit | Partial: `SRC-WERPC-027`, `SRC-WERPC-032`, `SRC-WERPC-040` | GitOps application and workload image/Helm selectors | Present: no artifact validity, signer identity, reconciliation, or registry inference | Partial: general GitOps or supply-chain change only | Existing sources do not directly separate branch revision immutability, image digest identity, Helm provenance, and signature or attestation verification for the exact workspace selectors. |
 
 ## Traceability
@@ -246,6 +275,6 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 | [WERG-000](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md#work-breakdown) | Completed | Reciprocal active owners and the ADR-0022 standalone relation passed focused review and the exact-index canonical commit gates. |
 | [VAL-WERG-001](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md#success-criteria--verification-plan) | Completed | The exact 33-row four-state matrix and eight-row admitted set pass the task-local completeness and uniqueness probe plus independent full-pack content and checker-quality review. |
 | N/A — WERG-002 shares the Plan and Spec sources above | Completed | `SRC-WERPC-053`–`059`, `CLM-WERPC-007-01`–`08`, `REQ-WERPC-033`, five document-family mappings, and the seven-column Verification/Validation matrix pass independent content/quality review plus the exact eight-path canonical commit gates. |
-| N/A — WERG-003 shares the Plan and Spec sources above | Queued | Research exact admitted Kubernetes security deltas or record a reviewed no-op. |
+| N/A — WERG-003 shares the Plan and Spec sources above | Completed | `SRC-WERPC-060`–`065`, `CLM-WERPC-008-01`–`06`, the dated Kubernetes/Security subsection, and two refreshed README owners contain only the three admitted deltas and pass independent content/security review plus the exact six-path canonical commit gates. |
 | N/A — WERG-004 shares the Plan and Spec sources above | Queued | Reconcile the exact five owners, identifiers, dates, links, and residue. |
 | N/A — WERG-005 shares the Plan and Spec sources above | Queued | Run whole-branch review, canonical gates, truthful closure, and branch finishing. |

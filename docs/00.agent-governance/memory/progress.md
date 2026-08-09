@@ -21,7 +21,7 @@ inventory stays in `scripts/README.md`.
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: WERG-002 documentation/V&V researchers and WERG-003 Kubernetes/security researchers, limited to the reviewed admitted questions.
+- **Next Owner**: WERG-003 Kubernetes security/content reviewers, then the primary agent for focused gates, logical commit, and WERG-004 reconciliation.
 
 #### Progress
 
@@ -59,6 +59,31 @@ failure, and `DEFER` boundaries. Final content and quality re-reviews are
 Approved with no remaining Critical or Important finding. The exact eight-path
 logical index passed its canonical gates without hook or formatter mutation.
 
+WERG-003 then researched only three reviewed line-level Kubernetes/Security
+deltas. It added `SRC-WERPC-060`–`065` and `CLM-WERPC-008-01`–`06` for
+kube-state-metrics Secret RBAC/metrics, Adminer ServiceAccount/token and Pod
+hardening, and immutable Git/chart/image plus signature, attestation, and
+provenance distinctions. Namespace ingress/default-deny was explicitly
+rejected as duplicate research. Content review is Approved; security review is
+Approved after correcting one default-token phrase to distinguish automatic
+credential mounting from token lifetime and effective RBAC. No manifest,
+policy, runtime, provider, remote, cluster, artifact, or secret value changed
+or was observed.
+
+WERG-003 researched and integrated only the three admitted, non-duplicate
+Kubernetes/Security deltas. Official Kubernetes, kube-state-metrics v2.14.0,
+Argo CD, Helm, Sigstore, SLSA, and GitHub sources were checked on 2026-08-10;
+the exact additive ranges are `SRC-WERPC-060`–`065` and
+`CLM-WERPC-008-01`–`06`. The dated report records kube-state-metrics Secret
+collector/RBAC versus metric-output boundaries, Adminer ServiceAccount/token
+and compatibility-gated Pod hardening, and the non-equivalence of immutable Git
+and image identities, Helm provenance, signatures, attestations, and SLSA
+provenance. Namespace ingress/default-deny was rejected as duplicate of the
+existing baseline. No manifest, policy, workflow, infrastructure, credential,
+Secret value, hosted, remote, registry, or live state was changed or inferred.
+The work package is `In Review`; independent security/content review and commit
+gates remain pending.
+
 #### Memory
 
 Spec 053, its Plan/Task, and its typed standalone relation are terminal `done`.
@@ -92,11 +117,18 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - The task-local checker now passes 28 fixture cases at SHA-256 `12580e30cd70872c112b1f7279f556de3868804284be8faa67652c7707e93363`. Its final 33-row admission, source/claim evidence, current-owner promotion, and nested Markdown-link integration checks all pass.
 - Final WERG-002 content and quality re-reviews are Approved with zero remaining Critical or Important findings. They preserve Spec 052 DOC-G10 as approved intent with queued/not-executed WORK-013, reject unsupported break-glass attribution, and keep static QA evidence distinct from intended-use or live validation.
 - The exact WERG-002 index contains eight paths: Spec 055, its Plan and Task, durable progress, pack README, SDLC report, QA report, and source/claim ledger. RIA self/production, affected/staged lanes, the direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
+- WERG-003 uses six source rows `SRC-WERPC-060`–`065` and six claim rows `CLM-WERPC-008-01`–`06`, all checked 2026-08-10 with exact selectors, uncertainty, and refresh triggers. The task-local Kubernetes and integration checks pass.
+- Final WERG-003 content and security reviews are Approved with zero remaining Critical or Important findings. The single security wording correction removes an unsupported implication about token scope while preserving the automatic-mount and effective-permission gap.
+- The exact six-path WERG-003 index contains the WERG Plan, Task, durable progress, pack README, Kubernetes/Security report, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
+- WERG-003's exact planned `kubernetes` command returned `PASS kubernetes` on the pre-edit baseline because it checks admission markers and the existing NetworkPolicy boundary rather than absence of new research rows. The companion content probe for `SRC-WERPC-060`, `CLM-WERPC-008-01`, and the dated subsection returned exit 1 before integration.
+- WERG-003 adds only `SRC-WERPC-060`–`065`, `CLM-WERPC-008-01`–`06`, a dated Kubernetes/Security subsection, and refreshed `REQ-WERPC-008`/`REQ-WERPC-025` source/status cells, all with the truthful 2026-08-10 check date and explicit selector, uncertainty, and refresh boundaries.
+- WERG-003 inspected only tracked object/field selectors for kube-state-metrics, Adminer, root/ApplicationSet Git revisions, Helm chart identities, bootstrap pinning, and image identities. Effective RBAC, metric consumers, image compatibility, admission, reconciliation, artifacts, trust, hosted, registry, remote, and live evidence remains `DEFER`.
 
 #### Handoff
 
-Run the exact WERG-002 commit gates, then begin WERG-003 only for the reviewed
-line-level Kubernetes/Security questions.
+Obtain independent WERG-003 Kubernetes security/content review, correct every
+Critical or Important finding, then run the exact focused and canonical commit
+gates. Do not stage or commit this in-review handoff before review disposition.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 

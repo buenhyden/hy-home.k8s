@@ -528,7 +528,7 @@ git commit -m "docs: research WER document and validation gaps"
 - Produces: only non-duplicative K8s source/claim rows and analysis, or a
   reviewed no-op result with no empty topic commit.
 
-- [ ] **Step 1: Run the line-level duplication and gap RED probe**
+- [x] **Step 1: Run the line-level duplication and gap RED probe**
 
 For each candidate subquestion, compare the exact current report paragraphs,
 source rows, claim rows, and workspace selectors. Admit a subquestion only
@@ -542,7 +542,14 @@ when at least one of these is missing:
 Expected: already complete general NetworkPolicy, Pod Security, and image-tag
 explanations are rejected; only exact subquestions that remain absent proceed.
 
-- [ ] **Step 2: Research the admitted official sources**
+2026-08-10 execution evidence: the exact planned `kubernetes` command returned
+`PASS kubernetes` on the pre-edit baseline because that mode confirms admission
+markers and the existing NetworkPolicy boundary rather than new-row absence.
+The companion content probe for `SRC-WERPC-060`, `CLM-WERPC-008-01`, and the
+dated refresh heading returned exit 1. Line-level comparison admitted the three
+question deltas and rejected Namespace ingress/default-deny as duplicate.
+
+- [x] **Step 2: Research the admitted official sources**
 
 Assign a Kubernetes documentation researcher and require complete official
 page reading for the admitted subset. Candidate questions are:
@@ -560,7 +567,12 @@ page reading for the admitted subset. Candidate questions are:
 Reject any inference about live enforcement, actual collected metrics,
 artifact validity, signer identity, or cluster behavior.
 
-- [ ] **Step 3: Reconcile exact workspace evidence**
+Result: official Kubernetes, kube-state-metrics v2.14.0, Argo CD, Helm,
+Sigstore, SLSA, and GitHub primary sources were checked on 2026-08-10 and
+allocated only as `SRC-WERPC-060`–`065`. No Namespace NetworkPolicy source was
+added.
+
+- [x] **Step 3: Reconcile exact workspace evidence**
 
 Use read-only inspection of:
 
@@ -577,21 +589,30 @@ Record only object kind/name, rule/resource/verb, policy type, security-context
 field presence, revision value, and image/chart identity. Do not inspect
 secrets or query a cluster.
 
-- [ ] **Step 4: Integrate only accepted non-duplicate findings**
+Result: the report records exact kube-state-metrics ClusterRole/container,
+Adminer Rollout and linter-field, root/ApplicationSet revision, Helm chart,
+bootstrap, and tag-only image selectors. Inspection was repository-static; no
+Secret value, cluster, registry, hosted workflow, or remote system was queried.
+
+- [x] **Step 4: Integrate only accepted non-duplicate findings**
 
 Append a dated subsection, allocate contiguous source/claim IDs, update only
 the Kubernetes or Security README cells whose basis changed, and preserve all
 existing general analysis. If no subquestion survives review, update only Task
 and progress with the no-op evidence and skip the topic commit.
 
-- [ ] **Step 5: Obtain Kubernetes security and content review**
+Result: the dated report subsection, contiguous `SRC-WERPC-060`–`065`, claims
+`CLM-WERPC-008-01`–`06`, and only the Kubernetes/Security README cells were
+updated. The delta is non-empty; review and commit gates remain pending.
+
+- [x] **Step 5: Obtain Kubernetes security and content review**
 
 The security reviewer checks least-privilege wording, threat/evidence depth,
 no remediation-by-research, and no sensitive value access. The content reviewer
 checks official-source fidelity and duplication. Correct every Critical or
 Important finding.
 
-- [ ] **Step 6: Validate and commit only a non-empty research delta**
+- [x] **Step 6: Validate and commit only a non-empty research delta**
 
 Run source/claim/selector probes, strict document gates, RIA, affected/staged,
 aggregate, plain/all-files pre-commit, formatter review, and diff checks. When
