@@ -299,6 +299,34 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
 - Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
   with exit 0 and every hook passing. Post-run state remained exactly three
   staged files with no unstaged changes.
+- Fix Round 8 RED produced 12 assertion failures and five errors across the
+  platform capability matrix: the cached boolean missed individual flag and
+  support-set loss, and root discovery could expose mocked `NotImplementedError`
+  or `TypeError` before the gate. GREEN replaces it with an invocation-time
+  evaluator that checks POSIX, `O_NOFOLLOW`, `O_DIRECTORY`, `O_CLOEXEC`, all
+  seven used `dir_fd` operations, `stat`/`link` `follow_symlinks`, and
+  descriptor-based `listdir`. Archive additionally requires `/proc/self/fd`
+  and an explicit `subprocess.Popen` `pass_fds` contract.
+- The capability gate now precedes root canonicalization, repository-lock
+  creation, transaction creation, and every write. Sixteen one-at-a-time
+  missing-capability subcases prove bounded
+  `MIGRATION-PLATFORM-UNSUPPORTED` diagnostics, no leaked platform exception,
+  no lock call, no write, and no residue; a separate test proves the archive FD
+  bridge requirements do not unnecessarily reject move planning/application.
+- Fix Round 8 focused GREEN passed 81/81 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and fresh pinned-builder equality
+  remained exactly 132/82/50; registry self-test remained 132 cases / 65
+  profiles / 30 templates; strict transition remained 490 paths with zero
+  uncovered or ambiguous routes; and strict Markdown remained zero violations.
+  No production apply ran, and full all-files pre-commit remains assigned to
+  the controller.
+- The exact three-file staged Fix Round 8 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every hook passing. Post-run state remained exactly three
+  staged files with no unstaged changes.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 

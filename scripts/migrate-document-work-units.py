@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import inspect
 import json
 import os
 import re
@@ -82,12 +83,9 @@ _REQUIRED_DIR_FD_FUNCTIONS = (
     os.unlink,
     os.rmdir,
 )
-_TRANSACTION_PLATFORM_SUPPORTED = (
-    os.name == "posix"
-    and hasattr(os, "O_NOFOLLOW")
-    and all(function in os.supports_dir_fd for function in _REQUIRED_DIR_FD_FUNCTIONS)
-    and os.stat in os.supports_follow_symlinks
-)
+_REQUIRED_OPEN_FLAGS = ("O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC")
+_REQUIRED_FOLLOW_SYMLINKS_FUNCTIONS = (os.stat, os.link)
+_REQUIRED_FD_FUNCTIONS = (os.listdir,)
 
 
 class MigrationAbort(RuntimeError):
@@ -2177,12 +2175,50 @@ def _repository_lock(root: Path):
         _cleanup_repository_lock(handle)
 
 
+def _proc_self_fd_available() -> bool:
+    return Path("/proc/self/fd").is_dir()
+
+
+def _subprocess_pass_fds_supported() -> bool:
+    try:
+        parameters = inspect.signature(subprocess.Popen).parameters
+    except (TypeError, ValueError):
+        return False
+    return "pass_fds" in parameters
+
+
+def _transaction_platform_diagnostics(phase: str) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    if os.name != "posix":
+        diagnostics.append("posix")
+    for flag in _REQUIRED_OPEN_FLAGS:
+        if not isinstance(getattr(os, flag, None), int):
+            diagnostics.append(f"flag:{flag}")
+    for function in _REQUIRED_DIR_FD_FUNCTIONS:
+        if function not in os.supports_dir_fd:
+            diagnostics.append(f"dir_fd:{function.__name__}")
+    for function in _REQUIRED_FOLLOW_SYMLINKS_FUNCTIONS:
+        if function not in os.supports_follow_symlinks:
+            diagnostics.append(f"follow_symlinks:{function.__name__}")
+    for function in _REQUIRED_FD_FUNCTIONS:
+        if function not in os.supports_fd:
+            diagnostics.append(f"supports_fd:{function.__name__}")
+    if diagnostics:
+        return tuple(sorted(diagnostics))
+    if phase == "archive":
+        if not _proc_self_fd_available():
+            diagnostics.append("proc-self-fd")
+        if not _subprocess_pass_fds_supported():
+            diagnostics.append("subprocess-pass-fds")
+    return tuple(sorted(diagnostics))
+
+
 def _require_transaction_platform(phase: str) -> None:
-    if (
-        not _TRANSACTION_PLATFORM_SUPPORTED
-        or (phase == "archive" and not Path("/proc/self/fd").is_dir())
-    ):
-        raise MigrationAbort("MIGRATION-PLATFORM-UNSUPPORTED")
+    diagnostics = _transaction_platform_diagnostics(phase)
+    if diagnostics:
+        raise MigrationAbort(
+            f"MIGRATION-PLATFORM-UNSUPPORTED:{diagnostics[0]}"
+        )
 
 
 def apply_phase(
@@ -2193,8 +2229,8 @@ def apply_phase(
     """Apply a manifest-exact phase with full preflight and rollback."""
     if phase not in PHASE_DISPOSITION:
         raise MigrationAbort("MIGRATION-PHASE")
-    root = _canonical_root(root)
     _require_transaction_platform(phase)
+    root = _canonical_root(root)
     with _repository_lock(root):
         _apply_phase_locked(root, planned_pairs, phase)
 

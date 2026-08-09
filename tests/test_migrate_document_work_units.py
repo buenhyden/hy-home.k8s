@@ -658,16 +658,122 @@ class MigrationTests(unittest.TestCase):
             self.tool.os.close(transaction.quarantine_fd)
             self.tool.os.close(transaction.root_fd)
 
-    def test_unsupported_transaction_platform_aborts_before_lock_write(self):
+    def test_platform_capability_matrix_aborts_before_lock_write(self):
+        cases = []
+        for flag in ("O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC"):
+            cases.append(
+                (
+                    f"flag:{flag}",
+                    (mock.patch.object(self.tool.os, flag, None),),
+                )
+            )
+        for index, function in enumerate(self.tool._REQUIRED_DIR_FD_FUNCTIONS):
+            unsupported = frozenset(self.tool.os.supports_dir_fd - {function})
+            leaked = (
+                NotImplementedError("unsupported dir_fd")
+                if index % 2 == 0
+                else TypeError("unsupported dir_fd")
+            )
+            cases.append(
+                (
+                    f"dir_fd:{function.__name__}",
+                    (
+                        mock.patch.object(
+                            self.tool.os, "supports_dir_fd", unsupported
+                        ),
+                        mock.patch.object(
+                            self.tool.os, function.__name__, side_effect=leaked
+                        ),
+                    ),
+                )
+            )
+        for function in (self.tool.os.stat, self.tool.os.link):
+            unsupported = frozenset(
+                self.tool.os.supports_follow_symlinks - {function}
+            )
+            cases.append(
+                (
+                    f"follow_symlinks:{function.__name__}",
+                    (
+                        mock.patch.object(
+                            self.tool.os,
+                            "supports_follow_symlinks",
+                            unsupported,
+                        ),
+                    ),
+                )
+            )
+        cases.extend(
+            (
+                (
+                    "supports_fd:listdir",
+                    (
+                        mock.patch.object(
+                            self.tool.os,
+                            "supports_fd",
+                            frozenset(
+                                self.tool.os.supports_fd - {self.tool.os.listdir}
+                            ),
+                        ),
+                    ),
+                ),
+                (
+                    "posix",
+                    (mock.patch.object(self.tool.os, "name", "nt"),),
+                ),
+                (
+                    "proc-self-fd",
+                    (
+                        mock.patch.object(
+                            self.tool,
+                            "_proc_self_fd_available",
+                            return_value=False,
+                        ),
+                    ),
+                ),
+                (
+                    "subprocess-pass-fds",
+                    (
+                        mock.patch.object(
+                            self.tool,
+                            "_subprocess_pass_fds_supported",
+                            return_value=False,
+                        ),
+                    ),
+                ),
+            )
+        )
+        for name, patchers in cases:
+            with self.subTest(capability=name):
+                before = tuple(ROOT.glob(".migration-*"))
+                with contextlib.ExitStack() as stack:
+                    for patcher in patchers:
+                        stack.enter_context(patcher)
+                    repository_lock = stack.enter_context(
+                        mock.patch.object(self.tool, "_repository_lock")
+                    )
+                    with self.assertRaisesRegex(
+                        self.tool.MigrationAbort,
+                        "MIGRATION-PLATFORM-UNSUPPORTED",
+                    ):
+                        self.tool.apply_phase(ROOT, (), "archive")
+                    repository_lock.assert_not_called()
+                self.assertEqual(tuple(ROOT.glob(".migration-*")), before)
+
+    def test_archive_fd_bridge_capabilities_are_phase_scoped(self):
         with (
-            mock.patch.object(self.tool, "_TRANSACTION_PLATFORM_SUPPORTED", False),
-            mock.patch.object(self.tool, "_repository_lock") as repository_lock,
-            self.assertRaisesRegex(
-                self.tool.MigrationAbort, "MIGRATION-PLATFORM-UNSUPPORTED"
+            mock.patch.object(
+                self.tool, "_proc_self_fd_available", return_value=False
+            ),
+            mock.patch.object(
+                self.tool, "_subprocess_pass_fds_supported", return_value=False
             ),
         ):
-            self.tool.apply_phase(ROOT, (), "archive")
-        repository_lock.assert_not_called()
+            self.tool._require_transaction_platform("move")
+            with self.assertRaisesRegex(
+                self.tool.MigrationAbort, "MIGRATION-PLATFORM-UNSUPPORTED"
+            ):
+                self.tool._require_transaction_platform("archive")
 
     def test_transaction_init_failure_has_no_raw_residue(self):
         for failure in ("open", "identity"):
