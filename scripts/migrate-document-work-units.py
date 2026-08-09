@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import re
@@ -11,7 +12,7 @@ import shutil
 import stat
 import subprocess
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
@@ -43,6 +44,7 @@ PHASE_DISPOSITION = {"archive": "archive-unique", "move": "move-current"}
 GIT_TIMEOUT_SECONDS = 20
 SECRET_TIMEOUT_SECONDS = 10
 SECRET_DETECTED_EXIT = 17
+CONTROL_SURFACE_LIMIT = 8 * 1024 * 1024
 GITLEAKS_HINT = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 GITLEAKS_CANDIDATES = tuple(
     Path(directory) / "gitleaks"
@@ -116,6 +118,21 @@ class _PreparedOperation:
     output: bytes
     source_mode: int
     target_mode: int
+
+
+@dataclass(frozen=True)
+class _FileIdentity:
+    path: Path
+    device: int
+    inode: int
+    mode: int
+
+
+@dataclass(frozen=True)
+class _ControlSurface:
+    path: PurePosixPath
+    contents: bytes = field(repr=False)
+    index_blob: str
 
 
 def _safe_git_environment() -> dict[str, str]:
@@ -203,7 +220,7 @@ def _safe_path(value: Any) -> PurePosixPath:
     return path
 
 
-def load_manifest_document(path: Path) -> ManifestDocument:
+def _parse_manifest_bytes(contents: bytes) -> ManifestDocument:
     def unique(pairs):
         out = {}
         for key, value in pairs:
@@ -211,9 +228,10 @@ def load_manifest_document(path: Path) -> ManifestDocument:
                 raise MigrationAbort("MIGRATION-JSON-DUPLICATE")
             out[key] = value
         return out
+
     try:
-        data = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique)
-    except (OSError, json.JSONDecodeError) as exc:
+        data = json.loads(contents.decode("utf-8"), object_pairs_hook=unique)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise MigrationAbort("MIGRATION-JSON") from exc
     if not isinstance(data, Mapping) or set(data) != TOP_KEYS or data.get("state") != "transition":
         raise MigrationAbort("MIGRATION-SCHEMA")
@@ -242,6 +260,14 @@ def load_manifest_document(path: Path) -> ManifestDocument:
             raise MigrationAbort("MIGRATION-ENTRY-SCHEMA")
         immutable.append(MappingProxyType(dict(row)))
     return ManifestDocument(commit, tuple(immutable))
+
+
+def load_manifest_document(path: Path) -> ManifestDocument:
+    try:
+        contents = path.read_bytes()
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-JSON") from exc
+    return _parse_manifest_bytes(contents)
 
 
 def load_manifest(path: Path) -> tuple[Mapping[str, Any], ...]:
@@ -572,7 +598,7 @@ def _gitleaks_executable(root: Path) -> Path | None:
     return None
 
 
-def _run_gitleaks(executable: Path, root: Path, payload: bytes) -> int:
+def _run_gitleaks(executable: Path, config_path: Path, payload: bytes) -> int:
     try:
         completed = subprocess.run(
             [
@@ -580,7 +606,7 @@ def _run_gitleaks(executable: Path, root: Path, payload: bytes) -> int:
                 "detect",
                 "--pipe",
                 "--config",
-                str(root / ".gitleaks.toml"),
+                str(config_path),
                 "--redact=100",
                 "--no-banner",
                 "--no-color",
@@ -603,13 +629,24 @@ def _run_gitleaks(executable: Path, root: Path, payload: bytes) -> int:
     return completed.returncode
 
 
-def _classify_secret_payload(root: Path, archive_path: str, payload: bytes) -> None:
+def _classify_secret_payload(
+    root: Path,
+    archive_path: str,
+    payload: bytes,
+    config: _FileIdentity,
+) -> None:
     executable = _gitleaks_executable(root)
     if executable is None:
         raise MigrationAbort(
             f"MIGRATION-SECRET-CLASSIFIER-UNAVAILABLE:{archive_path}"
         )
-    return_code = _run_gitleaks(executable, root, payload)
+    if (
+        not _identity_matches(config)
+        or not stat.S_ISREG(config.mode)
+        or stat.S_IMODE(config.mode) != 0o600
+    ):
+        raise MigrationAbort("MIGRATION-SECRET-CONFIG")
+    return_code = _run_gitleaks(executable, config.path, payload)
     if return_code == SECRET_DETECTED_EXIT:
         raise MigrationAbort(f"MIGRATION-SECRET-DETECTED:{archive_path}")
     if return_code != 0:
@@ -692,10 +729,10 @@ def _phase_manifest_rows(
     root: Path,
     planned_pairs: Sequence[tuple[PurePosixPath, PurePosixPath]],
     phase: str,
-) -> tuple[str, tuple[Mapping[str, Any], ...]]:
-    _validate_control_surface(root, MANIFEST_PATH)
-    _validate_control_surface(root, GITLEAKS_CONFIG_PATH)
-    document = load_manifest_document(root / MANIFEST_PATH)
+) -> tuple[str, tuple[Mapping[str, Any], ...], bytes]:
+    manifest = _capture_control_surface(root, MANIFEST_PATH)
+    gitleaks_config = _capture_control_surface(root, GITLEAKS_CONFIG_PATH)
+    document = _parse_manifest_bytes(manifest.contents)
     if document.source_commit != EXPECTED_SOURCE_COMMIT:
         raise MigrationAbort("MIGRATION-SOURCE-COMMIT:unexpected")
     rows = tuple(
@@ -719,7 +756,7 @@ def _phase_manifest_rows(
     )
     if tuple(planned_pairs) != expected:
         raise MigrationAbort("MIGRATION-PLANNED-PAIRS-MISMATCH")
-    return document.source_commit, rows
+    return document.source_commit, rows, gitleaks_config.contents
 
 
 def _tracked_source_blob(root: Path, source: PurePosixPath) -> str:
@@ -742,21 +779,202 @@ def _tracked_source_blob(root: Path, source: PurePosixPath) -> str:
     return blob
 
 
-def _validate_control_surface(root: Path, path: PurePosixPath) -> None:
-    absolute = root / path
+def _git_hash_bytes(root: Path, contents: bytes) -> str:
+    root = _canonical_root(root)
     try:
-        metadata = absolute.lstat()
-        if absolute.resolve(strict=True) != absolute:
+        result = subprocess.run(
+            [
+                "git",
+                "--no-replace-objects",
+                "--literal-pathspecs",
+                "-C",
+                str(root),
+                "hash-object",
+                "--stdin",
+            ],
+            input=contents,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            check=False,
+            timeout=GIT_TIMEOUT_SECONDS,
+            env=_safe_git_environment(),
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise MigrationAbort("MIGRATION-GIT-ERROR") from exc
+    try:
+        digest = result.stdout.decode("ascii").strip()
+    except UnicodeDecodeError as exc:
+        raise MigrationAbort("MIGRATION-GIT:hash-object") from exc
+    if result.returncode != 0 or OID.fullmatch(digest) is None:
+        raise MigrationAbort("MIGRATION-GIT:hash-object")
+    return digest
+
+
+def _identity(path: Path) -> _FileIdentity:
+    try:
+        metadata = path.lstat()
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+    return _FileIdentity(path, metadata.st_dev, metadata.st_ino, metadata.st_mode)
+
+
+def _identity_matches(identity: _FileIdentity) -> bool:
+    try:
+        metadata = identity.path.lstat()
+    except FileNotFoundError:
+        return False
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+    return (
+        metadata.st_dev == identity.device
+        and metadata.st_ino == identity.inode
+    )
+
+
+def _unlink_identity(identity: _FileIdentity, *, missing_ok: bool = True) -> bool:
+    try:
+        metadata = identity.path.lstat()
+    except FileNotFoundError:
+        return missing_ok
+    except OSError:
+        return False
+    if (
+        metadata.st_dev != identity.device
+        or metadata.st_ino != identity.inode
+    ):
+        return False
+    try:
+        identity.path.unlink()
+    except OSError:
+        return False
+    return True
+
+
+def _rmdir_identity(identity: _FileIdentity) -> bool:
+    try:
+        metadata = identity.path.lstat()
+    except FileNotFoundError:
+        return True
+    except OSError:
+        return False
+    if (
+        metadata.st_dev != identity.device
+        or metadata.st_ino != identity.inode
+        or not stat.S_ISDIR(metadata.st_mode)
+    ):
+        return False
+    try:
+        identity.path.rmdir()
+    except OSError:
+        return False
+    return True
+
+
+@contextlib.contextmanager
+def _temporary_gitleaks_config(root: Path, contents: bytes):
+    descriptor: int | None = None
+    identity: _FileIdentity | None = None
+    raw_path: str | None = None
+    try:
+        descriptor, raw_path = tempfile.mkstemp(
+            prefix=".migration-gitleaks-", suffix=".toml", dir=root
+        )
+        opened = os.fstat(descriptor)
+        identity = _FileIdentity(
+            Path(raw_path), opened.st_dev, opened.st_ino, opened.st_mode
+        )
+        os.fchmod(descriptor, 0o600)
+        offset = 0
+        while offset < len(contents):
+            offset += os.write(descriptor, contents[offset:])
+        os.fsync(descriptor)
+        current = _identity(Path(raw_path))
+        if (
+            identity.device != current.device
+            or identity.inode != current.inode
+            or stat.S_IMODE(current.mode) != 0o600
+        ):
+            raise MigrationAbort("MIGRATION-SECRET-CONFIG")
+        identity = current
+        yield current
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-SECRET-CONFIG") from exc
+    finally:
+        cleanup_ok = True
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError:
+                cleanup_ok = False
+        if identity is not None:
+            cleanup_ok = _unlink_identity(identity) and cleanup_ok
+        elif raw_path is not None:
+            try:
+                Path(raw_path).unlink(missing_ok=True)
+            except OSError:
+                cleanup_ok = False
+        if not cleanup_ok:
+            raise MigrationAbort("MIGRATION-ROLLBACK")
+
+
+def _capture_control_surface(root: Path, path: PurePosixPath) -> _ControlSurface:
+    absolute = root / path
+    descriptor: int | None = None
+    try:
+        before = absolute.lstat()
+        descriptor = os.open(
+            absolute,
+            os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+        )
+        opened = os.fstat(descriptor)
+        if (
+            not stat.S_ISREG(opened.st_mode)
+            or stat.S_ISLNK(before.st_mode)
+            or before.st_dev != opened.st_dev
+            or before.st_ino != opened.st_ino
+        ):
+            raise MigrationAbort(f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}")
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(descriptor, min(65536, CONTROL_SURFACE_LIMIT + 1 - total))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            total += len(chunk)
+            if total > CONTROL_SURFACE_LIMIT:
+                raise MigrationAbort(
+                    f"MIGRATION-CONTROL-SURFACE-SIZE:{path.as_posix()}"
+                )
+        contents = b"".join(chunks)
+        after = absolute.lstat()
+        if (
+            after.st_dev != opened.st_dev
+            or after.st_ino != opened.st_ino
+            or after.st_mode != opened.st_mode
+        ):
             raise MigrationAbort(f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}")
     except (OSError, RuntimeError) as exc:
         raise MigrationAbort(
             f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}"
         ) from exc
-    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
-        raise MigrationAbort(f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}")
-    _tracked_source_blob(root, path)
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError as exc:
+                raise MigrationAbort(
+                    f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}"
+                ) from exc
+    index_blob = _tracked_source_blob(root, path)
+    flags = _git(root, "ls-files", "-v", "--", path.as_posix())
+    if flags != f"H {path.as_posix()}":
+        raise MigrationAbort(f"MIGRATION-CONTROL-INDEX-FLAGS:{path.as_posix()}")
+    if _git_hash_bytes(root, contents) != index_blob:
+        raise MigrationAbort(f"MIGRATION-CONTROL-DIRTY:{path.as_posix()}")
     if _git(root, "status", "--porcelain=v1", "--", path.as_posix()):
         raise MigrationAbort(f"MIGRATION-CONTROL-DIRTY:{path.as_posix()}")
+    return _ControlSurface(path, contents, index_blob)
 
 
 def _prepare_operations(
@@ -764,6 +982,7 @@ def _prepare_operations(
     rows: Sequence[Mapping[str, Any]],
     source_commit: str,
     phase: str,
+    gitleaks_config: _FileIdentity | None,
 ) -> tuple[_PreparedOperation, ...]:
     prepared: list[_PreparedOperation] = []
     for row in rows:
@@ -815,28 +1034,32 @@ def _prepare_operations(
         if _git(root, "hash-object", "--", source_name) != expected_blob:
             raise MigrationAbort(f"MIGRATION-CHANGED-SOURCE:{source_name}")
         try:
-            source_bytes = source_path.read_bytes()
-        except OSError as exc:
-            raise MigrationAbort(f"MIGRATION-SOURCE-READ:{source_name}") from exc
-        if phase == "archive":
-            try:
-                recovered = recover_git_blob(root, source_name, source_commit)
-                if recovered.source_blob != expected_blob:
-                    raise MigrationAbort(f"MIGRATION-SOURCE-BLOB:{source_name}")
-                _classify_secret_payload(root, target_name, recovered.source_bytes)
+            recovered = recover_git_blob(root, source_name, source_commit)
+            if recovered.source_blob != expected_blob:
+                raise MigrationAbort(f"MIGRATION-SOURCE-BLOB:{source_name}")
+            source_bytes = recovered.source_bytes
+            if phase == "archive":
+                if gitleaks_config is None:
+                    raise MigrationAbort("MIGRATION-SECRET-CONFIG")
+                _classify_secret_payload(
+                    root,
+                    target_name,
+                    recovered.source_bytes,
+                    gitleaks_config,
+                )
                 metadata = _archive_metadata(row, recovered)
                 output = render_archive_envelope(
                     metadata, recovered, recovered.source_bytes
                 )
                 parse_archive_envelope(output, expected=recovered)
-            except ArchiveContractError as exc:
-                raise MigrationAbort(
-                    f"MIGRATION-ARCHIVE-METADATA:{target_name}"
-                ) from exc
-            target_mode = 0o644
-        else:
-            output = source_bytes
-            target_mode = stat.S_IMODE(source_metadata.st_mode)
+                target_mode = 0o644
+            else:
+                output = recovered.source_bytes
+                target_mode = stat.S_IMODE(source_metadata.st_mode)
+        except ArchiveContractError as exc:
+            raise MigrationAbort(
+                f"MIGRATION-ARCHIVE-METADATA:{target_name}"
+            ) from exc
         source_mode = stat.S_IMODE(source_metadata.st_mode)
         prepared.append(
             _PreparedOperation(
@@ -852,7 +1075,7 @@ def _prepare_operations(
     return tuple(prepared)
 
 
-def _ensure_parent(path: Path, root: Path, created: list[Path]) -> None:
+def _ensure_parent(path: Path, root: Path, created: list[_FileIdentity]) -> None:
     relative = path.relative_to(root)
     current = root
     for part in relative.parts:
@@ -861,64 +1084,151 @@ def _ensure_parent(path: Path, root: Path, created: list[Path]) -> None:
             metadata = current.lstat()
         except FileNotFoundError:
             current.mkdir()
-            created.append(current)
+            created.append(_identity(current))
             continue
         if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
             raise MigrationAbort("MIGRATION-TARGET-ANCESTOR")
 
 
-def _stage_output(operation: _PreparedOperation, root: Path) -> Path:
+def _stage_output(operation: _PreparedOperation, root: Path) -> _FileIdentity:
     target_parent = (root / operation.target).parent
+    descriptor: int | None = None
+    identity: _FileIdentity | None = None
     raw_path: str | None = None
     try:
         descriptor, raw_path = tempfile.mkstemp(
             prefix=".migration-", dir=target_parent
         )
-        with os.fdopen(descriptor, "wb") as handle:
-            handle.write(operation.output)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.chmod(raw_path, operation.target_mode)
+        opened = os.fstat(descriptor)
+        identity = _FileIdentity(
+            Path(raw_path), opened.st_dev, opened.st_ino, opened.st_mode
+        )
+        offset = 0
+        while offset < len(operation.output):
+            offset += os.write(descriptor, operation.output[offset:])
+        os.fsync(descriptor)
+        os.fchmod(descriptor, operation.target_mode)
     except OSError as exc:
-        if raw_path is not None:
+        cleanup_ok = True
+        if descriptor is not None:
             try:
-                Path(raw_path).unlink(missing_ok=True)
+                os.close(descriptor)
             except OSError:
-                raise MigrationAbort("MIGRATION-ROLLBACK") from exc
+                cleanup_ok = False
+            descriptor = None
+        if identity is not None:
+            cleanup_ok = _unlink_identity(identity) and cleanup_ok
+        if not cleanup_ok:
+            raise MigrationAbort("MIGRATION-ROLLBACK") from exc
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
-    return Path(raw_path)
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError as exc:
+                if identity is None or not _unlink_identity(identity):
+                    raise MigrationAbort("MIGRATION-ROLLBACK") from exc
+                raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+    closed = _identity(Path(raw_path))
+    if (
+        identity is None
+        or closed.device != identity.device
+        or closed.inode != identity.inode
+        or stat.S_IMODE(closed.mode) != operation.target_mode
+    ):
+        if identity is not None and not _unlink_identity(identity):
+            raise MigrationAbort("MIGRATION-ROLLBACK")
+        raise MigrationAbort("MIGRATION-STAGED-IDENTITY")
+    return closed
 
 
-def _cleanup_paths(paths: Sequence[Path]) -> bool:
+def _cleanup_identities(paths: Sequence[_FileIdentity]) -> bool:
     clean = True
-    for path in reversed(tuple(paths)):
-        try:
-            if path.exists() or path.is_symlink():
-                path.unlink()
-        except OSError:
-            clean = False
+    for identity in reversed(tuple(paths)):
+        clean = _unlink_identity(identity) and clean
     return clean
+
+
+def _link_no_clobber(staged: _FileIdentity, target: Path) -> _FileIdentity:
+    if not _identity_matches(staged) or not stat.S_ISREG(staged.mode):
+        raise MigrationAbort("MIGRATION-STAGED-IDENTITY")
+    try:
+        os.link(staged.path, target, follow_symlinks=False)
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+    return _FileIdentity(target, staged.device, staged.inode, staged.mode)
 
 
 def _restore_source(operation: _PreparedOperation, root: Path) -> bool:
     source_path = root / operation.source
+    descriptor: int | None = None
+    staged: _FileIdentity | None = None
     raw_path: str | None = None
     try:
         descriptor, raw_path = tempfile.mkstemp(
             prefix=".migration-rollback-", dir=source_path.parent
         )
-        with os.fdopen(descriptor, "wb") as handle:
-            handle.write(operation.source_bytes)
-        os.chmod(raw_path, operation.source_mode)
-        os.replace(raw_path, source_path)
+        opened = os.fstat(descriptor)
+        staged = _FileIdentity(
+            Path(raw_path), opened.st_dev, opened.st_ino, opened.st_mode
+        )
+        offset = 0
+        while offset < len(operation.source_bytes):
+            offset += os.write(descriptor, operation.source_bytes[offset:])
+        os.fsync(descriptor)
+        os.fchmod(descriptor, operation.source_mode)
+        os.close(descriptor)
+        descriptor = None
+        current = _identity(Path(raw_path))
+        if current.device != staged.device or current.inode != staged.inode:
+            return False
+        staged = current
+        installed = _link_no_clobber(current, source_path)
+        if not _unlink_identity(current):
+            _unlink_identity(installed)
+            return False
     except (OSError, MigrationAbort, ArchiveContractError):
-        if raw_path is not None:
+        if descriptor is not None:
             try:
-                Path(raw_path).unlink(missing_ok=True)
+                os.close(descriptor)
             except OSError:
-                return False
+                pass
+        if staged is not None:
+            _unlink_identity(staged)
         return False
     return True
+
+
+def _repository_lock_path(root: Path) -> Path:
+    raw = _git(root, "rev-parse", "--git-common-dir")
+    common = Path(raw)
+    if not common.is_absolute():
+        common = root / common
+    try:
+        common = common.resolve(strict=True)
+        metadata = common.lstat()
+    except (OSError, RuntimeError) as exc:
+        raise MigrationAbort("MIGRATION-LOCK") from exc
+    if not stat.S_ISDIR(metadata.st_mode) or stat.S_ISLNK(metadata.st_mode):
+        raise MigrationAbort("MIGRATION-LOCK")
+    return common / "document-taxonomy-migration.lock"
+
+
+@contextlib.contextmanager
+def _repository_lock(root: Path):
+    path = _repository_lock_path(root)
+    try:
+        path.mkdir(mode=0o700)
+    except FileExistsError as exc:
+        raise MigrationAbort("MIGRATION-LOCK-CONTENDED") from exc
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-LOCK") from exc
+    identity = _identity(path)
+    try:
+        yield
+    finally:
+        if not _rmdir_identity(identity):
+            raise MigrationAbort("MIGRATION-LOCK-CLEANUP")
 
 
 def apply_phase(
@@ -930,6 +1240,15 @@ def apply_phase(
     if phase not in PHASE_DISPOSITION:
         raise MigrationAbort("MIGRATION-PHASE")
     root = _canonical_root(root)
+    with _repository_lock(root):
+        _apply_phase_locked(root, planned_pairs, phase)
+
+
+def _apply_phase_locked(
+    root: Path,
+    planned_pairs: Sequence[tuple[PurePosixPath | Path, PurePosixPath | Path]],
+    phase: str,
+) -> None:
     checked: list[tuple[PurePosixPath, PurePosixPath]] = []
     sources: set[str] = set()
     targets: set[str] = set()
@@ -945,7 +1264,9 @@ def apply_phase(
         targets.add(target_name)
         checked.append((source, target))
     checked_tuple = tuple(checked)
-    source_commit, rows = _phase_manifest_rows(root, checked_tuple, phase)
+    source_commit, rows, gitleaks_contents = _phase_manifest_rows(
+        root, checked_tuple, phase
+    )
     status_entries = tuple(
         MappingProxyType({"source": source.as_posix(), "target": target.as_posix()})
         for source, target in checked
@@ -953,10 +1274,18 @@ def apply_phase(
     dirty = _controlled_dirty(root, status_entries)
     if dirty:
         raise MigrationAbort(f"MIGRATION-CONTROLLED-DIRTY:{dirty[0]}")
-    prepared = _prepare_operations(root, rows, source_commit, phase)
-    created_directories: list[Path] = []
-    staged: list[Path] = []
-    installed: list[Path] = []
+    config_context = (
+        _temporary_gitleaks_config(root, gitleaks_contents)
+        if phase == "archive"
+        else contextlib.nullcontext(None)
+    )
+    with config_context as gitleaks_config:
+        prepared = _prepare_operations(
+            root, rows, source_commit, phase, gitleaks_config
+        )
+    created_directories: list[_FileIdentity] = []
+    staged: list[_FileIdentity] = []
+    installed: list[_FileIdentity] = []
     removed_sources: list[_PreparedOperation] = []
     try:
         for operation in prepared:
@@ -976,23 +1305,35 @@ def apply_phase(
             ):
                 raise MigrationAbort("MIGRATION-CHANGED-SOURCE")
         for operation, temporary in zip(prepared, staged, strict=True):
-            os.replace(temporary, root / operation.target)
-            installed.append(root / operation.target)
+            installed_target = _link_no_clobber(
+                temporary, root / operation.target
+            )
+            installed.append(installed_target)
+            if not _unlink_identity(temporary):
+                raise MigrationAbort("MIGRATION-STAGED-CLEANUP")
         for operation in prepared:
-            (root / operation.source).unlink()
+            source_path = root / operation.source
+            try:
+                metadata = source_path.lstat()
+            except OSError as exc:
+                raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+            if (
+                stat.S_ISLNK(metadata.st_mode)
+                or not stat.S_ISREG(metadata.st_mode)
+                or _git(root, "hash-object", "--", operation.source.as_posix())
+                != operation.source_blob
+            ):
+                raise MigrationAbort("MIGRATION-CHANGED-SOURCE")
+            source_path.unlink()
             removed_sources.append(operation)
     except (OSError, subprocess.TimeoutExpired, MigrationAbort) as exc:
         rollback_ok = True
         for operation in reversed(removed_sources):
             rollback_ok = _restore_source(operation, root) and rollback_ok
-        rollback_ok = _cleanup_paths(installed) and rollback_ok
-        rollback_ok = _cleanup_paths(staged) and rollback_ok
+        rollback_ok = _cleanup_identities(installed) and rollback_ok
+        rollback_ok = _cleanup_identities(staged) and rollback_ok
         for directory in reversed(created_directories):
-            try:
-                directory.rmdir()
-            except OSError:
-                if directory.exists():
-                    rollback_ok = False
+            rollback_ok = _rmdir_identity(directory) and rollback_ok
         if not rollback_ok:
             raise MigrationAbort("MIGRATION-ROLLBACK") from exc
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc

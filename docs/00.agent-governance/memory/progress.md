@@ -131,6 +131,39 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
   passing. Post-run state is exactly six staged files with no unstaged changes;
   both diff checks pass, and frozen Plan/Task plus `docs/98.archive` have zero
   staged and unstaged diff. WORK-102 Fix Round 3 is complete.
+- Fix Round 4 RED produced five assertion failures and two missing-API errors:
+  move apply copied a substituted worktree read instead of its pinned Git blob,
+  no repository-scoped lock or immutable control-surface snapshot existed,
+  `os.replace` could clobber a concurrently created target, rollback did not
+  identity-protect replaced targets, and assume-unchanged/skip-worktree flags
+  concealed dirty control surfaces.
+- Fix Round 4 GREEN uses recovered pinned bytes for move output while retaining
+  immediate worktree blob/type revalidation. A Git-common-directory exclusive
+  lock now spans validation, preparation, installation, source removal,
+  rollback, and cleanup. Target installation uses atomic hard-link
+  no-clobber semantics; installed and staged identities are recorded by device
+  and inode, so rollback removes only the same object and preserves concurrent
+  or third-party replacements. Lock and migration temporaries leave no residue
+  in focused success and failure cases.
+- The manifest and `.gitleaks.toml` are each read exactly once through a
+  no-follow descriptor, bounded in size, compared byte-for-byte by Git blob ID
+  with their stage-zero index entry, and rejected for any index marker other
+  than normal `H` (including assume-unchanged and skip-worktree). Apply parses
+  the captured manifest bytes directly and gives gitleaks only an owner-mode
+  `0600` temporary copy of the captured config; original-path replacement
+  after capture cannot alter either consumer, and config cleanup is
+  identity-safe.
+- Fix Round 4 focused GREEN passed 62/62 migration, strict-cutover, and archive
+  recovery tests. Python compilation and Ruff passed; manifest dry run remains
+  132/82/50; registry self-test remains 132 cases / 65 profiles / 30 templates;
+  strict transition remains 490 paths with zero uncovered or ambiguous routes;
+  strict Markdown remains zero violations. No production apply was executed.
+- The staged Fix Round 4 aggregate exited 0 with final repository-quality PASS;
+  ACER remained exact at 68 helpers (`33 + 35`) with zero findings. Full
+  pre-commit remained assigned to the controller. The controller then completed
+  `env TMPDIR=/tmp pre-commit run --all-files` with exit 0 and every hook
+  passing; post-run state remained exactly three staged files with no unstaged
+  changes.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 
