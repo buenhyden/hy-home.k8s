@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WERG-000 gap-only research refresh design
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, research, governance
+- **Status**: in-review
+- **Tags**: #research #gap-analysis #sdlc #verification #validation #kubernetes
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md`
+- **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
+- **Next Owner**: human requester for written Spec review; primary agent for Plan authoring only after approval.
+
+#### Progress
+
+Recorded the approved design as draft Spec 055 instead of creating the
+repository-prohibited `docs/superpowers/**` tree. The design keeps the existing
+`2026-08-08-wer` pack as the only research owner, admits only unresearched or
+externally under-sourced `Partial` questions, and excludes authenticated,
+provider-runtime, hosted, remote, credential-bearing, and live evidence.
+
+#### Memory
+
+Spec 053, its Plan/Task, and its typed standalone relation are terminal `done`.
+A new active Plan/Task cannot be attached to that terminal relation. If the
+written draft is approved, Spec 055 requires its own reciprocal Plan, Task, and
+ADR-0022 standalone registry entry. The research output remains an in-place
+five-owner refresh; lifecycle evidence is separate from the research pack.
+
+#### Evidence
+
+- Main baseline at design start: `df8fe30dbbbd46611699f06692611041dbb35061` with a clean worktree and 18 local commits ahead of `origin/main`.
+- Isolated branch/worktree: `codex/2026-08-09-wer-gap-refresh` at `.worktrees/2026-08-09-wer-gap-refresh`.
+- Read-only gap audit found broad requested coverage already present and narrowed candidate external-source gaps to document-family semantics, explicit Verification/Validation terminology, and exact Kubernetes security deltas.
+- Routing audit confirmed `docs/superpowers/**` is prohibited and Stage 03 Spec plus Stage 04 Plan/Task is the canonical execution route.
+- Design-contract RED/GREEN: strict profile/link validation rejected grouped criteria and Spec-local pseudo-PRD rows; the corrected standalone `N/A` traceability form passes with ten one-to-one `VAL-WERG-*` rows.
+- Independent draft-design review is Approved with no Critical or Important finding.
+- Pre-final exact three-path affected and staged lanes, plain pre-commit, the direct repository quality gate, and all-files pre-commit passed. This evidence-only progress update invalidates those results as completion evidence; the primary agent must rerun the canonical final lanes after restaging and report the post-update results in the commit handoff.
+- No external source browsing, research-pack content edit, Plan/Task activation, standalone registry edit, hosted/provider/live action, or implementation has occurred in this design step.
+
+#### Handoff
+
+Review draft Spec 055. After explicit written-Spec approval, invoke the
+Superpowers planning workflow, create the reciprocal Stage 04 Plan/Task and
+standalone execution record, then execute through disjoint research workers and
+independent reviews. Do not begin external research before that approval.
+
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 
 #### Metadata
