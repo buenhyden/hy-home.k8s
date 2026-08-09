@@ -44,7 +44,7 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-005 | VAL-WGA-002, VAL-WGA-006 | Audit harness, loop, scripts, fixtures, checkpoints, blockers, recovery, and handoff | assigned worker | Done | Repository-static harness topology, lifecycle/checkpoint behavior, and fixture production ownership align; the scripts human inventory is `Partial`, while provider runtime and actual ignored-checkpoint execution remain `DEFER`. | [Focused evidence](#wgia-005-focused-evidence); four complete findings, exact state/owner/blocker matrices, 47 scripts = 41 CLI + six helpers, 37 fixtures, one provisional WGIA-009 human-index repair, 119 tests, specification/content and fix-round quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-006 | VAL-WGA-002, VAL-WGA-007 | Audit LLM-WIKI, knowledge routing, and memory classes | assigned worker | Done | Generated ownership/lookup and four-class memory lifecycle align repository-statically; stale LLM-WIKI source-trigger review metadata is a `Gap`, and actual provider-local memory/lifecycle execution remains `DEFER`. | [Focused evidence](#wgia-006-focused-evidence); four complete findings, exact generated-owner and memory-lifecycle matrices, one provisional WGIA-009 freshness repair, generator/memory checks, 115 tests, specification/content and quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-007 | VAL-WGA-002, VAL-WGA-008 | Audit integrated orchestration and every current AI-agent role | assigned worker | Done | Exact 12-role/four-surface/48-projection inventory and complete per-role matrix align repository-statically; integrated supervisor controls align, model/evaluation/admission evidence is `Partial`, and native provider execution remains `DEFER`. | [Focused evidence](#wgia-007-focused-evidence); four complete findings, one complete provider-runtime evidence blocker, focused contract and 150-test evidence, no remediation/disposition candidate, specification/content and fix-round quality reviews Approved, and complete repository quality gate PASS. |
-| WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Queued | Not executed. | Security report, trust/control matrix, static gate evidence and review. |
+| WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Done | Repository-static approval/workflow, GitOps, and external-secret structure align; Claude permissions conflict with shared stops; KSM RBAC and supply-chain identity are `Partial`; Gitleaks scope, network isolation, and admission/Adminer hardening are `Gap`; deeper enforcement remains `DEFER`. | [Focused evidence](#wgia-008-focused-evidence); full control matrix, nine complete findings, two evidence blockers, six provisional WGIA-009 inputs, focused static security evidence, and fresh specification/content plus security fix-round reviews Approved with no Critical/Important finding. |
 | WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Queued | Not executed. | Candidate/consumer ledger, roadmap, review dispositions, focused gates. |
 | WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, canonical-owner diffs or reviewed no-delta evidence. |
 | WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, owner-family commits or reviewed no-delta evidence. |
@@ -534,6 +534,67 @@ and quality reviews are Approved with no Critical or Important finding.
   edits. No agent-owner correction or roadmap candidate was accepted;
   WGIA-014 owns whole-branch completion evidence.
 
+### WGIA-008 Focused Evidence
+
+- **Scope and changed paths**: the security report, `REQ-WGA-024` cell, six
+  provisional WGIA-009 roadmap rows, this Task, one top durable progress entry,
+  and ignored worker progress/report. No disposition-ledger row is warranted:
+  none of the reviewed security owners is proven Legacy, Deprecated, one-shot,
+  or deletion-ready. Canonical policy/config/manifest/script/test owners, other
+  reports, Stage 98, Current, and RIA remain unchanged.
+- **Acceptance IDs**: VAL-WGA-002 and VAL-WGA-009 at `repository-static`
+  depth. Evidence is pinned to observation commit
+  `50628b84165479b03efc0a25be075a49c91a9aef`; current matching security owners
+  were reviewed separately from later implementation drift.
+- **Control inventory and findings**: the report maps repository/workflow,
+  supply-chain, agent, secret, GitOps/infrastructure, permission, destructive,
+  remote, and live boundaries to their owner, threat, enforcement point,
+  evidence, bypass/exception, failure mode, approval authority, depth, and
+  result. Nine complete findings record two `Aligned`, two `Partial`, three
+  `Gap`, one `Conflict`, and one `DEFER` result. Two blockers preserve the
+  provider/hosted/live evidence limit and the untriaged redacted history scan.
+- **Deterministic probes**: repository-static inventory finds nine Namespace
+  objects, six egress-oriented NetworkPolicies, zero ingress/default-deny
+  policy, four namespaces without a policy object, five RBAC objects with no
+  wildcard rule, three raw pod templates, zero `latest` images, zero
+  digest-pinned images, and zero tracked raw Secret kinds. Kube-state-metrics
+  has exact cluster-wide Secret `list`/`watch` access and a mounted
+  service-account token. Adminer lacks the hardening visible on the other two
+  raw pod templates. Tracked PSA/admission-policy ownership is absent.
+- **Secret-scanning RED and limitation**: the bounded secret-handling check
+  passes 100 selected files. Redacted Gitleaks current-worktree probing exits 1
+  with four candidates (two tracked documents and two ignored compiled-test
+  artifacts); redacted history probing exits 1 with eleven candidates across
+  1,136 commits. Match/secret payloads were neither inspected nor recorded.
+  `BLK-WGA-SEC-002` therefore blocks any clean-history claim until approved
+  non-disclosing triage, rotation if necessary, and exact false-positive
+  classification complete.
+- **Focused static validation**: Actions security and CI-Python contract
+  self-tests/production pass; Vault/ESO and GitOps-change self-tests/production
+  pass; secret handling, GitOps structure, static infrastructure contracts, and
+  104-manifest validation pass. Policy validation passes through the built-in
+  fallback while optional Conftest is `SKIP`; KubeLinter is available and
+  reports no lint errors under the repository's documented exclusions. The
+  final report probe passes nine findings, 14 conceptual fields each, the exact
+  2/2/3/1/1 closed-verdict distribution, six candidate rows, and 42 unique
+  observation evidence paths with zero missing. Strict registry passes 502
+  paths; Markdown profiles report zero violations; strict links are valid;
+  diff and both Stage 98 checks pass. The first strict-document invocation used
+  unsupported `--strict` and exited 2 at argument parsing; the corrected
+  `--mode strict` commands pass.
+- **Lanes and limitations**: repository-static validation is evidence, not live
+  enforcement. Hosted branch/ruleset, provider-native permission consumption,
+  credentials, registry identity, cluster admission/RBAC/CNI, GitOps
+  reconciliation, Vault/ESO delivery, destructive action, remote mutation, and
+  live workload behavior remain `DEFER`. No secret value, provider/runtime,
+  remote, cluster, or live state was accessed.
+- **Review, rollback, and next owner**: fresh independent specification/content
+  and security fix-round reviews are `Approved` with no Critical/Important
+  finding. Rollback is limited to the
+  WGIA-008 report/cell/roadmap/Task/progress/ignored-worker edits. WGIA-009 owns
+  deduplication/admission; WGIA-011 may implement only accepted security rows;
+  WGIA-014 owns whole-branch completion evidence.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -548,7 +609,7 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-005 shares the Plan and Spec sources above | Done. | Four complete findings: repository-static harness topology and loop/checkpoint controls `Aligned`; fixture production evidence remains aligned within `WGA-HAR-003`, but canonical script human inventory is `Partial`; provider runtime and actual ignored-checkpoint execution `DEFER`. Exact proof is 47 scripts = 41 CLI + six helpers with two human-index omissions, 37 fixtures, one provisional roadmap row, and one complete evidence-depth blocker; specification/content and fix-round quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-006 shares the Plan and Spec sources above | Done. | Four complete findings: generated ownership/lookup and four-class memory lifecycle `Aligned`; stale LLM-WIKI source-trigger review metadata is a `Gap`; provider-local/actual lifecycle execution `DEFER`. Exact proof shows all six declared inputs changed after the 2026-05-10 review date; one provisional freshness repair and one complete provider-runtime blocker are recorded; specification/content and quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-007 shares the Plan and Spec sources above | Done. | Four complete findings: exact 12-role/four-surface/48-projection inventory and integrated supervisor orchestration `Aligned`; model/evaluation/admission state `Partial`; native provider execution `DEFER`. Focused contract self-tests/production and 150 tests pass; specification/content and fix-round quality reviews Approved; complete repository quality gate PASS. |
-| N/A — WGIA-008 shares the Plan and Spec sources above | Queued. | Security/approval audit evidence will be recorded here. |
+| N/A — WGIA-008 shares the Plan and Spec sources above | Done. | Nine complete findings and a full control matrix distinguish static alignment from one permission conflict, three gaps, two partial controls, and deeper `DEFER`; six provisional WGIA-009 inputs are recorded. Focused static security checks pass with optional Conftest `SKIP`; redacted Gitleaks candidates remain intentionally untriaged; fresh specification/content and security fix-round reviews are Approved with no Critical/Important finding. |
 | N/A — WGIA-009 shares the Plan and Spec sources above | Queued. | Candidate disposition and integrated roadmap evidence will be recorded here. |
 | N/A — WGIA-010 shares the Plan and Spec sources above | Queued. | Governance/documentation/knowledge remediation evidence will be recorded here. |
 | N/A — WGIA-011 shares the Plan and Spec sources above | Queued. | Delivery/harness/agent/security remediation evidence will be recorded here. |

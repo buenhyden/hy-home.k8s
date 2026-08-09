@@ -8,6 +8,69 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-008 security and approval-boundary audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #security #approval #gitops
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-008 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted security-owner change.
+- **Next Owner**: WGIA-009 for provisional-candidate admission; WGIA-011 only for accepted remediation; WGIA-014 for whole-branch closure.
+
+#### Progress
+
+Applied the Kubernetes security audit dimensions to repository-static RBAC,
+NetworkPolicy, secret-reference, container-hardening, and supply-chain evidence.
+Approval/workflow, GitOps structure, and Vault/ESO reference handling align
+within that lane. The report records Claude permission `Conflict`; Gitleaks,
+network-isolation, and admission/Adminer `Gap`; KSM least privilege and
+supply-chain identity `Partial`; and all deeper enforcement `DEFER`.
+
+#### Memory
+
+Manifest presence and pre-merge validation do not prove cluster admission,
+CNI behavior, reconciled RBAC, or secret delivery. Local-home-lab KubeLinter
+exceptions must be assessed separately from production-like hardening. A
+redacted scanner candidate is neither a proven secret nor a safe false
+positive until the credential/security owner completes non-disclosing triage.
+
+#### Evidence
+
+- Full Plan-required control matrix and nine closed findings, each with exact
+  owner, threat, enforcement, bypass/exception, failure mode, approval, depth,
+  uncertainty, and blocker fields.
+- Static inventory: nine namespaces, six egress-oriented NetworkPolicies, zero
+  ingress/default-deny policy, four uncovered namespaces, no wildcard RBAC,
+  three raw pod templates, no `latest` image, no digest-pinned raw image, and no
+  tracked raw Secret kind.
+- KSM Secret metadata `list`/`watch`, Claude broad command patterns, Adminer
+  hardening omissions, mutable supply-chain references, and redacted Gitleaks
+  scope are routed to six provisional WGIA-009 candidates; no disposition row.
+- Focused Actions/CI, Vault/ESO, GitOps-change/structure, secret handling,
+  policy fallback, KubeLinter/manifest, and infrastructure static checks pass;
+  optional Conftest is `SKIP` and deeper lanes remain `DEFER`.
+- The final contract probe passes 9 findings/14 fields, the exact closed
+  verdict distribution, six candidates, and 42 unique observation evidence
+  paths with none missing. Strict registry passes 502 paths, profiles report
+  zero violations, strict links are valid, and diff/Stage 98 checks pass. An
+  initial unsupported `--strict` invocation exited 2 at parsing; corrected
+  `--mode strict` commands pass.
+
+#### Handoff
+
+WGIA-008 is complete. Fresh independent specification/content and security
+fix-round reviews are Approved with no Critical/Important finding. Six
+provisional security rows remain WGIA-009 inputs rather than implementation
+approval. No secret value, provider runtime, hosted/remote, cluster/live state,
+canonical security owner, Stage 98, Current, or RIA surface was accessed or
+changed.
+
 ### 2026-08-09 - WGIA-007 AI-agent system audit
 
 #### Metadata

@@ -434,15 +434,15 @@ roadmap/ledger rows, Task and progress evidence.
 **Files:** `security-and-approval-boundaries.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Inventory repository, workflow, supply-chain, agent, secret, GitOps,
+- [x] Inventory repository, workflow, supply-chain, agent, secret, GitOps,
   infrastructure, permission, destructive, remote, and live trust boundaries.
-- [ ] Map each control to owner, threat, enforcement point, evidence artifact,
+- [x] Map each control to owner, threat, enforcement point, evidence artifact,
   bypass/exception route, failure mode, and approval authority.
-- [ ] Inspect only structure and metadata needed by the approved static lane;
+- [x] Inspect only structure and metadata needed by the approved static lane;
   never print secret values or perform live/provider/remote mutation.
-- [ ] Run GitHub Actions security, secret handling, policy, Vault/ESO static,
+- [x] Run GitHub Actions security, secret handling, policy, Vault/ESO static,
   manifest/GitOps/static-infrastructure, profile, and link gates.
-- [ ] Obtain a security-focused review against VAL-WGA-009, record candidates,
+- [x] Obtain a security-focused review against VAL-WGA-009, record candidates,
   and commit `docs: audit security and approval boundaries`.
 
 #### WGIA-009 — Disposition ledger and integrated roadmap
