@@ -14,22 +14,25 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-08-09
 - **Layer**: documentation, research, governance
-- **Status**: in-review
+- **Status**: in-progress
 - **Tags**: #research #gap-analysis #sdlc #verification #validation #kubernetes
 - **Owner**: primary agent
 - **Canonical Owner**: `docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md`
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: human requester for written Spec review; primary agent for Plan authoring only after approval.
+- **Next Owner**: human requester for execution-mode choice; primary agent for WERG-000 activation only after that choice.
 
 #### Progress
 
 Recorded the approved design as draft Spec 055 instead of creating the
-repository-prohibited `docs/superpowers/**` tree. The design keeps the existing
-`2026-08-08-wer` pack as the only research owner, admits only unresearched or
-externally under-sourced `Partial` questions, and excludes authenticated,
-provider-runtime, hosted, remote, credential-bearing, and live evidence.
+repository-prohibited `docs/superpowers/**` tree. After explicit written-Spec
+approval, authored the reciprocal draft Plan and Task with six work packages,
+four-state admission, exact five-owner integration, independent reviews,
+logical commits, cleanup, terminal gates, and branch finishing. The existing
+`2026-08-08-wer` pack remains the only research owner; authenticated,
+provider-runtime, hosted, remote, credential-bearing, and live evidence stays
+excluded.
 
 #### Memory
 
@@ -48,14 +51,16 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - Design-contract RED/GREEN: strict profile/link validation rejected grouped criteria and Spec-local pseudo-PRD rows; the corrected standalone `N/A` traceability form passes with ten one-to-one `VAL-WERG-*` rows.
 - Independent draft-design review is Approved with no Critical or Important finding.
 - Pre-final exact three-path affected and staged lanes, plain pre-commit, the direct repository quality gate, and all-files pre-commit passed. This evidence-only progress update invalidates those results as completion evidence; the primary agent must rerun the canonical final lanes after restaging and report the post-update results in the commit handoff.
-- No external source browsing, research-pack content edit, Plan/Task activation, standalone registry edit, hosted/provider/live action, or implementation has occurred in this design step.
+- The approved Spec is mapped to WERG-000–005 in a detailed draft Plan and reciprocal draft Task. Activation is deliberately deferred until the human chooses subagent-driven or inline execution.
+- Independent Plan review is Approved with no remaining Critical or Important finding after fix rounds for approval-state wording, complete 13-file admission review, reproducible temporary probe contracts, draft reciprocal exclusion, and post-lane scratch cleanup.
+- No external source browsing, research-pack content edit, Plan/Task activation, standalone registry edit, hosted/provider/live action, or research implementation has occurred in this planning step.
 
 #### Handoff
 
-Review draft Spec 055. After explicit written-Spec approval, invoke the
-Superpowers planning workflow, create the reciprocal Stage 04 Plan/Task and
-standalone execution record, then execute through disjoint research workers and
-independent reviews. Do not begin external research before that approval.
+Choose the execution mode for the approved Plan: subagent-driven execution is
+recommended; inline executing-plans is also available. After that choice,
+WERG-000 must atomically activate the reciprocal Spec/Plan/Task/index/ADR-0022
+relation before any external research begins.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 

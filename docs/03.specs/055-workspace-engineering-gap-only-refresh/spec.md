@@ -22,12 +22,13 @@ The refresh admits only two evidence classes selected by the human requester:
    external basis is materially incomplete and can be strengthened without
    provider-runtime, hosted, remote, credential-bearing, or live evidence.
 
-The user approved this design direction on 2026-08-09 and directed the result
-to be integrated into the existing `2026-08-08-wer` pack. This draft is the
-written design review surface. It does not activate execution, reopen terminal
-Spec 053, or create a second Plan/Task relation for Spec 053. If the written
-specification is approved, the reciprocal Plan and Task will use a new
-standalone execution relation governed by
+The user approved this design direction and the written specification on
+2026-08-09 and directed the result to be integrated into the existing
+`2026-08-08-wer` pack. This draft does not activate execution, reopen terminal
+Spec 053, or create a second Plan/Task relation for Spec 053. The reciprocal
+draft Plan and Task have been authored; after the human chooses an execution
+mode, WERG-000 will activate them through a new standalone execution relation
+governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 No separate PRD or ARD is asserted by this draft.
 
@@ -380,5 +381,5 @@ credential-bearing, or live success.
 - **Direct-approval lineage decision**: [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - **Document taxonomy decisions**: [Spec 052](../052-document-taxonomy-consolidation/spec.md)
 - **Current research pack**: [2026-08-08 WER](../../90.references/research/2026-08-08-wer/README.md)
-- **Plan**: pending written Spec approval
-- **Task**: pending written Spec approval
+- **Plan**: draft at `docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md`; reciprocal activation waits for the execution-mode choice
+- **Task**: draft at `docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md`; reciprocal activation waits for the execution-mode choice

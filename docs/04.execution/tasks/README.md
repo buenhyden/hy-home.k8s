@@ -111,6 +111,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-08-02-repository-assurance-integration-and-closure.md
 ├── 2026-08-07-document-taxonomy-consolidation.md
 ├── 2026-08-08-workspace-engineering-research-pack-consolidation.md
+├── 2026-08-09-workspace-engineering-gap-only-refresh.md
 ├── 2026-08-09-workspace-governance-audit-and-remediation.md
 └── README.md
 ```
@@ -205,6 +206,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-08-02-repository-assurance-integration-and-closure.md`](./2026-08-02-repository-assurance-integration-and-closure.md) | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md)과 reciprocal [Plan](../plans/2026-08-02-repository-assurance-integration-and-closure.md)의 계약 통합, QA, 검토, 로컬 fast-forward, stash 및 worktree 정리, 수명주기 종결 증거를 추적한다. | Draft | 2026-08-02 |
 | [`./2026-08-07-document-taxonomy-consolidation.md`](./2026-08-07-document-taxonomy-consolidation.md) | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)와 reciprocal [Plan](../plans/2026-08-07-document-taxonomy-consolidation.md)의 WORK-000–WORK-015 실행 증거를 추적한다. WORK-000은 완료됐고 WORK-002는 Spec 053으로 supersede됐으며 나머지 rows는 queued 상태다. | Active | 2026-08-08 |
 | [`./2026-08-08-workspace-engineering-research-pack-consolidation.md`](./2026-08-08-workspace-engineering-research-pack-consolidation.md) | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)과 reciprocal [Plan](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)의 WERPC-000–009 외부·워크스페이스 조사, 통합, consumer 이관, 삭제, 검증, review, residue scan, lifecycle closure evidence를 추적한다. | Done | 2026-08-09 |
+| [`./2026-08-09-workspace-engineering-gap-only-refresh.md`](./2026-08-09-workspace-engineering-gap-only-refresh.md) | 승인된 [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)와 reciprocal [Plan](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md)의 WERG-000–005 admission, gap-only 외부 조사, 기존 팩 통합, review, 논리 커밋, 검증, cleanup, closure evidence를 추적한다. | Draft | 2026-08-09 |
 | [`./2026-08-09-workspace-governance-audit-and-remediation.md`](./2026-08-09-workspace-governance-audit-and-remediation.md) | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)와 reciprocal [Plan](../plans/2026-08-09-workspace-governance-audit-and-remediation.md)의 WGIA-000–014 감사, canonical-owner remediation, RIA Current cutover, no-deletion 결과, terminal review와 lifecycle closure evidence를 완료했다. | Done | 2026-08-09 |
 
 ## Related Documents
