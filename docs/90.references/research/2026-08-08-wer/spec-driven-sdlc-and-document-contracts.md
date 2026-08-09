@@ -95,6 +95,28 @@ stage matrix, not a machine-enforced link.
 | Release | A discrete, auditable version/change decision; approved policy, change set, validation, version decision -> release record, approval, rollout/rollback evidence. | No canonical local owner; intended readers include release/operations and consumers. A lifecycle must be approved before use (for example `draft -> approved -> released/withdrawn`). | Should link Policy, Plan/Task, validation results, deployment/runbook and, where public API exists, SemVer decision. Must not substitute a tag or workflow for approval evidence. | **Gap:** no `sdlc/release` profile, template, canonical path/index, status domain/lifecycle, or validator was found. Target requires a separately approved cross-stage owner, state model, retention/supersession rules, template, registry/schema projection, fixtures, and negative tests together. |
 | Runbook | Safe, repeatable operational procedure after a procedure is known; policy/observed procedure -> preconditions, steps, verification, observability, recovery. | Operations Engineer; operators/responders; `draft -> active -> accepted/archived`. | Promotes eligible policy/Spec/helper/Task; require verification, evidence sources, and safe rollback/recovery. A runbook is not an incident fact record or release approval. | `sdlc/runbook` exists. Static validation cannot show a command is safe in a live environment. |
 
+### 2026-08-10 gap-only source refresh
+
+This refresh adds external meaning only for the five admitted document families.
+It does not change a profile, template, lifecycle, route, or the accepted Spec
+052 decisions. In particular, DOC-G5 still rejects a first-class release-notes
+type; the broader release-record question remains a separate cross-stage design
+decision.
+
+| Family | External question answered | Source-backed rule | Workspace As-Is -> bounded target | Boundary |
+| --- | --- | --- | --- | --- |
+| PRD | What evidence should connect stakeholder intent to requirements and acceptance? | Requirements engineering turns stakeholder expectations into traceable requirements and information items, but ISO does not define a universal Product Requirements Document template ([SRC-WERPC-053](source-coverage-and-migration-ledger.md#source-register)). | The local PRD already owns vision, problem, personas, use cases, numbered requirements, acceptance, scope, risks, and downstream links. Keep that repository-defined contract; distinguish narrative intent from atomic technical requirements and never treat template conformance as stakeholder or product validation. | ISO clauses beyond the public abstract were not consulted; NASA uses PRD to mean Project Requirements Document, so neither source owns the local family name or format. |
+| ARD | What makes an architecture description reviewable without prescribing one notation? | An architecture description is a work product about an architecture; purpose/environment, stakeholders and concerns, context, drivers, constraints, decisions/rationale, and concern-addressing views make it useful, while ISO 42010 does not mandate a method, tool, notation, format, or medium ([SRC-WERPC-054](source-coverage-and-migration-ledger.md#source-register)). | The local ARD already owns boundaries, quality attributes, context, data, deployment, and PRD-to-ADR/Spec traceability. Review material changes proportionally for unambiguous context, named drivers, decision rationale, and concern-to-view coverage; require a diagram only when it clarifies a real boundary or concern. | The ISO text consulted was public catalog/abstract material and the NASA outline is agency guidance; no ISO conformance or universal Markdown format is claimed. |
+| Policy | How is normative intent separated from implementation and assessment? | Policy establishes accountable intent, scope, responsibilities, controls, exceptions, communication, review, and update triggers; procedures implement it and assessment evidence tests controls rather than treating the document as enforcement ([SRC-WERPC-055](source-coverage-and-migration-ledger.md#source-register)). | `sdlc/policy` already requires scope, applies-to roles, controls, exceptions, verification, cadence, and traceability. Preserve Policy as the normative owner, keep commands in Runbooks, and bind each control to an enforcement surface and assessment evidence. | NIST's detailed model is cybersecurity/privacy-specific. Its accountability and policy/procedure/evidence separation are a bounded benchmark, not a universal operations-policy standard or proof of enforcement. |
+| Release | What is an auditable release record beyond version semantics or notes? | Release engineering spans source, build, test, packaging, approval gates, deployment, audit trail, and rollback; immutable tag/commit/assets and provenance strengthen artifact identity but do not establish organizational release intent or approval ([SRC-WERPC-056](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-019](source-coverage-and-migration-ledger.md#source-register), [SRC-WERPC-032](source-coverage-and-migration-ledger.md#source-register), and [SRC-WERPC-040](source-coverage-and-migration-ledger.md#source-register)). | No `sdlc/release` owner exists. A future decision must either map identity, approval, validation, provenance, rollout, rollback, outcome, retention, and supersession to existing Policy/Plan/Task/Runbook owners or approve a complete new contract atomically. | No public API, hosted release, immutable-release setting, attestation, rollout, or rollback was observed. A tag, workflow, GitHub Release, SemVer value, release notes, provenance, or attestation alone is insufficient. |
+| Runbook | What makes an operational procedure safe, current, and improvable? | Current, known, practiced playbooks accelerate response; repeated deterministic command sequences should be evaluated for automation while preserving human judgment, escalation, and automation-failure recovery ([SRC-WERPC-057](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-018](source-coverage-and-migration-ledger.md#source-register)). | `sdlc/runbook` already requires trigger, prerequisites, procedure, expected results, stop/escalation, verification, evidence, and recovery. Route the automation counter-rule through approved DOC-G10 and queued/not-executed WORK-013; record rehearsal/currentness as evidence without silently adding a required heading. | Google uses playbook/runbook contextually rather than as a formal document standard. Static structure cannot prove commands are current, rehearsed, authorized, or safe live. |
+
+The authoring consequence is a review checklist, not taxonomy expansion: keep
+stable requirement and evidence identities; keep architecture views
+proportional to concerns; keep policy intent separate from procedures; keep a
+release record distinct from notes, versions, and provenance; and keep runbook
+automation risk-based with a recoverable manual path.
+
 ### Current contract and evidence flow
 
 The checked profiles use exact five-key SDLC frontmatter and closed status
@@ -136,6 +158,11 @@ must never be interpreted as that approval.
 - [AWS ADR process](https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html), checked 2026-08-08: ADR context/consequence/supersession benchmark.
 - [Google SRE incident management](https://sre.google/resources/practices-and-processes/incident-management-guide/) and [postmortem culture](https://sre.google/workbook/postmortem-culture/), checked 2026-08-08: response and learning/follow-through benchmark.
 - [Semantic Versioning 2.0.0](https://semver.org/), checked 2026-08-08: public-API version meaning, not release governance.
+- [ISO/IEC/IEEE 29148:2018 abstract](https://www.iso.org/standard/72089.html) and [NASA system-design processes](https://www.nasa.gov/reference/4-0-system-design-processes/), checked 2026-08-10: requirements-engineering information items and stakeholder-to-requirement practice; no universal Product Requirements Document format or conformance claim.
+- [ISO/IEC/IEEE 42010:2022 abstract](https://www.iso.org/standard/74393.html) and [NASA software architecture description guidance](https://swehb.nasa.gov/spaces/SWEHBVB/pages/32604329/7.07%2B-%2BSoftware%2BArchitecture%2BDescription), checked 2026-08-10: architecture-description concepts and proportional review guidance; no fixed notation or format claim.
+- [NIST CSF 2.0](https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20), [SP 800-53 Rev. 5](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final), and [SP 800-53A Rev. 5](https://csrc.nist.gov/pubs/sp/800/53/a/r5/final), checked 2026-08-10: accountable policy, procedure, control, and assessment-evidence separation within the bounded cybersecurity/privacy context.
+- [Google SRE release engineering](https://sre.google/sre-book/release-engineering/) and [GitHub immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases), checked 2026-08-10: release pipeline/audit and immutable artifact-identity boundaries; not a local release-document decision.
+- [Google SRE eliminating toil](https://sre.google/workbook/eliminating-toil/), checked 2026-08-10: risk-aware automation of repeated operational procedures; no universal runbook standard or live-safety proof.
 
 ## Review and Freshness
 
@@ -143,7 +170,11 @@ Refresh on any Stage 01–05 taxonomy/profile/template/validator change, a
 Release-family proposal, changes to traceability or retention rules, security
 control ownership, incident/postmortem practice, or upstream revision of the
 listed sources. Recheck before asserting ISO/SSDF conformance or operational
-effectiveness. All sources above are observations as of 2026-08-08.
+effectiveness. The original source set remains observed as of 2026-08-08; the
+gap-only additions are observed as of 2026-08-10. Recheck when ISO 29148's
+announced revision is published, NIST policy/control assessment guidance
+changes, the Release-family decision advances, or DOC-G10/WORK-013 changes the
+Runbook automation contract.
 
 ## Related Documents
 

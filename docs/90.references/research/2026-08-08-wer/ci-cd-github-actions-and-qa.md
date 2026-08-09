@@ -149,6 +149,24 @@ process-group cleanup. It does not silently waive nonzero results; the reviewed
 workflows contain no `continue-on-error`, retry, or flaky-test quarantine rule.
 Until one is separately specified, an unstable test is `FAIL`, not `SKIP`.
 
+### Verification and Validation question matrix
+
+The external terms below do not rename the repository's validation lanes or
+`VAL-*` acceptance-criterion IDs. They identify the comparison question and
+evidence depth that a result can support.
+
+| Term | Question | Actor | Input | Evidence | Failure meaning | Workspace mapping |
+| --- | --- | --- | --- | --- | --- | --- |
+| Verification | Was the artifact realized right: does the identified product or work product conform to its approved specified requirements? | Implementer/engineer with QA or an independent reviewer proportionate to risk. Full IV&V is not implied. | Versioned requirement/specification baseline, acceptance criteria, artifact/commit version, approved method, tools, and environment. | Bidirectional requirement-to-result trace plus test, analysis, inspection, or demonstration record; method/tool/environment versions; pass/fail; discrepancies, waivers, corrective action, and closure ([SRC-WERPC-058](source-coverage-and-migration-ledger.md#source-register)). | The artifact is nonconforming, or the method/procedure/environment was invalid. Stop, diagnose, correct and reverify, or process an explicitly controlled waiver. | During SDLC implementation/review, targeted/affected/staged/tests and structural validators provide bounded conformance evidence. Release readiness links the approved Spec/Plan/Task/Policy baseline to artifact identity and results; operations use Runbook verification/evidence steps. `VAL-*` names a criterion, and static PASS is not intended-use or live fitness. |
+| Validation | Was the right product realized: does the verified product satisfy stakeholder expectations and intended use in its intended environment? | Product/requirements owner, affected stakeholders, and anticipated users/operators; independent review strength is risk-based. | Verified product version, stakeholder expectation or requirement baseline, intended use/ConOps, scenarios, validation plan, and representative environment. | Expected-versus-observed scenario results under realistic or justified simulated conditions; participating stakeholder/user identities; environment/tool versions; discrepancies, corrective action, and revalidation closure ([SRC-WERPC-059](source-coverage-and-migration-ledger.md#source-register)). | The setup was not representative, or the product/requirements/design cannot satisfy intended use. Correct the setup and repeat, or rework the expectation, requirement, design, or product with stakeholder involvement and revalidate. | Requirements validation begins during PRD/ARD/Spec review; product/system validation belongs at release readiness and operational scenarios with stakeholders/users. Without separately authorized intended-use, user/operator, hosted, remote, or live evidence, release/operations validation is `DEFER`, never inferred from repository-static PASS. |
+
+Testing is a method available to both terms, not a synonym for either one.
+Requirements validation is an earlier agreement and quality check on the
+requirements themselves; it must not be conflated with later product/system
+validation. Traceability must bind stable identities and versions in both
+directions so a change can select affected verification and intended-use
+scenarios rather than merely link filenames.
+
 ### Supply-chain, cache, artifact, environment, and identity boundaries
 
 | Control | Repository-static finding | Evidence and follow-up boundary |
@@ -182,6 +200,8 @@ Current primary-source rows are `SRC-WERPC-035` through `SRC-WERPC-044` in the
 [source register](source-coverage-and-migration-ledger.md#source-register).
 They cover Actions syntax, secure use, concurrency, artifact retention, OIDC,
 attestations/SLSA, pre-commit update provenance, and secure pip installs.
+The gap-only V&V rows are `SRC-WERPC-058` and `SRC-WERPC-059`, checked
+2026-08-10 from NASA's official Systems and Software Engineering Handbooks.
 Predecessor documents remain dated provenance until WERPC-008; current claims
 were reconciled against workflow, contract, and QA owners rather than copied.
 

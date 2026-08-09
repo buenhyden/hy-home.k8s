@@ -3,7 +3,7 @@ title: 'Task: Workspace Engineering Gap-only Research Refresh'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-10
 ---
 
 # Task: Workspace Engineering Gap-only Research Refresh
@@ -40,7 +40,7 @@ edit begins.
 | --- | --- | --- | --- | --- | --- | --- |
 | WERG-000 | VAL-WERG-010 | After execution-mode selection, atomically activate Spec 055, Plan, Task, indexes, and one ADR-0022 standalone registry relation. | primary agent | Completed | Activated and validated | Human selected subagent-driven execution on 2026-08-09; exact nine changed paths are Spec 055, ADR-0022, Spec index, WERG Plan, Plan index, WERG Task, Task index, document-profiles registry, and durable progress. After adding the exact Spec approval statements, reciprocal ADR row, and rendered Spec criterion link, focused registry/profile/link/diff checks, both independent reviews, exact-index RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass. No formatter or detect-secrets mutation occurred. |
 | WERG-001 | VAL-WERG-001 | Classify every requested category through the four-state gap-admission gate and obtain independent admission review. | primary agent + content reviewer | Completed | Admission matrix reviewed and closed | The deterministic checker reproduced the six expected baseline gaps, then accepted exactly 33 unique topic rows: 18 `complete-existing`, seven `admit-under-sourced-partial`, one `admit-unresearched`, and seven `exclude-deep-evidence`. Full-pack content and checker-quality reviews are Approved; no source or claim row was added or changed. |
-| WERG-002 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-005, VAL-WERG-006 | Research and integrate admitted document-family and Verification/Validation gaps using official sources. | documentation researchers + content/quality reviewers | Queued | Not executed | Planned source/claim rows, SDLC owner update, QA matrix, and focused gates. |
+| WERG-002 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-005, VAL-WERG-006 | Research and integrate admitted document-family and Verification/Validation gaps using official sources. | documentation researchers + content/quality reviewers | Completed | Researched, reviewed, validated, and committed as one logical unit | Official primary-source rows `SRC-WERPC-053`–`059`, claims `CLM-WERPC-007-01`–`08`, request `REQ-WERPC-033`, the five admitted document-family mappings, and the seven-column Verification/Validation matrix are integrated with truthful 2026-08-10 check dates. Content and quality reviews are Approved; the exact eight-path index passes focused evidence/admission/integration, RIA, affected/staged, aggregate, plain/all-files pre-commit, formatter, and diff gates without mutation. |
 | WERG-003 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-007 | Research only exact non-duplicate Kubernetes security deltas, or record a reviewed no-op. | Kubernetes researcher + security/content reviewers | Queued | Not executed | Planned line-level admission, official sources, workspace selectors, and no-live boundary. |
 | WERG-004 | VAL-WERG-002, VAL-WERG-008, VAL-WERG-009 | Reconcile the five research owners, IDs, dates, links, and one-off cleanup. | primary agent + integration reviewer | Queued | Not executed | Planned integration/residue probes and canonical commit gates. |
 | WERG-005 | VAL-WERG-008, VAL-WERG-010 | Run whole-branch review, terminal validation, lifecycle closure, and branch finishing workflow. | primary agent + specification/quality/security reviewers | Queued | Not executed | Planned terminal evidence or exact blocked handoff; no silent validator expansion. |
@@ -131,6 +131,39 @@ finding. The full-pack content reviewer likewise approved all 33 states, source
 and claim mappings, the eight-topic admitted set, and the duplicate rejection
 for namespace ingress/default-deny semantics after the two mechanical fixes.
 
+WERG-002 reproduced the six admitted external-basis gaps before browsing, then
+checked official primary sources for PRD, ARD, Policy, Release, Runbook,
+Verification, and Validation on 2026-08-10. It added only `SRC-WERPC-053`–`059`
+and `CLM-WERPC-007-01`–`08`; all prior source and claim rows remain unchanged.
+The SDLC owner now distinguishes the five admitted document families, while
+the QA owner contains one exact seven-column row each for Verification and
+Validation. The matrix preserves repository `VAL-*` identifiers as criterion
+IDs and does not infer intended-use, operator, hosted, or live validation from
+a repository-static PASS.
+
+The first WERG-002 content review corrected two overstatements: DOC-G10 is an
+approved Spec 052 decision with queued, not executed, WORK-013, and no source
+supported the removed break-glass attribution. The first quality review aligned
+the actual 2026-08-10 research date with Spec and Plan and added explicit SDLC,
+release-readiness, and operations mappings. Its second round exposed two
+task-local checker defects: the historical `verification-validation` admission
+row did not recognize the promoted `Verification/Validation` request owner,
+and a nested Markdown-link regex produced false broken anchors. The corrected
+checker preserves the 32-row admission evidence, validates the final 33-row
+promotion and current owner anchor, parses nested links safely, and passes 28
+self-test cases at SHA-256
+`12580e30cd70872c112b1f7279f556de3868804284be8faa67652c7707e93363`.
+Final WERG-002 content and quality re-reviews are Approved with zero remaining
+Critical or Important findings.
+
+The exact eight-path WERG-002 index then passed RIA self-test and production,
+affected and staged lanes, the direct repository aggregate, plain pre-commit,
+all-files pre-commit, formatter review, and both worktree/cached diff checks.
+No hook or formatter changed a tracked file. The eight paths are Spec 055, its
+Plan and Task, durable progress, pack README, SDLC report, QA report, and the
+source/claim ledger. Hosted, provider-runtime, remote, credential-bearing, and
+live evidence remains `DEFER`.
+
 Before each logical commit, the implementation owner must record the exact
 RED/GREEN result, independent specification/content and quality disposition,
 affected/staged paths, aggregate and pre-commit outcomes, formatter mutations,
@@ -212,7 +245,7 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 | --- | --- | --- |
 | [WERG-000](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md#work-breakdown) | Completed | Reciprocal active owners and the ADR-0022 standalone relation passed focused review and the exact-index canonical commit gates. |
 | [VAL-WERG-001](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md#success-criteria--verification-plan) | Completed | The exact 33-row four-state matrix and eight-row admitted set pass the task-local completeness and uniqueness probe plus independent full-pack content and checker-quality review. |
-| N/A — WERG-002 shares the Plan and Spec sources above | Queued | Research admitted document-family and Verification/Validation gaps. |
+| N/A — WERG-002 shares the Plan and Spec sources above | Completed | `SRC-WERPC-053`–`059`, `CLM-WERPC-007-01`–`08`, `REQ-WERPC-033`, five document-family mappings, and the seven-column Verification/Validation matrix pass independent content/quality review plus the exact eight-path canonical commit gates. |
 | N/A — WERG-003 shares the Plan and Spec sources above | Queued | Research exact admitted Kubernetes security deltas or record a reviewed no-op. |
 | N/A — WERG-004 shares the Plan and Spec sources above | Queued | Reconcile the exact five owners, identifiers, dates, links, and residue. |
 | N/A — WERG-005 shares the Plan and Spec sources above | Queued | Run whole-branch review, canonical gates, truthful closure, and branch finishing. |

@@ -3,7 +3,7 @@ title: 'Workspace Engineering Gap-only Research Refresh Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-10
 ---
 
 # Workspace Engineering Gap-only Research Refresh Implementation Plan
@@ -49,7 +49,7 @@ repository-quality validators.
   `admit-under-sourced-partial`, or `exclude-deep-evidence`.
 - Only `admit-unresearched` and `admit-under-sourced-partial` authorize new
   external-source or claim rows.
-- All accepted new source and claim evidence uses check date `2026-08-09`;
+- All accepted new source and claim evidence uses check date `2026-08-10`;
   original rows and their dates remain unchanged.
 - Official standards, government, product, or upstream project owners are the
   default source class. Search-result pages are never cited as authority.
@@ -85,7 +85,7 @@ as an admission corpus, not as permission to rewrite every topic.
 
 The planned output is an in-place evidence refresh. The directory keeps its
 `2026-08-08-wer` identity while every additive section and ledger row records a
-separate `2026-08-09 gap-only source refresh` boundary. Lifecycle documents,
+separate `2026-08-10 gap-only source refresh` boundary. Lifecycle documents,
 indexes, the standalone registry relation, and durable progress evidence are
 execution metadata and do not become research-topic owners.
 
@@ -406,14 +406,14 @@ git commit -m "docs: classify WER gap-only research scope"
   semantics, an explicit Verification/Validation matrix, and reconciled README
   ownership/status cells.
 
-- [ ] **Step 1: Reproduce the focused external-basis RED**
+- [x] **Step 1: Reproduce the focused external-basis RED**
 
 Run the evidence checker against the activation commit before browsing:
 
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase baseline --check-date 2026-08-09
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase baseline --check-date 2026-08-10
 ```
 
 The command emits exact missing field and owner identifiers while showing:
@@ -427,14 +427,14 @@ The command emits exact missing field and owner identifiers while showing:
 
 Expected: all admitted rows fail at least one asserted external-basis field.
 
-- [ ] **Step 2: Research official primary sources**
+- [x] **Step 2: Research official primary sources**
 
 Assign one documentation-research worker to requirements/architecture and one
 to policy/runbook/release/V&V. Each worker must:
 
 1. open and read the complete relevant official page;
 2. capture the exact URL and title;
-3. record check date `2026-08-09`;
+3. record check date `2026-08-10`;
 4. state the adopted scope and rejected inference;
 5. state the refresh trigger;
 6. map the claim to exact workspace paths/selectors; and
@@ -451,18 +451,18 @@ The research must distinguish:
   requirement satisfaction or intended use; and
 - external definitions from the repository's canonical lane vocabulary.
 
-- [ ] **Step 3: Allocate source and claim IDs without renumbering**
+- [x] **Step 3: Allocate source and claim IDs without renumbering**
 
 Mechanically read the maximum existing numeric suffix for `SRC-WERPC-*` and
 `CLM-WERPC-*`. Allocate contiguous new IDs only for accepted claims. Assert
 that every old row is byte-identical before the insertion point and retains
 its original checked date.
 
-- [ ] **Step 4: Integrate the two owner reports**
+- [x] **Step 4: Integrate the two owner reports**
 
 Use `apply_patch` to:
 
-- add a `2026-08-09 gap-only source refresh` subsection to the SDLC reference;
+- add a `2026-08-10 gap-only source refresh` subsection to the SDLC reference;
 - update only admitted document-family rows or add linked analysis below the
   matrix;
 - preserve Spec 052 DOC-G1 and DOC-G5 as accepted local decisions;
@@ -472,14 +472,14 @@ Use `apply_patch` to:
 - update README source/status cells and add a new request row only if WERG-001
   proved no current request owner.
 
-- [ ] **Step 5: Run focused GREEN probes**
+- [x] **Step 5: Run focused GREEN probes**
 
 Run:
 
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase final --check-date 2026-08-09 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
 ```
 
 Record the resolved full commit in the Task. The command requires:
@@ -493,14 +493,14 @@ Record the resolved full commit in the Task. The command requires:
   all seven columns; and
 - unchanged request/source/claim IDs and original check dates.
 
-- [ ] **Step 6: Obtain content and quality review**
+- [x] **Step 6: Obtain content and quality review**
 
 The content reviewer checks source fidelity, terminology, Spec 052 decision
 preservation, and absence of policy invention. The quality reviewer checks
 table contracts, identifiers, links, profiles, concision, and no duplicated
 topic owner. Correct every Critical or Important finding.
 
-- [ ] **Step 7: Validate and commit**
+- [x] **Step 7: Validate and commit**
 
 Run focused source/claim/selector probes, strict registry/profile/links, RIA,
 affected/staged lanes, plain and all-files pre-commit, aggregate, formatter
@@ -634,7 +634,7 @@ WERG-001:
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --check-date 2026-08-09 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
 ```
 
 The checker rejects a missing or non-40-hex commit. It parses the final README,
@@ -642,7 +642,7 @@ ledger, and three content owners and fails on:
 
 - a new source or claim ID without exactly one ledger row;
 - an admitted question without a surviving linked owner;
-- a new `2026-08-09` claim that inherits the old `2026-08-08` wording;
+- a new `2026-08-10` claim that inherits the old `2026-08-08` wording;
 - an old source row whose date or content changed;
 - a duplicate heading owner;
 - an external claim without workspace evidence or uncertainty;
@@ -759,10 +759,10 @@ paths and prove their absence:
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
 python3 /tmp/werg-gap-refresh-check.py --self-test
-python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --pack docs/90.references/research/2026-08-08-wer --expected-pack-files 13 --expected-request-rows 32 --extra-topic verification-validation --require-complete
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase final --check-date 2026-08-09 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --pack docs/90.references/research/2026-08-08-wer --expected-pack-files 13 --expected-request-rows 33 --extra-topic verification-validation --require-complete
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
 python3 /tmp/werg-gap-refresh-check.py kubernetes --root . --pack docs/90.references/research/2026-08-08-wer --report docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md --ledger docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --require-line-level-admission
-python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --check-date 2026-08-09 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
 python3 /tmp/werg-gap-refresh-check.py residue --root . --owned-temp /tmp/werg-gap-refresh-check.py --owned-temp /tmp/werg-paths.nul --owned-temp /tmp/werg-ledger-before.md
 rm -f /tmp/werg-gap-refresh-check.py /tmp/werg-ledger-before.md
 test ! -e /tmp/werg-gap-refresh-check.py

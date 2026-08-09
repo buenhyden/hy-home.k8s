@@ -3,7 +3,7 @@ title: 'Workspace Engineering Gap-only Research Refresh Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-10
 ---
 
 # Workspace Engineering Gap-only Research Refresh Technical Specification (Spec)
@@ -104,7 +104,7 @@ All accepted findings are integrated into the existing
 `2026-08-08-wer` owners. No new pack, addendum, duplicate topic owner, or
 parallel current navigation is created. The pack date remains its original
 identity; every new source and claim records the separate check date
-`2026-08-09`.
+`2026-08-10`.
 
 ### C-WERG-003 — primary-source provenance
 
@@ -174,7 +174,7 @@ record the final admission result for every requested category.
 
 | Existing owner | Bounded addition |
 | --- | --- |
-| `README.md` | Add a `2026-08-09` gap-only refresh boundary; add or reconcile the explicit Verification/Validation request owner; update only source/status cells whose admitted evidence changed. |
+| `README.md` | Add a `2026-08-10` gap-only refresh boundary; add or reconcile the explicit Verification/Validation request owner; update only source/status cells whose admitted evidence changed. |
 | `spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, ARD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
 | `ci-cd-github-actions-and-qa.md` | Add the externally sourced Verification/Validation distinction and a responsibility/evidence/failure matrix across SDLC, QA, delivery, and operations. |
 | `kubernetes-infrastructure-and-security.md` | Add only line-level admitted security deltas after proving the current report does not already close the question. |
@@ -248,7 +248,7 @@ their numbers or counts.
 ### Snapshot identity
 
 The directory identity remains `2026-08-08-wer`. New material is visibly
-labeled as a `2026-08-09 gap-only source refresh`. This separates the original
+labeled as a `2026-08-10 gap-only source refresh`. This separates the original
 consolidated snapshot from later source verification without pretending that
 all original sources were rechecked on the later date.
 
@@ -266,7 +266,7 @@ and before branch completion.
 - The exact current thirteen-file `2026-08-08-wer` pack.
 - The 32-row request matrix and current source/claim registers.
 - The current repository paths cited by each candidate question.
-- Official external sources checked on 2026-08-09.
+- Official external sources checked on 2026-08-10.
 - Spec 053 terminal boundaries, Spec 052 document decisions, ADR-0022, and the
   repository validation contracts.
 
@@ -351,7 +351,7 @@ credential-bearing, or live success.
 | --- | --- | --- |
 | VAL-WERG-001 | Every requested category has exactly one gap-admission state and only admitted questions receive new research. | Deterministic admission inventory plus reviewer approval. |
 | VAL-WERG-002 | The research result changes no pack directory or topic owner outside the five authorized existing files. | Exact Git path set and scope review. |
-| VAL-WERG-003 | Every new source row has an official/primary URL, `2026-08-09` check date, adopted scope, rejected inference, and refresh trigger. | Ledger parser and source review. |
+| VAL-WERG-003 | Every new source row has an official/primary URL, `2026-08-10` check date, adopted scope, rejected inference, and refresh trigger. | Ledger parser and source review. |
 | VAL-WERG-004 | Every new claim has source linkage, exact workspace evidence, uncertainty, status, and surviving owner. | Claim parser, path/selector probe, and content review. |
 | VAL-WERG-005 | Verification and Validation have externally sourced definitions plus an explicit workspace responsibility/evidence/failure matrix. | Focused report contract and independent review. |
 | VAL-WERG-006 | Document-family additions distinguish external semantics from local profile/lifecycle facts and preserve Spec 052 decisions. | Section comparison and cross-link validation. |

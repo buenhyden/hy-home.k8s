@@ -47,6 +47,18 @@ request, topical report, runtime, provider, workflow, policy, or infrastructure
 row changed. Independent full-pack content and checker-quality reviews are
 Approved with no remaining Critical or Important finding.
 
+WERG-002 researched only the admitted external-source gaps and integrated the
+results into the existing `2026-08-08-wer` pack. Official primary sources for
+PRD, ARD, Policy, Release, Runbook, Verification, and Validation were checked
+on 2026-08-10. The exact additive ranges are `SRC-WERPC-053`–`059` and
+`CLM-WERPC-007-01`–`08`, plus request `REQ-WERPC-033`; prior source and claim
+rows remain byte-preserved. The SDLC owner now distinguishes all five admitted
+document families, and the QA owner has a seven-column Verification/Validation
+matrix with SDLC, release-readiness, operations, actor, input, evidence,
+failure, and `DEFER` boundaries. Final content and quality re-reviews are
+Approved with no remaining Critical or Important finding. The exact eight-path
+logical index passed its canonical gates without hook or formatter mutation.
+
 #### Memory
 
 Spec 053, its Plan/Task, and its typed standalone relation are terminal `done`.
@@ -76,11 +88,15 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - The quality-review RED proved that exact state/admitted membership, old-row mutation, and several path-boundary negatives were not enforced. The corrected checker pins all 33 topic states and eight admitted topics, fail-closes derived owner paths and symlinks, and exercises real old-row, outside-root, symlink-root, symlink-owner, field, ID, date, anchor, and residue fixtures. The content review approved all classifications after its transient missing-path self-test error and one malformed table delimiter were corrected.
 - Final WERG-001 content and quality re-reviews are Approved with no remaining Critical or Important finding. The admitted research boundary is exactly PRD, ARD, Policy, Release, Runbook, Verification/Validation, and the shared narrow Kubernetes/Security deltas; every other requested topic is a duplicate stop or deeper-evidence exclusion.
 - The complete admission probe covers exactly 13 pack files, 32 existing request rows plus one Verification/Validation topic, 52 source rows, and 51 claim rows. The in-review matrix authorizes eight topic rows and excludes all authenticated, provider-runtime, hosted, remote, administrative, credential-bearing, connected-resource, and live evidence.
+- WERG-002 baseline mode reproduced exactly six external-basis gaps. Final evidence uses the truthful 2026-08-10 date contract and adds only `SRC-WERPC-053`–`059`, `CLM-WERPC-007-01`–`08`, and `REQ-WERPC-033` across the admitted report owners.
+- The task-local checker now passes 28 fixture cases at SHA-256 `12580e30cd70872c112b1f7279f556de3868804284be8faa67652c7707e93363`. Its final 33-row admission, source/claim evidence, current-owner promotion, and nested Markdown-link integration checks all pass.
+- Final WERG-002 content and quality re-reviews are Approved with zero remaining Critical or Important findings. They preserve Spec 052 DOC-G10 as approved intent with queued/not-executed WORK-013, reject unsupported break-glass attribution, and keep static QA evidence distinct from intended-use or live validation.
+- The exact WERG-002 index contains eight paths: Spec 055, its Plan and Task, durable progress, pack README, SDLC report, QA report, and source/claim ledger. RIA self/production, affected/staged lanes, the direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
 
 #### Handoff
 
-Run the exact WERG-001 commit gates, then begin WERG-002 and WERG-003 only for
-the reviewed eight-topic admitted set.
+Run the exact WERG-002 commit gates, then begin WERG-003 only for the reviewed
+line-level Kubernetes/Security questions.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 
