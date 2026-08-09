@@ -10,6 +10,7 @@ import contextlib
 import copy
 import hashlib
 import html
+import importlib.util
 import io
 import json
 import os
@@ -22,6 +23,7 @@ import tempfile
 import time
 import unicodedata
 from dataclasses import dataclass, field as dataclass_field, replace
+from functools import lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Any, Iterable, Mapping, Sequence
@@ -72,6 +74,9 @@ DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
 )
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
+DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
+    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+)
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
@@ -445,6 +450,30 @@ class ArchiveTransitionEdge:
 
     source: PurePosixPath
     target: PurePosixPath
+
+
+EXPECTED_ARCHIVE_TRANSITION_EDGES = (
+    ArchiveTransitionEdge(
+        PurePosixPath(
+            "docs/04.execution/tasks/"
+            "2026-07-05-workspace-engineering-implementation-audit-pack.md"
+        ),
+        PurePosixPath(
+            "docs/04.execution/plans/"
+            "2026-05-24-p3-gitops-secret-runtime-remediation.md"
+        ),
+    ),
+    ArchiveTransitionEdge(
+        PurePosixPath(
+            "docs/04.execution/tasks/"
+            "2026-07-05-workspace-engineering-implementation-audit-pack.md"
+        ),
+        PurePosixPath(
+            "docs/04.execution/tasks/"
+            "2026-05-24-p3-gitops-secret-runtime-remediation.md"
+        ),
+    ),
+)
 
 
 @dataclass(frozen=True)
@@ -2396,6 +2425,45 @@ def _retired_reference_replacement(
     return replacement if actual_digest == expected_digest else None
 
 
+@lru_cache(maxsize=1)
+def _load_document_taxonomy_migration() -> Any:
+    """Load the reviewed migration tool under one private canonical identity."""
+
+    path = Path(__file__).resolve(strict=True).with_name(
+        "migrate-document-work-units.py"
+    )
+    name = "_links_document_taxonomy_migration"
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise ConfigurationError("archive transition manifest validator is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    try:
+        spec.loader.exec_module(module)
+        if Path(str(getattr(module, "__file__", ""))).resolve(strict=True) != path:
+            raise ConfigurationError(
+                "archive transition manifest validator is unavailable"
+            )
+    except Exception:
+        sys.modules.pop(name, None)
+        raise
+    return module
+
+
+def _reviewed_taxonomy_manifest(root: Path) -> Any:
+    """Return only a clean stage-zero, fully validated reviewed manifest."""
+
+    module = _load_document_taxonomy_migration()
+    try:
+        snapshot = module.load_reviewed_manifest_snapshot(root)
+    except module.MigrationAbort as exc:
+        raise ConfigurationError("archive transition manifest contract differs") from exc
+    document = snapshot.document
+    if document.source_commit != DOCUMENT_TAXONOMY_SOURCE_COMMIT:
+        raise ConfigurationError("archive transition manifest source commit differs")
+    return document
+
+
 def _document_taxonomy_transition_manifest(
     context: Context,
 ) -> tuple[dict[PurePosixPath, str], frozenset[PurePosixPath]]:
@@ -2403,23 +2471,10 @@ def _document_taxonomy_transition_manifest(
 
     if DOCUMENT_TAXONOMY_MANIFEST_PATH not in context.tracked_regular_paths:
         raise ConfigurationError("archive transition manifest is not tracked")
-    manifest_path = context.root / DOCUMENT_TAXONOMY_MANIFEST_PATH
-    try:
-        mode = manifest_path.lstat().st_mode
-        raw = manifest_path.read_bytes()
-        document = json.loads(raw.decode("utf-8", "strict"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ConfigurationError("archive transition manifest is unreadable") from exc
-    if not stat.S_ISREG(mode) or not isinstance(document, dict):
-        raise ConfigurationError("archive transition manifest contract differs")
-    if list(document) != ["state", "sourceCommit", "entries"]:
-        raise ConfigurationError("archive transition manifest contract differs")
+    document = _reviewed_taxonomy_manifest(context.root)
     if (
-        document["state"] != "transition"
-        or not isinstance(document["sourceCommit"], str)
-        or re.fullmatch(r"[0-9a-f]{40}", document["sourceCommit"]) is None
-        or not isinstance(document["entries"], list)
-        or len(document["entries"]) != 132
+        document.source_commit != DOCUMENT_TAXONOMY_SOURCE_COMMIT
+        or len(document.entries) != 132
     ):
         raise ConfigurationError("archive transition manifest contract differs")
 
@@ -2434,8 +2489,8 @@ def _document_taxonomy_transition_manifest(
     move_blobs: dict[PurePosixPath, str] = {}
     archive_sources: set[PurePosixPath] = set()
     targets: set[PurePosixPath] = set()
-    for entry in document["entries"]:
-        if not isinstance(entry, dict) or list(entry) != expected_keys:
+    for entry in document.entries:
+        if not isinstance(entry, Mapping) or list(entry) != expected_keys:
             raise ConfigurationError("archive transition manifest entry differs")
         source_value = entry["source"]
         target_value = entry["target"]
@@ -2522,10 +2577,10 @@ def _archive_transition_handoff(context: Context) -> ArchiveTransitionHandoff:
             if kind == "local" and target in archive_sources:
                 assert target is not None
                 edges.add(ArchiveTransitionEdge(source, target))
-    return ArchiveTransitionHandoff(
-        ARCHIVE_INDEX_BOUNDARY,
-        tuple(sorted(edges)),
-    )
+    ordered_edges = tuple(sorted(edges))
+    if ordered_edges != EXPECTED_ARCHIVE_TRANSITION_EDGES:
+        raise ConfigurationError("archive transition deferred edge set differs")
+    return ArchiveTransitionHandoff(ARCHIVE_INDEX_BOUNDARY, ordered_edges)
 
 
 def _archive_transition_target(

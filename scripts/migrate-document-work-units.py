@@ -164,6 +164,14 @@ class _ControlSurface:
 
 
 @dataclass(frozen=True)
+class ReviewedManifestSnapshot:
+    """One clean stage-zero manifest plus its fully parsed review contract."""
+
+    document: ManifestDocument
+    control: _ControlSurface
+
+
+@dataclass(frozen=True)
 class _ConfigHandle:
     descriptor: int
     device: int
@@ -1048,6 +1056,42 @@ def _capture_control_surface(root: Path, path: PurePosixPath) -> _ControlSurface
     if _git(root, "status", "--porcelain=v1", "--", path.as_posix()):
         raise MigrationAbort(f"MIGRATION-CONTROL-DIRTY:{path.as_posix()}")
     return _ControlSurface(path, contents, index_blob)
+
+
+def load_reviewed_manifest_snapshot(
+    root: Path,
+    *,
+    validate_repository: bool = True,
+) -> ReviewedManifestSnapshot:
+    """Load the exact clean index-bound manifest and optionally validate endpoints."""
+
+    root = _canonical_root(root)
+    control = _capture_control_surface(root, MANIFEST_PATH)
+    if _git_hash_bytes(root, control.contents) != control.index_blob:
+        raise MigrationAbort(f"MIGRATION-CONTROL-DIRTY:{MANIFEST_PATH.as_posix()}")
+    document = _parse_manifest_bytes(control.contents)
+    if document.source_commit != EXPECTED_SOURCE_COMMIT:
+        raise MigrationAbort("MIGRATION-SOURCE-COMMIT:unexpected")
+    move_count = sum(
+        row["disposition"] == "move-current" for row in document.entries
+    )
+    archive_count = sum(
+        row["disposition"] == "archive-unique" for row in document.entries
+    )
+    validate_counts(
+        move_count=move_count,
+        archive_count=archive_count,
+        source_count=len(document.entries),
+    )
+    if validate_repository:
+        diagnostics = validate_manifest(
+            root,
+            document.entries,
+            document.source_commit,
+        )
+        if diagnostics:
+            raise MigrationAbort(diagnostics[0])
+    return ReviewedManifestSnapshot(document=document, control=control)
 
 
 def _prepare_operations(

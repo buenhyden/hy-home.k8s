@@ -100,8 +100,31 @@ projection.
   with every applicable hook passing, including strict repository quality and
   detect-secrets, and no worktree mutation. The post-run staged shape remained
   `A50/D50/M45`, with zero unstaged paths.
-- No move phase, Release family, provider/runtime action, remote action, live
-  action, or commit was performed.
+- Review remediation for commit `0b53e9a1` closed all four Important and two
+  Minor findings after an exact ten-test RED. The transition waiver now uses
+  the canonical fully validated stage-zero/index-bound manifest, pins source
+  commit `713dff1fc3de58a2d1682970a7f24faa39c14263`, and admits exactly two
+  deferred edges. The `wdtc-execution` namespace joins exact manifest
+  source/target/commit/blob metadata, and cutover ownership no longer
+  self-compares an envelope's source commit.
+- Archive inventory and recovery now use descriptor-anchored, no-symlink,
+  bounded reads and identity-safe exclusive output/cleanup. Git provenance is
+  batched after one repository identity validation; the production snapshot
+  passed with 19 Git subprocesses in 3.016 seconds under the 24-call/60-second
+  regression bound. Index replacements and per-record historical-link counts
+  are exact, and the unused cutover migration-count binding was removed.
+- Review-fix GREEN evidence: new tests 10/10 in 39.253 seconds; final
+  archive/cutover/recovery/lifecycle tests 102/102 in 410.982 seconds;
+  canonical migration tests 56/56 in 106.589 seconds; Ruff, `py_compile`,
+  strict links, production cutover `93/711/93`, and 9,927-byte read-only
+  recovery PASS. The synchronized-index aggregate ended with `[PASS]
+  repository quality gates passed` after atomic staging.
+- The initial WORK-103 archive set exists as commit `0b53e9a1`. During this
+  review-fix round, no move phase, Release family, provider/runtime action,
+  remote action, live action, or additional commit was performed. The
+  controller's final review-fix `pre-commit run --all-files` exited 0 with all
+  hooks passing and no mutation; the post-run shape remained `M10` staged and
+  zero unstaged paths.
 
 ### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
 

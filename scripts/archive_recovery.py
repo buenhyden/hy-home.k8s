@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import datetime as dt
 import argparse
+import contextlib
 import hashlib
 import json
 import os
@@ -132,6 +133,14 @@ class ParsedArchiveEnvelope:
     metadata: dict[str, object]
     payload: bytes = field(repr=False)
     replacement_reference: ArchiveReplacementReference | None
+
+
+@dataclass(frozen=True)
+class _OutputTarget:
+    """One output basename anchored to a held non-symlink parent directory."""
+
+    parent_fd: int
+    name: str
 
 
 def _error(code: str, detail: str) -> ArchiveContractError:
@@ -647,6 +656,35 @@ def parse_archive_envelope(
 MAX_ARCHIVE_RECORD_BYTES = 8_000_000
 
 
+def _open_parent_at(root: Path, path: PurePosixPath, *, code: str) -> tuple[int, str]:
+    """Open every parent component relative to held descriptors without symlinks."""
+
+    if not path.parts:
+        raise _error(code, "path has no basename")
+    current: int | None = None
+    try:
+        current = os.open(
+            root,
+            os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+        )
+        for part in path.parts[:-1]:
+            child = os.open(
+                part,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=current,
+            )
+            os.close(current)
+            current = child
+        return current, path.name
+    except OSError as exc:
+        if current is not None:
+            try:
+                os.close(current)
+            except OSError:
+                pass
+        raise _error(code, "path parent is unavailable") from exc
+
+
 def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
     canonical = _require_repository_path(record, field="record")
     pure = PurePosixPath(canonical)
@@ -656,44 +694,80 @@ def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
         or pure.suffix != ".md"
     ):
         raise _error("RECOVERY-RECORD-PATH", "record must name an archive envelope")
-    path = root / pure
+    parent_fd: int | None = None
+    descriptor: int | None = None
     try:
-        metadata = path.lstat()
-        if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+        parent_fd, name = _open_parent_at(root, pure, code="RECOVERY-RECORD-READ")
+        descriptor = os.open(
+            name,
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            dir_fd=parent_fd,
+        )
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode):
             raise OSError
         if metadata.st_size > MAX_ARCHIVE_RECORD_BYTES:
             raise _error("RECOVERY-RECORD-SIZE", "archive record exceeds the limit")
-        content = path.read_bytes()
-        after = path.lstat()
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(
+                descriptor,
+                min(65536, MAX_ARCHIVE_RECORD_BYTES + 1 - total),
+            )
+            if not chunk:
+                break
+            chunks.append(chunk)
+            total += len(chunk)
+            if total > MAX_ARCHIVE_RECORD_BYTES:
+                raise _error(
+                    "RECOVERY-RECORD-SIZE", "archive record exceeds the limit"
+                )
+        content = b"".join(chunks)
+        after = os.fstat(descriptor)
+        linked = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
     except ArchiveContractError:
         raise
     except OSError as exc:
         raise _error("RECOVERY-RECORD-READ", "archive record is unavailable") from exc
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError as exc:
+                raise _error("RECOVERY-RECORD-READ", "archive record close failed") from exc
+        if parent_fd is not None:
+            try:
+                os.close(parent_fd)
+            except OSError as exc:
+                raise _error("RECOVERY-RECORD-READ", "archive parent close failed") from exc
     if (
         metadata.st_dev != after.st_dev
         or metadata.st_ino != after.st_ino
         or metadata.st_mode != after.st_mode
+        or metadata.st_dev != linked.st_dev
+        or metadata.st_ino != linked.st_ino
         or len(content) != metadata.st_size
     ):
         raise _error("RECOVERY-RECORD-CHANGED", "archive record changed during read")
     return canonical, content
 
 
-def _confined_output(root: Path, output: object) -> Path:
+@contextlib.contextmanager
+def _confined_output(root: Path, output: object):
     if not isinstance(output, (str, Path)):
         raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output must be an absolute path")
     candidate = Path(output)
     if not candidate.is_absolute():
         raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output must be an absolute path")
     try:
-        parent = candidate.parent.resolve(strict=True)
         temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
     except (OSError, RuntimeError) as exc:
         raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output parent is unavailable") from exc
-    resolved = parent / candidate.name
     if (
-        not resolved.is_relative_to(temporary_root)
-        or resolved.is_relative_to(root)
+        any(part in {".", ".."} for part in candidate.parts)
+        or not candidate.is_relative_to(temporary_root)
+        or candidate.is_relative_to(root)
         or not candidate.name
         or candidate.name in {".", ".."}
     ):
@@ -701,19 +775,39 @@ def _confined_output(root: Path, output: object) -> Path:
             "RECOVERY-OUTPUT-CONFINEMENT",
             "output must remain outside the repository under the temporary root",
         )
-    return resolved
+    relative = PurePosixPath(candidate.relative_to(temporary_root).as_posix())
+    parent_fd: int | None = None
+    try:
+        parent_fd, name = _open_parent_at(
+            temporary_root,
+            relative,
+            code="RECOVERY-OUTPUT-CONFINEMENT",
+        )
+        yield _OutputTarget(parent_fd=parent_fd, name=name)
+    finally:
+        if parent_fd is not None:
+            try:
+                os.close(parent_fd)
+            except OSError as exc:
+                raise _error(
+                    "RECOVERY-OUTPUT-WRITE", "output parent close failed"
+                ) from exc
 
 
-def _write_new_output(path: Path, payload: bytes) -> None:
+def _write_new_output(target: _OutputTarget, payload: bytes) -> None:
     descriptor: int | None = None
-    created = False
+    created_identity: os.stat_result | None = None
     try:
         descriptor = os.open(
-            path,
+            target.name,
             os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
             0o600,
+            dir_fd=target.parent_fd,
         )
-        created = True
+        created_identity = os.fstat(descriptor)
+        if not stat.S_ISREG(created_identity.st_mode):
+            raise OSError
+        os.fchmod(descriptor, 0o600)
         view = memoryview(payload)
         while view:
             written = os.write(descriptor, view)
@@ -721,12 +815,32 @@ def _write_new_output(path: Path, payload: bytes) -> None:
                 raise OSError
             view = view[written:]
         os.fsync(descriptor)
+        linked = os.stat(
+            target.name,
+            dir_fd=target.parent_fd,
+            follow_symlinks=False,
+        )
+        if (
+            linked.st_dev != created_identity.st_dev
+            or linked.st_ino != created_identity.st_ino
+            or not stat.S_ISREG(linked.st_mode)
+        ):
+            raise OSError
     except FileExistsError as exc:
         raise _error("RECOVERY-OUTPUT-EXISTS", "output already exists") from exc
     except OSError as exc:
-        if created:
+        if created_identity is not None:
             try:
-                path.unlink()
+                linked = os.stat(
+                    target.name,
+                    dir_fd=target.parent_fd,
+                    follow_symlinks=False,
+                )
+                if (
+                    linked.st_dev == created_identity.st_dev
+                    and linked.st_ino == created_identity.st_ino
+                ):
+                    os.unlink(target.name, dir_fd=target.parent_fd)
             except OSError:
                 pass
         raise _error("RECOVERY-OUTPUT-WRITE", "output could not be written") from exc
@@ -760,7 +874,8 @@ def recover_archive_record(
     except (KeyError, TypeError) as exc:
         raise _error("RECOVERY-RECORD-METADATA", "archive metadata is invalid") from exc
     if output is not None:
-        _write_new_output(_confined_output(root, output), recovered.source_bytes)
+        with _confined_output(root, output) as target:
+            _write_new_output(target, recovered.source_bytes)
     return recovered
 
 

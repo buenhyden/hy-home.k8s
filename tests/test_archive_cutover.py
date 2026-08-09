@@ -19,7 +19,7 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from scripts import archive_cutover  # noqa: E402
+from scripts import archive_cutover, archive_validation  # noqa: E402
 from scripts.archive_recovery import parse_archive_envelope  # noqa: E402
 from scripts.archive_validation import (  # noqa: E402
     ArchiveDiagnostic,
@@ -138,6 +138,9 @@ class ArchiveCutoverTest(unittest.TestCase):
             record_link_counts=tuple(
                 (path, row.historical_links)
                 for path, row in sorted(index_rows.items())
+            ),
+            reviewed_manifest_records=tuple(
+                archive_validation._reviewed_manifest_records(ROOT).values()  # noqa: SLF001
             ),
         )
         with (
@@ -859,6 +862,33 @@ class ArchiveCutoverTest(unittest.TestCase):
         ):
             report = self._validate_without_repeating_secret_classification()
         self._assert_named_partial(report, "ARCHIVE-REPLACEMENT-MISSING")
+
+    def test_wdtc_source_commit_cannot_self_validate(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        wdtc_path = registry["archiveNamespaces"][2]["records"][0]
+        record_bytes = (ROOT / wdtc_path).read_bytes()
+        original_parse = archive_cutover.parse_archive_envelope
+
+        def drift_wdtc_commit(content: bytes):
+            parsed = original_parse(content)
+            if content == record_bytes:
+                metadata = dict(parsed.metadata)
+                metadata["source_commit"] = archive_cutover.FIRST_SOURCE_COMMIT
+                return replace(parsed, metadata=metadata)
+            return parsed
+
+        with patch.object(
+            archive_cutover,
+            "parse_archive_envelope",
+            side_effect=drift_wdtc_commit,
+        ):
+            report = self._validate_without_repeating_secret_classification()
+
+        self._assert_named_partial(report, "ARCHIVE-SOURCE-OWNERSHIP")
 
 
 if __name__ == "__main__":

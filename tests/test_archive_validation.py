@@ -10,6 +10,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import time
 import types
 import unittest
 from pathlib import Path, PurePosixPath
@@ -675,6 +676,108 @@ class ArchiveValidationTest(unittest.TestCase):
 
         self.assertIn("ARCHIVE-NAMESPACE-PARITY", self.codes(report))
 
+    def test_repository_archive_binds_reviewed_namespace_paths_and_metadata(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        substituted = json.loads(json.dumps(registry))
+        acer_path = substituted["archiveNamespaces"][1]["records"][0]
+        wdtc_path = substituted["archiveNamespaces"][2]["records"][0]
+        substituted["archiveNamespaces"][1]["records"][0] = wdtc_path
+        substituted["archiveNamespaces"][2]["records"][0] = acer_path
+
+        path_report = archive_validation.validate_repository_archive(ROOT, substituted)
+
+        self.assertIn("ARCHIVE-NAMESPACE-REVIEWED", self.codes(path_report))
+
+        reviewed = archive_validation._reviewed_manifest_records(ROOT)  # noqa: SLF001
+        first_path, second_path = tuple(sorted(reviewed))[:2]
+        metadata_substitution = dict(reviewed)
+        metadata_substitution[first_path] = dataclasses.replace(
+            metadata_substitution[first_path],
+            source_blob=metadata_substitution[second_path].source_blob,
+        )
+        with mock.patch.object(
+            archive_validation,
+            "_reviewed_manifest_records",
+            return_value=metadata_substitution,
+        ):
+            metadata_report = archive_validation.validate_repository_archive(
+                ROOT, registry
+            )
+
+        self.assertIn("ARCHIVE-NAMESPACE-METADATA", self.codes(metadata_report))
+
+    def test_repository_archive_rejects_noncanonical_replacement_and_per_record_link_swap(
+        self,
+    ) -> None:
+        index_text = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
+        invalid_null = index_text.replace("| `null` |", "| `NULL` |", 1)
+        rows, _total, diagnostics = archive_validation._parse_repository_index(  # noqa: SLF001
+            invalid_null
+        )
+        self.assertLess(len(rows), 93)
+        self.assertIn(
+            "ARCHIVE-INDEX-STRUCTURE",
+            self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
+        )
+
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        parsed_rows, link_total, parse_diagnostics = (
+            archive_validation._parse_repository_index(index_text)  # noqa: SLF001
+        )
+        self.assertEqual(parse_diagnostics, [])
+        counts = {path: int(row[-1]) for path, row in parsed_rows.items()}
+        positive = next(path for path, count in counts.items() if count > 0)
+        other = next(path for path in counts if path != positive)
+        counts[positive] -= 1
+        counts[other] += 1
+        fake_report = archive_validation.ArchiveValidationReport(
+            historical_link_count=link_total,
+            record_link_counts=tuple(sorted(counts.items())),
+        )
+        with mock.patch.object(
+            archive_validation, "validate_archive_records", return_value=fake_report
+        ):
+            report = archive_validation.validate_repository_archive(ROOT, registry)
+
+        self.assertIn("ARCHIVE-INDEX-LINKS", self.codes(report))
+
+    def test_repository_archive_git_snapshot_is_bounded_and_under_sixty_seconds(
+        self,
+    ) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        real_run = subprocess.run
+        git_calls = 0
+
+        def bounded_run(*args, **kwargs):
+            nonlocal git_calls
+            command = args[0] if args else kwargs.get("args", ())
+            if command and command[0] == "git":
+                git_calls += 1
+                if git_calls > 24:
+                    raise AssertionError("repository archive exceeded Git subprocess budget")
+            return real_run(*args, **kwargs)
+
+        started = time.monotonic()
+        with mock.patch.object(subprocess, "run", side_effect=bounded_run):
+            report = archive_validation.validate_repository_archive(ROOT, registry)
+        elapsed = time.monotonic() - started
+
+        self.assertTrue(report.valid, report.diagnostics)
+        self.assertLessEqual(git_calls, 24)
+        self.assertLess(elapsed, 60.0)
+
 
 class ArchiveTransitionLinkTest(unittest.TestCase):
     """Close the exact two-edge WDTC-103-to-WDTC-104 transition handoff."""
@@ -741,9 +844,8 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         texts[source] += "\n"
         mutated = dataclasses.replace(self.context, texts=texts)
 
-        self.assertIsNone(
+        with self.assertRaises(self.validator.ConfigurationError):
             self.validator._archive_transition_target(mutated, source, target)
-        )
 
     def test_unknown_archived_target_is_not_deferred(self) -> None:
         source = PurePosixPath(self.fixture_edges[0][0])
@@ -766,6 +868,74 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         diagnostics = self.validator._link_diagnostics(terminal)
         broken = [item for item in diagnostics if item.rule_id == "LINK-BROKEN"]
         self.assertGreaterEqual(len(broken), len(self.fixture_edges))
+
+    def test_source_commit_drift_and_manifest_index_drift_fail_closed(self) -> None:
+        snapshot = self.validator._reviewed_taxonomy_manifest(self.context.root)
+        drifted = dataclasses.replace(snapshot, source_commit="0" * 40)
+        with mock.patch.object(
+            self.validator, "_reviewed_taxonomy_manifest", return_value=drifted
+        ), self.assertRaises(self.validator.ConfigurationError):
+            self.validator._archive_transition_handoff(self.context)
+
+        with mock.patch.object(
+            self.validator,
+            "_reviewed_taxonomy_manifest",
+            side_effect=self.validator.ConfigurationError(
+                "archive transition manifest worktree/index differs"
+            ),
+        ), self.assertRaises(self.validator.ConfigurationError):
+            self.validator._archive_transition_handoff(self.context)
+
+    def test_added_or_replaced_deferred_edge_is_rejected(self) -> None:
+        source = PurePosixPath(self.fixture_edges[0][0])
+        original_text = self.context.texts[source]
+        _move_blobs, archive_sources = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        extra_target = next(
+            target
+            for target in sorted(archive_sources)
+            if target.as_posix() not in {edge[1] for edge in self.fixture_edges}
+        )
+
+        added_text = original_text + f"\n[unexpected]({self.validator.posixpath.relpath(extra_target.as_posix(), source.parent.as_posix())})\n"
+        added_context = dataclasses.replace(
+            self.context, texts={**self.context.texts, source: added_text}
+        )
+        with mock.patch.object(
+            self.validator,
+            "_document_taxonomy_transition_manifest",
+            return_value=(
+                {source: self.validator._git_sha1_blob(added_text)},
+                archive_sources,
+            ),
+        ), self.assertRaises(self.validator.ConfigurationError):
+            self.validator._archive_transition_handoff(added_context)
+
+        old_target = self.fixture_edges[0][1]
+        replacement = self.validator.posixpath.relpath(
+            extra_target.as_posix(), source.parent.as_posix()
+        )
+        old_destination = self.validator.posixpath.relpath(
+            old_target, source.parent.as_posix()
+        )
+        replaced_text = original_text.replace(
+            f"]({old_destination})",
+            f"]({replacement})",
+            1,
+        )
+        replaced_context = dataclasses.replace(
+            self.context, texts={**self.context.texts, source: replaced_text}
+        )
+        with mock.patch.object(
+            self.validator,
+            "_document_taxonomy_transition_manifest",
+            return_value=(
+                {source: self.validator._git_sha1_blob(replaced_text)},
+                archive_sources,
+            ),
+        ), self.assertRaises(self.validator.ConfigurationError):
+            self.validator._archive_transition_handoff(replaced_context)
 
 
 if __name__ == "__main__":

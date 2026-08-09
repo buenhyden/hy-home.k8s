@@ -588,6 +588,90 @@ class ArchiveRecoveryTest(unittest.TestCase):
                     output=output,
                 )
 
+    def test_recovery_rejects_archive_intermediate_parent_symlink(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        real_parent = self.root / "archive-record-parent"
+        real_parent.mkdir()
+        (real_parent / "spec.md").write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        linked_parent = self.root / "docs/98.archive/03.specs/900-fixture"
+        linked_parent.parent.mkdir(parents=True)
+        linked_parent.symlink_to(real_parent, target_is_directory=True)
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RECORD-READ:"
+        ):
+            archive_recovery.recover_archive_record(
+                self.root,
+                "docs/98.archive/03.specs/900-fixture/spec.md",
+                verify=True,
+            )
+
+    def test_recovery_rejects_output_intermediate_parent_symlink(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        temporary_root = Path(tempfile.gettempdir()).resolve()
+        real_parent = Path(tempfile.mkdtemp(prefix="recovery-output-real-"))
+        linked_parent = temporary_root / f"recovery-output-link-{self.root.name}"
+        linked_parent.symlink_to(real_parent, target_is_directory=True)
+        self.addCleanup(lambda: real_parent.rmdir())
+        self.addCleanup(
+            lambda: [child.unlink(missing_ok=True) for child in real_parent.iterdir()]
+        )
+        self.addCleanup(lambda: linked_parent.unlink(missing_ok=True))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+        ):
+            archive_recovery.recover_archive_record(
+                self.root,
+                record.relative_to(self.root).as_posix(),
+                output=linked_parent / "recovered.md",
+            )
+
+    def test_recovery_cleanup_keeps_substituted_output_identity(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        parent = Path(tempfile.mkdtemp(prefix="recovery-output-parent-"))
+        parked = parent.with_name(f"{parent.name}-parked")
+        output = parent / "recovered.md"
+        replacement = b"replacement identity must survive\n"
+
+        def substitute_parent_then_fail(_descriptor: int, _payload: object) -> int:
+            parent.rename(parked)
+            parent.mkdir()
+            output.write_bytes(replacement)
+            raise OSError("injected write failure")
+
+        try:
+            with mock.patch.object(
+                archive_recovery.os, "write", side_effect=substitute_parent_then_fail
+            ), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OUTPUT-WRITE:"
+            ):
+                archive_recovery.recover_archive_record(
+                    self.root,
+                    record.relative_to(self.root).as_posix(),
+                    output=output,
+                )
+            self.assertTrue(output.exists())
+            self.assertEqual(output.read_bytes(), replacement)
+        finally:
+            output.unlink(missing_ok=True)
+            parent.rmdir()
+            parked_output = parked / output.name
+            parked_output.unlink(missing_ok=True)
+            parked.rmdir()
+
 
 if __name__ == "__main__":
     unittest.main()

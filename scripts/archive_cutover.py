@@ -726,13 +726,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         if isinstance(path, str)
     )
     try:
-        migration_rows, migration_counts = _migration_projection(root)
+        migration_rows = _migration_projection(root)[0]
     except Exception:
         migration_rows = {}
-        migration_counts = {
-            "records": 0,
-            "historicalLinksAdded": 0,
-        }
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", MIGRATION_RESULTS_PATH)
         )
@@ -748,6 +744,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
 
     record_link_counts = dict(generic_report.record_link_counts)
+    reviewed_manifest_rows = {
+        row.target: row for row in generic_report.reviewed_manifest_records
+    }
     payloads: list[bytes] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
     for archive_path in sorted(expected_paths):
@@ -766,7 +765,11 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             else (
                 _source_commit(str(original_path))
                 if archive_path in base_paths
-                else parsed.metadata.get("source_commit")
+                else (
+                    reviewed_manifest_rows[archive_path].source_commit
+                    if archive_path in reviewed_manifest_rows
+                    else None
+                )
             )
         )
         if (

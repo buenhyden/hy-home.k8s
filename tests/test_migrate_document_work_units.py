@@ -107,6 +107,21 @@ class MigrationTests(unittest.TestCase):
         }
         self.assertEqual(len(move_units), 41)
 
+    def test_reviewed_manifest_snapshot_binds_clean_stage_zero_index(self):
+        snapshot = self.tool.load_reviewed_manifest_snapshot(ROOT)
+        self.assertEqual(snapshot.document.source_commit, self.tool.EXPECTED_SOURCE_COMMIT)
+        self.assertEqual(len(snapshot.document.entries), 132)
+
+        dirty = self.tool._ControlSurface(
+            snapshot.control.path,
+            snapshot.control.contents + b"\n",
+            snapshot.control.index_blob,
+        )
+        with mock.patch.object(
+            self.tool, "_capture_control_surface", return_value=dirty
+        ), self.assertRaisesRegex(self.tool.MigrationAbort, "CONTROL-DIRTY"):
+            self.tool.load_reviewed_manifest_snapshot(ROOT)
+
     def test_named_unsafe_states_abort(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
