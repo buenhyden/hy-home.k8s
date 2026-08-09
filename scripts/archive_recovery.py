@@ -1,9 +1,9 @@
-"""Private ARWB-001 Git-object recovery and ArchiveEnvelope.v1 fixtures.
+"""Recovery-grade Git-object and canonical ArchiveEnvelope.v1 contracts.
 
 This module deliberately has no command-line entry point and does not activate
 the production document registry, archive form, lifecycle admission, or corpus
-validation.  Later ARWB packages may consume the byte-exact primitives after
-their own production contracts are approved.
+validation. Migration and fixture callers may consume the byte-exact primitives
+only through their own fail-closed workflow contracts.
 """
 
 from __future__ import annotations
@@ -517,12 +517,12 @@ def _metadata_bytes(metadata: Mapping[str, object]) -> bytes:
     return "".join(lines).encode("utf-8")
 
 
-def render_fixture_archive_envelope(
+def render_archive_envelope(
     metadata: Mapping[str, object],
     recovered: RecoveryResult,
     payload: bytes,
 ) -> bytes:
-    """Render one fixture envelope only when payload is the recovered Git blob."""
+    """Render one canonical envelope only from the exact recovered Git blob."""
 
     validate_archive_metadata(metadata)
     if not isinstance(payload, bytes) or payload != recovered.source_bytes:
@@ -544,6 +544,16 @@ def render_fixture_archive_envelope(
     if len(payload) != recovered.byte_count:
         raise _error("ARCHIVE-PAYLOAD-SIZE", "payload byte count differs from recovery")
     return _metadata_bytes(metadata) + ARCHIVE_ENVELOPE_MARKER + b"\n" + payload
+
+
+def render_fixture_archive_envelope(
+    metadata: Mapping[str, object],
+    recovered: RecoveryResult,
+    payload: bytes,
+) -> bytes:
+    """Compatibility wrapper for existing fixture callers."""
+
+    return render_archive_envelope(metadata, recovered, payload)
 
 
 def parse_archive_envelope(

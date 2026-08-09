@@ -5198,10 +5198,11 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
         if profile.profile_id != "native/document-migration-manifest":
             raise AssertionError("migration manifest selected the wrong native profile")
         tool = _load_migration_tool(root)
-        entries = tool.load_manifest(root / manifest_path)
-        diagnostics = tool.validate_manifest(
-            root, entries, tool.EXPECTED_SOURCE_COMMIT
-        )
+        document = tool.load_manifest_document(root / manifest_path)
+        if document.source_commit != tool.EXPECTED_SOURCE_COMMIT:
+            raise AssertionError("migration manifest source commit is not the reviewed base")
+        entries = document.entries
+        diagnostics = tool.validate_manifest(root, entries, document.source_commit)
         if diagnostics:
             raise AssertionError("migration manifest invalid: " + ", ".join(diagnostics))
         tool.validate_counts(

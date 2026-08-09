@@ -132,6 +132,19 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 REPOSITORY_ROOT, registry, "terminal"
             )
 
+    def test_transition_compares_manifest_declared_source_commit(self) -> None:
+        validator = self.validators["registry"]
+        registry = validator.load_registry(REPOSITORY_ROOT)
+        fake_tool = mock.Mock()
+        fake_tool.EXPECTED_SOURCE_COMMIT = "a" * 40
+        fake_tool.load_manifest_document.return_value.source_commit = "b" * 40
+        fake_tool.load_manifest_document.return_value.entries = ()
+        with (
+            mock.patch.object(validator, "_load_migration_tool", return_value=fake_tool),
+            self.assertRaisesRegex(AssertionError, "source commit"),
+        ):
+            validator._assert_route_state(REPOSITORY_ROOT, registry, "transition")
+
     def test_terminal_retired_route_classification_is_closed(self) -> None:
         validator = self.validators["registry"]
         raw_registry = json.loads(

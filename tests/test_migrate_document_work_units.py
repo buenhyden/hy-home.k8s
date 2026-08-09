@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from collections import OrderedDict
 from pathlib import Path
 from types import MappingProxyType
 from unittest import mock
@@ -68,7 +69,19 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual(self.tool.validate_work_unit_paths({"052": {"tasks.md", "spec.md"}}), ("WORK-UNIT-MISSING-PLAN:052",))
 
     def test_plan_requires_spec(self):
-        self.assertEqual(self.tool.validate_work_unit_paths({"052": {"plan.md"}}), ("WORK-UNIT-MISSING-SPEC:052",))
+        self.assertEqual(
+            self.tool.validate_work_unit_paths({"052": {"plan.md"}}),
+            (
+                "WORK-UNIT-MISSING-SPEC:052",
+                "WORK-UNIT-MISSING-TASK:052",
+            ),
+        )
+
+    def test_plan_and_spec_require_task(self):
+        self.assertEqual(
+            self.tool.validate_work_unit_paths({"052": {"plan.md", "spec.md"}}),
+            ("WORK-UNIT-MISSING-TASK:052",),
+        )
 
     def test_transition_accepts_complete_siblings(self):
         self.assertEqual(self.tool.validate_work_unit_paths({"052": {"spec.md", "plan.md", "tasks.md"}}), ())
@@ -89,6 +102,10 @@ class MigrationTests(unittest.TestCase):
         self.assertIsInstance(manifest[0], MappingProxyType)
         first = manifest[0]
         self.assertEqual({k: first[k] for k in ("source", "target", "workUnit", "disposition", "reviewed")}, {"source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md", "target": "docs/03.specs/052-document-taxonomy-consolidation/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "reviewed": True})
+        move_units = {
+            row["workUnit"] for row in manifest if row["disposition"] == "move-current"
+        }
+        self.assertEqual(len(move_units), 41)
 
     def test_named_unsafe_states_abort(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -159,10 +176,12 @@ class MigrationTests(unittest.TestCase):
         subprocess.run(["git", "init", "-q"], cwd=root, check=True)
         subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
         subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+        (root / ".gitleaks.toml").write_text("[allowlist]\n", encoding="utf-8")
         paths = [
             "docs/04.execution/plans/2026-01-01-zeta.md",
             "docs/04.execution/tasks/2026-01-01-alpha.md",
             "docs/04.execution/plans/2026-01-01-current.md",
+            "docs/04.execution/tasks/2026-01-01-current.md",
         ]
         for path in paths:
             target = root / path
@@ -171,15 +190,33 @@ class MigrationTests(unittest.TestCase):
         spec = root / "docs/03.specs/052-current/spec.md"
         spec.parent.mkdir(parents=True)
         spec.write_text("spec\n", encoding="utf-8")
-        subprocess.run(["git", "add", "docs"], cwd=root, check=True)
+        subprocess.run(["git", "add", "docs", ".gitleaks.toml"], cwd=root, check=True)
         subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
         commit = self.git(root, "rev-parse", "HEAD")
         rows = []
         for path in paths[:2]:
             rows.append({"source": path, "target": path.replace("docs/04.execution", "docs/98.archive/04.execution"), "workUnit": "Archive-unique-fixture", "disposition": "archive-unique", "sourceBlob": self.git(root, "rev-parse", f"HEAD:{path}"), "reviewed": True})
-        path = paths[2]
-        rows.append({"source": path, "target": "docs/03.specs/052-current/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "sourceBlob": self.git(root, "rev-parse", f"HEAD:{path}"), "reviewed": True})
+        for path, name in zip(paths[2:], ("plan.md", "tasks.md"), strict=True):
+            rows.append({"source": path, "target": f"docs/03.specs/052-current/{name}", "workUnit": "Spec-052", "disposition": "move-current", "sourceBlob": self.git(root, "rev-parse", f"HEAD:{path}"), "reviewed": True})
         return commit, tuple(MappingProxyType(row) for row in rows)
+
+    def write_manifest(self, root: Path, commit: str, entries) -> None:
+        target = root / "scripts/document-taxonomy-migration.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(
+                {
+                    "state": "transition",
+                    "sourceCommit": commit,
+                    "entries": [dict(row) for row in entries],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        subprocess.run(["git", "add", "scripts/document-taxonomy-migration.json"], cwd=root, check=True)
+        subprocess.run(["git", "commit", "-qm", "manifest fixture"], cwd=root, check=True)
 
     def test_validate_manifest_returns_sorted_diagnostics_without_writes(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -240,7 +277,7 @@ class MigrationTests(unittest.TestCase):
             self._complete_fixture_archives(root, commit, entries)
             self.assertEqual(self.tool.validate_manifest(root, entries, commit), ())
             planned = self.tool.plan_phase(root, entries, "move")
-            self.assertEqual(len(planned), 1)
+            self.assertEqual(len(planned), 2)
             archive_target = root / entries[0]["target"]
             archive_target.write_bytes(archive_target.read_bytes() + b"corrupt")
             subprocess.run(["git", "add", "docs"], cwd=root, check=True)
@@ -251,13 +288,235 @@ class MigrationTests(unittest.TestCase):
     def test_apply_phase_preflights_every_pair_before_first_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            _, entries = self.phase_fixture(root)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
             valid = (Path(entries[0]["source"]), Path(entries[0]["target"]))
             invalid = (Path("docs/04.execution/plans/missing.md"), Path("docs/98.archive/04.execution/plans/missing.md"))
-            with self.assertRaises(self.tool.MigrationAbort):
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                self.assertRaises(self.tool.MigrationAbort),
+            ):
                 self.tool.apply_phase(root, (valid, invalid), "archive")
             self.assertTrue((root / valid[0]).is_file())
             self.assertFalse((root / valid[1]).exists())
+
+    def test_archive_apply_builds_valid_envelopes_then_move_plans(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            archive_pairs = self.tool.plan_phase(root, entries, "archive")
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                mock.patch.object(self.tool, "_classify_secret_payload"),
+            ):
+                self.tool.apply_phase(root, archive_pairs, "archive")
+            self.assertEqual(self.tool.validate_manifest(root, entries, commit), ())
+            subprocess.run(["git", "add", "docs"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "archive apply"], cwd=root, check=True)
+            self.assertEqual(len(self.tool.plan_phase(root, entries, "move")), 2)
+            self.assertFalse((root / "docs/98.archive/README.md").exists())
+
+    def test_archive_apply_rejects_secret_classifier_outcomes_without_payload(self):
+        payload = b"sensitive-payload-must-not-appear"
+        cases = (
+            (None, None, "MIGRATION-SECRET-CLASSIFIER-UNAVAILABLE"),
+            (Path("/usr/bin/gitleaks"), 17, "MIGRATION-SECRET-DETECTED"),
+            (Path("/usr/bin/gitleaks"), 2, "MIGRATION-SECRET-CLASSIFIER-ERROR"),
+        )
+        for executable, result, expected in cases:
+            with self.subTest(expected=expected):
+                with (
+                    mock.patch.object(
+                        self.tool, "_gitleaks_executable", return_value=executable
+                    ),
+                    mock.patch.object(
+                        self.tool, "_run_gitleaks", return_value=result
+                    ),
+                    self.assertRaisesRegex(self.tool.MigrationAbort, expected) as raised,
+                ):
+                    self.tool._classify_secret_payload(Path.cwd(), "archive.md", payload)
+                self.assertNotIn(payload.decode(), str(raised.exception))
+        with (
+            mock.patch.object(
+                self.tool.subprocess,
+                "run",
+                side_effect=subprocess.TimeoutExpired("gitleaks", 20),
+            ),
+            self.assertRaisesRegex(
+                self.tool.MigrationAbort, "MIGRATION-SECRET-CLASSIFIER-ERROR"
+            ),
+        ):
+            self.tool._run_gitleaks(Path("/usr/bin/gitleaks"), Path.cwd(), payload)
+
+    def test_gitleaks_discovery_admits_safe_path_and_rejects_workspace_or_tmp(self):
+        safe = Path("/home/test/.local/bin/gitleaks")
+        with (
+            mock.patch.object(self.tool.shutil, "which", return_value=str(safe)),
+            mock.patch.object(
+                self.tool,
+                "_gitleaks_candidate_is_safe",
+                side_effect=lambda candidate, _root: candidate == safe,
+            ),
+        ):
+            self.assertEqual(self.tool._gitleaks_executable(ROOT), safe)
+        self.assertFalse(
+            self.tool._gitleaks_candidate_is_safe(ROOT / "gitleaks", ROOT)
+        )
+        self.assertFalse(
+            self.tool._gitleaks_candidate_is_safe(Path("/tmp/gitleaks"), ROOT)
+        )
+
+    def test_work_unit_number_must_match_target_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            changed = [dict(row) for row in entries]
+            move_index = next(
+                index
+                for index, row in enumerate(changed)
+                if row["disposition"] == "move-current"
+            )
+            changed[move_index]["target"] = changed[move_index]["target"].replace(
+                "052-current", "053-current"
+            )
+            diagnostics = self.tool.validate_manifest(
+                root,
+                tuple(MappingProxyType(row) for row in changed),
+                commit,
+            )
+            self.assertTrue(
+                any(item.startswith("MIGRATION-WORK-UNIT:") for item in diagnostics)
+            )
+
+    def test_archive_apply_invalid_metadata_and_late_write_roll_back(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            pairs = self.tool.plan_phase(root, entries, "archive")
+            original = {source: (root / source).read_bytes() for source, _ in pairs}
+            invalid = OrderedDict(
+                (
+                    ("title", "invalid"),
+                    ("type", "content/archive"),
+                )
+            )
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                mock.patch.object(self.tool, "_classify_secret_payload"),
+                mock.patch.object(self.tool, "_archive_metadata", return_value=invalid),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "ARCHIVE-METADATA"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+            for source, target in pairs:
+                self.assertEqual((root / source).read_bytes(), original[source])
+                self.assertFalse((root / target).exists())
+
+    def test_apply_rejects_dirty_or_alternate_control_surfaces(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            pairs = self.tool.plan_phase(root, entries, "archive")
+            manifest = root / "scripts/document-taxonomy-migration.json"
+            manifest.write_text(manifest.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "CONTROL-DIRTY"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+            subprocess.run(["git", "restore", ".gitleaks.toml"], cwd=root, check=True)
+            data = json.loads(manifest.read_text(encoding="utf-8"))
+            data["sourceCommit"] = self.git(root, "rev-parse", "HEAD")
+            manifest.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            subprocess.run(["git", "add", str(manifest.relative_to(root))], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "alternate commit"], cwd=root, check=True)
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "SOURCE-COMMIT"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+            subprocess.run(["git", "restore", "scripts/document-taxonomy-migration.json"], cwd=root, check=True)
+            (root / ".gitleaks.toml").write_text("[allowlist]\npaths = []\n", encoding="utf-8")
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "CONTROL-DIRTY"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+
+    def test_archive_apply_cleans_temp_on_staging_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            pairs = self.tool.plan_phase(root, entries, "archive")
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                mock.patch.object(self.tool, "_classify_secret_payload"),
+                mock.patch.object(self.tool.os, "fsync", side_effect=OSError("fsync")),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "MIGRATION-FILESYSTEM"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+            self.assertEqual(tuple(root.rglob(".migration-*")), ())
+            for source, target in pairs:
+                self.assertTrue((root / source).is_file())
+                self.assertFalse((root / target).exists())
+
+    def test_duplicate_source_frontmatter_and_build_slugs_fail_closed(self):
+        duplicate = b"---\ntitle: one\ntitle: two\n---\n# Body\n"
+        with self.assertRaisesRegex(self.tool.MigrationAbort, "ARCHIVE-METADATA"):
+            self.tool._source_frontmatter(duplicate)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.phase_fixture(root)
+            duplicate_path = root / "docs/04.execution/plans/2026-02-02-current.md"
+            duplicate_path.write_text("duplicate slug\n", encoding="utf-8")
+            subprocess.run(["git", "add", "docs"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "duplicate slug"], cwd=root, check=True)
+            with self.assertRaisesRegex(self.tool.MigrationAbort, "DUPLICATE-SLUG"):
+                self.tool.build_manifest(root)
+
+    def test_archive_apply_late_write_failure_rolls_back(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            pairs = self.tool.plan_phase(root, entries, "archive")
+            original = {source: (root / source).read_bytes() for source, _ in pairs}
+            real_replace = self.tool.os.replace
+            installs = 0
+
+            def fail_second_install(source, target):
+                nonlocal installs
+                if ".migration-" in str(source) and str(target).endswith(".md"):
+                    installs += 1
+                    if installs == 2:
+                        raise OSError("injected late failure")
+                return real_replace(source, target)
+
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                mock.patch.object(self.tool, "_classify_secret_payload"),
+                mock.patch.object(self.tool.os, "replace", side_effect=fail_second_install),
+                self.assertRaisesRegex(self.tool.MigrationAbort, "MIGRATION-FILESYSTEM"),
+            ):
+                self.tool.apply_phase(root, pairs, "archive")
+            for source, target in pairs:
+                self.assertEqual((root / source).read_bytes(), original[source])
+                self.assertFalse((root / target).exists())
+
+    def test_git_ignores_hostile_environment_and_rejects_non_root(self):
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as hostile:
+            root = Path(tmp)
+            self.phase_fixture(root)
+            with mock.patch.dict(
+                self.tool.os.environ,
+                {"GIT_DIR": hostile, "GIT_WORK_TREE": hostile, "GIT_INDEX_FILE": hostile},
+            ):
+                self.assertEqual(self.tool._git(root, "rev-parse", "--show-toplevel"), str(root))
+            with self.assertRaisesRegex(self.tool.MigrationAbort, "MIGRATION-ROOT"):
+                self.tool._git(root / "docs", "status", "--short")
 
     def test_plan_phase_rejects_dirty_controlled_path_but_not_unrelated_edit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -280,6 +539,21 @@ class MigrationTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 self.tool._parser().parse_args(["--build"])
 
+    def test_cli_rejects_alternate_manifest_path(self):
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(
+                self.tool.main(
+                    [
+                        "--root",
+                        str(ROOT),
+                        "--manifest",
+                        str(ROOT / "scripts/document-taxonomy-migration.json"),
+                        "--check",
+                    ]
+                ),
+                1,
+            )
+
     def test_cli_apply_runs_plan_before_apply_without_production_writes(self):
         entries = tuple(
             MappingProxyType(
@@ -298,8 +572,10 @@ class MigrationTests(unittest.TestCase):
         with (
             mock.patch.object(
                 self.tool,
-                "_load_manifest_document",
-                return_value=(self.tool.EXPECTED_SOURCE_COMMIT, entries),
+                "load_manifest_document",
+                return_value=self.tool.ManifestDocument(
+                    self.tool.EXPECTED_SOURCE_COMMIT, entries
+                ),
             ),
             mock.patch.object(self.tool, "_controlled_dirty", return_value=()),
             mock.patch.object(self.tool, "validate_manifest", return_value=()),

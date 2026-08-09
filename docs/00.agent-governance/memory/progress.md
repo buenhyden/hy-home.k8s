@@ -94,6 +94,43 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
   passing. The final index contains exactly eight staged files and no unstaged
   changes; both diff checks pass; frozen Plan/Task and all Stage 98 staged plus
   unstaged diffs are zero. WORK-102 Fix Round 2 is complete.
+- Fix Round 3 RED reproduced raw archive output, absent secret-classifier
+  closure, incomplete triad acceptance, insufficient direct-apply controls,
+  late-write partial-state risk, manifest-declared commit substitution, hostile
+  Git environment influence, and duplicate-slug overwrite behavior.
+- Fix Round 3 GREEN makes archive apply recover each pinned Git blob, run a
+  bounded redacted gitleaks classification without payload output, derive
+  duplicate-key-safe deterministic metadata, render and parse a canonical
+  ArchiveEnvelope entirely before mutation, revalidate source types/blobs, and
+  install transactionally with reverse rollback and temporary-file cleanup.
+  Safe PATH discovery admits the canonical owner-controlled installed gitleaks
+  while rejecting repository and temporary-directory candidates.
+- Direct apply now requires the exact ordered pairs from the canonical tracked,
+  clean manifest at the reviewed commit; the manifest and `.gitleaks.toml` are
+  regular non-symlink tracked/clean control surfaces. Only exact regular Stage
+  04 sources, mirrored Stage 98 archive targets, and matching Stage 03 move
+  targets are admissible; ignored, symlinked, alternate, dirty, and wrong-blob
+  paths fail closed before writes.
+- Every move work unit is now an exact Spec/Plan/Task triad whose Spec number
+  matches its destination. Production remains 41 triads / 82 moves plus 50
+  archives. Duplicate spec/source slugs fail instead of overwriting state, and
+  strict transition reads and validates the manifest-declared source commit.
+- Fix Round 3 focused GREEN passed 41 migration/strict-cutover and 15 archive
+  recovery tests. Python compilation, Ruff, the 132/82/50 dry run, 132-case
+  registry self-test, 490-path strict transition, strict Markdown, and an
+  actual benign classification through the safe PATH-discovered gitleaks all
+  passed. No production apply was executed.
+- Archive apply deliberately emits canonical envelopes without editing the
+  existing Stage 98 index. Its success output names
+  `docs/98.archive/README.md#document-index`; WDTC-103 must stage generated
+  envelopes and index evidence atomically and must not commit an intermediate
+  envelope-only state.
+- Controller final verification completed the aggregate with exit 0 and final
+  repository-quality PASS, then completed
+  `env TMPDIR=/tmp pre-commit run --all-files` with exit 0 and every hook
+  passing. Post-run state is exactly six staged files with no unstaged changes;
+  both diff checks pass, and frozen Plan/Task plus `docs/98.archive` have zero
+  staged and unstaged diff. WORK-102 Fix Round 3 is complete.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 
