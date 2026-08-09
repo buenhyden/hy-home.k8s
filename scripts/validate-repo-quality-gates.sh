@@ -126,6 +126,7 @@ python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --sel
 python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --root "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
+import ast
 import collections
 import json
 import os
@@ -4171,6 +4172,83 @@ for skill_path in sorted((root / ".claude/skills").glob("*/skill.md")):
 
 scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")
+tracked_script_paths = sorted(
+    root / tracked_path
+    for tracked_path in tracked
+    if pathlib.PurePosixPath(tracked_path).parent
+    == pathlib.PurePosixPath("scripts")
+    and pathlib.PurePosixPath(tracked_path).suffix in {".py", ".sh"}
+)
+expected_import_only_helpers = {
+    "archive_cutover_manifest.py",
+    "archive_recovery.py",
+    "archive_validation.py",
+    "document_contracts.py",
+    "document_lifecycle.py",
+    "reference_information_architecture.py",
+}
+
+
+def is_top_level_main_guard(node):
+    test = node.test if isinstance(node, ast.If) else None
+    return (
+        isinstance(test, ast.Compare)
+        and isinstance(test.left, ast.Name)
+        and test.left.id == "__name__"
+        and len(test.ops) == 1
+        and isinstance(test.ops[0], ast.Eq)
+        and len(test.comparators) == 1
+        and isinstance(test.comparators[0], ast.Constant)
+        and test.comparators[0].value == "__main__"
+    )
+
+
+main_guard_classifier_probes = {
+    'positive': ('if __name__ == "__main__":\n    pass\n', True),
+    'wrong-left': ('if module_name == "__main__":\n    pass\n', False),
+    'not-eq': ('if __name__ != "__main__":\n    pass\n', False),
+    'chained': ('if __name__ == "__main__" == sentinel:\n    pass\n', False),
+}
+for probe_name, (source, expected) in main_guard_classifier_probes.items():
+    probe_node = ast.parse(source).body[0]
+    if is_top_level_main_guard(probe_node) is not expected:
+        fail(f"tracked script main-guard classifier failed probe: {probe_name}")
+
+
+observed_import_only_helpers = set()
+for script_path in tracked_script_paths:
+    if script_path.suffix != ".py":
+        continue
+    try:
+        module = ast.parse(read_text(script_path), filename=rel(script_path))
+    except SyntaxError as exc:
+        fail(f"tracked Python script syntax failed for {rel(script_path)}: {exc.msg}")
+        continue
+    has_main_guard = any(is_top_level_main_guard(node) for node in module.body)
+    if not has_main_guard:
+        observed_import_only_helpers.add(script_path.name)
+
+observed_script_names = {path.name for path in tracked_script_paths}
+observed_cli_count = len(tracked_script_paths) - len(observed_import_only_helpers)
+if (
+    len(tracked_script_paths) != 47
+    or observed_cli_count != 41
+    or observed_import_only_helpers != expected_import_only_helpers
+):
+    fail(
+        "tracked script inventory must remain exact: "
+        "total=47 cli=41 helpers=6"
+    )
+for script_name in sorted(observed_script_names):
+    if script_name not in scripts_readme:
+        fail(f"tracked script missing from scripts/README.md: {script_name}")
+for phrase in (
+    "47 tracked scripts",
+    "41 CLI entrypoints",
+    "six import-only helpers",
+):
+    if phrase not in scripts_readme:
+        fail(f"scripts/README.md missing exact inventory summary: {phrase}")
 script_paths = sorted(scripts_dir.glob("*.sh"))
 script_names = {script.name for script in script_paths}
 disallowed_script_absolute_path_patterns = [

@@ -97,10 +97,12 @@ At the observation commit, `scripts/` contains 47 tracked Python/shell files:
 41 CLI entrypoints and six import-only helpers (`archive_cutover_manifest.py`,
 `archive_recovery.py`, `archive_validation.py`, `document_contracts.py`,
 `document_lifecycle.py`, and `reference_information_architecture.py`). The
-canonical human inventory contains neither `archive_cutover_manifest.py` nor
-`reference_information_architecture.py` anywhere, while the other 45 tracked
-paths are named. Production consumers still resolve through the entrypoints and
-imports, but the two missing human-index rows make script inventory incomplete.
+observation-state canonical human inventory contained neither
+`archive_cutover_manifest.py` nor `reference_information_architecture.py`,
+while the other 45 tracked paths were named. WGIA-011 now names both helpers,
+records the exact 47 = 41 + 6 classification, and makes the aggregate quality
+gate fail closed on count, helper-set, or human-index drift. Production
+consumers still resolve through the existing entrypoints and imports.
 
 | Owner family | Tracked script files | Caller / ownership result |
 | --- | --- | --- |
@@ -116,9 +118,9 @@ imports, but the two missing human-index rows make script inventory incomplete.
 
 A blocker record is complete only when it names cause, impact, affected
 request IDs, release condition, owner, and evidence depth. Pending work alone
-is not a blocker. No material repository-static blocker or direct canonical or
-disposition candidate was found; `WGA-RMP-HAR-001` is the sole provisional
-human-index repair input for WGIA-009.
+is not a blocker. No material repository-static blocker or disposition
+candidate was found. WGIA-009 admitted `WGA-RMP-HAR-001`, and WGIA-011
+implemented its bounded human-index repair without changing script semantics.
 
 | ID | Cause | Impact | Affected request IDs | Release condition | Owner | Evidence depth | Classification |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -163,21 +165,21 @@ explicit value `none`.
 - **Uncertainty**: actual provider execution and ignored-checkpoint I/O remain unobserved.
 - **Blocker**: none for repository-static alignment; `BLK-WGA-HAR-001` limits runtime promotion.
 
-#### WGA-HAR-003 — Fixture ownership aligns but script human inventory is incomplete
+#### WGA-HAR-003 — Fixture ownership and script human inventory align
 
 - **Request IDs**: `REQ-WGA-013`, `REQ-WGA-017`.
 - **Scope**: 47 tracked script files, 41 CLI entrypoints, six import-only helpers, 37 fixtures, and the audited harness-family production consumers.
 - **Expected state**: every tracked script is named by the canonical human inventory, each entrypoint/fixture family resolves to a production contract owner and caller, test mutations do not substitute for production checks, and aggregate wrappers do not duplicate focused semantics.
-- **Observed state**: fixture families and harness production consumers resolve correctly, and separate self-test/production modes pass; however, `scripts/README.md` omits `scripts/archive_cutover_manifest.py` and `scripts/reference_information_architecture.py` from the human inventory even though both are tracked import-only helpers.
-- **Evidence**: `scripts/README.md#script-inventory`; `scripts/README.md#python-validator-inventory`; `scripts/README.md#script-classification-matrix`; `scripts/README.md#command-contract`; `tests/README.md#validation-model`; `tests/fixtures/agent-harness-contract.json#mutations`; `tests/fixtures/agent-loop-lifecycle.json#mutations`; `tests/fixtures/agent-checkpoint.json#negativeMutations`; `scripts/validate-agent-provider-evidence.py#run`; `scripts/validate-harness.sh`.
+- **Observed state**: at the observation commit, the human index omitted two tracked import-only helpers. WGIA-011 now names all 47 tracked scripts, explicitly classifies 41 CLI entrypoints and the six exact import-only helpers, and adds a fail-closed aggregate inventory check; fixture families, production consumers, and separate self-test/production owners remain unchanged.
+- **Evidence**: `scripts/README.md#script-inventory`; `scripts/README.md#python-validator-inventory`; `scripts/README.md#script-classification-matrix`; `scripts/README.md#command-contract`; `scripts/validate-repo-quality-gates.sh#tracked_script_paths`; `tests/README.md#validation-model`; `tests/fixtures/agent-harness-contract.json#mutations`; `tests/fixtures/agent-loop-lifecycle.json#mutations`; `tests/fixtures/agent-checkpoint.json#negativeMutations`; `scripts/validate-agent-provider-evidence.py#run`; `scripts/validate-harness.sh`.
 - **Evidence depth**: `repository-static`.
-- **Verdict**: `Partial`.
-- **Impact**: fixture and validator behavior remains explicit, but operators cannot derive the complete tracked script/helper inventory from its canonical human index.
+- **Verdict**: `Aligned`.
+- **Impact**: operators and the aggregate gate now resolve the same complete script/helper inventory without promoting helpers into duplicate CLI or semantic owners.
 - **Disposition**: `Correct`.
 - **Canonical owner**: each machine/policy contract for semantics; its focused validator for production enforcement; scripts/tests READMEs for human inventory only.
-- **Verification**: deterministic 47 = 41 CLI + 6 helper probe with exact human-index absence, separate self-test/production runs, five focused unit modules, and WGIA-009 admission/review before any canonical edit.
-- **Uncertainty**: WGIA-005 did not re-audit the topical behavior of document, RIA, GitOps, delivery, or security validators owned by other reports.
-- **Blocker**: WGIA-009 admission and quality re-review are required before the bounded `scripts/README.md` repair; no masked-production or duplicate semantic owner was found.
+- **Verification**: deterministic RED records exactly two missing helper names; GREEN records 47 tracked scripts, 41 CLI entrypoints, six helpers, and zero missing names. The aggregate embedded contract, shell syntax, focused harness/provider checks, and strict document checks cover the correction.
+- **Uncertainty**: WGIA-011 did not re-audit the topical behavior of document, RIA, GitOps, delivery, or security validators owned by other reports.
+- **Blocker**: none for repository-static inventory alignment; fresh WGIA-011 reviews and the controlling full gate remain completion gates rather than finding blockers.
 
 #### WGA-HAR-004 — Provider and actual checkpoint execution remain deferred
 
@@ -212,8 +214,8 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 - Review status: `Approved`; specification/content and fix-round quality
   reviews found no remaining Critical or Important issue.
-- Review disposition: `Approved` as a bounded repository-static audit;
-  `WGA-RMP-HAR-001` remains provisional pending WGIA-009 admission.
+- Review disposition: the bounded WGIA-005 audit and WGIA-011 remediation are
+  `Approved`; the exact staged complete repository quality gate passes.
 - Evidence observed: 2026-08-09 at exact observation commit
   `50628b84165479b03efc0a25be075a49c91a9aef`, compared with starting commit
   `fd68251715bf2631fc50c7c603000a525539a901`.
@@ -224,14 +226,17 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
   fixture, caller, blocker, provider source, or observation-commit change.
 - Provider-runtime, hosted, remote, credential-bearing, ignored-checkpoint, and
   live evidence remains `DEFER`; none was accessed.
-- One provisional WGIA-009 roadmap row records the bounded canonical
-  `scripts/README.md` human-inventory repair. No disposition-ledger row is
+- WGIA-009 admitted the bounded `scripts/README.md` human-inventory repair and
+  WGIA-011 implemented it without semantic-owner or caller changes. No disposition-ledger row is
   warranted: neither missing helper is Legacy, Deprecated, one-shot, or a
   deletion candidate, and no missing production behavior or duplicate semantic
   owner was found.
-- Quality review found one Important inventory-count/coverage overclaim. This
-  fix records 47 = 41 CLI + 6 helpers, names the two omitted human-index paths,
-  changes `WGA-HAR-003` and `REQ-WGA-017` to `Partial`, and requests re-review.
+- The earlier WGIA-005 quality fix corrected the observation baseline to record
+  47 = 41 CLI + 6 helpers, name the two omitted human-index paths, and retain
+  `WGA-HAR-003`/`REQ-WGA-017` as `Partial` pending admitted remediation.
+- WGIA-011 now advances `WGA-HAR-003` and `REQ-WGA-017` to repository-static
+  `Aligned`; fresh specification/content and Python/quality reviews plus the
+  exact staged complete repository quality gate are `Approved`/PASS.
 
 ## Related Documents
 
