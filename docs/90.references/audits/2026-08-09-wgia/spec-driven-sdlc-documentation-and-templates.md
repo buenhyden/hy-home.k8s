@@ -167,11 +167,11 @@ the closed pack vocabularies.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Gap`.
 - **Impact**: release notes are correctly blocked from ad hoc creation, but the broader audit request cannot yet resolve deterministically to that negative decision or an existing release-evidence owner.
-- **Disposition**: `DEFER`; WGIA-009 must deduplicate this finding into DOC-G5/WORK-013 and preserve the approved negative decision.
+- **Disposition**: `Integrate`; WGIA-010 records no duplicate canonical delta and preserves approved DOC-G5/queued WORK-013 as the sole execution route.
 - **Canonical owner**: approved Spec 052 DOC-G5 for the release-notes decision; its Plan and WORK-013 for deliberate-absence execution; existing Stage 99/Stage 05 owners remain unchanged.
 - **Verification**: the probe returned `WGIA-DOC-RELEASE FAIL profile_route=0 template=0 lifecycle=0 role_validator=0`; WORK-013 must record the DOC-G5 absence, and review must confirm the broad `Release` mapping without adding a route.
 - **Uncertainty**: which existing Task, workflow, policy, or reference artifact should satisfy the broader Release evidence request, if any; this does not unsettle DOC-G5.
-- **Blocker**: WORK-013 is queued and the broad-versus-narrow semantic mapping is not recorded.
+- **Blocker**: WORK-013 is queued and the broad-versus-narrow semantic mapping is not recorded; WGIA-010 made no registry/template/Spec delta.
 
 #### WGA-DOC-003 — Approved Guide Type enum is not yet enforced
 
@@ -183,11 +183,11 @@ the closed pack vocabularies.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Partial`.
 - **Impact**: guide authors have the intended values and current documents are consistent, but an invalid future Guide Type value is not deterministically rejected.
-- **Disposition**: `DEFER` execution to existing WORK-013; WGIA-009 should deduplicate and route, not create a new taxonomy decision.
+- **Disposition**: `Integrate` execution with existing WORK-013; WGIA-010 records no duplicate canonical delta and does not create a new taxonomy decision.
 - **Canonical owner**: approved Spec 052 DOC-G1 through DOC-G3; the WDTC Plan and Task WORK-013 own implementation evidence; Stage 99 remains the registry/template owner.
 - **Verification**: add an invalid Guide Type negative fixture, enforce the three-value enum, validate all eight current guides, and confirm no tutorial or explanation route was created.
 - **Uncertainty**: implementation timing and exact validator fixture placement, not the approved enum or deliberate-absence decisions.
-- **Blocker**: WORK-013 is queued and its deterministic enum/migration evidence is not yet recorded.
+- **Blocker**: WORK-013 is queued and its deterministic enum/migration evidence is not yet recorded; WGIA-010 made no registry/template/guide delta.
 
 #### WGA-DOC-004 — Integration guides conform statically; live usability is deferred
 
@@ -221,16 +221,18 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 ## Review and Freshness
 
-- Review status: `Approved`; specification review and fix-round quality
-  re-review found no remaining Critical or Important issue.
-- Review disposition: `Approved` as a bounded repository-static audit; the four
-  findings and two provisional WGIA-009 inputs are not implementation approval.
+- Review status: fresh WGIA-010 specification/content and quality reviews of
+  the integration/no-delta evidence are `Approved`. The original WGIA-003
+  reviews remain Approved.
+- Review disposition: `Approved`; WGIA-010 records no duplicate canonical
+  change for WGA-DOC-002/003, and queued WORK-013 remains their sole execution
+  owner.
 - Evidence observed: 2026-08-09 at the exact observation commit.
 - Current-truth owners: Stage 99 machine contracts and the owning Stage 01-05 documents.
 - Refresh triggers: route, profile, schema, template, lifecycle, README, guide,
   observation commit, finding, or canonical-owner change.
-- Next owners: WGIA-009 deduplicates and routes both candidates to approved
-  Spec 052 and queued WORK-013; the existing WDTC program owns implementation.
+- Next owner: the existing WDTC program and queued WORK-013 own implementation;
+  WGIA-010 made no registry, template, guide, or Spec change.
 - Deeper evidence: guide usability plus hosted, provider-runtime, remote,
   credential-bearing, and live lanes remain `DEFER`.
 

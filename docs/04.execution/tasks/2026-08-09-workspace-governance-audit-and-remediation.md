@@ -46,7 +46,7 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-007 | VAL-WGA-002, VAL-WGA-008 | Audit integrated orchestration and every current AI-agent role | assigned worker | Done | Exact 12-role/four-surface/48-projection inventory and complete per-role matrix align repository-statically; integrated supervisor controls align, model/evaluation/admission evidence is `Partial`, and native provider execution remains `DEFER`. | [Focused evidence](#wgia-007-focused-evidence); four complete findings, one complete provider-runtime evidence blocker, focused contract and 150-test evidence, no remediation/disposition candidate, specification/content and fix-round quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Done | Repository-static approval/workflow, GitOps, and external-secret structure align; Claude permissions conflict with shared stops; KSM RBAC and supply-chain identity are `Partial`; Gitleaks scope, network isolation, and admission/Adminer hardening are `Gap`; deeper enforcement remains `DEFER`. | [Focused evidence](#wgia-008-focused-evidence); full control matrix, nine complete findings, two evidence blockers, six provisional WGIA-009 inputs, focused static security evidence, and fresh specification/content plus security fix-round reviews Approved with no Critical/Important finding. |
 | WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Done | Seven legacy-name active surfaces are rejected as noncandidates; the exact fifteen Spec 052 WORK-001 one-shot paths are `Integrate`, with `Delete=0`; 12 reviewed inputs are deduplicated into seven bounded Correct/Integrate admissions and five explicit `DEFER` rows. Overall request verdict remains `Partial` because live WORK-001 consumers and one eligibility-unit blocker remain; two authoring-state blockers are resolved. | [Focused evidence](#wgia-009-focused-evidence); full source commits, 114 resolved consumer selectors, exact replacements/history/post-delete gates, contiguous 12-row roadmap, exact staged aggregate PASS, 150 tests with 149 PASS/one recorded failure, and fix-round content plus quality reviews Approved. |
-| WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, canonical-owner diffs or reviewed no-delta evidence. |
+| WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Done | Root routing and four-surface classification are corrected; all six LLM-WIKI inputs are reviewed and generated metadata is refreshed; DOC-G1/G5 integration records no duplicate delta and leaves WORK-013 queued. | [Focused evidence](#wgia-010-focused-evidence); deterministic RED/GREEN, producer-only generated diff, canonical-owner/no-delta evidence, fresh specification/content plus quality reviews Approved, and exact staged complete repository quality gate PASS. |
 | WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, owner-family commits or reviewed no-delta evidence. |
 | WGIA-012 | VAL-WGA-011 | Cut over the sole Current audit and mutable consumers atomically | assigned worker | Queued | Not executed. | RIA/profile/index/link RED/GREEN, protected historical baseline, atomic commit. |
 | WGIA-013 | VAL-WGA-010 | Delete only proof-complete candidate artifacts | assigned worker | Queued | Not executed. | Zero-consumer proof, isolated/staged post-delete validation, exact deletions or reviewed no-deletion result. |
@@ -675,6 +675,63 @@ and quality reviews are Approved with no Critical or Important finding.
   authority; WGIA-012 owns Current cutover; WGIA-013 applies only the
   then-current reviewed WGIA disposition; WGIA-014 owns terminal QA.
 
+### WGIA-010 Focused Evidence
+
+- **Scope**: root `README.md`; LLM-WIKI README, generator, and producer-owned
+  `wiki-index.md`; WGA-GOV-002/003 and WGA-KNW-002 re-audit state; DOC-001/002
+  integration/no-delta evidence; affected pack/roadmap cells; this Task, Plan,
+  durable progress, and ignored worker report. No Stage 99 registry/template,
+  Spec 052, guide, RIA owner, Current pointer, Stage 98, provider, remote, live,
+  or secret surface changed.
+- **RED**: the pre-edit probe exited 1 with
+  `ROOT_STAGE00_OWNER_MISSING ROOT_THIN_GATEWAY_PROMOTED
+  ROOT_SURFACE_MISSING:.gemini/ LLM_SOURCE_REVIEW_STALE
+  LLM_FRESHNESS_REVIEW_STALE` plus stale generator `updated`, source, and review
+  metadata. The existing generator byte check still passed, proving byte
+  equality alone did not establish source-trigger review freshness.
+- **GREEN**: the corrected probe reports
+  `root_owner=stage00 thin_gateway=true surfaces=4/4 llm_inputs=6/6
+  source_checked=2026-08-09 last_reviewed=2026-08-09`. The first GREEN probe's
+  prefix-count assertion omitted `scripts/README.md`; the corrected assertion
+  compares the exact six-path set and required no production change.
+- **Canonical remediation**: `README.md#canonical-owners` routes to the Stage 00
+  hub, while `README.md#top-level-areas` distinguishes `.agents/`, `.claude/`,
+  `.codex/`, and `.gemini/` without promoting provider-runtime consumption.
+  The LLM-WIKI README records each of the six RIA-declared input identities;
+  the generator emits 2026-08-09 source/review metadata and alone regenerated
+  `docs/90.references/llm-wiki/wiki-index.md`.
+- **Documentation integration/no delta**: WGA-DOC-002/003 and roadmap DOC-001/
+  DOC-002 now record integration with existing approved Spec 052/queued
+  WORK-013. WGIA-010 changed no document profile, schema, template, Guide,
+  Spec 052, or WDTC execution owner and did not reopen DOC-G1/DOC-G5.
+- **Validation and review**: producer generation and `--check`; three focused
+  RIA generator-relation tests; governance closure self-test/production; RIA
+  self-test; strict registry (502 paths, zero uncovered/ambiguous), Markdown
+  profiles (zero violations), links, archive cutover (43 records, 362
+  historical links, 43 secret-clean records), DOC/WORK-013 no-delta, RIA owner-
+  family no-delta, diff, and both Stage 98 boundaries pass. Normal RIA
+  production is a bounded dirty-worktree RED: required progress and the three
+  changed generator-relation paths are unavailable for duplicate/index
+  comparison. No RIA owner changed; staged/settled RIA evidence remains for
+  primary/terminal validation. The first parallel archive invocation yielded a
+  session without final output; polling the recovered session `33794` returned
+  PASS. Fresh specification/content and quality reviews are Approved. The exact
+  staged complete repository quality gate then passed, including RIA,
+  active-corpus, harness/provider, document, archive, and cross-document lanes.
+- **Content review fix round**: the reviewer found one Important contradiction:
+  the report's Freshness Proof still described the 2026-05-10 RED baseline in
+  present tense and called the already admitted/implemented roadmap row
+  provisional. The section now labels the observation/pre-remediation state
+  explicitly, records the 2026-08-09 current GREEN state, and names
+  `WGA-RMP-KNW-001` as admitted by WGIA-009 and implemented by WGIA-010.
+  Report-local profile/link checks and `git diff --check` were rerun; the fresh
+  specification/content re-review and the separate quality review are
+  Approved.
+- **Rollback and next owner**: revert only the root README unit or the
+  LLM-WIKI README/generator/generated-output unit. WORK-013 retains DOC
+  execution; WGIA-014 owns terminal QA and deeper provider/live evidence stays
+  `DEFER`.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -691,7 +748,7 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-007 shares the Plan and Spec sources above | Done. | Four complete findings: exact 12-role/four-surface/48-projection inventory and integrated supervisor orchestration `Aligned`; model/evaluation/admission state `Partial`; native provider execution `DEFER`. Focused contract self-tests/production and 150 tests pass; specification/content and fix-round quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-008 shares the Plan and Spec sources above | Done. | Nine complete findings and a full control matrix distinguish static alignment from one permission conflict, three gaps, two partial controls, and deeper `DEFER`; six provisional WGIA-009 inputs are recorded. Focused static security checks pass with optional Conftest `SKIP`; redacted Gitleaks candidates remain intentionally untriaged; fresh specification/content and security fix-round reviews are Approved with no Critical/Important finding. |
 | N/A — WGIA-009 shares the Plan and Spec sources above | Done with bounded `Partial` findings and one routed blocker. | Seven legacy-name active surfaces are rejected as noncandidates; fifteen exact Spec 052 WORK-001 paths are `Integrate`, `Delete=0`, and 2,355 starting-HEAD/2,360 authored-worktree vocabulary line hits remain rejected as name-only evidence. Twelve inputs are deduplicated once: seven bounded Correct/Integrate admissions and five explicit `DEFER` decisions. Structural, 114-selector, strict document/link, legacy-cutover, active-corpus production/self-test/role-production, archive, RIA, complete repository gate, diff, and Stage 98 checks pass. The exact staged 150-test run has 149 PASS and one expected-53/actual-57 eligibility failure under open `BLK-WGA-DSP-003`; `BLK-WGA-DSP-001`/`002` are resolved. Fix-round content and quality reviews are Approved. |
-| N/A — WGIA-010 shares the Plan and Spec sources above | Queued. | Governance/documentation/knowledge remediation evidence will be recorded here. |
+| N/A — WGIA-010 shares the Plan and Spec sources above | Done. | Deterministic RED/GREEN and producer-only generation pass; three RIA generator tests, governance closure, RIA self-test, strict registry/profile/link, archive, DOC and RIA-owner no-delta, diff, and Stage 98 pass. The exact staged complete repository quality gate passes the RIA and aggregate boundary; fresh specification/content and quality reviews are Approved. |
 | N/A — WGIA-011 shares the Plan and Spec sources above | Queued. | Delivery/harness/agent/security remediation evidence will be recorded here. |
 | N/A — WGIA-012 shares the Plan and Spec sources above | Queued. | Atomic Current transition evidence will be recorded here. |
 | N/A — WGIA-013 shares the Plan and Spec sources above | Queued. | Exact deletion or reviewed no-deletion evidence will be recorded here. |

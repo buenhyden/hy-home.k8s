@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-010 governance and knowledge remediation
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #llm-wiki #documentation #tdd
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-010 implementation of admitted WGA-RMP-GOV-001 and WGA-RMP-KNW-001 plus DOC-001/002 integration/no-delta evidence
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh on root routing, any RIA-declared LLM-WIKI input, generator, WORK-013, review, or Current transition change.
+- **Next Owner**: WORK-013 for approved documentation-gap execution; WGIA-014 for terminal QA.
+
+#### Progress
+
+Corrected root human routing so Stage 00 is the canonical agent-policy owner,
+`AGENTS.md` remains a thin gateway, and all four tracked adapter surfaces are
+classified separately without a runtime claim. Reviewed the exact six
+RIA-declared LLM-WIKI inputs, refreshed source/review metadata to 2026-08-09,
+and regenerated `wiki-index.md` only through its producer. Recorded no-duplicate
+integration for DOC-G1/DOC-G5 findings while leaving queued WORK-013 and every
+Stage 99/Spec/Guide owner unchanged.
+
+#### Evidence
+
+- RED exited 1 for missing Stage 00 routing, promoted gateway, missing
+  `.gemini/`, and stale README/generator freshness metadata; the old generated
+  byte check still passed.
+- GREEN proves `root_owner=stage00`, `thin_gateway=true`, `surfaces=4/4`,
+  `llm_inputs=6/6`, and 2026-08-09 source/review dates. Producer generation and
+  `--check` pass.
+- PASS: three RIA generator tests, governance closure self/production, RIA
+  self-test, strict registry/profile/links, archive, DOC/WORK-013 no-delta, RIA
+  owner-family no-delta, diff, and both Stage 98 boundaries. Normal RIA
+  production rejects dirty progress and changed generator paths as unavailable
+  for comparison; no RIA owner changed, and staged/settled evidence remains for
+  terminal validation. The exact staged complete repository quality gate later
+  passed; no provider, remote, secret, or live action is claimed.
+- Content-review fix: one Important stale-present-tense contradiction in the
+  LLM-WIKI audit report is resolved. The 2026-05-10 state is explicitly the
+  observation/pre-remediation RED, the current 2026-08-09 state is GREEN, and
+  `WGA-RMP-KNW-001` is admitted/implemented rather than provisional.
+
+#### Handoff
+
+WGIA-010 is complete: fresh specification/content and quality reviews are
+Approved after the Important fix, and the exact staged complete repository
+quality gate passes. Rollback is bounded to the root README unit or the LLM-WIKI
+README/generator/generated-output unit; DOC rows have no canonical delta.
+
 ### 2026-08-09 - WGIA-009 disposition and integrated roadmap
 
 #### Metadata

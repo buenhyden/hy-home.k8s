@@ -468,17 +468,22 @@ README final verdict cells, Task and progress evidence.
 **Files:** only canonical owner families named by accepted WGIA-009 rows, their
 schemas/projections/fixtures/tests, audit finding status, Task/progress evidence.
 
-- [ ] Select only unambiguous `Correct` or `Integrate` rows in governance,
+- [x] Select only unambiguous `Correct` or `Integrate` rows in governance,
   SDLC, documentation, templates, README routing, LLM-WIKI, or memory.
-- [ ] Add the smallest failing regression at the current contract owner; record
+- [x] Add the smallest failing regression at the current contract owner; record
   exact RED output before production edits.
-- [ ] Correct the canonical owner and every affected projection without copying
+- [x] Correct the canonical owner and every affected projection without copying
   policy into Stage 90 or hand-editing generated output.
-- [ ] Make focused tests GREEN, regenerate through canonical producers when
+- [x] Make focused tests GREEN, regenerate through canonical producers when
   needed, and re-audit the finding expected/observed state.
-- [ ] Run strict registry/profiles/links, RIA/LLM-WIKI as affected, archive,
+- [x] Run strict registry/profiles/links, RIA/LLM-WIKI as affected, archive,
   full gate, both reviews, and commit
   `fix: reconcile governance documentation owners` when non-empty.
+
+WGIA-010 is `Done`: focused repository-static checks, exact staged aggregate,
+generator parity, and both fresh reviews pass. Normal unstaged RIA production
+rejected the intentionally dirty comparison inputs before staging; the staged
+full gate passed the RIA boundary. Commit evidence is recorded in the Task.
 
 #### WGIA-011 — Delivery, harness, agent, and security remediation
 

@@ -3,7 +3,7 @@ title: 'Reference: LLM WIKI Generated Index'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-05-10
+updated: 2026-08-09
 ---
 
 # Reference: LLM WIKI Generated Index
@@ -25,8 +25,9 @@ updated: 2026-05-10
 ## Reference Type
 
 - Type: durable-concept / faq
-- Source checked: 2026-05-10
-- Refresh trigger: docs taxonomy, Agent governance routing, runtime roster, script inventory, GitOps owner, examples taxonomy, or version inventory path changes.
+- Source checked: 2026-08-09
+- Declared input review: exact six RIA-declared inputs reviewed together on 2026-08-09.
+- Refresh trigger: any declared input, docs taxonomy, Agent governance routing, runtime roster, script inventory, GitOps owner, examples taxonomy, or version inventory path changes.
 
 ## Authority Boundary
 
@@ -84,8 +85,8 @@ updated: 2026-05-10
 ## Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-05-10
-- Next review trigger: any change to docs taxonomy, `wiki-curator`, generator output, Agent governance routing, script inventory, GitOps root ownership, examples taxonomy, or version inventory paths.
+- Last reviewed: 2026-08-09
+- Next review trigger: any change to one of the six RIA-declared inputs, docs taxonomy, `wiki-curator`, generator output, Agent governance routing, script inventory, GitOps root ownership, examples taxonomy, or version inventory paths.
 
 ## Related Documents
 

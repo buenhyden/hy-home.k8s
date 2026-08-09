@@ -88,8 +88,8 @@ redefines those contracts.
 | Area | As-Is | Gap | Target |
 | --- | --- | --- | --- |
 | Purpose and shared operating hierarchy | Root purpose, Stage 00 JIT order, approval owner, completion owner, machine role owner, and readable catalog are consistent. | None found at repository-static depth. | Preserve the owner split and its deterministic validators. |
-| Root canonical-owner summary | `README.md#canonical-owners` lists the thin `AGENTS.md` gateway as a canonical owner and omits the Stage 00 policy SSoT. | Human navigation misclassifies a route as authority. | Point the canonical-owner list to `docs/00.agent-governance/README.md`; retain root shims as entrypoints. |
-| Root adapter-area summary | `README.md#top-level-areas` groups `.agents/`, `.claude/`, and `.codex/` as shared/provider runtime overlays and omits `.gemini/`. | The summary loses the local/Antigravity versus native-project split and omits a tracked current surface. | Describe `.agents/` as shared/local, `.claude/` and `.codex/` as native tracked adapters, and `.gemini/` as repo-static Gemini project-surface evidence. |
+| Root canonical-owner summary | `README.md#canonical-owners` links `docs/00.agent-governance/README.md` and no longer promotes the thin `AGENTS.md` gateway. | None at repository-static depth after WGIA-010. | Preserve Stage 00 as policy SSoT and root shims as entrypoints. |
+| Root adapter-area summary | `README.md#top-level-areas` distinguishes `.agents/` shared/local ownership, `.claude/` and `.codex/` tracked native adapters, and `.gemini/` repo-static project-surface evidence. | None at repository-static depth after WGIA-010; native provider consumption remains separately unobserved. | Preserve all four surface classes and the runtime-evidence boundary. |
 | Provider execution | Tracked adapters and repo-static validators exist; the evidence contract keeps native discovery and authenticated run unpromoted. | No authorized current provider-runtime evidence was collected by WGIA-002. | Retain `DEFER`; promote only through a separately authorized provider-runtime canary. |
 
 ### Finding Convention
@@ -116,37 +116,37 @@ claim fails closed.
 - **Uncertainty**: this verdict is limited to tracked content and deterministic local semantics; it does not cover provider consumption or live behavior.
 - **Blocker**: none at repository-static depth.
 
-#### WGA-GOV-002 — Root canonical-owner list misclassifies the Codex gateway
+#### WGA-GOV-002 — Root canonical-owner routing is corrected
 
 - **Request IDs**: `REQ-WGA-001`, `REQ-WGA-012`.
 - **Scope**: root human navigation to the active agent-governance authority.
 - **Expected state**: `README.md#canonical-owners` links the Stage 00 policy SSoT as authority and treats `AGENTS.md` only as a thin Codex/GPT entrypoint.
-- **Observed state**: the canonical-owner list names `AGENTS.md` but omits `docs/00.agent-governance/README.md`; the gateway and its provider note explicitly say policy and role semantics live in Stage 00 and the machine contract.
+- **Observed state**: WGIA-010 replaced the `AGENTS.md` canonical-owner entry with `docs/00.agent-governance/README.md`; the gateway remains a reachable thin entrypoint and policy/role semantics remain in Stage 00 and the machine contract.
 - **Evidence**: `README.md#canonical-owners`; `AGENTS.md#agentsmd`; `docs/00.agent-governance/README.md#overview`; `docs/00.agent-governance/providers/agents-md.md#gateway-integrity-rules`.
 - **Evidence depth**: `repository-static`.
-- **Verdict**: `Conflict`.
-- **Impact**: a human following the canonical-owner list can mistake a routing shim for the policy authority and miss the exhaustive Stage 00 governance index.
-- **Disposition**: `Correct` provisionally; WGIA-009 must admit the roadmap row before WGIA-010 changes the owner.
+- **Verdict**: `Aligned`.
+- **Impact**: human onboarding now resolves directly to the Stage 00 policy index without promoting the thin Codex/GPT gateway.
+- **Disposition**: `Corrected` by admitted roadmap row `WGA-RMP-GOV-001` in WGIA-010.
 - **Canonical owner**: `README.md#canonical-owners` for the stale summary; `docs/00.agent-governance/README.md#overview` for agent-policy authority.
-- **Verification**: the pre-edit contradiction probe returned `THIN_GATEWAY_AS_CANONICAL_OWNER`; target validation must require the Stage 00 link while keeping all three root gateways thin and reachable.
-- **Uncertainty**: none for the tracked text conflict; the exact wording of the later human-facing correction remains a content-review choice.
-- **Blocker**: WGIA-009 admission and independent review precede canonical remediation.
+- **Verification**: RED returned `ROOT_STAGE00_OWNER_MISSING ROOT_THIN_GATEWAY_PROMOTED`; GREEN reports `root_owner=stage00 thin_gateway=true` and focused governance/profile/link checks remain required.
+- **Uncertainty**: none for the tracked routing correction; provider-native consumption remains outside this finding.
+- **Blocker**: none at repository-static depth; fresh specification/content and quality reviews are Approved.
 
-#### WGA-GOV-003 — Root adapter-area summary omits and misclassifies current surfaces
+#### WGA-GOV-003 — Root adapter-area summary covers all current surfaces
 
 - **Request IDs**: `REQ-WGA-002`, `REQ-WGA-012`.
 - **Scope**: root overview of current tracked agent adapter roots.
 - **Expected state**: root navigation distinguishes `.agents/` shared/local Antigravity ownership from provider-native tracked roots and includes the current `.gemini/` project surface without claiming runtime use.
-- **Observed state**: `README.md#top-level-areas` groups `.agents/`, `.claude/`, and `.codex/` as shared assets and provider runtime overlays, omits `.gemini/`, and therefore disagrees with the four-surface machine inventory and the explicit Gemini boundary.
+- **Observed state**: WGIA-010 gives `.agents/`, `.claude/`, `.codex/`, and `.gemini/` separate entries matching the four-surface machine inventory and keeps each native-consumption claim behind a separate runtime-evidence boundary.
 - **Evidence**: `README.md#top-level-areas`; `GEMINI.md#geminimd`; `docs/00.agent-governance/README.md#current-adapter-surface-matrix`; `.agents/GEMINI.md#purpose`; `docs/00.agent-governance/providers/gemini.md#gemini-cli-native-surface`; `docs/00.agent-governance/contracts/harness-contract.json#currentInventory`.
 - **Evidence depth**: `repository-static`.
-- **Verdict**: `Conflict`.
-- **Impact**: the primary human overview can conceal a tracked current adapter surface and blur the evidence boundary between local/shared assets and provider-native project configuration.
-- **Disposition**: `Correct` provisionally in the same root-owner remediation unit as WGA-GOV-002.
+- **Verdict**: `Aligned`.
+- **Impact**: the primary human overview now exposes every tracked adapter surface without inferring native discovery or application.
+- **Disposition**: `Corrected` by admitted roadmap row `WGA-RMP-GOV-001` in WGIA-010.
 - **Canonical owner**: `README.md#top-level-areas` for the stale summary; the harness contract and Stage 00 adapter matrix for current classification.
-- **Verification**: the pre-edit contradiction probe returned `GEMINI_NATIVE_SURFACE_OMITTED`; target checks must see all four surface classes and retain the repo-static-only qualification for `.gemini/`.
+- **Verification**: RED returned `ROOT_SURFACE_MISSING:.gemini/`; GREEN reports `surfaces=4/4` and retains repository-static-only qualifications.
 - **Uncertainty**: native Gemini discovery, event delivery, authentication, and model resolution remain outside this tracked-summary correction.
-- **Blocker**: WGIA-009 admission and independent review precede canonical remediation.
+- **Blocker**: none at repository-static depth; fresh specification/content and quality reviews are Approved.
 
 #### WGA-GOV-004 — Provider discovery and authenticated consumption remain unverified
 
@@ -181,10 +181,11 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 ## Review and Freshness
 
-- Review status: `Approved` by independent specification and quality reviews.
-- Review disposition: four bounded findings and one reviewed provisional
-  roadmap input are accepted as dated audit evidence; WGIA-009 owns admission
-  and WGIA-010 owns any canonical-owner correction.
+- Review status: fresh WGIA-010 specification/content and quality reviews are
+  `Approved`. The original WGIA-002 audit reviews remain Approved.
+- Review disposition: `Approved` after WGIA-010 corrected WGA-GOV-002/003;
+  WGA-GOV-001 remains `Aligned` and provider-runtime WGA-GOV-004 remains
+  `DEFER`.
 - Evidence observed: 2026-08-09 at the exact observation commit.
 - Current-truth owners: the linked root, Stage 00, and machine-contract surfaces.
 - Refresh triggers: purpose, gateway classification, root canonical-owner or

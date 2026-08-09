@@ -45,8 +45,24 @@ LLM과 사람이 저장소의 문서 경계를 빠르게 찾도록 돕는다. �
 ### Reference Type
 
 - Type: durable-concept / faq
-- Source checked: 2026-05-10
-- Refresh trigger: canonical docs taxonomy, Agent governance routing, examples taxonomy, or version inventory path changes.
+- Source checked: 2026-08-09
+- Declared input review: all six inputs in `docs/90.references/data/reference-information-architecture.json#generatedAssets[id=llm-wiki-index].inputRoots`.
+- Refresh trigger: any declared input, canonical docs taxonomy, Agent governance routing, examples taxonomy, or version inventory path changes.
+
+### Declared Input Review
+
+The six RIA-declared inputs were reviewed together on 2026-08-09. This records
+repository-static link-map freshness only; it does not establish runtime
+discovery, retrieval quality, provider consumption, or live behavior.
+
+| Declared input | Last-change evidence reviewed | Link-map role | Result |
+| --- | --- | --- | --- |
+| `docs/90.references/llm-wiki/README.md` | `0cb1789c80811a6ec5833ae1cfc56b5c12cb327a` (2026-07-23) | Canonical link-map and review owner | Reviewed; this change refreshes its source/review metadata. |
+| `docs/00.agent-governance/README.md` | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` (2026-07-29) | Agent-governance hub | Reviewed; owner path remains current. |
+| `docs/00.agent-governance/harness-catalog.md` | `4fdea6a068aec6c65681bae32c44b67a5e95f09e` (2026-08-02) | Readable runtime/role catalog | Reviewed; owner path remains current. |
+| `docs/00.agent-governance/rules/document-stage-routing.md` | `38a2fe6b90bad694d0a9a021c7edce8d800e03ea` (2026-07-30) | Document stage-routing owner | Reviewed; owner path remains current. |
+| `docs/README.md` | `787b28fe1f2b1fff16d59936ed2a411e04d25db5` (2026-07-18) | Human documentation hub | Reviewed; owner path remains current. |
+| `scripts/README.md` | `4fdea6a068aec6c65681bae32c44b67a5e95f09e` (2026-08-02) | Script inventory | Reviewed; owner path remains current. |
 
 ### Authority Boundary
 
@@ -117,8 +133,8 @@ docs/90.references/llm-wiki/
 ### Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-05-10
-- Next review trigger: any change to `docs/` taxonomy, `examples/` taxonomy, Agent governance routing, script inventory, `wiki-curator`, generator output, or version inventory path.
+- Last reviewed: 2026-08-09
+- Next review trigger: any change to one of the six RIA-declared inputs, `docs/` taxonomy, `examples/` taxonomy, Agent governance routing, script inventory, `wiki-curator`, generator output, or version inventory path.
 
 ## Add and Find
 

@@ -127,7 +127,7 @@ hy-home.k8s/
 ### Canonical Owners
 
 - [docs/README.md](docs/README.md)
-- [AGENTS.md](AGENTS.md)
+- [docs/00.agent-governance/README.md](docs/00.agent-governance/README.md)
 - [docs/01.requirements/004-current-local-gitops-platform.md](docs/01.requirements/004-current-local-gitops-platform.md)
 - [docs/03.specs/008-current-local-gitops-platform/spec.md](docs/03.specs/008-current-local-gitops-platform/spec.md)
 - [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
@@ -145,7 +145,10 @@ hy-home.k8s/
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
 - `graphify-out/` - 공유된 graphify 탐색 산출물. `GRAPH_REPORT.md`, `graph.json`, `graph.html`만 추적한다.
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
-- `.agents/`, `.claude/`, `.codex/` - 공유 에이전트 자산과 provider별 런타임 오버레이
+- `.agents/` - 공유/local Antigravity 에이전트 자산. provider-native 실행 증거의 정본이 아니다.
+- `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
+- `.codex/` - 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
+- `.gemini/` - 추적되는 Gemini project surface의 repository-static 증거. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 
 ### Tech Stack
 
