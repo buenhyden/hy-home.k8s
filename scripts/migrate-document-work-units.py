@@ -145,6 +145,17 @@ class _ConfigHandle:
 
 
 @dataclass
+class _DirectoryAnchor:
+    parent_fd: int
+    descriptor: int
+    name: str
+    relative: PurePosixPath
+    identity: _FileIdentity
+    created: bool = False
+    active: bool = True
+
+
+@dataclass
 class _TransactionOperation:
     prepared: _PreparedOperation
     source_parent_fd: int
@@ -163,11 +174,13 @@ class _TransactionOperation:
 class _Transaction:
     root: Path
     root_fd: int
+    root_identity: _FileIdentity
     quarantine_fd: int
     quarantine_name: str
     quarantine_identity: _FileIdentity
     operations: list[_TransactionOperation] = field(default_factory=list)
-    created_directories: list[Path] = field(default_factory=list)
+    directory_anchors: list[_DirectoryAnchor] = field(default_factory=list)
+    created_directories: list[_DirectoryAnchor] = field(default_factory=list)
     recovery_required: bool = False
     replacement_detected: bool = False
     commit_started: bool = False
@@ -1096,21 +1109,6 @@ def _prepare_operations(
     return tuple(prepared)
 
 
-def _ensure_parent(path: Path, root: Path, created: list[Path]) -> None:
-    relative = path.relative_to(root)
-    current = root
-    for part in relative.parts:
-        current /= part
-        try:
-            metadata = current.lstat()
-        except FileNotFoundError:
-            current.mkdir()
-            created.append(current)
-            continue
-        if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
-            raise MigrationAbort("MIGRATION-TARGET-ANCESTOR")
-
-
 def _fd_identity(descriptor: int, path: Path) -> _FileIdentity:
     try:
         metadata = os.fstat(descriptor)
@@ -1154,29 +1152,218 @@ def _open_directory(path: Path) -> int:
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
 
 
+def _close_descriptor(descriptor: int) -> bool:
+    if descriptor < 0:
+        return True
+    try:
+        os.close(descriptor)
+    except OSError:
+        return False
+    return True
+
+
+def _cleanup_failed_transaction_init(
+    root: Path,
+    root_fd: int,
+    name: str,
+    quarantine_fd: int | None,
+) -> bool:
+    current_name = name
+    descriptor = quarantine_fd
+    clean = False
+    try:
+        if descriptor is None:
+            descriptor = os.open(
+                name,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=root_fd,
+            )
+        opened = os.fstat(descriptor)
+        linked = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
+        if (
+            not stat.S_ISDIR(opened.st_mode)
+            or opened.st_dev != linked.st_dev
+            or opened.st_ino != linked.st_ino
+            or os.listdir(descriptor)
+        ):
+            raise OSError("unsafe transaction initialization residue")
+        disposal = f".migration-disposal-{secrets.token_hex(8)}"
+        os.rename(name, disposal, src_dir_fd=root_fd, dst_dir_fd=root_fd)
+        current_name = disposal
+        moved = os.stat(disposal, dir_fd=root_fd, follow_symlinks=False)
+        if moved.st_dev != opened.st_dev or moved.st_ino != opened.st_ino:
+            raise OSError("transaction initialization identity changed")
+        os.rmdir(disposal, dir_fd=root_fd)
+        clean = True
+    except OSError:
+        recovery = f".migration-recovery-{secrets.token_hex(8)}"
+        try:
+            os.rename(
+                current_name,
+                recovery,
+                src_dir_fd=root_fd,
+                dst_dir_fd=root_fd,
+            )
+        except OSError:
+            pass
+    finally:
+        if descriptor is not None:
+            _close_descriptor(descriptor)
+        _close_descriptor(root_fd)
+    return clean
+
+
 def _start_transaction(root: Path) -> _Transaction:
     root_fd = _open_directory(root)
+    try:
+        root_identity = _fd_identity(root_fd, root)
+    except MigrationAbort:
+        _close_descriptor(root_fd)
+        raise
     name = f".migration-transaction-{secrets.token_hex(8)}"
     quarantine_fd: int | None = None
+    created = False
     try:
         os.mkdir(name, mode=0o700, dir_fd=root_fd)
+        created = True
         quarantine_fd = os.open(
             name,
             os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
             dir_fd=root_fd,
         )
         identity = _fd_identity(quarantine_fd, root / name)
-        return _Transaction(root, root_fd, quarantine_fd, name, identity)
-    except OSError as exc:
-        if quarantine_fd is not None:
-            os.close(quarantine_fd)
-        os.close(root_fd)
+        return _Transaction(
+            root,
+            root_fd,
+            root_identity,
+            quarantine_fd,
+            name,
+            identity,
+        )
+    except (OSError, MigrationAbort) as exc:
+        if created:
+            cleaned = _cleanup_failed_transaction_init(
+                root, root_fd, name, quarantine_fd
+            )
+            if not cleaned:
+                exc.add_note("MIGRATION-ROLLBACK:RECOVERY-RESIDUE")
+        else:
+            if quarantine_fd is not None:
+                _close_descriptor(quarantine_fd)
+            _close_descriptor(root_fd)
+        if isinstance(exc, MigrationAbort):
+            raise
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
-    except MigrationAbort:
-        if quarantine_fd is not None:
-            os.close(quarantine_fd)
-        os.close(root_fd)
-        raise
+
+
+def _verify_directory_anchors(transaction: _Transaction) -> None:
+    try:
+        root_open = os.fstat(transaction.root_fd)
+        root_linked = transaction.root.lstat()
+    except OSError as exc:
+        raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED") from exc
+    if (
+        root_open.st_dev != transaction.root_identity.device
+        or root_open.st_ino != transaction.root_identity.inode
+        or root_linked.st_dev != transaction.root_identity.device
+        or root_linked.st_ino != transaction.root_identity.inode
+        or not stat.S_ISDIR(root_open.st_mode)
+    ):
+        raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED")
+    for anchor in transaction.directory_anchors:
+        if not anchor.active:
+            continue
+        try:
+            opened = os.fstat(anchor.descriptor)
+            linked = os.stat(
+                anchor.name,
+                dir_fd=anchor.parent_fd,
+                follow_symlinks=False,
+            )
+        except OSError as exc:
+            raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED") from exc
+        if (
+            opened.st_dev != anchor.identity.device
+            or opened.st_ino != anchor.identity.inode
+            or linked.st_dev != anchor.identity.device
+            or linked.st_ino != anchor.identity.inode
+            or not stat.S_ISDIR(opened.st_mode)
+            or not stat.S_ISDIR(linked.st_mode)
+        ):
+            raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED")
+
+
+def _open_relative_directory(
+    transaction: _Transaction,
+    relative: PurePosixPath,
+    *,
+    create: bool,
+) -> int:
+    if relative.is_absolute() or not relative.parts:
+        raise MigrationAbort("MIGRATION-DIRECTORY-PATH")
+    parent_fd = transaction.root_fd
+    current = PurePosixPath()
+    for component in relative.parts:
+        if component in {"", ".", ".."}:
+            raise MigrationAbort("MIGRATION-DIRECTORY-PATH")
+        current /= component
+        _verify_directory_anchors(transaction)
+        created = False
+        created_identity: _FileIdentity | None = None
+        try:
+            descriptor = os.open(
+                component,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=parent_fd,
+            )
+        except FileNotFoundError:
+            if not create:
+                raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED") from None
+            try:
+                _verify_directory_anchors(transaction)
+                os.mkdir(component, mode=0o755, dir_fd=parent_fd)
+                created_identity = _stat_at(
+                    parent_fd, component, transaction.root / current
+                )
+                descriptor = os.open(
+                    component,
+                    os.O_RDONLY
+                    | os.O_DIRECTORY
+                    | os.O_NOFOLLOW
+                    | os.O_CLOEXEC,
+                    dir_fd=parent_fd,
+                )
+                created = True
+            except OSError as exc:
+                raise MigrationAbort("MIGRATION-TARGET-ANCESTOR") from exc
+        except OSError as exc:
+            raise MigrationAbort("MIGRATION-TARGET-ANCESTOR") from exc
+        identity = _fd_identity(descriptor, transaction.root / current)
+        linked = _stat_at(parent_fd, component, transaction.root / current)
+        if (
+            not stat.S_ISDIR(identity.mode)
+            or not _same_object(identity, linked)
+            or (
+                created_identity is not None
+                and not _same_object(identity, created_identity)
+            )
+        ):
+            _close_descriptor(descriptor)
+            raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED")
+        anchor = _DirectoryAnchor(
+            parent_fd,
+            descriptor,
+            component,
+            current,
+            identity,
+            created,
+        )
+        transaction.directory_anchors.append(anchor)
+        if created:
+            transaction.created_directories.append(anchor)
+        parent_fd = descriptor
+    _verify_directory_anchors(transaction)
+    return parent_fd
 
 
 def _private_unlink(
@@ -1184,18 +1371,39 @@ def _private_unlink(
     name: str,
     expected: _FileIdentity,
 ) -> bool:
+    disposal = f"private-disposal-{secrets.token_hex(8)}"
     try:
+        os.rename(
+            name,
+            disposal,
+            src_dir_fd=transaction.quarantine_fd,
+            dst_dir_fd=transaction.quarantine_fd,
+        )
         moved = _stat_at(
             transaction.quarantine_fd,
-            name,
-            transaction.root / transaction.quarantine_name / name,
+            disposal,
+            transaction.root / transaction.quarantine_name / disposal,
         )
         if not _same_object(moved, expected):
+            transaction.recovery_required = True
+            transaction.replacement_detected = True
+            try:
+                os.link(
+                    disposal,
+                    name,
+                    src_dir_fd=transaction.quarantine_fd,
+                    dst_dir_fd=transaction.quarantine_fd,
+                    follow_symlinks=False,
+                )
+            except OSError:
+                pass
             return False
-        os.unlink(name, dir_fd=transaction.quarantine_fd)
+        os.unlink(disposal, dir_fd=transaction.quarantine_fd)
     except MigrationAbort:
+        transaction.recovery_required = True
         return False
     except OSError:
+        transaction.recovery_required = True
         return False
     return True
 
@@ -1207,8 +1415,6 @@ def _close_transaction_fds(transaction: _Transaction) -> bool:
             "target_fd",
             "stage_fd",
             "source_fd",
-            "target_parent_fd",
-            "source_parent_fd",
         ):
             descriptor = getattr(operation, descriptor_name)
             if descriptor is None or descriptor < 0:
@@ -1218,37 +1424,106 @@ def _close_transaction_fds(transaction: _Transaction) -> bool:
             except OSError:
                 clean = False
             setattr(operation, descriptor_name, -1)
+        operation.target_parent_fd = -1
+        operation.source_parent_fd = -1
+    for anchor in reversed(transaction.directory_anchors):
+        if anchor.descriptor < 0:
+            continue
+        if not _close_descriptor(anchor.descriptor):
+            clean = False
+        anchor.descriptor = -1
     return clean
 
 
 def _preserve_recovery(transaction: _Transaction) -> None:
-    recovery_name = f".migration-recovery-{secrets.token_hex(8)}"
+    recovery_name = transaction.quarantine_name
+    failure: OSError | None = None
     try:
-        os.rename(
-            transaction.quarantine_name,
-            recovery_name,
-            src_dir_fd=transaction.root_fd,
-            dst_dir_fd=transaction.root_fd,
-        )
-        transaction.quarantine_name = recovery_name
+        if not recovery_name.startswith(".migration-recovery-"):
+            recovery_name = f".migration-recovery-{secrets.token_hex(8)}"
+            os.rename(
+                transaction.quarantine_name,
+                recovery_name,
+                src_dir_fd=transaction.root_fd,
+                dst_dir_fd=transaction.root_fd,
+            )
+            transaction.quarantine_name = recovery_name
+    except OSError as exc:
+        failure = exc
+    finally:
         if transaction.quarantine_fd >= 0:
-            os.close(transaction.quarantine_fd)
+            if not _close_descriptor(transaction.quarantine_fd) and failure is None:
+                failure = OSError("quarantine descriptor close failed")
             transaction.quarantine_fd = -1
         if transaction.root_fd >= 0:
-            os.close(transaction.root_fd)
+            if not _close_descriptor(transaction.root_fd) and failure is None:
+                failure = OSError("root descriptor close failed")
             transaction.root_fd = -1
-    except OSError as exc:
-        raise MigrationAbort("MIGRATION-ROLLBACK:RECOVERY-RESIDUE") from exc
+    if failure is not None:
+        raise MigrationAbort("MIGRATION-ROLLBACK:RECOVERY-RESIDUE") from failure
+
+
+def _deactivate_directory_identity(
+    transaction: _Transaction,
+    identity: _FileIdentity,
+) -> None:
+    for anchor in transaction.directory_anchors:
+        if _same_object(anchor.identity, identity):
+            anchor.active = False
+
+
+def _rollback_created_directories(transaction: _Transaction) -> bool:
+    clean = True
+    for anchor in reversed(transaction.created_directories):
+        if not anchor.active:
+            continue
+        disposal = f"created-directory-{secrets.token_hex(8)}"
+        moved_fd: int | None = None
+        try:
+            _verify_directory_anchors(transaction)
+            if os.listdir(anchor.descriptor):
+                continue
+            os.rename(
+                anchor.name,
+                disposal,
+                src_dir_fd=anchor.parent_fd,
+                dst_dir_fd=transaction.quarantine_fd,
+            )
+            _deactivate_directory_identity(transaction, anchor.identity)
+            moved_fd = os.open(
+                disposal,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=transaction.quarantine_fd,
+            )
+            moved = _fd_identity(
+                moved_fd,
+                transaction.root / transaction.quarantine_name / disposal,
+            )
+            if not _same_object(moved, anchor.identity) or os.listdir(moved_fd):
+                transaction.recovery_required = True
+                clean = False
+                continue
+            os.rmdir(disposal, dir_fd=transaction.quarantine_fd)
+        except (OSError, MigrationAbort):
+            transaction.recovery_required = True
+            clean = False
+        finally:
+            if moved_fd is not None:
+                _close_descriptor(moved_fd)
+    return clean
 
 
 def _dispose_transaction(transaction: _Transaction) -> bool:
     if not _close_transaction_fds(transaction):
+        transaction.recovery_required = True
+        try:
+            _preserve_recovery(transaction)
+        except MigrationAbort:
+            pass
         return False
     try:
         if os.listdir(transaction.quarantine_fd):
-            return False
-        os.close(transaction.quarantine_fd)
-        transaction.quarantine_fd = -1
+            raise OSError("transaction quarantine is not empty")
         disposal = f".migration-disposal-{secrets.token_hex(8)}"
         os.rename(
             transaction.quarantine_name,
@@ -1256,19 +1531,29 @@ def _dispose_transaction(transaction: _Transaction) -> bool:
             src_dir_fd=transaction.root_fd,
             dst_dir_fd=transaction.root_fd,
         )
-        moved_fd = os.open(
-            disposal,
-            os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
-            dir_fd=transaction.root_fd,
-        )
-        moved = _fd_identity(moved_fd, transaction.root / disposal)
-        os.close(moved_fd)
-        if not _same_object(moved, transaction.quarantine_identity):
-            return False
+        transaction.quarantine_name = disposal
+        moved = _stat_at(transaction.root_fd, disposal, transaction.root / disposal)
+        opened = _fd_identity(transaction.quarantine_fd, transaction.root / disposal)
+        if (
+            not _same_object(moved, transaction.quarantine_identity)
+            or not _same_object(opened, transaction.quarantine_identity)
+        ):
+            raise OSError("transaction disposal identity changed")
         os.rmdir(disposal, dir_fd=transaction.root_fd)
-        os.close(transaction.root_fd)
+        descriptors_closed = _close_descriptor(transaction.quarantine_fd)
+        transaction.quarantine_fd = -1
+        descriptors_closed = (
+            _close_descriptor(transaction.root_fd) and descriptors_closed
+        )
         transaction.root_fd = -1
+        if not descriptors_closed:
+            return False
     except (OSError, MigrationAbort):
+        transaction.recovery_required = True
+        try:
+            _preserve_recovery(transaction)
+        except MigrationAbort:
+            pass
         return False
     return True
 
@@ -1318,7 +1603,9 @@ def _create_transaction_operation(
     index: int,
 ) -> _TransactionOperation:
     source_path = transaction.root / prepared.source
-    source_parent_fd = _open_directory(source_path.parent)
+    source_parent_fd = _open_relative_directory(
+        transaction, prepared.source.parent, create=False
+    )
     source_fd: int | None = None
     target_parent_fd: int | None = None
     anchor: _FileIdentity | None = None
@@ -1349,11 +1636,15 @@ def _create_transaction_operation(
         )
         if not _same_object(anchor, source_identity):
             raise MigrationAbort("MIGRATION-CHANGED-SOURCE")
-        target_path = transaction.root / prepared.target
-        _ensure_parent(target_path.parent, transaction.root, transaction.created_directories)
-        target_parent_fd = _open_directory(target_path.parent)
+        target_parent_fd = _open_relative_directory(
+            transaction, prepared.target.parent, create=True
+        )
         try:
-            os.stat(target_path.name, dir_fd=target_parent_fd, follow_symlinks=False)
+            os.stat(
+                prepared.target.name,
+                dir_fd=target_parent_fd,
+                follow_symlinks=False,
+            )
         except FileNotFoundError:
             pass
         else:
@@ -1365,7 +1656,7 @@ def _create_transaction_operation(
     except (OSError, MigrationAbort) as exc:
         if anchor is not None:
             _private_unlink(transaction, source_anchor, anchor)
-        for descriptor in (target_parent_fd, source_fd, source_parent_fd):
+        for descriptor in (source_fd,):
             if descriptor is not None:
                 try:
                     os.close(descriptor)
@@ -1414,14 +1705,17 @@ def _verify_target(operation: _TransactionOperation) -> None:
 
 
 def _verify_all_targets(transaction: _Transaction) -> None:
+    _verify_directory_anchors(transaction)
     for operation in transaction.operations:
         if operation.target_identity is not None:
             _verify_target(operation)
+    _verify_directory_anchors(transaction)
 
 
 def _install_targets(transaction: _Transaction) -> None:
     for operation in transaction.operations:
         try:
+            _verify_directory_anchors(transaction)
             os.link(
                 operation.stage_name,
                 operation.prepared.target.name,
@@ -1434,6 +1728,7 @@ def _install_targets(transaction: _Transaction) -> None:
                 os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
                 dir_fd=operation.target_parent_fd,
             )
+            _verify_directory_anchors(transaction)
         except OSError as exc:
             raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
         stage_identity = _fd_identity(operation.stage_fd, Path(operation.stage_name))
@@ -1453,6 +1748,7 @@ def _restore_quarantined_entry(
     expected: _FileIdentity,
 ) -> bool:
     try:
+        _verify_directory_anchors(transaction)
         os.link(
             quarantine_name,
             operation.prepared.source.name,
@@ -1465,6 +1761,7 @@ def _restore_quarantined_entry(
             operation.prepared.source.name,
             transaction.root / operation.prepared.source,
         )
+        _verify_directory_anchors(transaction)
     except (OSError, MigrationAbort):
         return False
     if not _same_object(restored, expected):
@@ -1493,6 +1790,7 @@ def _quarantine_source(
         ):
             raise MigrationAbort("MIGRATION-CHANGED-SOURCE")
         removed_name = f"removed-{index}"
+        _verify_directory_anchors(transaction)
         os.rename(
             source_name,
             removed_name,
@@ -1504,6 +1802,7 @@ def _quarantine_source(
             removed_name,
             transaction.root / transaction.quarantine_name / removed_name,
         )
+        _verify_directory_anchors(transaction)
     except OSError as exc:
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
     if not _same_object(moved, operation.source_identity):
@@ -1522,6 +1821,7 @@ def _rollback_target(
         return True
     quarantine_name = f"rollback-target-{index}"
     try:
+        _verify_directory_anchors(transaction)
         os.rename(
             operation.prepared.target.name,
             quarantine_name,
@@ -1530,6 +1830,9 @@ def _rollback_target(
         )
     except FileNotFoundError:
         return True
+    except MigrationAbort:
+        transaction.recovery_required = True
+        return False
     except OSError:
         return False
     try:
@@ -1556,6 +1859,7 @@ def _rollback_target(
             operation.prepared.target.name,
             transaction.root / operation.prepared.target,
         )
+        _verify_directory_anchors(transaction)
     except (OSError, MigrationAbort):
         transaction.recovery_required = True
         return False
@@ -1590,6 +1894,7 @@ def _rollback_transaction(transaction: _Transaction) -> bool:
         clean = _private_unlink(
             transaction, operation.stage_name, stage_identity
         ) and clean
+    clean = _rollback_created_directories(transaction) and clean
     if not clean:
         transaction.recovery_required = True
     if transaction.recovery_required:
@@ -1765,9 +2070,18 @@ def _apply_phase_locked(
         if transaction.commit_started:
             if transaction.quarantine_fd >= 0:
                 _close_transaction_fds(transaction)
-                _preserve_recovery(transaction)
+                try:
+                    _preserve_recovery(transaction)
+                except MigrationAbort as recovery_error:
+                    exc.add_note(str(recovery_error))
             raise MigrationAbort("MIGRATION-ROLLBACK:COMMIT-CLEANUP") from exc
-        rollback_ok = _rollback_transaction(transaction)
+        try:
+            rollback_ok = _rollback_transaction(transaction)
+        except MigrationAbort as rollback_error:
+            exc.add_note(str(rollback_error))
+            if isinstance(exc, MigrationAbort):
+                raise exc
+            raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
         if not rollback_ok or transaction.replacement_detected:
             raise MigrationAbort("MIGRATION-ROLLBACK") from exc
         if isinstance(exc, MigrationAbort):

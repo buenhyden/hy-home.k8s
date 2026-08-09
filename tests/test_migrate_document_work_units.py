@@ -495,6 +495,7 @@ class MigrationTests(unittest.TestCase):
             ):
                 self.tool.apply_phase(root, pairs, "archive")
             self.assertEqual(tuple(root.rglob(".migration-*")), ())
+            self.assertFalse((root / "docs/98.archive").exists())
             for source, target in pairs:
                 self.assertTrue((root / source).is_file())
                 self.assertFalse((root / target).exists())
@@ -548,6 +549,182 @@ class MigrationTests(unittest.TestCase):
             for source, target in pairs:
                 self.assertEqual((root / source).read_bytes(), original[source])
                 self.assertFalse((root / target).exists())
+            self.assertFalse((root / "docs/98.archive").exists())
+
+    def test_source_and_target_ancestor_swaps_abort_without_outside_mutation(self):
+        for swapped_route in ("source", "target"):
+            with (
+                self.subTest(route=swapped_route),
+                tempfile.TemporaryDirectory() as tmp,
+                tempfile.TemporaryDirectory() as external_tmp,
+            ):
+                root = Path(tmp)
+                commit, entries = self.phase_fixture(root)
+                self.write_manifest(root, commit, entries)
+                pairs = self.tool.plan_phase(root, entries, "archive")
+                original = {
+                    source: (root / source).read_bytes() for source, _ in pairs
+                }
+                real_install = self.tool._install_targets
+                outside = Path(external_tmp)
+
+                def swap_ancestor_then_install(transaction):
+                    if swapped_route == "source":
+                        ancestor = root / "docs/04.execution/plans"
+                    else:
+                        ancestor = root / "docs/98.archive/04.execution/plans"
+                    moved = outside / f"{swapped_route}-ancestor"
+                    ancestor.rename(moved)
+                    if swapped_route == "target":
+                        ancestor.symlink_to(outside, target_is_directory=True)
+                    else:
+                        ancestor.mkdir()
+                    return real_install(transaction)
+
+                with (
+                    mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                    mock.patch.object(self.tool, "validate_counts"),
+                    mock.patch.object(self.tool, "_classify_secret_payload"),
+                    mock.patch.object(
+                        self.tool,
+                        "_install_targets",
+                        side_effect=swap_ancestor_then_install,
+                    ),
+                    self.assertRaisesRegex(
+                        self.tool.MigrationAbort,
+                        "MIGRATION-(?:DIRECTORY-CHANGED|ROLLBACK)",
+                    ),
+                ):
+                    self.tool.apply_phase(root, pairs, "archive")
+                for source, payload in original.items():
+                    if swapped_route == "source" and "plans/" in source.as_posix():
+                        moved_source = outside / "source-ancestor" / Path(source).name
+                        self.assertEqual(moved_source.read_bytes(), payload)
+                    else:
+                        self.assertEqual((root / source).read_bytes(), payload)
+                if swapped_route == "target":
+                    self.assertEqual(
+                        tuple((outside / "target-ancestor").glob("*.md")), ()
+                    )
+
+    def test_private_unlink_preserves_replacement_race(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            transaction = self.tool._start_transaction(root)
+            victim = root / transaction.quarantine_name / "victim"
+            victim.write_bytes(b"expected")
+            expected = self.tool._identity(victim)
+            real_rename = self.tool.os.rename
+            injected = False
+
+            def replace_before_private_disposal(source, target, **kwargs):
+                nonlocal injected
+                if not injected and source == "victim":
+                    injected = True
+                    real_rename(
+                        source,
+                        "expected-preserved",
+                        src_dir_fd=transaction.quarantine_fd,
+                        dst_dir_fd=transaction.quarantine_fd,
+                    )
+                    descriptor = self.tool.os.open(
+                        source,
+                        self.tool.os.O_WRONLY
+                        | self.tool.os.O_CREAT
+                        | self.tool.os.O_EXCL,
+                        0o600,
+                        dir_fd=transaction.quarantine_fd,
+                    )
+                    self.tool.os.write(descriptor, b"replacement")
+                    self.tool.os.close(descriptor)
+                return real_rename(source, target, **kwargs)
+
+            with mock.patch.object(
+                self.tool.os, "rename", side_effect=replace_before_private_disposal
+            ):
+                self.assertFalse(
+                    self.tool._private_unlink(transaction, "victim", expected)
+                )
+            self.assertTrue(injected)
+            payloads = {
+                path.read_bytes()
+                for path in (root / transaction.quarantine_name).iterdir()
+                if path.is_file()
+            }
+            self.assertEqual(payloads, {b"expected", b"replacement"})
+            self.tool._close_transaction_fds(transaction)
+            self.tool.os.close(transaction.quarantine_fd)
+            self.tool.os.close(transaction.root_fd)
+
+    def test_transaction_init_failure_has_no_raw_residue(self):
+        for failure in ("open", "identity"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                if failure == "open":
+                    real_open = self.tool.os.open
+                    injected = False
+
+                    def fail_first_transaction_open(path, flags, *args, **kwargs):
+                        nonlocal injected
+                        if not injected and str(path).startswith(
+                            ".migration-transaction-"
+                        ):
+                            injected = True
+                            raise OSError("transaction open")
+                        return real_open(path, flags, *args, **kwargs)
+
+                    patcher = mock.patch.object(
+                        self.tool.os,
+                        "open",
+                        side_effect=fail_first_transaction_open,
+                    )
+                else:
+                    real_identity = self.tool._fd_identity
+                    injected = False
+
+                    def fail_first_transaction_identity(descriptor, path):
+                        nonlocal injected
+                        if not injected and path.name.startswith(
+                            ".migration-transaction-"
+                        ):
+                            injected = True
+                            raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                        return real_identity(descriptor, path)
+
+                    patcher = mock.patch.object(
+                        self.tool,
+                        "_fd_identity",
+                        side_effect=fail_first_transaction_identity,
+                    )
+                with patcher, self.assertRaises(self.tool.MigrationAbort):
+                    self.tool._start_transaction(root)
+                self.assertTrue(injected)
+                self.assertEqual(tuple(root.glob(".migration-transaction-*")), ())
+                self.assertEqual(tuple(root.glob(".migration-disposal-*")), ())
+
+    def test_dispose_failure_uses_recovery_name_and_closes_descriptors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            transaction = self.tool._start_transaction(root)
+            root_fd = transaction.root_fd
+            quarantine_fd = transaction.quarantine_fd
+            real_rmdir = self.tool.os.rmdir
+
+            def fail_disposal_rmdir(path, **kwargs):
+                if str(path).startswith(".migration-disposal-"):
+                    raise OSError("injected disposal failure")
+                return real_rmdir(path, **kwargs)
+
+            with mock.patch.object(
+                self.tool.os, "rmdir", side_effect=fail_disposal_rmdir
+            ):
+                self.assertFalse(self.tool._dispose_transaction(transaction))
+            self.assertEqual(tuple(root.glob(".migration-transaction-*")), ())
+            self.assertEqual(tuple(root.glob(".migration-disposal-*")), ())
+            self.assertEqual(len(tuple(root.glob(".migration-recovery-*"))), 1)
+            for descriptor in (root_fd, quarantine_fd):
+                with self.assertRaises(OSError):
+                    self.tool.os.fstat(descriptor)
 
     def test_move_apply_uses_pinned_blob_instead_of_worktree_read_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:

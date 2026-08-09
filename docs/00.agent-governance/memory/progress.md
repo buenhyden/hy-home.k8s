@@ -206,6 +206,54 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
 - Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
   with exit 0 and every applicable hook passing. Post-run state remained exactly
   three staged files with no unstaged changes.
+- Fix Round 6 RED produced eight failures across six selected methods: two
+  failure paths retained empty created target directories; source-directory
+  rename and target-directory symlink swaps were not detected; private cleanup
+  could unlink a replacement; transaction open/identity failures left raw
+  transaction directories; and disposal failure left a raw disposal name.
+- Fix Round 6 GREEN walks every source and target parent from the captured root
+  descriptor with `openat`/`mkdirat` semantics and no-follow directory opens.
+  Every component retains its parent descriptor, child descriptor, and
+  device/inode identity until transaction completion. The complete chain is
+  revalidated before each public install, source quarantine, rollback restore,
+  created-directory cleanup, and final commit boundary, so a renamed source
+  ancestor or symlink-substituted target ancestor aborts without writing to the
+  repository-external replacement.
+- Private cleanup now atomically renames the candidate to a random disposal
+  name inside the transaction quarantine before comparing identity. A mismatch
+  is never deleted: no-clobber hard-link restoration is attempted and all
+  objects remain recoverable with a bounded rollback diagnostic. Created target
+  directories retain anchored parent/child identity and are cleaned deepest
+  first only when still exact and empty; nonempty or replaced directories are
+  not removed. Partial preparation and late installation failures now leave no
+  empty created-target hierarchy.
+- Transaction initialization safely cleans an exact empty directory after
+  post-`mkdirat` open or identity failure; uncertain state is recovery-named.
+  Disposal keeps the quarantine descriptor open across rename and identity
+  proof, and any pre-removal failure is recovery-named while all retained
+  descriptors are closed. Cleanup failures remain notes on the primary body
+  error rather than replacing it.
+- Mode `0700` on the private quarantine is defense in depth, not a standalone
+  same-EUID concurrency claim. Same-tool concurrency remains serialized by the
+  repository lock; arbitrary same-EUID namespace changes are handled by held
+  descriptors, repeated identity checks, quarantine moves, no-clobber
+  restoration, preservation, and fail-closed diagnostics within portable POSIX
+  limits.
+- Fix Round 6 focused GREEN passed 75/75 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and pinned-builder equality remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; and strict Markdown remained zero violations. Normal paths
+  left no lock, transaction, disposal, or recovery residue. No production apply
+  ran, and full pre-commit remains assigned to the controller.
+- The exact three-file staged Fix Round 6 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every applicable hook passing. Post-run state remained exactly
+  three staged files with no unstaged changes.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 
