@@ -97,6 +97,19 @@ claims.
 | REQ-WERPC-032 | Memory management | [Memory-management baseline](agent-memory-tiers-and-management.md#memory-management-baseline) | `docs/00.agent-governance/memory/README.md` | Official OpenAI, Anthropic, and MCP primary sources plus local memory contract, checked 2026-08-08 | Partial — lifecycle/redaction/conflict rules verified; provider retention, deletion, compaction, and connected-resource behavior remain DEFER |
 | REQ-WERPC-033 | Verification/Validation | [Verification and Validation matrix](ci-cd-github-actions-and-qa.md#verification-and-validation-question-matrix) | `docs/00.agent-governance/rules/quality-standards.md` | NASA product verification, product validation, requirements validation, and traceability guidance plus local quality-lane evidence (`SRC-WERPC-058`–`SRC-WERPC-059`), checked 2026-08-10 | Partial — external questions and static workspace mapping verified; stakeholder, intended-use, independent, hosted, remote, and live evidence remain DEFER |
 
+### 2026-08-10 gap-only refresh reconciliation
+
+The completed gap-only research delta retains exactly 13 pack files and 33
+unique request owners. The source and claim registers each contain 65 unique
+IDs: frozen rows through `SRC-WERPC-052` and `CLM-WERPC-006-08`, document and
+Verification/Validation additions `SRC-WERPC-053`–`059` and
+`CLM-WERPC-007-01`–`08`, and Kubernetes/Security additions
+`SRC-WERPC-060`–`065` and `CLM-WERPC-008-01`–`06`. The five mutable research
+owners are this README, the SDLC report, the CI/CD and QA report, the
+Kubernetes/Security report, and the source/claim ledger. Static validation does
+not promote any hosted, provider-runtime, remote, credential-bearing, secret,
+artifact, or live evidence from `DEFER`.
+
 ## Refresh and Succession
 
 WERPC-002 through WERPC-006 add dated source-backed findings to their assigned

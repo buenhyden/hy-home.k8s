@@ -1040,6 +1040,23 @@ duplicate-rejection boundary. Independent checker-quality review approved the
 exact state/membership contract and 23 fixture-based negative cases with no
 remaining Critical or Important finding.
 
+### WERG-004 gap-only integration result
+
+The 2026-08-10 reconciliation parses exactly 13 pack files, 33 request rows,
+65 unique source IDs, and 65 unique claim IDs with zero duplicate or malformed
+record diagnostics. Integration against the WERG-001 admission commit
+`8471c88ecf0a365b23cf29a1e94ff92ebaf394d1` confirms that every frozen source
+and claim row is unchanged, all new rows use the truthful 2026-08-10 date, all
+relative document anchors resolve, and every changed pack path belongs to the
+exact five-owner allowlist. The README request matrix and the three topical
+owners route to this surviving ledger without a second research owner.
+
+The task-owned residue review found only `/tmp/werg-gap-refresh-check.py` and
+`/tmp/werg-paths.nul`; `/tmp/werg-ledger-before.md` was absent. These exact
+paths are retained only through WERG-005 targeted validation and canonical
+lanes. No tracked download, extract, alternate pack, or untracked research
+artifact exists, and no unrelated workspace data is cleanup-authorized.
+
 ## Sources
 
 The source register above is the interface for later research. Its three

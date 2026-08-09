@@ -70,6 +70,13 @@ credential mounting from token lifetime and effective RBAC. No manifest,
 policy, runtime, provider, remote, cluster, artifact, or secret value changed
 or was observed.
 
+WERG-004 reconciles the reviewed result without new research. The parsed final
+shape is 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs; all
+new rows are dated 2026-08-10 and all frozen source/claim rows remain stable.
+The exact five-owner integration and relative anchors pass. Residue review
+finds only the task-owned checker and current NUL lane input; the optional
+ledger scratch file is absent and no unrelated path was removed.
+
 WERG-003 researched and integrated only the three admitted, non-duplicate
 Kubernetes/Security deltas. Official Kubernetes, kube-state-metrics v2.14.0,
 Argo CD, Helm, Sigstore, SLSA, and GitHub sources were checked on 2026-08-10;
@@ -120,6 +127,9 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - WERG-003 uses six source rows `SRC-WERPC-060`–`065` and six claim rows `CLM-WERPC-008-01`–`06`, all checked 2026-08-10 with exact selectors, uncertainty, and refresh triggers. The task-local Kubernetes and integration checks pass.
 - Final WERG-003 content and security reviews are Approved with zero remaining Critical or Important findings. The single security wording correction removes an unsupported implication about token scope while preserving the automatic-mount and effective-permission gap.
 - The exact six-path WERG-003 index contains the WERG Plan, Task, durable progress, pack README, Kubernetes/Security report, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
+- WERG-004 integration parses exactly 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs with zero record errors. Old-row stability, 2026-08-10 date, exact five-owner path, link, and residue checks pass; independent integration review and commit gates remain pending.
+- Independent WERG-004 integration review is Approved with zero Critical or Important findings. It confirms the unchanged Snapshot Contract and Report Index, exact counts and five-owner scope, frozen-row/date/link closure, and truthful task-owned residue statement.
+- The exact five-path WERG-004 index contains the WERG Plan, Task, durable progress, pack README, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
 - WERG-003's exact planned `kubernetes` command returned `PASS kubernetes` on the pre-edit baseline because it checks admission markers and the existing NetworkPolicy boundary rather than absence of new research rows. The companion content probe for `SRC-WERPC-060`, `CLM-WERPC-008-01`, and the dated subsection returned exit 1 before integration.
 - WERG-003 adds only `SRC-WERPC-060`–`065`, `CLM-WERPC-008-01`–`06`, a dated Kubernetes/Security subsection, and refreshed `REQ-WERPC-008`/`REQ-WERPC-025` source/status cells, all with the truthful 2026-08-10 check date and explicit selector, uncertainty, and refresh boundaries.
 - WERG-003 inspected only tracked object/field selectors for kube-state-metrics, Adminer, root/ApplicationSet Git revisions, Helm chart identities, bootstrap pinning, and image identities. Effective RBAC, metric consumers, image compatibility, admission, reconciliation, artifacts, trust, hosted, registry, remote, and live evidence remains `DEFER`.

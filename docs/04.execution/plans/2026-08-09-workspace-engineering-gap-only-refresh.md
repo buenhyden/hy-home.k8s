@@ -647,7 +647,7 @@ in the next non-empty Task evidence commit.
 - Produces: one internally consistent five-owner research delta with no broken
   links, duplicate owner, stale date implication, or one-off residue.
 
-- [ ] **Step 1: Write the integration RED probe**
+- [x] **Step 1: Write the integration RED probe**
 
 Run the integration mode against the exact pre-research commit recorded by
 WERG-001:
@@ -670,13 +670,22 @@ ledger, and three content owners and fails on:
 - a broken relative anchor; or
 - a research-pack path outside the exact five-owner allowlist.
 
-- [ ] **Step 2: Reconcile README and ledger projections**
+2026-08-10 result: the integration probe was already GREEN after the reviewed
+WERG-002 and WERG-003 fixes; no false RED was fabricated. Earlier REDs for date
+drift, promoted request ownership, nested Markdown links, missing uncertainty
+labels, and one external fragment are preserved in the Task evidence.
+
+- [x] **Step 2: Reconcile README and ledger projections**
 
 Use `apply_patch` to make the request matrix, source rows, claim rows, report
 links, and dated refresh boundary agree. Keep the pack's original Snapshot
 Contract and existing report index intact.
 
-- [ ] **Step 3: Inventory and bound one-off residue**
+Result: the README and ledger now state the exact 13-file, 33-request,
+65-source, 65-claim closure and five-owner boundary without changing the
+Snapshot Contract or Report Index.
+
+- [x] **Step 3: Inventory and bound one-off residue**
 
 Review `git status --short`, tracked additions, ignored task scratch, `/tmp`
 artifacts created by the task, and any downloaded source files. Remove only
@@ -699,19 +708,23 @@ directory cleanup is permitted. `/tmp/werg-gap-refresh-check.py`,
 `/tmp/werg-paths.nul`, and `/tmp/werg-ledger-before.md` remain the only allowed
 task-owned temporary paths until WERG-005 Step 4.
 
-- [ ] **Step 4: Run GREEN integration and document gates**
+Result: residue PASS. The checker and current NUL path file are present;
+`/tmp/werg-ledger-before.md` is absent. No untracked research download or
+tracked scratch path exists, and nothing unrelated was removed.
+
+- [x] **Step 4: Run GREEN integration and document gates**
 
 After Step 2 reconciliation and Step 3 bounded cleanup, rerun the exact
 integration command from Step 1 and require exit `0`. Then require registry
 self/strict, Markdown profiles, strict links/owners, RIA self/production, and
 `git diff --check` to pass.
 
-- [ ] **Step 5: Obtain independent integration review**
+- [x] **Step 5: Obtain independent integration review**
 
 The reviewer checks exact five-owner scope, ID continuity, old-row stability,
 request ownership, dates, cross-links, source/claim fidelity, and cleanup.
 
-- [ ] **Step 6: Run canonical gates and commit**
+- [x] **Step 6: Run canonical gates and commit**
 
 Run affected/staged, plain pre-commit, direct aggregate, all-files,
 formatter-review/rerun, and diff checks. Commit:
