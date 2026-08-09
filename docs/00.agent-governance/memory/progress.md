@@ -21,7 +21,7 @@ inventory stays in `scripts/README.md`.
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: WERG-003 Kubernetes security/content reviewers, then the primary agent for focused gates, logical commit, and WERG-004 reconciliation.
+- **Next Owner**: primary agent for WERG-005 whole-branch review, terminal validation, lifecycle closure, and the human-selected branch finishing action.
 
 #### Progress
 
@@ -70,26 +70,14 @@ credential mounting from token lifetime and effective RBAC. No manifest,
 policy, runtime, provider, remote, cluster, artifact, or secret value changed
 or was observed.
 
-WERG-004 reconciles the reviewed result without new research. The parsed final
+WERG-004 reconciled the reviewed result without new research. The parsed final
 shape is 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs; all
 new rows are dated 2026-08-10 and all frozen source/claim rows remain stable.
-The exact five-owner integration and relative anchors pass. Residue review
-finds only the task-owned checker and current NUL lane input; the optional
-ledger scratch file is absent and no unrelated path was removed.
-
-WERG-003 researched and integrated only the three admitted, non-duplicate
-Kubernetes/Security deltas. Official Kubernetes, kube-state-metrics v2.14.0,
-Argo CD, Helm, Sigstore, SLSA, and GitHub sources were checked on 2026-08-10;
-the exact additive ranges are `SRC-WERPC-060`–`065` and
-`CLM-WERPC-008-01`–`06`. The dated report records kube-state-metrics Secret
-collector/RBAC versus metric-output boundaries, Adminer ServiceAccount/token
-and compatibility-gated Pod hardening, and the non-equivalence of immutable Git
-and image identities, Helm provenance, signatures, attestations, and SLSA
-provenance. Namespace ingress/default-deny was rejected as duplicate of the
-existing baseline. No manifest, policy, workflow, infrastructure, credential,
-Secret value, hosted, remote, registry, or live state was changed or inferred.
-The work package is `In Review`; independent security/content review and commit
-gates remain pending.
+The exact five-owner integration and relative anchors pass. Independent review
+is Approved and logical commit `12798c47` records the reconciled result. Residue
+review finds only the task-owned checker and current NUL lane input; the optional
+ledger scratch file is absent and no unrelated path was removed. WERG-005 now
+owns whole-branch review, terminal validation, lifecycle closure, and cleanup.
 
 #### Memory
 
@@ -127,7 +115,7 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - WERG-003 uses six source rows `SRC-WERPC-060`–`065` and six claim rows `CLM-WERPC-008-01`–`06`, all checked 2026-08-10 with exact selectors, uncertainty, and refresh triggers. The task-local Kubernetes and integration checks pass.
 - Final WERG-003 content and security reviews are Approved with zero remaining Critical or Important findings. The single security wording correction removes an unsupported implication about token scope while preserving the automatic-mount and effective-permission gap.
 - The exact six-path WERG-003 index contains the WERG Plan, Task, durable progress, pack README, Kubernetes/Security report, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
-- WERG-004 integration parses exactly 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs with zero record errors. Old-row stability, 2026-08-10 date, exact five-owner path, link, and residue checks pass; independent integration review and commit gates remain pending.
+- WERG-004 integration parses exactly 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs with zero record errors. Old-row stability, 2026-08-10 date, exact five-owner path, link, and residue checks pass; independent integration review is Approved and logical commit `12798c47` is complete.
 - Independent WERG-004 integration review is Approved with zero Critical or Important findings. It confirms the unchanged Snapshot Contract and Report Index, exact counts and five-owner scope, frozen-row/date/link closure, and truthful task-owned residue statement.
 - The exact five-path WERG-004 index contains the WERG Plan, Task, durable progress, pack README, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
 - WERG-003's exact planned `kubernetes` command returned `PASS kubernetes` on the pre-edit baseline because it checks admission markers and the existing NetworkPolicy boundary rather than absence of new research rows. The companion content probe for `SRC-WERPC-060`, `CLM-WERPC-008-01`, and the dated subsection returned exit 1 before integration.
@@ -136,9 +124,11 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 
 #### Handoff
 
-Obtain independent WERG-003 Kubernetes security/content review, correct every
-Critical or Important finding, then run the exact focused and canonical commit
-gates. Do not stage or commit this in-review handoff before review disposition.
+Complete WERG-005 whole-branch review, correct every Critical or Important
+finding, run the exact terminal validation and cleanup sequence, close the
+Spec/Plan/Task lifecycle atomically, and present the human with the permitted
+branch-finishing choices. Do not infer hosted, remote, provider-runtime, or live
+evidence from repository-static PASS results.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 

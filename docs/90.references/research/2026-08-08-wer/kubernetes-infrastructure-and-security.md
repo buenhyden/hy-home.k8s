@@ -215,7 +215,8 @@ read-only-root-filesystem checks. These are exact tracked-field observations,
 not evidence that Adminer calls the Kubernetes API, runs as root, violates an
 active Pod Security policy, or can run unchanged under every hardening field.
 
-The target is a dedicated ServiceAccount with no permissions and pod-level
+The target is a dedicated ServiceAccount with no workload-specific
+RoleBinding or ClusterRoleBinding in tracked manifests and pod-level
 `automountServiceAccountToken: false`, plus a compatibility-tested Restricted
 Pod Security posture: non-root UID/GID, `seccompProfile.type: RuntimeDefault`,
 no privilege escalation or privileged mode, all capabilities dropped, and a
@@ -224,7 +225,9 @@ future API need is demonstrated, grant only the required RBAC and use a bounded
 projected token instead of re-enabling the default automatic credential mount.
 Image UID,
 writable paths, readiness, canary behavior, API need, admission, and runtime
-remain `DEFER`. [SRC-WERPC-062](source-coverage-and-migration-ledger.md#source-register),
+remain `DEFER`; effective authorization also remains `DEFER` because group
+bindings, discovery access, and external authorization were not observed.
+[SRC-WERPC-062](source-coverage-and-migration-ledger.md#source-register),
 [CLM-WERPC-008-03](source-coverage-and-migration-ledger.md#werg-003-gap-only-claim-register),
 and [CLM-WERPC-008-04](source-coverage-and-migration-ledger.md#werg-003-gap-only-claim-register)
 own this boundary.

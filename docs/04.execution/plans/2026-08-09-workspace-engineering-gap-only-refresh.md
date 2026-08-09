@@ -319,7 +319,7 @@ git commit -m "docs: activate WER gap-only research refresh"
 - Produces: one admission record per requested category and an exact admitted
   question set used by WERG-002 and WERG-003.
 
-- [ ] **Step 1: Write and run the admission RED probe**
+- [x] **Step 1: Write and run the admission RED probe**
 
 Create the task-local checker at the exact temporary path and run its bounded
 self-test plus baseline mode:
@@ -337,7 +337,7 @@ Expected RED: Verification/Validation has no independent research owner and
 the four local-only document-family rows plus Release's SemVer-only external
 basis fail the source-class assertion.
 
-- [ ] **Step 2: Build the complete admission matrix**
+- [x] **Step 2: Build the complete admission matrix**
 
 For each requested topic, record in the Task:
 
@@ -350,7 +350,7 @@ The reason must identify either the material missing question, the adequate
 existing source/claim boundary, or the deeper evidence that makes the topic
 `exclude-deep-evidence`.
 
-- [ ] **Step 3: Verify admission completeness and uniqueness**
+- [x] **Step 3: Verify admission completeness and uniqueness**
 
 Run the reviewed-matrix mode:
 
@@ -367,7 +367,7 @@ The command requires:
 - exact owner/heading existence for every existing reference; and
 - no new web-source row before the admitted set is reviewed.
 
-- [ ] **Step 4: Obtain independent admission review**
+- [x] **Step 4: Obtain independent admission review**
 
 The reviewer must compare every final row—`complete-existing`, both admitted
 states, and `exclude-deep-evidence`—with all thirteen current pack files, not
@@ -377,7 +377,7 @@ source, exact local mapping, uncertainty boundary, and refresh trigger for the
 same question. A false `complete-existing` or `exclude-deep-evidence` result is
 an Important finding and blocks browsing.
 
-- [ ] **Step 5: Record the reviewed result and commit**
+- [x] **Step 5: Record the reviewed result and commit**
 
 Append a bounded `2026-08-09 Gap-only admission` subsection to the existing
 ledger, update WERG-001 evidence and progress, run focused profile/link/diff
