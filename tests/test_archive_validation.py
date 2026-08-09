@@ -824,6 +824,94 @@ class ArchiveValidationTest(unittest.TestCase):
                 archive_validation._GIT_TREE_OUTPUT_LIMIT,  # noqa: SLF001
             )
 
+    def test_exact_membership_does_not_expand_requested_ancestor(self) -> None:
+        source = "docs/04.execution/tasks/exact-source.md"
+        ancestor = "docs/03.specs/910-exact-membership"
+        child = f"{ancestor}/requested.md"
+        nested = f"{ancestor}/nested/requested.md"
+        files = {
+            source: b"# Exact source\n",
+            child: b"# Requested child\n",
+            nested: b"# Requested nested child\n",
+        }
+        files.update(
+            {
+                f"{ancestor}/unrelated-{index:02d}-with-a-long-name.md": b"# Unrelated\n"
+                for index in range(12)
+            }
+        )
+        commit, blobs = self.git.commit_many(files)
+
+        with mock.patch.object(archive_validation, "_GIT_TREE_OUTPUT_LIMIT", 512):
+            members = archive_validation._commit_tree_members(  # noqa: SLF001
+                self.root,
+                commit,
+                original_paths=(source,),
+                historical_paths=(ancestor, child, nested),
+                object_id_length=len(commit),
+            )
+
+        self.assertEqual(set(members), {source, ancestor, child, nested})
+        self.assertEqual(members[source].mode, "100644")
+        self.assertEqual(members[source].object_id, blobs[source])
+        self.assertEqual(members[ancestor].kind, "tree")
+        self.assertEqual(members[child].kind, "blob")
+        self.assertEqual(members[nested].kind, "blob")
+        self.assertFalse(any("unrelated-" in path for path in members))
+
+    def test_repository_four_spec_overlaps_use_only_exact_batch_evidence(
+        self,
+    ) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected = {
+            "docs/03.specs",
+            "docs/03.specs/001-wsl-k3d-argocd-platform/spec.md",
+            "docs/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md",
+            "docs/03.specs/003-platform-expansion/spec.md",
+            "docs/03.specs/README.md",
+        }
+        records, inventory_diagnostics = (
+            archive_validation._repository_archive_records(ROOT)  # noqa: SLF001
+        )
+        self.assertEqual(inventory_diagnostics, [])
+        original_paths = {
+            str(
+                archive_validation.parse_archive_envelope(content).metadata[
+                    "original_path"
+                ]
+            )
+            for content in records.values()
+        }
+        ls_tree_paths: set[str] = set()
+        exact_batch_paths: set[str] = set()
+        real_git_command = archive_validation._git_command  # noqa: SLF001
+
+        def capture_git_command(root: Path, *args: str, **kwargs):
+            if args[:1] == ("ls-tree",) and "--" in args:
+                ls_tree_paths.update(args[args.index("--") + 1 :])
+            if args[:1] == ("cat-file",) and args[1:2] == (
+                "--batch-check=%(objectname) %(objecttype) %(objectsize)",
+            ):
+                for request in kwargs.get("input_bytes", b"").splitlines():
+                    exact_batch_paths.add(
+                        request.decode("utf-8", errors="strict").split(":", 1)[1]
+                    )
+            return real_git_command(root, *args, **kwargs)
+
+        with mock.patch.object(
+            archive_validation, "_git_command", side_effect=capture_git_command
+        ):
+            report = archive_validation.validate_repository_archive(ROOT, registry)
+
+        self.assertTrue(report.valid, report.diagnostics)
+        self.assertLessEqual(ls_tree_paths, original_paths)
+        self.assertNotIn("docs/03.specs", ls_tree_paths)
+        self.assertLessEqual(expected, exact_batch_paths)
+
 
 class ArchiveTransitionLinkTest(unittest.TestCase):
     """Close the exact two-edge WDTC-103-to-WDTC-104 transition handoff."""

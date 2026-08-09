@@ -143,6 +143,23 @@ projection.
   exited 0 with every applicable hook passing, including strict repository
   quality and detect-secrets, and inspection confirmed no worktree mutation.
   The post-run shape remained exactly `M5` staged with zero unstaged paths.
+- Review-fix Round 3 removed the remaining ancestor/descendant pathspec
+  expansion. Historical links are now resolved only through one global,
+  bounded exact `commit:path` batch-check; `ls-tree` receives only original
+  paths already proven to be blobs and cross-checks their mode and object ID.
+  The live `docs/03.specs` ancestor plus its four requested descendants and a
+  fixture with many unrelated descendants proved no expansion under the
+  output cap. TDD observed the two integration cases RED as one error and one
+  failure, then GREEN 2/2. Final validation/recovery passed 63/63 in 97.832
+  seconds and the full archive/cutover/recovery/lifecycle suite passed 110/110
+  in 391.355 seconds. The production snapshot remained valid at 20 Git
+  processes in 2.701 seconds; Ruff, `py_compile`, cutover `93/711/93`, and
+  7,049-byte recovery passed. The synchronized-index aggregate ended with
+  `[PASS] repository quality gates passed`. No later-scope action or commit
+  occurred.
+- The controller's final Round 3 `pre-commit run --all-files` fixed-point
+  exited 0 with every applicable hook passing and no worktree mutation. The
+  post-run shape remained exactly `M3` staged with zero unstaged paths.
 
 ### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
 

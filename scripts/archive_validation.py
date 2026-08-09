@@ -966,36 +966,97 @@ def _commit_types(
 def _commit_tree_members(
     root: Path,
     commit: str,
-    paths: tuple[str, ...],
+    *,
+    original_paths: tuple[str, ...],
+    historical_paths: tuple[str, ...],
     object_id_length: int,
+    exact_members: Mapping[str, _GitTreeMember] | None = None,
 ) -> dict[str, _GitTreeMember]:
-    result = _git_command(
+    paths = tuple(sorted(set(original_paths) | set(historical_paths)))
+    _validate_commit_path_requests(paths)
+    if exact_members is None:
+        exact_by_commit = _batch_commit_path_members(
+            root, {commit: paths}, object_id_length
+        )
+        members = exact_by_commit.get(commit, {})
+    else:
+        if any(
+            path not in paths or not isinstance(member, _GitTreeMember)
+            for path, member in exact_members.items()
+        ):
+            raise ArchiveContractError(
+                "RECOVERY-TREE-INVALID", "tree lookup evidence is malformed"
+            )
+        members = dict(exact_members)
+    original_blobs = tuple(
+        path
+        for path in original_paths
+        if (member := members.get(path)) is not None and member.kind == "blob"
+    )
+    if not original_blobs:
+        return members
+    modes = _git_command(
         root,
         "ls-tree",
         "-z",
         "--full-tree",
         commit,
         "--",
-        *paths,
+        *original_blobs,
         output_limit=_GIT_TREE_OUTPUT_LIMIT,
     )
-    if result.returncode:
+    if modes.returncode:
         raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup failed")
-    members = _parse_git_tree_output(
-        result.stdout,
-        paths=paths,
+    mode_members = _parse_git_tree_output(
+        modes.stdout,
+        paths=original_blobs,
         object_id_length=object_id_length,
     )
-    unresolved = tuple(path for path in paths if path not in members)
-    if not unresolved:
-        return members
-    if len(unresolved) > _GIT_TREE_ENTRY_LIMIT or any(
-        "\n" in path or "\r" in path or "\0" in path for path in unresolved
+    for path in original_blobs:
+        exact_member = members[path]
+        mode_member = mode_members.get(path)
+        if (
+            mode_member is None
+            or mode_member.kind != "blob"
+            or mode_member.object_id != exact_member.object_id
+        ):
+            raise ArchiveContractError(
+                "RECOVERY-TREE-INVALID", "tree lookup changed identity"
+            )
+        members[path] = mode_member
+    return members
+
+
+def _validate_commit_path_requests(paths: tuple[str, ...]) -> None:
+    if len(paths) > _GIT_TREE_ENTRY_LIMIT or any(
+        "\n" in path or "\r" in path or "\0" in path for path in paths
     ):
         raise ArchiveContractError(
             "RECOVERY-RESOURCE-LIMIT", "tree lookup request exceeds its budget"
         )
-    requests = "".join(f"{commit}:{path}\n" for path in unresolved).encode("utf-8")
+
+
+def _batch_commit_path_members(
+    root: Path,
+    paths_by_commit: Mapping[str, tuple[str, ...]],
+    object_id_length: int,
+) -> dict[str, dict[str, _GitTreeMember]]:
+    ordered: list[tuple[str, tuple[str, ...]]] = []
+    request_lines: list[str] = []
+    total = 0
+    for commit in sorted(paths_by_commit):
+        paths = tuple(sorted(set(paths_by_commit[commit])))
+        _validate_commit_path_requests(paths)
+        total += len(paths)
+        if total > _GIT_TREE_ENTRY_LIMIT:
+            raise ArchiveContractError(
+                "RECOVERY-RESOURCE-LIMIT", "tree lookup request exceeds its budget"
+            )
+        ordered.append((commit, paths))
+        request_lines.extend(f"{commit}:{path}\n" for path in paths)
+    if not request_lines:
+        return {}
+    requests = "".join(request_lines).encode("utf-8")
     if len(requests) > _GIT_TREE_OUTPUT_LIMIT:
         raise ArchiveContractError(
             "RECOVERY-RESOURCE-LIMIT", "tree lookup request exceeds its budget"
@@ -1005,19 +1066,28 @@ def _commit_tree_members(
         "cat-file",
         "--batch-check=%(objectname) %(objecttype) %(objectsize)",
         input_bytes=requests,
-        output_limit=_GIT_TREE_OUTPUT_LIMIT - len(result.stdout),
+        output_limit=_GIT_TREE_OUTPUT_LIMIT,
     )
     if exact.returncode:
         raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup failed")
-    members.update(
-        _parse_git_path_batch_output(
-            exact.stdout,
-            paths=unresolved,
+    lines = exact.stdout.splitlines()
+    if len(lines) != total:
+        raise ArchiveContractError(
+            "RECOVERY-TREE-INVALID", "tree lookup is incomplete"
+        )
+    offset = 0
+    members_by_commit: dict[str, dict[str, _GitTreeMember]] = {}
+    for commit, paths in ordered:
+        end = offset + len(paths)
+        output = b"\n".join(lines[offset:end])
+        members_by_commit[commit] = _parse_git_path_batch_output(
+            output,
+            paths=paths,
             object_id_length=object_id_length,
             missing_prefix=f"{commit}:",
         )
-    )
-    return members
+        offset = end
+    return members_by_commit
 
 
 def _parse_git_tree_output(
@@ -1162,7 +1232,7 @@ def _batch_recover(
         commit_types = _commit_types(root, commits)
     except ArchiveContractError as exc:
         return {}, {item.archive_path: exc.code for item in envelopes}, {}
-    trees: dict[str, dict[str, _GitTreeMember]] = {}
+    request_groups: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {}
     for commit in commits:
         members = valid_by_commit[commit]
         kind = commit_types.get(commit)
@@ -1170,19 +1240,52 @@ def _batch_recover(
             code = "RECOVERY-OBJECT-MISSING" if kind is None else "RECOVERY-OBJECT-NOT-COMMIT"
             errors.update({item.archive_path: code for item in members})
             continue
-        requested = {item.original_path for item in members}
-        requested.update(
+        originals = {item.original_path for item in members}
+        historical = {
             link.target.as_posix()
             for item in members
             for link in item.rendered_links
             if link.kind == "local" and link.target is not None
+        }
+        request_groups[commit] = (
+            tuple(sorted(originals)),
+            tuple(sorted(historical)),
         )
+    try:
+        exact_by_commit = _batch_commit_path_members(
+            root,
+            {
+                commit: tuple(sorted(set(originals) | set(historical)))
+                for commit, (originals, historical) in request_groups.items()
+            },
+            object_id_length,
+        )
+    except ArchiveContractError as exc:
+        errors.update(
+            {
+                item.archive_path: exc.code
+                for commit in request_groups
+                for item in valid_by_commit[commit]
+            }
+        )
+        exact_by_commit = {}
+    trees: dict[str, dict[str, _GitTreeMember]] = {}
+    for commit, (originals, historical) in request_groups.items():
+        if any(item.archive_path in errors for item in valid_by_commit[commit]):
+            continue
         try:
             trees[commit] = _commit_tree_members(
-                root, commit, tuple(sorted(requested)), object_id_length
+                root,
+                commit,
+                original_paths=originals,
+                historical_paths=historical,
+                object_id_length=object_id_length,
+                exact_members=exact_by_commit.get(commit, {}),
             )
         except ArchiveContractError as exc:
-            errors.update({item.archive_path: exc.code for item in members})
+            errors.update(
+                {item.archive_path: exc.code for item in valid_by_commit[commit]}
+            )
     source_members: dict[str, _GitTreeMember] = {}
     for commit, items in valid_by_commit.items():
         tree = trees.get(commit)
