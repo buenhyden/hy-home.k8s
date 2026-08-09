@@ -390,6 +390,24 @@ git commit -m "docs: accept the document taxonomy decision"
 - Consumes: the recorded three-finding baseline.
 - Produces: a reproducible Linux/WSL all-files PASS without hook suppression.
 
+**Implementation scope note (2026-08-09):** At implementation base
+`bdc1a51010c0541fee48e068c88d1d405a5ede84`, Markdown `MD001` reproduced. An
+initial detect-secrets invocation was a cache/order observation that passed
+while generating baseline synchronization; the repeated focused invocation is
+authoritative and reproduced exactly two source-ledger keyword candidates and
+one historical Plan hex candidate. The controller approved only those three
+existing locations as `is_secret: false`, plus the deterministic current-hook
+baseline synchronization: active baseline-file and exact CLI exclusion filters,
+refreshed existing agent-legacy-cutover line numbers, removal of one now-excluded
+duplicate, and the generated timestamp. Scanner configuration and source
+content remain unchanged. A subsequent fixed-point run attempted an additional
+reference-architecture baseline removal whose current source line was a `path`
+field rather than an active exclusion match. An in-memory raw scan proved its
+stored candidate absent, so the stale orphan record was removed; two consecutive
+focused detector runs then passed without mutation. The remaining all-files
+session completion was rerun by the controller against the staged fixed-point
+baseline: it exited 0 with every applicable hook passing and no mutation.
+
 - [ ] **Step 1: Reproduce the failures without retaining hook mutations**
 
 ```bash

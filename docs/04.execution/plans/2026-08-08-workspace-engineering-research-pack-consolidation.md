@@ -32,7 +32,7 @@ plumbing, Python 3 standard-library checks, the existing reference-information
 architecture validators, unittest fixtures, pre-commit when installed, and the
 repository quality-gate shell entrypoint.
 
-### Global Constraints
+## Global Constraints
 
 - The output root is exactly
   `docs/90.references/research/2026-08-08-wer/`.

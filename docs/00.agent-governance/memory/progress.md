@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WDTC-101 all-files baseline observation and Markdown repair
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #sdlc #validation #baseline #markdown
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: Controller resolution for the approved WDTC-101 implementation at base `bdc1a51010c0541fee48e068c88d1d405a5ede84`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WDTC-110 closure as the exact all-files baseline reconciliation record.
+- **Next Owner**: supervisor — continue with WORK-102 after preserving this scope boundary.
+
+#### Progress
+
+Corrected the first `Global Constraints` heading in the completed Spec 053 Plan
+from H3 to H2, resolving all-files Markdown `MD001`. The approved repair adds
+only three exact non-secret detect-secrets baseline adjudications; scanner
+configuration and the source ledger remain unchanged.
+
+#### Memory
+
+At the mandated implementation base, `TMPDIR=/tmp pre-commit run
+markdownlint-cli2 --all-files` reproduced MD001. An initial detect-secrets
+pass was recorded as a cache/order observation, but the authoritative repeated
+focused run reproduced exactly two source-ledger keyword candidates and one
+historical Plan hex candidate without exposing values. Their three exact
+baseline records are marked `is_secret: false`. The reviewed deterministic
+current-hook synchronization adds the active baseline-file and exact CLI
+exclusion filters, refreshes existing agent-legacy-cutover line numbers,
+removes one now-excluded duplicate, and updates the generated timestamp. The
+source ledger remains byte-identical. The required second fixed-point run
+attempted an additional reference-architecture baseline removal whose current
+source line was a `path` field, not an active exclusion match. An in-memory raw
+scan proved its stored candidate absent, so it was removed as a stale orphan;
+two subsequent focused detector runs passed without mutation. The controller
+then reran the exact all-files command on the staged fixed point with exit 0,
+every applicable hook passing, and no worktree mutation.
+
+#### Evidence
+
+- Focused RED: Markdownlint reports MD001 at the first Spec 053 Plan
+  `Global Constraints` heading; the repeated detect-secrets all-files run
+  reports the three approved candidates.
+- Focused GREEN reached a two-run byte-stable detector fixed point. The
+  controller all-files rerun exited 0 with every applicable hook passing and
+  no mutation; see the linked Task and implementation report.
+- Repository-static only: no provider-runtime, hosted CI, remote,
+  credential-bearing, or live result is claimed.
+
+#### Handoff
+
+Do not broaden scanner suppression or add synthetic baseline records. Continue
+WDTC-102 from the completed staged WDTC-101 scope.
+
 ### 2026-08-09 - WDTC implementation plan approval and activation
 
 #### Metadata
