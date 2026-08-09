@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import dataclasses
 import hashlib
+import io
 import importlib.util
 import json
 import subprocess
@@ -757,26 +758,71 @@ class ArchiveValidationTest(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        real_run = subprocess.run
+        real_popen = subprocess.Popen
         git_calls = 0
 
-        def bounded_run(*args, **kwargs):
+        def bounded_popen(*args, **kwargs):
             nonlocal git_calls
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
                 if git_calls > 24:
                     raise AssertionError("repository archive exceeded Git subprocess budget")
-            return real_run(*args, **kwargs)
+            return real_popen(*args, **kwargs)
 
         started = time.monotonic()
-        with mock.patch.object(subprocess, "run", side_effect=bounded_run):
+        # Every subprocess.run call creates exactly one Popen. Count that shared
+        # process boundary once instead of double-counting run plus its Popen.
+        with mock.patch.object(subprocess, "Popen", side_effect=bounded_popen):
             report = archive_validation.validate_repository_archive(ROOT, registry)
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
         self.assertLessEqual(git_calls, 24)
         self.assertLess(elapsed, 60.0)
+
+    def test_repository_index_read_is_descriptor_bounded(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="archive-index-limit-") as temporary:
+            root = Path(temporary)
+            index = root / "docs/98.archive/README.md"
+            index.parent.mkdir(parents=True)
+            index.write_bytes(b"x" * (archive_validation._ARCHIVE_INDEX_LIMIT + 1))  # noqa: SLF001
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                r"^ARCHIVE-INDEX-SIZE:",
+            ):
+                archive_validation._read_repository_index(root)  # noqa: SLF001
+
+    def test_tree_parser_enforces_output_and_entry_budgets_without_disclosure(
+        self,
+    ) -> None:
+        object_id = "0" * 40
+        sentinel = "SECRET-TREE-PATH-SENTINEL"
+        record = f"{object_id} blob 7\n".encode("ascii")
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError,
+            r"^RECOVERY-RESOURCE-LIMIT:",
+        ) as entries:
+            archive_validation._parse_git_path_batch_output(  # noqa: SLF001
+                record + record,
+                paths=(sentinel, f"{sentinel}-2"),
+                object_id_length=40,
+                entry_limit=1,
+            )
+        self.assertNotIn(sentinel, str(entries.exception))
+
+        oversized = io.BytesIO(
+            b"x" * (archive_validation._GIT_TREE_OUTPUT_LIMIT + 1)  # noqa: SLF001
+        )
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError,
+            r"^RECOVERY-RESOURCE-LIMIT:",
+        ):
+            archive_validation._read_stream_bounded(  # noqa: SLF001
+                oversized,
+                archive_validation._GIT_TREE_OUTPUT_LIMIT,  # noqa: SLF001
+            )
 
 
 class ArchiveTransitionLinkTest(unittest.TestCase):

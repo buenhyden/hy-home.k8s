@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import os
 import re
 import subprocess
@@ -436,17 +437,15 @@ class ArchiveRecoveryTest(unittest.TestCase):
             "GIT_NO_LAZY_FETCH": "0",
         }
         observed: list[tuple[list[str], dict[str, object]]] = []
-        real_run = subprocess.run
+        real_popen = subprocess.Popen
 
-        def capture(
-            *args: object, **kwargs: object
-        ) -> subprocess.CompletedProcess[bytes]:
+        def capture(*args: object, **kwargs: object):
             observed.append((list(args[0]), dict(kwargs)))
-            return real_run(*args, **kwargs)
+            return real_popen(*args, **kwargs)
 
         with mock.patch.dict(os.environ, hostile, clear=False):
             with mock.patch.object(
-                archive_recovery.subprocess, "run", side_effect=capture
+                archive_recovery.subprocess, "Popen", side_effect=capture
             ):
                 recovered = recover_git_blob(self.root, self.original_path, self.commit)
 
@@ -466,7 +465,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
             self.assertNotIn("GIT_ALTERNATE_OBJECT_DIRECTORIES", environment)
             self.assertIn("--no-replace-objects", argv)
             self.assertIn("--literal-pathspecs", argv)
-            self.assertEqual(kwargs["timeout"], archive_recovery.GIT_TIMEOUT_SECONDS)
+            self.assertEqual(kwargs["stderr"], subprocess.DEVNULL)
 
     def test_stable_recovery_errors_for_root_startup_timeout_and_object_format(
         self,
@@ -480,7 +479,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
 
         with mock.patch.object(
             archive_recovery.subprocess,
-            "run",
+            "Popen",
             side_effect=FileNotFoundError("STARTUP-SENTINEL"),
         ):
             with self.assertRaisesRegex(
@@ -491,11 +490,10 @@ class ArchiveRecoveryTest(unittest.TestCase):
         self.assertNotIn("STARTUP-SENTINEL", str(startup.exception))
 
         with mock.patch.object(
-            archive_recovery.subprocess,
-            "run",
-            side_effect=subprocess.TimeoutExpired(
-                cmd=["git", "TIMEOUT-SENTINEL"],
-                timeout=0.001,
+            archive_recovery._DeadlineReader,  # noqa: SLF001
+            "read",
+            side_effect=ArchiveContractError(
+                "RECOVERY-GIT-TIMEOUT", "bounded timeout"
             ),
         ):
             with self.assertRaisesRegex(
@@ -517,8 +515,8 @@ class ArchiveRecoveryTest(unittest.TestCase):
             )
             with self.subTest(name=name):
                 with mock.patch.object(
-                    archive_recovery.subprocess,
-                    "run",
+                    archive_recovery,
+                    "_git",
                     side_effect=responses,
                 ):
                     with self.assertRaisesRegex(
@@ -526,6 +524,103 @@ class ArchiveRecoveryTest(unittest.TestCase):
                         r"^RECOVERY-OBJECT-FORMAT:",
                     ):
                         recover_git_blob(self.root, self.original_path, self.commit)
+
+    def test_git_batch_rejects_oversized_header_before_body_read(self) -> None:
+        object_id = self.blob
+        header = (
+            f"{object_id} blob {archive_recovery.MAX_GIT_BLOB_BYTES + 1}\n"
+        ).encode("ascii")
+
+        class HeaderOnly:
+            def __init__(self) -> None:
+                self.offset = 0
+                self.body_read = False
+
+            def read(self, size: int = -1) -> bytes:
+                if self.offset >= len(header):
+                    self.body_read = True
+                    raise AssertionError("oversized body must not be read")
+                end = len(header) if size < 0 else min(len(header), self.offset + size)
+                result = header[self.offset:end]
+                self.offset = end
+                return result
+
+        stream = HeaderOnly()
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ) as failure:
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                stream,
+                (object_id,),
+                object_id_length=len(object_id),
+            )
+
+        self.assertFalse(stream.body_read)
+        self.assertNotIn(object_id, str(failure.exception))
+
+    def test_git_batch_enforces_aggregate_budget_and_redacts_payload(self) -> None:
+        first = self.blob
+        second = "0" * len(first)
+        sentinel = b"SECRET-PAYLOAD-SENTINEL"
+        response = (
+            f"{first} blob {len(sentinel)}\n".encode("ascii")
+            + sentinel
+            + b"\n"
+            + f"{second} blob {len(sentinel)}\n".encode("ascii")
+            + sentinel
+            + b"\n"
+        )
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ) as failure:
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                io.BytesIO(response),
+                (first, second),
+                object_id_length=len(first),
+                aggregate_limit=len(sentinel),
+            )
+
+        self.assertNotIn(sentinel.decode("ascii"), str(failure.exception))
+        self.assertNotIn(second, str(failure.exception))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ):
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                io.BytesIO(b""),
+                (first, second),
+                object_id_length=len(first),
+                object_limit=1,
+            )
+
+    def test_git_batch_rejects_truncated_and_extra_protocol_without_payload(self) -> None:
+        object_id = self.blob
+        cases = {
+            "truncated": f"{object_id} blob 5\nabc".encode("ascii"),
+            "extra": f"{object_id} blob 3\nabc\nEXTRA-SENTINEL".encode("ascii"),
+        }
+        for name, response in cases.items():
+            with self.subTest(name=name), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OBJECT-MISSING:"
+            ) as failure:
+                archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                    io.BytesIO(response),
+                    (object_id,),
+                    object_id_length=len(object_id),
+                )
+            self.assertNotIn("EXTRA-SENTINEL", str(failure.exception))
+
+    def test_recover_git_blob_uses_size_aware_batch_reader(self) -> None:
+        with mock.patch.object(
+            archive_recovery,
+            "_read_git_blob_batch",
+            wraps=archive_recovery._read_git_blob_batch,  # noqa: SLF001
+        ) as batch:
+            recovered = recover_git_blob(self.root, self.original_path, self.commit)
+
+        self.assertEqual(recovered.source_bytes, self.payload)
+        batch.assert_called_once()
 
     def test_rejects_worktree_byte_substitution(self) -> None:
         recovered = recover_git_blob(self.root, self.original_path, self.commit)

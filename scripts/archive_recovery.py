@@ -14,12 +14,14 @@ import hashlib
 import json
 import os
 import re
+import select
 import subprocess
 import stat
 import tempfile
+import time
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping
+from typing import Any, BinaryIO, Mapping
 
 import yaml
 
@@ -28,6 +30,11 @@ ARCHIVE_ENVELOPE_MARKER = (
     b"<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
 )
 GIT_TIMEOUT_SECONDS = 10.0
+MAX_GIT_BLOB_BYTES = 8_000_000
+MAX_GIT_BATCH_BYTES = 32 * 1024 * 1024
+MAX_GIT_BATCH_OBJECTS = 128
+MAX_GIT_HEADER_BYTES = 256
+MAX_GIT_CAPTURE_BYTES = 2 * 1024 * 1024
 ARCHIVE_METADATA_KEYS = (
     "title",
     "type",
@@ -143,6 +150,35 @@ class _OutputTarget:
     name: str
 
 
+@dataclass(frozen=True)
+class _DeadlineReader:
+    """Pipe reader that applies one monotonic deadline to every bounded read."""
+
+    stream: BinaryIO = field(repr=False)
+    deadline: float
+
+    def read(self, size: int = -1) -> bytes:
+        if size == 0:
+            return b""
+        remaining = self.deadline - time.monotonic()
+        if remaining <= 0:
+            raise _error("RECOVERY-GIT-TIMEOUT", "Git output deadline expired")
+        try:
+            readable, _, _ = select.select((self.stream.fileno(),), (), (), remaining)
+        except (OSError, ValueError) as exc:
+            raise _error(
+                "RECOVERY-GIT-STARTUP", "Git output stream is unavailable"
+            ) from exc
+        if not readable:
+            raise _error("RECOVERY-GIT-TIMEOUT", "Git output deadline expired")
+        try:
+            return os.read(self.stream.fileno(), 65536 if size < 0 else size)
+        except OSError as exc:
+            raise _error(
+                "RECOVERY-GIT-STARTUP", "Git output stream could not be read"
+            ) from exc
+
+
 def _error(code: str, detail: str) -> ArchiveContractError:
     return ArchiveContractError(code, detail)
 
@@ -167,33 +203,232 @@ def _safe_git_environment() -> dict[str, str]:
     return environment
 
 
-def _git(root: Path, *args: str) -> subprocess.CompletedProcess[bytes]:
+def _git_argv(root: Path, args: tuple[str, ...]) -> list[str]:
+    return [
+        "git",
+        "--no-replace-objects",
+        "--literal-pathspecs",
+        "-C",
+        str(root),
+        *args,
+    ]
+
+
+def _start_git(
+    root: Path,
+    args: tuple[str, ...],
+    *,
+    input_bytes: bytes | None = None,
+) -> tuple[subprocess.Popen[bytes], _DeadlineReader, list[str]]:
+    argv = _git_argv(root, args)
+    input_stream: BinaryIO | int = subprocess.DEVNULL
     try:
-        return subprocess.run(
-            [
-                "git",
-                "--no-replace-objects",
-                "--literal-pathspecs",
-                "-C",
-                str(root),
-                *args,
-            ],
+        if input_bytes is not None:
+            input_stream = tempfile.TemporaryFile(mode="w+b")
+            input_stream.write(input_bytes)
+            input_stream.seek(0)
+        process = subprocess.Popen(
+            argv,
+            stdin=input_stream,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
             env=_safe_git_environment(),
-            timeout=GIT_TIMEOUT_SECONDS,
-            check=False,
+            bufsize=0,
         )
-    except subprocess.TimeoutExpired as exc:
-        raise _error(
-            "RECOVERY-GIT-TIMEOUT",
-            "Git object lookup exceeded its bounded timeout",
-        ) from exc
     except OSError as exc:
         raise _error(
             "RECOVERY-GIT-STARTUP",
             "Git object lookup could not start",
         ) from exc
+    finally:
+        if not isinstance(input_stream, int):
+            input_stream.close()
+    if process.stdout is None:
+        process.kill()
+        process.wait()
+        raise _error("RECOVERY-GIT-STARTUP", "Git output pipe is unavailable")
+    deadline = time.monotonic() + GIT_TIMEOUT_SECONDS
+    return process, _DeadlineReader(process.stdout, deadline), argv
+
+
+def _finish_git(process: subprocess.Popen[bytes], deadline: float) -> int:
+    remaining = deadline - time.monotonic()
+    try:
+        return process.wait(timeout=max(0.0, remaining))
+    except subprocess.TimeoutExpired as exc:
+        process.kill()
+        process.wait()
+        raise _error(
+            "RECOVERY-GIT-TIMEOUT",
+            "Git object lookup exceeded its bounded timeout",
+        ) from exc
+
+
+def _abort_git(process: subprocess.Popen[bytes]) -> None:
+    if process.poll() is None:
+        process.kill()
+    try:
+        process.wait(timeout=1)
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    if process.stdout is not None:
+        process.stdout.close()
+
+
+def _read_stream_bounded(stream: Any, limit: int) -> bytes:
+    """Read at most ``limit`` bytes and reject the first excess byte."""
+
+    if not isinstance(limit, int) or isinstance(limit, bool) or limit < 0:
+        raise _error("RECOVERY-RESOURCE-LIMIT", "output budget is invalid")
+    chunks: list[bytes] = []
+    total = 0
+    while True:
+        chunk = stream.read(min(65536, limit + 1 - total))
+        if not isinstance(chunk, bytes):
+            raise _error("RECOVERY-OBJECT-MISSING", "Git output type is invalid")
+        if not chunk:
+            break
+        chunks.append(chunk)
+        total += len(chunk)
+        if total > limit:
+            raise _error("RECOVERY-RESOURCE-LIMIT", "Git output exceeds its budget")
+    return b"".join(chunks)
+
+
+def _git_capture_bounded(
+    root: Path,
+    *args: str,
+    stdout_limit: int = MAX_GIT_CAPTURE_BYTES,
+    input_bytes: bytes | None = None,
+) -> subprocess.CompletedProcess[bytes]:
+    process, reader, argv = _start_git(root, args, input_bytes=input_bytes)
+    try:
+        output = _read_stream_bounded(reader, stdout_limit)
+        returncode = _finish_git(process, reader.deadline)
+    except Exception:
+        _abort_git(process)
+        raise
+    finally:
+        if process.stdout is not None:
+            process.stdout.close()
+    return subprocess.CompletedProcess(argv, returncode, output, b"")
+
+
+def _read_bounded_line(stream: Any) -> bytes:
+    line = bytearray()
+    while len(line) <= MAX_GIT_HEADER_BYTES:
+        byte = stream.read(1)
+        if not isinstance(byte, bytes):
+            raise _error("RECOVERY-OBJECT-MISSING", "Git header type is invalid")
+        if not byte:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch header is truncated")
+        line.extend(byte)
+        if byte == b"\n":
+            return bytes(line)
+    raise _error("RECOVERY-RESOURCE-LIMIT", "Git batch header exceeds its budget")
+
+
+def _read_exact(stream: Any, size: int) -> bytes:
+    chunks: list[bytes] = []
+    remaining = size
+    while remaining:
+        chunk = stream.read(min(65536, remaining))
+        if not isinstance(chunk, bytes) or not chunk:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch body is truncated")
+        if len(chunk) > remaining:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch body is malformed")
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
+
+
+def _read_git_blob_batch_protocol(
+    stream: Any,
+    object_ids: tuple[str, ...],
+    *,
+    object_id_length: int,
+    per_blob_limit: int = MAX_GIT_BLOB_BYTES,
+    aggregate_limit: int = MAX_GIT_BATCH_BYTES,
+    object_limit: int = MAX_GIT_BATCH_OBJECTS,
+) -> dict[str, bytes]:
+    """Parse a streaming ``cat-file --batch`` response within fixed budgets."""
+
+    if len(object_ids) > object_limit:
+        raise _error("RECOVERY-RESOURCE-LIMIT", "Git object count exceeds its budget")
+    blobs: dict[str, bytes] = {}
+    aggregate = 0
+    for expected in object_ids:
+        if (
+            not isinstance(expected, str)
+            or len(expected) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(expected) is None
+        ):
+            raise _error("RECOVERY-OBJECT-AMBIGUOUS", "Git object identity is invalid")
+        header = _read_bounded_line(stream).removesuffix(b"\n").split(b" ")
+        if len(header) != 3:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch header is malformed")
+        try:
+            returned = header[0].decode("ascii", errors="strict")
+            kind = header[1].decode("ascii", errors="strict")
+            size = int(header[2])
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch header is malformed") from exc
+        if returned != expected or kind != "blob" or size < 0:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch identity differs")
+        if size > per_blob_limit or aggregate + size > aggregate_limit:
+            raise _error("RECOVERY-RESOURCE-LIMIT", "Git blob bytes exceed their budget")
+        payload = _read_exact(stream, size)
+        if stream.read(1) != b"\n":
+            raise _error("RECOVERY-OBJECT-MISSING", "Git batch separator is malformed")
+        try:
+            payload.decode("utf-8", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise _error("RECOVERY-NON-UTF8", "source blob is not UTF-8 Markdown") from exc
+        blobs[expected] = payload
+        aggregate += size
+    if stream.read(1) != b"":
+        raise _error("RECOVERY-OBJECT-MISSING", "Git batch contains trailing output")
+    return blobs
+
+
+def _read_git_blob_batch(
+    root: Path,
+    object_ids: tuple[str, ...],
+    *,
+    object_id_length: int,
+    per_blob_limit: int = MAX_GIT_BLOB_BYTES,
+    aggregate_limit: int = MAX_GIT_BATCH_BYTES,
+    object_limit: int = MAX_GIT_BATCH_OBJECTS,
+) -> dict[str, bytes]:
+    if not object_ids:
+        return {}
+    input_bytes = ("\n".join(object_ids) + "\n").encode("ascii")
+    process, reader, _argv = _start_git(
+        root, ("cat-file", "--batch"), input_bytes=input_bytes
+    )
+    try:
+        blobs = _read_git_blob_batch_protocol(
+            reader,
+            object_ids,
+            object_id_length=object_id_length,
+            per_blob_limit=per_blob_limit,
+            aggregate_limit=aggregate_limit,
+            object_limit=object_limit,
+        )
+        returncode = _finish_git(process, reader.deadline)
+        if returncode:
+            raise _error("RECOVERY-OBJECT-MISSING", "Git blob batch failed")
+        return blobs
+    except Exception:
+        _abort_git(process)
+        raise
+    finally:
+        if process.stdout is not None:
+            process.stdout.close()
+
+
+def _git(root: Path, *args: str) -> subprocess.CompletedProcess[bytes]:
+    return _git_capture_bounded(root, *args)
 
 
 def _require_repository(root: Path) -> tuple[Path, int]:
@@ -411,14 +646,14 @@ def recover_git_blob(
     ):
         raise _error("RECOVERY-TREE-INVALID", "source blob ID is not full length")
 
-    blob = _git(root, "cat-file", "blob", source_blob)
-    if blob.returncode != 0:
-        raise _error("RECOVERY-OBJECT-MISSING", "source blob object is unavailable")
-    source_bytes = blob.stdout
-    try:
-        source_bytes.decode("utf-8", errors="strict")
-    except UnicodeDecodeError as exc:
-        raise _error("RECOVERY-NON-UTF8", "source blob is not UTF-8 Markdown") from exc
+    source_bytes = _read_git_blob_batch(
+        root,
+        (source_blob,),
+        object_id_length=object_id_length,
+        per_blob_limit=MAX_GIT_BLOB_BYTES,
+        aggregate_limit=MAX_GIT_BLOB_BYTES,
+        object_limit=1,
+    )[source_blob]
 
     return RecoveryResult(
         original_path=canonical_original,
@@ -653,7 +888,7 @@ def parse_archive_envelope(
     )
 
 
-MAX_ARCHIVE_RECORD_BYTES = 8_000_000
+MAX_ARCHIVE_RECORD_BYTES = MAX_GIT_BLOB_BYTES
 
 
 def _open_parent_at(root: Path, path: PurePosixPath, *, code: str) -> tuple[int, str]:

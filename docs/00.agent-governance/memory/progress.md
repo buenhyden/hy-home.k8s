@@ -125,6 +125,24 @@ projection.
   controller's final review-fix `pre-commit run --all-files` exited 0 with all
   hooks passing and no mutation; the post-run shape remained `M10` staged and
   zero unstaged paths.
+- Review-fix Round 2 closed the remaining resource-boundary finding with
+  streaming Git batch parsing: declared blob sizes are rejected before body
+  reads, per-object/aggregate/object-count budgets are fixed, truncated or
+  trailing protocol data fails closed, diagnostics are payload-free, and
+  ordinary Git capture has bounded output with discarded stderr. Exact tree
+  membership uses non-recursive bounded lookup plus exact `commit:path`
+  batch evidence; the Stage 98 index uses a descriptor-anchored 2 MiB read.
+  TDD observed the six new adversarial cases RED, then the relevant suite
+  passed 108/108 in 386.042 seconds and migration passed 56/56 in 94.301
+  seconds. The production snapshot remained valid at 20 Git processes in
+  2.662 seconds; cutover `93/711/93`, 7,049-byte recovery, and migration
+  `132/82/50` all passed. The synchronized-index repository aggregate ended
+  with `[PASS] repository quality gates passed`. No move/Release/provider/
+  runtime/remote/live action or commit occurred during Round 2.
+- The controller's final Round 2 `pre-commit run --all-files` fixed-point
+  exited 0 with every applicable hook passing, including strict repository
+  quality and detect-secrets, and inspection confirmed no worktree mutation.
+  The post-run shape remained exactly `M5` staged with zero unstaged paths.
 
 ### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
 

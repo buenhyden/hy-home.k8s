@@ -27,13 +27,23 @@ from typing import Mapping, Protocol, Sequence
 if __package__:
     from scripts.archive_recovery import (
         ArchiveContractError,
+        MAX_GIT_BATCH_BYTES,
+        MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        _git_capture_bounded,
+        _read_git_blob_batch,
+        _read_stream_bounded as _recovery_read_stream_bounded,
         parse_archive_envelope,
     )
 else:  # Direct import-only execution from scripts/.
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
+        MAX_GIT_BATCH_BYTES,
+        MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        _git_capture_bounded,
+        _read_git_blob_batch,
+        _read_stream_bounded as _recovery_read_stream_bounded,
         parse_archive_envelope,
     )
 
@@ -217,11 +227,20 @@ _INDEX_MARKER = re.compile(
 )
 _FULL_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 _ARCHIVE_RECORD_LIMIT = 8 * 1024 * 1024
+_ARCHIVE_INDEX_LIMIT = 2 * 1024 * 1024
 _GIT_TIMEOUT_SECONDS = 20
+_GIT_TREE_OUTPUT_LIMIT = 2 * 1024 * 1024
+_GIT_TREE_ENTRY_LIMIT = 4096
 _MANIFEST_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
 )
 _MIGRATION_MODULE_TOKEN = object()
+
+
+def _read_stream_bounded(stream: object, limit: int) -> bytes:
+    """Expose the shared bounded reader at this repository validation boundary."""
+
+    return _recovery_read_stream_bounded(stream, limit)
 
 
 @dataclass(frozen=True)
@@ -454,6 +473,83 @@ def _reviewed_manifest_records(root: Path) -> dict[str, ReviewedManifestRecord]:
     return reviewed
 
 
+def _read_repository_index(root: Path) -> str:
+    """Read the Stage 98 index through held descriptors within a fixed budget."""
+
+    current_fd: int | None = None
+    descriptor: int | None = None
+    try:
+        current_fd = os.open(
+            root,
+            os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+        )
+        for part in ARCHIVE_INDEX.parts[:-1]:
+            child_fd = os.open(
+                part,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=current_fd,
+            )
+            os.close(current_fd)
+            current_fd = child_fd
+        descriptor = os.open(
+            ARCHIVE_INDEX.name,
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            dir_fd=current_fd,
+        )
+        before = os.fstat(descriptor)
+        if not stat.S_ISREG(before.st_mode):
+            raise OSError
+        if before.st_size > _ARCHIVE_INDEX_LIMIT:
+            raise ArchiveContractError(
+                "ARCHIVE-INDEX-SIZE", "archive index exceeds its byte budget"
+            )
+        chunks: list[bytes] = []
+        remaining = before.st_size
+        while remaining:
+            chunk = os.read(descriptor, min(65536, remaining))
+            if not chunk:
+                raise OSError
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        if os.read(descriptor, 1):
+            raise ArchiveContractError(
+                "ARCHIVE-INDEX-SIZE", "archive index changed beyond its byte budget"
+            )
+        after = os.fstat(descriptor)
+        linked = os.stat(
+            ARCHIVE_INDEX.name,
+            dir_fd=current_fd,
+            follow_symlinks=False,
+        )
+        if (
+            before.st_dev != after.st_dev
+            or before.st_ino != after.st_ino
+            or before.st_mode != after.st_mode
+            or before.st_size != after.st_size
+            or before.st_dev != linked.st_dev
+            or before.st_ino != linked.st_ino
+        ):
+            raise OSError
+        return b"".join(chunks).decode("utf-8", errors="strict")
+    except ArchiveContractError:
+        raise
+    except (OSError, UnicodeDecodeError) as exc:
+        raise ArchiveContractError(
+            "ARCHIVE-INDEX-READ", "archive index is unavailable"
+        ) from exc
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+        if current_fd is not None:
+            try:
+                os.close(current_fd)
+            except OSError:
+                pass
+
+
 def _parse_repository_index(
     text: str,
 ) -> tuple[dict[str, tuple[str, ...]], int, list[ArchiveDiagnostic]]:
@@ -584,10 +680,10 @@ def validate_repository_archive(
             else:
                 diagnostics.append(_diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", record.path))
     try:
-        index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
+        index_text = _read_repository_index(root)
+    except ArchiveContractError as exc:
         index_text = ""
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-READ", ARCHIVE_INDEX.as_posix()))
+        diagnostics.append(_diagnostic(exc.code, ARCHIVE_INDEX.as_posix()))
     index_rows, index_links, index_diagnostics = _parse_repository_index(index_text)
     diagnostics.extend(index_diagnostics)
     if frozenset(index_rows) != actual:
@@ -784,52 +880,18 @@ def _archive_mapping(
     return normalized, tuple(diagnostics)
 
 
-def _safe_git_environment() -> dict[str, str]:
-    environment = {
-        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
-    }
-    environment.update(
-        {
-            "GIT_CONFIG_GLOBAL": os.devnull,
-            "GIT_CONFIG_SYSTEM": os.devnull,
-            "GIT_CONFIG_NOSYSTEM": "1",
-            "GIT_GRAFT_FILE": os.devnull,
-            "GIT_NO_LAZY_FETCH": "1",
-            "GIT_NO_REPLACE_OBJECTS": "1",
-            "GIT_OPTIONAL_LOCKS": "0",
-            "GIT_TERMINAL_PROMPT": "0",
-            "LC_ALL": "C",
-        }
-    )
-    return environment
-
-
 def _git_command(
     root: Path,
     *args: str,
     input_bytes: bytes | None = None,
+    output_limit: int = _GIT_TREE_OUTPUT_LIMIT,
 ) -> subprocess.CompletedProcess[bytes]:
-    try:
-        return subprocess.run(
-            [
-                "git",
-                "--no-replace-objects",
-                "--literal-pathspecs",
-                "-C",
-                str(root),
-                *args,
-            ],
-            input=input_bytes,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=_safe_git_environment(),
-            timeout=_GIT_TIMEOUT_SECONDS,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise ArchiveContractError(
-            "RECOVERY-GIT-STARTUP", "bounded Git evidence lookup failed"
-        ) from exc
+    return _git_capture_bounded(
+        root,
+        *args,
+        stdout_limit=output_limit,
+        input_bytes=input_bytes,
+    )
 
 
 def _repository_identity(root: Path) -> int:
@@ -910,20 +972,75 @@ def _commit_tree_members(
     result = _git_command(
         root,
         "ls-tree",
-        "-r",
-        "-t",
         "-z",
         "--full-tree",
         commit,
         "--",
         *paths,
+        output_limit=_GIT_TREE_OUTPUT_LIMIT,
     )
     if result.returncode:
         raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup failed")
+    members = _parse_git_tree_output(
+        result.stdout,
+        paths=paths,
+        object_id_length=object_id_length,
+    )
+    unresolved = tuple(path for path in paths if path not in members)
+    if not unresolved:
+        return members
+    if len(unresolved) > _GIT_TREE_ENTRY_LIMIT or any(
+        "\n" in path or "\r" in path or "\0" in path for path in unresolved
+    ):
+        raise ArchiveContractError(
+            "RECOVERY-RESOURCE-LIMIT", "tree lookup request exceeds its budget"
+        )
+    requests = "".join(f"{commit}:{path}\n" for path in unresolved).encode("utf-8")
+    if len(requests) > _GIT_TREE_OUTPUT_LIMIT:
+        raise ArchiveContractError(
+            "RECOVERY-RESOURCE-LIMIT", "tree lookup request exceeds its budget"
+        )
+    exact = _git_command(
+        root,
+        "cat-file",
+        "--batch-check=%(objectname) %(objecttype) %(objectsize)",
+        input_bytes=requests,
+        output_limit=_GIT_TREE_OUTPUT_LIMIT - len(result.stdout),
+    )
+    if exact.returncode:
+        raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup failed")
+    members.update(
+        _parse_git_path_batch_output(
+            exact.stdout,
+            paths=unresolved,
+            object_id_length=object_id_length,
+            missing_prefix=f"{commit}:",
+        )
+    )
+    return members
+
+
+def _parse_git_tree_output(
+    output: bytes,
+    *,
+    paths: tuple[str, ...],
+    object_id_length: int,
+    entry_limit: int = _GIT_TREE_ENTRY_LIMIT,
+) -> dict[str, _GitTreeMember]:
+    if len(output) > _GIT_TREE_OUTPUT_LIMIT:
+        raise ArchiveContractError(
+            "RECOVERY-RESOURCE-LIMIT", "tree output exceeds its budget"
+        )
     members: dict[str, _GitTreeMember] = {}
-    for raw_record in result.stdout.split(b"\0"):
+    entry_count = 0
+    for raw_record in output.split(b"\0"):
         if not raw_record:
             continue
+        entry_count += 1
+        if entry_count > entry_limit:
+            raise ArchiveContractError(
+                "RECOVERY-RESOURCE-LIMIT", "tree entries exceed their budget"
+            )
         try:
             raw_header, raw_path = raw_record.split(b"\t", 1)
             raw_mode, raw_kind, raw_object = raw_header.split(b" ", 2)
@@ -950,65 +1067,71 @@ def _commit_tree_members(
     return members
 
 
-def _batch_blob_bytes(root: Path, object_ids: tuple[str, ...]) -> dict[str, bytes]:
-    if not object_ids:
-        return {}
-    result = _git_command(
-        root,
-        "cat-file",
-        "--batch",
-        input_bytes=("\n".join(object_ids) + "\n").encode("ascii"),
-    )
-    if result.returncode:
-        raise ArchiveContractError("RECOVERY-OBJECT-MISSING", "blob batch failed")
-    offset = 0
-    blobs: dict[str, bytes] = {}
-    for expected in object_ids:
-        newline = result.stdout.find(b"\n", offset)
-        if newline < 0:
+def _parse_git_path_batch_output(
+    output: bytes,
+    *,
+    paths: tuple[str, ...],
+    object_id_length: int,
+    entry_limit: int = _GIT_TREE_ENTRY_LIMIT,
+    missing_prefix: str = "",
+) -> dict[str, _GitTreeMember]:
+    """Parse exact ``commit:path`` batch-check evidence without path disclosure."""
+
+    if (
+        len(output) > _GIT_TREE_OUTPUT_LIMIT
+        or len(paths) > entry_limit
+        or not isinstance(output, bytes)
+    ):
+        raise ArchiveContractError(
+            "RECOVERY-RESOURCE-LIMIT", "tree entries exceed their budget"
+        )
+    lines = output.splitlines()
+    if len(lines) != len(paths):
+        raise ArchiveContractError(
+            "RECOVERY-TREE-INVALID", "tree lookup is incomplete"
+        )
+    members: dict[str, _GitTreeMember] = {}
+    for path, line in zip(paths, lines, strict=True):
+        missing = f"{missing_prefix}{path} missing".encode("utf-8")
+        if line == missing:
+            continue
+        fields = line.split(b" ")
+        if len(fields) != 3:
             raise ArchiveContractError(
-                "RECOVERY-OBJECT-MISSING", "blob batch is incomplete"
+                "RECOVERY-TREE-INVALID", "tree lookup is malformed"
             )
-        header = result.stdout[offset:newline].split(b" ")
-        if len(header) != 3:
-            raise ArchiveContractError(
-                "RECOVERY-OBJECT-MISSING", "blob batch header is malformed"
-            )
+        raw_object, raw_kind, raw_size = fields
         try:
-            returned = header[0].decode("ascii", errors="strict")
-            kind = header[1].decode("ascii", errors="strict")
-            size = int(header[2])
+            object_id = raw_object.decode("ascii", errors="strict")
+            kind = raw_kind.decode("ascii", errors="strict")
+            size = int(raw_size)
         except (UnicodeDecodeError, ValueError) as exc:
             raise ArchiveContractError(
-                "RECOVERY-OBJECT-MISSING", "blob batch header is malformed"
+                "RECOVERY-TREE-INVALID", "tree lookup is malformed"
             ) from exc
-        start = newline + 1
-        end = start + size
         if (
-            returned != expected
-            or kind != "blob"
+            len(object_id) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(object_id) is None
+            or kind not in {"blob", "tree"}
             or size < 0
-            or size > _ARCHIVE_RECORD_LIMIT
-            or end >= len(result.stdout)
-            or result.stdout[end : end + 1] != b"\n"
         ):
             raise ArchiveContractError(
-                "RECOVERY-OBJECT-MISSING", "blob batch identity differs"
+                "RECOVERY-TREE-INVALID", "tree lookup is malformed"
             )
-        payload = result.stdout[start:end]
-        try:
-            payload.decode("utf-8", errors="strict")
-        except UnicodeDecodeError as exc:
-            raise ArchiveContractError(
-                "RECOVERY-NON-UTF8", "source blob is not UTF-8 Markdown"
-            ) from exc
-        blobs[expected] = payload
-        offset = end + 1
-    if offset != len(result.stdout):
-        raise ArchiveContractError(
-            "RECOVERY-OBJECT-MISSING", "blob batch contains trailing output"
-        )
-    return blobs
+        mode = "040000" if kind == "tree" else "000000"
+        members[path] = _GitTreeMember(mode, kind, object_id)
+    return members
+
+
+def _batch_blob_bytes(root: Path, object_ids: tuple[str, ...]) -> dict[str, bytes]:
+    return _read_git_blob_batch(
+        root,
+        object_ids,
+        object_id_length=len(object_ids[0]) if object_ids else 40,
+        per_blob_limit=_ARCHIVE_RECORD_LIMIT,
+        aggregate_limit=MAX_GIT_BATCH_BYTES,
+        object_limit=MAX_GIT_BATCH_OBJECTS,
+    )
 
 
 def _batch_recover(
