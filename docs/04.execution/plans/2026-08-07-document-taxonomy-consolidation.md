@@ -530,14 +530,18 @@ of immutable Stage 90/98 evidence profiles. In terminal mode the registry CLI
 scans tracked text, classifies every token hit, and fails on mutable,
 executable, contract, fixture, navigation, or unclassified consumers.
 
-Atomically add `tests/test_migrate_document_work_units.py` to the current
-ACER role-audit post-closure helper manifest and `tests/README.md`. Do not alter
-the frozen 33-helper ledger. Mark this one exact admission as transition-only
-in code/tests, and require WDTC-109 to remove the test, README row, admission,
-and its temporary role-audit test together. During transition, update
-`docs/90.references/data/README.md` to state the exact current partition as 42
-helpers (`33` frozen plus `9` admitted); WDTC-109 restores the terminal 41
-(`33 + 8`) statement. The aggregate must remain green throughout.
+The repo-backed census reviewed all 34 current ACER post-closure admissions and
+retained every one: none met the authorized deletion conjunction of
+legacy/deprecated status, zero current consumers, and no unique semantics.
+Deletion authorization therefore produced zero deletions. Atomically add
+`tests/test_migrate_document_work_units.py` to the current ACER role-audit
+post-closure helper manifest and `tests/README.md`. Do not alter the frozen
+33-helper ledger. Mark this one exact admission as transition-only in
+code/tests, and require WDTC-109 to remove the test, README row, admission, and
+its temporary role-audit test together. During transition, update
+`docs/90.references/data/README.md` to state the exact current partition as 68
+helpers (`33` frozen plus `35` admitted); WDTC-109 restores the terminal 67
+(`33 + 34`) statement. The aggregate must remain green throughout.
 
 - [ ] **Step 4: Build the exact manifest**
 
@@ -1168,8 +1172,8 @@ reviewed migration remains recoverable through Git history. In the same commit,
 remove the exact transition-only helper admission from
 `validate-active-corpus-role-audit.py`, its role-audit test, and the
 `tests/README.md` inventory row. Verify that the frozen 33-helper ACER ledger
-and all permanent post-closure admissions remain unchanged, and restore
-`docs/90.references/data/README.md` to the exact terminal 41-helper (`33 + 8`)
+and all 34 permanent post-closure admissions remain unchanged, and restore
+`docs/90.references/data/README.md` to the exact terminal 67-helper (`33 + 34`)
 description.
 
 Before deletion, run the tracked-tree search below and record every hit in the
