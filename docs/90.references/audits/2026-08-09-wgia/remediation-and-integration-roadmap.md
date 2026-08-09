@@ -94,6 +94,17 @@ admission complete; no script, validator, fixture, or disposition changes here.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | WGA-RMP-HAR-001 | `WGA-HAR-003` | `REQ-WGA-017` | The canonical `scripts/README.md` human inventory omits tracked import-only helpers `scripts/archive_cutover_manifest.py` and `scripts/reference_information_architecture.py`; observation inventory is 47 scripts = 41 CLI + six helpers. | WGIA-005 specification/content and fix-round quality reviews Approved; WGIA-009 deduplication/admission is required before WGIA-011 or the current human-index owner changes. | P2 human inventory completeness | `scripts/README.md` names all 47 tracked script files, identifies the six import-only helpers, and preserves the existing production semantic owners/callers. | `scripts/README.md` human inventory owner; current scripts, contracts, validators, tests, and fixtures retain production ownership. | Re-run the deterministic observation/current 47 = 41 + 6 probe with zero missing human-index paths, then strict registry/profile/link and focused harness checks. | Reviewer confirms both missing helper rows are present, no CLI/helper is misclassified, and no aggregate/helper is promoted to a duplicate semantic owner. | Revert only the later bounded `scripts/README.md` inventory correction; production scripts/contracts/tests require no rollback. | WGIA-009 admission pending. | `repository-static` | `Provisional` |
 
+### WGIA-006 Provisional Inputs
+
+This row is a candidate input for WGIA-009, not implementation approval. The
+source finding remains authoritative until WGIA-006 independent review and
+integrated admission complete. Generated output must be changed only through
+its producer.
+
+| Candidate ID | Source findings | Request IDs | Problem | Dependency | Priority | Target state | Canonical implementation owner | Validation | Verification | Rollback | Blocker | Evidence depth | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| WGA-RMP-KNW-001 | `WGA-KNW-002` | `REQ-WGA-022` | LLM-WIKI README and generated output retain 2026-05-10 source/review metadata although all six RIA-declared inputs and the producer/output changed later; byte equality alone does not prove on-source-change review. | WGIA-006 specification/content and quality reviews Approved; WGIA-009 deduplication/admission is required before WGIA-010 changes the current knowledge owners. | P1 freshness evidence integrity | Review all six declared inputs and current owner links; record current review metadata in the README and generator; regenerate output through the producer without adding a runtime/search claim or hand editing. | `docs/90.references/llm-wiki/README.md` for review/freshness declaration; `scripts/generate-llm-wiki-index.sh` for emitted metadata; target documents retain fact/policy ownership. | Generator `--check`, three focused RIA generator-relation tests, strict profiles/links, and deterministic declared-input last-change versus review-date proof. | Reviewer confirms six-input review, current links, truthful metadata, generator-only output, and continued reference-only boundary. | Revert only the later bounded README/generator/generated-output logical unit; canonical targets and memory contracts require no rollback. | WGIA-009 admission pending. | `repository-static` | `Provisional` |
+
 ### Finding Convention
 
 Every material roadmap finding keeps the complete pack field set and closed

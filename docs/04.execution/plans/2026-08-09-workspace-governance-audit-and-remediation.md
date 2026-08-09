@@ -400,16 +400,16 @@ roadmap/ledger rows, Task and progress evidence.
 **Files:** `llm-wiki-memory-and-knowledge-management.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Inspect LLM-WIKI canonical sources, generator, generated output,
+- [x] Inspect LLM-WIKI canonical sources, generator, generated output,
   freshness/drift checks, and current lookup routes.
-- [ ] Audit working/short-term, durable/long-term, domain-scoped, and
+- [x] Audit working/short-term, durable/long-term, domain-scoped, and
   provider-local auxiliary memory for authority, promotion, conflict,
   redaction, freshness, retention, and deletion rules.
-- [ ] Prove repository-wins and generated-output ownership; do not hand-edit the
+- [x] Prove repository-wins and generated-output ownership; do not hand-edit the
   generated wiki index.
-- [ ] Run the LLM-WIKI generator check, loop/checkpoint/memory-related checks,
+- [x] Run the LLM-WIKI generator check, loop/checkpoint/memory-related checks,
   profiles, and links; review against VAL-WGA-007.
-- [ ] Record candidates and commit `docs: audit knowledge and memory controls`.
+- [x] Record candidates and commit `docs: audit knowledge and memory controls`.
 
 #### WGIA-007 — Integrated and role-specific AI agents
 

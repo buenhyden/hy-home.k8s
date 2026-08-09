@@ -10,81 +10,183 @@ updated: 2026-08-09
 
 ## Overview
 
-This report owns the audit of LLM-WIKI, deterministic knowledge routing, the
-four memory classes, freshness, promotion, retention, conflict, redaction,
-archive/GC, compaction, and handoff. WGIA-001 records current owners and
-boundaries; WGIA-006 owns complete analysis and review.
+This report audits deterministic LLM-WIKI knowledge routing and the exact four
+memory classes at observation commit
+`50628b84165479b03efc0a25be075a49c91a9aef`. Starting implementation commit
+`d56f2c3429065e9c4642028f905dfcf2a9f748a7` has no LLM-WIKI, generator,
+memory-policy, lifecycle, checkpoint, closure-contract, or generated-output
+drift from the observation; its relevant current drift is prior WGIA progress
+and document-contract fixture documentation only.
 
 ## Reference Type
 
 Dated repository-static knowledge and memory audit. It is not a knowledge
-router, generated index, memory policy, checkpoint, or provider-local store.
+router, generator, generated index, memory policy, checkpoint writer, provider
+store, runtime readiness claim, or remediation approval.
 
 ## Authority Boundary
 
-LLM-WIKI source/index contracts, the generator, Stage 00 memory owners, and
-machine schemas retain authority. This report does not hand-edit generated
-output, read ignored or provider-local memory, promote temporary context, or
-infer provider/runtime delivery from tracked files.
+The LLM-WIKI README owns link-map boundaries, the generator owns generated
+bytes, canonical target documents own their content, and Stage 00 contracts own
+memory semantics. This report did not edit generated output or its producer,
+read ignored checkpoints/provider-local memory, promote temporary context,
+inspect private state, or infer runtime retrieval from tracked links.
 
 ## Scope
 
-Included: LLM-WIKI sources and generated boundary, deterministic routing,
-working-short-term, durable-long-term, domain-scoped, provider-local-auxiliary
-memory, freshness, promotion, retention, conflict, redaction, compaction, and
-handoff. Excluded: private runtime state, credentials, ignored checkpoints,
-provider recall, generator modification, and conclusions before WGIA-006.
+Included: the LLM-WIKI README, six declared input roots, generator, generated
+output, byte-drift check, repository lookup routes, review/freshness triggers,
+and exactly four memory classes across authority, promotion, conflict,
+redaction, freshness, retention, deletion/GC, compaction, resume, and handoff.
+Excluded: provider recall, ignored checkpoints, private/user memory, secrets,
+retrieval quality, MCP/search/RAG operation, hosted/remote/live state, and
+canonical remediation.
 
 ## Definitions / Facts
 
 ### LLM-WIKI
 
-`docs/90.references/llm-wiki/README.md` routes the collection,
-`wiki-index.md` is generated output, and `scripts/generate-llm-wiki-index.sh`
-is the current producer/check surface. Canonical sources, not a hand edit to
-the index, own knowledge changes.
+The LLM-WIKI is a repository-local Markdown owner map, not a search service or
+knowledge authority. The RIA relation names one canonical owner, one generator,
+six ordered input roots, one generated output, and one check command.
+
+| Role | Exact owner / evidence | Current behavior | Audit result |
+| --- | --- | --- | --- |
+| Link-map boundary | `docs/90.references/llm-wiki/README.md#current-index-role` | Declares reference-only scope, six inputs, producer, output, and check. | Unique canonical owner. |
+| Declared inputs | `docs/90.references/data/reference-information-architecture.json#generatedAssets` | LLM-WIKI README, Agent Governance Hub, Harness Catalog, stage routing, Docs README, and Scripts README in exact order. | RIA relation and README agree. |
+| Producer | `scripts/generate-llm-wiki-index.sh#generate_index` | Emits a fixed Markdown map; `--check` regenerates to a temporary file and byte-compares it with tracked output. | Deterministic producer; it does not parse or digest declared input contents. |
+| Generated output | `docs/90.references/llm-wiki/wiki-index.md#authority-boundary` | Derived canonical-owner lookup only; hand editing is prohibited. | Output bytes equal producer bytes. |
+| Static enforcement | `scripts/validate-repo-quality-gates.sh`; `scripts/reference_information_architecture.py#validate_generated_assets` | Quality gate checks reference-only shape and byte equality; RIA validates unique safe generator relation and command. | Current lookup boundary is enforced repository-statically. |
+| Human operation | `docs/05.operations/guides/0009-llm-wiki-curation-guide.md#step-by-step-instructions`; `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md#scenario-c-llm-wiki-ownerlink-change` | Change canonical owner/generator, regenerate, check, and never hand-edit output. | Human refresh route is explicit. |
+
+The generated map contains canonical-owner links across governance, SDLC
+stages, operations, references, templates, scripts, GitOps, and examples.
+Repository readers route through the root README, reference index, scripts
+inventory, curation guide/runbook, tracked knowledge-map skills, quality gate,
+and RIA relation. None of these surfaces proves model ingestion or retrieval.
+
+#### Freshness Proof
+
+Byte freshness and review freshness are different. `bash
+scripts/generate-llm-wiki-index.sh --check` passes, but both the README and
+generated output still declare `2026-05-10` for source/review metadata. At the
+observation commit, all six declared inputs have later last-change commits:
+
+| Declared input | Last change at the observation commit |
+| --- | --- |
+| `docs/90.references/llm-wiki/README.md` | 2026-07-23, commit `0cb1789c80811a6ec5833ae1cfc56b5c12cb327a` |
+| `docs/00.agent-governance/README.md` | 2026-07-29, commit `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` |
+| `docs/00.agent-governance/harness-catalog.md` | 2026-08-02, commit `4fdea6a068aec6c65681bae32c44b67a5e95f09e` |
+| `docs/00.agent-governance/rules/document-stage-routing.md` | 2026-07-30, commit `38a2fe6b90bad694d0a9a021c7edce8d800e03ea` |
+| `docs/README.md` | 2026-07-18, commit `787b28fe1f2b1fff16d59936ed2a411e04d25db5` |
+| `scripts/README.md` | 2026-08-02, commit `4fdea6a068aec6c65681bae32c44b67a5e95f09e` |
+
+The producer/output themselves last changed 2026-07-03 at commit
+`4ec068e4b14f244dd31d991d90241694f15323e4`. Thus byte equality proves current
+output against the current fixed producer, but the visible on-source-change
+review record is stale and source-trigger review is not machine-demonstrated.
 
 ### Memory Tiers and Management
 
-The current contract has exactly four classes:
-`working-short-term`, `durable-long-term`, `domain-scoped`, and
-`provider-local-auxiliary`. `docs/00.agent-governance/memory/progress.md` is
-the durable shared progress ledger, not a fifth class. Repository evidence and
-canonical owners win conflicts with temporary or provider-local context.
+Exactly four classes are selected in identical order by the harness, lifecycle,
+checkpoint, and closure contracts. `docs/00.agent-governance/memory/progress.md`
+is the durable shared ledger within `durable-long-term`, not a fifth class.
 
-### Canonical-owner Inventory
+| Class | Authority / owner | Freshness and conflict | Retention / deletion / GC | Promotion and redaction | Compaction and handoff |
+| --- | --- | --- | --- | --- | --- |
+| `working-short-term` | Active executor; temporary, non-authoritative task context | Re-observe repository/task on resume; observed repository state wins | Task-bounded; discard at reviewed terminal disposition after durable evidence is promoted | Reviewed/redacted reusable evidence may enter `durable-long-term`; prohibited payloads never persist | Replace raw context with bounded reviewed summary; hand off next owner or discard with evidence |
+| `durable-long-term` | Canonical SDLC owner or shared progress ledger | Canonical-owner review; document-type owner outranks progress, and newer reviewed evidence reconciles older memory | Retain until canonical owner approves replacement; governed archive preserves provenance | No implicit onward promotion; only non-sensitive reviewed facts, decisions, progress, and handoff evidence | Preserve source/provenance, remove raw prompts, and hand off through canonical Task/progress evidence |
+| `domain-scoped` | Canonical domain document owner | Domain-owner review; domain owner wins, ambiguous cross-domain overlap escalates | Archive when superseded/invalidated with original and replacement ownership | Cross-domain evidence may enter `durable-long-term` only after receiving-owner review; no copied sensitive payloads | Merge duplicate scope knowledge under current owner and route handoff by domain/validation owner |
+| `provider-local-auxiliary` | Provider runtime or user-local store; advisory only | Re-observe repository before use; repository and canonical owners win every conflict | Provider-owned retention/GC after re-observation; never archived as repository authority | May enter `working-short-term` only after re-observation/classification/redaction; never writes canonical memory directly | Provider compaction is not repository evidence; handoff records only redacted status/retry trigger without transferring authority |
 
-| Role | Current evidence surface | Foundation use |
-| --- | --- | --- |
-| Knowledge human index | `docs/90.references/llm-wiki/README.md` | Collection routing. |
-| Generated output | `docs/90.references/llm-wiki/wiki-index.md` | Derived lookup only. |
-| Evidence producer | `scripts/generate-llm-wiki-index.sh` | Generation and drift check. |
-| Memory policy/index | `docs/00.agent-governance/memory/README.md` | Four-class use and routing. |
-| Durable ledger | `docs/00.agent-governance/memory/progress.md` | Shared progress evidence. |
-| Machine owner | checkpoint, loop, harness, and closure contracts | Synthetic lifecycle enforcement. |
+The checkpoint schema requires 20 top-level fields including redaction,
+compaction, handoff, and exactly four lifecycle records. Resume is
+`repository-wins`, exact identity and a single writer are required, duplicate
+resume is prohibited, and actual provider-state reads are disallowed by the
+static validator. Closure validation fixes each class's owner, sensitivity,
+promotion, retention, compaction, archive/GC, conflict, and handoff projection.
+
+### Blockers
+
+A material blocker requires cause, impact, affected request IDs, release
+condition, owner, and evidence depth. Pending work alone is not a blocker.
+
+| ID | Cause | Impact | Affected request IDs | Release condition | Owner | Evidence depth | Classification |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| BLK-WGA-KNW-001 | Provider-local stores, native compaction, and the ignored checkpoint are outside authorized repository-static inspection. | Static lifecycle alignment cannot be promoted to actual memory retention/deletion, provider recall, compaction, resume, or handoff evidence. | `REQ-WGA-027` | An authorized provider-runtime exercise produces redacted class/promotion/retention/compaction/resume/handoff evidence without exposing private state. | Provider-runtime operator and current provider note; Stage 00 contracts remain static owners. | `provider-runtime` | `DEFER` evidence limitation, not a blocker to the repository-static audit. |
 
 ### Finding Convention
 
-Every material finding uses the complete finding field set and the closed audit
-verdict/evidence-depth vocabularies. Source facts must distinguish authored
-canonical input, generated output, evidence producer, and advisory runtime
-state; unavailable advisory/runtime evidence is `DEFER`.
+Every material finding uses the closed pack fields. Evidence depth is one of
+`repository-static`, `provider-runtime`, `hosted`, or `live`; unavailable
+deeper evidence remains `DEFER`. A blocker is either a complete object above or
+the explicit value `none`.
 
-#### WGA-KNW-001 — Knowledge and memory owner inventory established
+#### WGA-KNW-001 — Generated ownership and lookup routing align
 
-- **Request IDs**: LLM-WIKI and memory-tiers/management coverage rows in the pack index.
-- **Scope**: pinned source, generated output, generator, memory index, durable ledger, and machine-contract inventory.
-- **Expected state**: WGIA-006 can verify routing, lifecycle, freshness, conflict, redaction, retention, promotion, GC, compaction, and handoff against unique owners.
-- **Observed state**: current owner families and four-class vocabulary are identified; source coverage and lifecycle completeness remain pending.
-- **Evidence**: `docs/90.references/llm-wiki/README.md#item-index`; `docs/90.references/llm-wiki/wiki-index.md#authority-boundary`; `scripts/generate-llm-wiki-index.sh#generate_index`; `docs/00.agent-governance/memory/README.md#four-memory-classes`; `docs/00.agent-governance/memory/progress.md#work-entries`; `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#properties`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#checkpointBoundary`; `docs/00.agent-governance/contracts/harness-contract.json#memory`; `docs/00.agent-governance/contracts/agent-governance-closure.json#memoryLayers`.
+- **Request IDs**: `REQ-WGA-022`.
+- **Scope**: LLM-WIKI owner, six input roots, producer, generated output, check command, lookup routes, and generated-only boundary.
+- **Expected state**: one canonical link-map owner and deterministic producer create one generated Markdown output without promoting the map to policy, search, or runtime knowledge.
+- **Observed state**: README and RIA ownership relations agree; generator check passes; generated output is reference-only; current lookup routes point to canonical owners and prohibit hand editing/runtime inference.
+- **Evidence**: `docs/90.references/llm-wiki/README.md#current-index-role`; `docs/90.references/data/reference-information-architecture.json#generatedAssets`; `scripts/generate-llm-wiki-index.sh#generate_index`; `docs/90.references/llm-wiki/wiki-index.md#authority-boundary`; `scripts/reference_information_architecture.py#validate_generated_assets`; `docs/05.operations/guides/0009-llm-wiki-curation-guide.md#common-pitfalls`; `docs/00.agent-governance/rules/documentation-protocol.md`.
 - **Evidence depth**: `repository-static`.
-- **Verdict**: `Partial`.
-- **Impact**: the later audit has a stable authority map, but current knowledge freshness and memory behavior cannot yet be concluded.
+- **Verdict**: `Aligned`.
+- **Impact**: generated lookup ownership, byte drift, and no-hand-edit boundaries are deterministic and do not duplicate target authority.
 - **Disposition**: `Keep`.
-- **Canonical owner**: current LLM-WIKI sources/generator and Stage 00 memory/machine contracts.
-- **Verification**: generated-index `--check`, memory-contract checks, strict links, and WGIA-006 review.
-- **Uncertainty**: source completeness, freshness triggers, actual compaction/handoff execution, and provider-local behavior are unobserved.
-- **Blocker**: none; private and runtime lanes are intentionally `DEFER`.
+- **Canonical owner**: LLM-WIKI README for link-map boundary, generator for output bytes, target documents for facts/policy.
+- **Verification**: generator `--check`, RIA generator-relation tests, strict profiles/links, and generated-output identity check.
+- **Uncertainty**: lookup use, model ingestion, discovery quality, MCP/search/RAG, hosted, provider, remote, and live behavior are not observed.
+- **Blocker**: none for repository-static generated ownership.
+
+#### WGA-KNW-002 — LLM-WIKI source-trigger review metadata is stale
+
+- **Request IDs**: `REQ-WGA-022`.
+- **Scope**: README/output source-reviewed dates and on-source-change freshness trigger across the six declared inputs.
+- **Expected state**: a declared input change triggers review, and visible source/review metadata records the reviewed current owner map separately from generator byte equality.
+- **Observed state**: README and generated output remain dated 2026-05-10 although all six declared inputs changed later and generator/output changed 2026-07-03; byte check still passes because the fixed producer compares only its emitted bytes.
+- **Evidence**: `docs/90.references/llm-wiki/README.md#reference-type`; `docs/90.references/llm-wiki/README.md#review-and-freshness`; `docs/90.references/llm-wiki/wiki-index.md#review-and-freshness`; `scripts/generate-llm-wiki-index.sh#generate_index`; `docs/90.references/data/reference-information-architecture.json#generatedAssets`; `docs/90.references/research/2026-08-08-wer/llm-wiki-and-knowledge-routing.md#owner-drift-and-freshness-rules`.
+- **Evidence depth**: `repository-static`.
+- **Verdict**: `Gap`.
+- **Impact**: byte-current output can be mistaken for evidence that later source changes and owner links received the declared freshness review.
+- **Disposition**: `Correct`.
+- **Canonical owner**: LLM-WIKI README for review/freshness declaration; generator for emitted metadata and output regeneration.
+- **Verification**: review all six inputs, update owner-map review metadata through canonical README/generator, regenerate rather than hand-edit, then rerun generator check, RIA generator tests, profiles, and links.
+- **Uncertainty**: the owner links may be semantically current, but no current dated review evidence establishes that conclusion.
+- **Blocker**: none; WGIA-006 review and WGIA-009 admission are dependencies
+  for a later canonical correction, not blockers to this repository-static
+  finding.
+
+#### WGA-KNW-003 — Four-class memory lifecycle aligns repository-statically
+
+- **Request IDs**: `REQ-WGA-027`.
+- **Scope**: authority, freshness, retention, deletion/GC, promotion, conflict, redaction, compaction, resume, and handoff for exactly four memory classes.
+- **Expected state**: closed machine/policy owners select the same four classes, repository truth wins, promotion is reviewed/redacted, and each class has bounded lifecycle and handoff behavior.
+- **Observed state**: memory README, harness, loop, checkpoint, closure, documentation protocol, and postflight projections agree; focused self-test/production validators and relevant tests pass.
+- **Evidence**: `docs/00.agent-governance/memory/README.md#four-memory-classes`; `docs/00.agent-governance/contracts/harness-contract.json#memory`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#checkpointBoundary`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#interfaces`; `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#required`; `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#$defs.memoryLifecycle`; `docs/00.agent-governance/contracts/agent-governance-closure.json#memoryLayers`; `docs/00.agent-governance/rules/postflight-checklist.md#validation-and-refresh`.
+- **Evidence depth**: `repository-static`.
+- **Verdict**: `Aligned`.
+- **Impact**: static authority, promotion, repository-wins, retention/GC, redaction, compaction, resume, and handoff semantics are closed and testable.
+- **Disposition**: `Keep`.
+- **Canonical owner**: harness/lifecycle/checkpoint/closure machine contracts and the Stage 00 memory policy/index.
+- **Verification**: harness, loop, checkpoint, and closure self-test/production checks plus focused memory/generator tests.
+- **Uncertainty**: static fixtures do not prove actual provider memory, checkpoint, compaction, deletion, resume, or handoff execution.
+- **Blocker**: none for repository-static alignment; `BLK-WGA-KNW-001` limits runtime promotion only.
+
+#### WGA-KNW-004 — Provider-local memory and actual lifecycle execution remain deferred
+
+- **Request IDs**: `REQ-WGA-027`.
+- **Scope**: provider-local stores, ignored checkpoint, actual retention/deletion, native compaction, resume, and handoff.
+- **Expected state**: advisory/private memory never becomes repository authority, and no deeper-lane claim is made without authorized redacted runtime evidence.
+- **Observed state**: static contracts enforce advisory status and repository re-observation; no provider/private/ignored checkpoint was accessed, so actual behavior remains unobserved.
+- **Evidence**: `docs/00.agent-governance/contracts/harness-contract.json#memory`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#checkpointBoundary`; `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#$defs.resume`; `docs/00.agent-governance/contracts/agent-governance-closure.json#memoryLayers`; `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md#lifecycle-rules-and-evidence-limits`; `docs/00.agent-governance/harness-implementation-map.md#evidence--progress`.
+- **Evidence depth**: `repository-static`.
+- **Verdict**: `DEFER`.
+- **Impact**: repository-static lifecycle controls are usable governance evidence but cannot establish provider retention, deletion, compaction, resume, or handoff behavior.
+- **Disposition**: `Keep`.
+- **Canonical owner**: provider-runtime operator for deeper evidence; Stage 00 contracts remain static authority.
+- **Verification**: separately authorized, redacted provider-runtime lifecycle evidence with repository re-observation and no private payload exposure.
+- **Uncertainty**: provider discovery, memory enablement, retention/GC, private deletion, native compaction, actual checkpoint I/O, resume, handoff, hosted, remote, and live state.
+- **Blocker**: `BLK-WGA-KNW-001`; it blocks evidence-depth promotion, not WGIA-006 static completion.
 
 ## Sources
 
@@ -93,28 +195,38 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 | Source ID | Source role | Evidence at the observation commit | Use |
 | --- | --- | --- | --- |
-| SRC-WGA-KNW-001 | human index | `docs/90.references/llm-wiki/README.md#item-index`; `docs/00.agent-governance/memory/README.md#four-memory-classes`; `docs/00.agent-governance/memory/progress.md#work-entries` | Knowledge and memory routing. |
-| SRC-WGA-KNW-002 | evidence producer | `scripts/generate-llm-wiki-index.sh#generate_index`; `docs/90.references/llm-wiki/wiki-index.md#authority-boundary` | Generated-index production and drift check. |
-| SRC-WGA-KNW-003 | machine owner | `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#properties`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#checkpointBoundary`; `docs/00.agent-governance/contracts/harness-contract.json#memory`; `docs/00.agent-governance/contracts/agent-governance-closure.json#memoryLayers` | Synthetic lifecycle evidence. |
-| SRC-WGA-KNW-004 | historical snapshot | `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md#lifecycle-rules-and-evidence-limits`; `docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md#residual-risks` | Source-commit-bounded context only. |
+| SRC-WGA-KNW-001 | human index | `docs/90.references/llm-wiki/README.md#current-index-role`; `docs/90.references/llm-wiki/README.md#review-and-freshness`; `docs/00.agent-governance/memory/README.md#four-memory-classes`; `docs/00.agent-governance/memory/progress.md#work-entries` | Knowledge ownership, freshness, and memory routing. |
+| SRC-WGA-KNW-002 | evidence producer | `scripts/generate-llm-wiki-index.sh#generate_index`; `docs/90.references/llm-wiki/wiki-index.md#authority-boundary`; `scripts/validate-agent-harness-contract.py#main`; `scripts/validate-agent-loop-lifecycle.py#main`; `scripts/validate-agent-checkpoint.py#main`; `scripts/validate-agent-governance-closure.py#main` | Deterministic byte and memory-lifecycle validation. |
+| SRC-WGA-KNW-003 | machine owner | `docs/90.references/data/reference-information-architecture.json#generatedAssets`; `docs/00.agent-governance/contracts/harness-contract.json#memory`; `docs/00.agent-governance/contracts/agent-loop-lifecycle.json#checkpointBoundary`; `docs/00.agent-governance/contracts/agent-checkpoint.schema.json#$defs.memoryLifecycle`; `docs/00.agent-governance/contracts/agent-governance-closure.json#memoryLayers` | Generated relation and closed memory projections. |
+| SRC-WGA-KNW-004 | policy owner | `docs/00.agent-governance/rules/documentation-protocol.md`; `docs/00.agent-governance/rules/postflight-checklist.md#validation-and-refresh`; `docs/05.operations/guides/0009-llm-wiki-curation-guide.md#step-by-step-instructions`; `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md#scenario-c-llm-wiki-ownerlink-change` | No-hand-edit, memory coupling, promotion, and operational refresh routes. |
+| SRC-WGA-KNW-005 | historical snapshot | `docs/90.references/research/2026-08-08-wer/llm-wiki-and-knowledge-routing.md#owner-drift-and-freshness-rules`; `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md#lifecycle-rules-and-evidence-limits` | Source-bounded research context only; current owners win. |
 
 ## Review and Freshness
 
-- Review status: `Pending` for WGIA-006 independent topic review.
-- Review disposition: `DEFER`; no knowledge or memory lifecycle is closed yet.
-- Evidence observed: 2026-08-09 at the exact observation commit.
-- Current-truth owners: canonical LLM-WIKI sources/generator and Stage 00
-  memory/machine-contract surfaces.
-- Refresh triggers: source, generated index, generator, memory class, lifecycle,
-  freshness, promotion, retention, conflict, redaction, compaction, handoff,
-  observation commit, or finding change.
-- Provider-runtime, hosted, remote, credential-bearing, private-memory, and live
-  evidence remains `DEFER`.
+- Review status: `Approved`; specification/content and quality reviews found no
+  remaining Critical or Important issue after the closed-vocabulary fix.
+- Review disposition: `Approved` as a bounded repository-static audit;
+  `WGA-RMP-KNW-001` remains provisional pending WGIA-009 admission.
+- Evidence observed: 2026-08-09 at exact observation commit
+  `50628b84165479b03efc0a25be075a49c91a9aef`, compared with starting commit
+  `d56f2c3429065e9c4642028f905dfcf2a9f748a7`.
+- Current-truth owners: LLM-WIKI README/generator/target documents and Stage 00
+  memory, harness, lifecycle, checkpoint, closure, documentation, and postflight
+  owners.
+- Refresh triggers: declared source, owner link, generator/output, source-review
+  date, memory class, promotion, retention/GC, conflict, redaction, compaction,
+  resume, handoff, provider evidence, or observation commit change.
+- Provider-runtime, hosted, remote, credential-bearing, private-memory,
+  ignored-checkpoint, retrieval, and live evidence remains `DEFER`.
+- One provisional WGIA-009 freshness-repair row is warranted. No disposition-
+  ledger row exists because no Legacy, Deprecated, one-shot, or deletion
+  candidate was found.
 
 ## Related Documents
 
 - [Pack Index](README.md)
 - [Spec 054](../../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)
+- [Implementation Plan](../../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)
 - [Memory README](../../../00.agent-governance/memory/README.md)
 - [LLM-WIKI README](../../llm-wiki/README.md)
-- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)

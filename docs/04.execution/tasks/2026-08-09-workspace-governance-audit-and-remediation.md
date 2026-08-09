@@ -42,7 +42,7 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-003 | VAL-WGA-002, VAL-WGA-004 | Audit SDD, SDLC, documentation, templates, README rules, and guides | assigned worker | Done | Bounded repository-static audit is complete: eleven requested families align structurally; broader Release mapping to approved DOC-G5 is a `Gap`; Guide Type enforcement is `Partial` under queued WORK-013; and integration-guide static conformance is `Partial` with live usability `DEFER`. | [Focused evidence](#wgia-003-focused-evidence); exact family/owner/profile/template/lifecycle/validator matrix, four complete findings, two provisional WGIA-009 dedupe/routing inputs, specification and fix-round quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-004 | VAL-WGA-002, VAL-WGA-005 | Audit CI/CD, GitHub Actions, QA, formatting, lint, syntax, tests, fixtures, Validation and Verification | assigned worker | Done | Repository-static delivery/QA audit is complete: Actions and lane ownership align, Prettier remains accurately dormant `DEFER`, and hosted Verification/deployment CD remain bounded. | [Focused evidence](#wgia-004-focused-evidence); workflow/lane/check-family matrices, four complete findings, no remediation candidate, specification/content and quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-005 | VAL-WGA-002, VAL-WGA-006 | Audit harness, loop, scripts, fixtures, checkpoints, blockers, recovery, and handoff | assigned worker | Done | Repository-static harness topology, lifecycle/checkpoint behavior, and fixture production ownership align; the scripts human inventory is `Partial`, while provider runtime and actual ignored-checkpoint execution remain `DEFER`. | [Focused evidence](#wgia-005-focused-evidence); four complete findings, exact state/owner/blocker matrices, 47 scripts = 41 CLI + six helpers, 37 fixtures, one provisional WGIA-009 human-index repair, 119 tests, specification/content and fix-round quality reviews Approved, and complete repository quality gate PASS. |
-| WGIA-006 | VAL-WGA-002, VAL-WGA-007 | Audit LLM-WIKI, knowledge routing, and memory classes | assigned worker | Queued | Not executed. | Knowledge/memory report, generator and lifecycle evidence, reviews. |
+| WGIA-006 | VAL-WGA-002, VAL-WGA-007 | Audit LLM-WIKI, knowledge routing, and memory classes | assigned worker | Done | Generated ownership/lookup and four-class memory lifecycle align repository-statically; stale LLM-WIKI source-trigger review metadata is a `Gap`, and actual provider-local memory/lifecycle execution remains `DEFER`. | [Focused evidence](#wgia-006-focused-evidence); four complete findings, exact generated-owner and memory-lifecycle matrices, one provisional WGIA-009 freshness repair, generator/memory checks, 115 tests, specification/content and quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-007 | VAL-WGA-002, VAL-WGA-008 | Audit integrated orchestration and every current AI-agent role | assigned worker | Queued | Not executed. | Exact role/adaptor/model/evaluation matrix, focused gates and reviews. |
 | WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Queued | Not executed. | Security report, trust/control matrix, static gate evidence and review. |
 | WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Queued | Not executed. | Candidate/consumer ledger, roadmap, review dispositions, focused gates. |
@@ -421,6 +421,60 @@ and quality reviews are Approved with no Critical or Important finding.
   progress/provisional-roadmap/ignored-worker edits. WGIA-014 owns whole-branch
   completion evidence.
 
+### WGIA-006 Focused Evidence
+
+- **Scope and changed paths**: the knowledge/memory report, `REQ-WGA-022` and
+  `REQ-WGA-027` cells, one provisional roadmap row, this Task, one top durable
+  progress entry, and ignored worker progress/report. No disposition-ledger row
+  was added because no Legacy, Deprecated, one-shot, or deletion candidate was
+  found. The generated index, generator, canonical memory owners, Stage 98,
+  Current, and RIA remain unchanged.
+- **Acceptance IDs**: VAL-WGA-002 and VAL-WGA-007 at repository-static depth.
+- **Pinned/current identity**: LLM-WIKI, generator/output, memory, harness,
+  lifecycle, checkpoint, and closure owners are identical between observation
+  commit `50628b84165479b03efc0a25be075a49c91a9aef` and starting HEAD
+  `d56f2c3429065e9c4642028f905dfcf2a9f748a7`; relevant current drift is prior
+  WGIA progress and document-contract fixture documentation only.
+- **RED and findings**: deterministic proof returns `WGIA-KNW-FRESHNESS RED
+  declared_inputs=6 changed_after_review=6 review_date=2026-05-10` with exact
+  path/date/commit rows and latest input date 2026-08-02. `WGA-KNW-001` and
+  `WGA-KNW-003` are `Aligned`, `WGA-KNW-002` is a freshness `Gap`, and `WGA-KNW-004` is
+  `DEFER`, all at strongest observed `repository-static` depth.
+  `WGA-RMP-KNW-001` is a provisional bounded source-review/metadata repair,
+  not implementation approval or generated-output hand-edit authority.
+- **Generator and memory validation**: `bash
+  scripts/generate-llm-wiki-index.sh --check` reports current generated bytes.
+  Harness contract self-test passes 37 cases and production passes 12/4/48,
+  four evidence classes, four memory classes, and 14 consumers. Loop self-test
+  passes 66 cases and production passes eight states/nine transitions/two
+  signature retries/three recovery actions/two-result no-progress stop/six
+  non-retryable conditions/five progress classes/six interfaces. Checkpoint
+  self-test passes 110 mutations and production passes four memory classes.
+  Governance closure self-test and production both pass.
+- **Focused tests and document checks**: harness, loop, checkpoint, closure,
+  and three RIA generator-relation tests pass 115 tests. The report probe passes
+  four complete findings, 28 exact observation paths with zero missing, and 14
+  JSON/Python/shell selectors with zero invalid. Strict registry reports 502
+  paths with zero uncovered/ambiguous; full and report-local strict Markdown
+  profiles report zero violations; strict links exits 0; `git diff --check`
+  passes; HEAD-worktree and observation-to-HEAD Stage 98 diffs are empty. The
+  generated index/generator, memory contracts/README, and RIA dirty diff is
+  empty; exact tracked dirty scope is report, two request cells, roadmap, Task,
+  and durable progress. The initial freshness probe command had unmatched
+  shell quoting and exited 1; the corrected bounded Python command produced the
+  exact RED above. The complete repository quality gate passed against the
+  exact staged five-file scope.
+- **Lanes and limitations**: targeted repository-static checks `PASS` so far;
+  staged, all-files, aggregate/full, hosted CI, provider-runtime,
+  authenticated, credential-bearing, private-memory, ignored-checkpoint,
+  remote/retrieval, and live lanes remain `DEFER`. No secret, runtime/private
+  memory, ignored checkpoint, provider, remote, or live state was accessed.
+- **Review, rollback, and next owner**: specification/content and quality
+  reviews are `Approved`. Rollback is limited to the WGIA-006 report/cells/
+  roadmap/Task/progress/ignored-worker edits. WGIA-009 owns candidate admission,
+  WGIA-010 only an accepted knowledge-owner correction, and WGIA-014 terminal
+  whole-branch completion evidence.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -433,7 +487,7 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-003 shares the Plan and Spec sources above | Done. | Four complete repository-static findings: eleven requested families structurally `Aligned`; broad Release mapping to DOC-G5 is a `Gap`; approved Guide Type enum enforcement under WORK-013 is `Partial`; and integration guides are `Partial` with live usability `DEFER`. Two provisional WGIA-009 dedupe/routing inputs; first quality review findings fixed; specification and fix-round quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-004 shares the Plan and Spec sources above | Done. | Four complete findings: Actions and lane ownership `Aligned`, accurate dormant Prettier `DEFER`, and repository-static Validation versus hosted Verification/CD `Partial`; focused workflow/contract checks and 110 tests PASS; specification/content and quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-005 shares the Plan and Spec sources above | Done. | Four complete findings: repository-static harness topology and loop/checkpoint controls `Aligned`; fixture production evidence remains aligned within `WGA-HAR-003`, but canonical script human inventory is `Partial`; provider runtime and actual ignored-checkpoint execution `DEFER`. Exact proof is 47 scripts = 41 CLI + six helpers with two human-index omissions, 37 fixtures, one provisional roadmap row, and one complete evidence-depth blocker; specification/content and fix-round quality reviews Approved; complete repository quality gate PASS. |
-| N/A — WGIA-006 shares the Plan and Spec sources above | Queued. | LLM-WIKI and memory audit evidence will be recorded here. |
+| N/A — WGIA-006 shares the Plan and Spec sources above | Done. | Four complete findings: generated ownership/lookup and four-class memory lifecycle `Aligned`; stale LLM-WIKI source-trigger review metadata is a `Gap`; provider-local/actual lifecycle execution `DEFER`. Exact proof shows all six declared inputs changed after the 2026-05-10 review date; one provisional freshness repair and one complete provider-runtime blocker are recorded; specification/content and quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-007 shares the Plan and Spec sources above | Queued. | Integrated and role-specific agent audit evidence will be recorded here. |
 | N/A — WGIA-008 shares the Plan and Spec sources above | Queued. | Security/approval audit evidence will be recorded here. |
 | N/A — WGIA-009 shares the Plan and Spec sources above | Queued. | Candidate disposition and integrated roadmap evidence will be recorded here. |
