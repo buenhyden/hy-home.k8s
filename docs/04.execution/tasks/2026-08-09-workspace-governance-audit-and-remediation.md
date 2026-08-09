@@ -47,7 +47,7 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Done | Repository-static approval/workflow, GitOps, and external-secret structure align; Claude permissions conflict with shared stops; KSM RBAC and supply-chain identity are `Partial`; Gitleaks scope, network isolation, and admission/Adminer hardening are `Gap`; deeper enforcement remains `DEFER`. | [Focused evidence](#wgia-008-focused-evidence); full control matrix, nine complete findings, two evidence blockers, six provisional WGIA-009 inputs, focused static security evidence, and fresh specification/content plus security fix-round reviews Approved with no Critical/Important finding. |
 | WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Done | Seven legacy-name active surfaces are rejected as noncandidates; the exact fifteen Spec 052 WORK-001 one-shot paths are `Integrate`, with `Delete=0`; 12 reviewed inputs are deduplicated into seven bounded Correct/Integrate admissions and five explicit `DEFER` rows. Overall request verdict remains `Partial` because live WORK-001 consumers and one eligibility-unit blocker remain; two authoring-state blockers are resolved. | [Focused evidence](#wgia-009-focused-evidence); full source commits, 114 resolved consumer selectors, exact replacements/history/post-delete gates, contiguous 12-row roadmap, exact staged aggregate PASS, 150 tests with 149 PASS/one recorded failure, and fix-round content plus quality reviews Approved. |
 | WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Done | Root routing and four-surface classification are corrected; all six LLM-WIKI inputs are reviewed and generated metadata is refreshed; DOC-G1/G5 integration records no duplicate delta and leaves WORK-013 queued. | [Focused evidence](#wgia-010-focused-evidence); deterministic RED/GREEN, producer-only generated diff, canonical-owner/no-delta evidence, fresh specification/content plus quality reviews Approved, and exact staged complete repository quality gate PASS. |
-| WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, owner-family commits or reviewed no-delta evidence. |
+| WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Done | The exact 47 = 41 + 6 script inventory and tracked Claude approval boundaries are corrected in two reviewable owner families; provider-runtime and live evidence remain `DEFER`. | [Focused evidence](#wgia-011-focused-evidence); exact RED/GREEN probes, 32 provider tests, focused production validators, aggregate embedded contract, strict documents/diff/Stage 98, fresh specification/content, Python/quality, and security reviews Approved, and exact staged complete repository quality gate PASS. |
 | WGIA-012 | VAL-WGA-011 | Cut over the sole Current audit and mutable consumers atomically | assigned worker | Queued | Not executed. | RIA/profile/index/link RED/GREEN, protected historical baseline, atomic commit. |
 | WGIA-013 | VAL-WGA-010 | Delete only proof-complete candidate artifacts | assigned worker | Queued | Not executed. | Zero-consumer proof, isolated/staged post-delete validation, exact deletions or reviewed no-deletion result. |
 | WGIA-014 | VAL-WGA-001–012 | Re-audit, close criteria, run terminal QA/reviews, clean residue, and hand off branch finishing | primary agent | Queued | Not executed. | Criterion walk, complete gates, whole-branch review, logical commit ledger, done lifecycle. |
@@ -732,6 +732,69 @@ and quality reviews are Approved with no Critical or Important finding.
   execution; WGIA-014 owns terminal QA and deeper provider/live evidence stays
   `DEFER`.
 
+### WGIA-011 Focused Evidence
+
+- **Scope**: admitted rows `WGA-RMP-HAR-001` and
+  `WGA-RMP-SEC-CLAUDE-001` only. The script owner family is
+  `scripts/README.md` plus the existing aggregate inventory projection; the
+  provider owner family is `.claude/settings.json`, its focused validator, and
+  existing focused regression module. Affected audit reports, roadmap/index,
+  Plan/Task, durable progress, and ignored worker evidence record the result.
+  No workflow, CI topology, agent role/model, shared approval policy, Stage 98,
+  Current/RIA, secret payload, provider process, remote, or live surface changed.
+- **RED**: the deterministic script probe exited 1 with
+  `total=47 cli=41 helpers=6` and exactly two missing names:
+  `archive_cutover_manifest.py,reference_information_architecture.py`. The
+  tracked Claude probe exited 1 with seven broad allows (`ls`, `grep`, `cat`,
+  `git`, and kubectl get/describe/logs) plus missing Vault/Kubernetes secret-
+  read and ordinary Git/GitHub remote-mutation stops. The first focused test
+  failed because the required closed Claude permission contract did not yet
+  exist (`AttributeError: CLAUDE_ALLOWED_PERMISSIONS`).
+- **Script GREEN**: `scripts/README.md` names both omitted helpers and records
+  the exact 47 tracked scripts = 41 CLI entrypoints + six import-only helpers.
+  The existing aggregate now derives the tracked set and accepts only the exact
+  top-level AST main guard `__name__ == "__main__"`; embedded probes reject a
+  wrong left operand, `NotEq`, and chained comparison. It rejects count/helper-
+  set drift and requires all 47 names plus the exact summary. The same
+  deterministic probe reports zero missing names; shell syntax and the
+  extracted embedded aggregate contract pass. No script behavior, caller,
+  entrypoint, import, or fixture changed.
+- **Claude GREEN**: the tracked allow list is closed to exact repository-static
+  validator and metadata-only Git commands, with literal `.` roots, generator
+  `--check`, and no wildcard or caller-selected suffix. Broad shell reads, broad Git,
+  kubectl reads, raw Helm, and k3d runtime listing are no longer pre-allowed.
+  Explicit deny rules cover `.env` reads, environment dumps, Vault reads,
+  Kubernetes Secret reads, ordinary push/merge, and GitHub PR/release/workflow
+  mutation. The validator reads `.claude/settings.json` through its existing
+  descriptor-safe JSON boundary, enforces unique string lists, the exact allow
+  set, and the exact complete 62-entry deny tuple. The aggregate delegates all
+  Claude permission semantics to that focused owner and retains only unrelated
+  Claude hook-wiring checks.
+- **Focused validation**: the provider-config regression module passes 32
+  tests, including every forbidden broad allow, wildcard mutation, alternate-
+  root mutation, and removal of each of the 62 required denies;
+  provider-config self-test reports 13 fixture mutations and production reports
+  four providers, ten sources, eight model candidates, and seven MCP servers.
+  Harness contract reports 12/4/48, harness semantics reports 12 roles/48
+  adapters/eight categories, roster currentness passes, Python compile/shell
+  syntax pass, and the embedded aggregate contract reports repository quality
+  PASS. Strict registry passes 502 paths with zero uncovered/ambiguous,
+  Markdown profiles report zero violations, strict links report `PASS
+  CROSS-DOCUMENT`, diff check passes, and both HEAD/observation Stage 98 diffs
+  are empty.
+- **Evidence boundary and review**: this is repository-static configuration
+  and test evidence only. Native Claude loading, permission precedence,
+  interactive prompting, effective enforcement, provider discovery,
+  authenticated execution, hosted CI, remote state, credentials, and live
+  cluster behavior remain `DEFER`. Fresh specification/content, Python/quality,
+  and security reviews are `Approved`; the exact staged complete repository
+  quality gate passes, including harness/provider and RIA lanes.
+- **Logical split and rollback**: commit the script-inventory owner family as
+  `fix: complete script inventory`, then the Claude owner family as
+  `fix: narrow Claude approval boundaries`; lifecycle evidence may accompany
+  the second reviewed unit. Revert either family independently without changing
+  production script semantics or the shared Stage 00 policy.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -749,7 +812,7 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-008 shares the Plan and Spec sources above | Done. | Nine complete findings and a full control matrix distinguish static alignment from one permission conflict, three gaps, two partial controls, and deeper `DEFER`; six provisional WGIA-009 inputs are recorded. Focused static security checks pass with optional Conftest `SKIP`; redacted Gitleaks candidates remain intentionally untriaged; fresh specification/content and security fix-round reviews are Approved with no Critical/Important finding. |
 | N/A — WGIA-009 shares the Plan and Spec sources above | Done with bounded `Partial` findings and one routed blocker. | Seven legacy-name active surfaces are rejected as noncandidates; fifteen exact Spec 052 WORK-001 paths are `Integrate`, `Delete=0`, and 2,355 starting-HEAD/2,360 authored-worktree vocabulary line hits remain rejected as name-only evidence. Twelve inputs are deduplicated once: seven bounded Correct/Integrate admissions and five explicit `DEFER` decisions. Structural, 114-selector, strict document/link, legacy-cutover, active-corpus production/self-test/role-production, archive, RIA, complete repository gate, diff, and Stage 98 checks pass. The exact staged 150-test run has 149 PASS and one expected-53/actual-57 eligibility failure under open `BLK-WGA-DSP-003`; `BLK-WGA-DSP-001`/`002` are resolved. Fix-round content and quality reviews are Approved. |
 | N/A — WGIA-010 shares the Plan and Spec sources above | Done. | Deterministic RED/GREEN and producer-only generation pass; three RIA generator tests, governance closure, RIA self-test, strict registry/profile/link, archive, DOC and RIA-owner no-delta, diff, and Stage 98 pass. The exact staged complete repository quality gate passes the RIA and aggregate boundary; fresh specification/content and quality reviews are Approved. |
-| N/A — WGIA-011 shares the Plan and Spec sources above | Queued. | Delivery/harness/agent/security remediation evidence will be recorded here. |
+| N/A — WGIA-011 shares the Plan and Spec sources above | Done. | Script inventory RED/GREEN reaches exact 47/41/6 with zero missing names and exact-AST negative probes; Claude permission RED/GREEN removes seven broad allows and enforces exact no-wildcard/no-alternate-root commands plus the focused-owned complete 62-entry deny tuple. Thirty-two focused provider tests, provider self/production, harness contract/semantics/currentness, syntax, the embedded aggregate contract, and exact staged complete repository quality gate pass. Fresh specification/content, Python/quality, and security reviews are Approved; provider-runtime/hosted/remote/live evidence stays `DEFER`. |
 | N/A — WGIA-012 shares the Plan and Spec sources above | Queued. | Atomic Current transition evidence will be recorded here. |
 | N/A — WGIA-013 shares the Plan and Spec sources above | Queued. | Exact deletion or reviewed no-deletion evidence will be recorded here. |
 | N/A — WGIA-014 shares the Plan and Spec sources above | Queued. | Terminal criterion, QA, review, residue, and closure evidence will be recorded here. |

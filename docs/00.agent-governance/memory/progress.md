@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-011 script inventory and Claude approval remediation
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: governance
+- **Status**: done
+- **Tags**: #governance #harness #security #claude #tdd
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-011 implementation of admitted `WGA-RMP-HAR-001` and `WGA-RMP-SEC-CLAUDE-001`
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh on script inventory, Claude permission syntax, shared approval boundary, provider validator, review, or Current transition change.
+- **Next Owner**: WGIA-012 for atomic Current cutover and WGIA-014 for terminal QA.
+
+#### Progress
+
+Corrected the canonical script human index to name the two omitted import-only
+helpers and record the exact 47 tracked scripts = 41 CLI entrypoints + six
+helpers. Extended the existing aggregate to derive and fail closed on that
+inventory without changing any script caller or semantics. Narrowed Claude's
+tracked allow set to exact repository-static checks and metadata-only Git
+operations with literal roots and no wildcard suffix, added explicit secret-read and remote-mutation stops, and extended
+the focused provider validator/test boundary to own the complete exact 62-entry
+deny tuple. The aggregate retains hook-wiring checks but no Claude permission
+semantics. Shared Stage 00 policy remains
+the approval authority; tracked provider configuration remains static evidence.
+
+#### Memory
+
+Provider allow syntax is not shared approval authority. A closed tracked allow
+set can remove a repository-static conflict, but native loading, matcher
+precedence, prompting, and effective enforcement remain provider-runtime
+`DEFER`. Script inventory completeness is a human-index/aggregate projection;
+an import-only helper row does not promote that helper into a CLI or duplicate
+semantic owner.
+
+#### Evidence
+
+- RED: 47/41/6 script classification with exactly
+  `archive_cutover_manifest.py` and
+  `reference_information_architecture.py` missing from the README; Claude had
+  seven broad allow patterns and lacked the required secret-read/ordinary
+  remote-mutation stops. The initial focused contract test failed on the
+  missing `CLAUDE_ALLOWED_PERMISSIONS` owner.
+- GREEN: zero missing script names and exact-AST negative probes; provider
+  regression module 32/32 PASS, including wildcard/alternate-root rejects and
+  removal of every one of the 62 exact denies;
+  provider-config self-test/production PASS; harness contract reports 12/4/48;
+  harness semantics reports 12 roles/48 adapters/eight categories; roster
+  currentness, Python compile, shell syntax, and the extracted aggregate
+  embedded contract PASS. Strict registry passes 502 paths with zero
+  uncovered/ambiguous, Markdown profiles report zero violations, strict links
+  pass, diff check passes, and both Stage 98 boundaries are unchanged.
+- No secret payload, private provider state, credential, hosted workflow,
+  remote state, live cluster, Vault/ESO runtime, Stage 98, Current/RIA, agent
+  role/model, or workflow topology was read or changed.
+
+#### Handoff
+
+WGIA-011 is complete. Fresh specification/content, Python/quality, and security
+reviews are `Approved`, and the exact staged complete repository quality gate
+passes. Preserve two independent rollback/commit units: script inventory
+(`fix: complete script inventory`) and Claude tracked permissions
+(`fix: narrow Claude approval boundaries`).
+
 ### 2026-08-09 - WGIA-010 governance and knowledge remediation
 
 #### Metadata

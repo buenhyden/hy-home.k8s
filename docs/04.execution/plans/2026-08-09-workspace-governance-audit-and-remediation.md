@@ -490,16 +490,21 @@ full gate passed the RIA boundary. Commit evidence is recorded in the Task.
 **Files:** only canonical owner families named by accepted WGIA-009 rows, their
 schemas/projections/fixtures/tests, audit finding status, Task/progress evidence.
 
-- [ ] Select only unambiguous `Correct` or `Integrate` rows in CI/QA, scripts,
+- [x] Select only unambiguous `Correct` or `Integrate` rows in CI/QA, scripts,
   fixtures, harness, loop, agents, models, providers, or security.
-- [ ] Add focused RED tests that preserve existing negative coverage and do not
+- [x] Add focused RED tests that preserve existing negative coverage and do not
   infer deeper evidence from static configuration.
-- [ ] Correct one owner family and all affected projections per reviewable
+- [x] Correct one owner family and all affected projections per reviewable
   sub-unit; do not combine unrelated workflow, agent, and security changes.
-- [ ] Run the exact affected validator/test matrix, re-audit each finding, and
+- [x] Run the exact affected validator/test matrix, re-audit each finding, and
   keep hosted/provider/live rows `DEFER`.
-- [ ] Run full gate, harness, security review, both task reviews, and commit one
+- [x] Run full gate, harness, security review, both task reviews, and commit one
   logical sub-unit per non-empty owner family using `fix:` messages.
+
+WGIA-011 is `Done`: exact staged repository gates, focused harness/provider
+tests, and fresh specification/content, Python/quality, and security reviews
+pass. Provider-native permission loading and effective enforcement remain
+`DEFER`; logical commit evidence is recorded in the Task.
 
 #### WGIA-012 — Atomic Current audit cutover
 
