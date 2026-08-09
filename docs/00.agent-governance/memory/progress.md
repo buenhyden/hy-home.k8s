@@ -60,13 +60,21 @@ outer ID.
 
 The current human-authored `sdlc/api-spec` profile, Stage 03 `api-spec.md`
 route, and `api-spec.template.md` are terminally retired by WORK-105. The
-tracked authored corpus is exactly zero, and terminal validation must retain a
-negative fixture for that route. Human interface requirements use only Stage
-01 `sdlc/interface` and IFC identity. Native OpenAPI, GraphQL, and Protobuf
-profiles/templates remain machine-readable Interface evidence with separate
-native identity rules; they are neither authored API Spec nor mandatory human
-artifact IDs. The current 93-record cutover needs no `API-SPEC` tombstone type;
-a later discovery requires reviewed Interface/`IFC` tombstone ledger mapping.
+tracked authored instance census is exactly zero, but that does not prove
+consumer retirement. WORK-105 independently requires a complete full-repo
+`git grep` classifier with zero live or unclassified authored-profile
+consumers. It covers profile/template/relationships, the positive Markdown
+fixture, lifecycle implementation, registry mappings/allowlists/self-tests,
+authoring hook/template routing, current Stage 00/03 prose, and
+validators/tests/docs/fixtures. Matches migrate to Stage 01 Interface/native
+contracts, become retired-route negative fixtures, or receive
+`retain-history` / `retain-native`; literal historical/native grep matches may
+remain. Human interface requirements use only Stage 01 `sdlc/interface` and
+IFC identity. Native OpenAPI, GraphQL, and Protobuf profiles/templates remain
+machine-readable Interface evidence with separate native identity rules; they
+are neither authored API Spec nor mandatory human artifact IDs. The current
+93-record cutover needs no `API-SPEC` tombstone type; a later discovery
+requires reviewed Interface/`IFC` tombstone ledger mapping.
 
 Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
 rewrite. The current cutover is 93-to-93 with every action `moved`: 76 records
@@ -80,10 +88,11 @@ dual recovery evidence.
 
 The successor sequence is closed: WORK-104 owns 82 moves and destination
 Plan/Task rebaseline; WORK-105 owns AD/Stage99 core forms, AD-0011 invariant
-replacement, authored API Spec retirement/negative fixture with native API
-evidence preservation, ADR-0024 acceptance, and registry projection; WORK-106
-owns artifact/ledger transition validators; WORK-107 owns the 93-record rehome
-and cannot start before WORK-105; WORK-108 through WORK-115 own ID backfill,
+replacement, authored API Spec zero-instance plus complete consumer
+disposition gates, negative fixtures and native/history preservation,
+ADR-0024 acceptance, and registry projection; WORK-106 owns artifact/ledger
+transition validators; WORK-107 owns the 93-record rehome and cannot start
+before WORK-105; WORK-108 through WORK-115 own ID backfill,
 document authority/routes, agent governance, the full script ledger,
 orchestration and the 49 count, progress/graph cleanup, transition asset
 retirement and the 47 count, and independent closure respectively. The
@@ -175,6 +184,25 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
   tracked files staged with zero unstaged paths. This is controller evidence;
   no future or self-referential carrier hash is forecast, and the actual
   carrier identity belongs to Git history.
+- Final Important review found that zero tracked authored API Spec instances
+  had been conflated with zero consumers. The correction makes the instance
+  census and complete consumer disposition independent WORK-105 gates,
+  enumerates all known live consumer classes, converts positive coverage to
+  retired-route negatives, and permits only classified `retain-history` /
+  `retain-native` residue. No current consumer is physically edited in this
+  amendment.
+- Final Important focused GREEN: registry self-test `132/65/30`, strict
+  transition registry `491/0/0`, strict Markdown, and strict links/owners all
+  passed with zero findings. The authored instance census remained zero, all
+  three governing documents contain the full-grep and positive-fixture gates,
+  and Stage 98, registry/templates, manifest/tool, and frozen Plan/Task retained
+  zero diff. Final lane evidence remains in the ignored report; implementer
+  all-files is controller-owned `DEFER`.
+- The controller then ran the final Important-fix
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point. It exited 0 with every
+  applicable hook passing and no mutation. Post-run scope remained exactly the
+  five owned tracked files staged with zero unstaged paths. This controller
+  PASS is distinct from the implementer's all-files `DEFER`.
 
 #### Handoff
 

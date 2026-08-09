@@ -73,9 +73,27 @@ authored relationships as part of the atomic AD/Stage 99 forms cutover.
 Terminal human-authored interface requirements live only as Stage 01
 `sdlc/interface` records under the `IFC-<DDD>-<SLUG-TOKEN>` grammar below.
 The current tracked corpus contains zero authored
-`docs/03.specs/*/api-spec.md` records; WORK-105 must preserve that zero-consumer
-proof and add a terminal negative fixture that rejects the retired authored
-route.
+`docs/03.specs/*/api-spec.md` records. That instance census is only the first
+retirement condition; it is not consumer proof. WORK-105 must satisfy two
+independent conditions before retirement:
+
+1. the tracked authored instance census for
+   `docs/03.specs/*/api-spec.md` is zero; and
+2. a full-repository `git grep` classifier assigns every authored-profile
+   reference a reviewed disposition, leaving zero live or unclassified
+   authored API Spec consumers.
+
+The consumer classifier covers, at minimum, profile/template and relationship
+surfaces; the positive Markdown fixture; lifecycle transitions and
+implementation; registry allowlists, mappings, and self-tests; the authoring
+hook and template routing; current Stage 00 and Stage 03 navigation prose; and
+validators, tests, documentation, and fixtures. Each match must migrate to the
+Stage 01 Interface form or a native contract, convert from positive API Spec
+coverage to a terminal retired-route negative fixture, or be classified
+`retain-history` / `retain-native` when it is immutable history or native
+evidence. A literal repository-wide match count is not required to reach zero;
+the acceptance invariant is zero live or unclassified consumers after the
+complete classifier.
 
 Native OpenAPI, GraphQL, and Protobuf profiles and their native templates
 remain machine-readable Interface evidence. They are not human-authored API
@@ -225,12 +243,13 @@ The successor schedule in Spec 052 is closed at WORK-104 through WORK-115.
 WORK-104 performs the 82 moves and rebases the destination Plan/Task; WORK-105
 creates the AD route and Stage 99 core forms, atomically converts active
 ARD-0011 to AD-0011 with its archive-invariant replacement, retires authored
-`sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` with zero-consumer
-proof and a terminal negative fixture, accepts ADR-0024, and changes the
-registry projection. It preserves the native OpenAPI/GraphQL/Protobuf evidence
-contracts. Stage 98 rehome in WORK-107 is forbidden before that WORK-105
-acceptance. The destination Plan/Task rebaseline explicitly supersedes their
-old WORK-105 through WORK-110 meanings.
+`sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` with zero authored
+instance proof, complete consumer disposition, and terminal negative fixtures,
+accepts ADR-0024, and changes the registry projection. It preserves the native
+OpenAPI/GraphQL/Protobuf evidence contracts and classified immutable history.
+Stage 98 rehome in WORK-107 is forbidden before that WORK-105 acceptance. The
+destination Plan/Task rebaseline explicitly supersedes their old WORK-105
+through WORK-110 meanings.
 
 The exact terminal script deletion set is `scripts/validate-harness.sh`,
 `scripts/document-taxonomy-migration.json`, and
@@ -261,7 +280,8 @@ ARD-0011 remains active, and ADR-0023 remains the registry projection.
 - Changing the current registry, profile, template, relationship, navigation,
   migration manifest, or script inventory in `WDTC-AMEND-001`.
 - Retiring the current authored API Spec surface before WORK-105 performs its
-  atomic forms cutover, zero-consumer proof, and terminal negative fixture.
+  atomic forms cutover, zero-instance proof, complete consumer disposition,
+  and terminal negative fixtures.
 - Accepting this successor or replacing ADR-0023 in PRD-008 registry lineage
   before WORK-105's atomic lifecycle transition.
 - Rewriting a historical payload, digest, source commit, source blob, embedded

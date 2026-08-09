@@ -204,12 +204,27 @@ relationship, or navigation; historical payload text may retain both terms.
 
 Current `sdlc/api-spec`, its fixed `api-spec.md` Stage 03 route, and the
 authored `api-spec.template.md` are transition surfaces, not a terminal form.
-WORK-105 retires them after re-proving the tracked authored consumer count is
-zero and installs a terminal negative fixture for the retired route. A human
-authors interface requirements only as Stage 01 `sdlc/interface` under the IFC
-grammar. Native OpenAPI, GraphQL, and Protobuf profiles/templates remain
-machine-readable Interface evidence; they are not authored API Spec and retain
-their separate native identity/validation contracts.
+WORK-105 retires them only after two independent evidence conditions pass:
+
+1. zero tracked authored `docs/03.specs/*/api-spec.md` instances; and
+2. a complete full-repository `git grep` consumer classifier with zero live or
+   unclassified authored-profile consumers.
+
+The second condition inventories profile/template and relationships; the
+positive Markdown fixture; lifecycle transitions and implementation; registry
+allowlists, mappings, and self-tests; the authoring hook and template routing;
+current Stage 00 and Stage 03 navigation prose; and validators, tests,
+documentation, and fixtures. Each reference must migrate to Stage 01 Interface
+or a native contract, convert from positive API Spec coverage to a terminal
+retired-route negative fixture, or be classified `retain-history` /
+`retain-native` for immutable history or native evidence. The gate does not
+require literal grep zero across history; it requires zero live or unclassified
+consumers after classification.
+
+A human authors interface requirements only as Stage 01 `sdlc/interface` under
+the IFC grammar. Native OpenAPI, GraphQL, and Protobuf profiles/templates
+remain machine-readable Interface evidence; they are not authored API Spec and
+retain their separate native identity/validation contracts.
 
 ### DTC-14 Global artifact identity
 
@@ -348,7 +363,7 @@ contracts:
 | Work | Closed scope |
 | --- | --- |
 | WORK-104 | Apply exactly the 82 current moves, rewrite the two transition edges, and rebaseline the destination Plan/Task to this table. |
-| WORK-105 | Activate the AD route and Stage 99 core forms; atomically convert active ARD-0011 to AD-0011 with archive-invariant replacement; retire authored `sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` after zero-consumer proof and add its terminal negative fixture while preserving native OpenAPI/GraphQL/Protobuf evidence; accept ADR-0024; and change the PRD-008 registry projection. |
+| WORK-105 | Activate the AD route and Stage 99 core forms; atomically convert active ARD-0011 to AD-0011 with archive-invariant replacement; retire authored `sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` only after independent zero-instance and complete full-grep consumer-disposition gates leave zero live/unclassified consumers; migrate Interface/native consumers, convert positive fixtures to retired-route negatives, retain classified history/native evidence, preserve OpenAPI/GraphQL/Protobuf contracts; accept ADR-0024; and change the PRD-008 registry projection. |
 | WORK-106 | Implement global artifact-identity and migration-ledger transition validators and negative fixtures. |
 | WORK-107 | Rehome all 93 Stage 98 records under the closed stable grammar; entry is forbidden before WORK-105 acceptance. |
 | WORK-108 | Backfill global outer `artifact_id` values under the closed grammar and exclusions. |
@@ -575,6 +590,8 @@ inventory.
 | A terminal `artifact_id` is duplicate, mistyped, aliased, noncanonical, or differs from its path ID | Fail terminal identity validation and report both owners. |
 | A Stage 00/90/99, governance memory/progress, README/navigation, template, fixture, native/generated, or embedded immutable-payload surface declares `artifact_id` | Fail namespace selection and report the prohibited profile/path. |
 | An authored `sdlc/api-spec`, `api-spec.md`, or authored API Spec template survives terminal mode, or a native contract is reclassified as authored API Spec | Fail terminal form validation; require WORK-105 retirement/negative-fixture evidence while preserving the native profile. |
+| The authored API Spec instance census is zero but a consumer class is unscanned, live, or unclassified | Fail WORK-105 acceptance; instance zero cannot substitute for complete consumer disposition. |
+| Immutable history or native evidence still matches the grep classifier after `retain-history` / `retain-native` disposition | Permit the classified reference; terminal acceptance requires zero live/unclassified consumers, not literal grep zero. |
 | A historical `api-spec.md` appears without a reviewed Interface/`IFC` tombstone ledger disposition | Stop terminal entry; do not infer an `API-SPEC` tombstone type. |
 | A Stage 98 change directory is treated as frontmatter-bearing or declares `artifact_id`, a leaf lacks the parent `change_id` or its typed outer ID, siblings disagree, or a tombstone stage/type pair is outside the closed map | Fail path/frontmatter validation before cutover. |
 | A tombstone fallback token is truncated, does not match the full canonical-path/source-blob digest, or aliases another spelling | Fail tombstone identity validation and report the computed token and owner. |
@@ -658,8 +675,8 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | VAL-WDTC-010 | The three pre-change validation failures and all migration regressions are closed. | Aggregate and all-files PASS with explicit secret-finding adjudication. |
 | VAL-WDTC-011 | Specs 047–051 remain unexecuted during migration and have a valid consolidated resumption route. | Status, task evidence, and final path inventory. |
 | VAL-WDTC-012 | No provider, hosted, remote, credential-bearing, or live result is claimed or performed. | Handoff evidence-class report and change inventory. |
-| VAL-WDTC-013 | Terminal active forms are PRD, optional SRS, optional Stage 01 Interface Requirement, AD (`sdlc/ad`), and ADR; ARD/RFC and authored `sdlc/api-spec` have no terminal surface, ARD-0011 becomes AD-0011, and native API contracts remain separate Interface evidence. | Terminal registry/profile/template/route/navigation inventory, tracked authored API Spec zero-consumer proof, retired-route negative fixture, native-profile preservation, and preserved-ID mapping. |
-| VAL-WDTC-014 | Every mandatory terminal outer profile has exactly one globally unique, type-valid `artifact_id` equal to its deterministic path-derived value; every excluded profile, including authored `sdlc/api-spec`, prohibits the field; native API contract identity stays separate; and virtual `CHG-####` remains `change_id` only. | Mandatory/prohibited namespace selection, authored API Spec negative fixture, native-contract non-promotion, global duplicate and alias scans, typed/canonical-token negatives, path/frontmatter equality, change-leaf agreement, and tombstone full-digest fixtures. |
+| VAL-WDTC-013 | Terminal active forms are PRD, optional SRS, optional Stage 01 Interface Requirement, AD (`sdlc/ad`), and ADR; ARD/RFC and authored `sdlc/api-spec` have no terminal surface, ARD-0011 becomes AD-0011, and native API contracts remain separate Interface evidence. | Terminal registry/profile/template/route/navigation inventory, independent zero authored-instance proof, complete full-grep consumer disposition with zero live/unclassified results, retired-route negative fixtures, native/history retention classifications, and preserved-ID mapping. |
+| VAL-WDTC-014 | Every mandatory terminal outer profile has exactly one globally unique, type-valid `artifact_id` equal to its deterministic path-derived value; every excluded profile, including authored `sdlc/api-spec`, prohibits the field; API Spec retirement independently proves zero instances and zero live/unclassified consumers after complete classification; native API contract identity stays separate; and virtual `CHG-####` remains `change_id` only. | Mandatory/prohibited namespace selection; full consumer-class coverage across profile/template/relationships, positive fixture, lifecycle, registry, authoring hook/routing, Stage 00/03 prose, validators/tests/docs/fixtures; migration/negative/retention dispositions; native-contract non-promotion; and global identity/path fixtures. |
 | VAL-WDTC-015 | The current 93 records map 93-to-93 with action `moved`, unique stable paths, exact `35/2/4` execution grouping and `3/8/4/2` tombstones; future actions retain unique terminal evidence. | Schema-versioned 14-field ledger, action/replacement/stable-path negatives, payload/provenance digests, old-envelope proof, and dual recovery. |
 | VAL-WDTC-016 | The exact tracked script closure is `50 -> 49 -> 47`, deleting only `validate-harness.sh` in WORK-112 and the transition JSON/tool in WORK-114. | Full 50-row disposition ledger, consumer/argument/diagnostic/fixture/evidence/recovery comparison, scripts README parity, and exact language-count census. |
 
@@ -700,7 +717,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | N/A — REQ-WDTC-016 shares the PRD source above. | VAL-WDTC-010 | Aggregate and all-files PASS prove baseline and regression closure. |
 | N/A — REQ-WDTC-017 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
 | N/A — REQ-WDTC-018 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
-| N/A — REQ-WDTC-019 shares the PRD source above. | VAL-WDTC-013 | Terminal profile/form/route/navigation inventory, authored API Spec zero-consumer retirement fixture, native API evidence preservation, and preserved-ID mapping prove the approved document taxonomy. |
-| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | Mandatory/prohibited selection, authored API Spec rejection, native-contract non-promotion, global uniqueness, canonical typed-ID, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
+| N/A — REQ-WDTC-019 shares the PRD source above. | VAL-WDTC-013 | Terminal inventory, independent authored instance/consumer gates, complete classification, retired-route negatives, native/history retention, and preserved-ID mapping prove the approved document taxonomy. |
+| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | Mandatory/prohibited selection, complete API Spec consumer disposition, native-contract non-promotion, global uniqueness, canonical typed-ID, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
 | N/A — REQ-WDTC-021 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
 | N/A — REQ-WDTC-022 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |
