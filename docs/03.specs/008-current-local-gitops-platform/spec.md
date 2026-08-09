@@ -126,7 +126,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 ### Delivery and References
 
-- **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
-- **Tasks**: [../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md](../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md)
+- **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
+- **Tasks**: [Archive Index](../../98.archive/README.md#document-index)
 - **Runbook**: [../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

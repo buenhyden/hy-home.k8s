@@ -110,6 +110,6 @@ WSL2 + WSL-native Docker 기반 로컬 Kubernetes 플랫폼을 GitOps-first 방�
 
 - **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Spec**: [../03.specs/008-current-local-gitops-platform/spec.md](../03.specs/008-current-local-gitops-platform/spec.md)
-- **Plan**: [../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+- **Plan**: [../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../98.archive/README.md#document-index)
 - **ADR**: [../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Archive Index**: [../98.archive/README.md](../98.archive/README.md)

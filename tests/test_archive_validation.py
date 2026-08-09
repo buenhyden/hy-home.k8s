@@ -3,13 +3,16 @@
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
+import importlib.util
+import json
 import subprocess
 import sys
 import tempfile
 import types
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest import mock
 
 
@@ -612,6 +615,157 @@ class ArchiveValidationTest(unittest.TestCase):
         )
 
         self.assertEqual(self.codes(report), ())
+
+    def test_repository_archive_v2_has_closed_namespace_and_index_parity(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        report = archive_validation.validate_repository_archive(ROOT, registry)
+
+        self.assertTrue(report.valid, report.diagnostics)
+        self.assertEqual(report.record_count, 93)
+        self.assertEqual(report.index_record_count, 93)
+        self.assertEqual(
+            dict(report.namespace_counts),
+            {
+                "arwb-base": 31,
+                "acer-additive": 12,
+                "wdtc-execution": 50,
+                "progress-snapshot": 0,
+            },
+        )
+
+    def test_repository_archive_rejects_open_or_overlapping_namespaces(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        open_registry = dict(registry)
+        open_registry["archiveNamespaces"] = [
+            *registry["archiveNamespaces"],
+            {"id": "rogue", "policy": "exact-immutable", "records": []},
+        ]
+        overlapping = json.loads(json.dumps(registry))
+        overlapping["archiveNamespaces"][1]["records"][0] = (
+            overlapping["archiveNamespaces"][0]["records"][0]
+        )
+
+        open_report = archive_validation.validate_repository_archive(ROOT, open_registry)
+        overlap_report = archive_validation.validate_repository_archive(
+            ROOT, overlapping
+        )
+
+        self.assertIn("ARCHIVE-NAMESPACE-CONTRACT", self.codes(open_report))
+        self.assertIn("ARCHIVE-NAMESPACE-OVERLAP", self.codes(overlap_report))
+
+    def test_repository_archive_rejects_index_and_envelope_membership_drift(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        missing_member = json.loads(json.dumps(registry))
+        missing_member["archiveNamespaces"][2]["records"].pop()
+
+        report = archive_validation.validate_repository_archive(ROOT, missing_member)
+
+        self.assertIn("ARCHIVE-NAMESPACE-PARITY", self.codes(report))
+
+
+class ArchiveTransitionLinkTest(unittest.TestCase):
+    """Close the exact two-edge WDTC-103-to-WDTC-104 transition handoff."""
+
+    fixture_edges = (
+        (
+            "docs/04.execution/tasks/"
+            "2026-07-05-workspace-engineering-implementation-audit-pack.md",
+            "docs/04.execution/plans/"
+            "2026-05-24-p3-gitops-secret-runtime-remediation.md",
+        ),
+        (
+            "docs/04.execution/tasks/"
+            "2026-07-05-workspace-engineering-implementation-audit-pack.md",
+            "docs/04.execution/tasks/"
+            "2026-05-24-p3-gitops-secret-runtime-remediation.md",
+        ),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        script_path = ROOT / "scripts" / "validate-links-and-owners.py"
+        scripts = str(script_path.parent)
+        if scripts not in sys.path:
+            sys.path.insert(0, scripts)
+        spec = importlib.util.spec_from_file_location(
+            "archive_transition_link_fixture", script_path
+        )
+        if spec is None or spec.loader is None:
+            raise RuntimeError("link validator is unavailable")
+        validator = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = validator
+        spec.loader.exec_module(validator)
+        cls.validator = validator
+        cls.context = validator._build_context(ROOT)
+
+    def test_exact_manifest_edges_route_to_collection_index(self) -> None:
+        handoff = self.validator._archive_transition_handoff(self.context)
+        actual = tuple(
+            (edge.source.as_posix(), edge.target.as_posix())
+            for edge in handoff.edges
+        )
+
+        self.assertEqual(actual, self.fixture_edges)
+        self.assertEqual(
+            handoff.navigation_boundary,
+            "docs/98.archive/README.md#document-index",
+        )
+
+    def test_non_manifest_current_source_is_not_deferred(self) -> None:
+        source = PurePosixPath(
+            "docs/01.requirements/004-current-local-gitops-platform.md"
+        )
+        target = PurePosixPath(self.fixture_edges[0][1])
+
+        self.assertIsNone(
+            self.validator._archive_transition_target(self.context, source, target)
+        )
+
+    def test_mutated_manifest_source_blob_is_not_deferred(self) -> None:
+        source = PurePosixPath(self.fixture_edges[0][0])
+        target = PurePosixPath(self.fixture_edges[0][1])
+        texts = dict(self.context.texts)
+        texts[source] += "\n"
+        mutated = dataclasses.replace(self.context, texts=texts)
+
+        self.assertIsNone(
+            self.validator._archive_transition_target(mutated, source, target)
+        )
+
+    def test_unknown_archived_target_is_not_deferred(self) -> None:
+        source = PurePosixPath(self.fixture_edges[0][0])
+        target = PurePosixPath(
+            "docs/04.execution/tasks/2099-01-01-unknown-archive-source.md"
+        )
+
+        self.assertIsNone(
+            self.validator._archive_transition_target(self.context, source, target)
+        )
+
+    def test_terminal_route_rejects_transition_residue(self) -> None:
+        source = PurePosixPath(self.fixture_edges[0][0])
+        target = PurePosixPath(self.fixture_edges[0][1])
+        terminal = dataclasses.replace(self.context, route_state="terminal")
+
+        self.assertIsNone(
+            self.validator._archive_transition_target(terminal, source, target)
+        )
+        diagnostics = self.validator._link_diagnostics(terminal)
+        broken = [item for item in diagnostics if item.rule_id == "LINK-BROKEN"]
+        self.assertGreaterEqual(len(broken), len(self.fixture_edges))
 
 
 if __name__ == "__main__":

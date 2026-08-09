@@ -8,6 +8,101 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WDTC-103 unmatched execution history archive
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #sdlc #archive #document-governance #recovery
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: WORK-103 archive phase from the reviewed manifest pinned to `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WDTC-110 closure.
+- **Next Owner**: WDTC-104 — rewrite the two frozen transition edges at their Stage 03 destinations and co-locate the 41 retained work units.
+
+#### Progress
+
+Activated ArchiveContract v2 with the closed namespaces `arwb-base=31`,
+`acer-additive=12`, `wdtc-execution=50`, and `progress-snapshot=0`. The reviewed
+archive phase generated 50 canonical ArchiveEnvelope records, updated the
+collection Archive Index, removed only the 50 manifest `archive-unique`
+sources, and left all 82 `move-current` sources byte-pinned for WDTC-104. The
+repository archive now contains 93 records and 711 historical rendered links.
+
+#### Memory
+
+The first ordinary apply attempt failed closed at `MIGRATION-LOCK` before any
+write and left zero transaction residue. The controller-authorized retry used
+the same reviewed tool path and passed exactly with `phase=archive moves=82
+archives=50 sources=132`. The prior 43 ARWB/ACER envelopes remain byte- and
+membership-identical. Spec-052 Plan/Task remain pinned to Git blobs
+`2c354aebf8578a9079d511f0f5a7783e7b0b8779` and
+`a066fc3460de0072a5a72c2822086ac1b6135c1c`. Recovery is read-only by default,
+and output recovery is confined, non-overwriting, and mode `0600`.
+
+One frozen `move-current` Task contains two links to newly archived originals.
+During `routeState=transition`, the link validator admits only those exact two
+edges after proving manifest membership and the source Git-blob identity, and
+resolves navigation to `docs/98.archive/README.md#document-index`. WDTC-104
+must rewrite or remove both edges at the destination; terminal routing rejects
+any residue. No current consumer links directly to an individual archive
+record.
+
+The immutable ACER residue-closure ledger remains byte-pinned to its
+pre-WDTC-103 snapshot. While both registry and migration manifest are in
+`transition`, its validator subtracts only the exact 50 `archive-unique`
+sources after proving the pinned manifest, `wdtc-execution` namespace,
+canonical ArchiveEnvelope provenance, source absence, and archive presence.
+It also pins the single additive migration-result object transition and the
+five reviewed authority-consumer object transitions whose retired Stage 04
+links now resolve to the collection Archive Index; every other source and
+authority object remains byte-equal. The Reference Information Architecture
+overlay similarly pins exactly seven protected audit/index old-to-reviewed
+object transitions and proves their manifest-retired Stage 04 destinations
+were removed or routed to the collection Archive Index; every other protected
+overlay remains under its existing byte/projection guard. WDTC-108 owns final
+document/ledger reconciliation and removal of these temporary object
+projections. WDTC-109 owns terminal enforcement: terminal state must reject
+the manifest-derived residue subtraction and any remaining transition object
+projection.
+
+#### Evidence
+
+- TDD RED preceded implementation for the generic repository boundary,
+  namespace/index parity, recovery API, and exact transition-edge handoff.
+- Final archive/cutover/recovery/lifecycle focused suite: 88/88 PASS in
+  503.339 seconds; active-corpus suite: 20/20 PASS in 21.475 seconds;
+  transition-edge suite: 5/5 PASS in 24.544 seconds.
+- `archive_cutover.py`: PASS with 93 records, 711 historical links, and 93
+  secret-clean records. Representative recovery verify passed for 7049 exact
+  bytes without writing output.
+- Migration check passed exact `132/82/50`; strict registry transition passed
+  490 paths with zero uncovered/ambiguous routes; strict Markdown and strict
+  cross-document validation passed with zero findings.
+- Independent post-archive audit proved 50/50 sources absent, 50/50 regular
+  targets present, Stage 98 exact 50 additions plus README modification,
+  prior43 43/43 byte-identical to HEAD, frozen Spec-052 blobs unchanged,
+  direct individual-archive consumer links zero, and transaction residue zero.
+- The controller-owned all-files pre-commit follow-up stopped only when
+  detect-secrets classified 24 transition Git object IDs as high-entropy
+  candidates; every other completed hook passed. Read-only Git proofs matched
+  all seven RIA old/current pairs to their exact HEAD/index objects and all five
+  residue-closure authority pairs to their exact HEAD/index objects. The
+  baseline therefore records only those 14 plus 10 candidates as
+  `is_secret: false`, together with the scanner's existing-entry line refresh
+  and generated timestamp. Two consecutive focused all-files detect-secrets
+  runs passed without mutation at baseline SHA-256
+  `2f9995fe66d2a711632d17306d67fda1e2eab53ba1941f9e1ff2399ba90ee307`.
+- The controller's final `pre-commit run --all-files` fixed-point exited 0
+  with every applicable hook passing, including strict repository quality and
+  detect-secrets, and no worktree mutation. The post-run staged shape remained
+  `A50/D50/M45`, with zero unstaged paths.
+- No move phase, Release family, provider/runtime action, remote action, live
+  action, or commit was performed.
+
 ### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
 
 #### Metadata
@@ -6193,8 +6288,8 @@ each logical commit.
   `e0d92f7^..1965215` using
   `.superpowers/sdd/task-10-closure-rereview.diff`; the reviewer returned Spec
   PASS and Quality PASS with no findings. The
-  [Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md),
-  [Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md),
+  [Plan](../../98.archive/README.md#document-index),
+  [Task](../../98.archive/README.md#document-index),
   their indexes, WERH-010, and Phase 4 are therefore complete/`Done`.
 
 #### Memory
@@ -7934,8 +8029,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   missing eval contract, missing Hookify advisory boundary, and missing
   workflow-skill phase criteria.
 - Recorded the implementation plan and task evidence:
-  - [Plan](../../04.execution/plans/2026-06-05-harness-governance-v2-overlay.md)
-  - [Task](../../04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 
 #### Memory
 
@@ -8007,8 +8102,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   AI-agent-facing English sections, and drift cleanup contract cannot be
   removed silently.
 - Recorded the implementation plan and task evidence:
-  - [Plan](../../04.execution/plans/2026-06-04-harness-four-element-alignment.md)
-  - [Task](../../04.execution/tasks/2026-06-04-harness-four-element-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 
 #### Memory
 
@@ -8215,8 +8310,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 4 ESO/Vault runtime diagnosis pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Performed read-only diagnosis of the Phase 3 live validation failure.
 - Confirmed `vault-external` Service, `vault-external-1` EndpointSlice,
   `vault-backend` ClusterSecretStore, `external-secrets` ServiceAccount, and
@@ -8273,8 +8368,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 3 protected-surface traceability pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Added `.agents/**` to the GitHub Actions `repo_quality` path filter so shared
   asset SSoT changes trigger repository quality validation.
 - Hardened shared post/lifecycle hooks so `.agents/*` changes trigger
@@ -8341,8 +8436,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 2 planning pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-2-governance-alignment.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-2-governance-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Routed Phase 2 through the canonical `docs/04.execution` stage instead of
   creating off-taxonomy `docs/superpowers/**` artifacts.
 - Updated Plans and Tasks README indexes so the Phase 2 artifacts are
@@ -8382,7 +8477,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 
 #### Progress
 
-- Created [Phase 1 Governance Alignment Audit Task](../../04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md)
+- Created [Phase 1 Governance Alignment Audit Task](../../98.archive/README.md#document-index)
   as repo-static evidence for the user-provided audit plan.
 - Re-audited Stage 00 canonical governance, provider adapters, docs lifecycle,
   QA/CI/CD gates, and GitOps boundaries against current repository evidence.
@@ -8437,10 +8532,10 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the corrective traceability pair:
-  - [Plan](../../04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
-  - [Task](../../04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Preserved the completed
-  [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+  [Phase 1 Decision Follow-up Plan](../../98.archive/README.md#document-index)
   and added a current-state coverage reconciliation note without reopening its
   `status: done`.
 - Mapped the original attachment's broader Stage 00/Codex harness requirements
@@ -8535,7 +8630,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 
 #### Progress
 
-- Created [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+- Created [Phase 1 Decision Follow-up Plan](../../98.archive/README.md#document-index)
   as a Phase 2 planning artifact for the 2026-06-02 Phase 1 continuation decisions.
 - Updated [Plans README](../../04.execution/plans/README.md) so the new plan is indexed in the stage structure and document table.
 - Implemented the plan by promoting it to `status: done` and checking its completion criteria after static validation.
@@ -8571,8 +8666,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the approved Phase 2/3 traceability pair:
-  - [Plan](../../04.execution/plans/2026-05-31-codex-governance-harness-alignment.md)
-  - [Task](../../04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Updated Stage 00 model policy and harness catalog so Codex worker tier stays
   `gpt-5.3-codex`, with explicit Codex `model_reasoning_effort` expectations.
 - Added `model_reasoning_effort` to all eight `.codex/agents/*.toml` mirrors:
@@ -13019,8 +13114,8 @@ References` is now a legacy heading that should not return.
 #### Progress
 
 - Added and completed Phase 2/3 artifacts for restoring `.claude/agents` as real Claude-specific agent files:
-  - [Plan](../../04.execution/plans/2026-06-01-claude-agent-surface-restoration.md)
-  - [Task](../../04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Archive Index](../../98.archive/README.md#document-index)
 - Pre-remediation inspection contradicted the older 2026-05-30 memory entry: `.claude/agents` was again a symlink to `../.agents/agents`, so prior memory was not treated as current runtime truth.
 - Replaced the `.claude/agents` symlink with real Claude agent files carrying Claude `model` and least-privilege `tools:` frontmatter.
 - Hardened `scripts/validate-repo-quality-gates.sh` to fail if `.claude/agents` is a symlink or if Claude agent model/tool frontmatter drifts.
@@ -13054,7 +13149,7 @@ References` is now a legacy heading that should not return.
 
 #### Progress
 
-- Completed Phase 3 for [Stage 00 Canonical Adapter Redesign](../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md) with task evidence in [2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md).
+- Completed Phase 3 for [Stage 00 Canonical Adapter Redesign](../../98.archive/README.md#document-index) with task evidence in [2026-06-01-stage-00-canonical-adapter-redesign.md](../../98.archive/README.md#document-index).
 - Added the Stage 00 canonical adapter ownership model to the governance hub, common governance mapping, harness catalog, and provider/runtime baselines.
 - Normalized active shared hook path references to `docs/00.agent-governance/hooks/*.sh` and expanded validator coverage for `.agents/hooks.json`, shared hook shell coverage, pre-commit shellcheck/shfmt scope, and stale `shell-static` guide drift.
 - Set authored-document template owner defaults to `platform` and recorded status/owner lifecycle expectations in the template README without turning additive lifecycle suggestions into required headings for all historical docs.
@@ -13520,7 +13615,7 @@ section separating static from live evidence.
 ### Resolution
 
 - Added
-  [Harness Connective Layer Risk Closure](../../04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md)
+  [Harness Connective Layer Risk Closure](../../98.archive/README.md#document-index)
   as the durable task evidence for closing the connective-layer Remaining Risk
   and Follow-up Tasks.
 - Classified optional `kube-linter` absence as a closed local-tool boundary
@@ -13585,7 +13680,7 @@ section separating static from live evidence.
 - Hardened `scripts/validate-repo-quality-gates.sh` to reject Korean syllables
   in Stage 03/04 English-first artifacts.
 - Added
-  [Language Boundary Alignment](../../04.execution/tasks/2026-06-05-language-boundary-alignment.md)
+  [Language Boundary Alignment](../../98.archive/README.md#document-index)
   as the current task record for this broader objective.
 
 ### Evidence

@@ -19,8 +19,8 @@ manifests, credentials, or live operations.
 - Snapshot date: 2026-07-11.
 - Audit observation SHA: `a85df194bbb8ebc61187b905afaef7f95215cc2f`.
 - Successor: none.
-- Completion evidence: [Stage 04 Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
-  and [Stage 04 Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md).
+- Completion evidence: [Stage 04 Plan](../../../98.archive/README.md#document-index)
+  and [Archive Index](../../../98.archive/README.md#document-index).
 
 ### Audience
 
@@ -83,9 +83,9 @@ pointer.
 ```
 
 The completed execution ledger now lives in the canonical
-[Stage 04 Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md),
+[Stage 04 Plan](../../../98.archive/README.md#document-index),
 with compact completion evidence in its paired
-[Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md).
+[Task](../../../98.archive/README.md#document-index).
 Neither document authorizes changes to the active owners audited here.
 
 ## Report Index
@@ -102,7 +102,6 @@ rescore or replace the source reports.
 | [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | `done` | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
 | [Integrated Remediation Roadmap](remediation-roadmap.md) | `done` | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
 | [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | `done` | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
-| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | `done` | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
 
 ## Refresh and Succession
 
@@ -194,24 +193,24 @@ Observed output on `2026-07-11`:
 ### Requirement Ownership Routing
 
 The Current research pack
-[owns the canonical requirement-to-research-to-audit map](../../research/2026-07-07-wer/README.md#canonical-requirement-to-research-to-audit-ownership-map).
+[owns the canonical requirement-to-research-to-audit map](../../research/2026-08-08-wer/README.md#requirement-coverage-matrix).
 Audit reports consume that map; this README owns only the snapshot, scoring,
 and evidence contract.
 
 ### Completed Research Inputs
 
-The completed [Current research pack](../../research/2026-07-07-wer/README.md)
+The completed [Current research pack](../../research/2026-08-08-wer/README.md)
 is the benchmark input. Its topic owners are:
 
 | Completed research owner | Benchmark responsibility |
 | --- | --- |
-| [Workspace Governance Baseline](../../research/2026-07-07-wer/workspace-governance-baseline.md) | Workspace purpose, governance, ownership, rules, and consolidation boundaries. |
-| [Harness and Loop Engineering](../../research/2026-07-07-wer/harness-and-loop-engineering.md) | Harness, Observe/Plan/Act/Verify/Learn, retry, evaluation, recovery, compaction, MCP, and termination. |
-| [Provider Implementation Status](../../research/2026-07-07-wer/provider-implementation-status.md) | Claude, Codex, Gemini, shared layers, model declarations, and runtime-evidence boundaries. |
-| [Spec, SDLC, CI, QA, and Formatting](../../research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md) | Document families, lifecycle, lineage, frontmatter, release and incident readiness, and AI-agent QA obligations. |
-| [Automation, Pipeline, Workflow, and QA](../../research/2026-07-07-wer/automation-pipeline-workflow-qa.md) | CI/CD topology, formatting, linting, automation, workflows, evidence artifacts, and delivery metrics. |
-| [Kubernetes, Infrastructure, and Security](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md) | Kubernetes, GitOps, Vault, ESO, network, policy, supply chain, and static-versus-live boundaries. |
-| [AI Agents Roster and Gap Analysis](../../research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md) | Local agents, provider adapters, `agency-agents`, role gaps, model routing, and vibe-coding controls. |
+| [Workspace Governance Baseline](../../research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md) | Workspace purpose, governance, ownership, rules, and consolidation boundaries. |
+| [Harness and Loop Engineering](../../research/2026-08-08-wer/harness-and-loop-engineering.md) | Harness, Observe/Plan/Act/Verify/Learn, retry, evaluation, recovery, compaction, MCP, and termination. |
+| [Provider Implementation Status](../../research/2026-08-08-wer/provider-implementation-status.md) | Claude, Codex, Gemini, shared layers, model declarations, and runtime-evidence boundaries. |
+| [Spec, SDLC, CI, QA, and Formatting](../../research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md) | Document families, lifecycle, lineage, frontmatter, release and incident readiness, and AI-agent QA obligations. |
+| [Automation, Pipeline, Workflow, and QA](../../research/2026-08-08-wer/ci-cd-github-actions-and-qa.md) | CI/CD topology, formatting, linting, automation, workflows, evidence artifacts, and delivery metrics. |
+| [Kubernetes, Infrastructure, and Security](../../research/2026-08-08-wer/kubernetes-infrastructure-and-security.md) | Kubernetes, GitOps, Vault, ESO, network, policy, supply chain, and static-versus-live boundaries. |
+| [AI Agents Roster and Gap Analysis](../../research/2026-08-08-wer/ai-agents-and-agency-agents.md) | Local agents, provider adapters, `agency-agents`, role gaps, model routing, and vibe-coding controls. |
 
 ### Report Interfaces and Topic Ownership
 
@@ -364,10 +363,10 @@ content into metadata.
 
 ### Completion Evidence
 
-The [completed Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
+The [completed Plan](../../../98.archive/README.md#document-index)
 preserves the thirteen-task ledger, logical publication boundaries, review
 record, and validation commands. The paired
-[Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
+[Task](../../../98.archive/README.md#document-index)
 summarizes completed tasks, known publication commits, repository-static
 validation, and the no-live/no-secret boundary. The final source correction is
 commit `14198a7`; the Current pack publication is commit `184d13e`.
@@ -393,9 +392,9 @@ commit `14198a7`; the Current pack publication is commit `184d13e`.
 ## Related Documents
 
 - [Audits README](../README.md)
-- [Current Workspace Engineering Research Pack](../../research/2026-07-07-wer/README.md)
-- [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
-- [Implementation Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
+- [Current Workspace Engineering Research Pack](../../research/2026-08-08-wer/README.md)
+- [Implementation Plan](../../../98.archive/README.md#document-index)
+- [Archive Index](../../../98.archive/README.md#document-index)
 - [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
 - [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md)
 - [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md)

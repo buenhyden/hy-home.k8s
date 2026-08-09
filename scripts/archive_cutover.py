@@ -45,10 +45,9 @@ if __package__:
     )
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
-        ArchiveRecord,
         CurrentMarkdownDocument,
-        validate_archive_records,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 else:
     from archive_cutover_manifest import (  # type: ignore[no-redef]
@@ -70,10 +69,9 @@ else:
     )
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
-        ArchiveRecord,
         CurrentMarkdownDocument,
-        validate_archive_records,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 
 
@@ -575,8 +573,6 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
     reason = reason_match.group("value")
     if cells[7] == "`null`":
         replacement = None
-        if reason != "completed-lineage":
-            return None
     else:
         replacement_match = _MARKDOWN_LINK.fullmatch(cells[7])
         if replacement_match is None or reason not in {
@@ -590,7 +586,6 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
         )
     if (
         archive_path is None
-        or (reason != "completed-lineage" and replacement is None)
         or record_match.group("label") != archive_path.removeprefix("docs/98.archive/")
     ):
         return None
@@ -710,6 +705,26 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             secret_clean_count=0,
         )
     diagnostics: list[CutoverDiagnostic] = list(_finite_cutover_base_diagnostics(root))
+    registry_path = root / "docs/99.templates/support/document-profiles.json"
+    try:
+        loaded_registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        loaded_registry = {}
+    if isinstance(loaded_registry, dict):
+        registry = loaded_registry
+    else:
+        registry = {}
+    generic_report = validate_repository_archive(root, registry)
+    diagnostics.extend(
+        _diagnostic(item.code, item.path) for item in generic_report.diagnostics
+    )
+    repository_paths = frozenset(
+        path
+        for namespace in registry.get("archiveNamespaces", ())
+        if isinstance(namespace, dict)
+        for path in namespace.get("records", ())
+        if isinstance(path, str)
+    )
     try:
         migration_rows, migration_counts = _migration_projection(root)
     except Exception:
@@ -722,20 +737,19 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", MIGRATION_RESULTS_PATH)
         )
     base_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
-    expected_paths = base_paths | frozenset(migration_rows)
-    expected_records = EXPECTED_ARCHIVE_RECORDS + migration_counts["records"]
-    expected_historical_links = (
-        EXPECTED_HISTORICAL_LINKS + migration_counts["historicalLinksAdded"]
-    )
+    acer_paths = base_paths | frozenset(migration_rows)
+    expected_paths = repository_paths
+    expected_records = len(repository_paths)
+    expected_historical_links = generic_report.historical_link_count
     present_paths = frozenset(
         path for path in expected_paths if _regular_file(root, path)
     )
     if present_paths != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
 
-    records: list[ArchiveRecord] = []
+    record_link_counts = dict(generic_report.record_link_counts)
+    payloads: list[bytes] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
-    secret_clean_count = 0
     for archive_path in sorted(expected_paths):
         if archive_path not in present_paths:
             continue
@@ -749,7 +763,11 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         expected_source_commit = (
             migration_rows[archive_path].get("sourceCommit")
             if archive_path in migration_rows
-            else _source_commit(str(original_path))
+            else (
+                _source_commit(str(original_path))
+                if archive_path in base_paths
+                else parsed.metadata.get("source_commit")
+            )
         )
         if (
             not isinstance(original_path, str)
@@ -757,49 +775,72 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         ):
             diagnostics.append(_diagnostic("ARCHIVE-SOURCE-OWNERSHIP", archive_path))
             continue
-        secret_diagnostic = _secret_classifier(root, archive_path, parsed.payload)
-        if secret_diagnostic is not None:
-            diagnostics.append(secret_diagnostic)
-            continue
-        secret_clean_count += 1
-        record = ArchiveRecord(path=archive_path, content=content)
-        records.append(record)
-        focused = validate_archive_records(root, (record,))
-        if not focused.valid:
-            diagnostics.extend(
-                _diagnostic(item.code, item.path) for item in focused.diagnostics
-            )
-            continue
+        payloads.append(parsed.payload)
         metadata_rows.append(
-            (archive_path, dict(parsed.metadata), focused.historical_link_count)
+            (
+                archive_path,
+                dict(parsed.metadata),
+                record_link_counts.get(archive_path, -1),
+            )
         )
 
-    archive_report = validate_archive_records(root, tuple(records))
-    diagnostics.extend(
-        _diagnostic(item.code, item.path) for item in archive_report.diagnostics
-    )
+    secret_clean_count = 0
+    if payloads:
+        secret_diagnostic = _secret_classifier(
+            root,
+            ARCHIVE_INDEX,
+            b"\n\n".join(payloads),
+        )
+        if secret_diagnostic is not None:
+            diagnostics.append(secret_diagnostic)
+        else:
+            secret_clean_count = len(payloads)
     if (
-        len(records) != expected_records
-        or archive_report.historical_link_count != expected_historical_links
+        len(metadata_rows) != expected_records
+        or frozenset(record_link_counts) != expected_paths
+        or generic_report.historical_link_count != expected_historical_links
+        or sum(record_link_counts.values()) != expected_historical_links
     ):
         diagnostics.append(_diagnostic("ARCHIVE-EVIDENCE-COUNT", ARCHIVE_INDEX))
-    base_report = validate_archive_records(
-        root,
-        tuple(record for record in records if record.path in base_paths),
-    )
+    namespace_paths = {
+        str(namespace.get("id")): frozenset(
+            path
+            for path in namespace.get("records", ())
+            if isinstance(path, str)
+        )
+        for namespace in registry.get("archiveNamespaces", ())
+        if isinstance(namespace, dict)
+    }
+    arwb_paths = namespace_paths.get("arwb-base", frozenset())
+    acer_additive_paths = namespace_paths.get("acer-additive", frozenset())
     if (
-        not base_report.valid
-        or len(tuple(record for record in records if record.path in base_paths))
-        != EXPECTED_ARCHIVE_RECORDS
-        or base_report.historical_link_count != EXPECTED_HISTORICAL_LINKS
+        arwb_paths != base_paths
+        or len(arwb_paths) != EXPECTED_ARCHIVE_RECORDS
+        or sum(record_link_counts.get(path, -1) for path in arwb_paths)
+        != EXPECTED_HISTORICAL_LINKS
     ):
         diagnostics.append(_diagnostic("ARCHIVE-FINITE-BASE", ARCHIVE_INDEX))
+    if (
+        arwb_paths | acer_additive_paths != acer_paths
+        or len(arwb_paths | acer_additive_paths) != 43
+        or sum(
+            record_link_counts.get(path, -1)
+            for path in arwb_paths | acer_additive_paths
+        )
+        != 362
+    ):
+        diagnostics.append(_diagnostic("ARCHIVE-ACER-SUBSET", ARCHIVE_INDEX))
 
     original_paths = [row[1].get("original_path") for row in metadata_rows]
     if len(original_paths) != len(set(original_paths)):
         diagnostics.append(
             _diagnostic("ARCHIVE-ORIGINAL-OWNER-DUPLICATE", ARCHIVE_INDEX)
         )
+    archived_original_paths = frozenset(
+        str(metadata.get("original_path"))
+        for _archive_path, metadata, _link_count in metadata_rows
+        if isinstance(metadata.get("original_path"), str)
+    )
     for archive_path, metadata, _link_count in metadata_rows:
         original_path = metadata.get("original_path")
         replacement = metadata.get("replacement")
@@ -823,18 +864,10 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 diagnostics.append(
                     _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
                 )
-        elif not isinstance(replacement, str):
+        elif reason in {"superseded", "consolidated", "duplicate"} and not isinstance(
+            replacement, str
+        ):
             diagnostics.append(_diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path))
-
-    registry_path = root / "docs/99.templates/support/document-profiles.json"
-    try:
-        loaded_registry = json.loads(registry_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-        loaded_registry = {}
-    if isinstance(loaded_registry, dict):
-        registry = loaded_registry
-    else:
-        registry = {}
     profiles = registry.get("profiles", ())
     profile_ids = [
         profile.get("id") for profile in profiles if isinstance(profile, dict)
@@ -920,6 +953,16 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         )
         if index_row != expected_row:
             diagnostics.append(_diagnostic("ARCHIVE-INDEX-MEMBER", archive_path))
+        if (
+            index_row is not None
+            and index_row.replacement is None
+            and metadata.get("archive_reason")
+            in {"superseded", "consolidated", "duplicate"}
+            and metadata.get("replacement") not in archived_original_paths
+        ):
+            diagnostics.append(
+                _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
+            )
 
     current_documents: list[CurrentMarkdownDocument] = []
     try:
@@ -982,8 +1025,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         )
     return CutoverReport(
         diagnostics=unique,
-        record_count=len(records),
-        historical_link_count=archive_report.historical_link_count,
+        record_count=len(metadata_rows),
+        historical_link_count=generic_report.historical_link_count,
         secret_clean_count=secret_clean_count,
     )
 

@@ -9,6 +9,9 @@ route, scan the production archive corpus, or inspect ignored workspace state.
 from __future__ import annotations
 
 import importlib.util
+import os
+import re
+import stat
 import sys
 from collections.abc import Mapping as RuntimeMapping
 from collections.abc import Sequence as RuntimeSequence
@@ -119,6 +122,10 @@ class ArchiveValidationReport:
 
     diagnostics: tuple[ArchiveDiagnostic, ...] = ()
     historical_link_count: int = 0
+    record_count: int = 0
+    index_record_count: int = 0
+    namespace_counts: tuple[tuple[str, int], ...] = ()
+    record_link_counts: tuple[tuple[str, int], ...] = ()
 
     @property
     def valid(self) -> bool:
@@ -157,10 +164,256 @@ def _report(
     diagnostics: Sequence[ArchiveDiagnostic],
     *,
     historical_link_count: int = 0,
+    record_count: int = 0,
+    index_record_count: int = 0,
+    namespace_counts: Sequence[tuple[str, int]] = (),
+    record_link_counts: Sequence[tuple[str, int]] = (),
 ) -> ArchiveValidationReport:
     return ArchiveValidationReport(
         diagnostics=tuple(sorted(diagnostics, key=lambda item: (item.path, item.code))),
         historical_link_count=historical_link_count,
+        record_count=record_count,
+        index_record_count=index_record_count,
+        namespace_counts=tuple(namespace_counts),
+        record_link_counts=tuple(record_link_counts),
+    )
+
+
+_NAMESPACE_CONTRACT = (
+    ("arwb-base", "exact-immutable", 31, 31),
+    ("acer-additive", "exact-immutable", 12, 12),
+    ("wdtc-execution", "exact-reviewed-manifest", 50, 50),
+    ("progress-snapshot", "append-only-unique", 0, 1),
+)
+_INDEX_HEADER = (
+    "| Archive Record | Original Path | Original Type | Source Commit | Source "
+    "Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |"
+)
+_INDEX_SEPARATOR = (
+    "| --- | --- | --- | --- | --- | --- | ---: | --- | --- |"
+)
+_INDEX_LINK = re.compile(r"\[`(?P<label>[^`]+)`\]\(\./(?P<target>[^)]+)\)\Z")
+_INDEX_CODE = re.compile(r"`(?P<value>[^`]+)`\Z")
+_INDEX_MARKER = re.compile(
+    r"<!-- archive-manifest:v1 records=(?P<records>\d+) "
+    r"historical-links=(?P<links>\d+) -->"
+)
+
+
+def _namespace_records(
+    registry: object,
+) -> tuple[dict[str, tuple[str, ...]], list[ArchiveDiagnostic]]:
+    diagnostics: list[ArchiveDiagnostic] = []
+    if not isinstance(registry, RuntimeMapping) or registry.get(
+        "archiveContractVersion"
+    ) != 2:
+        return {}, [_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT")]
+    raw_namespaces = registry.get("archiveNamespaces")
+    if type(raw_namespaces) is not list or len(raw_namespaces) != len(
+        _NAMESPACE_CONTRACT
+    ):
+        return {}, [_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT")]
+    namespaces: dict[str, tuple[str, ...]] = {}
+    seen: set[str] = set()
+    for raw, (expected_id, expected_policy, minimum, maximum) in zip(
+        raw_namespaces, _NAMESPACE_CONTRACT, strict=True
+    ):
+        if (
+            type(raw) is not dict
+            or tuple(raw) != ("id", "policy", "records")
+            or raw.get("id") != expected_id
+            or raw.get("policy") != expected_policy
+            or type(raw.get("records")) is not list
+        ):
+            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT"))
+            continue
+        raw_records = raw["records"]
+        if not minimum <= len(raw_records) <= maximum:
+            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-COUNT"))
+        canonical: list[str] = []
+        for value in raw_records:
+            path = _canonical_path(value, archive_only=True)
+            if path is None or path == ARCHIVE_INDEX.as_posix():
+                diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-PATH", value))
+                continue
+            if path in seen:
+                diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-OVERLAP", path))
+            seen.add(path)
+            canonical.append(path)
+        if len(set(canonical)) != len(canonical):
+            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-OVERLAP"))
+        namespaces[expected_id] = tuple(canonical)
+    return namespaces, diagnostics
+
+
+def _repository_archive_records(
+    root: Path,
+) -> tuple[dict[str, bytes], list[ArchiveDiagnostic]]:
+    records: dict[str, bytes] = {}
+    diagnostics: list[ArchiveDiagnostic] = []
+    archive_root = root / ARCHIVE_ROOT
+    try:
+        archive_root_stat = archive_root.lstat()
+    except OSError:
+        return {}, [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())]
+    if stat.S_ISLNK(archive_root_stat.st_mode) or not stat.S_ISDIR(
+        archive_root_stat.st_mode
+    ):
+        return {}, [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())]
+    try:
+        for directory, names, filenames in os.walk(archive_root, followlinks=False):
+            directory_path = Path(directory)
+            safe_names: list[str] = []
+            for name in names:
+                child = directory_path / name
+                metadata = child.lstat()
+                if stat.S_ISDIR(metadata.st_mode) and not stat.S_ISLNK(metadata.st_mode):
+                    safe_names.append(name)
+                else:
+                    relative = child.relative_to(root).as_posix()
+                    diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-TYPE", relative))
+            names[:] = safe_names
+            for filename in filenames:
+                child = directory_path / filename
+                relative = child.relative_to(root).as_posix()
+                if relative == ARCHIVE_INDEX.as_posix() or not relative.endswith(".md"):
+                    continue
+                metadata = child.lstat()
+                if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+                    diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-TYPE", relative))
+                    continue
+                records[relative] = child.read_bytes()
+    except (OSError, RuntimeError, ValueError):
+        diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-READ", ARCHIVE_ROOT.as_posix()))
+    return records, diagnostics
+
+
+def _parse_repository_index(
+    text: str,
+) -> tuple[dict[str, tuple[str, ...]], int, list[ArchiveDiagnostic]]:
+    diagnostics: list[ArchiveDiagnostic] = []
+    lines = text.splitlines()
+    headers = [offset for offset, line in enumerate(lines) if line == _INDEX_HEADER]
+    if len(headers) != 1:
+        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
+    header = headers[0]
+    if header + 1 >= len(lines) or lines[header + 1] != _INDEX_SEPARATOR:
+        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
+    raw_rows: list[str] = []
+    for line in lines[header + 2 :]:
+        if not line.startswith("|"):
+            break
+        raw_rows.append(line)
+    end = header + 2 + len(raw_rows)
+    if any(line.startswith("|") for line in lines[end:]):
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+    rows: dict[str, tuple[str, ...]] = {}
+    link_total = 0
+    for line in raw_rows:
+        cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
+        if len(cells) != 9:
+            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+            continue
+        link = _INDEX_LINK.fullmatch(cells[0])
+        code_cells = tuple(_INDEX_CODE.fullmatch(cells[index]) for index in (1, 2, 3, 4, 5, 8))
+        if link is None or any(match is None for match in code_cells) or not cells[6].isdigit():
+            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+            continue
+        path = f"docs/98.archive/{link.group('target')}"
+        if link.group("label") != link.group("target") or _canonical_path(path, archive_only=True) is None or path in rows:
+            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+            continue
+        values = tuple(match.group("value") for match in code_cells if match is not None)
+        rows[path] = (*values, cells[7], cells[6])
+        link_total += int(cells[6])
+    markers = tuple(_INDEX_MARKER.finditer(text))
+    if (
+        len(markers) != 1
+        or int(markers[0].group("records")) != len(rows)
+        or int(markers[0].group("links")) != link_total
+    ):
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX.as_posix()))
+    return rows, link_total, diagnostics
+
+
+def validate_repository_archive(
+    repository_root: str | Path,
+    registry: object,
+) -> ArchiveValidationReport:
+    """Validate the complete version-2 repository archive and README index."""
+
+    try:
+        root = Path(repository_root).resolve(strict=True)
+        if not root.is_dir():
+            raise OSError
+    except (OSError, RuntimeError, TypeError):
+        return _report((_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", "<repository>"),))
+    namespaces, namespace_diagnostics = _namespace_records(registry)
+    records, inventory_diagnostics = _repository_archive_records(root)
+    declared = frozenset(path for paths in namespaces.values() for path in paths)
+    actual = frozenset(records)
+    diagnostics = [*namespace_diagnostics, *inventory_diagnostics]
+    if actual != declared:
+        diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-PARITY", ARCHIVE_ROOT.as_posix()))
+    typed_records = tuple(
+        ArchiveRecord(path=path, content=content)
+        for path, content in sorted(records.items())
+    )
+    record_report = validate_archive_records(root, typed_records)
+    diagnostics.extend(record_report.diagnostics)
+    metadata_by_path: dict[str, Mapping[str, object]] = {}
+    for record in typed_records:
+        try:
+            parsed = parse_archive_envelope(record.content)
+        except ArchiveContractError:
+            continue
+        metadata_by_path[record.path] = parsed.metadata
+        original_path = parsed.metadata.get("original_path")
+        if isinstance(original_path, str):
+            try:
+                (root / original_path).lstat()
+            except FileNotFoundError:
+                pass
+            except OSError:
+                diagnostics.append(_diagnostic("ARCHIVE-ORIGINAL-READ", record.path))
+            else:
+                diagnostics.append(_diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", record.path))
+    try:
+        index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        index_text = ""
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-READ", ARCHIVE_INDEX.as_posix()))
+    index_rows, index_links, index_diagnostics = _parse_repository_index(index_text)
+    diagnostics.extend(index_diagnostics)
+    if frozenset(index_rows) != actual:
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-PARITY", ARCHIVE_INDEX.as_posix()))
+    if index_links != record_report.historical_link_count:
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", ARCHIVE_INDEX.as_posix()))
+    for path, metadata in metadata_by_path.items():
+        row = index_rows.get(path)
+        if row is None:
+            continue
+        expected = (
+            str(metadata.get("original_path")),
+            str(metadata.get("original_type")),
+            str(metadata.get("source_commit")),
+            str(metadata.get("source_blob")),
+            str(metadata.get("content_sha256")),
+            str(metadata.get("archive_reason")),
+        )
+        if row[:5] + (row[5],) != expected:
+            diagnostics.append(_diagnostic("ARCHIVE-INDEX-MEMBER", path))
+    namespace_counts = tuple(
+        (namespace, len(namespaces.get(namespace, ())))
+        for namespace, _policy, _minimum, _maximum in _NAMESPACE_CONTRACT
+    )
+    return _report(
+        diagnostics,
+        historical_link_count=record_report.historical_link_count,
+        record_count=len(records),
+        index_record_count=len(index_rows),
+        namespace_counts=namespace_counts,
+        record_link_counts=record_report.record_link_counts,
     )
 
 
@@ -330,6 +583,7 @@ def validate_archive_records(
         return _report((_contract_diagnostic("ARCHIVE-REPOSITORY-CONTRACT"),))
     diagnostics: list[ArchiveDiagnostic] = []
     historical_link_count = 0
+    record_link_counts: dict[str, int] = {}
     original_owners: dict[str, str] = {}
     seen_archive_paths: set[str] = set()
     materialized, contract_diagnostics = _exact_sequence(
@@ -404,10 +658,12 @@ def validate_archive_records(
                 _diagnostic("ARCHIVE-LINK-ADAPTER-FAILURE", archive_path)
             )
             continue
+        record_link_counts[archive_path] = 0
         for link in rendered_links:
             if link.kind in {"external", "anchor"}:
                 continue
             historical_link_count += 1
+            record_link_counts[archive_path] += 1
             if link.kind != "local" or link.target is None:
                 diagnostics.append(
                     _diagnostic("ARCHIVE-HISTORICAL-LINK-INVALID", archive_path)
@@ -429,7 +685,11 @@ def validate_archive_records(
                     _diagnostic("ARCHIVE-HISTORICAL-LINK-MISSING", archive_path)
                 )
 
-    return _report(diagnostics, historical_link_count=historical_link_count)
+    return _report(
+        diagnostics,
+        historical_link_count=historical_link_count,
+        record_link_counts=tuple(sorted(record_link_counts.items())),
+    )
 
 
 def validate_current_archive_authority(

@@ -44,6 +44,10 @@ DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
+DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
+DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
+    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+)
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
 OID_PATTERN = re.compile(r"^[0-9a-f]{40}$")
@@ -103,6 +107,101 @@ AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
         "source-coverage-and-migration-ledger.md",
         1,
     ),
+)
+TAXONOMY_OVERLAY_PATHS = frozenset(
+    {
+        Path("docs/90.references/audits/2026-07-11-weia/README.md"),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ai-agents-model-routing-vibe-coding.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ci-qa-automation-pipeline-workflow.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "governance-harness-loop-providers.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "kubernetes-infrastructure-security.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "sdlc-document-lifecycle-frontmatter.md"
+        ),
+        Path("docs/90.references/audits/README.md"),
+    }
+)
+_WEIA_PLAN = (
+    "docs/04.execution/plans/"
+    "2026-07-11-workspace-engineering-research-audit-integration.md"
+)
+_WEIA_TASK = (
+    "docs/04.execution/tasks/"
+    "2026-07-11-workspace-engineering-research-audit-integration.md"
+)
+TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
+    {
+        Path("docs/90.references/audits/2026-07-11-weia/README.md"): {
+            "oldOid": "84b4cdae06e3882cee4b9f60cec30b01dfada873",
+            "currentOid": "dbeb6c063b36c98d620d09562a5100d5923343b5",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 5, _WEIA_TASK: 4}),
+            "archiveIndexLinks": 8,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ai-agents-model-routing-vibe-coding.md"
+        ): {
+            "oldOid": "bdeb41f2cb5d7aa0b9822f7c7ffc0674c6abc895",
+            "currentOid": "71fdb66e9ff080aa505374dc4ab0424065153edc",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ci-qa-automation-pipeline-workflow.md"
+        ): {
+            "oldOid": "b469ca00ffc7e226fa2f51b40c8a5bb2347a0f03",
+            "currentOid": "4cad1c4330c41d721b7fe6aa9eebb90c702e2f8f",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "governance-harness-loop-providers.md"
+        ): {
+            "oldOid": "859dd01de058474939e734ca6e5cf6c1678ff18d",
+            "currentOid": "b35dce197ca96bb9341b590ef505040e86d18577",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "kubernetes-infrastructure-security.md"
+        ): {
+            "oldOid": "8d706c7b2f09a030cc3d9bf1ca9cf856779288a1",
+            "currentOid": "f8cec478bbff2ee542c0738521bdb54de2fc6e38",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 2}),
+            "archiveIndexLinks": 2,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "sdlc-document-lifecycle-frontmatter.md"
+        ): {
+            "oldOid": "fa3178eab2ad0371652188b16ec9ed8d456ee21b",
+            "currentOid": "39cdc99f265ca91c35f1f0ede114cf626359837e",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path("docs/90.references/audits/README.md"): {
+            "oldOid": "6020fd85b8e21578ba93fba61c03b17599118a87",
+            "currentOid": "16f671253013bbdda6605049bd08981b0d40556f",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 2, _WEIA_TASK: 2}),
+            "archiveIndexLinks": 4,
+        },
+    }
 )
 DATA_ASSET_FIELDS = frozenset({"id", "repositoryEvidence", "refreshTrigger", "sources"})
 SOURCE_RECORD_FIELDS = frozenset({"url", "checkedOn", "adoptedScope", "rejectedScope"})
@@ -2112,6 +2211,174 @@ def _proposed_path(
     if proposed_oid is not None:
         return _read_commit_path(root, proposed_oid, path, runner)
     return read_proposed_regular_file(root, path, runner)
+
+
+def _taxonomy_transition_sources(
+    registry: Mapping[str, object], manifest: Mapping[str, object]
+) -> frozenset[str]:
+    route_state = registry.get("routeState")
+    manifest_state = manifest.get("state")
+    if route_state == "terminal":
+        if manifest_state != "terminal":
+            raise _GitError("taxonomy transition state differs")
+        return frozenset()
+    if route_state != "transition" or manifest_state != "transition":
+        raise _GitError("taxonomy transition state differs")
+    namespaces = registry.get("archiveNamespaces")
+    namespace_contract = (
+        ("arwb-base", "exact-immutable", 31),
+        ("acer-additive", "exact-immutable", 12),
+        ("wdtc-execution", "exact-reviewed-manifest", 50),
+        ("progress-snapshot", "append-only-unique", 0),
+    )
+    if (
+        registry.get("archiveContractVersion") != 2
+        or not isinstance(namespaces, list)
+        or len(namespaces) != len(namespace_contract)
+    ):
+        raise _GitError("taxonomy archive namespace differs")
+    namespace_records: dict[str, frozenset[str]] = {}
+    for raw, (expected_id, expected_policy, expected_count) in zip(
+        namespaces, namespace_contract, strict=True
+    ):
+        if (
+            not isinstance(raw, Mapping)
+            or set(raw) != {"id", "policy", "records"}
+            or raw.get("id") != expected_id
+            or raw.get("policy") != expected_policy
+            or not isinstance(raw.get("records"), list)
+            or len(raw["records"]) != expected_count
+            or any(
+                not isinstance(path, str) or not _safe_git_path(path)
+                for path in raw["records"]
+            )
+            or len(set(raw["records"])) != expected_count
+        ):
+            raise _GitError("taxonomy archive namespace differs")
+        namespace_records[expected_id] = frozenset(raw["records"])
+    entries = manifest.get("entries")
+    if (
+        set(manifest) != {"state", "sourceCommit", "entries"}
+        or manifest.get("sourceCommit") != DOCUMENT_TAXONOMY_SOURCE_COMMIT
+        or not isinstance(entries, list)
+        or len(entries) != 132
+    ):
+        raise _GitError("taxonomy manifest differs")
+    entry_keys = {
+        "source",
+        "target",
+        "workUnit",
+        "disposition",
+        "sourceBlob",
+        "reviewed",
+    }
+    sources: set[str] = set()
+    targets: set[str] = set()
+    archive_sources: set[str] = set()
+    archive_targets: set[str] = set()
+    dispositions: Counter[str] = Counter()
+    for entry in entries:
+        if (
+            not isinstance(entry, Mapping)
+            or set(entry) != entry_keys
+            or not isinstance(entry.get("source"), str)
+            or not _safe_git_path(entry["source"])
+            or not isinstance(entry.get("target"), str)
+            or not _safe_git_path(entry["target"])
+            or not isinstance(entry.get("workUnit"), str)
+            or not entry["workUnit"]
+            or entry.get("disposition") not in {"move-current", "archive-unique"}
+            or not isinstance(entry.get("sourceBlob"), str)
+            or OID_PATTERN.fullmatch(entry["sourceBlob"]) is None
+            or entry.get("reviewed") is not True
+            or entry["source"] in sources
+            or entry["target"] in targets
+        ):
+            raise _GitError("taxonomy manifest differs")
+        source = entry["source"]
+        target = entry["target"]
+        sources.add(source)
+        targets.add(target)
+        dispositions[entry["disposition"]] += 1
+        if entry["disposition"] == "archive-unique":
+            if target != source.replace("docs/", "docs/98.archive/", 1):
+                raise _GitError("taxonomy manifest archive route differs")
+            archive_sources.add(source)
+            archive_targets.add(target)
+    if (
+        dispositions != Counter({"move-current": 82, "archive-unique": 50})
+        or archive_targets != set(namespace_records["wdtc-execution"])
+    ):
+        raise _GitError("taxonomy manifest membership differs")
+    return frozenset(archive_sources)
+
+
+def _load_taxonomy_archive_transition(
+    root: Path,
+    *,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> frozenset[str]:
+    registry = _decode_json_bytes(
+        _proposed_path(root, REGISTRY_PATH, proposed_oid, runner),
+        field=REGISTRY_PATH.as_posix(),
+    )
+    manifest = _decode_json_bytes(
+        _proposed_path(
+            root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner
+        ),
+        field=DOCUMENT_TAXONOMY_MANIFEST_PATH.as_posix(),
+    )
+    return _taxonomy_transition_sources(registry, manifest)
+
+
+def _blob_sha1(payload: bytes) -> str:
+    return hashlib.sha1(
+        f"blob {len(payload)}\0".encode("ascii") + payload
+    ).hexdigest()
+
+
+def _taxonomy_overlay_matches(
+    path: Path,
+    baseline: bytes,
+    proposed: bytes,
+    taxonomy_sources: frozenset[str],
+) -> bool:
+    if set(TAXONOMY_OVERLAY_RULES) != set(TAXONOMY_OVERLAY_PATHS):
+        return False
+    rule = TAXONOMY_OVERLAY_RULES.get(path)
+    if rule is None or not taxonomy_sources:
+        return False
+    retired_links = rule.get("retiredLinks")
+    if (
+        not isinstance(retired_links, Mapping)
+        or _blob_sha1(baseline) != rule.get("oldOid")
+        or _blob_sha1(proposed) != rule.get("currentOid")
+        or any(source not in taxonomy_sources for source in retired_links)
+    ):
+        return False
+    try:
+        baseline_text = baseline.decode("utf-8", errors="strict")
+        proposed_text = proposed.decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return False
+    for source, expected_count in retired_links.items():
+        if not isinstance(source, str) or not isinstance(expected_count, int):
+            return False
+        target = os.path.relpath(source, path.parent.as_posix())
+        marker = f"]({target})"
+        if (
+            baseline_text.count(marker) != expected_count
+            or proposed_text.count(marker) != 0
+        ):
+            return False
+    archive_index = (
+        os.path.relpath("docs/98.archive/README.md", path.parent.as_posix())
+        + "#document-index"
+    )
+    return proposed_text.count(f"]({archive_index})") == rule.get(
+        "archiveIndexLinks"
+    )
 
 
 def _build_context(
@@ -4776,6 +5043,12 @@ def validate_overlay_guards(
     baselines = _encoded_baselines(contract)
     projections = _projection_map(contract)
     try:
+        taxonomy_sources = _load_taxonomy_archive_transition(
+            root.absolute(), proposed_oid=proposed_oid, runner=runner
+        )
+    except (ContractError, _GitError):
+        taxonomy_sources = frozenset()
+    try:
         cutover_projections = load_agent_cutover_projections(
             root.absolute(),
             runner,
@@ -4809,6 +5082,8 @@ def validate_overlay_guards(
         for path in (pack.readme_path, *pack.member_paths):
             baseline = context.baseline_bytes[(encoded, path)]
             proposed = context.proposed_bytes[path]
+            raw_baseline = baseline
+            raw_proposed = proposed
             projection = projections.get(path)
             if path == transition_path:
                 digest = transition.get("targetSha256") if transition else None
@@ -4852,11 +5127,16 @@ def validate_overlay_guards(
                 )
                 continue
             if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-                findings.append(
-                    Finding(
-                        "RIA-OVERLAY", path.as_posix(), "protected Current bytes differ"
+                if not _taxonomy_overlay_matches(
+                    path, raw_baseline, raw_proposed, taxonomy_sources
+                ):
+                    findings.append(
+                        Finding(
+                            "RIA-OVERLAY",
+                            path.as_posix(),
+                            "protected Current bytes differ",
+                        )
                     )
-                )
     current_paths = set(context.proposed_registry.paths)
     for path, projection in projections.items():
         if path in current_paths:
@@ -4883,6 +5163,8 @@ def validate_overlay_guards(
         try:
             baseline = _read_commit_path(root.absolute(), oid, path, runner)
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
+            raw_baseline = baseline
+            raw_proposed = proposed
             baseline = _projection_mask(
                 baseline,
                 path,
@@ -4903,9 +5185,16 @@ def validate_overlay_guards(
             )
             continue
         if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-            findings.append(
-                Finding("RIA-OVERLAY", path.as_posix(), "protected index bytes differ")
-            )
+            if not _taxonomy_overlay_matches(
+                path, raw_baseline, raw_proposed, taxonomy_sources
+            ):
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "protected index bytes differ",
+                    )
+                )
     return sorted(set(findings))
 
 

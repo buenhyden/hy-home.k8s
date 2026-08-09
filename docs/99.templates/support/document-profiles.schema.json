@@ -9,6 +9,8 @@
     "$id",
     "schemaVersion",
     "routeState",
+    "archiveContractVersion",
+    "archiveNamespaces",
     "retiredRouteEvidence",
     "baseline",
     "target",
@@ -30,6 +32,12 @@
     },
     "routeState": {
       "enum": ["legacy", "transition", "terminal"]
+    },
+    "archiveContractVersion": {
+      "const": 2
+    },
+    "archiveNamespaces": {
+      "$ref": "#/$defs/archiveNamespaces"
     },
     "retiredRouteEvidence": {
       "$ref": "#/$defs/retiredRouteEvidence"
@@ -67,6 +75,85 @@
     }
   },
   "$defs": {
+    "archiveNamespaces": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        { "$ref": "#/$defs/arwbArchiveNamespace" },
+        { "$ref": "#/$defs/acerArchiveNamespace" },
+        { "$ref": "#/$defs/wdtcArchiveNamespace" },
+        { "$ref": "#/$defs/progressArchiveNamespace" }
+      ]
+    },
+    "archiveNamespaceRecords": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^docs/98\\.archive/(?!README\\.md$).+\\.md$"
+      }
+    },
+    "arwbArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "arwb-base" },
+        "policy": { "const": "exact-immutable" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 31, "maxItems": 31 }
+          ]
+        }
+      }
+    },
+    "acerArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "acer-additive" },
+        "policy": { "const": "exact-immutable" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 12, "maxItems": 12 }
+          ]
+        }
+      }
+    },
+    "wdtcArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "wdtc-execution" },
+        "policy": { "const": "exact-reviewed-manifest" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 50, "maxItems": 50 }
+          ]
+        }
+      }
+    },
+    "progressArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "progress-snapshot" },
+        "policy": { "const": "append-only-unique" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "maxItems": 1 }
+          ]
+        }
+      }
+    },
     "retiredRouteEvidence": {
       "type": "object",
       "additionalProperties": false,

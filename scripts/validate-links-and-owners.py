@@ -67,6 +67,11 @@ RIA_CONTRACT_PATH = PurePosixPath(
 DOCUMENT_PROFILES_PATH = PurePosixPath(
     "docs/99.templates/support/document-profiles.json"
 )
+DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
+    "scripts/document-taxonomy-migration.json"
+)
+ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
+ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
@@ -431,6 +436,23 @@ class Context:
     tracked_regular_paths: frozenset[PurePosixPath]
     ledger_bytes: bytes | None = None
     ria_contract_text: str | None = None
+    route_state: str = "legacy"
+
+
+@dataclass(frozen=True, order=True)
+class ArchiveTransitionEdge:
+    """One immutable move-current link deferred until WDTC-104."""
+
+    source: PurePosixPath
+    target: PurePosixPath
+
+
+@dataclass(frozen=True)
+class ArchiveTransitionHandoff:
+    """Closed transition projection to the collection archive boundary."""
+
+    navigation_boundary: str
+    edges: tuple[ArchiveTransitionEdge, ...]
 
 
 @dataclass(frozen=True)
@@ -805,6 +827,7 @@ def _build_context(
         tracked_regular_paths,
         ledger_bytes,
         ria_contract_text,
+        registry.route_state,
     )
 
 
@@ -2373,8 +2396,154 @@ def _retired_reference_replacement(
     return replacement if actual_digest == expected_digest else None
 
 
+def _document_taxonomy_transition_manifest(
+    context: Context,
+) -> tuple[dict[PurePosixPath, str], frozenset[PurePosixPath]]:
+    """Load the exact temporary 132-entry handoff without broad path waivers."""
+
+    if DOCUMENT_TAXONOMY_MANIFEST_PATH not in context.tracked_regular_paths:
+        raise ConfigurationError("archive transition manifest is not tracked")
+    manifest_path = context.root / DOCUMENT_TAXONOMY_MANIFEST_PATH
+    try:
+        mode = manifest_path.lstat().st_mode
+        raw = manifest_path.read_bytes()
+        document = json.loads(raw.decode("utf-8", "strict"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ConfigurationError("archive transition manifest is unreadable") from exc
+    if not stat.S_ISREG(mode) or not isinstance(document, dict):
+        raise ConfigurationError("archive transition manifest contract differs")
+    if list(document) != ["state", "sourceCommit", "entries"]:
+        raise ConfigurationError("archive transition manifest contract differs")
+    if (
+        document["state"] != "transition"
+        or not isinstance(document["sourceCommit"], str)
+        or re.fullmatch(r"[0-9a-f]{40}", document["sourceCommit"]) is None
+        or not isinstance(document["entries"], list)
+        or len(document["entries"]) != 132
+    ):
+        raise ConfigurationError("archive transition manifest contract differs")
+
+    expected_keys = [
+        "source",
+        "target",
+        "workUnit",
+        "disposition",
+        "sourceBlob",
+        "reviewed",
+    ]
+    move_blobs: dict[PurePosixPath, str] = {}
+    archive_sources: set[PurePosixPath] = set()
+    targets: set[PurePosixPath] = set()
+    for entry in document["entries"]:
+        if not isinstance(entry, dict) or list(entry) != expected_keys:
+            raise ConfigurationError("archive transition manifest entry differs")
+        source_value = entry["source"]
+        target_value = entry["target"]
+        if (
+            not isinstance(source_value, str)
+            or not isinstance(target_value, str)
+            or not isinstance(entry["workUnit"], str)
+            or not entry["workUnit"]
+            or entry["disposition"] not in {"move-current", "archive-unique"}
+            or not isinstance(entry["sourceBlob"], str)
+            or re.fullmatch(r"[0-9a-f]{40}", entry["sourceBlob"]) is None
+            or entry["reviewed"] is not True
+        ):
+            raise ConfigurationError("archive transition manifest entry differs")
+        source = PurePosixPath(source_value)
+        target = PurePosixPath(target_value)
+        if (
+            source.as_posix() != source_value
+            or target.as_posix() != target_value
+            or source.is_absolute()
+            or target.is_absolute()
+            or ".." in source.parts
+            or ".." in target.parts
+            or len(source.parts) != 4
+            or source.parts[:2] != ("docs", "04.execution")
+            or source.parts[2] not in {"plans", "tasks"}
+            or source.suffix != ".md"
+            or source in move_blobs
+            or source in archive_sources
+            or target in targets
+        ):
+            raise ConfigurationError("archive transition manifest path differs")
+        if entry["disposition"] == "move-current":
+            if (
+                len(target.parts) != 4
+                or target.parts[:2] != ("docs", "03.specs")
+                or target.name not in {"plan.md", "tasks.md"}
+            ):
+                raise ConfigurationError("archive transition move target differs")
+            move_blobs[source] = entry["sourceBlob"]
+        else:
+            expected_target = PurePosixPath("docs", "98.archive", *source.parts[1:])
+            if target != expected_target:
+                raise ConfigurationError("archive transition archive target differs")
+            archive_sources.add(source)
+        targets.add(target)
+    if len(move_blobs) != 82 or len(archive_sources) != 50:
+        raise ConfigurationError("archive transition manifest counts differ")
+    return move_blobs, frozenset(archive_sources)
+
+
+def _git_sha1_blob(text: str) -> str:
+    content = text.encode("utf-8")
+    header = f"blob {len(content)}\0".encode("ascii")
+    return hashlib.sha1(header + content).hexdigest()  # noqa: S324
+
+
+def _archive_transition_handoff(context: Context) -> ArchiveTransitionHandoff:
+    """Project exact frozen-source edges only while the registry is transition."""
+
+    if context.route_state != "transition":
+        return ArchiveTransitionHandoff(ARCHIVE_INDEX_BOUNDARY, ())
+    move_blobs, archive_sources = _document_taxonomy_transition_manifest(context)
+    if (
+        ARCHIVE_INDEX_PATH not in context.paths
+        or ARCHIVE_INDEX_PATH not in context.tracked_regular_paths
+        or not _path_exists_without_dereference(
+            context.root, ARCHIVE_INDEX_PATH, context.adapter_targets
+        )
+    ):
+        raise ConfigurationError("archive transition index boundary is unavailable")
+    edges: set[ArchiveTransitionEdge] = set()
+    for source, source_blob in move_blobs.items():
+        text = context.texts.get(source)
+        if (
+            text is None
+            or source not in context.paths
+            or source not in context.tracked_regular_paths
+            or _git_sha1_blob(text) != source_blob
+        ):
+            continue
+        for raw in _extract_links(text):
+            kind, target = _local_destination(source, raw)
+            if kind == "local" and target in archive_sources:
+                assert target is not None
+                edges.add(ArchiveTransitionEdge(source, target))
+    return ArchiveTransitionHandoff(
+        ARCHIVE_INDEX_BOUNDARY,
+        tuple(sorted(edges)),
+    )
+
+
+def _archive_transition_target(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> str | None:
+    """Resolve one admitted transition edge to the collection index anchor."""
+
+    handoff = _archive_transition_handoff(context)
+    edge = ArchiveTransitionEdge(source, target)
+    return handoff.navigation_boundary if edge in handoff.edges else None
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
+    archive_handoff = _archive_transition_handoff(context)
+    deferred_archive_edges = frozenset(archive_handoff.edges)
     for source in context.paths:
         profile = context.profiles[source].profile_id
         if profile == "content/archive":
@@ -2401,6 +2570,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             if not _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
+                if ArchiveTransitionEdge(source, target) in deferred_archive_edges:
+                    continue
                 if _protected_historical_predecessor_link(context, source, target):
                     continue
                 replacement = _retired_reference_replacement(
@@ -5670,7 +5841,54 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                     "inventory row is missing",
                 )
             )
-        known_paths = inventory_paths | {path.as_posix() for path in context.paths}
+        archived_original_paths: set[str] = set()
+        try:
+            raw_registry = json.loads(
+                read_repository_text(context.root, DOCUMENT_PROFILES_PATH)
+            )
+        except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError):
+            raw_registry = {}
+        raw_namespaces = (
+            raw_registry.get("archiveNamespaces", ())
+            if isinstance(raw_registry, dict)
+            else ()
+        )
+        if isinstance(raw_namespaces, list):
+            for namespace in raw_namespaces:
+                raw_records = (
+                    namespace.get("records", ())
+                    if isinstance(namespace, dict)
+                    else ()
+                )
+                if not isinstance(raw_records, list):
+                    continue
+                for raw_target in raw_records:
+                    if not isinstance(raw_target, str):
+                        continue
+                    target = PurePosixPath(raw_target)
+                    if (
+                        target.as_posix() != raw_target
+                        or len(target.parts) <= 2
+                        or target.parts[:2] != ("docs", "98.archive")
+                        or target.name == "README.md"
+                        or not _path_exists_without_dereference(
+                            context.root, target, context.adapter_targets
+                        )
+                    ):
+                        continue
+                    try:
+                        target_mode = (context.root / target).lstat().st_mode
+                    except OSError:
+                        continue
+                    if stat.S_ISREG(target_mode):
+                        archived_original_paths.add(
+                            PurePosixPath("docs", *target.parts[2:]).as_posix()
+                        )
+        known_paths = (
+            inventory_paths
+            | {path.as_posix() for path in context.paths}
+            | archived_original_paths
+        )
         unknown_paths = set(counter) - known_paths
         predecessor_unknown = unknown_paths & WERPC_PREDECESSOR_PATHS
         if predecessor_unknown:

@@ -537,6 +537,57 @@ class ArchiveRecoveryTest(unittest.TestCase):
         ):
             render_fixture_archive_envelope(self.metadata(), recovered, substitute)
 
+    def test_cli_verify_is_read_only_and_output_is_exact_non_overwriting(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        before = tuple(sorted(path.as_posix() for path in self.root.rglob("*")))
+
+        self.assertEqual(
+            archive_recovery.main(
+                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--verify"]
+            ),
+            0,
+        )
+        self.assertEqual(
+            tuple(sorted(path.as_posix() for path in self.root.rglob("*"))), before
+        )
+
+        output = Path(self.temporary.name).parent / f"recovered-{self.root.name}.md"
+        self.addCleanup(lambda: output.unlink(missing_ok=True))
+        self.assertEqual(
+            archive_recovery.main(
+                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--output", str(output)]
+            ),
+            0,
+        )
+        self.assertEqual(output.read_bytes(), self.payload)
+        with self.assertRaisesRegex(ArchiveContractError, r"^RECOVERY-OUTPUT-EXISTS:"):
+            archive_recovery.recover_archive_record(self.root, record.relative_to(self.root).as_posix(), output=output)
+
+    def test_recovery_output_rejects_repository_and_unconfined_paths(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        for output in (
+            self.root / "docs/recovered.md",
+            Path("relative-output.md"),
+        ):
+            with self.subTest(output=output), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+            ):
+                archive_recovery.recover_archive_record(
+                    self.root,
+                    record.relative_to(self.root).as_posix(),
+                    output=output,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

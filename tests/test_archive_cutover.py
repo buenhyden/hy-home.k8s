@@ -97,7 +97,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertEqual(
             completed.stdout,
-            "PASS archive cutover records=43 historical_links=362 secret_clean=43\n",
+            "PASS archive cutover records=93 historical_links=711 secret_clean=93\n",
         )
         self.assertEqual(completed.stderr, "")
 
@@ -118,8 +118,56 @@ class ArchiveCutoverTest(unittest.TestCase):
             archive_cutover.EXPECTED_HISTORICAL_LINKS,
         )
         self.assertEqual(archive_cutover.EXPECTED_HISTORICAL_LINKS, 202)
-        self.assertEqual(len(rows), 43)
-        self.assertEqual(sum(row.historical_links for row in rows.values()), 362)
+        self.assertEqual(len(rows), 93)
+        self.assertEqual(sum(row.historical_links for row in rows.values()), 711)
+
+    def test_repository_cutover_calls_generic_v2_boundary(self) -> None:
+        index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
+        index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
+        self.assertFalse(structure_failure)
+        generic = ArchiveValidationReport(
+            historical_link_count=711,
+            record_count=93,
+            index_record_count=93,
+            namespace_counts=(
+                ("arwb-base", 31),
+                ("acer-additive", 12),
+                ("wdtc-execution", 50),
+                ("progress-snapshot", 0),
+            ),
+            record_link_counts=tuple(
+                (path, row.historical_links)
+                for path, row in sorted(index_rows.items())
+            ),
+        )
+        with (
+            patch.object(archive_cutover, "validate_repository_archive", return_value=generic) as validate,
+            patch.object(
+                archive_cutover, "_secret_classifier", return_value=None
+            ) as secret_classifier,
+        ):
+            report = archive_cutover.validate_repository_cutover(ROOT)
+
+        self.assertTrue(report.valid, report.diagnostics)
+        validate.assert_called_once()
+        secret_classifier.assert_called_once()
+
+    def test_secret_classifier_failure_is_redacted_for_new_namespace(self) -> None:
+        sentinel = "PAYLOAD-SENTINEL-MUST-NOT-LEAK"
+
+        with patch.object(
+            archive_cutover,
+            "_secret_classifier",
+            return_value=archive_cutover.CutoverDiagnostic(
+                "ARCHIVE-SECRET-DETECTED",
+                "docs/98.archive/04.execution/plans/fixture.md",
+            ),
+        ):
+            report = archive_cutover.validate_repository_cutover(ROOT)
+
+        rendered = repr(report) + " ".join(map(str, report.diagnostics))
+        self.assertIn("ARCHIVE-SECRET-DETECTED", rendered)
+        self.assertNotIn(sentinel, rendered)
 
     def test_partial_projection_emits_named_red_without_payload(self) -> None:
         report = archive_cutover.CutoverReport(
@@ -157,10 +205,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         def without_manifest(path: Path, *args, **kwargs) -> str:
             text = original_read_text(path, *args, **kwargs)
             if path.resolve() == index_path:
-                return text.replace(
-                    "<!-- archive-manifest:v1 records=43 historical-links=362 -->",
-                    "",
-                )
+                return archive_cutover._INDEX_MANIFEST.sub("", text, count=1)
             return text
 
         with patch.object(Path, "read_text", new=without_manifest):

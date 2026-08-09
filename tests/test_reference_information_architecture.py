@@ -3193,6 +3193,129 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 wrong_section, Path(projection["path"]), projection
             )
 
+    def taxonomy_overlay_payloads(self):
+        root = REPOSITORY_ROOT
+        contract = load_contract(root, root / ria.DEFAULT_CONTRACT_PATH)
+        context = ria._build_context(root, contract)  # noqa: SLF001
+        baselines = ria._encoded_baselines(contract)  # noqa: SLF001
+        result = {}
+        for path in ria.TAXONOMY_OVERLAY_RULES:
+            if path in context.proposed_bytes:
+                pack = next(
+                    pack
+                    for pack in context.proposed_registry.packs
+                    if path == pack.readme_path or path in pack.member_paths
+                )
+                baseline = context.baseline_bytes[(baselines[pack.pack_id], path)]
+                proposed = context.proposed_bytes[path]
+            else:
+                encoded = baselines[ria.AUDIT_PACK_ID]
+                baseline = ria._read_commit_path(  # noqa: SLF001
+                    root, context.baseline_oids[encoded], path
+                )
+                proposed = ria._proposed_path(root, path, None, None)  # noqa: SLF001
+            result[path] = (baseline, proposed)
+        return result
+
+    def test_taxonomy_archive_overlay_is_exactly_the_seven_reviewed_paths(
+        self,
+    ) -> None:
+        sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
+            REPOSITORY_ROOT, proposed_oid=None, runner=None
+        )
+        payloads = self.taxonomy_overlay_payloads()
+        self.assertEqual(len(ria.TAXONOMY_OVERLAY_RULES), 7)
+        self.assertEqual(set(payloads), set(ria.TAXONOMY_OVERLAY_PATHS))
+        for path, (baseline, proposed) in payloads.items():
+            self.assertTrue(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+
+    def test_taxonomy_archive_overlay_rejects_membership_oid_and_semantic_drift(
+        self,
+    ) -> None:
+        sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
+            REPOSITORY_ROOT, proposed_oid=None, runner=None
+        )
+        path, (baseline, proposed) = next(
+            iter(self.taxonomy_overlay_payloads().items())
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline + b"x", proposed, sources
+            )
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline, proposed + b"x", sources
+            )
+        )
+        rule = ria.TAXONOMY_OVERLAY_RULES[path]
+        retired_source = next(iter(rule["retiredLinks"]))
+        index_target = os.path.relpath(
+            "docs/98.archive/README.md", path.parent.as_posix()
+        ) + "#document-index"
+        retired_target = os.path.relpath(retired_source, path.parent.as_posix())
+        semantic_drift = proposed.replace(
+            f"]({index_target})".encode(),
+            f"]({retired_target})".encode(),
+            1,
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline, semantic_drift, sources
+            )
+        )
+        with mock.patch.object(
+            ria,
+            "TAXONOMY_OVERLAY_RULES",
+            {
+                key: value
+                for key, value in ria.TAXONOMY_OVERLAY_RULES.items()
+                if key != path
+            },
+        ):
+            self.assertFalse(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+        with mock.patch.object(
+            ria,
+            "TAXONOMY_OVERLAY_RULES",
+            {
+                **ria.TAXONOMY_OVERLAY_RULES,
+                Path("docs/90.references/audits/rogue.md"): rule,
+            },
+        ):
+            self.assertFalse(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+
+    def test_taxonomy_archive_overlay_is_disabled_in_terminal_state(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / ria.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        manifest = json.loads(
+            (REPOSITORY_ROOT / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            len(ria._taxonomy_transition_sources(registry, manifest)),  # noqa: SLF001
+            50,
+        )
+        registry["routeState"] = "terminal"
+        manifest["state"] = "terminal"
+        self.assertEqual(
+            ria._taxonomy_transition_sources(registry, manifest),  # noqa: SLF001
+            frozenset(),
+        )
+
     def test_complete_body_projection_preserves_frontmatter(self) -> None:
         projection = {
             "path": "docs/90.references/audits/2026-07-11-weia/README.md",

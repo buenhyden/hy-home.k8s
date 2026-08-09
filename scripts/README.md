@@ -586,4 +586,4 @@ hardening pass에서 다룬다.
 - [Agent Governance Bootstrap](../docs/00.agent-governance/rules/bootstrap.md)
 - [LLM Wiki Curation Guide](../docs/05.operations/guides/0009-llm-wiki-curation-guide.md)
 - [Generated LLM WIKI Index](../docs/90.references/llm-wiki/wiki-index.md)
-- [scripts Inventory Remediation Plan](../docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md)
+- [scripts Inventory Remediation Plan](../docs/98.archive/README.md#document-index)

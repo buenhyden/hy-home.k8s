@@ -8,6 +8,7 @@ import copy
 import hashlib
 import json
 import os
+import posixpath
 import re
 import stat
 import subprocess
@@ -15,6 +16,14 @@ import sys
 from collections import Counter, defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
+
+try:
+    from scripts.archive_recovery import ArchiveContractError, parse_archive_envelope
+except ModuleNotFoundError:  # Direct execution from scripts/.
+    from archive_recovery import (  # type: ignore[no-redef]
+        ArchiveContractError,
+        parse_archive_envelope,
+    )
 
 
 SCHEMA = "active-corpus-residue-closure.v1"
@@ -25,6 +34,57 @@ LEDGER_PATH = "docs/90.references/data/active-corpus-residue-closure.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-residue-closure.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+TAXONOMY_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
+TAXONOMY_SOURCE_COMMIT = (
+    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+)
+FROZEN_MIGRATION_RESULTS_BLOB = (
+    "b208c65d203d97b5921e676f33e31e9df44508d7"  # pragma: allowlist secret
+)
+TRANSITION_MIGRATION_RESULTS_BLOB = (
+    "cc63874ad523e1a531d7aeee2c4e291d67ee80bf"  # pragma: allowlist secret
+)
+TRANSITION_AUTHORITY_BLOBS = {
+    "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
+        "71cbadc7f0798137e4b57b61615e69561c9cd449",
+        "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",
+    ),
+    "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": (
+        "100a7bbb5354ced8d140a434757e9ca8df9312ae",
+        "d7130da27c94d7bdf8d79efa794f03d0014557df",
+    ),
+    "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": (
+        "c74a491ab21f5969058415b1251ce4bb08b6be5a",
+        "7c45166536061ca971391532c9e296ce44597e44",
+    ),
+    "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": (
+        "ad701ae2c7913c83413ba887c0666db114cf50d1",
+        "60b9c1021a9a2a4811d492de3aad2a82add59740",
+    ),
+    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+        "4e72760d4eee9705c8b5e06abeef87e8c62cf82c",
+        "9fdd92d9ee4ebb20159e2d8d5f7f656bb353886d",
+    ),
+}
+TRANSITION_AUTHORITY_REMAPS = {
+    "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
+        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+    ),
+    "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": (
+        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+    ),
+    "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": (
+        "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+        "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+    ),
+    "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": (
+        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+    ),
+    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+        "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+        "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+    ),
+}
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
 EXECUTION_PLAN = (
     "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
@@ -224,6 +284,19 @@ EXPECTED_COUNTS = {
     "helperTests": 33,
     "findings": 0,
 }
+TRANSITION_EXPECTED_COUNTS = {
+    **EXPECTED_COUNTS,
+    "currentStage04": 50,
+    "currentPlans": 25,
+    "currentTasks": 25,
+    "currentDefer": 50,
+    "pairKeys": 25,
+    "completePairs": 25,
+    "planOnly": 0,
+    "taskOnly": 0,
+    "partialOwnedDefer": 0,
+    "taxonomyArchived": 50,
+}
 
 GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 10
@@ -343,6 +416,20 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         )
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", REGISTRY_PATH))
+    inventory_queries.add(
+        (
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--",
+            TAXONOMY_MANIFEST_PATH,
+        )
+    )
+    inventory_queries.add(
+        ("ls-files", "-z", "--stage", "--", TAXONOMY_MANIFEST_PATH)
+    )
     inventory_queries.add(
         (
             "ls-files",
@@ -683,8 +770,10 @@ def _control_inventory(root: str, runner: GitRunner) -> dict[str, str]:
     return index
 
 
-def _registry_inventory(root: str, runner: GitRunner) -> dict[str, str]:
-    allowed = {REGISTRY_PATH}
+def _single_file_inventory(
+    root: str, path: str, code: str, runner: GitRunner
+) -> dict[str, str]:
+    allowed = {path}
     paths = _parse_exact_nul_paths(
         _git(
             root,
@@ -695,21 +784,36 @@ def _registry_inventory(root: str, runner: GitRunner) -> dict[str, str]:
                 "--others",
                 "--exclude-standard",
                 "--",
-                REGISTRY_PATH,
+                path,
             ),
             runner,
         ),
         allowed,
     )
-    if paths != [REGISTRY_PATH]:
-        raise ClosureError("CLOSURE-REGISTRY-INVENTORY", REGISTRY_PATH)
+    if paths != [path]:
+        raise ClosureError(code, path)
     index = _parse_modes(
-        _git(root, ("ls-files", "-z", "--stage", "--", REGISTRY_PATH), runner),
+        _git(root, ("ls-files", "-z", "--stage", "--", path), runner),
         allowed_paths=allowed,
     )
     if set(index) != allowed:
-        raise ClosureError("CLOSURE-REGISTRY-INVENTORY", REGISTRY_PATH)
+        raise ClosureError(code, path)
     return index
+
+
+def _registry_inventory(root: str, runner: GitRunner) -> dict[str, str]:
+    return _single_file_inventory(
+        root, REGISTRY_PATH, "CLOSURE-REGISTRY-INVENTORY", runner
+    )
+
+
+def _taxonomy_manifest_inventory(root: str, runner: GitRunner) -> dict[str, str]:
+    return _single_file_inventory(
+        root,
+        TAXONOMY_MANIFEST_PATH,
+        "CLOSURE-TAXONOMY-MANIFEST-INVENTORY",
+        runner,
+    )
 
 
 def _proposed_or_index_bytes(
@@ -764,12 +868,193 @@ def _object_identity(
     }
 
 
+def _build_taxonomy_transition_closure(
+    registry: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    eligibility: Mapping[str, Any],
+    current_paths: set[str],
+    archive_payloads: Mapping[str, bytes],
+    archive_index: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """Reconcile the frozen ACER residue snapshot with exact WDTC archives."""
+
+    if (
+        not isinstance(registry, Mapping)
+        or registry.get("routeState") != "transition"
+        or not isinstance(manifest, Mapping)
+        or manifest.get("state") != "transition"
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-TERMINAL", TAXONOMY_MANIFEST_PATH)
+    if (
+        registry.get("archiveContractVersion") != 2
+        or manifest.get("sourceCommit") != TAXONOMY_SOURCE_COMMIT
+        or set(manifest) != {"state", "sourceCommit", "entries"}
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+
+    namespaces = registry.get("archiveNamespaces")
+    namespace_contract = (
+        ("arwb-base", "exact-immutable", 31),
+        ("acer-additive", "exact-immutable", 12),
+        ("wdtc-execution", "exact-reviewed-manifest", 50),
+        ("progress-snapshot", "append-only-unique", 0),
+    )
+    if not isinstance(namespaces, list) or len(namespaces) != len(
+        namespace_contract
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+    by_namespace: dict[str, Mapping[str, Any]] = {}
+    for raw_namespace, (expected_id, expected_policy, expected_count) in zip(
+        namespaces, namespace_contract, strict=True
+    ):
+        if (
+            not isinstance(raw_namespace, Mapping)
+            or set(raw_namespace) != {"id", "policy", "records"}
+            or raw_namespace.get("id") != expected_id
+            or raw_namespace.get("policy") != expected_policy
+            or not isinstance(raw_namespace.get("records"), list)
+            or len(raw_namespace["records"]) != expected_count
+            or raw_namespace["id"] in by_namespace
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+        by_namespace[raw_namespace["id"]] = raw_namespace
+    namespace = by_namespace.get("wdtc-execution")
+    if (
+        namespace is None
+        or namespace.get("policy") != "exact-reviewed-manifest"
+        or not isinstance(namespace.get("records"), list)
+        or any(not is_safe_path(path) for path in namespace["records"])
+        or len(set(namespace["records"])) != 50
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+
+    entries = manifest.get("entries")
+    if not isinstance(entries, list) or len(entries) != 132:
+        raise ClosureError(
+            "CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH
+        )
+    entry_keys = {
+        "source",
+        "target",
+        "workUnit",
+        "disposition",
+        "sourceBlob",
+        "reviewed",
+    }
+    sources: set[str] = set()
+    targets: set[str] = set()
+    archive_entries: list[Mapping[str, Any]] = []
+    dispositions: Counter[str] = Counter()
+    for entry in entries:
+        if (
+            not isinstance(entry, Mapping)
+            or set(entry) != entry_keys
+            or not is_safe_path(entry.get("source"))
+            or not is_safe_path(entry.get("target"))
+            or not isinstance(entry.get("workUnit"), str)
+            or not entry["workUnit"]
+            or entry.get("disposition") not in {"move-current", "archive-unique"}
+            or not isinstance(entry.get("sourceBlob"), str)
+            or re.fullmatch(r"[0-9a-f]{40}", entry["sourceBlob"]) is None
+            or entry.get("reviewed") is not True
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+        source = entry["source"]
+        target = entry["target"]
+        if source in sources or target in targets:
+            raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+        sources.add(source)
+        targets.add(target)
+        dispositions[entry["disposition"]] += 1
+        if entry["disposition"] == "archive-unique":
+            archive_entries.append(entry)
+    if dispositions != Counter({"move-current": 82, "archive-unique": 50}):
+        raise ClosureError(
+            "CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH
+        )
+
+    archive_targets = {entry["target"] for entry in archive_entries}
+    if archive_targets != set(namespace["records"]):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+
+    candidates = eligibility.get("candidateRows")
+    if not isinstance(candidates, list):
+        raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+    eligibility_by_path: dict[str, Mapping[str, Any]] = {}
+    for candidate in candidates:
+        if not isinstance(candidate, Mapping) or not is_safe_path(
+            candidate.get("path")
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+        path = candidate["path"]
+        if path in eligibility_by_path:
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+        eligibility_by_path[path] = candidate
+
+    rows: list[dict[str, Any]] = []
+    for entry in sorted(archive_entries, key=lambda row: row["source"]):
+        source = entry["source"]
+        target = entry["target"]
+        expected_target = source.replace("docs/", "docs/98.archive/", 1)
+        kind = (
+            "plan"
+            if source.startswith(f"{PLAN_ROOT}/")
+            else "task"
+            if source.startswith(f"{TASK_ROOT}/")
+            else None
+        )
+        if kind is None or target != expected_target:
+            raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", source)
+        if source in current_paths:
+            raise ClosureError("CLOSURE-TAXONOMY-SOURCE", source)
+        archive_bytes = archive_payloads.get(target)
+        archive_oid = archive_index.get(target)
+        if not isinstance(archive_bytes, bytes) or not isinstance(
+            archive_oid, str
+        ) or FULL_OID.fullmatch(archive_oid) is None:
+            raise ClosureError("CLOSURE-TAXONOMY-ARCHIVE", target)
+        candidate = eligibility_by_path.get(source)
+        if (
+            candidate is None
+            or candidate.get("disposition") != "DEFER"
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", source)
+        try:
+            parsed = parse_archive_envelope(archive_bytes)
+        except ArchiveContractError as exc:
+            raise ClosureError("CLOSURE-TAXONOMY-ARCHIVE", target) from exc
+        metadata = parsed.metadata
+        if (
+            metadata.get("original_path") != source
+            or metadata.get("original_type") != f"sdlc/{kind}"
+            or metadata.get("source_commit") != TAXONOMY_SOURCE_COMMIT
+            or metadata.get("source_blob") != entry["sourceBlob"]
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", source)
+        rows.append(
+            {
+                "path": source,
+                "kind": kind,
+                "archivePath": target,
+                "namespace": "wdtc-execution",
+                "sourceCommit": _git_identity(TAXONOMY_SOURCE_COMMIT),
+                "sourceBlob": _git_identity(entry["sourceBlob"]),
+                "archiveObjectId": _git_identity(archive_oid),
+                "disposition": "manifest-archive-closed",
+                "currentSourcePresent": False,
+                "archivePresent": True,
+            }
+        )
+    return rows
+
+
 def _build_current_rows(
     plan_paths: Sequence[str],
     task_paths: Sequence[str],
     index: Mapping[str, str],
     payloads: Mapping[str, bytes],
     eligibility: Mapping[str, Any],
+    transition_archived_paths: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     candidates = eligibility.get("candidateRows")
     controls = eligibility.get("controls")
@@ -784,8 +1069,10 @@ def _build_current_rows(
         row.get("path"): row for row in controls if isinstance(row, Mapping)
     }
     frozen_paths = set(defer_by_path) | set(control_by_path)
-    paths = sorted(frozen_paths)
-    if not frozen_paths.issubset(set(plan_paths) | set(task_paths)):
+    if not transition_archived_paths.issubset(frozen_paths):
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+    paths = sorted(frozen_paths - transition_archived_paths)
+    if not set(paths).issubset(set(plan_paths) | set(task_paths)):
         raise ClosureError("CLOSURE-CURRENT-RESIDUE")
     entries: list[dict[str, Any]] = []
     for path in paths:
@@ -1729,6 +2016,7 @@ def _build_migrations(
     migration: Mapping[str, Any],
     current_paths: set[str],
     archive_paths: set[str],
+    transition_archive_paths: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     candidates = eligibility.get("candidateRows")
     batches = migration.get("batches")
@@ -1764,6 +2052,7 @@ def _build_migrations(
     observed_candidate_archives = {
         archive
         for archive in archive_paths
+        if archive not in transition_archive_paths
         if archive.replace("docs/98.archive/04.execution/", "docs/04.execution/")
         in candidate_paths
     }
@@ -1988,6 +2277,149 @@ def _generic_adr_authority_paths(
     return [path for path in adr_paths if path != TERMINAL_PROGRAM_CLOSURE_ADR]
 
 
+def _validate_repository_archive_projection(migration: Mapping[str, Any]) -> None:
+    if migration.get("repositoryArchive") != {
+        "contractVersion": 2,
+        "managedNamespaces": ["arwb-base", "acer-additive"],
+        "managedRecords": 43,
+        "repositoryRecords": 93,
+    }:
+        raise ClosureError("CLOSURE-TAXONOMY-PROJECTION", SOURCE_PATHS[2])
+
+
+def _validate_source_ledger_transition(
+    ledger_sources: Any,
+    observed_sources: Any,
+    transition: Sequence[Mapping[str, Any]],
+) -> None:
+    if not transition:
+        if ledger_sources != observed_sources:
+            raise ClosureError("CLOSURE-SOURCE-DRIFT")
+        return
+    if not isinstance(ledger_sources, list) or not isinstance(observed_sources, list):
+        raise ClosureError("CLOSURE-SOURCE-DRIFT")
+    ledger_by_path = {
+        row.get("path"): row for row in ledger_sources if isinstance(row, Mapping)
+    }
+    observed_by_path = {
+        row.get("path"): row for row in observed_sources if isinstance(row, Mapping)
+    }
+    if (
+        len(ledger_by_path) != len(SOURCE_PATHS)
+        or len(observed_by_path) != len(SOURCE_PATHS)
+        or tuple(row.get("path") for row in ledger_sources) != SOURCE_PATHS
+        or tuple(row.get("path") for row in observed_sources) != SOURCE_PATHS
+    ):
+        raise ClosureError("CLOSURE-SOURCE-DRIFT")
+    migration_path = SOURCE_PATHS[2]
+    for path in SOURCE_PATHS:
+        if path == migration_path:
+            continue
+        if ledger_by_path[path] != observed_by_path[path]:
+            raise ClosureError("CLOSURE-SOURCE-DRIFT", path)
+    ledger_migration = ledger_by_path[migration_path]
+    observed_migration = observed_by_path[migration_path]
+    expected_common = {
+        "path": migration_path,
+        "schema": SOURCE_SCHEMAS[migration_path],
+    }
+    if (
+        {key: ledger_migration.get(key) for key in expected_common}
+        != expected_common
+        or {key: observed_migration.get(key) for key in expected_common}
+        != expected_common
+        or ledger_migration.get("objectId")
+        != _git_identity(FROZEN_MIGRATION_RESULTS_BLOB)
+        or observed_migration.get("objectId")
+        != _git_identity(TRANSITION_MIGRATION_RESULTS_BLOB)
+        or set(ledger_migration) != {*expected_common, "objectId"}
+        or set(observed_migration) != {*expected_common, "objectId"}
+    ):
+        raise ClosureError("CLOSURE-SOURCE-DRIFT", migration_path)
+
+
+def _validate_transition_authority_semantics(
+    payloads: Mapping[str, bytes], taxonomy_sources: frozenset[str]
+) -> None:
+    if set(TRANSITION_AUTHORITY_REMAPS) != set(TRANSITION_AUTHORITY_BLOBS):
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+    archive_index = "docs/98.archive/README.md#document-index"
+    for authority_path, retired_sources in TRANSITION_AUTHORITY_REMAPS.items():
+        if not set(retired_sources).issubset(taxonomy_sources):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        payload = payloads.get(authority_path)
+        if not isinstance(payload, bytes):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        text = _decode_text(payload, authority_path)
+        start = posixpath.dirname(authority_path)
+        index_target = posixpath.relpath(archive_index, start)
+        if text.count(f"]({index_target})") != len(retired_sources):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        for retired_source in retired_sources:
+            retired_target = posixpath.relpath(retired_source, start)
+            if f"]({retired_target})" in text:
+                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+
+
+def _validate_authority_guard_transition(
+    ledger_guards: Any,
+    observed_guards: Any,
+    transition: Sequence[Mapping[str, Any]],
+) -> None:
+    if not transition:
+        if ledger_guards != observed_guards:
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+        return
+    if not isinstance(ledger_guards, Mapping) or not isinstance(
+        observed_guards, Mapping
+    ) or set(ledger_guards) != {"acceptedAdrs", "doneSpecs"} or set(
+        observed_guards
+    ) != {"acceptedAdrs", "doneSpecs"}:
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+    admitted: set[str] = set()
+    for key in ("acceptedAdrs", "doneSpecs"):
+        ledger_rows = ledger_guards[key]
+        observed_rows = observed_guards[key]
+        if not isinstance(ledger_rows, list) or not isinstance(observed_rows, list):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+        ledger_by_path = {
+            row.get("path"): row for row in ledger_rows if isinstance(row, Mapping)
+        }
+        observed_by_path = {
+            row.get("path"): row
+            for row in observed_rows
+            if isinstance(row, Mapping)
+        }
+        if (
+            len(ledger_by_path) != len(ledger_rows)
+            or len(observed_by_path) != len(observed_rows)
+            or set(ledger_by_path) != set(observed_by_path)
+        ):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+        for path, ledger_row in ledger_by_path.items():
+            observed_row = observed_by_path[path]
+            expected_blobs = TRANSITION_AUTHORITY_BLOBS.get(path)
+            if expected_blobs is None:
+                if ledger_row != observed_row:
+                    raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+                continue
+            admitted.add(path)
+            old_blob, current_blob = expected_blobs
+            if (
+                ledger_row.get("objectId") != _git_identity(old_blob)
+                or observed_row.get("objectId") != _git_identity(current_blob)
+                or {key: value for key, value in ledger_row.items() if key != "objectId"}
+                != {
+                    key: value
+                    for key, value in observed_row.items()
+                    if key != "objectId"
+                }
+            ):
+                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+    if admitted != set(TRANSITION_AUTHORITY_BLOBS):
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+
+
 def build_observed(
     root: str | os.PathLike[str], runner: GitRunner = _run_git
 ) -> dict[str, Any]:
@@ -1995,6 +2427,16 @@ def build_observed(
     if _git(normalized, ("cat-file", "-t", FIXED_INPUT_COMMIT), runner) != b"commit\n":
         raise ClosureError("CLOSURE-FIXED-COMMIT", ".git")
     registry = _load_registry_authority(normalized, runner)
+    taxonomy_index = _taxonomy_manifest_inventory(normalized, runner)
+    taxonomy_manifest = _load_json_bytes(
+        _proposed_or_index_bytes(
+            normalized,
+            TAXONOMY_MANIFEST_PATH,
+            taxonomy_index,
+            runner,
+        ),
+        TAXONOMY_MANIFEST_PATH,
+    )
     source_index = _source_index(normalized, runner)
     sources: dict[str, Any] = {}
     source_rows: list[dict[str, Any]] = []
@@ -2027,6 +2469,7 @@ def build_observed(
         or migration.get("counts", {}).get("records") != 12
     ):
         raise ClosureError("CLOSURE-SOURCE-COUNTS")
+    _validate_repository_archive_projection(migration)
 
     inventories = {
         scope: _inventory(normalized, scope, runner) for scope in INVENTORY_ROOTS
@@ -2046,12 +2489,34 @@ def build_observed(
             )
     plan_paths = _authored_stage04(inventories[PLAN_ROOT][0], PLAN_ROOT)
     task_paths = _authored_stage04(inventories[TASK_ROOT][0], TASK_ROOT)
+    archive_paths = {
+        path
+        for scope in (ARCHIVE_PLAN_ROOT, ARCHIVE_TASK_ROOT)
+        for path in inventories[scope][0]
+        if path.endswith(".md")
+    }
+    taxonomy_transition = _build_taxonomy_transition_closure(
+        registry,
+        taxonomy_manifest,
+        eligibility,
+        set(plan_paths) | set(task_paths),
+        {path: inventory_payloads[path] for path in archive_paths},
+        combined_index,
+    )
+    taxonomy_sources = frozenset(row["path"] for row in taxonomy_transition)
+    taxonomy_archives = frozenset(
+        row["archivePath"] for row in taxonomy_transition
+    )
+    _validate_transition_authority_semantics(
+        inventory_payloads, taxonomy_sources
+    )
     current = _build_current_rows(
         plan_paths,
         task_paths,
         combined_index,
         inventory_payloads,
         eligibility,
+        taxonomy_sources,
     )
     pairs = _build_pairs(current)
     frozen_paths = {row["path"] for row in current}
@@ -2079,14 +2544,12 @@ def build_observed(
         inventory_payloads,
     )
     active_control_pairs = _build_active_control_pairs(active_controls)
-    archive_paths = {
-        path
-        for scope in (ARCHIVE_PLAN_ROOT, ARCHIVE_TASK_ROOT)
-        for path in inventories[scope][0]
-        if path.endswith(".md")
-    }
     migrated = _build_migrations(
-        eligibility, migration, {row["path"] for row in current}, archive_paths
+        eligibility,
+        migration,
+        {row["path"] for row in current},
+        archive_paths,
+        taxonomy_archives,
     )
 
     adr_paths = [
@@ -2154,7 +2617,7 @@ def build_observed(
     )
     if residue_counts != Counter(
         {
-            "deferred-evidence": 88,
+            "deferred-evidence": 38,
             "resolved-partial-evidence": 10,
             "terminal-owned-defer": 2,
         }
@@ -2195,13 +2658,15 @@ def build_observed(
         "stage05Authored": role_stage,
         "helperTests": role_helpers,
         "findings": 0,
+        "taxonomyArchived": len(taxonomy_transition),
     }
-    if counts != EXPECTED_COUNTS:
+    if counts != TRANSITION_EXPECTED_COUNTS:
         raise ClosureError("CLOSURE-COUNTS")
     return {
         "sourceLedgers": source_rows,
         "counts": counts,
         "migratedClosed": migrated,
+        "taxonomyTransitionClosed": taxonomy_transition,
         "currentRows": current,
         "pairCardinality": pairs,
         "activeControlRows": active_controls,
@@ -2298,10 +2763,21 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
         raise ClosureError("CLOSURE-AUTHORITY")
     if ledger.get("inventoryBoundary") != expected["inventoryBoundary"]:
         raise ClosureError("CLOSURE-BOUNDARY")
-    if ledger.get("sourceLedgers") != expected["sourceLedgers"]:
-        raise ClosureError("CLOSURE-SOURCE-DRIFT")
+    transition = observed.get("taxonomyTransitionClosed", [])
+    if not isinstance(transition, list):
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+    _validate_source_ledger_transition(
+        ledger.get("sourceLedgers"), observed.get("sourceLedgers"), transition
+    )
     if ledger.get("counts") != EXPECTED_COUNTS:
         raise ClosureError("CLOSURE-COUNTS")
+
+    if transition:
+        _ordered_unique_paths(transition, "CLOSURE-TAXONOMY")
+        if len(transition) != 50:
+            raise ClosureError(
+                "CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH
+            )
 
     current = ledger.get("currentRows")
     _ordered_unique_paths(current, "CLOSURE-CURRENT")
@@ -2343,7 +2819,33 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
                 raise ClosureError("CLOSURE-CONTROL-FIELDS", row.get("path"))
         else:
             raise ClosureError("CLOSURE-CURRENT-FIELDS", row.get("path"))
-    if current != expected["currentRows"]:
+    if transition:
+        observed_current = observed.get("currentRows")
+        _ordered_unique_paths(observed_current, "CLOSURE-CURRENT")
+        ledger_by_path = {row["path"]: row for row in current}
+        observed_by_path = {row["path"]: row for row in observed_current}
+        transition_by_path = {row["path"]: row for row in transition}
+        if (
+            set(observed_by_path) & set(transition_by_path)
+            or set(ledger_by_path)
+            != set(observed_by_path) | set(transition_by_path)
+        ):
+            raise ClosureError("CLOSURE-CURRENT-DRIFT")
+        if any(
+            ledger_by_path[path] != row
+            for path, row in observed_by_path.items()
+        ):
+            raise ClosureError("CLOSURE-CURRENT-DRIFT")
+        for path, closed in transition_by_path.items():
+            frozen = ledger_by_path[path]
+            if (
+                frozen.get("kind") != closed.get("kind")
+                or frozen.get("objectMode") != "index-stage-zero"
+                or frozen.get("objectId") != closed.get("sourceBlob")
+                or frozen.get("sourceDisposition") != "DEFER"
+            ):
+                raise ClosureError("CLOSURE-TAXONOMY-BLOB", path)
+    elif current != expected["currentRows"]:
         raise ClosureError("CLOSURE-CURRENT-DRIFT")
 
     migrated = ledger.get("migratedClosed")
@@ -2384,7 +2886,14 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
         for row in pairs
     ):
         raise ClosureError("CLOSURE-PAIR-PARTIAL")
-    if pairs != expected["pairCardinality"]:
+    if transition:
+        if pairs != _build_pairs(current):
+            raise ClosureError("CLOSURE-PAIR-DRIFT")
+        if observed.get("pairCardinality") != _build_pairs(
+            observed.get("currentRows", [])
+        ):
+            raise ClosureError("CLOSURE-PAIR-DRIFT")
+    elif pairs != expected["pairCardinality"]:
         raise ClosureError("CLOSURE-PAIR-DRIFT")
 
     guards = ledger.get("authorityGuards")
@@ -2406,8 +2915,9 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
             for row in rows
         ):
             raise ClosureError("CLOSURE-AUTHORITY-GUARD")
-    if guards != expected["authorityGuards"]:
-        raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+    _validate_authority_guard_transition(
+        guards, observed.get("authorityGuards"), transition
+    )
     if ledger.get("acer004Dependency") != expected["acer004Dependency"]:
         raise ClosureError("CLOSURE-ACER004")
     if ledger.get("linkEvidenceBoundary") != expected["linkEvidenceBoundary"]:
@@ -2470,6 +2980,7 @@ def validate_active_corpus_residue_closure(
     counts = observed["counts"]
     return {
         "migratedClosed": counts["migratedClosed"],
+        "taxonomyArchived": counts.get("taxonomyArchived", 0),
         "currentRows": counts["currentStage04"],
         "defer": counts["currentDefer"],
         "retain": counts["currentRetain"],
@@ -2960,6 +3471,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(
                 "PASS active-corpus-residue-closure "
                 f"migrated={counts['migratedClosed']} "
+                f"taxonomy_archived={counts['taxonomyArchived']} "
                 f"current={counts['currentRows']} "
                 f"dispositions={counts['defer']}/{counts['retain']} "
                 f"pairs={counts['pairKeys']}:{counts['completePairs']}/{counts['planOnly']}/{counts['taskOnly']} "

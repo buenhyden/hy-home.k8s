@@ -1,19 +1,21 @@
 """Recovery-grade Git-object and canonical ArchiveEnvelope.v1 contracts.
 
-This module deliberately has no command-line entry point and does not activate
-the production document registry, archive form, lifecycle admission, or corpus
-validation. Migration and fixture callers may consume the byte-exact primitives
-only through their own fail-closed workflow contracts.
+The command-line boundary verifies a repository record without writing or
+recovers exact bytes only to a new path under the operating-system temporary
+directory. It never restores directly into a repository route.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+import argparse
 import hashlib
 import json
 import os
 import re
 import subprocess
+import stat
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping
@@ -640,3 +642,154 @@ def parse_archive_envelope(
         payload=payload,
         replacement_reference=replacement_reference,
     )
+
+
+MAX_ARCHIVE_RECORD_BYTES = 8_000_000
+
+
+def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
+    canonical = _require_repository_path(record, field="record")
+    pure = PurePosixPath(canonical)
+    if (
+        not pure.is_relative_to(PurePosixPath("docs/98.archive"))
+        or pure == PurePosixPath("docs/98.archive/README.md")
+        or pure.suffix != ".md"
+    ):
+        raise _error("RECOVERY-RECORD-PATH", "record must name an archive envelope")
+    path = root / pure
+    try:
+        metadata = path.lstat()
+        if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+            raise OSError
+        if metadata.st_size > MAX_ARCHIVE_RECORD_BYTES:
+            raise _error("RECOVERY-RECORD-SIZE", "archive record exceeds the limit")
+        content = path.read_bytes()
+        after = path.lstat()
+    except ArchiveContractError:
+        raise
+    except OSError as exc:
+        raise _error("RECOVERY-RECORD-READ", "archive record is unavailable") from exc
+    if (
+        metadata.st_dev != after.st_dev
+        or metadata.st_ino != after.st_ino
+        or metadata.st_mode != after.st_mode
+        or len(content) != metadata.st_size
+    ):
+        raise _error("RECOVERY-RECORD-CHANGED", "archive record changed during read")
+    return canonical, content
+
+
+def _confined_output(root: Path, output: object) -> Path:
+    if not isinstance(output, (str, Path)):
+        raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output must be an absolute path")
+    candidate = Path(output)
+    if not candidate.is_absolute():
+        raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output must be an absolute path")
+    try:
+        parent = candidate.parent.resolve(strict=True)
+        temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output parent is unavailable") from exc
+    resolved = parent / candidate.name
+    if (
+        not resolved.is_relative_to(temporary_root)
+        or resolved.is_relative_to(root)
+        or not candidate.name
+        or candidate.name in {".", ".."}
+    ):
+        raise _error(
+            "RECOVERY-OUTPUT-CONFINEMENT",
+            "output must remain outside the repository under the temporary root",
+        )
+    return resolved
+
+
+def _write_new_output(path: Path, payload: bytes) -> None:
+    descriptor: int | None = None
+    created = False
+    try:
+        descriptor = os.open(
+            path,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
+            0o600,
+        )
+        created = True
+        view = memoryview(payload)
+        while view:
+            written = os.write(descriptor, view)
+            if written <= 0:
+                raise OSError
+            view = view[written:]
+        os.fsync(descriptor)
+    except FileExistsError as exc:
+        raise _error("RECOVERY-OUTPUT-EXISTS", "output already exists") from exc
+    except OSError as exc:
+        if created:
+            try:
+                path.unlink()
+            except OSError:
+                pass
+        raise _error("RECOVERY-OUTPUT-WRITE", "output could not be written") from exc
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError as exc:
+                raise _error("RECOVERY-OUTPUT-WRITE", "output close failed") from exc
+
+
+def recover_archive_record(
+    repository_root: str | Path,
+    record: object,
+    *,
+    verify: bool = False,
+    output: str | Path | None = None,
+) -> RecoveryResult:
+    """Verify one envelope or recover its exact payload to a new temp file."""
+
+    if verify == (output is not None):
+        raise _error("RECOVERY-OPERATION", "choose exactly one recovery operation")
+    root, _object_length = _require_repository(Path(repository_root))
+    _record_path, content = _read_archive_record(root, record)
+    try:
+        parsed = parse_archive_envelope(content)
+        original_path = parsed.metadata["original_path"]
+        source_commit = parsed.metadata["source_commit"]
+        recovered = recover_git_blob(root, original_path, source_commit)
+        parse_archive_envelope(content, expected=recovered)
+    except (KeyError, TypeError) as exc:
+        raise _error("RECOVERY-RECORD-METADATA", "archive metadata is invalid") from exc
+    if output is not None:
+        _write_new_output(_confined_output(root, output), recovered.source_bytes)
+    return recovered
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument("--record", required=True)
+    operation = parser.add_mutually_exclusive_group(required=True)
+    operation.add_argument("--verify", action="store_true")
+    operation.add_argument("--output", type=Path)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parser().parse_args(argv)
+    try:
+        recovered = recover_archive_record(
+            args.root,
+            args.record,
+            verify=args.verify,
+            output=args.output,
+        )
+    except ArchiveContractError as exc:
+        print(f"FAIL archive recovery code={exc.code}")
+        return 1
+    operation = "verify" if args.verify else "output"
+    print(f"PASS archive recovery operation={operation} bytes={recovered.byte_count}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

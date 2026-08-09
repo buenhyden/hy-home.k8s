@@ -169,6 +169,8 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "records": 12,
                 "baseRecords": 31,
                 "archiveRecords": 43,
+                "managedArchiveRecords": 43,
+                "repositoryArchiveRecords": 93,
                 "baseHistoricalLinks": 202,
                 "addedHistoricalLinks": 160,
                 "historicalLinks": 362,
@@ -176,6 +178,24 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "repairedConsumers": 15,
             },
         )
+
+    def test_acer_managed_subset_remains_exact_with_declared_wdtc_records(self) -> None:
+        validator = load_validator()
+        registry = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        namespace_counts = {
+            namespace["id"]: len(namespace["records"])
+            for namespace in registry["archiveNamespaces"]
+        }
+
+        self.assertEqual(namespace_counts["arwb-base"], 31)
+        self.assertEqual(namespace_counts["acer-additive"], 12)
+        self.assertEqual(namespace_counts["wdtc-execution"], 50)
+        self.assertEqual(namespace_counts["progress-snapshot"], 0)
+        self.assertEqual(validator.MANAGED_ARCHIVE_RECORDS, 43)
 
     def test_staged_consumer_retirement_is_closed_to_migrated_originals(self) -> None:
         validator = load_validator()

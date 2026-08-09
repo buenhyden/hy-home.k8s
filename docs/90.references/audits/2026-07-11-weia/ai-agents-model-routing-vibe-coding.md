@@ -254,9 +254,9 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
 - [Audit pack README and method](README.md)
 - [Task 7 Governance, Harness, Loop, and Provider audit](governance-harness-loop-providers.md)
 - [Primary CI/QA audit](ci-qa-automation-pipeline-workflow.md)
-- [Current AI Agents Roster and Gap Analysis](../../research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)
-- [Current Provider Implementation Status](../../research/2026-07-07-wer/provider-implementation-status.md)
-- [Current Harness and Loop Engineering](../../research/2026-07-07-wer/harness-and-loop-engineering.md)
+- [Current AI Agents Roster and Gap Analysis](../../research/2026-08-08-wer/ai-agents-and-agency-agents.md)
+- [Current Provider Implementation Status](../../research/2026-08-08-wer/provider-implementation-status.md)
+- [Current Harness and Loop Engineering](../../research/2026-08-08-wer/harness-and-loop-engineering.md)
 - [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
 - [Harness Catalog](../../../00.agent-governance/harness-catalog.md)
 - [Model Policy](../../../00.agent-governance/model-policy.md)
@@ -290,8 +290,8 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
 ## Related Documents
 
 - **Audit pack**: [2026-07-11 WEIA README](README.md)
-- **Implementation plan**: [WEIA implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
+- **Implementation plan**: [WEIA implementation plan](../../../98.archive/README.md#document-index)
 - **Task 7 canonical provider audit**: [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
-- **Current research pack**: [2026-07-07 WER README](../../research/2026-07-07-wer/README.md)
+- **Current research pack**: [2026-07-07 WER README](../../research/2026-08-08-wer/README.md)
 - **Parent audits index**: [Audits README](../README.md)
 - **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

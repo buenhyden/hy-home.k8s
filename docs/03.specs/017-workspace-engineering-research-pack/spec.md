@@ -341,9 +341,9 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
 - **Historical/original Task (2026-07-04)**:
   [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
 - **Current execution Plan (2026-07-10)**:
-  [Current Research Pack Fact-First Hardening Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+  [Current Research Pack Fact-First Hardening Plan](../../98.archive/README.md#document-index)
 - **Current execution Task (2026-07-10)**:
-  [Current Research Pack Fact-First Hardening Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+  [Current Research Pack Fact-First Hardening Task](../../98.archive/README.md#document-index)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

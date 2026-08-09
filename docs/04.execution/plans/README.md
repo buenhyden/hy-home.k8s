@@ -45,29 +45,8 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 ```text
 04.execution/plans/
-├── 2026-05-09-github-qa-ci-remediation.md
-├── 2026-05-09-scripts-inventory-remediation.md
-├── 2026-05-10-agent-first-harness-llm-wiki-hooks.md
-├── 2026-05-17-template-crosslink-fix.md
 ├── 2026-05-18-argo-rollouts-progressive-delivery.md
 ├── 2026-05-18-argo-notifications-slack.md
-├── 2026-05-22-docs-governance-full-ab-hardening.md
-├── 2026-05-22-workspace-purpose-alignment.md
-├── 2026-05-24-p3-gitops-secret-runtime-remediation.md
-├── 2026-05-28-workspace-skill-expansion.md
-├── 2026-05-30-antigravity-governance.md
-├── 2026-05-31-codex-governance-harness-alignment.md
-├── 2026-06-01-claude-agent-surface-restoration.md
-├── 2026-06-01-stage-00-canonical-adapter-redesign.md
-├── 2026-06-02-current-implementation-docs-alignment.md
-├── 2026-06-02-docs-01-05-current-implementation-alignment.md
-├── 2026-06-02-phase-1-decision-follow-up.md
-├── 2026-06-02-phase-2-governance-alignment.md
-├── 2026-06-02-phase-3-protected-surface-hardening.md
-├── 2026-06-02-phase-4-eso-vault-runtime-diagnosis.md
-├── 2026-06-02-stage-00-codex-harness-coverage-reconciliation.md
-├── 2026-06-04-harness-four-element-alignment.md
-├── 2026-06-05-harness-governance-v2-overlay.md
 ├── 2026-07-02-workspace-harness-implementation-audit-pack.md
 ├── 2026-07-02-workspace-harness-research-pack.md
 ├── 2026-07-03-template-contract-governance-migration.md
@@ -84,10 +63,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-06-control-cloud-doc-normalization.md
 ├── 2026-07-06-stage03-04-repo-static-gap-closure.md
 ├── 2026-07-06-observability-and-network-review-agents.md
-├── 2026-07-07-workspace-engineering-research-pack-refresh.md
-├── 2026-07-10-current-research-pack-fact-first-hardening.md
 ├── 2026-07-11-governance-owner-and-roster-currentness.md
-├── 2026-07-11-workspace-engineering-research-audit-integration.md
 ├── 2026-07-12-document-contract-registry.md
 ├── 2026-07-12-template-contract-consolidation.md
 ├── 2026-07-12-readme-workspace-profiles.md
@@ -136,29 +112,8 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 | 문서                                                                                                                                 | 설명                                                                                                                                                                                                               | 상태 | 최종 수정  |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- | ---------- |
-| [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md)                                     | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획                                                                                                                                                              | Done | 2026-05-21 |
-| [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md)                                               | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 계획                                                                                                                                                            | Done | 2026-05-09 |
-| [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md)                           | Agent-first harness, LLM Wiki, hook wiring 보정 계획                                                                                                                                                               | Done | 2026-05-10 |
-| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md)                                                   | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 완료 이력. Plan과 Task record가 template link validation evidence를 소유한다.                                                                        | Done | 2026-05-21 |
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md)                           | Argo Rollouts current-contract backfill 실행 계획                                                                                                                                                                  | Done | 2026-05-21 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md)                                               | ArgoCD Notifications Slack current-contract backfill 실행 계획                                                                                                                                                     | Done | 2026-05-21 |
-| [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md)                             | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획                                                                                                                          | Done | 2026-05-22 |
-| [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md)                                         | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 계획                                                                                                                                | Done | 2026-05-22 |
-| [`./2026-05-24-p3-gitops-secret-runtime-remediation.md`](./2026-05-24-p3-gitops-secret-runtime-remediation.md)                       | 승인된 P3 ArgoCD/Vault/ESO/secret runtime remediation 실행 계획. Repo desired-state 보완은 완료됐고 live runtime 검증은 별도 follow-up이다.                                                                        | Done | 2026-06-04 |
-| [`./2026-05-28-workspace-skill-expansion.md`](./2026-05-28-workspace-skill-expansion.md)                                             | repo-local skill expansion과 harness catalog routing 보강 계획                                                                                                                                                     | Done | 2026-05-28 |
-| [`./2026-05-30-antigravity-governance.md`](./2026-05-30-antigravity-governance.md)                                                   | Gemini/Antigravity 하네스와 공통 Stage 00 거버넌스 정합화 계획                                                                                                                                                     | Done | 2026-06-02 |
-| [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)                           | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 계획                                                                                                                                                | Done | 2026-05-31 |
-| [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)                               | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 실행 계획                                                                                                                  | Done | 2026-06-01 |
-| [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)                         | Stage 00 canonical adapter 모델로 공통 governance, provider adapter, template, hook, model policy, QA/CI gap을 변경 단위별로 정합화한 계획                                                                         | Done | 2026-06-01 |
-| [`./2026-06-02-current-implementation-docs-alignment.md`](./2026-06-02-current-implementation-docs-alignment.md)                     | 현재 구현 기준으로 01-04 문서를 정렬하고 old 문서를 중앙 archive corpus로 이동하는 실행 계획                                                                                                                  | Done | 2026-06-02 |
-| [`./2026-06-02-docs-01-05-current-implementation-alignment.md`](./2026-06-02-docs-01-05-current-implementation-alignment.md)         | 현재 repo-backed 구현 기준으로 01-05 active 문서, 05.operations archive mirror, stale currentness gate를 정리한 실행 계획                                                                                          | Done | 2026-06-02 |
-| [`./2026-06-02-phase-1-decision-follow-up.md`](./2026-06-02-phase-1-decision-follow-up.md)                                           | Phase 1 결정 항목을 후속 Phase 2 planning artifact로 고정하고 남은 QA skill/PATH/RTK gap boundary를 분리한 계획                                                                                                    | Done | 2026-06-02 |
-| [`./2026-06-02-phase-2-governance-alignment.md`](./2026-06-02-phase-2-governance-alignment.md)                                       | Phase 1 governance alignment audit 결과를 Phase 2 Plan/Task 추적성으로 고정하고 live validation boundary를 분리한 계획                                                                                             | Done | 2026-06-02 |
-| [`./2026-06-02-phase-3-protected-surface-hardening.md`](./2026-06-02-phase-3-protected-surface-hardening.md)                         | 승인된 policy/runtime/CI/template/live validation 범위에서 `.agents/**` shared asset trigger와 runtime readiness boundary를 보강한 계획                                                                            | Done | 2026-06-02 |
-| [`./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md`](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)                         | Phase 3 live validation 실패를 Vault sealed runtime prerequisite로 분류하고 operator-bound 복구 경계를 고정한 계획                                                                                                 | Done | 2026-06-02 |
-| [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)   | Phase 1 follow-up plan의 축소 범위를 보정하고 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 계획                                                                                                      | Done | 2026-06-02 |
-| [`./2026-06-04-harness-four-element-alignment.md`](./2026-06-04-harness-four-element-alignment.md)                                   | 하네스 네 요소를 공통 Stage 00, Codex, Claude runtime surface에 연결하고 문서 언어/템플릿/드리프트 GC 검증 게이트를 보강한 계획                                                                                    | Done | 2026-06-04 |
-| [`./2026-06-05-harness-governance-v2-overlay.md`](./2026-06-05-harness-governance-v2-overlay.md)                                     | DAILY/LIBRARY 분류, workflow skill phase 기준, Hookify/eval/progress 단일화 계약을 기존 Stage 00 하네스 위에 덧붙인 계획                                                                                           | Done | 2026-06-05 |
 | [`./2026-07-02-workspace-harness-implementation-audit-pack.md`](./2026-07-02-workspace-harness-implementation-audit-pack.md)         | `docs/90.references/audits/` 아래 workspace harness 구현 현황 감사 팩을 작성하고 research benchmark와 repo-backed evidence를 대조하는 실행 계획                                                                    | Done | 2026-07-03 |
 | [`./2026-07-02-workspace-harness-research-pack.md`](./2026-07-02-workspace-harness-research-pack.md)                                 | `docs/90.references/research/` 통합 연구 팩 작성, 공식 외부 소스 우선 조사, market scan, implementation checklist, 검증 증적을 묶는 실행 계획                                                                      | Done | 2026-07-02 |
 | [`./2026-07-03-template-contract-governance-migration.md`](./2026-07-03-template-contract-governance-migration.md)                   | `docs/99.templates/`를 template forms와 support contracts로 분리하고 validator, hook, governance, authored docs 적용을 추적하는 실행 계획                                                                          | Done | 2026-07-03 |
@@ -175,10 +130,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md)                                 | Historical implementation plan for frontmatter-free control surfaces and the cloud normalization tranche later superseded by Spec 030 Stage 90 consolidation and retired-path enforcement.                        | Done | 2026-07-14 |
 | [`./2026-07-06-stage03-04-repo-static-gap-closure.md`](./2026-07-06-stage03-04-repo-static-gap-closure.md)                           | Stage 03/04 repo-static gap closure implementation plan for evidence-lane classification, WER lifecycle drift closure, operator-approved follow-up routing, and validation closure.                                | Done | 2026-07-06 |
 | [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Implementation plan for adding `observability-reviewer` and `network-reviewer` worker agents across three tracked adapter surfaces and the harness catalog.                                                               | Done | 2026-07-06 |
-| [`./2026-07-07-workspace-engineering-research-pack-refresh.md`](./2026-07-07-workspace-engineering-research-pack-refresh.md)         | Implementation plan for workspace engineering research pack refresh.                                                                                                                                               | Done | 2026-07-07 |
-| [`./2026-07-10-current-research-pack-fact-first-hardening.md`](./2026-07-10-current-research-pack-fact-first-hardening.md)           | Fact-first in-place audit, external-source refresh, related-document integration, provider-model currentness analysis, and review plan for the Current workspace engineering research pack.                           | Done | 2026-07-10 |
 | [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Evidence-preserving audit IA, complete Spec/Plan lifecycle reconciliation, and RMD-004 ten-role/30-adapter roster currentness implementation plan.                                                                    | Done   | 2026-07-11 |
-| [`./2026-07-11-workspace-engineering-research-audit-integration.md`](./2026-07-11-workspace-engineering-research-audit-integration.md) | Completed thirteen-task workspace engineering research and implementation-audit integration ledger relocated from the Current Stage 90 audit pack.                                                                  | Done | 2026-07-11 |
 | [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Declarative document registry, schema, classifier, baseline inventory, and compatibility-gate implementation plan. | Done | 2026-07-12 |
 | [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, legacy template removal, and measured authored-document compatibility plan. | Done   | 2026-07-12 |
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 plan for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |

@@ -1078,6 +1078,38 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
         "schemaVersion": 8,
         "routeState": "legacy",
+        "archiveContractVersion": 2,
+        "archiveNamespaces": [
+            {
+                "id": "arwb-base",
+                "policy": "exact-immutable",
+                "records": [
+                    f"docs/98.archive/fixture/arwb-{index:02d}.md"
+                    for index in range(31)
+                ],
+            },
+            {
+                "id": "acer-additive",
+                "policy": "exact-immutable",
+                "records": [
+                    f"docs/98.archive/fixture/acer-{index:02d}.md"
+                    for index in range(12)
+                ],
+            },
+            {
+                "id": "wdtc-execution",
+                "policy": "exact-reviewed-manifest",
+                "records": [
+                    f"docs/98.archive/fixture/wdtc-{index:02d}.md"
+                    for index in range(50)
+                ],
+            },
+            {
+                "id": "progress-snapshot",
+                "policy": "append-only-unique",
+                "records": [],
+            },
+        ],
         "retiredRouteEvidence": {
             "routeSegment": "04.execution",
             "profiles": [

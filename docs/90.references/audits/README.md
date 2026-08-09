@@ -50,7 +50,7 @@ audits/
 | [2026-07-03-wdgh](./2026-07-03-wdgh/README.md) | Resolved | Workspace document-governance hardening baseline. | Resolution: [2026-07-04-wdcn](./2026-07-04-wdcn/README.md). |
 | [2026-07-04-wdcn](./2026-07-04-wdcn/README.md) | Resolved | Workspace document-contract normalization audit. | Current comparison owner: [2026-07-11-weia](./2026-07-11-weia/README.md). |
 | [2026-07-05-wea](./2026-07-05-wea/README.md) | Historical | Workspace engineering implementation audit based on the 2026-07-04 research benchmark. | Successor: [2026-07-11-weia](./2026-07-11-weia/README.md). |
-| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |
+| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [2026-07-11-weia](../../98.archive/README.md#document-index) and [Plan](../../98.archive/README.md#document-index). |
 
 `Current pack`, `Historical`, and `Resolved` are collection roles, not report
 lifecycle values. The registry owns the single Current pointer; the selected
@@ -81,8 +81,8 @@ pack's `## Report Index` mirrors member lifecycle from report frontmatter.
 
 - [Parent Reference README](../README.md)
 - [Current Audit Pack](./2026-07-11-weia/README.md)
-- [Current Audit Integration Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
-- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
+- [Current Audit Integration Plan](../../98.archive/README.md#document-index)
+- [Archive Index](../../98.archive/README.md#document-index)
 - [Workspace Harness Research Packs](../research/README.md)
 - [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
