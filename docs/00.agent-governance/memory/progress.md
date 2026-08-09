@@ -164,6 +164,48 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
   `env TMPDIR=/tmp pre-commit run --all-files` with exit 0 and every hook
   passing; post-run state remained exactly three staged files with no unstaged
   changes.
+- Fix Round 5 RED produced four failures and two missing-helper errors for an
+  exact open gitleaks-config descriptor, lock cleanup diagnostics, closed
+  whole-manifest validation, target/source replacement preservation, and the
+  pinned manifest builder. Two additional RED cases closed opposite-phase
+  corruption and lock identity-acquisition failure before any write.
+- Fix Round 5 GREEN keeps source, target, and private staging descriptors plus
+  hard-link anchors live through the transaction boundary. Target installation
+  is no-clobber through held parent directory descriptors; exact inode and
+  output bytes are revalidated before each source quarantine and immediately
+  before commit. Source removal is an atomic directory-FD rename into a private
+  transaction quarantine, and rollback restores without clobber while
+  preserving third-party replacements or explicit recovery residue when the
+  original cannot safely reclaim its path. Private cleanup never path-unlinks a
+  caller-controlled object.
+- Gitleaks consumes only `/proc/self/fd/<fd>` for the verified owner-mode `0600`
+  captured configuration, with that descriptor inherited explicitly and kept
+  open until classification exits. Direct apply now validates the complete
+  manifest plus exact 132/82/50 counts before mutation, including the opposite
+  phase. The retained builder derives commit and blobs only from
+  `EXPECTED_SOURCE_COMMIT` and rejects a current/pinned census mismatch.
+- Same-tool concurrency is serialized by the repository lock. Arbitrary
+  same-user path replacement cannot be eliminated by portable POSIX APIs, so
+  the implementation instead holds directory/object descriptors and private
+  anchors, uses no-clobber creation and quarantine moves, and fails closed
+  without deleting a mismatched object. Lock/body cleanup preserves the primary
+  diagnostic and records cleanup failure as a note; an unidentifiable new lock
+  is preserved rather than guessed safe to delete.
+- Fix Round 5 focused GREEN passed 71/71 migration, strict-cutover, and archive
+  recovery tests, including replacement at the final commit revalidation
+  boundary. Python compilation and Ruff passed. Actual safe gitleaks FD
+  classification returned 0; the dry run and pinned builder comparison remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; strict Markdown remained zero violations. No production
+  apply was executed, and full pre-commit remains assigned to the controller.
+- The exact three-file staged Fix Round 5 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every applicable hook passing. Post-run state remained exactly
+  three staged files with no unstaged changes.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 
