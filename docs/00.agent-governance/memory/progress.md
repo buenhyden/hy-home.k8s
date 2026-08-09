@@ -21,7 +21,7 @@ inventory stays in `scripts/README.md`.
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: WERG-001 admission implementer and independent admission reviewer after the logical WERG-000 activation commit.
+- **Next Owner**: WERG-002 documentation/V&V researchers and WERG-003 Kubernetes/security researchers, limited to the reviewed admitted questions.
 
 #### Progress
 
@@ -36,6 +36,16 @@ authorized activation paths and entered focused validation and review. The exist
 `2026-08-08-wer` pack remains the only research owner; authenticated,
 provider-runtime, hosted, remote, credential-bearing, and live evidence stays
 excluded.
+
+WERG-001 then read the complete 13-file pack without web access and built the
+33-row four-state admission matrix: 18 complete-existing, seven
+under-sourced-partial admissions, one unresearched Verification/Validation
+admission, and seven deeper-evidence exclusions. The exact admitted set is
+PRD, ARD, Policy, Release, Runbook, Verification/Validation, and the shared
+question-level Kubernetes and Security deltas. No source, claim, README
+request, topical report, runtime, provider, workflow, policy, or infrastructure
+row changed. Independent full-pack content and checker-quality reviews are
+Approved with no remaining Critical or Important finding.
 
 #### Memory
 
@@ -62,11 +72,15 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - Independent WERG-000 specification/content and quality reviews are Approved with no remaining Critical or Important finding. They confirmed the exact nine-path activation, reciprocal authority, sorted standalone relation, unchanged `programLineage`, and unchanged research pack.
 - The exact nine-path index passed RIA self-test and production validation, affected and staged lanes, the direct repository aggregate, plain pre-commit, all-files pre-commit, formatter review, and both worktree/cached diff checks. No hook changed a tracked file; the workflow-owned NUL path input was removed after the lanes.
 - No external source browsing, research-pack content edit, hosted/provider/live action, secret access, staging, or implementation commit has occurred in this activation step.
+- WERG-001 checker self-test passes 23 fixture-based cases at `/tmp/werg-gap-refresh-check.py` with SHA-256 `19cfee103a914a85bd4c0d8e81ca6cdea5a18ee115572f2be8d2faec4f689186`; baseline mode reproduces the missing Verification/Validation owner and five under-sourced document-family source classes before the complete matrix is written.
+- The quality-review RED proved that exact state/admitted membership, old-row mutation, and several path-boundary negatives were not enforced. The corrected checker pins all 33 topic states and eight admitted topics, fail-closes derived owner paths and symlinks, and exercises real old-row, outside-root, symlink-root, symlink-owner, field, ID, date, anchor, and residue fixtures. The content review approved all classifications after its transient missing-path self-test error and one malformed table delimiter were corrected.
+- Final WERG-001 content and quality re-reviews are Approved with no remaining Critical or Important finding. The admitted research boundary is exactly PRD, ARD, Policy, Release, Runbook, Verification/Validation, and the shared narrow Kubernetes/Security deltas; every other requested topic is a duplicate stop or deeper-evidence exclusion.
+- The complete admission probe covers exactly 13 pack files, 32 existing request rows plus one Verification/Validation topic, 52 source rows, and 51 claim rows. The in-review matrix authorizes eight topic rows and excludes all authenticated, provider-runtime, hosted, remote, administrative, credential-bearing, connected-resource, and live evidence.
 
 #### Handoff
 
-Commit the atomic reciprocal Spec/Plan/Task/index/ADR-0022 relation, then begin
-WERG-001 admission before any external research.
+Run the exact WERG-001 commit gates, then begin WERG-002 and WERG-003 only for
+the reviewed eight-topic admitted set.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 

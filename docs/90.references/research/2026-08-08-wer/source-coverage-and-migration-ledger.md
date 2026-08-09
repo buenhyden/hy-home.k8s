@@ -953,6 +953,36 @@ additional done Spec, with an exact-set test and unknown-Spec negative coverage
 retained. The closure does not claim hosted CI, provider-runtime, remote,
 credential, secret, or live-platform evidence.
 
+### 2026-08-09 Gap-only admission
+
+The approved gap-only refresh compared all 13 current pack files, the 32
+unique README request rows, all 52 existing source rows, and all 51 existing
+claim rows before any new web research. The complete review-input matrix is
+owned by the active [WERG Task](../../../04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#2026-08-09-gap-only-admission-matrix).
+
+The four-state result is 18 `complete-existing`, seven
+`admit-under-sourced-partial`, one `admit-unresearched`, and seven
+`exclude-deep-evidence`. The admitted set is limited to PRD, ARD, Policy,
+Release, Runbook, Verification/Validation, and the shared exact Kubernetes and
+Security subquestions. General NetworkPolicy, Pod Security, CI/CD, GitHub
+Actions, agent-system, model-routing, memory-management, infrastructure, and
+provider-runtime questions are not blanket research authorization: existing
+complete boundaries stop duplicates, while authenticated, hosted, remote,
+administrative, provider-runtime, connected-resource, credential-bearing, and
+live evidence remains excluded.
+
+No `SRC-WERPC-*`, `CLM-WERPC-*`, README request, topical report, provider,
+workflow, policy, infrastructure, or runtime row was added or modified by this
+admission step. The frozen pre-research maxima remain `SRC-WERPC-052` and
+`CLM-WERPC-006-08`; later accepted research must allocate additive identifiers
+without rewriting these rows or inheriting their 2026-08-08 check date.
+
+Independent full-pack content review approved all 33 topic states, existing
+source/claim mappings, the eight-topic admitted set, and the Kubernetes
+duplicate-rejection boundary. Independent checker-quality review approved the
+exact state/membership contract and 23 fixture-based negative cases with no
+remaining Critical or Important finding.
+
 ## Sources
 
 The source register above is the interface for later research. Its three
