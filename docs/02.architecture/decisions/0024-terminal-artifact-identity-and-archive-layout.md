@@ -66,6 +66,22 @@ AD-0011 without renumbering. ARD and RFC have no terminal active profile,
 template, route, relationship, or navigation; immutable historical payload
 text may retain those terms.
 
+The current transition registry also exposes the human-authored profile
+`sdlc/api-spec` at `docs/03.specs/<ddd>-<slug>/api-spec.md` and its authored
+`api-spec.template.md`. WORK-105 retires that profile, route, template, and
+authored relationships as part of the atomic AD/Stage 99 forms cutover.
+Terminal human-authored interface requirements live only as Stage 01
+`sdlc/interface` records under the `IFC-<DDD>-<SLUG-TOKEN>` grammar below.
+The current tracked corpus contains zero authored
+`docs/03.specs/*/api-spec.md` records; WORK-105 must preserve that zero-consumer
+proof and add a terminal negative fixture that rejects the retired authored
+route.
+
+Native OpenAPI, GraphQL, and Protobuf profiles and their native templates
+remain machine-readable Interface evidence. They are not human-authored API
+Spec records, do not enter the mandatory human `artifact_id` namespace, and
+retain their separate native contract identity and validation rules.
+
 Global uniqueness applies to every declared `artifact_id`. The mandatory
 terminal outer profiles are PRD, SRS, Interface Requirement, AD, ADR, Spec,
 Agent Design, Data Model, Tests, Plan, Task, Guide, Policy, Runbook, Incident,
@@ -76,9 +92,11 @@ The following profiles and surfaces are outside the mandatory namespace and
 MUST NOT declare `artifact_id`: Stage 00 governance/reference, all Stage 90
 content/reference/observation profiles, governance memory/progress, Stage 99
 support, README/navigation, templates, fixtures, native/generated surfaces,
+the current authored `sdlc/api-spec` / `api-spec.md` surface being retired,
 the virtual Stage 98 change-directory aggregate, and embedded immutable
-archive payloads. Embedded `original_artifact_id` is provenance, not an outer
-`artifact_id`, and is excluded from global current-ID uniqueness.
+archive payloads. The authored `api-spec.template.md` is both a template and a
+retired terminal surface. Embedded `original_artifact_id` is provenance, not
+an outer `artifact_id`, and is excluded from global current-ID uniqueness.
 
 Terminal active path extraction is deterministic and closed:
 
@@ -150,6 +168,12 @@ Tombstone `<stage>/<TYPE>` pairs are limited to
 payload maps to terminal type `AD`; its embedded `original_artifact_id` may
 remain `ARD-####`.
 
+The current 93-record cutover needs no `API-SPEC` tombstone type because its
+reviewed corpus contains no authored API Spec record. If a historical
+`api-spec.md` is discovered later, terminal entry fails until a reviewed
+ledger disposition maps it to the Stage 01 Interface form or to an `IFC`
+tombstone under the existing grammar; no new tombstone type is inferred.
+
 When `original_artifact_id` exists, `<STABLE-TOKEN>` is the complete suffix
 after that original ID's type prefix and separator; the lowercase path token
 must be its exact canonical lowercase form. When it is null, the ID token is
@@ -200,10 +224,13 @@ index and provenance. Every other current document may link only to
 The successor schedule in Spec 052 is closed at WORK-104 through WORK-115.
 WORK-104 performs the 82 moves and rebases the destination Plan/Task; WORK-105
 creates the AD route and Stage 99 core forms, atomically converts active
-ARD-0011 to AD-0011 with its archive-invariant replacement, accepts ADR-0024,
-and changes the registry projection. Stage 98 rehome in WORK-107 is forbidden
-before that WORK-105 acceptance. The destination Plan/Task rebaseline
-explicitly supersedes their old WORK-105 through WORK-110 meanings.
+ARD-0011 to AD-0011 with its archive-invariant replacement, retires authored
+`sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` with zero-consumer
+proof and a terminal negative fixture, accepts ADR-0024, and changes the
+registry projection. It preserves the native OpenAPI/GraphQL/Protobuf evidence
+contracts. Stage 98 rehome in WORK-107 is forbidden before that WORK-105
+acceptance. The destination Plan/Task rebaseline explicitly supersedes their
+old WORK-105 through WORK-110 meanings.
 
 The exact terminal script deletion set is `scripts/validate-harness.sh`,
 `scripts/document-taxonomy-migration.json`, and
@@ -233,6 +260,8 @@ ARD-0011 remains active, and ADR-0023 remains the registry projection.
   schema-versioned ledger, validators, recovery proof, and bounded cutover.
 - Changing the current registry, profile, template, relationship, navigation,
   migration manifest, or script inventory in `WDTC-AMEND-001`.
+- Retiring the current authored API Spec surface before WORK-105 performs its
+  atomic forms cutover, zero-consumer proof, and terminal negative fixture.
 - Accepting this successor or replacing ADR-0023 in PRD-008 registry lineage
   before WORK-105's atomic lifecycle transition.
 - Rewriting a historical payload, digest, source commit, source blob, embedded
@@ -249,6 +278,11 @@ and AD naming follows the Architecture Description concept without claiming a
 standards-mandated Markdown representation. Preserving the number in
 ARD-0011-to-AD-0011 keeps lineage stable but makes the WORK-105 conversion and
 archive-invariant replacement a hard acceptance gate.
+
+Retiring the empty authored API Spec route removes a second human interface
+form without deleting machine-readable API contracts. Authors use Stage 01
+Interface Requirement; OpenAPI, GraphQL, and Protobuf retain separate native
+identity validation and remain implementation evidence.
 
 Stage 98 becomes navigable by stable change and migration identities rather
 than mirror dates. That costs a complete 93-row ledger, unique terminal

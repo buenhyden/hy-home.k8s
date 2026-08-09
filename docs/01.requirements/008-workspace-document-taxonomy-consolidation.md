@@ -31,6 +31,13 @@ atomically converts active ARD-0011 to AD-0011 with its archive-invariant
 replacement, accepts ADR-0024, and changes that projection. WORK-104 remains
 the existing 82-move and destination Plan/Task rebaseline task.
 
+The current authored `sdlc/api-spec` / Stage 03 `api-spec.md` form and its
+`api-spec.template.md` retire in WORK-105. Terminal human-authored interface
+requirements use only Stage 01 `sdlc/interface` and the `IFC-###-<SLUG-TOKEN>`
+grammar. Native OpenAPI, GraphQL, and Protobuf profiles/templates remain
+machine-readable Interface evidence under separate native identity contracts;
+they are not authored API Spec records or mandatory human artifact IDs.
+
 The design is a local architecture choice, not an ISO, NIST, or tool-vendor
 conformance claim. [ISO/IEC/IEEE 12207:2026](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/09/02/90219.html)
 provides a common lifecycle-process framework without prescribing one lifecycle
@@ -153,7 +160,7 @@ be deleted with provenance and disposition evidence.
 | REQ-WDTC-016 | Resolve the recorded pre-change validator failures without weakening the corresponding contracts. | Must | The final all-files gate passes with explicit false-positive adjudication and deterministic temporary-directory behavior. |
 | REQ-WDTC-017 | Keep PRD-007 Specs 047–051 suspended until the consolidated topology and validator owners are active, then provide a reviewed resumption route. | Must | No suspended tranche executes during migration and every path is valid at resumption. |
 | REQ-WDTC-018 | Keep platform desired state, remote services, credentials, provider runtime, and live cluster changes outside this program. | Must | Handoff reports these evidence classes as not performed or separately deferred. |
-| REQ-WDTC-019 | Make PRD, optional SRS, and optional Interface Requirement the terminal active requirement forms and Architecture Description (`sdlc/ad`) plus ADR the terminal active architecture forms. | Must | `docs/02.architecture/descriptions/ad-<id>-<slug>.md` is the only active AD route; WORK-105 atomically converts conflicting active ARD-0011 to AD-0011 with its archive-invariant replacement before accepting ADR-0024; ARD/RFC then have no active profile, template, route, relationship, or navigation. |
+| REQ-WDTC-019 | Make PRD, optional SRS, and optional Interface Requirement the terminal active requirement forms and Architecture Description (`sdlc/ad`) plus ADR the terminal active architecture forms; retire the authored `sdlc/api-spec` form while preserving native API-contract evidence. | Must | `docs/02.architecture/descriptions/ad-<id>-<slug>.md` is the only active AD route; WORK-105 atomically converts conflicting active ARD-0011 to AD-0011, retires `sdlc/api-spec` / `api-spec.md` / `api-spec.template.md` with zero-consumer proof and a terminal negative fixture, preserves native OpenAPI/GraphQL/Protobuf contracts, and accepts ADR-0024; ARD/RFC and authored API Spec then have no active terminal profile, template, route, relationship, or navigation. |
 | REQ-WDTC-020 | Require exactly one globally unique, path-derived `artifact_id` on every mandatory terminal outer profile and prohibit the field on every excluded profile/surface. | Must | The closed active, operations, and Stage 98 grammars pass mandatory-presence, prohibited-presence, global uniqueness, canonical token, collision, and path/frontmatter equality fixtures without reallocating an existing numeric identity. |
 | REQ-WDTC-021 | Cut the 93 historical Stage 98 records over to stable change and tombstone paths through a schema-versioned migration ledger, while counting migration documents separately. | Must | The current cutover is 93-to-93 with every action `moved`; 76 execution records map to 41 `chg-####` directories and 17 other records map to unique tombstones in the exact `3/8/4/2` split, with no shared stable path. |
 | REQ-WDTC-022 | Close the tracked `scripts/` inventory from the current 50 assets to exactly 47 through the reviewed three-asset deletion set only. | Must | WORK-112 removes only `validate-harness.sh` after consumer migration and leaves 49 assets; WORK-114 removes only the transition manifest/tool and leaves 39 Python, seven shell, and one README asset. |
@@ -164,9 +171,21 @@ Runbook, Incident, Postmortem, and Stage 98 Plan, Task, Tombstone, and
 Migration. Every declared `artifact_id` participates in one global uniqueness
 check. Stage 00 governance/reference, Stage 90 content/reference/observations,
 governance memory/progress, Stage 99 support, README, template, fixture,
-native/generated, virtual change aggregate, and embedded archive payload
-surfaces MUST NOT declare `artifact_id`; embedded `original_artifact_id` is
-provenance outside the outer namespace.
+native/generated, the retiring authored `sdlc/api-spec` / `api-spec.md`
+surface, virtual change aggregate, and embedded archive payload surfaces MUST
+NOT declare `artifact_id`; `api-spec.template.md` is both a template and a
+retired terminal surface. Embedded `original_artifact_id` is provenance
+outside the outer namespace. Native OpenAPI/GraphQL/Protobuf identity remains
+owned by its separate machine-readable contract and is not a mandatory human
+artifact ID.
+
+The tracked authored consumer census is exactly zero for
+`docs/03.specs/*/api-spec.md`. WORK-105 must re-prove that zero before retiring
+the profile/template and add a negative fixture that rejects any authored
+terminal `api-spec.md`. The current 93 Stage 98 records therefore need no
+`API-SPEC` tombstone type. A later-discovered historical API Spec must be
+mapped through the reviewed ledger to a Stage 01 Interface record or an `IFC`
+tombstone before terminal acceptance.
 
 The path grammar is closed and deterministic:
 
@@ -232,8 +251,8 @@ may link only to the Stage 98 collection README.
 | ACC-WDTC-008 | Existing archive payloads remain byte-stable and dated observation bodies preserve their historical meaning. |
 | ACC-WDTC-009 | Logical-unit commits remain independently reviewable and revertible, with measured before/after inventories. |
 | ACC-WDTC-010 | PRD-007 has a valid consolidated resumption route and no remote or live action is implied. |
-| ACC-WDTC-011 | Terminal active requirements and architecture expose only PRD/SRS/Interface Requirement and AD/ADR, with AD using `sdlc/ad` and preserving numeric identity. |
-| ACC-WDTC-012 | Every mandatory terminal outer profile has one globally unique, type-valid, path-derived `artifact_id`; every excluded profile prohibits it, and virtual `change_id` never enters the artifact namespace. |
+| ACC-WDTC-011 | Terminal active requirements and architecture expose only PRD/SRS/Interface Requirement and AD/ADR, with AD using `sdlc/ad` and preserving numeric identity; authored API Spec is retired with zero consumers while native API contracts remain evidence. |
+| ACC-WDTC-012 | Every mandatory terminal outer profile has one globally unique, type-valid, path-derived `artifact_id`; every excluded profile, including authored `sdlc/api-spec`, prohibits it, native contract identity remains separate, and virtual `change_id` never enters the artifact namespace. |
 | ACC-WDTC-013 | All 93 historical Stage 98 records have unique recoverable terminal records under the 14-field ledger contract, immutable payload/provenance, and no terminal date/year path. |
 | ACC-WDTC-014 | The exact script sequence is `50 -> 49 -> 47`; all other 47 assets retain their distinct contract, diagnostic, fixture, evidence, or recovery responsibility. |
 
@@ -302,7 +321,7 @@ surface.
 | REQ-WDTC-016 | ACC-WDTC-007 | N/A — Spec 052 owns the named baseline remediation. |
 | REQ-WDTC-017 | ACC-WDTC-010 | N/A — Spec 052 owns suspension and resumption evidence. |
 | REQ-WDTC-018 | ACC-WDTC-010 | N/A — ARD-0011 owns the local-only system boundary. |
-| REQ-WDTC-019 | ACC-WDTC-011 | [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) owns the terminal PRD/SRS/Interface Requirement and AD/ADR form contract; ADR-0023 remains the transition projection until WORK-105's atomic AD-0011/invariant/ADR-0024 acceptance. |
-| REQ-WDTC-020 | ACC-WDTC-012 | N/A — active ADR-0024 and Spec 052 own global artifact identity and numeric preservation. |
+| REQ-WDTC-019 | ACC-WDTC-011 | [Spec 052](../03.specs/052-document-taxonomy-consolidation/spec.md) owns the terminal PRD/SRS/Interface Requirement and AD/ADR form contract, authored API Spec retirement, and native API evidence preservation; ADR-0023 remains the transition projection until WORK-105's atomic AD-0011/invariant/retirement/ADR-0024 acceptance. |
+| REQ-WDTC-020 | ACC-WDTC-012 | N/A — active ADR-0024 and Spec 052 own global artifact identity, authored API Spec prohibition, native-contract separation, and numeric preservation. |
 | REQ-WDTC-021 | ACC-WDTC-013 | N/A — active ADR-0024 and Spec 052 own the stable Stage 98 topology and exact 93-row ledger cutover. |
 | REQ-WDTC-022 | ACC-WDTC-014 | N/A — Spec 052 owns the reviewed WORK-112/WORK-114 `50 -> 49 -> 47` script disposition. |

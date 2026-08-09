@@ -30,9 +30,10 @@ keeping accepted ADR-0023 as the transition program-decision registry
 projection. This completed documentation package is `WDTC-AMEND-001`; it is
 not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
 terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
-the closed mandatory/prohibited outer-ID grammar, virtual Stage 98 change
-identity, stable archive topology, 14-field recovery ledger, direct-link
-corpus, and exact `scripts/` closure.
+the WORK-105 retirement of authored `sdlc/api-spec`, preservation of separate
+native API-contract evidence, the closed mandatory/prohibited outer-ID grammar,
+virtual Stage 98 change identity, stable archive topology, 14-field recovery
+ledger, direct-link corpus, and exact `scripts/` closure.
 The ADR index exposes the accepted predecessor and active successor state.
 This package changes no route, profile, template, registry, manifest, Stage 04
 execution record, Stage 98 record, or script.
@@ -57,6 +58,16 @@ no frontmatter; its path-derived `CHG-####` is `change_id` only, and every
 present Plan/Task leaf carries that same grouping value plus its own unique
 outer ID.
 
+The current human-authored `sdlc/api-spec` profile, Stage 03 `api-spec.md`
+route, and `api-spec.template.md` are terminally retired by WORK-105. The
+tracked authored corpus is exactly zero, and terminal validation must retain a
+negative fixture for that route. Human interface requirements use only Stage
+01 `sdlc/interface` and IFC identity. Native OpenAPI, GraphQL, and Protobuf
+profiles/templates remain machine-readable Interface evidence with separate
+native identity rules; they are neither authored API Spec nor mandatory human
+artifact IDs. The current 93-record cutover needs no `API-SPEC` tombstone type;
+a later discovery requires reviewed Interface/`IFC` tombstone ledger mapping.
+
 Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
 rewrite. The current cutover is 93-to-93 with every action `moved`: 76 records
 become unique Plan/Task leaves in 41 change directories (35 pairs, two
@@ -69,9 +80,10 @@ dual recovery evidence.
 
 The successor sequence is closed: WORK-104 owns 82 moves and destination
 Plan/Task rebaseline; WORK-105 owns AD/Stage99 core forms, AD-0011 invariant
-replacement, ADR-0024 acceptance, and registry projection; WORK-106 owns
-artifact/ledger transition validators; WORK-107 owns the 93-record rehome and
-cannot start before WORK-105; WORK-108 through WORK-115 own ID backfill,
+replacement, authored API Spec retirement/negative fixture with native API
+evidence preservation, ADR-0024 acceptance, and registry projection; WORK-106
+owns artifact/ledger transition validators; WORK-107 owns the 93-record rehome
+and cannot start before WORK-105; WORK-108 through WORK-115 own ID backfill,
 document authority/routes, agent governance, the full script ledger,
 orchestration and the 49 count, progress/graph cleanup, transition asset
 retirement and the 47 count, and independent closure respectively. The
@@ -143,13 +155,34 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
   diff; and the PRD-008 projection remained active Spec 052 / decision 0023.
   Final affected/staged/index/aggregate and exact-scope evidence belongs to the
   ignored Round 2 report rather than a forecast in this tracked ledger.
+- Final review found one remaining Critical: the current authored
+  `sdlc/api-spec` profile/template had no explicit terminal disposition.
+  Resolution assigns retirement to WORK-105, preserves native
+  OpenAPI/GraphQL/Protobuf evidence, records zero tracked authored
+  `docs/03.specs/*/api-spec.md` consumers, requires a terminal negative
+  fixture, and forbids an inferred `API-SPEC` tombstone type. This is a design
+  correction only; the registry and templates remain unchanged until
+  WORK-105.
+- Final-fix focused GREEN: registry self-test `132/65/30`, strict transition
+  registry `491/0/0`, strict Markdown, and strict links/owners all passed with
+  zero findings. The tracked Stage 03 authored API Spec census remained zero,
+  and Stage 98, registry/templates, manifest/tool, and frozen Plan/Task retained
+  zero diff. Exact affected/staged/index/aggregate evidence belongs to the
+  ignored report; implementer all-files remains `DEFER`.
+- The controller subsequently ran the final Critical-fix
+  `pre-commit run --all-files` fixed point. It exited 0 with every applicable
+  hook passing and no mutation. Post-run scope remained exactly the five owned
+  tracked files staged with zero unstaged paths. This is controller evidence;
+  no future or self-referential carrier hash is forecast, and the actual
+  carrier identity belongs to Git history.
 
 #### Handoff
 
 WORK-104 is the next owner and remains incomplete until the 82 moves and
 destination Plan/Task rebaseline occur. WORK-105 then owns lifecycle
-acceptance and the atomic registry projection change; later work units own the
-archive cutover and script deletions. Rollback is a reviewed revert of the
+acceptance, authored API Spec retirement/native evidence preservation, and the
+atomic registry projection change; later work units own the archive cutover
+and script deletions. Rollback is a reviewed revert of the
 applicable `WDTC-AMEND-001` carrier commit before dependent implementation.
 Residual risk is later drift from the exact 93-row, global-ID, and
 `50 -> 49 -> 47` contracts; VAL-WDTC-013 through VAL-WDTC-016 fail those
