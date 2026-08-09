@@ -451,17 +451,17 @@ roadmap/ledger rows, Task and progress evidence.
 `remediation-and-integration-roadmap.md`, cross-report finding references,
 README final verdict cells, Task and progress evidence.
 
-- [ ] Search tracked names, links, imports, schemas, workflows, invocations,
+- [x] Search tracked names, links, imports, schemas, workflows, invocations,
   generated owners, fixtures, and machine contracts for candidate consumers.
-- [ ] Add one complete disposition row per candidate using full Git source
+- [x] Add one complete disposition row per candidate using full Git source
   commit, exact consumers, replacement owner, decision, proof, and reviewer.
-- [ ] Reject name-only and no-rendered-link-only deletion claims; retain active
+- [x] Reject name-only and no-rendered-link-only deletion claims; retain active
   legacy validators/contracts and unique evidence.
-- [ ] De-duplicate cross-report findings into one roadmap row with dependencies,
+- [x] De-duplicate cross-report findings into one roadmap row with dependencies,
   priority, canonical owner, rollback, verification, blocker, and status.
-- [ ] Independently review every Delete/Correct/Integrate row and run legacy,
+- [x] Independently review every Delete/Correct/Integrate row and run legacy,
   active-corpus, RIA, link, archive, profile, and diff gates.
-- [ ] Commit `docs: classify governance remediation and cleanup`.
+- [x] Commit `docs: classify governance remediation and cleanup`.
 
 #### WGIA-010 — Governance, SDLC, documentation, and knowledge remediation
 

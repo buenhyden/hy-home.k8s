@@ -8,6 +8,85 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-009 disposition and integrated roadmap
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #disposition #roadmap #cleanup
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-009 repository-static integration at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh on candidate, consumer, owner, admission, blocker, or Current transition change.
+- **Next Owner**: WGIA-010/011 for admitted rows, WORK-013 for integrated documentation rows, WORK-001 for the integrated active-corpus one-shot set, WGIA-012 for Current cutover, WGIA-013 for the then-current reviewed WGIA disposition, WGIA-014 for terminal QA.
+
+#### Progress
+
+Rejected seven exact legacy-name matches as active-owner noncandidates: six
+tracked at observation and the post-observation dated ledger. Classified the
+exact fifteen Spec 052 `WORK-001` one-shot paths as `Integrate` because live
+consumers remain; `Delete=0`. Deduplicated 12 reviewed inputs into seven bounded
+Correct/Integrate admissions and five explicit `DEFER` rows without changing
+an implementation owner.
+
+#### Memory
+
+A broad vocabulary hit is triage, not lifecycle evidence: the exact excluded-
+scope starting-HEAD probe reports 2,355 matching lines and the authored
+worktree reports 2,360 after five matched Task evidence lines; none is promoted
+without tracked-path, consumer, replacement/owner, provenance, and history
+proof. For a post-observation candidate, record its real full creation commit
+and explicit observation absence; never substitute the observation SHA.
+
+#### Evidence
+
+- Seven name-only paths have exact active-consumer evidence and an explicit
+  noncandidate decision. Fifteen complete disposition rows include full source
+  commit, observation state, class, exact consumers, surviving owner,
+  `Integrate` decision, evidence, historical route, focused/aggregate
+  post-delete gates, and reviewer.
+- One contiguous 12-row roadmap routes GOV/KNW to WGIA-010, HAR/CLAUDE to
+  WGIA-011, DOC1/DOC2 to existing WORK-013, DSP to existing WORK-001, and
+  preserves SCAN/KSM/NET/ADM/SC as `DEFER` with exact release conditions.
+- PASS: exact table-width and 7-noncandidate/15-candidate/15-full-hash/
+  12-roadmap structure (`Integrate=15`, `Delete=0`, admitted=7, `DEFER=5`),
+  legacy-cutover self/production,
+  active-corpus role self/production, migration self-test, RIA self-test,
+  archive unit/production, strict registry/profile/links, diff, and both Stage
+  98 boundaries. Initial unstaged migration/RIA probes were unavailable under
+  their dirty-state guards, with no payload inspected or archive edit. Exact
+  staging then made the complete repository quality gate PASS, including
+  active-corpus migration production and RIA self-test/production, resolving
+  `BLK-WGA-DSP-001`/`002`. The same staged state runs 150 active-corpus tests
+  with 149 PASS and one stale 53-versus-57 eligibility expectation; only
+  `BLK-WGA-DSP-003` remains open. No post-delete rehearsal is claimed.
+- Specification review fix round 1 corrected the Candidate Discovery table's
+  delimiter from four cells to the exact three-cell header width. The first
+  structural parser run exposed and corrected the same delimiter-only mismatch
+  under the 12-cell Candidate Disposition Ledger header (13 to 12). The parser
+  checks equal header/delimiter/data widths for every WGIA-009-changed table;
+- Fresh content/quality review then found incomplete live-consumer coverage,
+  invalid JSON pointers/test anchors, two prose-only self references, and one
+  stale two-versus-three blocker count. All fifteen cells now separate live
+  consumers from dated decision/history evidence; a deterministic checker
+  resolves 114 path/selectors with zero missing/invalid results. The blocker
+  count is consistent, both fix-round re-reviews are Approved, and the final
+  states are two resolved plus one open blocker.
+
+#### Handoff
+
+WGIA-009 is Done with bounded `Partial` findings. Content and quality fix-round
+reviews are Approved; two authoring-state blockers are resolved by exact staged
+aggregate evidence, and the one open eligibility-unit blocker is routed to the
+active-corpus/WORK-001/WGIA-014 owners. Downstream
+work may use only
+admitted rows; deferred rows require their named owner/design/credential/live
+evidence. No deletion, implementation, Current cutover, historical rewrite,
+Stage 98 change, or external action occurred.
+
 ### 2026-08-09 - WGIA-008 security and approval-boundary audit
 
 #### Metadata

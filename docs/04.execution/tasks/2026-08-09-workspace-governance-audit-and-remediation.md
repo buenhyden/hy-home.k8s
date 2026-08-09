@@ -45,7 +45,7 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-006 | VAL-WGA-002, VAL-WGA-007 | Audit LLM-WIKI, knowledge routing, and memory classes | assigned worker | Done | Generated ownership/lookup and four-class memory lifecycle align repository-statically; stale LLM-WIKI source-trigger review metadata is a `Gap`, and actual provider-local memory/lifecycle execution remains `DEFER`. | [Focused evidence](#wgia-006-focused-evidence); four complete findings, exact generated-owner and memory-lifecycle matrices, one provisional WGIA-009 freshness repair, generator/memory checks, 115 tests, specification/content and quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-007 | VAL-WGA-002, VAL-WGA-008 | Audit integrated orchestration and every current AI-agent role | assigned worker | Done | Exact 12-role/four-surface/48-projection inventory and complete per-role matrix align repository-statically; integrated supervisor controls align, model/evaluation/admission evidence is `Partial`, and native provider execution remains `DEFER`. | [Focused evidence](#wgia-007-focused-evidence); four complete findings, one complete provider-runtime evidence blocker, focused contract and 150-test evidence, no remediation/disposition candidate, specification/content and fix-round quality reviews Approved, and complete repository quality gate PASS. |
 | WGIA-008 | VAL-WGA-002, VAL-WGA-009 | Audit security and approval boundaries | assigned worker | Done | Repository-static approval/workflow, GitOps, and external-secret structure align; Claude permissions conflict with shared stops; KSM RBAC and supply-chain identity are `Partial`; Gitleaks scope, network isolation, and admission/Adminer hardening are `Gap`; deeper enforcement remains `DEFER`. | [Focused evidence](#wgia-008-focused-evidence); full control matrix, nine complete findings, two evidence blockers, six provisional WGIA-009 inputs, focused static security evidence, and fresh specification/content plus security fix-round reviews Approved with no Critical/Important finding. |
-| WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Queued | Not executed. | Candidate/consumer ledger, roadmap, review dispositions, focused gates. |
+| WGIA-009 | VAL-WGA-010, VAL-WGA-012 | Build disposition ledger and integrated remediation roadmap | assigned worker | Done | Seven legacy-name active surfaces are rejected as noncandidates; the exact fifteen Spec 052 WORK-001 one-shot paths are `Integrate`, with `Delete=0`; 12 reviewed inputs are deduplicated into seven bounded Correct/Integrate admissions and five explicit `DEFER` rows. Overall request verdict remains `Partial` because live WORK-001 consumers and one eligibility-unit blocker remain; two authoring-state blockers are resolved. | [Focused evidence](#wgia-009-focused-evidence); full source commits, 114 resolved consumer selectors, exact replacements/history/post-delete gates, contiguous 12-row roadmap, exact staged aggregate PASS, 150 tests with 149 PASS/one recorded failure, and fix-round content plus quality reviews Approved. |
 | WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, canonical-owner diffs or reviewed no-delta evidence. |
 | WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Queued | Not executed. | RED/GREEN tests, owner-family commits or reviewed no-delta evidence. |
 | WGIA-012 | VAL-WGA-011 | Cut over the sole Current audit and mutable consumers atomically | assigned worker | Queued | Not executed. | RIA/profile/index/link RED/GREEN, protected historical baseline, atomic commit. |
@@ -595,6 +595,86 @@ and quality reviews are Approved with no Critical or Important finding.
   deduplication/admission; WGIA-011 may implement only accepted security rows;
   WGIA-014 owns whole-branch completion evidence.
 
+### WGIA-009 Focused Evidence
+
+- **Scope and changed paths**: the disposition ledger, integrated roadmap,
+  `REQ-WGA-025`/`REQ-WGA-026` final verdict cells and report-index summaries,
+  this Task, one top durable progress entry, and ignored worker progress/report.
+  No source report finding, canonical implementation owner, Current/RIA owner,
+  historical audit body, Stage 98 path, provider/remote/live surface, or secret
+  value changed.
+- **Acceptance IDs**: VAL-WGA-010 and VAL-WGA-012 at `repository-static`
+  depth. Candidate evidence is pinned to observation commit
+  `50628b84165479b03efc0a25be075a49c91a9aef` and compared with starting HEAD
+  `5db8fa365d1953861e80f1031003b08f69b132fd`.
+- **Candidate inventory**: observation has six exact legacy-name paths and the
+  starting HEAD has those six plus the dated ledger. All seven are active or
+  durable evidence owners with exact consumers and are rejected as name-only
+  noncandidates. The approved Spec 052 `WORK-001` globs identify exactly
+  fifteen one-shot data/script/test paths. Each has its observation-state full
+  last-change commit, exact current consumers, surviving owner, history route,
+  focused/aggregate gates, and decision `Integrate`; live consumers keep
+  `Delete=0`.
+- **Rejected name-only evidence**: the exact current tracked probe
+  `git grep -n -I -E '(legacy|Legacy|deprecated|Deprecated|one[- ]shot|one_shot|duplicate|Duplicate)' -- ':!docs/98.archive/**' ':!docs/90.references/audits/**' ':!docs/00.agent-governance/memory/progress.md'`
+  reports 2,355 matching lines at starting HEAD; the authored worktree reports
+  2,360 because this Task contributes five matched evidence lines. Both counts
+  are triage only, not candidate or deletion proof. Five machine-declared
+  retired agent surfaces are already
+  absent with five replacements and zero active consumers; absent paths are not
+  new tracked candidates. Six prior audit packs and Stage 98 remain protected.
+- **Integrated remediation**: one contiguous 12-row table represents each
+  reviewed topical input once. `WGA-RMP-GOV-001` and `WGA-RMP-KNW-001` are
+  admitted `Correct` inputs to WGIA-010; `WGA-RMP-HAR-001` and
+  `WGA-RMP-SEC-CLAUDE-001` are admitted `Correct` inputs to WGIA-011; the two
+  DOC rows `Integrate` with existing Spec 052 WORK-013 without duplicate
+  implementation; `WGA-RMP-DSP-001` integrates the fifteen one-shot paths with
+  existing Spec 052 WORK-001 without authorizing deletion. SCAN is hard
+  `DEFER` for credential/security triage; KSM, NET, ADM, and SC remain `DEFER`
+  for architecture/owner/live evidence.
+- **Validation results and boundary**: the ledger records focused and aggregate
+  post-delete commands for every row, but no post-delete gate was run or claimed
+  because no `Delete` row exists. The fix-round structural target is one
+  seven-row rejected-name table, one contiguous fifteen-row/12-column ledger,
+  and one contiguous 12-row/14-column roadmap (`Integrate=15`, `Delete=0`,
+  admitted=7, `DEFER=5`, two 14-field findings); the corrected parser and all
+  15 observation last-change hashes pass. Other PASS evidence:
+  legacy-cutover self-test and production (five retired, five replacements,
+  zero active consumers); active-corpus role self-test/production; migration
+  self-test; RIA self-test; 22 archive unit tests and archive production (43
+  records, 362 historical links, 43 secret-clean records); strict registry
+  (502 paths, zero uncovered/ambiguous), Markdown profiles (zero violations),
+  strict links, diff, and observation/worktree Stage 98 identity. RED:
+  initial unstaged active-corpus migration production reported path-only
+  `MIGRATION-SECRET-CLASSIFIER` for the protected historical
+  `docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md`;
+  no payload was inspected and no archive edit was authorized. Initial RIA
+  production also rejected dirty/unsettled comparison input. After exact
+  staging, the complete repository quality gate passed, including active-corpus
+  migration production and RIA self-test/production; `BLK-WGA-DSP-001` and
+  `BLK-WGA-DSP-002` are resolved. The same exact staged state runs 150 focused
+  active-corpus tests with 149 PASS and one eligibility count mismatch
+  (expected 53, actual 57); `BLK-WGA-DSP-003` remains open.
+- **Specification review fix round 1**: the reviewer found a four-cell
+  delimiter beneath the three-cell Candidate Discovery header. The delimiter
+  is now exactly three cells. The first width-aware parser run also exposed the
+  same delimiter-only defect under the 12-cell Candidate Disposition Ledger
+  header (13 cells); that delimiter is now exactly 12 cells. The parser covers
+  every table changed by WGIA-009.
+- **Fresh-review fix round 2**: content and quality reviewers found incomplete
+  live-consumer coverage, invalid JSON pointers/test anchors, two prose-only
+  self references, and a stale two-versus-three blocker count. The corrected
+  ledger explicitly separates live consumers from dated decision/history
+  evidence and resolves 114 consumer path/selectors with zero missing/invalid
+  results across all fifteen rows. `git diff --check`, strict registry, and
+  Markdown profiles pass after the fix. Both fix-round re-reviews are Approved.
+- **Review, rollback, and next owner**: independent content and quality reviews
+  are Approved. Rollback is limited to the WGIA-009 ledger/roadmap/
+  README/Task/progress/ignored-worker edits. WGIA-010/011 may implement only
+  admitted rows; WORK-013 and WORK-001 retain their existing integration
+  authority; WGIA-012 owns Current cutover; WGIA-013 applies only the
+  then-current reviewed WGIA disposition; WGIA-014 owns terminal QA.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -610,7 +690,7 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-006 shares the Plan and Spec sources above | Done. | Four complete findings: generated ownership/lookup and four-class memory lifecycle `Aligned`; stale LLM-WIKI source-trigger review metadata is a `Gap`; provider-local/actual lifecycle execution `DEFER`. Exact proof shows all six declared inputs changed after the 2026-05-10 review date; one provisional freshness repair and one complete provider-runtime blocker are recorded; specification/content and quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-007 shares the Plan and Spec sources above | Done. | Four complete findings: exact 12-role/four-surface/48-projection inventory and integrated supervisor orchestration `Aligned`; model/evaluation/admission state `Partial`; native provider execution `DEFER`. Focused contract self-tests/production and 150 tests pass; specification/content and fix-round quality reviews Approved; complete repository quality gate PASS. |
 | N/A — WGIA-008 shares the Plan and Spec sources above | Done. | Nine complete findings and a full control matrix distinguish static alignment from one permission conflict, three gaps, two partial controls, and deeper `DEFER`; six provisional WGIA-009 inputs are recorded. Focused static security checks pass with optional Conftest `SKIP`; redacted Gitleaks candidates remain intentionally untriaged; fresh specification/content and security fix-round reviews are Approved with no Critical/Important finding. |
-| N/A — WGIA-009 shares the Plan and Spec sources above | Queued. | Candidate disposition and integrated roadmap evidence will be recorded here. |
+| N/A — WGIA-009 shares the Plan and Spec sources above | Done with bounded `Partial` findings and one routed blocker. | Seven legacy-name active surfaces are rejected as noncandidates; fifteen exact Spec 052 WORK-001 paths are `Integrate`, `Delete=0`, and 2,355 starting-HEAD/2,360 authored-worktree vocabulary line hits remain rejected as name-only evidence. Twelve inputs are deduplicated once: seven bounded Correct/Integrate admissions and five explicit `DEFER` decisions. Structural, 114-selector, strict document/link, legacy-cutover, active-corpus production/self-test/role-production, archive, RIA, complete repository gate, diff, and Stage 98 checks pass. The exact staged 150-test run has 149 PASS and one expected-53/actual-57 eligibility failure under open `BLK-WGA-DSP-003`; `BLK-WGA-DSP-001`/`002` are resolved. Fix-round content and quality reviews are Approved. |
 | N/A — WGIA-010 shares the Plan and Spec sources above | Queued. | Governance/documentation/knowledge remediation evidence will be recorded here. |
 | N/A — WGIA-011 shares the Plan and Spec sources above | Queued. | Delivery/harness/agent/security remediation evidence will be recorded here. |
 | N/A — WGIA-012 shares the Plan and Spec sources above | Queued. | Atomic Current transition evidence will be recorded here. |
