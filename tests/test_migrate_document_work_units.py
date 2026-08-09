@@ -607,7 +607,9 @@ class MigrationTests(unittest.TestCase):
                         tuple((outside / "target-ancestor").glob("*.md")), ()
                     )
 
-    def test_private_unlink_preserves_replacement_race(self):
+    def test_private_unlink_fails_closed_on_rename_before_identity_mismatch(self):
+        # The supported boundary covers a mismatch moved by the cleanup rename.
+        # Hostile same-EUID replacement after the identity check is out of scope.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             transaction = self.tool._start_transaction(root)
@@ -655,6 +657,17 @@ class MigrationTests(unittest.TestCase):
             self.tool._close_transaction_fds(transaction)
             self.tool.os.close(transaction.quarantine_fd)
             self.tool.os.close(transaction.root_fd)
+
+    def test_unsupported_transaction_platform_aborts_before_lock_write(self):
+        with (
+            mock.patch.object(self.tool, "_TRANSACTION_PLATFORM_SUPPORTED", False),
+            mock.patch.object(self.tool, "_repository_lock") as repository_lock,
+            self.assertRaisesRegex(
+                self.tool.MigrationAbort, "MIGRATION-PLATFORM-UNSUPPORTED"
+            ),
+        ):
+            self.tool.apply_phase(ROOT, (), "archive")
+        repository_lock.assert_not_called()
 
     def test_transaction_init_failure_has_no_raw_residue(self):
         for failure in ("open", "identity"):
@@ -725,6 +738,222 @@ class MigrationTests(unittest.TestCase):
             for descriptor in (root_fd, quarantine_fd):
                 with self.assertRaises(OSError):
                     self.tool.os.fstat(descriptor)
+
+    def test_created_directory_partial_states_are_owned_immediately(self):
+        for failure in ("stat", "open", "identity"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                commit, entries = self.phase_fixture(root)
+                self.write_manifest(root, commit, entries)
+                pairs = self.tool.plan_phase(root, entries, "archive")
+                target_directory = root / "docs/98.archive"
+                opened_descriptors = []
+                real_open = self.tool.os.open
+                real_stat_at = self.tool._stat_at
+                real_identity = self.tool._fd_identity
+                open_calls = 0
+                identity_failures = 0
+
+                def inject_open(path, flags, *args, **kwargs):
+                    nonlocal open_calls
+                    if str(path) == "98.archive":
+                        open_calls += 1
+                        if failure == "open" and open_calls == 2:
+                            raise OSError("created directory open")
+                    descriptor = real_open(path, flags, *args, **kwargs)
+                    if str(path) == "98.archive":
+                        opened_descriptors.append(descriptor)
+                    return descriptor
+
+                def inject_stat(directory_fd, name, path):
+                    if failure == "stat" and path == target_directory:
+                        raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                    return real_stat_at(directory_fd, name, path)
+
+                def inject_identity(descriptor, path):
+                    nonlocal identity_failures
+                    if (
+                        failure == "identity"
+                        and path == target_directory
+                        and identity_failures == 0
+                    ):
+                        identity_failures += 1
+                        opened_descriptors.append(descriptor)
+                        raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                    return real_identity(descriptor, path)
+
+                with (
+                    mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                    mock.patch.object(self.tool, "validate_counts"),
+                    mock.patch.object(self.tool, "_classify_secret_payload"),
+                    mock.patch.object(self.tool.os, "open", side_effect=inject_open),
+                    mock.patch.object(self.tool, "_stat_at", side_effect=inject_stat),
+                    mock.patch.object(
+                        self.tool, "_fd_identity", side_effect=inject_identity
+                    ),
+                    self.assertRaisesRegex(
+                        self.tool.MigrationAbort,
+                        "MIGRATION-(?:FILESYSTEM|ROLLBACK|TARGET-ANCESTOR)",
+                    ),
+                ):
+                    self.tool.apply_phase(root, pairs, "archive")
+                if failure == "stat":
+                    self.assertFalse(target_directory.exists())
+                    self.assertEqual(
+                        len(tuple(root.glob(".migration-recovery-*"))), 1
+                    )
+                else:
+                    self.assertFalse(target_directory.exists())
+                    self.assertEqual(tuple(root.glob(".migration-*")), ())
+                for descriptor in set(opened_descriptors):
+                    with self.assertRaises(OSError):
+                        self.tool.os.fstat(descriptor)
+
+    def test_installed_target_is_rolled_back_after_open_or_identity_failure(self):
+        for failure in ("open", "identity", "replacement"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                commit, entries = self.phase_fixture(root)
+                self.write_manifest(root, commit, entries)
+                pairs = self.tool.plan_phase(root, entries, "archive")
+                first_target = root / pairs[0][1]
+                target_name = pairs[0][1].name
+                real_open = self.tool.os.open
+                real_identity = self.tool._fd_identity
+                target_descriptors = []
+                injected = False
+                replacement = b"third-party target after install"
+
+                def inject_open(path, flags, *args, **kwargs):
+                    nonlocal injected
+                    if (
+                        not injected
+                        and str(path) == target_name
+                        and first_target.parent.is_dir()
+                    ):
+                        if failure in {"open", "replacement"}:
+                            injected = True
+                            if failure == "replacement":
+                                substitute = first_target.with_suffix(".third-party")
+                                substitute.write_bytes(replacement)
+                                self.tool.os.replace(substitute, first_target)
+                            raise OSError("installed target open")
+                    descriptor = real_open(path, flags, *args, **kwargs)
+                    if str(path) == target_name:
+                        target_descriptors.append(descriptor)
+                    return descriptor
+
+                def inject_identity(descriptor, path):
+                    nonlocal injected
+                    if not injected and path == first_target:
+                        injected = True
+                        target_descriptors.append(descriptor)
+                        raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                    return real_identity(descriptor, path)
+
+                with (
+                    mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                    mock.patch.object(self.tool, "validate_counts"),
+                    mock.patch.object(self.tool, "_classify_secret_payload"),
+                    mock.patch.object(self.tool.os, "open", side_effect=inject_open),
+                    mock.patch.object(
+                        self.tool, "_fd_identity", side_effect=inject_identity
+                    ),
+                    self.assertRaises(self.tool.MigrationAbort),
+                ):
+                    self.tool.apply_phase(root, pairs, "archive")
+                self.assertTrue(injected)
+                if failure == "replacement":
+                    self.assertEqual(first_target.read_bytes(), replacement)
+                else:
+                    self.assertFalse(first_target.exists())
+                    self.assertFalse((root / "docs/98.archive").exists())
+                for descriptor in set(target_descriptors):
+                    with self.assertRaises(OSError):
+                        self.tool.os.fstat(descriptor)
+
+    def test_source_rename_partial_state_restores_canonical_source(self):
+        for failure in ("transient-stat", "mismatch", "persistent-stat"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                commit, entries = self.phase_fixture(root)
+                self.write_manifest(root, commit, entries)
+                pairs = self.tool.plan_phase(root, entries, "archive")
+                originals = {
+                    root / source: (root / source).read_bytes()
+                    for source, _ in pairs
+                }
+                real_stat_at = self.tool._stat_at
+                injected = 0
+
+                def inject_removed_stat(directory_fd, name, path):
+                    nonlocal injected
+                    if str(name).startswith("removed-0"):
+                        injected += 1
+                        if failure == "persistent-stat" or injected == 1:
+                            if failure == "mismatch":
+                                actual = real_stat_at(directory_fd, name, path)
+                                return self.tool._FileIdentity(
+                                    path,
+                                    actual.device,
+                                    actual.inode + 1,
+                                    actual.mode,
+                                )
+                            raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                    return real_stat_at(directory_fd, name, path)
+
+                with (
+                    mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                    mock.patch.object(self.tool, "validate_counts"),
+                    mock.patch.object(self.tool, "_classify_secret_payload"),
+                    mock.patch.object(
+                        self.tool, "_stat_at", side_effect=inject_removed_stat
+                    ),
+                    self.assertRaises(self.tool.MigrationAbort),
+                ):
+                    self.tool.apply_phase(root, pairs, "archive")
+                self.assertGreaterEqual(injected, 1)
+                for source, payload in originals.items():
+                    self.assertEqual(source.read_bytes(), payload)
+                self.assertTrue(all(not (root / target).exists() for _, target in pairs))
+                recovery = tuple(root.glob(".migration-recovery-*"))
+                if failure == "persistent-stat":
+                    self.assertEqual(len(recovery), 1)
+                else:
+                    self.assertEqual(recovery, ())
+
+    def test_private_stage_migration_abort_closes_fd_and_removes_stage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            transaction = self.tool._start_transaction(root)
+            real_identity = self.tool._fd_identity
+            stage_fd = None
+
+            def fail_stage_identity(descriptor, path):
+                nonlocal stage_fd
+                if path.name == "stage-test":
+                    stage_fd = descriptor
+                    raise self.tool.MigrationAbort("MIGRATION-FILESYSTEM")
+                return real_identity(descriptor, path)
+
+            with (
+                mock.patch.object(
+                    self.tool, "_fd_identity", side_effect=fail_stage_identity
+                ),
+                self.assertRaisesRegex(
+                    self.tool.MigrationAbort, "MIGRATION-FILESYSTEM"
+                ),
+            ):
+                self.tool._write_private_stage(
+                    transaction, "stage-test", b"payload", 0o600
+                )
+            self.assertIsNotNone(stage_fd)
+            with self.assertRaises(OSError):
+                self.tool.os.fstat(stage_fd)
+            self.assertFalse(
+                (root / transaction.quarantine_name / "stage-test").exists()
+            )
+            self.assertTrue(self.tool._dispose_transaction(transaction))
 
     def test_move_apply_uses_pinned_blob_instead_of_worktree_read_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:

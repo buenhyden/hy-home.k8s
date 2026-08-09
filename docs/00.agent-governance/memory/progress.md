@@ -254,6 +254,51 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
 - Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
   with exit 0 and every applicable hook passing. Post-run state remained exactly
   three staged files with no unstaged changes.
+- Fix Round 7 RED reproduced nine partial-state failures across mkdir
+  stat/open/identity, post-link target open/identity/replacement, post-rename
+  source stat/identity, and private-stage identity failure. GREEN registers a
+  provisional created-directory owner immediately after `mkdirat`; records an
+  installed target and its expected stage identity immediately after `linkat`;
+  records the removed source name immediately after quarantine rename; and
+  catches both `OSError` and `MigrationAbort` while closing and safely cleaning
+  a partially staged private file.
+- A created directory with proved identity is reopened, checked exact and empty,
+  and removed through quarantine rollback. An identity-unknown object is never
+  deleted: it is moved into the transaction recovery record. A post-link target
+  whose open or identity proof fails is still rolled back; a substituted
+  third-party target remains at its public path. A transient post-rename source
+  proof failure is reclassified during rollback; a known replacement returns to
+  its public path with the canonical source anchor preserved for recovery, while
+  a persistently unknown moved object is retained in recovery after canonical
+  no-clobber restoration. Normal full rollback leaves no `.migration-*` residue.
+- The reviewed enforcement boundary is now explicit in the migration module.
+  The Git-common-directory lock is mandatory coordination for supported
+  repository/migration writers, not a security sandbox. Non-cooperative public
+  source, target, and ancestor replacement remains in scope. Hostile same-EUID
+  enumeration or replacement of random mode-`0700` private quarantine entries
+  is unsupported; private rename/identity/unlink is an internal integrity check,
+  not hostile-process isolation. Unsupported `dir_fd`, `O_NOFOLLOW`,
+  `follow_symlinks`, or archive `pass_fds` behavior fails before lock creation or
+  migration writes.
+- Deferred WDTC-104 handoff: once the frozen Plan moves to
+  `docs/03.specs/052-document-taxonomy-consolidation/plan.md`, that destination
+  must receive the same coordination/threat-boundary wording in WDTC-104's
+  encompassing logical change. WORK-102 keeps the manifest-pinned Stage 04 Plan
+  byte-identical and does not amend it in place.
+- Fix Round 7 focused GREEN passed 80/80 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and pinned-builder equality remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; and strict Markdown remained zero violations. No production
+  apply ran.
+- The exact three-file staged Fix Round 7 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every hook passing. Post-run state remained exactly three
+  staged files with no unstaged changes.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 

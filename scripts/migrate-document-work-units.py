@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
-"""Build and validate the reviewed Stage 04 document migration manifest."""
+"""Build, validate, and transactionally apply the reviewed migration manifest.
+
+The Git-common-directory lock is the mandatory coordination boundary for
+supported repository and migration writers; it is not a security sandbox.
+Non-cooperative replacement of public source, target, or ancestor paths remains
+in scope and fails closed through anchored descriptors, no-clobber operations,
+and recovery preservation. A hostile same-EUID process that enumerates and
+mutates random mode-0700 private quarantine entries is outside the supported
+threat model. Private rename/identity/unlink cleanup is an internal integrity
+check only and does not claim hostile-process isolation.
+
+Platforms without the required dir_fd, O_NOFOLLOW, follow_symlinks, and
+pass_fds-compatible POSIX behavior are rejected before the migration lock or
+any filesystem mutation is created.
+"""
 
 from __future__ import annotations
 
@@ -58,6 +72,21 @@ GITLEAKS_CONFIG_PATH = PurePosixPath(".gitleaks.toml")
 SOURCE_PATH = re.compile(r"docs/04\.execution/(?:plans|tasks)/[^/]+\.md\Z")
 MOVE_TARGET = re.compile(
     r"docs/03\.specs/(?P<unit>[0-9]{3})-[^/]+/(?P<name>plan|tasks)\.md\Z"
+)
+_REQUIRED_DIR_FD_FUNCTIONS = (
+    os.open,
+    os.stat,
+    os.mkdir,
+    os.rename,
+    os.link,
+    os.unlink,
+    os.rmdir,
+)
+_TRANSACTION_PLATFORM_SUPPORTED = (
+    os.name == "posix"
+    and hasattr(os, "O_NOFOLLOW")
+    and all(function in os.supports_dir_fd for function in _REQUIRED_DIR_FD_FUNCTIONS)
+    and os.stat in os.supports_follow_symlinks
 )
 
 
@@ -156,6 +185,16 @@ class _DirectoryAnchor:
 
 
 @dataclass
+class _CreatedDirectory:
+    parent_fd: int
+    name: str
+    relative: PurePosixPath
+    descriptor: int | None = None
+    identity: _FileIdentity | None = None
+    active: bool = True
+
+
+@dataclass
 class _TransactionOperation:
     prepared: _PreparedOperation
     source_parent_fd: int
@@ -167,7 +206,9 @@ class _TransactionOperation:
     stage_name: str
     target_fd: int | None = None
     target_identity: _FileIdentity | None = None
+    target_installed: bool = False
     removed_name: str | None = None
+    removed_identity: _FileIdentity | None = None
 
 
 @dataclass
@@ -180,7 +221,7 @@ class _Transaction:
     quarantine_identity: _FileIdentity
     operations: list[_TransactionOperation] = field(default_factory=list)
     directory_anchors: list[_DirectoryAnchor] = field(default_factory=list)
-    created_directories: list[_DirectoryAnchor] = field(default_factory=list)
+    created_directories: list[_CreatedDirectory] = field(default_factory=list)
     recovery_required: bool = False
     replacement_detected: bool = False
     commit_started: bool = False
@@ -1310,6 +1351,8 @@ def _open_relative_directory(
         _verify_directory_anchors(transaction)
         created = False
         created_identity: _FileIdentity | None = None
+        provisional: _CreatedDirectory | None = None
+        descriptor: int | None = None
         try:
             descriptor = os.open(
                 component,
@@ -1322,9 +1365,12 @@ def _open_relative_directory(
             try:
                 _verify_directory_anchors(transaction)
                 os.mkdir(component, mode=0o755, dir_fd=parent_fd)
+                provisional = _CreatedDirectory(parent_fd, component, current)
+                transaction.created_directories.append(provisional)
                 created_identity = _stat_at(
                     parent_fd, component, transaction.root / current
                 )
+                provisional.identity = created_identity
                 descriptor = os.open(
                     component,
                     os.O_RDONLY
@@ -1333,13 +1379,29 @@ def _open_relative_directory(
                     | os.O_CLOEXEC,
                     dir_fd=parent_fd,
                 )
+                provisional.descriptor = descriptor
                 created = True
-            except OSError as exc:
+            except (OSError, MigrationAbort) as exc:
+                if descriptor is not None:
+                    _close_descriptor(descriptor)
+                    descriptor = None
+                if provisional is not None:
+                    provisional.descriptor = None
+                if isinstance(exc, MigrationAbort):
+                    raise
                 raise MigrationAbort("MIGRATION-TARGET-ANCESTOR") from exc
         except OSError as exc:
             raise MigrationAbort("MIGRATION-TARGET-ANCESTOR") from exc
-        identity = _fd_identity(descriptor, transaction.root / current)
-        linked = _stat_at(parent_fd, component, transaction.root / current)
+        if descriptor is None:
+            raise MigrationAbort("MIGRATION-TARGET-ANCESTOR")
+        try:
+            identity = _fd_identity(descriptor, transaction.root / current)
+            linked = _stat_at(parent_fd, component, transaction.root / current)
+        except MigrationAbort:
+            _close_descriptor(descriptor)
+            if provisional is not None:
+                provisional.descriptor = None
+            raise
         if (
             not stat.S_ISDIR(identity.mode)
             or not _same_object(identity, linked)
@@ -1349,6 +1411,8 @@ def _open_relative_directory(
             )
         ):
             _close_descriptor(descriptor)
+            if provisional is not None:
+                provisional.descriptor = None
             raise MigrationAbort("MIGRATION-DIRECTORY-CHANGED")
         anchor = _DirectoryAnchor(
             parent_fd,
@@ -1359,8 +1423,9 @@ def _open_relative_directory(
             created,
         )
         transaction.directory_anchors.append(anchor)
-        if created:
-            transaction.created_directories.append(anchor)
+        if provisional is not None:
+            provisional.descriptor = descriptor
+            provisional.identity = identity
         parent_fd = descriptor
     _verify_directory_anchors(transaction)
     return parent_fd
@@ -1470,26 +1535,69 @@ def _deactivate_directory_identity(
     for anchor in transaction.directory_anchors:
         if _same_object(anchor.identity, identity):
             anchor.active = False
+    for created in transaction.created_directories:
+        if created.identity is not None and _same_object(created.identity, identity):
+            created.active = False
 
 
 def _rollback_created_directories(transaction: _Transaction) -> bool:
     clean = True
-    for anchor in reversed(transaction.created_directories):
-        if not anchor.active:
+    for created in reversed(transaction.created_directories):
+        if not created.active:
             continue
         disposal = f"created-directory-{secrets.token_hex(8)}"
         moved_fd: int | None = None
+        temporary_fd: int | None = None
         try:
+            if created.identity is None:
+                recovery_entry = f"unverified-created-{secrets.token_hex(8)}"
+                _verify_directory_anchors(transaction)
+                os.rename(
+                    created.name,
+                    recovery_entry,
+                    src_dir_fd=created.parent_fd,
+                    dst_dir_fd=transaction.quarantine_fd,
+                )
+                created.active = False
+                transaction.recovery_required = True
+                clean = False
+                continue
             _verify_directory_anchors(transaction)
-            if os.listdir(anchor.descriptor):
+            descriptor = created.descriptor
+            if descriptor is None:
+                temporary_fd = os.open(
+                    created.name,
+                    os.O_RDONLY
+                    | os.O_DIRECTORY
+                    | os.O_NOFOLLOW
+                    | os.O_CLOEXEC,
+                    dir_fd=created.parent_fd,
+                )
+                descriptor = temporary_fd
+            opened = _fd_identity(
+                descriptor, transaction.root / created.relative
+            )
+            linked = _stat_at(
+                created.parent_fd,
+                created.name,
+                transaction.root / created.relative,
+            )
+            if (
+                not _same_object(opened, created.identity)
+                or not _same_object(linked, created.identity)
+            ):
+                transaction.recovery_required = True
+                clean = False
+                continue
+            if os.listdir(descriptor):
                 continue
             os.rename(
-                anchor.name,
+                created.name,
                 disposal,
-                src_dir_fd=anchor.parent_fd,
+                src_dir_fd=created.parent_fd,
                 dst_dir_fd=transaction.quarantine_fd,
             )
-            _deactivate_directory_identity(transaction, anchor.identity)
+            _deactivate_directory_identity(transaction, created.identity)
             moved_fd = os.open(
                 disposal,
                 os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
@@ -1499,7 +1607,7 @@ def _rollback_created_directories(transaction: _Transaction) -> bool:
                 moved_fd,
                 transaction.root / transaction.quarantine_name / disposal,
             )
-            if not _same_object(moved, anchor.identity) or os.listdir(moved_fd):
+            if not _same_object(moved, created.identity) or os.listdir(moved_fd):
                 transaction.recovery_required = True
                 clean = False
                 continue
@@ -1510,6 +1618,8 @@ def _rollback_created_directories(transaction: _Transaction) -> bool:
         finally:
             if moved_fd is not None:
                 _close_descriptor(moved_fd)
+            if temporary_fd is not None:
+                _close_descriptor(temporary_fd)
     return clean
 
 
@@ -1583,14 +1693,30 @@ def _write_private_stage(
             offset += os.write(descriptor, contents[offset:])
         os.fsync(descriptor)
         os.lseek(descriptor, 0, os.SEEK_SET)
-    except OSError as exc:
+    except (OSError, MigrationAbort) as exc:
+        cleanup_identity = identity
         if descriptor is not None:
             try:
-                os.close(descriptor)
+                if cleanup_identity is None:
+                    metadata = os.fstat(descriptor)
+                    if stat.S_ISREG(metadata.st_mode):
+                        cleanup_identity = _FileIdentity(
+                            transaction.root / transaction.quarantine_name / name,
+                            metadata.st_dev,
+                            metadata.st_ino,
+                            metadata.st_mode,
+                        )
             except OSError:
-                pass
-        if identity is not None:
-            _private_unlink(transaction, name, identity)
+                transaction.recovery_required = True
+            finally:
+                if not _close_descriptor(descriptor):
+                    transaction.recovery_required = True
+        if cleanup_identity is not None:
+            _private_unlink(transaction, name, cleanup_identity)
+        else:
+            transaction.recovery_required = True
+        if isinstance(exc, MigrationAbort):
+            raise
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
     if identity is None:
         raise MigrationAbort("MIGRATION-FILESYSTEM")
@@ -1629,12 +1755,13 @@ def _create_transaction_operation(
             dst_dir_fd=transaction.quarantine_fd,
             follow_symlinks=False,
         )
-        anchor = _stat_at(
+        anchor = source_identity
+        linked_anchor = _stat_at(
             transaction.quarantine_fd,
             source_anchor,
             transaction.root / transaction.quarantine_name / source_anchor,
         )
-        if not _same_object(anchor, source_identity):
+        if not _same_object(linked_anchor, source_identity):
             raise MigrationAbort("MIGRATION-CHANGED-SOURCE")
         target_parent_fd = _open_relative_directory(
             transaction, prepared.target.parent, create=True
@@ -1714,6 +1841,9 @@ def _verify_all_targets(transaction: _Transaction) -> None:
 
 def _install_targets(transaction: _Transaction) -> None:
     for operation in transaction.operations:
+        stage_identity = _fd_identity(
+            operation.stage_fd, Path(operation.stage_name)
+        )
         try:
             _verify_directory_anchors(transaction)
             os.link(
@@ -1723,22 +1853,28 @@ def _install_targets(transaction: _Transaction) -> None:
                 dst_dir_fd=operation.target_parent_fd,
                 follow_symlinks=False,
             )
+            operation.target_installed = True
+            operation.target_identity = stage_identity
             target_fd = os.open(
                 operation.prepared.target.name,
                 os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
                 dir_fd=operation.target_parent_fd,
             )
+            operation.target_fd = target_fd
             _verify_directory_anchors(transaction)
-        except OSError as exc:
+            target_identity = _fd_identity(
+                target_fd, transaction.root / operation.prepared.target
+            )
+            if not _same_object(stage_identity, target_identity):
+                raise MigrationAbort("MIGRATION-TARGET-CHANGED")
+            _verify_target(operation)
+        except (OSError, MigrationAbort) as exc:
+            if operation.target_fd is not None:
+                _close_descriptor(operation.target_fd)
+                operation.target_fd = None
+            if isinstance(exc, MigrationAbort):
+                raise
             raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
-        stage_identity = _fd_identity(operation.stage_fd, Path(operation.stage_name))
-        target_identity = _fd_identity(target_fd, transaction.root / operation.prepared.target)
-        if not _same_object(stage_identity, target_identity):
-            os.close(target_fd)
-            raise MigrationAbort("MIGRATION-TARGET-CHANGED")
-        operation.target_fd = target_fd
-        operation.target_identity = target_identity
-        _verify_target(operation)
 
 
 def _restore_quarantined_entry(
@@ -1775,6 +1911,7 @@ def _quarantine_source(
     index: int,
 ) -> None:
     source_name = operation.prepared.source.name
+    current_fd: int | None = None
     try:
         current_fd = os.open(
             source_name,
@@ -1783,7 +1920,6 @@ def _quarantine_source(
         )
         current = _fd_identity(current_fd, transaction.root / operation.prepared.source)
         current_bytes = _read_descriptor(current_fd)
-        os.close(current_fd)
         if (
             not _same_object(current, operation.source_identity)
             or current_bytes != operation.prepared.source_bytes
@@ -1797,19 +1933,63 @@ def _quarantine_source(
             src_dir_fd=operation.source_parent_fd,
             dst_dir_fd=transaction.quarantine_fd,
         )
+        operation.removed_name = removed_name
         moved = _stat_at(
             transaction.quarantine_fd,
             removed_name,
             transaction.root / transaction.quarantine_name / removed_name,
         )
+        operation.removed_identity = moved
         _verify_directory_anchors(transaction)
     except OSError as exc:
         raise MigrationAbort("MIGRATION-FILESYSTEM") from exc
+    finally:
+        if current_fd is not None:
+            _close_descriptor(current_fd)
     if not _same_object(moved, operation.source_identity):
-        _restore_quarantined_entry(transaction, removed_name, operation, moved)
-        transaction.recovery_required = True
         raise MigrationAbort("MIGRATION-ROLLBACK:SOURCE-REPLACED")
-    operation.removed_name = removed_name
+
+
+def _rollback_source(
+    transaction: _Transaction,
+    operation: _TransactionOperation,
+) -> bool:
+    if operation.removed_name is None:
+        return True
+    try:
+        moved = _stat_at(
+            transaction.quarantine_fd,
+            operation.removed_name,
+            transaction.root
+            / transaction.quarantine_name
+            / operation.removed_name,
+        )
+    except MigrationAbort:
+        moved = None
+    if moved is not None and _same_object(moved, operation.source_identity):
+        return _restore_quarantined_entry(
+            transaction,
+            operation.removed_name,
+            operation,
+            operation.source_identity,
+        )
+    if moved is not None:
+        _restore_quarantined_entry(
+            transaction,
+            operation.removed_name,
+            operation,
+            moved,
+        )
+        transaction.recovery_required = True
+        return False
+    _restore_quarantined_entry(
+        transaction,
+        operation.source_anchor,
+        operation,
+        operation.source_identity,
+    )
+    transaction.recovery_required = True
+    return False
 
 
 def _rollback_target(
@@ -1817,7 +1997,7 @@ def _rollback_target(
     operation: _TransactionOperation,
     index: int,
 ) -> bool:
-    if operation.target_identity is None:
+    if not operation.target_installed or operation.target_identity is None:
         return True
     quarantine_name = f"rollback-target-{index}"
     try:
@@ -1873,12 +2053,7 @@ def _rollback_transaction(transaction: _Transaction) -> bool:
     clean = True
     for operation in reversed(transaction.operations):
         if operation.removed_name is not None:
-            clean = _restore_quarantined_entry(
-                transaction,
-                operation.removed_name,
-                operation,
-                operation.source_identity,
-            ) and clean
+            clean = _rollback_source(transaction, operation) and clean
             if not clean:
                 transaction.recovery_required = True
     for index, operation in reversed(tuple(enumerate(transaction.operations))):
@@ -2002,6 +2177,14 @@ def _repository_lock(root: Path):
         _cleanup_repository_lock(handle)
 
 
+def _require_transaction_platform(phase: str) -> None:
+    if (
+        not _TRANSACTION_PLATFORM_SUPPORTED
+        or (phase == "archive" and not Path("/proc/self/fd").is_dir())
+    ):
+        raise MigrationAbort("MIGRATION-PLATFORM-UNSUPPORTED")
+
+
 def apply_phase(
     root: Path,
     planned_pairs: Sequence[tuple[PurePosixPath | Path, PurePosixPath | Path]],
@@ -2011,6 +2194,7 @@ def apply_phase(
     if phase not in PHASE_DISPOSITION:
         raise MigrationAbort("MIGRATION-PHASE")
     root = _canonical_root(root)
+    _require_transaction_platform(phase)
     with _repository_lock(root):
         _apply_phase_locked(root, planned_pairs, phase)
 
