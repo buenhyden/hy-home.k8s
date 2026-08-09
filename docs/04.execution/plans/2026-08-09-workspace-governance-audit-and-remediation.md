@@ -526,15 +526,16 @@ surface fixtures as affected, mutable current links, Task/progress evidence.
   trees; run LLM-WIKI check, archive validation, full gate, and harness.
 - [x] Complete fresh specification/content and Python/quality review; both are
   Approved after clean fix rounds 1-2 with no remaining Critical/Important.
-- [ ] Commit `docs: cut over current governance audit` as one atomic unit.
+- [x] Commit `docs: cut over current governance audit` as one atomic unit.
 
-WGIA-012 is `In Review`: the sole-Current, exact-member, retired-baseline,
+WGIA-012 is `Done` in commit
+`dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`: the sole-Current, exact-member, retired-baseline,
 audit-settlement, literal-projection, registry, profile, link, affected,
 archive, generator, and isolated exact-index RIA checks pass. Fresh reviews,
 including clean fix rounds 1-2, are Approved. The final 17-path affected and
 staged lanes, plain pre-commit, direct repository gate, full harness, all-files,
-formatter-review, and rerun pass. Only the logical commit remains owned by the
-primary agent; hosted, remote, and live evidence remains `DEFER`.
+formatter-review, and rerun pass. Hosted, remote, and live evidence remains
+`DEFER`.
 
 Primary final evidence expanded the initial exact 15-file index to 17 only
 after formatter/QA review. The accepted additions are `.secrets.baseline` and
@@ -556,17 +557,28 @@ remain pending.
 **Files:** only exact `Delete` rows and necessary mutable consumers, the
 disposition ledger, roadmap, Task/progress evidence. Stage 98 is forbidden.
 
-- [ ] Re-run zero-consumer and replacement-owner proof at current HEAD for each
+- [x] Re-run zero-consumer and replacement-owner proof at current HEAD for each
   Delete row; demote any incomplete row to `DEFER`.
-- [ ] Simulate the exact deletions in an isolated clone or staged index and run
-  affected link/RIA/archive/import/invocation/fixture checks before committing.
-- [ ] Delete only proof-complete exact paths, update the ledger post-delete
-  evidence and surviving current indexes, and verify no unrelated file is gone.
-- [ ] Run strict registry/profiles/links, affected tests, RIA, legacy and active-
-  corpus validators, archive validation, full gate, harness, and both reviews.
+- [x] Stop before isolated deletion simulation because the exact ledger has no
+  `Delete` row; no post-delete claim or destructive action is applicable.
+- [x] Preserve all fifteen exact paths because every row remains `Integrate`
+  with at least one tracked external live consumer; no file or index is removed.
+- [x] Run focused strict registry/profiles/links and diff checks for the
+  no-deletion evidence unit; broader terminal validation remains WGIA-014-owned.
 - [ ] Commit `chore: remove retired governance artifacts`; if there are no
   valid Delete rows, record the reviewed no-deletion result without an empty
   commit and advance.
+
+WGIA-013 is `In Review` with a fail-closed no-deletion result. At Current HEAD
+`dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`, the candidate ledger has exactly
+15 unique tracked rows, all `Integrate`, and `Delete=0`. Its 114 current-
+consumer selectors resolve to tracked paths, every candidate has an external
+live consumer and a surviving owner, and all 15 source commits recover the
+candidate bytes. Spec 052 `WORK-001` remains `Queued` and `Not executed` with
+zero of five execution steps complete. Therefore deletion simulation,
+post-delete validation, removal, and a deletion commit are inapplicable; this
+bounded evidence update has fresh review approval with no Critical or Important
+finding and awaits only a non-empty documentation commit before WGIA-014.
 
 #### WGIA-014 — Re-audit, closure, and branch handoff
 

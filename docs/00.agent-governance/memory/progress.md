@@ -8,20 +8,74 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-08-09 - WGIA-012 atomic Current audit cutover
+### 2026-08-09 - WGIA-013 no-deletion revalidation
 
 #### Metadata
 
 - **Date**: 2026-08-09
 - **Layer**: documentation, governance, validation
 - **Status**: in-review
+- **Tags**: #governance #audit #cleanup #fail-closed
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-013 implementation of VAL-WGA-010 at Current HEAD `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh when a candidate, consumer, replacement, source commit, disposition, or Spec 052 WORK-001 state changes.
+- **Next Owner**: primary agent for fresh review and the non-empty evidence commit; then WGIA-014.
+
+#### Progress
+
+Re-ran the exact deletion entry gate without executing Spec 052 `WORK-001`.
+The disposition ledger has 15 unique tracked rows, all `Integrate`, and
+`Delete=0`. Its exact candidate set equals the current WORK-001 glob expansion;
+every row retains a surviving owner and at least one tracked consumer outside
+the candidate set. No deletion simulation, removal, post-delete claim, index
+change, deletion commit, or Stage 98 action occurred.
+
+#### Memory
+
+A no-deletion work package should stop at its destructive entry gate. Empty
+post-delete simulations and empty deletion commits do not add evidence when no
+row is authorized for deletion; the durable result is the exact negative proof
+and the unchanged execution owner.
+
+#### Evidence
+
+- Structural proof: 15 unique 12-column rows, `Integrate=15`, `Delete=0`, 15
+  tracked candidates, 15 live-consumer rows, and 15 surviving-owner rows.
+- Consumer/recovery proof: 114 selectors route to tracked paths, every row has
+  an external live consumer, and all 15 source commits recover candidate bytes.
+- Owner state: Spec 052 Task `WORK-001` is `Queued` and `Not executed`; all five
+  Plan execution steps remain unchecked.
+- Focused results: strict registry passes 502 paths with zero uncovered or
+  ambiguous, Markdown profiles report zero violations, strict links/owners
+  returns `PASS CROSS-DOCUMENT`, worktree/cached diff checks pass, and Stage 98
+  plus the Current pack have zero diff. Production RIA reports only the
+  expected dirty mutable-progress comparison limitation and no Current-pack
+  member or overlay diagnostic. Hosted, provider-runtime, remote, credential-
+  bearing, and live evidence remains `DEFER`.
+
+#### Handoff
+
+WGIA-013 is `In Review`. Fresh independent review is Approved with no Critical
+or Important finding. The primary agent must record the non-empty evidence
+commit before advancing to WGIA-014. Existing WORK-001 remains the only owner
+for future consumer migration and any later independently proven deletion.
+
+### 2026-08-09 - WGIA-012 atomic Current audit cutover
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, governance, validation
+- **Status**: done
 - **Tags**: #governance #audit #ria #current-cutover #tdd
 - **Owner**: assigned worker
 - **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
 - **Provenance**: WGIA-012 implementation of VAL-WGA-011 from source tree `e09a0b976a555c5200cdab2aeb9abf6759b77588`
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 054 closure; refresh on Current pack, retired baseline, RIA settlement, report membership, or mutable navigation change.
-- **Next Owner**: primary agent for the atomic commit; then WGIA-013.
+- **Next Owner**: WGIA-013 for current disposition revalidation; then WGIA-014.
 
 #### Progress
 
@@ -92,12 +146,14 @@ permits future drift.
   repository gate; full harness; final all-files; formatter-review; and rerun.
   Primary final diff-checks remain pending. Hosted, remote, and live evidence
   remains `DEFER`.
+- Logical commit: `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`
+  (`docs: cut over current governance audit`).
 
 #### Handoff
 
-WGIA-012 remains `In Review`. Fresh specification/content and Python/quality
-reviews, including clean fix rounds 1-2, are Approved with no remaining
-Critical/Important. Only the atomic logical commit is still required.
+WGIA-012 is `Done`. Fresh specification/content and Python/quality reviews,
+including clean fix rounds 1-2, are Approved with no remaining
+Critical/Important, and the atomic logical commit is recorded above.
 Repository-static evidence does not claim hosted, provider, remote, credential,
 secret, Kubernetes, GitOps, or live behavior.
 
