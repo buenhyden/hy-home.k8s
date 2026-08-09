@@ -384,15 +384,15 @@ roadmap/ledger rows, Task and progress evidence.
 **Files:** `harness-loop-fixtures-scripts-and-blockers.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [ ] Trace harness contract, catalog, implementation map, loop lifecycle,
+- [x] Trace harness contract, catalog, implementation map, loop lifecycle,
   checkpoint, memory, handoff, retry/stop/recovery, and approval interfaces.
-- [ ] Inventory script entrypoints and fixtures by production contract owner;
+- [x] Inventory script entrypoints and fixtures by production contract owner;
   identify tests that mask missing production behavior or duplicate ownership.
-- [ ] Model every blocker with cause, impact, affected requirements, release
+- [x] Model every blocker with cause, impact, affected requirements, release
   condition, owner, and evidence depth.
-- [ ] Run harness contract/semantics, loop lifecycle, checkpoint, roster
+- [x] Run harness contract/semantics, loop lifecycle, checkpoint, roster
   currentness, provider-boundary checks, profiles, and links.
-- [ ] Review static/runtime separation against VAL-WGA-006, record candidates,
+- [x] Review static/runtime separation against VAL-WGA-006, record candidates,
   and commit `docs: audit harness and loop controls`.
 
 #### WGIA-006 — LLM-WIKI, knowledge routing, and memory

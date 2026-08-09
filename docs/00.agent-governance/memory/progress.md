@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-005 harness and loop audit
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #governance #audit #harness #loop #fixtures #scripts
+- **Owner**: assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-005 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted harness/loop owner change.
+- **Next Owner**: WGIA-009 candidate admission, WGIA-011 only for an accepted bounded human-index correction, and WGIA-014 whole-branch closure.
+
+#### Progress
+
+Audited the 12-role/four-surface/48-projection harness, 14 consumers, four
+evidence and memory classes, loop transitions/retry/stop/recovery, the 20-field
+checkpoint and handoff contract, all 47 tracked script files, and all 37 fixture
+files. Repository-static harness topology, loop/checkpoint behavior, and
+fixture production ownership align. The canonical scripts human inventory is
+`Partial`: exact proof is 41 CLI plus six helpers, with two helpers absent from
+`scripts/README.md`. One provisional WGIA-009 repair is recorded; provider
+runtime and actual ignored-checkpoint execution remain `DEFER`.
+
+#### Memory
+
+Self-test mutation counts do not prove production behavior by themselves. Run
+the same validator in production mode, keep focused and aggregate ownership
+distinct, and classify tracked adapters/canaries as repository-static. A
+pending deeper lane is not a blocker unless cause, impact, affected requests,
+release condition, owner, and evidence depth are all explicit.
+
+#### Evidence
+
+- Harness contract/semantics self-test and production pass exact 12/4/48 and
+  14-consumer contracts; loop and checkpoint self-test/production pass.
+- Roster currentness and provider config/canary/evidence self-test/production
+  pass; five focused unit modules pass 119 tests.
+- Corrected deterministic RED is 47 scripts = 41 CLI + six import helpers; the
+  human inventory omits `scripts/archive_cutover_manifest.py` and
+  `scripts/reference_information_architecture.py`. The 37 fixtures remain 31
+  JSON/six YAML and are mapped by current production-owner family.
+- Four complete findings and the blocker object are in the dated WGIA report;
+  no provider, remote, credential, secret, live, or ignored-checkpoint access
+  occurred.
+
+#### Handoff
+
+WGIA-005 is complete. Specification/content and fix-round quality reviews are
+Approved with no remaining Critical or Important finding, and the complete
+repository quality gate passes against the exact staged scope. WGIA-009 owns
+candidate admission, WGIA-011 only an accepted bounded human-index correction,
+and WGIA-014 whole-branch closure. No provider-runtime, hosted, remote, or live
+action belongs to this handoff.
+
 ### 2026-08-09 - WGIA-004 CI and QA audit
 
 #### Metadata
