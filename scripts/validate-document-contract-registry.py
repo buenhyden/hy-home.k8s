@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import json
 import re
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
@@ -797,6 +799,9 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--mode", choices=("strict",), default="strict")
+    parser.add_argument(
+        "--route-state", choices=("legacy", "transition", "terminal")
+    )
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",
@@ -1072,6 +1077,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
         "schemaVersion": 8,
+        "routeState": "legacy",
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -2447,7 +2453,11 @@ def _assert_program_lineage_projection(
 
 
 def _assert_document_contract_projection(registry: Registry) -> None:
-    if registry.schema_version != 8 or len(registry.profiles) != 64:
+    if (
+        registry.schema_version != 8
+        or registry.route_state != "transition"
+        or len(registry.profiles) != 65
+    ):
         raise AssertionError("production v8 profile projection differs")
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     expected_predicate_order = (
@@ -2579,6 +2589,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/native-contract-openapi",
         "exception/native-contract-graphql",
         "exception/native-contract-protobuf",
@@ -2846,6 +2857,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/generated-record",
         "exception/program-non-target",
     ):
@@ -2902,7 +2914,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_roles != expected_roles or len(expected_roles) != 64:
+    if actual_roles != expected_roles or len(expected_roles) != 65:
         raise AssertionError("production complete role/source projection differs")
 
     authored_draft = tuple(
@@ -2923,6 +2935,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/native-contract-openapi",
         "exception/native-contract-graphql",
         "exception/native-contract-protobuf",
@@ -3001,7 +3014,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_admissions != expected_admissions or len(expected_admissions) != 64:
+    if actual_admissions != expected_admissions or len(expected_admissions) != 65:
         raise AssertionError("production complete admission projection differs")
 
     lifecycle_groups = (
@@ -3089,7 +3102,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 64:
+    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 65:
         raise AssertionError("production complete lifecycle projection differs")
 
     def edge_rows(
@@ -5066,6 +5079,61 @@ def _print_diagnostic(diagnostic: Any) -> None:
     )
 
 
+def _load_migration_tool(root: Path) -> Any:
+    path = root / "scripts/migrate-document-work-units.py"
+    specification = importlib.util.spec_from_file_location(
+        "document_taxonomy_migration_contract", path
+    )
+    if specification is None or specification.loader is None:
+        raise AssertionError("migration tool is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _assert_route_state(root: Path, registry: Any, requested: str | None) -> None:
+    state = requested or registry.route_state
+    if requested is not None and requested != registry.route_state:
+        raise AssertionError(
+            f"route state differs from registry: requested={requested} registry={registry.route_state}"
+        )
+    manifest_path = PurePosixPath("scripts/document-taxonomy-migration.json")
+    if state == "transition":
+        profile = classify_path(registry, manifest_path)
+        if profile.profile_id != "native/document-migration-manifest":
+            raise AssertionError("migration manifest selected the wrong native profile")
+        tool = _load_migration_tool(root)
+        manifest = tool.load_manifest(root / manifest_path)
+        tool.validate_manifest_data(root, manifest, True)
+    elif state == "terminal":
+        if (root / manifest_path).exists():
+            raise AssertionError("terminal route retains the migration manifest")
+        token = "docs/" + "04.execution"
+        result = subprocess.run(
+            ["git", "grep", "-Il", "-F", "--", token],
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if result.returncode not in {0, 1}:
+            raise AssertionError("terminal retired-route scan failed")
+        owner = "docs/99.templates/support/document-profiles.json"
+        invalid = [
+            path
+            for path in result.stdout.splitlines()
+            if path != owner
+            and not path.startswith(("docs/90.references/", "docs/98.archive/"))
+        ]
+        if invalid:
+            raise AssertionError(
+                "terminal retired-route consumers are not immutable evidence: "
+                + ", ".join(invalid)
+            )
+
+
 def main() -> int:
     args = _parse_args()
     try:
@@ -5078,6 +5146,7 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
+        _assert_route_state(root, registry, args.route_state)
         _assert_template_source_parity(registry)
         _assert_gemini_native_current_surface(root)
         _assert_retired_cloud_sdlc_surfaces_absent(root)

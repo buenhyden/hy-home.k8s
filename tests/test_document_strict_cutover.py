@@ -112,6 +112,26 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             with self.subTest(validator=name):
                 self.assertEqual(self.parse(name, []).mode, "strict")
 
+    def test_registry_route_state_is_explicit_transition(self) -> None:
+        args = self.parse("registry", ["--route-state", "transition"])
+        self.assertEqual(args.route_state, "transition")
+        registry = self.validators["registry"].load_registry(REPOSITORY_ROOT)
+        self.assertEqual(registry.route_state, "transition")
+        profile = self.validators["registry"].classify_path(
+            registry,
+            self.validators["registry"].PurePosixPath(
+                "scripts/document-taxonomy-migration.json"
+            ),
+        )
+        self.assertEqual(profile.profile_id, "native/document-migration-manifest")
+
+    def test_registry_rejects_route_state_mismatch(self) -> None:
+        registry = self.validators["registry"].load_registry(REPOSITORY_ROOT)
+        with self.assertRaisesRegex(AssertionError, "route state differs"):
+            self.validators["registry"]._assert_route_state(
+                REPOSITORY_ROOT, registry, "terminal"
+            )
+
     def test_compatibility_mode_is_rejected_by_argparse(self) -> None:
         for name in VALIDATOR_PATHS:
             with self.subTest(validator=name):

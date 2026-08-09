@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
   "schemaVersion": 8,
+  "routeState": "transition",
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -2404,6 +2405,35 @@
         "order": []
       },
       "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "native/document-migration-manifest",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/document-taxonomy-migration.json"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [
+        "transition"
+      ],
       "headings": {
         "required": [],
         "allowed": []
@@ -4995,6 +5025,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",
@@ -5255,6 +5286,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/generated-record",
           "exception/program-non-target"
         ],
@@ -5360,6 +5392,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",
@@ -5595,6 +5628,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",

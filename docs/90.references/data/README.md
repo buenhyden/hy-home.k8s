@@ -123,11 +123,16 @@ data/
 - `active-corpus-role-audit.json` is ACER-004 repository-static evidence. It
   preserves real operation records, treats empty Incident/Postmortem
   collections as valid, and freezes the reviewed 33-helper corpus and README
-  remediation. The validator separately reports the current 41-helper corpus
-  as 33 frozen plus eight exact manifested RIA helpers: the `current-owner`,
+  remediation. During WDTC-102 transition the validator separately reports the
+  exact current 68-helper corpus as 33 frozen plus 34 retained permanent
+  post-closure admissions and the one transition-only migration regression
+  test. WDTC-109 removes only that temporary admission and restores the exact
+  terminal 67-helper (`33 + 34`) partition. The retained RIA subset includes
+  the `current-owner`,
   `generator-collision`, `minimal-valid`, `overlay-mutation`, `policy-copy`,
   `snapshot-mutation`, and `source-freshness` JSON fixtures plus the RIA Python
-  regression test, with the canonical 13/21/6/1 format split. A supported extension or
+  regression test. The transition corpus has the exact 30/31/6/1
+  Python/JSON/YAML/README format split. A supported extension or
   sorted `tests/README.md` row cannot create another post-closure role; every
   admitted helper also remains an authoritative safe regular read and exact
   README member. Neither partition claims live/runtime state.

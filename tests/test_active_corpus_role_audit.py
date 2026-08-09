@@ -67,6 +67,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             [
                 *self.validator.FROZEN_HELPER_PATHS,
                 *self.validator.POST_CLOSURE_HELPER_MANIFEST,
+                *self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
             ]
         )
         proposal_path = "tests/test_reference_information_architecture.py"
@@ -124,10 +125,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 67,
+                "helpers": 68,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 34,
-                "python": 29,
+                "postClosureHelpers": 35,
+                "python": 30,
                 "json": 31,
                 "yaml": 6,
                 "readme": 1,
@@ -179,7 +180,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 67)
+        self.assertEqual(len(actual), 68)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -324,12 +325,21 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 ),
             },
         )
+        self.assertEqual(
+            self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
+            {
+                "tests/test_migrate_document_work_units.py": (
+                    "python",
+                    "regression-test",
+                )
+            },
+        )
 
     def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 34})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 35})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -441,6 +451,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/test_k8s_pre_edit_hook.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_migrate_document_work_units.py",
                     "format": "python",
                     "role": "regression-test",
                 },

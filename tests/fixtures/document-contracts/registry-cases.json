@@ -1,5 +1,25 @@
 {
   "schemaVersion": 8,
+  "transitionRouteCases": [
+    {
+      "name": "terminal-rejects-migration-manifest",
+      "routeState": "terminal",
+      "path": "scripts/document-taxonomy-migration.json",
+      "expected": "reject"
+    },
+    {
+      "name": "native-profile-rejects-other-path",
+      "routeState": "transition",
+      "path": "scripts/other-migration.json",
+      "expected": "reject"
+    },
+    {
+      "name": "native-profile-rejects-other-lifecycle",
+      "routeState": "legacy",
+      "path": "scripts/document-taxonomy-migration.json",
+      "expected": "reject"
+    }
+  ],
   "localAgentFixtureSamplePath": ".agents/GEMINI.md",
   "productionProgramLineageProjection": {
     "prd": "008",

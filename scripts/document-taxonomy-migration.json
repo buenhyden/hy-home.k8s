@@ -1,0 +1,1062 @@
+{
+  "state": "transition",
+  "sourceCommit": "713dff1fc3de58a2d1682970a7f24faa39c14263",
+  "entries": [
+    {
+      "source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md",
+      "target": "docs/03.specs/052-document-taxonomy-consolidation/plan.md",
+      "workUnit": "Spec-052",
+      "disposition": "move-current",
+      "sourceBlob": "2c354aebf8578a9079d511f0f5a7783e7b0b8779",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-09-github-qa-ci-remediation.md",
+      "workUnit": "Archive-unique-plan-github-qa-ci-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "bfbadc5a29c5830861f2f7c63a7704c2d602c7e9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-09-scripts-inventory-remediation.md",
+      "workUnit": "Archive-unique-plan-scripts-inventory-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "4cd4f523066f95b1da96347e969f6c17acd74c3b",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+      "workUnit": "Archive-unique-plan-agent-first-harness-llm-wiki-hooks",
+      "disposition": "archive-unique",
+      "sourceBlob": "d694cf8ad98cfdecc4458711b80870a994627a09",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-17-template-crosslink-fix.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-17-template-crosslink-fix.md",
+      "workUnit": "Archive-unique-plan-template-crosslink-fix",
+      "disposition": "archive-unique",
+      "sourceBlob": "91c09f8c4c86075457afab1e3def1563168c00f2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-18-argo-notifications-slack.md",
+      "target": "docs/03.specs/005-argo-notifications-slack/plan.md",
+      "workUnit": "Spec-005",
+      "disposition": "move-current",
+      "sourceBlob": "21e6715c4a498d2ff4a1345c819832ce6fecf847",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md",
+      "target": "docs/03.specs/004-argo-rollouts-progressive-delivery/plan.md",
+      "workUnit": "Spec-004",
+      "disposition": "move-current",
+      "sourceBlob": "649dbc7c7855fe21417a7d1be2b06af83beb6e3f",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md",
+      "workUnit": "Archive-unique-plan-docs-governance-full-ab-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "ecfbd62fdb3c3b309d5c33a2f7121653daed7007",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-22-workspace-purpose-alignment.md",
+      "workUnit": "Archive-unique-plan-workspace-purpose-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "c56ac084f816f13ea4639ac4d72fd95ff3ef71bd",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+      "workUnit": "Archive-unique-plan-p3-gitops-secret-runtime-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "85fda4b0bfa9e8c0fce44e86c47940c15e605dad",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-28-workspace-skill-expansion.md",
+      "workUnit": "Archive-unique-plan-workspace-skill-expansion",
+      "disposition": "archive-unique",
+      "sourceBlob": "300511ac8713c7375160da63e4e49434895279fe",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-30-antigravity-governance.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-30-antigravity-governance.md",
+      "workUnit": "Archive-unique-plan-antigravity-governance",
+      "disposition": "archive-unique",
+      "sourceBlob": "11d7e8ffbfc070f1171528801e24a92a3846ecee",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md",
+      "workUnit": "Archive-unique-plan-codex-governance-harness-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "fb9b36acb658a3da6138ca9a38fb1498e215e05d",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md",
+      "workUnit": "Archive-unique-plan-claude-agent-surface-restoration",
+      "disposition": "archive-unique",
+      "sourceBlob": "b2361a40d1f6801c66d6bbd6593ade2767896be2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+      "workUnit": "Archive-unique-plan-stage-00-canonical-adapter-redesign",
+      "disposition": "archive-unique",
+      "sourceBlob": "e634d30634a93be522e103d0253d4da1b8287f4a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+      "workUnit": "Archive-unique-plan-current-implementation-docs-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "cb8034796a86468b7dcfd0445878c036b08d23b9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md",
+      "workUnit": "Archive-unique-plan-docs-01-05-current-implementation-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "0808dd5335ed2ce7214c88d8136e88980ce48106",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md",
+      "workUnit": "Archive-unique-plan-phase-1-decision-follow-up",
+      "disposition": "archive-unique",
+      "sourceBlob": "2f4727b9cf9fdfc5e5747c56ae05df739e3a6369",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-phase-2-governance-alignment.md",
+      "workUnit": "Archive-unique-plan-phase-2-governance-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "938d0fefb395302791b84bf129cd96b8a4dcda42",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md",
+      "workUnit": "Archive-unique-plan-phase-3-protected-surface-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "fc658162ea8dd68121f3bf545066aea41c90ad2c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+      "workUnit": "Archive-unique-plan-phase-4-eso-vault-runtime-diagnosis",
+      "disposition": "archive-unique",
+      "sourceBlob": "7edc0d44b45c8c3a833e6091b130b8366654d0d3",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+      "workUnit": "Archive-unique-plan-stage-00-codex-harness-coverage-reconciliation",
+      "disposition": "archive-unique",
+      "sourceBlob": "81a32fa2b246a0597d0d3c0029a87a68ce6e620e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-04-harness-four-element-alignment.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-04-harness-four-element-alignment.md",
+      "workUnit": "Archive-unique-plan-harness-four-element-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "4f0bd42ca8acb9571cec1d64070cbc25c7d321b9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md",
+      "target": "docs/98.archive/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md",
+      "workUnit": "Archive-unique-plan-harness-governance-v2-overlay",
+      "disposition": "archive-unique",
+      "sourceBlob": "e5e1f7a51a8dc8b6307e9f5a1bad13ace5a201a0",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md",
+      "target": "docs/03.specs/010-workspace-harness-implementation-audit-pack/plan.md",
+      "workUnit": "Spec-010",
+      "disposition": "move-current",
+      "sourceBlob": "1a8687fb514129345c03f26a9d683d13102e608a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-02-workspace-harness-research-pack.md",
+      "target": "docs/03.specs/009-workspace-harness-research-pack/plan.md",
+      "workUnit": "Spec-009",
+      "disposition": "move-current",
+      "sourceBlob": "882e120b7761b939182f2ff3255732ebf0cae539",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-03-template-contract-governance-migration.md",
+      "target": "docs/03.specs/011-template-contract-governance-migration/plan.md",
+      "workUnit": "Spec-011",
+      "disposition": "move-current",
+      "sourceBlob": "f15a615ccf3d4e6abbbb8b0db6d59c1aabf5da59",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
+      "target": "docs/03.specs/012-template-governance-audit-enhancement/plan.md",
+      "workUnit": "Spec-012",
+      "disposition": "move-current",
+      "sourceBlob": "a3f32dccfc72c502fe08d6dc68c182116101c5cf",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md",
+      "target": "docs/03.specs/013-workspace-document-governance-hardening/plan.md",
+      "workUnit": "Spec-013",
+      "disposition": "move-current",
+      "sourceBlob": "e9742061d016e757805f74794338ef9c20423c89",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md",
+      "target": "docs/03.specs/016-active-control-surface-governance-hardening/plan.md",
+      "workUnit": "Spec-016",
+      "disposition": "move-current",
+      "sourceBlob": "2f1d375e728484d63b3101b1026cecb2ca1beba5",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md",
+      "target": "docs/03.specs/015-agent-governance-contract-normalization/plan.md",
+      "workUnit": "Spec-015",
+      "disposition": "move-current",
+      "sourceBlob": "1b258f47c7dde2d5021a5fcf4521dbdb325634e8",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md",
+      "target": "docs/03.specs/014-workspace-document-contract-normalization/plan.md",
+      "workUnit": "Spec-014",
+      "disposition": "move-current",
+      "sourceBlob": "aa80cd65ac445c76654e452e2b1e3cd77482d051",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
+      "target": "docs/03.specs/017-workspace-engineering-research-pack/plan.md",
+      "workUnit": "Spec-017",
+      "disposition": "move-current",
+      "sourceBlob": "526a50b5b5adebda6a0181e66ae58cf937504cb5",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md",
+      "target": "docs/03.specs/019-template-path-numbering-contract/plan.md",
+      "workUnit": "Spec-019",
+      "disposition": "move-current",
+      "sourceBlob": "8b90152112e8f5e71c5c56d71fcde7290fedab1a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md",
+      "target": "docs/03.specs/020-workspace-contract-governance-normalization/plan.md",
+      "workUnit": "Spec-020",
+      "disposition": "move-current",
+      "sourceBlob": "16495309dded68bfb73166b379f93da8f4b54f2c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+      "target": "docs/03.specs/018-workspace-engineering-implementation-audit-pack/plan.md",
+      "workUnit": "Spec-018",
+      "disposition": "move-current",
+      "sourceBlob": "12be929253723049785f5a7c17f0589e30630133",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md",
+      "target": "docs/03.specs/022-control-cloud-doc-normalization/plan.md",
+      "workUnit": "Spec-022",
+      "disposition": "move-current",
+      "sourceBlob": "1e4f3c6cbbcea106f290c718dc9c494f3e965f5e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-06-observability-and-network-review-agents.md",
+      "target": "docs/03.specs/024-observability-and-network-review-agents/plan.md",
+      "workUnit": "Spec-024",
+      "disposition": "move-current",
+      "sourceBlob": "37042ecb1c15eebcd8392be2380e953cfdc1c93a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md",
+      "target": "docs/03.specs/021-sdlc-lifecycle-contract/plan.md",
+      "workUnit": "Spec-021",
+      "disposition": "move-current",
+      "sourceBlob": "dafb3b2bdbb2c879a879451ebe86ab3728cf503d",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md",
+      "target": "docs/03.specs/023-stage03-04-repo-static-gap-closure/plan.md",
+      "workUnit": "Spec-023",
+      "disposition": "move-current",
+      "sourceBlob": "954561b167989cc23c0fe2fd27afc1326e3bc42d",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md",
+      "target": "docs/98.archive/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md",
+      "workUnit": "Archive-unique-plan-workspace-engineering-research-pack-refresh",
+      "disposition": "archive-unique",
+      "sourceBlob": "4c59e58b5f867bcf9fef6d8d768a616fac911e11",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+      "target": "docs/98.archive/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+      "workUnit": "Archive-unique-plan-current-research-pack-fact-first-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "07b21e748647294f7aa349797c13805b6249472a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md",
+      "target": "docs/03.specs/025-governance-owner-and-roster-currentness/plan.md",
+      "workUnit": "Spec-025",
+      "disposition": "move-current",
+      "sourceBlob": "f52d22ba5fbdd583eb80bf42c96001fa7d604214",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md",
+      "target": "docs/98.archive/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md",
+      "workUnit": "Archive-unique-plan-workspace-engineering-research-audit-integration",
+      "disposition": "archive-unique",
+      "sourceBlob": "156fcf060467fd228758b7693bf889b7d4d0f7a2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-12-authored-document-migration.md",
+      "target": "docs/03.specs/030-authored-document-migration/plan.md",
+      "workUnit": "Spec-030",
+      "disposition": "move-current",
+      "sourceBlob": "076fa27fbc6d7971864dcd3932e5d19bc0dbdece",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-12-document-contract-registry.md",
+      "target": "docs/03.specs/026-document-contract-registry/plan.md",
+      "workUnit": "Spec-026",
+      "disposition": "move-current",
+      "sourceBlob": "483a2aaad49d6e44a3a74e9f6e751ea585d8027a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md",
+      "target": "docs/03.specs/028-readme-workspace-profiles/plan.md",
+      "workUnit": "Spec-028",
+      "disposition": "move-current",
+      "sourceBlob": "a0b6e799cb494da32b8851771d515f9fc3dbe5a2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-12-semantic-document-validation.md",
+      "target": "docs/03.specs/029-semantic-document-validation/plan.md",
+      "workUnit": "Spec-029",
+      "disposition": "move-current",
+      "sourceBlob": "fdf30984c633ea28309f6304dedcce668e6a28d2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-12-template-contract-consolidation.md",
+      "target": "docs/03.specs/027-template-contract-consolidation/plan.md",
+      "workUnit": "Spec-027",
+      "disposition": "move-current",
+      "sourceBlob": "040f915d5e34a0afa7f8c3888883c855c749746c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md",
+      "target": "docs/03.specs/037-active-corpus-and-execution-retention/plan.md",
+      "workUnit": "Spec-037",
+      "disposition": "move-current",
+      "sourceBlob": "f1fe6ef8e02cca8120076cc43d525d9703b3524e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-22-reference-information-architecture.md",
+      "target": "docs/03.specs/038-reference-information-architecture/plan.md",
+      "workUnit": "Spec-038",
+      "disposition": "move-current",
+      "sourceBlob": "a3637359d75761c51c5cd9ae95e53b740d9364bf",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md",
+      "target": "docs/03.specs/039-github-ci-qa-evidence/plan.md",
+      "workUnit": "Spec-039",
+      "disposition": "move-current",
+      "sourceBlob": "c1926571ff8c030b19f18b444caaa7292aa22f51",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-27-contract-cutover-and-program-closure.md",
+      "target": "docs/03.specs/040-contract-cutover-and-program-closure/plan.md",
+      "workUnit": "Spec-040",
+      "disposition": "move-current",
+      "sourceBlob": "57e952f2c2004edab6f53de8589d97048dbd55a9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-28-provider-native-runtime-and-model-evidence.md",
+      "target": "docs/03.specs/042-provider-native-runtime-and-model-evidence/plan.md",
+      "workUnit": "Spec-042",
+      "disposition": "move-current",
+      "sourceBlob": "4c84b1ac2a365f5837a90bf684e08efcf30f54da",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-28-stage-00-agent-governance-contract.md",
+      "target": "docs/03.specs/041-stage-00-agent-governance-contract/plan.md",
+      "workUnit": "Spec-041",
+      "disposition": "move-current",
+      "sourceBlob": "3e509d73c195b72003ec3beef93afd9ef654d9df",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-29-agent-harness-loop-lifecycle.md",
+      "target": "docs/03.specs/043-agent-harness-loop-lifecycle/plan.md",
+      "workUnit": "Spec-043",
+      "disposition": "move-current",
+      "sourceBlob": "e3fb4bc61a9728e2e72418ac8c4aa73c1c451ffe",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-29-agent-roster-evaluation-and-admission.md",
+      "target": "docs/03.specs/044-agent-roster-evaluation-and-admission/plan.md",
+      "workUnit": "Spec-044",
+      "disposition": "move-current",
+      "sourceBlob": "37346af77bccb8d20e788d5be639313934a018d4",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md",
+      "target": "docs/03.specs/045-agent-governance-ci-qa-cutover/plan.md",
+      "workUnit": "Spec-045",
+      "disposition": "move-current",
+      "sourceBlob": "864ad48a361414fabfa095f3e7ac0139064872c3",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-01-agent-governance-program-closure.md",
+      "target": "docs/03.specs/046-agent-governance-program-closure/plan.md",
+      "workUnit": "Spec-046",
+      "disposition": "move-current",
+      "sourceBlob": "1f538313cb501b5a2d7c07f1c607055604c54873",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md",
+      "target": "docs/03.specs/047-current-surface-and-stash-reconciliation/plan.md",
+      "workUnit": "Spec-047",
+      "disposition": "move-current",
+      "sourceBlob": "d903d389c6ef47fe2ce23067306e51d573e9a7ae",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md",
+      "target": "docs/03.specs/050-example-iac-and-validator-qa/plan.md",
+      "workUnit": "Spec-050",
+      "disposition": "move-current",
+      "sourceBlob": "f0f6060505b828e8e6cf53df68946ee406372449",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md",
+      "target": "docs/03.specs/048-github-routing-and-ci-evidence/plan.md",
+      "workUnit": "Spec-048",
+      "disposition": "move-current",
+      "sourceBlob": "5ff6db78dbd890e40fcc53170a5963455e53a056",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md",
+      "target": "docs/03.specs/049-platform-validation-and-security-evidence/plan.md",
+      "workUnit": "Spec-049",
+      "disposition": "move-current",
+      "sourceBlob": "d615b7bfccfc94f040f3d8ae5131991ca14942d8",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md",
+      "target": "docs/03.specs/051-repository-assurance-integration-and-closure/plan.md",
+      "workUnit": "Spec-051",
+      "disposition": "move-current",
+      "sourceBlob": "b2d9455b1f39061b6bc15e5290b67901c73f82b1",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "target": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/plan.md",
+      "workUnit": "Spec-053",
+      "disposition": "move-current",
+      "sourceBlob": "3af3dc0046b65f459bcb20cfacb9019dfb2b8a0b",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
+      "workUnit": "Archive-unique-task-github-qa-ci-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "067db8e5bfeba84f3b3163350e82f8a2d6b510d4",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md",
+      "workUnit": "Archive-unique-task-scripts-inventory-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "e9e877c1ed798291ba19d9b5d6de22c6f0f2c6d0",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+      "workUnit": "Archive-unique-task-agent-first-harness-llm-wiki-hooks",
+      "disposition": "archive-unique",
+      "sourceBlob": "8a7d96e4366032c9a01db54d10f3f9409f723cb5",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-17-template-crosslink-fix.md",
+      "workUnit": "Archive-unique-task-template-crosslink-fix",
+      "disposition": "archive-unique",
+      "sourceBlob": "c919eb4be8b0ef0ae7369d81b22438d9744c705d",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md",
+      "target": "docs/03.specs/005-argo-notifications-slack/tasks.md",
+      "workUnit": "Spec-005",
+      "disposition": "move-current",
+      "sourceBlob": "f0b0c39721a1c0c5085cd964ba73d8bb45d8ed4d",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md",
+      "target": "docs/03.specs/004-argo-rollouts-progressive-delivery/tasks.md",
+      "workUnit": "Spec-004",
+      "disposition": "move-current",
+      "sourceBlob": "e83bd32fbe95aecb2b35cfb5bda1abec655a918e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md",
+      "workUnit": "Archive-unique-task-docs-governance-full-ab-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "0f179f89fdf26a3e7f1773a8191c07e6ab55af0b",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md",
+      "workUnit": "Archive-unique-task-workspace-purpose-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "f2c2b2e71690a7866de7f335206667d69cebc409",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+      "workUnit": "Archive-unique-task-p3-gitops-secret-runtime-remediation",
+      "disposition": "archive-unique",
+      "sourceBlob": "3fda0e49de70f8e22822d9027423ebc856a0f68c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-28-workspace-skill-expansion.md",
+      "workUnit": "Archive-unique-task-workspace-skill-expansion",
+      "disposition": "archive-unique",
+      "sourceBlob": "d5d8609a7f55185612eab74d5d88e68e6bfec0d5",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-30-antigravity-governance.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-30-antigravity-governance.md",
+      "workUnit": "Archive-unique-task-antigravity-governance",
+      "disposition": "archive-unique",
+      "sourceBlob": "1b2d77a150da136d345204778971ac8ef923840b",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md",
+      "workUnit": "Archive-unique-task-codex-governance-harness-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "938c9529841aba3db547e8c8edf5ae6159fc6019",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md",
+      "workUnit": "Archive-unique-task-claude-agent-surface-restoration",
+      "disposition": "archive-unique",
+      "sourceBlob": "301d6cb244e02ae0de5c16fd8e2f971724e6cbe0",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+      "workUnit": "Archive-unique-task-stage-00-canonical-adapter-redesign",
+      "disposition": "archive-unique",
+      "sourceBlob": "8802040e54ab15c36d35236136d5837e53fd764a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md",
+      "workUnit": "Archive-unique-task-current-implementation-docs-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "1ffbfb66742d091181072af36b15543d1a13a633",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md",
+      "workUnit": "Archive-unique-task-docs-01-05-current-implementation-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "0909d20ec4155abdc78eca91306b1644ebaf12ac",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md",
+      "workUnit": "Archive-unique-task-phase-1-governance-alignment-audit",
+      "disposition": "archive-unique",
+      "sourceBlob": "fb0d232fbc8f775e56b25fcc0b249a3fd34dadc9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md",
+      "workUnit": "Archive-unique-task-phase-2-governance-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "b8d913a09f90914117e7b0d2f425719a2e382724",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md",
+      "workUnit": "Archive-unique-task-phase-3-protected-surface-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "1066735341581b2e8b09f215f1e4e384d4903c56",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+      "workUnit": "Archive-unique-task-phase-4-eso-vault-runtime-diagnosis",
+      "disposition": "archive-unique",
+      "sourceBlob": "71456f9d4dae7ce3baa7552a22a861aa6d560da3",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+      "workUnit": "Archive-unique-task-stage-00-codex-harness-coverage-reconciliation",
+      "disposition": "archive-unique",
+      "sourceBlob": "b3f6ff060d23368f79edeee125bb6e647b3e1089",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-04-harness-four-element-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-04-harness-four-element-alignment.md",
+      "workUnit": "Archive-unique-task-harness-four-element-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "fbfc89141ed54114a8fd5c1c2e7ab32c4c2c67e4",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md",
+      "workUnit": "Archive-unique-task-harness-connective-layer-risk-closure",
+      "disposition": "archive-unique",
+      "sourceBlob": "b6c37f6f3b6e4f0e011143a18be62cde50d9772c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md",
+      "workUnit": "Archive-unique-task-harness-governance-v2-overlay",
+      "disposition": "archive-unique",
+      "sourceBlob": "8f9962f3798e3addc74eb66429c378dbf75e871e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-06-05-language-boundary-alignment.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-06-05-language-boundary-alignment.md",
+      "workUnit": "Archive-unique-task-language-boundary-alignment",
+      "disposition": "archive-unique",
+      "sourceBlob": "3bd8b1e5116c70d7a5ec98d3e615bbd2f11ebcf2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md",
+      "target": "docs/03.specs/010-workspace-harness-implementation-audit-pack/tasks.md",
+      "workUnit": "Spec-010",
+      "disposition": "move-current",
+      "sourceBlob": "e0ecaca0a67aa5ad3ed164619f6865a05ac1a641",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md",
+      "target": "docs/03.specs/009-workspace-harness-research-pack/tasks.md",
+      "workUnit": "Spec-009",
+      "disposition": "move-current",
+      "sourceBlob": "f7373e69792631ce32b91aa6f4912293437899df",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-03-template-contract-governance-migration.md",
+      "target": "docs/03.specs/011-template-contract-governance-migration/tasks.md",
+      "workUnit": "Spec-011",
+      "disposition": "move-current",
+      "sourceBlob": "db6b27b7f648e5dddb2c2b8959841f8c5060049f",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
+      "target": "docs/03.specs/012-template-governance-audit-enhancement/tasks.md",
+      "workUnit": "Spec-012",
+      "disposition": "move-current",
+      "sourceBlob": "91b59cc6d2e79168b1b43adf584b842f6a595e7a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md",
+      "target": "docs/03.specs/013-workspace-document-governance-hardening/tasks.md",
+      "workUnit": "Spec-013",
+      "disposition": "move-current",
+      "sourceBlob": "87eae0323da8751a2c9c37c36432235d85ffcb1a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md",
+      "target": "docs/03.specs/016-active-control-surface-governance-hardening/tasks.md",
+      "workUnit": "Spec-016",
+      "disposition": "move-current",
+      "sourceBlob": "c0e12316db5749488aa62e96b5495518674e43eb",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md",
+      "target": "docs/03.specs/015-agent-governance-contract-normalization/tasks.md",
+      "workUnit": "Spec-015",
+      "disposition": "move-current",
+      "sourceBlob": "20bdfffcdfa11a8bb1b556d60fd2204b342f77b6",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md",
+      "target": "docs/03.specs/014-workspace-document-contract-normalization/tasks.md",
+      "workUnit": "Spec-014",
+      "disposition": "move-current",
+      "sourceBlob": "a8fc50984c630a674ad0f6547291d81fbba24ce1",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
+      "target": "docs/03.specs/017-workspace-engineering-research-pack/tasks.md",
+      "workUnit": "Spec-017",
+      "disposition": "move-current",
+      "sourceBlob": "caf30b8efb5803976d93b35f2a0394178d559811",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md",
+      "target": "docs/03.specs/019-template-path-numbering-contract/tasks.md",
+      "workUnit": "Spec-019",
+      "disposition": "move-current",
+      "sourceBlob": "878832cd3f1226faba9716233c90f3c021cb8886",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md",
+      "target": "docs/03.specs/020-workspace-contract-governance-normalization/tasks.md",
+      "workUnit": "Spec-020",
+      "disposition": "move-current",
+      "sourceBlob": "1ede33f1772a28e41bde1cac6b9db23d1b3dc19a",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+      "target": "docs/03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md",
+      "workUnit": "Spec-018",
+      "disposition": "move-current",
+      "sourceBlob": "faf36cbec0006bb807b2aba9db8f9fdf63761af9",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md",
+      "target": "docs/03.specs/022-control-cloud-doc-normalization/tasks.md",
+      "workUnit": "Spec-022",
+      "disposition": "move-current",
+      "sourceBlob": "0ad5a7e855999cd10c1a9228efb38b5e3f5fcaeb",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
+      "target": "docs/03.specs/024-observability-and-network-review-agents/tasks.md",
+      "workUnit": "Spec-024",
+      "disposition": "move-current",
+      "sourceBlob": "9eb5aa290e7eca26c1af5a028f9afb0946be8521",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md",
+      "target": "docs/03.specs/021-sdlc-lifecycle-contract/tasks.md",
+      "workUnit": "Spec-021",
+      "disposition": "move-current",
+      "sourceBlob": "c404a5e7879c4fe77942a645e7f81d0168b75810",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md",
+      "target": "docs/03.specs/023-stage03-04-repo-static-gap-closure/tasks.md",
+      "workUnit": "Spec-023",
+      "disposition": "move-current",
+      "sourceBlob": "d79563c1c21a1e900924eb52230d6efd642bb7b3",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md",
+      "workUnit": "Archive-unique-task-workspace-engineering-research-pack-refresh",
+      "disposition": "archive-unique",
+      "sourceBlob": "94d5476d447fded9221a197061bfeee87762f67f",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+      "workUnit": "Archive-unique-task-current-research-pack-fact-first-hardening",
+      "disposition": "archive-unique",
+      "sourceBlob": "8d7c76f168bb4696b2fd517e2c1674e56a42739f",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+      "target": "docs/03.specs/025-governance-owner-and-roster-currentness/tasks.md",
+      "workUnit": "Spec-025",
+      "disposition": "move-current",
+      "sourceBlob": "751677388aa966bb531fe5ee728a56e46348f866",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md",
+      "target": "docs/98.archive/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md",
+      "workUnit": "Archive-unique-task-workspace-engineering-research-audit-integration",
+      "disposition": "archive-unique",
+      "sourceBlob": "38559c41864ddebf83deb26dc65c5649456a7194",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-12-authored-document-migration.md",
+      "target": "docs/03.specs/030-authored-document-migration/tasks.md",
+      "workUnit": "Spec-030",
+      "disposition": "move-current",
+      "sourceBlob": "20d2b41abddf1958d51707d98a9ac2c9eb3d8912",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-12-document-contract-registry.md",
+      "target": "docs/03.specs/026-document-contract-registry/tasks.md",
+      "workUnit": "Spec-026",
+      "disposition": "move-current",
+      "sourceBlob": "8e7af6c52b872a1c5eebce5d4c4248fb4b7c51dd",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md",
+      "target": "docs/03.specs/028-readme-workspace-profiles/tasks.md",
+      "workUnit": "Spec-028",
+      "disposition": "move-current",
+      "sourceBlob": "6f93c3f447d11fdcdd367acd20a494ada7c61166",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md",
+      "target": "docs/03.specs/029-semantic-document-validation/tasks.md",
+      "workUnit": "Spec-029",
+      "disposition": "move-current",
+      "sourceBlob": "c401c4ee2b9b999c588252beec041b1dd5ba0de6",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md",
+      "target": "docs/03.specs/027-template-contract-consolidation/tasks.md",
+      "workUnit": "Spec-027",
+      "disposition": "move-current",
+      "sourceBlob": "2bf829458ed4981d0cf6d1793aa5ffe7ac0f3ae0",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+      "target": "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md",
+      "workUnit": "Spec-037",
+      "disposition": "move-current",
+      "sourceBlob": "b36e796d077d559fdf6134214e9e43c0bc25df27",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md",
+      "target": "docs/03.specs/038-reference-information-architecture/tasks.md",
+      "workUnit": "Spec-038",
+      "disposition": "move-current",
+      "sourceBlob": "a42cfe4bb4f561242c40fe0cfc0b6eca940e7867",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md",
+      "target": "docs/03.specs/039-github-ci-qa-evidence/tasks.md",
+      "workUnit": "Spec-039",
+      "disposition": "move-current",
+      "sourceBlob": "c94bc4123534d9b05259546cf05fbf619abdc90c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-27-contract-cutover-and-program-closure.md",
+      "target": "docs/03.specs/040-contract-cutover-and-program-closure/tasks.md",
+      "workUnit": "Spec-040",
+      "disposition": "move-current",
+      "sourceBlob": "09e3e2272bc57a4ba98fd6953d038e9482355b6e",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-28-provider-native-runtime-and-model-evidence.md",
+      "target": "docs/03.specs/042-provider-native-runtime-and-model-evidence/tasks.md",
+      "workUnit": "Spec-042",
+      "disposition": "move-current",
+      "sourceBlob": "bcea717007bae38ec5fc7c67b7cbe15a82fc77c2",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-28-stage-00-agent-governance-contract.md",
+      "target": "docs/03.specs/041-stage-00-agent-governance-contract/tasks.md",
+      "workUnit": "Spec-041",
+      "disposition": "move-current",
+      "sourceBlob": "6d641d7961c26303d2ca50aab3f0ca370bd728f1",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md",
+      "target": "docs/03.specs/043-agent-harness-loop-lifecycle/tasks.md",
+      "workUnit": "Spec-043",
+      "disposition": "move-current",
+      "sourceBlob": "f8149c06f08ed58827c8afbcc207bcb2ca67fbff",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-29-agent-roster-evaluation-and-admission.md",
+      "target": "docs/03.specs/044-agent-roster-evaluation-and-admission/tasks.md",
+      "workUnit": "Spec-044",
+      "disposition": "move-current",
+      "sourceBlob": "e25f39fa8f19d77f628edc9e74cc50d692ba0ff8",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md",
+      "target": "docs/03.specs/045-agent-governance-ci-qa-cutover/tasks.md",
+      "workUnit": "Spec-045",
+      "disposition": "move-current",
+      "sourceBlob": "448b4202b84e1d362d7962225b168ece904f1300",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-01-agent-governance-program-closure.md",
+      "target": "docs/03.specs/046-agent-governance-program-closure/tasks.md",
+      "workUnit": "Spec-046",
+      "disposition": "move-current",
+      "sourceBlob": "8fc6d94ceeeba34e58212c11892d4f88ddb16658",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md",
+      "target": "docs/03.specs/047-current-surface-and-stash-reconciliation/tasks.md",
+      "workUnit": "Spec-047",
+      "disposition": "move-current",
+      "sourceBlob": "4a1fa146d929f0151d7988348401cd89be6264ba",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md",
+      "target": "docs/03.specs/050-example-iac-and-validator-qa/tasks.md",
+      "workUnit": "Spec-050",
+      "disposition": "move-current",
+      "sourceBlob": "149be36f6ddeb280327e8308433b226f2738c8ec",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md",
+      "target": "docs/03.specs/048-github-routing-and-ci-evidence/tasks.md",
+      "workUnit": "Spec-048",
+      "disposition": "move-current",
+      "sourceBlob": "b6f15b59bbfd61c579c781c65a095e7ceac3ce83",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md",
+      "target": "docs/03.specs/049-platform-validation-and-security-evidence/tasks.md",
+      "workUnit": "Spec-049",
+      "disposition": "move-current",
+      "sourceBlob": "4820cbb98b67ce2ab2d48e4b2edbf66d1b9c6fa1",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md",
+      "target": "docs/03.specs/051-repository-assurance-integration-and-closure/tasks.md",
+      "workUnit": "Spec-051",
+      "disposition": "move-current",
+      "sourceBlob": "5aace6baf1a302ea5058014aac9c1c915ff66fbb",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md",
+      "target": "docs/03.specs/052-document-taxonomy-consolidation/tasks.md",
+      "workUnit": "Spec-052",
+      "disposition": "move-current",
+      "sourceBlob": "a066fc3460de0072a5a72c2822086ac1b6135c1c",
+      "reviewed": true
+    },
+    {
+      "source": "docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "target": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md",
+      "workUnit": "Spec-053",
+      "disposition": "move-current",
+      "sourceBlob": "2da50885fd9a0e9ae694fd14a25a249f59e75320",
+      "reviewed": true
+    }
+  ]
+}

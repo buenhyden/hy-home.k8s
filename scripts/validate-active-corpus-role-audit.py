@@ -294,6 +294,9 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
 }
+TRANSITION_ONLY_HELPER_MANIFEST = {
+    "tests/test_migrate_document_work_units.py": ("python", "regression-test"),
+}
 README_ADDITIONS = [
     "tests/fixtures/document-contracts/template-source-parity.json",
     "tests/fixtures/document-lifecycle.json",
@@ -720,7 +723,10 @@ def _helper_format_role(path: str) -> tuple[str, str]:
         raise RoleAuditError("ROLE-AUDIT-HELPER-FORMAT", path)
     if path in FROZEN_HELPER_PATHS:
         return derived
-    admitted = POST_CLOSURE_HELPER_MANIFEST.get(path)
+    admitted = {
+        **POST_CLOSURE_HELPER_MANIFEST,
+        **TRANSITION_ONLY_HELPER_MANIFEST,
+    }.get(path)
     if admitted is None or admitted != derived:
         raise RoleAuditError("ROLE-AUDIT-HELPER-ADMISSION", path)
     return admitted
@@ -797,7 +803,9 @@ def _expected_frozen_helper_entries() -> list[dict[str, str]]:
 def _expected_post_closure_helper_entries() -> list[dict[str, str]]:
     return [
         {"path": path, "format": helper_format, "role": role}
-        for path, (helper_format, role) in sorted(POST_CLOSURE_HELPER_MANIFEST.items())
+        for path, (helper_format, role) in sorted(
+            {**POST_CLOSURE_HELPER_MANIFEST, **TRANSITION_ONLY_HELPER_MANIFEST}.items()
+        )
     ]
 
 
@@ -1144,6 +1152,7 @@ def run_self_test() -> int:
             [
                 *FROZEN_HELPER_PATHS,
                 *POST_CLOSURE_HELPER_MANIFEST,
+                *TRANSITION_ONLY_HELPER_MANIFEST,
             ]
         )
         for path in helper_paths:

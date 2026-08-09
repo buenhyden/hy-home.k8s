@@ -371,6 +371,7 @@ class StandaloneExecution:
 @dataclass(frozen=True)
 class Registry:
     schema_version: int
+    route_state: Literal["legacy", "transition", "terminal"]
     baseline_sha: str
     baseline_count: int
     profiles: tuple[DocumentProfile, ...]
@@ -2723,6 +2724,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
 
     registry = Registry(
         schema_version=raw_registry["schemaVersion"],
+        route_state=raw_registry["routeState"],
         baseline_sha=baseline["sha"],
         baseline_count=baseline["count"],
         profiles=tuple(

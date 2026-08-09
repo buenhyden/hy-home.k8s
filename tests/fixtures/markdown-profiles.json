@@ -1,5 +1,21 @@
 {
   "schemaVersion": 2,
+  "nativeProfileCases": [
+    {
+      "name": "document-migration-manifest-transition-only",
+      "profile": "native/document-migration-manifest",
+      "path": "scripts/document-taxonomy-migration.json",
+      "state": "transition",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "document-migration-manifest-terminal-rejected",
+      "profile": "native/document-migration-manifest",
+      "path": "scripts/document-taxonomy-migration.json",
+      "state": "terminal",
+      "expectedRuleIds": ["REGISTRY_ROUTE_STATE"]
+    }
+  ],
   "dateCases": [
     {
       "name": "authored-previous-day",

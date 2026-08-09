@@ -8,6 +8,7 @@
     "$schema",
     "$id",
     "schemaVersion",
+    "routeState",
     "baseline",
     "target",
     "profiles",
@@ -25,6 +26,9 @@
     },
     "schemaVersion": {
       "const": 8
+    },
+    "routeState": {
+      "enum": ["legacy", "transition", "terminal"]
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -59,6 +63,34 @@
     }
   },
   "$defs": {
+    "documentMigrationManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "sourceCommit", "entries"],
+      "properties": {
+        "state": { "const": "transition" },
+        "sourceCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "entries": {
+          "type": "array",
+          "minItems": 132,
+          "maxItems": 132,
+          "items": { "$ref": "#/$defs/documentMigrationEntry" }
+        }
+      }
+    },
+    "documentMigrationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "target", "workUnit", "disposition", "sourceBlob", "reviewed"],
+      "properties": {
+        "source": { "type": "string", "pattern": "^docs/04\\.execution/(?:plans|tasks)/.+\\.md$" },
+        "target": { "type": "string", "pattern": "^docs/(?:03\\.specs|98\\.archive)/.+\\.md$" },
+        "workUnit": { "type": "string", "minLength": 1 },
+        "disposition": { "enum": ["move-current", "archive-unique"] },
+        "sourceBlob": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "reviewed": { "const": true }
+      }
+    },
     "stringArray": {
       "type": "array",
       "uniqueItems": true,

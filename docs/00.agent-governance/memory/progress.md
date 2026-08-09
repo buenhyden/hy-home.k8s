@@ -8,6 +8,65 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: docs
+- **Status**: done
+- **Tags**: #sdlc #migration #document-governance #validation
+- **Owner**: platform
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Provenance**: WORK-102 implementation from corrected source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WDTC-110 closure.
+- **Next Owner**: supervisor — review and commit WORK-102 before WDTC-103.
+
+#### Progress
+
+Added the explicit transition route state, the temporary native migration
+manifest profile, a fail-closed manifest builder/checker, and the reviewed
+132-source manifest with 82 current moves and 50 unique archives. The corrected
+ACER partition retains all 34 permanent admissions and temporarily admits one
+migration regression test, producing 68 helpers (`33 + 35`).
+
+#### Memory
+
+The manifest pins source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+The Spec-052 Plan blob is `2c354aebf8578a9079d511f0f5a7783e7b0b8779`
+and the Task blob is `a066fc3460de0072a5a72c2822086ac1b6135c1c`;
+both remained byte-identical during WORK-102. WDTC-103 must consume the 50
+archive entries without modifying either source, and WDTC-109 must remove only
+the transition-only test admission to restore 67 helpers (`33 + 34`).
+
+#### Evidence
+
+- RED: focused migration import failed because the tool was absent; strict
+  registry rejected the absent `--route-state` argument; ACER failed closed on
+  the unregistered helper.
+- GREEN: focused migration, ACER, strict-cutover, registry self-test/strict
+  transition, manifest dry-run, and strict Markdown validation passed.
+- Fix Round 1 RED/GREEN: staged pre-commit detected only the manifest's exact
+  Git integrity metadata (`sourceCommit` at two-space JSON indentation and 132
+  `sourceBlob` rows at six-space indentation). A focused regression first
+  proved those canonical forms absent from the narrow line allowlist, then
+  passed after adding only those two exact key/indent/hash alternatives to the
+  synchronized hook and baseline filters. Secret classifications were not
+  changed.
+- Final controller rerun: `env TMPDIR=/tmp pre-commit run` exited 0; every
+  applicable hook passed, non-applicable hooks skipped, the exact 17-file index
+  had no unstaged mutation, both diff checks passed, and the frozen Plan/Task
+  staged plus unstaged diffs remained zero.
+- Repository-static only; hosted CI, provider-runtime, remote, credential, and
+  live-platform evidence remain DEFER.
+
+#### Handoff
+
+WORK-102 is ready for controller review and commit. Preserve all 34 permanent
+ACER admissions, the frozen 33-helper ledger, and both pinned Spec-052 source
+blobs when beginning WDTC-103.
+
 ### 2026-08-09 - WDTC-101 all-files baseline observation and Markdown repair
 
 #### Metadata
