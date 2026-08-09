@@ -8,7 +8,7 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-08-10 - WORK-104 terminal taxonomy amendment
+### 2026-08-10 - WDTC-AMEND-001 pre-WORK-104 terminal taxonomy design
 
 #### Metadata
 
@@ -18,32 +18,52 @@ inventory stays in `scripts/README.md`.
 - **Tags**: #sdlc #document-governance #artifact-identity #archive
 - **Owner**: platform
 - **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
-- **Provenance**: WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f` and the human-approved task brief.
+- **Provenance**: Pre-WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f`, reviewed at commit `1452dbfde267452ed676b551ee2595d250a6ecfa`, and the human-approved terminal-design rulings.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC terminal closure and PRD-008 disposition.
-- **Next Owner**: WORK-105 — accept ADR-0024 and update the PRD-008 program-decision projection atomically after the reviewed 82 moves.
+- **Next Owner**: WORK-104 — apply the existing 82-move task and rebaseline the destination Plan/Task to the closed WORK-104 through WORK-115 schedule.
 
 #### Progress
 
-Recorded active ADR-0024 as the human-approved successor design while keeping
-accepted ADR-0023 as the current program-decision registry projection. PRD-008
-and Spec 052 now define terminal PRD, optional SRS, optional Interface
-Requirement, AD, and ADR forms, `sdlc/ad`, numeric preservation from ARD-0011
-to AD-0011, global `artifact_id`, the stable Stage 98 topology, and the exact
-`scripts/` closure. The ADR index exposes both the accepted predecessor and
-active successor state. WORK-104 changes no route, profile, template, registry,
-manifest, Stage 04 execution record, Stage 98 record, or script.
+Recorded active ADR-0024 as the human-approved terminal/current design while
+keeping accepted ADR-0023 as the transition program-decision registry
+projection. This completed documentation package is `WDTC-AMEND-001`; it is
+not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
+terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
+the closed active and Stage 98 outer-ID grammar, stable archive topology,
+14-field recovery ledger, direct-link corpus, and exact `scripts/` closure.
+The ADR index exposes the accepted predecessor and active successor state.
+This package changes no route, profile, template, registry, manifest, Stage 04
+execution record, Stage 98 record, or script.
 
 #### Memory
 
+At WORK-105 acceptance ADR-0024 partially supersedes only accepted ADR-0018's
+mirror-path and Tombstone-prohibition clauses plus accepted ADR-0023's Stage 98
+date/mirror-path immutability. Full-body payload, provenance, retention,
+recovery, transition safety, and unrelated decisions remain intact. Active
+ARD-0011 is a conflicting transition predecessor and must atomically become
+AD-0011 with archive-invariant replacement before ADR-0024 acceptance.
+
 Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
-rewrite. The 93 historical records map to 41 change directories for the 76
-execution records (35 pairs, two Plan-only, four Task-only) and 17 tombstones
-distributed `3/8/4/2`; migration documents are separate control records. The
-cutover retains payload bytes, digest, `source_commit`, `source_blob`, and the
-old ArchiveEnvelope Git blob, and must support recovery from both the terminal
-record and old Git object/path. Ledger actions are closed to `moved`, `merged`,
-`replaced`, and `deleted`.
+rewrite. The current cutover is 93-to-93 with every action `moved`: 76 records
+become unique Plan/Task leaves in 41 change directories (35 pairs, two
+Plan-only, four Task-only) and 17 become unique tombstones distributed
+`3/8/4/2`. Future merged/replaced/deleted rows also retain unique tombstone
+paths, so stable paths are never many-to-one. The ledger distinguishes original
+`source_commit`/`source_blob` from old-envelope
+`legacy_archive_commit`/`legacy_envelope_blob` and retains payload digest and
+dual recovery evidence.
+
+The successor sequence is closed: WORK-104 owns 82 moves and destination
+Plan/Task rebaseline; WORK-105 owns AD/Stage99 core forms, AD-0011 invariant
+replacement, ADR-0024 acceptance, and registry projection; WORK-106 owns
+artifact/ledger transition validators; WORK-107 owns the 93-record rehome and
+cannot start before WORK-105; WORK-108 through WORK-115 own ID backfill,
+document authority/routes, agent governance, the full script ledger,
+orchestration and the 49 count, progress/graph cleanup, transition asset
+retirement and the 47 count, and independent closure respectively. The
+destination rebaseline supersedes old WORK-105 through WORK-110 meanings.
 
 The terminal script inventory is not a filename-similarity reduction. WORK-112
 deletes only `validate-harness.sh` after orchestration/consumer migration and
@@ -60,11 +80,10 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
 
 #### Evidence
 
-- The docs-only baseline and the authored five-file design both passed the
-  registry self-test, strict transition registry, strict Markdown-profile, and
-  strict link/owner checks. The registry result remained 132 self-test cases,
-  65 profiles, 30 templates, and 490 strict-transition paths with zero
-  uncovered or ambiguous routes.
+- The clean pre-change baseline had 490 strict-transition registry paths. The
+  authored package adds ADR-0024, so the post-change strict result is 491 paths
+  with zero uncovered or ambiguous routes; self-test remains 132 cases, 65
+  profiles, and 30 templates. Strict Markdown and link/owner checks pass.
 - The migration check remained exact at `sources=132`, `moves=82`, and
   `archives=50`, pinned to source commit
   `713dff1fc3de58a2d1682970a7f24faa39c14263`.
@@ -78,23 +97,42 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
 - RTK 0.34.3 was available on PATH, but `rtk gain` could not initialize its
   tracking database. Repository policy therefore required direct commands;
   no private runtime database or credential file was inspected.
-- Canonical targeted, affected, staged, tests, all-files, formatter-review,
-  rerun, and diff-check evidence is recorded in the ignored WORK-104 amendment
-  report. Remote CI, provider-runtime, credential-bearing, and live evidence
-  remain `DEFER`; no such action was performed.
-- The controller's final `pre-commit run --all-files` fixed-point exited 0 with
-  every applicable hook passing and no mutation. Post-run status remained the
-  exact five WORK-104 files staged with zero unstaged paths.
+- Canonical targeted, affected, staged, aggregate, formatter-review, rerun, and
+  diff evidence is recorded in the ignored `WDTC-AMEND-001` report. Remote CI,
+  provider-runtime, credential-bearing, and live evidence remain `DEFER`; no
+  such action was performed.
+- The implementer intentionally DEFERRED all-files to the controller. The
+  controller's final fixed-point at reviewed commit `1452dbfd` then ran
+  `pre-commit run --all-files`, exited 0 with every applicable hook passing,
+  caused no mutation, and left the exact five package files staged with zero
+  unstaged paths. This review-fix round likewise leaves all-files to the
+  controller rather than treating the prior PASS as implementer evidence.
+- Review-fix RED first found eight stale design/evidence markers, then one
+  reciprocal-link modeling error. GREEN retained ARD-0011's mandatory
+  conversion in decision prose/Spec while limiting the ADR body-contract table
+  to reciprocal ADR-to-Spec sources. Focused registry/Markdown/links,
+  immutable boundary/hash checks, migration `132/82/50`, exact-five affected
+  and staged runners, plain exact-index pre-commit, and aggregate validation
+  passed with zero final findings. The exact five tracked files remain staged
+  with zero unstaged paths; controller all-files remains `DEFER` for this
+  review-fix state.
+- The controller subsequently ran the review-fix
+  `pre-commit run --all-files` fixed point against the staged proposal over
+  HEAD `1452dbfd`. It exited 0 with every applicable hook passing and no
+  mutation. Post-run status remained exactly the same five tracked files
+  staged with zero unstaged paths; this closes review-fix all-files evidence
+  without claiming that the staged fix has been committed.
 
 #### Handoff
 
-WORK-105 owns lifecycle acceptance and the atomic registry projection change;
-later work units own physical form/profile/template/navigation changes, the
-ledger-backed Stage 98 cutover, and script deletions. Rollback is a reviewed
-revert of the single WORK-104 documentation commit before any dependent
-acceptance. Residual risk is limited to later implementation drift from the
-exact 93-row, global-ID, and `50 -> 49 -> 47` contracts; VAL-WDTC-013 through
-VAL-WDTC-016 fail those terminal states closed.
+WORK-104 is the next owner and remains incomplete until the 82 moves and
+destination Plan/Task rebaseline occur. WORK-105 then owns lifecycle
+acceptance and the atomic registry projection change; later work units own the
+archive cutover and script deletions. Rollback is a reviewed revert of the
+`WDTC-AMEND-001` documentation commit before dependent implementation.
+Residual risk is later drift from the exact 93-row, global-ID, and
+`50 -> 49 -> 47` contracts; VAL-WDTC-013 through VAL-WDTC-016 fail those
+terminal states closed.
 
 ### 2026-08-09 - WDTC-103 unmatched execution history archive
 
@@ -681,7 +719,7 @@ two families and retires the wrapper only after zero-consumer proof.
 
 #### Evidence
 
-- Approved written design: PRD-008, ARD-0011, active ADR-0023, and Spec 052.
+- Approved written design: PRD-008, ARD-0011, accepted ADR-0023, and Spec 052.
 - Approved implementation plan: WORK-100 through WORK-110 with one logical
   commit, focused RED/GREEN, aggregate gate, and two-stage review per package.
 - Baseline design commit: `14a0a75c`.
