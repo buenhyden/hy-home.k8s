@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Gap-only Research Refresh Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
 updated: 2026-08-09
 ---
@@ -89,10 +89,10 @@ separate `2026-08-09 gap-only source refresh` boundary. Lifecycle documents,
 indexes, the standalone registry relation, and durable progress evidence are
 execution metadata and do not become research-topic owners.
 
-The written Spec was approved by the human on 2026-08-09. This Plan and its
-reciprocal Task remain `draft` until the human chooses an execution mode. WERG-000
-then activates Spec, Plan, Task, their indexes, and the exact ADR-0022
-standalone relation atomically.
+The written Spec was approved by the human on 2026-08-09, and the human then
+selected subagent-driven execution. WERG-000 therefore activates this Plan,
+the reciprocal [Task](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md),
+their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 
 ## Context
 
@@ -211,6 +211,7 @@ that directly supports the claim.
 **Files:**
 
 - Modify: `docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md`
+- Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md`
 - Modify: `docs/04.execution/plans/README.md`
@@ -226,7 +227,7 @@ that directly supports the claim.
 - Produces: one unique active standalone relation for Spec `055`, with exact
   Plan and Task identities and `approvalMode: spec-body-record`.
 
-- [ ] **Step 1: Record the exact draft baseline and human approval**
+- [x] **Step 1: Record the exact draft baseline and human approval**
 
 Run:
 
@@ -245,12 +246,15 @@ rg -n "status: draft|pending written Spec approval|055-workspace-engineering-gap
 Expected: clean planning baseline; Spec, Plan, and Task are draft; no Spec 055
 standalone registry row exists.
 
-- [ ] **Step 2: Apply the atomic active relation**
+- [x] **Step 2: Apply the atomic active relation**
 
 Use `apply_patch` to:
 
 1. set Spec, Plan, and Task frontmatter to `status: active`;
 1. replace pending Plan/Task text in Spec 055 with reciprocal rendered links;
+1. record the exact direct-human approval and no-separate-PRD/ARD standalone
+   lifecycle statements in Spec 055;
+1. add the reciprocal Spec 055 traceability row to ADR-0022;
 1. mark all three README index rows `Active`;
 1. insert the exact sorted registry object:
 
@@ -268,7 +272,7 @@ Use `apply_patch` to:
 
 1. mark WERG-000 `In Review` with the exact changed-path and approval evidence.
 
-- [ ] **Step 3: Run focused activation validation**
+- [x] **Step 3: Run focused activation validation**
 
 Run:
 
@@ -283,12 +287,12 @@ git diff --check
 Expected: registry self-test and strict validation pass; Markdown violations
 are zero; links/owners pass; no unowned active execution component exists.
 
-- [ ] **Step 4: Obtain specification and quality review**
+- [x] **Step 4: Obtain specification and quality review**
 
 Dispatch one specification reviewer and one quality reviewer against only the
 WERG-000 diff. Correct every Critical or Important finding before commit.
 
-- [ ] **Step 5: Stage, run the canonical commit gates, and commit**
+- [x] **Step 5: Stage, run the canonical commit gates, and commit**
 
 Run the affected and staged lanes for the exact changed paths, then plain
 pre-commit, the direct aggregate, all-files pre-commit, formatter review, and
@@ -928,7 +932,7 @@ for hosted, provider-runtime, remote, credential-bearing, or live evidence.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| N/A — VAL-WERG-001 uses approved Spec 055; WERG-000 adds its reciprocal link during atomic activation | WERG-001 | [Complete four-state admission matrix and review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
+| [VAL-WERG-001](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md#success-criteria--verification-plan) | WERG-001 | [Complete four-state admission matrix and review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
 | N/A — VAL-WERG-002 shares the Spec source above | WERG-004 | [Exact five-owner research path set](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
 | N/A — VAL-WERG-003 shares the Spec source above | WERG-002, WERG-003 | [New source rows and source-fidelity reviews](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
 | N/A — VAL-WERG-004 shares the Spec source above | WERG-002, WERG-003, WERG-004 | [Claim rows, workspace selector checks, and owner closure](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |

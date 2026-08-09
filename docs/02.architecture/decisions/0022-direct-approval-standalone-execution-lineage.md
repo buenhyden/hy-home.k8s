@@ -17,9 +17,9 @@ PRD or ARD owner.
 
 ## Context
 
-Spec 053 was approved directly by the human on 2026-08-08 and Spec 054 was
-approved directly on 2026-08-09, each with an explicit no-separate-PRD/ARD
-boundary. The existing `programLineage` contract correctly requires
+Spec 053 was approved directly by the human on 2026-08-08, while Spec 054 and
+Spec 055 were approved directly on 2026-08-09, each with an explicit
+no-separate-PRD/ARD boundary. The existing `programLineage` contract correctly requires
 PRD/ARD-backed program membership and must remain unchanged, while the
 unowned-active-component gate correctly rejects either active Plan/Task pair
 without a separate typed owner.
@@ -51,8 +51,8 @@ without a separate typed owner.
 
 ## Consequences
 
-Spec 053 and Spec 054, with each exact Plan/Task pair, gain deterministic
-registry ownership without a fabricated program component. Validators accept
+Spec 053, Spec 054, and Spec 055, with each exact Plan/Task pair, gain
+deterministic registry ownership without a fabricated program component. Validators accept
 an exact ISO-date direct-approval statement, reject invalid calendar dates,
 missing approval fields, identity overlap, wrong owners or states, incomplete
 reciprocal evidence, foreign-Spec links, and extra active component nodes.
@@ -78,3 +78,4 @@ false upstream authority.
 | --- | --- | --- |
 | Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — second typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — third typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md) |

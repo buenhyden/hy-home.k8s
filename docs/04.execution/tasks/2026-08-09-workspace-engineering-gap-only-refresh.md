@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Engineering Gap-only Research Refresh'
 type: sdlc/task
-status: draft
+status: active
 owner: platform
 updated: 2026-08-09
 ---
@@ -16,15 +16,17 @@ only previously unresearched questions or externally under-sourced `Partial`
 questions, keeps authenticated/provider-runtime/hosted/remote/live evidence
 out of scope, and records one logical commit per non-empty work package.
 
-The written Spec is approved, but this Task remains `draft`. No external
-research, lifecycle activation, standalone-registry change, or pack edit is
-authorized until the human selects an execution mode and WERG-000 activates
-the reciprocal Spec/Plan/Task relation atomically.
+The written Spec is approved and the human selected subagent-driven execution.
+WERG-000 activates this Task with the reciprocal
+[Spec](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md) and
+[Plan](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md) through
+the exact ADR-0022 standalone relation before any external research or pack
+edit begins.
 
 ## Inputs
 
-- [Approved Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)
-- [Draft implementation Plan](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
+- [Active Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)
+- [Active implementation Plan](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
 - [ADR-0022 direct-approval standalone lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Existing 2026-08-08 WER research pack](../../90.references/research/2026-08-08-wer/README.md)
 - Terminal predecessor: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md`
@@ -36,7 +38,7 @@ the reciprocal Spec/Plan/Task relation atomically.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WERG-000 | VAL-WERG-010 | After execution-mode selection, atomically activate Spec 055, Plan, Task, indexes, and one ADR-0022 standalone registry relation. | primary agent | Queued | Not executed | Written Spec approved; Plan/Task remain draft; no registry row exists. |
+| WERG-000 | VAL-WERG-010 | After execution-mode selection, atomically activate Spec 055, Plan, Task, indexes, and one ADR-0022 standalone registry relation. | primary agent | Completed | Activated and validated | Human selected subagent-driven execution on 2026-08-09; exact nine changed paths are Spec 055, ADR-0022, Spec index, WERG Plan, Plan index, WERG Task, Task index, document-profiles registry, and durable progress. After adding the exact Spec approval statements, reciprocal ADR row, and rendered Spec criterion link, focused registry/profile/link/diff checks, both independent reviews, exact-index RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass. No formatter or detect-secrets mutation occurred. |
 | WERG-001 | VAL-WERG-001 | Classify every requested category through the four-state gap-admission gate and obtain independent admission review. | primary agent + content reviewer | Queued | Not executed | Planned admission matrix and deterministic completeness/uniqueness probes. |
 | WERG-002 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-005, VAL-WERG-006 | Research and integrate admitted document-family and Verification/Validation gaps using official sources. | documentation researchers + content/quality reviewers | Queued | Not executed | Planned source/claim rows, SDLC owner update, QA matrix, and focused gates. |
 | WERG-003 | VAL-WERG-003, VAL-WERG-004, VAL-WERG-007 | Research only exact non-duplicate Kubernetes security deltas, or record a reviewed no-op. | Kubernetes researcher + security/content reviewers | Queued | Not executed | Planned line-level admission, official sources, workspace selectors, and no-live boundary. |
@@ -75,10 +77,32 @@ the reciprocal Spec/Plan/Task relation atomically.
 
 ## Verification Summary
 
-Planning only. Spec 055 is approved and the detailed Plan has been authored,
-but no WERG work package has executed. No web research, research-pack content
-change, activation, standalone-registry edit, hosted/provider/live action,
-secret access, staging, or implementation commit is claimed by this draft.
+WERG-000 activation is complete. The human selected subagent-driven execution
+on 2026-08-09, and the reciprocal active Spec/Plan/Task/index relation plus one
+sorted ADR-0022 standalone registry row have been applied across the exact nine
+authorized activation paths. No web research, research-pack content change,
+hosted/provider/live action or secret access is claimed by this repository-static
+activation state.
+
+Focused rerun results at the in-review boundary are registry self-test PASS
+(132 cases, 64 profiles, 30 templates), registry strict PASS (505 paths; zero
+uncovered or ambiguous), Markdown profiles strict PASS (zero violations),
+strict links PASS, and diff-check PASS. The initial strict-links RED is resolved
+by the exact Spec body approval statements, ADR-0022 reciprocal traceability
+row, and rendered Spec criterion link. The earlier production RIA diagnostic
+was the expected pre-staging exact-index authority boundary; RIA was not rerun
+in this narrow focused-fix round and remains part of the exact staged gate.
+
+Independent WERG-000 specification/content and quality reviews are Approved
+with no remaining Critical or Important finding. Both reviews confirmed the
+exact nine-path activation, direct-approval semantics, reciprocal links,
+sorted standalone relation, and unchanged `programLineage` and research pack.
+
+The exact nine-path index then passed RIA self-test and production validation,
+affected and staged lanes, the direct repository aggregate, plain pre-commit,
+all-files pre-commit, formatter review, and both worktree/cached diff checks.
+No hook changed a tracked file. Hosted, provider-runtime, remote,
+credential-bearing, and live evidence remains `DEFER`.
 
 Independent Plan review is Approved with no remaining Critical or Important
 finding after correcting the written-approval state, full 13-file admission
@@ -97,7 +121,7 @@ must make no empty topic commit when review admits no new Kubernetes evidence.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WERG-000](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md#work-breakdown) | Queued | Activate the approved reciprocal standalone execution relation after the execution-mode choice. |
+| [WERG-000](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md#work-breakdown) | Completed | Reciprocal active owners and the ADR-0022 standalone relation passed focused review and the exact-index canonical commit gates. |
 | N/A — WERG-001 shares the Plan and Spec sources above | Queued | Build and review the complete four-state admission matrix. |
 | N/A — WERG-002 shares the Plan and Spec sources above | Queued | Research admitted document-family and Verification/Validation gaps. |
 | N/A — WERG-003 shares the Plan and Spec sources above | Queued | Research exact admitted Kubernetes security deltas or record a reviewed no-op. |

@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Gap-only Research Refresh Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-09
 ---
@@ -23,14 +23,16 @@ The refresh admits only two evidence classes selected by the human requester:
    provider-runtime, hosted, remote, credential-bearing, or live evidence.
 
 The user approved this design direction and the written specification on
-2026-08-09 and directed the result to be integrated into the existing
-`2026-08-08-wer` pack. This draft does not activate execution, reopen terminal
-Spec 053, or create a second Plan/Task relation for Spec 053. The reciprocal
-draft Plan and Task have been authored; after the human chooses an execution
-mode, WERG-000 will activate them through a new standalone execution relation
-governed by
+2026-08-09, selected subagent-driven execution, and directed the result to be
+integrated into the existing `2026-08-08-wer` pack. WERG-000 activates the
+reciprocal [Plan](../../04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
+and [Task](../../04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md)
+through a standalone execution relation governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
-No separate PRD or ARD is asserted by this draft.
+Direct human approval on 2026-08-09 authorizes this standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle.
+This active execution does not reopen terminal Spec 053 or create a second
+Plan/Task relation for Spec 053.
 
 The primary consumers are documentation writers, platform and security
 engineers, quality reviewers, governance stewards, and AI agents that use the
@@ -381,5 +383,5 @@ credential-bearing, or live success.
 - **Direct-approval lineage decision**: [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - **Document taxonomy decisions**: [Spec 052](../052-document-taxonomy-consolidation/spec.md)
 - **Current research pack**: [2026-08-08 WER](../../90.references/research/2026-08-08-wer/README.md)
-- **Plan**: draft at `docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md`; reciprocal activation waits for the execution-mode choice
-- **Task**: draft at `docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md`; reciprocal activation waits for the execution-mode choice
+- **Plan**: [active gap-only refresh Plan](../../04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
+- **Task**: [active gap-only refresh Task](../../04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md)

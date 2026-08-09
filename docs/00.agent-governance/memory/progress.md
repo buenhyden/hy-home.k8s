@@ -21,15 +21,18 @@ inventory stays in `scripts/README.md`.
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: human requester for execution-mode choice; primary agent for WERG-000 activation only after that choice.
+- **Next Owner**: WERG-001 admission implementer and independent admission reviewer after the logical WERG-000 activation commit.
 
 #### Progress
 
-Recorded the approved design as draft Spec 055 instead of creating the
+Recorded the approved design as Spec 055 instead of creating the
 repository-prohibited `docs/superpowers/**` tree. After explicit written-Spec
-approval, authored the reciprocal draft Plan and Task with six work packages,
+approval, authored the reciprocal Plan and Task with six work packages,
 four-state admission, exact five-owner integration, independent reviews,
-logical commits, cleanup, terminal gates, and branch finishing. The existing
+logical commits, cleanup, terminal gates, and branch finishing. The human
+selected subagent-driven execution on 2026-08-09, so WERG-000 applied the
+atomic active Spec/Plan/Task/index/ADR-0022 relation across the exact nine
+authorized activation paths and entered focused validation and review. The existing
 `2026-08-08-wer` pack remains the only research owner; authenticated,
 provider-runtime, hosted, remote, credential-bearing, and live evidence stays
 excluded.
@@ -51,16 +54,19 @@ five-owner refresh; lifecycle evidence is separate from the research pack.
 - Design-contract RED/GREEN: strict profile/link validation rejected grouped criteria and Spec-local pseudo-PRD rows; the corrected standalone `N/A` traceability form passes with ten one-to-one `VAL-WERG-*` rows.
 - Independent draft-design review is Approved with no Critical or Important finding.
 - Pre-final exact three-path affected and staged lanes, plain pre-commit, the direct repository quality gate, and all-files pre-commit passed. This evidence-only progress update invalidates those results as completion evidence; the primary agent must rerun the canonical final lanes after restaging and report the post-update results in the commit handoff.
-- The approved Spec is mapped to WERG-000–005 in a detailed draft Plan and reciprocal draft Task. Activation is deliberately deferred until the human chooses subagent-driven or inline execution.
+- The approved Spec is mapped to WERG-000–005 in an active reciprocal Plan and Task after the human selected subagent-driven execution.
 - Independent Plan review is Approved with no remaining Critical or Important finding after fix rounds for approval-state wording, complete 13-file admission review, reproducible temporary probe contracts, draft reciprocal exclusion, and post-lane scratch cleanup.
-- No external source browsing, research-pack content edit, Plan/Task activation, standalone registry edit, hosted/provider/live action, or research implementation has occurred in this planning step.
+- WERG-000 activation changes exactly Spec 055, ADR-0022, the Spec index, WERG Plan, Plan index, WERG Task, Task index, `docs/99.templates/support/document-profiles.json`, and this durable progress owner.
+- Focused activation rerun records registry self-test PASS (132 cases, 64 profiles, 30 templates), registry strict PASS (505 paths; zero uncovered or ambiguous), Markdown profiles strict PASS (zero violations), strict links PASS, and diff-check PASS.
+- The initial `STANDALONE-EXECUTION-ADR` and `STANDALONE-EXECUTION-APPROVAL` diagnostics are resolved by the exact Spec body approval statements, ADR-0022 reciprocal traceability row, and rendered Plan-to-Spec criterion link. The earlier production RIA diagnostic was the expected pre-staging exact-index authority boundary; RIA remains part of the exact staged gate.
+- Independent WERG-000 specification/content and quality reviews are Approved with no remaining Critical or Important finding. They confirmed the exact nine-path activation, reciprocal authority, sorted standalone relation, unchanged `programLineage`, and unchanged research pack.
+- The exact nine-path index passed RIA self-test and production validation, affected and staged lanes, the direct repository aggregate, plain pre-commit, all-files pre-commit, formatter review, and both worktree/cached diff checks. No hook changed a tracked file; the workflow-owned NUL path input was removed after the lanes.
+- No external source browsing, research-pack content edit, hosted/provider/live action, secret access, staging, or implementation commit has occurred in this activation step.
 
 #### Handoff
 
-Choose the execution mode for the approved Plan: subagent-driven execution is
-recommended; inline executing-plans is also available. After that choice,
-WERG-000 must atomically activate the reciprocal Spec/Plan/Task/index/ADR-0022
-relation before any external research begins.
+Commit the atomic reciprocal Spec/Plan/Task/index/ADR-0022 relation, then begin
+WERG-001 admission before any external research.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 
