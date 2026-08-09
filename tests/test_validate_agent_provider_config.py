@@ -206,6 +206,18 @@ class ProviderConfigContractTests(unittest.TestCase):
         )
         self.validator.validate_claude_permissions(REPOSITORY_ROOT)
 
+    def test_claude_auto_allow_excludes_repo_mutable_command_trampolines(
+        self,
+    ) -> None:
+        settings = json.loads(CLAUDE_SETTINGS_PATH.read_text(encoding="utf-8"))
+        allowed = settings["permissions"]["allow"]
+
+        self.assertTrue(allowed)
+        self.assertTrue(
+            all(permission.startswith("Bash(git ") for permission in allowed)
+        )
+        self.assertFalse(any("scripts/" in permission for permission in allowed))
+
     def test_each_broad_claude_allow_rule_fails_closed(self) -> None:
         for permission in self.validator.CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS:
             with self.subTest(permission=permission):
@@ -232,27 +244,6 @@ class ProviderConfigContractTests(unittest.TestCase):
                 settings = json.loads(path.read_text(encoding="utf-8"))
                 index = settings["permissions"]["allow"].index(permission)
                 settings["permissions"]["allow"][index] = permission[:-1] + ":*)"
-                path.write_text(
-                    json.dumps(settings, indent=2) + "\n", encoding="utf-8"
-                )
-                with self.assertRaises(
-                    self.validator.ProviderConfigError
-                ) as raised:
-                    self.validator.validate_contract(root)
-                self.assertEqual(
-                    raised.exception.code, "PNME-CLAUDE-PERMISSIONS"
-                )
-
-    def test_each_alternate_root_claude_allow_rule_fails_closed(self) -> None:
-        for expected, mutation in (
-            self.validator.CLAUDE_ALTERNATE_ROOT_PERMISSION_MUTATIONS
-        ):
-            with self.subTest(permission=mutation):
-                root = self.make_valid_root()
-                path = root / ".claude/settings.json"
-                settings = json.loads(path.read_text(encoding="utf-8"))
-                index = settings["permissions"]["allow"].index(expected)
-                settings["permissions"]["allow"][index] = mutation
                 path.write_text(
                     json.dumps(settings, indent=2) + "\n", encoding="utf-8"
                 )

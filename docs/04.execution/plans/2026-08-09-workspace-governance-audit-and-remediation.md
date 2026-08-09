@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Governance Audit and Remediation Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-08-09
 ---
@@ -565,11 +565,12 @@ disposition ledger, roadmap, Task/progress evidence. Stage 98 is forbidden.
   with at least one tracked external live consumer; no file or index is removed.
 - [x] Run focused strict registry/profiles/links and diff checks for the
   no-deletion evidence unit; broader terminal validation remains WGIA-014-owned.
-- [ ] Commit `chore: remove retired governance artifacts`; if there are no
+- [x] Commit `chore: remove retired governance artifacts`; if there are no
   valid Delete rows, record the reviewed no-deletion result without an empty
   commit and advance.
 
-WGIA-013 is `In Review` with a fail-closed no-deletion result. At Current HEAD
+WGIA-013 is `Done` with a fail-closed no-deletion result recorded by commit
+`4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`. At the revalidation source HEAD
 `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`, the candidate ledger has exactly
 15 unique tracked rows, all `Integrate`, and `Delete=0`. Its 114 current-
 consumer selectors resolve to tracked paths, every candidate has an external
@@ -578,7 +579,7 @@ candidate bytes. Spec 052 `WORK-001` remains `Queued` and `Not executed` with
 zero of five execution steps complete. Therefore deletion simulation,
 post-delete validation, removal, and a deletion commit are inapplicable; this
 bounded evidence update has fresh review approval with no Critical or Important
-finding and awaits only a non-empty documentation commit before WGIA-014.
+finding. No empty deletion commit or file removal occurred.
 
 #### WGIA-014 — Re-audit, closure, and branch handoff
 
@@ -586,20 +587,47 @@ finding and awaits only a non-empty documentation commit before WGIA-014.
 Plan, Task and indexes; document profiles standalone state; durable progress;
 ignored SDD reports only until cleanup.
 
-- [ ] Re-run the exact tracked inventory and all 30 request rows against the
+- [x] Re-run the exact tracked inventory and all 30 request rows against the
   final tree; reconcile As-Is/Target, finding status, blockers, roadmap, and
   deletion evidence without erasing dated observations.
-- [ ] Walk VAL-WGA-001–012 one by one and record deterministic command/result,
+- [x] Walk VAL-WGA-001–012 one by one and record deterministic command/result,
   limitations, commit, and review evidence in the Task.
-- [ ] Run strict registry, profiles, links, RIA, LLM-WIKI, CI/QA, harness/loop/
+- [x] Run strict registry, profiles, links, RIA, LLM-WIKI, CI/QA, harness/loop/
   model/roster, security, legacy/active corpus, archive, full quality gate,
   full harness, diff checks, and scoped/all-files pre-commit when available.
-- [ ] Obtain a whole-branch correctness/security/coverage review; resolve all
+- [x] Obtain a whole-branch correctness/security/coverage review; resolve all
   Critical and Important findings and rerun affected plus terminal gates.
-- [ ] Verify zero Stage 98 diff, zero tracked scratch, no unclassified mutable
+- [x] Verify zero Stage 98 diff, zero tracked scratch, no unclassified mutable
   consumer, and logical commit history; remove task-created one-off files.
-- [ ] Set Spec/Plan/Task/indexes/standalone relation to `done`, commit
+- [x] Set Spec/Plan/Task/indexes/standalone relation to `done`, commit
   `docs: close workspace governance audit`, then invoke branch finishing.
+
+WGIA-014 is `Done`. The terminal criterion record in the Task closes
+VAL-WGA-001–012, the 17 pre-closure logical commits, the 53-to-57 self-test
+expectation repair, and focused protected-surface checks. The primary agent
+records fresh whole-branch review, the exact terminal aggregate/harness/all-files
+matrix, reciprocal `done` transition, and logical closure handoff. Hosted CI,
+provider-runtime, authenticated, credential-bearing, remote, and live evidence
+remains `DEFER`.
+
+The first whole-branch security review found that seven exact repo-script
+auto-allows remained mutable command trampolines. The terminal fix removes all
+repo-script entries from Claude `permissions.allow`, retains seven fixed
+read-only Git metadata commands, and adds a no-trampoline regression. Focused
+provider checks pass; fresh security/Python re-review is Approved with no
+remaining Critical or Important finding, and the exact terminal matrix is the
+closure gate for this final index.
+
+The first exact `done` quality-gate run then failed closed on
+`CLOSURE-AUTHORITY-SCOPE` because the terminal active-corpus authority contract
+did not yet admit Spec 054 as a later standalone done specification. The
+focused RED expected the exact 054 path and failed against the seven-path set;
+GREEN adds only that path to the typed post-closure Spec authority set. The
+focused test, 49-test closure class, 25-case self-test, production final
+frontier, complete repository quality gate, and full harness pass on the exact
+staged terminal tree. Plain and all-files pre-commit pass, and fresh
+correctness, security, coverage, Python/quality, and specification/content
+reviews are Approved with no remaining Critical or Important finding.
 
 ## Verification Plan
 

@@ -120,6 +120,7 @@ POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
         "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
         "docs/03.specs/046-agent-governance-program-closure/spec.md",
         "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
+        "docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md",
     }
 )
 PLAN_ROOT = "docs/04.execution/plans"

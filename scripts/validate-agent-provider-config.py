@@ -138,13 +138,6 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git diff --cached --name-only)",
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
-    "Bash(bash scripts/validate-repo-quality-gates.sh .)",
-    "Bash(bash scripts/generate-llm-wiki-index.sh --check)",
-    "Bash(bash scripts/validate-k8s-manifests.sh .)",
-    "Bash(bash scripts/validate-gitops-structure.sh)",
-    "Bash(bash scripts/check-secret-handling.sh .)",
-    "Bash(bash scripts/validate-policy-gates.sh .)",
-    "Bash(bash scripts/validate-harness.sh)",
 )
 CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS = (
     "Bash(ls:*)",
@@ -154,24 +147,6 @@ CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS = (
     "Bash(kubectl get:*)",
     "Bash(kubectl describe:*)",
     "Bash(kubectl logs:*)",
-)
-CLAUDE_ALTERNATE_ROOT_PERMISSION_MUTATIONS = (
-    (
-        "Bash(bash scripts/validate-repo-quality-gates.sh .)",
-        "Bash(bash scripts/validate-repo-quality-gates.sh /tmp)",
-    ),
-    (
-        "Bash(bash scripts/validate-k8s-manifests.sh .)",
-        "Bash(bash scripts/validate-k8s-manifests.sh ..)",
-    ),
-    (
-        "Bash(bash scripts/check-secret-handling.sh .)",
-        "Bash(bash scripts/check-secret-handling.sh ../other-repository)",
-    ),
-    (
-        "Bash(bash scripts/validate-policy-gates.sh .)",
-        "Bash(bash scripts/validate-policy-gates.sh /tmp)",
-    ),
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",

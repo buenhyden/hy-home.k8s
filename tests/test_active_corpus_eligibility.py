@@ -44,7 +44,7 @@ class ActiveCorpusEligibilityTests(unittest.TestCase):
 
         executed = validator.self_test_case_names(ROOT)
         self.assertTrue(validator.REQUIRED_SELF_TEST_CASES <= executed)
-        self.assertEqual(len(executed), 53)
+        self.assertEqual(len(executed), 57)
 
     def test_eligible_consumer_enumeration_includes_pinned_non_markdown_authority(self) -> None:
         validator = load_validator()

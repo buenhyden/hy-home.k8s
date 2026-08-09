@@ -8,6 +8,83 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-09 - WGIA-014 workspace governance audit closure
+
+#### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, governance, validation
+- **Status**: done
+- **Tags**: #governance #audit #closure #tdd #sdlc
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
+- **Provenance**: WGIA-014 repository-static terminal reconciliation after WGIA-013 commit `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`
+- **Sensitivity**: non-sensitive
+- **Retention / Expiry**: Retain as Spec 054 terminal closure evidence; refresh only if the Current audit identity, protected retired baseline, or canonical owner state changes.
+- **Next Owner**: primary agent for the approved local fast-forward merge and feature worktree/branch cleanup.
+
+#### Progress
+
+Reconciled WGIA-012 as done at `dcc0a0e9` and WGIA-013 as a committed
+no-deletion result at `4e4adcf3`. WGIA-014 closes the reciprocal Spec, Plan,
+Task, three collection index rows, and typed standalone relation as `done`
+after whole-branch reviews approved the final repository-static tree. The
+ten-file Current audit pack and all nine member bodies remain unchanged.
+
+#### Memory
+
+The terminal active-corpus blocker was test expectation drift, not production
+eligibility drift. Four standalone-lineage negative cases had raised the named
+self-test set from 53 to 57; changing only the expected count preserves the
+58-case CLI result and the production 110/12/98/2 eligibility projection.
+Evidence-gated cleanup remains fail-closed: 15 candidates still have live
+consumers, so `Delete=0` is a valid reviewed terminal result.
+
+#### Evidence
+
+- RED: the focused test failed with `AssertionError: 57 != 53`.
+- GREEN: focused and full eligibility unit tests pass; CLI self-test reports 58
+  cases and production reports 110 candidates, 12 eligible, 98 deferred, and
+  two controls.
+- Terminal shape: ten pack files, 30 request rows, one sole Current audit, one
+  protected retired audit, 15 `Integrate` rows, and no Delete row.
+- Protected boundaries: no current or retired pack member body, Stage 98, RIA
+  baseline/projection, Spec 052 WORK-001, provider, hosted, remote, or live
+  state changed. Deeper evidence remains `DEFER`.
+- Fresh implementation reviews: Python/quality and specification/content are
+  Approved with no Critical or Important finding on the exact four-file
+  in-review diff.
+- Whole-branch security RED: seven exact repo-script auto-allow commands were
+  still mutable command trampolines even without wildcards. GREEN removes all
+  repo-script auto-allows, retains seven fixed read-only Git metadata commands,
+  and adds a focused no-trampoline regression. Provider tests pass 32/32 plus
+  self/production/evidence, Ruff, compile, and diff checks; security and Python
+  re-review are Approved with no remaining Critical or Important finding.
+- Terminal closure-authority RED/GREEN: the first exact `done` full gate failed
+  `CLOSURE-AUTHORITY-SCOPE` on Spec 054. The regression first expected the exact
+  054 path and failed against the seven-path production set; GREEN adds only
+  that path to the later done-Spec authority set. The focused test, 49-test
+  closure class, 25-case self-test, and production final frontier pass.
+- Exact terminal aggregate: strict registry 502/0/0, Markdown violations 0,
+  strict links, settled RIA, provider 32/32, eligibility 7/7 and 110/12/98/2,
+  affected 858/22/22/4, complete repository quality gate, and full harness all
+  pass on the staged `done` tree.
+- Plain staged and all-files pre-commit pass. Fresh whole-branch correctness,
+  security, and coverage reviews plus final Python/quality and lifecycle
+  consistency re-reviews are Approved with no remaining Critical or Important
+  finding; independent replay passes 126 focused tests, affected and staged
+  lanes for 14 paths, the complete gate, and the harness.
+- Completion boundary: the primary agent records exact-tree terminal aggregate,
+  harness, all-files, and fresh whole-branch review results before the closure
+  commit; this entry does not preclaim a later commit hash.
+
+#### Handoff
+
+Use the exact final staged terminal-gate evidence to create
+`docs: close workspace governance audit`, then proceed to the already approved
+local fast-forward merge and clean only this feature branch/worktree. Do not
+push or modify unrelated worktrees.
+
 ### 2026-08-09 - WGIA-013 no-deletion revalidation
 
 #### Metadata

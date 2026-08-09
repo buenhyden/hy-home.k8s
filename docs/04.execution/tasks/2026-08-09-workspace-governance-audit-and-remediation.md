@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Governance Audit and Remediation'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-09
 ---
@@ -49,8 +49,8 @@ limitations, logical commits, and unresolved blockers.
 | WGIA-010 | VAL-WGA-003, VAL-WGA-004, VAL-WGA-007, VAL-WGA-012 | Correct accepted governance, documentation, and knowledge owner conflicts | assigned worker | Done | Root routing and four-surface classification are corrected; all six LLM-WIKI inputs are reviewed and generated metadata is refreshed; DOC-G1/G5 integration records no duplicate delta and leaves WORK-013 queued. | [Focused evidence](#wgia-010-focused-evidence); deterministic RED/GREEN, producer-only generated diff, canonical-owner/no-delta evidence, fresh specification/content plus quality reviews Approved, and exact staged complete repository quality gate PASS. |
 | WGIA-011 | VAL-WGA-005, VAL-WGA-006, VAL-WGA-008, VAL-WGA-009, VAL-WGA-012 | Correct accepted delivery, harness, agent, and security owner conflicts | assigned worker | Done | The exact 47 = 41 + 6 script inventory and tracked Claude approval boundaries are corrected in two reviewable owner families; provider-runtime and live evidence remain `DEFER`. | [Focused evidence](#wgia-011-focused-evidence); exact RED/GREEN probes, 32 provider tests, focused production validators, aggregate embedded contract, strict documents/diff/Stage 98, fresh specification/content, Python/quality, and security reviews Approved, and exact staged complete repository quality gate PASS. |
 | WGIA-012 | VAL-WGA-011 | Cut over the sole Current audit and mutable consumers atomically | assigned worker | Done | The exact nine-member 2026-08-09 pack is the sole Current audit; the six-member 2026-07-11 pack is a source-registered and final-byte-protected historical baseline. | [Focused evidence](#wgia-012-focused-evidence); RIA/profile/index/link RED/GREEN, closed audit settlement, no `completeBody`, fresh isolated exact-index validation, fresh specification/content plus Python/quality reviews Approved after clean fix rounds 1-2, and commit `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`. |
-| WGIA-013 | VAL-WGA-010 | Delete only proof-complete candidate artifacts | assigned worker | In Review | Current-HEAD proof fails closed to no deletion: exactly 15 unique tracked rows remain `Integrate`, `Delete=0`, every row has a tracked external live consumer and surviving owner, and Spec 052 `WORK-001` remains queued/unexecuted. No file, index, or Stage 98 path changed. | [Focused evidence](#wgia-013-focused-evidence); 15 recoverable source commits, 114 tracked consumer selectors, 15 external-consumer rows, WORK-001 zero of five steps complete, focused strict documents/links and diff checks. |
-| WGIA-014 | VAL-WGA-001–012 | Re-audit, close criteria, run terminal QA/reviews, clean residue, and hand off branch finishing | primary agent | Queued | Not executed. | Criterion walk, complete gates, whole-branch review, logical commit ledger, done lifecycle. |
+| WGIA-013 | VAL-WGA-010 | Delete only proof-complete candidate artifacts | assigned worker | Done | Current-HEAD proof failed closed to no deletion: exactly 15 unique tracked rows remain `Integrate`, `Delete=0`, every row has a tracked external live consumer and surviving owner, and Spec 052 `WORK-001` remains queued/unexecuted. No file, index, or Stage 98 path changed. | [Focused evidence](#wgia-013-focused-evidence); 15 recoverable source commits, 114 tracked consumer selectors, 15 external-consumer rows, WORK-001 zero of five steps complete, focused strict documents/links and diff checks; commit `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`. |
+| WGIA-014 | VAL-WGA-001–012 | Re-audit, close criteria, run terminal QA/reviews, clean residue, and hand off branch finishing | primary agent | Done | The repository-static criteria, exact pack/request shape, Current and retired audit identities, no-delete disposition, protected-scope scan, logical history, focused active-corpus repair, whole-branch review, and reciprocal terminal lifecycle are complete. | [Terminal evidence](#wgia-014-terminal-evidence); focused active-corpus RED/GREEN, exact staged terminal gates, fresh correctness/security/coverage reviews, protected-scope and residue checks, and reciprocal `done` transition close the repository-static program. Deeper lanes remain `DEFER`. |
 
 ## Approval and Safety Boundaries
 
@@ -82,14 +82,17 @@ limitations, logical commits, and unresolved blockers.
 
 ## Verification Summary
 
-WGIA-000 through WGIA-012 are complete. WGIA-012's atomic Current-pointer
+WGIA-000 through WGIA-013 are complete. WGIA-012's atomic Current-pointer
 implementation is committed: the 2026-08-09 audit is the sole
 Current owner and the 2026-07-11 audit is protected historical evidence in the
 same exact index state at commit
-`dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`. WGIA-013 is `In Review` with a
-no-deletion result because all 15 candidate rows remain `Integrate` with live
-consumers and Spec 052 `WORK-001` remains queued. Hosted, provider-runtime,
-remote, credential-bearing, and live evidence remains `DEFER`.
+`dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`. WGIA-013's reviewed no-deletion
+result is committed at `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae` because all
+15 candidate rows remain `Integrate` with live consumers and Spec 052
+`WORK-001` remains queued. WGIA-014 is `In Review`; the reciprocal lifecycle
+stays active until the primary agent completes exact-tree terminal gates and
+whole-branch review. Hosted, provider-runtime, remote, credential-bearing, and
+live evidence remains `DEFER`.
 
 WGIA-001 is complete as a bounded draft successor foundation. Its conservative
 `Partial` findings establish source and owner inventories; focused, staged,
@@ -924,6 +927,88 @@ and quality reviews are Approved with no Critical or Important finding.
   test count blocker remain with the active-corpus owner and existing Spec 052
   `WORK-001`; WGIA-014 owns terminal validation after the evidence commit.
 
+### WGIA-014 Terminal Evidence
+
+- **Bounded repair**: before the one-line test edit, the focused active-corpus
+  eligibility test failed with exact `AssertionError: 57 != 53`. The validator
+  now names four additional terminal-standalone negative cases, so the test
+  expectation changed from 53 to 57 without changing production behavior.
+  The focused test and full test module pass; CLI self-test reports 58 cases
+  (57 named cases plus its wrapper) and production reports `candidates=110
+  eligible=12 defer=98 controls=2`.
+- **VAL-WGA-001**: the Current pack remains exactly ten tracked files and its
+  README retains exactly 30 sequential request rows. No pack member body was
+  edited during closure.
+- **VAL-WGA-002**: the nine report bodies retain the reviewed closed finding
+  fields, verdicts, evidence depths, exact selectors, and blockers established
+  by WGIA-001–009; closure adds no competing finding or policy owner.
+- **VAL-WGA-003–009**: the final tree retains the reviewed purpose/governance,
+  SDLC/documentation, CI/QA, harness/loop, knowledge/memory, agent/model, and
+  security evidence plus their canonical-owner corrections in commits
+  `a59177ca` through `e09a0b97`. Repository-static results remain separate from
+  hosted, provider-runtime, credential-bearing, remote, and live `DEFER` rows.
+- **VAL-WGA-010**: commit `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`
+  records the reviewed no-deletion result: 15 unique `Integrate` rows,
+  `Delete=0`, 114 tracked consumer selectors, 15 external-consumer rows, and
+  Spec 052 `WORK-001` still queued with zero of five execution steps complete.
+- **VAL-WGA-011**: commit
+  `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de` owns the atomic cutover. The
+  2026-08-09 pack remains the sole Current nine-member report set; the six-
+  member 2026-07-11 pack remains source-registered and final-byte protected.
+  Stage 98 and both audit-pack bodies have zero closure diff.
+- **VAL-WGA-012**: the branch preserves 17 logical pre-closure commits from
+  design `d9ffa12a` through the no-deletion result `4e4adcf3`. The terminal
+  in-review scope changes only the focused test, Plan, Task, durable progress,
+  and ignored task evidence. Spec/Plan/Task frontmatter, the three indexes, and
+  the standalone relation remain atomically `active`. Strict registry,
+  profiles, links, RIA, LLM-WIKI, active-corpus, diff, protected-scope,
+  terminal aggregate, harness, all-files, and fresh whole-branch review
+  evidence are required before the later logical
+  `docs: close workspace governance audit` commit.
+- **Residue and boundaries**: tracked scratch-name and protected-scope scans
+  are empty. Current audit member bodies, the retired audit body, Stage 98,
+  RIA data/projection/baseline, Spec 052 `WORK-001`, provider state, and live
+  resources are unchanged. Direct production RIA stops at its known
+  `RIA-DUPLICATE` dirty-progress comparison boundary because this Task updates
+  durable progress before commit; it reports no Current-pack or baseline
+  mutation. The primary exact-tree/staged and clean-tree lanes own the terminal
+  RIA result. Deeper evidence lanes remain `DEFER`.
+- **Handoff**: after terminal gates and fresh correctness/security/coverage
+  review approve this exact tree with no Critical or Important finding, the
+  primary agent owns the closure commit and branch-finishing workflow.
+- **Implementation reviews**: fresh Python/quality and specification/content
+  reviews are Approved with no Critical or Important finding on the exact
+  four-file in-review diff. Whole-branch terminal review remains pending.
+- **Whole-branch security fix**: the first review found one Important command-
+  trampoline risk: seven exact auto-allowed commands invoked repo-mutable
+  scripts. RED proved an allow entry did not satisfy the immutable Git-only
+  boundary. GREEN removes all repo-script auto-allows, retains exactly seven
+  fixed read-only Git metadata commands, and adds a no-trampoline regression.
+  The provider suite passes 32/32 plus config/evidence self/production, Ruff,
+  Python compile, and diff checks. The complete 62-entry deny tuple and native
+  runtime `DEFER` boundary remain unchanged. Fresh security and Python
+  re-reviews are Approved with no remaining Critical or Important finding.
+- **Terminal closure-authority RED/GREEN**: the first exact `done` repository
+  gate failed with `CLOSURE-AUTHORITY-SCOPE` on Spec 054. A focused test first
+  expanded the expected later-spec set and failed against the seven-path
+  production constant. GREEN adds only the exact Spec 054 path to
+  `POST_CLOSURE_SPEC_AUTHORITY_PATHS`; the focused test, 49-test closure class,
+  25-case self-test, and production final frontier pass with
+  `active_controls=0/0`, `terminal_controls=6/3`, `terminal_specs=3`, and
+  guards `13/29`.
+- **Exact terminal aggregate**: strict registry reports 502 paths with zero
+  uncovered or ambiguous, Markdown profiles report zero violations, strict
+  links and settled RIA pass, provider tests pass 32/32, eligibility tests pass
+  7/7, affected surfaces report 858 paths and 22/22 coverage, and the complete
+  repository quality gate plus full harness pass on the staged `done` tree.
+- **Terminal review and pre-commit**: plain staged pre-commit and all-files
+  pre-commit pass, including strict repository quality, detect-secrets,
+  Markdown, shell, Actions, and Kubernetes hooks. Fresh whole-branch
+  correctness, security, and coverage reviews plus the final Python/quality
+  and lifecycle consistency re-reviews are Approved with no remaining
+  Critical or Important finding. Independent replay passes 126 focused tests,
+  affected and staged lanes for 14 paths, the full gate, and the harness.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -943,5 +1028,5 @@ and quality reviews are Approved with no Critical or Important finding.
 | N/A — WGIA-010 shares the Plan and Spec sources above | Done. | Deterministic RED/GREEN and producer-only generation pass; three RIA generator tests, governance closure, RIA self-test, strict registry/profile/link, archive, DOC and RIA-owner no-delta, diff, and Stage 98 pass. The exact staged complete repository quality gate passes the RIA and aggregate boundary; fresh specification/content and quality reviews are Approved. |
 | N/A — WGIA-011 shares the Plan and Spec sources above | Done. | Script inventory RED/GREEN reaches exact 47/41/6 with zero missing names and exact-AST negative probes; Claude permission RED/GREEN removes seven broad allows and enforces exact no-wildcard/no-alternate-root commands plus the focused-owned complete 62-entry deny tuple. Thirty-two focused provider tests, provider self/production, harness contract/semantics/currentness, syntax, the embedded aggregate contract, and exact staged complete repository quality gate pass. Fresh specification/content, Python/quality, and security reviews are Approved; provider-runtime/hosted/remote/live evidence stays `DEFER`. |
 | N/A — WGIA-012 shares the Plan and Spec sources above | Done. | Exact sole Current, 9-member registry, retired 6-member source/final-byte guard, closed 6-to-9 settlement, literal projections, and RIA 94/94 pass. The final exact index is 17 paths after Approved formatter/security review of exactly `.secrets.baseline` and the WERPC Plan additions; affected, staged, plain pre-commit, production RIA settled, LLM-WIKI, archive, direct repository gate, full harness, final all-files, formatter-review, and rerun pass. Fresh specification/content and Python/quality reviews are Approved after clean fix rounds 1-2 with no remaining Critical/Important; atomic commit `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`. Hosted/remote/live remain `DEFER`. |
-| N/A — WGIA-013 shares the Plan and Spec sources above | In Review: no deletion. | Exact Current-HEAD proof reports 15 unique tracked `Integrate` rows, `Delete=0`, 114 tracked consumer selectors, an external live consumer and surviving owner for every row, 15 recoverable source commits, and Spec 052 `WORK-001` queued/unexecuted with zero of five steps complete. No deletion simulation, removal, post-delete claim, empty deletion commit, or Stage 98 change occurred; fresh review is Approved with no Critical or Important finding. |
-| N/A — WGIA-014 shares the Plan and Spec sources above | Queued. | Terminal criterion, QA, review, residue, and closure evidence will be recorded here. |
+| N/A — WGIA-013 shares the Plan and Spec sources above | Done: no deletion. | Exact Current-HEAD proof reports 15 unique tracked `Integrate` rows, `Delete=0`, 114 tracked consumer selectors, an external live consumer and surviving owner for every row, 15 recoverable source commits, and Spec 052 `WORK-001` queued/unexecuted with zero of five steps complete. No deletion simulation, removal, post-delete claim, empty deletion commit, or Stage 98 change occurred; fresh review is Approved with no Critical or Important finding; commit `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`. |
+| N/A — WGIA-014 shares the Plan and Spec sources above | Done. | [Terminal evidence](#wgia-014-terminal-evidence) records the criterion closure, focused 53-to-57 RED/GREEN, exact staged terminal gates, whole-branch review approval, protected-scope and residue checks, logical history, reciprocal `done` lifecycle, and deeper-lane `DEFER` state. |

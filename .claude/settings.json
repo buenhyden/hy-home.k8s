@@ -8,14 +8,7 @@
       "Bash(git diff --name-only)",
       "Bash(git diff --cached --name-only)",
       "Bash(git rev-parse HEAD)",
-      "Bash(git ls-files)",
-      "Bash(bash scripts/validate-repo-quality-gates.sh .)",
-      "Bash(bash scripts/generate-llm-wiki-index.sh --check)",
-      "Bash(bash scripts/validate-k8s-manifests.sh .)",
-      "Bash(bash scripts/validate-gitops-structure.sh)",
-      "Bash(bash scripts/check-secret-handling.sh .)",
-      "Bash(bash scripts/validate-policy-gates.sh .)",
-      "Bash(bash scripts/validate-harness.sh)"
+      "Bash(git ls-files)"
     ],
     "deny": [
       "Read(./.env)",
