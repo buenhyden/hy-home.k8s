@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-10
 ---
 
 # Document Taxonomy Consolidation Technical Specification (Spec)
@@ -18,6 +18,14 @@ and the human-approved direction recorded in accepted
 It replaces the earlier Spec 052 direction that would have renumbered
 `05.operations` and deleted several validator families without current
 consumer proof.
+
+Active
+[ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
+records the later human-approved successor for terminal requirement and
+architecture forms, global artifact identity, stable Stage 98 layout, and the
+exact `scripts/` disposition. ADR-0023 remains the accepted PRD-008 registry
+projection until WORK-105 performs atomic lifecycle acceptance after the 82
+reviewed moves.
 
 The terminal result co-locates each retained Spec/Plan/Task work unit in Stage
 03, removes the Stage 04 execution tree, preserves Stage 05, excludes a Release
@@ -36,11 +44,13 @@ projections, document and harness contracts, templates, scripts, tests,
 fixtures, generated documentation outputs, indexes, and cross-links affected
 by the migration. Git history may be read to establish provenance.
 
-Existing `docs/98.archive/**` envelopes and payloads are read-only. New unique
-history may be appended through the existing ArchiveEnvelope mechanism and
-indexed, but no existing digest-sealed record may change. Dated Stage 90
-observation bodies retain their historical meaning; only contract-permitted
-navigation or explicit annotations may change.
+Existing `docs/98.archive/**` records remain read-only during WORK-104 and
+until the terminal schema-versioned migration ledger, validators, and recovery
+proof are activated together. That later cutover may transform only the outer
+wrapper/path while preserving payload bytes, digest, `source_commit`,
+`source_blob`, and the old ArchiveEnvelope Git blob. Dated Stage 90 observation
+bodies retain their historical meaning; only contract-permitted navigation or
+explicit annotations may change.
 
 The implementation must not renumber Stage 05 or any lifecycle identifier,
 create a Release family, create tutorial/explanation families, change platform
@@ -58,11 +68,12 @@ under `docs/04.execution/`.
 
 ### DTC-2 Stable identity and date exceptions
 
-Mutable PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, and Runbook filenames
-use stable identifiers or slugs and carry authoring dates in frontmatter.
-Dates remain in paths only for dated Stage 90 observation/snapshot identity,
-real Incident/Postmortem identity, and Stage 98 historical mirrors. The
-registry owns the exact path classes and exceptions.
+Mutable PRD, SRS, Interface Requirement, AD, ADR, Spec, Plan, Task, Guide,
+Policy, and Runbook filenames use stable identifiers or slugs and carry
+authoring dates in frontmatter. Dates remain in terminal paths only for dated
+Stage 90 observation/snapshot identity and real Incident/Postmortem identity.
+Terminal Stage 98 paths contain no date or year component. The registry owns
+the exact path classes and exceptions after the terminal cutover.
 
 ### DTC-3 Stage and document-family boundary
 
@@ -85,7 +96,9 @@ Existing identifiers are unchanged. Program and standalone lineage remains in
 the closed registry relations and reciprocal lifecycle tables; no competing
 frontmatter lineage keys are added. The unrelated ADR-0021 association was
 corrected atomically when reviewed ADR-0023 was accepted; the registry and
-immutable self-test projection now require ADR-0023.
+immutable self-test projection continue to require ADR-0023 in WORK-104.
+Active ADR-0024 is a successor design only; WORK-105 owns its atomic acceptance
+and program-decision projection.
 
 ### DTC-6 Route transition
 
@@ -101,6 +114,12 @@ has exactly one reviewed disposition: `move-current`, `archive-unique`,
 `retain-observation`, `merge-successor`, `delete-redundant`, or
 `retain-contract`. Deletion requires a named successor or reproducibility,
 zero live consumers, and no unique negative fixture or rule.
+
+For the terminal Stage 98 cutover, every migration ledger row contains exactly
+`legacy_path`, `stable_path`, `artifact_id`, `action`, `replacement`,
+`source_commit`, and `reason`. `action` is closed to `moved`, `merged`,
+`replaced`, or `deleted`; provenance fields may be additive. Merged or deleted
+artifacts require migration or tombstone evidence.
 
 ### DTC-8 Agent-governance control
 
@@ -156,6 +175,59 @@ detect-secrets false-positive/baseline drift, and Markdown heading failure
 without disabling the corresponding checks. Every logical commit records
 focused and aggregate results; terminal acceptance requires all-files PASS.
 
+### DTC-13 Terminal document forms
+
+Terminal active requirement forms are PRD, optional SRS, and optional
+Interface Requirement. Terminal active architecture forms are Architecture
+Description (AD) and ADR. AD uses profile/type `sdlc/ad` at
+`docs/02.architecture/descriptions/ad-<id>-<slug>.md`. The later conversion
+preserves numeric identity, so ARD-0011 becomes AD-0011. ARD and RFC have no
+terminal active profile, template, route, relationship, or navigation;
+historical payload text may retain both terms.
+
+### DTC-14 Global artifact identity
+
+Every governed terminal artifact has exactly one globally unique, type-valid
+`artifact_id`. Existing numeric identities remain unchanged. Each path-bound
+stable ID equals its frontmatter identity, and terminal validators reject
+duplicates or a value outside the owning profile's closed typed pattern.
+
+### DTC-15 Stable terminal Stage 98
+
+Terminal Stage 98 contains `README.md`, stable `changes/chg-####-<slug>/`
+directories with `plan.md` and/or `task.md`, stage-typed tombstone collections,
+and `migrations/mig-####-<slug>.md` control records. The 93 historical records
+map bijectively: 76 execution records become 41 change directories (35 pairs,
+two Plan-only, four Task-only), while 17 other records become tombstones in
+the exact requirements/architecture/specs/operations split `3/8/4/2`.
+Migration documents are counted separately from those 93 records.
+
+The cutover preserves payload bytes, `source_commit`, `source_blob`, content
+digest, and the old ArchiveEnvelope Git blob. Recovery must work from the
+terminal record and the old Git object/path. Active documents link only to
+`docs/98.archive/README.md`; no active document links directly to an individual
+Stage 98 record.
+
+### DTC-16 Exact script closure
+
+The current 50 tracked `scripts/` assets close to 47 through exactly three
+deletions. WORK-112 migrates orchestration consumers, reconciles the full
+50-row disposition ledger and `scripts/README.md`, then removes only
+`validate-harness.sh`, leaving 49 assets. WORK-114 removes only
+`document-taxonomy-migration.json` and `migrate-document-work-units.py` plus the
+tool's external test after terminal cutover, leaving 39 Python, seven shell,
+and one README asset. The other 47 assets retain distinct rule, argument,
+diagnostic, negative-fixture, evidence, or manual-recovery responsibilities.
+
+ISO/IEC/IEEE 42010:2022 defines Architecture Description
+structure/expression but not recording media; ISO/IEC/IEEE 29148:2018 defines
+requirements-engineering processes and information items but not the local
+PRD/SRS/Interface Requirement split; ISO/IEC/IEEE 15289:2019 supports an
+organization-selected information-item presentation/repository model. The
+official-source links and precise claim boundaries are recorded in ADR-0024.
+None of these standards mandates the local route, filename, ID, pairing,
+ledger, or script disposition.
+
 ## Core Design
 
 ### Tranche dependency graph
@@ -164,7 +236,9 @@ focused and aggregate results; terminal acceptance requires all-files PASS.
 approved design and recorded baseline
   -> transition fixtures and route support
   -> explicit work-unit mapping and git moves
+  -> ADR-0024 atomic acceptance and program-decision projection
   -> unique-history archive / redundant-material disposition
+  -> global artifact identity and stable Stage 98 ledger cutover
   -> Stage 00 and Stage 99 authority consolidation
   -> harness-contract and provider-projection alignment
   -> validator orchestration and generated/memory cleanup
@@ -225,12 +299,15 @@ the audit compares rule owner, accepted arguments, input domain, exit behavior,
 diagnostics, negative fixtures, lane, and downstream evidence.
 
 `validate-repo-quality-gates.sh` is retained. Pre-commit and affected selection
-use one declared orchestration path. `validate-harness.sh` is a retire
-candidate after root README, PR template, tests, scripts index, and current
-work-unit consumers migrate. Active-corpus validators remain until their
-current rule and fixture dispositions are proved; historical lifecycle checks
-may be quarantined from the hot path but are not deleted without the same
-proof.
+use one declared orchestration path. WORK-112 removes only
+`validate-harness.sh` after root README, PR template, tests, scripts index, and
+current work-unit consumers migrate, reducing the inventory from 50 to 49.
+WORK-114 removes only the transition manifest and migration tool after terminal
+cutover, reducing it to exactly 47 (39 Python, seven shell, one README).
+Active-corpus validators remain because their current rules and negative
+fixtures are distinct. Historical lifecycle checks may be quarantined from the
+hot path but are not deleted without the same proof. Similar filenames never
+establish semantic duplication.
 
 ### One-time and generated cleanup
 
@@ -273,6 +350,25 @@ unique rule/fixture count, successor or archive target, reviewer, and result.
 Generated output additionally records generator, reproducibility command, and
 whether the terminal output is tracked or ignored.
 
+The terminal Stage 98 migration ledger is schema-versioned and separate from
+that working disposition audit. Its required row is exactly:
+
+```json
+{
+  "legacy_path": "docs/98.archive/<legacy-path>",
+  "stable_path": "docs/98.archive/<stable-path>",
+  "artifact_id": "<typed-stable-id>",
+  "action": "moved|merged|replaced|deleted",
+  "replacement": "<artifact-id-or-null>",
+  "source_commit": "<git-commit>",
+  "reason": "<reviewed-reason>"
+}
+```
+
+Provenance fields may be added, but none of the seven required fields may be
+renamed or omitted. The ledger is a 93-record historical bijection; migration
+control documents are outside that count.
+
 ### Harness data
 
 `agentSystems` references existing role, permission, evidence, evaluation, and
@@ -295,10 +391,12 @@ observed identity remains `DEFER`.
 
 ### Archive and memory
 
-New ArchiveEnvelope payloads preserve exact source blob bytes and source
-commits. Existing envelopes remain unchanged. Progress rotation uses the same
-append-only mechanism; the live ledger contains only the approved current
-window after recovery validation passes.
+Terminal archive cutover preserves every original payload byte, source commit,
+source blob, and content digest while recording the old ArchiveEnvelope Git
+blob before an outer-wrapper/path transformation. The schema-versioned ledger
+provides the reversible old-to-stable path mapping. Progress rotation uses the
+approved terminal tombstone/change mechanism; the live ledger contains only
+the approved current window after recovery validation passes.
 
 ## Interfaces & Data Structures
 
@@ -345,7 +443,9 @@ inventory.
 | Transition produces both legacy and target active owners | Fail route validation; do not commit. |
 | Plan lacks a sibling Spec, or Task lacks Spec/Plan | Fail work-unit validation with the missing sibling. |
 | A date-prefixed mutable file has no registered identity exception | Fail profile validation and name the matched family. |
-| Any existing Stage 98 path changes | Stop the tranche; separate new archive/index additions from existing records. |
+| An existing Stage 98 path changes outside the reviewed schema-versioned ledger or before recovery proof | Stop before writes and report the unowned transformation. |
+| A Stage 98 payload, digest, `source_commit`, or `source_blob` changes during cutover | Stop; wrapper/path migration cannot alter historical payload or provenance. |
+| A terminal `artifact_id` is duplicate, mistyped, or differs from its path ID | Fail terminal identity validation and report both owners. |
 | A Stage 90 observation body would be rewritten | Stop and require retain/annotation/merge disposition review. |
 | A deleted script still has a consumer or unique negative fixture | Retain it and record `retain-contract`. |
 | A static record claims provider enforcement or action execution | Fail evidence non-promotion validation. |
@@ -369,16 +469,17 @@ green state. Never use a broad destructive reset. Contract consolidation that
 cannot preserve a rule or fixture is deferred as `retain-contract`, not forced
 through for line-count reduction.
 
-Human escalation is required for any proposed edit to an existing archive
-record, uncertain historical disposition, removal of a unique rule or fixture,
-unapproved lifecycle identifier change, new document family, evidence-class
-promotion, credential or secret access, external write, remote action, or live
-mutation.
+Human escalation is required for any unledgered edit to an existing archive
+record, payload/provenance mutation, uncertain historical disposition, removal
+of a unique rule or fixture, unapproved lifecycle identifier change, new
+document family, evidence-class promotion, credential or secret access,
+external write, remote action, or live mutation.
 
 ## Verification Commands
 
 ```bash
 # Document profile, route, body, and link contracts.
+python3 scripts/migrate-document-work-units.py --root . --manifest scripts/document-taxonomy-migration.json --check
 python3 scripts/validate-document-contract-registry.py --root . --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
@@ -412,16 +513,20 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | --- | --- | --- |
 | VAL-WDTC-001 | Every retained Spec/Plan/Task resolves in one Stage 03 work unit and no live Stage 04 execution path remains. | Reviewed mapping, terminal inventory, locality and route negative fixtures. |
 | VAL-WDTC-002 | Stage 05 remains stable and no Release-family route or artifact exists. | Path inventory and focused registry/residue search. |
-| VAL-WDTC-003 | Mutable authored filenames are date-free and every date-identity exception is registered. | Profile inventory, exception fixtures, and frontmatter preservation diff. |
+| VAL-WDTC-003 | Mutable authored filenames are date-free, terminal Stage 98 has no date/year path, and every remaining date-identity exception is registered. | Profile inventory, exception fixtures, and frontmatter preservation diff. |
 | VAL-WDTC-004 | PRD-008 lineage uses ADR-0023 and all active relations are reciprocal without renumbering. | Registry, strict links/owners, and lifecycle traceability results. |
 | VAL-WDTC-005 | Stage 00/99 prose and the document registry have disjoint human and machine authority. | Rule-to-owner ledger, duplicate-rule scan, profile/template validation. |
-| VAL-WDTC-006 | Every removed path has a reviewed disposition and existing Stage 98 records are unchanged. | Disposition ledger, source blobs, archive validation, zero existing-archive diff. |
+| VAL-WDTC-006 | Every removed path has a reviewed disposition; Stage 98 payload/provenance is immutable and any outer-wrapper/path migration is ledger-backed. | Disposition ledger, source blobs, archive validation, and old-object recovery proof. |
 | VAL-WDTC-007 | Validator/script reduction removes no live consumer, rule, or unique negative fixture. | Consumer graph, semantic comparison, fixture mutation results, declared/executable parity. |
 | VAL-WDTC-008 | Harness systems record risk, trust, oversight, approval, trace, evaluation, and provenance with non-promotable evidence. | Schema positive/negative fixtures and agent-governance semantic validation. |
 | VAL-WDTC-009 | Progress and generated-output cleanup is recoverable and leaves no unowned tracked artifact. | Archive recovery, consumer/reproducibility checks, ignored-path and registry results. |
 | VAL-WDTC-010 | The three pre-change validation failures and all migration regressions are closed. | Aggregate and all-files PASS with explicit secret-finding adjudication. |
 | VAL-WDTC-011 | Specs 047–051 remain unexecuted during migration and have a valid consolidated resumption route. | Status, task evidence, and final path inventory. |
 | VAL-WDTC-012 | No provider, hosted, remote, credential-bearing, or live result is claimed or performed. | Handoff evidence-class report and change inventory. |
+| VAL-WDTC-013 | Terminal active forms are PRD, optional SRS, optional Interface Requirement, AD (`sdlc/ad`), and ADR; ARD/RFC have no active terminal surface and ARD-0011 becomes AD-0011. | Terminal registry/profile/template/route/navigation inventory and preserved-ID mapping. |
+| VAL-WDTC-014 | Every governed terminal artifact has one globally unique, type-valid `artifact_id` equal to its path-bound stable ID. | Global duplicate scan, typed-pattern negatives, and path/frontmatter equality fixtures. |
+| VAL-WDTC-015 | The 93 historical Stage 98 records map bijectively to 41 changes plus 17 tombstones with exact `35/2/4` execution grouping and `3/8/4/2` tombstone distribution. | Schema-versioned seven-field ledger, no-date/year scan, payload/provenance digests, old-envelope blob proof, and dual recovery test. |
+| VAL-WDTC-016 | The exact tracked script closure is `50 -> 49 -> 47`, deleting only `validate-harness.sh` in WORK-112 and the transition JSON/tool in WORK-114. | Full 50-row disposition ledger, consumer/argument/diagnostic/fixture/evidence/recovery comparison, scripts README parity, and exact language-count census. |
 
 ## Traceability
 
@@ -431,6 +536,8 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
 - **Accepted decision and PRD-008 lineage authority**:
   [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
+- **Active successor design pending WORK-105 atomic acceptance/projection**:
+  [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Approved implementation Plan and Task, to move during transition**:
   [legacy Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
   and [legacy Task](../../04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md)
@@ -456,3 +563,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | N/A — REQ-WDTC-016 shares the PRD source above. | VAL-WDTC-010 | Aggregate and all-files PASS prove baseline and regression closure. |
 | N/A — REQ-WDTC-017 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
 | N/A — REQ-WDTC-018 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
+| N/A — REQ-WDTC-019 shares the PRD source above. | VAL-WDTC-013 | Terminal profile, form, route, relationship, navigation, and preserved-ID evidence prove the approved document taxonomy. |
+| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | Global uniqueness, typed-ID, and path/frontmatter fixtures prove artifact identity. |
+| N/A — REQ-WDTC-021 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
+| N/A — REQ-WDTC-022 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |

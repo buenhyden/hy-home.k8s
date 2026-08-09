@@ -8,6 +8,94 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-10 - WORK-104 terminal taxonomy amendment
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: architecture
+- **Status**: complete
+- **Tags**: #sdlc #document-governance #artifact-identity #archive
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
+- **Provenance**: WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f` and the human-approved task brief.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WDTC terminal closure and PRD-008 disposition.
+- **Next Owner**: WORK-105 — accept ADR-0024 and update the PRD-008 program-decision projection atomically after the reviewed 82 moves.
+
+#### Progress
+
+Recorded active ADR-0024 as the human-approved successor design while keeping
+accepted ADR-0023 as the current program-decision registry projection. PRD-008
+and Spec 052 now define terminal PRD, optional SRS, optional Interface
+Requirement, AD, and ADR forms, `sdlc/ad`, numeric preservation from ARD-0011
+to AD-0011, global `artifact_id`, the stable Stage 98 topology, and the exact
+`scripts/` closure. The ADR index exposes both the accepted predecessor and
+active successor state. WORK-104 changes no route, profile, template, registry,
+manifest, Stage 04 execution record, Stage 98 record, or script.
+
+#### Memory
+
+Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
+rewrite. The 93 historical records map to 41 change directories for the 76
+execution records (35 pairs, two Plan-only, four Task-only) and 17 tombstones
+distributed `3/8/4/2`; migration documents are separate control records. The
+cutover retains payload bytes, digest, `source_commit`, `source_blob`, and the
+old ArchiveEnvelope Git blob, and must support recovery from both the terminal
+record and old Git object/path. Ledger actions are closed to `moved`, `merged`,
+`replaced`, and `deleted`.
+
+The terminal script inventory is not a filename-similarity reduction. WORK-112
+deletes only `validate-harness.sh` after orchestration/consumer migration and
+leaves 49 assets. WORK-114 deletes only the transition JSON/tool after cutover
+and leaves exactly 47 assets: 39 Python, seven shell, and one README. The other
+47 retain distinct rule, argument, diagnostic, negative-fixture, evidence, or
+manual-recovery semantics.
+
+ISO/IEC/IEEE 42010:2022 bounds Architecture Description structure/expression,
+29148:2018 bounds requirements engineering and information items, and
+15289:2019 bounds lifecycle information-item purpose/content and permits an
+organization-selected presentation model. None mandates this repository's
+paths, filenames, stable IDs, form split, pairing, ledger, or script count.
+
+#### Evidence
+
+- The docs-only baseline and the authored five-file design both passed the
+  registry self-test, strict transition registry, strict Markdown-profile, and
+  strict link/owner checks. The registry result remained 132 self-test cases,
+  65 profiles, 30 templates, and 490 strict-transition paths with zero
+  uncovered or ambiguous routes.
+- The migration check remained exact at `sources=132`, `moves=82`, and
+  `archives=50`, pinned to source commit
+  `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+- Git blob identities remained
+  `d82466f99b093dc39092a3f36d1c55452a45a7ed` for the manifest,
+  `2c354aebf8578a9079d511f0f5a7783e7b0b8779` for the frozen Plan, and
+  `a066fc3460de0072a5a72c2822086ac1b6135c1c` for the frozen Task.
+- The tracked script census remained exact at 50: 40 Python, eight shell, one
+  JSON, and one README. Stage 98, the manifest/tool, registry/templates, and
+  frozen Plan/Task had zero diff.
+- RTK 0.34.3 was available on PATH, but `rtk gain` could not initialize its
+  tracking database. Repository policy therefore required direct commands;
+  no private runtime database or credential file was inspected.
+- Canonical targeted, affected, staged, tests, all-files, formatter-review,
+  rerun, and diff-check evidence is recorded in the ignored WORK-104 amendment
+  report. Remote CI, provider-runtime, credential-bearing, and live evidence
+  remain `DEFER`; no such action was performed.
+- The controller's final `pre-commit run --all-files` fixed-point exited 0 with
+  every applicable hook passing and no mutation. Post-run status remained the
+  exact five WORK-104 files staged with zero unstaged paths.
+
+#### Handoff
+
+WORK-105 owns lifecycle acceptance and the atomic registry projection change;
+later work units own physical form/profile/template/navigation changes, the
+ledger-backed Stage 98 cutover, and script deletions. Rollback is a reviewed
+revert of the single WORK-104 documentation commit before any dependent
+acceptance. Residual risk is limited to later implementation drift from the
+exact 93-row, global-ID, and `50 -> 49 -> 47` contracts; VAL-WDTC-013 through
+VAL-WDTC-016 fail those terminal states closed.
+
 ### 2026-08-09 - WDTC-103 unmatched execution history archive
 
 #### Metadata

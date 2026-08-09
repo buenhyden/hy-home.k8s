@@ -55,6 +55,7 @@
 ├── 0021-canonical-surface-routing-and-evidence-depth.md
 ├── 0022-direct-approval-standalone-execution-lineage.md
 ├── 0023-work-unit-document-taxonomy-and-governance-authority.md
+├── 0024-terminal-artifact-identity-and-archive-layout.md
 └── README.md
 ```
 
@@ -97,6 +98,7 @@
 | [`./0021-canonical-surface-routing-and-evidence-depth.md`](./0021-canonical-surface-routing-and-evidence-depth.md) | Canonical affected-surface references, GitHub projections, and layered platform evidence decision | Accepted | Existing platform topology and validation-surface owners are preserved; active Spec 047 and planned Specs 048–051 implement the reference-based projections and evidence-depth model without remote/live mutation. |
 | [`./0022-direct-approval-standalone-execution-lineage.md`](./0022-direct-approval-standalone-execution-lineage.md) | Direct human-approved standalone Spec/Plan/Task lineage decision | Accepted | Registry schema v8 owns the closed optional standalone relation while preserving every existing PRD/ARD-backed program-lineage rule. |
 | [`./0023-work-unit-document-taxonomy-and-governance-authority.md`](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Work-unit document topology, stable Stage 05, and governance-authority decision | Accepted | Written design and implementation planning were reviewed; this accepted decision is the sole PRD-008 registry tranche decision. |
+| [`./0024-terminal-artifact-identity-and-archive-layout.md`](./0024-terminal-artifact-identity-and-archive-layout.md) | Architecture Description, global artifact identity, stable Stage 98, and exact script-disposition successor | Active | Human-approved successor design pending atomic acceptance and PRD-008 registry projection in WORK-105. ADR-0023 remains the accepted program decision until then. |
 
 ## Related Documents
 
