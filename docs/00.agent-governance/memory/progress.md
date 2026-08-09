@@ -18,7 +18,7 @@ inventory stays in `scripts/README.md`.
 - **Tags**: #sdlc #document-governance #artifact-identity #archive
 - **Owner**: platform
 - **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
-- **Provenance**: Pre-WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f`, reviewed at commit `1452dbfde267452ed676b551ee2595d250a6ecfa`, and the human-approved terminal-design rulings.
+- **Provenance**: Pre-WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f`; initial amendment carrier `1452dbfde267452ed676b551ee2595d250a6ecfa`; first-correction carrier `574140abafced14ea1096df044a3ce6ffe7ae06e`; and the human-approved terminal-design rulings.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC terminal closure and PRD-008 disposition.
 - **Next Owner**: WORK-104 — apply the existing 82-move task and rebaseline the destination Plan/Task to the closed WORK-104 through WORK-115 schedule.
@@ -30,8 +30,9 @@ keeping accepted ADR-0023 as the transition program-decision registry
 projection. This completed documentation package is `WDTC-AMEND-001`; it is
 not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
 terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
-the closed active and Stage 98 outer-ID grammar, stable archive topology,
-14-field recovery ledger, direct-link corpus, and exact `scripts/` closure.
+the closed mandatory/prohibited outer-ID grammar, virtual Stage 98 change
+identity, stable archive topology, 14-field recovery ledger, direct-link
+corpus, and exact `scripts/` closure.
 The ADR index exposes the accepted predecessor and active successor state.
 This package changes no route, profile, template, registry, manifest, Stage 04
 execution record, Stage 98 record, or script.
@@ -44,6 +45,17 @@ date/mirror-path immutability. Full-body payload, provenance, retention,
 recovery, transition safety, and unrelated decisions remain intact. Active
 ARD-0011 is a conflicting transition predecessor and must atomically become
 AD-0011 with archive-invariant replacement before ADR-0024 acceptance.
+
+Every declared `artifact_id` is globally unique. PRD, SRS, Interface
+Requirement, AD, ADR, the six Stage 03 work-unit forms, the five Stage 05
+operations forms, and Stage 98 Plan/Task/Tombstone/Migration outer records
+require one deterministic path-derived ID. Stage 00, Stage 90,
+governance memory/progress, Stage 99 support, README/navigation, templates,
+fixtures, native/generated surfaces, embedded archive payloads, and the
+virtual Stage 98 change aggregate prohibit the field. A change directory has
+no frontmatter; its path-derived `CHG-####` is `change_id` only, and every
+present Plan/Task leaf carries that same grouping value plus its own unique
+outer ID.
 
 Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
 rewrite. The current cutover is 93-to-93 with every action `moved`: 76 records
@@ -101,27 +113,36 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
   diff evidence is recorded in the ignored `WDTC-AMEND-001` report. Remote CI,
   provider-runtime, credential-bearing, and live evidence remain `DEFER`; no
   such action was performed.
-- The implementer intentionally DEFERRED all-files to the controller. The
-  controller's final fixed-point at reviewed commit `1452dbfd` then ran
-  `pre-commit run --all-files`, exited 0 with every applicable hook passing,
-  caused no mutation, and left the exact five package files staged with zero
-  unstaged paths. This review-fix round likewise leaves all-files to the
-  controller rather than treating the prior PASS as implementer evidence.
-- Review-fix RED first found eight stale design/evidence markers, then one
+- The initial amendment is historical commit `1452dbfd`; its controller-owned
+  all-files fixed point exited 0 with every applicable hook passing and no
+  mutation. The first correction is historical commit `574140ab`; its
+  controller-owned final all-files fixed point likewise exited 0 with all
+  applicable hooks passing and no mutation. These results remain distinct
+  from implementer evidence.
+- First-correction RED found eight stale design/evidence markers, then one
   reciprocal-link modeling error. GREEN retained ARD-0011's mandatory
   conversion in decision prose/Spec while limiting the ADR body-contract table
   to reciprocal ADR-to-Spec sources. Focused registry/Markdown/links,
   immutable boundary/hash checks, migration `132/82/50`, exact-five affected
   and staged runners, plain exact-index pre-commit, and aggregate validation
-  passed with zero final findings. The exact five tracked files remain staged
-  with zero unstaged paths; controller all-files remains `DEFER` for this
-  review-fix state.
-- The controller subsequently ran the review-fix
-  `pre-commit run --all-files` fixed point against the staged proposal over
-  HEAD `1452dbfd`. It exited 0 with every applicable hook passing and no
-  mutation. Post-run status remained exactly the same five tracked files
-  staged with zero unstaged paths; this closes review-fix all-files evidence
-  without claiming that the staged fix has been committed.
+  passed with zero final findings before the first-correction carrier was
+  created.
+- The commit that actually carries a correction is the authority for that
+  correction. This ledger does not forecast a future or self-referential
+  carrier hash. The Round 2 implementer left all-files `DEFER`; the controller
+  subsequently ran the final `pre-commit run --all-files` fixed point, which
+  exited 0 with every applicable hook passing and no mutation. Post-run scope
+  remained exactly the five owned tracked files staged with zero unstaged
+  paths. This records controller evidence without assigning a future carrier
+  identity; the actual carrier commit is Git history.
+- Round 2 stale-marker and worktree diff checks passed. Focused registry
+  self-test `132/65/30`, strict transition registry `491/0/0`, strict Markdown,
+  and strict links/owners passed with zero findings. Migration remained
+  `132/82/50`; the manifest and frozen Plan/Task retained their pinned blobs;
+  Stage 98, registry/templates, manifest/tool, and frozen files retained zero
+  diff; and the PRD-008 projection remained active Spec 052 / decision 0023.
+  Final affected/staged/index/aggregate and exact-scope evidence belongs to the
+  ignored Round 2 report rather than a forecast in this tracked ledger.
 
 #### Handoff
 
@@ -129,7 +150,7 @@ WORK-104 is the next owner and remains incomplete until the 82 moves and
 destination Plan/Task rebaseline occur. WORK-105 then owns lifecycle
 acceptance and the atomic registry projection change; later work units own the
 archive cutover and script deletions. Rollback is a reviewed revert of the
-`WDTC-AMEND-001` documentation commit before dependent implementation.
+applicable `WDTC-AMEND-001` carrier commit before dependent implementation.
 Residual risk is later drift from the exact 93-row, global-ID, and
 `50 -> 49 -> 47` contracts; VAL-WDTC-013 through VAL-WDTC-016 fail those
 terminal states closed.

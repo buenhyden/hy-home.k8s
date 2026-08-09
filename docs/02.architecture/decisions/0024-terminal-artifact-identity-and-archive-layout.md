@@ -66,29 +66,48 @@ AD-0011 without renumbering. ARD and RFC have no terminal active profile,
 template, route, relationship, or navigation; immutable historical payload
 text may retain those terms.
 
-The global current-artifact namespace excludes navigational README files,
-templates, fixtures, historical observation profiles, and embedded immutable
-archive payloads. Each included outer record has exactly one globally unique
-`artifact_id`. A lowercase path token maps to the uppercase canonical ID, and
-the path-derived value must equal frontmatter exactly:
+Global uniqueness applies to every declared `artifact_id`. The mandatory
+terminal outer profiles are PRD, SRS, Interface Requirement, AD, ADR, Spec,
+Agent Design, Data Model, Tests, Plan, Task, Guide, Policy, Runbook, Incident,
+Postmortem, and the Stage 98 Plan, Task, Tombstone, and Migration records. Each
+such record MUST declare exactly one path-derived `artifact_id`.
 
-| Terminal record | Path extraction | Required outer identity |
+The following profiles and surfaces are outside the mandatory namespace and
+MUST NOT declare `artifact_id`: Stage 00 governance/reference, all Stage 90
+content/reference/observation profiles, governance memory/progress, Stage 99
+support, README/navigation, templates, fixtures, native/generated surfaces,
+the virtual Stage 98 change-directory aggregate, and embedded immutable
+archive payloads. Embedded `original_artifact_id` is provenance, not an outer
+`artifact_id`, and is excluded from global current-ID uniqueness.
+
+Terminal active path extraction is deterministic and closed:
+
+| Mandatory outer profile | Path extraction | Required `artifact_id` |
 | --- | --- | --- |
-| PRD | One `docs/01.requirements/<ddd>-<slug>.md` record per three-digit `ddd` | `artifact_id=PRD-<DDD>` |
-| SRS | One `srs-<ddd>-<slug>.md` record per three-digit `ddd` | `artifact_id=SRS-<DDD>` |
-| Interface Requirement | `ifc-<ddd>-<slug-token>.md`, where the lowercase slug token is part of identity | `artifact_id=IFC-<DDD>-<SLUG-TOKEN>`; the token is uppercased, preserving hyphens, so multiple interfaces under one number remain unique |
-| AD | `ad-<dddd>-<slug>.md` | `artifact_id=AD-<DDDD>` |
-| ADR | `docs/02.architecture/decisions/<dddd>-<slug>.md` | `artifact_id=ADR-<DDDD>` |
-| Spec | `docs/03.specs/<ddd>-<slug>/spec.md` | `artifact_id=SPEC-<DDD>` |
-| Plan | `docs/03.specs/<ddd>-<slug>/plan.md` | `artifact_id=PLAN-<DDD>` |
-| Task | `docs/03.specs/<ddd>-<slug>/tasks.md` | `artifact_id=TASK-<DDD>` |
+| PRD | `docs/01.requirements/<ddd>-<slug>.md` | `PRD-<DDD>` |
+| SRS | `docs/01.requirements/srs-<ddd>-<slug>.md` | `SRS-<DDD>` |
+| Interface Requirement | `docs/01.requirements/ifc-<ddd>-<slug-token>.md`; the complete filename suffix after `ifc-<ddd>-` is identity-bearing | `IFC-<DDD>-<SLUG-TOKEN>` |
+| AD | `docs/02.architecture/descriptions/ad-<dddd>-<slug>.md` | `AD-<DDDD>` |
+| ADR | `docs/02.architecture/decisions/<dddd>-<slug>.md` | `ADR-<DDDD>` |
+| Spec | `docs/03.specs/<ddd>-<slug>/spec.md` | `SPEC-<DDD>` |
+| Agent Design | `docs/03.specs/<ddd>-<slug>/agent-design.md` | `AGENT-DESIGN-<DDD>` |
+| Data Model | `docs/03.specs/<ddd>-<slug>/data-model.md` | `DATA-MODEL-<DDD>` |
+| Tests | `docs/03.specs/<ddd>-<slug>/tests.md` | `TESTS-<DDD>` |
+| Plan | `docs/03.specs/<ddd>-<slug>/plan.md` | `PLAN-<DDD>` |
+| Task | `docs/03.specs/<ddd>-<slug>/tasks.md` | `TASK-<DDD>` |
+| Guide | `docs/05.operations/guides/<dddd>-<slug>.md` | `GUIDE-<DDDD>` |
+| Policy | `docs/05.operations/policies/<dddd>-<slug>.md` | `POLICY-<DDDD>` |
+| Runbook | `docs/05.operations/runbooks/<dddd>-<slug>.md` | `RUNBOOK-<DDDD>` |
+| Incident | `docs/05.operations/incidents/<yyyy>/INC-<nnn>-<slug>/INC-<nnn>-<slug>.md`; directory and filename incident numbers MUST agree | `INC-<YYYY>-<NNN>` |
+| Postmortem | `docs/05.operations/incidents/<yyyy>/INC-<nnn>-<slug>/postmortem.md` | `POSTMORTEM-<YYYY>-<NNN>` |
 
-`<ddd>` and `<dddd>` are zero-padded decimal tokens. `<slug-token>` is one or
-more lowercase alphanumeric segments separated by single hyphens; its
-canonical ID token is the same sequence uppercased. PRD and SRS permit one
-outer record per numeric ID. AD, ADR, Spec, Plan, and Task likewise permit one
-record per typed numeric ID; Interface Requirement alone uses its slug token
-to preserve multiple unique interfaces for one numeric group.
+`<ddd>`, `<dddd>`, `<yyyy>`, and `<nnn>` are zero-padded decimal tokens.
+Interface `<SLUG-TOKEN>` matches
+`[A-Z0-9]+(?:-[A-Z0-9]+)*`; its path form is the exact ASCII-lowercase token.
+For every typed ID, ASCII-lowercasing the canonical ID and its path-derived
+counterpart must yield the same hyphen-delimited token sequence. Validators
+reject aliases, collisions, leading/trailing/double hyphens, non-canonical
+case, or more than one path that derives the same ID.
 
 Terminal Stage 98 uses this stable layout:
 
@@ -112,22 +131,35 @@ The Stage 98 path/frontmatter grammar is closed:
 
 | Terminal record | Path/frontmatter equality |
 | --- | --- |
-| Change aggregate | Directory `changes/chg-<dddd>-<slug>/` has `change_id=CHG-<DDDD>`; `change_id` is grouping metadata, not an `artifact_id`. |
-| Change Plan leaf | `changes/chg-<dddd>-<slug>/plan.md` has outer `artifact_id=PLAN-CHG-<DDDD>`. |
-| Change Task leaf | `changes/chg-<dddd>-<slug>/task.md` has outer `artifact_id=TASK-CHG-<DDDD>`. |
+| Change aggregate | Directory `changes/chg-<dddd>-<slug>/` yields the virtual/path-derived `change_id=CHG-<DDDD>`. A directory has no frontmatter and the change aggregate is not an artifact. |
+| Change Plan leaf | `changes/chg-<dddd>-<slug>/plan.md` has `change_id=CHG-<DDDD>` and unique outer `artifact_id=PLAN-CHG-<DDDD>`. |
+| Change Task leaf | `changes/chg-<dddd>-<slug>/task.md` has `change_id=CHG-<DDDD>` and unique outer `artifact_id=TASK-CHG-<DDDD>`. |
 | Migration control record | `migrations/mig-<dddd>-<slug>.md` has outer `artifact_id=MIG-<DDDD>` and `migration_id=MIG-<DDDD>`. |
 | Tombstone | `tombstones/<stage>/tmb-<type>-<stable-token>.md` has outer `artifact_id=TMB-<TYPE>-<STABLE-TOKEN>`; lowercase path type/token map to uppercase frontmatter. |
+
+Every present change Plan/Task leaf MUST carry the virtual `change_id` derived
+from its parent directory, and sibling leaves MUST carry the same value. The
+leaf `artifact_id` remains globally unique; `change_id` is not admitted to the
+artifact namespace.
 
 Tombstone `<stage>/<TYPE>` pairs are limited to
 `01.requirements/{PRD,SRS,IFC}`,
 `02.architecture/{AD,ADR}`,
-`03.specs/{SPEC,PLAN,TASK}`, and
-`05.operations/{GUIDE,INCIDENT,POLICY,RUNBOOK,POSTMORTEM}`. A historical ARD
+`03.specs/{SPEC,AGENT-DESIGN,DATA-MODEL,TESTS,PLAN,TASK}`, and
+`05.operations/{GUIDE,POLICY,RUNBOOK,INCIDENT,POSTMORTEM}`. A historical ARD
 payload maps to terminal type `AD`; its embedded `original_artifact_id` may
-remain `ARD-####`. The `<stable-token>` is the lowercase, hyphen-preserving
-remainder after the terminal type prefix and maps byte-for-byte after uppercase
-normalization to `<STABLE-TOKEN>`. Embedded `original_artifact_id` is
-provenance only and is excluded from the outer/global current-ID namespace.
+remain `ARD-####`.
+
+When `original_artifact_id` exists, `<STABLE-TOKEN>` is the complete suffix
+after that original ID's type prefix and separator; the lowercase path token
+must be its exact canonical lowercase form. When it is null, the ID token is
+`LEGACY-<HASH>`, where `<HASH>` is the full uppercase SHA-256 hex digest of the
+UTF-8 bytes `canonical legacy_path`, one NUL byte, and the lowercase ASCII
+`source_blob` Git OID. The path token is `legacy-<hash>` in lowercase.
+`canonical legacy_path` is the exact repository-relative POSIX tracked path
+with no leading slash, `.` or `..` segment, repeated separator, or alternate
+spelling. Tombstone validation rejects token aliases, digest truncation,
+collisions, and leading/trailing/double hyphens.
 
 The 93 current historical records undergo a 93-to-93 cutover, and every row's
 `action` is `moved`. The 76 execution records become 41 change directories:

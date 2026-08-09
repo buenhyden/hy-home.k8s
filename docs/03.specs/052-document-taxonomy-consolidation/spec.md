@@ -19,9 +19,9 @@ It replaces the earlier Spec 052 direction that would have renumbered
 `05.operations` and deleted several validator families without current
 consumer proof.
 
-The pre-WORK-104 design package `WDTC-AMEND-001` records active
-[ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
-records the later human-approved successor for terminal requirement and
+The pre-WORK-104 design package `WDTC-AMEND-001` created active
+[ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
+which records the later human-approved successor for terminal requirement and
 architecture forms, global artifact identity, stable Stage 98 layout, and the
 exact `scripts/` disposition. ADR-0023 remains the accepted transition decision
 and PRD-008 registry projection until WORK-105 atomically converts active
@@ -198,31 +198,45 @@ relationship, or navigation; historical payload text may retain both terms.
 
 ### DTC-14 Global artifact identity
 
-Navigational README files, templates, fixtures, historical observation
-profiles, and embedded immutable archive payloads are excluded from the outer
-current-artifact namespace. Every included terminal record has exactly one
-globally unique, type-valid `artifact_id`; lowercase path tokens map to the
-uppercase canonical ID and the path-derived value equals frontmatter exactly:
+Global uniqueness applies to every declared `artifact_id`. Mandatory terminal
+outer profiles are PRD, SRS, Interface Requirement, AD, ADR, Spec, Agent
+Design, Data Model, Tests, Plan, Task, Guide, Policy, Runbook, Incident,
+Postmortem, and Stage 98 Plan, Task, Tombstone, and Migration. Every record in
+that set MUST declare exactly one path-derived `artifact_id`.
 
-| Record | Closed path/frontmatter identity |
+Stage 00 governance/reference, all Stage 90 content/reference/observation
+profiles, governance memory/progress, Stage 99 support, README/navigation,
+template, fixture, native/generated, the virtual Stage 98 change aggregate,
+and embedded immutable archive payload surfaces MUST NOT declare
+`artifact_id`. Embedded `original_artifact_id` is provenance and does not
+participate in outer global uniqueness.
+
+| Mandatory outer profile | Closed path/frontmatter identity |
 | --- | --- |
-| PRD | One Stage 01 record per three-digit path number; `PRD-###`. |
-| SRS | `srs-###-<slug>.md`, one per number; `SRS-###`. |
-| Interface Requirement | `ifc-###-<slug-token>.md`; `IFC-###-<SLUG-TOKEN>`, permitting multiple unique interfaces for one number. |
-| AD / ADR | Four-digit `ad-####` / decision `####` token; `AD-####` / `ADR-####`. |
-| Spec / Plan / Task | Fixed leaf in the same three-digit Stage 03 folder; `SPEC-###` / `PLAN-###` / `TASK-###`. |
+| PRD / SRS | `docs/01.requirements/<ddd>-<slug>.md` / `srs-<ddd>-<slug>.md` maps to `PRD-<DDD>` / `SRS-<DDD>`. |
+| Interface Requirement | The complete suffix of `ifc-<ddd>-<slug-token>.md` maps to `IFC-<DDD>-<SLUG-TOKEN>`, permitting multiple interfaces under one number. |
+| AD / ADR | Four-digit `ad-<dddd>` / decision `<dddd>` token maps to `AD-<DDDD>` / `ADR-<DDDD>`. |
+| Stage 03 | Parent work-unit `<ddd>` plus `spec.md`, `agent-design.md`, `data-model.md`, `tests.md`, `plan.md`, or `tasks.md` maps to `SPEC-<DDD>`, `AGENT-DESIGN-<DDD>`, `DATA-MODEL-<DDD>`, `TESTS-<DDD>`, `PLAN-<DDD>`, or `TASK-<DDD>`. |
+| Guide / Policy / Runbook | Stage 05 four-digit filename token maps to `GUIDE-<DDDD>`, `POLICY-<DDDD>`, or `RUNBOOK-<DDDD>`. |
+| Incident / Postmortem | Year directory plus matching three-digit incident directory/file token maps to `INC-<YYYY>-<NNN>`; sibling `postmortem.md` maps to `POSTMORTEM-<YYYY>-<NNN>`. |
 
-The interface slug token is lowercase alphanumeric segments separated by
-single hyphens; its uppercase, hyphen-preserving form is part of identity.
+Interface `<SLUG-TOKEN>` matches
+`[A-Z0-9]+(?:-[A-Z0-9]+)*` and the path uses its exact ASCII-lowercase form.
+All canonical typed path tokens use single hyphens. The validator derives the
+full ID from the path, ASCII-lowercases both comparison forms, and then requires
+exact token equality. It rejects aliases, collisions, noncanonical case,
+leading/trailing/double hyphens, or more than one path deriving the same ID.
 Existing numeric identities remain unchanged.
 
 ### DTC-15 Stable terminal Stage 98
 
 Terminal Stage 98 contains `README.md`, stable `changes/chg-####-<slug>/`
 directories with `plan.md` and/or `task.md`, stage-typed tombstone collections,
-and `migrations/mig-####-<slug>.md` control records. The change directory has
-aggregate `change_id=CHG-####`, not `artifact_id`; its unique leaf outer IDs
-are `PLAN-CHG-####` and `TASK-CHG-####`. A migration path has outer
+and `migrations/mig-####-<slug>.md` control records. A change directory has no
+frontmatter. Its path yields virtual `change_id=CHG-####`, which is grouping
+metadata rather than an `artifact_id`. Every present Plan/Task leaf MUST carry
+that same parent-derived `change_id`; sibling leaves MUST agree. Their unique
+outer IDs are `PLAN-CHG-####` and `TASK-CHG-####`. A migration path has outer
 `artifact_id=MIG-####` and equal `migration_id`.
 
 A tombstone path
@@ -231,10 +245,19 @@ A tombstone path
 uppercase frontmatter. The closed stage/type map is
 `01.requirements/{PRD,SRS,IFC}`,
 `02.architecture/{AD,ADR}`,
-`03.specs/{SPEC,PLAN,TASK}`, and
-`05.operations/{GUIDE,INCIDENT,POLICY,RUNBOOK,POSTMORTEM}`. Historical ARD
+`03.specs/{SPEC,AGENT-DESIGN,DATA-MODEL,TESTS,PLAN,TASK}`, and
+`05.operations/{GUIDE,POLICY,RUNBOOK,INCIDENT,POSTMORTEM}`. Historical ARD
 payload uses terminal outer type AD. Embedded `original_artifact_id` remains
 provenance and is excluded from the outer/global current-ID namespace.
+
+If `original_artifact_id` exists, the tombstone `<STABLE-TOKEN>` is its full
+suffix after the original type prefix and separator. If it is null, the token
+is `LEGACY-<HASH>`, where `<HASH>` is the full uppercase SHA-256 hex digest of
+the UTF-8 bytes `canonical legacy_path`, one NUL byte, and lowercase ASCII
+`source_blob`; the path uses `legacy-<hash>`. The canonical legacy path is the
+exact repository-relative POSIX tracked path with no leading slash, `.` or
+`..` segment, repeated separator, or alias. Tombstone validators reject token
+aliases, collisions, truncated hashes, and leading/trailing/double hyphens.
 
 The current cutover is 93-to-93 and every row has `action=moved`: 76 execution
 records become unique Plan/Task leaves in 41 change directories (35 pairs, two
@@ -526,9 +549,10 @@ inventory.
 | A date-prefixed mutable file has no registered identity exception | Fail profile validation and name the matched family. |
 | An existing Stage 98 path changes outside the reviewed schema-versioned ledger or before recovery proof | Stop before writes and report the unowned transformation. |
 | A Stage 98 payload, digest, `source_commit`, or `source_blob` changes during cutover | Stop; wrapper/path migration cannot alter historical payload or provenance. |
-| A terminal `artifact_id` is duplicate, mistyped, or differs from its path ID | Fail terminal identity validation and report both owners. |
-| A navigational README/template/fixture or embedded immutable payload is treated as a current outer identity | Fail namespace selection and report the excluded profile/path. |
-| A Stage 98 aggregate uses `artifact_id`, a leaf lacks its typed outer ID, or a tombstone stage/type pair is outside the closed map | Fail path/frontmatter validation before cutover. |
+| A terminal `artifact_id` is duplicate, mistyped, aliased, noncanonical, or differs from its path ID | Fail terminal identity validation and report both owners. |
+| A Stage 00/90/99, governance memory/progress, README/navigation, template, fixture, native/generated, or embedded immutable-payload surface declares `artifact_id` | Fail namespace selection and report the prohibited profile/path. |
+| A Stage 98 change directory is treated as frontmatter-bearing or declares `artifact_id`, a leaf lacks the parent `change_id` or its typed outer ID, siblings disagree, or a tombstone stage/type pair is outside the closed map | Fail path/frontmatter validation before cutover. |
+| A tombstone fallback token is truncated, does not match the full canonical-path/source-blob digest, or aliases another spelling | Fail tombstone identity validation and report the computed token and owner. |
 | Two ledger rows share a stable path, or a future merged/replaced/deleted row lacks its unique tombstone evidence | Stop; every source retains one independently addressable terminal record. |
 | A current non-Stage-98 document links directly to a stable record instead of the collection README | Fail the direct-link corpus check; only Stage 98 README/migration index-provenance links are excepted. |
 | WORK-107 Stage 98 rehome starts before WORK-105 atomic acceptance | Stop before writes; transition archive invariants remain authoritative. |
@@ -610,7 +634,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | VAL-WDTC-011 | Specs 047–051 remain unexecuted during migration and have a valid consolidated resumption route. | Status, task evidence, and final path inventory. |
 | VAL-WDTC-012 | No provider, hosted, remote, credential-bearing, or live result is claimed or performed. | Handoff evidence-class report and change inventory. |
 | VAL-WDTC-013 | Terminal active forms are PRD, optional SRS, optional Interface Requirement, AD (`sdlc/ad`), and ADR; ARD/RFC have no active terminal surface and ARD-0011 becomes AD-0011. | Terminal registry/profile/template/route/navigation inventory and preserved-ID mapping. |
-| VAL-WDTC-014 | Every included outer terminal artifact has one globally unique, type-valid ID equal to its path-derived value under the closed active/Stage98 grammar and exclusions. | Namespace selection, global duplicate scan, typed-pattern negatives, and path/frontmatter equality fixtures. |
+| VAL-WDTC-014 | Every mandatory terminal outer profile has exactly one globally unique, type-valid `artifact_id` equal to its deterministic path-derived value; every excluded profile prohibits the field, and virtual `CHG-####` remains `change_id` only. | Mandatory/prohibited namespace selection, global duplicate and alias scans, typed/canonical-token negatives, path/frontmatter equality, change-leaf agreement, and tombstone full-digest fixtures. |
 | VAL-WDTC-015 | The current 93 records map 93-to-93 with action `moved`, unique stable paths, exact `35/2/4` execution grouping and `3/8/4/2` tombstones; future actions retain unique terminal evidence. | Schema-versioned 14-field ledger, action/replacement/stable-path negatives, payload/provenance digests, old-envelope proof, and dual recovery. |
 | VAL-WDTC-016 | The exact tracked script closure is `50 -> 49 -> 47`, deleting only `validate-harness.sh` in WORK-112 and the transition JSON/tool in WORK-114. | Full 50-row disposition ledger, consumer/argument/diagnostic/fixture/evidence/recovery comparison, scripts README parity, and exact language-count census. |
 
@@ -652,6 +676,6 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | N/A — REQ-WDTC-017 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
 | N/A — REQ-WDTC-018 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
 | N/A — REQ-WDTC-019 shares the PRD source above. | VAL-WDTC-013 | Terminal profile, form, route, relationship, navigation, and preserved-ID evidence prove the approved document taxonomy. |
-| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | Global uniqueness, typed-ID, and path/frontmatter fixtures prove artifact identity. |
+| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | Mandatory/prohibited selection, global uniqueness, canonical typed-ID, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
 | N/A — REQ-WDTC-021 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
 | N/A — REQ-WDTC-022 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |
