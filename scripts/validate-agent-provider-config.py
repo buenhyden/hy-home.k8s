@@ -32,6 +32,7 @@ HARNESS_PATH = PurePosixPath(
 ROUTING_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
+CLAUDE_SETTINGS_PATH = PurePosixPath(".claude/settings.json")
 
 CUTOFF_UTC = datetime(2026, 7, 10, 1, 0, 0, tzinfo=timezone.utc)
 CUTOFF_UTC_DATE = CUTOFF_UTC.date()
@@ -128,6 +129,113 @@ FORBIDDEN_VALUE_FRAGMENTS = (
     "ghp_",
     "aiza",
     "-----begin private key",
+)
+CLAUDE_ALLOWED_PERMISSIONS = (
+    "Bash(git status --short)",
+    "Bash(git diff --check)",
+    "Bash(git diff --cached --check)",
+    "Bash(git diff --name-only)",
+    "Bash(git diff --cached --name-only)",
+    "Bash(git rev-parse HEAD)",
+    "Bash(git ls-files)",
+    "Bash(bash scripts/validate-repo-quality-gates.sh .)",
+    "Bash(bash scripts/generate-llm-wiki-index.sh --check)",
+    "Bash(bash scripts/validate-k8s-manifests.sh .)",
+    "Bash(bash scripts/validate-gitops-structure.sh)",
+    "Bash(bash scripts/check-secret-handling.sh .)",
+    "Bash(bash scripts/validate-policy-gates.sh .)",
+    "Bash(bash scripts/validate-harness.sh)",
+)
+CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS = (
+    "Bash(ls:*)",
+    "Bash(grep:*)",
+    "Bash(cat:*)",
+    "Bash(git:*)",
+    "Bash(kubectl get:*)",
+    "Bash(kubectl describe:*)",
+    "Bash(kubectl logs:*)",
+)
+CLAUDE_ALTERNATE_ROOT_PERMISSION_MUTATIONS = (
+    (
+        "Bash(bash scripts/validate-repo-quality-gates.sh .)",
+        "Bash(bash scripts/validate-repo-quality-gates.sh /tmp)",
+    ),
+    (
+        "Bash(bash scripts/validate-k8s-manifests.sh .)",
+        "Bash(bash scripts/validate-k8s-manifests.sh ..)",
+    ),
+    (
+        "Bash(bash scripts/check-secret-handling.sh .)",
+        "Bash(bash scripts/check-secret-handling.sh ../other-repository)",
+    ),
+    (
+        "Bash(bash scripts/validate-policy-gates.sh .)",
+        "Bash(bash scripts/validate-policy-gates.sh /tmp)",
+    ),
+)
+CLAUDE_REQUIRED_DENY_PERMISSIONS = (
+    "Read(./.env)",
+    "Read(./.env.*)",
+    "Read(./**/.env)",
+    "Read(./**/.env.*)",
+    "Bash(cat .env:*)",
+    "Bash(cat .env.*:*)",
+    "Bash(env:*)",
+    "Bash(printenv:*)",
+    "Bash(vault kv get:*)",
+    "Bash(vault read:*)",
+    "Bash(vault token lookup:*)",
+    "Bash(kubectl get secret:*)",
+    "Bash(kubectl get secrets:*)",
+    "Bash(kubectl describe secret:*)",
+    "Bash(kubectl describe secrets:*)",
+    "Bash(git push:*)",
+    "Bash(git merge:*)",
+    "Bash(gh pr create:*)",
+    "Bash(gh pr merge:*)",
+    "Bash(gh release create:*)",
+    "Bash(gh workflow run:*)",
+    "Bash(kubectl delete:*)",
+    "Bash(kubectl apply:*)",
+    "Bash(kubectl create:*)",
+    "Bash(kubectl replace:*)",
+    "Bash(kubectl exec:*)",
+    "Bash(kubectl patch:*)",
+    "Bash(kubectl edit:*)",
+    "Bash(kubectl label:*)",
+    "Bash(kubectl annotate:*)",
+    "Bash(kubectl set:*)",
+    "Bash(kubectl scale:*)",
+    "Bash(kubectl rollout restart:*)",
+    "Bash(kubectl rollout undo:*)",
+    "Bash(kubectl port-forward:*)",
+    "Bash(kubectl drain:*)",
+    "Bash(kubectl cordon:*)",
+    "Bash(kubectl uncordon:*)",
+    "Bash(kubectl taint:*)",
+    "Bash(argocd app sync:*)",
+    "Bash(argocd app set:*)",
+    "Bash(argocd app patch:*)",
+    "Bash(argocd app delete:*)",
+    "Bash(argocd app create:*)",
+    "Bash(argocd app unset:*)",
+    "Bash(argocd app terminate-op:*)",
+    "Bash(vault kv put:*)",
+    "Bash(vault kv patch:*)",
+    "Bash(vault write:*)",
+    "Bash(git reset --hard:*)",
+    "Bash(git checkout --:*)",
+    "Bash(git restore:*)",
+    "Bash(git clean:*)",
+    "Bash(git rebase:*)",
+    "Bash(git commit --amend:*)",
+    "Bash(git branch -D:*)",
+    "Bash(git push --force:*)",
+    "Bash(git push -f:*)",
+    "Bash(git push --delete:*)",
+    "Bash(git push --mirror:*)",
+    "Bash(rm -rf:*)",
+    "Bash(k3d cluster delete:*)",
 )
 
 
@@ -630,6 +738,56 @@ def validate_sources(contract: dict[str, Any]) -> None:
                 )
 
 
+def validate_claude_permissions(root: Path) -> None:
+    settings = load_json(root, CLAUDE_SETTINGS_PATH)
+    if not isinstance(settings, dict):
+        fail("PNME-CLAUDE-PERMISSIONS", "Claude settings must be an object")
+    permissions = settings.get("permissions")
+    if not isinstance(permissions, dict):
+        fail(
+            "PNME-CLAUDE-PERMISSIONS",
+            "Claude permissions must be an object",
+        )
+
+    permission_lists: dict[str, list[str]] = {}
+    for key in ("allow", "deny"):
+        values = permissions.get(key)
+        if (
+            not isinstance(values, list)
+            or not all(isinstance(value, str) and value for value in values)
+            or len(values) != len(set(values))
+        ):
+            fail(
+                "PNME-CLAUDE-PERMISSIONS",
+                f"Claude permissions.{key} must be a unique non-empty string list",
+            )
+        permission_lists[key] = values
+
+    allow = permission_lists["allow"]
+    if any(character in permission for permission in allow for character in "*?[]"):
+        fail(
+            "PNME-CLAUDE-PERMISSIONS",
+            "Claude allow permissions must not contain wildcard syntax",
+        )
+    if tuple(allow) != CLAUDE_ALLOWED_PERMISSIONS:
+        fail(
+            "PNME-CLAUDE-PERMISSIONS",
+            "Claude allow permissions must match the narrow repository-static set",
+        )
+    if set(allow).intersection(CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS):
+        fail(
+            "PNME-CLAUDE-PERMISSIONS",
+            "Claude allow permissions include a broad command family",
+        )
+
+    deny = permission_lists["deny"]
+    if tuple(deny) != CLAUDE_REQUIRED_DENY_PERMISSIONS:
+        fail(
+            "PNME-CLAUDE-PERMISSIONS",
+            "Claude deny permissions must match the complete required set",
+        )
+
+
 def provider_map(contract: dict[str, Any]) -> dict[str, dict[str, Any]]:
     observed = [provider["id"] for provider in contract["providers"]]
     if observed != list(PROVIDER_IDS):
@@ -1034,6 +1192,8 @@ def validate_contract(
         providers,
         check_paths=check_paths,
     )
+    if check_paths:
+        validate_claude_permissions(root)
     validate_evidence_lanes(providers)
     validate_models(contract, providers)
     validate_mcp_inventory(contract, harness)

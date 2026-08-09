@@ -41,8 +41,14 @@ ROUTING_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
+CLAUDE_SETTINGS_PATH = REPOSITORY_ROOT / ".claude/settings.json"
 
 GOVERNED_JSON_OWNERS = (
+    (
+        "claude-settings",
+        Path(".claude/settings.json"),
+        "contract",
+    ),
     (
         "contract",
         Path("docs/00.agent-governance/contracts/provider-runtime-evidence.json"),
@@ -110,6 +116,7 @@ class ProviderConfigContractTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         owners = (
+            CLAUDE_SETTINGS_PATH,
             CONTRACT_PATH,
             SCHEMA_PATH,
             FIXTURE_PATH,
@@ -131,7 +138,10 @@ class ProviderConfigContractTests(unittest.TestCase):
                     target.mkdir(parents=True, exist_ok=True)
                 else:
                     target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_text("repository-static fixture\n", encoding="utf-8")
+                    if not target.exists():
+                        target.write_text(
+                            "repository-static fixture\n", encoding="utf-8"
+                        )
         return root
 
     def run_boundary_owner(self, root: Path, runner: str) -> None:
@@ -175,6 +185,104 @@ class ProviderConfigContractTests(unittest.TestCase):
             self.contract["cutoff"]["utc"], "2026-07-10T01:00:00Z"
         )
         self.assertEqual(self.contract["contractVersion"], "1.0.0")
+
+    def test_claude_permission_boundary_is_narrow_and_explicit(self) -> None:
+        settings = json.loads(CLAUDE_SETTINGS_PATH.read_text(encoding="utf-8"))
+        permissions = settings["permissions"]
+        self.assertEqual(
+            tuple(permissions["allow"]),
+            self.validator.CLAUDE_ALLOWED_PERMISSIONS,
+        )
+        self.assertEqual(
+            tuple(permissions["deny"]),
+            self.validator.CLAUDE_REQUIRED_DENY_PERMISSIONS,
+        )
+        self.assertFalse(
+            any(
+                character in permission
+                for permission in permissions["allow"]
+                for character in "*?[]"
+            )
+        )
+        self.validator.validate_claude_permissions(REPOSITORY_ROOT)
+
+    def test_each_broad_claude_allow_rule_fails_closed(self) -> None:
+        for permission in self.validator.CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS:
+            with self.subTest(permission=permission):
+                root = self.make_valid_root()
+                path = root / ".claude/settings.json"
+                settings = json.loads(path.read_text(encoding="utf-8"))
+                settings["permissions"]["allow"].append(permission)
+                path.write_text(
+                    json.dumps(settings, indent=2) + "\n", encoding="utf-8"
+                )
+                with self.assertRaises(
+                    self.validator.ProviderConfigError
+                ) as raised:
+                    self.validator.validate_contract(root)
+                self.assertEqual(
+                    raised.exception.code, "PNME-CLAUDE-PERMISSIONS"
+                )
+
+    def test_each_wildcard_claude_allow_rule_fails_closed(self) -> None:
+        for permission in self.validator.CLAUDE_ALLOWED_PERMISSIONS:
+            with self.subTest(permission=permission):
+                root = self.make_valid_root()
+                path = root / ".claude/settings.json"
+                settings = json.loads(path.read_text(encoding="utf-8"))
+                index = settings["permissions"]["allow"].index(permission)
+                settings["permissions"]["allow"][index] = permission[:-1] + ":*)"
+                path.write_text(
+                    json.dumps(settings, indent=2) + "\n", encoding="utf-8"
+                )
+                with self.assertRaises(
+                    self.validator.ProviderConfigError
+                ) as raised:
+                    self.validator.validate_contract(root)
+                self.assertEqual(
+                    raised.exception.code, "PNME-CLAUDE-PERMISSIONS"
+                )
+
+    def test_each_alternate_root_claude_allow_rule_fails_closed(self) -> None:
+        for expected, mutation in (
+            self.validator.CLAUDE_ALTERNATE_ROOT_PERMISSION_MUTATIONS
+        ):
+            with self.subTest(permission=mutation):
+                root = self.make_valid_root()
+                path = root / ".claude/settings.json"
+                settings = json.loads(path.read_text(encoding="utf-8"))
+                index = settings["permissions"]["allow"].index(expected)
+                settings["permissions"]["allow"][index] = mutation
+                path.write_text(
+                    json.dumps(settings, indent=2) + "\n", encoding="utf-8"
+                )
+                with self.assertRaises(
+                    self.validator.ProviderConfigError
+                ) as raised:
+                    self.validator.validate_contract(root)
+                self.assertEqual(
+                    raised.exception.code, "PNME-CLAUDE-PERMISSIONS"
+                )
+
+    def test_each_required_claude_deny_rule_fails_closed_when_missing(
+        self,
+    ) -> None:
+        for permission in self.validator.CLAUDE_REQUIRED_DENY_PERMISSIONS:
+            with self.subTest(permission=permission):
+                root = self.make_valid_root()
+                path = root / ".claude/settings.json"
+                settings = json.loads(path.read_text(encoding="utf-8"))
+                settings["permissions"]["deny"].remove(permission)
+                path.write_text(
+                    json.dumps(settings, indent=2) + "\n", encoding="utf-8"
+                )
+                with self.assertRaises(
+                    self.validator.ProviderConfigError
+                ) as raised:
+                    self.validator.validate_contract(root)
+                self.assertEqual(
+                    raised.exception.code, "PNME-CLAUDE-PERMISSIONS"
+                )
 
     def test_provider_order_and_local_observations_are_exact(self) -> None:
         providers = self.contract["providers"]

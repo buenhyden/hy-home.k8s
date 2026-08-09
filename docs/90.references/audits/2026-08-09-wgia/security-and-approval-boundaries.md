@@ -86,7 +86,7 @@ The actual static tools also expose important result distinctions:
 | Repository writes and destructive Git | Stage 00 approval matrix and Git workflow | Unscoped overwrite, history loss, unauthorized merge/push | Sandbox/task ownership, deny patterns, staged review, human finish choice | `docs/00.agent-governance/rules/approval-boundaries.md#approval-matrix`; `docs/00.agent-governance/rules/git-workflow.md#rules` | Exact human recovery approval with scope, target, rollback, evidence | Broad command or provider allow bypasses human decision | User/human owner | `repository-static`; broadly `Aligned`, provider exception in `WGA-SEC-002` |
 | Workflow permissions | Workflow owner and Actions security validator | Token write, untrusted trigger, unpinned Action, direct deployment | Trigger/permission/concurrency/action-SHA validator and read-only workflow permissions | `.github/workflows/ci.yml#permissions`; `scripts/validate-github-actions-security.py#main` | Protected workflow expansion requires governance update and approval | Hosted token or branch controls differ from tracked YAML | Repository owner | `repository-static`; `Aligned`, hosted `DEFER` |
 | Validation supply chain | CI lock owner and CI Python contract | Dependency substitution or downloaded-tool tampering | Hashed requirements, full Action SHA, Gitleaks archive SHA-256 | `.github/requirements/ci-validation.txt`; `.github/workflows/ci.yml#jobs.repo-quality-static`; `scripts/validate-ci-python-contract.py#main` | Version change through reviewed lock regeneration | Hosted fetch/install or package provenance differs | Repository owner | `repository-static`; `Aligned`, hosted `DEFER` |
-| Agent/provider permission | Stage 00 shared policy plus provider setting owner | Secret read, unapproved Git remote action, cluster information disclosure | Provider allow/deny config and shared approval stop conditions | `.claude/settings.json#permissions.allow`; `.claude/settings.json#permissions.deny`; `docs/00.agent-governance/rules/approval-boundaries.md#mandatory-policies` | Human approval is required, but broad static allow patterns are not approval-scoped | Native runtime treats broad allow as sufficient authority | User/operator | `repository-static`; `Conflict`; runtime `DEFER` |
+| Agent/provider permission | Stage 00 shared policy plus provider setting owner | Secret read, unapproved Git remote action, cluster information disclosure | Provider allow/deny config and shared approval stop conditions | `.claude/settings.json#permissions.allow`; `.claude/settings.json#permissions.deny`; `scripts/validate-agent-provider-config.py#validate_claude_permissions`; `docs/00.agent-governance/rules/approval-boundaries.md#mandatory-policies` | Unlisted commands retain the human decision path; tracked deny rules explicitly stop secret-read and remote-mutation shapes | Native loading or matcher behavior differs from tracked intent | User/operator | `repository-static`; `Aligned`; runtime `DEFER` |
 | Secret detection | Gitleaks/detect-secrets config, bounded scanner, workflow/pre-commit owners | Committed credential or noisy gate that masks a real leak | Pre-commit Gitleaks/detect-secrets plus bounded structural scanner | `.gitleaks.toml#rules[id=generic-api-key]`; `.pre-commit-config.yaml#repos[id=gitleaks]`; `scripts/check-secret-handling.sh#add_scan_root` | Exact reviewed false-positive allowlist only; real finding requires stop/rotation | Full worktree/history scan is RED while bounded scan passes | Security owner; credential owner if real | `repository-static`; `Partial` |
 | Vault/ESO secret references | GitOps/security, external Vault operator | Plaintext secret, wrong store/identity, unsafe bootstrap value path | ExternalSecret/ClusterSecretStore/RBAC/HCL contracts, HTTPS bootstrap, stdin/header/file flow | `gitops/platform/eso/vault-secret-store.yaml#kind=ClusterSecretStore`; `infrastructure/bootstrap-local.sh#vault_curl`; `scripts/validate-vault-eso-contracts.py#main` | Annotated local-only HTTP store; bootstrap-only mutation; production reuse prohibited | Exception reused outside local or live policy/identity diverges | Platform/security for Git; Vault/operator for live | `repository-static`; `Aligned` to declared local contract; live `DEFER` |
 | GitOps and AppProject | GitOps desired-state owner and approval matrix | Direct mutation, wildcard deployment authority, namespace creation bypass | Argo applications/projects, policy gate, immutable identity diff | `gitops/clusters/local/appproject-apps.yaml#kind=AppProject`; `scripts/validate-gitops-structure.sh#ROOT_APP`; `scripts/validate-gitops-change-set.py#main` | Approved bootstrap/break-glass with rollback/reconciliation | Argo live RBAC/reconciliation differs or source `main` changes | Operator for sync/live; repository owner for desired state | `repository-static`; `Aligned` structure; live `DEFER` |
@@ -131,24 +131,24 @@ or explicit `none`.
 - **Uncertainty**: hosted settings, provider consumption, remote Git, cluster/GitOps, and operator action.
 - **Blocker**: none for this bounded static structure; `BLK-WGA-SEC-001` limits deeper evidence.
 
-#### WGA-SEC-002 — Claude broad allow patterns conflict with shared approval stops
+#### WGA-SEC-002 — Claude tracked permissions align with shared approval stops
 
 - **Request IDs**: `REQ-WGA-024`.
 - **Scope**: Claude native Bash allow/deny patterns for file reads, Git, kubectl, secrets, and remote action.
 - **Expected state**: provider-native permissions are no broader than shared secret-value, remote publication, and live-cluster approval boundaries, or require the same explicit human gate.
-- **Observed state**: allow patterns include broad `cat`, `grep`, `git`, kubectl get/describe/logs; deny patterns omit ordinary push/merge and secret-read shapes. Shared Stage 00 forbids secret values and requires approval for publish/merge/remote/live actions. Runtime loading remains unobserved.
+- **Observed state**: the observation configuration allowed broad `cat`, `grep`, `git`, and kubectl read families and omitted ordinary push/merge and secret-read stops. WGIA-011 replaces those allows with exact repository-static validator commands and fixed metadata-only Git commands. Root-taking validators receive literal `.`, the LLM-WIKI producer is allowlisted only in `--check` mode, and no allow contains wildcard syntax. The focused provider validator owns the exact complete 62-entry deny tuple, including environment/Vault/Kubernetes secret reads, remote/destructive Git, GitHub mutation, kubectl/Argo/Vault writes, recursive removal, and k3d deletion; the aggregate retains only unrelated hook wiring. Runtime loading remains unobserved.
 - **Threat**: provider runtime treats a broad allow as authority to read secret-bearing files/resources or perform ordinary Git remote actions.
 - **Enforcement point**: `.claude/settings.json` permission matcher and Stage 00 human approval stop.
-- **Evidence**: `.claude/settings.json#permissions.allow`; `.claude/settings.json#permissions.deny`; `docs/00.agent-governance/rules/approval-boundaries.md#mandatory-policies`; `docs/00.agent-governance/rules/git-workflow.md#rules`; `docs/00.agent-governance/providers/claude.md#native-boundary`.
-- **Bypass / exception**: none recorded that reconciles broad allow patterns with the shared approval matrix.
-- **Failure mode**: a native session executes an allowed broad command without the required human decision or exposes protected data.
+- **Evidence**: `.claude/settings.json#permissions.allow`; `.claude/settings.json#permissions.deny`; `scripts/validate-agent-provider-config.py#validate_claude_permissions`; `tests/test_validate_agent_provider_config.py#ProviderConfigContractTests.test_each_broad_claude_allow_rule_fails_closed`; `tests/test_validate_agent_provider_config.py#ProviderConfigContractTests.test_each_required_claude_deny_rule_fails_closed_when_missing`; `docs/00.agent-governance/rules/approval-boundaries.md#mandatory-policies`; `docs/00.agent-governance/rules/git-workflow.md#rules`; `docs/00.agent-governance/providers/claude.md#native-boundary`.
+- **Bypass / exception**: no tracked exception weakens the shared matrix; operations outside the closed allow set are not pre-authorized by tracked configuration, and explicit denies retain the repository-static stop. Native prompting behavior remains `DEFER`.
+- **Failure mode**: tracked settings broaden an allowed command family, remove a required stop, or native runtime behavior differs from the repository-static contract.
 - **Approval authority**: user/operator; provider config cannot self-authorize.
 - **Evidence depth**: `repository-static`.
-- **Verdict**: `Conflict`.
-- **Impact**: static native permission intent is broader than shared governance, even though actual provider enforcement is `DEFER`.
-- **Disposition**: `Correct` provisionally through WGIA-009/WGIA-011; no provider file changes in this audit.
+- **Verdict**: `Aligned`.
+- **Impact**: tracked Claude permission intent no longer subsumes secret reads, ordinary remote mutation, or broad live reads; actual provider enforcement remains `DEFER`.
+- **Disposition**: `Correct`; WGIA-009 admitted and WGIA-011 implemented the bounded tracked-adapter correction.
 - **Canonical owner**: Stage 00 approval rules for shared authority; `.claude/settings.json` for Claude-native enforcement syntax.
-- **Verification**: exact positive/negative permission fixtures for approved safe reads and rejected secret/remote/live commands, provider-config validator, and later authorized runtime evidence.
+- **Verification**: the focused unit module covers the production set, every forbidden broad allow, wildcard mutation, alternate-root mutation, and removal of each of the 62 required denies; provider-config self-test/production, harness contract/semantics/currentness, and later separately authorized runtime evidence remain distinct.
 - **Uncertainty**: matcher precedence, native loading, interactive approval prompts, and actual execution.
 - **Blocker**: `BLK-WGA-SEC-001` blocks runtime-effect claims, not the static conflict.
 
@@ -316,13 +316,16 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 - Review status: `Approved`; fresh specification/content and security
   fix-round reviews found no Critical/Important issue against VAL-WGA-009.
-- Review disposition: `Approved` for the bounded repository-static report;
-  six provisional WGIA-009 inputs remain candidates, not implementation
-  approval.
-- Focused document evidence: the report contract probe passes nine findings,
-  14 conceptual fields each, the exact closed verdict distribution, six
-  candidate routes, and 42 unique observation-commit evidence paths with zero
-  missing; strict registry reports 502 paths, Markdown profiles report zero
+- Review disposition: the bounded WGIA-008 report and WGIA-011 remediation are
+  `Approved`; fresh specification/content, Python/quality, and security reviews
+  are `Approved`, and the exact staged complete repository quality gate passes.
+  Of six WGIA-008 roadmap inputs, the admitted
+  Claude row is implemented and the other five remain `DEFER`.
+- Focused document evidence: the WGIA-008 observation probe passed nine
+  findings, 14 conceptual fields each, six candidate routes, and 42 unique
+  observation-commit evidence paths with zero missing. WGIA-011 reclassifies
+  only `WGA-SEC-002` from `Conflict` to repository-static `Aligned`; strict
+  registry reports 502 paths, Markdown profiles report zero
   violations, strict links are valid, and diff/Stage 98 checks pass. The first
   strict-validator invocation used unsupported `--strict` syntax and exited 2
   at argument parsing; corrected `--mode strict` invocations pass.

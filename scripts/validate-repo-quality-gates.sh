@@ -3694,36 +3694,6 @@ for json_path in [root / ".claude/settings.json", root / ".agents/hooks.json", r
         fail(f"agent runtime JSON parse failed for {rel(json_path)}: {exc}")
 
 claude_settings = load_json(root / ".claude/settings.json")
-claude_permissions = claude_settings.get("permissions") or {}
-claude_allow = set(claude_permissions.get("allow") or [])
-claude_deny = set(claude_permissions.get("deny") or [])
-if "Bash(git:*)" not in claude_allow:
-    fail(".claude/settings.json must keep broad Git routing explicit before deny hardening")
-for allow_rule in [
-    "Bash(bash scripts/validate-repo-quality-gates.sh:*)",
-    "Bash(bash scripts/validate-k8s-manifests.sh:*)",
-    "Bash(bash scripts/validate-gitops-structure.sh:*)",
-    "Bash(bash scripts/check-secret-handling.sh:*)",
-    "Bash(bash scripts/validate-policy-gates.sh:*)",
-]:
-    if allow_rule not in claude_allow:
-        fail(f".claude/settings.json missing local QA allow rule: {allow_rule}")
-expected_destructive_git_denies = [
-    "Bash(git reset --hard:*)",
-    "Bash(git checkout --:*)",
-    "Bash(git restore:*)",
-    "Bash(git clean:*)",
-    "Bash(git rebase:*)",
-    "Bash(git commit --amend:*)",
-    "Bash(git branch -D:*)",
-    "Bash(git push --force:*)",
-    "Bash(git push -f:*)",
-    "Bash(git push --delete:*)",
-    "Bash(git push --mirror:*)",
-]
-for deny_rule in expected_destructive_git_denies:
-    if deny_rule not in claude_deny:
-        fail(f".claude/settings.json missing destructive Git deny rule: {deny_rule}")
 post_validate_command = json.dumps(claude_settings.get("hooks", {}))
 for phrase in [
     "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
