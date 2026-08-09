@@ -132,6 +132,53 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 REPOSITORY_ROOT, registry, "terminal"
             )
 
+    def test_terminal_retired_route_classification_is_closed(self) -> None:
+        validator = self.validators["registry"]
+        raw_registry = json.loads(
+            (REPOSITORY_ROOT / validator.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        accepted = {
+            "docs/90.references/data/active-corpus-migration-results.json": "stage90/immutable-retired-route-evidence",
+            "docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md": "stage98/immutable-retired-route-evidence",
+        }
+        for path, expected in accepted.items():
+            with self.subTest(path=path):
+                self.assertEqual(
+                    validator._classify_retired_route_hit(
+                        raw_registry, validator.PurePosixPath(path)
+                    ),
+                    expected,
+                )
+        for path in (
+            "docs/90.references/mutable-note.md",
+            "docs/98.archive/non-evidence.md",
+            "scripts/current-consumer.py",
+        ):
+            with self.subTest(path=path):
+                self.assertIsNone(
+                    validator._classify_retired_route_hit(
+                        raw_registry, validator.PurePosixPath(path)
+                    )
+                )
+
+    def test_terminal_rejects_residual_native_migration_contract(self) -> None:
+        validator = self.validators["registry"]
+        raw_registry = json.loads(
+            (REPOSITORY_ROOT / validator.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        raw_schema = json.loads(
+            (REPOSITORY_ROOT / validator.SCHEMA_PATH).read_text(encoding="utf-8")
+        )
+        diagnostics = validator._terminal_route_contract_diagnostics(
+            REPOSITORY_ROOT,
+            raw_registry,
+            raw_schema,
+            (),
+        )
+        self.assertIn("TERMINAL-MIGRATION-PROFILE", diagnostics)
+        self.assertIn("TERMINAL-MIGRATION-SCHEMA", diagnostics)
+        self.assertIn("TERMINAL-MIGRATION-FILE", diagnostics)
+
     def test_compatibility_mode_is_rejected_by_argparse(self) -> None:
         for name in VALIDATOR_PATHS:
             with self.subTest(validator=name):

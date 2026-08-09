@@ -58,6 +58,42 @@ the transition-only test admission to restore 67 helpers (`33 + 34`).
   applicable hook passed, non-applicable hooks skipped, the exact 17-file index
   had no unstaged mutation, both diff checks passed, and the frozen Plan/Task
   staged plus unstaged diffs remained zero.
+- Fix Round 2 RED proved that the Plan-fixed immutable loader, read-only sorted
+  validator, archive/move planner, atomic apply preflight, and fixed phase CLI
+  were absent. GREEN adds those exact APIs and rejects dirty controlled paths,
+  invalid pairs, wrong phase order, missing targets, existing targets, and
+  targets below an existing Stage 98 record before the first write. No
+  production apply was executed.
+- Move-phase validation uses the existing `recover_git_blob` plus
+  `parse_archive_envelope(..., expected=recovered)` contract. It accepts a
+  completed archive only when original path, source commit/blob, canonical
+  metadata, digest, payload size, and payload bytes match; a committed corrupt
+  envelope fails closed without payload echo. Raw move-current targets still
+  require the exact source blob.
+- Terminal retired-route handling is now a registry-owned closed classifier:
+  ten exact Stage 90 evidence paths and narrow Stage 98 archived-Spec/execution
+  routes are the only admissible profiles. Mutable Stage 90, non-evidence Stage
+  98, navigation, executable, contract, fixture, and unclassified hits fail.
+  Terminal also rejects residual manifest file/route/profile and both schema
+  definitions.
+- Fix Round 2 focused GREEN passed 28/28 tests. Manifest dry-run remained
+  132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; strict Markdown remained zero violations. The first
+  aggregate run stopped only on the expected unstaged ACER worktree/index drift
+  boundary. The staged rerun exited 0 with the final repository-quality PASS;
+  ACER remained exact at 68 helpers (`33 + 35`) and zero findings.
+- The controller's Fix Round 2 full pre-commit run failed only detect-secrets
+  on the exact Python `EXPECTED_SOURCE_COMMIT` Git identity. The existing
+  narrow inline convention now admits that constant line with
+  `# pragma: allowlist secret`. The derived baseline only moves the existing
+  `document-profiles.json` adjudication from line 7 to 42 and refreshes its
+  timestamp; no candidate, classification, filter, or adjudication changed.
+- Final controller verification: focused detect-secrets and full
+  `env TMPDIR=/tmp pre-commit run` both exited 0 with every applicable hook
+  passing. The final index contains exactly eight staged files and no unstaged
+  changes; both diff checks pass; frozen Plan/Task and all Stage 98 staged plus
+  unstaged diffs are zero. WORK-102 Fix Round 2 is complete.
 - Repository-static only; hosted CI, provider-runtime, remote, credential, and
   live-platform evidence remain DEFER.
 

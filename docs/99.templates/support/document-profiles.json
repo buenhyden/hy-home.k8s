@@ -3,6 +3,41 @@
   "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
   "schemaVersion": 8,
   "routeState": "transition",
+  "retiredRouteEvidence": {
+    "routeSegment": "04.execution",
+    "profiles": [
+      {
+        "id": "stage90/immutable-retired-route-evidence",
+        "paths": [
+          "docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md",
+          "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md",
+          "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md",
+          "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md",
+          "docs/90.references/data/active-corpus-eligibility-ledger.json",
+          "docs/90.references/data/active-corpus-migration-results.json",
+          "docs/90.references/data/active-corpus-residue-closure.json",
+          "docs/90.references/data/active-corpus-retention-census.json",
+          "docs/90.references/data/active-corpus-role-audit.json",
+          "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
+        ],
+        "routes": []
+      },
+      {
+        "id": "stage98/immutable-retired-route-evidence",
+        "paths": [],
+        "routes": [
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+          },
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/04\\.execution/(?:plans|tasks)/[^/]+\\.md$"
+          }
+        ]
+      }
+    ]
+  },
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433

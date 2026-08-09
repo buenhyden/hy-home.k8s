@@ -9,6 +9,7 @@
     "$id",
     "schemaVersion",
     "routeState",
+    "retiredRouteEvidence",
     "baseline",
     "target",
     "profiles",
@@ -29,6 +30,9 @@
     },
     "routeState": {
       "enum": ["legacy", "transition", "terminal"]
+    },
+    "retiredRouteEvidence": {
+      "$ref": "#/$defs/retiredRouteEvidence"
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -63,6 +67,45 @@
     }
   },
   "$defs": {
+    "retiredRouteEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routeSegment", "profiles"],
+      "properties": {
+        "routeSegment": { "const": "04.execution" },
+        "profiles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/retiredRouteEvidenceProfile" },
+            { "$ref": "#/$defs/retiredRouteEvidenceProfile" }
+          ]
+        }
+      }
+    },
+    "retiredRouteEvidenceProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "paths", "routes"],
+      "properties": {
+        "id": {
+          "enum": [
+            "stage90/immutable-retired-route-evidence",
+            "stage98/immutable-retired-route-evidence"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^docs/(?:90\\.references|98\\.archive)/" }
+        },
+        "routes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/route" }
+        }
+      }
+    },
     "documentMigrationManifest": {
       "type": "object",
       "additionalProperties": false,

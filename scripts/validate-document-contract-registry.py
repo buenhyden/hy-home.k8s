@@ -1078,6 +1078,21 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
         "schemaVersion": 8,
         "routeState": "legacy",
+        "retiredRouteEvidence": {
+            "routeSegment": "04.execution",
+            "profiles": [
+                {
+                    "id": "stage90/immutable-retired-route-evidence",
+                    "paths": [],
+                    "routes": [],
+                },
+                {
+                    "id": "stage98/immutable-retired-route-evidence",
+                    "paths": [],
+                    "routes": [],
+                },
+            ],
+        },
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -5092,6 +5107,85 @@ def _load_migration_tool(root: Path) -> Any:
     return module
 
 
+def _classify_retired_route_hit(
+    raw_registry: Any, path: PurePosixPath
+) -> str | None:
+    """Return one explicit immutable evidence profile, or fail closed."""
+    if not isinstance(raw_registry, dict):
+        return None
+    policy = raw_registry.get("retiredRouteEvidence")
+    if not isinstance(policy, dict) or policy.get("routeSegment") != "04.execution":
+        return None
+    profiles = policy.get("profiles")
+    if not isinstance(profiles, list):
+        return None
+    path_text = path.as_posix()
+    matches: list[str] = []
+    for profile in profiles:
+        if not isinstance(profile, dict) or set(profile) != {"id", "paths", "routes"}:
+            return None
+        profile_id = profile.get("id")
+        expected_prefix = {
+            "stage90/immutable-retired-route-evidence": "docs/90.references/",
+            "stage98/immutable-retired-route-evidence": "docs/98.archive/",
+        }.get(profile_id)
+        if expected_prefix is None or not isinstance(profile.get("paths"), list) or not isinstance(profile.get("routes"), list):
+            return None
+        selected = path_text in profile["paths"]
+        for route in profile["routes"]:
+            if not isinstance(route, dict) or set(route) != {"kind", "value"}:
+                return None
+            kind, value = route.get("kind"), route.get("value")
+            if not isinstance(value, str):
+                return None
+            if kind == "exact":
+                selected = selected or path_text == value
+            elif kind == "regex" and value.startswith("^") and value.endswith("$"):
+                selected = selected or re.fullmatch(value, path_text) is not None
+            elif kind != "regex":
+                return None
+        if selected and path_text.startswith(expected_prefix):
+            matches.append(profile_id)
+    return matches[0] if len(matches) == 1 else None
+
+
+def _terminal_route_contract_diagnostics(
+    root: Path,
+    raw_registry: Any,
+    raw_schema: Any,
+    retired_route_hits: tuple[PurePosixPath, ...],
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    manifest_path = PurePosixPath("scripts/document-taxonomy-migration.json")
+    if (root / manifest_path).exists():
+        diagnostics.append("TERMINAL-MIGRATION-FILE")
+    profiles = raw_registry.get("profiles", []) if isinstance(raw_registry, dict) else []
+    if any(
+        isinstance(profile, dict)
+        and profile.get("id") == "native/document-migration-manifest"
+        for profile in profiles
+    ):
+        diagnostics.append("TERMINAL-MIGRATION-PROFILE")
+    if any(
+        isinstance(profile, dict)
+        and any(
+            isinstance(route, dict)
+            and route.get("kind") == "exact"
+            and route.get("value") == manifest_path.as_posix()
+            for route in profile.get("routes", [])
+        )
+        for profile in profiles
+    ):
+        diagnostics.append("TERMINAL-MIGRATION-ROUTE")
+    definitions = raw_schema.get("$defs", {}) if isinstance(raw_schema, dict) else {}
+    if any(name in definitions for name in ("documentMigrationManifest", "documentMigrationEntry")):
+        diagnostics.append("TERMINAL-MIGRATION-SCHEMA")
+    for path in retired_route_hits:
+        if _classify_retired_route_hit(raw_registry, path) is None:
+            diagnostics.append(f"TERMINAL-RETIRED-HIT:{path.as_posix()}")
+    return tuple(sorted(set(diagnostics)))
+
+
 def _assert_route_state(root: Path, registry: Any, requested: str | None) -> None:
     state = requested or registry.route_state
     if requested is not None and requested != registry.route_state:
@@ -5104,12 +5198,21 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
         if profile.profile_id != "native/document-migration-manifest":
             raise AssertionError("migration manifest selected the wrong native profile")
         tool = _load_migration_tool(root)
-        manifest = tool.load_manifest(root / manifest_path)
-        tool.validate_manifest_data(root, manifest, True)
+        entries = tool.load_manifest(root / manifest_path)
+        diagnostics = tool.validate_manifest(
+            root, entries, tool.EXPECTED_SOURCE_COMMIT
+        )
+        if diagnostics:
+            raise AssertionError("migration manifest invalid: " + ", ".join(diagnostics))
+        tool.validate_counts(
+            move_count=sum(row["disposition"] == "move-current" for row in entries),
+            archive_count=sum(row["disposition"] == "archive-unique" for row in entries),
+            source_count=len(entries),
+        )
     elif state == "terminal":
-        if (root / manifest_path).exists():
-            raise AssertionError("terminal route retains the migration manifest")
-        token = "docs/" + "04.execution"
+        raw_registry = load_json_file(root / REGISTRY_PATH)
+        raw_schema = load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
+        token = "docs/" + raw_registry["retiredRouteEvidence"]["routeSegment"]
         result = subprocess.run(
             ["git", "grep", "-Il", "-F", "--", token],
             cwd=root,
@@ -5120,17 +5223,13 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
         )
         if result.returncode not in {0, 1}:
             raise AssertionError("terminal retired-route scan failed")
-        owner = "docs/99.templates/support/document-profiles.json"
-        invalid = [
-            path
-            for path in result.stdout.splitlines()
-            if path != owner
-            and not path.startswith(("docs/90.references/", "docs/98.archive/"))
-        ]
-        if invalid:
+        hits = tuple(PurePosixPath(path) for path in result.stdout.splitlines())
+        diagnostics = _terminal_route_contract_diagnostics(
+            root, raw_registry, raw_schema, hits
+        )
+        if diagnostics:
             raise AssertionError(
-                "terminal retired-route consumers are not immutable evidence: "
-                + ", ".join(invalid)
+                "terminal route contract failed: " + ", ".join(diagnostics)
             )
 
 
