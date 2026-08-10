@@ -8,6 +8,107 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-10 - Candidate re-verification, zero-risk RBAC subset applied
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: docs, infra, security
+- **Status**: complete
+- **Tags**: #followup #kubernetes #security #rbac #leastprivilege #diataxis #networkpolicy
+- **Owner**: primary agent
+- **Canonical Owner**: `gitops/platform/monitoring/kube-state-metrics.yaml` for the RBAC item; `gitops/platform/network-policies/` for the ingress item; `docs/99.templates/support/document-profiles.json` for the documentation item
+- **Provenance**: Read-only repository-static re-verification on 2026-08-10 after merge `6e117c2f`, plus the official kube-state-metrics v2.14.0 CLI documentation read at tag `v2.14.0`. The human approved implementing only the zero-risk RBAC subset.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until the remaining items are adopted by an approved Spec or explicitly rejected; re-observe every claim before acting.
+- **Next Owner**: human — decide on the deferred items. No agent is authorized to implement them.
+
+#### Progress
+
+All three candidates registered earlier today were re-verified and still hold.
+The first candidate turned out to be three separable items rather than one, and
+only the zero-risk item was implemented.
+
+**Applied — uncollected RBAC grants removed.** Five cluster-wide `list, watch`
+grants were removed from `ClusterRole/kube-state-metrics`: `serviceaccounts`
+plus the whole `rbac.authorization.k8s.io` rule covering `clusterroles`,
+`clusterrolebindings`, `roles`, and `rolebindings`. None appears in the
+documented default `--resources` collector set, and the Deployment sets no
+`--resources` flag, so removing them cannot change any exposed metric.
+
+**Deferred — the `secrets` grant.** This is the item the earlier registration
+called the highest-value bounded change, and the re-verification shows it is not
+a one-line deletion. `secrets` IS in the default collector set, so removing the
+grant alone would leave the secret informer running without permission. The
+correct change pairs the RBAC removal with an explicit `--resources` value that
+excludes `secrets`. That resolves the compatibility question `CLM-WERPC-008-01`
+left unobserved.
+
+**New finding — collector and RBAC are already out of step.** Two default
+collectors have no grant at all: `certificatesigningrequests` and `leases`. This
+predates today's work and suggests the workload is already logging permission
+failures for those two informers. It was not fixed here.
+
+**Deferred — no Ingress-type or default-deny NetworkPolicy.** Re-verified: all
+six tracked policies under `gitops/platform/network-policies/` remain
+`policyTypes: [Egress]` only, and no Ingress-type or default-deny policy exists
+under `gitops/`, `infrastructure/`, or `policy/`. Still the highest-risk item and
+still requires a complete allowed-flow inventory and a security-reviewed Spec.
+
+**Deferred — absent Diátaxis tutorial and explanation profiles.** Re-verified:
+64 routed profiles, none of them a tutorial or explanation type. Adoption should
+still first prove a named owner, reader, consumer, and validator need.
+
+**Diátaxis source re-check failed a second time.** Ten requests across
+`/start-here/`, `/`, the `www` hostname, and an unrelated `/map/` probe returned
+HTTP 429, so the block is host-wide for this egress. Two failures on the same day
+make it persistent rather than transient.
+
+#### Memory
+
+Splitting a least-privilege candidate by blast radius changed the outcome. As a
+single item it looked like one bounded change gated behind an unresolved
+compatibility question. Separated, part of it was provably zero-impact and
+shipped the same day, while the genuinely coupled part stayed deferred with its
+coupling now named instead of unknown.
+
+The general lesson is that "what does this permission grant" and "what does the
+workload actually read" are different questions, and comparing a role against the
+consumer's documented default collector set answers both at once. That
+comparison also surfaced the reverse defect nobody was looking for: resources the
+workload collects but has no permission to read.
+
+#### Evidence
+
+Repository-static and official-documentation, read-only, on merge `6e117c2f`:
+
+- kube-state-metrics v2.14.0 `docs/developer/cli-arguments.md` at tag `v2.14.0`
+  states the default `--resources` set, which includes `secrets` and excludes all
+  five removed grants.
+- `gitops/platform/monitoring/kube-state-metrics.yaml` Deployment declares no
+  `--resources` flag.
+- Before/after parse of the ClusterRole intersected against that default set:
+  five removed, zero added, zero removed items present in the default set.
+- `kube_secret` search across the tracked tree outside the research pack — zero
+  matches. The only kube-state-metrics series referenced anywhere are
+  `kube_deployment_*`, `kube_node_info`, and `kube_pod_*`.
+- Six `policyTypes` declarations under `gitops/platform/network-policies/` — all
+  `Egress`; zero Ingress-type or default-deny policy.
+- `docs/99.templates/support/document-profiles.json` — 64 routed profiles, zero
+  tutorial or explanation id.
+
+No cluster, ArgoCD, Vault, ESO, kubectl, registry, hosted, or credential-bearing
+check was run; effective RBAC, actual scrape behavior, real traffic flows, and
+live posture remain `DEFER`.
+
+#### Handoff
+
+None in progress. Three items await a human decision: pairing the `secrets` RBAC
+removal with an explicit `--resources` value, reconciling the
+`certificatesigningrequests` and `leases` collector/RBAC mismatch, and the two
+previously deferred candidates. The Diátaxis source re-check should be retried
+from a different network path.
+
 ### 2026-08-10 - WER follow-up candidates registered without implementation
 
 #### Metadata
