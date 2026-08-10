@@ -8,6 +8,216 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-10 - Orphaned taxonomy-program findings recovered before cleanup
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: docs, meta, infra
+- **Status**: complete
+- **Tags**: #recovery #cleanup #hooks #security #validators #taxonomy
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` for the program; `docs/00.agent-governance/hooks/` for the hook findings
+- **Provenance**: Recovered on 2026-08-10 from an untracked SDD ledger at `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md` before that file was deleted during one-shot cleanup. The findings themselves are dated 2026-08-08 and were produced during the taxonomy-consolidation program on base commit `c62a5cd9`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until each finding is either adopted into a canonical owner or explicitly superseded. Re-observe every file and line reference before acting, because all of them can drift.
+- **Next Owner**: human — decide whether the hook findings warrant a Stage 00 documentation change or a Spec.
+
+#### Progress
+
+Routine cleanup found an untracked ledger whose worktree no longer exists, so
+the record was orphaned. A search showed four of its conclusions appear in zero
+tracked files, meaning deletion would have destroyed them. They are recovered
+here verbatim in substance before the file is removed.
+
+**R-1 reduction is NOT FEASIBLE, with evidence.** The active-corpus census
+cannot be reduced. `scripts/validate-active-corpus-retention.py:927` compares
+`candidateBaseline` for exact equality against a validator-constructed expected
+value, and its negative probes at `:982-985` require that popping or appending
+an entry FAILS. `scripts/validate-active-corpus-eligibility.py:830-834` requires
+that missing-row, extra-row, and duplicate-row mutations all FAIL, and
+`tests/test_active_corpus_eligibility.py:29-32` asserts the exact counts
+`{"candidates": 110, "eligible": 12, "defer": 98, "controls": 2}`. The census is
+pinned fail-closed expected state, so removing rows is precisely what these
+validators exist to reject. Reducing the data would require weakening the
+validator and its negative probes at the same time. Consequence recorded at the
+time: package WDTC-001 had no remaining content and was dropped.
+
+**R-4 has an abort rule that a future agent must not skip.**
+`scripts/validate-agent-legacy-cutover.py:183` pins an exact reference count for
+`docs/00.agent-governance/memory/progress.md` inside `ALLOWED_REFERENCE_COUNTS`.
+Any entry rotated out of this file must not contain a counted retired-surface
+string, or the count breaks. Verify the counted strings are absent from the
+rotated range BEFORE moving anything; if a counted string would leave the live
+file, keep that entry or report the rotation infeasible. Do not adjust the
+pinned count to match. The other three consumers are safe by construction:
+`validate-agent-governance-closure.py:240` declares the memory-class row,
+`validate-agent-harness-contract.py:29` pins only the canonical path, and
+`validate-markdown-profiles.py:1510,1696` uses this file as an append parent,
+matching shape rather than content.
+
+**A hook privilege inversion was found and fixed.** An earlier worktree fix made
+`k8s-pre-edit.sh:321` derive the EXECUTABLE location from tool input rather than
+only the `--root` argument. Editing a file inside an untrusted worktree would
+have made the pre-edit guard execute that branch's copy of
+`select-affected-surfaces.py` — the guard running the code it is supposed to
+guard. The fix pins the program to the project directory and passes only
+`--root` as data. It was proven concretely: a sabotage stub placed in the
+worktree copy made the unpinned hook exit 2, while the pinned hook exits 0 with
+the sabotage marker absent.
+
+**Hooks in this repository cannot be validated live from a branch.**
+`.claude/settings.json` loads hooks from `$CLAUDE_PROJECT_DIR`, which is the main
+checkout, not the working directory. A hook change is therefore inert until it
+reaches `main`, so branch-local hook testing proves nothing. The original record
+notes this constraint is undocumented in Stage 00. A related constraint: the
+same resolver defect exists in `post-validate.sh`, but fixing it collides with
+`tests/test_provider_post_validate_hook.py:94`, which asserts that
+`git rev-parse` never appears in that hook as a deliberate hermeticity contract.
+
+#### Memory
+
+Untracked tool directories are not automatically disposable. A cleanup pass that
+classifies by directory name would have deleted a ledger holding a feasibility
+verdict, a validator abort rule, and a proven privilege-escalation fix. Grepping
+the tracked tree for each distinctive conclusion before deleting is what
+separated cache from knowledge here, and it cost one command.
+
+The recovered R-4 rule then immediately applied to its own recovery: writing this
+entry required checking that the new text contains none of the pinned
+retired-surface strings, because adding one would have broken the very validator
+the rule describes.
+
+#### Evidence
+
+Read-only, on branch `fix/infra-ksm-excess-rbac` at commit `ceba1057`:
+
+- The source ledger was 168 lines at
+  `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md`,
+  naming worktree `.worktrees/docs-taxonomy-consolidation` and branch
+  `refactor/docs-taxonomy-consolidation`, neither of which still exists.
+- Tracked-tree search returned zero files containing `NOT FEASIBLE`,
+  `ABORT RULE`, `privilege inversion`, or the branch-validation constraint
+  sentence.
+- `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` is
+  tracked, and base commit `c62a5cd9` remains reachable, so the program itself
+  is preserved; only these conclusions were not.
+- Counted-string baseline in this file before the edit: four retired-surface
+  strings at zero occurrences and the fifth at its pinned value, all unchanged
+  by this entry.
+
+No cluster, hosted, provider-runtime, or credential-bearing check was run. Every
+file and line reference above is quoted from the recovered record and was not
+re-executed.
+
+#### Handoff
+
+None in progress. The hook findings are the actionable residue: whether the
+branch-validation constraint should be documented in Stage 00, and whether the
+`post-validate.sh` resolver defect should be fixed using the same pinned-program
+shape without weakening its hermeticity test.
+
+### 2026-08-10 - Candidate re-verification, zero-risk RBAC subset applied
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: docs, infra, security
+- **Status**: complete
+- **Tags**: #followup #kubernetes #security #rbac #leastprivilege #diataxis #networkpolicy
+- **Owner**: primary agent
+- **Canonical Owner**: `gitops/platform/monitoring/kube-state-metrics.yaml` for the RBAC item; `gitops/platform/network-policies/` for the ingress item; `docs/99.templates/support/document-profiles.json` for the documentation item
+- **Provenance**: Read-only repository-static re-verification on 2026-08-10 after merge `6e117c2f`, plus the official kube-state-metrics v2.14.0 CLI documentation read at tag `v2.14.0`. The human approved implementing only the zero-risk RBAC subset.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until the remaining items are adopted by an approved Spec or explicitly rejected; re-observe every claim before acting.
+- **Next Owner**: human — decide on the deferred items. No agent is authorized to implement them.
+
+#### Progress
+
+All three candidates registered earlier today were re-verified and still hold.
+The first candidate turned out to be three separable items rather than one, and
+only the zero-risk item was implemented.
+
+**Applied — uncollected RBAC grants removed.** Five cluster-wide `list, watch`
+grants were removed from `ClusterRole/kube-state-metrics`: `serviceaccounts`
+plus the whole `rbac.authorization.k8s.io` rule covering `clusterroles`,
+`clusterrolebindings`, `roles`, and `rolebindings`. None appears in the
+documented default `--resources` collector set, and the Deployment sets no
+`--resources` flag, so removing them cannot change any exposed metric.
+
+**Deferred — the `secrets` grant.** This is the item the earlier registration
+called the highest-value bounded change, and the re-verification shows it is not
+a one-line deletion. `secrets` IS in the default collector set, so removing the
+grant alone would leave the secret informer running without permission. The
+correct change pairs the RBAC removal with an explicit `--resources` value that
+excludes `secrets`. That resolves the compatibility question `CLM-WERPC-008-01`
+left unobserved.
+
+**New finding — collector and RBAC are already out of step.** Two default
+collectors have no grant at all: `certificatesigningrequests` and `leases`. This
+predates today's work and suggests the workload is already logging permission
+failures for those two informers. It was not fixed here.
+
+**Deferred — no Ingress-type or default-deny NetworkPolicy.** Re-verified: all
+six tracked policies under `gitops/platform/network-policies/` remain
+`policyTypes: [Egress]` only, and no Ingress-type or default-deny policy exists
+under `gitops/`, `infrastructure/`, or `policy/`. Still the highest-risk item and
+still requires a complete allowed-flow inventory and a security-reviewed Spec.
+
+**Deferred — absent Diátaxis tutorial and explanation profiles.** Re-verified:
+64 routed profiles, none of them a tutorial or explanation type. Adoption should
+still first prove a named owner, reader, consumer, and validator need.
+
+**Diátaxis source re-check failed a second time.** Ten requests across
+`/start-here/`, `/`, the `www` hostname, and an unrelated `/map/` probe returned
+HTTP 429, so the block is host-wide for this egress. Two failures on the same day
+make it persistent rather than transient.
+
+#### Memory
+
+Splitting a least-privilege candidate by blast radius changed the outcome. As a
+single item it looked like one bounded change gated behind an unresolved
+compatibility question. Separated, part of it was provably zero-impact and
+shipped the same day, while the genuinely coupled part stayed deferred with its
+coupling now named instead of unknown.
+
+The general lesson is that "what does this permission grant" and "what does the
+workload actually read" are different questions, and comparing a role against the
+consumer's documented default collector set answers both at once. That
+comparison also surfaced the reverse defect nobody was looking for: resources the
+workload collects but has no permission to read.
+
+#### Evidence
+
+Repository-static and official-documentation, read-only, on merge `6e117c2f`:
+
+- kube-state-metrics v2.14.0 `docs/developer/cli-arguments.md` at tag `v2.14.0`
+  states the default `--resources` set, which includes `secrets` and excludes all
+  five removed grants.
+- `gitops/platform/monitoring/kube-state-metrics.yaml` Deployment declares no
+  `--resources` flag.
+- Before/after parse of the ClusterRole intersected against that default set:
+  five removed, zero added, zero removed items present in the default set.
+- `kube_secret` search across the tracked tree outside the research pack — zero
+  matches. The only kube-state-metrics series referenced anywhere are
+  `kube_deployment_*`, `kube_node_info`, and `kube_pod_*`.
+- Six `policyTypes` declarations under `gitops/platform/network-policies/` — all
+  `Egress`; zero Ingress-type or default-deny policy.
+- `docs/99.templates/support/document-profiles.json` — 64 routed profiles, zero
+  tutorial or explanation id.
+
+No cluster, ArgoCD, Vault, ESO, kubectl, registry, hosted, or credential-bearing
+check was run; effective RBAC, actual scrape behavior, real traffic flows, and
+live posture remain `DEFER`.
+
+#### Handoff
+
+None in progress. Three items await a human decision: pairing the `secrets` RBAC
+removal with an explicit `--resources` value, reconciling the
+`certificatesigningrequests` and `leases` collector/RBAC mismatch, and the two
+previously deferred candidates. The Diátaxis source re-check should be retried
+from a different network path.
+
 ### 2026-08-10 - WER follow-up candidates registered without implementation
 
 #### Metadata
