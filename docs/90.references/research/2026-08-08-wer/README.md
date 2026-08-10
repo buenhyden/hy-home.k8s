@@ -27,6 +27,16 @@ not a policy, runtime, provider, or deployment control surface.
   Claude gateway-import, common-instruction-topology, and LLM-WIKI freshness
   statements, and resolved a source-date self-contradiction in the CI/CD and QA
   report. Source and claim identifiers were not renumbered.
+- **Freshness record**: on 2026-08-10 the five reports that the gap-only refresh
+  did not touch had their external sources re-checked. Four returned no change
+  inside the window: harness and loop, AI agents and agency agents, model
+  routing, and memory. The Diátaxis sources were unreachable behind HTTP 429 and
+  are recorded as `unreachable`, not `unchanged`; their claims retain the
+  2026-08-08 observation date. Two findings were added as dated subsections
+  without rewriting an existing claim: the pinned MCP `2025-11-25` revision is
+  superseded by `2026-07-28`, registered as `SRC-WERPC-066`; and the two live
+  Codex pages disagree on model identifiers, reasoning-effort values, and model
+  precedence order. No requirement status changed.
 
 ### Structure
 

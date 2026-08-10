@@ -3,7 +3,7 @@ title: 'Reference: Agent Memory Tiers and Management'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-10
 ---
 
 # Reference: Agent Memory Tiers and Management
@@ -93,11 +93,29 @@ MCP Resources describes retrieval and optional change notifications. These
 surfaces do not define this repository's retention, authorization, truth, or
 deletion policy, and no local provider-memory state was inspected.
 
+### 2026-08-10 freshness re-check
+
+All four external sources were re-read on 2026-08-10 and none changed inside
+the 2026-08-08 to 2026-08-10 window. The re-check did surface one material fact
+that the original observation missed: the pinned Model Context Protocol revision
+this report cites is superseded.
+
+| Observation                      | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Effect on this report                                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MCP revision currency            | `2025-11-25` remains published and reachable, but the MCP versioning page states the current protocol revision is `2026-07-28` ([SRC-WERPC-066](source-coverage-and-migration-ledger.md#source-register)). That revision pre-dates the 2026-08-08 check, so this is a missed-currency correction, not a two-day change.                                                                                                                                                        | The connected-resource statements here describe the `2025-11-25` semantics only. They remain accurate for that revision and must not be read as current-protocol claims.        |
+| MCP resource semantics delta     | At `2026-07-28`, `resources/subscribe` is replaced by `subscriptions/listen` with a `resourceSubscriptions` filter and a subscription id in `_meta`; `resources/list`, `resources/read`, and `resources/templates/list` gain `resultType`, `ttlMs`, and `cacheScope`; resource-not-found moves from `-32002` to `-32602` with `-32002` retained for compatibility; every request must carry `io.modelcontextprotocol/protocolVersion`, `clientInfo`, and `clientCapabilities`. | Any future domain-scoped memory design that assumes the cited retrieval and subscription shape must re-derive it from `2026-07-28`. This report does not adopt those semantics. |
+| Codex and Claude memory surfaces | `config-reference`, the Agents SDK sessions page, and the Claude Code memory page were reachable and consistent with the claims already recorded. None publishes a last-modified date, so "unchanged" here is content identity, not a publisher freshness signal.                                                                                                                                                                                                              | No claim changes. The absence of a publisher timestamp is itself a recorded limit.                                                                                              |
+
+No status in this report is promoted by this re-check. `REQ-WERPC-032` stays
+`Partial` because provider retention, deletion, compaction, and
+connected-resource behavior still require runtime evidence that is `DEFER`.
+
 ## Sources
 
-- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08 (`SRC-WERPC-049`–`050`).
-- [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory), checked 2026-08-08 (`SRC-WERPC-051`).
-- [Model Context Protocol Resources specification](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), checked 2026-08-08 (`SRC-WERPC-052`).
+- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`–`050`).
+- [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-051`).
+- [Model Context Protocol Resources specification](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), checked 2026-08-08, re-checked 2026-08-10 and confirmed superseded (`SRC-WERPC-052`).
+- [Model Context Protocol versioning](https://modelcontextprotocol.io/specification/versioning) and the [2026-07-28 Resources specification](https://modelcontextprotocol.io/specification/2026-07-28/server/resources), checked 2026-08-10 (`SRC-WERPC-066`).
 - [Memory README](../../../00.agent-governance/memory/README.md) and `contracts/agent-checkpoint.schema.json` are local static owners.
 
 ## Review and Freshness
@@ -106,6 +124,12 @@ Refresh after a memory/checkpoint contract, canonical owner, provider memory,
 MCP Resource, retention/privacy, or lifecycle-validator change. Static PASS
 does not prove provider-local memory, checkpoint use, authentication, or actual
 compaction execution.
+
+External sources were re-checked on 2026-08-10; no cited claim changed inside
+that window. The re-check recorded that the pinned `2025-11-25` MCP revision is
+superseded by `2026-07-28`, so treat every MCP statement here as revision-scoped
+rather than current-protocol. None of the four sources publishes a last-modified
+date, so an unchanged result is content identity rather than a publisher signal.
 
 ## Related Documents
 
