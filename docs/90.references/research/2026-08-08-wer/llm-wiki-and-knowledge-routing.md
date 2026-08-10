@@ -43,13 +43,13 @@ policy/procedure content, vector data, embeddings, runtime configuration, and
 static-site output. This is a deterministic **link-map contract**, not a
 document-discovery experiment.
 
-| Surface | What it is | What it is not | Evidence boundary |
-| --- | --- | --- | --- |
-| LLM-WIKI | Generated local Markdown pointers to canonical repository owners, with a deterministic drift check. | A policy, a duplicated wiki, a search engine, semantic index, RAG corpus, or runtime context provider. | Generator and `--check` establish output freshness against declared static inputs only. |
-| `llms.txt` | A proposal for a Markdown file at a website root that helps an LLM use that website. | A local repository index specification or proof any LLM fetches/uses it. | No workspace publication or consumer is observed; a separate web/publication review would be required. |
-| MCP Resources | URI-addressed data exposed by an MCP server through the Resources capability; hosts/clients decide incorporation. | A Markdown index, a local file merely because it has links, or proof of an MCP server/client session. | Requires a separately configured server, capability negotiation, access policy, and runtime evidence. |
-| Search | Keyword/metadata lookup over an indexed corpus. | A canonical-authority decision or source-freshness guarantee. | Requires index ownership, update policy, access and quality evaluation. |
-| RAG | Retrieval plus model-context assembly over selected content. | A deterministic owner map or proof retrieved content is current/correct. | Requires corpus boundaries, ingestion/deletion, permissions, provenance, evaluation, and incident handling. |
+| Surface       | What it is                                                                                                        | What it is not                                                                                         | Evidence boundary                                                                                           |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| LLM-WIKI      | Generated local Markdown pointers to canonical repository owners, with a deterministic drift check.               | A policy, a duplicated wiki, a search engine, semantic index, RAG corpus, or runtime context provider. | Generator and `--check` establish output freshness against declared static inputs only.                     |
+| `llms.txt`    | A proposal for a Markdown file at a website root that helps an LLM use that website.                              | A local repository index specification or proof any LLM fetches/uses it.                               | No workspace publication or consumer is observed; a separate web/publication review would be required.      |
+| MCP Resources | URI-addressed data exposed by an MCP server through the Resources capability; hosts/clients decide incorporation. | A Markdown index, a local file merely because it has links, or proof of an MCP server/client session.  | Requires a separately configured server, capability negotiation, access policy, and runtime evidence.       |
+| Search        | Keyword/metadata lookup over an indexed corpus.                                                                   | A canonical-authority decision or source-freshness guarantee.                                          | Requires index ownership, update policy, access and quality evaluation.                                     |
+| RAG           | Retrieval plus model-context assembly over selected content.                                                      | A deterministic owner map or proof retrieved content is current/correct.                               | Requires corpus boundaries, ingestion/deletion, permissions, provenance, evaluation, and incident handling. |
 
 ### Owner, drift, and freshness rules
 
@@ -66,9 +66,12 @@ document-discovery experiment.
    collision/absence behavior, fixture tests, and migration plan first.
 4. **Freshness rule.** A source-owner path, documentation taxonomy, governance
    routing, scripts inventory, GitOps owner, examples taxonomy, generator, or
-   version-inventory path change triggers review and check. The generated file's
-   own `updated`/last-reviewed date remains 2026-05-10; that is a visible
-   freshness debt, not evidence of current external knowledge.
+   version-inventory path change triggers review and check. As checked on
+   2026-08-10, the generated file's `updated`, `Source checked`, and
+   `Last reviewed` values are all 2026-08-09, so the freshness debt recorded at
+   the 2026-08-08 observation is closed. A current review date remains evidence
+   of declared-input review only; it is not evidence of current external
+   knowledge.
 5. **Security rule.** An owner map is intentionally reference-only. Do not add
    secrets, ignored configuration, embeddings, runtime cache, package manifest,
    or copied runbook text. Any future retrieval endpoint requires separately
