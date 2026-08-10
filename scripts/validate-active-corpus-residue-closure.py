@@ -121,6 +121,7 @@ POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
         "docs/03.specs/046-agent-governance-program-closure/spec.md",
         "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
         "docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md",
+        "docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md",
     }
 )
 PLAN_ROOT = "docs/04.execution/plans"
@@ -2816,10 +2817,7 @@ def _self_test_post_closure_adr_scope() -> int:
         raise AssertionError("frozen accepted ADR guard drift")
     cases = 1
 
-    unknown = (
-        "docs/02.architecture/decisions/"
-        "9999-unknown-post-closure-authority.md"
-    )
+    unknown = "docs/02.architecture/decisions/9999-unknown-post-closure-authority.md"
     unknown_paths = [*known_paths, unknown]
     unknown_payloads = {**payloads, unknown: accepted_payload()}
     unknown_index = {**index, unknown: "0" * 40}
@@ -2843,11 +2841,7 @@ def run_self_test() -> int:
     observed = _self_test_observed()
     ledger = _ledger_from_observed(observed)
     validate_ledger(ledger, observed)
-    cases = (
-        1
-        + _self_test_terminal_frontier()
-        + _self_test_post_closure_adr_scope()
-    )
+    cases = 1 + _self_test_terminal_frontier() + _self_test_post_closure_adr_scope()
     mutations: list[tuple[str, Callable[[dict[str, Any]], None]]] = [
         ("CLOSURE-SCHEMA", lambda item: item.__setitem__("schemaVersion", 2)),
         ("CLOSURE-SOURCE-DRIFT", lambda item: item["sourceLedgers"].pop()),

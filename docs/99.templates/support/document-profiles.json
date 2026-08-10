@@ -6450,7 +6450,7 @@
       "spec": "055",
       "plan": "docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md",
       "task": "docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md",
-      "state": "active",
+      "state": "done",
       "reason": "Direct human-approved gap-only external-source refresh of the existing 2026-08-08 WER pack without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"

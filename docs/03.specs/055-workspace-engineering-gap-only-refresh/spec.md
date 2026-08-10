@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Gap-only Research Refresh Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-08-10
 ---

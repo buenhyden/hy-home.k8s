@@ -410,18 +410,12 @@ class ActiveCorpusRetentionContractTests(unittest.TestCase):
 
 class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
     FRONTIER_LINEAGE = "2026-07-27-contract-cutover-and-program-closure"
-    FRONTIER_SPEC = (
-        "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
-    )
+    FRONTIER_SPEC = "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
     FRONTIER_PLAN = f"docs/04.execution/plans/{FRONTIER_LINEAGE}.md"
     FRONTIER_TASK = f"docs/04.execution/tasks/{FRONTIER_LINEAGE}.md"
     SUCCESSOR_LINEAGE = "2026-07-26-github-ci-qa-evidence"
-    SUCCESSOR_PLAN = (
-        f"docs/04.execution/plans/{SUCCESSOR_LINEAGE}.md"
-    )
-    SUCCESSOR_TASK = (
-        f"docs/04.execution/tasks/{SUCCESSOR_LINEAGE}.md"
-    )
+    SUCCESSOR_PLAN = f"docs/04.execution/plans/{SUCCESSOR_LINEAGE}.md"
+    SUCCESSOR_TASK = f"docs/04.execution/tasks/{SUCCESSOR_LINEAGE}.md"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -575,19 +569,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 r"\Agit:(?:sha1:[0-9a-f]{40}|sha256:[0-9a-f]{64})\Z",
             )
 
-        current_plan = (
-            "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md"
-        )
-        current_task = (
-            "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md"
-        )
+        current_plan = "docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md"
+        current_task = "docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md"
         terminal_plan = (
-            "docs/04.execution/plans/"
-            "2026-07-22-reference-information-architecture.md"
+            "docs/04.execution/plans/2026-07-22-reference-information-architecture.md"
         )
         terminal_task = (
-            "docs/04.execution/tasks/"
-            "2026-07-22-reference-information-architecture.md"
+            "docs/04.execution/tasks/2026-07-22-reference-information-architecture.md"
         )
         active_rows_by_mode = {
             "current": [
@@ -875,9 +863,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 *terminal_specs_by_mode[mode],
             )
         }
-        row_paths = {
-            row["path"] for row in (*rows, *terminal_rows, *terminal_specs)
-        }
+        row_paths = {row["path"] for row in (*rows, *terminal_rows, *terminal_specs)}
         self.assertEqual(row_paths, expected_paths)
         if expected_object_ids is None:
             expected_object_ids = self.index_object_identities(expected_paths)
@@ -955,9 +941,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.assertEqual(row["programArd"], "0009")
             self.assertEqual(row["decision"], "0017")
             self.assertEqual(row["relationClass"], "original-tranche")
-            self.assertEqual(
-                row["registryPath"], self.validator.REGISTRY_PATH
-            )
+            self.assertEqual(row["registryPath"], self.validator.REGISTRY_PATH)
         self.assertEqual(
             [
                 (
@@ -1186,20 +1170,14 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(
             {
                 "activeControlRows": len(observed["activeControlRows"]),
-                "activeControlPairs": len(
-                    observed["activeControlPairCardinality"]
-                ),
+                "activeControlPairs": len(observed["activeControlPairCardinality"]),
                 "terminalControlRows": len(observed["terminalControlRows"]),
-                "terminalControlPairs": len(
-                    observed["terminalControlPairCardinality"]
-                ),
+                "terminalControlPairs": len(observed["terminalControlPairCardinality"]),
                 "terminalSpecs": len(observed["terminalSpecRows"]),
             },
             frontier_counts,
         )
-        counts = self.validator.validate_active_corpus_residue_closure(
-            REPOSITORY_ROOT
-        )
+        counts = self.validator.validate_active_corpus_residue_closure(REPOSITORY_ROOT)
         self.assertEqual(counts, expected)
 
     def test_tracked_inventory_requires_descriptor_and_index_equality(self) -> None:
@@ -1523,6 +1501,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "docs/03.specs/046-agent-governance-program-closure/spec.md",
             "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
             "docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md",
+            "docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md",
         ]
         future_adrs = sorted(self.validator.POST_CLOSURE_ADR_AUTHORITY_PATHS)
         future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
@@ -1537,10 +1516,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 path: accepted_payload
                 for path in self.validator.FROZEN_ACCEPTED_ADR_PATHS
             },
-            **{
-                path: done_payload
-                for path in self.validator.FROZEN_DONE_SPEC_PATHS
-            },
+            **{path: done_payload for path in self.validator.FROZEN_DONE_SPEC_PATHS},
             **{path: accepted_payload for path in future_adrs},
             **{path: done_payload for path in future_specs},
         }
@@ -1578,40 +1554,26 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ("spec", self.validator.FROZEN_DONE_SPEC_PATHS, future_specs),
         ):
             for frozen_path in frozen:
-                with self.subTest(
-                    kind=kind, path=frozen_path, mutation="missing"
-                ):
+                with self.subTest(kind=kind, path=frozen_path, mutation="missing"):
                     with self.assertRaises(self.validator.ClosureError) as raised:
                         self.validator._frozen_authority_scope(
                             [
-                                *(
-                                    path
-                                    for path in frozen
-                                    if path != frozen_path
-                                ),
+                                *(path for path in frozen if path != frozen_path),
                                 *future,
                             ],
                             kind=kind,
                         )
-                    self.assertEqual(
-                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
-                    )
+                    self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-SCOPE")
                     self.assertEqual(raised.exception.path, frozen_path)
-                with self.subTest(
-                    kind=kind, path=frozen_path, mutation="duplicate"
-                ):
+                with self.subTest(kind=kind, path=frozen_path, mutation="duplicate"):
                     with self.assertRaises(self.validator.ClosureError) as raised:
                         self.validator._frozen_authority_scope(
                             [*frozen, frozen_path, *future],
                             kind=kind,
                         )
-                    self.assertEqual(
-                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
-                    )
+                    self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-SCOPE")
                     self.assertEqual(raised.exception.path, frozen_path)
-                with self.subTest(
-                    kind=kind, path=frozen_path, mutation="status"
-                ):
+                with self.subTest(kind=kind, path=frozen_path, mutation="status"):
                     mutated_payloads = dict(payloads)
                     expected_type = f"sdlc/{kind}"
                     mutated_payloads[frozen_path] = (
@@ -1628,14 +1590,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                             mutated_payloads,
                             kind=kind,
                         )
-                    self.assertEqual(
-                        raised.exception.code, "CLOSURE-AUTHORITY-SCOPE"
-                    )
+                    self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-SCOPE")
                     self.assertEqual(raised.exception.path, frozen_path)
-        rogue_adr = (
-            "docs/02.architecture/decisions/"
-            "2099-rogue-accepted-decision.md"
-        )
+        rogue_adr = "docs/02.architecture/decisions/2099-rogue-accepted-decision.md"
         rogue_spec = "docs/03.specs/999-rogue-done-spec/spec.md"
         for kind, frozen, future, rogue_path, rogue_payload in (
             (
@@ -1916,7 +1873,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "CLOSURE-TERMINAL-FRONTIER",
             )
             for name, kwargs in (
-            (
+                (
                     "successor-document-relation-mismatch",
                     {
                         "payloads": self.terminal_payloads(
@@ -2029,10 +1986,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             payloads,
         )
         self.assertEqual(
-            [
-                (row["path"], row["lineageId"], row["status"])
-                for row in active_rows
-            ],
+            [(row["path"], row["lineageId"], row["status"]) for row in active_rows],
             [
                 (self.FRONTIER_PLAN, self.FRONTIER_LINEAGE, "active"),
                 (self.FRONTIER_TASK, self.FRONTIER_LINEAGE, "active"),
@@ -2170,8 +2124,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
                         {},
                         {
-                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
-                                invalid_payload,
+                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR: invalid_payload,
                         },
                         terminal["terminalSpecRows"],
                     )
@@ -2197,17 +2150,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
                 {},
                 {
-                    self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
-                        closure_payload,
+                    self.validator.TERMINAL_PROGRAM_CLOSURE_ADR: closure_payload,
                 },
                 early["terminalSpecRows"],
             ),
             [],
         )
-        rogue_adr = (
-            "docs/02.architecture/decisions/"
-            "2099-rogue-accepted-decision.md"
-        )
+        rogue_adr = "docs/02.architecture/decisions/2099-rogue-accepted-decision.md"
         self.assertEqual(
             self.validator._generic_adr_authority_paths(
                 [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR, rogue_adr],
@@ -2327,13 +2276,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         active_missing_relation = self.terminal_registry("done")
         active_missing_relation["programLineage"]["programs"][0]["tranches"].pop()
         active_duplicate_relation = self.terminal_registry("done")
-        active_duplicate_relation["programLineage"]["programs"][0][
-            "tranches"
-        ].append(
+        active_duplicate_relation["programLineage"]["programs"][0]["tranches"].append(
             copy.deepcopy(
-                active_duplicate_relation["programLineage"]["programs"][0][
-                    "tranches"
-                ][-1]
+                active_duplicate_relation["programLineage"]["programs"][0]["tranches"][
+                    -1
+                ]
             )
         )
         cases = (
@@ -2518,12 +2465,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         for name, kwargs, code in cases:
             with self.subTest(case=name):
                 parameters = {
-                    "payloads": self.terminal_payloads(
-                        "done", successor_state="done"
-                    ),
-                    "registry": self.terminal_registry(
-                        "done", successor_state="done"
-                    ),
+                    "payloads": self.terminal_payloads("done", successor_state="done"),
+                    "registry": self.terminal_registry("done", successor_state="done"),
                 }
                 parameters.update(kwargs)
                 with self.assertRaises(self.validator.ClosureError) as raised:
@@ -2686,27 +2629,27 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             observed.update(
                 {
                     "activeControlRows": active_rows,
-                    "activeControlPairCardinality":
-                        self.validator._build_active_control_pairs(active_rows),
+                    "activeControlPairCardinality": self.validator._build_active_control_pairs(
+                        active_rows
+                    ),
                     "terminalControlRows": partition["terminalControlRows"],
-                    "terminalControlPairCardinality":
-                        partition["terminalControlPairCardinality"],
+                    "terminalControlPairCardinality": partition[
+                        "terminalControlPairCardinality"
+                    ],
                     "terminalSpecRows": partition["terminalSpecRows"],
                     "terminalProgramClosureAuthority": [],
                 }
             )
             if frontier_state == "done":
                 closure_payload = (
-                    b"---\ntype: sdlc/adr\nstatus: accepted\n"
-                    b"owner: platform\n---\n"
+                    b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
                 )
                 observed["terminalProgramClosureAuthority"] = (
                     self.validator._terminal_program_closure_authority(
                         [self.validator.TERMINAL_PROGRAM_CLOSURE_ADR],
                         {},
                         {
-                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR:
-                                closure_payload,
+                            self.validator.TERMINAL_PROGRAM_CLOSURE_ADR: closure_payload,
                         },
                         partition["terminalSpecRows"],
                     )
@@ -2751,8 +2694,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             wrong_oid["activeControlRows"][0]["objectId"],
             current_object_ids[wrong_oid_path],
         )
-        wrong_oid["activeControlRows"][0]["objectId"] = (
-            self.validator._git_identity("0" * 40)
+        wrong_oid["activeControlRows"][0]["objectId"] = self.validator._git_identity(
+            "0" * 40
         )
         with self.assertRaises(AssertionError):
             self.assert_production_observed(
@@ -2768,10 +2711,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             hybrid_object_ids = copy.deepcopy(advanced_object_ids)
             hybrid_object_ids.update(
-                {
-                    row["path"]: row["objectId"]
-                    for row in hybrid["activeControlRows"]
-                }
+                {row["path"]: row["objectId"] for row in hybrid["activeControlRows"]}
             )
             self.assert_production_observed(
                 hybrid, expected_object_ids=hybrid_object_ids
@@ -2805,21 +2745,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             }
         ]
         with (
-            mock.patch.object(
-                self.validator, "verify_entrypoints", return_value={}
-            ),
-            mock.patch.object(
-                self.validator, "build_observed", return_value=rogue
-            ),
-            mock.patch.object(
-                self.validator, "load_ledger", return_value=self.ledger
-            ),
+            mock.patch.object(self.validator, "verify_entrypoints", return_value={}),
+            mock.patch.object(self.validator, "build_observed", return_value=rogue),
+            mock.patch.object(self.validator, "load_ledger", return_value=self.ledger),
             mock.patch.object(self.validator, "validate_ledger"),
             self.assertRaises(self.validator.ClosureError) as raised,
         ):
-            self.validator.validate_active_corpus_residue_closure(
-                REPOSITORY_ROOT
-            )
+            self.validator.validate_active_corpus_residue_closure(REPOSITORY_ROOT)
         self.assertEqual(raised.exception.code, "CLOSURE-TERMINAL-FRONTIER")
         self.assertEqual(raised.exception.path, rogue_plan)
 
@@ -2857,13 +2789,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assert_production_observed(observed)
         expected = {
             "activeControlRows": len(observed["activeControlRows"]),
-            "activeControlPairs": len(
-                observed["activeControlPairCardinality"]
-            ),
+            "activeControlPairs": len(observed["activeControlPairCardinality"]),
             "terminalControlRows": len(observed["terminalControlRows"]),
-            "terminalControlPairs": len(
-                observed["terminalControlPairCardinality"]
-            ),
+            "terminalControlPairs": len(observed["terminalControlPairCardinality"]),
             "terminalSpecs": len(observed["terminalSpecRows"]),
         }
         with (
@@ -2898,9 +2826,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             f"{expected['terminalControlRows']}/{expected['terminalControlPairs']}",
             stdout.getvalue(),
         )
-        self.assertIn(
-            f"terminal_specs={expected['terminalSpecs']}", stdout.getvalue()
-        )
+        self.assertIn(f"terminal_specs={expected['terminalSpecs']}", stdout.getvalue())
 
     def test_cli_reports_exact_spec038_terminal_partition_counts(self) -> None:
         counts = {

@@ -14,14 +14,14 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-08-09
 - **Layer**: documentation, research, governance
-- **Status**: in-progress
+- **Status**: done
 - **Tags**: #research #gap-analysis #sdlc #verification #validation #kubernetes
 - **Owner**: primary agent
 - **Canonical Owner**: `docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md`
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: primary agent for WERG-005 whole-branch review, terminal validation, lifecycle closure, and the human-selected branch finishing action.
+- **Next Owner**: human — select the branch-finishing action after terminal validation and the closure commit.
 
 #### Progress
 
@@ -79,6 +79,17 @@ review finds only the task-owned checker and current NUL lane input; the optiona
 ledger scratch file is absent and no unrelated path was removed. WERG-005 now
 owns whole-branch review, terminal validation, lifecycle closure, and cleanup.
 
+WERG-006 ran a closure re-verification on 2026-08-10 before finishing the
+branch. Seven disjoint read-only workers tested all 33 requested rows against
+four required elements: an official source with a checked date, exact workspace
+reconciliation, a named uncertainty boundary, and a refresh trigger. Thirty
+rows are `covered`. Three failed workspace reconciliation and were corrected in
+`b9e16079`: `REQ-WERPC-004` and `REQ-WERPC-006` asserted that root `CLAUDE.md`
+imports `AGENTS.md`, which `providers/claude.md` forbids and which commit
+`e11dd607` removed on 2026-05-29, ten weeks before the pack's observation date;
+`REQ-WERPC-021` asserted a 2026-05-10 LLM-WIKI freshness debt that closed in
+`ee67aad2`. Precision and absence statements were sharpened in `25b4a450`.
+
 #### Memory
 
 Spec 053, its Plan/Task, and its typed standalone relation are terminal `done`.
@@ -86,6 +97,28 @@ A new active Plan/Task cannot be attached to that terminal relation. If the
 written draft is approved, Spec 055 requires its own reciprocal Plan, Task, and
 ADR-0022 standalone registry entry. The research output remains an in-place
 five-owner refresh; lifecycle evidence is separate from the research pack.
+
+Three reusable lessons from the WERG-006 closure re-verification:
+
+1. An `Approved` review is not evidence that a claim was reconciled against the
+   file it names. Three false repository facts survived every earlier content,
+   quality, and security review because those reviews checked that a cited path
+   exists, not that the cited path says what the claim asserts. Research
+   verification must open the named file and compare its content.
+2. Moving a Spec to `done` also requires registering it in
+   `POST_CLOSURE_SPEC_AUTHORITY_PATHS` in
+   `scripts/validate-active-corpus-residue-closure.py` and its retention test.
+   Without that, `validate-repo-quality-gates.sh` fails
+   `CLOSURE-AUTHORITY-SCOPE`. Commit `df8fe30d` is the reference pattern.
+3. `validate-reference-information-architecture.py` and the residue-closure
+   validator both require index bytes to equal worktree bytes. Unstaged changes
+   surface as `... is unavailable` or `CLOSURE-WORKTREE-INDEX-DRIFT`, which look
+   like tool defects but mean "stage first". Stage before reading their result.
+4. The commit-time `pre-commit` hook scans only changed files, so it cannot
+   substitute for `pre-commit run --all-files`. WERG-002 and WERG-003 recorded
+   the all-files lane as passed while `detect-secrets` was failing on three
+   Kubernetes RBAC prose lines. Run the all-files lane and read its exit code
+   before writing an all-files evidence sentence.
 
 #### Evidence
 
@@ -1193,7 +1226,7 @@ wrong commits, and byte drift retain `LINK-BROKEN`.
   and complete gate rerun remain pending fresh review.
 - Fresh review exposed an exact-header mismatch: the validator expected
   `Topic scope` while the production disposition table owns `Topic or
-  heading`. Updating the fixture and adding a production-table parse assertion
+heading`. Updating the fixture and adding a production-table parse assertion
   produced four focused RED findings, then the unified header made links
   self-test/strict PASS. A fresh isolated clone with all 25 predecessor files
   removed also passes strict links/owners.
@@ -1336,7 +1369,7 @@ provenance/verification.
 - Focused pre-review validation PASS: `git diff --check`,
   `python3 scripts/validate-markdown-profiles.py --root . --mode strict` (zero
   violations), `python3 scripts/validate-links-and-owners.py --root . --mode
-  strict`, and `bash scripts/validate-harness.sh`.
+strict`, and `bash scripts/validate-harness.sh`.
 - Fresh content review Approved with no Critical, Important, or Minor finding.
   On the exact five-file staged scope, cached diff, Reference IA production,
   and the complete repository quality gate passed.
@@ -1995,7 +2028,7 @@ each logical commit.
 - Immutability evidence: a one-byte change to a historical member produced
   `RIA-SNAPSHOT ... protected snapshot`; edits to the Current pack README and
   the collection README produced `RIA-OVERLAY ... protected Current bytes
-  differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
+differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
   were reverted byte-exactly.
 - `staged`: recorded by the committing step.
 - `ci`: repository-static only; `DEFER`.
@@ -2108,6 +2141,7 @@ each logical commit.
   governance decision; it was not worked around.
 - Push, PR, merge, hosted CI, provider runtime, and live verification remain
   pending human authorization.
+
 ### 2026-08-02 - PRD-007 program foundation activation
 
 #### Metadata
@@ -2346,7 +2380,7 @@ each logical commit.
   QA/review evidence without promoting any provider/runtime, hosted,
   actual-evaluation, remote, or live result.
 - The scoped review for the evidence commit returned `SPEC PASS`, `QUALITY
-  PASS`, and no findings.
+PASS`, and no findings.
 
 #### Evidence
 
@@ -3012,7 +3046,7 @@ each logical commit.
   router, aggregate compatibility checks, and script/test inventories.
 - Extended the closed CI contract to version `1.1.0` with the exact
   `targeted -> affected -> staged -> tests -> all-files ->
-  formatter-review -> rerun -> diff-checks` sequence, separate staged and
+formatter-review -> rerun -> diff-checks` sequence, separate staged and
   all-files commands, both worktree and cached diff checks, and formatter
   invalidation/rerun semantics.
 - Added production staged-runner support. Exact staged Markdown paths now flow
@@ -3692,7 +3726,7 @@ each logical commit.
   body/index, reciprocal Task body/index, progress ledger, and Spec 044
   program-lineage relation. Spec 045 and Spec 046 remain draft.
 - AREA-000 is complete. Current implementation truth remains `10 roles / 3
-  surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
+surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
   remains a target until later Spec 044 implementation evidence exists.
 
 #### Evidence
@@ -3737,7 +3771,7 @@ each logical commit.
   program-lineage transition from `draft` to `active`.
 - The current implementation remains the Spec 041 baseline until subsequent
   commits promote repository-static roster evidence: current `10 roles / 3
-  surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
+surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
 
 #### Memory
 
@@ -3893,7 +3927,7 @@ each logical commit.
 
 - Explicit-ref lifecycle validation for `HEAD^..HEAD`: PASS.
 - Clean-tree repository aggregate: PASS (`[PASS] repository quality gates
-  passed`).
+passed`).
 - Pre-commit all-files: PASS for every applicable hook; Dockerfile lint was a
   no-file `SKIP`.
 - Strict registry, Markdown profile, cross-document, affected-surface, staged
@@ -4245,8 +4279,8 @@ each logical commit.
 #### Evidence
 
 - `python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref
-  --from-ref e85b7829cd120742c5f62712259a037134e2db7a --to-ref
-  1a3232ce73a653371634e99d773d71ab03f87967` passed.
+--from-ref e85b7829cd120742c5f62712259a037134e2db7a --to-ref
+1a3232ce73a653371634e99d773d71ab03f87967` passed.
 - `bash scripts/validate-repo-quality-gates.sh .` passed on the clean tree
   after closure.
 - `git show --name-only` confirmed the closure commit's single parent and exact
@@ -4477,9 +4511,9 @@ each logical commit.
 - Independent terminal reviewers inspected staged diff SHA-256
   `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`.
   `/root/ccpc004_terminal_requirements_review` returned `REQUIREMENTS
-  COMPLIANT`; `/root/ccpc004_terminal_quality_review` returned `QUALITY
-  APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
-  APPROVED`; all reported no findings. Hosted, provider, remote,
+COMPLIANT`; `/root/ccpc004_terminal_quality_review` returned `QUALITY
+APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
+APPROVED`; all reported no findings. Hosted, provider, remote,
   credential-bearing, and live evidence remains `DEFER`.
 - Terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` is
   observed with parent `35d8552ba423e3e2d92294ddeb81674392b8f333`.
@@ -4583,8 +4617,8 @@ each logical commit.
   checks. Dockerfile lint was a no-file `SKIP`; no formatter mutation or
   unstaged drift remained.
 - `/root/spec040_ccpc001_final_requirements` returned `REQUIREMENTS
-  COMPLIANT`, and `/root/spec040_ccpc001_final_quality` returned `QUALITY
-  APPROVED` for pre-evidence digest
+COMPLIANT`, and `/root/spec040_ccpc001_final_quality` returned `QUALITY
+APPROVED` for pre-evidence digest
   `f83ec5afb90b6c2cb7d35e9c5259d5c8358697e6d7304bfa9cde39ddf9c1b360`.
   This evidence update does not predict or claim the CCPC-001 commit identity.
 - CCPC-001 implementation commit
@@ -4658,25 +4692,25 @@ each logical commit.
   whole-tranche terminal review.
 - Active-corpus frontier commit
   `b5c3eea128b8b3be7c858f70803f83994be1fc77` received `REQUIREMENTS
-  COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
-  APPROVED` from `/root/gcqe006_frontier_quality_review`. It admits only the
+COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
+APPROVED` from `/root/gcqe006_frontier_quality_review`. It admits only the
   exact Spec 039-done / Spec 040-active advanced frontier.
 - Index-bound current/advanced test commit
   `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` received fresh `REQUIREMENTS
-  COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
-  APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. All three commit
+COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
+APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. All three commit
   review pairs are scoped compatibility evidence, not whole-tranche terminal
   approval.
 - The exact staged proposal passed the active-corpus residue class `46/46`,
   full module `84/84`, self-test `22`, and production result
   `active_controls=0/0 terminal_controls=4/2 terminal_specs=2 guards=13/29
-  findings=0`. The repository aggregate ended with `[PASS] repository quality
-  gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
+findings=0`. The repository aggregate ended with `[PASS] repository quality
+gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
   self-test `119`, registry strict `448` paths with zero uncovered/ambiguous,
   Markdown strict with zero violations, strict links/owners, and cached and
   unstaged diff checks also passed.
 - The terminal commit gate passed `bash scripts/validate-repo-quality-gates.sh
-  .` through its final marker and `pre-commit run --all-files` with every
+.` through its final marker and `pre-commit run --all-files` with every
   applicable hook green; Dockerfile lint was a no-file `SKIP`. No formatter
   mutation occurred, exactly eight paths remained staged with no unstaged
   changes, and both diff checks passed.
@@ -4874,9 +4908,9 @@ each logical commit.
 - Markdown-profile strict validation: PASS.
 - The first final aggregate run reached the guide-index check after all earlier
   aggregate lanes passed, then emitted `ERR
-  docs/05.operations/guides/README.md updated mismatch for
-  0010-ci-cd-qa-reference-guide.md: index=2026-07-04,
-  frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
+docs/05.operations/guides/README.md updated mismatch for
+0010-ci-cd-qa-reference-guide.md: index=2026-07-04,
+frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   bounded coupled-path variance: the existing guide collection-index row now
   carries the same date as its changed guide.
 - Remaining aggregate, strict cross-document, staged, unqualified all-files,
@@ -4936,7 +4970,7 @@ each logical commit.
   for missing seven-day retention.
 - GREEN after remediation: security self-test, production validation, the
   staged repository-quality aggregate, and unqualified `pre-commit run
-  --all-files` passed. No formatter mutation required restaging.
+--all-files` passed. No formatter mutation required restaging.
 - Review-round RED: internal hostile shapes made the self-test traceback at
   `jobs: [build]`, while a mapping-valued `steps` block with pinned
   `upload-artifact` was accepted. Review-round GREEN: self-test and production
@@ -5142,13 +5176,13 @@ each logical commit.
 - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`: PASS,
   zero violations.
 - `python3 scripts/validate-links-and-owners.py --root . --mode strict
-  --body-contracts registry`: PASS.
+--body-contracts registry`: PASS.
 - `python3 scripts/validate-links-and-owners.py --self-test`: PASS, including
   pre-settlement inventory equality, post-settlement inventory addition and
   removal, protected-byte drift, malformed settlement, and exact
   `fromCommit`/reason drift regression cases.
 - `python3 scripts/validate-reference-information-architecture.py --root .
-  --require-settled-baselines`: PASS with the protected 446-row ledger
+--require-settled-baselines`: PASS with the protected 446-row ledger
   unchanged.
 - `python3 scripts/validate-active-corpus-residue-closure.py --root .`: PASS
   after restoring the protected Spec 030 authority object.
@@ -5356,7 +5390,7 @@ each logical commit.
   exited 1, so Conftest is `SKIP`; the separately reported built-in policy
   fallback is `PASS` and is not represented as a Conftest pass.
 - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name
-  '*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
+'*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
   `pre-commit run --all-files`, and `git diff --check`: PASS. Dockerfile lint
   was a no-file `SKIP`, not a pass.
 - Whole-tranche independent review of PSH-001 through PSH-005 approved Action
@@ -5541,8 +5575,7 @@ each logical commit.
   `d5f345ab514f1359518dac709c62842ef46c09aac41094fbb76a52656331615e`.
   It scans the 413 tracked post-deletion Markdown paths plus both snapshots and
   proves zero source-target, internal, external, consumer, and target edges.
-- Current-ledger/corpus equality is 412; history/source-manifest set equality is
-  59. All 26 AWS destinations and all 33 Azure destinations match the approved
+- Current-ledger/corpus equality is 412; history/source-manifest set equality is 59. All 26 AWS destinations and all 33 Azure destinations match the approved
   provider snapshots, and the source paths are absent from both the tracked
   inventory and filesystem.
 - Empty fixture semantic SHA-256:
@@ -5561,8 +5594,8 @@ each logical commit.
   link-only hashes pass the README text guard.
 - The registry statement-level AST guard pins the only additional `main`
   expression. Focused README output is exactly `README baseline=67
-  active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
-  uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
+active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
+uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
   Registry and Markdown AST guards, both validator self-tests, compatibility
   validation, focused hooks, and the repository quality gate pass.
 - Final scope is exactly 79 staged paths: allowed70 plus nine fixed
@@ -5821,7 +5854,7 @@ each logical commit.
   indexed Stage 05 documents without changing their normalized bodies or any
   README; the final full repository quality gate passes.
 - The exact tracked set is `126 = 120 documents + ledger + fixture + Markdown
-  validator + quality-gate consumer + Task + progress`; nothing is staged by
+validator + quality-gate consumer + Task + progress`; nothing is staged by
   this finalization step.
 
 #### Handoff
@@ -6479,7 +6512,7 @@ each logical commit.
 - Embedded Python/Bash blocks, three-file diff checks, registry self-test and
   compatibility validation, and focused pre-commit are the Plan-correction
   evidence bundle for logical commit `fix(plans): align semantic debt removal
-  lifecycle`.
+lifecycle`.
 - The repository quality gate passed from a clean `HEAD` clone under `/tmp`,
   isolating the unrelated in-progress SMDV-002 fixture in the implementation
   worktree.
@@ -6521,7 +6554,7 @@ each logical commit.
 - Registry self-test and compatibility, repository quality, diff checks,
   exact seven-path staging, and focused pre-commit form the static evidence
   bundle for logical commit `docs(execution): start semantic document
-  validation`.
+validation`.
 - No live, secret-value, credential, remote CI, publication, push, merge,
   deployment, or third-party mutation check is performed or inferred.
 
@@ -6667,7 +6700,7 @@ each logical commit.
   label.
 - A copied fixture with `missing-role` changed to mutation `none` and
   `expected_errors: []` returned a deterministic `missing-role: fixture schema
-  mismatch` failure before mutation execution.
+mismatch` failure before mutation execution.
 - `python3 scripts/validate-agent-roster-currentness.py . --self-test` — PASS.
 - `python3 scripts/validate-agent-roster-currentness.py .` — PASS.
 - `git diff --check` — PASS with no output.
@@ -15686,7 +15719,7 @@ section separating static from live evidence.
 
 - Reviewer: independent reviewer agent
   `/root/review_adm006_adm007_conflict`; disposition `APPROVED FOR LIFECYCLE
-  CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
+CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
   `.superpowers/sdd/asqa006-provisional-review.md`.
 - Rollback unit: logical commit
   `docs(agents): align provider qa evidence contracts`; revert it before any

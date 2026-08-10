@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Gap-only Research Refresh Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-08-10
 ---
@@ -753,7 +753,7 @@ git commit -m "docs: reconcile WER gap-only research evidence"
 - Produces: terminal standalone lifecycle state when existing closure contracts
   accept it, or an explicit blocked handoff that does not weaken a validator.
 
-- [ ] **Step 1: Run a whole-branch scope and evidence audit**
+- [x] **Step 1: Run a whole-branch scope and evidence audit**
 
 Compare `main...HEAD` and require:
 
@@ -766,13 +766,13 @@ Compare `main...HEAD` and require:
 - no tracked one-off artifact; and
 - one logical commit per non-empty work package.
 
-- [ ] **Step 2: Obtain fresh whole-branch reviews**
+- [x] **Step 2: Obtain fresh whole-branch reviews**
 
 Dispatch independent specification/content, quality, and security reviewers.
 Correct all Critical and Important findings in forward-only logical commits,
 then repeat the affected review scope.
 
-- [ ] **Step 3: Propose terminal lifecycle state in the exact index**
+- [x] **Step 3: Propose terminal lifecycle state in the exact index**
 
 Set Spec, Plan, Task, index rows, progress, and the Spec 055 standalone registry
 row to `done` as one staged proposal. Run focused lifecycle, registry,
