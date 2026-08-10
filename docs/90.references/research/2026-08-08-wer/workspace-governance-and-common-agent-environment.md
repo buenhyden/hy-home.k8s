@@ -148,9 +148,9 @@ human approval of the protected action.
 
 - **SRC-WERPC-004–008**: official Anthropic Claude Code documentation, checked
   2026-08-08, establishes product-specific surfaces only.
-- **SRC-WERPC-009–013**: official OpenAI Codex documentation, first reviewed
-  from `/tmp/openai-docs-cache/codex-manual.md` and its outline, checked
-  2026-08-08.
+- **SRC-WERPC-009–013**: official OpenAI Codex documentation, checked
+  2026-08-08. A non-repository manual cache was the first review surface; it is
+  ephemeral, so the ledger's official URLs are the durable citation.
 - **Workspace evidence**: `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `.codex/**`,
   `docs/00.agent-governance/{rules,providers,contracts}/**`, and
   `harness-catalog.md`, inspected in the WERPC worktree on 2026-08-08.
