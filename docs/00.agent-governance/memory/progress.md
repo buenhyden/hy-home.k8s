@@ -8,6 +8,91 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-10 - WER follow-up candidates registered without implementation
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: docs, infra, security
+- **Status**: complete
+- **Tags**: #research #followup #kubernetes #security #diataxis #networkpolicy
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md` for the platform items; `docs/99.templates/support/document-profiles.json` for the documentation item
+- **Provenance**: Read-only repository-static inventory run on 2026-08-10 after the Spec 055 closure merge `79e44638`; human directed registration only, with no implementation.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until each candidate is adopted by an approved Spec or explicitly rejected; re-observe every claim before acting, because all three describe current tracked state that can drift.
+- **Next Owner**: human — decide whether any candidate becomes an approved Spec. No agent is authorized to implement these.
+
+#### Progress
+
+The Spec 055 closure re-verification surfaced three implementation candidates.
+The human chose registration only, so none was implemented and no manifest,
+profile, template, or policy changed. One read-only inventory was completed
+because it was the named prerequisite for the highest-value candidate.
+
+**Candidate 1 — kube-state-metrics cluster-wide Secret read.** The prerequisite
+consumer inventory is now complete and repository-static. Searching the whole
+tree outside the research pack finds zero `kube_secret_*` references, zero
+`PrometheusRule`, zero `ServiceMonitor`, and no Grafana dashboard asset. The
+only tracked consumer of any kube-state-metrics series is
+`gitops/workloads/adminer/analysis-template.yaml:19`, which queries
+`kube_pod_container_status_restarts_total`. No tracked consumer justifies
+`resources: secrets` with `verbs: [list, watch]` in
+`ClusterRole/kube-state-metrics`
+(`gitops/platform/monitoring/kube-state-metrics.yaml`). Removing that resource
+is therefore a bounded, evidence-backed change whenever an owner approves it.
+
+**Candidate 2 — no Ingress-type or default-deny NetworkPolicy.** All six tracked
+policies under `gitops/platform/network-policies/` declare
+`policyTypes: [Egress]` only, and no Ingress-type or default-deny policy exists
+under `gitops/`, `infrastructure/`, or `policy/`. This is the highest-risk
+candidate: a default-deny ingress posture added without a complete allowed-flow
+inventory can sever in-cluster traffic. It requires its own security-reviewed
+Spec, not an incremental edit.
+
+**Candidate 3 — absent Diátaxis tutorial and explanation profiles.** The
+registry holds 64 profiles; none is a tutorial or explanation type. The nearest
+existing types are `sdlc/guide`, `content/reference`, and
+`governance/reference`. The research owner deliberately declined to create a
+profile by implication, so adoption should first prove a named owner, reader,
+consumer, and validator need.
+
+#### Memory
+
+A gap that research classifies as an implementation gap is not automatically
+work to schedule. Candidate 1 is well-evidenced and small; candidate 2 is
+well-evidenced and dangerous; candidate 3 is well-evidenced and may be
+unnecessary. Evidence quality and action priority are independent axes, so
+record them separately instead of treating every confirmed gap as a backlog
+item.
+
+#### Evidence
+
+Repository-static, read-only, on merge commit `79e44638`:
+
+- `kube_secret` search across tracked YAML, JSON, and Markdown outside the
+  research pack — zero matches.
+- `PrometheusRule`, `ServiceMonitor`, and dashboard-asset search over `gitops/`
+  and `infrastructure/` — zero matches.
+- `gitops/workloads/adminer/analysis-template.yaml:19` — the single tracked
+  kube-state-metrics query.
+- Six `policyTypes` declarations under `gitops/platform/network-policies/` — all
+  `Egress`.
+- `docs/99.templates/support/document-profiles.json` — 64 profiles, no tutorial
+  or explanation id.
+
+No cluster, ArgoCD, Vault, ESO, kubectl, registry, hosted, or credential-bearing
+check was run; effective RBAC, actual scrape behavior, real traffic flows, and
+live posture remain `DEFER`. `CLM-WERPC-008-01` in the research pack still reads
+`Partial` with the consumer question unobserved; that dated snapshot is not
+edited retroactively, and this later observation is recorded here instead.
+
+#### Handoff
+
+None in progress. A human decides whether any candidate becomes an approved
+Spec. Candidate 1 is the smallest and best-evidenced starting point; candidate 2
+must not begin without a complete allowed-flow inventory and security review.
+
 ### 2026-08-09 - WERG-000 gap-only research refresh design
 
 #### Metadata
