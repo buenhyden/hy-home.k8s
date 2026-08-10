@@ -3,7 +3,7 @@ title: 'Reference: AI Agents and Agency-Agents'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-10
 ---
 
 # Reference: AI Agents and Agency-Agents
@@ -102,9 +102,9 @@ does not authorize external cleanup or provider configuration changes.
 
 ## Sources
 
-- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-08-08 (`SRC-WERPC-045`).
-- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08 (`SRC-WERPC-046`).
-- [Agency Agents pinned tree](https://github.com/msitarzewski/agency-agents/tree/ebe9c99acb5c96f9468de368d8bead775387d1a7), [MIT license](https://github.com/msitarzewski/agency-agents/blob/ebe9c99acb5c96f9468de368d8bead775387d1a7/LICENSE), and inspected converter/installer sources, checked 2026-08-08 (`SRC-WERPC-047`–`048`).
+- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`).
+- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
+- [Agency Agents pinned tree](https://github.com/msitarzewski/agency-agents/tree/ebe9c99acb5c96f9468de368d8bead775387d1a7), [MIT license](https://github.com/msitarzewski/agency-agents/blob/ebe9c99acb5c96f9468de368d8bead775387d1a7/LICENSE), and inspected converter/installer sources, checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-047`–`048`).
 - The [source ledger](source-coverage-and-migration-ledger.md#source-register) records claim limits and refresh triggers.
 
 ## Review and Freshness
@@ -113,6 +113,17 @@ Refresh after a roster, adapter, evaluation, tool/sandbox boundary, Agency
 Agents pin/license, or upstream conversion/install-script change. Re-resolve
 the full commit before any reuse. Do not infer provider runtime behavior or
 prompt quality from static files or this dated comparison.
+
+External sources were re-checked on 2026-08-10 and no cited claim changed. The
+Agency Agents result is the strongest evidence in this pack: the repository's
+default branch head is byte-identical to the pinned commit
+`ebe9c99acb5c96f9468de368d8bead775387d1a7`, the comparison reports zero commits
+ahead or behind, and the last push is dated 2026-08-06, before the original
+check. No agent, structure, converter, installer, or license change has landed,
+and the MIT license at the pin is unchanged. The two provider subagent pages
+publish no last-modified date, so their unchanged result is content identity
+rather than a publisher signal and is a weaker class of evidence than the pinned
+commit comparison.
 
 ## Related Documents
 

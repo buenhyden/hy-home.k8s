@@ -3,7 +3,7 @@ title: 'Reference: Documentation Architecture and Diataxis'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-10
 ---
 
 # Reference: Documentation Architecture and Diataxis
@@ -98,6 +98,19 @@ templates, profile schema, collection navigation, or authoring/review standards
 change. Re-evaluate a tutorial/explanation proposal only when it names an owner,
 reader, consumer, and validation approach. Diátaxis source observation is dated
 2026-08-08.
+
+A re-check attempted on 2026-08-10 did not succeed. Both `diataxis.fr/start-here/`
+and `diataxis.fr/` returned HTTP 429 across repeated attempts and path variants,
+so the pages were unreachable from that egress. This is `unreachable`, not
+`unchanged`: the four-mode model, the quadrant names, and the load-bearing
+boundary that Diátaxis describes documentation needs rather than mandating a
+document type system were not re-verified and retain their 2026-08-08
+observation date. As a labelled inference only, the upstream source repository
+`evildmp/diataxis-documentation-framework` shows no commit between 2026-08-08
+and 2026-08-10, and the last change to the `start-here` source was a 2026-08-01
+typo fix; an upstream repository state cannot establish what the published pages
+currently say. Re-run the check from a different egress before treating these
+claims as freshly verified.
 
 ## Related Documents
 

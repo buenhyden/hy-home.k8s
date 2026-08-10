@@ -3,7 +3,7 @@ title: 'Reference: Harness and Loop Engineering'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-10
 ---
 
 # Reference: Harness and Loop Engineering
@@ -184,7 +184,8 @@ marketing feature statement or inference into implementation truth.
 
 ## Sources
 
-- **SRC-WERPC-009–013** — official OpenAI Codex materials, checked 2026-08-08.
+- **SRC-WERPC-009–013** — official OpenAI Codex materials, checked 2026-08-08,
+  re-checked 2026-08-10.
   A locally supplied manual cache outside the repository was the first
   consultation surface; it is ephemeral and not reproducible, so the durable
   citation is the official URL. The ledger records each direct URL, adopted
@@ -202,6 +203,18 @@ on a provider release affecting instructions, hooks, subagents, sandbox or
 approval behavior; retain the old checked date rather than silently moving it.
 No native discovery, hook delivery, credential-bearing action, hosted CI, or
 live-cluster observation was collected for WERPC-002.
+
+External sources were re-checked on 2026-08-10 and no cited claim changed. The
+config reference still carries the retry, interrupt, approval, hook-event, and
+telemetry keys this report relies on. Two bounded observations are recorded
+without changing a claim. First, `developers.openai.com/codex` now answers with
+a permanent redirect to `learn.chatgpt.com/docs`; the redirect was observed today
+and cannot be attributed to the two-day window, since the pack already cited the
+`learn.chatgpt.com` host on 2026-08-08. Second, the `openai/codex` default branch
+carries unreleased commits dated 2026-08-08 to 2026-08-10 touching approval,
+config, and hook surfaces, with no corresponding change to the published README
+or to any documented key. Unreleased source movement is not a documented
+behavior change and is not adopted here.
 
 ## Related Documents
 

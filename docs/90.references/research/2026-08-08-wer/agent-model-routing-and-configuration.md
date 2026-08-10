@@ -3,7 +3,7 @@ title: 'Reference: Agent Model Routing and Configuration'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-10
 ---
 
 # Reference: Agent Model Routing and Configuration
@@ -84,11 +84,34 @@ token/cost/latency measurements, account availability, and canary outcomes are
 `DEFER`. Product-specific surfaces (Codex CLI, OpenAI API/SDK, and Claude Code)
 are separate: evidence for one does not transfer to another.
 
+### 2026-08-10 freshness re-check
+
+All four external sources were re-read on 2026-08-10. No cited claim changed
+inside the 2026-08-08 to 2026-08-10 window. The re-check did record three
+disagreements that exist between the live official pages themselves, which
+bounds how strongly any single page can be cited for model resolution.
+
+| Observation | Live evidence on 2026-08-10 | Effect on this report |
+| --- | --- | --- |
+| Model identifiers disagree across Codex pages | The config reference uses `gpt-5.5` as its `model` example; the subagents page names `gpt-5.6`, `gpt-5.6-terra`, and `gpt-5.6-luna` in prose while its own TOML example sets `gpt-5.3-codex-spark`. Three generations appear across two pages of the same product. | Do not treat any documented model identifier as a stable routing target. A model-policy tuple must be validated against the provider at run time, which is `DEFER`. |
+| Reasoning-effort value sets disagree | The config reference lists `minimal`, `low`, `medium`, `high`, `xhigh` for `model_reasoning_effort`; the subagents page lists `ultra`, `max`, `xhigh`, `high`, `medium`, `low`. `ultra` and `max` appear only on the second page; `minimal` only on the first. | A local effort value that validates against one page may be rejected by the runtime. Effort-value admission stays an unverified property. |
+| Model precedence order disagrees | The config reference says of `agents.default_subagent_model` that "An explicit spawn model takes precedence." The subagents page states the agent file value takes precedence, and only otherwise resolves explicit spawn value, then the `[agents]` default, then the parent value. | The two statements order the agent-file and explicit-spawn sources differently. This report therefore records no single authoritative Codex precedence chain; the Claude Code chain, which one page states end to end, remains separately citable. |
+
+One attribution limit is also recorded. The Agents SDK sessions page
+(`SRC-WERPC-050`) documents session storage backends only; it states no
+model-selection key, no model identifier, and no resolution or fallback rule.
+It supports the session-context claims in this pack, not the model-routing
+claims, and it should not be cited for the latter.
+
+`REQ-WERPC-028` stays `Partial`. Parsing, resolution, fitness, cost and latency,
+canary, and promotion still require provider runtime evidence that is `DEFER`,
+and the disagreements above make that runtime check more necessary, not less.
+
 ## Sources
 
-- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08 (`SRC-WERPC-049`).
-- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08 (`SRC-WERPC-045`, `SRC-WERPC-050`).
-- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08 (`SRC-WERPC-046`).
+- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`).
+- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`, `SRC-WERPC-050`).
+- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
 - [Model policy](../../../00.agent-governance/model-policy.md) and `contracts/agent-model-fitness.json` are the local static owners.
 
 ## Review and Freshness
@@ -97,6 +120,12 @@ Refresh when a provider changes configuration/model/reasoning semantics or when
 a role, model-policy tuple, adapter, evaluation corpus, threshold, candidate,
 or promotion decision changes. Recheck official sources and obtain separately
 authorized runtime evidence before promoting a configuration.
+
+External sources were re-checked on 2026-08-10; no cited claim changed inside
+that window. The re-check recorded that the two Codex pages disagree on model
+identifiers, reasoning-effort values, and precedence order, so no single page is
+sufficient on its own. None of the four sources publishes a last-modified date,
+so an unchanged result is content identity rather than a publisher signal.
 
 ## Related Documents
 
