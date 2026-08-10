@@ -45,17 +45,17 @@ A harness is the control plane around an agent task, rather than the model or a
 single prompt. Its minimum components and the evidence required to call each
 component present are:
 
-| Component | Responsibility | Workspace owner / present static evidence | Status boundary |
-| --- | --- | --- | --- |
-| Context | Load task, scope, canonical owners, and local instructions in an ordered, bounded form. | `AGENTS.md`, `CLAUDE.md`, `.codex/CODEX.md`, bootstrap, scope, provider note, and `memory/progress.md` state the JIT order. | Verified as tracked text; native loading is `DEFER`. |
-| Tools | Provide only task-relevant file, shell, validation, and approved read-only research capabilities. | `RTK.md`, validation-surface contract, provider adapters, and tool instructions. | Partial: static routing exists; actual installed-tool/provider availability is runtime-specific. |
-| Guardrails | Bound filesystem, approval, destructive action, secret, GitOps, and delegation authority before action. | `rules/agentic.md`, approval boundary, `.claude/settings.json`, plus Codex's documented sandbox/approval surface. No project `.codex/config.toml` is tracked. | Partial: workspace policy and Claude static settings exist; Codex project configuration/enforcement is `DEFER`. |
-| Evaluation | Turn acceptance criteria into deterministic checks and separate static, CI, and live evidence. | `rules/quality-standards.md`, `contracts/validation-surfaces.json`, repository quality gate. | Verified as static contract; a passing static lane is not a live result. |
-| Recovery | Normalize failures, prohibit no-progress repetition, retain redacted checkpoint/handoff material, and stop at authority boundaries. | `contracts/agent-loop-lifecycle.json` and checkpoint schema. | Verified as tracked executable-contract surface; actual provider checkpoint use is `DEFER`. |
-| Observability | Produce redacted, attributable evidence of action, result, limitation, and handoff. | Task records, `memory/progress.md`, lifecycle contracts, validators. | Partial: schema and durable ledger exist; telemetry completeness is not measured. |
+| Component     | Responsibility                                                                                                                      | Workspace owner / present static evidence                                                                                                                     | Status boundary                                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Context       | Load task, scope, canonical owners, and local instructions in an ordered, bounded form.                                             | `AGENTS.md`, `CLAUDE.md`, `.codex/CODEX.md`, bootstrap, scope, provider note, and `memory/progress.md` state the JIT order.                                   | Verified as tracked text; native loading is `DEFER`.                                                            |
+| Tools         | Provide only task-relevant file, shell, validation, and approved read-only research capabilities.                                   | `RTK.md`, validation-surface contract, provider adapters, and tool instructions.                                                                              | Partial: static routing exists; actual installed-tool/provider availability is runtime-specific.                |
+| Guardrails    | Bound filesystem, approval, destructive action, secret, GitOps, and delegation authority before action.                             | `rules/agentic.md`, approval boundary, `.claude/settings.json`, plus Codex's documented sandbox/approval surface. No project `.codex/config.toml` is tracked. | Partial: workspace policy and Claude static settings exist; Codex project configuration/enforcement is `DEFER`. |
+| Evaluation    | Turn acceptance criteria into deterministic checks and separate static, CI, and live evidence.                                      | `rules/quality-standards.md`, `contracts/validation-surfaces.json`, repository quality gate.                                                                  | Verified as static contract; a passing static lane is not a live result.                                        |
+| Recovery      | Normalize failures, prohibit no-progress repetition, retain redacted checkpoint/handoff material, and stop at authority boundaries. | `contracts/agent-loop-lifecycle.json` and checkpoint schema.                                                                                                  | Verified as tracked executable-contract surface; actual provider checkpoint use is `DEFER`.                     |
+| Observability | Produce redacted, attributable evidence of action, result, limitation, and handoff.                                                 | Task records, `memory/progress.md`, lifecycle contracts, validators.                                                                                          | Partial: schema and durable ledger exist; telemetry completeness is not measured.                               |
 
 This aligns with OpenAI's official Codex guidance that durable instructions,
-configuration, MCP, skills, and validation define a repeatable workflow, and
+configuration, subagents, and MCP define a repeatable workflow, and
 with its instruction-discovery and hook documentation; those sources do not
 claim that this particular repository's configuration was consumed in a given
 session. See [SRC-WERPC-009](source-coverage-and-migration-ledger.md#source-register)
@@ -90,16 +90,16 @@ are therefore supporting context, not authority for the local policy.
 
 ### State machine and termination
 
-| State | Entry event | Authorized next outcome | Terminal condition / evidence |
-| --- | --- | --- | --- |
-| `ready` | Task inputs and repository observation are complete. | `start` → `running`. | No; incomplete scope or authority remains a preflight blocker. |
-| `running` | One authorized action begins. | `submit-for-validation` → `validating`. | No; action output alone is not success. |
-| `validating` | A deterministic check or bounded observation completes. | pass → `completed`; recoverable failure → `retry-assessment`; blocked dependency → `blocked`; escalation-required → `escalated`; explicit user stop → `aborted`. | No. |
-| `retry-assessment` | A normalized recoverable failure exists. | approved different action → `running`; denied/budget-exhausted → `escalated`. | No. |
-| `completed` | Every named acceptance condition passed. | none. | Yes; only terminal success state. |
-| `blocked` | A required dependency or authority is unavailable. | none. | Yes; record exact blocker and owner. |
-| `escalated` | Automatic recovery is unsafe, non-retryable, no-progress, or over budget. | none. | Yes; an owned human/supervisor decision is needed. |
-| `aborted` | User explicitly stops the work. | none. | Yes; do not make further automatic action. |
+| State              | Entry event                                                               | Authorized next outcome                                                                                                                                          | Terminal condition / evidence                                  |
+| ------------------ | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `ready`            | Task inputs and repository observation are complete.                      | `start` → `running`.                                                                                                                                             | No; incomplete scope or authority remains a preflight blocker. |
+| `running`          | One authorized action begins.                                             | `submit-for-validation` → `validating`.                                                                                                                          | No; action output alone is not success.                        |
+| `validating`       | A deterministic check or bounded observation completes.                   | pass → `completed`; recoverable failure → `retry-assessment`; blocked dependency → `blocked`; escalation-required → `escalated`; explicit user stop → `aborted`. | No.                                                            |
+| `retry-assessment` | A normalized recoverable failure exists.                                  | approved different action → `running`; denied/budget-exhausted → `escalated`.                                                                                    | No.                                                            |
+| `completed`        | Every named acceptance condition passed.                                  | none.                                                                                                                                                            | Yes; only terminal success state.                              |
+| `blocked`          | A required dependency or authority is unavailable.                        | none.                                                                                                                                                            | Yes; record exact blocker and owner.                           |
+| `escalated`        | Automatic recovery is unsafe, non-retryable, no-progress, or over budget. | none.                                                                                                                                                            | Yes; an owned human/supervisor decision is needed.             |
+| `aborted`          | User explicitly stops the work.                                           | none.                                                                                                                                                            | Yes; do not make further automatic action.                     |
 
 The transition table is an implementation fact from the local contract. It
 does not prove that all provider runs emit every event. A runtime event record
@@ -117,14 +117,14 @@ progress. The evaluation order is non-retryable class, second identical
 no-progress result, per-signature budget, task budget, then different-action
 requirement.
 
-| Condition | Decision | Reason / required handoff content |
-| --- | --- | --- |
-| Validation passes all named criteria. | Stop `completed`. | Record scope, commands, result lane, limitations, rollback, reviewer, and next owner. |
-| Same normalized result recurs without an allowed progress delta. | Escalate on the second observation. | Repeating commands, more tokens, wording changes, and unverified fallbacks do not count as progress. |
-| Permission denial, credential boundary, secret detection, destructive live-mutation risk, or schema corruption. | Escalate immediately. | These are non-retryable; preserve the sanitized class, never credential/raw diagnostic content. |
-| Missing authority or dependency. | Stop `blocked`. | Name the dependency/authority and the decision required; do not silently broaden access. |
-| User stop. | Stop `aborted`. | Do not continue automatically. |
-| Recoverable failure within budgets with a distinct safe action. | Retry. | Record normalized signature, budget consumption, expected measurable delta, and next validation. |
+| Condition                                                                                                       | Decision                            | Reason / required handoff content                                                                    |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Validation passes all named criteria.                                                                           | Stop `completed`.                   | Record scope, commands, result lane, limitations, rollback, reviewer, and next owner.                |
+| Same normalized result recurs without an allowed progress delta.                                                | Escalate on the second observation. | Repeating commands, more tokens, wording changes, and unverified fallbacks do not count as progress. |
+| Permission denial, credential boundary, secret detection, destructive live-mutation risk, or schema corruption. | Escalate immediately.               | These are non-retryable; preserve the sanitized class, never credential/raw diagnostic content.      |
+| Missing authority or dependency.                                                                                | Stop `blocked`.                     | Name the dependency/authority and the decision required; do not silently broaden access.             |
+| User stop.                                                                                                      | Stop `aborted`.                     | Do not continue automatically.                                                                       |
+| Recoverable failure within budgets with a distinct safe action.                                                 | Retry.                              | Record normalized signature, budget consumption, expected measurable delta, and next validation.     |
 
 Provider, model, tool, or handoff fallback does not reset counters. That prevents
 “retry by relabeling” and makes escalation auditable. It is a local policy;
@@ -152,14 +152,14 @@ prose, token count, or static adapter presence as an operating measurement.
 
 ### Workspace Application and Gap Matrix
 
-| Concern | Current repository evidence | Gap / risk | Target state and application rule |
-| --- | --- | --- | --- |
-| Intake context | JIT bootstrap and `AGENTS.md`/`CLAUDE.md` gateways point to canonical owners. | Provider discovery is not observed. | At **session** start, record the gateway and scope read; use a native runtime inspection only as separately dated runtime evidence. |
-| Authority | GitOps-first and destructive-action boundaries are explicit. | Static policy cannot physically prevent every tool outside a given provider. | At **task** scope, reject live mutation, credentials, and external writes unless explicit human approval names target, rollback, and verification. |
-| Validation | Selected static lanes and full quality gate are defined. | No current metric ties a class of defects to control effectiveness. | At **project/CI** scope, preserve lane distinctions and add a deterministic negative test when a recurring defect exposes a missing control. |
-| Recovery | State, retry budget, no-progress rule, checkpoint redaction, and handoff schema exist. | Ignored checkpoint/provider memory execution is unobserved. | At **session** scope, rediscover the repository; checkpoint is advisory and cannot override current tracked state. |
-| Provider parity | Claude/Codex adapters and shared roster are statically validated. | Parity can be mistaken for native behavior. | At **provider** scope, state separately: static configuration, native discovery, authenticated/runtime evidence. |
-| Learning | Durable progress ledger and domain owners are designated. | Auto/provider memory may retain inaccurate or sensitive detail. | At **project** scope, promote only reviewed, redacted, durable lessons; current policy stays in Stage 00 and current implementation truth stays with its owner. |
+| Concern         | Current repository evidence                                                            | Gap / risk                                                                   | Target state and application rule                                                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Intake context  | JIT bootstrap and `AGENTS.md`/`CLAUDE.md` gateways point to canonical owners.          | Provider discovery is not observed.                                          | At **session** start, record the gateway and scope read; use a native runtime inspection only as separately dated runtime evidence.                             |
+| Authority       | GitOps-first and destructive-action boundaries are explicit.                           | Static policy cannot physically prevent every tool outside a given provider. | At **task** scope, reject live mutation, credentials, and external writes unless explicit human approval names target, rollback, and verification.              |
+| Validation      | Selected static lanes and full quality gate are defined.                               | No current metric ties a class of defects to control effectiveness.          | At **project/CI** scope, preserve lane distinctions and add a deterministic negative test when a recurring defect exposes a missing control.                    |
+| Recovery        | State, retry budget, no-progress rule, checkpoint redaction, and handoff schema exist. | Ignored checkpoint/provider memory execution is unobserved.                  | At **session** scope, rediscover the repository; checkpoint is advisory and cannot override current tracked state.                                              |
+| Provider parity | Claude/Codex adapters and shared roster are statically validated.                      | Parity can be mistaken for native behavior.                                  | At **provider** scope, state separately: static configuration, native discovery, authenticated/runtime evidence.                                                |
+| Learning        | Durable progress ledger and domain owners are designated.                              | Auto/provider memory may retain inaccurate or sensitive detail.              | At **project** scope, promote only reviewed, redacted, durable lessons; current policy stays in Stage 00 and current implementation truth stays with its owner. |
 
 ### Recommended Target State
 
@@ -167,13 +167,13 @@ The target is a provider-neutral control plane with provider-specific adapters
 at the edge. It does not require identical files or promises that two clients
 implement hooks the same way. It requires the following invariants:
 
-| Scope | Required control | Failure/security boundary |
-| --- | --- | --- |
-| Work item | Acceptance IDs, owned paths, authority, validation and rollback are explicit before edits. | Out-of-scope path, unclear owner, or missing approval stops work. |
-| Session | Fresh repository observation, scoped instructions, bounded tools, and compact redacted handoff. | Provider/local memory is advisory; repository wins conflicts. |
-| Project | Canonical rules, contracts, templates, validators, and durable ledger are versioned. | A static file proves configuration only, not discovery or enforcement. |
-| Provider | Map instruction/config/hook/agent/MCP/sandbox/approval semantics to the provider's official surface. | Never transpose a Claude setting into Codex evidence, or vice versa. |
-| CI | Run repository-static checks over the declared path set and retain reviewed results. | CI/static PASS is not hosted execution, provider runtime, or live deployment proof. |
+| Scope     | Required control                                                                                     | Failure/security boundary                                                           |
+| --------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Work item | Acceptance IDs, owned paths, authority, validation and rollback are explicit before edits.           | Out-of-scope path, unclear owner, or missing approval stops work.                   |
+| Session   | Fresh repository observation, scoped instructions, bounded tools, and compact redacted handoff.      | Provider/local memory is advisory; repository wins conflicts.                       |
+| Project   | Canonical rules, contracts, templates, validators, and durable ledger are versioned.                 | A static file proves configuration only, not discovery or enforcement.              |
+| Provider  | Map instruction/config/hook/agent/MCP/sandbox/approval semantics to the provider's official surface. | Never transpose a Claude setting into Codex evidence, or vice versa.                |
+| CI        | Run repository-static checks over the declared path set and retain reviewed results.                 | CI/static PASS is not hosted execution, provider runtime, or live deployment proof. |
 
 Apply these in stages: (1) bind every non-trivial task to the state machine and
 evidence lanes; (2) require an explicit normalized failure/progress record
@@ -184,10 +184,11 @@ marketing feature statement or inference into implementation truth.
 
 ## Sources
 
-- **SRC-WERPC-009–013** — official OpenAI Codex materials, checked 2026-08-08;
-  the locally supplied `/tmp/openai-docs-cache/codex-manual.md` and outline
-  were the first consultation surface. The ledger records each direct URL,
-  adopted claim boundary, and refresh trigger.
+- **SRC-WERPC-009–013** — official OpenAI Codex materials, checked 2026-08-08.
+  A locally supplied manual cache outside the repository was the first
+  consultation surface; it is ephemeral and not reproducible, so the durable
+  citation is the official URL. The ledger records each direct URL, adopted
+  claim boundary, and refresh trigger.
 - **Workspace evidence** — `.codex/CODEX.md`, `rules/agentic.md`,
   `rules/quality-standards.md`, and `contracts/agent-loop-lifecycle.json`,
   observed in this worktree on 2026-08-08. These support repository-static

@@ -146,6 +146,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 054-workspace-governance-audit-and-remediation/
 │   └── spec.md
+├── 055-workspace-engineering-gap-only-refresh/
+│   └── spec.md
 └── README.md
 ```
 
@@ -230,6 +232,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./052-document-taxonomy-consolidation/spec.md`](./052-document-taxonomy-consolidation/spec.md) | Document taxonomy consolidation, work-unit co-location, lineage metadata, rule-ownership collapse, and validator reconciliation specification | Active | 2026-08-07 외부 SDD/문서 IA 조사와 측정 baseline을 근거로 execution stage 폐지, operations stage 재번호, 파일명 날짜 제거, frontmatter lineage, 규칙 문서 10→3 통합, machine contract 및 validator 감축을 소유한다. Archive payload 불가침과 dated observation 무결성은 보존하며 hosted/provider/remote/live 증거는 주장하지 않는다. 2026-08-07 기준 reciprocal Plan/Task 실행 경로가 active로 전환됐고 PRD-007은 active로 유지된 채 같은 기간 실행만 일시 중단된다. | 2026-08-07 |
 | [`./053-workspace-engineering-research-pack-consolidation/spec.md`](./053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
 | [`./054-workspace-governance-audit-and-remediation/spec.md`](./054-workspace-governance-audit-and-remediation/spec.md) | Workspace governance audit, canonical-owner remediation, current-pointer cutover, and evidence-gated cleanup specification | Done | 승인된 30개 요청 범위를 신규 10-file Current 감사 팩으로 조사하고 canonical owner 보정, sole-Current 전환, 증거 기반 no-deletion 결과, terminal QA와 review를 완료했다. 기존 감사 팩은 source-commit 고정 역사 증거로 보존하며 hosted/provider/remote/live 결과는 `DEFER`한다. | 2026-08-09 |
+| [`./055-workspace-engineering-gap-only-refresh/spec.md`](./055-workspace-engineering-gap-only-refresh/spec.md) | Existing 2026-08-08 WER gap-only external-source refresh specification | Done | 기존 팩에서 조사되지 않았거나 외부 근거가 불충분한 `Partial` 질문만 2026-08-10 공식 1차 출처와 현재 workspace evidence로 보강했다. 새 팩·중복 보고서·provider/runtime/hosted/remote/live 증거는 범위 밖이다. | 2026-08-10 |
 
 ### Helper Templates
 
