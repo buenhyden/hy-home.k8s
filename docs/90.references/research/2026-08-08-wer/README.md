@@ -42,6 +42,7 @@ not a policy, runtime, provider, or deployment control surface.
 ├── kubernetes-infrastructure-and-security.md
 ├── llm-wiki-and-knowledge-routing.md
 ├── provider-implementation-status.md
+├── scope-application-index.md
 ├── source-coverage-and-migration-ledger.md
 ├── spec-driven-sdlc-and-document-contracts.md
 └── workspace-governance-and-common-agent-environment.md
@@ -63,6 +64,7 @@ not a policy, runtime, provider, or deployment control surface.
 | [model routing](agent-model-routing-and-configuration.md)                    | Model-selection controls                               |
 | [memory](agent-memory-tiers-and-management.md)                               | Memory-class lifecycle                                 |
 | [source and migration ledger](source-coverage-and-migration-ledger.md)       | Sources, predecessor disposition, and cutover evidence |
+| [scope application index](scope-application-index.md)                        | Governance-scope routing over the pack findings        |
 
 ### Requirement Coverage Matrix
 
