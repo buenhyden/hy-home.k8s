@@ -8,6 +8,115 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-10 - Orphaned taxonomy-program findings recovered before cleanup
+
+#### Metadata
+
+- **Date**: 2026-08-10
+- **Layer**: docs, meta, infra
+- **Status**: complete
+- **Tags**: #recovery #cleanup #hooks #security #validators #taxonomy
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` for the program; `docs/00.agent-governance/hooks/` for the hook findings
+- **Provenance**: Recovered on 2026-08-10 from an untracked SDD ledger at `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md` before that file was deleted during one-shot cleanup. The findings themselves are dated 2026-08-08 and were produced during the taxonomy-consolidation program on base commit `c62a5cd9`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until each finding is either adopted into a canonical owner or explicitly superseded. Re-observe every file and line reference before acting, because all of them can drift.
+- **Next Owner**: human — decide whether the hook findings warrant a Stage 00 documentation change or a Spec.
+
+#### Progress
+
+Routine cleanup found an untracked ledger whose worktree no longer exists, so
+the record was orphaned. A search showed four of its conclusions appear in zero
+tracked files, meaning deletion would have destroyed them. They are recovered
+here verbatim in substance before the file is removed.
+
+**R-1 reduction is NOT FEASIBLE, with evidence.** The active-corpus census
+cannot be reduced. `scripts/validate-active-corpus-retention.py:927` compares
+`candidateBaseline` for exact equality against a validator-constructed expected
+value, and its negative probes at `:982-985` require that popping or appending
+an entry FAILS. `scripts/validate-active-corpus-eligibility.py:830-834` requires
+that missing-row, extra-row, and duplicate-row mutations all FAIL, and
+`tests/test_active_corpus_eligibility.py:29-32` asserts the exact counts
+`{"candidates": 110, "eligible": 12, "defer": 98, "controls": 2}`. The census is
+pinned fail-closed expected state, so removing rows is precisely what these
+validators exist to reject. Reducing the data would require weakening the
+validator and its negative probes at the same time. Consequence recorded at the
+time: package WDTC-001 had no remaining content and was dropped.
+
+**R-4 has an abort rule that a future agent must not skip.**
+`scripts/validate-agent-legacy-cutover.py:183` pins an exact reference count for
+`docs/00.agent-governance/memory/progress.md` inside `ALLOWED_REFERENCE_COUNTS`.
+Any entry rotated out of this file must not contain a counted retired-surface
+string, or the count breaks. Verify the counted strings are absent from the
+rotated range BEFORE moving anything; if a counted string would leave the live
+file, keep that entry or report the rotation infeasible. Do not adjust the
+pinned count to match. The other three consumers are safe by construction:
+`validate-agent-governance-closure.py:240` declares the memory-class row,
+`validate-agent-harness-contract.py:29` pins only the canonical path, and
+`validate-markdown-profiles.py:1510,1696` uses this file as an append parent,
+matching shape rather than content.
+
+**A hook privilege inversion was found and fixed.** An earlier worktree fix made
+`k8s-pre-edit.sh:321` derive the EXECUTABLE location from tool input rather than
+only the `--root` argument. Editing a file inside an untrusted worktree would
+have made the pre-edit guard execute that branch's copy of
+`select-affected-surfaces.py` — the guard running the code it is supposed to
+guard. The fix pins the program to the project directory and passes only
+`--root` as data. It was proven concretely: a sabotage stub placed in the
+worktree copy made the unpinned hook exit 2, while the pinned hook exits 0 with
+the sabotage marker absent.
+
+**Hooks in this repository cannot be validated live from a branch.**
+`.claude/settings.json` loads hooks from `$CLAUDE_PROJECT_DIR`, which is the main
+checkout, not the working directory. A hook change is therefore inert until it
+reaches `main`, so branch-local hook testing proves nothing. The original record
+notes this constraint is undocumented in Stage 00. A related constraint: the
+same resolver defect exists in `post-validate.sh`, but fixing it collides with
+`tests/test_provider_post_validate_hook.py:94`, which asserts that
+`git rev-parse` never appears in that hook as a deliberate hermeticity contract.
+
+#### Memory
+
+Untracked tool directories are not automatically disposable. A cleanup pass that
+classifies by directory name would have deleted a ledger holding a feasibility
+verdict, a validator abort rule, and a proven privilege-escalation fix. Grepping
+the tracked tree for each distinctive conclusion before deleting is what
+separated cache from knowledge here, and it cost one command.
+
+The recovered R-4 rule then immediately applied to its own recovery: writing this
+entry required checking that the new text contains none of the pinned
+retired-surface strings, because adding one would have broken the very validator
+the rule describes.
+
+#### Evidence
+
+Read-only, on branch `fix/infra-ksm-excess-rbac` at commit `ceba1057`:
+
+- The source ledger was 168 lines at
+  `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md`,
+  naming worktree `.worktrees/docs-taxonomy-consolidation` and branch
+  `refactor/docs-taxonomy-consolidation`, neither of which still exists.
+- Tracked-tree search returned zero files containing `NOT FEASIBLE`,
+  `ABORT RULE`, `privilege inversion`, or the branch-validation constraint
+  sentence.
+- `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` is
+  tracked, and base commit `c62a5cd9` remains reachable, so the program itself
+  is preserved; only these conclusions were not.
+- Counted-string baseline in this file before the edit: four retired-surface
+  strings at zero occurrences and the fifth at its pinned value, all unchanged
+  by this entry.
+
+No cluster, hosted, provider-runtime, or credential-bearing check was run. Every
+file and line reference above is quoted from the recovered record and was not
+re-executed.
+
+#### Handoff
+
+None in progress. The hook findings are the actionable residue: whether the
+branch-validation constraint should be documented in Stage 00, and whether the
+`post-validate.sh` resolver defect should be fixed using the same pinned-program
+shape without weakening its hermeticity test.
+
 ### 2026-08-10 - Candidate re-verification, zero-risk RBAC subset applied
 
 #### Metadata
