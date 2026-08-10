@@ -109,8 +109,7 @@ observation date. As a labelled inference only, the upstream source repository
 `evildmp/diataxis-documentation-framework` shows no commit between 2026-08-08
 and 2026-08-10, and the last change to the `start-here` source was a 2026-08-01
 typo fix; an upstream repository state cannot establish what the published pages
-currently say. Re-run the check from a different egress before treating these
-claims as freshly verified.
+currently say. A second independent attempt later on 2026-08-10 also failed: ten requests across `/start-here/`, `/`, `www.diataxis.fr`, and an unrelated `/map/` probe all returned HTTP 429, so the block is host-wide for this egress rather than specific to the cited pages. Two failed re-checks on the same day make this a persistent condition, not a transient one. Re-run the check from a different egress before treating these claims as freshly verified.
 
 ## Related Documents
 
