@@ -25,7 +25,6 @@ rules:
       - nodes
       - pods
       - services
-      - serviceaccounts
       - resourcequotas
       - replicationcontrollers
       - limitranges
@@ -63,13 +62,6 @@ rules:
     resources:
       - networkpolicies
       - ingresses
-    verbs: [list, watch]
-  - apiGroups: [rbac.authorization.k8s.io]
-    resources:
-      - clusterroles
-      - clusterrolebindings
-      - roles
-      - rolebindings
     verbs: [list, watch]
   - apiGroups: [admissionregistration.k8s.io]
     resources:
