@@ -37,6 +37,14 @@ not a policy, runtime, provider, or deployment control surface.
   superseded by `2026-07-28`, registered as `SRC-WERPC-066`; and the two live
   Codex pages disagree on model identifiers, reasoning-effort values, and model
   precedence order. No requirement status changed.
+- **Source-verification record**: a third published-page attempt on 2026-08-11
+  returned HTTP 429 again, so the Diátaxis claims were instead verified against
+  the upstream source that builds the site, registered as `SRC-WERPC-067`. That
+  check also reconciled the recorded tutorial and explanation absence with
+  approved Spec 052 `DOC-G2` and `DOC-G3`: the absence is a decision resting on
+  the framework's own instruction, not an open question. `REQ-WERPC-020` keeps
+  its `Partial` status, which now reflects unenforced `DOC-G1` enum work rather
+  than an undecided route.
 
 ### Structure
 

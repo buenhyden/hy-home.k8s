@@ -3,7 +3,7 @@ title: 'Reference: Documentation Architecture and Diataxis'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Reference: Documentation Architecture and Diataxis
@@ -86,9 +86,50 @@ authority, safety, and reader intent.
 5. Run the profile/link/owner checks and use a human reader review for clarity,
    accessibility, and safety; no static validator can infer those properties.
 
+### 2026-08-11 upstream-source verification and decision reconciliation
+
+The published pages remain unreachable, but the claims are now verified against
+the upstream source that generates them, and the local "gap" framing is
+reconciled against an approved decision.
+
+| Question | 2026-08-11 result | Evidence class |
+| --- | --- | --- |
+| Are `diataxis.fr/start-here/` and `diataxis.fr/` reachable? | No. A third attempt from a different client also returned HTTP 429. Three failed attempts across two days and two egresses make the block persistent. | Direct observation |
+| Do the four modes and their authoring tests still hold? | Yes. `source/start-here.rst` at `evildmp/diataxis-documentation-framework@main` states the four kinds are tutorials, how-to guides, reference, and explanation, and defines a tutorial as a lesson serving study, a how-to guide as addressing a real-world goal for an already-competent user at work, reference as neutral technical description, and explanation as context and background serving study ([SRC-WERPC-067](source-coverage-and-migration-ledger.md#source-register)). | Upstream source, not the published page |
+| Does the framework mandate creating the four sections? | No, and it says the opposite. `source/how-to-use-diataxis.rst` states verbatim: "It certainly does not mean that you should create empty structures for tutorials/howto guides/reference/explanation with nothing in them. Don't do that. It's horrible." It adds that "Diátaxis changes the structure of your documentation from the inside." | Upstream source, not the published page |
+
+The upstream repository is the source that builds the site, so it is stronger
+evidence than an inference about commit dates, but it is still not the published
+page. A published page can lag or diverge from `main`. Treat these as
+source-verified, not page-verified.
+
+#### The tutorial and explanation absence is a decision, not an unmade choice
+
+This report's `As-Is, gap, target` table records that no tutorial or explanation
+route exists, and `REQ-WERPC-020` carries `Partial` on that basis. Both remain
+factually correct as observations, but read alone they suggest an open question.
+They are reconciled here.
+
+Spec 052 is `active` and already decided the question. `DOC-G2` states no
+tutorial route is created because Diátaxis says empty structures must not be
+created in advance, and `DOC-G3` declines an explanation route on the same
+recorded basis, keeping explanation inside ADR context and reference sub-types.
+The verbatim upstream sentence quoted above is that recorded basis, now checked
+at source rather than accepted secondhand.
+
+The consequence is that creating these two profiles would contradict both the
+approved local decision and the framework's own instruction. The open item is
+not a missing route. It is `DOC-G1`: constraining `Guide Type` to the
+enumeration `how-to`, `tutorial`, `concept` in the profile registry and template,
+which a 2026-08-11 registry check confirms is still unenforced, together with
+validating that the eight current guides declare their type and recording the
+`DOC-G2` and `DOC-G3` absences deliberately. That work is the queued `WORK-013`
+package and belongs to its owning Plan, not to this reference.
+
 ## Sources
 
 - [Diátaxis — Start here](https://diataxis.fr/start-here/) and [Diátaxis home](https://diataxis.fr/), checked 2026-08-08. They define tutorials, how-to guides, reference, and explanation as distinct documentation needs; they do not prescribe this repository's schema.
+- [Diátaxis upstream source](https://github.com/evildmp/diataxis-documentation-framework) `source/start-here.rst` and `source/how-to-use-diataxis.rst` at `main`, checked 2026-08-11 (`SRC-WERPC-067`). This is the source that builds the site, not the published page.
 - Workspace observation, 2026-08-08: `document-profiles.json`, selected Guide/Runbook templates, Stage 90 reference profiles, stage-routing and stage-authoring documents. This is static configuration evidence only.
 
 ## Review and Freshness
@@ -109,7 +150,7 @@ observation date. As a labelled inference only, the upstream source repository
 `evildmp/diataxis-documentation-framework` shows no commit between 2026-08-08
 and 2026-08-10, and the last change to the `start-here` source was a 2026-08-01
 typo fix; an upstream repository state cannot establish what the published pages
-currently say. A second independent attempt later on 2026-08-10 also failed: ten requests across `/start-here/`, `/`, `www.diataxis.fr`, and an unrelated `/map/` probe all returned HTTP 429, so the block is host-wide for this egress rather than specific to the cited pages. Two failed re-checks on the same day make this a persistent condition, not a transient one. Re-run the check from a different egress before treating these claims as freshly verified.
+currently say. A second independent attempt later on 2026-08-10 also failed: ten requests across `/start-here/`, `/`, `www.diataxis.fr`, and an unrelated `/map/` probe all returned HTTP 429, so the block is host-wide for this egress rather than specific to the cited pages. Two failed re-checks on the same day make this a persistent condition, not a transient one. A third attempt on 2026-08-11 from a different client also returned HTTP 429, so the published pages stay unverified. The four-mode claims and the no-mandated-structure boundary are now verified against the upstream source instead, which is a different and slightly weaker evidence class than the published page. Re-run the page check from a different egress if page-level verification is required.
 
 ## Related Documents
 
