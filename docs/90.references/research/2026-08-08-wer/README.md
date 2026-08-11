@@ -128,14 +128,18 @@ claims.
 
 ### 2026-08-10 gap-only refresh reconciliation
 
-The completed gap-only research delta retains exactly 13 pack files and 33
-unique request owners. The source and claim registers each contain 65 unique
-IDs: frozen rows through `SRC-WERPC-052` and `CLM-WERPC-006-08`, document and
-Verification/Validation additions `SRC-WERPC-053`–`059` and
-`CLM-WERPC-007-01`–`08`, and Kubernetes/Security additions
-`SRC-WERPC-060`–`065` and `CLM-WERPC-008-01`–`06`. The five mutable research
-owners are this README, the SDLC report, the CI/CD and QA report, the
-Kubernetes/Security report, and the source/claim ledger. Static validation does
+The WERG-004 closure snapshot recorded exactly 13 pack files, 33 unique request
+owners, 65 unique source IDs, and 65 unique claim IDs: frozen rows through
+`SRC-WERPC-052` and `CLM-WERPC-006-08`, document and Verification/Validation
+additions `SRC-WERPC-053`–`059` and `CLM-WERPC-007-01`–`08`, and
+Kubernetes/Security additions `SRC-WERPC-060`–`065` and
+`CLM-WERPC-008-01`–`06`. The five mutable research owners for that closure were
+this README, the SDLC report, the CI/CD and QA report, the Kubernetes/Security
+report, and the source/claim ledger.
+
+After the later scope index and freshness/upstream source rows, the current pack
+contains 14 physical Markdown files including this README, 33 unique request
+owners, 67 unique source IDs, and 65 unique claim IDs. Static validation does
 not promote any hosted, provider-runtime, remote, credential-bearing, secret,
 artifact, or live evidence from `DEFER`.
 

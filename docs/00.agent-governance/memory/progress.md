@@ -397,7 +397,9 @@ must not begin without a complete allowed-flow inventory and security review.
 - **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
 - **Sensitivity**: non-sensitive
 - **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: human — select the branch-finishing action after terminal validation and the closure commit.
+- **Next Owner**: none — WERG-005 is complete; closure commit `22002d91`,
+  merge `79e44638`, and terminal trace reconciliation `6b953f74` are on local
+  `main`. Hosted, provider-runtime, remote, and live evidence remains `DEFER`.
 
 #### Progress
 
@@ -533,11 +535,10 @@ Three reusable lessons from the WERG-006 closure re-verification:
 
 #### Handoff
 
-Complete WERG-005 whole-branch review, correct every Critical or Important
-finding, run the exact terminal validation and cleanup sequence, close the
-Spec/Plan/Task lifecycle atomically, and present the human with the permitted
-branch-finishing choices. Do not infer hosted, remote, provider-runtime, or live
-evidence from repository-static PASS results.
+None active. WERG-005 is completed, with closure commit `22002d91`, local-main
+merge `79e44638`, and terminal trace reconciliation `6b953f74`. There is no
+active WERG owner or handoff. Hosted, provider-runtime, remote, and live
+evidence remains `DEFER`; repository-static PASS results do not promote it.
 
 ### 2026-08-09 - WGIA-014 workspace governance audit closure
 
