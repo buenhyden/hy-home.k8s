@@ -1196,6 +1196,143 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 worktree_bytes=expected + b"worktree divergence",
             )
 
+    def test_work106_path_derived_artifact_identity_fixture(self) -> None:
+        validator = self.validators["registry"]
+        fixture = json.loads(_staged_bytes(REGISTRY_CASES))
+        cases = fixture["work106ArtifactIdentityCases"]
+        self.assertEqual(len(cases), 20)
+        for case in cases:
+            with self.subTest(path=case["path"]):
+                actual = validator._work106_derive_artifact_identity(case["path"])
+                self.assertEqual(actual.artifact_id, case["artifactId"])
+                self.assertEqual(actual.change_id, case.get("changeId"))
+                self.assertEqual(actual.migration_id, case.get("migrationId"))
+
+        for invalid in (
+            "docs/01.requirements/ifc-09-bad.md",
+            "docs/01.requirements/ifc-009-Bad.md",
+            "docs/01.requirements/ifc-009-double--hyphen.md",
+            "docs/02.architecture/descriptions/ad-011-short.md",
+            "docs/03.specs/52-short/spec.md",
+            "docs/98.archive/changes/chg-0001-bad/nested/plan.md",
+            "docs/98.archive/tombstones/02.architecture/tmb-ar" + "d-0011.md",
+        ):
+            with self.subTest(invalid=invalid):
+                self.assertIsNone(validator._work106_derive_artifact_identity(invalid))
+
+    def test_work106_artifact_namespace_is_transition_aware_and_global(self) -> None:
+        validator = self.validators["registry"]
+        records = (
+            ("docs/01.requirements/008-program.md", {}),
+            ("docs/02.architecture/descriptions/ad-0011-program.md", {"artifact_id": "AD-0011"}),
+            (
+                "docs/90.references/current.md",
+                {"original_artifact_id": "AR" + "D-0011"},
+            ),
+        )
+        self.assertEqual(validator._work106_artifact_diagnostics(records, terminal=False), ())
+        self.assertIn(
+            "ARTIFACT-ID-MISSING:docs/01.requirements/008-program.md",
+            validator._work106_artifact_diagnostics(records, terminal=True),
+        )
+
+        mutations = (
+            (("docs/01.requirements/008-program.md", {"artifact_id": "PRD-009"}), "ARTIFACT-ID-PATH"),
+            (("docs/90.references/current.md", {"artifact_id": "PRD-008"}), "ARTIFACT-ID-PROHIBITED"),
+            (("docs/01.requirements/009-second.md", {"artifact_id": "PRD-008"}), "ARTIFACT-ID-PATH"),
+        )
+        for record, expected in mutations:
+            with self.subTest(expected=expected):
+                diagnostics = validator._work106_artifact_diagnostics(
+                    (records[1], record), terminal=False
+                )
+                self.assertTrue(any(item.startswith(expected) for item in diagnostics))
+
+        duplicate = (
+            ("docs/01.requirements/008-program.md", {"artifact_id": "PRD-008"}),
+            ("docs/01.requirements/008-alias.md", {"artifact_id": "PRD-008"}),
+        )
+        self.assertTrue(
+            any(
+                item.startswith("ARTIFACT-ID-DUPLICATE")
+                for item in validator._work106_artifact_diagnostics(duplicate, terminal=False)
+            )
+        )
+
+    def test_work106_tombstone_legacy_hash_is_canonical_and_full(self) -> None:
+        validator = self.validators["registry"]
+        legacy_path = "docs/04.execution/tasks/2026-07-05-audit-pack.md"
+        source_blob = "a" * 40
+        token = validator._work106_legacy_tombstone_token(legacy_path, source_blob)
+        self.assertRegex(token, r"^LEGACY-[A-F0-9]{64}$")
+        self.assertEqual(
+            token,
+            validator._work106_legacy_tombstone_token(legacy_path, source_blob),
+        )
+        for invalid in ("/absolute.md", "docs//bad.md", "docs/../bad.md", "./docs/bad.md"):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    validator._work106_legacy_tombstone_token(invalid, source_blob)
+        self.assertEqual(
+            validator._work106_tombstone_artifact_id(
+                "02.architecture", "AD", "AR" + "D-0011", legacy_path, source_blob
+            ),
+            "TMB-AD-0011",
+        )
+        self.assertEqual(
+            validator._work106_tombstone_artifact_id(
+                "02.architecture", "AD", None, legacy_path, source_blob
+            ),
+            "TMB-AD-" + token,
+        )
+        with self.assertRaises(ValueError):
+            validator._work106_tombstone_artifact_id(
+                "02.architecture", "API-SPEC", None, legacy_path, source_blob
+            )
+
+    def test_work106_stable_leaf_group_metadata_is_mandatory_during_transition(self) -> None:
+        validator = self.validators["registry"]
+        plan_path = "docs/98.archive/changes/chg-0001-bootstrap/plan.md"
+        migration_path = "docs/98.archive/migrations/mig-0001-convergence.md"
+        valid = (
+            (plan_path, {"artifact_id": "PLAN-CHG-0001", "change_id": "CHG-0001"}),
+            (migration_path, {"artifact_id": "MIG-0001", "migration_id": "MIG-0001"}),
+        )
+        self.assertEqual(
+            validator._work106_artifact_diagnostics(valid, terminal=False), ()
+        )
+        for path, metadata, expected in (
+            (plan_path, {"artifact_id": "PLAN-CHG-0001"}, "ARTIFACT-CHANGE-ID"),
+            (migration_path, {"artifact_id": "MIG-0001"}, "ARTIFACT-MIGRATION-ID"),
+        ):
+            with self.subTest(expected=expected):
+                diagnostics = validator._work106_artifact_diagnostics(
+                    ((path, metadata),), terminal=False
+                )
+                self.assertTrue(any(item.startswith(expected) for item in diagnostics))
+
+    def test_work106_ledger_fixture_rejects_closed_negative_matrix(self) -> None:
+        validator = self.validators["registry"]
+        fixture = json.loads(_staged_bytes(REGISTRY_CASES))["work106MigrationLedger"]
+        row = fixture["row"]
+        self.assertEqual(validator._work106_ledger_diagnostics((row,), current=False), ())
+        for mutation in fixture["negativeMutations"]:
+            with self.subTest(mutation=mutation):
+                rows = validator._work106_mutated_ledger_rows(row, mutation)
+                self.assertNotEqual(
+                    validator._work106_ledger_diagnostics(rows, current=False), ()
+                )
+
+    def test_work106_current_ledger_census_is_exact_93(self) -> None:
+        validator = self.validators["registry"]
+        rows = validator._work106_synthetic_current_ledger()
+        self.assertEqual(len(rows), 93)
+        self.assertEqual(validator._work106_ledger_diagnostics(rows, current=True), ())
+        wrong = [dict(row) for row in rows]
+        wrong[-1]["stable_path"] = wrong[-2]["stable_path"]
+        diagnostics = validator._work106_ledger_diagnostics(tuple(wrong), current=True)
+        self.assertTrue(any(item.startswith("LEDGER-STABLE-PATH-DUPLICATE") for item in diagnostics))
+
 
 if __name__ == "__main__":
     unittest.main()

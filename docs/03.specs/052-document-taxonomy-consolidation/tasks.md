@@ -12,8 +12,8 @@ updated: 2026-08-12
 
 This Task records execution evidence for the approved work-unit-centered SDLC,
 document-governance, and AI-agent-governance consolidation. The closed sequence records WORK-100 through WORK-115 plus the approved
-pre-WORK-104 amendment. WORK-100 through WORK-105 and `WDTC-AMEND-001` are
-complete; WORK-106 through WORK-115 remain the only successor work items.
+pre-WORK-104 amendment. WORK-100 through WORK-106 and `WDTC-AMEND-001` are
+complete; WORK-107 through WORK-115 remain the only successor work items.
 
 All results are repository-static. No provider-runtime enforcement, hosted CI,
 remote state, credential-bearing action, release action, or live-cluster result
@@ -50,7 +50,7 @@ is performed or claimed.
 | WDTC-AMEND-001 | VAL-WDTC-013 through VAL-WDTC-016 | Approve terminal AD, artifact-ID, stable Stage 98, and exact script-closure design. | platform | Done | Spec 052 and ADR-0024 close the successor scope and ordering. | `1452dbfd` through `446e336a`; strict design gates PASS |
 | WORK-104 | VAL-WDTC-001 | Move 82 retained Plan/Task documents, repair consumers, and rebaseline the destination pair. | platform | Done | Exact move applied; 41/41 siblings and only three Stage 04 READMEs remain; current links and immutable-history resolution are green. | Apply `phase=move moves=82 archives=50 sources=132`; strict transition registry, Markdown, links/owners PASS |
 | WORK-105 | VAL-WDTC-004, VAL-WDTC-013 | Convert exactly eight ARDs to ADs, close legacy ARD/API-Spec consumers, activate core forms, and accept the AD-0011/ADR-0024/projection gate. | platform | Done | Exact eight ADs, Stage 99 core forms, retired authored API Spec route, complete consumer classifiers, and ADR-0024 authority accepted. | Strict-cutover 31/31, registry 132/67/31 and strict 504 paths, lifecycle 754, active corpus 100/100, closure 29/29, archive cutover 31/31, RIA 94/94, and aggregate PASS |
-| WORK-106 | VAL-WDTC-006, VAL-WDTC-014, VAL-WDTC-015 | Implement artifact-ID and migration-ledger transition validators. | platform | Queued | Not executed | Global identity and 14-field ledger positive/negative fixtures |
+| WORK-106 | VAL-WDTC-006, VAL-WDTC-014, VAL-WDTC-015 | Implement artifact-ID and migration-ledger transition validators. | platform | Done | Transition permits absent mandatory IDs until WORK-108 but rejects every present mismatch, duplicate, prohibited declaration, malformed stable grouping, or ledger violation; terminal mode requires IDs. | Path-derived identity fixtures 20/20; strict-cutover 37/37; registry self 132/67/31 and strict 504; affected/staged/aggregate PASS |
 | WORK-107 | VAL-WDTC-003, VAL-WDTC-006, VAL-WDTC-015 | Rehome all 93 Stage 98 records under stable paths. | platform | Queued | Not executed | 93-to-93 ledger, unique destinations, payload/provenance and dual recovery |
 | WORK-108 | VAL-WDTC-003, VAL-WDTC-014 | Backfill mandatory outer artifact IDs after WORK-107 stable rehome and WORK-105 acceptance. | platform | Queued | Not executed | Mandatory/prohibited namespace and global uniqueness evidence |
 | WORK-109 | VAL-WDTC-001, VAL-WDTC-002, VAL-WDTC-003, VAL-WDTC-005 | Consolidate document authority and terminal routes. | platform | Queued | Not executed | Three owners, Stage 04 absence, Stage 05 stability, route/date negatives |
@@ -116,15 +116,27 @@ PRD-008/AD-0011/Spec-052 authority. Stage 90 and Stage 98 remain byte-immutable,
 Stage 05 has exactly seven reviewed AD-0007 link repairs, and no `artifact_id`
 frontmatter is introduced before WORK-108.
 
+WORK-106 added no document family or one-shot script. The existing registry
+validator now owns the closed active and Stage 98 path-to-ID grammar, global
+declared-ID uniqueness, prohibited namespace selection, transition-versus-
+terminal missing-field rule, exact `change_id`/`migration_id` binding, full
+legacy tombstone hash, and schema-versioned 14-field migration ledger. The
+positive fixture proves the exact 93-row `76 + 17` census with `35/2/4` change
+grouping and `3/8/4/2` tombstones; missing/extra fields, aliases, malformed
+objects/digests, action/replacement errors, record-kind drift, and duplicate
+legacy/stable/artifact identities fail closed. Stage 90 and Stage 98 remain
+byte-identical and mandatory current IDs remain deliberately absent until
+WORK-108.
+
 The controller-owned WORK-104 fixed point ran
 `TMPDIR=/tmp pre-commit run --all-files` with exit `0`; every applicable hook
 passed and the run produced no mutation. Post-run scope remained exactly
 `A82/D82/M73` with zero unstaged paths.
 
 No provider, hosted, remote, credential-bearing, Release-family, or live action
-was performed or claimed. WORK-106 is the next owner; WORK-107 and WORK-108
-remain blocked by WORK-106/WORK-107 ordering plus WORK-105's accepted complete
-eight-AD conversion and authority gate.
+was performed or claimed. WORK-107 is the next owner; WORK-108 remains blocked
+by WORK-107 stable rehome plus WORK-105's accepted complete eight-AD conversion
+and authority gate.
 
 ## Traceability
 
@@ -139,7 +151,7 @@ eight-AD conversion and authority gate.
 | [WDTC-AMEND-001](plan.md#work-breakdown) | Complete. | Human-approved Spec 052/ADR-0024 design carried through `446e336a`. |
 | [WORK-104](plan.md#work-breakdown) | Complete. | Exact 82 move, 41/41 siblings, three Stage 04 READMEs, repaired consumers, and strict focused gates. |
 | [WORK-105](plan.md#work-breakdown) | Complete. | Exact eight-AD conversion, legacy ARD/authored API Spec retirement, ADR-0024 authority acceptance, native surface preservation, and strict focused gates passed. |
-| [WORK-106](plan.md#work-breakdown) | Not executed. | Artifact-ID and migration-ledger validators pending. |
+| [WORK-106](plan.md#work-breakdown) | Complete. | Closed path-derived/global identity and exact 14-field ledger validators; strict-cutover 37/37 and repository gates passed. |
 | [WORK-107](plan.md#work-breakdown) | Not executed. | Stable 93-record Stage 98 rehome pending WORK-105 acceptance. |
 | [WORK-108](plan.md#work-breakdown) | Not executed. | Global artifact-ID backfill pending WORK-107 stable rehome and complete AD conversion. |
 | [WORK-109](plan.md#work-breakdown) | Not executed. | Document authority and terminal routes pending. |

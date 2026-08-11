@@ -15,9 +15,9 @@ import stat
 import subprocess
 import sys
 import tempfile
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, Mapping
 
 from document_contracts import (
     BASELINE_COUNT,
@@ -42,6 +42,8 @@ SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 LOCAL_AGENT_FIXTURE_FIELD = "localAgentFixtureSamplePath"
 PROGRAM_LINEAGE_PROJECTION_FIXTURE_FIELD = "productionProgramLineageProjection"
 WORK105_CONSUMER_DISPOSITION_FIXTURE_FIELD = "work105ConsumerDisposition"
+WORK106_ARTIFACT_FIXTURE_FIELD = "work106ArtifactIdentityCases"
+WORK106_LEDGER_FIXTURE_FIELD = "work106MigrationLedger"
 WORK105_CONSUMER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_CONSUMER_PATTERNS = (
     {
@@ -75,6 +77,47 @@ WORK105_CONSUMER_RECORD_KEYS = {
     "target",
     "reason",
 }
+
+WORK106_LEDGER_FIELDS = frozenset(
+    {
+        "schema_version",
+        "migration_id",
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "legacy_archive_commit",
+        "legacy_envelope_blob",
+        "source_blob",
+        "content_sha256",
+        "record_kind",
+        "reason",
+    }
+)
+WORK106_OBJECT_ID = re.compile(r"^[0-9a-f]{40}$")
+WORK106_CONTENT_DIGEST = re.compile(r"^[0-9a-f]{64}$")
+WORK106_MIGRATION_ID = re.compile(r"^MIG-[0-9]{4}$")
+WORK106_SLUG = r"[a-z0-9]+(?:-[a-z0-9]+)*"
+WORK106_TOMBSTONE_TYPES = {
+    "01.requirements": frozenset({"PRD", "SRS", "IFC"}),
+    "02.architecture": frozenset({"AD", "ADR"}),
+    "03.specs": frozenset(
+        {"SPEC", "AGENT-DESIGN", "DATA-MODEL", "TESTS", "PLAN", "TASK"}
+    ),
+    "05.operations": frozenset(
+        {"GUIDE", "POLICY", "RUNBOOK", "INCIDENT", "POSTMORTEM"}
+    ),
+}
+
+
+@dataclass(frozen=True)
+class Work106ArtifactIdentity:
+    artifact_id: str
+    change_id: str | None = None
+    migration_id: str | None = None
+    record_kind: str | None = None
 WORK105_STAGED_INVENTORY_BYTES = 4 * 1024 * 1024
 WORK105_STAGED_ENTRY_LIMIT = 20_000
 WORK105_STAGED_PATH_BYTES = 4096
@@ -5874,6 +5917,467 @@ def _assert_work105_consumer_disposition(root: Path, fixture: dict[str, Any]) ->
         )
 
 
+def _work106_derive_artifact_identity(
+    raw_path: str,
+) -> Work106ArtifactIdentity | None:
+    """Derive one canonical outer identity from a terminal repository path."""
+
+    slug = WORK106_SLUG
+    simple_patterns = (
+        (rf"^docs/01\.requirements/(?P<id>[0-9]{{3}})-{slug}\.md$", "PRD"),
+        (rf"^docs/01\.requirements/srs-(?P<id>[0-9]{{3}})-{slug}\.md$", "SRS"),
+        (
+            rf"^docs/01\.requirements/ifc-(?P<id>[0-9]{{3}})-(?P<suffix>{slug})\.md$",
+            "IFC",
+        ),
+        (
+            rf"^docs/02\.architecture/descriptions/ad-(?P<id>[0-9]{{4}})-{slug}\.md$",
+            "AD",
+        ),
+        (
+            rf"^docs/02\.architecture/decisions/(?P<id>[0-9]{{4}})-{slug}\.md$",
+            "ADR",
+        ),
+        (rf"^docs/05\.operations/guides/(?P<id>[0-9]{{4}})-{slug}\.md$", "GUIDE"),
+        (rf"^docs/05\.operations/policies/(?P<id>[0-9]{{4}})-{slug}\.md$", "POLICY"),
+        (rf"^docs/05\.operations/runbooks/(?P<id>[0-9]{{4}})-{slug}\.md$", "RUNBOOK"),
+    )
+    for pattern, prefix in simple_patterns:
+        match = re.fullmatch(pattern, raw_path)
+        if match is None:
+            continue
+        suffix = match.groupdict().get("suffix")
+        artifact_id = f"{prefix}-{match.group('id')}"
+        if suffix is not None:
+            artifact_id += f"-{suffix.upper()}"
+        return Work106ArtifactIdentity(artifact_id)
+
+    stage03 = re.fullmatch(
+        rf"docs/03\.specs/(?P<id>[0-9]{{3}})-{slug}/"
+        r"(?P<leaf>spec|agent-design|data-model|tests|plan|tasks)\.md",
+        raw_path,
+    )
+    if stage03 is not None:
+        prefix = {
+            "spec": "SPEC",
+            "agent-design": "AGENT-DESIGN",
+            "data-model": "DATA-MODEL",
+            "tests": "TESTS",
+            "plan": "PLAN",
+            "tasks": "TASK",
+        }[stage03.group("leaf")]
+        return Work106ArtifactIdentity(f"{prefix}-{stage03.group('id')}")
+
+    incident = re.fullmatch(
+        rf"docs/05\.operations/incidents/(?P<year>[0-9]{{4}})/"
+        rf"INC-(?P<id>[0-9]{{3}})-(?P<slug>{slug})/"
+        rf"(?P<leaf>INC-(?P=id)-(?P=slug)\.md|postmortem\.md)",
+        raw_path,
+    )
+    if incident is not None:
+        prefix = "POSTMORTEM" if incident.group("leaf") == "postmortem.md" else "INC"
+        return Work106ArtifactIdentity(
+            f"{prefix}-{incident.group('year')}-{incident.group('id')}"
+        )
+
+    change = re.fullmatch(
+        rf"docs/98\.archive/changes/chg-(?P<id>[0-9]{{4}})-{slug}/"
+        r"(?P<leaf>plan|task)\.md",
+        raw_path,
+    )
+    if change is not None:
+        change_id = f"CHG-{change.group('id')}"
+        kind = "change-plan" if change.group("leaf") == "plan" else "change-task"
+        prefix = "PLAN" if kind == "change-plan" else "TASK"
+        return Work106ArtifactIdentity(
+            f"{prefix}-{change_id}", change_id=change_id, record_kind=kind
+        )
+
+    migration = re.fullmatch(
+        rf"docs/98\.archive/migrations/mig-(?P<id>[0-9]{{4}})-{slug}\.md",
+        raw_path,
+    )
+    if migration is not None:
+        migration_id = f"MIG-{migration.group('id')}"
+        return Work106ArtifactIdentity(
+            migration_id, migration_id=migration_id, record_kind="migration"
+        )
+
+    tombstone = re.fullmatch(
+        rf"docs/98\.archive/tombstones/(?P<stage>[0-9]{{2}}\.[a-z]+)/"
+        rf"tmb-(?P<type>[a-z]+(?:-[a-z]+)*)-(?P<token>{slug})\.md",
+        raw_path,
+    )
+    if tombstone is not None:
+        type_token = tombstone.group("type").upper()
+        if type_token not in WORK106_TOMBSTONE_TYPES.get(tombstone.group("stage"), ()):
+            return None
+        return Work106ArtifactIdentity(
+            f"TMB-{type_token}-{tombstone.group('token').upper()}",
+            record_kind="tombstone",
+        )
+    return None
+
+
+def _work106_artifact_diagnostics(
+    records: tuple[tuple[str, Mapping[str, Any]], ...], *, terminal: bool
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    owners: dict[str, list[str]] = {}
+    for path, metadata in records:
+        identity = _work106_derive_artifact_identity(path)
+        declared = metadata.get("artifact_id")
+        if identity is None:
+            if declared is not None:
+                diagnostics.append(f"ARTIFACT-ID-PROHIBITED:{path}")
+            continue
+        if isinstance(declared, str):
+            owners.setdefault(declared, []).append(path)
+        if declared is None:
+            if terminal:
+                diagnostics.append(f"ARTIFACT-ID-MISSING:{path}")
+        elif not isinstance(declared, str) or declared != identity.artifact_id:
+            diagnostics.append(f"ARTIFACT-ID-PATH:{path}")
+        if identity.change_id is not None and metadata.get("change_id") != identity.change_id:
+            diagnostics.append(f"ARTIFACT-CHANGE-ID:{path}")
+        if identity.migration_id is not None and metadata.get("migration_id") != identity.migration_id:
+            diagnostics.append(f"ARTIFACT-MIGRATION-ID:{path}")
+    for artifact_id, paths in owners.items():
+        if len(paths) > 1:
+            diagnostics.append(
+                f"ARTIFACT-ID-DUPLICATE:{artifact_id}:{','.join(sorted(paths))}"
+            )
+    return tuple(sorted(diagnostics))
+
+
+def _work106_canonical_legacy_path(raw_path: str) -> bool:
+    if not raw_path or raw_path.startswith("/") or "//" in raw_path or "\\" in raw_path:
+        return False
+    path = PurePosixPath(raw_path)
+    return (
+        path.as_posix() == raw_path
+        and all(part not in {"", ".", ".."} for part in path.parts)
+        and raw_path.startswith("docs/")
+    )
+
+
+def _work106_legacy_tombstone_token(legacy_path: str, source_blob: str) -> str:
+    if not _work106_canonical_legacy_path(legacy_path):
+        raise ValueError("legacy path is not canonical")
+    if WORK106_OBJECT_ID.fullmatch(source_blob) is None:
+        raise ValueError("source blob is not a lowercase Git object ID")
+    digest = hashlib.sha256(
+        legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
+    ).hexdigest().upper()
+    return f"LEGACY-{digest}"
+
+
+def _work106_tombstone_artifact_id(
+    stage: str,
+    terminal_type: str,
+    original_artifact_id: str | None,
+    legacy_path: str,
+    source_blob: str,
+) -> str:
+    allowed = WORK106_TOMBSTONE_TYPES.get(stage)
+    if allowed is None or terminal_type not in allowed:
+        raise ValueError("tombstone stage/type pair is outside the closed map")
+    if original_artifact_id is None:
+        token = _work106_legacy_tombstone_token(legacy_path, source_blob)
+    else:
+        historical_ad_type = "AR" + "D"
+        source_type = (
+            historical_ad_type
+            if terminal_type == "AD"
+            and original_artifact_id.startswith(historical_ad_type + "-")
+            else terminal_type
+        )
+        prefix = f"{source_type}-"
+        token = original_artifact_id.removeprefix(prefix)
+        if (
+            not original_artifact_id.startswith(prefix)
+            or re.fullmatch(r"[A-Z0-9]+(?:-[A-Z0-9]+)*", token) is None
+        ):
+            raise ValueError("original artifact identity does not match tombstone type")
+    return f"TMB-{terminal_type}-{token}"
+
+
+def _work106_is_canonical_artifact_id(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    return re.fullmatch(
+        r"(?:PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{3,4}"
+        r"|IFC-[0-9]{3}-[A-Z0-9]+(?:-[A-Z0-9]+)*"
+        r"|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}"
+        r"|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{3}"
+        r"|(?:PLAN|TASK)-CHG-[0-9]{4}"
+        r"|MIG-[0-9]{4}"
+        r"|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*",
+        value,
+    ) is not None
+
+
+def _work106_ledger_diagnostics(
+    rows: tuple[Mapping[str, Any], ...], *, current: bool
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    stable_owners: dict[str, list[int]] = {}
+    artifact_owners: dict[str, list[int]] = {}
+    legacy_owners: dict[str, list[int]] = {}
+    change_leaves: dict[str, set[str]] = {}
+    tombstone_stages: dict[str, int] = {}
+    for index, row in enumerate(rows):
+        label = f"row-{index + 1}"
+        if not isinstance(row, Mapping) or set(row) != WORK106_LEDGER_FIELDS:
+            diagnostics.append(f"LEDGER-FIELDS:{label}")
+            continue
+        migration_id = row["migration_id"]
+        if row["schema_version"] != 1 or not isinstance(migration_id, str) or WORK106_MIGRATION_ID.fullmatch(migration_id) is None:
+            diagnostics.append(f"LEDGER-SCHEMA:{label}")
+        legacy_path = row["legacy_path"]
+        if not isinstance(legacy_path, str) or not _work106_canonical_legacy_path(legacy_path):
+            diagnostics.append(f"LEDGER-LEGACY-PATH:{label}")
+        else:
+            legacy_owners.setdefault(legacy_path, []).append(index)
+        stable_path = row["stable_path"]
+        identity = _work106_derive_artifact_identity(stable_path) if isinstance(stable_path, str) else None
+        if identity is None:
+            diagnostics.append(f"LEDGER-STABLE-PATH:{label}")
+        elif row["artifact_id"] != identity.artifact_id:
+            diagnostics.append(f"LEDGER-ARTIFACT-ID:{label}")
+        elif row["record_kind"] != identity.record_kind:
+            diagnostics.append(f"LEDGER-RECORD-KIND:{label}")
+        if isinstance(stable_path, str):
+            stable_owners.setdefault(stable_path, []).append(index)
+        artifact_id = row["artifact_id"]
+        if isinstance(artifact_id, str):
+            artifact_owners.setdefault(artifact_id, []).append(index)
+        for field in (
+            "source_commit",
+            "legacy_archive_commit",
+            "legacy_envelope_blob",
+            "source_blob",
+        ):
+            if not isinstance(row[field], str) or WORK106_OBJECT_ID.fullmatch(row[field]) is None:
+                diagnostics.append(f"LEDGER-GIT-OBJECT:{label}:{field}")
+        if not isinstance(row["content_sha256"], str) or WORK106_CONTENT_DIGEST.fullmatch(row["content_sha256"]) is None:
+            diagnostics.append(f"LEDGER-CONTENT-DIGEST:{label}")
+        if not isinstance(row["reason"], str) or not row["reason"].strip():
+            diagnostics.append(f"LEDGER-REASON:{label}")
+        action, replacement = row["action"], row["replacement"]
+        if action == "moved":
+            if replacement is not None:
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        elif action in {"merged", "replaced"}:
+            if (
+                identity is None
+                or identity.record_kind != "tombstone"
+                or not _work106_is_canonical_artifact_id(replacement)
+            ):
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        elif action == "deleted":
+            if identity is None or identity.record_kind != "tombstone" or replacement is not None:
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        else:
+            diagnostics.append(f"LEDGER-ACTION:{label}")
+        if identity is not None and identity.change_id is not None:
+            change_leaves.setdefault(identity.change_id, set()).add(identity.record_kind or "")
+        if identity is not None and identity.record_kind == "tombstone":
+            stage = stable_path.split("/", 4)[3]
+            tombstone_stages[stage] = tombstone_stages.get(stage, 0) + 1
+    for path, indices in stable_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-STABLE-PATH-DUPLICATE:{path}")
+    for path, indices in legacy_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-LEGACY-PATH-DUPLICATE:{path}")
+    for artifact_id, indices in artifact_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-ARTIFACT-ID-DUPLICATE:{artifact_id}")
+    if current:
+        if len(rows) != 93 or any(
+            not isinstance(row, Mapping) or row.get("action") != "moved"
+            for row in rows
+        ):
+            diagnostics.append("LEDGER-CURRENT-CENSUS")
+        pair_counts = {
+            frozenset({"change-plan", "change-task"}): 0,
+            frozenset({"change-plan"}): 0,
+            frozenset({"change-task"}): 0,
+        }
+        for leaves in change_leaves.values():
+            key = frozenset(leaves)
+            if key not in pair_counts:
+                diagnostics.append("LEDGER-CHANGE-GROUP")
+            else:
+                pair_counts[key] += 1
+        if tuple(pair_counts.values()) != (35, 2, 4):
+            diagnostics.append("LEDGER-CHANGE-CENSUS")
+        if tombstone_stages != {
+            "01.requirements": 3,
+            "02.architecture": 8,
+            "03.specs": 4,
+            "05.operations": 2,
+        }:
+            diagnostics.append("LEDGER-TOMBSTONE-CENSUS")
+    return tuple(sorted(set(diagnostics)))
+
+
+def _work106_mutated_ledger_rows(
+    source: Mapping[str, Any], mutation: str
+) -> tuple[dict[str, Any], ...]:
+    row = dict(source)
+    if mutation == "missing-field":
+        row.pop("reason")
+        return (row,)
+    if mutation == "extra-field":
+        row["unexpected"] = True
+        return (row,)
+    if mutation == "bad-legacy-path":
+        row["legacy_path"] = "docs/../escape.md"
+    elif mutation == "bad-source-commit":
+        row["source_commit"] = "A" * 40
+    elif mutation == "bad-content-digest":
+        row["content_sha256"] = "0" * 63
+    elif mutation == "artifact-path-mismatch":
+        row["artifact_id"] = "TASK-CHG-0001"
+    elif mutation == "kind-path-mismatch":
+        row["record_kind"] = "change-task"
+    elif mutation == "moved-replacement":
+        row["replacement"] = "SPEC-052"
+    elif mutation == "bad-replacement-id":
+        row["action"] = "replaced"
+        row["stable_path"] = "docs/98.archive/tombstones/03.specs/tmb-plan-0001.md"
+        row["artifact_id"] = "TMB-PLAN-0001"
+        row["record_kind"] = "tombstone"
+        row["replacement"] = "not-an-id"
+    elif mutation == "duplicate-legacy-path":
+        second = dict(row)
+        second["stable_path"] = second["stable_path"].replace("chg-0001", "chg-0002")
+        second["artifact_id"] = "PLAN-CHG-0002"
+        return (row, second)
+    elif mutation == "duplicate-stable-path":
+        return (row, dict(row))
+    elif mutation == "duplicate-artifact-id":
+        second = dict(row)
+        second["stable_path"] = second["stable_path"].replace("chg-0001", "chg-0002")
+        return (row, second)
+    else:
+        raise AssertionError(f"unknown WORK-106 ledger mutation: {mutation}")
+    return (row,)
+
+
+def _work106_ledger_row(
+    ordinal: int, stable_path: str, artifact_id: str, record_kind: str
+) -> dict[str, Any]:
+    object_id = f"{ordinal:040x}"[-40:]
+    return {
+        "schema_version": 1,
+        "migration_id": "MIG-0001",
+        "legacy_path": f"docs/04.execution/legacy/record-{ordinal:03d}.md",
+        "stable_path": stable_path,
+        "artifact_id": artifact_id,
+        "action": "moved",
+        "replacement": None,
+        "source_commit": object_id,
+        "legacy_archive_commit": f"{ordinal + 100:040x}"[-40:],
+        "legacy_envelope_blob": f"{ordinal + 200:040x}"[-40:],
+        "source_blob": f"{ordinal + 300:040x}"[-40:],
+        "content_sha256": f"{ordinal:064x}"[-64:],
+        "record_kind": record_kind,
+        "reason": "Reviewed current-corpus stable rehome",
+    }
+
+
+def _work106_synthetic_current_ledger() -> tuple[dict[str, Any], ...]:
+    rows: list[dict[str, Any]] = []
+    ordinal = 1
+    for change in range(1, 42):
+        leaves = (
+            ("plan", "PLAN", "change-plan"),
+            ("task", "TASK", "change-task"),
+        )
+        if change in {36, 37}:
+            leaves = leaves[:1]
+        elif change >= 38:
+            leaves = leaves[1:]
+        for leaf, prefix, kind in leaves:
+            path = f"docs/98.archive/changes/chg-{change:04d}-record-{change:04d}/{leaf}.md"
+            rows.append(_work106_ledger_row(ordinal, path, f"{prefix}-CHG-{change:04d}", kind))
+            ordinal += 1
+    tombstone_groups = (
+        ("01.requirements", "prd", 3),
+        ("02.architecture", "ad", 8),
+        ("03.specs", "spec", 4),
+        ("05.operations", "guide", 2),
+    )
+    for stage, kind, count in tombstone_groups:
+        for number in range(1, count + 1):
+            token = f"{number:04d}"
+            path = f"docs/98.archive/tombstones/{stage}/tmb-{kind}-{token}.md"
+            rows.append(
+                _work106_ledger_row(
+                    ordinal, path, f"TMB-{kind.upper()}-{token}", "tombstone"
+                )
+            )
+            ordinal += 1
+    return tuple(rows)
+
+
+def _work106_frontmatter(raw: bytes) -> Mapping[str, Any]:
+    if not raw.startswith(b"---\n"):
+        return {}
+    closing = raw.find(b"\n---\n", 4)
+    if closing < 0:
+        return {}
+    metadata: dict[str, Any] = {}
+    for line in raw[4:closing].decode("utf-8").splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        value = value.strip()
+        metadata[key.strip()] = None if value == "null" else value.strip("'\"")
+    return metadata
+
+
+def _assert_work106_transition_contract(
+    root: Path, fixture: Mapping[str, Any], *, terminal: bool
+) -> None:
+    artifact_cases = fixture.get(WORK106_ARTIFACT_FIXTURE_FIELD)
+    ledger_fixture = fixture.get(WORK106_LEDGER_FIXTURE_FIELD)
+    if not isinstance(artifact_cases, list) or len(artifact_cases) != 20:
+        raise AssertionError("WORK-106 artifact identity fixture differs")
+    for case in artifact_cases:
+        if not isinstance(case, dict) or not isinstance(case.get("path"), str):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+        identity = _work106_derive_artifact_identity(case["path"])
+        if identity is None or identity.artifact_id != case.get("artifactId"):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+        if identity.change_id != case.get("changeId") or identity.migration_id != case.get("migrationId"):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+    if not isinstance(ledger_fixture, dict) or set(ledger_fixture) != {"row", "negativeMutations"}:
+        raise AssertionError("WORK-106 migration ledger fixture differs")
+    row = ledger_fixture["row"]
+    mutations = ledger_fixture["negativeMutations"]
+    if _work106_ledger_diagnostics((row,), current=False):
+        raise AssertionError("WORK-106 migration ledger positive fixture differs")
+    if not isinstance(mutations, list) or any(
+        not _work106_ledger_diagnostics(_work106_mutated_ledger_rows(row, mutation), current=False)
+        for mutation in mutations
+    ):
+        raise AssertionError("WORK-106 migration ledger negative fixture differs")
+    if _work106_ledger_diagnostics(_work106_synthetic_current_ledger(), current=True):
+        raise AssertionError("WORK-106 current 93-row census fixture differs")
+    records = tuple(
+        (path, _work106_frontmatter(raw))
+        for path, raw in _work105_staged_blobs(root)
+        if path.endswith(".md")
+    )
+    diagnostics = _work106_artifact_diagnostics(records, terminal=terminal)
+    if diagnostics:
+        raise AssertionError("WORK-106 artifact identity: " + ", ".join(diagnostics))
+
+
 def _fixture_prd_008_immutable_projection(
     fixture: dict[str, Any],
 ) -> tuple[Any, ...]:
@@ -5925,6 +6429,7 @@ def _self_test(root: Path) -> int:
     try:
         fixture_prd_008_projection = _fixture_prd_008_immutable_projection(fixture)
         _assert_work105_consumer_disposition(root, fixture)
+        _assert_work106_transition_contract(root, fixture, terminal=False)
     except AssertionError as exc:
         print(f"FAIL document contract registry self-test: {exc}")
         return 1
@@ -6293,7 +6798,13 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
-        _assert_work105_consumer_disposition(root, _load_json(root / FIXTURE_PATH))
+        fixture = _load_json(root / FIXTURE_PATH)
+        _assert_work105_consumer_disposition(root, fixture)
+        _assert_work106_transition_contract(
+            root,
+            fixture,
+            terminal=(args.route_state or registry.route_state) == "terminal",
+        )
         _assert_route_state(root, registry, args.route_state)
         _assert_template_source_parity(registry)
         _assert_gemini_native_current_surface(root)

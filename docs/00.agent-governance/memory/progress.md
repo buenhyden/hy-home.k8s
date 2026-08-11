@@ -15947,3 +15947,59 @@ section separating static from live evidence.
 - Continue with WORK-106 only after the WORK-105 staged candidate and protected
   surface checks remain green. Do not begin the Stage 98 cutover before its
   schema-versioned ledger, validator, recovery, and bounded WORK-107 gate pass.
+
+## 2026-08-12 - WORK-106 artifact identity and migration-ledger validators
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #identity #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-106 tests-first implementation on WORK-105 commit `84bd7cf5`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-107 stable Stage 98 rehome
+
+### Progress
+
+- Extended the existing document registry validator rather than adding a
+  one-shot helper. It derives the closed PRD/SRS/IFC/AD/ADR/Stage03/Stage05/
+  Incident/Postmortem and stable Stage 98 identities from canonical paths.
+- Transition mode permits absent mandatory outer `artifact_id` values until
+  WORK-108, while every present mismatch, duplicate, prohibited declaration,
+  or wrong `change_id`/`migration_id` fails. Terminal mode additionally rejects
+  missing mandatory identities.
+- Added exact 14-field migration-row validation, canonical legacy-path and Git
+  object/digest checks, action/replacement semantics, unique legacy/stable/
+  artifact identities, full legacy tombstone hashes, and the exact current
+  `93 = 76 + 17` / `35 + 2 + 4` / `3 + 8 + 4 + 2` census.
+
+### Evidence
+
+- RED: five focused tests produced 31 missing-interface errors; the expanded
+  tombstone/ledger matrix then exposed one missing helper and two unimplemented
+  ledger negatives.
+- GREEN: path identity fixture 20/20 and all negative mutations pass; full
+  strict-cutover is 37/37. Registry self-test reports 132 cases, 67 profiles,
+  and 31 templates; strict transition reports 504 paths with zero uncovered or
+  ambiguous routes.
+- The exact three-path affected and staged runners passed every selected gate
+  including one repository-quality success marker, and the synchronized
+  aggregate ended with `[PASS] repository quality gates passed`.
+- `docs/90.references/**` and `docs/98.archive/**` have zero staged and
+  worktree diff. No artifact-ID backfill, Stage 98 rehome, Release-family,
+  provider, remote, credential-bearing, hosted, or live action was performed.
+- Final completion sequence: the six-path affected and staged lanes, plain
+  exact-index `TMPDIR=/tmp pre-commit run`, standalone repository aggregate,
+  and `TMPDIR=/tmp pre-commit run --all-files` all exited `0`; every applicable
+  hook passed, the all-files run produced no mutation, and post-run scope
+  remained six staged paths with zero unstaged or untracked paths.
+
+### Handoff
+
+- WORK-107 may now construct the exact 93-row terminal ledger and stable paths.
+  It must preserve payload/provenance and dual recovery; WORK-108 remains the
+  sole owner of mandatory outer artifact-ID backfill.
