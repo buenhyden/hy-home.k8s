@@ -783,7 +783,7 @@ stop. Do not add an allowlist, test, or validator exception without a separate
 human approval that names the exact contract path and expected negative
 coverage.
 
-- [ ] **Step 4: Run targeted checks, delete owned scratch, and run the terminal canonical sequence**
+- [x] **Step 4: Run targeted checks, delete owned scratch, and run the terminal canonical sequence**
 
 Resolve the WERG-001 baseline, run the complete targeted checker sequence on
 the final reconciled snapshot, then remove only the exact owned temporary
@@ -822,7 +822,11 @@ test ! -e /tmp/werg-paths.nul
 git status --short
 ```
 
-- [ ] **Step 5: Commit terminal closure or record the blocker**
+Result: the terminal repository-static sequence passed and the owned scratch
+absence was recorded in closure commit `22002d91`. Hosted, provider-runtime,
+remote, credential-bearing, and live evidence remains `DEFER`.
+
+- [x] **Step 5: Commit terminal closure or record the blocker**
 
 When all terminal gates and reviews pass, commit:
 
@@ -833,12 +837,19 @@ git commit -m "docs: close WER gap-only research refresh"
 If closure is blocked, keep lifecycle `active`/`In Review`, commit only truthful
 non-terminal evidence when it is independently useful, and request direction.
 
-- [ ] **Step 6: Finish the development branch**
+Result: `22002d91` closed the lifecycle with truthful validation evidence and
+was merged through `79e44638`.
+
+- [x] **Step 6: Finish the development branch**
 
 Use `superpowers:finishing-a-development-branch` to verify the clean branch and
 present the user-owned choices: local merge, push and PR, keep, or discard. Do
 not merge, push, remove the worktree, or delete the branch without the selected
 choice.
+
+Result: the selected branch finish is evidenced by merge commit `79e44638`; no
+hosted, provider-runtime, remote, credential-bearing, or live behavior is
+claimed by this repository-static record.
 
 ## Verification Plan
 
