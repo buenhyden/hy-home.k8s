@@ -206,8 +206,8 @@ frontmatter. Helper Spec profiles use the parent Spec lifecycle.
 | Profile IDs | Class | Mode | Frontmatter | Exact `statusDomain` |
 | --- | --- | --- | --- | --- |
 | `sdlc/prd` | `sdlc` | `authored` | `required` | `draft`, `active`, `done`, `archived` |
-| `sdlc/ard`, `sdlc/adr` | `sdlc` | `authored` | `required` | `draft`, `active`, `accepted`, `archived` |
-| `sdlc/spec`, `sdlc/api-spec`, `sdlc/agent-design`, `sdlc/data-model`, `sdlc/tests` | `sdlc` | `authored` | `required` | `draft`, `active`, `done`, `archived` |
+| `sdlc/ad`, `sdlc/adr` | `sdlc` | `authored` | `required` | `draft`, `active`, `accepted`, `archived` |
+| `sdlc/spec`, `sdlc/interface`, `sdlc/agent-design`, `sdlc/data-model`, `sdlc/tests` | `sdlc` | `authored` | `required` | `draft`, `active`, `done`, `archived` |
 | `sdlc/plan`, `sdlc/task` | `sdlc` | `authored` | `required` | `draft`, `active`, `done`, `archived` |
 | `sdlc/guide`, `sdlc/policy`, `sdlc/runbook`, `sdlc/incident`, `sdlc/postmortem` | `sdlc` | `authored` | `required` | `draft`, `active`, `accepted`, `archived` |
 | `content/reference` | `common` | `authored` | `required` | `draft`, `active`, `accepted`, `done`, `archived` |
@@ -329,7 +329,7 @@ Required rule IDs are `REGISTRY_SCHEMA`, `REGISTRY_PROFILE_ID`,
 
 **Interfaces:**
 
-- Consumes: approved PRD 005, ARD 0008, ADRs 0015/0016, and Spec 026.
+- Consumes: approved PRD 005, AD 0008, ADRs 0015/0016, and Spec 026.
 - Produces: active lineage with Task IDs `DCR-001` through `DCR-005` and exact links used by later evidence closure.
 
 - [ ] **Step 1: Run the failing reciprocal-link assertion**
@@ -647,8 +647,8 @@ Expected: FAIL with `REGISTRY_ROUTE_UNCOVERED` and real repository paths.
 
 - [ ] **Step 2: Populate exact metadata profiles**
 
-Declare the current types `sdlc/prd`, `sdlc/ard`, `sdlc/adr`, `sdlc/spec`,
-`sdlc/api-spec`, `sdlc/agent-design`, `sdlc/data-model`, `sdlc/tests`,
+Declare the current types `sdlc/prd`, `sdlc/ad`, `sdlc/adr`, `sdlc/spec`,
+`sdlc/interface`, `sdlc/agent-design`, `sdlc/data-model`, `sdlc/tests`,
 `sdlc/plan`, `sdlc/task`, `sdlc/guide`, `sdlc/policy`, `sdlc/runbook`,
 `sdlc/incident`, `sdlc/postmortem`, `content/reference`,
 `content/archive-tombstone`, `governance/reference`, `governance/memory`, and
@@ -798,7 +798,7 @@ Expected: one closure commit and a clean focused diff.
 ## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Spec**: [Document Contract Registry](spec.md)

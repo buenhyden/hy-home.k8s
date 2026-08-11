@@ -133,7 +133,7 @@ docs/99.templates/README.md
 ```text
 docs/00.agent-governance/memory/README.md
 docs/02.architecture/decisions/README.md
-docs/02.architecture/requirements/README.md
+docs/02.architecture/descriptions/README.md
 docs/04.execution/plans/README.md
 docs/04.execution/tasks/README.md
 docs/05.operations/guides/README.md
@@ -164,7 +164,7 @@ docs/90.references/research/2026-07-07-wer/README.md
 examples/aws/docs/README.md
 examples/aws/docs/01.requirements/README.md
 examples/aws/docs/02.architecture/decisions/README.md
-examples/aws/docs/02.architecture/requirements/README.md
+examples/aws/docs/02.architecture/descriptions/README.md
 examples/aws/docs/03.specs/README.md
 examples/aws/docs/04.execution/plans/README.md
 examples/aws/docs/04.execution/tasks/README.md
@@ -174,7 +174,7 @@ examples/aws/docs/05.operations/runbooks/README.md
 examples/azure/docs/README.md
 examples/azure/docs/01.requirements/README.md
 examples/azure/docs/02.architecture/decisions/README.md
-examples/azure/docs/02.architecture/requirements/README.md
+examples/azure/docs/02.architecture/descriptions/README.md
 examples/azure/docs/03.specs/README.md
 examples/azure/docs/04.execution/plans/README.md
 examples/azure/docs/04.execution/tasks/README.md
@@ -1065,7 +1065,7 @@ Expected: closure commit succeeds.
 ## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)

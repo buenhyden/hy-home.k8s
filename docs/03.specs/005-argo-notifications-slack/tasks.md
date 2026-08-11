@@ -24,7 +24,7 @@ writes are out of scope.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| NOTIF-T-001 | Add Notifications ARD | doc | Related Inputs | PLN-001 | ARD exists and links PRD/ADR/Spec/Plan | platform | Done |
+| NOTIF-T-001 | Add Notifications AD | doc | Related Inputs | PLN-001 | AD exists and links PRD/ADR/Spec/Plan | platform | Done |
 | NOTIF-T-002 | Add Notifications Spec | doc | Contracts | PLN-002 | `validate-repo-quality-gates.sh` template heading check | platform | Done |
 | NOTIF-T-003 | Add Notifications Plan and Task | doc | Related Documents | PLN-003 | Plan/Task links resolve | platform | Done |
 | NOTIF-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform | Done |

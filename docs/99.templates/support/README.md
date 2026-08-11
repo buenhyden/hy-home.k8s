@@ -36,7 +36,7 @@ Primary readers:
 ### Out of Scope
 
 - Template form bodies that authors copy into new documents.
-- Authored PRD, ARD, ADR, Spec, Plan, Task, operations, reference, or archive
+- Authored PRD, AD, ADR, Spec, Plan, Task, operations, reference, or archive
   documents.
 - Runtime, cluster, Vault, GitHub remote, paid job, or cloud mutation.
 

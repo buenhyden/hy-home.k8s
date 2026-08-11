@@ -189,7 +189,7 @@ argocd app list
 ## Traceability
 
 - **Incident and Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
-- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

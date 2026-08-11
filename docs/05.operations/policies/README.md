@@ -103,7 +103,7 @@ docs/05.operations/policies/
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
 - [03.specs](../../03.specs/README.md)
-- [ARD](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - [Operation Template](../../99.templates/templates/sdlc/operations/policy.template.md)

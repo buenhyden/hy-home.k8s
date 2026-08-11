@@ -88,7 +88,7 @@ agent-governance static validation:
   `.codex`, and `.gemini`;
 - rules, providers, contracts, and model/roster/evaluation owners under
   `docs/00.agent-governance`;
-- related PRD, ARD, ADR, Spec, Plan, Task, and template/contract routes;
+- related PRD, AD, ADR, Spec, Plan, Task, and template/contract routes;
 - agent-governance validators, fixtures, pre-commit configuration, and CI
   workflows;
 - owner surfaces consumed by legacy scans and generated rosters/indexes.
@@ -382,7 +382,7 @@ and the required QA ordering/formatter rerun.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **ARD**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **CI foundation**: [Spec 039](../039-github-ci-qa-evidence/spec.md)
 - **Roster/eval predecessor**: [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md)

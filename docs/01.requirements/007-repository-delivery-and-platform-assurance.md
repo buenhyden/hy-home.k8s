@@ -14,7 +14,7 @@ This program turns the repository's current audit findings into a bounded,
 evidence-driven assurance path for GitHub automation, Kubernetes and GitOps
 desired state, infrastructure examples, policy, scripts, tests, secret
 boundaries, and Traefik dynamic configuration. It complements rather than
-replaces the current local platform baseline owned by PRD-004, ARD-0007,
+replaces the current local platform baseline owned by PRD-004, AD-0007,
 ADR-0014, and Spec 008.
 
 PRD-007 remains active and governing. Its execution is paused as of 2026-08-07
@@ -131,7 +131,7 @@ state that current `main` has already superseded.
   workflow, validator, fixture, and obsolete placeholder changes are allowed
   when evidence identifies a real conflict, duplicate, or gap.
 - **Non-goals**: Redefining current local platform topology; replacing
-  PRD-004, ARD-0007, ADR-0014, or Spec 008; rewriting completed Specs or dated
+  PRD-004, AD-0007, ADR-0014, or Spec 008; rewriting completed Specs or dated
   audits; reading ignored/private state; changing credentials; pushing;
   changing branch protection or rulesets; dispatching remote workflows;
   applying manifests; deploying cloud resources; or mutating Kubernetes,
@@ -164,7 +164,7 @@ state that current `main` has already superseded.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-RDPA-001 | ACC-RDPA-001 | [ARD-0010](../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
+| REQ-RDPA-001 | ACC-RDPA-001 | [AD-0010](../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
 | REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 shares the downstream owner linked in REQ-RDPA-001. |
 | REQ-RDPA-003 | ACC-RDPA-002 | [Spec 048](../03.specs/048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
 | REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the downstream owner stated in REQ-RDPA-003. |

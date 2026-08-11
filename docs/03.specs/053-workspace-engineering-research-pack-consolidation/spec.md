@@ -35,7 +35,7 @@ architecture, plans, contracts, validators, and fixtures must be reconciled
 before deletion.
 
 Direct human approval on 2026-08-08 authorizes this standalone execution relation.
-No separate PRD or ARD is required or part of this standalone lifecycle. The
+No separate PRD or AD is required or part of this standalone lifecycle. The
 typed relationship is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 
@@ -141,7 +141,7 @@ cutover.
 | `workspace-governance-and-common-agent-environment.md` | Workspace purpose, operating contract, shared Claude/Codex environment, common rules, governance, templates, scripts, and integration routes. |
 | `harness-and-loop-engineering.md` | Harness elements; Observe/Plan/Act/Verify/Learn loop; evaluation, recovery, termination, memory, and workspace application requirements. |
 | `provider-implementation-status.md` | Claude and Codex upstream surfaces, local adapters, hooks, permissions, subagents, implementation status, parity limits, and common-system options. |
-| `spec-driven-sdlc-and-document-contracts.md` | Spec-driven development, SDLC governance, and PRD, ARD, ADR, guide, incident, postmortem, policy, release, and runbook roles and rules. |
+| `spec-driven-sdlc-and-document-contracts.md` | Spec-driven development, SDLC governance, and PRD, AD, ADR, guide, incident, postmortem, policy, release, and runbook roles and rules. |
 | `documentation-architecture-and-diataxis.md` | Diataxis tutorial, how-to, reference, and explanation modes; workspace mapping; authoring rules; implementation gaps. |
 | `llm-wiki-and-knowledge-routing.md` | LLM-WIKI structure, deterministic indexes, JIT retrieval, authority routing, freshness, and drift controls. |
 | `kubernetes-infrastructure-and-security.md` | Kubernetes, infrastructure, GitOps, RBAC, NetworkPolicy, secrets, policy-as-code, supply-chain, and security boundaries. |
@@ -334,7 +334,7 @@ The cutover inventory classifies each old-path occurrence as:
 | --- | --- | --- |
 | Primary source cannot support a material conclusion | Use `Unverified` and retain the old live packs until the coverage gate is complete. | The missing conclusion changes pack structure, deletion safety, or provider status. |
 | Migration ledger cannot account for all 25 files | Stop before deletion and complete the inventory. | A file's purpose or canonical owner remains ambiguous. |
-| Existing PRD, ARD, Spec, or Plan mandates archive retention | Amend the mutable lifecycle contract with the approved replacement and review it before deletion. | Two active requirements still prescribe incompatible outcomes. |
+| Existing PRD, AD, Spec, or Plan mandates archive retention | Amend the mutable lifecycle contract with the approved replacement and review it before deletion. | Two active requirements still prescribe incompatible outcomes. |
 | Reference-information-architecture tests require an old pack | Migrate the contract and preserve equivalent negative coverage. | Passing requires weakening provenance or snapshot integrity. |
 | Mutable audit rewrite would falsify dated evidence | Preserve the dated statement and add a separate current-lookup migration note. | The document is immutable or its evidence meaning would change. |
 | Stage 98 change appears in the diff | Stop and revert that change. | Completion would require modifying an existing archive payload or digest. |
@@ -402,7 +402,7 @@ secret-value check is part of acceptance.
 - **Conflicting program requirement**:
   [PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md)
 - **Conflicting architecture**:
-  [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
+  [AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
 - **Approved requirement source**: the 2026-08-08 human request and explicit
   approval in the current Codex task.
 - **Governing standalone decision**:

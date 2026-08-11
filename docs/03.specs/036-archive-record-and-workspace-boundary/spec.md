@@ -192,7 +192,7 @@ unclaimed.
 - **Successor**: [Spec 037](../037-active-corpus-and-execution-retention/spec.md)
 - **Archive decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability

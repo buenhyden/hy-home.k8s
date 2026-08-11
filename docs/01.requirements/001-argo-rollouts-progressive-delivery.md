@@ -15,7 +15,7 @@ updated: 2026-07-13
 ### Current requirement status
 
 이 PRD는 current-contract backfill 기준의 active 문서다.
-Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 2026-05-18에 ARD/Spec/Plan/Task 추적 체인을 보강했다.
+Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 2026-05-18에 AD/Spec/Plan/Task 추적 체인을 보강했다.
 이 문서는 제품 의도와 수용 기준을 소유하고, 구현 가능한 계약은 연결된 downstream 문서가 소유한다.
 
 ## Vision
@@ -90,18 +90,18 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-PRD-FUN-01 | GitOps 정적 검증이 `platform-rollouts` 설치 계약을 통과하고 운영자가 controller 가용성을 확인할 수 있다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-02 | `rollouts.127.0.0.1.nip.io` HTTPS 경로에서 Dashboard 진행률을 확인할 수 있다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-03 | controller 상태와 metrics 노출 계약이 정적 검증 및 운영 점검에서 관찰 가능하다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-04 | ArgoCD가 `Rollout`을 `Healthy` 또는 `Progressing` 상태로 추적할 수 있다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-05 | 승인된 AnalysisTemplate을 사용하는 앱별 Rollout이 실패 신호에서 abort/rollback 경계를 유지하고 자동 promotion을 강제하지 않는다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-06 | 표준 local route가 Dashboard HTTPS 접근 계약과 일치한다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-01 | `argo-rollouts-controller` Deployment가 `Available=True`임을 운영자가 확인할 수 있다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-02 | `rollouts.127.0.0.1.nip.io` HTTPS 접근이 성공하고 Dashboard에 진행률이 표시된다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-03 | ArgoCD가 기준 Rollout 리소스를 `Healthy` 또는 `Progressing`으로 표시한다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-04 | repository quality gate와 Rollouts 정적 계약 검증이 PASS한다. | [ARD 0004](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-01 | GitOps 정적 검증이 `platform-rollouts` 설치 계약을 통과하고 운영자가 controller 가용성을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-02 | `rollouts.127.0.0.1.nip.io` HTTPS 경로에서 Dashboard 진행률을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-03 | controller 상태와 metrics 노출 계약이 정적 검증 및 운영 점검에서 관찰 가능하다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-04 | ArgoCD가 `Rollout`을 `Healthy` 또는 `Progressing` 상태로 추적할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-05 | 승인된 AnalysisTemplate을 사용하는 앱별 Rollout이 실패 신호에서 abort/rollback 경계를 유지하고 자동 promotion을 강제하지 않는다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-FUN-06 | 표준 local route가 Dashboard HTTPS 접근 계약과 일치한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-MET-01 | `argo-rollouts-controller` Deployment가 `Available=True`임을 운영자가 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-MET-02 | `rollouts.127.0.0.1.nip.io` HTTPS 접근이 성공하고 Dashboard에 진행률이 표시된다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-MET-03 | ArgoCD가 기준 Rollout 리소스를 `Healthy` 또는 `Progressing`으로 표시한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-PRD-MET-04 | repository quality gate와 Rollouts 정적 계약 검증이 PASS한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/004-argo-rollouts-progressive-delivery/spec.md) |
 
-- **ARD**: [`../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
+- **AD**: [`../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **Plan**: [`../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/004-argo-rollouts-progressive-delivery/plan.md)
 - **Task**: [`../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/004-argo-rollouts-progressive-delivery/tasks.md)

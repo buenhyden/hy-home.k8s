@@ -360,7 +360,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **PRD**: No separate PRD exists. The upstream requirement is the approved
   user request to write a dated audit pack, compare research findings against
   workspace implementation status, and folderize existing audit reports.
-- **ARD**: No separate ARD exists. The architecture baseline is the Stage 00 to
+- **AD**: No separate AD exists. The architecture baseline is the Stage 00 to
   Stage 99 documentation taxonomy and the existing Stage 90 reference/audit
   contract.
 - **Related Specs**:

@@ -102,10 +102,10 @@ literal headings:
 | Profile | Required H2 sequence |
 | --- | --- |
 | `sdlc/prd` | `Overview`, `Vision`, `Problem Statement`, `Personas`, `Key Use Cases`, `Functional Requirements`, `Success / Acceptance Criteria`, `Scope and Non-goals`, `Risks, Dependencies, and Assumptions`, `Traceability` |
-| `sdlc/ard` | `Overview`, `Boundaries & Non-goals`, `Quality Attributes`, `System Overview & Context`, `Data Architecture`, `Infrastructure & Deployment`, `Traceability` |
+| `sdlc/ad` | `Overview`, `Boundaries & Non-goals`, `Quality Attributes`, `System Overview & Context`, `Data Architecture`, `Infrastructure & Deployment`, `Traceability` |
 | `sdlc/adr` | `Overview`, `Context`, `Decision`, `Explicit Non-goals`, `Consequences`, `Alternatives`, `Traceability` |
 | `sdlc/spec` | `Overview`, `Strategic Boundaries & Non-goals`, `Contracts`, `Core Design`, `Data Modeling & Storage Strategy`, `Interfaces & Data Structures`, `Edge Cases & Error Handling`, `Failure Modes & Fallback / Human Escalation`, `Verification Commands`, `Success Criteria & Verification Plan`, `Traceability` |
-| `sdlc/api-spec` | `Overview`, `Scope & Non-goals`, `API Style`, `Authentication & Authorization`, `Endpoint / Operation Catalog`, `Request / Response Schemas`, `Error Model`, `Data Contract Compatibility`, `Non-Functional Requirements`, `Machine-readable Contract Files`, `Verification`, `Traceability` |
+| `sdlc/interface` | `Overview`, `Scope & Non-goals`, `API Style`, `Authentication & Authorization`, `Endpoint / Operation Catalog`, `Request / Response Schemas`, `Error Model`, `Data Contract Compatibility`, `Non-Functional Requirements`, `Machine-readable Contract Files`, `Verification`, `Traceability` |
 | `sdlc/agent-design` | `Overview`, `Scope & Non-goals`, `Agent Role`, `Inputs / Outputs`, `Orchestration Model`, `Tools & Permissions`, `Prompt / Policy Contract`, `Context & Memory Strategy`, `Guardrails`, `Failure Modes & Fallback`, `Evaluation Plan`, `Observability`, `Traceability` |
 | `sdlc/data-model` | `Overview`, `Scope & Non-goals`, `Entities / Aggregates`, `Relationships`, `Schema / Structures`, `Validation & Integrity Rules`, `Storage Strategy`, `Privacy / Security`, `Migration & Compatibility`, `Traceability` |
 | `sdlc/tests` | `Overview`, `Verification Goals`, `TDD Scope`, `Test Matrix`, `Contract & Integration Tests`, `Non-Functional Tests`, `Fixtures / Datasets`, `How to Run`, `Evidence & Reporting`, `Traceability` |
@@ -269,7 +269,7 @@ Expected: exit 1 because the file does not exist.
 
 - [x] **Step 2: Create the ten complete family rows**
 
-Use the families and primary sources exactly named in Spec 027: PRD; ARD; ADR;
+Use the families and primary sources exactly named in Spec 027: PRD; AD; ADR;
 Spec/Plan/Task/tests; native API contracts; agent design; Guide/Reference/README;
 Policy/Runbook; Incident/Postmortem; Archive/memory/progress. Set observed date
 `2026-07-12`; include source revision/year or `living guidance observed
@@ -290,7 +290,7 @@ from pathlib import Path
 text = Path('docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md').read_text()
 for column in ('Source kind','Observed','Version/revision','Adopted guidance','Rejected guidance and reason','Local extension','Refresh trigger','Affected forms'):
     assert column in text, column
-for family in ('PRD','ARD','ADR','Spec, Plan, Task, tests','API and native contracts','Agent design','Guide, Reference, README','Policy and Runbook','Incident and Postmortem','Archive, memory, progress'):
+for family in ('PRD','AD','ADR','Spec, Plan, Task, tests','API and native contracts','Agent design','Guide, Reference, README','Policy and Runbook','Incident and Postmortem','Archive, memory, progress'):
     assert family in text, family
 PY
 ```
@@ -349,7 +349,7 @@ for common-role rationale, `frontmatter-schema.md` for metadata rationale,
 tables with links to registry profile IDs and include research-ledger links.
 Before removing the copied lifecycle table, assert the registry domains equal
 the current canonical values exactly: PRD and Spec/Plan/Task use
-`draft, active, done, archived`; ARD/ADR and Operations use
+`draft, active, done, archived`; AD/ADR and Operations use
 `draft, active, accepted, archived`; Tombstone uses only `archived`. Do not
 rename, narrow, or expand those domains in this tranche. Record any proposed
 future lifecycle normalization in the research decision ledger as deferred,
@@ -712,7 +712,7 @@ Expected: commit succeeds.
 ## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **Spec**: [Template Contract Consolidation](spec.md)

@@ -102,7 +102,7 @@ docs/05.operations/runbooks/
 - [05.operations/guides](../guides/README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/incidents](../incidents/README.md)
-- [ARD](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
 - [Operations Policy](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)

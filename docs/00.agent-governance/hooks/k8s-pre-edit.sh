@@ -222,15 +222,18 @@ def authored_doc_template(path: str) -> str:
             return "classify via docs/99.templates/support/document-profiles.json and docs/99.templates/support/template-routing.md before writing"
         basename = path.rsplit("/", 1)[-1]
         if path.startswith("docs/01.requirements/"):
+            if basename.startswith("srs-"):
+                return "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+            if basename.startswith("ifc-"):
+                return "docs/99.templates/templates/sdlc/requirements/interface.template.md"
             return "docs/99.templates/templates/sdlc/requirements/prd.template.md"
-        if path.startswith("docs/02.architecture/requirements/"):
-            return "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+        if path.startswith("docs/02.architecture/descriptions/"):
+            return "docs/99.templates/templates/sdlc/architecture/ad.template.md"
         if path.startswith("docs/02.architecture/decisions/"):
             return "docs/99.templates/templates/sdlc/architecture/adr.template.md"
         if path.startswith("docs/03.specs/"):
             spec_templates = {
                 "spec.md": "docs/99.templates/templates/sdlc/specs/spec.template.md",
-                "api-spec.md": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
                 "agent-design.md": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
                 "data-model.md": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
                 "tests.md": "docs/99.templates/templates/sdlc/specs/tests.template.md",

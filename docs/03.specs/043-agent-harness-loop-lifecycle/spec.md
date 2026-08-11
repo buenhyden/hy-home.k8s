@@ -214,7 +214,7 @@ Requirements review returned `COMPLIANT`; quality and security returned
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
 - **Successor**: [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md)

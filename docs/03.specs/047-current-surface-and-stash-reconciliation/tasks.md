@@ -23,7 +23,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 - Parent [Spec 047](spec.md)
 - Parent [Implementation Plan](plan.md)
 - [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md),
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md),
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Current `validation-surfaces.json`, document profile registry, Current audit
   pack, tracked repository inventory, and affected-surface validators
@@ -44,7 +44,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: PRD-007/ARD-0010/ADR-0021, Spec 047, reciprocal
+- **Allowed Paths**: PRD-007/AD-0010/ADR-0021, Spec 047, reciprocal
   Plan/Task and indexes, progress, document profiles, registry projection
   validator/tests, current tracked target metadata, and validator-proven
   `active-corpus-residue-closure.json` regeneration.

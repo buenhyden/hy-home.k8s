@@ -22,7 +22,7 @@ in this repository.
 
 ## When to Use
 
-- A spec or ARD/ADR has been approved and needs a delivery plan.
+- A spec or AD/ADR has been approved and needs a delivery plan.
 - Translating a design decision into ordered implementation phases.
 - Defining risks, mitigations, verification steps, and completion criteria before starting work.
 - Producing a `plan.template.md`-compliant document for `docs/04.execution/plans/`.
@@ -36,7 +36,7 @@ in this repository.
 
 ## Workflow Steps
 
-1. Read the driving spec (`docs/03.specs/`) or ARD/ADR (`docs/02.architecture/`) to extract
+1. Read the driving spec (`docs/03.specs/`) or AD/ADR (`docs/02.architecture/`) to extract
    the goal, scope, and constraints.
 2. Identify all in-scope deliverables and group them into phases (P1 = immediate low-risk,
    P2 = bounded medium-risk, P3 = deferred high-risk/external-dependency).

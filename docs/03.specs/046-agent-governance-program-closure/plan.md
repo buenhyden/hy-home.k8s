@@ -132,7 +132,7 @@ external/runtime PASS.
 - **Task**: [Task: Agent Governance Program Closure](tasks.md)
 - **Predecessor**: Spec 045 closure `de9a88e4` and postflight `06039611`
 - **Program**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md),
-  [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md),
+  [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md),
   and [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 
 ### Lifecycle Traceability

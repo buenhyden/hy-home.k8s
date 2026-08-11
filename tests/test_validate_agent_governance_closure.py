@@ -196,18 +196,18 @@ class AgentGovernanceClosureTests(unittest.TestCase):
     def test_rejects_missing_or_wrong_upstream_predecessor(self) -> None:
         missing = copy.deepcopy(self.fixture)
         missing["predecessorCriteria"].pop(0)
-        self.assertRejected(missing, "PRD 003, ARD 0006, ADR 0019")
+        self.assertRejected(missing, "PRD 003, AD 0006, ADR 0019")
 
         wrong_owner = copy.deepcopy(self.fixture)
         wrong_owner["predecessorCriteria"][1]["owner"] = "platform"
-        self.assertRejected(wrong_owner, "PRD 003, ARD 0006, ADR 0019")
+        self.assertRejected(wrong_owner, "PRD 003, AD 0006, ADR 0019")
 
     def test_rejects_duplicate_predecessor(self) -> None:
         contract = copy.deepcopy(self.fixture)
         contract["predecessorCriteria"][1] = copy.deepcopy(
             contract["predecessorCriteria"][0]
         )
-        self.assertRejected(contract, "PRD 003, ARD 0006, ADR 0019")
+        self.assertRejected(contract, "PRD 003, AD 0006, ADR 0019")
 
     def test_rejects_non_repository_predecessor(self) -> None:
         contract = copy.deepcopy(self.fixture)
@@ -365,17 +365,23 @@ class AgentGovernanceClosureTests(unittest.TestCase):
 
     def test_repository_sources_are_digest_bound(self) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
-        predecessor_path = PurePosixPath(contract["predecessorCriteria"][0]["owner"])
-        predecessor_bytes = self.module._read_regular_bytes(REPO_ROOT, predecessor_path)
-        with patch.object(
-            self.module,
-            "_read_regular_bytes",
-            return_value=predecessor_bytes + b"\n",
-        ):
-            self.assertIn(
-                "predecessor source digest differs",
-                self.module._validate_predecessor_sources(REPO_ROOT, contract),
-            )
+        read_regular_bytes = self.module._read_regular_bytes
+        for row in contract["predecessorCriteria"]:
+            predecessor_path = PurePosixPath(row["owner"])
+
+            def read_with_drift(root: Path, path: PurePosixPath) -> bytes:
+                source = read_regular_bytes(root, path)
+                return source + b"\n" if path == predecessor_path else source
+
+            with self.subTest(predecessor=predecessor_path), patch.object(
+                self.module,
+                "_read_regular_bytes",
+                side_effect=read_with_drift,
+            ):
+                self.assertEqual(
+                    self.module._validate_predecessor_sources(REPO_ROOT, contract),
+                    [f"predecessor source digest differs: {predecessor_path}"],
+                )
 
         for source_path, validator, expected in (
             (

@@ -1,12 +1,12 @@
 ---
-title: 'Current Local GitOps Platform Architecture Reference Document'
-type: sdlc/ard
+title: 'Current Local GitOps Platform Architecture Description'
+type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-07-13
 ---
 
-# Current Local GitOps Platform Architecture Reference Document (ARD)
+# Current Local GitOps Platform Architecture Description (AD)
 
 ## Overview
 

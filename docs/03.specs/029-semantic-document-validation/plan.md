@@ -1374,7 +1374,7 @@ logical unit with its own progress entry.
 ## Traceability
 
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- [Operating Model AD](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - [Registry ADR](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - [Semantic Validation Spec](spec.md)
 - [Semantic Validation Task](tasks.md)

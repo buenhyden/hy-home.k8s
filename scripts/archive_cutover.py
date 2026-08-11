@@ -117,7 +117,7 @@ STALE_CONTRACT_SURFACES = (
     "docs/01.requirements/README.md",
     "docs/02.architecture/README.md",
     "docs/02.architecture/decisions/README.md",
-    "docs/02.architecture/requirements/README.md",
+    "docs/02.architecture/descriptions/README.md",
     "docs/03.specs/README.md",
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/README.md",
@@ -179,6 +179,51 @@ class ArchiveIndexRow:
     historical_links: int
     replacement: str | None
     reason: str
+
+
+_WORK105_CURRENT_AD = (
+    "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md"
+)
+_WORK105_LEGACY_REPLACEMENT = (
+    "docs/02.architecture/requirements/0007-current-local-gitops-platform.md"
+)
+_WORK105_REPLACEMENT_PROOFS = MappingProxyType(
+    {
+        "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+            original_path="docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="9001b10b9657396fe85d6d7b98112dcc6b310e4f",
+            content_sha256="cbf08950c2da952a6ca7feaa122085700c5984c5b177a97d90277f3fcca4b44b",
+            historical_links=7,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+        "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+            original_path="docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="37857c69bd334b3acc59705a701233a303c2bcb2",
+            content_sha256="4a0902cee5048f2192e16c3688e9bf1e992e60fde4fe3865abb1fcd45767f59f",
+            historical_links=4,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+        "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+            original_path="docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="4d38947d216e84dfc9430f4f632966292b602017",
+            content_sha256="dfc0cd13ede805828a19909b2e525648c892dea9fc25d505d7becf8c27acd6b2",
+            historical_links=9,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+    }
+)
 
 
 def _diagnostic(code: str, path: str) -> CutoverDiagnostic:
@@ -512,6 +557,30 @@ def _replacement_target_diagnostic(
     ):
         return "ARCHIVE-REPLACEMENT-NONCURRENT"
     return None
+
+
+def _work105_replacement_target(
+    archive_path: str,
+    index_row: ArchiveIndexRow,
+    archive_metadata: Mapping[str, object],
+) -> str | None:
+    """Resolve the three immutable ARD rows through the exact WORK-105 AD move."""
+
+    expected = _WORK105_REPLACEMENT_PROOFS.get(archive_path)
+    if expected is None or index_row != expected:
+        return index_row.replacement
+    metadata_proof = (
+        ("original_path", expected.original_path),
+        ("original_type", expected.original_type),
+        ("source_commit", expected.source_commit),
+        ("source_blob", expected.source_blob),
+        ("content_sha256", expected.content_sha256),
+        ("replacement", expected.replacement),
+        ("archive_reason", expected.reason),
+    )
+    if any(archive_metadata.get(key) != value for key, value in metadata_proof):
+        return index_row.replacement
+    return _WORK105_CURRENT_AD
 
 
 @lru_cache(maxsize=1)
@@ -927,14 +996,24 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
     if index_structure_failure or frozenset(index_rows) != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX))
+    archive_metadata = {
+        archive_path: metadata for archive_path, metadata, _link_count in metadata_rows
+    }
     if typed_registry is not None:
         for archive_path, index_row in index_rows.items():
             if index_row.replacement is None:
                 continue
+            replacement_target = _work105_replacement_target(
+                archive_path,
+                index_row,
+                archive_metadata.get(archive_path, {}),
+            )
+            if replacement_target is None:
+                continue
             replacement_failure = _replacement_target_diagnostic(
                 root,
                 typed_registry,
-                index_row.replacement,
+                replacement_target,
                 tracked_regular_blobs,
             )
             if replacement_failure is not None:

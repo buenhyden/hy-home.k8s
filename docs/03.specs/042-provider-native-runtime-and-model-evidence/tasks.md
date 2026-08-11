@@ -26,7 +26,7 @@ removes stale future-gate wording before this tranche activates.
 - [Provider-Native Runtime and Model Evidence Implementation Plan](plan.md)
 - [Spec 042](spec.md)
 - [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - [Harness machine contract](../../00.agent-governance/contracts/harness-contract.json)
 - `docs/90.references/research/2026-07-07-wer/provider-implementation-status.md`; [current lookup](../../90.references/research/2026-08-08-wer/provider-implementation-status.md)

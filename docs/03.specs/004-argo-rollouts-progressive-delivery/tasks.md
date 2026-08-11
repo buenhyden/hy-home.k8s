@@ -23,7 +23,7 @@ traceability hardening; live cluster changes are out of scope.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| ROL-T-001 | Add Rollouts ARD | doc | Related Inputs | PLN-001 | ARD exists and links PRD/ADR/Spec/Plan | platform | Done |
+| ROL-T-001 | Add Rollouts AD | doc | Related Inputs | PLN-001 | AD exists and links PRD/ADR/Spec/Plan | platform | Done |
 | ROL-T-002 | Add Rollouts Spec | doc | Contracts | PLN-002 | `validate-repo-quality-gates.sh` template heading check | platform | Done |
 | ROL-T-003 | Add Rollouts Plan and Task | doc | Related Documents | PLN-003 | Plan/Task links resolve | platform | Done |
 | ROL-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform | Done |

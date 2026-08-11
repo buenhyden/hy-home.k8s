@@ -95,11 +95,13 @@ This protocol defines how governance references authored docs and how language b
 - README files are entrypoints and must not hold duplicated policy bodies.
   They route readers to the canonical support, governance, operations,
   workflow, validator, GitOps, policy-as-code, or manifest owner.
-- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Record documents must use their stage-specific templates from `docs/99.templates/`.
+- PRD, AD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Record documents must use their stage-specific templates from `docs/99.templates/`.
 - Protected-surface Task records use the canonical Task form's [Approval and
   Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries);
   do not create a second Task starter.
-- `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
+- Stage 01 `srs-<###>-<feature-id>.md` and `ifc-<###>-<feature-id>.md`,
+  plus Stage 03 `agent-design.md`, `data-model.md`, and `tests.md`, must use
+  their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.
 - The canonical `owner` value for all authored documents in this repository is `platform`. Do not use deprecated team-owner values.
@@ -159,7 +161,7 @@ This protocol defines how governance references authored docs and how language b
 
 ### Docs 3 Rules (HALT)
 
-**R1 — Template-First:** Read `docs/99.templates/README.md` and `docs/99.templates/support/template-routing.md`, then read the matching template in `docs/99.templates/templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → operations policy first.
+**R1 — Template-First:** Read `docs/99.templates/README.md` and `docs/99.templates/support/template-routing.md`, then read the matching template in `docs/99.templates/templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → AD required; RBAC change → ADR required; production change → operations policy first.
 
 **R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and conforms to its registry-selected profile.
 

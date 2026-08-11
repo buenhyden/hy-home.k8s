@@ -70,7 +70,7 @@ claim its own commit.
 - [GitHub CI and QA Evidence Implementation Plan](plan.md)
 - [Spec 039](spec.md)
 - [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
 - [Affected-surface contract](../../00.agent-governance/contracts/validation-surfaces.json)
 - [Agent quality standards](../../00.agent-governance/rules/quality-standards.md)

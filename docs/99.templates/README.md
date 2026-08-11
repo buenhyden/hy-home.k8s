@@ -24,7 +24,7 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](./templates/README.md) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
 
-이 stage는 실제 PRD, ARD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
+이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 support
 또는 Stage 00 governance로 돌려보낸다.
 
@@ -32,7 +32,8 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 
 - **Common forms**: README profile, governance reference, durable reference,
   archive record, memory, progress entry를 위한 Markdown form이다.
-- **Core SDLC forms**: PRD, ARD, ADR, Spec, Plan, Task의 단계별 책임과
+- **Core SDLC forms**: PRD, optional SRS, optional Interface Requirement, AD,
+  ADR, Spec, Plan, Task의 단계별 책임과
   handoff를 기록한다.
 - **Spec helper and native forms**: API, agent, data model, test 보조 문서와
   OpenAPI, GraphQL, protobuf 계약을 feature Spec 아래에 둔다.

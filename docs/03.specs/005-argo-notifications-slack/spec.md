@@ -116,7 +116,7 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 
 - **Agent Role**: documentation and manifest maintenance agents validate
   notification wiring without reading or printing credential material.
-- **Inputs**: PRD/ARD/ADR, ArgoCD values, ConfigMap, ExternalSecret, operations policy/runbook.
+- **Inputs**: PRD/AD/ADR, ArgoCD values, ConfigMap, ExternalSecret, operations policy/runbook.
 - **Outputs**: documentation, non-secret manifest diffs, validation evidence.
 - **Success Definition**: Slack notification contract is traceable without exposing credentials.
 
@@ -198,7 +198,7 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 | [REQ-PRD-MET-03](../../01.requirements/002-argo-notifications-slack.md) | VAL-SPC-005 | The operator-approved runbook checks controller readiness, ExternalSecret state, and non-secret Slack send/error evidence. |
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
-- **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md`](../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](plan.md)
 - **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](tasks.md)
@@ -207,5 +207,5 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 ### Related inputs
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
-- **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md`](../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

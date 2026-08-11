@@ -360,7 +360,7 @@ bash infrastructure/tests/verify-contracts-static.sh
 - **PRD**: No separate PRD exists. The upstream requirement is the approved
   user request to harden the active control surfaces while preserving AWS and
   Azure cloud examples as dated snapshots.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
+- **AD**: No separate AD exists. The architectural baseline is the current
   local GitOps platform contract plus Stage 00 and Stage 99 governance.
 - **Related ADRs**:
   - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

@@ -141,7 +141,7 @@ and Plan.
   docs/99.templates/templates/common/readme.template.md
   docs/99.templates/templates/common/reference.template.md
   docs/99.templates/templates/sdlc/architecture/adr.template.md
-  docs/99.templates/templates/sdlc/architecture/ard.template.md
+  docs/99.templates/templates/sdlc/architecture/ad.template.md
   docs/99.templates/templates/sdlc/execution/plan.template.md
   docs/99.templates/templates/sdlc/execution/task.template.md
   docs/99.templates/templates/sdlc/operations/guide.template.md
@@ -151,7 +151,7 @@ and Plan.
   docs/99.templates/templates/sdlc/operations/runbook.template.md
   docs/99.templates/templates/sdlc/requirements/prd.template.md
   docs/99.templates/templates/sdlc/specs/agent-design.template.md
-  docs/99.templates/templates/sdlc/specs/api-spec.template.md
+  docs/99.templates/templates/sdlc/specs/interface.template.md
   docs/99.templates/templates/sdlc/specs/data-model.template.md
   # retired duplicate harness Task starter (removed by Spec 027)
   docs/99.templates/templates/sdlc/specs/openapi.template.yaml
@@ -303,7 +303,7 @@ and Plan.
 - Frontmatter profile scan:
 
   ```text
-  rg -n "sdlc/prd|sdlc/ard|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates scripts/validate-repo-quality-gates.sh
+  rg -n "sdlc/prd|sdlc/ad|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates scripts/validate-repo-quality-gates.sh
   ```
 
   PASS. Markdown template frontmatter, support schema, and validator expected

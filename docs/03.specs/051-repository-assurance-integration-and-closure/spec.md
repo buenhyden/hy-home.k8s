@@ -29,7 +29,7 @@ ledger.
   DEFER matrix; complete QA; independent whole-branch reviews; lifecycle
   transitions; local fast-forward merge; main postflight; stash retirement;
   worktree/branch cleanup; and final handoff.
-- **Consumes**: PRD-007, ARD-0010, ADR-0021, Specs 047-050 and their Plans,
+- **Consumes**: PRD-007, AD-0010, ADR-0021, Specs 047-050 and their Plans,
   Tasks, commits, contracts, validators, fixtures, review results, read-only
   GitHub metadata, and the recorded stash object.
 - **Does not own**: remote push or PR, branch-protection/ruleset mutation,
@@ -53,7 +53,7 @@ ledger.
    limitation, owner, retry trigger, and evidence lane.
 4. Required repository-static and CI-equivalent gates are PASS. A required
    tool or validator cannot close as SKIP/DEFER.
-5. ARD-0010 and ADR-0021 transition together under the registry lifecycle
+5. AD-0010 and ADR-0021 transition together under the registry lifecycle
    predicate; PRD-007, Spec 051, Plan, Task, indexes, program lineage, and
    progress evidence change atomically as required.
 6. Current hosted, provider-runtime, credential-bearing, and live evidence
@@ -215,7 +215,7 @@ read-only remote metadata commands in addition to this terminal sequence.
   accurately classified.
 - **VAL-RAIC-005**: Independent whole-branch requirements and quality/security
   reviews approve the exact terminal diff with no open finding.
-- **VAL-RAIC-006**: PRD-007, ARD-0010, ADR-0021, Specs, Plan, Task, indexes,
+- **VAL-RAIC-006**: PRD-007, AD-0010, ADR-0021, Specs, Plan, Task, indexes,
   lineage, and progress complete valid reciprocal lifecycle transitions.
 - **VAL-RAIC-007**: Local main fast-forwards to the reviewed branch and passes
   postflight without push, PR, remote merge, or remote setting change.
@@ -230,7 +230,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Program requirement**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:

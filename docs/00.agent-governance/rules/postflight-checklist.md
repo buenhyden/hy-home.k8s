@@ -54,7 +54,7 @@ Run this checklist before finalizing a response.
 
 ### 6. Docs 3 Rules Compliance
 
-- [ ] R1: Template read before document creation; `status: draft` set; k8s triggers respected (namespace→ARD, RBAC→ADR, prod→OPER first).
+- [ ] R1: Template read before document creation; `status: draft` set; k8s triggers respected (namespace→AD, RBAC→ADR, prod→OPER first).
 - [ ] R2: Folder-level changes **and content modifications to existing documents** include a README review and update (if stale) in the same PR, with the selected README profile intact.
 - [ ] R3: Every new authored document includes the relationship section selected by its registry profile.
 - [ ] R4: Memory ledger coupling is satisfied for repo-changing work and standalone memory files.

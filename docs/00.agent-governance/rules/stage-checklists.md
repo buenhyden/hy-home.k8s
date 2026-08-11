@@ -38,7 +38,7 @@ acceptance evidence, while this file remains a reusable cross-stage checklist.
 - [ ] Problem, value, acceptance criteria, and scope are explicit.
 - [ ] Links to downstream docs are prepared.
 
-### `02.architecture/requirements`
+### `02.architecture/descriptions`
 
 - [ ] System boundaries and quality attributes are documented.
 - [ ] Inputs from PRD are traceable.
@@ -46,7 +46,7 @@ acceptance evidence, while this file remains a reusable cross-stage checklist.
 ### `02.architecture/decisions`
 
 - [ ] Decision context, alternatives, and consequences are captured.
-- [ ] Links to PRD/ARD/Spec are valid.
+- [ ] Links to PRD/AD/Spec are valid.
 
 ### `03.specs`
 

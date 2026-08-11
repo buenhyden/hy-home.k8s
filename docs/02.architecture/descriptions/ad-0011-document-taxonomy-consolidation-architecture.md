@@ -1,12 +1,12 @@
 ---
-title: 'Document Taxonomy Consolidation Architecture Reference Document'
-type: sdlc/ard
+title: 'Document Taxonomy Consolidation Architecture Description'
+type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-11
 ---
 
-# Document Taxonomy Consolidation Architecture Reference Document (ARD)
+# Document Taxonomy Consolidation Architecture Description (AD)
 
 ## Overview
 
@@ -33,17 +33,21 @@ not govern GitOps desired state, live Kubernetes or Vault behavior, provider
 authentication, hosted CI administration, credentials, publication, or remote
 mutation.
 
-Existing Stage 98 records are immutable. Their envelopes, payloads, digests,
-source commits, and historical paths are excluded from rewrite. This program
-may append a new ArchiveEnvelope for unique retired history and update the
-central index, but it may not edit an existing record.
+Existing Stage 98 payload bytes, digests, source commits/blobs, legacy-envelope
+identity, and recovery result are immutable in every phase. WORK-105 and
+WORK-106 also preserve every existing path and wrapper byte. The sole
+existing-record path/wrapper exception is the exact 93-row, ledger-gated
+WORK-107 outer rehome defined below; WORK-108 and later restore full path and
+wrapper immutability. Outside that bounded event, this program may append a
+new ArchiveEnvelope for unique retired history and update the central index,
+but it may not edit an existing record.
 
 Stage 90 dated observations retain the facts and paths observed at their
 cutoff. A current navigational index or an explicit historical annotation may
 change when its contract allows; observation prose is not silently rewritten
 to look current.
 
-Existing PRD, ARD, ADR, and Spec numbers remain stable. Accepted ADRs are
+Existing PRD, AD, ADR, and Spec numbers remain stable. Accepted ADRs are
 append-only decision evidence; changed decisions use a successor record rather
 than rewriting an unrelated or accepted predecessor.
 
@@ -73,8 +77,10 @@ redesign, and consolidation of validators with different failure semantics.
 docs/
   00.agent-governance/   human policy, provider deltas, harness contracts
   01.requirements/       PRD                         <NNN>-<slug>.md
+                         optional SRS                srs-<NNN>-<slug>.md
+                         optional Interface Req.     ifc-<NNN>-<slug>.md
   02.architecture/
-    requirements/        ARD                         <NNNN>-<slug>.md
+    descriptions/        AD                          ad-<NNNN>-<slug>.md
     decisions/           ADR                         <NNNN>-<slug>.md
   03.specs/              work unit                   <NNN>-<slug>/
     <NNN>-<slug>/
@@ -148,9 +154,30 @@ snapshots, real Incident/Postmortem identities, and Stage 98 mirror paths.
 
 Cross-stage lineage continues to use the registry's closed program or
 standalone relationship data and reciprocal document links. This program does
-not add ad-hoc frontmatter keys that compete with that owner. Draft ADR-0023
-records the approved replacement direction; the registry association to
-unrelated ADR-0021 changes only after ADR-0023 satisfies lifecycle acceptance.
+not add ad-hoc frontmatter keys that compete with that owner. Accepted
+[ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md)
+owns the terminal form and archive-layout direction, and the PRD-008 program
+projection names that decision without rewriting accepted predecessor records.
+
+### Stable Stage 98 migration invariant
+
+WORK-105 and WORK-106 change no Stage 98 path or byte. WORK-105 acceptance and
+a green WORK-106 validator tranche are both preconditions. WORK-107 only may
+then replace the outer record location and terminal wrapper identity for the exact existing
+93-record corpus, and only through a schema-versioned 93-row migration ledger
+with one source, one unique target, and action `moved` per row. WORK-108 and later
+return Stage 98 to an immutable path-and-byte state. For every row, the
+archived payload bytes, `content_sha256` digest, `source_commit`, and
+`source_blob` provenance remain exact.
+
+The ledger also binds the legacy envelope identity and the terminal record so
+both remain independently verifiable during review. Old-envelope proof must
+succeed before any source removal, and read-only recovery from both the legacy
+envelope and the terminal record must reproduce the same payload bytes. A
+missing row, shared target, payload or digest drift, source-commit/blob drift,
+unrecoverable legacy envelope, or unequal recovery result stops the migration.
+This invariant replaces only the earlier mirror-path requirement; it preserves
+the full-body, provenance, retention, and recovery guarantees.
 
 ### AI-agent governance extension
 
@@ -271,10 +298,10 @@ promoted, or a required repository-static gate fails.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-WDTC-001](../../01.requirements/008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0023](../decisions/0023-work-unit-document-taxonomy-and-governance-authority.md) and [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
-| N/A — REQ-WDTC-002 through REQ-WDTC-004 share the PRD source above. | Stable filename identity, Stage 05 stability, and registry-owned reciprocal lineage | N/A — ADR-0023 and Spec 052 share the target owners above. |
-| N/A — REQ-WDTC-005 through REQ-WDTC-007 share the PRD source above. | Authority uniqueness, template parity, and explicit Release exclusion | N/A — ADR-0023 and Spec 052 share the target owners above. |
+| [REQ-WDTC-001](../../01.requirements/008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md) and [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
+| N/A — REQ-WDTC-002 through REQ-WDTC-004 share the PRD source above. | Stable filename identity, Stage 05 stability, and registry-owned reciprocal lineage | N/A — ADR-0024 and Spec 052 share the target owners above. |
+| N/A — REQ-WDTC-005 through REQ-WDTC-007 share the PRD source above. | Authority uniqueness, template parity, and explicit Release exclusion | N/A — ADR-0024 and Spec 052 share the target owners above. |
 | N/A — REQ-WDTC-008 through REQ-WDTC-010 share the PRD source above. | Reviewed disposition, archive integrity, and fail-closed route transition | N/A — Spec 052 owns the migration contract. |
 | N/A — REQ-WDTC-011 and REQ-WDTC-012 share the PRD source above. | Validator semantic preservation and consumer/fixture proof | N/A — Spec 052 owns script reconciliation. |
-| N/A — REQ-WDTC-013 and REQ-WDTC-014 share the PRD source above. | Existing harness owner, risk/approval/provenance records, and evidence non-promotion | N/A — ADR-0023 and Spec 052 share the target owners above. |
+| N/A — REQ-WDTC-013 and REQ-WDTC-014 share the PRD source above. | Existing harness owner, risk/approval/provenance records, and evidence non-promotion | N/A — ADR-0024 and Spec 052 share the target owners above. |
 | N/A — REQ-WDTC-015 through REQ-WDTC-018 share the PRD source above. | Recoverable cleanup, green baseline, suspended-program safety, and local-only scope | N/A — Spec 052 owns the execution and verification design. |

@@ -20,7 +20,7 @@ Support template-aligned documentation work using the approved templates, stage 
 
 ## When to Use
 
-- A PRD, ARD, ADR, spec, plan, task record, guide, policy, runbook, incident, postmortem, reference, or README needs routing, template selection, drafting support, or explicitly delegated updates.
+- A PRD, AD, ADR, spec, plan, task record, guide, policy, runbook, incident, postmortem, reference, or README needs routing, template selection, drafting support, or explicitly delegated updates.
 - A template-aligned document is needed to support an infra, ops, or governance workflow.
 - A worker is needed to translate findings into durable documentation.
 

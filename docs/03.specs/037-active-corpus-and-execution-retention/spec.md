@@ -38,7 +38,7 @@ unclaimed.
 
 ## Contracts
 
-- A normalized scope has at most one current PRD, ARD, and Spec owner.
+- A normalized scope has at most one current PRD, AD, and Spec owner.
 - An active Spec lineage has at most one current Plan and one current Task.
 - A closed lineage cannot retain done Plan or Task files in the active
   execution stage after an eligible migration.
@@ -216,7 +216,7 @@ Remote/live and CI/FIFO PASS results are unclaimed.
 - **Predecessor**: [Spec 036](../036-archive-record-and-workspace-boundary/spec.md)
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Active Corpus and Execution Retention Implementation Plan](plan.md)
 - **Task**: [Active Corpus and Execution Retention Task](tasks.md)
 

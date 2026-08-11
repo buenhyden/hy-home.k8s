@@ -1,12 +1,12 @@
 ---
-title: 'Workspace Document Assurance Operating Model Architecture Reference Document'
-type: sdlc/ard
+title: 'Workspace Document Assurance Operating Model Architecture Description'
+type: sdlc/ad
 status: accepted
 owner: platform
 updated: 2026-07-14
 ---
 
-# Workspace Document Assurance Operating Model Architecture Reference Document (ARD)
+# Workspace Document Assurance Operating Model Architecture Description (AD)
 
 ## Overview
 
@@ -57,7 +57,7 @@ big-bang gate cutover.
 The control flow is:
 
 ```text
-approved PRD/ARD/ADR
+approved PRD/AD/ADR
   -> document profile registry + schema
   -> Stage 99 support contracts and template forms
   -> authored documents and README profiles
@@ -113,7 +113,7 @@ against their source rather than becoming new owners.
   CLI native model resolution remains `DEFER` until `.gemini/**` runtime evidence exists.
 - **Tooling Boundary**: Agents may use repository and read-only research tools;
   remote mutation and secret access require separate authority.
-- **Memory & Context Strategy**: Durable decisions live in PRD/ARD/ADR/Spec and
+- **Memory & Context Strategy**: Durable decisions live in PRD/AD/ADR/Spec and
   Task evidence; `_workspace` stores only ignored, temporary, non-secret support
   artifacts.
 - **Guardrail Boundary**: Shared roles define responsibility, output, prohibited

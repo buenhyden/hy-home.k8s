@@ -129,7 +129,7 @@ establish live cluster or provider readiness.
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **README Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)

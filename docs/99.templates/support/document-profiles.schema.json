@@ -352,13 +352,13 @@
     "program": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prd", "ard", "tranches", "followUps"],
+      "required": ["prd", "ad", "tranches", "followUps"],
       "properties": {
         "prd": {
           "type": "string",
           "pattern": "^[0-9]{3}$"
         },
-        "ard": {
+        "ad": {
           "type": "string",
           "pattern": "^[0-9]{4}$"
         },

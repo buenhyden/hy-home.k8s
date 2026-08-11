@@ -110,7 +110,7 @@ The support layer has one owner for each rationale:
 | Family | Unique responsibility | Must not duplicate |
 | --- | --- | --- |
 | PRD | Problem, users, requirement IDs, scope, and acceptance criteria | Architecture and execution procedure |
-| ARD (Architecture Reference Document) | Architecture boundary, views, quality attributes, data, and deployment constraints | Individual decision rationale and implementation plan |
+| AD (Architecture Description) | Architecture boundary, views, quality attributes, data, and deployment constraints | Individual decision rationale and implementation plan |
 | ADR | One decision, alternatives, consequences, and replacement lineage | System-wide description and work breakdown |
 | Spec and helper Specs | Implementable behavior, interfaces, invariants, failures, and verification criteria | Product motivation and execution schedule |
 | Plan | Ordered work, dependencies, gates, risks, rollback, and completion criteria | Requirement or technical-contract redefinition |
@@ -154,7 +154,7 @@ create a successor or a new execution record.
 | Source | Local adoption | Boundary |
 | --- | --- | --- |
 | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/standard/72089.html) | Keep verifiable requirements and acceptance criteria in the PRD family. | The public abstract is evidence for role separation, not a claim of full ISO conformance. |
-| [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) | Keep architecture description semantics separate from the Markdown recording format. | The local ARD name and path remain a repository convention. |
+| [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) | Keep architecture description semantics separate from the Markdown recording format. | The local AD name and path remain a repository convention. |
 | [Nygard ADR practice](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) and [AWS ADR process](https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html) | Preserve accepted ADRs and replace decisions with a new numbered ADR. | ADR practice does not prescribe the repository's full SDLC directory scheme. |
 | [GitHub Docs YAML frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter) and [JSON Schema 2020-12](https://json-schema.org/specification) | Validate metadata centrally with exact required keys and enums. | Frontmatter itself is a repository convention rather than CommonMark semantics. |
 | [Kubernetes page content types](https://kubernetes.io/docs/contribute/style/page-content-types/) | Distinguish how-to, tutorial, concept, and reference intent in Guide body content. | No new Guide frontmatter key is introduced. |
@@ -201,7 +201,7 @@ The exact table lives under the existing `Traceability` H2 and varies by role:
 | Profile | Required semantic mapping |
 | --- | --- |
 | PRD | Requirement ID -> acceptance criterion -> downstream owner |
-| ARD | Upstream requirement -> quality attribute or boundary -> ADR/Spec |
+| AD | Upstream requirement -> quality attribute or boundary -> ADR/Spec |
 | ADR | Decision lineage -> replacement relation -> affected Spec |
 | Spec | PRD requirement ID -> Spec criterion -> verification method |
 | Plan | Spec criterion -> work package -> expected Task |
@@ -321,7 +321,7 @@ the implementation diff.
 ### Upstream authority
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Registry ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 

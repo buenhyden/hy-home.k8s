@@ -54,10 +54,11 @@ CURRENT_STATUSES = frozenset({"draft", "active", "accepted", "done", "archived"}
 CURRENT_MARKDOWN_PROFILES = frozenset(
     {
         "sdlc/prd",
-        "sdlc/ard",
+        "sdlc/srs",
+        "sdlc/interface",
+        "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
-        "sdlc/api-spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests",

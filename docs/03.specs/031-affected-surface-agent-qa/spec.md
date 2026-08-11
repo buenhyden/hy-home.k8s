@@ -170,7 +170,7 @@ and live infrastructure remain `DEFER` for their separately authorized owners.
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Migration Spec**: [Authored Document Migration](../030-authored-document-migration/spec.md)
 - **Audit**: [CI, QA, Automation, Pipeline, and Workflow](../../90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md)

@@ -112,8 +112,8 @@ the authority.
 
 - `docs/01.requirements/007-repository-delivery-and-platform-assurance.md`
 - `docs/01.requirements/README.md`
-- `docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md`
-- `docs/02.architecture/requirements/README.md`
+- `docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md`
+- `docs/02.architecture/descriptions/README.md`
 - `docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md`
 - `docs/02.architecture/decisions/README.md`
 - `docs/03.specs/047-current-surface-and-stash-reconciliation/spec.md`
@@ -363,7 +363,7 @@ the authority.
 ### Task 6: RAIC-005 — close lifecycle and postflight
 
 - [ ] On local main, set Specs 047-051 and all five Plans/Tasks to `done`, keep
-  PRD-007 and ARD-0010 `active`, set ADR-0021 to `accepted`, mark all five
+  PRD-007 and AD-0010 `active`, set ADR-0021 to `accepted`, mark all five
   program tranches `done`, update indexes, and record the observed integration,
   stash, worktree, branch, and remote-action results.
 
@@ -381,7 +381,7 @@ the authority.
   SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md docs/02.architecture/requirements/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/048-github-routing-and-ci-evidence/spec.md docs/03.specs/049-platform-validation-and-security-evidence/spec.md docs/03.specs/050-example-iac-and-validator-qa/spec.md docs/03.specs/051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/048-github-routing-and-ci-evidence/spec.md docs/03.specs/049-platform-validation-and-security-evidence/spec.md docs/03.specs/050-example-iac-and-validator-qa/spec.md docs/03.specs/051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: close repository delivery assurance program"
   ```
 
@@ -453,7 +453,7 @@ remain `DEFER` with explicit owners and retry triggers.
 - **Spec**: [Repository Assurance Integration and Closure](spec.md)
 - **Task**: [Repository Assurance Integration and Closure Task](tasks.md)
 - **Program**: [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-007 program
   lineage

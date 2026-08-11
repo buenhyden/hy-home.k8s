@@ -33,7 +33,7 @@ claimed; those evidence lanes remain `DEFER`.
 - [Stage 00 Agent Governance Contract Implementation Plan](plan.md)
 - [Spec 041](spec.md)
 - [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - Spec 040 closure content commit `c5adc27b` and postflight evidence update
   `4335ea60`
@@ -45,7 +45,7 @@ claimed; those evidence lanes remain `DEFER`.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| SAGC-000 | VAL-SAGC-001 | Enroll PRD-003/ARD-0006/Specs041–046 under current accepted ADR-0013, retain ADR-0019 as the proposed successor, and activate the reciprocal Spec/Plan/Task frontier as one exact eight-path proposal. | platform | Done | PASS — reciprocal activation and postflight are observed without promoting provider/runtime evidence. | Activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`; exact eight paths; strict/lifecycle/aggregate/all-files/diff PASS; requirements compliant; quality approved; explicit-ref and clean-tree postflight PASS. |
+| SAGC-000 | VAL-SAGC-001 | Enroll PRD-003/AD-0006/Specs041–046 under current accepted ADR-0013, retain ADR-0019 as the proposed successor, and activate the reciprocal Spec/Plan/Task frontier as one exact eight-path proposal. | platform | Done | PASS — reciprocal activation and postflight are observed without promoting provider/runtime evidence. | Activation `9e6fc553fa6d6b700e628ecd59306ab2a55777c1`; parent `48d8f731d062f5e29fe58c7084fe134ddf2740b3`; exact eight paths; strict/lifecycle/aggregate/all-files/diff PASS; requirements compliant; quality approved; explicit-ref and clean-tree postflight PASS. |
 | SAGC-001 | VAL-SAGC-002, VAL-SAGC-003 | Implement the closed harness schema, focused validator, and negative fixtures while preserving independent route ownership. | platform | Done | PASS — the closed schema, focused validator, and mutation fixtures reject malformed or unsupported contract states while routing remains separately owned. | Implementation `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`; harness self-test/production PASS; unknown-key, enum, duplicate-role, projection, stop-rule, version, path, and sensitive-content mutations PASS. |
 | SAGC-002 | VAL-SAGC-005, VAL-SAGC-006, VAL-SAGC-007, VAL-SAGC-009 | Add exact current/target contract data, evidence classes, and four explicit memory-class declarations. | platform | Done | PASS — current and target inventories, four non-transitive evidence classes, and four memory classes validate without promoting target or runtime state. | Implementation `8d5a4c50468c07d1f3574e53a1d32ca5a39f642d`; current `10/3/30`; target-only `12/4/48`; evidence `4`; memory `4`; redaction and provider-local advisory boundaries PASS. |
 | SAGC-003 | VAL-SAGC-004 | Migrate named validators and readers to one selected harness contract version while retaining explicit legacy compatibility input. | platform | Done | PASS — all named semantic consumers select `harness-contract/1.0.0`; the legacy role contract is readable compatibility input with no current semantic consumer. | Migration `52a4ab6c2e1e4436486a74ec13f35109150161a1`; consumers `11`; `legacyConsumers=[]`; harness, role-semantics, roster, unit, aggregate, path-safety, requirements, and quality review PASS. |
@@ -138,7 +138,7 @@ update does not identify or claim its own future content-addressed SHA.
 
 - **Plan**: [Stage 00 Agent Governance Contract Implementation Plan](plan.md)
 - **Spec**: [Stage 00 Agent Governance Contract](spec.md)
-- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) / [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) / [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Proposed successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 

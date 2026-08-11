@@ -1,12 +1,12 @@
 ---
-title: 'Repository Delivery Evidence Architecture Reference Document'
-type: sdlc/ard
+title: 'Repository Delivery Evidence Architecture Description'
+type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-08-02
 ---
 
-# Repository Delivery Evidence Architecture Reference Document (ARD)
+# Repository Delivery Evidence Architecture Description (AD)
 
 ## Overview
 
@@ -16,7 +16,7 @@ projection, validation depth, evidence classification, review, and rollback on
 top of the current platform and document contracts without creating a second
 platform topology owner.
 
-ARD-0010 is active for the accepted ADR-0021 program decision and the active
+AD-0010 is active for the accepted ADR-0021 program decision and the active
 Spec 047 foundation tranche.
 
 The architecture consumes the existing validation-surface registry, document
@@ -30,7 +30,7 @@ gaps.
 - **Owns**: repository delivery assurance boundaries; GitHub projection parity;
   platform validation depth; exact tool and fallback evidence; ordered tranche
   execution; and local integration evidence.
-- **Consumes**: PRD-004/ARD-0007/ADR-0014/Spec 008 current topology,
+- **Consumes**: PRD-004/AD-0007/ADR-0014/Spec 008 current topology,
   `validation-surfaces.json` path routing, existing technology inventory,
   workflows, validators, tests, desired state, and the Current audit pack.
 - **Does not own**: platform component selection, live reconciliation state,

@@ -352,7 +352,7 @@ class ProgramFollowUp(ProgramRelation):
 @dataclass(frozen=True)
 class ProgramLineage:
     prd_id: str
-    ard_id: str
+    ad_id: str
     tranches: tuple[ProgramRelation, ...]
     follow_ups: tuple[ProgramFollowUp, ...]
 
@@ -603,6 +603,12 @@ def _within_target_scope(path: PurePosixPath) -> bool:
         return False
     if path.parts[0] in {"graphify-out", ".worktrees"}:
         return False
+    if (
+        len(path.parts) == 3
+        and path.parts[:2] == (".gemini", "agents")
+        and path.suffix == ".md"
+    ):
+        return True
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
 
 
@@ -1112,7 +1118,7 @@ def _program_follow_up_from_mapping(raw: Mapping[str, Any]) -> ProgramFollowUp:
 def _program_lineage_from_mapping(raw: Mapping[str, Any]) -> ProgramLineage:
     return ProgramLineage(
         prd_id=raw["prd"],
-        ard_id=raw["ard"],
+        ad_id=raw["ad"],
         tranches=tuple(
             _program_relation_from_mapping(item) for item in raw["tranches"]
         ),
@@ -1183,13 +1189,13 @@ def _program_structure_diagnostics(
 ) -> tuple[Diagnostic, ...]:
     diagnostics: list[Diagnostic] = []
     prd_ids = [program["prd"] for program in raw_programs]
-    ard_ids = [program["ard"] for program in raw_programs]
-    if len(prd_ids) != len(set(prd_ids)) or len(ard_ids) != len(set(ard_ids)):
+    ad_ids = [program["ad"] for program in raw_programs]
+    if len(prd_ids) != len(set(prd_ids)) or len(ad_ids) != len(set(ad_ids)):
         diagnostics.append(
             _diagnostic(
                 "REGISTRY_PROGRAM_DUPLICATE",
-                expected="unique PRD and ARD program owners",
-                actual="a PRD or ARD is declared by multiple programs",
+                expected="unique PRD and AD program owners",
+                actual="a PRD or AD is declared by multiple programs",
             )
         )
     if prd_ids != sorted(prd_ids, key=int):
@@ -1278,10 +1284,10 @@ _PROGRAM_OWNER_CONTRACTS = {
         re.compile(r"^docs/01\.requirements/(?P<id>[0-9]{3})-[^/]+\.md$"),
         "sdlc/prd",
     ),
-    "ard": (
-        PurePosixPath("docs/02.architecture/requirements"),
-        re.compile(r"^docs/02\.architecture/requirements/(?P<id>[0-9]{4})-[^/]+\.md$"),
-        "sdlc/ard",
+    "ad": (
+        PurePosixPath("docs/02.architecture/descriptions"),
+        re.compile(r"^docs/02\.architecture/descriptions/ad-(?P<id>[0-9]{4})-[^/]+\.md$"),
+        "sdlc/ad",
     ),
     "adr": (
         PurePosixPath("docs/02.architecture/decisions"),
@@ -1314,7 +1320,7 @@ def _frontmatter_metadata(root: Path, path: PurePosixPath) -> Mapping[str, Any]:
 def _resolve_program_owner(
     root: Path,
     registry: Registry,
-    owner_kind: Literal["prd", "ard", "adr", "spec"],
+    owner_kind: Literal["prd", "ad", "adr", "spec"],
     numeric_id: str,
 ) -> tuple[PurePosixPath | None, tuple[Diagnostic, ...]]:
     directory, pattern, expected_profile = _PROGRAM_OWNER_CONTRACTS[owner_kind]
@@ -1382,7 +1388,7 @@ def _program_repository_diagnostics(
     decision_keys: dict[str, tuple[date, int] | None] = {}
 
     def owner(
-        kind: Literal["prd", "ard", "adr", "spec"], numeric_id: str
+        kind: Literal["prd", "ad", "adr", "spec"], numeric_id: str
     ) -> PurePosixPath | None:
         cache_key = (kind, numeric_id)
         if cache_key not in owner_cache:
@@ -1515,7 +1521,7 @@ def _program_repository_diagnostics(
 
     for program in registry.program_lineage:
         owner("prd", program.prd_id)
-        owner("ard", program.ard_id)
+        owner("ad", program.ad_id)
         tranche_keys: list[tuple[date, int]] = []
         follow_up_keys: list[tuple[ProgramFollowUp, tuple[date, int] | None]] = []
         for relation in (*program.tranches, *program.follow_ups):

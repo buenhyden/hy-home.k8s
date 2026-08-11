@@ -353,7 +353,7 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
   user request to build a dated workspace engineering research pack, move the
   existing four research documents into it, and include external source-backed
   analysis.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
+- **AD**: No separate AD exists. The architectural baseline is the current
   Stage 00 to Stage 99 documentation taxonomy and the existing
   `docs/90.references/**` reference contract.
 - **Prior Specs**:
@@ -413,7 +413,7 @@ The Current pack retains this component boundary:
 | `workspace-governance-baseline.md` | Workspace purpose, roles, overview, operating contract, governance, rules, templates, scripts, integration guides, owner/authority matrix, and follow-up routes. |
 | `harness-and-loop-engineering.md` | Four-element harness, Observe/Plan/Act/Verify/Learn loop, evaluation, recovery, termination, memory, and the workspace system/environment/rule requirements. |
 | `provider-implementation-status.md` | Claude, Codex, and Gemini upstream capabilities, native runtime surfaces, local adapters, hooks, permissions, subagents, model lifecycle, and local-currentness comparison. |
-| `spec-sdlc-ci-qa-formatting.md` | Spec-driven development, full SDLC, PRD/ARD/ADR/guide/incident/postmortem/policy/release/runbook roles, formatting, linting, syntax validation, and QA evidence lanes. |
+| `spec-sdlc-ci-qa-formatting.md` | Spec-driven development, full SDLC, PRD/AD/ADR/guide/incident/postmortem/policy/release/runbook roles, formatting, linting, syntax validation, and QA evidence lanes. |
 | `automation-pipeline-workflow-qa.md` | Actual GitHub Actions DAG, path filtering, pre-commit/hooks/CI/GitOps feedback topology, automation/pipeline/workflow distinction, and delivery measurement gaps. |
 | `kubernetes-infrastructure-security.md` | Kubernetes, Argo CD, infrastructure, RBAC, NetworkPolicy, ESO/Vault, policy-as-code, supply-chain security, and static/live evidence boundaries. |
 | `ai-agents-roster-and-gap-analysis.md` | Local agent roster, current `agency-agents` upstream evidence, Adopt/Adapt/Skip analysis, missing or overlapping roles, and task-characteristic model routing. |

@@ -29,7 +29,7 @@ credential-bearing, or live results.
 - [Agent Harness Loop Lifecycle Implementation Plan](plan.md)
 - [Spec 043](spec.md)
 - [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - [Harness machine contract](../../00.agent-governance/contracts/harness-contract.json)
 - [Memory boundary](../../00.agent-governance/memory/README.md)
@@ -143,7 +143,7 @@ execution.
 
 - **Plan**: [Agent Harness Loop Lifecycle Implementation Plan](plan.md)
 - **Spec**: [Agent Harness Loop Lifecycle](spec.md)
-- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) / [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) / [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Proposed successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 

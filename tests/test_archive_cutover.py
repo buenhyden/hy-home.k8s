@@ -365,6 +365,90 @@ class ArchiveCutoverTest(unittest.TestCase):
                         "ARCHIVE-REPLACEMENT-NONCURRENT",
                     )
 
+    def test_work105_legacy_ad_replacement_alias_is_exact_and_fails_closed(
+        self,
+    ) -> None:
+        index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
+        index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
+        self.assertFalse(structure_failure)
+
+        legacy_paths = (
+            "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+            "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+            "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+        )
+        legacy_replacement = (
+            "docs/02.architecture/requirements/0007-current-local-gitops-platform.md"
+        )
+        current_replacement = (
+            "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md"
+        )
+
+        for archive_path in legacy_paths:
+            with self.subTest(archive_path=archive_path):
+                metadata = parse_archive_envelope((ROOT / archive_path).read_bytes()).metadata
+                index_row = index_rows[archive_path]
+                self.assertEqual(index_row.replacement, legacy_replacement)
+                self.assertEqual(
+                    archive_cutover._work105_replacement_target(
+                        archive_path,
+                        index_row,
+                        metadata,
+                    ),
+                    current_replacement,
+                )
+
+        first_path = legacy_paths[0]
+        first_row = index_rows[first_path]
+        first_metadata = parse_archive_envelope((ROOT / first_path).read_bytes()).metadata
+        rejected = (
+            (
+                "unknown archive row",
+                "docs/98.archive/02.architecture/requirements/0004-unapproved.md",
+                replace(
+                    first_row,
+                    archive_path=(
+                        "docs/98.archive/02.architecture/requirements/0004-unapproved.md"
+                    ),
+                ),
+                first_metadata,
+            ),
+            (
+                "replacement path drift",
+                first_path,
+                replace(first_row, replacement=f"{legacy_replacement}.extra"),
+                first_metadata,
+            ),
+            (
+                "source blob drift",
+                first_path,
+                replace(first_row, source_blob="f" * 40),
+                first_metadata,
+            ),
+            (
+                "index original path drift",
+                first_path,
+                replace(first_row, original_path=f"{first_row.original_path}.extra"),
+                first_metadata,
+            ),
+            (
+                "archive envelope proof drift",
+                first_path,
+                first_row,
+                {**first_metadata, "source_blob": "f" * 40},
+            ),
+        )
+        for label, archive_path, index_row, metadata in rejected:
+            with self.subTest(label=label):
+                self.assertEqual(
+                    archive_cutover._work105_replacement_target(
+                        archive_path,
+                        index_row,
+                        metadata,
+                    ),
+                    index_row.replacement,
+                )
+
     def test_replacement_target_status_comes_from_index_blob(self) -> None:
         registry = load_registry(ROOT)
         target = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"

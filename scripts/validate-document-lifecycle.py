@@ -205,6 +205,71 @@ AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS = (
     "duplicate-key",
 )
 
+WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
+WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
+WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
+WORK105_BASE_REGISTRY_PROJECTION_SHA256 = (
+    "ef2e31327be14a3117898a8c0eb661f022fd96cac4e1d3f9362925e189c63daf"  # pragma: allowlist secret
+)
+WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256 = (
+    "17d49aa94403200ea9795d8c14f3fb9137e4f266ebb91e0449b937eecea6ff50"  # pragma: allowlist secret
+)
+WORK105_RETIRED_PROFILE_IDS = frozenset(
+    {
+        "sdlc/ard",  # Retired WORK-105 base input.
+        "template/sdlc/ard",  # Retired WORK-105 base input.
+        "sdlc/api-spec",  # Retired WORK-105 base input.
+        "template/sdlc/api-spec",  # Retired WORK-105 base input.
+    }
+)
+WORK105_TERMINAL_PROFILE_IDS = frozenset(
+    {
+        "sdlc/ad",
+        "template/sdlc/ad",
+        "sdlc/interface",
+        "template/sdlc/interface",
+        "sdlc/srs",
+        "template/sdlc/srs",
+    }
+)
+WORK105_AD_CUTOVER = (
+    ("0004-argo-rollouts-progressive-delivery", "active"),
+    ("0005-argo-notifications-slack", "active"),
+    ("0006-workspace-agent-governance-platform", "active"),
+    ("0007-current-local-gitops-platform", "active"),
+    ("0008-workspace-document-assurance-operating-model", "accepted"),
+    ("0009-document-lifecycle-evidence-operating-model", "accepted"),
+    ("0010-repository-delivery-evidence-architecture", "active"),
+    ("0011-document-taxonomy-consolidation-architecture", "active"),
+)
+WORK105_ADR0023_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/"
+    "0023-work-unit-document-taxonomy-and-governance-authority.md"
+)
+WORK105_ADR0024_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/"
+    "0024-terminal-artifact-identity-and-archive-layout.md"
+)
+WORK105_LEGACY_AD0011_PATH = PurePosixPath(
+    "docs/02.architecture/requirements/"
+    "0011-document-taxonomy-consolidation-architecture.md"
+)
+WORK105_ADR0023_BASE_BLOB_OID = "6424c13f4728ff6418bcdac9796df9c5673d2124"
+WORK105_ADR0023_PROPOSED_BLOB_OID = "7200ec9eb873c971876583b5ba41921d0fdfb24d"
+WORK105_ADR0023_BASE_SHA256 = (
+    "fadbd95c581a0874797666e200f283d0f5fdc6c103643cc653e387062adbe53a"  # pragma: allowlist secret
+)
+WORK105_ADR0023_PROPOSED_SHA256 = (
+    "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5"  # pragma: allowlist secret
+)
+WORK105_ADR0023_RECIPROCAL_ROW = (
+    "| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | "
+    "Partially supersedes only terminal Stage 98 date/mirror-path immutability; "
+    "preserves transition safety, Stage 05 stability, Release exclusion, and "
+    "every unrelated decision | "
+    "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
+)
+
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
     profiles = raw_registry.get("profiles")
@@ -215,6 +280,153 @@ def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
         for profile in profiles
         if isinstance(profile, dict) and isinstance(profile.get("id"), str)
     )
+
+
+def _work105_registry_projection_sha256(
+    raw_registry: Mapping[str, object],
+) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            dict(raw_registry),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+def finite_work105_form_cutover_paths(
+    *,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_registry: Mapping[str, object],
+    proposed_registry: Mapping[str, object],
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[PurePosixPath]:
+    """Admit only the pinned, complete WORK-105 form migration event set."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK105_CUTOVER_BASE_COMMIT
+        or base_registry_oid != WORK105_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK105_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+    if any(
+        registry.get("$id")
+        != "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
+        or registry.get("schemaVersion") != 8
+        or registry.get("routeState") != "transition"
+        for registry in (base_registry, proposed_registry)
+    ):
+        return frozenset()
+    if (
+        _work105_registry_projection_sha256(base_registry)
+        != WORK105_BASE_REGISTRY_PROJECTION_SHA256
+        or _work105_registry_projection_sha256(proposed_registry)
+        != WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256
+    ):
+        return frozenset()
+    base_profile_ids = _registry_profile_ids(base_registry)
+    proposed_profile_ids = _registry_profile_ids(proposed_registry)
+    if (
+        base_profile_ids - proposed_profile_ids != WORK105_RETIRED_PROFILE_IDS
+        or proposed_profile_ids - base_profile_ids != WORK105_TERMINAL_PROFILE_IDS
+    ):
+        return frozenset()
+
+    consumed: set[PurePosixPath] = set()
+    old_ad_paths: set[PurePosixPath] = set()
+    new_ad_paths: set[PurePosixPath] = set()
+    for token, status in WORK105_AD_CUTOVER:
+        old_path = PurePosixPath(  # Retired WORK-105 base route.
+            f"docs/02.architecture/requirements/{token}.md"  # Retired base route.
+        )
+        new_path = PurePosixPath(f"docs/02.architecture/descriptions/ad-{token}.md")
+        if (
+            base_documents.get(old_path)
+            != LifecycleDocument(old_path, "sdlc/ard", status)  # Retired base type.
+            or old_path in proposed_documents
+            or new_path in base_documents
+            or proposed_documents.get(new_path)
+            != LifecycleDocument(new_path, "sdlc/ad", status)
+        ):
+            return frozenset()
+        old_ad_paths.add(old_path)
+        new_ad_paths.add(new_path)
+        consumed.update((old_path, new_path))
+
+    if (
+        {
+            path
+            for path, document in base_documents.items()
+            if document.profile_id == "sdlc/ard"  # Retired WORK-105 base type.
+        }
+        != old_ad_paths
+        or {
+            path
+            for path, document in proposed_documents.items()
+            if document.profile_id == "sdlc/ad"
+        }
+        != new_ad_paths
+        or any(
+            document.profile_id == "sdlc/api-spec"  # Retired authored base type.
+            for document in (*base_documents.values(), *proposed_documents.values())
+        )
+    ):
+        return frozenset()
+
+    exact_forms = (
+        (
+            "docs/02.architecture/requirements/README.md",  # Retired base route.
+            "readme/collection-index",
+            "base",
+        ),
+        (
+            "docs/02.architecture/descriptions/README.md",
+            "readme/collection-index",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/architecture/ard.template.md",  # Retired.
+            "template/sdlc/ard",  # Retired WORK-105 base type.
+            "base",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+            "template/sdlc/ad",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/specs/api-spec.template.md",  # Retired.
+            "template/sdlc/api-spec",  # Retired authored base type.
+            "base",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+            "template/sdlc/interface",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+            "template/sdlc/srs",
+            "proposed",
+        ),
+    )
+    for raw_path, profile_id, side in exact_forms:
+        path = PurePosixPath(raw_path)
+        present = base_documents if side == "base" else proposed_documents
+        absent = proposed_documents if side == "base" else base_documents
+        if (
+            present.get(path) != LifecycleDocument(path, profile_id, None)
+            or path in absent
+        ):
+            return frozenset()
+        consumed.add(path)
+    return frozenset(consumed)
 
 
 def finite_archive_cutover_paths(
@@ -1080,6 +1292,198 @@ def _archive_cutover_fixture_inputs(
     }
 
 
+def _work105_form_cutover_fixture_inputs(
+    root: Path,
+    mode: str,
+    mutation: str,
+) -> dict[str, object]:
+    base_registry = dict(_registry_blob(root, WORK105_BASE_REGISTRY_BLOB_OID))
+    proposed_registry = dict(
+        _registry_blob(root, WORK105_PROPOSED_REGISTRY_BLOB_OID)
+    )
+    base_documents: dict[PurePosixPath, LifecycleDocument] = {}
+    proposed_documents: dict[PurePosixPath, LifecycleDocument] = {}
+    for token, status in WORK105_AD_CUTOVER:
+        old_path = PurePosixPath(
+            f"docs/02.architecture/requirements/{token}.md"
+        )
+        new_path = PurePosixPath(
+            f"docs/02.architecture/descriptions/ad-{token}.md"
+        )
+        base_documents[old_path] = LifecycleDocument(old_path, "sdlc/ard", status)
+        proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/ad", status)
+
+    exact_forms = (
+        (
+            PurePosixPath("docs/02.architecture/requirements/README.md"),
+            "readme/collection-index",
+            base_documents,
+        ),
+        (
+            PurePosixPath("docs/02.architecture/descriptions/README.md"),
+            "readme/collection-index",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+            ),
+            "template/sdlc/ard",
+            base_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/architecture/ad.template.md"
+            ),
+            "template/sdlc/ad",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
+            ),
+            "template/sdlc/api-spec",
+            base_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/interface.template.md"
+            ),
+            "template/sdlc/interface",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+            ),
+            "template/sdlc/srs",
+            proposed_documents,
+        ),
+    )
+    for path, profile_id, documents in exact_forms:
+        documents[path] = LifecycleDocument(path, profile_id, None)
+
+    base_commit = WORK105_CUTOVER_BASE_COMMIT
+    base_registry_oid = WORK105_BASE_REGISTRY_BLOB_OID
+    proposed_registry_oid = WORK105_PROPOSED_REGISTRY_BLOB_OID
+    if mutation == "wrong-base":
+        base_commit = "0" * 40
+    elif mutation == "wrong-base-registry-oid":
+        base_registry_oid = "0" * 40
+    elif mutation == "wrong-proposed-registry-oid":
+        proposed_registry_oid = "0" * 40
+    elif mutation == "wrong-base-schema":
+        base_registry["schemaVersion"] = 9
+    elif mutation == "wrong-proposed-schema":
+        proposed_registry["schemaVersion"] = 9
+    elif mutation == "wrong-base-id":
+        base_registry["$id"] = "https://example.invalid/base"
+    elif mutation == "wrong-proposed-id":
+        proposed_registry["$id"] = "https://example.invalid/proposed"
+    elif mutation == "wrong-base-route-state":
+        base_registry["routeState"] = "terminal"
+    elif mutation == "wrong-proposed-route-state":
+        proposed_registry["routeState"] = "terminal"
+    elif mutation == "base-projection-drift":
+        base_registry["unexpectedProjection"] = True
+    elif mutation == "proposed-projection-drift":
+        proposed_registry["unexpectedProjection"] = True
+    elif mutation == "missing-ad":
+        proposed_documents.pop(
+            PurePosixPath(
+                "docs/02.architecture/descriptions/"
+                "ad-0004-argo-rollouts-progressive-delivery.md"
+            )
+        )
+    elif mutation == "extra-ad":
+        path = PurePosixPath("docs/02.architecture/descriptions/ad-9999-extra.md")
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "active")
+    elif mutation == "wrong-status":
+        path = PurePosixPath(
+            "docs/02.architecture/descriptions/"
+            "ad-0004-argo-rollouts-progressive-delivery.md"
+        )
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "accepted")
+    elif mutation == "missing-form":
+        proposed_documents.pop(
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+            )
+        )
+    elif mutation == "wrong-form-profile":
+        path = PurePosixPath(
+            "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+        )
+        proposed_documents[path] = LifecycleDocument(
+            path, "template/sdlc/interface", None
+        )
+    elif mutation == "authored-api-instance":
+        path = PurePosixPath("docs/03.specs/999-extra/api-spec.md")
+        base_documents[path] = LifecycleDocument(path, "sdlc/api-spec", "active")
+    elif mutation != "exact":
+        raise ValueError(f"unknown WORK-105 form cutover mutation: {mutation}")
+    return {
+        "mode": mode,
+        "base_commit": base_commit,
+        "base_registry_oid": base_registry_oid,
+        "proposed_registry_oid": proposed_registry_oid,
+        "base_registry": base_registry,
+        "proposed_registry": proposed_registry,
+        "base_documents": base_documents,
+        "proposed_documents": proposed_documents,
+    }
+
+
+def _work105_decision_evidence_fixture_inputs(
+    root: Path, mutation: str
+) -> dict[str, object]:
+    base_text = _blob_text(
+        root, WORK105_ADR0023_BASE_BLOB_OID, WORK105_ADR0023_PATH
+    )
+    proposed_text = _blob_text(
+        root, WORK105_ADR0023_PROPOSED_BLOB_OID, WORK105_ADR0023_PATH
+    )
+    assert base_text is not None and proposed_text is not None
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    path = WORK105_ADR0023_PATH
+    base_document: LifecycleDocument | None = exact_document
+    proposed_document = exact_document
+    relationship_links = (WORK105_ADR0024_PATH,)
+    unresolved_links = (WORK105_LEGACY_AD0011_PATH,)
+    body_table_links = (WORK105_ADR0024_PATH,)
+
+    if mutation == "wrong-owner":
+        path = WORK105_ADR0024_PATH
+    elif mutation == "wrong-base-profile":
+        base_document = replace(exact_document, profile_id="sdlc/ad")
+    elif mutation == "wrong-proposed-status":
+        proposed_document = replace(exact_document, status="active")
+    elif mutation == "base-blob-drift":
+        base_text += "\n"
+    elif mutation == "proposed-blob-drift":
+        proposed_text += "\n"
+    elif mutation == "missing-reciprocal-row":
+        proposed_text = proposed_text.replace(WORK105_ADR0023_RECIPROCAL_ROW, "")
+    elif mutation == "missing-resolved-successor":
+        relationship_links = ()
+    elif mutation == "missing-table-successor":
+        body_table_links = ()
+    elif mutation == "extra-unresolved":
+        unresolved_links += (PurePosixPath("docs/02.architecture/decisions/9999.md"),)
+    elif mutation != "exact":
+        raise ValueError(f"unknown WORK-105 decision evidence mutation: {mutation}")
+    return {
+        "path": path,
+        "base_document": base_document,
+        "proposed_document": proposed_document,
+        "base_text": base_text,
+        "proposed_text": proposed_text,
+        "relationship_links": relationship_links,
+        "unresolved_links": unresolved_links,
+        "body_table_links": body_table_links,
+    }
+
+
 EXPECTED_FORWARD_CASE_NAMES = (
     "product",
     "architecture-requirement",
@@ -1210,8 +1614,78 @@ EXPECTED_ARCHIVE_CUTOVER_MUTATIONS = frozenset(
         "unrelated-profile-change",
     }
 )
-FIXTURE_MUTATION_COUNT = 24
-EXPECTED_EVIDENCE_ASSERTION_SHA256 = "beb430e079bf603ebd5164666218fa178c6e27550f425c62f3fd739c31675892"  # pragma: allowlist secret
+EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES = (
+    "exact-staged",
+    "exact-ci",
+    "wrong-mode",
+    "wrong-base",
+    "wrong-base-registry-oid",
+    "wrong-proposed-registry-oid",
+    "wrong-base-schema",
+    "wrong-proposed-schema",
+    "wrong-base-id",
+    "wrong-proposed-id",
+    "wrong-base-route-state",
+    "wrong-proposed-route-state",
+    "base-projection-drift",
+    "proposed-projection-drift",
+    "missing-ad",
+    "extra-ad",
+    "wrong-status",
+    "missing-form",
+    "wrong-form-profile",
+    "authored-api-instance",
+)
+EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS = frozenset(
+    {
+        "exact",
+        "wrong-base",
+        "wrong-base-registry-oid",
+        "wrong-proposed-registry-oid",
+        "wrong-base-schema",
+        "wrong-proposed-schema",
+        "wrong-base-id",
+        "wrong-proposed-id",
+        "wrong-base-route-state",
+        "wrong-proposed-route-state",
+        "base-projection-drift",
+        "proposed-projection-drift",
+        "missing-ad",
+        "extra-ad",
+        "wrong-status",
+        "missing-form",
+        "wrong-form-profile",
+        "authored-api-instance",
+    }
+)
+EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES = (
+    "exact-reciprocal-predecessor",
+    "wrong-owner",
+    "wrong-base-profile",
+    "wrong-proposed-status",
+    "base-blob-drift",
+    "proposed-blob-drift",
+    "missing-reciprocal-row",
+    "missing-resolved-successor",
+    "missing-table-successor",
+    "extra-unresolved",
+)
+EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS = frozenset(
+    {
+        "exact",
+        "wrong-owner",
+        "wrong-base-profile",
+        "wrong-proposed-status",
+        "base-blob-drift",
+        "proposed-blob-drift",
+        "missing-reciprocal-row",
+        "missing-resolved-successor",
+        "missing-table-successor",
+        "extra-unresolved",
+    }
+)
+FIXTURE_MUTATION_COUNT = 26
+EXPECTED_EVIDENCE_ASSERTION_SHA256 = "50cb97c0b48d4d97983eba0958856d831fbf01a6f0a53332870067fcf6cd9b37"  # pragma: allowlist secret
 EXPECTED_EVIDENCE_VARIANTS = (
     "positive",
     "missing",
@@ -1320,9 +1794,6 @@ class InvocationError(ValueError):
 
 class ArgumentParser(argparse.ArgumentParser):
     """Argument parser that returns deterministic exit 2 through ``main``."""
-
-    def error(self, message: str) -> None:
-        raise InvocationError(message)
 
 
 @dataclass(frozen=True)
@@ -1847,6 +2318,10 @@ def _classification_registry(
     aliases = {
         LEGACY_ARCHIVE_PROFILE: ARCHIVE_PROFILE,
         LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
+        "sdlc/ard": "sdlc/ad",  # Retired WORK-105 comparison alias.
+        "template/sdlc/ard": "template/sdlc/ad",  # Retired comparison alias.
+        "sdlc/api-spec": "sdlc/interface",  # Retired comparison alias.
+        "template/sdlc/api-spec": "template/sdlc/interface",  # Retired alias.
     }
     projected: list[DocumentProfile] = []
     for raw_profile in raw_profiles:
@@ -1924,6 +2399,36 @@ def _body_text(text: str) -> str:
     return text if closing < 0 else text[closing + 5 :]
 
 
+def _work105_predecessor_unresolved_links(
+    *,
+    path: PurePosixPath,
+    base_document: LifecycleDocument | None,
+    proposed_document: LifecycleDocument,
+    base_text: str,
+    proposed_text: str,
+    relationship_links: tuple[PurePosixPath, ...],
+    unresolved_links: tuple[PurePosixPath, ...],
+    body_table_links: tuple[PurePosixPath, ...],
+) -> tuple[PurePosixPath, ...]:
+    """Admit only WORK-105's blob-pinned reciprocal predecessor evidence."""
+
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    exact = (
+        path == WORK105_ADR0023_PATH
+        and base_document == exact_document
+        and proposed_document == exact_document
+        and hashlib.sha256(base_text.encode("utf-8")).hexdigest()
+        == WORK105_ADR0023_BASE_SHA256
+        and hashlib.sha256(proposed_text.encode("utf-8")).hexdigest()
+        == WORK105_ADR0023_PROPOSED_SHA256
+        and proposed_text.count(WORK105_ADR0023_RECIPROCAL_ROW) == 1
+        and WORK105_ADR0024_PATH in relationship_links
+        and WORK105_ADR0024_PATH in body_table_links
+        and unresolved_links == (WORK105_LEGACY_AD0011_PATH,)
+    )
+    return () if exact else unresolved_links
+
+
 def _evidence_context(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1954,11 +2459,21 @@ def _evidence_context(
         rendered = adapter.lifecycle_markdown_evidence(
             path, proposed_texts[path], profile, snapshot_profiles
         )
+        unresolved_links = _work105_predecessor_unresolved_links(
+            path=path,
+            base_document=base_documents.get(path),
+            proposed_document=document,
+            base_text=base_texts.get(path, ""),
+            proposed_text=proposed_texts[path],
+            relationship_links=rendered.relationship_links,
+            unresolved_links=rendered.unresolved_relationship_links,
+            body_table_links=rendered.body_table_links,
+        )
         views[path] = LifecycleEvidenceDocument(
             document=document,
             all_local_links=rendered.all_local_links,
             relationship_links=rendered.relationship_links,
-            unresolved_relationship_links=rendered.unresolved_relationship_links,
+            unresolved_relationship_links=unresolved_links,
             body_table_links=rendered.body_table_links,
             relationship_section_valid=rendered.relationship_section_valid,
             body_contract_valid=rendered.body_contract_valid,
@@ -2217,6 +2732,22 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
+    base_snapshot, base_texts = _snapshot_projection(
+        root, base_classification_registry, base_blobs
+    )
+    proposed_snapshot, proposed_texts = _snapshot_projection(
+        root, proposed_classification_registry, proposed_blobs
+    )
+    work105_consumed_paths = finite_work105_form_cutover_paths(
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_registry=base_registry_raw,
+        proposed_registry=proposed_registry_raw,
+        base_documents=base_snapshot,
+        proposed_documents=proposed_snapshot,
+    )
     archive_consumed_paths = finite_archive_cutover_paths(
         mode=mode,
         base_commit=base_commit,
@@ -2257,7 +2788,9 @@ def _evaluate_comparison(
                 base_harness=base_harness,
                 proposed_harness=proposed_harness,
             )
-    consumed_paths = archive_consumed_paths | agent_consumed_paths
+    consumed_paths = (
+        work105_consumed_paths | archive_consumed_paths | agent_consumed_paths
+    )
 
     def consume_finite_cutover(
         diagnostics: Sequence[LifecycleDiagnostic],
@@ -2282,12 +2815,6 @@ def _evaluate_comparison(
                 base_mode=mode,  # type: ignore[arg-type]
             )
         )
-    base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs
-    )
-    proposed_snapshot, proposed_texts = _snapshot_projection(
-        root, proposed_classification_registry, proposed_blobs
-    )
     evidence = evidence_context_factory(
         proposed_classification_registry,
         base_snapshot,
@@ -2341,7 +2868,7 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     refs = (args.from_ref, args.base_ref, args.to_ref)
     if args.self_test:
         if (
-            args.mode is not None
+            args.mode != "strict"
             or any(ref is not None for ref in refs)
             or args.include_path
         ):
@@ -2349,7 +2876,9 @@ def _validate_arguments(args: argparse.Namespace) -> None:
         return
     if args.mode is None:
         raise InvocationError("--mode is required unless --self-test is selected")
-    if args.mode in {"staged", "snapshot"} and any(ref is not None for ref in refs):
+    if args.mode in {"strict", "staged", "snapshot"} and any(
+        ref is not None for ref in refs
+    ):
         raise InvocationError(f"{args.mode} mode forbids ref flags")
     if args.mode == "ci" and (
         args.base_ref is None or args.to_ref is None or args.from_ref is not None
@@ -2364,7 +2893,11 @@ def _validate_arguments(args: argparse.Namespace) -> None:
 def _parser() -> ArgumentParser:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
-    parser.add_argument("--mode", choices=("staged", "ci", "explicit-ref", "snapshot"))
+    parser.add_argument(
+        "--mode",
+        choices=("strict", "staged", "ci", "explicit-ref", "snapshot"),
+        default="strict",
+    )
     parser.add_argument("--from-ref")
     parser.add_argument("--base-ref")
     parser.add_argument("--to-ref")
@@ -2546,6 +3079,12 @@ def _evidence_target_path(
     profile_id: str, predicate_id: str, case_index: int
 ) -> PurePosixPath:
     if predicate_id == "complete-product-program":
+        if profile_id == "sdlc/srs":
+            return PurePosixPath("docs/01.requirements/srs-006-evidence-fixture.md")
+        if profile_id == "sdlc/interface":
+            return PurePosixPath(
+                "docs/01.requirements/ifc-006-evidence-fixture.md"
+            )
         return PurePosixPath("docs/01.requirements/006-evidence-fixture.md")
     if profile_id == "sdlc/plan":
         return PurePosixPath(
@@ -2589,6 +3128,7 @@ def _evidence_case_context(
     primary_evidence: list[PurePosixPath] = []
     pair_paths: tuple[PurePosixPath, PurePosixPath] | None = None
     spec_identity: PurePosixPath | None = None
+    program_owner_path: PurePosixPath | None = None
 
     if predicate_id == "accept-architecture":
         adr = add(
@@ -2605,6 +3145,16 @@ def _evidence_case_context(
         program = next(
             program for program in registry.program_lineage if program.prd_id == "006"
         )
+        program_owner = target_path
+        if profile_id != "sdlc/prd":
+            program_owner = add(
+                PurePosixPath("docs/01.requirements/006-evidence-fixture.md"),
+                "sdlc/prd",
+                "active",
+            )
+            relationships[target_path].append(program_owner)
+            relationships[program_owner].append(target_path)
+        program_owner_path = program_owner
         relation_paths: list[PurePosixPath] = []
         for relation in (*program.tranches, *program.follow_ups):
             relation_path = add(
@@ -2615,7 +3165,7 @@ def _evidence_case_context(
                 "done",
             )
             relation_paths.append(relation_path)
-        relationships[target_path].extend(relation_paths)
+        relationships[program_owner].extend(relation_paths)
         primary_evidence.extend(relation_paths)
     elif predicate_id in {
         "activate-execution-pair",
@@ -2630,7 +3180,6 @@ def _evidence_case_context(
             if profile_id
             in {
                 "sdlc/spec",
-                "sdlc/api-spec",
                 "sdlc/agent-design",
                 "sdlc/data-model",
                 "sdlc/tests",
@@ -2678,7 +3227,7 @@ def _evidence_case_context(
             table_targets[task].append(target_path)
     else:
         if predicate_id in {"activate-heading-profile", "accept-decision-self"}:
-            support_profile = "sdlc/ard" if profile_id == "sdlc/adr" else "sdlc/spec"
+            support_profile = "sdlc/ad" if profile_id == "sdlc/adr" else "sdlc/spec"
             support = add(
                 PurePosixPath(
                     f"docs/__lifecycle_evidence__/{case_index:02d}-support.md"
@@ -2753,8 +3302,9 @@ def _evidence_case_context(
                 ]
         elif predicate_id == "complete-product-program" and primary_evidence:
             removed = primary_evidence[-1]
-            relationships[target_path] = [
-                path for path in relationships[target_path] if path != removed
+            owner = program_owner_path or target_path
+            relationships[owner] = [
+                path for path in relationships[owner] if path != removed
             ]
         elif predicate_id == "accept-architecture" and primary_evidence:
             removed = primary_evidence[0]
@@ -2853,7 +3403,7 @@ def _evidence_case_context(
                 "sdlc/spec",
                 "done",
             )
-            relationships[target_path].append(duplicate)
+            relationships[program_owner_path or target_path].append(duplicate)
         elif relationships.get(target_path):
             relationships[target_path].append(relationships[target_path][0])
         else:
@@ -3073,16 +3623,12 @@ def _fixture_document_text(
                     (
                         _fixture_link(
                             owner,
-                            PurePosixPath(
-                                "docs/04.execution/plans/2099-01-01-example.md"
-                            ),
+                            execution_spec.with_name("plan.md"),
                             "Plan backlink",
                         ),
                         _fixture_link(
                             owner,
-                            PurePosixPath(
-                                "docs/04.execution/tasks/2099-01-01-example.md"
-                            ),
+                            execution_spec.with_name("tasks.md"),
                             "Task backlink",
                         ),
                     )
@@ -3107,7 +3653,7 @@ def _fixture_document_text(
             body_parts.append(
                 "| Spec criterion | Work package | Expected Task |\n"
                 "| --- | --- | --- |\n"
-                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](../tasks/2099-01-01-example.md) |"
+                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](tasks.md) |"
             )
         elif profile_id == "sdlc/task":
             spec_link = _fixture_link(
@@ -3117,7 +3663,7 @@ def _fixture_document_text(
                 "| Criterion / work item | Result | Evidence |\n"
                 "| --- | --- | --- |\n"
                 f"| {_fixture_link(PurePosixPath(path), execution_spec, 'FIX-001')} | Verified | {spec_link} |\n"
-                f"| [FIX-002](../plans/2099-01-01-example.md) | Verified | {spec_link} |"
+                f"| [FIX-002](plan.md) | Verified | {spec_link} |"
             )
     body = "\n\n".join(body_parts)
     return (
@@ -3204,11 +3750,11 @@ def _write_architecture_evidence_pair(
     linked: bool,
 ) -> tuple[str, str]:
     ard_path = PurePosixPath(
-        "docs/02.architecture/requirements/0900-evidence-fixture.md"
+        "docs/02.architecture/descriptions/ad-0900-evidence-fixture.md"
     )
     adr_path = PurePosixPath("docs/02.architecture/decisions/0900-evidence-fixture.md")
     documents = {
-        ard_path: LifecycleDocument(ard_path, "sdlc/ard", ard_status),
+        ard_path: LifecycleDocument(ard_path, "sdlc/ad", ard_status),
         adr_path: LifecycleDocument(adr_path, "sdlc/adr", adr_status),
     }
     snapshot_profiles = MappingProxyType(
@@ -3469,14 +4015,14 @@ def _git_case(
     }:
         _write_fixture_document(
             root,
-            "docs/04.execution/plans/2099-01-01-example.md",
+            ready_spec_path.with_name("plan.md").as_posix(),
             "sdlc/plan",
             "active",
             execution_spec_path=ready_spec_path,
         )
         _write_fixture_document(
             root,
-            "docs/04.execution/tasks/2099-01-01-example.md",
+            ready_spec_path.with_name("tasks.md").as_posix(),
             "sdlc/task",
             "active",
             execution_spec_path=ready_spec_path,
@@ -3484,9 +4030,9 @@ def _git_case(
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-paired-create-blocked-spec":
-        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
-        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
         assert blocked_spec_path is not None
+        plan_path = blocked_spec_path.with_name("plan.md").as_posix()
+        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
         _write_fixture_document(
             root,
             plan_path,
@@ -3504,9 +4050,9 @@ def _git_case(
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
     elif name == "staged-paired-create-split-spec":
-        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
-        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
         assert blocked_spec_path is not None
+        plan_path = ready_spec_path.with_name("plan.md").as_posix()
+        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
         _write_fixture_document(
             root,
             plan_path,
@@ -3913,6 +4459,8 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         "includePathCases",
         "evidenceCases",
         "archiveCutoverCases",
+        "work105FormCutoverCases",
+        "work105DecisionEvidenceCases",
         "snapshotCase",
     }
     if set(fixture) != expected_root_keys:
@@ -3970,6 +4518,16 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
             EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES,
             {"name", "mode", "mutation", "expectedAdmittedCount"},
         ),
+        (
+            "work105FormCutoverCases",
+            EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES,
+            {"name", "mode", "mutation", "expectedAdmittedCount"},
+        ),
+        (
+            "work105DecisionEvidenceCases",
+            EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES,
+            {"name", "mutation", "expectedUnresolvedCount"},
+        ),
     )
     for group_name, expected_names, expected_keys in group_contracts:
         cases = fixture.get(group_name)
@@ -4025,7 +4583,13 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                 expected_rules = case.get("expectedRuleIds")
                 if not _is_rule_id_list(expected_rules):
                     failures.append(f"argumentCases rule IDs differ: {case_name}")
-                elif expected_rules != ["LIFECYCLE-BASE"]:
+                elif (
+                    expected_rules != ["LIFECYCLE-BASE"]
+                    and not (
+                        case_name == "invalid-mode"
+                        and expected_rules == []
+                    )
+                ):
                     failures.append(f"argumentCases base rule differs: {case_name}")
                 expected_base_mode = case.get("expectedBaseMode")
                 if not isinstance(
@@ -4036,7 +4600,10 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                     "explicit-ref",
                     "snapshot",
                     "unknown",
+                    "argparse",
                 }:
+                    failures.append(f"argumentCases base mode differs: {case_name}")
+                elif case_name != "invalid-mode" and expected_base_mode == "argparse":
                     failures.append(f"argumentCases base mode differs: {case_name}")
             elif group_name == "includePathCases":
                 if not _is_string_list(case.get("values"), nonempty=True):
@@ -4057,6 +4624,39 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                     )
                 if case.get("expectedAdmittedCount") not in {0, 33}:
                     failures.append(f"archiveCutoverCases count differs: {case_name}")
+            elif group_name == "work105FormCutoverCases":
+                if case.get("mode") not in {
+                    "staged",
+                    "ci",
+                    "snapshot",
+                    "explicit-ref",
+                }:
+                    failures.append(
+                        f"work105FormCutoverCases mode differs: {case_name}"
+                    )
+                if (
+                    case.get("mutation")
+                    not in EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS
+                ):
+                    failures.append(
+                        f"work105FormCutoverCases mutation differs: {case_name}"
+                    )
+                if case.get("expectedAdmittedCount") not in {0, 23}:
+                    failures.append(
+                        f"work105FormCutoverCases count differs: {case_name}"
+                    )
+            elif group_name == "work105DecisionEvidenceCases":
+                if (
+                    case.get("mutation")
+                    not in EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS
+                ):
+                    failures.append(
+                        f"work105DecisionEvidenceCases mutation differs: {case_name}"
+                    )
+                if case.get("expectedUnresolvedCount") not in {0, 1, 2}:
+                    failures.append(
+                        f"work105DecisionEvidenceCases count differs: {case_name}"
+                    )
 
     admission_cases = fixture.get("admissionCases")
     if not isinstance(admission_cases, list):
@@ -4182,10 +4782,10 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         failures.append("fixture evidence edge projection contains duplicates")
     if evidence_projection != production_evidence_projection:
         failures.append("fixture evidence edge projection differs from production")
-    if len(evidence_projection) != 42 or len(registry.evidence_predicates) != 11:
-        failures.append("production evidence inventory is not 42 edges/11 predicates")
-    if len({item[0] for item in evidence_projection}) != 19:
-        failures.append("production evidence profile inventory is not 19")
+    if len(evidence_projection) != 44 or len(registry.evidence_predicates) != 11:
+        failures.append("production evidence inventory is not 44 edges/11 predicates")
+    if len({item[0] for item in evidence_projection}) != 20:
+        failures.append("production evidence profile inventory is not 20")
     return failures
 
 
@@ -4225,6 +4825,29 @@ def _fixture_mutation_probe_failures(
         if case["name"] != "partial-record-set"
     ]
     probes.append(("missing archive cutover denial", missing_archive_cutover))
+
+    missing_work105_cutover = copy.deepcopy(fixture)
+    missing_work105_cutover["work105FormCutoverCases"] = [
+        case
+        for case in missing_work105_cutover["work105FormCutoverCases"]
+        if case["name"] != "wrong-proposed-registry-oid"
+    ]
+    probes.append(("missing WORK-105 form cutover denial", missing_work105_cutover))
+
+    missing_work105_decision_evidence = copy.deepcopy(fixture)
+    missing_work105_decision_evidence["work105DecisionEvidenceCases"] = [
+        case
+        for case in missing_work105_decision_evidence[
+            "work105DecisionEvidenceCases"
+        ]
+        if case["name"] != "extra-unresolved"
+    ]
+    probes.append(
+        (
+            "missing WORK-105 decision evidence denial",
+            missing_work105_decision_evidence,
+        )
+    )
 
     duplicate_case = copy.deepcopy(fixture)
     duplicate_case["gitCases"].append(copy.deepcopy(duplicate_case["gitCases"][0]))
@@ -4712,9 +5335,9 @@ def _ambiguous_base_edge_failures(
                     f"evidence {case['name']}/ambiguous-base: "
                     f"resolver calls {resolver_calls}"
                 )
-    if invoked_edges != expected_edges or len(set(invoked_edges)) != 42:
+    if invoked_edges != expected_edges or len(set(invoked_edges)) != 44:
         failures.append(
-            "ambiguous-base did not invoke the exact 42 unique profile/state edges"
+            "ambiguous-base did not invoke the exact 44 unique profile/state edges"
         )
     return failures
 
@@ -4723,7 +5346,7 @@ def _evidence_assertion_run(
     registry: Registry,
     evidence_cases: Sequence[Mapping[str, object]],
 ) -> tuple[list[dict[str, object]], list[str], list[str]]:
-    """Build the exact 504-case diagnostic projection for one lineage state."""
+    """Build the exact 528-case diagnostic projection for one lineage state."""
 
     projection: list[dict[str, object]] = []
     ambiguous_controls: list[str] = []
@@ -4873,13 +5496,13 @@ def _run_self_test(root: Path) -> list[str]:
         evidence_assertion_failures,
     ) = _evidence_assertion_run(evidence_registry, evidence_cases)
     failures.extend(evidence_assertion_failures)
-    if len(ambiguous_edge_controls) != 42 or len(set(ambiguous_edge_controls)) != 42:
-        failures.append("ambiguous-base edge projection is not exactly 42 unique edges")
+    if len(ambiguous_edge_controls) != 44 or len(set(ambiguous_edge_controls)) != 44:
+        failures.append("ambiguous-base edge projection is not exactly 44 unique edges")
     evidence_assertion_sha256 = _evidence_assertion_sha256(
         evidence_assertion_projection
     )
     if (
-        len(evidence_assertion_projection) != 504
+        len(evidence_assertion_projection) != 528
         or evidence_assertion_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
     ):
         failures.append(
@@ -4918,10 +5541,10 @@ def _run_self_test(root: Path) -> list[str]:
             )
         rollover_sha256 = _evidence_assertion_sha256(rollover_projection)
         if (
-            len(rollover_projection) != 504
+            len(rollover_projection) != 528
             or rollover_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
-            or len(rollover_controls) != 42
-            or len(set(rollover_controls)) != 42
+            or len(rollover_controls) != 44
+            or len(set(rollover_controls)) != 44
         ):
             failures.append(
                 f"rollover {ready_spec_id}: evidence exact assertion projection "
@@ -4984,6 +5607,28 @@ def _run_self_test(root: Path) -> list[str]:
             failures.append(
                 f"archive cutover {case['name']}: expected admitted count "
                 f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
+    for case in fixture.get("work105FormCutoverCases", []):
+        admitted = finite_work105_form_cutover_paths(
+            **_work105_form_cutover_fixture_inputs(
+                root, case["mode"], case["mutation"]
+            )
+        )
+        if len(admitted) != case["expectedAdmittedCount"]:
+            failures.append(
+                f"WORK-105 form cutover {case['name']}: expected admitted count "
+                f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
+    for case in fixture.get("work105DecisionEvidenceCases", []):
+        unresolved = _work105_predecessor_unresolved_links(
+            **_work105_decision_evidence_fixture_inputs(root, case["mutation"])
+        )
+        if len(unresolved) != case["expectedUnresolvedCount"]:
+            failures.append(
+                f"WORK-105 decision evidence {case['name']}: expected unresolved "
+                f"count {case['expectedUnresolvedCount']}, actual {len(unresolved)}"
             )
 
     for mutation in AGENT_ROSTER_CUTOVER_MUTATIONS:
@@ -5090,13 +5735,24 @@ def _run_self_test(root: Path) -> list[str]:
         stdout = io.StringIO()
         stderr = io.StringIO()
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            actual_exit = main(["--root", str(root), *case["argv"]])
+            try:
+                actual_exit = main(["--root", str(root), *case["argv"]])
+            except SystemExit as exc:
+                actual_exit = int(exc.code) if isinstance(exc.code, int) else 2
         if actual_exit != case["expectedExit"]:
             failures.append(
                 f"argument {case['name']}: expected exit {case['expectedExit']}, actual {actual_exit}"
             )
         error_line = stderr.getvalue().strip()
-        if (
+        if case["expectedBaseMode"] == "argparse":
+            if (
+                not error_line.startswith("usage:")
+                or "invalid choice" not in error_line
+            ):
+                failures.append(
+                    f"argument {case['name']}: argparse diagnostic differs"
+                )
+        elif (
             not error_line.startswith("FAIL LIFECYCLE-BASE . ")
             or f"base_mode={json.dumps(case['expectedBaseMode'])}" not in error_line
             or "profile=" not in error_line
@@ -5171,6 +5827,8 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + len(fixture["argumentCases"])
             + len(fixture["includePathCases"])
             + len(fixture["archiveCutoverCases"])
+            + len(fixture["work105FormCutoverCases"])
+            + len(fixture["work105DecisionEvidenceCases"])
             + len(AGENT_ROSTER_CUTOVER_MUTATIONS)
             + len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)
             + 1
@@ -5188,6 +5846,8 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             f"{len(fixture['argumentCases'])} arguments, "
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
             f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
+            f"{len(fixture['work105FormCutoverCases'])} WORK-105 form cutovers, "
+            f"{len(fixture['work105DecisionEvidenceCases'])} WORK-105 decision evidence cases, "
             f"{len(AGENT_ROSTER_CUTOVER_MUTATIONS)} agent roster cutovers, "
             f"{len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)} agent contract "
             "blob controls, "
@@ -5202,10 +5862,11 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
     if args.mode == "snapshot":
         diagnostics = _evaluate_snapshot(root, registry, include_paths)
     else:
+        comparison_mode = "staged" if args.mode == "strict" else args.mode
         diagnostics = _evaluate_comparison(
             root,
             registry,
-            mode=args.mode,
+            mode=comparison_mode,
             from_ref=args.from_ref,
             base_ref=args.base_ref,
             to_ref=args.to_ref,
@@ -5223,7 +5884,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     error_mode = "unknown"
     try:
         args = _parser().parse_args(argv)
-        if args.mode in {"staged", "ci", "explicit-ref", "snapshot"}:
+        if args.mode in {"strict", "staged", "ci", "explicit-ref", "snapshot"}:
             error_mode = args.mode
         _validate_arguments(args)
         root = Path(args.root).resolve()

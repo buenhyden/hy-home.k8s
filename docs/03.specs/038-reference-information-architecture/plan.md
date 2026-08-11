@@ -997,7 +997,7 @@ restoring the observation, generator, or owner relation it protects.
 - **Spec**: [Reference Information Architecture](spec.md)
 - **Task**: [Reference Information Architecture Task](tasks.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **Current research**: `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 

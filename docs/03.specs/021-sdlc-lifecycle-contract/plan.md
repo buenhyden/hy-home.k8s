@@ -118,7 +118,7 @@ rules in topic-specific prose:
 
 ```text
 PRD: draft -> active -> done | archived
-ARD/ADR: draft -> active -> accepted | archived
+AD/ADR: draft -> active -> accepted | archived
 Spec: draft -> active -> done | archived
 Plan/Task: draft -> active -> done | archived
 Operations: draft -> active -> accepted | archived

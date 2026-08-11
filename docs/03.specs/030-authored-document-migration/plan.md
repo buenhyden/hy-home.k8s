@@ -246,7 +246,7 @@ support_paths = {
     'docs/99.templates/support/template-routing.md',
 }
 adm003 = {path for path in debt_paths if path.startswith((
-    'docs/01.requirements/', 'docs/02.architecture/requirements/',
+    'docs/01.requirements/', 'docs/',
     'docs/02.architecture/decisions/', 'docs/03.specs/',
 ))}
 adm004 = {path for path in debt_paths if path.startswith((
@@ -788,7 +788,7 @@ item return atomically.
 **Files:**
 
 - Modify: non-README Markdown under `docs/01.requirements/`
-- Modify: non-README Markdown under `docs/02.architecture/requirements/`
+- Modify: non-README Markdown under `docs/02.architecture/descriptions/`
 - Modify: non-README Markdown under `docs/02.architecture/decisions/`
 - Modify: `spec.md`, `agent-design.md`, `api-spec.md`, `data-model.md`, and `tests.md` under `docs/03.specs/`
 - Modify: durable migration ledger
@@ -854,7 +854,7 @@ debt = json.loads(pathlib.Path('_workspace/adm-003-debt-removals.json').read_tex
 selected = set(debt['documentPaths'])
 eligible = set(subprocess.check_output([
     'git', 'ls-files', 'docs/01.requirements',
-    'docs/02.architecture/requirements', 'docs/02.architecture/decisions',
+    'docs/02.architecture/descriptions', 'docs/02.architecture/decisions',
     'docs/03.specs',
 ], text=True).splitlines())
 excluded = {p for p in eligible if pathlib.PurePosixPath(p).name == 'README.md'}
@@ -898,12 +898,12 @@ assert not [d for d in data['diagnostics'] if d['path'] in paths]
 PY
 ```
 
-- [x] **Step 3: Transform PRD and ARD batches**
+- [x] **Step 3: Transform PRD and AD batches**
 
 Apply exact key order and family state domain, retain topic-specific requirements,
 merge duplicate opening intent, and move all upstream/downstream relationships
 to the profile-owned Traceability section. For each `documents-*.nul` manifest
-containing PRD/ARD paths,
+containing PRD/AD paths,
 edit only those at-most-five paths, update their ledger rows, run the
 compatibility validator on each exact path, and mark that 2–5 minute checkpoint
 complete before opening the next manifest.
@@ -2948,7 +2948,7 @@ removed migration debt.
 ## Traceability
 
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- [Operating Model AD](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - [Authored Migration Spec](spec.md)
 - [Authored Migration Task](tasks.md)
 - [Semantic Validation Plan](../029-semantic-document-validation/plan.md)

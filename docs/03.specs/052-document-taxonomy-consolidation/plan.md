@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-11
+updated: 2026-08-12
 ---
 
 # Document Taxonomy Consolidation Implementation Plan
@@ -46,9 +46,10 @@ contracts.
   frontmatter; terminal path dates are limited to Stage 90 observations/snapshots
   and actual Incident/Postmortem identity. WORK-107 removes dates and years from
   terminal Stage 98 paths through the reviewed 93-row migration ledger.
-- Existing identifiers are immutable. ADR-0023 replaces ADR-0021 only as the
-  machine decision associated with PRD-008/ARD-0011/Spec-052; ADR-0021 itself
-  and its original program scope remain accepted and unchanged.
+- Existing identifiers are immutable. ADR-0024 is the current machine decision
+  associated with PRD-008/AD-0011/Spec-052 after WORK-105 acceptance;
+  ADR-0023 remains the accepted transition predecessor, while ADR-0021 and its
+  original program scope remain accepted and unchanged.
 - Embedded Stage 98 payload and provenance bytes are immutable. WORK-107 may
   rehome the 93 outer records only through the schema-versioned 93-to-93 ledger,
   old-envelope proof, and dual recovery evidence approved by ADR-0024. No
@@ -107,7 +108,7 @@ The design baseline is commit `14a0a75c`. At that commit the live corpus has:
 - an approximately 14,900-line shared progress ledger.
 
 The existing registry routes Plans and Tasks only through date-prefixed Stage
-04 patterns. PRD-008/ARD-0011/Spec-052 currently names accepted ADR-0021 even
+04 patterns. PRD-008/AD-0011/Spec-052 currently names accepted ADR-0021 even
 though ADR-0021 owns a different program. ADR-0023 is the human-approved
 decision and is promoted through `draft -> active -> accepted`, never directly
 from draft to accepted.
@@ -141,7 +142,7 @@ explicit Task 2 work and are not terminal waivers.
 
 ## Non-Goals & Out-of-Scope
 
-- Renumbering Stage 05 or any PRD, ARD, ADR, or Spec identifier.
+- Renumbering Stage 05 or any PRD, AD, ADR, or Spec identifier.
 - Editing an existing ArchiveEnvelope or historical Stage 90 claim.
 - Creating Release, tutorial, or explanation document families.
 - Merging Spec, Plan, and Task bodies into one Markdown document.
@@ -162,10 +163,10 @@ explicit Task 2 work and are not terminal waivers.
 | WORK-103 | Archive the 50 unmatched execution documents. | Complete | `0b53e9a1` plus archive hardening through `a3cc852f`; 93 records and prior-envelope immutability proved. |
 | WDTC-AMEND-001 | Approve the terminal AD, artifact-ID, Stage 98, and script-closure design before the move. | Complete | `1452dbfd` through `446e336a`; Spec 052 and ADR-0024 close WORK-105 through WORK-115. |
 | WORK-104 | Move the exact 82 current Plan/Task sources, repair consumers, and rebaseline this destination pair. | Complete | Move apply reported `phase=move moves=82 archives=50 sources=132`; 41/41 siblings, three Stage 04 READMEs, strict transition registry, Markdown, and links/owners passed. |
-| WORK-105 | Activate the AD route and Stage 99 core forms; convert exactly ARD-0004..0011 to AD-0004..0011; close all ARD and authored API Spec consumers; perform the separate AD-0011/ADR-0024/projection authority gate. | Queued | Exact eight-record census, zero current/unclassified consumers, retired-route negatives, native-contract preservation, and atomic acceptance. |
+| WORK-105 | Activate the AD route and Stage 99 core forms; convert exactly ARD-0004..0011 to AD-0004..0011; close all legacy ARD and authored API Spec consumers; perform the separate AD-0011/ADR-0024/projection authority gate. | Complete | Exact eight-record census, zero current/unclassified legacy consumers, retired-route negatives, native-contract preservation, atomic ADR-0024 acceptance, strict-cutover 31/31, lifecycle 754, archive cutover 31/31, RIA 94/94, and aggregate PASS. |
 | WORK-106 | Implement global artifact-identity and migration-ledger transition validators and negative fixtures. | Queued | Namespace selection, uniqueness, path/frontmatter equality, ledger action/replacement, and recovery negatives. |
 | WORK-107 | Rehome all 93 Stage 98 records under the stable grammar. | Queued | WORK-105 accepted; exact 93-to-93 ledger, unique targets, immutable payload/provenance, old-envelope proof, and dual recovery. |
-| WORK-108 | Backfill mandatory outer `artifact_id` values after the complete AD conversion. | Queued | WORK-105 accepted; global uniqueness and mandatory/prohibited profile parity, including AD-0004..0011. |
+| WORK-108 | Backfill mandatory outer `artifact_id` values after WORK-107 stable rehome and the complete AD conversion. | Queued | WORK-107 green and WORK-105 accepted; global uniqueness and mandatory/prohibited profile parity, including AD-0004..0011. |
 | WORK-109 | Consolidate document authority and activate terminal routes. | Queued | Three disjoint prose/machine owners, Stage 04 absent, Stage 05 stable, date-free mutable routes, and terminal negatives. |
 | WORK-110 | Consolidate workspace AI-agent governance contracts and projections. | Queued | Closed risk/trust/oversight/approval/trace/evaluation/provenance shapes with non-promotable evidence. |
 | WORK-111 | Reconcile the complete 50-row script disposition ledger. | Queued | Every script has reviewed rule, consumer, argument, diagnostic, fixture, evidence, and recovery disposition. |
@@ -338,8 +339,9 @@ meanings; it does not rewrite the frozen pre-move evidence.
    unstaged changes; they do not run controller-owned all-files validation or
    create commits unless explicitly delegated.
 4. Never edit embedded Stage 98 payloads, Stage 90 observation bodies, Stage 05
-   content, credentials, remote state, or live infrastructure. Do not create a
-   Release-family artifact.
+   topology, identifiers, or operational meaning, credentials, remote state,
+   or live infrastructure. Stage 05 link-label/path bytes may change only for
+   the seven reviewed AD-0007 repairs. Do not create a Release-family artifact.
 5. Commands operate from the repository root, use explicit paths, and may not
    use broad reset, checkout, recursive deletion, unreviewed glob mutation, or
    unpinned external execution.
@@ -351,7 +353,7 @@ meanings; it does not rewrite the frozen pre-move evidence.
 | WORK-105 | WORK-104 focused and aggregate evidence accepted. | Eight ADs and all current consumers converted; API Spec retirement gates independent and complete; ADR-0024 authority accepted atomically. |
 | WORK-106 | WORK-105 accepted. | Artifact-ID and 14-field ledger validators reject every closed negative case. |
 | WORK-107 | WORK-106 green and WORK-105 acceptance present. | 93 unique stable records, exact grouping/tombstone census, immutable payload/provenance and recovery proof. |
-| WORK-108 | Full WORK-105 AD conversion accepted. | Every mandatory outer record has its exact unique ID and excluded surfaces have none. |
+| WORK-108 | WORK-107 green and the full WORK-105 AD conversion accepted. | Every mandatory outer record has its exact unique ID and excluded surfaces have none. |
 | WORK-109 | WORK-107/108 green. | Terminal document authority/routes active; Stage 04 absent and Stage 05 unchanged. |
 | WORK-110 | WORK-109 green. | Agent-governance contracts and projections are complete without runtime promotion. |
 | WORK-111 | Current 50-script inventory exact. | Complete reviewed semantic disposition ledger. |
@@ -368,7 +370,7 @@ meanings; it does not rewrite the frozen pre-move evidence.
 | WORK-102 | migration unit tests, route fixtures, `132/82/50` check | strict transition registry and aggregate PASS |
 | WORK-103 | archive validation/cutover/recovery, prior-envelope byte diff | 93-record index and aggregate PASS |
 | WORK-104 | exact source/target inventory, 41/41 siblings, three Stage 04 files, Markdown, links/owners | staged/affected/index/aggregate gates; controller all-files is separately owned |
-| WORK-105 | eight-AD census, complete ARD/API-Spec classifiers, atomic authority fixtures | strict transition/terminal document gates |
+| WORK-105 | eight-AD census, complete AD/API-Spec classifiers, atomic authority fixtures | strict transition/terminal document gates |
 | WORK-106 | artifact-ID and ledger positive/negative fixtures | registry, lifecycle, archive, aggregate gates |
 | WORK-107 | 93-to-93 ledger, old-envelope/payload/recovery checks | terminal archive and aggregate gates |
 | WORK-108 | path-derived ID and global uniqueness fixtures | strict terminal registry/lifecycle gates |
@@ -403,7 +405,7 @@ scope and are never inferred from these checks.
 - WORK-100 through WORK-104 and `WDTC-AMEND-001` retain their factual commit,
   manifest, archive, and move evidence.
 - Terminal active forms use PRD/SRS/Interface Requirement, AD/ADR, and Stage 03
-  sibling work units; no ARD/RFC/authored API Spec or live Stage 04 route remains.
+  sibling work units; no legacy ARD/RFC/authored API Spec or live Stage 04 route remains.
 - Every mandatory outer artifact has one globally unique path-derived ID and
   every prohibited surface has none.
 - The 93 current Stage 98 records have unique stable destinations, immutable
@@ -425,9 +427,9 @@ scope and are never inferred from these checks.
 - **Program requirement**:
   [PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [ARD-0011](../../02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md)
+  [AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
 - **Decision**:
-  [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
+  [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Specification**:
   [Spec 052](spec.md)
 - **Execution evidence**:
@@ -449,7 +451,7 @@ scope and are never inferred from these checks.
 | [VAL-WDTC-010](spec.md#success-criteria--verification-plan) | WORK-101, WORK-114, WORK-115 | [Baseline repair and final fixed-point results](tasks.md) |
 | [VAL-WDTC-011](spec.md#success-criteria--verification-plan) | WORK-115 | [Specs 047-051 status and resumption handoff](tasks.md) |
 | [VAL-WDTC-012](spec.md#success-criteria--verification-plan) | All work | [Repository-static evidence classification](tasks.md) |
-| [VAL-WDTC-013](spec.md#success-criteria--verification-plan) | WORK-105 | [AD/ARD/API-Spec complete consumer disposition](tasks.md) |
+| [VAL-WDTC-013](spec.md#success-criteria--verification-plan) | WORK-105 | [Eight-AD and authored API Spec complete consumer disposition](tasks.md) |
 | [VAL-WDTC-014](spec.md#success-criteria--verification-plan) | WORK-106, WORK-108 | [Global mandatory/prohibited artifact-ID results](tasks.md) |
 | [VAL-WDTC-015](spec.md#success-criteria--verification-plan) | WORK-106, WORK-107 | [93-row stable archive migration ledger](tasks.md) |
 | [VAL-WDTC-016](spec.md#success-criteria--verification-plan) | WORK-111, WORK-112, WORK-114 | [50-row disposition and exact 49/47 censuses](tasks.md) |

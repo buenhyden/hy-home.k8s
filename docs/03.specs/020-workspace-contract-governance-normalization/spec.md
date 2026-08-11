@@ -425,7 +425,7 @@ Expected notes:
 - **PRD**: No dedicated PRD exists for this repository governance
   normalization. The approved user request and current Stage 00/99 contracts
   are the controlling inputs.
-- **ARD**: No new architecture requirement is required because this is a
+- **AD**: No new architecture requirement is required because this is a
   documentation and validation governance change.
 - **Related ADRs**: Not applicable.
 - **Template contracts**:

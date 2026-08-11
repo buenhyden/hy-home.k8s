@@ -69,16 +69,16 @@ EXPECTED_PREDECESSORS = (
         "docs/01.requirements/003-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "56f19c27-2052da00-a2f5428c-80a2388d-f2fc2e14".replace("-", ""),
-        "1b696204-f94d6632-7bf6241b-00c64a36-e9580176-9f884c8e-2ed00de2-2838fbe8".replace(
+        "ebb121d6-d12c0953-25229995-00539332-5d5db2d0-cd655542-7c07a81f-2efae756".replace(
             "-", ""
         ),
     ),
     (
         "ard-0006",
-        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "27bfa256-33d94bd3-dc92c95c-d8937ec6-efd875d7-c4e5f1f1-ead87d1c-eeae66f2".replace(
+        "40018788-f2346828-17b59aa0-8182af64-55210866-31b7df73-62969b4d-cddd07cb".replace(
             "-", ""
         ),
     ),
@@ -96,7 +96,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/038-reference-information-architecture/spec.md",
         "done",
         "git-sha1:" + "f8ad39de-4017e399-df26625f-e72ec972-04dce88e".replace("-", ""),
-        "63476cf6-3914c3ea-ec2d4a44-9d2db270-2f194ecd-ade59e0f-eceb39fc-b1c43a5f".replace(
+        "c837ac3b-5ddaf86a-b5c5257d-0a03b9f6-2ade23ed-fd8b97c6-62077301-013dfcec".replace(
             "-", ""
         ),
     ),
@@ -105,7 +105,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/039-github-ci-qa-evidence/spec.md",
         "done",
         "git-sha1:" + "11a020d9-b299ae91-b7af9278-c22ed89f-fccb5cfc".replace("-", ""),
-        "1a1ea7a1-e457aa3c-e48d5731-374612fa-0ac89370-d27e2a75-9af55218-284bad85".replace(
+        "aeb0e6bd-0ccf61fb-eb2c8938-686e9d74-f481a7a2-4a1a66c7-817ddf2d-cd9fb2d5".replace(
             "-", ""
         ),
     ),
@@ -114,7 +114,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/040-contract-cutover-and-program-closure/spec.md",
         "done",
         "git-sha1:" + "4335ea60-76a68fe0-bbed3526-a21b92a3-9180faa7".replace("-", ""),
-        "c98e2755-5943ef5b-b310ed39-f1fc11b2-30d3c7f4-c2c43072-c88aa5e4-ed390b52".replace(
+        "e3655def-e888dc39-835281a1-98027ef8-836aeb0e-ec3c7be7-0ae6804b-1800085a".replace(
             "-", ""
         ),
     ),
@@ -123,7 +123,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
         "done",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "bc5f7cac-14466151-e90ec081-0779d98d-3b354df3-ca7a067f-4b5d3475-56f8df97".replace(
+        "222faa93-25248fec-a70f584f-9234bdca-2cc63c86-48f0f32d-0b570c5a-2c4b1106".replace(
             "-", ""
         ),
     ),
@@ -132,7 +132,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
         "done",
         "git-sha1:" + "90a7d856-98cc024e-26085ca7-caed1b01-8f78a04e".replace("-", ""),
-        "b1c41b8f-fff4578b-4ce08d44-cda3e0d7-2c085382-8b148b1f-9bb47683-62a4a1f5".replace(
+        "db582a99-c1b7887e-d2722489-f463b13a-819d1c8f-1ef28aa0-16ad2baa-3bee0c6c".replace(
             "-", ""
         ),
     ),
@@ -141,7 +141,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
         "done",
         "git-sha1:" + "a0bc3565-988e2919-80320dec-8442405c-7ef16eb6".replace("-", ""),
-        "53da23e9-8fc162d6-8a6f903d-4b2b7c7c-b3d3b083-a67d24a9-ee0f24a6-d4abd877".replace(
+        "591dd0ad-043790c5-b14d1e71-263a38fd-f9ec933f-8f8008b2-f7b8a951-2c488b03".replace(
             "-", ""
         ),
     ),
@@ -150,7 +150,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
         "done",
         "git-sha1:" + "42864832-c966744a-c4e5cf8c-28baa5bf-31ac2765".replace("-", ""),
-        "5295419b-a5bc124d-47b41f6b-b838237a-b4b3fd52-9015b0f6-cf892ac9-0c12a32b".replace(
+        "4c198fcd-15cb6142-5418dbc3-15bde986-941e7cc4-4e9eb22d-25ddbc8d-b60c0614".replace(
             "-", ""
         ),
     ),
@@ -159,7 +159,7 @@ EXPECTED_PREDECESSORS = (
         "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
         "done",
         "git-sha1:" + "de9a88e4-550b8754-2eb7221c-5ae7416f-e5075763".replace("-", ""),
-        "a88fcb77-878faa90-44740127-15164963-a4b6c8a1-eda0eb6b-d56619c2-c926fb46".replace(
+        "14d0dd68-cc90a52b-f70272e4-c3bcd8ef-7b01006c-34e7069a-6100ecd3-1b192f00".replace(
             "-", ""
         ),
     ),
@@ -537,7 +537,7 @@ def _validate_predecessors(contract: dict[str, Any]) -> list[str]:
     expected_identities = tuple((row[0], row[1]) for row in EXPECTED_PREDECESSORS)
     if identities != expected_identities:
         errors.append(
-            "predecessor criteria must equal PRD 003, ARD 0006, ADR 0019, and Specs 038-045 in order"
+            "predecessor criteria must equal PRD 003, AD 0006, ADR 0019, and Specs 038-045 in order"
         )
         return errors
     metadata = tuple(
@@ -598,7 +598,7 @@ def _validate_predecessor_sources(root: Path, contract: dict[str, Any]) -> list[
             observed_digest != expected_digest
             or row.get("evidenceSha256") != observed_digest
         ):
-            errors.append("predecessor source digest differs")
+            errors.append(f"predecessor source digest differs: {owner}")
         try:
             status = _frontmatter_status(source.decode("utf-8"))
         except UnicodeError:

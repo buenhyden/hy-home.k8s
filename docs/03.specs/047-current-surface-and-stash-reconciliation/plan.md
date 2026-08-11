@@ -61,7 +61,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
 ## Goals & In-Scope
 
 - Create and activate the reciprocal Spec 047 Plan/Task path.
-- Add PRD-007, ARD-0010, ADR-0021, and Specs 047-051 to program lineage with
+- Add PRD-007, AD-0010, ADR-0021, and Specs 047-051 to program lineage with
   Spec 047 as the first unfinished relation.
 - Update hard-coded program-lineage validator expectations and their tests.
 - Enumerate every tracked file under `.github`, `examples`, `gitops`,
@@ -159,7 +159,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   `docs: activate repository delivery decision`.
 
 - [ ] In the following program activation commit, move ADR-0021 from `active`
-  to `accepted`; change PRD-007, ARD-0010, Spec 047, this Plan, and its Task to
+  to `accepted`; change PRD-007, AD-0010, Spec 047, this Plan, and its Task to
   `active`; and update owning indexes/progress atomically using subject
   `docs: activate repository delivery program lineage`.
 
@@ -186,7 +186,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   rtk git add docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md
   rtk git commit -m "docs: activate repository delivery decision"
 
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md docs/02.architecture/requirements/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
   rtk git commit -m "docs: activate repository delivery program lineage"
   ```
 
@@ -339,7 +339,7 @@ or live readiness. Those lanes remain `DEFER`.
 - **Spec**: [Current Surface and Stash Reconciliation](spec.md)
 - **Task**: [Current Surface and Stash Reconciliation Task](tasks.md)
 - **Program**: [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Successor**: Spec 048 GitHub Routing and CI Evidence in the PRD-007 program
   lineage

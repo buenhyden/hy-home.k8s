@@ -11,7 +11,7 @@ updated: 2026-07-13
 ## Overview
 
 This document is the backfill implementation plan for connecting the existing
-ArgoCD Notifications Slack execution contract to the PRD/ARD/ADR/Spec/Task
+ArgoCD Notifications Slack execution contract to the PRD/AD/ADR/Spec/Task
 chain. It improves document traceability, Secret boundaries, and validation
 criteria without runtime changes.
 
@@ -19,14 +19,14 @@ criteria without runtime changes.
 
 ArgoCD Notifications is enabled in `infrastructure/argocd/values-local.yaml`,
 and the ConfigMap and ExternalSecret are managed through GitOps under
-`gitops/platform/argocd/`. However, the ARD/Spec/Plan/Task documents linking
+`gitops/platform/argocd/`. However, the AD/Spec/Plan/Task documents linking
 the Notifications PRD and ADR were missing, so the credential boundary and
 validation path were not traceable from `03.specs`.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Backfill the Notifications current contract into the ARD/Spec/Plan/Task chain.
+  - Backfill the Notifications current contract into the AD/Spec/Plan/Task chain.
   - Clarify the Vault/ESO security boundary for the Slack token.
   - Separate ArgoCD Notifications from Rollouts chart notifications.
 - **In Scope**:
@@ -49,7 +49,7 @@ validation path were not traceable from `03.specs`.
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Write Notifications ARD | `docs/02.architecture/requirements/0005-argo-notifications-slack.md` | REQ-PRD-FUN-01..06 | ARD includes PRD/ADR/Spec/Plan links |
+| PLN-001 | Write Notifications AD | `docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md` | REQ-PRD-FUN-01..06 | AD includes PRD/ADR/Spec/Plan links |
 | PLN-002 | Write Notifications Spec | `docs/03.specs/005-argo-notifications-slack/spec.md` | REQ-PRD-FUN-01..06 | Spec heading/template gate passes |
 | PLN-003 | Write Notifications Task | `docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md` | REQ-PRD-MET-01..05 | Task defines validation evidence |
 | PLN-004 | Update backlinks and README indexes | PRD, ADR, README, operations docs | REQ-PRD-FUN-02 | No stale gap text remains |
@@ -83,7 +83,7 @@ validation path were not traceable from `03.specs`.
 
 ## Completion Criteria
 
-- [x] ARD, Spec, Plan, Task chain exists for Notifications.
+- [x] AD, Spec, Plan, Task chain exists for Notifications.
 - [x] PRD/ADR/operations docs link to the new chain.
 - [x] README indexes include Notifications.
 - [x] Verification commands are documented for execution.
@@ -91,7 +91,7 @@ validation path were not traceable from `03.specs`.
 ## Traceability
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
-- **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md`](../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](spec.md)
 - **ADR**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **Tasks**: [`../tasks/2026-05-18-argo-notifications-slack.md`](tasks.md)

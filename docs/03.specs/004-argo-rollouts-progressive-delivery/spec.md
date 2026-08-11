@@ -116,10 +116,10 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 
 - **Agent Role**: maintenance agents statically validate repo-backed manifests
   and docs, and do not perform live promotion.
-- **Inputs**: PRD/ARD/ADR, GitOps manifests, operations policy/runbook.
+- **Inputs**: PRD/AD/ADR, GitOps manifests, operations policy/runbook.
 - **Outputs**: documentation alignment, manifest diffs, and validation
   evidence.
-- **Success Definition**: the Rollouts contract is traceable from PRD -> ARD ->
+- **Success Definition**: the Rollouts contract is traceable from PRD -> AD ->
   Spec -> Plan -> Task -> Operations.
 
 ### Tools & Tool Contract
@@ -200,7 +200,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 | [REQ-PRD-FUN-03](../../01.requirements/001-argo-rollouts-progressive-delivery.md) | VAL-SPC-005 | Static contract verification checks controller metrics port and NodePort exposure for external Prometheus. |
 
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
-- **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](plan.md)
 - **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](tasks.md)
@@ -209,5 +209,5 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 ### Related inputs
 
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
-- **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)

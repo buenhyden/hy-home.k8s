@@ -1,12 +1,12 @@
 ---
-title: 'Workspace Agent Governance Platform Architecture Reference Document'
-type: sdlc/ard
+title: 'Workspace Agent Governance Platform Architecture Description'
+type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-08-01
 ---
 
-# Workspace Agent Governance Platform Architecture Reference Document (ARD)
+# Workspace Agent Governance Platform Architecture Description (AD)
 
 ## Overview
 
@@ -167,7 +167,7 @@ runtime-readiness claim은 해당 canary PASS가 필요하다. Repository-local 
 
 ### State and integrity flow
 
-`PRD/ARD/ADR → Spec → machine contract → provider projection → static validation → authenticated
+`PRD/AD/ADR → Spec → machine contract → provider projection → static validation → authenticated
 canary/eval → CI/QA → closure` 순서를 사용한다. Specs 038–040은 이 프로그램의 문서·CI 기반을
 먼저 닫고, Specs 041–046은 contract, provider, loop, roster, cutover, closure 순서로 선행
 evidence를 소비한다.

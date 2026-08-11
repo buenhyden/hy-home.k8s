@@ -229,6 +229,22 @@ GENERATOR_INPUT_ROOTS = (
 )
 GENERATOR_OUTPUT_PATH = Path("docs/90.references/llm-wiki/wiki-index.md")
 GENERATOR_CANONICAL_OWNER_PATH = Path("docs/90.references/llm-wiki/README.md")
+GENERATOR_TRANSITION_RULE: Mapping[str, object] = MappingProxyType(
+    {
+        "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
+        "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
+        "currentGeneratorOid": "395d8537531b3bcd51f08bc3fe2b68e50831a5cd",
+        "semanticMappings": (
+            MappingProxyType(
+                {
+                    "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",
+                    "current": "| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |",
+                    "count": 1,
+                }
+            ),
+        ),
+    }
+)
 GENERATOR_RELATIONS: Mapping[
     str,
     tuple[tuple[str, ...], str, Path, tuple[Path, ...], Path, Path],
@@ -742,7 +758,7 @@ def _run_git(
     return bytes(buffers["stdout"])
 
 
-def _run_generator_check(root: Path, check_command: object) -> None:
+def _run_generator_check(root: Path, check_command: object) -> str:
     """Run the one mapped generator check with bounded, discarded output."""
 
     if not isinstance(check_command, str):
@@ -856,7 +872,22 @@ def _run_generator_check(root: Path, check_command: object) -> None:
                 stream.close()
             except OSError:
                 pass
+    if returncode == 0:
+        stdout = bytes(buffers["stdout"])
+        if stdout == b"[PASS] LLM WIKI generated index is current\n":
+            return "current"
+        if stdout == b"[PASS] LLM WIKI generated index transition overlay is current\n":
+            return "transition"
+        raise _GeneratorError("generator success output differs")
     if returncode != 0:
+        expected_stale_prefix = (
+            "ERR generated LLM WIKI index is stale: "
+            f"{root.absolute() / GENERATOR_OUTPUT_PATH}\n"
+        ).encode("utf-8")
+        if returncode == 1 and bytes(buffers["stderr"]).startswith(
+            expected_stale_prefix
+        ):
+            raise _GeneratorError("generator output is stale")
         raise _GeneratorError("generator command failed")
 
 
@@ -1872,6 +1903,65 @@ def _output_links_to_owner(
     )
 
 
+def _generator_transition_overlay_matches(
+    generator: bytes,
+    output: bytes,
+    *,
+    transition_active: bool,
+) -> bool:
+    """Admit only the reviewed AD-row generator transition over frozen Stage 90."""
+
+    rule = GENERATOR_TRANSITION_RULE
+    if (
+        not transition_active
+        or set(rule)
+        != {
+            "baseOutputOid",
+            "currentOutputOid",
+            "currentGeneratorOid",
+            "semanticMappings",
+        }
+        or _blob_sha1(generator) != rule.get("currentGeneratorOid")
+        or _blob_sha1(output) != rule.get("baseOutputOid")
+    ):
+        return False
+    mappings = rule.get("semanticMappings")
+    if not isinstance(mappings, tuple) or not mappings:
+        return False
+    try:
+        output_text = output.decode("utf-8", "strict")
+    except UnicodeDecodeError:
+        return False
+    reconstructed_current = output_text
+    for mapping in mappings:
+        if not isinstance(mapping, Mapping) or set(mapping) != {
+            "base",
+            "current",
+            "count",
+        }:
+            return False
+        base = mapping.get("base")
+        current = mapping.get("current")
+        count = mapping.get("count")
+        if (
+            not isinstance(base, str)
+            or not base
+            or not isinstance(current, str)
+            or not current
+            or base == current
+            or not isinstance(count, int)
+            or isinstance(count, bool)
+            or count < 1
+            or output_text.count(base) != count
+            or output_text.count(current) != 0
+        ):
+            return False
+        reconstructed_current = reconstructed_current.replace(base, current, count)
+    return _blob_sha1(reconstructed_current.encode("utf-8")) == rule.get(
+        "currentOutputOid"
+    )
+
+
 def validate_generated_assets(
     root: Path,
     contract: Mapping[str, object],
@@ -2122,8 +2212,35 @@ def validate_generated_assets(
 
     for relation in relations:
         try:
-            _run_generator_check(root, relation.check_command)
+            generator_result = _run_generator_check(root, relation.check_command)
         except _GeneratorError:
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    relation.output_path.as_posix(),
+                    "generated output check failed",
+                )
+            )
+            continue
+        if generator_result == "current":
+            continue
+        transition_active = False
+        if generator_result == "transition":
+            try:
+                transition_active = bool(
+                    _load_taxonomy_archive_transition(
+                        root,
+                        proposed_oid=None,
+                        runner=runner,
+                    )
+                )
+            except (ContractError, _GitError):
+                transition_active = False
+        if not _generator_transition_overlay_matches(
+            authoritative[relation.generator_path],
+            authoritative[relation.output_path],
+            transition_active=transition_active,
+        ):
             findings.append(
                 Finding(
                     "RIA-GENERATOR",

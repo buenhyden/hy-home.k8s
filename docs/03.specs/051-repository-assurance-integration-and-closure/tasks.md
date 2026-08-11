@@ -22,7 +22,7 @@ merge, stash, cleanup, remote, or live result.
 - Parent [Spec 051](spec.md)
 - Parent [Implementation Plan](plan.md)
 - [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md),
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md),
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Predecessor Specs 047-050, their Plans, Tasks, commits, reviews, contracts,
   schemas, validators, fixtures, and residual DEFER owners
@@ -44,7 +44,7 @@ merge, stash, cleanup, remote, or live result.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: PRD-007/ARD-0010/ADR-0021; Specs 047-051; their five
+- **Allowed Paths**: PRD-007/AD-0010/ADR-0021; Specs 047-051; their five
   Plans/Tasks and indexes; progress; document profiles; the two machine
   contracts and implementation surfaces already approved by predecessor
   Specs; local Git refs/worktree/stash metadata required for finishing.

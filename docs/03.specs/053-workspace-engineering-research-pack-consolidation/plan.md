@@ -91,12 +91,12 @@ Spec 052 and its active Plan/Task currently prescribe archiving only the
 `2026-07-04-wer` pack. Spec 053 supersedes that unexecuted work item for the
 three-pack replacement only: Spec 052 retains every other taxonomy work
 package, while its WDTC-002/WORK-002 route becomes `Superseded` and points to
-WERPC-008. PRD-008 and ARD-0011 receive a bounded exception note so two active
+WERPC-008. PRD-008 and AD-0011 receive a bounded exception note so two active
 programs do not prescribe incompatible retention behavior.
 
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 records the approved standalone relation between Spec 053 and this exact
-Plan/Task pair. No separate PRD or ARD is part of that lifecycle, and the
+Plan/Task pair. No separate PRD or AD is part of that lifecycle, and the
 existing `programLineage` contract remains unchanged.
 
 The project-local `deep-research` workflow applies. Exa and Firecrawl are not
@@ -168,7 +168,7 @@ owners.
 - `provider-implementation-status.md` — Claude/Codex upstream product
   surfaces, local adapters, status, evidence depth, parity, and gaps.
 - `spec-driven-sdlc-and-document-contracts.md` — spec-driven development,
-  SDLC, and PRD/ARD/ADR/guide/incident/postmortem/policy/release/runbook
+  SDLC, and PRD/AD/ADR/guide/incident/postmortem/policy/release/runbook
   contracts.
 - `documentation-architecture-and-diataxis.md` — Diátaxis modes and the
   workspace documentation architecture mapping.
@@ -193,7 +193,7 @@ owners.
 
 - Modify `docs/01.requirements/008-workspace-document-taxonomy-consolidation.md`
   and
-  `docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md`
+  `docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md`
   with the approved three-pack exception and Spec 053 owner.
 - Modify `docs/03.specs/052-document-taxonomy-consolidation/spec.md`,
   `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md`, and
@@ -275,7 +275,7 @@ Canonical follow-up owner | Refresh trigger
 
 - Create: this Plan and
   `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
-- Modify: Spec 053, PRD-008, ARD-0011, Spec 052, the Spec 052 Plan/Task,
+- Modify: Spec 053, PRD-008, AD-0011, Spec 052, the Spec 052 Plan/Task,
   `docs/03.specs/README.md`, `docs/04.execution/plans/README.md`,
   `docs/04.execution/tasks/README.md`, and the progress ledger
 
@@ -287,7 +287,7 @@ Canonical follow-up owner | Refresh trigger
 
 - [x] **Step 1: Record the bounded supersession rule**
 
-  In PRD-008 and ARD-0011, state that the direct 2026-08-08 human approval and
+  In PRD-008 and AD-0011, state that the direct 2026-08-08 human approval and
   Spec 053 replace only the three-pack retention route; every unrelated
   taxonomy requirement and architecture decision remains active.
 
@@ -321,7 +321,7 @@ Canonical follow-up owner | Refresh trigger
   ```bash
   bash scripts/validate-repo-quality-gates.sh .
   git add docs/01.requirements/008-workspace-document-taxonomy-consolidation.md \
-    docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md \
+    docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md \
     docs/03.specs/052-document-taxonomy-consolidation/spec.md \
     docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md \
     docs/03.specs/README.md docs/04.execution/plans docs/04.execution/tasks \
@@ -373,7 +373,7 @@ Canonical follow-up owner | Refresh trigger
 
   Add one row for each separately named request: harness, loop, workspace
   application, Claude, Codex, common system, spec-driven development,
-  Kubernetes, infrastructure, SDLC, PRD, ARD, ADR, guide, incident,
+  Kubernetes, infrastructure, SDLC, PRD, AD, ADR, guide, incident,
   postmortem, policy, release, runbook, Diátaxis, LLM-WIKI, CI/CD, GitHub
   Actions, QA, security, AI-agent systems, agency-agents, model routing, and
   short/long/domain memory. Where one request contains multiple named document
@@ -515,7 +515,7 @@ Canonical follow-up owner | Refresh trigger
 
 - [ ] **Step 3: Write the document-family contract matrix**
 
-  Give PRD, ARD, ADR, Spec, Plan, Task, guide, incident, postmortem, policy,
+  Give PRD, AD, ADR, Spec, Plan, Task, guide, incident, postmortem, policy,
   release, and runbook separate rows with purpose, trigger, required inputs,
   required outputs, owner, lifecycle, evidence depth, cross-links, anti-pattern,
   and repository status.

@@ -64,17 +64,17 @@
     "ast_hash": "5d5fbd611078454db717e24f2e36708e",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md": {
+  "/home/hy/projects/hy-home.k8s/docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md": {
     "mtime": 1780550757.9992664,
     "ast_hash": "a1dd7672d18b13484a4fe541ea93fe52",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/02.architecture/requirements/README.md": {
+  "/home/hy/projects/hy-home.k8s/docs/02.architecture/descriptions/README.md": {
     "mtime": 1780370843.7631912,
     "ast_hash": "516d98201df099cb887f33851bb47fa9",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/02.architecture/requirements/0005-argo-notifications-slack.md": {
+  "/home/hy/projects/hy-home.k8s/docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md": {
     "mtime": 1780006756.2667763,
     "ast_hash": "5503fc5de3528af259111cc200702ee8",
     "semantic_hash": ""
@@ -334,12 +334,12 @@
     "ast_hash": "4751afa0c674ca60132ec94c70e571b2",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/99.templates/ard.template.md": {
+  "/home/hy/projects/hy-home.k8s/docs/99.templates/ad.template.md": {
     "mtime": 1780278960.8700926,
     "ast_hash": "0e559108ca1ed09430af833083c8d7e5",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/99.templates/api-spec.template.md": {
+  "/home/hy/projects/hy-home.k8s/docs/99.templates/interface.template.md": {
     "mtime": 1780278960.8660927,
     "ast_hash": "429bc0ae620b1a8e336fc601afeb457c",
     "semantic_hash": ""
@@ -1219,12 +1219,12 @@
     "ast_hash": "41ddece2378d69b040c5f2c1d6f6f9cd",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md": {
     "mtime": 1780286234.7546873,
     "ast_hash": "4e03230362ff90c570381d155f86dacd",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/02.architecture/requirements/0007-current-local-gitops-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md": {
     "mtime": 1780370387.2710938,
     "ast_hash": "e88a605d556b47d05d83d157cc3517f7",
     "semantic_hash": ""
@@ -1409,17 +1409,17 @@
     "ast_hash": "29324dc347312721bcff7ea8cf95debf",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md": {
     "mtime": 1780370532.9231305,
     "ast_hash": "83307ae2a05127c09703ea46c48bfca8",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md": {
     "mtime": 1780370532.9311304,
     "ast_hash": "23d7bdc6bb591e823be8e89dfbe612e0",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md": {
+  "/home/hy/projects/hy-home.k8s/docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md": {
     "mtime": 1780370532.9351304,
     "ast_hash": "2e0f62e857bf9b14cbc7b8eba55241f9",
     "semantic_hash": ""

@@ -145,7 +145,7 @@
       "new": false
     },
     {
-      "path": "docs/02.architecture/requirements/README.md",
+      "path": "docs/02.architecture/descriptions/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [
         "Overview",
@@ -1204,7 +1204,7 @@
       "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/aws/docs/02.architecture/requirements/README.md",
+      "path": "examples/aws/docs/02.architecture/descriptions/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
@@ -1444,7 +1444,7 @@
       "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
     },
     {
-      "path": "examples/azure/docs/02.architecture/requirements/README.md",
+      "path": "examples/azure/docs/02.architecture/descriptions/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",

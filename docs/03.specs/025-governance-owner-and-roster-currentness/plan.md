@@ -452,7 +452,7 @@ Change Specs 009-024 and the 024 agent design to `status: done` and
 `updated: 2026-07-11`. Keep 004, 005, 006, and 008 active. Keep Spec 025 active.
 
 Update every affected Spec README row to the same status and date. Do not alter
-the accepted status of PRD, ARD, ADR, or operations documents.
+the accepted status of PRD, AD, ADR, or operations documents.
 
 - [ ] **Step 3: Add explicit lineage and missing links**
 

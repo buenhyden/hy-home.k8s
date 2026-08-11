@@ -172,7 +172,7 @@ or external environment verification.
 
 ## Traceability
 
-- **ARD**: [Workspace Document Assurance Operating Model](../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **ADRs**: [Declarative Document Contract Registry](../02.architecture/decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Specs**: [Document Contract Registry](../03.specs/026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
 - **Current Audit**: [2026-07-11 Workspace Engineering Implementation Audit](../90.references/audits/2026-07-11-weia/README.md)

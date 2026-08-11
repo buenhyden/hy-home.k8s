@@ -591,8 +591,8 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 
 ## Traceability
 
-- **ARD**:
-  `[../../02.architecture/requirements/0006-workspace-agent-governance-platform.md]`
+- **AD**:
+  `[../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md]`
 - **ADR**:
   `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
 - **Spec**:

@@ -27,7 +27,7 @@ In scope:
 - Codify the SDLC flow from `docs/01.requirements/` through
   `docs/04.execution/`, with operations and archive handoff rules where they
   apply.
-- Define status transition expectations for PRD, ARD, ADR, Spec, Plan, Task,
+- Define status transition expectations for PRD, AD, ADR, Spec, Plan, Task,
   operations, and archive tombstone documents.
 - Preserve the existing numeric route contracts for PRDs and specs:
   `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` and
@@ -318,7 +318,7 @@ find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 ## Traceability
 
 - **PRD**: No dedicated PRD; approved user request controls this follow-up.
-- **ARD**: No dedicated ARD; this is a repository documentation governance
+- **AD**: No dedicated AD; this is a repository documentation governance
   contract update.
 - **Related ADRs**: Not applicable.
 - **Plan**: `../../04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md`
@@ -331,7 +331,7 @@ find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 
 - **PRD**: No dedicated PRD exists for this governance follow-up. The approved
   user request and existing Stage 00/99 contracts are the controlling inputs.
-- **ARD**: No new architecture requirement is required because this change
+- **AD**: No new architecture requirement is required because this change
   affects repository documentation governance and validation.
 - **Related ADRs**: Not applicable.
 - **Template contracts**:

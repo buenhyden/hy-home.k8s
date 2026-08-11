@@ -327,7 +327,7 @@ hook, validator, scanner behavior, or CI topology is changed here.
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Reference Information Architecture Implementation Plan](plan.md)
 - **Task**: [Reference Information Architecture Task](tasks.md)
 

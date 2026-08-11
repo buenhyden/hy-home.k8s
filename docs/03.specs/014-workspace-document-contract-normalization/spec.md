@@ -347,7 +347,7 @@ bash scripts/validate-policy-gates.sh .
 
 - **PRD**: No separate PRD; upstream requirement is the approved user request in
   this thread.
-- **ARD**: No separate ARD; Stage 00 and Stage 99 contracts are the architecture
+- **AD**: No separate AD; Stage 00 and Stage 99 contracts are the architecture
   baseline.
 - **Related ADRs**:
   - [Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
@@ -369,7 +369,7 @@ bash scripts/validate-policy-gates.sh .
   upstream requirement and explicitly authorizes destructive document
   normalization, contract and governance changes, external-source-backed
   improvements, subagents, and logical-unit commits.
-- **ARD**: No separate ARD exists. The current architecture baseline is the
+- **AD**: No separate AD exists. The current architecture baseline is the
   Stage 00 governance model and the Stage 99 template support contract set.
 - **Related ADRs**:
   - [Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)

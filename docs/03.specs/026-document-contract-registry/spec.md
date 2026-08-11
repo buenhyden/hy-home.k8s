@@ -54,7 +54,7 @@ does not introduce universal metadata fields or a root `DESIGN.md`.
 
 The registry covers these profile classes:
 
-- SDLC: PRD, ARD, ADR, Spec and helper Specs, Plan, Task, Guide, Policy,
+- SDLC: PRD, AD, ADR, Spec and helper Specs, Plan, Task, Guide, Policy,
   Runbook, Incident, and Postmortem.
 - Common: Reference, Archive Tombstone, governance memory, and progress entry.
 - Governance: reference and template support.
@@ -165,7 +165,7 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)

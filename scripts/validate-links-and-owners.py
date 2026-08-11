@@ -77,6 +77,78 @@ ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
 )
+WORK105_HISTORY_SOURCE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
+WORK105_COMPLETED_HISTORY_ARD_TARGETS = frozenset(
+    PurePosixPath(path)
+    for path in (
+        "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+        "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+        "docs/02.architecture/requirements/0008-workspace-document-assurance-operating-model.md",
+        "docs/02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md",
+        "docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md",
+        "docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md",
+    )
+)
+WORK105_IMMUTABLE_HISTORY_ARD_TARGETS = (
+    WORK105_COMPLETED_HISTORY_ARD_TARGETS
+    | {PurePosixPath("docs/02.architecture/requirements/README.md")}
+)
+WORK105_ACCEPTED_HISTORY_ADR_PATHS = frozenset(
+    PurePosixPath(f"docs/02.architecture/decisions/{name}.md")
+    for name in (
+        "0002-argocd-helm-and-gitops-model",
+        "0003-eso-vault-k8s-auth",
+        "0006-cert-manager-mkcert-ca-issuer",
+        "0008-istio-install-and-ingress-coexist",
+        "0009-kiali-external-observability",
+        "0011-argo-rollouts-progressive-delivery",
+        "0012-argo-notifications-slack",
+        "0013-stage-00-canonical-adapter-model",
+        "0014-current-local-gitops-platform-contract",
+        "0015-declarative-document-contract-registry",
+        "0016-program-to-tranche-document-lineage",
+        "0017-program-follow-up-lineage-semantics",
+        "0018-full-body-archive-record-and-retention",
+        "0019-provider-native-agent-harness-and-loop-model",
+        "0020-document-lifecycle-program-closure-evidence",
+        "0021-canonical-surface-routing-and-evidence-depth",
+        "0022-direct-approval-standalone-execution-lineage",
+        "0023-work-unit-document-taxonomy-and-governance-authority",
+    )
+)
+WORK105_AMENDED_ACCEPTED_ADR_SHA256 = {
+    PurePosixPath(
+        "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md"
+    ): "e4b718b76b87157be60e824e4c8aaada01af220ebb1b3f43b04d36b1b5110285",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md"
+    ): "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5",  # pragma: allowlist secret
+}
+WORK105_LEDGER_PATH_ALIASES = {
+    PurePosixPath("docs/02.architecture/requirements/README.md"): PurePosixPath(
+        "docs/02.architecture/descriptions/README.md"
+    ),
+    **{
+        source: PurePosixPath(
+            "docs/02.architecture/descriptions"
+        ) / f"ad-{source.name}"
+        for source in WORK105_COMPLETED_HISTORY_ARD_TARGETS
+    },
+    PurePosixPath(
+        "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+    ): PurePosixPath(
+        "docs/99.templates/templates/sdlc/architecture/ad.template.md"
+    ),
+}
+WORK105_LEDGER_RETIRED_PATHS = frozenset(
+    {
+        PurePosixPath(
+            "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
+        )
+    }
+)
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
@@ -442,6 +514,7 @@ class Context:
     ledger_bytes: bytes | None = None
     ria_contract_text: str | None = None
     route_state: str = "legacy"
+    work105_history_base_commit: str = WORK105_HISTORY_SOURCE_COMMIT
 
 
 @dataclass(frozen=True, order=True)
@@ -2717,6 +2790,14 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if ArchiveTransitionEdge(source, target) in deferred_archive_edges:
                     continue
+                if _work105_immutable_history_ard_link(
+                    context, source, target
+                ):
+                    continue
+                if _work105_accepted_history_ard_link(context, source, target):
+                    continue
+                if _work105_completed_history_ard_link(context, source, target):
+                    continue
                 if _protected_historical_predecessor_link(context, source, target):
                     continue
                 replacement = _retired_reference_replacement(
@@ -3440,8 +3521,8 @@ PROGRAM_MUTABLE_STATES = frozenset({"draft", "active"})
 PROGRAM_CURRENT_EXECUTION_STATES = frozenset({"draft", "active"})
 PROGRAM_PATHS = {
     "sdlc/prd": re.compile(r"^docs/01\.requirements/({identifier})-[^/]+\.md$"),
-    "sdlc/ard": re.compile(
-        r"^docs/02\.architecture/requirements/({identifier})-[^/]+\.md$"
+    "sdlc/ad": re.compile(
+        r"^docs/02\.architecture/descriptions/ad-({identifier})-[^/]+\.md$"
     ),
     "sdlc/adr": re.compile(
         r"^docs/02\.architecture/decisions/({identifier})-[^/]+\.md$"
@@ -3450,7 +3531,7 @@ PROGRAM_PATHS = {
 }
 PROGRAM_LIFECYCLE_AUTHORITY = {
     "prd": "draft -> active -> done | archived",
-    "ard/adr": "draft -> active -> accepted | archived",
+    "ad/adr": "draft -> active -> accepted | archived",
     "spec": "draft -> active -> done | archived",
     "plan/task": "draft -> active -> done | archived",
     "operations": "draft -> active -> accepted | archived",
@@ -3483,6 +3564,11 @@ def _program_local_targets(
     for raw_link in _extract_links(context.texts.get(source, "")):
         kind, target = _local_destination(source, raw_link)
         if kind == "local" and target is not None:
+            if (
+                target in WORK105_LEDGER_PATH_ALIASES
+                and _work105_accepted_history_source(context, source)
+            ):
+                target = WORK105_LEDGER_PATH_ALIASES[target]
             targets.add(target)
     return frozenset(targets)
 
@@ -4195,7 +4281,7 @@ def _program_reciprocal_diagnostics(
 ) -> list[Diagnostic]:
     spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
     prd = _program_owner_path(context, "sdlc/prd", program.prd_id)
-    ard = _program_owner_path(context, "sdlc/ard", program.ard_id)
+    ard = _program_owner_path(context, "sdlc/ad", program.ad_id)
     decision = _program_owner_path(context, "sdlc/adr", relation.decision_id)
     if spec is None or prd is None or ard is None or (follow_up and decision is None):
         return []
@@ -4205,14 +4291,14 @@ def _program_reciprocal_diagnostics(
         required_from_spec.add(decision)
     missing: list[str] = []
     spec_targets = _program_local_targets(context, spec)
-    for label, target in (("PRD", prd), ("ARD", ard), ("ADR", decision)):
+    for label, target in (("PRD", prd), ("AD", ard), ("ADR", decision)):
         if (
             target is not None
             and target in required_from_spec
             and target not in spec_targets
         ):
             missing.append(f"Spec->{label}")
-    for label, upstream in (("PRD", prd), ("ARD", ard), ("ADR", decision)):
+    for label, upstream in (("PRD", prd), ("AD", ard), ("ADR", decision)):
         if (
             upstream is not None
             and (
@@ -4244,11 +4330,11 @@ def _historical_exception_diagnostics(
         return []
     spec = _program_owner_path(context, "sdlc/spec", follow_up.spec_id)
     prd = _program_owner_path(context, "sdlc/prd", program.prd_id)
-    ard = _program_owner_path(context, "sdlc/ard", program.ard_id)
+    ard = _program_owner_path(context, "sdlc/ad", program.ad_id)
     decision = _program_owner_path(context, "sdlc/adr", follow_up.decision_id)
     exact_relation = (
         program.prd_id == "005"
-        and program.ard_id == "0008"
+        and program.ad_id == "0008"
         and follow_up.spec_id == "033"
         and follow_up.decision_id == "0017"
         and follow_up.state == "done"
@@ -4291,7 +4377,7 @@ def _historical_exception_diagnostics(
             "PROGRAM-LINEAGE-HISTORICAL-EXCEPTION",
             owner,
             profile,
-            "exact PRD-005/ARD-0008/Spec-033/ADR-0017 registry, ADR, and Current-overlay agreement",
+            "exact PRD-005/AD-0008/Spec-033/ADR-0017 registry, ADR, and Current-overlay agreement",
             "successor-record evidence is incomplete or outside the named exception",
         )
     ]
@@ -4547,7 +4633,7 @@ STANDALONE_APPROVAL_STATEMENT = (
     "Direct human approval on 2026-08-08 authorizes this standalone execution relation."
 )
 STANDALONE_LIFECYCLE_EXCLUSION = (
-    "No separate PRD or ARD is required or part of this standalone lifecycle."
+    "No separate PRD or AD is required or part of this standalone lifecycle."
 )
 
 
@@ -4612,7 +4698,7 @@ def _standalone_execution_diagnostics(
                     "STANDALONE-EXECUTION-APPROVAL",
                     spec,
                     "sdlc/spec",
-                    "the exact direct-human approval and no-separate-PRD/ARD statements",
+                    "the exact direct-human approval and no-separate-PRD/AD statements",
                     "one or both standalone approval statements are absent",
                 )
             )
@@ -5802,6 +5888,101 @@ def _protected_historical_predecessor_link(
     return source_bytes == context.texts[source].encode("utf-8")
 
 
+def _work105_accepted_history_source(
+    context: Context,
+    source: PurePosixPath,
+) -> bool:
+    """Return true only for the exact reviewed accepted-ADR history corpus."""
+
+    if (
+        source not in WORK105_ACCEPTED_HISTORY_ADR_PATHS
+        or context.metadata.get(source, {}).get("status") != "accepted"
+        or source not in context.texts
+    ):
+        return False
+    source_bytes = context.texts[source].encode("utf-8")
+    amended_digest = WORK105_AMENDED_ACCEPTED_ADR_SHA256.get(source)
+    if amended_digest is not None:
+        return hashlib.sha256(source_bytes).hexdigest() == amended_digest
+    try:
+        pinned = _read_ria_commit_path(
+            context.root,
+            context.work105_history_base_commit,
+            Path(source.as_posix()),
+        )
+    except (RiaContractError, RiaGitError):
+        return False
+    return source_bytes == pinned
+
+
+def _work105_accepted_history_ard_link(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> bool:
+    """Admit reviewed accepted-ADR links to the exact retired ARD corpus."""
+
+    return (
+        target in WORK105_COMPLETED_HISTORY_ARD_TARGETS
+        and _work105_accepted_history_source(context, source)
+    )
+
+
+def _work105_completed_history_ard_link(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> bool:
+    """Admit only exact pinned-base done-document links to the eight retired ARDs."""
+
+    if (
+        target not in WORK105_COMPLETED_HISTORY_ARD_TARGETS
+        or source not in context.tracked_regular_paths
+        or context.metadata.get(source, {}).get("status") != "done"
+        or source not in context.texts
+    ):
+        return False
+    try:
+        source_bytes = _read_ria_commit_path(
+            context.root,
+            context.work105_history_base_commit,
+            Path(source.as_posix()),
+        )
+    except (RiaContractError, RiaGitError):
+        return False
+    return source_bytes == context.texts[source].encode("utf-8")
+
+
+def _work105_immutable_history_ard_link(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> bool:
+    """Preserve exact pinned Stage 90/98 links without rewriting history."""
+
+    if (
+        not any(
+            source.is_relative_to(root)
+            for root in (
+                PurePosixPath("docs/90.references"),
+                PurePosixPath("docs/98.archive"),
+            )
+        )
+        or target not in WORK105_IMMUTABLE_HISTORY_ARD_TARGETS
+        or source not in context.texts
+    ):
+        return False
+    try:
+        source_bytes = _read_ria_commit_path(
+            context.root,
+            context.work105_history_base_commit,
+            Path(source.as_posix()),
+        )
+    except (RiaContractError, RiaGitError):
+        return False
+    return source_bytes == context.texts[source].encode("utf-8")
+
+
 def _ledger_protected_drift() -> Diagnostic:
     return _diag(
         "LEDGER-PROTECTED-DRIFT",
@@ -6034,6 +6215,26 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             | {path.as_posix() for path in context.paths}
             | archived_original_paths
         )
+        if all(
+            target in context.tracked_regular_paths
+            and _path_exists_without_dereference(
+                context.root, target, context.adapter_targets
+            )
+            for target in WORK105_LEDGER_PATH_ALIASES.values()
+        ):
+            known_paths |= {
+                source.as_posix() for source in WORK105_LEDGER_PATH_ALIASES
+            }
+        if (
+            not any(
+                profile.profile_id == "sdlc/api-spec"
+                for profile in context.profiles.values()
+            )
+            and all(path not in context.paths for path in WORK105_LEDGER_RETIRED_PATHS)
+        ):
+            known_paths |= {
+                path.as_posix() for path in WORK105_LEDGER_RETIRED_PATHS
+            }
         if context.route_state == "transition":
             _, move_targets, _ = _document_taxonomy_transition_manifest(context)
             if all(
@@ -6424,6 +6625,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
                 },
             }
         ),
+        work105_history_base_commit=fixture_baseline_commit,
     )
 
 
@@ -6569,7 +6771,7 @@ def _program_lineage_fixture_context(
     for raw_program in raw_programs:
         if not isinstance(raw_program, dict) or list(raw_program) != [
             "prd",
-            "ard",
+            "ad",
             "tranches",
             "followUps",
         ]:
@@ -6598,7 +6800,7 @@ def _program_lineage_fixture_context(
         programs.append(
             ProgramLineage(
                 prd_id=raw_program["prd"],
-                ard_id=raw_program["ard"],
+                ad_id=raw_program["ad"],
                 tranches=tranches,
                 follow_ups=follow_ups,
             )
@@ -6829,7 +7031,7 @@ def _mutated_program_lineage_fixture(
             programs[0],
             ProgramLineage(
                 prd_id=program.prd_id,
-                ard_id=program.ard_id,
+                ad_id=program.ad_id,
                 tranches=(closed, activated_successor, *program.tranches[2:]),
                 follow_ups=program.follow_ups,
             ),
@@ -6843,10 +7045,10 @@ def _mutated_program_lineage_fixture(
             spec,
             "sdlc/spec",
             "[PRD](../../01.requirements/006-fixture.md)\n"
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
         )
         prd = PurePosixPath("docs/01.requirements/006-fixture.md")
-        ard = PurePosixPath("docs/02.architecture/requirements/0009-fixture.md")
+        ard = PurePosixPath("docs/02.architecture/descriptions/ad-0009-fixture.md")
         mutated.texts[prd] += "\n[Spec 036](../03.specs/036-fixture/spec.md)"
         mutated.texts[ard] += "\n[Spec 036](../../03.specs/036-fixture/spec.md)"
         program = programs[1]
@@ -6854,7 +7056,7 @@ def _mutated_program_lineage_fixture(
             programs[0],
             ProgramLineage(
                 prd_id=program.prd_id,
-                ard_id=program.ard_id,
+                ad_id=program.ad_id,
                 tranches=(
                     *program.tranches,
                     ProgramRelation(
@@ -6893,15 +7095,15 @@ def _mutated_program_lineage_fixture(
     elif mutation == "program-reciprocal":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)\n",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)\n",
             "",
         )
-        mutated.texts[spec] += "\n`../../02.architecture/requirements/0009-fixture.md`"
+        mutated.texts[spec] += "\n`../../02.architecture/descriptions/ad-0009-fixture.md`"
     elif mutation == "program-reciprocal-unicode-space-inline":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD](../../02.architecture/requirements/0009-fixture.md\u00a0)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md\u00a0)",
         )
     elif mutation == "program-execution-unicode-space-reference":
         mutated.texts[plan_034] = mutated.texts[plan_034].replace(
@@ -6909,9 +7111,9 @@ def _mutated_program_lineage_fixture(
             "[Spec][owner]\n\n[owner]: ../../03.specs/034-fixture/spec.md\u2003",
         )
     elif mutation == "program-reciprocal-balanced-escaped":
-        old_ard = PurePosixPath("docs/02.architecture/requirements/0009-fixture.md")
+        old_ard = PurePosixPath("docs/02.architecture/descriptions/ad-0009-fixture.md")
         new_ard = PurePosixPath(
-            "docs/02.architecture/requirements/0009-fixture-(owner).md"
+            "docs/02.architecture/descriptions/ad-0009-fixture-(owner).md"
         )
         rename_document_path(old_ard, new_ard)
         prd = PurePosixPath("docs/01.requirements/006-fixture.md")
@@ -6929,22 +7131,22 @@ def _mutated_program_lineage_fixture(
     elif mutation == "program-reciprocal-cross-container":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD\n> owner](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD\n> owner](../../02.architecture/descriptions/ad-0009-fixture.md)",
         )
     elif mutation == "program-reciprocal-cross-container-reference":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD][owner\n> key]\n\n"
-            "[owner key]: ../../02.architecture/requirements/0009-fixture.md",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD][owner\n> key]\n\n"
+            "[owner key]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation == "program-reciprocal-outer-fence-nested":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
             "> ~~~markdown\n"
-            "> > [ARD](../../02.architecture/requirements/0009-fixture.md)\n"
+            "> > [AD](../../02.architecture/descriptions/ad-0009-fixture.md)\n"
             "> ~~~",
         )
     elif mutation in {
@@ -6958,15 +7160,15 @@ def _mutated_program_lineage_fixture(
             else ' "owner"'
         )
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD][owner]\n\n"
-            "[owner]: ../../02.architecture/requirements/0009-fixture.md" + suffix,
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD][owner]\n\n"
+            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md" + suffix,
         )
     elif mutation == "program-reciprocal-valid-double-title":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            '[ARD](../../02.architecture/requirements/0009-fixture.md "owner")',
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            '[AD](../../02.architecture/descriptions/ad-0009-fixture.md "owner")',
         )
     elif mutation in {
         "program-reciprocal-invalid-reference-angle-less-than",
@@ -6979,93 +7181,93 @@ def _mutated_program_lineage_fixture(
             else r"#\<owner"
         )
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD][owner]\n\n"
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD][owner]\n\n"
             "[owner]: "
-            "<../../02.architecture/requirements/0009-fixture.md"
+            "<../../02.architecture/descriptions/ad-0009-fixture.md"
             f"{fragment}>",
         )
     elif mutation == "program-reciprocal-valid-double-title-closing-paren":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD](../../02.architecture/requirements/0009-fixture.md "
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md "
             '"owner ) current")',
         )
     elif mutation == "program-reciprocal-list-marker-boundary":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD\n- owner](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD\n- owner](../../02.architecture/descriptions/ad-0009-fixture.md)",
         )
     elif mutation == "program-reciprocal-bare-nonpunctuation-escape":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            r"[ARD](../../02.architecture/requirements/00\09-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            r"[AD](../../00\09-fixture.md)",
         )
     elif mutation == "program-reciprocal-reference-nonpunctuation-escape":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[ARD][owner]\n\n"
-            r"[owner]: ../../02.architecture/requirements/00\09-fixture.md",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[AD][owner]\n\n"
+            r"[owner]: ../../02.architecture/descriptions/ad-00\09-fixture.md",
         )
     elif mutation == "program-reciprocal-nested-link":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
             "[outer [inner](./unrelated.md)]"
-            "(../../02.architecture/requirements/0009-fixture.md)",
+            "(../../02.architecture/descriptions/ad-0009-fixture.md)",
         )
     elif mutation == "program-reciprocal-adjacent-references":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[Other][other][ARD]\n\n"
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[Other][other][AD]\n\n"
             "[other]: ./unrelated.md\n"
-            "[ARD]: ../../02.architecture/requirements/0009-fixture.md",
+            "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation == "program-reciprocal-image-alt-subtree":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "![owner [ARD]"
-            "(../../02.architecture/requirements/0009-fixture.md)]"
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "![owner [AD]"
+            "(../../02.architecture/descriptions/ad-0009-fixture.md)]"
             "(./owner.png)",
         )
     elif mutation == "program-reciprocal-unresolved-before-inline":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[literal][ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[literal][AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
         )
     elif mutation == "program-reciprocal-unresolved-before-full-reference":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "[literal][ARD][owner]\n\n"
-            "[owner]: ../../02.architecture/requirements/0009-fixture.md",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "[literal][AD][owner]\n\n"
+            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation == "program-reciprocal-escaped-literal-before-shortcut":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "\\[literal][ARD]\n\n"
-            "[ARD]: ../../02.architecture/requirements/0009-fixture.md",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "\\[literal][AD]\n\n"
+            "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation == "program-reciprocal-unresolved-image-inline":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "![literal [ARD](../../02.architecture/requirements/0009-fixture.md)]",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "![literal [AD](../../02.architecture/descriptions/ad-0009-fixture.md)]",
         )
     elif mutation == "program-reciprocal-unresolved-image-full-reference":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "![literal [ARD][owner]]\n\n"
-            "[owner]: ../../02.architecture/requirements/0009-fixture.md",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "![literal [AD][owner]]\n\n"
+            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation in {
         "program-reciprocal-link-destination-span",
@@ -7075,16 +7277,16 @@ def _mutated_program_lineage_fixture(
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         evidence = {
             "program-reciprocal-link-destination-span": (
-                "[Other](<./unrelated.md#[ARD]>)"
+                "[Other](<./unrelated.md#[AD]>)"
             ),
-            "program-reciprocal-link-title-span": ('[Other](./unrelated.md "[ARD]")'),
-            "program-reciprocal-image-title-span": ('![Other](./owner.png "[ARD]")'),
+            "program-reciprocal-link-title-span": ('[Other](./unrelated.md "[AD]")'),
+            "program-reciprocal-image-title-span": ('![Other](./owner.png "[AD]")'),
         }[mutation]
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
             evidence
             + "\n\n"
-            + "[ARD]: ../../02.architecture/requirements/0009-fixture.md",
+            + "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
         )
     elif mutation in {
         "program-reciprocal-definition-title-span",
@@ -7167,96 +7369,96 @@ def _mutated_program_lineage_fixture(
         "program-reciprocal-code-closing-backslash",
     }:
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
-        target = "../../02.architecture/requirements/0009-fixture.md"
+        target = "../../02.architecture/descriptions/ad-0009-fixture.md"
         raw_pua_html_identity = (
             str(_mask_inline_html_tokens("<i>"))
-            + "ARD"
+            + "AD"
             + str(_mask_inline_html_tokens("</i>"))
         )
         evidence = {
             "program-reciprocal-definition-title-span": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md "[ARD]"\n[ARD]: {target}'
+                f'[Other][owner]\n\n[owner]: ./unrelated.md "[AD]"\n[AD]: {target}'
             ),
             "program-reciprocal-multiline-single-title": (
-                f"[ARD][owner]\n\n[owner]:\n  {target}\n  'owner'"
+                f"[AD][owner]\n\n[owner]:\n  {target}\n  'owner'"
             ),
             "program-reciprocal-escaped-paren-title": (
-                f"[ARD][owner]\n\n[owner]: {target} (\\(owner)"
+                f"[AD][owner]\n\n[owner]: {target} (\\(owner)"
             ),
             "program-reciprocal-nested-paren-title": (
-                f"[ARD][owner]\n\n[owner]: {target} ((nested)"
+                f"[AD][owner]\n\n[owner]: {target} ((nested)"
             ),
             "program-reciprocal-blank-definition-continuation": (
-                f"[ARD][owner]\n\n[owner]:\n\n  {target}"
+                f"[AD][owner]\n\n[owner]:\n\n  {target}"
             ),
             "program-reciprocal-unclosed-definition-title": (
-                f'[ARD][owner]\n\n[owner]: {target} "owner'
+                f'[AD][owner]\n\n[owner]: {target} "owner'
             ),
             "program-reciprocal-space-remainder-valid-title-span": (
                 "[Other][owner]\n\n"
                 "[owner]: ./unrelated.md   \n"
-                '  "[ARD]"\n'
-                f"[ARD]: {target}"
+                '  "[AD]"\n'
+                f"[AD]: {target}"
             ),
             "program-reciprocal-tab-remainder-valid-title-span": (
                 "[Other][owner]\n\n"
                 "[owner]: ./unrelated.md\t\n"
-                "  '[ARD]'\n"
-                f"[ARD]: {target}"
+                "  '[AD]'\n"
+                f"[AD]: {target}"
             ),
             "program-reciprocal-space-remainder-nested-paren-title": (
-                f"[ARD][owner]\n\n[owner]: {target}   \n  ((nested)"
+                f"[AD][owner]\n\n[owner]: {target}   \n  ((nested)"
             ),
             "program-reciprocal-tab-remainder-unclosed-title": (
-                f'[ARD][owner]\n\n[owner]: {target}\t\n  "owner'
+                f'[AD][owner]\n\n[owner]: {target}\t\n  "owner'
             ),
             "program-reciprocal-next-line-title-trailing-garbage": (
-                f'[ARD][owner]\n\n[owner]: {target}\n  "owner" garbage'
+                f'[AD][owner]\n\n[owner]: {target}\n  "owner" garbage'
             ),
             "program-reciprocal-invalid-next-line-title-phantom": (
                 "[Other][owner]\n\n"
                 "[owner]: ./unrelated.md\n"
-                f'  "[ARD]({target})" garbage'
+                f'  "[AD]({target})" garbage'
             ),
             "program-reciprocal-continued-destination-invalid-title": (
-                f'[ARD][owner]\n\n[owner]:\n    {target}\n    "owner" garbage'
+                f'[AD][owner]\n\n[owner]:\n    {target}\n    "owner" garbage'
             ),
             "program-reciprocal-definition-before-thematic": (
-                f"[ARD][owner]\n\n[owner]:\n{target}\n---"
+                f"[AD][owner]\n\n[owner]:\n{target}\n---"
             ),
             "program-reciprocal-setext-destination-first-wins": (
-                f"[ARD][owner]\n\n[owner]:\n===\n[owner]: {target}"
+                f"[AD][owner]\n\n[owner]:\n===\n[owner]: {target}"
             ),
             "program-reciprocal-paragraph-definition-setext": (
-                f"Ordinary paragraph\n[owner]: {target}\n---\n[ARD][owner]"
+                f"Ordinary paragraph\n[owner]: {target}\n---\n[AD][owner]"
             ),
             "program-reciprocal-html-numeric-destination": (
-                "[ARD](../../02.architecture/requirements/0009&#45;fixture.md)"
+                "[AD](../../02.architecture/descriptions/ad-0009&#45;fixture.md)"
             ),
             "program-reciprocal-html-backslash-destination": (
-                "[ARD](../../02.architecture/requirements/"
-                r"0009\&#45;fixture.md)"
+                "[AD](../../02.architecture/descriptions/"
+                r"ad-0009\&#45;fixture.md)"
             ),
             "program-reciprocal-quote-lazy-setext-definition": (
-                f"> paragraph\n===\n> [owner]: {target}\n> [ARD][owner]"
+                f"> paragraph\n===\n> [owner]: {target}\n> [AD][owner]"
             ),
             "program-reciprocal-inline-html-attribute": (
-                f'<span title="[ARD]({target})">ok</span>'
+                f'<span title="[AD]({target})">ok</span>'
             ),
             "program-reciprocal-markdown-inside-inline-html": (
-                f"<span>[ARD]({target})</span>"
+                f"<span>[AD]({target})</span>"
             ),
             "program-reciprocal-inline-html-definition-lookalike": (
-                f"[ARD][owner]\n\n<b>[owner]: {target}"
+                f"[AD][owner]\n\n<b>[owner]: {target}"
             ),
             "program-reciprocal-type7-html-quoted-greater": (
-                f'\n<x title=">">\n[ARD]({target})'
+                f'\n<x title=">">\n[AD]({target})'
             ),
             "program-reciprocal-inline-html-shortcut-collision": (
-                f"[<i>ARD</i>]\n\n[<b>ARD</b>]: {target}"
+                f"[<i>AD</i>]\n\n[<b>AD</b>]: {target}"
             ),
             "program-reciprocal-inline-html-shortcut-identical": (
-                f"[<i>ARD</i>]\n\n[<i>ARD</i>]: {target}"
+                f"[<i>AD</i>]\n\n[<i>AD</i>]: {target}"
             ),
             "program-reciprocal-inline-html-label-999": (
                 f"[<i>{'x' * 992}</i>]\n\n[<i>{'x' * 992}</i>]: {target}"
@@ -7265,158 +7467,158 @@ def _mutated_program_lineage_fixture(
                 f"[<i>{'x' * 993}</i>]\n\n[<i>{'x' * 993}</i>]: {target}"
             ),
             "program-reciprocal-comment-block-trailing": (
-                f"\n<!-- owner evidence --> [ARD]({target})"
+                f"\n<!-- owner evidence --> [AD]({target})"
             ),
             "program-reciprocal-invalid-inline-comment": (
-                f"before <!-- invalid -- [ARD]({target}) --> after"
+                f"before <!-- invalid -- [AD]({target}) --> after"
             ),
             "program-reciprocal-inline-html-blank-boundary": (
-                f'<span\n\n title="[ARD]({target})">ok</span>'
+                f'<span\n\n title="[AD]({target})">ok</span>'
             ),
             "program-reciprocal-multiline-definition-label": (
-                f"[ARD][owner key]\n\n[owner\nkey]: {target}"
+                f"[AD][owner key]\n\n[owner\nkey]: {target}"
             ),
-            "program-reciprocal-inline-backtick-suffix": (f"[ARD]({target} `suffix`)"),
+            "program-reciprocal-inline-backtick-suffix": (f"[AD]({target} `suffix`)"),
             "program-reciprocal-quote-comment-leaf": (
-                f"> paragraph\n> <!-- owner -->\n    [ARD]({target})"
+                f"> paragraph\n> <!-- owner -->\n    [AD]({target})"
             ),
             "program-reciprocal-root-declaration-leaf": (
-                f"paragraph\n<!A owner>\n    [ARD]({target})"
+                f"paragraph\n<!A owner>\n    [AD]({target})"
             ),
             "program-reciprocal-escaped-definition-label-close": (
-                f"[ARD][owner\\]]\n\n[owner\\]]: {target}"
+                f"[AD][owner\\]]\n\n[owner\\]]: {target}"
             ),
             "program-reciprocal-destination-continuation-zero": (
-                f"[ARD][owner]\n\n[owner]:\n{target}"
+                f"[AD][owner]\n\n[owner]:\n{target}"
             ),
             "program-reciprocal-destination-continuation-four": (
-                f"[ARD][owner]\n\n[owner]:\n    {target}"
+                f"[AD][owner]\n\n[owner]:\n    {target}"
             ),
             "program-reciprocal-destination-continuation-tab": (
-                f"[ARD][owner]\n\n[owner]:\n\t{target}"
+                f"[AD][owner]\n\n[owner]:\n\t{target}"
             ),
             "program-reciprocal-title-continuation-zero": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n"[ARD]({target})"'
+                f'[Other][owner]\n\n[owner]: ./unrelated.md\n"[AD]({target})"'
             ),
             "program-reciprocal-title-continuation-four": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n    "[ARD]({target})"'
+                f'[Other][owner]\n\n[owner]: ./unrelated.md\n    "[AD]({target})"'
             ),
             "program-reciprocal-title-continuation-tab": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n\t"[ARD]({target})"'
+                f'[Other][owner]\n\n[owner]: ./unrelated.md\n\t"[AD]({target})"'
             ),
             "program-reciprocal-title-continuation-multiline": (
                 "[Other][owner]\n\n"
                 '[owner]: ./unrelated.md "first line\n'
-                f"[ARD]({target})\n"
+                f"[AD]({target})\n"
                 'last line"'
             ),
             "program-reciprocal-invalid-blank-title-rendered": (
                 "[Other][owner]\n\n"
                 '[owner]: ./unrelated.md "first line\n\n'
-                f"[ARD]({target})\n"
+                f"[AD]({target})\n"
                 'last line"'
             ),
             "program-reciprocal-complete-definition-four-space-code": (
-                f"[Other][owner]\n\n[owner]: ./unrelated.md\n    [ARD]({target})"
+                f"[Other][owner]\n\n[owner]: ./unrelated.md\n    [AD]({target})"
             ),
             "program-reciprocal-definition-paragraph-interruption": (
-                f"[ARD][owner]\n\nOrdinary paragraph continuation\n[owner]: {target}"
+                f"[AD][owner]\n\nOrdinary paragraph continuation\n[owner]: {target}"
             ),
             "program-reciprocal-definition-blank-boundary": (
-                f"[ARD][owner]\n\nCompleted paragraph.\n\n[owner]: {target}"
+                f"[AD][owner]\n\nCompleted paragraph.\n\n[owner]: {target}"
             ),
             "program-reciprocal-definition-heading-boundary": (
-                f"[ARD][owner]\n\n# Reference definitions\n[owner]: {target}"
+                f"[AD][owner]\n\n# Reference definitions\n[owner]: {target}"
             ),
             "program-reciprocal-failed-inline-shortcut-fallback": (
-                f"[ARD](not a link)\n\n[ARD]: {target}"
+                f"[AD](not a link)\n\n[AD]: {target}"
             ),
             "program-reciprocal-ordered-123-tilde-fence": (
-                f"123. fenced block\n     ~~~markdown\n     [ARD]({target})\n     ~~~"
+                f"123. fenced block\n     ~~~markdown\n     [AD]({target})\n     ~~~"
             ),
-            "program-reciprocal-unordered-indented-code": (f"-\n      [ARD]({target})"),
+            "program-reciprocal-unordered-indented-code": (f"-\n      [AD]({target})"),
             "program-reciprocal-unordered-empty-four-code": (
-                f"-    \n      [ARD]({target})"
+                f"-    \n      [AD]({target})"
             ),
             "program-reciprocal-ordered-empty-five-code": (
-                f"1.     \n       [ARD]({target})"
+                f"1.     \n       [AD]({target})"
             ),
-            "program-reciprocal-unordered-tab-code": (f"-\t    [ARD]({target})"),
-            "program-reciprocal-list-lazy-continuation": (f"- [ARD\n]({target})"),
-            "program-reciprocal-list-sibling-boundary": (f"- [ARD\n- ]({target})"),
+            "program-reciprocal-unordered-tab-code": (f"-\t    [AD]({target})"),
+            "program-reciprocal-list-lazy-continuation": (f"- [AD\n]({target})"),
+            "program-reciprocal-list-sibling-boundary": (f"- [AD\n- ]({target})"),
             "program-reciprocal-whitespace-shortcut-label": (f"[ ]\n\n[ ]: {target}"),
             "program-reciprocal-normal-spaced-label": (
-                f"[ARD][ owner key ]\n\n[owner   key]: {target}"
+                f"[AD][ owner key ]\n\n[owner   key]: {target}"
             ),
             "program-reciprocal-setext-indented-code": (
-                f"Reference evidence\n---\n    [ARD]({target})"
+                f"Reference evidence\n---\n    [AD]({target})"
             ),
             "program-reciprocal-standalone-setext-equals-indented-continuation": (
-                f"\n===\n    [ARD]({target})"
+                f"\n===\n    [AD]({target})"
             ),
             "program-reciprocal-definition-standalone-equals-indented-continuation": (
-                f"\n[r]: /u\n===\n    [ARD]({target})"
+                f"\n[r]: /u\n===\n    [AD]({target})"
             ),
             "program-reciprocal-quote-lazy-hyphen-indented-continuation": (
-                f"> paragraph\n--\n    [ARD]({target})"
+                f"> paragraph\n--\n    [AD]({target})"
             ),
             "program-reciprocal-quote-definition-indented-code": (
-                f"> [r]: /u\n    [ARD]({target})"
+                f"> [r]: /u\n    [AD]({target})"
             ),
             "program-reciprocal-invalid-quote-definition-indented-lazy": (
-                f"> [r]: <unterminated\n    [ARD]({target})"
+                f"> [r]: <unterminated\n    [AD]({target})"
             ),
             "program-reciprocal-multiline-quote-definition-indented-code": (
-                f"> [r]:\n /u\n    [ARD]({target})"
+                f"> [r]:\n /u\n    [AD]({target})"
             ),
             "program-reciprocal-multiline-list-definition-indented-code": (
-                f"- [r]:\n /u\n      [ARD]({target})"
+                f"- [r]:\n /u\n      [AD]({target})"
             ),
             "program-reciprocal-explicit-quote-setext-indented-code": (
-                f"> paragraph\n> ===\n    [ARD]({target})"
+                f"> paragraph\n> ===\n    [AD]({target})"
             ),
             "program-reciprocal-thematic-definition-indented-code": (
-                f"***\n[r]: /u\n    [ARD]({target})"
+                f"***\n[r]: /u\n    [AD]({target})"
             ),
             "program-reciprocal-list-atx-definition-indented-code": (
-                f"- # Heading\n  [r]: /u\n      [ARD]({target})"
+                f"- # Heading\n  [r]: /u\n      [AD]({target})"
             ),
             "program-reciprocal-shortcut-label-999": (
                 f"[{'s' * 999}]\n\n[{'s' * 999}]: {target}"
             ),
             "program-reciprocal-full-label-1000": (
-                f"[ARD][{'f' * 1000}]\n\n[{'f' * 1000}]: {target}"
+                f"[AD][{'f' * 1000}]\n\n[{'f' * 1000}]: {target}"
             ),
             "program-reciprocal-failed-inline-label-999": (
                 f"[{'i' * 999}](not a link)\n\n[{'i' * 999}]: {target}"
             ),
             "program-reciprocal-escaped-label-1000": (
-                f"[ARD][{r'\*' * 500}]\n\n[{r'\*' * 500}]: {target}"
+                f"[AD][{r'\*' * 500}]\n\n[{r'\*' * 500}]: {target}"
             ),
-            "program-reciprocal-code-label-closing-bracket": (f"[ARD `]`]({target})"),
+            "program-reciprocal-code-label-closing-bracket": (f"[AD `]`]({target})"),
             "program-reciprocal-code-label-mixed-run": (
-                f"[ARD ``code `]` still``]({target})"
+                f"[AD ``code `]` still``]({target})"
             ),
             "program-reciprocal-raw-pua-html-collision": (
-                f"[<i>ARD</i>]\n\n[{raw_pua_html_identity}]: {target}"
+                f"[<i>AD</i>]\n\n[{raw_pua_html_identity}]: {target}"
             ),
             "program-reciprocal-inline-html-tag-casefold": (
-                f"[<I>ARD</I>]\n\n[<i>ard</i>]: {target}"
+                f"[<I>AD</I>]\n\n[<i>ad</i>]: {target}"
             ),
             "program-reciprocal-orphan-inline-suffix-backtick": (
-                f"orphan](`[ARD]({target})`)"
+                f"orphan](`[AD]({target})`)"
             ),
-            "program-reciprocal-code-closing-backslash": ("`[ARD](" + target + ")\\`"),
+            "program-reciprocal-code-closing-backslash": ("`[AD](" + target + ")\\`"),
         }[mutation]
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
             evidence,
         )
     elif mutation == "program-reciprocal-code-paragraph-recovery":
         spec = PurePosixPath("docs/03.specs/034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
-            "[ARD](../../02.architecture/requirements/0009-fixture.md)",
-            "`unmatched\n\n[ARD](../../02.architecture/requirements/0009-fixture.md)`",
+            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
+            "`unmatched\n\n[AD](../../02.architecture/descriptions/ad-0009-fixture.md)`",
         )
     elif mutation == "program-historical-exception":
         roadmap = PurePosixPath(
@@ -7918,7 +8120,7 @@ def _mutated_program_lineage_fixture(
             *programs[:2],
             ProgramLineage(
                 prd_id=program.prd_id,
-                ard_id=program.ard_id,
+                ad_id=program.ad_id,
                 tranches=program.tranches,
                 follow_ups=(draft_follow_up,),
             ),
@@ -8328,7 +8530,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition\n"
             "--- | ---\n"
             "PRD | `draft -> active -> done \\| archived`\n"
-            "ARD/ADR | `draft -> active -> accepted \\| archived`\n"
+            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
@@ -8342,7 +8544,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition\n"
             "--- | ---\n"
             "PRD | `draft -> active -> done \\| archived`\n"
-            "ARD/ADR | `draft -> active -> accepted \\| archived`\n"
+            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
@@ -8356,7 +8558,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition\n"
             "--- | ---\n"
             "PRD | `draft -> active -> done \\| archived`\n"
-            "ARD/ADR | `draft -> active -> accepted \\| archived`\n"
+            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
@@ -8373,7 +8575,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition",
             "--- | ---",
             "PRD | `draft -> active -> done \\| archived`",
-            "ARD/ADR | `draft -> active -> accepted \\| archived`",
+            "AD/ADR | `draft -> active -> accepted \\| archived`",
             "Spec | `draft -> active -> done \\| archived`",
             "Plan/Task | `draft -> active -> done \\| archived`",
             "Operations | `draft -> active -> accepted \\| archived`",
@@ -8414,7 +8616,7 @@ def _mutated_program_lineage_fixture(
             "**[Ｄｏｃｕｍｅｎｔ Ｆａｍｉｌｙ](./family.md)** | *Lifecycle   Transition*",
             "--- | ---",
             "[*ＰＲＤ*](./prd.md) | `draft → active → done \\| archived`",
-            "ARD/ADR | `draft -> active -> accepted \\| archived`",
+            "AD/ADR | `draft -> active -> accepted \\| archived`",
             "Spec | `draft -> active -> done \\| archived`",
             "Plan/Task | `draft -> active -> done \\| archived`",
             "Operations | `draft -> active -> accepted \\| archived`",
@@ -8447,7 +8649,7 @@ def _mutated_program_lineage_fixture(
                 "Owner | Lifecycle Transition | Document Family | Notes",
                 "--- | --- | --- | ---",
                 "platform | `draft -> active -> done \\| archived` | PRD | current",
-                "platform | `draft -> active -> accepted \\| archived` | ARD/ADR | current",
+                "platform | `draft -> active -> accepted \\| archived` | AD/ADR | current",
                 "platform | `draft -> active -> done \\| archived` | Spec | current",
                 "platform | `draft -> active -> done \\| archived` | Plan/Task | current",
                 "platform | `draft -> active -> accepted \\| archived` | Operations | current",
@@ -8476,7 +8678,7 @@ def _mutated_program_lineage_fixture(
             rows[0] = "<span>Document Family</span> | <b>Lifecycle Transition</b>"
         elif mutation == "program-duplicate-authority-html-family":
             rows[2] = (
-                '<span title="ARD/ADR">PRD</span> | '
+                '<span title="AD/ADR">PRD</span> | '
                 "`draft -> active -> done \\| archived`"
             )
         elif mutation == "program-duplicate-authority-html-transition":
@@ -8493,7 +8695,7 @@ def _mutated_program_lineage_fixture(
             "| Document Family | Lifecycle Transition |\n"
             "| --- | --- |\n"
             "| PRD | `draft -> active -> done \\| archived` |\n"
-            "| ARD/ADR | `draft -> active -> accepted \\| archived` |\n"
+            "| AD/ADR | `draft -> active -> accepted \\| archived` |\n"
             "| Spec | `draft -> active -> done \\| archived` |\n"
             "| Plan/Task | `draft -> active -> done \\| archived` |\n"
             "| Operations | `draft -> active -> accepted \\| archived` |\n"
@@ -8508,7 +8710,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition\n"
             "--- | ---\n"
             "PRD | `draft -> active -> done \\| archived`\n"
-            "ARD/ADR | `draft -> active -> accepted \\| archived`\n"
+            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
@@ -8525,7 +8727,7 @@ def _mutated_program_lineage_fixture(
             "Document Family | Lifecycle Transition\n"
             "--- | ---\n"
             "PRD | `draft -> active -> done \\| archived`\n"
-            "ARD/ADR | `draft -> active -> accepted \\| archived`\n"
+            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
             "Spec | `draft -> active -> done \\| archived`\n"
             "Plan/Task | `draft -> active -> done \\| archived`\n"
             "Operations | `draft -> active -> accepted \\| archived`\n"
@@ -8610,6 +8812,31 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     source = PurePosixPath("docs/05.operations/guides/9999-source.md")
     if mutation == "link-broken":
         texts[source] += "\n[bad](./missing.md)\n"
+    elif mutation.startswith("link-work105-history-"):
+        history_source = PurePosixPath("docs/05.operations/guides/9997-history.md")
+        if mutation == "link-work105-history-valid":
+            pass
+        elif mutation in {
+            "link-work105-history-active",
+            "link-work105-history-draft",
+            "link-work105-history-accepted",
+        }:
+            status = mutation.rsplit("-", 1)[1]
+            texts[history_source] = texts[history_source].replace(
+                "status: done", f"status: {status}"
+            )
+            metadata[history_source]["status"] = status
+        elif mutation == "link-work105-history-byte-drift":
+            texts[history_source] += "\nchanged completed-history line\n"
+        elif mutation == "link-work105-history-outside-target":
+            texts[history_source] = texts[history_source].replace(
+                "requirements/0011-document-taxonomy-consolidation-architecture.md",
+                "requirements/0012-outside-work105-census.md",
+            )
+        else:
+            raise ConfigurationError(
+                f"unknown WORK-105 history fixture mutation: {mutation}"
+            )
     elif mutation in {
         "link-protected-historical-predecessor",
         "link-protected-historical-unprotected-source",
@@ -9217,6 +9444,8 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         tracked_regular_paths,
         (texts[LEDGER_PATH].encode("utf-8") if LEDGER_PATH in texts else None),
         ria_contract_text,
+        context.route_state,
+        context.work105_history_base_commit,
     )
 
 
@@ -9570,6 +9799,12 @@ def _self_test(root: Path) -> list[str]:
     required = {
         "valid-tree",
         "broken-link",
+        "work105-completed-history-ard-links",
+        "work105-completed-history-active-rejected",
+        "work105-completed-history-draft-rejected",
+        "work105-completed-history-accepted-rejected",
+        "work105-completed-history-byte-drift-rejected",
+        "work105-completed-history-outside-target-rejected",
         "protected-historical-predecessor-link",
         "unprotected-historical-predecessor-link",
         "protected-historical-predecessor-disposition-drift",
@@ -10279,9 +10514,9 @@ def _self_test(root: Path) -> list[str]:
                         )
             if case["mutation"] == "program-reciprocal-unicode-space-inline":
                 source_path = PurePosixPath("docs/03.specs/034-fixture/spec.md")
-                canonical_raw = "../../02.architecture/requirements/0009-fixture.md"
+                canonical_raw = "../../02.architecture/descriptions/ad-0009-fixture.md"
                 canonical_path = PurePosixPath(
-                    "docs/02.architecture/requirements/0009-fixture.md"
+                    "docs/02.architecture/descriptions/ad-0009-fixture.md"
                 )
                 canonical_contracts = (
                     canonical_raw,
@@ -10295,8 +10530,8 @@ def _self_test(root: Path) -> list[str]:
                             f"{raw_target!r} resolved as {actual_local!r}"
                         )
                 rendered_canonical_contracts = (
-                    f"[ARD]({canonical_raw.replace('-', '&#45;', 1)})",
-                    "[ARD](" + canonical_raw.replace("-", r"\-", 1) + ")",
+                    f"[AD]({canonical_raw.replace('-', '&#45;', 1)})",
+                    "[AD](" + canonical_raw.replace("-", r"\-", 1) + ")",
                 )
                 for markdown_source in rendered_canonical_contracts:
                     extracted = _extract_links(markdown_source)
@@ -10321,8 +10556,8 @@ def _self_test(root: Path) -> list[str]:
                                 f"{case['name']}: Unicode-space target "
                                 f"{raw_target!r} collapsed to canonical path"
                             )
-                        inline_source = f"[ARD]({raw_target})"
-                        reference_source = "[ARD][owner]\n\n[owner]: " + raw_target
+                        inline_source = f"[AD]({raw_target})"
+                        reference_source = "[AD][owner]\n\n[owner]: " + raw_target
                         for markdown_source in (inline_source, reference_source):
                             extracted = _extract_links(markdown_source)
                             if extracted != (raw_target,):

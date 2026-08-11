@@ -809,7 +809,7 @@ required_doc_dirs = {
     "00.agent-governance",
     "01.requirements",
     "02.architecture",
-    "02.architecture/requirements",
+    "02.architecture/descriptions",
     "02.architecture/decisions",
     "03.specs",
     "04.execution",
@@ -849,7 +849,7 @@ for name in sorted(allowed_top_level_docs - actual_docs):
 example_docs_required = {
     "01.requirements",
     "02.architecture",
-    "02.architecture/requirements",
+    "02.architecture/descriptions",
     "02.architecture/decisions",
     "03.specs",
     "04.execution",
@@ -1156,7 +1156,7 @@ if template_compatibility.get("retiredFields") != sorted(RETIRED_TEMPLATE_DEBT_F
 expected_behavior_cases = [
     {
         "name": "registry-derived-form-inventory",
-        "expectedMarkdownForms": 27,
+        "expectedMarkdownForms": 28,
         "expectedNativeForms": 3,
     },
     {
@@ -1311,9 +1311,9 @@ if expected_noncanonical_diagnostic not in noncanonical_errors:
     )
 markdown_form_count = sum(path.suffix == ".md" for path in physical_form_paths)
 native_form_count = len(physical_form_paths) - markdown_form_count
-if (markdown_form_count, native_form_count) != (27, 3):
+if (markdown_form_count, native_form_count) != (28, 3):
     fail(
-        "registry-derived form inventory must contain 27 Markdown and three native forms: "
+        "registry-derived form inventory must contain 28 Markdown and three native forms: "
         f"actual={(markdown_form_count, native_form_count)}"
     )
 
@@ -1648,7 +1648,7 @@ for provider in ["aws", "azure"]:
         for stale_heading in [
             "## Azure Migration Product Requirements",
             "## Azure Migration Specification",
-            "## Azure Kubernetes Service Architecture Reference Document",
+            "## Azure Kubernetes Service Architecture Description",
         ]:
             if stale_heading in text:
                 fail(f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}")
@@ -3859,7 +3859,11 @@ if True:
         {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
     )
     docs_hook_payload = json.dumps(
-        {"tool_input": {"file_path": "docs/03.specs/example-feature/api-spec.md"}}
+        {
+            "tool_input": {
+                "file_path": "docs/01.requirements/ifc-999-example-feature.md"
+            }
+        }
     )
     pre_hook_path = root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
     pre_hook_result = subprocess.run(
@@ -3889,7 +3893,7 @@ if True:
     for phrase in [
         "Template-First",
         "docs/99.templates/README.md",
-        "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+        "docs/99.templates/templates/sdlc/requirements/interface.template.md",
         "documentation template enforcement",
     ]:
         if phrase not in docs_pre_hook_result.stdout:

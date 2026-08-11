@@ -965,7 +965,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         ),
         "agent-governance-authored-lineage": (
             "docs/01.requirements/003-workspace-agent-governance-platform.md",
-            "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+            "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
             "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
             "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
             "docs/03.specs/045-agent-governance-ci-qa-cutover/plan.md",
@@ -1037,7 +1037,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "docs/03.specs/999-rename-probe/spec.md",
         ".pre-commit-config.yaml",
         "docs/01.requirements/003-workspace-agent-governance-platform.md",
-        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+        "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
         "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
         "docs/03.specs/045-agent-governance-ci-qa-cutover/plan.md",

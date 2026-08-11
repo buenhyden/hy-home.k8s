@@ -247,7 +247,7 @@ their recorded `DEFER` or `ABSENT` verdicts.
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 041](../041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)

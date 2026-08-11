@@ -46,7 +46,7 @@ is claimed before observation.
 
 ## Goals & In-Scope
 
-- Enroll PRD-003, ARD-0006, and ordered Specs 041–046 under current accepted
+- Enroll PRD-003, AD-0006, and ordered Specs 041–046 under current accepted
   ADR-0013 in the registry while activating only Spec 041; keep ADR-0019 as
   the proposed successor until Spec 046 acceptance.
 - Add a closed `harness-contract.json` schema and deterministic focused
@@ -135,7 +135,7 @@ is claimed before observation.
 
 - **Spec**: [Stage 00 Agent Governance Contract](spec.md)
 - **Task**: [Stage 00 Agent Governance Contract Task](tasks.md)
-- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Proposed successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Prerequisite**: Spec 040 closure content commit `c5adc27b` and postflight

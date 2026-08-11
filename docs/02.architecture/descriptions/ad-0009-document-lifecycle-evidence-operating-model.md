@@ -1,12 +1,12 @@
 ---
-title: 'Document Lifecycle and Evidence Operating Model Architecture Reference Document'
-type: sdlc/ard
+title: 'Document Lifecycle and Evidence Operating Model Architecture Description'
+type: sdlc/ad
 status: accepted
 owner: platform
 updated: 2026-07-28
 ---
 
-# Document Lifecycle and Evidence Operating Model Architecture Reference Document (ARD)
+# Document Lifecycle and Evidence Operating Model Architecture Description (AD)
 
 ## Overview
 
@@ -15,7 +15,7 @@ without replacing its registry, profile, template, and validation foundations.
 Specs 034 through 040 close its repository-static implementation, and
 [ADR-0020](../decisions/0020-document-lifecycle-program-closure-evidence.md)
 is the reciprocally linked same-diff accepted role-decision evidence for this
-ARD acceptance. Hosted, provider, remote, and live readiness remain `DEFER`;
+AD acceptance. Hosted, provider, remote, and live readiness remain `DEFER`;
 terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and
 parent-to-closure postflight are observed, while this evidence-update commit is
 unidentified and unclaimed.

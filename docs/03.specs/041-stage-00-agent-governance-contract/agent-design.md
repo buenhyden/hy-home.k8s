@@ -210,7 +210,7 @@ prompts, full transcripts, credentials, or secret-bearing tool output.
 
 - **Parent Spec**: [Spec 041](./spec.md)
 - **Program requirement**: PRD 003 (linked in the lifecycle table below)
-- **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Current accepted decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Foundation**: [Spec 039](../039-github-ci-qa-evidence/spec.md) and
   [Spec 040](../040-contract-cutover-and-program-closure/spec.md)

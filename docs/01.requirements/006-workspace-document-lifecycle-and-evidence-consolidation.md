@@ -42,7 +42,7 @@ Specs 034 through 040 close those implementation gaps with repository-static
 evidence. Exact terminal closure commit
 `c5adc27b13893d7cbd1266c9225372cfb7df79e9` proves the integrated strict
 contract, reconciles the Current audit, preserves explicit external `DEFER`
-boundaries, and transitions PRD-006, ARD-0009, ADR-0020, Spec 040, and its
+boundaries, and transitions PRD-006, AD-0009, ADR-0020, Spec 040, and its
 reciprocal execution pair atomically. Explicit-ref lifecycle from parent
 `35d8552ba423e3e2d92294ddeb81674392b8f333` to the closure commit and
 clean-tree repository-static aggregate passed; this evidence-update commit is
@@ -162,7 +162,7 @@ unidentified and unclaimed.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-WDLEC-001 | ACC-WDLEC-001 | [ARD-0009](../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/034-authority-and-lineage-foundation/spec.md) |
+| REQ-WDLEC-001 | ACC-WDLEC-001 | [AD-0009](../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/034-authority-and-lineage-foundation/spec.md) |
 | REQ-WDLEC-002 | ACC-WDLEC-002 | N/A — Spec 034 shares the downstream owner linked in REQ-WDLEC-001 and is governed by unchanged accepted ADR-0017. |
 | REQ-WDLEC-003 | ACC-WDLEC-003 | [Spec 035](../03.specs/035-document-schema-and-lifecycle-contract/spec.md) |
 | REQ-WDLEC-004 | ACC-WDLEC-004 | [Spec 036](../03.specs/036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |

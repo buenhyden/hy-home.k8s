@@ -3,7 +3,7 @@ title: 'ADR-0018: Full-body Archive Record and Retention'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-07-19
+updated: 2026-08-11
 ---
 
 # ADR-0018: Full-body Archive Record and Retention
@@ -96,3 +96,4 @@ unreachable objects may be pruned:
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | Existing metadata-only archive decision | Supersedes the Tombstone-only storage model | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only the mirrored-original-path requirement and parallel-Tombstone prohibition; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |

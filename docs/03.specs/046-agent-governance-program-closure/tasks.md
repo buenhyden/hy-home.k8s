@@ -34,7 +34,7 @@ approved action observes them.
 - Parent [Spec 046](spec.md)
 - Parent [Implementation Plan](plan.md)
 - [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md),
-  [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md),
+  [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md),
   and [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - Spec 045 closure `de9a88e4550b87542eb7221c5ae7416fe5075763`,
   sole parent `ed89228546501dd11a7f4abad28e8ebb094fbd97`, and observed
@@ -181,8 +181,8 @@ The terminal commit contains exactly these 21 paths:
 - `docs/01.requirements/README.md`
 - `docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md`
 - `docs/02.architecture/decisions/README.md`
-- `docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md`
-- `docs/02.architecture/requirements/README.md`
+- `docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md`
+- `docs/02.architecture/descriptions/README.md`
 - `docs/03.specs/041-stage-00-agent-governance-contract/agent-design.md`
 - `docs/03.specs/041-stage-00-agent-governance-contract/spec.md`
 - `docs/03.specs/046-agent-governance-program-closure/spec.md`

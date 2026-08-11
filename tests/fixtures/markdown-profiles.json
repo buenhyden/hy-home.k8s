@@ -13,7 +13,9 @@
       "profile": "native/document-migration-manifest",
       "path": "scripts/document-taxonomy-migration.json",
       "state": "terminal",
-      "expectedRuleIds": ["REGISTRY_ROUTE_STATE"]
+      "expectedRuleIds": [
+        "REGISTRY_ROUTE_STATE"
+      ]
     }
   ],
   "dateCases": [
@@ -164,7 +166,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Wrong Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Wrong Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-HEADING"
       ]
@@ -178,7 +180,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n#### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n#### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-HEADING"
       ]
@@ -206,7 +208,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Acceptance criterion | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| Observable result | REQ-FIXTURE-001 | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Acceptance criterion | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| Observable result | REQ-FIXTURE-001 | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-COLUMNS"
       ]
@@ -220,7 +222,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | REQ-FIXTURE-001 | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Requirement ID | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | REQ-FIXTURE-001 | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-COLUMN-DUPLICATE"
       ]
@@ -234,7 +236,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-CELL"
       ]
@@ -248,7 +250,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| requirement-1 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| requirement-1 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-IDENTIFIER"
       ]
@@ -290,7 +292,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| N/A \u2014 standalone corrective specification | VAL-FIXTURE-001 | Named test |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| N/A — standalone corrective specification | VAL-FIXTURE-001 | Named test |\n",
       "expectedRuleIds": []
     },
     {
@@ -426,7 +428,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n   | Requirement ID | Acceptance criterion | Downstream owner |\n   | --- | --- | --- |\n   | REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n   | Requirement ID | Acceptance criterion | Downstream owner |\n   | --- | --- | --- |\n   | REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": []
     },
     {
@@ -438,7 +440,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n\n| REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-TABLE"
       ]
@@ -452,7 +454,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n<!-- spacing -->\n| REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n<!-- spacing -->\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": [
         "BODY-CONTRACT-TABLE"
       ]
@@ -466,7 +468,7 @@
         "draft",
         "active"
       ],
-      "body": "## Traceability\n\n```markdown\n### Lifecycle Traceability\n| Wrong | Table | Here |\n| --- | --- | --- |\n```\n\n<!--\n### Lifecycle Traceability\n| Wrong | Comment | Table |\n| --- | --- | --- |\n-->\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A \u2014 no downstream owner yet |\n",
+      "body": "## Traceability\n\n```markdown\n### Lifecycle Traceability\n| Wrong | Table | Here |\n| --- | --- | --- |\n```\n\n<!--\n### Lifecycle Traceability\n| Wrong | Comment | Table |\n| --- | --- | --- |\n-->\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | N/A — no downstream owner yet |\n",
       "expectedRuleIds": []
     }
   ],
@@ -487,11 +489,41 @@
       ]
     },
     {
-      "profile": "sdlc/ard",
+      "profile": "sdlc/srs",
       "mode": "authored",
       "applicability": "validate-document",
-      "fixturePath": "docs/02.architecture/requirements/9999-fixture.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ard\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/01.requirements/srs-999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/srs\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## System Context\n\nFixture content.\n\n## Functional Requirements\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Interface Requirements\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/interface",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/01.requirements/ifc-999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/interface\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Interface Boundary\n\nFixture content.\n\n## Requirements\n\nFixture content.\n\n## Data Contract\n\nFixture content.\n\n## Error Handling\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/ad",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/02.architecture/descriptions/ad-9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ad\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -522,21 +554,6 @@
       "applicability": "validate-document",
       "fixturePath": "docs/03.specs/999-fixture/spec.md",
       "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
-      "negativeMutations": [
-        {
-          "kind": "remove-required-heading",
-          "expectedRuleIds": [
-            "BODY-HEADING-REQUIRED"
-          ]
-        }
-      ]
-    },
-    {
-      "profile": "sdlc/api-spec",
-      "mode": "authored",
-      "applicability": "validate-document",
-      "fixturePath": "docs/03.specs/999-fixture/api-spec.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/api-spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## API Style\n\nFixture content.\n\n## Authentication & Authorization\n\nFixture content.\n\n## Endpoint / Operation Catalog\n\nFixture content.\n\n## Request / Response Schemas\n\nFixture content.\n\n## Error Model\n\nFixture content.\n\n## Data Contract Compatibility\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Machine-readable Contract Files\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1171,11 +1188,11 @@
       ]
     },
     {
-      "profile": "template/sdlc/ard",
+      "profile": "template/sdlc/ad",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ard\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ad\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1306,11 +1323,11 @@
       ]
     },
     {
-      "profile": "template/sdlc/agent-design",
+      "profile": "template/sdlc/srs",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/agent-design\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Agent Role\n\nFixture content.\n\n## Inputs / Outputs\n\nFixture content.\n\n## Orchestration Model\n\nFixture content.\n\n## Tools & Permissions\n\nFixture content.\n\n## Prompt / Policy Contract\n\nFixture content.\n\n## Context & Memory Strategy\n\nFixture content.\n\n## Guardrails\n\nFixture content.\n\n## Failure Modes & Fallback\n\nFixture content.\n\n## Evaluation Plan\n\nFixture content.\n\n## Observability\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/srs\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## System Context\n\nFixture content.\n\n## Functional Requirements\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Interface Requirements\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1321,11 +1338,26 @@
       ]
     },
     {
-      "profile": "template/sdlc/api-spec",
+      "profile": "template/sdlc/interface",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/api-spec\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## API Style\n\nFixture content.\n\n## Authentication & Authorization\n\nFixture content.\n\n## Endpoint / Operation Catalog\n\nFixture content.\n\n## Request / Response Schemas\n\nFixture content.\n\n## Error Model\n\nFixture content.\n\n## Data Contract Compatibility\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Machine-readable Contract Files\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/interface\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Interface Boundary\n\nFixture content.\n\n## Requirements\n\nFixture content.\n\n## Data Contract\n\nFixture content.\n\n## Error Handling\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/agent-design",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/agent-design\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Agent Role\n\nFixture content.\n\n## Inputs / Outputs\n\nFixture content.\n\n## Orchestration Model\n\nFixture content.\n\n## Tools & Permissions\n\nFixture content.\n\n## Prompt / Policy Contract\n\nFixture content.\n\n## Context & Memory Strategy\n\nFixture content.\n\n## Guardrails\n\nFixture content.\n\n## Failure Modes & Fallback\n\nFixture content.\n\n## Evaluation Plan\n\nFixture content.\n\n## Observability\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",

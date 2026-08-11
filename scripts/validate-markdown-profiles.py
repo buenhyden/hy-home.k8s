@@ -2133,17 +2133,28 @@ def _self_test(root: Path) -> list[str]:
     baseline_readmes = {
         path.as_posix() for path in inventory.baseline_paths if path.name == "README.md"
     }
-    active_baseline = set(readme_paths) & baseline_readmes
-    active_program_created = set(readme_paths) - baseline_readmes
-    retired_baseline = set(retired_readme_paths) & baseline_readmes
-    retired_program_created = set(retired_readme_paths) - baseline_readmes
+    work105_readme_renames = {
+        "docs/02.architecture/requirements/README.md":
+            "docs/02.architecture/descriptions/README.md",
+        "examples/aws/docs/02.architecture/requirements/README.md":
+            "examples/aws/docs/02.architecture/descriptions/README.md",
+        "examples/azure/docs/02.architecture/requirements/README.md":
+            "examples/azure/docs/02.architecture/descriptions/README.md",
+    }
+    conceptual_baseline_readmes = {
+        work105_readme_renames.get(path, path) for path in baseline_readmes
+    }
+    active_baseline = set(readme_paths) & conceptual_baseline_readmes
+    active_program_created = set(readme_paths) - conceptual_baseline_readmes
+    retired_baseline = set(retired_readme_paths) & conceptual_baseline_readmes
+    retired_program_created = set(retired_readme_paths) - conceptual_baseline_readmes
     if (
         len(baseline_readmes) != 67
         or len(active_baseline) != 45
         or len(active_program_created) != 6
         or len(retired_baseline) != 22
         or len(retired_program_created) != 1
-        or active_baseline | retired_baseline != baseline_readmes
+        or active_baseline | retired_baseline != conceptual_baseline_readmes
     ):
         failures.append(
             "README handoff must reconstruct baseline67 as active45 plus retired22, with active-new6 and retired-new1"
@@ -2211,7 +2222,7 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(f"README handoff requiredH2 mismatch: {path_text}")
             if handoff.get("allowedH2") != list(selected.headings.allowed):
                 failures.append(f"README handoff allowedH2 mismatch: {path_text}")
-            expected_new = path_text not in baseline_readmes
+            expected_new = path_text not in conceptual_baseline_readmes
             if handoff.get("new") is not expected_new:
                 failures.append(f"README handoff new disposition mismatch: {path_text}")
             if lifecycle == "active":

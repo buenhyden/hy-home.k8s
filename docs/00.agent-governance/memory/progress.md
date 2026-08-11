@@ -15879,3 +15879,71 @@ section separating static from live evidence.
 
 - Continue with WORK-101. The known all-files baseline defects remain assigned
   to that separate work package.
+
+## 2026-08-11 - WORK-105 terminal document-form cutover
+
+### Metadata
+
+- **Date**: 2026-08-11
+- **Layer**: documentation, architecture, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #ad #validation
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-105 tests-first implementation and staged-candidate review
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-106 transition-validator tranche
+
+### Progress
+
+- Converted the exact eight source architecture records to terminal AD-0004
+  through AD-0011 paths while preserving IDs, slugs, owners, and lifecycle
+  states; retired the authored legacy ARD/RFC and API Spec routes.
+- Added terminal SRS, Interface Requirement, and AD profiles/templates, retained
+  the three native OpenAPI/GraphQL/Protobuf forms byte-for-byte, and left
+  identity-field backfill to its later work package.
+- Closed the pinned-base consumer ledger at 2,092 unique path/line records:
+  1,864 legacy ARD matches, 235 API/native matches, and seven overlaps. The
+  staged-candidate classifier reports zero live and zero unclassified current
+  consumers while retaining only exact history, native evidence, and negative
+  controls.
+- Applied the AD-0011/ADR-0024/PRD-008 authority change only after corpus and
+  consumer closure. WORK-105 and WORK-106 leave Stage 98 unchanged; only the
+  later ledger-gated WORK-107 tranche may change its outer record locations.
+
+### Evidence
+
+- RED: the strict-cutover classifier tests first exposed four uncovered legacy
+  vocabulary forms, worktree leakage into staged results, and one file-wide
+  negative classification; the semantic/route/archive/invariant tranche then
+  exposed eight additional contract failures.
+- GREEN: the exact union generator reproduces 2,092 unique records with digest
+  `01586b5f638e47ab6074f55012f354f1147f2256ed3e55c5256525d625abff45`;
+  the worktree semantic projection reports zero live and zero unclassified
+  consumers, and the staged-index divergence probe passes.
+- Completed-history links are admitted only for status `done`, exact pinned-base
+  source bytes, and the eight closed predecessor targets. Active, draft,
+  accepted, changed-byte, and outside-target fixture mutations fail closed.
+- Stage 90 and Stage 98 bodies remain unchanged, Stage 05 changes are limited
+  to the reviewed seven AD-0007 link repairs, and no remote, provider, hosted,
+  credential, deployment, or live action was performed or claimed.
+- Final staged-candidate evidence supersedes the interim digest above: the exact
+  union generator and registry fixture digest are
+  `07a9a5060a0a9da2487308d24364d69f120799603ae3be13e9a280c74ac424f4`.
+  Focused gates passed for strict-cutover 31/31, registry self/strict, Markdown
+  self/strict, links self/strict, lifecycle self/staged, active corpus 100/100,
+  active-corpus residue self-test 25, governance closure 29/29, archive
+  cutover 31/31, and RIA 94/94. The synchronized staged-index aggregate ended
+  with `[PASS] repository quality gates passed`.
+- Controller verification ran `TMPDIR=/tmp pre-commit run` and
+  `TMPDIR=/tmp pre-commit run --all-files` to exit `0`; every applicable hook
+  passed and the all-files run produced no mutation. Its post-run candidate was
+  `A12/D11/M182` across 205 no-renames logical records (196 rename-aware paths)
+  with zero unstaged or untracked paths.
+
+### Handoff
+
+- Continue with WORK-106 only after the WORK-105 staged candidate and protected
+  surface checks remain green. Do not begin the Stage 98 cutover before its
+  schema-versioned ledger, validator, recovery, and bounded WORK-107 gate pass.

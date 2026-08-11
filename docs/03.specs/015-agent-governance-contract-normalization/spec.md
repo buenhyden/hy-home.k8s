@@ -327,7 +327,7 @@ surfaces change.
   upstream requirement is the approved user request to normalize the target
   AI-agent governance, frontmatter, section, contract, provider-adapter, QA,
   and CI/CD surfaces.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
+- **AD**: No separate AD exists. The architectural baseline is the current
   Stage 00 canonical core plus provider-adapter model.
 - **Related ADRs**: No new ADR is required unless implementation discovers a
   provider capability decision that changes the architecture rather than merely

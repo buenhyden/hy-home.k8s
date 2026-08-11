@@ -71,7 +71,7 @@ trigger. The initial minimum basis is:
 | Document family | Primary external basis | Required comparison |
 | --- | --- | --- |
 | PRD | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/standard/72089.html) and [Spec Kit](https://github.github.com/spec-kit/index.html) | Requirement quality, acceptance, scope, and downstream traceability; do not copy a paid standard's text. |
-| ARD | [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) | Stakeholders, concerns, viewpoints, boundaries, and architecture-description versus implementation distinction. |
+| AD | [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) | Stakeholders, concerns, viewpoints, boundaries, and architecture-description versus implementation distinction. |
 | ADR | [Michael Nygard's ADR practice](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) | One decision, context, decision, status, consequences, monotonic numbering, and preservation when superseded. |
 | Spec, Plan, Task, tests | [Spec Kit](https://github.github.com/spec-kit/index.html) and [NIST SSDF 1.1](https://csrc.nist.gov/pubs/sp/800/218/final) | Spec-to-plan-to-task-to-implementation flow, cross-artifact analysis, secure-development verification; treat Spec Kit as a method, not a standard. |
 | API and native contracts | [OpenAPI Specification](https://spec.openapis.org/oas/latest.html), [GraphQL Specification](https://spec.graphql.org/), and [Protocol Buffers](https://protobuf.dev/programming-guides/proto3/) | Native syntax and consumer contract; keep formats outside Markdown frontmatter. |
@@ -151,7 +151,7 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **Current Contracts**: [Template Documentation Contract](../../99.templates/support/documentation-contract.md) and [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)

@@ -186,7 +186,7 @@ deployment what-if guidance:
   bounded developer diagnostic, with owner and retry trigger.
 - **Cloud semantics require API access**: record `DEFER`; obtain separate
   credentials and action approval only in a later live-readiness Spec.
-- **Example defect requires topology change**: update PRD/ARD/ADR/Spec scope
+- **Example defect requires topology change**: update PRD/AD/ADR/Spec scope
   before altering the reference implementation.
 
 ## Verification Commands
@@ -238,7 +238,7 @@ isolated environment described above, not an unreviewed ambient configuration.
 - **Program requirement**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:

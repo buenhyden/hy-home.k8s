@@ -23,7 +23,7 @@ or live result.
 - Parent [Spec 050](spec.md)
 - Parent [Implementation Plan](plan.md)
 - [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md),
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md),
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 049 platform contract, exact-tool helper behavior, validation routing,
   CI owner, aggregate, and residual DEFER records

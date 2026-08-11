@@ -121,7 +121,7 @@ bash scripts/validate-k8s-manifests.sh .
 ### Inputs
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
-- **ARD**: [../../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- **AD**: [../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 
 ### Delivery and References

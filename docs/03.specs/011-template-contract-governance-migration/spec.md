@@ -89,7 +89,7 @@ against the old flat inventory before the path migration begins.
 | Component | Target | Responsibility |
 | --- | --- | --- |
 | Template inventory README | `docs/99.templates/README.md` | Human entrypoint, current inventory, and links to support contracts. |
-| SDLC template forms | `docs/99.templates/templates/sdlc/**` | PRD, ARD, ADR, Spec, Plan, Task, operations, incident, and feature-helper forms. |
+| SDLC template forms | `docs/99.templates/templates/sdlc/**` | PRD, AD, ADR, Spec, Plan, Task, operations, incident, and feature-helper forms. |
 | Common template forms | `docs/99.templates/templates/common/**` | README, Reference, Archive Tombstone, Memory, Progress, and shared utility forms. |
 | Template support contracts | `docs/99.templates/support/**` | Frontmatter schema, SDLC governance, common documentation governance, routing map, legacy cleanup rules. |
 | Stage 00 governance | `docs/00.agent-governance/**` | Agent-facing governance, routing policy, language rules, hooks, and protected-surface behavior. |
@@ -119,7 +119,7 @@ docs/99.templates/
     └── sdlc/
         ├── architecture/
         │   ├── adr.template.md
-        │   └── ard.template.md
+        │   └── ad.template.md
         ├── execution/
         │   ├── plan.template.md
         │   └── task.template.md
@@ -133,7 +133,7 @@ docs/99.templates/
         │   └── prd.template.md
         └── specs/
             ├── agent-design.template.md
-            ├── api-spec.template.md
+            ├── interface.template.md
             ├── data-model.template.md
             ├── retired duplicate harness Task starter (removed by Spec 027)
             ├── openapi.template.yaml
@@ -444,7 +444,7 @@ rule.
 
 - **PRD**: No separate PRD exists. The user-approved request in this Codex
   thread is the product requirement input.
-- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
+- **AD**: No separate AD exists. Existing Stage 00 documentation governance
   defines the architectural boundary.
 - **Related ADRs**: No new ADR is required unless the implementation changes
   non-documentation runtime behavior.

@@ -143,6 +143,184 @@ TRANSITION_AUTHORITY_BLOBS = {
         "a2fe213c905ce2d79623f24d728e5b32776fd06a",  # pragma: allowlist secret
     ),
 }
+WORK105_BASE_COMMIT = (
+    "a6fa1806364ea0472baaad0906e1b5e4ddac8602"  # pragma: allowlist secret
+)
+WORK105_REGISTRY_BLOBS = (
+    "fc9ba039906ef240d076de5eeb6c584b681ae09f",  # pragma: allowlist secret
+    "fd842f60e801a39435600f35a27f22e1c659f1bd",  # pragma: allowlist secret
+)
+WORK105_AUTHORITY_BLOBS = {
+    "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
+        "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",  # pragma: allowlist secret
+        "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": (
+        "d7130da27c94d7bdf8d79efa794f03d0014557df",  # pragma: allowlist secret
+        "d7130da27c94d7bdf8d79efa794f03d0014557df",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md": (
+        "e70dd6126fcab9c36a1a77cb839bf1059e44d4ff",  # pragma: allowlist secret
+        "e70dd6126fcab9c36a1a77cb839bf1059e44d4ff",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md": (
+        "7aa77303c5217c624e3bfe88a0c9a182283164c2",  # pragma: allowlist secret
+        "7aa77303c5217c624e3bfe88a0c9a182283164c2",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0009-kiali-external-observability.md": (
+        "48c24f79994c201ebc3e087d7764bd023bead95a",  # pragma: allowlist secret
+        "48c24f79994c201ebc3e087d7764bd023bead95a",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md": (
+        "56354ecbf722b55fc2f783df215d26caa6d108a5",  # pragma: allowlist secret
+        "56354ecbf722b55fc2f783df215d26caa6d108a5",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0012-argo-notifications-slack.md": (
+        "04597c0f3c4e5c42d88a5a18383846cb49ec8c1f",  # pragma: allowlist secret
+        "04597c0f3c4e5c42d88a5a18383846cb49ec8c1f",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": (
+        "7c45166536061ca971391532c9e296ce44597e44",  # pragma: allowlist secret
+        "7c45166536061ca971391532c9e296ce44597e44",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": (
+        "60b9c1021a9a2a4811d492de3aad2a82add59740",  # pragma: allowlist secret
+        "60b9c1021a9a2a4811d492de3aad2a82add59740",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md": (
+        "7e09132e1a1278d96f4d9f1a0e57987144f21e65",  # pragma: allowlist secret
+        "7e09132e1a1278d96f4d9f1a0e57987144f21e65",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md": (
+        "81c164b7a4a81e8cbd922597cff813528ab23d5f",  # pragma: allowlist secret
+        "81c164b7a4a81e8cbd922597cff813528ab23d5f",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md": (
+        "21c66759821e260621bde510574a58f4fe6b4de4",  # pragma: allowlist secret
+        "21c66759821e260621bde510574a58f4fe6b4de4",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md": (
+        "96daabd4098215e403237e016e771522c647bf4a",  # pragma: allowlist secret
+        "0d1ae80fc1bad299491f9ab9dee49eddd472c6e8",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/009-workspace-harness-research-pack/spec.md": (
+        "96ee4d63145234876145e0413d69b97b79b6823f",  # pragma: allowlist secret
+        "2eb273df097d55add15717f865226b1e7c8dbbcc",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md": (
+        "e485cd00e7c9766ebc2dad849cf719431f72c2c0",  # pragma: allowlist secret
+        "ed36174654aba055ebfc2e94c7fb44809d3cb1ee",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+        "99e80929ac13720f646286ce2ea95b02c194672e",  # pragma: allowlist secret
+        "cb30f0ca89fa11f4e421ac3543289231204c76ef",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+        "4fdef1a7385620dc2113b3bc1568d6a72ec7217e",  # pragma: allowlist secret
+        "90623b083cf285bc99ac855170471e4d2343fec3",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+        "ded396714e0d734908bac7126d21b7f5ecd7c211",  # pragma: allowlist secret
+        "02fb77f0ed82408144c93e5bf08b9f0dffc2506d",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/014-workspace-document-contract-normalization/spec.md": (
+        "59a40eea737b1184340d41de2f94f9782c1f7a22",  # pragma: allowlist secret
+        "99cd9f8395edd2b369abcacf71fe8d841716e907",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/015-agent-governance-contract-normalization/spec.md": (
+        "2651fd2638387e784c7579129b0862dab90048e6",  # pragma: allowlist secret
+        "64de8c7810415cfe5547773f3de2ea9330c032f3",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+        "3e7e9c44aba500a454db557c78279185ae4c84f2",  # pragma: allowlist secret
+        "1066123a7bdc079c21cd1cb745a2359ccc2da948",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+        "ddbe2d692da2c709017d271ff3d713eeec600da2",  # pragma: allowlist secret
+        "49d9864b5d9335db3990ffa4f4224d72831abb62",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md": (
+        "d688e3ed234ab264711a7949d2e05f1d5df2fcc7",  # pragma: allowlist secret
+        "935accf1f4e56c93c15a8d56ffb82f3c3c1e7b80",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+        "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
+        "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/020-workspace-contract-governance-normalization/spec.md": (
+        "396a84f8e2de773ebb14bfda10c87db288779274",  # pragma: allowlist secret
+        "d6a1fb47b1ca080602f9e12abe5f752a0074d899",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/021-sdlc-lifecycle-contract/spec.md": (
+        "e877cb560bd95fecc0c7d205c31484461a8f0c2a",  # pragma: allowlist secret
+        "ef8abb13c14b8867a4f3a51f171e110fa23aa174",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+        "32a6cb6803ac213edb69a9c5337b382c99c83edb",  # pragma: allowlist secret
+        "c1b9c8f67ae008dbd77084aa4e3477cba9c9ace6",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+        "5317314ce90b59b9066ec5d0f44d6184563afe33",  # pragma: allowlist secret
+        "919883bd07ef0f8af7400a7e67ea297d384ac96c",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+        "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
+        "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+        "b56d1b3d99e20db6a1491ef51cbe3fd376da0fff",  # pragma: allowlist secret
+        "89ff3f99888aee78ef642f2742244be9d4f37265",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/026-document-contract-registry/spec.md": (
+        "4a97eedf1f76b367335bc8b7153c7f28b20031b5",  # pragma: allowlist secret
+        "a8f64e4795bed6c7cd1a47d4f4cb1429c0178b87",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+        "89daed767234baa10b3a44ad7a24ed325c362135",  # pragma: allowlist secret
+        "4aef90531c24136a307932f55a80c3360f45c5a3",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+        "0efdbe887101a2c5000f55e31daeb37a0a42dc56",  # pragma: allowlist secret
+        "5198903bd8022e417b8bb721cb11eba0cfd207e6",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/029-semantic-document-validation/spec.md": (
+        "ea1d54f47a7288ebbf5cff2d11e0c805dea3788d",  # pragma: allowlist secret
+        "3b226a2fb59f76519af01e655e4c7e3ae8ecbe03",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/030-authored-document-migration/spec.md": (
+        "8b443403fb044a529cfdcbe748d1ffdb6b879dfb",  # pragma: allowlist secret
+        "9c0dbe6539ddae2903c9d610bd07724f3b2264e3",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/031-affected-surface-agent-qa/spec.md": (
+        "8314414e34d733e20d40536eb91b015d0c3e894b",  # pragma: allowlist secret
+        "cec3eb9361b9960912cf2b7efa447f8a8fde75ae",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md": (
+        "70cc3eb48e65de90a027f5a81e79c616fcf6c4da",  # pragma: allowlist secret
+        "f52be661732bf4aee26477d818aab610708a497c",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md": (
+        "1bba28ab3cf65fc7fd3092f12ff53cc685a8398e",  # pragma: allowlist secret
+        "ecb8e93b8394953e5f0583bb6f30160f1efc7ad8",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/034-authority-and-lineage-foundation/spec.md": (
+        "84ebd53683214bbc2ce5f61037cea8121094b2a7",  # pragma: allowlist secret
+        "4dc1965c31bff39c25ab3d58d99b1b5065bdaab3",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md": (
+        "f217827d5867166c1a0b9ff38542caffa5618394",  # pragma: allowlist secret
+        "6a4fc6cfdea908aee132415eaae123f34bcd602f",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md": (
+        "20b7bddc865cd7f18129e9cdf02b21944a3720dd",  # pragma: allowlist secret
+        "7a55f01a4e0d6513f179185914441570de3602d5",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+        "a2fe213c905ce2d79623f24d728e5b32776fd06a",  # pragma: allowlist secret
+        "829b532834ff73fcccc74850a9794410a15b2985",  # pragma: allowlist secret
+    ),
+}
+WORK105_BASE_PATHS = (REGISTRY_PATH, *sorted(WORK105_AUTHORITY_BLOBS))
 TRANSITION_AUTHORITY_REMAPS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
         (
@@ -469,6 +647,8 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0022-direct-approval-standalone-execution-lineage.md",
         "docs/02.architecture/decisions/"
         "0023-work-unit-document-taxonomy-and-governance-authority.md",
+        "docs/02.architecture/decisions/"
+        "0024-terminal-artifact-identity-and-archive-layout.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -737,6 +917,16 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
             TASK_ROOT,
         )
     )
+    inventory_queries.add(
+        (
+            "ls-tree",
+            "-z",
+            "--full-tree",
+            WORK105_BASE_COMMIT,
+            "--",
+            *WORK105_BASE_PATHS,
+        )
+    )
     if arguments in inventory_queries:
         return True
     return (
@@ -994,6 +1184,64 @@ def _taxonomy_source_tree(
     return resolved
 
 
+def _work105_base_projection(
+    root: str, runner: GitRunner = _run_git
+) -> dict[str, str]:
+    """Bind the staged WORK-105 compatibility projection to its exact base tree."""
+
+    expected = {
+        REGISTRY_PATH: WORK105_REGISTRY_BLOBS[0],
+        **{
+            path: base_blob
+            for path, (base_blob, _current_blob) in WORK105_AUTHORITY_BLOBS.items()
+        },
+    }
+    payload = _git(
+        root,
+        (
+            "ls-tree",
+            "-z",
+            "--full-tree",
+            WORK105_BASE_COMMIT,
+            "--",
+            *WORK105_BASE_PATHS,
+        ),
+        runner,
+    )
+    if payload and not payload.endswith(b"\0"):
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
+    resolved: dict[str, str] = {}
+    for raw in payload[:-1].split(b"\0") if payload else ():
+        try:
+            header, raw_path = raw.split(b"\t", 1)
+            mode, object_type, raw_oid = header.split(b" ", 2)
+            path = raw_path.decode("utf-8", errors="strict")
+            oid = raw_oid.decode("ascii", errors="strict")
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT") from exc
+        if (
+            path not in expected
+            or mode != b"100644"
+            or object_type != b"blob"
+            or FULL_OID.fullmatch(oid) is None
+            or path in resolved
+        ):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+        resolved[path] = oid
+    if resolved != expected:
+        mismatch = next(
+            (path for path in WORK105_BASE_PATHS if resolved.get(path) != expected[path]),
+            REGISTRY_PATH,
+        )
+        code = (
+            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY"
+            if mismatch == REGISTRY_PATH
+            else "CLOSURE-AUTHORITY-DRIFT"
+        )
+        raise ClosureError(code, mismatch)
+    return resolved
+
+
 def _taxonomy_archive_recoveries(
     root: str,
     archive_entries: Sequence[Mapping[str, Any]],
@@ -1210,9 +1458,10 @@ def _load_registry_authority(
     root: str, runner: GitRunner = _run_git
 ) -> Mapping[str, Any]:
     index = _registry_inventory(root, runner)
-    registry = _load_json_bytes(
-        _proposed_or_index_bytes(root, REGISTRY_PATH, index, runner), REGISTRY_PATH
-    )
+    payload = _proposed_or_index_bytes(root, REGISTRY_PATH, index, runner)
+    if index.get(REGISTRY_PATH) != WORK105_REGISTRY_BLOBS[1]:
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+    registry = _load_json_bytes(payload, REGISTRY_PATH)
     if not isinstance(registry, Mapping):
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
     return registry
@@ -1717,7 +1966,11 @@ def _terminal_registry_relations(
     for program in programs:
         if not isinstance(program, Mapping):
             raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
-        if program.get("prd") == "006" and program.get("ard") == "0009":
+        if program.get("prd") == "006" and program.get("ad") == "0009":
+            if set(program) != {"prd", "ad", "tranches", "followUps"}:
+                raise ClosureError(
+                    "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH
+                )
             exact_programs.append(program)
         for collection_name in ("tranches", "followUps"):
             collection = program.get(collection_name)
@@ -2009,7 +2262,7 @@ def _partition_terminal_controls(
             **_object_identity(TERMINAL_SPEC, index, payloads[TERMINAL_SPEC]),
             "registryPath": REGISTRY_PATH,
             "programPrd": "006",
-            "programArd": "0009",
+            "programAd": "0009",
             "relationClass": "original-tranche",
             **TERMINAL_RELATION_IDENTITY,
             "state": "done",
@@ -2039,7 +2292,7 @@ def _partition_terminal_controls(
                 ),
                 "registryPath": REGISTRY_PATH,
                 "programPrd": "006",
-                "programArd": "0009",
+                "programAd": "0009",
                 "relationClass": "original-tranche",
                 **TERMINAL_SUCCESSOR_IDENTITY,
                 "state": "done",
@@ -2069,7 +2322,7 @@ def _partition_terminal_controls(
                 ),
                 "registryPath": REGISTRY_PATH,
                 "programPrd": "006",
-                "programArd": "0009",
+                "programAd": "0009",
                 "relationClass": "original-tranche",
                 **TERMINAL_FRONTIER_IDENTITY,
                 "state": "done",
@@ -2175,7 +2428,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
         "objectId",
         "registryPath",
         "programPrd",
-        "programArd",
+        "programAd",
         "relationClass",
         "spec",
         "order",
@@ -2350,7 +2603,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
             row.get("owner"),
             row.get("registryPath"),
             row.get("programPrd"),
-            row.get("programArd"),
+            row.get("programAd"),
             row.get("relationClass"),
             row.get("spec"),
             row.get("order"),
@@ -2912,7 +3165,8 @@ def _validate_authority_guard_transition(
         observed_guards
     ) != {"acceptedAdrs", "doneSpecs"}:
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
-    admitted: set[str] = set()
+    admitted_transition: set[str] = set()
+    admitted_work105: set[str] = set()
     for key in ("acceptedAdrs", "doneSpecs"):
         ledger_rows = ledger_guards[key]
         observed_rows = observed_guards[key]
@@ -2934,15 +3188,21 @@ def _validate_authority_guard_transition(
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
         for path, ledger_row in ledger_by_path.items():
             observed_row = observed_by_path[path]
-            expected_blobs = TRANSITION_AUTHORITY_BLOBS.get(path)
-            if expected_blobs is None:
-                if ledger_row != observed_row:
-                    raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
-                continue
-            admitted.add(path)
-            old_blob, current_blob = expected_blobs
+            work105_blobs = WORK105_AUTHORITY_BLOBS.get(path)
+            if work105_blobs is None:
+                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+            admitted_work105.add(path)
+            work105_base_blob, current_blob = work105_blobs
+            transition_blobs = TRANSITION_AUTHORITY_BLOBS.get(path)
+            if transition_blobs is None:
+                old_blob = work105_base_blob
+                transition_blob = work105_base_blob
+            else:
+                admitted_transition.add(path)
+                old_blob, transition_blob = transition_blobs
             if (
-                ledger_row.get("objectId") != _git_identity(old_blob)
+                work105_base_blob != transition_blob
+                or ledger_row.get("objectId") != _git_identity(old_blob)
                 or observed_row.get("objectId") != _git_identity(current_blob)
                 or {key: value for key, value in ledger_row.items() if key != "objectId"}
                 != {
@@ -2952,7 +3212,9 @@ def _validate_authority_guard_transition(
                 }
             ):
                 raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
-    if admitted != set(TRANSITION_AUTHORITY_BLOBS):
+    if admitted_transition != set(TRANSITION_AUTHORITY_BLOBS) or admitted_work105 != set(
+        WORK105_AUTHORITY_BLOBS
+    ):
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
 
 
@@ -2962,6 +3224,12 @@ def build_observed(
     normalized = _normalize_root(root)
     if _git(normalized, ("cat-file", "-t", FIXED_INPUT_COMMIT), runner) != b"commit\n":
         raise ClosureError("CLOSURE-FIXED-COMMIT", ".git")
+    if (
+        _git(normalized, ("cat-file", "-t", WORK105_BASE_COMMIT), runner)
+        != b"commit\n"
+    ):
+        raise ClosureError("CLOSURE-FIXED-COMMIT", ".git")
+    _work105_base_projection(normalized, runner)
     registry = _load_registry_authority(normalized, runner)
     taxonomy_index = _taxonomy_manifest_inventory(normalized, runner)
     if taxonomy_index.get(TAXONOMY_MANIFEST_PATH) != TAXONOMY_MANIFEST_BLOB:
@@ -3740,7 +4008,7 @@ def _self_test_terminal_frontier() -> int:
                 "programs": [
                     {
                         "prd": "006",
-                        "ard": "0009",
+                        "ad": "0009",
                         "tranches": [
                             {**TERMINAL_RELATION_IDENTITY, "state": "done"},
                             {
@@ -3881,6 +4149,8 @@ def _self_test_post_closure_adr_scope() -> int:
             "0022-direct-approval-standalone-execution-lineage.md",
             "docs/02.architecture/decisions/"
             "0023-work-unit-document-taxonomy-and-governance-authority.md",
+            "docs/02.architecture/decisions/"
+            "0024-terminal-artifact-identity-and-archive-layout.md",
         }
     )
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:

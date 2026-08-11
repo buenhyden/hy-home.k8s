@@ -222,7 +222,7 @@ observed repository and SHA.
 - **Program requirement**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:

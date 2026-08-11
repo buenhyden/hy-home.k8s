@@ -162,7 +162,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         contract["generatedAssets"] = relations
         return contract
 
-    def _generator_repository(self) -> Path:
+    def _generator_repository(
+        self, *, preserve_production_output: bool = False
+    ) -> Path:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
@@ -177,14 +179,43 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("scripts/README.md"),
             Path("docs/90.references/README.md"),
             Path("docs/90.references/data/README.md"),
+            ria.REGISTRY_PATH,
+            ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
         )
         for path in paths:
             destination = root / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((REPOSITORY_ROOT / path).read_bytes())
+        if not preserve_production_output:
+            generated = subprocess.run(
+                [ria.GENERATOR_EXECUTABLE, ria.GENERATOR_PATH.as_posix()],
+                cwd=root,
+                env=ria.CLOSED_GENERATOR_ENVIRONMENT,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(generated.returncode, 0, generated.stderr)
         self._git_in(root, "init", "--quiet")
         self._git_in(root, "add", "--", *(path.as_posix() for path in paths))
         return root
+
+    def _run_generator_check(self, root: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                ria.GENERATOR_EXECUTABLE,
+                ria.GENERATOR_PATH.as_posix(),
+                "--check",
+            ],
+            cwd=root,
+            env=ria.CLOSED_GENERATOR_ENVIRONMENT,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
 
     def _replace_generator(self, root: Path, payload: bytes) -> None:
         path = Path("scripts/generate-llm-wiki-index.sh")
@@ -1334,6 +1365,231 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 root, self._generator_contract([stale_owner])
             )
         )
+
+    def test_generator_transition_overlay_is_exact_and_fail_closed(self) -> None:
+        generator = (REPOSITORY_ROOT / ria.GENERATOR_PATH).read_bytes()
+        output = (REPOSITORY_ROOT / ria.GENERATOR_OUTPUT_PATH).read_bytes()
+        rule = ria.GENERATOR_TRANSITION_RULE
+        self.assertEqual(
+            rule,
+            {
+                "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
+                "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
+                "currentGeneratorOid": "395d8537531b3bcd51f08bc3fe2b68e50831a5cd",
+                "semanticMappings": (
+                    {
+                        "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",
+                        "current": "| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |",
+                        "count": 1,
+                    },
+                ),
+            },
+        )
+        self.assertTrue(
+            ria._generator_transition_overlay_matches(  # noqa: SLF001
+                generator,
+                output,
+                transition_active=True,
+            )
+        )
+
+        mutations = (
+            ("terminal-state", generator, output, False, rule),
+            ("future-generator", generator + b"\n", output, True, rule),
+            ("future-output", generator, output + b"\n", True, rule),
+            (
+                "base-blob-pin",
+                generator,
+                output,
+                True,
+                {**rule, "baseOutputOid": "0" * 40},
+            ),
+            (
+                "current-output-pin",
+                generator,
+                output,
+                True,
+                {**rule, "currentOutputOid": "0" * 40},
+            ),
+            (
+                "current-generator-pin",
+                generator,
+                output,
+                True,
+                {**rule, "currentGeneratorOid": "0" * 40},
+            ),
+            (
+                "semantic-mapping",
+                generator,
+                output,
+                True,
+                {
+                    **rule,
+                    "semanticMappings": (
+                        {
+                            **rule["semanticMappings"][0],
+                            "current": rule["semanticMappings"][0]["current"]
+                            + " drift",
+                        },
+                    ),
+                },
+            ),
+        )
+        for (
+            name,
+            candidate_generator,
+            candidate_output,
+            active,
+            candidate_rule,
+        ) in mutations:
+            with (
+                self.subTest(case=name),
+                mock.patch.object(ria, "GENERATOR_TRANSITION_RULE", candidate_rule),
+            ):
+                self.assertFalse(
+                    ria._generator_transition_overlay_matches(  # noqa: SLF001
+                        candidate_generator,
+                        candidate_output,
+                        transition_active=active,
+                    )
+                )
+
+    def test_generator_transition_suppresses_only_expected_stale_exit(self) -> None:
+        contract = json.loads(
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8")
+        )
+        root = self._generator_repository(preserve_production_output=True)
+        active_sources = frozenset({"docs/04.execution/plans/reviewed.md"})
+        with (
+            mock.patch.object(
+                ria,
+                "_load_taxonomy_archive_transition",
+                return_value=active_sources,
+            ),
+            mock.patch.object(
+                ria,
+                "_run_generator_check",
+                return_value="transition",
+            ),
+        ):
+            self.assertEqual(
+                ria.validate_generated_assets(root, contract),
+                [],
+            )
+
+        for name, sources, result, message in (
+            ("terminal-state", frozenset(), "transition", None),
+            ("unknown-success", active_sources, "unknown", None),
+            ("generic-nonzero", active_sources, None, "generator command failed"),
+            ("timeout", active_sources, None, "generator command timed out"),
+            ("unavailable", active_sources, None, "generator executable is unavailable"),
+        ):
+            generator_result = (
+                {"return_value": result}
+                if message is None
+                else {"side_effect": ria._GeneratorError(message)}  # noqa: SLF001
+            )
+            with (
+                self.subTest(case=name),
+                mock.patch.object(
+                    ria,
+                    "_load_taxonomy_archive_transition",
+                    return_value=sources,
+                ),
+                mock.patch.object(
+                    ria,
+                    "_run_generator_check",
+                    **generator_result,
+                ),
+            ):
+                findings = ria.validate_generated_assets(root, contract)
+                self.assertEqual(
+                    findings,
+                    [
+                        ria.Finding(
+                            "RIA-GENERATOR",
+                            ria.GENERATOR_OUTPUT_PATH.as_posix(),
+                            "generated output check failed",
+                        )
+                    ],
+                )
+
+    def test_direct_generator_check_accepts_only_exact_transition_overlay(self) -> None:
+        output_path = ria.GENERATOR_OUTPUT_PATH
+        root = self._generator_repository(preserve_production_output=True)
+        before = (root / output_path).read_bytes()
+        result = self._run_generator_check(root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("transition overlay", result.stdout)
+        self.assertEqual((root / output_path).read_bytes(), before)
+        self.assertEqual(
+            ria._blob_sha1(before),  # noqa: SLF001
+            "5a1482bd94df7f52d3ba22f20e9304c29d61862c",  # pragma: allowlist secret
+        )
+
+        def mutate_output(candidate: Path) -> None:
+            target = candidate / output_path
+            target.write_bytes(target.read_bytes() + b"future output\n")
+
+        def mutate_generated_content(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"| Specifications | [03.specs README]"
+            replacement = b"| Future specifications | [03.specs README]"
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, replacement, 1))
+
+        def mutate_semantic_pin(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"| Architecture requirements | [Architecture Requirements README]"
+            replacement = b"| Drifted requirements | [Architecture Requirements README]"
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, replacement, 1))
+
+        def mutate_output_pin(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"5a1482bd94df7f52d3ba22f20e9304c29d61862c"  # pragma: allowlist secret
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, b"0" * 40, 1))
+
+        def mutate_terminal_state(candidate: Path) -> None:
+            target = candidate / ria.REGISTRY_PATH
+            payload = target.read_bytes()
+            self.assertEqual(payload.count(b'"routeState": "transition"'), 1)
+            target.write_bytes(
+                payload.replace(
+                    b'"routeState": "transition"',
+                    b'"routeState": "terminal"',
+                    1,
+                )
+            )
+
+        def mutate_future_manifest(candidate: Path) -> None:
+            target = candidate / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH
+            target.write_bytes(target.read_bytes() + b"\n")
+
+        mutations = (
+            ("output-bytes", mutate_output),
+            ("generated-bytes", mutate_generated_content),
+            ("semantic-pin", mutate_semantic_pin),
+            ("output-pin", mutate_output_pin),
+            ("terminal-state", mutate_terminal_state),
+            ("future-manifest", mutate_future_manifest),
+        )
+        for name, mutation in mutations:
+            with self.subTest(case=name):
+                candidate = self._generator_repository(
+                    preserve_production_output=True
+                )
+                mutation(candidate)
+                candidate_before = (candidate / output_path).read_bytes()
+                rejected = self._run_generator_check(candidate)
+                self.assertNotEqual(rejected.returncode, 0)
+                self.assertEqual(
+                    (candidate / output_path).read_bytes(), candidate_before
+                )
 
     def test_duplicate_current_and_generated_manual_owners_fail(self) -> None:
         root, contract, owners, _copies = self._duplicate_repository()

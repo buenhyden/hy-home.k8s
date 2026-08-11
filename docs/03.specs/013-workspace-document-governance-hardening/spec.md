@@ -358,7 +358,7 @@ bash scripts/validate-policy-gates.sh .
 
 - **PRD**: No dedicated PRD exists. The user request and prior approved
   template governance work are the active requirements input.
-- **ARD**: No dedicated ARD exists. Current architecture constraints are
+- **AD**: No dedicated AD exists. Current architecture constraints are
   inherited from the Stage 00 canonical adapter model and local GitOps platform
   contract.
 - **Related ADRs**:

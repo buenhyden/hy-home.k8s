@@ -11,7 +11,7 @@ updated: 2026-08-01
 ## Overview
 
 This Spec is the final repository-local integrator for the workspace
-agent-governance program. It closes the PRD 003, ARD 0006, ADR 0019, and Specs
+agent-governance program. It closes the PRD 003, AD 0006, ADR 0019, and Specs
 041-045 chain by validating one machine-readable closure contract over the
 current harness, loop, provider, roster, CI/QA, and legacy-cutover evidence.
 
@@ -58,7 +58,7 @@ remote, or live lane.
 Spec 046 closure requires the following repository-local contract:
 
 1. Specs 038-045 have allowed terminal states and committed evidence.
-2. PRD 003, ARD 0006, ADR 0019, and Specs 041-046 have reciprocal links and
+2. PRD 003, AD 0006, ADR 0019, and Specs 041-046 have reciprocal links and
    status/index/profile agreement.
 3. One closure contract and one adjacent schema are the current machine owner
    for program closure result classification.
@@ -202,7 +202,7 @@ owner and cannot support closure of required repository-local criteria.
   live cluster mutation, push, PR, merge, or release.
 - If live/provider/hosted evidence is unavailable, record it as `ABSENT` or
   `DEFER` with owner and retry trigger rather than weakening the contract.
-- If a review finding requires changing the requirement, update PRD, ARD, ADR,
+- If a review finding requires changing the requirement, update PRD, AD, ADR,
   or the owning Spec first, then revalidate.
 
 ## Verification Commands
@@ -233,7 +233,7 @@ tests.
 
 ## Success Criteria & Verification Plan
 
-- **VAL-AGPC-001**: Specs 038-045 and upstream PRD/ARD/ADR lineage have
+- **VAL-AGPC-001**: Specs 038-045 and upstream PRD/AD/ADR lineage have
   committed, reciprocal, current-state evidence.
 - **VAL-AGPC-002**: The closure contract/schema/validator/fixture/tests are
   closed and reject lane collapse, missing rows, stale owners, and ownerless
@@ -266,7 +266,7 @@ tests.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **ARD**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Document-lifecycle prerequisites**: [Spec 038](../038-reference-information-architecture/spec.md),
   [Spec 039](../039-github-ci-qa-evidence/spec.md), and

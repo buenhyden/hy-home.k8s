@@ -156,7 +156,7 @@ cleanup.
 
 - **Predecessors**: [Spec 037](../037-active-corpus-and-execution-retention/spec.md), [Spec 038](../038-reference-information-architecture/spec.md), and [Spec 039](../039-github-ci-qa-evidence/spec.md)
 - **Program PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Program ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Program AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Decisions**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md), [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md), and [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - **Execution Plan**: [Contract Cutover and Program Closure Implementation Plan](plan.md)
 - **Task Evidence**: [Contract Cutover and Program Closure Task](tasks.md)

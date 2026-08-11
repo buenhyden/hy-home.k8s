@@ -43,7 +43,7 @@ In scope:
 - Update Stage 99 support contracts, Stage 00 routing rules, and the
   repository quality gate so AWS/Azure example docs have an explicit
   example-local SDLC snapshot route.
-- Normalize AWS/Azure example PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy,
+- Normalize AWS/Azure example PRD, AD, ADR, Spec, Plan, Task, Guide, Policy,
   and Runbook documents with type-appropriate frontmatter and topic-specific
   content.
 - Remove duplicate headings, stale provider-latest wording, template residue,
@@ -336,7 +336,7 @@ bash scripts/validate-policy-gates.sh .
 - **PRD**: No dedicated PRD exists. The controlling input is the approved user
   request to combine active control-surface normalization with AWS/Azure
   example-local SDLC snapshot normalization.
-- **ARD**: No new architecture requirement is required because this change is
+- **AD**: No new architecture requirement is required because this change is
   a repository documentation and validation contract.
 - **Related ADRs**:
   - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

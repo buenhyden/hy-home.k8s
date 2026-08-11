@@ -44,7 +44,7 @@ inventory is an input to recompute rather than activation PASS evidence.
 - [Active Corpus and Execution Retention Implementation Plan](plan.md)
 - [Spec 037](spec.md)
 - [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - [Archive index](../../98.archive/README.md)
 - `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)

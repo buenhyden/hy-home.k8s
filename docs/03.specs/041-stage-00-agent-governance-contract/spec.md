@@ -33,7 +33,7 @@ lifecycle and clean-tree aggregate passed after that commit.
 
 - **Owns**: the machine-contract shape, schema boundary, consumer migration
   order, provider projection invariants, evidence classes, and the activation
-  gate for the PRD-003 / ARD-0006 / ADR-0019 program.
+  gate for the PRD-003 / AD-0006 / ADR-0019 program.
 - **Consumes**: the Stage 00 owner graph, the then-current role-semantics
   compatibility input, `validation-surfaces.json`, roster validators,
   provider adapters, and Specs 038–040 closure evidence.
@@ -52,10 +52,10 @@ lifecycle and clean-tree aggregate passed after that commit.
 2. At Spec 041 activation ADR-0019 was `draft` and ADR-0013 was the accepted
    current baseline. Later ADR-0019 lifecycle states are owned by Spec 046 and
    do not retroactively change this activation evidence.
-3. At Spec 041 activation, the registry adds one PRD `003` / ARD `0006`
+3. At Spec 041 activation, the registry adds one PRD `003` / AD `0006`
    program with Specs 041–046 as ordered tranches and accepted ADR `0013` as
    its governing decision. ADR `0019` is the conditional successor linked by
-   PRD/ARD/Spec traceability and may replace that registry relation only with
+   PRD/AD/Spec traceability and may replace that registry relation only with
    its Spec 046 acceptance evidence.
 4. Only Spec 041 may own the first execution Plan/Task pair; later tranches
    remain blocked until their predecessor's tranche-owned criteria are `done`.
@@ -233,7 +233,7 @@ now part of the repository-static aggregate lane.
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **Architecture**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Current accepted decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Agent design**: [Agent Design](./agent-design.md)

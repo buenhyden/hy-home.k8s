@@ -248,7 +248,7 @@ The version choices use the official package records observed on 2026-07-26:
 
 **Interfaces:**
 
-- Consumes: active Spec 039, PRD-006, ARD-0009, ADR-0017, program-lineage
+- Consumes: active Spec 039, PRD-006, AD-0009, ADR-0017, program-lineage
   order 6, approved design commits `b69f829` and `56f19c2`, prerequisite
   commit `cd726e0`, the settled RIA ledger digest, and the reviewed
   post-settlement admission prerequisite.
@@ -1122,8 +1122,8 @@ retroactively convert an earlier failure or skipped lane into PASS.
   [Task: GitHub CI and QA Evidence](tasks.md)
 - **PRD**:
   [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**:
-  [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**:
+  [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 
 ### Lifecycle Traceability
 

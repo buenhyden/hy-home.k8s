@@ -411,9 +411,9 @@ Expected:
 Compare each document family to its template:
 
 - PRD: `prd.template.md`
-- ARD: `ard.template.md`
+- AD: `ad.template.md`
 - ADR: `adr.template.md`
-- Spec and helper specs: `spec.template.md`, `api-spec.template.md`,
+- Spec and helper specs: `spec.template.md`, `interface.template.md`,
   `agent-design.template.md`, `data-model.template.md`, `tests.template.md`
 - Plan: `plan.template.md`
 - Task: `task.template.md`

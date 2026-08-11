@@ -18,48 +18,88 @@
   "forwardContracts": [
     {
       "name": "product",
-      "profiles": ["sdlc/prd"],
+      "profiles": [
+        "sdlc/prd",
+        "sdlc/srs",
+        "sdlc/interface"
+      ],
       "edges": [
-        ["draft", "active"],
-        ["active", "done"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "done"
+        ]
       ]
     },
     {
       "name": "architecture-requirement",
-      "profiles": ["sdlc/ard"],
+      "profiles": [
+        "sdlc/ad"
+      ],
       "edges": [
-        ["draft", "active"],
-        ["active", "accepted"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "accepted"
+        ]
       ]
     },
     {
       "name": "architecture-decision",
-      "profiles": ["sdlc/adr"],
+      "profiles": [
+        "sdlc/adr"
+      ],
       "edges": [
-        ["draft", "active"],
-        ["active", "accepted"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "accepted"
+        ]
       ]
     },
     {
       "name": "specification",
       "profiles": [
         "sdlc/spec",
-        "sdlc/api-spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests"
       ],
       "edges": [
-        ["draft", "active"],
-        ["active", "done"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "done"
+        ]
       ]
     },
     {
       "name": "execution",
-      "profiles": ["sdlc/plan", "sdlc/task"],
+      "profiles": [
+        "sdlc/plan",
+        "sdlc/task"
+      ],
       "edges": [
-        ["draft", "active"],
-        ["active", "done"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "done"
+        ]
       ]
     },
     {
@@ -72,8 +112,14 @@
         "sdlc/postmortem"
       ],
       "edges": [
-        ["draft", "active"],
-        ["active", "accepted"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "accepted"
+        ]
       ]
     },
     {
@@ -85,143 +131,317 @@
         "governance/template-support"
       ],
       "edges": [
-        ["draft", "active"],
-        ["active", "accepted"],
-        ["active", "done"]
+        [
+          "draft",
+          "active"
+        ],
+        [
+          "active",
+          "accepted"
+        ],
+        [
+          "active",
+          "done"
+        ]
       ]
     }
   ],
   "comparisonCases": [
     {
       "name": "unchanged-valid-state",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
       "expectedRuleIds": []
     },
     {
       "name": "skipped-edge",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "done"],
-      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "draft"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "done"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
     },
     {
       "name": "reverse-edge",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
-      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "draft"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
     },
     {
       "name": "terminal-reopen",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "done"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "expectedRuleIds": ["LIFECYCLE-EDGE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "done"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
     },
     {
       "name": "archive-reactivation",
-      "base": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "archived"],
-      "proposed": ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "active"],
-      "expectedRuleIds": ["LIFECYCLE-STATE"]
+      "base": [
+        "docs/98.archive/03.specs/900-example/spec.md",
+        "content/archive",
+        "archived"
+      ],
+      "proposed": [
+        "docs/98.archive/03.specs/900-example/spec.md",
+        "content/archive",
+        "active"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
     },
     {
       "name": "same-path-profile-change",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/guide", "active"],
-      "expectedRuleIds": ["LIFECYCLE-PROFILE-CHANGE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/guide",
+        "active"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-PROFILE-CHANGE"
+      ]
     },
     {
       "name": "same-path-unclassified-state",
-      "base": ["docs/__unclassified__/example.md", "unclassified", null],
-      "proposed": ["docs/__unclassified__/example.md", "unclassified", null],
-      "expectedRuleIds": ["LIFECYCLE-STATE"]
+      "base": [
+        "docs/__unclassified__/example.md",
+        "unclassified",
+        null
+      ],
+      "proposed": [
+        "docs/__unclassified__/example.md",
+        "unclassified",
+        null
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
     },
     {
       "name": "invalid-base-state",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "accepted"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "expectedRuleIds": ["LIFECYCLE-STATE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "accepted"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
     },
     {
       "name": "missing-proposed-state",
-      "base": ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"],
-      "proposed": ["docs/03.specs/900-example/spec.md", "sdlc/spec", null],
-      "expectedRuleIds": ["LIFECYCLE-STATE"]
+      "base": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        "active"
+      ],
+      "proposed": [
+        "docs/03.specs/900-example/spec.md",
+        "sdlc/spec",
+        null
+      ],
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
     }
   ],
   "admissionCases": [
     {
       "name": "draft-create-allowed",
       "documents": [
-        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"]
+        [
+          "docs/03.specs/900-example/spec.md",
+          "sdlc/spec",
+          "draft"
+        ]
       ],
       "expectedRuleIds": []
     },
     {
       "name": "archive-envelope-create-without-evidence-denied",
       "documents": [
-        ["docs/98.archive/03.specs/900-example/spec.md", "content/archive", "archived"]
+        [
+          "docs/98.archive/03.specs/900-example/spec.md",
+          "content/archive",
+          "archived"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-EVIDENCE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE"
+      ]
     },
     {
       "name": "active-create-denied",
       "documents": [
-        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "active"]
+        [
+          "docs/03.specs/900-example/spec.md",
+          "sdlc/spec",
+          "active"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE"
+      ]
     },
     {
       "name": "unclassified-create-denied",
       "documents": [
-        ["docs/__unclassified__/new.md", "unclassified", null]
+        [
+          "docs/__unclassified__/new.md",
+          "unclassified",
+          null
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE"
+      ]
     },
     {
       "name": "unclassified-delete-denied",
       "operation": "delete",
       "documents": [
-        ["docs/__unclassified__/old.md", "unclassified", null]
+        [
+          "docs/__unclassified__/old.md",
+          "unclassified",
+          null
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-DELETE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE"
+      ]
     },
     {
       "name": "paired-draft-create-allowed",
       "documents": [
-        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "draft"],
-        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "draft"]
+        [
+          "docs/03.specs/900-lifecycle-fixture/plan.md",
+          "sdlc/plan",
+          "draft"
+        ],
+        [
+          "docs/03.specs/900-lifecycle-fixture/tasks.md",
+          "sdlc/task",
+          "draft"
+        ]
       ],
       "expectedRuleIds": []
     },
     {
       "name": "paired-active-create-allowed",
       "documents": [
-        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"],
-        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "active"]
+        [
+          "docs/03.specs/900-lifecycle-fixture/plan.md",
+          "sdlc/plan",
+          "active"
+        ],
+        [
+          "docs/03.specs/900-lifecycle-fixture/tasks.md",
+          "sdlc/task",
+          "active"
+        ]
       ],
       "expectedRuleIds": []
     },
     {
       "name": "paired-orphan-create-denied",
       "documents": [
-        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "draft"]
+        [
+          "docs/03.specs/900-lifecycle-fixture/plan.md",
+          "sdlc/plan",
+          "draft"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE"
+      ]
     },
     {
       "name": "paired-state-mismatch-denied",
       "documents": [
-        ["docs/04.execution/plans/2099-01-01-example.md", "sdlc/plan", "active"],
-        ["docs/04.execution/tasks/2099-01-01-example.md", "sdlc/task", "draft"]
+        [
+          "docs/03.specs/900-lifecycle-fixture/plan.md",
+          "sdlc/plan",
+          "active"
+        ],
+        [
+          "docs/03.specs/900-lifecycle-fixture/tasks.md",
+          "sdlc/task",
+          "draft"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-CREATE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-CREATE"
+      ]
     },
     {
       "name": "multiple-pairs-create-denied",
       "documents": [
-        ["docs/04.execution/plans/2099-01-01-example-a.md", "sdlc/plan", "draft"],
-        ["docs/04.execution/tasks/2099-01-01-example-a.md", "sdlc/task", "draft"],
-        ["docs/04.execution/plans/2099-01-01-example-b.md", "sdlc/plan", "draft"],
-        ["docs/04.execution/tasks/2099-01-01-example-b.md", "sdlc/task", "draft"]
+        [
+          "docs/03.specs/900-lifecycle-fixture-a/plan.md",
+          "sdlc/plan",
+          "draft"
+        ],
+        [
+          "docs/03.specs/900-lifecycle-fixture-a/tasks.md",
+          "sdlc/task",
+          "draft"
+        ],
+        [
+          "docs/03.specs/901-lifecycle-fixture-b/plan.md",
+          "sdlc/plan",
+          "draft"
+        ],
+        [
+          "docs/03.specs/901-lifecycle-fixture-b/tasks.md",
+          "sdlc/task",
+          "draft"
+        ]
       ],
       "expectedRuleIds": [
         "LIFECYCLE-CREATE",
@@ -233,151 +453,1522 @@
     {
       "name": "snapshot-only-create-denied",
       "documents": [
-        ["docs/03.specs/README.md", "readme/stage-index", null]
+        [
+          "docs/03.specs/README.md",
+          "readme/stage-index",
+          null
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-CREATE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE"
+      ]
     },
     {
       "name": "delete-denied",
       "operation": "delete",
       "documents": [
-        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"]
+        [
+          "docs/03.specs/900-example/spec.md",
+          "sdlc/spec",
+          "draft"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-DELETE"]
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE"
+      ]
     },
     {
       "name": "exact-rename-single-event",
       "operation": "rename",
       "documents": [
-        ["docs/03.specs/900-example/spec.md", "sdlc/spec", "draft"],
-        ["docs/03.specs/901-example/spec.md", "sdlc/spec", "draft"]
+        [
+          "docs/03.specs/900-example/spec.md",
+          "sdlc/spec",
+          "draft"
+        ],
+        [
+          "docs/03.specs/901-example/spec.md",
+          "sdlc/spec",
+          "draft"
+        ]
       ],
-      "expectedRuleIds": ["LIFECYCLE-RENAME"]
+      "expectedRuleIds": [
+        "LIFECYCLE-RENAME"
+      ]
     }
   ],
   "gitCases": [
-    {"name": "staged-head-index-worktree-pass", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "staged-head-index-worktree-fail", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
-    {"name": "staged-add", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "staged-delete", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE"]},
-    {"name": "staged-exact-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
-    {"name": "staged-modified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE", "LIFECYCLE-CREATE"]},
-    {"name": "staged-modified-governed-to-unclassified", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE", "LIFECYCLE-CREATE"]},
-    {"name": "staged-modified-unclassified-to-governed", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-DELETE"]},
-    {"name": "staged-modified-unclassified-to-unclassified", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE", "LIFECYCLE-DELETE"]},
-    {"name": "staged-governed-to-unclassified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
-    {"name": "staged-unclassified-to-unclassified-rename", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-RENAME"]},
-    {"name": "staged-unclassified-add", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-CREATE"]},
-    {"name": "staged-unclassified-delete", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-DELETE"]},
-    {"name": "staged-unclassified-modify", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-STATE"]},
-    {"name": "staged-same-path-profile-change", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-PROFILE-CHANGE"]},
-    {"name": "staged-unknown-type-state", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-STATE"]},
-    {"name": "staged-paired-create", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "staged-paired-create-blocked-spec", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EVIDENCE", "LIFECYCLE-EVIDENCE"]},
-    {"name": "staged-paired-create-ready-spec-done", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EVIDENCE", "LIFECYCLE-EVIDENCE"]},
-    {"name": "staged-paired-create-split-spec", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EVIDENCE", "LIFECYCLE-EVIDENCE"]},
-    {"name": "staged-evidence-index-invalid-worktree-valid", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EVIDENCE"]},
-    {"name": "staged-evidence-index-valid-worktree-invalid", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "include-does-not-filter-violation", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
-    {"name": "staged-submodule-ignore-all", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "ci-merge-base", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "ci-no-merge-base", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "ci-ambiguous-merge-base", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "explicit-ref-pass", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "explicit-ref-fail", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
-    {"name": "explicit-ref-proposed-only-evidence", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "explicit-ref-base-only-evidence-removed", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EVIDENCE", "LIFECYCLE-EVIDENCE"]},
-    {"name": "ci-proposed-tree-evidence", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "explicit-ref-submodule-ignore-all", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "missing-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "ambiguous-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "raw-tree-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "raw-blob-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "annotated-tag-ref", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "lightweight-commit-tag-pass", "expectedExit": 0, "expectedRuleIds": []},
-    {"name": "git-environment-steering", "expectedExit": 1, "expectedRuleIds": ["LIFECYCLE-EDGE"]},
-    {"name": "non-worktree-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "wrong-worktree-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]},
-    {"name": "bare-root", "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"]}
+    {
+      "name": "staged-head-index-worktree-pass",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "staged-head-index-worktree-fail",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
+    },
+    {
+      "name": "staged-add",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "staged-delete",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE"
+      ]
+    },
+    {
+      "name": "staged-exact-rename",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-RENAME"
+      ]
+    },
+    {
+      "name": "staged-modified-rename",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE",
+        "LIFECYCLE-CREATE"
+      ]
+    },
+    {
+      "name": "staged-modified-governed-to-unclassified",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE",
+        "LIFECYCLE-CREATE"
+      ]
+    },
+    {
+      "name": "staged-modified-unclassified-to-governed",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-DELETE"
+      ]
+    },
+    {
+      "name": "staged-modified-unclassified-to-unclassified",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE",
+        "LIFECYCLE-DELETE"
+      ]
+    },
+    {
+      "name": "staged-governed-to-unclassified-rename",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-RENAME"
+      ]
+    },
+    {
+      "name": "staged-unclassified-to-unclassified-rename",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-RENAME"
+      ]
+    },
+    {
+      "name": "staged-unclassified-add",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-CREATE"
+      ]
+    },
+    {
+      "name": "staged-unclassified-delete",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-DELETE"
+      ]
+    },
+    {
+      "name": "staged-unclassified-modify",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
+    },
+    {
+      "name": "staged-same-path-profile-change",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-PROFILE-CHANGE"
+      ]
+    },
+    {
+      "name": "staged-unknown-type-state",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-STATE"
+      ]
+    },
+    {
+      "name": "staged-paired-create",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "staged-paired-create-blocked-spec",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE",
+        "LIFECYCLE-EVIDENCE"
+      ]
+    },
+    {
+      "name": "staged-paired-create-ready-spec-done",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE",
+        "LIFECYCLE-EVIDENCE"
+      ]
+    },
+    {
+      "name": "staged-paired-create-split-spec",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE",
+        "LIFECYCLE-EVIDENCE"
+      ]
+    },
+    {
+      "name": "staged-evidence-index-invalid-worktree-valid",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE"
+      ]
+    },
+    {
+      "name": "staged-evidence-index-valid-worktree-invalid",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "include-does-not-filter-violation",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
+    },
+    {
+      "name": "staged-submodule-ignore-all",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "ci-merge-base",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "ci-no-merge-base",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "ci-ambiguous-merge-base",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "explicit-ref-pass",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "explicit-ref-fail",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
+    },
+    {
+      "name": "explicit-ref-proposed-only-evidence",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "explicit-ref-base-only-evidence-removed",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EVIDENCE",
+        "LIFECYCLE-EVIDENCE"
+      ]
+    },
+    {
+      "name": "ci-proposed-tree-evidence",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "explicit-ref-submodule-ignore-all",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "missing-ref",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "ambiguous-ref",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "raw-tree-ref",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "raw-blob-ref",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "annotated-tag-ref",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "lightweight-commit-tag-pass",
+      "expectedExit": 0,
+      "expectedRuleIds": []
+    },
+    {
+      "name": "git-environment-steering",
+      "expectedExit": 1,
+      "expectedRuleIds": [
+        "LIFECYCLE-EDGE"
+      ]
+    },
+    {
+      "name": "non-worktree-root",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "wrong-worktree-root",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    },
+    {
+      "name": "bare-root",
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ]
+    }
   ],
   "argumentCases": [
-    {"name": "staged-forbids-refs", "argv": ["--mode", "staged", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "staged"},
-    {"name": "ci-requires-base", "argv": ["--mode", "ci", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "ci"},
-    {"name": "ci-requires-to", "argv": ["--mode", "ci", "--base-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "ci"},
-    {"name": "explicit-requires-from", "argv": ["--mode", "explicit-ref", "--to-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "explicit-ref"},
-    {"name": "explicit-requires-to", "argv": ["--mode", "explicit-ref", "--from-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "explicit-ref"},
-    {"name": "snapshot-forbids-refs", "argv": ["--mode", "snapshot", "--from-ref", "HEAD"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "snapshot"},
-    {"name": "invalid-mode", "argv": ["--mode", "invalid"], "expectedExit": 2, "expectedRuleIds": ["LIFECYCLE-BASE"], "expectedBaseMode": "unknown"}
+    {
+      "name": "staged-forbids-refs",
+      "argv": [
+        "--mode",
+        "staged",
+        "--to-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "staged"
+    },
+    {
+      "name": "ci-requires-base",
+      "argv": [
+        "--mode",
+        "ci",
+        "--to-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "ci"
+    },
+    {
+      "name": "ci-requires-to",
+      "argv": [
+        "--mode",
+        "ci",
+        "--base-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "ci"
+    },
+    {
+      "name": "explicit-requires-from",
+      "argv": [
+        "--mode",
+        "explicit-ref",
+        "--to-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "explicit-ref"
+    },
+    {
+      "name": "explicit-requires-to",
+      "argv": [
+        "--mode",
+        "explicit-ref",
+        "--from-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "explicit-ref"
+    },
+    {
+      "name": "snapshot-forbids-refs",
+      "argv": [
+        "--mode",
+        "snapshot",
+        "--from-ref",
+        "HEAD"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [
+        "LIFECYCLE-BASE"
+      ],
+      "expectedBaseMode": "snapshot"
+    },
+    {
+      "name": "invalid-mode",
+      "argv": [
+        "--mode",
+        "invalid"
+      ],
+      "expectedExit": 2,
+      "expectedRuleIds": [],
+      "expectedBaseMode": "argparse"
+    }
   ],
   "includePathCases": [
-    {"name": "duplicate", "values": ["docs/README.md", "docs/README.md"], "expectedExit": 2},
-    {"name": "noncanonical", "values": ["./docs/README.md"], "expectedExit": 2},
-    {"name": "parent", "values": ["docs/../README.md"], "expectedExit": 2},
-    {"name": "non-target", "values": ["pyproject.toml"], "expectedExit": 2},
-    {"name": "missing-blob", "values": ["docs/03.specs/999-missing/spec.md"], "expectedExit": 2}
+    {
+      "name": "duplicate",
+      "values": [
+        "docs/README.md",
+        "docs/README.md"
+      ],
+      "expectedExit": 2
+    },
+    {
+      "name": "noncanonical",
+      "values": [
+        "./docs/README.md"
+      ],
+      "expectedExit": 2
+    },
+    {
+      "name": "parent",
+      "values": [
+        "docs/../README.md"
+      ],
+      "expectedExit": 2
+    },
+    {
+      "name": "non-target",
+      "values": [
+        "pyproject.toml"
+      ],
+      "expectedExit": 2
+    },
+    {
+      "name": "missing-blob",
+      "values": [
+        "docs/03.specs/999-missing/spec.md"
+      ],
+      "expectedExit": 2
+    }
   ],
   "evidenceCases": [
-    {"name": "sdlc/prd:draft->active", "profile": "sdlc/prd", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/prd:active->done", "profile": "sdlc/prd", "from": "active", "to": "done", "predicate": "complete-product-program", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/ard:draft->active", "profile": "sdlc/ard", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/ard:active->accepted", "profile": "sdlc/ard", "from": "active", "to": "accepted", "predicate": "accept-architecture", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/adr:draft->active", "profile": "sdlc/adr", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/adr:active->accepted", "profile": "sdlc/adr", "from": "active", "to": "accepted", "predicate": "accept-decision-self", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/spec:draft->active", "profile": "sdlc/spec", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/spec:active->done", "profile": "sdlc/spec", "from": "active", "to": "done", "predicate": "complete-specification", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/api-spec:draft->active", "profile": "sdlc/api-spec", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/api-spec:active->done", "profile": "sdlc/api-spec", "from": "active", "to": "done", "predicate": "complete-specification", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/agent-design:draft->active", "profile": "sdlc/agent-design", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/agent-design:active->done", "profile": "sdlc/agent-design", "from": "active", "to": "done", "predicate": "complete-specification", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/data-model:draft->active", "profile": "sdlc/data-model", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/data-model:active->done", "profile": "sdlc/data-model", "from": "active", "to": "done", "predicate": "complete-specification", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/tests:draft->active", "profile": "sdlc/tests", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/tests:active->done", "profile": "sdlc/tests", "from": "active", "to": "done", "predicate": "complete-specification", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/plan:draft->active", "profile": "sdlc/plan", "from": "draft", "to": "active", "predicate": "activate-execution-pair", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/plan:active->done", "profile": "sdlc/plan", "from": "active", "to": "done", "predicate": "complete-execution-pair", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/task:draft->active", "profile": "sdlc/task", "from": "draft", "to": "active", "predicate": "activate-execution-pair", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/task:active->done", "profile": "sdlc/task", "from": "active", "to": "done", "predicate": "complete-execution-pair", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/guide:draft->active", "profile": "sdlc/guide", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/guide:active->accepted", "profile": "sdlc/guide", "from": "active", "to": "accepted", "predicate": "accept-operated-document", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/policy:draft->active", "profile": "sdlc/policy", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/policy:active->accepted", "profile": "sdlc/policy", "from": "active", "to": "accepted", "predicate": "accept-operated-document", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/runbook:draft->active", "profile": "sdlc/runbook", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/runbook:active->accepted", "profile": "sdlc/runbook", "from": "active", "to": "accepted", "predicate": "accept-operated-document", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/incident:draft->active", "profile": "sdlc/incident", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/incident:active->accepted", "profile": "sdlc/incident", "from": "active", "to": "accepted", "predicate": "accept-operated-document", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/postmortem:draft->active", "profile": "sdlc/postmortem", "from": "draft", "to": "active", "predicate": "activate-self-body", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "sdlc/postmortem:active->accepted", "profile": "sdlc/postmortem", "from": "active", "to": "accepted", "predicate": "accept-operated-document", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "content/reference:draft->active", "profile": "content/reference", "from": "draft", "to": "active", "predicate": "activate-heading-profile", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "content/reference:active->accepted", "profile": "content/reference", "from": "active", "to": "accepted", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "content/reference:active->done", "profile": "content/reference", "from": "active", "to": "done", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/reference:draft->active", "profile": "governance/reference", "from": "draft", "to": "active", "predicate": "activate-heading-profile", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/reference:active->accepted", "profile": "governance/reference", "from": "active", "to": "accepted", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/reference:active->done", "profile": "governance/reference", "from": "active", "to": "done", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/memory:draft->active", "profile": "governance/memory", "from": "draft", "to": "active", "predicate": "activate-heading-profile", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/memory:active->accepted", "profile": "governance/memory", "from": "active", "to": "accepted", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/memory:active->done", "profile": "governance/memory", "from": "active", "to": "done", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/template-support:draft->active", "profile": "governance/template-support", "from": "draft", "to": "active", "predicate": "activate-heading-profile", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/template-support:active->accepted", "profile": "governance/template-support", "from": "active", "to": "accepted", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]},
-    {"name": "governance/template-support:active->done", "profile": "governance/template-support", "from": "active", "to": "done", "predicate": "terminate-reviewed-reference", "variants": ["positive", "missing", "wrong-profile", "wrong-state", "wrong-relationship-section", "unchanged", "ambiguous-base", "body-contract-mismatch", "plain-text-path", "opaque-markdown", "orphan", "multiple"]}
+    {
+      "name": "sdlc/prd:draft->active",
+      "profile": "sdlc/prd",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/prd:active->done",
+      "profile": "sdlc/prd",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-product-program",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/srs:draft->active",
+      "profile": "sdlc/srs",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/srs:active->done",
+      "profile": "sdlc/srs",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-product-program",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/interface:draft->active",
+      "profile": "sdlc/interface",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/interface:active->done",
+      "profile": "sdlc/interface",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-product-program",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/ad:draft->active",
+      "profile": "sdlc/ad",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/ad:active->accepted",
+      "profile": "sdlc/ad",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-architecture",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/adr:draft->active",
+      "profile": "sdlc/adr",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/adr:active->accepted",
+      "profile": "sdlc/adr",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-decision-self",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/spec:draft->active",
+      "profile": "sdlc/spec",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/spec:active->done",
+      "profile": "sdlc/spec",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-specification",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/agent-design:draft->active",
+      "profile": "sdlc/agent-design",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/agent-design:active->done",
+      "profile": "sdlc/agent-design",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-specification",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/data-model:draft->active",
+      "profile": "sdlc/data-model",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/data-model:active->done",
+      "profile": "sdlc/data-model",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-specification",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/tests:draft->active",
+      "profile": "sdlc/tests",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/tests:active->done",
+      "profile": "sdlc/tests",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-specification",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/plan:draft->active",
+      "profile": "sdlc/plan",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-execution-pair",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/plan:active->done",
+      "profile": "sdlc/plan",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-execution-pair",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/task:draft->active",
+      "profile": "sdlc/task",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-execution-pair",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/task:active->done",
+      "profile": "sdlc/task",
+      "from": "active",
+      "to": "done",
+      "predicate": "complete-execution-pair",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/guide:draft->active",
+      "profile": "sdlc/guide",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/guide:active->accepted",
+      "profile": "sdlc/guide",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-operated-document",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/policy:draft->active",
+      "profile": "sdlc/policy",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/policy:active->accepted",
+      "profile": "sdlc/policy",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-operated-document",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/runbook:draft->active",
+      "profile": "sdlc/runbook",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/runbook:active->accepted",
+      "profile": "sdlc/runbook",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-operated-document",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/incident:draft->active",
+      "profile": "sdlc/incident",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/incident:active->accepted",
+      "profile": "sdlc/incident",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-operated-document",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/postmortem:draft->active",
+      "profile": "sdlc/postmortem",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-self-body",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "sdlc/postmortem:active->accepted",
+      "profile": "sdlc/postmortem",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "accept-operated-document",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "content/reference:draft->active",
+      "profile": "content/reference",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-heading-profile",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "content/reference:active->accepted",
+      "profile": "content/reference",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "content/reference:active->done",
+      "profile": "content/reference",
+      "from": "active",
+      "to": "done",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/reference:draft->active",
+      "profile": "governance/reference",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-heading-profile",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/reference:active->accepted",
+      "profile": "governance/reference",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/reference:active->done",
+      "profile": "governance/reference",
+      "from": "active",
+      "to": "done",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/memory:draft->active",
+      "profile": "governance/memory",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-heading-profile",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/memory:active->accepted",
+      "profile": "governance/memory",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/memory:active->done",
+      "profile": "governance/memory",
+      "from": "active",
+      "to": "done",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/template-support:draft->active",
+      "profile": "governance/template-support",
+      "from": "draft",
+      "to": "active",
+      "predicate": "activate-heading-profile",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/template-support:active->accepted",
+      "profile": "governance/template-support",
+      "from": "active",
+      "to": "accepted",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    },
+    {
+      "name": "governance/template-support:active->done",
+      "profile": "governance/template-support",
+      "from": "active",
+      "to": "done",
+      "predicate": "terminate-reviewed-reference",
+      "variants": [
+        "positive",
+        "missing",
+        "wrong-profile",
+        "wrong-state",
+        "wrong-relationship-section",
+        "unchanged",
+        "ambiguous-base",
+        "body-contract-mismatch",
+        "plain-text-path",
+        "opaque-markdown",
+        "orphan",
+        "multiple"
+      ]
+    }
   ],
   "archiveCutoverCases": [
-    {"name": "exact-staged", "mode": "staged", "mutation": "exact", "expectedAdmittedCount": 33},
-    {"name": "exact-ci", "mode": "ci", "mutation": "exact", "expectedAdmittedCount": 33},
-    {"name": "partial-record-set", "mode": "staged", "mutation": "partial", "expectedAdmittedCount": 0},
-    {"name": "extra-record", "mode": "staged", "mutation": "extra", "expectedAdmittedCount": 0},
+    {
+      "name": "exact-staged",
+      "mode": "staged",
+      "mutation": "exact",
+      "expectedAdmittedCount": 33
+    },
+    {
+      "name": "exact-ci",
+      "mode": "ci",
+      "mutation": "exact",
+      "expectedAdmittedCount": 33
+    },
+    {
+      "name": "partial-record-set",
+      "mode": "staged",
+      "mutation": "partial",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "extra-record",
+      "mode": "staged",
+      "mutation": "extra",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "wrong-base",
+      "mode": "staged",
+      "mutation": "wrong-base",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "wrong-base-registry-oid",
+      "mode": "staged",
+      "mutation": "wrong-base-registry-oid",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "proposed-policy-drift",
+      "mode": "staged",
+      "mutation": "proposed-policy-drift",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "missing-template-pair",
+      "mode": "staged",
+      "mutation": "missing-template",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "wrong-registry-version",
+      "mode": "staged",
+      "mutation": "wrong-registry-version",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "missing-registry-profile-pair",
+      "mode": "staged",
+      "mutation": "missing-registry-profile",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "unrelated-profile-change",
+      "mode": "staged",
+      "mutation": "unrelated-profile-change",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "snapshot-not-admitted",
+      "mode": "snapshot",
+      "mutation": "exact",
+      "expectedAdmittedCount": 0
+    },
+    {
+      "name": "explicit-ref-not-admitted",
+      "mode": "explicit-ref",
+      "mutation": "exact",
+      "expectedAdmittedCount": 0
+    }
+  ],
+  "work105FormCutoverCases": [
+    {"name": "exact-staged", "mode": "staged", "mutation": "exact", "expectedAdmittedCount": 23},
+    {"name": "exact-ci", "mode": "ci", "mutation": "exact", "expectedAdmittedCount": 23},
+    {"name": "wrong-mode", "mode": "explicit-ref", "mutation": "exact", "expectedAdmittedCount": 0},
     {"name": "wrong-base", "mode": "staged", "mutation": "wrong-base", "expectedAdmittedCount": 0},
     {"name": "wrong-base-registry-oid", "mode": "staged", "mutation": "wrong-base-registry-oid", "expectedAdmittedCount": 0},
-    {"name": "proposed-policy-drift", "mode": "staged", "mutation": "proposed-policy-drift", "expectedAdmittedCount": 0},
-    {"name": "missing-template-pair", "mode": "staged", "mutation": "missing-template", "expectedAdmittedCount": 0},
-    {"name": "wrong-registry-version", "mode": "staged", "mutation": "wrong-registry-version", "expectedAdmittedCount": 0},
-    {"name": "missing-registry-profile-pair", "mode": "staged", "mutation": "missing-registry-profile", "expectedAdmittedCount": 0},
-    {"name": "unrelated-profile-change", "mode": "staged", "mutation": "unrelated-profile-change", "expectedAdmittedCount": 0},
-    {"name": "snapshot-not-admitted", "mode": "snapshot", "mutation": "exact", "expectedAdmittedCount": 0},
-    {"name": "explicit-ref-not-admitted", "mode": "explicit-ref", "mutation": "exact", "expectedAdmittedCount": 0}
+    {"name": "wrong-proposed-registry-oid", "mode": "staged", "mutation": "wrong-proposed-registry-oid", "expectedAdmittedCount": 0},
+    {"name": "wrong-base-schema", "mode": "staged", "mutation": "wrong-base-schema", "expectedAdmittedCount": 0},
+    {"name": "wrong-proposed-schema", "mode": "staged", "mutation": "wrong-proposed-schema", "expectedAdmittedCount": 0},
+    {"name": "wrong-base-id", "mode": "staged", "mutation": "wrong-base-id", "expectedAdmittedCount": 0},
+    {"name": "wrong-proposed-id", "mode": "staged", "mutation": "wrong-proposed-id", "expectedAdmittedCount": 0},
+    {"name": "wrong-base-route-state", "mode": "staged", "mutation": "wrong-base-route-state", "expectedAdmittedCount": 0},
+    {"name": "wrong-proposed-route-state", "mode": "staged", "mutation": "wrong-proposed-route-state", "expectedAdmittedCount": 0},
+    {"name": "base-projection-drift", "mode": "staged", "mutation": "base-projection-drift", "expectedAdmittedCount": 0},
+    {"name": "proposed-projection-drift", "mode": "staged", "mutation": "proposed-projection-drift", "expectedAdmittedCount": 0},
+    {"name": "missing-ad", "mode": "staged", "mutation": "missing-ad", "expectedAdmittedCount": 0},
+    {"name": "extra-ad", "mode": "staged", "mutation": "extra-ad", "expectedAdmittedCount": 0},
+    {"name": "wrong-status", "mode": "staged", "mutation": "wrong-status", "expectedAdmittedCount": 0},
+    {"name": "missing-form", "mode": "staged", "mutation": "missing-form", "expectedAdmittedCount": 0},
+    {"name": "wrong-form-profile", "mode": "staged", "mutation": "wrong-form-profile", "expectedAdmittedCount": 0},
+    {"name": "authored-api-instance", "mode": "staged", "mutation": "authored-api-instance", "expectedAdmittedCount": 0}
+  ],
+  "work105DecisionEvidenceCases": [
+    {"name": "exact-reciprocal-predecessor", "mutation": "exact", "expectedUnresolvedCount": 0},
+    {"name": "wrong-owner", "mutation": "wrong-owner", "expectedUnresolvedCount": 1},
+    {"name": "wrong-base-profile", "mutation": "wrong-base-profile", "expectedUnresolvedCount": 1},
+    {"name": "wrong-proposed-status", "mutation": "wrong-proposed-status", "expectedUnresolvedCount": 1},
+    {"name": "base-blob-drift", "mutation": "base-blob-drift", "expectedUnresolvedCount": 1},
+    {"name": "proposed-blob-drift", "mutation": "proposed-blob-drift", "expectedUnresolvedCount": 1},
+    {"name": "missing-reciprocal-row", "mutation": "missing-reciprocal-row", "expectedUnresolvedCount": 1},
+    {"name": "missing-resolved-successor", "mutation": "missing-resolved-successor", "expectedUnresolvedCount": 1},
+    {"name": "missing-table-successor", "mutation": "missing-table-successor", "expectedUnresolvedCount": 1},
+    {"name": "extra-unresolved", "mutation": "extra-unresolved", "expectedUnresolvedCount": 2}
   ],
   "snapshotCase": {
     "name": "exactly-one-base-defer",
     "expectedExit": 0,
-    "expectedRuleIds": ["LIFECYCLE-BASE-DEFER"]
+    "expectedRuleIds": [
+      "LIFECYCLE-BASE-DEFER"
+    ]
   }
 }

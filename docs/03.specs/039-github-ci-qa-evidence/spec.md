@@ -215,7 +215,7 @@ GitHub's workflow, security, and artifact-retention guidance:
 - **Foundation**: [Spec 035](../035-document-schema-and-lifecycle-contract/spec.md)
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [GitHub CI and QA Evidence Plan](plan.md)
 - **Task**: [GitHub CI and QA Evidence Task](tasks.md)
 

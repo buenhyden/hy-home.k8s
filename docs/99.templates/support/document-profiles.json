@@ -278,7 +278,9 @@
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
         "allowedTargetProfileIds": [
-          "sdlc/ard",
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
           "sdlc/spec"
         ],
         "reciprocalEvidence": true,
@@ -286,13 +288,213 @@
       }
     },
     {
-      "id": "sdlc/ard",
+      "id": "sdlc/srs",
       "class": "sdlc",
       "mode": "authored",
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/requirements/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/01\\.requirements/srs-[0-9]{3}-[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "System requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "System requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "sdlc/interface",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/01\\.requirements/ifc-[0-9]{3}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Interface requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Interface requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "sdlc/ad",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[^/]+\\.md$"
         }
       ],
       "frontmatter": {
@@ -345,7 +547,7 @@
           "Traceability"
         ]
       },
-      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null,
@@ -370,7 +572,9 @@
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
         ],
         "allowedTargetProfileIds": [
           "sdlc/adr",
@@ -460,12 +664,11 @@
         "sourceLinkColumn": "Decision lineage",
         "targetLinkColumn": "Affected Spec",
         "allowedSourceProfileIds": [
-          "sdlc/ard",
+          "sdlc/ad",
           "sdlc/adr"
         ],
         "allowedTargetProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -571,113 +774,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
-        ],
-        "allowedTargetProfileIds": [],
-        "reciprocalEvidence": true,
-        "allowExplicitExclusion": true
-      }
-    },
-    {
-      "id": "sdlc/api-spec",
-      "class": "sdlc",
-      "mode": "authored",
-      "routes": [
-        {
-          "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/api-spec\\.md$"
-        }
-      ],
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "order": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ]
-      },
-      "statusDomain": [
-        "draft",
-        "active",
-        "done",
-        "archived"
-      ],
-      "headings": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ],
-        "allowed": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ]
-      },
-      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
-      "sourceProfileIds": [],
-      "placeholderPolicy": "forbidden",
-      "appendContract": null,
-      "bodyContract": {
-        "section": "Traceability",
-        "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [
-          "draft",
-          "active"
-        ],
-        "requiredColumns": [
-          "PRD requirement",
-          "Spec criterion",
-          "Verification method"
-        ],
-        "identifierColumns": [
-          {
-            "column": "PRD requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "Spec criterion",
-            "kind": "criterion"
-          }
-        ],
-        "sourceLinkColumn": "PRD requirement",
-        "targetLinkColumn": null,
-        "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -785,7 +884,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -887,7 +988,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -989,7 +1092,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -1087,7 +1192,6 @@
         "targetLinkColumn": "Expected Task",
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -1184,7 +1288,6 @@
         "allowedSourceProfileIds": [
           "sdlc/plan",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -1275,7 +1378,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -1369,7 +1471,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -1463,7 +1564,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -2155,7 +2255,7 @@
         },
         {
           "kind": "exact",
-          "value": "docs/02.architecture/requirements/README.md"
+          "value": "docs/02.architecture/descriptions/README.md"
         },
         {
           "kind": "exact",
@@ -3288,12 +3388,11 @@
         "sourceLinkColumn": "Decision lineage",
         "targetLinkColumn": "Affected Spec",
         "allowedSourceProfileIds": [
-          "sdlc/ard",
+          "sdlc/ad",
           "sdlc/adr"
         ],
         "allowedTargetProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -3303,13 +3402,13 @@
       }
     },
     {
-      "id": "template/sdlc/ard",
+      "id": "template/sdlc/ad",
       "class": "sdlc",
       "mode": "template",
       "routes": [
         {
           "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+          "value": "docs/99.templates/templates/sdlc/architecture/ad.template.md"
         }
       ],
       "frontmatter": {
@@ -3362,9 +3461,9 @@
           "Traceability"
         ]
       },
-      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
       "sourceProfileIds": [
-        "sdlc/ard"
+        "sdlc/ad"
       ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
@@ -3389,7 +3488,9 @@
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
         ],
         "allowedTargetProfileIds": [
           "sdlc/adr",
@@ -3492,7 +3593,6 @@
         "targetLinkColumn": "Expected Task",
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -3591,7 +3691,6 @@
         "allowedSourceProfileIds": [
           "sdlc/plan",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -3684,7 +3783,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -3871,7 +3969,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -4063,7 +4160,6 @@
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -4169,7 +4265,213 @@
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
         "allowedTargetProfileIds": [
-          "sdlc/ard",
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "template/sdlc/srs",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "sourceProfileIds": [
+        "sdlc/srs"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "System requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "System requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "template/sdlc/interface",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/requirements/interface.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "sourceProfileIds": [
+        "sdlc/interface"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Interface requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Interface requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/ad",
           "sdlc/spec"
         ],
         "reciprocalEvidence": true,
@@ -4279,115 +4581,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
-        ],
-        "allowedTargetProfileIds": [],
-        "reciprocalEvidence": true,
-        "allowExplicitExclusion": true
-      }
-    },
-    {
-      "id": "template/sdlc/api-spec",
-      "class": "sdlc",
-      "mode": "template",
-      "routes": [
-        {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
-        }
-      ],
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "order": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ]
-      },
-      "statusDomain": [
-        "draft",
-        "active",
-        "done",
-        "archived"
-      ],
-      "headings": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ],
-        "allowed": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ]
-      },
-      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
-      "sourceProfileIds": [
-        "sdlc/api-spec"
-      ],
-      "placeholderPolicy": "template-only",
-      "appendContract": null,
-      "bodyContract": {
-        "section": "Traceability",
-        "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": [
-          "draft",
-          "active"
-        ],
-        "requiredColumns": [
-          "PRD requirement",
-          "Spec criterion",
-          "Verification method"
-        ],
-        "identifierColumns": [
-          {
-            "column": "PRD requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "Spec criterion",
-            "kind": "criterion"
-          }
-        ],
-        "sourceLinkColumn": "PRD requirement",
-        "targetLinkColumn": null,
-        "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -4491,7 +4687,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -4597,7 +4795,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -4701,7 +4901,9 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
@@ -4950,10 +5152,11 @@
         "id": "authored-standard",
         "profileIds": [
           "sdlc/prd",
-          "sdlc/ard",
+          "sdlc/interface",
+          "sdlc/srs",
+          "sdlc/ad",
           "sdlc/adr",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -5201,9 +5404,27 @@
       },
       {
         "profileIds": [
-          "sdlc/ard"
+          "sdlc/srs"
         ],
-        "role": "architecture-requirement",
+        "role": "system-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/interface"
+        ],
+        "role": "interface-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/ad"
+        ],
+        "role": "architecture-description",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
@@ -5222,15 +5443,6 @@
           "sdlc/spec"
         ],
         "role": "implementation-specification",
-        "sourceProfileId": null,
-        "relationshipSection": "Traceability",
-        "bodyRequirement": "body-contract"
-      },
-      {
-        "profileIds": [
-          "sdlc/api-spec"
-        ],
-        "role": "api-specification",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
@@ -5466,10 +5678,11 @@
         "id": "authored-draft-only",
         "profileIds": [
           "sdlc/prd",
-          "sdlc/ard",
+          "sdlc/interface",
+          "sdlc/srs",
+          "sdlc/ad",
           "sdlc/adr",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -5562,7 +5775,7 @@
           "template/readme/workspace-staging",
           "template/content/reference",
           "template/sdlc/adr",
-          "template/sdlc/ard",
+          "template/sdlc/ad",
           "template/sdlc/plan",
           "template/sdlc/task",
           "template/sdlc/guide",
@@ -5571,8 +5784,9 @@
           "template/sdlc/postmortem",
           "template/sdlc/runbook",
           "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
           "template/sdlc/agent-design",
-          "template/sdlc/api-spec",
           "template/sdlc/data-model",
           "template/sdlc/spec",
           "template/sdlc/tests",
@@ -5595,7 +5809,9 @@
       {
         "id": "product",
         "profileIds": [
-          "sdlc/prd"
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
         ],
         "terminalStates": [
           "done"
@@ -5616,7 +5832,7 @@
       {
         "id": "architecture-requirement",
         "profileIds": [
-          "sdlc/ard"
+          "sdlc/ad"
         ],
         "terminalStates": [
           "accepted"
@@ -5659,7 +5875,6 @@
         "id": "specification",
         "profileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -5798,7 +6013,7 @@
           "template/readme/workspace-staging",
           "template/content/reference",
           "template/sdlc/adr",
-          "template/sdlc/ard",
+          "template/sdlc/ad",
           "template/sdlc/plan",
           "template/sdlc/task",
           "template/sdlc/guide",
@@ -5807,8 +6022,9 @@
           "template/sdlc/postmortem",
           "template/sdlc/runbook",
           "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
           "template/sdlc/agent-design",
-          "template/sdlc/api-spec",
           "template/sdlc/data-model",
           "template/sdlc/spec",
           "template/sdlc/tests",
@@ -5847,7 +6063,17 @@
             "to": "active"
           },
           {
-            "profileId": "sdlc/ard",
+            "profileId": "sdlc/srs",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/ad",
             "from": "draft",
             "to": "active"
           },
@@ -5858,11 +6084,6 @@
           },
           {
             "profileId": "sdlc/spec",
-            "from": "draft",
-            "to": "active"
-          },
-          {
-            "profileId": "sdlc/api-spec",
             "from": "draft",
             "to": "active"
           },
@@ -6034,6 +6255,16 @@
             "profileId": "sdlc/prd",
             "from": "active",
             "to": "done"
+          },
+          {
+            "profileId": "sdlc/srs",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "active",
+            "to": "done"
           }
         ],
         "evidence": [
@@ -6064,7 +6295,7 @@
         "id": "accept-architecture",
         "profileEdges": [
           {
-            "profileId": "sdlc/ard",
+            "profileId": "sdlc/ad",
             "from": "active",
             "to": "accepted"
           }
@@ -6132,11 +6363,6 @@
         "profileEdges": [
           {
             "profileId": "sdlc/spec",
-            "from": "active",
-            "to": "done"
-          },
-          {
-            "profileId": "sdlc/api-spec",
             "from": "active",
             "to": "done"
           },
@@ -6388,7 +6614,6 @@
     "programs": [
       {
         "prd": "003",
-        "ard": "0006",
         "tranches": [
           {
             "spec": "041",
@@ -6433,11 +6658,11 @@
             "decision": "0013"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0006"
       },
       {
         "prd": "005",
-        "ard": "0008",
         "tranches": [
           {
             "spec": "026",
@@ -6498,11 +6723,11 @@
             "decision": "0017",
             "evidenceMode": "successor-record"
           }
-        ]
+        ],
+        "ad": "0008"
       },
       {
         "prd": "006",
-        "ard": "0009",
         "tranches": [
           {
             "spec": "034",
@@ -6554,11 +6779,11 @@
             "decision": "0017"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0009"
       },
       {
         "prd": "007",
-        "ard": "0010",
         "tranches": [
           {
             "spec": "047",
@@ -6596,21 +6821,22 @@
             "decision": "0021"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0010"
       },
       {
         "prd": "008",
-        "ard": "0011",
         "tranches": [
           {
             "spec": "052",
             "order": 1,
             "state": "active",
             "reason": "Document taxonomy consolidation",
-            "decision": "0023"
+            "decision": "0024"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0011"
       }
     ]
   },
@@ -6620,7 +6846,7 @@
       "plan": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/plan.md",
       "task": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md",
       "state": "done",
-      "reason": "Direct human-approved research-pack consolidation without separate PRD/ARD authority",
+      "reason": "Direct human-approved research-pack consolidation without separate PRD/AD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
     }

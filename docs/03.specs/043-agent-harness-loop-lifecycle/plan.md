@@ -139,7 +139,7 @@ or post-closure evidence update.
 
 - **Spec**: [Agent Harness Loop Lifecycle](spec.md)
 - **Task**: [Agent Harness Loop Lifecycle Task](tasks.md)
-- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [ARD-0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **Program**: [PRD-003](../../01.requirements/003-workspace-agent-governance-platform.md) and [AD-0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Governing decision**: [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Proposed successor decision**: [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Prerequisite**: Spec 042 closure `90a7d856` and postflight evidence update

@@ -532,7 +532,7 @@ Expected: one final integration commit.
 ## Traceability
 
 - **PRD**: `../../01.requirements/003-workspace-agent-governance-platform.md`
-- **ARD**: `../../02.architecture/requirements/0006-workspace-agent-governance-platform.md`
+- **AD**: `../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md`
 - **Spec**: `../../03.specs/009-workspace-harness-research-pack/spec.md`
 - **ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
 - **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](tasks.md)

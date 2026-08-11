@@ -81,7 +81,7 @@ old top-level 13-folder model.
 | Legacy Path | Canonical Path |
 | --- | --- |
 | `docs/01.prd/` | `docs/01.requirements/` |
-| `docs/02.ard/` | `docs/02.architecture/requirements/` |
+| `docs/02.ard/` | `docs/02.architecture/descriptions/` |
 | `docs/03.adr/` | `docs/02.architecture/decisions/` |
 | `docs/04.specs/` | `docs/03.specs/` |
 | `docs/05.plans/` | `docs/04.execution/plans/` |
@@ -154,7 +154,7 @@ table.
 | --- | --- | --- | --- |
 | README or folder index | Repository or folder-local `README.md` | Template Routing Contract | Use for repository, stage, and nested folder entrypoints. |
 | Product requirement | `docs/01.requirements/` | Template Routing Contract | Use for product intent, scope, success criteria, and acceptance criteria. |
-| Architecture requirement | `docs/02.architecture/requirements/` | Template Routing Contract | Use for architecture requirements and quality attributes. |
+| Architecture description | `docs/02.architecture/descriptions/` | Template Routing Contract | Use for architecture descriptions and quality attributes. |
 | Architecture decision | `docs/02.architecture/decisions/` | Template Routing Contract | Use for decision context, selected option, alternatives, and consequences. |
 | Technical specification and helper contracts | `docs/03.specs/` | Template Routing Contract | Use for implementation contracts, feature-local API, agent, data, test, OpenAPI, GraphQL, and protobuf contracts. |
 | Implementation plan | `docs/04.execution/plans/` | Template Routing Contract | Use for execution order, risks, gates, and rollout. |

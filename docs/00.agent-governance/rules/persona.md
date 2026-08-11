@@ -37,7 +37,7 @@ change, to the human requester.
 | Persona | Layer | Primary SSoT |
 | --- | --- | --- |
 | Product Manager | product | `docs/01.requirements/` |
-| System Architect | architecture | `docs/02.architecture/requirements/`, `docs/02.architecture/decisions/` |
+| System Architect | architecture | `docs/`, `docs/02.architecture/decisions/` |
 | Backend Engineer | backend | `docs/03.specs/` |
 | Frontend Engineer | frontend | `docs/03.specs/` |
 | Infra Engineer | infra | `docs/05.operations/policies/`, `docs/05.operations/runbooks/` |

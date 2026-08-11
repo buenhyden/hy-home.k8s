@@ -108,7 +108,7 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | Requirement ID | Acceptance criterion |
 | --- | --- |
 | REQ-PRD-MET-01 | Stage 00 governance hub, harness catalog, model policy, provider note, hook, QA와 template routing이 하나의 owner graph로 연결된다. |
-| REQ-PRD-MET-02 | PRD 003 → ARD 0006 → ADR 0019 → Specs 041–046 → Plan/Task의 reciprocal lifecycle chain이 존재한다. |
+| REQ-PRD-MET-02 | PRD 003 → AD 0006 → ADR 0019 → Specs 041–046 → Plan/Task의 reciprocal lifecycle chain이 존재한다. |
 | REQ-PRD-MET-03 | Root/provider gateway는 durable policy를 복제하지 않고 native, repo-static, runtime evidence를 구분한다. |
 | REQ-PRD-MET-04 | Repository static quality gate가 governance 변경 후 PASS한다. |
 | REQ-PRD-MET-05 | 별도 template-policy 승인 없이 외부 documentation format을 repository template contract 대체물로 사용하지 않는다. |
@@ -188,35 +188,35 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-PRD-FUN-01 | 공통 governance와 owner graph가 단일 current source로 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-02 | Provider gateway가 thin adapter 경계를 지킨다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-03 | Skill provenance와 missing gap이 기계 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-04 | 모든 strategy axis와 scope owner를 찾을 수 있다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-05 | Repo-changing handoff에 evidence와 limitation이 남는다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-06 | Template/profile/cross-link 검사가 통과한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-07 | GitOps, secret, privilege와 external-action guardrail 위반이 없다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-08 | 네 surface가 공통 semantic과 분리된 native claim을 가진다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-09 | Schema/model/effort/MCP 및 세 provider의 독립 canary record가 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-10 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-11 | Bounded loop/checkpoint/compaction fixture가 recovery 경계를 증명한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-12 | 12-role/48-adapter 및 eval/model fitness가 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-13 | CI/QA/all-files evidence가 필수 lane 전체를 통과한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-14 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-FUN-15 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-01 | Stage 00 owner graph가 모순 없이 연결된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-02 | PRD→ARD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-03 | Gateway가 policy를 복제하지 않고 evidence class를 구분한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-04 | Repository static quality gate가 PASS한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-05 | Repository template contract가 유일한 form authority로 유지된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-06 | 12 canonical roles와 48 adapters가 exact parity를 이룬다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-07 | Claude, Codex, Gemini 각각의 canary record와 runtime-readiness 경계가 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-08 | Contract/schema/provider metadata parity가 PASS한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-09 | Bounded loop recovery와 safe resume가 fixture로 검증된다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-10 | 역할별 eval/model fitness evidence가 존재한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-11 | CI와 all-files QA가 PASS한다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
-| REQ-PRD-MET-12 | Stale legacy와 orphan reference가 0건이다. | [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-01 | 공통 governance와 owner graph가 단일 current source로 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-02 | Provider gateway가 thin adapter 경계를 지킨다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-03 | Skill provenance와 missing gap이 기계 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-04 | 모든 strategy axis와 scope owner를 찾을 수 있다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-05 | Repo-changing handoff에 evidence와 limitation이 남는다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-06 | Template/profile/cross-link 검사가 통과한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-07 | GitOps, secret, privilege와 external-action guardrail 위반이 없다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-08 | 네 surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-09 | Schema/model/effort/MCP 및 세 provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-10 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-11 | Bounded loop/checkpoint/compaction fixture가 recovery 경계를 증명한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-12 | 12-role/48-adapter 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-13 | CI/QA/all-files evidence가 필수 lane 전체를 통과한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-14 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-FUN-15 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-01 | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-02 | PRD→AD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-03 | Gateway가 policy를 복제하지 않고 evidence class를 구분한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-04 | Repository static quality gate가 PASS한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-05 | Repository template contract가 유일한 form authority로 유지된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-06 | 12 canonical roles와 48 adapters가 exact parity를 이룬다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-07 | Claude, Codex, Gemini 각각의 canary record와 runtime-readiness 경계가 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-08 | Contract/schema/provider metadata parity가 PASS한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-09 | Bounded loop recovery와 safe resume가 fixture로 검증된다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-10 | 역할별 eval/model fitness evidence가 존재한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-11 | CI와 all-files QA가 PASS한다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
+| REQ-PRD-MET-12 | Stale legacy와 orphan reference가 0건이다. | [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md) |
 
-- **ARD**: [ARD 0006](../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Prerequisite Specs**: [Spec 038](../03.specs/038-reference-information-architecture/spec.md),
   [Spec 039](../03.specs/039-github-ci-qa-evidence/spec.md),

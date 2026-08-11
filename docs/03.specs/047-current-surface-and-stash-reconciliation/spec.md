@@ -31,7 +31,7 @@ those tranches.
   disposition matrix; duplicate/conflict proof; protected-surface boundary;
   program activation; stash hunk classification; generated-object refresh;
   and successor handoff.
-- **Consumes**: the Current 2026-07-11 audit pack, PRD-007, ARD-0010,
+- **Consumes**: the Current 2026-07-11 audit pack, PRD-007, AD-0010,
   ADR-0021, current Git indexes, `validation-surfaces.json`, Stage 99 profiles,
   native control files, validators, tests, and read-only GitHub metadata.
 - **Does not own**: labeler/CODEOWNERS projection implementation, workflow
@@ -46,9 +46,9 @@ those tranches.
 
 ### Program activation contract
 
-1. PRD-007, ARD-0010, ADR-0021, and Specs 047-051 must exist as reviewed draft
+1. PRD-007, AD-0010, ADR-0021, and Specs 047-051 must exist as reviewed draft
    documents before Plan authoring begins.
-2. After human review, Spec 047 alone may enroll PRD `007`, ARD `0010`, and
+2. After human review, Spec 047 alone may enroll PRD `007`, AD `0010`, and
    ordered Specs `047` through `051` in the registry program lineage.
 3. Exactly the first unfinished tranche may have a reciprocal Plan/Task pair.
    Later tranche execution records remain absent until their predecessor is
@@ -140,7 +140,7 @@ secret-bearing payload.
 - **Audit interface**: immutable observation rows plus a current dated
   disposition in the Task; past findings are not rewritten as current fact.
 - **Document interface**: selected profiles, Stage indexes, reciprocal
-  PRD/ARD/ADR/Spec links, and program-lineage state.
+  PRD/AD/ADR/Spec links, and program-lineage state.
 - **Successor interface**: a closed list of Spec 048-051 owned changes and
   evidence-backed no-change rows.
 - **Scratch interface**: ignored, non-secret `_workspace` ledger with no
@@ -199,7 +199,7 @@ or `git stash drop` in this tranche.
   disposition and owner, with no uncovered or duplicated current-purpose row.
 - **VAL-CSASR-002**: Every Current audit finding is classified as residual,
   resolved, false positive, or external DEFER against current evidence.
-- **VAL-CSASR-003**: Program lineage contains PRD-007, ARD-0010, ordered Specs
+- **VAL-CSASR-003**: Program lineage contains PRD-007, AD-0010, ordered Specs
   047-051, one first-tranche execution component, and no later Plan/Task.
 - **VAL-CSASR-004**: Every stash hunk has one durable category and adopted or
   non-adopted rationale; no wholesale apply occurs.
@@ -219,7 +219,7 @@ or `git stash drop` in this tranche.
 - **Program requirement**:
   [PRD-007](../../01.requirements/007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [ARD-0010](../../02.architecture/requirements/0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:

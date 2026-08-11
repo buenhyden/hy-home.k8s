@@ -46,7 +46,7 @@ docs/
 ├── 00.agent-governance/   # Agent policies, execution rules, workspace governance
 ├── 01.requirements/       # Product and feature requirements
 ├── 02.architecture/
-│   ├── requirements/      # Architecture requirements and reference model
+│   ├── descriptions/      # Architecture descriptions, views, and allocations
 │   └── decisions/         # Architecture decision records
 ├── 03.specs/              # Software, automation, and Agent design specifications
 ├── 04.execution/
@@ -71,7 +71,7 @@ docs/
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
 5. 사람 대상 문서 안에서도 `AI Agent Requirements`, `Agent Execution Notes`, tool/prompt contract처럼 AI Agent가 직접 따라야 하는 섹션은 영어를 우선한다.
 6. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
-7. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+7. PRD/AD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [Template Routing Contract](./99.templates/support/template-routing.md), [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
 9. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
 10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
@@ -90,7 +90,7 @@ docs/
 모든 변경이 `01.requirements`부터 `05.operations/incidents`까지의 전체 체인을 요구하지는 않는다. 새 기능이나 플랫폼 변경은 영향도에 따라 필요한 stage만 작성하되, 요구사항, 설계 판단, 실행 증적, 운영 절차가 서로 추적 가능해야 한다.
 
 - 제품 요구나 사용자 시나리오가 바뀌면 `01.requirements`를 갱신한다.
-- 아키텍처 모델이나 품질 속성이 바뀌면 `02.architecture/requirements`를, 선택지와 결정 근거가 바뀌면 `02.architecture/decisions`을 갱신한다.
+- 아키텍처 모델이나 품질 속성이 바뀌면 `02.architecture/descriptions`를, 선택지와 결정 근거가 바뀌면 `02.architecture/decisions`을 갱신한다.
 - 구현 계약, manifest 구조, agent/tool contract처럼 구현자가 따라야 할 세부 설계는 `03.specs`에 둔다.
 - `03.specs/<feature-id>/` 하위 폴더는 기본적으로 별도 README를 요구하지 않는다. 중앙 인덱스와 현재성 판단은 `03.specs/README.md`가 소유하고, feature-local README는 하위 API/agent/data/test 보조 문서가 많아져 탐색 비용이 커질 때만 추가한다.
 - 수행 순서와 risk/verification gate는 `04.execution/plans`에, 실제 작업과 evidence는 `04.execution/tasks`에 둔다.
@@ -99,7 +99,7 @@ docs/
 
 ### Documentation Flow
 
-`01.requirements` (기획) -> `02.architecture/requirements` / `02.architecture/decisions` (설계와 결정) -> `03.specs` (상세 명세) -> `04.execution/plans` / `04.execution/tasks` (실행과 검증) -> `05.operations/guides` / `05.operations/policies` / `05.operations/runbooks` (운영 지식) -> `05.operations/incidents` (사고와 회고)
+`01.requirements` (기획) -> `02.architecture/descriptions` / `02.architecture/decisions` (설계와 결정) -> `03.specs` (상세 명세) -> `04.execution/plans` / `04.execution/tasks` (실행과 검증) -> `05.operations/guides` / `05.operations/policies` / `05.operations/runbooks` (운영 지식) -> `05.operations/incidents` (사고와 회고)
 
 ### Documentation Contract
 
@@ -126,8 +126,10 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 
 | Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
 | --- | --- | --- | --- |
-| Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/templates/sdlc/requirements/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
-| Architecture Requirement | [`02.architecture/requirements`](./02.architecture/requirements/README.md) | [`ard.template.md`](./99.templates/templates/sdlc/architecture/ard.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
+| Product Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/templates/sdlc/requirements/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
+| System Requirement (optional) | [`01.requirements`](./01.requirements/README.md) | [`srs.template.md`](./99.templates/templates/sdlc/requirements/srs.template.md) | 필요한 경우 시스템·소프트웨어 요구와 품질 제약 |
+| Interface Requirement (optional) | [`01.requirements`](./01.requirements/README.md) | [`interface.template.md`](./99.templates/templates/sdlc/requirements/interface.template.md) | 필요한 경우 외부·내부 인터페이스 요구와 검증 경계 |
+| Architecture Description | [`02.architecture/descriptions`](./02.architecture/descriptions/README.md) | [`ad.template.md`](./99.templates/templates/sdlc/architecture/ad.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
 | Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/templates/sdlc/architecture/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
 | Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/templates/sdlc/specs/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
 | Plan | [`04.execution/plans`](./04.execution/plans/README.md) | [`plan.template.md`](./99.templates/templates/sdlc/execution/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |

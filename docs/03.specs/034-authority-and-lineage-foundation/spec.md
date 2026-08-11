@@ -21,7 +21,7 @@ surfaces before schema and corpus migration begins.
 - **In scope**: Registry schema and lineage data, PRD-005 and PRD-006 program
   relations, current audit remediation overlay, Stage 00 lifecycle summaries,
   validator fixtures, and reciprocal program links.
-- **Historical boundary**: ADR-0016, PRD-005, ARD-0008, completed Specs, Plans,
+- **Historical boundary**: ADR-0016, PRD-005, AD-0008, completed Specs, Plans,
   Tasks, and observation-time audit facts are not rewritten.
 - **Non-goals**: Archive payload conversion, Plan/Task movement, reference-tree
   consolidation, workflow behavior changes, or live validation.
@@ -29,13 +29,13 @@ surfaces before schema and corpus migration begins.
 ## Contracts
 
 - document-profiles.json remains the sole machine owner of program lineage.
-- A program has one PRD, one ARD, an ordered original tranche set, and a
+- A program has one PRD, one AD, an ordered original tranche set, and a
   separately ordered follow-up set.
 - Spec 033 is a historical follow-up to the PRD-005 program; Specs 026-032
   remain its original tranche set. ADR-0017, registry data, and the mutable
   remediation overlay provide the successor-side relation without rewriting
   the completed Spec.
-- Specs 034-040 are the original tranche set for PRD-006 and ARD-0009.
+- Specs 034-040 are the original tranche set for PRD-006 and AD-0009.
 - Accepted and completed bodies are immutable. New decisions and registry
   relations express later facts.
 - The Current audit register records post-observation closure only in its
@@ -72,7 +72,7 @@ unstructured note.
 
 The registry interface exposes:
 
-- program PRD and ARD identifiers;
+- program PRD and AD identifiers;
 - original tranches in execution order;
 - follow-ups in approval order;
 - governing ADR for each relation class;
@@ -155,7 +155,7 @@ only after an explicit reciprocal Plan/Task pair is created.
 ## Traceability
 
 - **PRD**: [Workspace Document Lifecycle and Evidence Consolidation](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **ARD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Lineage decision**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)

@@ -522,7 +522,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 ### Related inputs
 
 - **PRD**: N/A. This is a workspace governance and validation improvement.
-- **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- **AD**: [../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - **Related ADRs**:
   [ADR-0002](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md),
   [ADR-0003](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md),

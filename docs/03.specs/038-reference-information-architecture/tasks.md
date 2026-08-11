@@ -55,7 +55,7 @@ results.
 - [Reference Information Architecture Implementation Plan](plan.md)
 - [Spec 038](spec.md)
 - [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - [Current audit pack](../../90.references/audits/2026-07-11-weia/README.md)
 - `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [Document profile registry](../../99.templates/support/document-profiles.json)

@@ -1,13 +1,13 @@
 # 03.specs
 
-> PRD/ARD/ADR을 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
+> PRD/AD/ADR을 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
 
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
 ## Overview
 
-이 경로는 PRD, ARD, ADR을 구현 가능한 기술 계약으로 구체화하는 Spec stage다.
+이 경로는 PRD, AD, ADR을 구현 가능한 기술 계약으로 구체화하는 Spec stage다.
 서비스, API, 데이터 모델, Agent 설계, 검증 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
 
 Spec은 실행 기준을 소유하는 문서다.
@@ -29,7 +29,7 @@ Spec은 실행 기준을 소유하는 문서다.
 - 기능/서비스 기술 설계와 인터페이스 계약
 - 데이터 모델, API 계약, 비기능 요구, 검증 기준
 - Agent 역할, 도구, 정책, 평가, 실패 모드 설계
-- PRD/ARD/ADR과 Plan/Task/Runbook을 잇는 traceability
+- PRD/AD/ADR과 Plan/Task/Runbook을 잇는 traceability
 
 ### Out of Scope
 
@@ -231,7 +231,7 @@ Spec은 실행 기준을 소유하는 문서다.
 
 ## Authoring Workflow
 
-1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
+1. 관련 PRD, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
 4. Spec 052 terminal cutover 전까지 현재 구현 및 검증 추적은 `04.execution/tasks/`로 연결하며, 새 Stage 03 Plan/Task route를 조기 사용하지 않는다. Cutover 후에는 같은 work-unit의 `plan.md`와 `tasks.md`가 실행 정본이 된다.
@@ -248,13 +248,13 @@ Spec은 실행 기준을 소유하는 문서다.
 
 ### Spec Authoring Rules
 
-1. 모든 활성 Spec은 관련 PRD와 ARD를 링크하거나 부재를 명시한다.
+1. 모든 활성 Spec은 관련 PRD와 AD를 링크하거나 부재를 명시한다.
 2. Verification은 필수다.
 3. Acceptance Criteria와 테스트는 PRD에서 이어지고, 구현 검증은 Task와 연결된다.
 4. API가 있다면 API Spec 또는 계약 파일을 함께 둔다.
 5. Agent 설계가 있다면 Role, Tool, Policy, Memory, Guardrail, Evaluation, Fallback을 명시한다.
 6. Spec 052 terminal cutover 전에는 feature-local `tasks.md`가 설계 보조 문서이고 실행 추적 정본은 `../04.execution/tasks/`다. Cutover 후 `tasks.md`가 해당 work-unit의 실행 정본이 되며 `tests.md`만 보조 문서로 남는다.
-7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/ARD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
+7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/AD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
 
 ### Current Spec Index
 
@@ -301,7 +301,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./043-agent-harness-loop-lifecycle/spec.md`](./043-agent-harness-loop-lifecycle/spec.md) | Agent harness loop lifecycle specification | Done | bounded retry/recovery와 non-retryable stop, repository-wins checkpoint/resume, 네 memory class의 promotion/refresh/expiry/archive-GC/conflict/compaction/handoff, routing/provider projection을 구현했다. 구현·보강 commits `8a995014`, `95a6ee03`, `f0190643`, `9d8a2a36`과 focused `59/82/39`, lifecycle `668`, aggregate/all-files, 독립 요구사항·품질·보안 승인을 기록하며 provider/runtime/live와 실제 ignored checkpoint 실행은 주장하지 않는다. | 2026-08-01 |
 | [`./044-agent-roster-evaluation-and-admission/spec.md`](./044-agent-roster-evaluation-and-admission/spec.md) | Agent roster evaluation and admission specification | Done | 구현 `258955b3`, AREA-004 postflight `a15d5e10`, AREA-005 semantic reconciliation `7891368e`로 exact 12-role/4-provider-surface/48-tuple repository-static readiness와 gate enforcement를 닫았다. Mapping은 `PASS` 21 / `DEFER` 27이고 configured incumbent는 유지된다. AREA-003 evaluation readiness는 완료됐지만 observed evaluation/final admission/model fitness/threshold/promotion/canary/runtime/provider auth/hosted CI/remote/live는 해당 범위에서 계속 `DEFER`다. 다음 handoff는 Spec 045다. | 2026-07-30 |
 | [`./045-agent-governance-ci-qa-cutover/spec.md`](./045-agent-governance-ci-qa-cutover/spec.md) | Agent governance CI and QA cutover specification | Done | AGQC-000~006 repository-static CI/QA cutover를 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`에서 Python `741`, aggregate, all-files, formatter review 및 diff가 PASS했고 test-only delta는 관련 `49`, nested-subreaper probe, file pre-commit 및 세 독립 검토를 통과했다(모두 `0/0/0`). 고정 cutoff는 `2026-07-10T10:00:00+09:00`이며 hosted CI, branch protection, provider runtime/auth/model discovery, actual eval/admission/promotion, remote/live 및 provider resume/handoff canary는 Spec 046 범위로 `DEFER`한다. | 2026-08-01 |
-| [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-003/ARD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
+| [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-003/AD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
 | [`./047-current-surface-and-stash-reconciliation/spec.md`](./047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 후속 Specs 048–050에 인계한다. 2026-08-07부터 PRD-008 document taxonomy consolidation 기간 동안 suspend되어 draft로 되돌아갔고, Spec 052가 `done`에 도달하면 통합된 구조에서 재개한다. | 2026-08-07 |
 | [`./048-github-routing-and-ci-evidence/spec.md`](./048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Draft | validation-surface ID를 참조하는 단일 projection contract와 native GitHub 정합성을 소유하며 branch protection 및 hosted rerun은 별도 권한으로 남긴다. | 2026-08-02 |
 | [`./049-platform-validation-and-security-evidence/spec.md`](./049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
@@ -315,7 +315,7 @@ Spec은 실행 기준을 소유하는 문서다.
 아래 템플릿은 `docs/03.specs/<###-Numbering>-<feature-id>/` 아래에서 `spec.md`를 보조하는 계약 문서에만 사용한다.
 
 - `../99.templates/templates/sdlc/specs/spec.template.md`
-- `../99.templates/templates/sdlc/specs/api-spec.template.md`
+- `../99.templates/templates/sdlc/specs/interface.template.md`
 - `../99.templates/templates/sdlc/specs/agent-design.template.md`
 - `../99.templates/templates/sdlc/specs/data-model.template.md`
 - `../99.templates/templates/sdlc/specs/tests.template.md`
@@ -327,7 +327,7 @@ Spec은 실행 기준을 소유하는 문서다.
 
 - [Docs README](../README.md)
 - [01.requirements](../01.requirements/README.md)
-- [02.architecture/requirements](../02.architecture/requirements/README.md)
+- [02.architecture/descriptions](../02.architecture/descriptions/README.md)
 - [02.architecture/decisions](../02.architecture/decisions/README.md)
 - [04.execution/plans](../04.execution/plans/README.md)
 - [04.execution/tasks](../04.execution/tasks/README.md)

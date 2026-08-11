@@ -304,7 +304,7 @@ bash scripts/validate-policy-gates.sh .
 - **PRD**: No dedicated PRD exists. The controlling input is the approved user
   request to inspect Stage 03/04 content, identify unimplemented items,
   implement repo-static gaps first, and separate runtime/operator work.
-- **ARD**: No dedicated ARD exists. The relevant architecture is the current
+- **AD**: No dedicated AD exists. The relevant architecture is the current
   documentation taxonomy and lifecycle contract.
 - **Related ADRs**: None.
 - **Related Specs**:

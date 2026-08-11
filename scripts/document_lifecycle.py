@@ -397,7 +397,6 @@ def _archive_creation_evidence(
 SPECIFICATION_PROFILES = frozenset(
     {
         "sdlc/spec",
-        "sdlc/api-spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests",
@@ -577,10 +576,26 @@ def _program_evidence(
     context: LifecycleEvidenceContext,
 ) -> tuple[tuple[PurePosixPath, ...], tuple[str, ...]]:
     views = context.proposed_documents
+    target_view = views.get(target.path)
+    if target.profile_id == "sdlc/prd":
+        owner_paths = (target.path,)
+    elif target_view is None:
+        owner_paths = ()
+    else:
+        owner_paths = tuple(
+            path
+            for path in target_view.relationship_links
+            if path in views
+            and views[path].document.profile_id == "sdlc/prd"
+            and target.path in views[path].relationship_links
+        )
+    if len(owner_paths) != 1:
+        return (), ("target does not resolve one reciprocal program PRD",)
+    owner_path = owner_paths[0]
     programs = [
         program
         for program in registry.program_lineage
-        if target.path.name.startswith(f"{program.prd_id}-")
+        if owner_path.name.startswith(f"{program.prd_id}-")
     ]
     if len(programs) != 1:
         return (), ("target does not resolve one registry program lineage",)
@@ -605,18 +620,18 @@ def _program_evidence(
         relation_paths.append(relation_path)
         if views[relation_path].document.status != "done":
             gaps.append(f"program Spec {relation.spec_id} is not done")
-    target_view = views.get(target.path)
+    owner_view = views.get(owner_path)
     linked_specs = (
         {
             path
-            for path in target_view.relationship_links
+            for path in owner_view.relationship_links
             if path in views and views[path].document.profile_id == "sdlc/spec"
         }
-        if target_view is not None
+        if owner_view is not None
         else set()
     )
     if linked_specs != set(relation_paths):
-        gaps.append("PRD relationship does not resolve the exact declared Spec set")
+        gaps.append("program PRD relationship does not resolve the exact declared Spec set")
     base_unfinished = [
         path
         for path in relation_paths

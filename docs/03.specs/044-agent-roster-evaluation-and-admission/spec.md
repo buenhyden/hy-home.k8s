@@ -361,7 +361,7 @@ evidence update. The next workstream is Spec 045.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **ARD**: [ARD 0006](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessors**: [Spec 041](../041-stage-00-agent-governance-contract/spec.md),
   [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md), and

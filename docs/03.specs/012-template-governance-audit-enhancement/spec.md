@@ -326,7 +326,7 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 
 - **PRD**: No separate PRD exists. The user-approved continuation request in
   this Codex thread is the product requirement input.
-- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
+- **AD**: No separate AD exists. Existing Stage 00 documentation governance
   defines the architecture boundary.
 - **Related ADRs**: No new ADR is required unless implementation changes
   non-documentation runtime behavior.

@@ -14,7 +14,7 @@ This completed Plan executes [Spec 040](spec.md)
 as the final PRD-006 repository-static tranche. It activated a reciprocal
 [Task](tasks.md), removes
 active compatibility-reader behavior, proves the final repository contract,
-and closes PRD-006, ARD-0009, ADR-0020, the Spec, Plan, Task, indexes, and
+and closes PRD-006, AD-0009, ADR-0020, the Spec, Plan, Task, indexes, and
 program relation in exact terminal closure commit
 `c5adc27b13893d7cbd1266c9225372cfb7df79e9`. Deterministic precommit validation
 passes, and independent terminal reviewers approved staged diff SHA-256
@@ -61,7 +61,7 @@ commit and the clean-tree repository-static aggregate passed.
   repository-static results, explicit limitations, owners, and rollback.
 - Run focused, affected, strict, lifecycle, aggregate, all-files, and
   whole-branch review lanes.
-- Close PRD-006, ARD-0009, Spec 040, this Plan, its Task, and the final program
+- Close PRD-006, AD-0009, Spec 040, this Plan, its Task, and the final program
   relation atomically, then run explicit-ref and clean-tree postflight checks.
 
 ## Non-Goals & Out-of-Scope
@@ -85,7 +85,7 @@ commit and the clean-tree repository-static aggregate passed.
 | CCPC-001 | Cut active document readers over to strict-only operation | CCPC-000 | Reciprocal Plan/Task pair is active | Tests prove strict default/no-mode PASS and retired compatibility invocation rejection; active current prose and retirement guard are consistent; finite historical proof fixtures remain bounded |
 | CCPC-002 | Build the final closure matrix and Current audit overlay | CCPC-001 | Strict-only active reader contract is green | Every Spec 040 criterion and PRD-006 requirement has repository evidence, result class, owner, limitation, rollback, and final disposition; no unowned current finding remains |
 | CCPC-003 | Run whole-branch QA and independent reviews | CCPC-002 | Closure matrix is complete and the proposal is stable | Focused, affected, strict, lifecycle, aggregate, all-files, formatter, and diff gates pass; independent requirements and quality/security reviews approve the exact proposal |
-| CCPC-004 | Close the program lifecycle atomically and record postflight | CCPC-003 | Observed validator compatibility prerequisite commit `35d8552` is the closure parent | Exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` transitions PRD-006, ARD-0009, ADR-0020, Spec/Plan/Task, six indexes, progress, and registry relation together; required precommit gates pass and final frontier is `0/0·6/3·3`; independent terminal reviewers approved staged diff SHA-256 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no findings; parent-to-closure explicit-ref lifecycle and clean-tree aggregate passed; this evidence-update commit remains unclaimed |
+| CCPC-004 | Close the program lifecycle atomically and record postflight | CCPC-003 | Observed validator compatibility prerequisite commit `35d8552` is the closure parent | Exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` transitions PRD-006, AD-0009, ADR-0020, Spec/Plan/Task, six indexes, progress, and registry relation together; required precommit gates pass and final frontier is `0/0·6/3·3`; independent terminal reviewers approved staged diff SHA-256 `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888` with no findings; parent-to-closure explicit-ref lifecycle and clean-tree aggregate passed; this evidence-update commit remains unclaimed |
 
 ### CCPC-000 — Reciprocal activation
 
@@ -142,7 +142,7 @@ commit and the clean-tree repository-static aggregate passed.
 ### CCPC-004 — Atomic closure and postflight
 
 1. Committed one terminal lifecycle closure that changes PRD-006 from `active`
-   to `done`, ARD-0009 from `active` to `accepted`, and Spec 040, this Plan,
+   to `done`, AD-0009 from `active` to `accepted`, and Spec 040, this Plan,
    its Task, their indexes, and the final registry relation from `active` to
    `done`. Updated the accepted decision evidence required by the lifecycle
    contract in the same proposal.
@@ -162,7 +162,7 @@ commit and the clean-tree repository-static aggregate passed.
    PASS for the parent-to-closure interval. An initial over-wide
    activation-to-closure comparison
    `5c7bb820d9b424577eda3eb3a5c368f0c7cfc656..c5adc27b13893d7cbd1266c9225372cfb7df79e9`
-   failed because it combined ADR/ARD creation with terminal transition; the
+   failed because it combined ADR/AD creation with terminal transition; the
    correct atomic terminal interval passed. Remote/live lanes remain `DEFER`
    until separately authorized and executed. This evidence-update commit is
    unidentified and unclaimed.
@@ -210,7 +210,7 @@ commit and the clean-tree repository-static aggregate passed.
   whole-branch implementation; CCPC-004 independent terminal requirements,
   quality, and security reviews approve the exact staged terminal proposal
   without findings.
-- PRD-006, ARD-0009, ADR-0020, Spec 040, Plan, Task, indexes, progress, and the
+- PRD-006, AD-0009, ADR-0020, Spec 040, Plan, Task, indexes, progress, and the
   final registry relation transition atomically in exact 14-path closure commit
   `c5adc27b13893d7cbd1266c9225372cfb7df79e9`.
 - Parent-to-closure explicit-ref lifecycle and clean-tree repository-static
@@ -224,8 +224,8 @@ commit and the clean-tree repository-static aggregate passed.
 - **Task**: Contract Cutover and Program Closure Task
 - **Program PRD**:
   [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Program ARD**:
-  [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
+- **Program AD**:
+  [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
 - **Decisions**:
   [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md),
   [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md),

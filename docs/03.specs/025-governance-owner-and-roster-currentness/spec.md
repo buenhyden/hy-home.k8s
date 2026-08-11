@@ -580,7 +580,7 @@ retains responsibility for final integration, validation, and branch finishing.
 
 - **PRD**: No product PRD is required. The approved requirement is repository
   governance and lifecycle normalization based on the Current audit findings.
-- **ARD**: No infrastructure ARD is changed. The existing Stage 00 canonical
+- **AD**: No infrastructure AD is changed. The existing Stage 00 canonical
   core and provider-adapter architecture remains in force.
 - **Related ADRs**: No new architectural decision is needed unless execution
   discovers that canonical ownership cannot be represented by the existing

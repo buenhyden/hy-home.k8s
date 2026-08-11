@@ -189,7 +189,7 @@ AWS and Azure migration rules:
   observation date, version boundary, and refresh trigger.
 - Keep only executable manifests, configurations, and their implementation
   entrypoint README files under `examples/**`.
-- Retire duplicate PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, and Runbook
+- Retire duplicate PRD, AD, ADR, Spec, Plan, Task, Guide, Policy, and Runbook
   files; create Tombstones only where lineage or inbound references require it.
 - Resolve every tracked Markdown link target relative to its consumer and
   freeze every edge whose target is in the exact 59-path source set. Before
@@ -287,7 +287,7 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Validation Spec**: [Semantic Document Validation](../029-semantic-document-validation/spec.md)
 - **Current Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
