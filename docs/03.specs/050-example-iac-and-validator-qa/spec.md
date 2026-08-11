@@ -242,9 +242,9 @@ isolated environment described above, not an unreviewed ambient configuration.
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
-  [Example IaC and Validator QA Implementation Plan](../../04.execution/plans/2026-08-02-example-iac-and-validator-qa.md)
+  [Example IaC and Validator QA Implementation Plan](plan.md)
 - **Task**:
-  [Example IaC and Validator QA Task](../../04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md)
+  [Example IaC and Validator QA Task](tasks.md)
 - **Predecessor**:
   [Spec 049](../049-platform-validation-and-security-evidence/spec.md)
 - **Successor**:

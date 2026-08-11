@@ -1100,6 +1100,26 @@ class MigrationTests(unittest.TestCase):
                 self.tool.apply_phase(root, pairs, "move")
             self.assertEqual((root / pairs[0][1]).read_bytes(), pinned)
 
+    def test_post_move_targets_may_be_rebaselined_after_exact_apply(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, entries = self.phase_fixture(root)
+            self.write_manifest(root, commit, entries)
+            self._complete_fixture_archives(root, commit, entries)
+            pairs = self.tool.plan_phase(root, entries, "move")
+            with (
+                mock.patch.object(self.tool, "EXPECTED_SOURCE_COMMIT", commit),
+                mock.patch.object(self.tool, "validate_counts"),
+            ):
+                self.tool.apply_phase(root, pairs, "move")
+
+            (root / pairs[0][1]).write_text(
+                "reviewed post-move link and schedule rebaseline\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(self.tool.validate_manifest(root, entries, commit), ())
+
     def test_apply_lock_contention_fails_without_residue(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

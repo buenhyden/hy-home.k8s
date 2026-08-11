@@ -337,9 +337,9 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
 - **Prior Spec**: [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
 - **Prior Spec**: [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
 - **Historical/original Plan (2026-07-04)**:
-  [Workspace Engineering Research Pack Plan](../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
+  [Workspace Engineering Research Pack Plan](plan.md)
 - **Historical/original Task (2026-07-04)**:
-  [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
+  [Workspace Engineering Research Pack Task](tasks.md)
 - **Current execution Plan (2026-07-10)**:
   [Current Research Pack Fact-First Hardening Plan](../../98.archive/README.md#document-index)
 - **Current execution Task (2026-07-10)**:

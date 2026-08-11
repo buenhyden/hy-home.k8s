@@ -25,6 +25,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence
 
 try:
+    from scripts import archive_validation as archive_validation_module
     from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
     from scripts.archive_recovery import ArchiveContractError, parse_archive_envelope
     from scripts.archive_validation import (
@@ -35,6 +36,7 @@ try:
         validate_repository_archive,
     )
 except ModuleNotFoundError:  # Direct execution from scripts/.
+    import archive_validation as archive_validation_module  # type: ignore[no-redef]
     from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
@@ -897,7 +899,9 @@ def _validate_archive_inventory(
 
 
 def _validate_repaired_consumer_inventory(
-    document: Mapping[str, Any], current_paths: set[str]
+    document: Mapping[str, Any],
+    current_paths: set[str],
+    current_replacements: Mapping[str, str] | None = None,
 ) -> set[str]:
     """Allow repaired consumers only while current or ledger-owned originals."""
 
@@ -909,9 +913,40 @@ def _validate_repaired_consumer_inventory(
         for batch in document["batches"]
         for path in batch["repairedConsumers"]
     }
-    if not repaired <= current_paths | migrated_original_paths:
+    replacements = current_replacements or {}
+    replaced_current_paths = {
+        source for source, target in replacements.items() if target in current_paths
+    }
+    if not repaired <= current_paths | migrated_original_paths | replaced_current_paths:
         _fail("MIGRATION-CONSUMERS")
     return repaired
+
+
+def _reviewed_move_current_replacements(
+    root: Path, current_paths: set[str]
+) -> dict[str, str]:
+    """Resolve post-move aliases only from the exact reviewed transition manifest."""
+
+    try:
+        module = archive_validation_module._load_migration_module()
+        snapshot = module.load_reviewed_manifest_snapshot(
+            root, validate_repository=True
+        )
+    except Exception:
+        _fail("MIGRATION-CONSUMERS")
+
+    replacements: dict[str, str] = {}
+    for entry in snapshot.document.entries:
+        if entry["disposition"] != "move-current":
+            continue
+        source = validate_path(entry["source"])
+        target = validate_path(entry["target"])
+        if source in current_paths or target not in current_paths or source in replacements:
+            _fail("MIGRATION-CONSUMERS")
+        replacements[source] = target
+    if len(replacements) != 82:
+        _fail("MIGRATION-CONSUMERS")
+    return replacements
 
 
 def _current_documents(
@@ -1204,7 +1239,10 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
         first = current_report.diagnostics[0]
         _fail(first.code, first.path)
 
-    repaired = _validate_repaired_consumer_inventory(document, current_paths)
+    current_replacements = _reviewed_move_current_replacements(root, current_paths)
+    repaired = _validate_repaired_consumer_inventory(
+        document, current_paths, current_replacements
+    )
 
     return {
         "batches": counts["batches"],

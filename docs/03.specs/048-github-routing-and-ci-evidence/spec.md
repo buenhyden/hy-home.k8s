@@ -226,9 +226,9 @@ observed repository and SHA.
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
-  [GitHub Routing and CI Evidence Implementation Plan](../../04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md)
+  [GitHub Routing and CI Evidence Implementation Plan](plan.md)
 - **Task**:
-  [GitHub Routing and CI Evidence Task](../../04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md)
+  [GitHub Routing and CI Evidence Task](tasks.md)
 - **Predecessor**:
   [Spec 047](../047-current-surface-and-stash-reconciliation/spec.md)
 - **Successor**:

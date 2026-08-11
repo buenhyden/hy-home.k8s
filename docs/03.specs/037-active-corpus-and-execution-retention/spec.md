@@ -217,8 +217,8 @@ Remote/live and CI/FIFO PASS results are unclaimed.
 - **Final integrator**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Plan**: [Active Corpus and Execution Retention Implementation Plan](../../04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md)
-- **Task**: [Active Corpus and Execution Retention Task](../../04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md)
+- **Plan**: [Active Corpus and Execution Retention Implementation Plan](plan.md)
+- **Task**: [Active Corpus and Execution Retention Task](tasks.md)
 
 ### Lifecycle Traceability
 

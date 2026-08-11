@@ -353,8 +353,8 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Quality Standards](../../00.agent-governance/rules/quality-standards.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Harness Validation](../../../scripts/validate-harness.sh)
-- [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
-- [Task](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md)
+- [Plan](plan.md)
+- [Task](tasks.md)
 ### Related inputs
 
 - **PRD**: No separate PRD exists. The upstream requirement is the approved

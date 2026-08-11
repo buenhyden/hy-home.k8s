@@ -250,9 +250,9 @@ commands and tool identities selected by the approved Plan.
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
-  [Platform Validation and Security Evidence Implementation Plan](../../04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md)
+  [Platform Validation and Security Evidence Implementation Plan](plan.md)
 - **Task**:
-  [Platform Validation and Security Evidence Task](../../04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md)
+  [Platform Validation and Security Evidence Task](tasks.md)
 - **Predecessor**:
   [Spec 048](../048-github-routing-and-ci-evidence/spec.md)
 - **Successor**:

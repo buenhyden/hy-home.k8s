@@ -114,5 +114,5 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
-- **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md)
+- **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../../03.specs/004-argo-rollouts-progressive-delivery/plan.md)
 - **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../decisions/0011-argo-rollouts-progressive-delivery.md)

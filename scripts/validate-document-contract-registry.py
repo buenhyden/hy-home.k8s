@@ -132,22 +132,22 @@ LINEAGE_FIXTURE_DOCUMENTS = {
     "docs/03.specs/037-fixture/spec.md": ("sdlc/spec", "active", "2026-07-18"),
     "docs/03.specs/038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
-    "docs/04.execution/plans/2026-07-18-fixture-037.md": (
+    "docs/03.specs/037-fixture/plan.md": (
         "sdlc/plan",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/tasks/2026-07-18-fixture-037.md": (
+    "docs/03.specs/037-fixture/tasks.md": (
         "sdlc/task",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/plans/2026-07-18-fixture-038.md": (
+    "docs/03.specs/038-fixture/plan.md": (
         "sdlc/plan",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/tasks/2026-07-18-fixture-038.md": (
+    "docs/03.specs/038-fixture/tasks.md": (
         "sdlc/task",
         "active",
         "2026-07-18",
@@ -1320,12 +1320,12 @@ def _minimal_fixture_registry() -> dict[str, Any]:
             ),
             _fixture_lineage_profile(
                 "sdlc/plan",
-                "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                "^docs/03\\.specs/[0-9]{3}-fixture/plan\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
             _fixture_lineage_profile(
                 "sdlc/task",
-                "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                "^docs/03\\.specs/[0-9]{3}-fixture/tasks\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
         ],
@@ -1394,8 +1394,8 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "standaloneExecutions": [
             {
                 "spec": "037",
-                "plan": "docs/04.execution/plans/2026-07-18-fixture-037.md",
-                "task": "docs/04.execution/tasks/2026-07-18-fixture-037.md",
+                "plan": "docs/03.specs/037-fixture/plan.md",
+                "task": "docs/03.specs/037-fixture/tasks.md",
                 "state": "active",
                 "reason": "Direct approval fixture",
                 "decision": "0022",
@@ -1948,21 +1948,21 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "standalone-duplicate-spec":
         duplicate = copy.deepcopy(standalone[0])
-        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-039.md"
-        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-039.md"
+        duplicate["plan"] = "docs/03.specs/039-fixture/plan.md"
+        duplicate["task"] = "docs/03.specs/039-fixture/tasks.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-program-overlap":
         standalone[0]["spec"] = "034"
         return
     if mutation == "standalone-wrong-plan-path":
-        standalone[0]["plan"] = "docs/04.execution/tasks/2026-07-18-fixture-037.md"
+        standalone[0]["plan"] = "docs/03.specs/037-fixture/tasks.md"
         return
     if mutation == "standalone-missing-plan-owner":
-        standalone[0]["plan"] = "docs/04.execution/plans/2026-07-18-fixture-099.md"
+        standalone[0]["plan"] = "docs/03.specs/099-fixture/plan.md"
         return
     if mutation == "standalone-missing-task-owner":
-        standalone[0]["task"] = "docs/04.execution/tasks/2026-07-18-fixture-099.md"
+        standalone[0]["task"] = "docs/03.specs/099-fixture/tasks.md"
         return
     if mutation == "standalone-task-profile-mismatch":
         target = standalone[0]["task"]
@@ -1976,7 +1976,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         task_profile["routes"] = [
             {
                 "kind": "exact",
-                "value": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+                "value": "docs/03.specs/038-fixture/tasks.md",
             }
         ]
         return
@@ -1988,8 +1988,8 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         earlier.update(
             {
                 "spec": "038",
-                "plan": "docs/04.execution/plans/2026-07-18-fixture-038.md",
-                "task": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+                "plan": "docs/03.specs/038-fixture/plan.md",
+                "task": "docs/03.specs/038-fixture/tasks.md",
             }
         )
         standalone.insert(0, earlier)
@@ -1997,13 +1997,13 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "standalone-duplicate-plan":
         duplicate = copy.deepcopy(standalone[0])
         duplicate["spec"] = "038"
-        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-038.md"
+        duplicate["task"] = "docs/03.specs/038-fixture/tasks.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-duplicate-task":
         duplicate = copy.deepcopy(standalone[0])
         duplicate["spec"] = "038"
-        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-038.md"
+        duplicate["plan"] = "docs/03.specs/038-fixture/plan.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-state-drift":

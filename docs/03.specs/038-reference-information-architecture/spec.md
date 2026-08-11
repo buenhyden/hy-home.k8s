@@ -17,8 +17,8 @@ distinct while preventing any of them from becoming an accidental policy,
 plan, runbook, or runtime owner.
 
 The reciprocal implementation
-[Plan](../../04.execution/plans/2026-07-22-reference-information-architecture.md)
-and [Task](../../04.execution/tasks/2026-07-22-reference-information-architecture.md)
+[Plan](plan.md)
+and [Task](tasks.md)
 record the reviewed RIA-000 through RIA-006 packages and the observed RIA-007
 C1 closure and clean-tree postflight. RIA-002 completed through design commits `08cf17d` and
 `f0c019a` plus implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
@@ -328,8 +328,8 @@ hook, validator, scanner behavior, or CI topology is changed here.
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **PRD**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **ARD**: [ARD-0009](../../02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Plan**: [Reference Information Architecture Implementation Plan](../../04.execution/plans/2026-07-22-reference-information-architecture.md)
-- **Task**: [Reference Information Architecture Task](../../04.execution/tasks/2026-07-22-reference-information-architecture.md)
+- **Plan**: [Reference Information Architecture Implementation Plan](plan.md)
+- **Task**: [Reference Information Architecture Task](tasks.md)
 
 ### Lifecycle Traceability
 

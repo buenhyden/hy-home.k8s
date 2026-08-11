@@ -99,5 +99,5 @@ This README is located at `docs/99.templates/support/`.
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)
 - [Migration Spec](../../03.specs/011-template-contract-governance-migration/spec.md)
-- [Migration Plan](../../04.execution/plans/2026-07-03-template-contract-governance-migration.md)
-- [Migration Task](../../04.execution/tasks/2026-07-03-template-contract-governance-migration.md)
+- [Migration Plan](../../03.specs/011-template-contract-governance-migration/plan.md)
+- [Migration Task](../../03.specs/011-template-contract-governance-migration/tasks.md)

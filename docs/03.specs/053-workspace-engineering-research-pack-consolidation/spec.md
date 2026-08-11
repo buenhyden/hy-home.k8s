@@ -408,9 +408,9 @@ secret-value check is part of acceptance.
 - **Governing standalone decision**:
   [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - **Execution artifacts**:
-  [Plan](../../04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)
+  [Plan](plan.md)
   and
-  [Task](../../04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md).
+  [Task](tasks.md).
 
 ### Lifecycle Traceability
 

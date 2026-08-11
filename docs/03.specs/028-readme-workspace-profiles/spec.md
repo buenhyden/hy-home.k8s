@@ -132,8 +132,8 @@ git diff --check
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)
-- **Execution Plan**: [README and Workspace Profiles Implementation Plan](../../04.execution/plans/2026-07-12-readme-workspace-profiles.md)
-- **Execution Task**: [README and Workspace Profiles Task](../../04.execution/tasks/2026-07-12-readme-workspace-profiles.md)
+- **Execution Plan**: [README and Workspace Profiles Implementation Plan](plan.md)
+- **Execution Task**: [README and Workspace Profiles Task](tasks.md)
 - **Current Workspace Contract**: [Workspace Support Staging](../../../_workspace/README.md)
 
 ### Delivery and References

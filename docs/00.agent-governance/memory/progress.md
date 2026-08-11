@@ -8,6 +8,75 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-11 - WORK-104 Stage 03 work-unit co-location
+
+#### Metadata
+
+- **Date**: 2026-08-11
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #sdlc #document-governance #work-unit #migration
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: WORK-104 exact move phase from manifest source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`, after WORK-103 and the approved `WDTC-AMEND-001` carrier `446e336a`.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through WORK-115 terminal closure.
+- **Next Owner**: WORK-105 — complete the exact eight-record AD conversion, Stage 99 core forms, ARD/API-Spec consumer closure, and atomic AD-0011/ADR-0024/projection acceptance.
+
+#### Progress
+
+Verified the frozen Plan/Task source blobs, then consumed only the 82
+`move-current` manifest entries. The first ordinary apply stopped before any
+write at `MIGRATION-LOCK`; the controller-authorized exact retry reported
+`phase=move moves=82 archives=50 sources=132`. All 82 sources are absent, all
+82 targets are regular files, Stage 03 contains 41 sibling `plan.md` and 41
+sibling `tasks.md` files, and Stage 04 contains only its three transition
+README files. No migration transaction residue remains.
+
+Recalculated current Markdown and machine-contract consumers from the exact
+manifest, including reciprocal Spec/Plan/Task links and the standalone Spec
+053 registry values. Stage 90 observation bodies, Stage 98 records, and Stage
+05 content remain unchanged; transition validation resolves their historical
+Stage 04 references only when the exact mapped destination is tracked and
+regular. Stage 04 indexes now expose no stale authored rows, and the Stage 03
+tree exposes the co-located siblings.
+
+Rebaselined only the moved Stage 03 destination Plan/Task. WORK-100 through
+WORK-103, `WDTC-AMEND-001`, and WORK-104 are complete. The prior destination
+WORK-105 through WORK-110 meanings are superseded; the only queued successor
+schedule is WORK-105 through WORK-115 from Spec 052 and ADR-0024. No
+Release-family, provider, hosted, remote, credential-bearing, or live action
+was created, performed, or claimed.
+
+#### Evidence
+
+- Pre-apply and post-apply manifest checks remain exact at `132/82/50`.
+- Post-apply inventory is exact at 41 Plans, 41 Tasks, and three Stage 04 files;
+  source/target and transaction-residue audits are clean.
+- The valid focused RED began with 790 cross-document findings after the
+  physical move. Exact consumer repair and immutable-history resolution reduced
+  it to zero; strict links/owners reports `PASS CROSS-DOCUMENT`.
+- Registry self-test, strict transition registry, strict Markdown, migration
+  tests/check, affected/staged/index/aggregate, and diff evidence belong to the
+  final WORK-104 validation report. Controller all-files and commit evidence
+  remain separately owned and are not preclaimed here.
+- The controller subsequently ran the exact
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point with exit `0`; every
+  applicable hook passed, no mutation occurred, and post-run scope remained
+  `A82/D82/M73` with zero unstaged paths. Commit evidence remains separately
+  controller-owned.
+- Stage 98, Stage 90, and Stage 05 content have zero WORK-104 diff.
+
+#### Handoff
+
+WORK-105 must preserve the exact eight ARD identifiers/slugs/states while
+converting them to AD, independently close authored API Spec instances and all
+consumer classes, preserve native OpenAPI/GraphQL/Protobuf contracts, and only
+then accept the separate AD-0011/ADR-0024/registry projection authority gate.
+WORK-107 and WORK-108 may not start before that acceptance. Rollback is a
+reviewed revert of the single WORK-104 logical commit; broad reset and archive
+payload repair remain prohibited.
+
 ### 2026-08-10 - WDTC-AMEND-001 pre-WORK-104 terminal taxonomy design
 
 #### Metadata
@@ -269,7 +338,7 @@ terminal states closed.
 - **Status**: done
 - **Tags**: #sdlc #archive #document-governance #recovery
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: WORK-103 archive phase from the reviewed manifest pinned to `713dff1fc3de58a2d1682970a7f24faa39c14263`.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC-110 closure.
@@ -422,7 +491,7 @@ projection.
 - **Status**: done
 - **Tags**: #sdlc #migration #document-governance #validation
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: WORK-102 implementation from corrected source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC-110 closure.
@@ -750,7 +819,7 @@ blobs when beginning WDTC-103.
 - **Status**: done
 - **Tags**: #sdlc #validation #baseline #markdown
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: Controller resolution for the approved WDTC-101 implementation at base `bdc1a51010c0541fee48e068c88d1d405a5ede84`.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC-110 closure as the exact all-files baseline reconciliation record.
@@ -807,7 +876,7 @@ WDTC-102 from the completed staged WDTC-101 scope.
 - **Status**: active
 - **Tags**: #sdlc #spec-driven #document-governance #agent-governance #planning
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: Human approval of the complete design and implementation-plan direction after design baseline commit `14a0a75c`.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WDTC-110 lifecycle closure; the terminal owner becomes the Spec 052 sibling `tasks.md` after WDTC-104.
@@ -867,7 +936,7 @@ active-corpus validators, or remove `archive_cutover_manifest.py`.
 - **Status**: done
 - **Tags**: #research #closure #validation #sdlc
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-009 final repository-static closure evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain as terminal closure evidence for Spec 053.
@@ -917,7 +986,7 @@ choice.
 - **Status**: done
 - **Tags**: #research #retirement #reference-ia #cleanup #validation
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-008 exact pre/post-deletion evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure and keep sourceCommit dispositions afterward.
@@ -973,7 +1042,7 @@ fresh review, residue scan, terminal lifecycle transition, and closure commit.
 - **Status**: done
 - **Tags**: #research #migration #reference-ia #links #contracts
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-007 repository-static RED/GREEN migration evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure and preserve the sourceCommit-bounded classifications afterward.
@@ -1069,7 +1138,7 @@ claimed.
 - **Status**: done
 - **Tags**: #research #ai-agents #agency-agents #model-routing #memory
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-006; official and upstream primary sources checked 2026-08-08; direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -1126,7 +1195,7 @@ credential/remote/hosted/live action was performed or implied.
 - **Status**: done
 - **Tags**: #research #kubernetes #infrastructure #gitops #security
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-004; official primary sources checked 2026-08-08 and direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -1188,7 +1257,7 @@ evidence depths remain `DEFER` for separately authorized work.
 - **Status**: done
 - **Tags**: #research #sdd #sdlc #document-contracts #diataxis #llm-wiki
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-003; official primary sources checked 2026-08-08 and direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -1250,7 +1319,7 @@ validation `DEFER`.
 - **Status**: done
 - **Tags**: #research #harness #agent-loop #claude #codex #evidence-depth
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-002 / VAL-WER-004 through VAL-WER-007; official primary sources checked 2026-08-08; direct repository observation in the WERPC worktree
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh individual source rows on their named provider/control trigger.
@@ -1324,7 +1393,7 @@ the WERPC-002 commit.
 - **Status**: done
 - **Tags**: #governance #lineage #standalone-execution #tdd
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: direct human approval, Spec 053, and ADR-0022
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through Spec 053 closure.
@@ -1371,7 +1440,7 @@ its exact pack checks on a staged tree, and commit that logical unit.
 - **Status**: complete
 - **Tags**: #research #workspace-engineering #migration #provenance
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-001 file inventory and full Git provenance in `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; successor ledger entries supersede only their named observations.
@@ -1421,7 +1490,7 @@ source-register schema, and evidence-depth boundary.
 - **Status**: done
 - **Tags**: #research #workspace-engineering #harness #sdlc #consolidation
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: direct human request and approval; Spec 053; design commit `37c714d04e1ab20816f2719fdc09f6dc42acef72`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through Spec 053 closure; summarize in the terminal Task evidence.
@@ -1478,7 +1547,7 @@ the required two-stage review.
 - **Status**: done
 - **Tags**: #governance #docs #sdlc #taxonomy #lifecycle
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
@@ -1549,7 +1618,7 @@ commit.
 - **Status**: in-progress
 - **Tags**: #governance #docs #sdlc #taxonomy #planning
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/plan.md`
 - **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
@@ -6780,7 +6849,7 @@ each logical commit.
 #### Progress
 
 - Completed the
-  [Workspace Contract Governance Normalization Task Record](../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md).
+  [Workspace Contract Governance Normalization Task Record](../../03.specs/020-workspace-contract-governance-normalization/tasks.md).
 - Introduced `_workspace/README.md` as the tracked contract for temporary,
   non-secret repository-support staging.
 - Kept scratch files ignored by default; `git ls-files _workspace` must list
@@ -6871,7 +6940,7 @@ each logical commit.
 - Refreshed tracked `graphify-out/**` artifacts so the four renamed active
   PRDs resolve through their numbered filenames.
 - Updated the
-  [Template Path Numbering Contract task record](../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md)
+  [Template Path Numbering Contract task record](../../03.specs/019-template-path-numbering-contract/tasks.md)
   so TPN-002 evidence records the graph refresh and classifies remaining
   old-name matches from the requested scan.
 - Preserved the requested boundaries: no `docs/99.templates/**` or
@@ -6958,7 +7027,7 @@ each logical commit.
 #### Progress
 
 - Completed the
-  [Workspace Engineering Implementation Audit Pack Task Record](../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md).
+  [Workspace Engineering Implementation Audit Pack Task Record](../../03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md).
 - Folderized existing root audit reports into dated folders under
   `docs/90.references/audits/`.
 - Added the dated
@@ -7018,7 +7087,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-007 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Added the dated `automation-pipeline-workflow-qa.md` reference with
   2026-07-05 metadata, source-checked date, authority boundary, repo-backed
   implementation comparison, workflow graph summary, evidence-lane separation,
@@ -7080,7 +7149,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-006 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Added the dated
   `kubernetes-infrastructure-security.md` reference with 2026-07-05 metadata,
   source-checked date, authority boundary, repo-backed implementation
@@ -7141,7 +7210,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-005 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated `spec-sdlc-ci-qa-formatting.md` reference with
   2026-07-05 official/primary source coverage for GitHub Actions, NIST SSDF,
   NIST SP 800-204D, CodeQL/code scanning, Dependency Review, SLSA,
@@ -7196,7 +7265,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-004 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated `harness-and-loop-engineering.md` reference with
   2026-07-04 metadata, official/primary source groups, provider agent-loop
   docs freshness triggers, common environment/rule-system construction,
@@ -7254,7 +7323,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-003 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated
   `workspace-governance-baseline.md` reference with 2026-07-04 metadata,
   source-checked date, freshness triggers, required `Definitions / Facts`
@@ -7303,7 +7372,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-002 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Created the dated workspace engineering research pack README and updated the
   research and parent Stage 90 indexes to route current moved references through
   `docs/90.references/research/2026-07-04-wer/`.
@@ -7358,7 +7427,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-001 baseline task evidence for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Created the Stage 04 task record, indexed it in the tasks README, and kept
   the work scoped to task evidence plus this progress ledger update.
 - Recorded the baseline branch/worktree check, task template intake, parent
@@ -7413,9 +7482,9 @@ each logical commit.
 
 - Completed ACS-005 for the active control surface governance hardening plan
   and closed the
-  [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
+  [Plan](../../03.specs/016-active-control-surface-governance-hardening/plan.md)
   and
-  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
 - Marked the Stage 04 plan and task indexes as done for this workstream.
 - Confirmed active README, GitHub-native Markdown, snapshot-boundary,
   protected-surface, and repo-static validation contracts have aligned
@@ -7466,7 +7535,7 @@ each logical commit.
 
 - Completed ACS-004 for the active control surface governance hardening plan
   and updated the
-  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
 - Aligned active README routing for scripts, GitOps, workloads, tests, Traefik,
   examples, and sample-app onboarding while preserving the common README
   profile and leaving AWS/Azure cloud example docs untouched.
@@ -7523,9 +7592,9 @@ each logical commit.
 
 - Completed T-005 for the workspace document governance hardening plan and
   updated the
-  [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  [Plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
   and
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Hardened `scripts/validate-repo-quality-gates.sh` with deterministic,
   path-scoped checks for active README deprecated headings, active authored
   template residue, active template-routing owner drift, shared hook path
@@ -7577,7 +7646,7 @@ each logical commit.
 
 - Completed T-004 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Cleaned active README/profile drift in the governance hub, AWS example docs
   README, tests README, root README, and docs hub.
 - Updated active onboarding guidance in provider doc-writer surfaces, shared
@@ -7632,7 +7701,7 @@ each logical commit.
 
 - Completed T-003 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Kept root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` thin while aligning their
   provider roles: Codex/GPT starts from `AGENTS.md`, Claude starts from
   `CLAUDE.md`, and Gemini starts from `GEMINI.md`.
@@ -7695,7 +7764,7 @@ each logical commit.
 
 - Completed T-002 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Kept exact target-pattern/template routing in
   `docs/99.templates/support/template-routing.md`, with the Templates README as
   a synchronized route inventory.
@@ -7749,7 +7818,7 @@ each logical commit.
 - Completed Task 1 for the workspace document governance hardening plan:
   baseline status, tracked file inventory, frontmatter/README scans, provider
   scans, and CI/QA scans are recorded in the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Created the Stage 90
   [workspace document governance hardening audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)
   because durable findings were found and should route to later tasks instead
@@ -7804,9 +7873,9 @@ each logical commit.
   `docs/superpowers/` top-level folder, which the repository quality gate
   rejects.
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  [implementation plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+  [task record](../../03.specs/013-workspace-document-governance-hardening/tasks.md)
   after user approval of the Stage 03 Spec.
 - Registered the new Plan and Task in the Stage 04 README indexes.
 
@@ -7841,9 +7910,9 @@ each logical commit.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md)
+  [implementation plan](../../03.specs/012-template-governance-audit-enhancement/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md)
+  [task record](../../03.specs/012-template-governance-audit-enhancement/tasks.md)
   for the approved follow-up audit and targeted enhancement pass over
   `docs/99.templates/**`.
 - Registered the new Plan and Task in the Stage 04 README indexes.
@@ -8085,9 +8154,9 @@ each logical commit.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-template-contract-governance-migration.md)
+  [implementation plan](../../03.specs/011-template-contract-governance-migration/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-template-contract-governance-migration.md)
+  [task record](../../03.specs/011-template-contract-governance-migration/tasks.md)
   for the approved template contract and governance migration.
 - Registered both execution documents in the Stage 04 plan and task README
   indexes.
@@ -8183,9 +8252,9 @@ each logical commit.
   [SDLC delivery practices](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md).
 - Finalized the parent
   [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
-  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md),
+  [Plan](../../03.specs/010-workspace-harness-implementation-audit-pack/plan.md),
   and
-  [Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
+  [Task](../../03.specs/010-workspace-harness-implementation-audit-pack/tasks.md)
   traceability by setting plan/task status and Stage 04 indexes to `Done`.
 - Updated the parent
   [references README](../../90.references/README.md), audits README, Stage 04
@@ -8263,7 +8332,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   plus four durable references covering governance baseline, harness/loop
   engineering, provider implementation status, and spec/SDLC/CI/QA/formatting.
 - Finalized
-  [T-006](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+  [T-006](../../03.specs/009-workspace-harness-research-pack/tasks.md)
   by marking the task and phase complete and recording the final repo-static
   validation bundle.
 - Confirmed the pack remains documentation-only reference material. Static
@@ -14122,9 +14191,9 @@ section separating static from live evidence.
 ### Progress
 
 - Created the Stage 04 implementation plan:
-  [Workspace Document Contract Normalization Plan](../../04.execution/plans/2026-07-04-workspace-document-contract-normalization.md).
+  [Workspace Document Contract Normalization Plan](../../03.specs/014-workspace-document-contract-normalization/plan.md).
 - Created the Stage 04 task record:
-  [Workspace Document Contract Normalization Tasks](../../04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md).
+  [Workspace Document Contract Normalization Tasks](../../03.specs/014-workspace-document-contract-normalization/tasks.md).
 - Indexed the new Plan and Task in their stage README files.
 - Split execution into six logical commits: audit inventory, contract/template
   normalization, active SDLC document application, historical evidence

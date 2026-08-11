@@ -251,8 +251,8 @@ their recorded `DEFER` or `ABSENT` verdicts.
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 041](../041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)
-- **Execution Plan**: [Provider-Native Runtime and Model Evidence Implementation Plan](../../04.execution/plans/2026-07-28-provider-native-runtime-and-model-evidence.md)
-- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](../../04.execution/tasks/2026-07-28-provider-native-runtime-and-model-evidence.md)
+- **Execution Plan**: [Provider-Native Runtime and Model Evidence Implementation Plan](plan.md)
+- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](tasks.md)
 
 ### Lifecycle Traceability
 

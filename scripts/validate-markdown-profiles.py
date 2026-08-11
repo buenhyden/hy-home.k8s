@@ -2016,6 +2016,7 @@ def _self_test(root: Path) -> list[str]:
         failures.append("fixture schemaVersion must be 2")
     if set(fixture) != {
         "schemaVersion",
+        "nativeProfileCases",
         "dateCases",
         "sectionBodyCases",
         "relationshipCases",
@@ -2030,8 +2031,39 @@ def _self_test(root: Path) -> list[str]:
     row_ids = [row.get("profile") for row in rows]
     if len(row_ids) != len(set(row_ids)):
         failures.append("profileMatrix contains duplicate profiles")
-    if set(row_ids) != set(profiles):
+    native_case_profiles = {
+        case.get("profile") for case in fixture.get("nativeProfileCases", [])
+    }
+    if set(row_ids) != set(profiles) - native_case_profiles:
         failures.append("profileMatrix must cover every registry profile exactly once")
+    expected_native_cases = (
+        (
+            "document-migration-manifest-transition-only",
+            "native/document-migration-manifest",
+            "scripts/document-taxonomy-migration.json",
+            "transition",
+            (),
+        ),
+        (
+            "document-migration-manifest-terminal-rejected",
+            "native/document-migration-manifest",
+            "scripts/document-taxonomy-migration.json",
+            "terminal",
+            ("REGISTRY_ROUTE_STATE",),
+        ),
+    )
+    actual_native_cases = tuple(
+        (
+            case.get("name"),
+            case.get("profile"),
+            case.get("path"),
+            case.get("state"),
+            tuple(case.get("expectedRuleIds", ())),
+        )
+        for case in fixture.get("nativeProfileCases", [])
+    )
+    if actual_native_cases != expected_native_cases:
+        failures.append("nativeProfileCases must preserve the exact transition contract")
     expected_date_cases = (
         ("authored-previous-day", "sdlc/spec", "2026-07-11", ()),
         ("authored-same-day", "sdlc/spec", "2026-07-12", ()),

@@ -236,9 +236,9 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Predecessor**:
   [Spec 050](../050-example-iac-and-validator-qa/spec.md)
 - **Implementation Plan**:
-  [Repository Assurance Integration and Closure Implementation Plan](../../04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md)
+  [Repository Assurance Integration and Closure Implementation Plan](plan.md)
 - **Execution Task**:
-  [Task: Repository Assurance Integration and Closure](../../04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md)
+  [Task: Repository Assurance Integration and Closure](tasks.md)
 
 ### Lifecycle Traceability
 

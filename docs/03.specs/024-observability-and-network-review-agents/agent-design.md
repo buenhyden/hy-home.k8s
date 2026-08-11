@@ -101,7 +101,7 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 - **Acceptance Thresholds**: `bash scripts/validate-repo-quality-gates.sh .`
   PASS and three-surface tracked-adapter parity without a Gemini CLI native
   runtime claim.
-- **Linked Task / Eval Docs**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md)
+- **Linked Task / Eval Docs**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](tasks.md)
 
 ## Observability
 
@@ -118,6 +118,6 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 
 ### Delivery and Governance
 
-- **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md)
+- **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](plan.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

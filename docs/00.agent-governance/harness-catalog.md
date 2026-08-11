@@ -390,8 +390,8 @@ Roster currentness and owner lineage resolve through these canonical surfaces:
 - [`docs/00.agent-governance/rules/bootstrap.md`](rules/bootstrap.md)
 - [`docs/00.agent-governance/rules/persona.md`](rules/persona.md)
 - [`docs/00.agent-governance/rules/stage-authoring-matrix.md`](rules/stage-authoring-matrix.md)
-- [`docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md`](../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md)
-- [`docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md`](../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md)
+- [`docs/03.specs/024-observability-and-network-review-agents/tasks.md`](../03.specs/024-observability-and-network-review-agents/tasks.md)
+- [`docs/03.specs/025-governance-owner-and-roster-currentness/tasks.md`](../03.specs/025-governance-owner-and-roster-currentness/tasks.md)
 - [`docs/99.templates/support/documentation-contract.md`](../99.templates/support/documentation-contract.md)
 - [`docs/99.templates/support/template-routing.md`](../99.templates/support/template-routing.md)
 

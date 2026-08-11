@@ -513,11 +513,11 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
             elif not source_exists and disposition == "archive-unique":
                 if not _archive_envelope_is_exact(root, row, target, commit):
                     diagnostics.append(f"MIGRATION-ARCHIVE-ENVELOPE:{source_name}")
-            else:
+            elif source_exists:
                 try:
-                    active_blob = _git(root, "hash-object", "--", active_path.as_posix())
+                    active_blob = _git(root, "hash-object", "--", source.as_posix())
                 except MigrationAbort:
-                    diagnostics.append(f"MIGRATION-ENDPOINT-BLOB:{active_path.as_posix()}")
+                    diagnostics.append(f"MIGRATION-ENDPOINT-BLOB:{source_name}")
                 else:
                     if active_blob != expected_blob:
                         diagnostics.append(f"MIGRATION-CHANGED-SOURCE:{source_name}")

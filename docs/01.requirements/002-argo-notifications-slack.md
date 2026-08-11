@@ -104,8 +104,8 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 
 - **ARD**: [`../02.architecture/requirements/0005-argo-notifications-slack.md`](../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Spec**: [`../03.specs/005-argo-notifications-slack/spec.md`](../03.specs/005-argo-notifications-slack/spec.md)
-- **Plan**: [`../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../04.execution/plans/2026-05-18-argo-notifications-slack.md)
-- **Task**: [`../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
+- **Plan**: [`../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../03.specs/005-argo-notifications-slack/plan.md)
+- **Task**: [`../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../03.specs/005-argo-notifications-slack/tasks.md)
 - **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **PRD**: [`./001-argo-rollouts-progressive-delivery.md`](./001-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스

@@ -206,9 +206,12 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             "docs/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md",
         }
         staged_paths = set(validator._git_paths(ROOT)) - retired_repaired_by_batch_six
+        current_replacements = validator._reviewed_move_current_replacements(
+            ROOT, staged_paths
+        )
 
         repaired = validator._validate_repaired_consumer_inventory(
-            migration, staged_paths
+            migration, staged_paths, current_replacements
         )
 
         self.assertTrue(retired_repaired_by_batch_six <= repaired)
@@ -219,11 +222,16 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertTrue(retired_repaired_by_batch_six <= migrated_originals)
 
         missing_current = staged_paths - {
-            "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
+            "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md"
+        }
+        missing_replacements = {
+            source: target
+            for source, target in current_replacements.items()
+            if target in missing_current
         }
         with self.assertRaises(validator.MigrationError) as missing:
             validator._validate_repaired_consumer_inventory(
-                migration, missing_current
+                migration, missing_current, missing_replacements
             )
         self.assertEqual(
             str(missing.exception),

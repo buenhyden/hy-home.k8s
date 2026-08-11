@@ -1003,7 +1003,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/plan\\.md$"
         }
       ],
       "frontmatter": {
@@ -1106,7 +1106,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tasks\\.md$"
         }
       ],
       "frontmatter": {
@@ -6617,8 +6617,8 @@
   "standaloneExecutions": [
     {
       "spec": "053",
-      "plan": "docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md",
-      "task": "docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "plan": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/plan.md",
+      "task": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md",
       "state": "done",
       "reason": "Direct human-approved research-pack consolidation without separate PRD/ARD authority",
       "decision": "0022",

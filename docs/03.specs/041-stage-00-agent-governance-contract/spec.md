@@ -237,8 +237,8 @@ now part of the repository-static aggregate lane.
 - **Current accepted decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../040-contract-cutover-and-program-closure/spec.md)
 - **Agent design**: [Agent Design](./agent-design.md)
-- **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](../../04.execution/plans/2026-07-28-stage-00-agent-governance-contract.md)
-- **Task evidence**: [Stage 00 Agent Governance Contract Task](../../04.execution/tasks/2026-07-28-stage-00-agent-governance-contract.md)
+- **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](plan.md)
+- **Task evidence**: [Stage 00 Agent Governance Contract Task](tasks.md)
 - **Successor**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
 
 ### Lifecycle Traceability

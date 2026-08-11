@@ -112,5 +112,5 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
-- **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../04.execution/plans/2026-05-18-argo-notifications-slack.md)
+- **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../03.specs/005-argo-notifications-slack/plan.md)
 - **ADR**: [`../decisions/0012-argo-notifications-slack.md`](../decisions/0012-argo-notifications-slack.md)

@@ -218,8 +218,8 @@ Requirements review returned `COMPLIANT`; quality and security returned
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 042](../042-provider-native-runtime-and-model-evidence/spec.md)
 - **Successor**: [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md)
-- **Execution Plan**: [Agent Harness Loop Lifecycle Implementation Plan](../../04.execution/plans/2026-07-29-agent-harness-loop-lifecycle.md)
-- **Task evidence**: [Agent Harness Loop Lifecycle Task](../../04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md)
+- **Execution Plan**: [Agent Harness Loop Lifecycle Implementation Plan](plan.md)
+- **Task evidence**: [Agent Harness Loop Lifecycle Task](tasks.md)
 
 ### Lifecycle Traceability
 

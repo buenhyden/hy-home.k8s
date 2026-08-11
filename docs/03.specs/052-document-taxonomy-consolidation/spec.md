@@ -733,8 +733,8 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 - **Terminal/current successor design pending WORK-105 eight-record AD/consumer closure and separate atomic AD-0011 authority acceptance/projection**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Approved implementation Plan and Task, to move during transition**:
-  [legacy Plan](../../04.execution/plans/2026-08-07-document-taxonomy-consolidation.md)
-  and [legacy Task](../../04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md)
+  [legacy Plan](plan.md)
+  and [legacy Task](tasks.md)
 - **External evidence boundary**:
   [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
   and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)

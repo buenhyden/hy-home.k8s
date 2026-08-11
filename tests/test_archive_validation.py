@@ -914,21 +914,18 @@ class ArchiveValidationTest(unittest.TestCase):
 
 
 class ArchiveTransitionLinkTest(unittest.TestCase):
-    """Close the exact two-edge WDTC-103-to-WDTC-104 transition handoff."""
+    """Close the deferred archive-edge handoff after the 82 current moves."""
 
-    fixture_edges = (
-        (
-            "docs/04.execution/tasks/"
-            "2026-07-05-workspace-engineering-implementation-audit-pack.md",
-            "docs/04.execution/plans/"
-            "2026-05-24-p3-gitops-secret-runtime-remediation.md",
-        ),
-        (
-            "docs/04.execution/tasks/"
-            "2026-07-05-workspace-engineering-implementation-audit-pack.md",
-            "docs/04.execution/tasks/"
-            "2026-05-24-p3-gitops-secret-runtime-remediation.md",
-        ),
+    moved_source = PurePosixPath(
+        "docs/04.execution/tasks/"
+        "2026-07-05-workspace-engineering-implementation-audit-pack.md"
+    )
+    moved_target = PurePosixPath(
+        "docs/03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md"
+    )
+    archived_source = PurePosixPath(
+        "docs/04.execution/plans/"
+        "2026-05-24-p3-gitops-secret-runtime-remediation.md"
     )
 
     @classmethod
@@ -955,7 +952,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             for edge in handoff.edges
         )
 
-        self.assertEqual(actual, self.fixture_edges)
+        self.assertEqual(actual, ())
         self.assertEqual(
             handoff.navigation_boundary,
             "docs/98.archive/README.md#document-index",
@@ -965,24 +962,18 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         source = PurePosixPath(
             "docs/01.requirements/004-current-local-gitops-platform.md"
         )
-        target = PurePosixPath(self.fixture_edges[0][1])
+        target = self.archived_source
 
         self.assertIsNone(
             self.validator._archive_transition_target(self.context, source, target)
         )
 
-    def test_mutated_manifest_source_blob_is_not_deferred(self) -> None:
-        source = PurePosixPath(self.fixture_edges[0][0])
-        target = PurePosixPath(self.fixture_edges[0][1])
-        texts = dict(self.context.texts)
-        texts[source] += "\n"
-        mutated = dataclasses.replace(self.context, texts=texts)
-
-        with self.assertRaises(self.validator.ConfigurationError):
-            self.validator._archive_transition_target(mutated, source, target)
+    def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:
+        self.assertNotIn(self.moved_source, self.context.texts)
+        self.assertIn(self.moved_target, self.context.texts)
 
     def test_unknown_archived_target_is_not_deferred(self) -> None:
-        source = PurePosixPath(self.fixture_edges[0][0])
+        source = self.moved_target
         target = PurePosixPath(
             "docs/04.execution/tasks/2099-01-01-unknown-archive-source.md"
         )
@@ -992,16 +983,10 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         )
 
     def test_terminal_route_rejects_transition_residue(self) -> None:
-        source = PurePosixPath(self.fixture_edges[0][0])
-        target = PurePosixPath(self.fixture_edges[0][1])
         terminal = dataclasses.replace(self.context, route_state="terminal")
 
-        self.assertIsNone(
-            self.validator._archive_transition_target(terminal, source, target)
-        )
-        diagnostics = self.validator._link_diagnostics(terminal)
-        broken = [item for item in diagnostics if item.rule_id == "LINK-BROKEN"]
-        self.assertGreaterEqual(len(broken), len(self.fixture_edges))
+        handoff = self.validator._archive_transition_handoff(terminal)
+        self.assertEqual(handoff.edges, ())
 
     def test_source_commit_drift_and_manifest_index_drift_fail_closed(self) -> None:
         snapshot = self.validator._reviewed_taxonomy_manifest(self.context.root)
@@ -1020,17 +1005,13 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         ), self.assertRaises(self.validator.ConfigurationError):
             self.validator._archive_transition_handoff(self.context)
 
-    def test_added_or_replaced_deferred_edge_is_rejected(self) -> None:
-        source = PurePosixPath(self.fixture_edges[0][0])
+    def test_added_post_move_deferred_edge_is_rejected(self) -> None:
+        source = self.moved_target
         original_text = self.context.texts[source]
-        _move_blobs, archive_sources = (
+        _move_blobs, move_targets, archive_sources = (
             self.validator._document_taxonomy_transition_manifest(self.context)
         )
-        extra_target = next(
-            target
-            for target in sorted(archive_sources)
-            if target.as_posix() not in {edge[1] for edge in self.fixture_edges}
-        )
+        extra_target = next(target for target in sorted(archive_sources))
 
         added_text = original_text + f"\n[unexpected]({self.validator.posixpath.relpath(extra_target.as_posix(), source.parent.as_posix())})\n"
         added_context = dataclasses.replace(
@@ -1041,35 +1022,50 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "_document_taxonomy_transition_manifest",
             return_value=(
                 {source: self.validator._git_sha1_blob(added_text)},
+                move_targets,
                 archive_sources,
             ),
         ), self.assertRaises(self.validator.ConfigurationError):
             self.validator._archive_transition_handoff(added_context)
 
-        old_target = self.fixture_edges[0][1]
-        replacement = self.validator.posixpath.relpath(
-            extra_target.as_posix(), source.parent.as_posix()
+    def _assert_added_legacy_move_edge_is_rejected(
+        self, source: PurePosixPath
+    ) -> None:
+        _move_blobs, move_targets, _archive_sources = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
         )
-        old_destination = self.validator.posixpath.relpath(
-            old_target, source.parent.as_posix()
+        legacy_target = next(iter(sorted(move_targets)))
+        raw_target = self.validator.posixpath.relpath(
+            legacy_target.as_posix(), source.parent.as_posix()
         )
-        replaced_text = original_text.replace(
-            f"]({old_destination})",
-            f"]({replacement})",
-            1,
+        added_text = self.context.texts[source] + f"\n[unexpected legacy]({raw_target})\n"
+        added_context = dataclasses.replace(
+            self.context, texts={**self.context.texts, source: added_text}
         )
-        replaced_context = dataclasses.replace(
-            self.context, texts={**self.context.texts, source: replaced_text}
+
+        try:
+            diagnostics = self.validator._link_diagnostics(added_context)
+        except self.validator.ConfigurationError:
+            return
+        self.assertTrue(
+            any(
+                item.rule_id == "LINK-BROKEN" and item.path == source
+                for item in diagnostics
+            )
         )
-        with mock.patch.object(
-            self.validator,
-            "_document_taxonomy_transition_manifest",
-            return_value=(
-                {source: self.validator._git_sha1_blob(replaced_text)},
-                archive_sources,
-            ),
-        ), self.assertRaises(self.validator.ConfigurationError):
-            self.validator._archive_transition_handoff(replaced_context)
+
+    def test_stage05_does_not_waive_injected_legacy_move_edge(self) -> None:
+        self._assert_added_legacy_move_edge_is_rejected(
+            PurePosixPath(
+                "docs/05.operations/policies/"
+                "0004-rollouts-notifications-headlamp-policy.md"
+            )
+        )
+
+    def test_stage90_does_not_waive_injected_legacy_move_edge(self) -> None:
+        self._assert_added_legacy_move_edge_is_rejected(
+            PurePosixPath("docs/90.references/README.md")
+        )
 
 
 if __name__ == "__main__":

@@ -194,7 +194,7 @@ FEEDBACK_DESTINATIONS = (
     ),
     (
         "owned-external-limitation",
-        "docs/04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md",
+        "docs/03.specs/043-agent-harness-loop-lifecycle/tasks.md",
     ),
 )
 INTERFACE_SIGNATURES = {

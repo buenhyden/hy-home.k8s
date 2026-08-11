@@ -595,7 +595,7 @@
       "profile": "sdlc/plan",
       "mode": "authored",
       "applicability": "validate-document",
-      "fixturePath": "docs/04.execution/plans/2026-07-12-fixture.md",
+      "fixturePath": "docs/03.specs/999-fixture/plan.md",
       "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/plan\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Goals & In-Scope\n\nFixture content.\n\n## Non-Goals & Out-of-Scope\n\nFixture content.\n\n## Work Breakdown\n\nFixture content.\n\n## Verification Plan\n\nFixture content.\n\n## Risks & Mitigations\n\nFixture content.\n\n## Completion Criteria\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
@@ -610,7 +610,7 @@
       "profile": "sdlc/task",
       "mode": "authored",
       "applicability": "validate-document",
-      "fixturePath": "docs/04.execution/tasks/2026-07-12-fixture.md",
+      "fixturePath": "docs/03.specs/999-fixture/tasks.md",
       "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/task\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Inputs\n\nFixture content.\n\n## Task Table\n\nFixture content.\n\n## Approval and Safety Boundaries\n\nFixture content.\n\n## Verification Summary\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {

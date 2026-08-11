@@ -294,8 +294,8 @@ git diff --check
 
 ### Delivery and References
 
-- **Execution Plan**: [Authored Document Migration Implementation Plan](../../04.execution/plans/2026-07-12-authored-document-migration.md)
-- **Execution Task**: [Authored Document Migration Task](../../04.execution/tasks/2026-07-12-authored-document-migration.md)
+- **Execution Plan**: [Authored Document Migration Implementation Plan](plan.md)
+- **Execution Task**: [Authored Document Migration Task](tasks.md)
 - **Next Spec**: [Affected Surface and Agent QA](../031-affected-surface-agent-qa/spec.md)
 - **ADR Practice**: [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
 - **Documentation Classification Aid**: [Diátaxis](https://diataxis.fr/)

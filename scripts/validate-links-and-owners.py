@@ -318,13 +318,13 @@ RETIRED_REFERENCE_TERMINAL_STATUSES = frozenset(
 )
 SMDV_CLOSURE_PATHS = (
     PurePosixPath("docs/03.specs/029-semantic-document-validation/spec.md"),
-    PurePosixPath("docs/04.execution/plans/2026-07-12-semantic-document-validation.md"),
-    PurePosixPath("docs/04.execution/tasks/2026-07-12-semantic-document-validation.md"),
+    PurePosixPath("docs/03.specs/029-semantic-document-validation/plan.md"),
+    PurePosixPath("docs/03.specs/029-semantic-document-validation/tasks.md"),
 )
 ADM_CLOSURE_PATHS = (
     PurePosixPath("docs/03.specs/030-authored-document-migration/spec.md"),
-    PurePosixPath("docs/04.execution/plans/2026-07-12-authored-document-migration.md"),
-    PurePosixPath("docs/04.execution/tasks/2026-07-12-authored-document-migration.md"),
+    PurePosixPath("docs/03.specs/030-authored-document-migration/plan.md"),
+    PurePosixPath("docs/03.specs/030-authored-document-migration/tasks.md"),
 )
 
 
@@ -452,28 +452,55 @@ class ArchiveTransitionEdge:
     target: PurePosixPath
 
 
-EXPECTED_ARCHIVE_TRANSITION_EDGES = (
-    ArchiveTransitionEdge(
-        PurePosixPath(
-            "docs/04.execution/tasks/"
-            "2026-07-05-workspace-engineering-implementation-audit-pack.md"
-        ),
-        PurePosixPath(
-            "docs/04.execution/plans/"
-            "2026-05-24-p3-gitops-secret-runtime-remediation.md"
-        ),
+EXPECTED_ARCHIVE_TRANSITION_EDGES: tuple[ArchiveTransitionEdge, ...] = ()
+REVIEWED_STAGE90_MOVE_SOURCE_BLOBS = {
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"
+    ): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"
+    ): "0403e861994bc322fbcaaabfceb1b5c8ada02572",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md"
+    ): "693b0b2b29899b4a6a54acbb2aa697b9ff5c0818",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"
+    ): "0965758eccd42bba5e884f01270ed738c9d6410a",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md"
+    ): "9f60551f8e5035cee01941a039a9be3336021916",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md"
+    ): "21151b591f787179f50dbbea0cd02913acb8f2e3",  # pragma: allowlist secret
+    PurePosixPath("docs/90.references/audits/2026-07-05-wea/README.md"): (
+        "9a7c9c70336c7510e23634b62eb0ee7b41d0db43"  # pragma: allowlist secret
     ),
-    ArchiveTransitionEdge(
-        PurePosixPath(
-            "docs/04.execution/tasks/"
-            "2026-07-05-workspace-engineering-implementation-audit-pack.md"
-        ),
-        PurePosixPath(
-            "docs/04.execution/tasks/"
-            "2026-05-24-p3-gitops-secret-runtime-remediation.md"
-        ),
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"
+    ): "84830e0fa7178f820bfb189d9f129fd34209af18",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"
+    ): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/kubernetes-infrastructure-security.md"
+    ): "cdab943dcb4d9d50b5252afad13db8e0bb3ce39a",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md"
+    ): "ceca294a1902fd38d33f4dec6aa0b41dc6e3ed15",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
+    ): "9fc02988093b418d8e27b464d1d341ab877c5562",  # pragma: allowlist secret
+    PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"): (
+        "195a92dfb2fa064c3179284f80c64b910c54bfb7"  # pragma: allowlist secret
     ),
-)
+    PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
+    ): "1d99471207154d85bb26679a6993fd91239bc045",  # pragma: allowlist secret
+    PurePosixPath("docs/90.references/research/README.md"): (
+        "0de14e1978610d55708db6dd13f197fc9bf2c4ca"  # pragma: allowlist secret
+    ),
+}
+REVIEWED_STAGE90_MOVE_EDGE_COUNT = 31
 
 
 @dataclass(frozen=True)
@@ -2466,7 +2493,11 @@ def _reviewed_taxonomy_manifest(root: Path) -> Any:
 
 def _document_taxonomy_transition_manifest(
     context: Context,
-) -> tuple[dict[PurePosixPath, str], frozenset[PurePosixPath]]:
+) -> tuple[
+    dict[PurePosixPath, str],
+    dict[PurePosixPath, PurePosixPath],
+    frozenset[PurePosixPath],
+]:
     """Load the exact temporary 132-entry handoff without broad path waivers."""
 
     if DOCUMENT_TAXONOMY_MANIFEST_PATH not in context.tracked_regular_paths:
@@ -2487,6 +2518,7 @@ def _document_taxonomy_transition_manifest(
         "reviewed",
     ]
     move_blobs: dict[PurePosixPath, str] = {}
+    move_targets: dict[PurePosixPath, PurePosixPath] = {}
     archive_sources: set[PurePosixPath] = set()
     targets: set[PurePosixPath] = set()
     for entry in document.entries:
@@ -2531,6 +2563,7 @@ def _document_taxonomy_transition_manifest(
             ):
                 raise ConfigurationError("archive transition move target differs")
             move_blobs[source] = entry["sourceBlob"]
+            move_targets[source] = target
         else:
             expected_target = PurePosixPath("docs", "98.archive", *source.parts[1:])
             if target != expected_target:
@@ -2539,7 +2572,7 @@ def _document_taxonomy_transition_manifest(
         targets.add(target)
     if len(move_blobs) != 82 or len(archive_sources) != 50:
         raise ConfigurationError("archive transition manifest counts differ")
-    return move_blobs, frozenset(archive_sources)
+    return move_blobs, move_targets, frozenset(archive_sources)
 
 
 def _git_sha1_blob(text: str) -> str:
@@ -2553,7 +2586,7 @@ def _archive_transition_handoff(context: Context) -> ArchiveTransitionHandoff:
 
     if context.route_state != "transition":
         return ArchiveTransitionHandoff(ARCHIVE_INDEX_BOUNDARY, ())
-    move_blobs, archive_sources = _document_taxonomy_transition_manifest(context)
+    move_blobs, _, archive_sources = _document_taxonomy_transition_manifest(context)
     if (
         ARCHIVE_INDEX_PATH not in context.paths
         or ARCHIVE_INDEX_PATH not in context.tracked_regular_paths
@@ -2595,10 +2628,65 @@ def _archive_transition_target(
     return handoff.navigation_boundary if edge in handoff.edges else None
 
 
+def _reviewed_stage90_move_edges(
+    context: Context,
+    move_targets: Mapping[PurePosixPath, PurePosixPath],
+) -> frozenset[ArchiveTransitionEdge]:
+    """Admit only legacy move edges frozen by reviewed Stage 90 blobs."""
+
+    if context.route_state != "transition":
+        return frozenset()
+    edges: set[ArchiveTransitionEdge] = set()
+    contributing_sources: set[PurePosixPath] = set()
+    for source, expected_blob in REVIEWED_STAGE90_MOVE_SOURCE_BLOBS.items():
+        text = context.texts.get(source)
+        if (
+            text is None
+            or source not in context.tracked_regular_paths
+            or _git_sha1_blob(text) != expected_blob
+        ):
+            raise ConfigurationError(
+                "reviewed Stage 90 move source differs from its frozen blob"
+            )
+        for raw in _extract_links(text):
+            kind, target = _local_destination(source, raw)
+            if kind != "local" or target not in move_targets:
+                continue
+            assert target is not None
+            if _path_exists_without_dereference(
+                context.root, target, context.adapter_targets
+            ):
+                continue
+            replacement = move_targets[target]
+            if (
+                replacement not in context.tracked_regular_paths
+                or not _path_exists_without_dereference(
+                    context.root, replacement, context.adapter_targets
+                )
+            ):
+                raise ConfigurationError(
+                    "reviewed Stage 90 move replacement is unavailable"
+                )
+            edges.add(ArchiveTransitionEdge(source, target))
+            contributing_sources.add(source)
+    if (
+        len(edges) != REVIEWED_STAGE90_MOVE_EDGE_COUNT
+        or contributing_sources != set(REVIEWED_STAGE90_MOVE_SOURCE_BLOBS)
+    ):
+        raise ConfigurationError("reviewed Stage 90 move edge set differs")
+    return frozenset(edges)
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     archive_handoff = _archive_transition_handoff(context)
     deferred_archive_edges = frozenset(archive_handoff.edges)
+    move_targets: dict[PurePosixPath, PurePosixPath] = {}
+    if context.route_state == "transition":
+        _, move_targets, _ = _document_taxonomy_transition_manifest(context)
+    reviewed_stage90_move_edges = _reviewed_stage90_move_edges(
+        context, move_targets
+    )
     for source in context.paths:
         profile = context.profiles[source].profile_id
         if profile == "content/archive":
@@ -2625,6 +2713,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             if not _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
+                if ArchiveTransitionEdge(source, target) in reviewed_stage90_move_edges:
+                    continue
                 if ArchiveTransitionEdge(source, target) in deferred_archive_edges:
                     continue
                 if _protected_historical_predecessor_link(context, source, target):
@@ -5944,6 +6034,16 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             | {path.as_posix() for path in context.paths}
             | archived_original_paths
         )
+        if context.route_state == "transition":
+            _, move_targets, _ = _document_taxonomy_transition_manifest(context)
+            if all(
+                target in context.tracked_regular_paths
+                and _path_exists_without_dereference(
+                    context.root, target, context.adapter_targets
+                )
+                for target in move_targets.values()
+            ):
+                known_paths |= {source.as_posix() for source in move_targets}
         unknown_paths = set(counter) - known_paths
         predecessor_unknown = unknown_paths & WERPC_PREDECESSOR_PATHS
         if predecessor_unknown:
@@ -6538,20 +6638,20 @@ def _standalone_execution_fixture_context(
             raw_relation["state"],
             f"{STANDALONE_APPROVAL_STATEMENT}\n{STANDALONE_LIFECYCLE_EXCLUSION}\n"
             "[Decision](../../02.architecture/decisions/0022-fixture.md)\n"
-            "[Plan](../../04.execution/plans/2026-07-18-fixture-043.md)\n"
-            "[Task](../../04.execution/tasks/2026-07-18-fixture-043.md)",
+            "[Plan](plan.md)\n"
+            "[Task](tasks.md)",
         ),
         plan: (
             "sdlc/plan",
             raw_relation["state"],
-            "[Spec](../../03.specs/043-fixture/spec.md)\n"
-            "[Task](../tasks/2026-07-18-fixture-043.md)",
+            "[Spec](spec.md)\n"
+            "[Task](tasks.md)",
         ),
         task: (
             "sdlc/task",
             raw_relation["state"],
-            "[Spec](../../03.specs/043-fixture/spec.md)\n"
-            "[Plan](../plans/2026-07-18-fixture-043.md)",
+            "[Spec](spec.md)\n"
+            "[Plan](plan.md)",
         ),
     }
     for path, (profile_id, status, body) in additions.items():
@@ -6607,7 +6707,7 @@ def _mutated_standalone_execution_fixture(
         mutated.texts[decision] = "Accepted standalone decision without reverse link."
     elif mutation == "standalone-plan-task-reciprocal":
         mutated.texts[relation.plan_path] = mutated.texts[relation.plan_path].replace(
-            "[Task](../tasks/2026-07-18-fixture-043.md)", "Task path omitted"
+            "[Task](tasks.md)", "Task path omitted"
         )
     elif mutation == "standalone-foreign-spec":
         mutated.texts[relation.plan_path] += (
@@ -8671,7 +8771,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[path] = texts[path].replace("| Active |", "| Done |")
     elif mutation == "index-tree":
         path = DECLARED_INDEXES[0].path
-        texts[path] = texts[path].replace("    └── spec.md\n", "")
+        texts[path] = texts[path].replace("    ├── spec.md\n", "")
     elif mutation == "index-anchor-prose":
         path = DECLARED_INDEXES[0].path
         texts[path] = texts[path].replace(
@@ -8687,8 +8787,8 @@ def _mutated_context(context: Context, mutation: str) -> Context:
             and "[`./999-fixture/spec.md`]" not in line
         )
     elif mutation == "owner-duplicate":
-        plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
-        task = PurePosixPath("docs/04.execution/tasks/2026-07-12-fixture.md")
+        plan = PurePosixPath("docs/03.specs/999-fixture/plan.md")
+        task = PurePosixPath("docs/03.specs/999-fixture/tasks.md")
         metadata[task]["type"] = metadata[plan]["type"]
         metadata[task]["title"] = metadata[plan]["title"]
         traceability = (
@@ -9371,20 +9471,21 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
         diagnostics = _index_diagnostics(mutated)
     elif mutation.startswith("owner"):
         if mutation == "owner-normalization":
-            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            plan = PurePosixPath("docs/03.specs/999-fixture/plan.md")
             mutated.metadata[plan]["type"] = "ＳＤＬＣ／ＰＬＡＮ"
             mutated.metadata[plan]["title"] = "Ｆixture__Implementation Plan"
             key, diagnostic = _owner_key(mutated, plan)
             return (
                 []
-                if diagnostic is None and key == "sdlc-plan|fixture|fixture"
+                if diagnostic is None
+                and key == "sdlc-plan|fixture|docs-03-specs-999-fixture-spec-md"
                 else ["OWNER-KEY-MISSING"]
             )
         if mutation == "owner-first-upstream":
-            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            plan = PurePosixPath("docs/03.specs/999-fixture/plan.md")
             texts = dict(mutated.texts)
-            texts[plan] += (
-                "\n[local-ref]: ../../README.md\n[prd-ref]: ../../01.requirements/999-fixture.md\n[spec-ref]: ../../03.specs/999-fixture/spec.md\n\n## Traceability\n\n[local][local-ref]\n[prd][prd-ref]\n[spec][spec-ref]\n"
+            texts[plan] = (
+                "[local-ref]: ../../README.md\n[prd-ref]: ../../01.requirements/999-fixture.md\n[spec-ref]: ../../03.specs/999-fixture/spec.md\n\n## Traceability\n\n[local][local-ref]\n[prd][prd-ref]\n[spec][spec-ref]\n"
             )
             selected = Context(
                 mutated.root,
@@ -9405,11 +9506,12 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
                 [] if diagnostic is None and key == expected else ["OWNER-KEY-MISSING"]
             )
         if mutation == "owner-fallback":
-            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            plan = PurePosixPath("docs/03.specs/999-fixture/plan.md")
             key, diagnostic = _owner_key(mutated, plan)
             return (
                 []
-                if diagnostic is None and key == "sdlc-plan|fixture|fixture"
+                if diagnostic is None
+                and key == "sdlc-plan|fixture|docs-03-specs-999-fixture-spec-md"
                 else ["OWNER-KEY-MISSING"]
             )
         if mutation == "owner-exclusions":

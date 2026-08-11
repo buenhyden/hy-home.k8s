@@ -389,8 +389,8 @@ and the required QA ordering/formatter rerun.
 - **Observed prerequisite**: Spec 044 closure `42864832` and postflight
   `279f8103`
 - **Successor**: [Spec 046](../046-agent-governance-program-closure/spec.md)
-- **Execution Plan**: [Agent Governance CI and QA Cutover Implementation Plan](../../04.execution/plans/2026-07-30-agent-governance-ci-qa-cutover.md)
-- **Task evidence**: [Agent Governance CI and QA Cutover Task](../../04.execution/tasks/2026-07-30-agent-governance-ci-qa-cutover.md)
+- **Execution Plan**: [Agent Governance CI and QA Cutover Implementation Plan](plan.md)
+- **Task evidence**: [Agent Governance CI and QA Cutover Task](tasks.md)
 
 ### Lifecycle Traceability
 

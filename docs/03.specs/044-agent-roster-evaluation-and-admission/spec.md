@@ -368,8 +368,8 @@ evidence update. The next workstream is Spec 045.
   [Spec 043](../043-agent-harness-loop-lifecycle/spec.md)
 - **Agent design**: [Workspace Agent Governance Program Design](../041-stage-00-agent-governance-contract/agent-design.md)
 - **Successor**: [Spec 045](../045-agent-governance-ci-qa-cutover/spec.md)
-- **Execution Plan**: [Agent Roster Evaluation and Admission Implementation Plan](../../04.execution/plans/2026-07-29-agent-roster-evaluation-and-admission.md)
-- **Task evidence**: [Agent Roster Evaluation and Admission Task](../../04.execution/tasks/2026-07-29-agent-roster-evaluation-and-admission.md)
+- **Execution Plan**: [Agent Roster Evaluation and Admission Implementation Plan](plan.md)
+- **Task evidence**: [Agent Roster Evaluation and Admission Task](tasks.md)
 
 ### Lifecycle Traceability
 

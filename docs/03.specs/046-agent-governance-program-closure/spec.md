@@ -277,9 +277,9 @@ tests.
   [Spec 044](../044-agent-roster-evaluation-and-admission/spec.md), and
   [Spec 045](../045-agent-governance-ci-qa-cutover/spec.md)
 - **Plan**:
-  [Agent Governance Program Closure Implementation Plan](../../04.execution/plans/2026-08-01-agent-governance-program-closure.md)
+  [Agent Governance Program Closure Implementation Plan](plan.md)
 - **Task**:
-  [Task: Agent Governance Program Closure](../../04.execution/tasks/2026-08-01-agent-governance-program-closure.md)
+  [Task: Agent Governance Program Closure](tasks.md)
 
 ### Lifecycle Traceability
 

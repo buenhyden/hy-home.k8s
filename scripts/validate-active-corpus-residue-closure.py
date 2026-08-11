@@ -15,13 +15,19 @@ import subprocess
 import sys
 from collections import Counter, defaultdict
 from collections.abc import Callable, Mapping, Sequence
+from pathlib import PurePosixPath
 from typing import Any
 
 try:
-    from scripts.archive_recovery import ArchiveContractError, parse_archive_envelope
+    from scripts.archive_recovery import (
+        ArchiveContractError,
+        RecoveryResult,
+        parse_archive_envelope,
+    )
 except ModuleNotFoundError:  # Direct execution from scripts/.
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
+        RecoveryResult,
         parse_archive_envelope,
     )
 
@@ -38,6 +44,9 @@ TAXONOMY_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
 )
+TAXONOMY_MANIFEST_BLOB = (
+    "d82466f99b093dc39092a3f36d1c55452a45a7ed"  # pragma: allowlist secret
+)
 FROZEN_MIGRATION_RESULTS_BLOB = (
     "b208c65d203d97b5921e676f33e31e9df44508d7"  # pragma: allowlist secret
 )
@@ -46,43 +55,322 @@ TRANSITION_MIGRATION_RESULTS_BLOB = (
 )
 TRANSITION_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
-        "71cbadc7f0798137e4b57b61615e69561c9cd449",
-        "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",
+        "71cbadc7f0798137e4b57b61615e69561c9cd449",  # pragma: allowlist secret
+        "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",  # pragma: allowlist secret
     ),
     "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": (
-        "100a7bbb5354ced8d140a434757e9ca8df9312ae",
-        "d7130da27c94d7bdf8d79efa794f03d0014557df",
+        "100a7bbb5354ced8d140a434757e9ca8df9312ae",  # pragma: allowlist secret
+        "d7130da27c94d7bdf8d79efa794f03d0014557df",  # pragma: allowlist secret
     ),
     "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": (
-        "c74a491ab21f5969058415b1251ce4bb08b6be5a",
-        "7c45166536061ca971391532c9e296ce44597e44",
+        "c74a491ab21f5969058415b1251ce4bb08b6be5a",  # pragma: allowlist secret
+        "7c45166536061ca971391532c9e296ce44597e44",  # pragma: allowlist secret
     ),
     "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": (
-        "ad701ae2c7913c83413ba887c0666db114cf50d1",
-        "60b9c1021a9a2a4811d492de3aad2a82add59740",
+        "ad701ae2c7913c83413ba887c0666db114cf50d1",  # pragma: allowlist secret
+        "60b9c1021a9a2a4811d492de3aad2a82add59740",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md": (
+        "1e8bc54d7761f82c1b469dcef68ecad870e93a7d",  # pragma: allowlist secret
+        "56354ecbf722b55fc2f783df215d26caa6d108a5",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0012-argo-notifications-slack.md": (
+        "4e08d6edfa7162495b630e6e15e87b627d5aca53",  # pragma: allowlist secret
+        "04597c0f3c4e5c42d88a5a18383846cb49ec8c1f",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+        "9bb00469ff54a0c9d062c60628067704d4a2f459",  # pragma: allowlist secret
+        "99e80929ac13720f646286ce2ea95b02c194672e",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+        "de80e461ef8940ff9faf343f97ff627c963fc022",  # pragma: allowlist secret
+        "4fdef1a7385620dc2113b3bc1568d6a72ec7217e",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+        "024f0fe32f50aab9cc730be1e2b7b533e752c1d5",  # pragma: allowlist secret
+        "ded396714e0d734908bac7126d21b7f5ecd7c211",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+        "62ac4e67cc9ee40352f6ac1bea7919796dd708cb",  # pragma: allowlist secret
+        "3e7e9c44aba500a454db557c78279185ae4c84f2",  # pragma: allowlist secret
     ),
     "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
-        "4e72760d4eee9705c8b5e06abeef87e8c62cf82c",
-        "9fdd92d9ee4ebb20159e2d8d5f7f656bb353886d",
+        "4e72760d4eee9705c8b5e06abeef87e8c62cf82c",  # pragma: allowlist secret
+        "ddbe2d692da2c709017d271ff3d713eeec600da2",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+        "6bf8321ccfccca8ff20287c49cfc05c919ba6038",  # pragma: allowlist secret
+        "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+        "a610eddc3ecbf7a004f168236fbd65d969a40c00",  # pragma: allowlist secret
+        "32a6cb6803ac213edb69a9c5337b382c99c83edb",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+        "143db84ebd7ab90185b817b837d3f54663028b27",  # pragma: allowlist secret
+        "5317314ce90b59b9066ec5d0f44d6184563afe33",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+        "11dd647ee9ad5188a150e5c48a7892c9ee227590",  # pragma: allowlist secret
+        "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+        "e9aa1662ff557714a578b618875561542223e20e",  # pragma: allowlist secret
+        "b56d1b3d99e20db6a1491ef51cbe3fd376da0fff",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/026-document-contract-registry/spec.md": (
+        "75be3a6c279bab217bab734110e18edda638e700",  # pragma: allowlist secret
+        "4a97eedf1f76b367335bc8b7153c7f28b20031b5",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+        "5cff6d0b94e962cd188287d56ccf22f6bba7e109",  # pragma: allowlist secret
+        "89daed767234baa10b3a44ad7a24ed325c362135",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+        "9554783c31404c91cca0e5e52a0b019162bf0d5d",  # pragma: allowlist secret
+        "0efdbe887101a2c5000f55e31daeb37a0a42dc56",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/029-semantic-document-validation/spec.md": (
+        "a1fa5a0a28179946dccd16a8a6e349a46037ddc9",  # pragma: allowlist secret
+        "ea1d54f47a7288ebbf5cff2d11e0c805dea3788d",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/030-authored-document-migration/spec.md": (
+        "89c0ad1acdcf3135515dea58a563857418c87a5e",  # pragma: allowlist secret
+        "8b443403fb044a529cfdcbe748d1ffdb6b879dfb",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+        "9eb2e5c48aa30f79beaadb535d1b10c15ffe3a84",  # pragma: allowlist secret
+        "a2fe213c905ce2d79623f24d728e5b32776fd06a",  # pragma: allowlist secret
     ),
 }
 TRANSITION_AUTHORITY_REMAPS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
-        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+        (
+            "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+            "docs/98.archive/README.md#document-index",
+        ),
     ),
     "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": (
-        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+        (
+            "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+            "docs/98.archive/README.md#document-index",
+        ),
+    ),
+    "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md": (
+        (
+            "docs/04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md",
+            "docs/03.specs/004-argo-rollouts-progressive-delivery/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md",
+            "docs/03.specs/004-argo-rollouts-progressive-delivery/tasks.md",
+        ),
+    ),
+    "docs/02.architecture/decisions/0012-argo-notifications-slack.md": (
+        (
+            "docs/04.execution/plans/2026-05-18-argo-notifications-slack.md",
+            "docs/03.specs/005-argo-notifications-slack/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md",
+            "docs/03.specs/005-argo-notifications-slack/tasks.md",
+        ),
     ),
     "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": (
-        "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
-        "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+        (
+            "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+            "docs/98.archive/README.md#document-index",
+        ),
+        (
+            "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+            "docs/98.archive/README.md#document-index",
+        ),
     ),
     "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": (
-        "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+        (
+            "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+            "docs/98.archive/README.md#document-index",
+        ),
+    ),
+    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-03-template-contract-governance-migration.md",
+            "docs/03.specs/011-template-contract-governance-migration/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-03-template-contract-governance-migration.md",
+            "docs/03.specs/011-template-contract-governance-migration/tasks.md",
+        ),
+    ),
+    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
+            "docs/03.specs/012-template-governance-audit-enhancement/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
+            "docs/03.specs/012-template-governance-audit-enhancement/tasks.md",
+        ),
+        (
+            "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
+            "docs/03.specs/012-template-governance-audit-enhancement/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
+            "docs/03.specs/012-template-governance-audit-enhancement/tasks.md",
+        ),
+    ),
+    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md",
+            "docs/03.specs/013-workspace-document-governance-hardening/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md",
+            "docs/03.specs/013-workspace-document-governance-hardening/tasks.md",
+        ),
+    ),
+    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md",
+            "docs/03.specs/016-active-control-surface-governance-hardening/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md",
+            "docs/03.specs/016-active-control-surface-governance-hardening/tasks.md",
+        ),
     ),
     "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
-        "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
-        "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+        (
+            "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+            "docs/98.archive/README.md#document-index",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+            "docs/98.archive/README.md#document-index",
+        ),
+        (
+            "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
+            "docs/03.specs/017-workspace-engineering-research-pack/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
+            "docs/03.specs/017-workspace-engineering-research-pack/tasks.md",
+        ),
+    ),
+    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md",
+            "docs/03.specs/019-template-path-numbering-contract/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md",
+            "docs/03.specs/019-template-path-numbering-contract/tasks.md",
+        ),
+    ),
+    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md",
+            "docs/03.specs/022-control-cloud-doc-normalization/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md",
+            "docs/03.specs/022-control-cloud-doc-normalization/tasks.md",
+        ),
+    ),
+    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md",
+            "docs/03.specs/023-stage03-04-repo-static-gap-closure/plan.md",
+        ),
+        (
+            "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
+            "docs/03.specs/017-workspace-engineering-research-pack/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
+            "docs/03.specs/017-workspace-engineering-research-pack/tasks.md",
+        ),
+    ),
+    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-06-observability-and-network-review-agents.md",
+            "docs/03.specs/024-observability-and-network-review-agents/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
+            "docs/03.specs/024-observability-and-network-review-agents/tasks.md",
+        ),
+    ),
+    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md",
+            "docs/03.specs/025-governance-owner-and-roster-currentness/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+            "docs/03.specs/025-governance-owner-and-roster-currentness/tasks.md",
+        ),
+    ),
+    "docs/03.specs/026-document-contract-registry/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-12-document-contract-registry.md",
+            "docs/03.specs/026-document-contract-registry/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-12-document-contract-registry.md",
+            "docs/03.specs/026-document-contract-registry/tasks.md",
+        ),
+    ),
+    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-12-template-contract-consolidation.md",
+            "docs/03.specs/027-template-contract-consolidation/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md",
+            "docs/03.specs/027-template-contract-consolidation/tasks.md",
+        ),
+    ),
+    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md",
+            "docs/03.specs/028-readme-workspace-profiles/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md",
+            "docs/03.specs/028-readme-workspace-profiles/tasks.md",
+        ),
+    ),
+    "docs/03.specs/029-semantic-document-validation/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-12-semantic-document-validation.md",
+            "docs/03.specs/029-semantic-document-validation/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md",
+            "docs/03.specs/029-semantic-document-validation/tasks.md",
+        ),
+    ),
+    "docs/03.specs/030-authored-document-migration/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-12-authored-document-migration.md",
+            "docs/03.specs/030-authored-document-migration/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-12-authored-document-migration.md",
+            "docs/03.specs/030-authored-document-migration/tasks.md",
+        ),
+    ),
+    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+        (
+            "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md",
+            "docs/03.specs/037-active-corpus-and-execution-retention/plan.md",
+        ),
+        (
+            "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
+            "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md",
+        ),
     ),
 }
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
@@ -112,6 +400,16 @@ TERMINAL_PROGRAM_PLAN_PATHS = frozenset(
 TERMINAL_PROGRAM_TASK_PATHS = frozenset(
     {TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK, TERMINAL_FRONTIER_TASK}
 )
+TERMINAL_CONTROL_REPLACEMENTS = {
+    EXECUTION_PLAN: "docs/03.specs/037-active-corpus-and-execution-retention/plan.md",
+    EXECUTION_TASK: "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md",
+    TERMINAL_PLAN: "docs/03.specs/038-reference-information-architecture/plan.md",
+    TERMINAL_TASK: "docs/03.specs/038-reference-information-architecture/tasks.md",
+    TERMINAL_SUCCESSOR_PLAN: "docs/03.specs/039-github-ci-qa-evidence/plan.md",
+    TERMINAL_SUCCESSOR_TASK: "docs/03.specs/039-github-ci-qa-evidence/tasks.md",
+    TERMINAL_FRONTIER_PLAN: "docs/03.specs/040-contract-cutover-and-program-closure/plan.md",
+    TERMINAL_FRONTIER_TASK: "docs/03.specs/040-contract-cutover-and-program-closure/tasks.md",
+}
 TERMINAL_PROGRAM_CLOSURE_ADR = (
     "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md"
 )
@@ -218,22 +516,7 @@ MANDATORY_OWNER_PATHS = {
             TERMINAL_SPEC,
             TERMINAL_SUCCESSOR_SPEC,
             TERMINAL_FRONTIER_SPEC,
-        }
-    ),
-    PLAN_ROOT: frozenset(
-        {
-            EXECUTION_PLAN,
-            TERMINAL_PLAN,
-            TERMINAL_SUCCESSOR_PLAN,
-            TERMINAL_FRONTIER_PLAN,
-        }
-    ),
-    TASK_ROOT: frozenset(
-        {
-            EXECUTION_TASK,
-            TERMINAL_TASK,
-            TERMINAL_SUCCESSOR_TASK,
-            TERMINAL_FRONTIER_TASK,
+            *TERMINAL_CONTROL_REPLACEMENTS.values(),
         }
     ),
 }
@@ -286,12 +569,12 @@ EXPECTED_COUNTS = {
 }
 TRANSITION_EXPECTED_COUNTS = {
     **EXPECTED_COUNTS,
-    "currentStage04": 50,
-    "currentPlans": 25,
-    "currentTasks": 25,
-    "currentDefer": 50,
-    "pairKeys": 25,
-    "completePairs": 25,
+    "currentStage04": 0,
+    "currentPlans": 0,
+    "currentTasks": 0,
+    "currentDefer": 0,
+    "pairKeys": 0,
+    "completePairs": 0,
     "planOnly": 0,
     "taskOnly": 0,
     "partialOwnedDefer": 0,
@@ -442,6 +725,18 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         )
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", *CONTROL_PATHS))
+    inventory_queries.add(
+        (
+            "ls-tree",
+            "-r",
+            "-z",
+            "--full-tree",
+            TAXONOMY_SOURCE_COMMIT,
+            "--",
+            PLAN_ROOT,
+            TASK_ROOT,
+        )
+    )
     if arguments in inventory_queries:
         return True
     return (
@@ -647,6 +942,85 @@ def _index_blob(root: str, oid: str, path: str, runner: GitRunner) -> bytes:
     if len(payload) != size:
         raise ClosureError("CLOSURE-BLOB-LENGTH", path)
     return payload
+
+
+def _taxonomy_source_tree(
+    root: str,
+    expected_sources: set[str],
+    runner: GitRunner,
+) -> dict[str, str]:
+    """Resolve every reviewed migration source from the frozen source tree."""
+
+    payload = _git(
+        root,
+        (
+            "ls-tree",
+            "-r",
+            "-z",
+            "--full-tree",
+            TAXONOMY_SOURCE_COMMIT,
+            "--",
+            PLAN_ROOT,
+            TASK_ROOT,
+        ),
+        runner,
+    )
+    if payload and not payload.endswith(b"\0"):
+        raise ClosureError("CLOSURE-TAXONOMY-BLOB", ".git")
+    resolved: dict[str, str] = {}
+    for raw in payload[:-1].split(b"\0") if payload else ():
+        try:
+            header, raw_path = raw.split(b"\t", 1)
+            mode, object_type, raw_oid = header.split(b" ", 2)
+            path = raw_path.decode("utf-8", errors="strict")
+            oid = raw_oid.decode("ascii", errors="strict")
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", ".git") from exc
+        if path not in expected_sources:
+            continue
+        if (
+            mode != b"100644"
+            or object_type != b"blob"
+            or FULL_OID.fullmatch(oid) is None
+            or path in resolved
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", path)
+        resolved[path] = oid
+    if set(resolved) != expected_sources:
+        missing = sorted(expected_sources - set(resolved))
+        raise ClosureError(
+            "CLOSURE-TAXONOMY-BLOB", missing[0] if missing else TAXONOMY_MANIFEST_PATH
+        )
+    return resolved
+
+
+def _taxonomy_archive_recoveries(
+    root: str,
+    archive_entries: Sequence[Mapping[str, Any]],
+    source_tree: Mapping[str, str],
+    runner: GitRunner,
+) -> dict[str, RecoveryResult]:
+    """Recover exact archive source bytes from their reviewed Git objects."""
+
+    recoveries: dict[str, RecoveryResult] = {}
+    for entry in archive_entries:
+        source = str(entry["source"])
+        target = str(entry["target"])
+        oid = source_tree.get(source)
+        if oid != entry.get("sourceBlob"):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", source)
+        source_bytes = _index_blob(root, oid, source, runner)
+        recoveries[source] = RecoveryResult(
+            original_path=source,
+            source_commit=TAXONOMY_SOURCE_COMMIT,
+            source_blob=oid,
+            byte_count=len(source_bytes),
+            content_sha256=hashlib.sha256(source_bytes).hexdigest(),
+            inline_link_candidate_count=0,
+            proposed_archive_path=target,
+            source_bytes=source_bytes,
+        )
+    return recoveries
 
 
 def _decode_text(payload: bytes, path: str) -> str:
@@ -862,10 +1236,58 @@ def _object_identity(
     oid = index.get(path)
     if oid is not None:
         return {"objectMode": "index-stage-zero", "objectId": _git_identity(oid)}
+    indexed_target = TERMINAL_CONTROL_REPLACEMENTS.get(path)
+    if indexed_target is not None:
+        target_oid = index.get(indexed_target)
+        if target_oid is not None:
+            return {
+                "objectMode": "projected-replacement",
+                "objectId": _git_identity(target_oid),
+                "legacySource": path,
+                "indexedTarget": indexed_target,
+            }
     return {
         "objectMode": "proposed-nonignored-descriptor",
         "objectId": _sha256_identity(hashlib.sha256(payload).hexdigest()),
     }
+
+
+def _validate_reviewed_move_mapping(
+    move_entries: Sequence[Mapping[str, Any]],
+) -> None:
+    """Bind every reviewed Stage 04 source to its exact Spec sibling pair."""
+
+    source_pattern = re.compile(
+        r"docs/04\.execution/(?P<scope>plans|tasks)/"
+        r"[0-9]{4}-[0-9]{2}-[0-9]{2}-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\.md"
+    )
+    target_pattern = re.compile(
+        r"docs/03\.specs/(?P<unit>[0-9]{3})-"
+        r"(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)/(?P<name>plan|tasks)\.md"
+    )
+    pairs: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for entry in move_entries:
+        source = str(entry["source"])
+        target = str(entry["target"])
+        source_match = source_pattern.fullmatch(source)
+        target_match = target_pattern.fullmatch(target)
+        if source_match is None or target_match is None:
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", source)
+        kind = "plan" if source_match.group("scope") == "plans" else "task"
+        expected_name = "plan" if kind == "plan" else "tasks"
+        expected_work_unit = f"Spec-{target_match.group('unit')}"
+        if (
+            source_match.group("slug") != target_match.group("slug")
+            or target_match.group("name") != expected_name
+            or entry["workUnit"] != expected_work_unit
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", source)
+        pair_key = (expected_work_unit, str(PurePosixPath(target).parent))
+        if kind in pairs[pair_key]:
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", source)
+        pairs[pair_key].add(kind)
+    if len(pairs) != 41 or any(kinds != {"plan", "task"} for kinds in pairs.values()):
+        raise ClosureError("CLOSURE-TAXONOMY-MOVE", TAXONOMY_MANIFEST_PATH)
 
 
 def _build_taxonomy_transition_closure(
@@ -875,6 +1297,8 @@ def _build_taxonomy_transition_closure(
     current_paths: set[str],
     archive_payloads: Mapping[str, bytes],
     archive_index: Mapping[str, str],
+    source_tree: Mapping[str, str],
+    archive_recoveries: Mapping[str, RecoveryResult],
 ) -> list[dict[str, Any]]:
     """Reconcile the frozen ACER residue snapshot with exact WDTC archives."""
 
@@ -944,6 +1368,7 @@ def _build_taxonomy_transition_closure(
     sources: set[str] = set()
     targets: set[str] = set()
     archive_entries: list[Mapping[str, Any]] = []
+    move_entries: list[Mapping[str, Any]] = []
     dispositions: Counter[str] = Counter()
     for entry in entries:
         if (
@@ -968,10 +1393,20 @@ def _build_taxonomy_transition_closure(
         dispositions[entry["disposition"]] += 1
         if entry["disposition"] == "archive-unique":
             archive_entries.append(entry)
+        else:
+            move_entries.append(entry)
     if dispositions != Counter({"move-current": 82, "archive-unique": 50}):
         raise ClosureError(
             "CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH
         )
+    _validate_reviewed_move_mapping(move_entries)
+    if set(source_tree) != sources or any(
+        source_tree.get(entry["source"]) != entry["sourceBlob"] for entry in entries
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-BLOB", TAXONOMY_MANIFEST_PATH)
+    archive_sources = {entry["source"] for entry in archive_entries}
+    if set(archive_recoveries) != archive_sources:
+        raise ClosureError("CLOSURE-TAXONOMY-BLOB", TAXONOMY_MANIFEST_PATH)
 
     archive_targets = {entry["target"] for entry in archive_entries}
     if archive_targets != set(namespace["records"]):
@@ -990,6 +1425,17 @@ def _build_taxonomy_transition_closure(
         if path in eligibility_by_path:
             raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
         eligibility_by_path[path] = candidate
+    controls = eligibility.get("controls")
+    if not isinstance(controls, list):
+        raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+    control_by_path: dict[str, Mapping[str, Any]] = {}
+    for control in controls:
+        if not isinstance(control, Mapping) or not is_safe_path(control.get("path")):
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+        path = control["path"]
+        if path in control_by_path or path in eligibility_by_path:
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", SOURCE_PATHS[1])
+        control_by_path[path] = control
 
     rows: list[dict[str, Any]] = []
     for entry in sorted(archive_entries, key=lambda row: row["source"]):
@@ -1020,9 +1466,11 @@ def _build_taxonomy_transition_closure(
         ):
             raise ClosureError("CLOSURE-TAXONOMY-BLOB", source)
         try:
-            parsed = parse_archive_envelope(archive_bytes)
+            parsed = parse_archive_envelope(
+                archive_bytes, expected=archive_recoveries[source]
+            )
         except ArchiveContractError as exc:
-            raise ClosureError("CLOSURE-TAXONOMY-ARCHIVE", target) from exc
+            raise ClosureError("CLOSURE-TAXONOMY-BLOB", source) from exc
         metadata = parsed.metadata
         if (
             metadata.get("original_path") != source
@@ -1045,6 +1493,61 @@ def _build_taxonomy_transition_closure(
                 "archivePresent": True,
             }
         )
+    frozen_paths = {
+        path
+        for path, candidate in eligibility_by_path.items()
+        if candidate.get("disposition") == "DEFER"
+    } | set(control_by_path)
+    for entry in sorted(move_entries, key=lambda row: row["source"]):
+        source = entry["source"]
+        target = entry["target"]
+        kind = (
+            "plan"
+            if source.startswith(f"{PLAN_ROOT}/")
+            else "task"
+            if source.startswith(f"{TASK_ROOT}/")
+            else None
+        )
+        expected_name = "plan.md" if kind == "plan" else "tasks.md"
+        target_path = PurePosixPath(target)
+        if (
+            kind is None
+            or source in current_paths
+            or target not in current_paths
+            or target_path.parts[:2] != ("docs", "03.specs")
+            or len(target_path.parts) != 4
+            or target_path.name != expected_name
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", source)
+        target_bytes = archive_payloads.get(target)
+        target_oid = archive_index.get(target)
+        if (
+            not isinstance(target_bytes, bytes)
+            or not isinstance(target_oid, str)
+            or FULL_OID.fullmatch(target_oid) is None
+        ):
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", target)
+        metadata = _frontmatter(_decode_text(target_bytes, target), target)
+        if metadata.get("type") != f"sdlc/{kind}" or metadata.get("owner") != "platform":
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", target)
+        if source not in frozen_paths:
+            continue
+        rows.append(
+            {
+                "path": source,
+                "kind": kind,
+                "replacementPath": target,
+                "sourceCommit": _git_identity(TAXONOMY_SOURCE_COMMIT),
+                "sourceBlob": _git_identity(entry["sourceBlob"]),
+                "replacementObjectId": _git_identity(target_oid),
+                "disposition": "manifest-move-closed",
+                "currentSourcePresent": False,
+                "replacementPresent": True,
+            }
+        )
+    rows.sort(key=lambda row: row["path"])
+    if len(rows) != len(frozen_paths):
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH)
     return rows
 
 
@@ -1181,6 +1684,20 @@ def _terminal_program_control_scope(paths: Sequence[str], *, kind: str) -> list[
     else:
         raise ValueError(f"unsupported terminal control kind: {kind}")
     return [path for path in paths if path in owned]
+
+
+def _project_terminal_control_replacements(
+    index: Mapping[str, str], payloads: Mapping[str, bytes]
+) -> tuple[dict[str, str], dict[str, bytes]]:
+    """Project reviewed Stage 03 siblings into the frozen terminal-state model."""
+
+    projected_index = dict(index)
+    projected_payloads = dict(payloads)
+    for source, target in TERMINAL_CONTROL_REPLACEMENTS.items():
+        if source in index or source in payloads or target not in index or target not in payloads:
+            raise ClosureError("CLOSURE-TERMINAL-INCOMPLETE", target)
+        projected_payloads[source] = payloads[target]
+    return projected_index, projected_payloads
 
 
 def _terminal_registry_relations(
@@ -1640,6 +2157,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
         "objectMode",
         "objectId",
     }
+    projected_control_keys = control_keys | {"legacySource", "indexedTarget"}
     pair_keys = {
         "lineageId",
         "state",
@@ -1735,9 +2253,9 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
     terminal_families = families[:done_count]
     active_families = families[done_count : done_count + 1]
 
-    def object_identity_is_indexed(row: Mapping[str, Any]) -> bool:
+    def object_id_is_git(row: Mapping[str, Any]) -> bool:
         value = row.get("objectId")
-        if row.get("objectMode") != "index-stage-zero" or not isinstance(value, str):
+        if not isinstance(value, str):
             return False
         parts = value.split(":")
         return (
@@ -1748,8 +2266,24 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
             and (parts[1] == "sha1") == (len(parts[2]) == 40)
         )
 
+    def object_identity_is_indexed(row: Mapping[str, Any]) -> bool:
+        return row.get("objectMode") == "index-stage-zero" and object_id_is_git(row)
+
+    def control_identity_is_valid(row: Mapping[str, Any]) -> bool:
+        path = row.get("path")
+        indexed_target = TERMINAL_CONTROL_REPLACEMENTS.get(str(path))
+        if indexed_target is None:
+            return set(row) == control_keys and object_identity_is_indexed(row)
+        return (
+            set(row) == projected_control_keys
+            and row.get("objectMode") == "projected-replacement"
+            and row.get("legacySource") == path
+            and row.get("indexedTarget") == indexed_target
+            and object_id_is_git(row)
+        )
+
     def control_signature(row: Mapping[str, Any]) -> tuple[Any, ...] | None:
-        if set(row) != control_keys or not object_identity_is_indexed(row):
+        if not control_identity_is_valid(row):
             return None
         return (
             row.get("path"),
@@ -2343,18 +2877,20 @@ def _validate_transition_authority_semantics(
 ) -> None:
     if set(TRANSITION_AUTHORITY_REMAPS) != set(TRANSITION_AUTHORITY_BLOBS):
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
-    archive_index = "docs/98.archive/README.md#document-index"
-    for authority_path, retired_sources in TRANSITION_AUTHORITY_REMAPS.items():
-        if not set(retired_sources).issubset(taxonomy_sources):
+    for authority_path, remaps in TRANSITION_AUTHORITY_REMAPS.items():
+        retired_sources = {source for source, _replacement in remaps}
+        if not retired_sources.issubset(taxonomy_sources):
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
         payload = payloads.get(authority_path)
         if not isinstance(payload, bytes):
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
         text = _decode_text(payload, authority_path)
         start = posixpath.dirname(authority_path)
-        index_target = posixpath.relpath(archive_index, start)
-        if text.count(f"]({index_target})") != len(retired_sources):
-            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        expected_targets = Counter(replacement for _source, replacement in remaps)
+        for replacement, expected_count in expected_targets.items():
+            replacement_target = posixpath.relpath(replacement, start)
+            if text.count(f"]({replacement_target})") != expected_count:
+                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
         for retired_source in retired_sources:
             retired_target = posixpath.relpath(retired_source, start)
             if f"]({retired_target})" in text:
@@ -2428,6 +2964,8 @@ def build_observed(
         raise ClosureError("CLOSURE-FIXED-COMMIT", ".git")
     registry = _load_registry_authority(normalized, runner)
     taxonomy_index = _taxonomy_manifest_inventory(normalized, runner)
+    if taxonomy_index.get(TAXONOMY_MANIFEST_PATH) != TAXONOMY_MANIFEST_BLOB:
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
     taxonomy_manifest = _load_json_bytes(
         _proposed_or_index_bytes(
             normalized,
@@ -2495,17 +3033,43 @@ def build_observed(
         for path in inventories[scope][0]
         if path.endswith(".md")
     }
+    raw_taxonomy_entries = taxonomy_manifest.get("entries")
+    if not isinstance(raw_taxonomy_entries, list) or any(
+        not isinstance(entry, Mapping) or not is_safe_path(entry.get("source"))
+        for entry in raw_taxonomy_entries
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
+    taxonomy_source_tree = _taxonomy_source_tree(
+        normalized,
+        {str(entry["source"]) for entry in raw_taxonomy_entries},
+        runner,
+    )
+    taxonomy_archive_entries = [
+        entry
+        for entry in raw_taxonomy_entries
+        if entry.get("disposition") == "archive-unique"
+    ]
+    taxonomy_archive_recoveries = _taxonomy_archive_recoveries(
+        normalized,
+        taxonomy_archive_entries,
+        taxonomy_source_tree,
+        runner,
+    )
     taxonomy_transition = _build_taxonomy_transition_closure(
         registry,
         taxonomy_manifest,
         eligibility,
-        set(plan_paths) | set(task_paths),
-        {path: inventory_payloads[path] for path in archive_paths},
+        set(inventory_payloads),
+        inventory_payloads,
         combined_index,
+        taxonomy_source_tree,
+        taxonomy_archive_recoveries,
     )
     taxonomy_sources = frozenset(row["path"] for row in taxonomy_transition)
     taxonomy_archives = frozenset(
-        row["archivePath"] for row in taxonomy_transition
+        row["archivePath"]
+        for row in taxonomy_transition
+        if row["disposition"] == "manifest-archive-closed"
     )
     _validate_transition_authority_semantics(
         inventory_payloads, taxonomy_sources
@@ -2519,29 +3083,39 @@ def build_observed(
         taxonomy_sources,
     )
     pairs = _build_pairs(current)
-    frozen_paths = {row["path"] for row in current}
     spec_paths = [
         path for path in inventories[SPEC_ROOT][0] if path.endswith("/spec.md")
     ]
+    terminal_index, terminal_payloads = _project_terminal_control_replacements(
+        combined_index, inventory_payloads
+    )
     terminal = _partition_terminal_controls(
         _terminal_program_control_scope(
-            [path for path in plan_paths if path not in frozen_paths],
+            [
+                path
+                for path in TERMINAL_PROGRAM_PLAN_PATHS
+                if TERMINAL_CONTROL_REPLACEMENTS[path] in inventory_payloads
+            ],
             kind="plan",
         ),
         _terminal_program_control_scope(
-            [path for path in task_paths if path not in frozen_paths],
+            [
+                path
+                for path in TERMINAL_PROGRAM_TASK_PATHS
+                if TERMINAL_CONTROL_REPLACEMENTS[path] in inventory_payloads
+            ],
             kind="task",
         ),
         spec_paths,
-        combined_index,
-        inventory_payloads,
+        terminal_index,
+        terminal_payloads,
         registry,
     )
     active_controls = _build_active_control_rows(
         terminal["planPaths"],
         terminal["taskPaths"],
-        combined_index,
-        inventory_payloads,
+        terminal_index,
+        terminal_payloads,
     )
     active_control_pairs = _build_active_control_pairs(active_controls)
     migrated = _build_migrations(
@@ -2615,13 +3189,7 @@ def build_observed(
     residue_counts = Counter(
         row.get("residueClass") for row in current if row["disposition"] == "DEFER"
     )
-    if residue_counts != Counter(
-        {
-            "deferred-evidence": 38,
-            "resolved-partial-evidence": 10,
-            "terminal-owned-defer": 2,
-        }
-    ):
+    if residue_counts:
         raise ClosureError("CLOSURE-RESIDUE-CLASS")
     counts = {
         "candidateInput": 110,
@@ -2658,7 +3226,7 @@ def build_observed(
         "stage05Authored": role_stage,
         "helperTests": role_helpers,
         "findings": 0,
-        "taxonomyArchived": len(taxonomy_transition),
+        "taxonomyArchived": len(taxonomy_archives),
     }
     if counts != TRANSITION_EXPECTED_COUNTS:
         raise ClosureError("CLOSURE-COUNTS")
@@ -2774,7 +3342,7 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
 
     if transition:
         _ordered_unique_paths(transition, "CLOSURE-TAXONOMY")
-        if len(transition) != 50:
+        if len(transition) != 100:
             raise ClosureError(
                 "CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH
             )
@@ -2842,7 +3410,11 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
                 frozen.get("kind") != closed.get("kind")
                 or frozen.get("objectMode") != "index-stage-zero"
                 or frozen.get("objectId") != closed.get("sourceBlob")
-                or frozen.get("sourceDisposition") != "DEFER"
+                or frozen.get("sourceDisposition") not in {"DEFER", "retain"}
+                or (
+                    frozen.get("sourceDisposition") == "retain"
+                    and closed.get("disposition") != "manifest-move-closed"
+                )
             ):
                 raise ClosureError("CLOSURE-TAXONOMY-BLOB", path)
     elif current != expected["currentRows"]:
