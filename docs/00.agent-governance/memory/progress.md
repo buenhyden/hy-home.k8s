@@ -8,6 +8,87 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-11 - Diátaxis claims source-verified, profile candidate closed
+
+#### Metadata
+
+- **Date**: 2026-08-11
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #diataxis #documentation #profiles #sourceverification #closure
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md` for the route decision; `docs/99.templates/support/document-profiles.json` for the registry
+- **Provenance**: Published `diataxis.fr` pages returned HTTP 429 on a third attempt from a different client on 2026-08-11, so the claims were verified against the upstream source repository at `main` via the GitHub API, and reconciled against approved Spec 052 by repository-static reading.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until `WORK-013` completes or Spec 052 is superseded. Re-observe before acting.
+- **Next Owner**: none for the route question, which is closed. `WORK-013` remains owned by its Plan.
+
+#### Progress
+
+Two questions were carried as open. Both are now answered, and one of them was
+never actually open.
+
+**The published pages are still unreachable, but the claims are verified.** A
+third attempt on 2026-08-11, from a different client than the two on 2026-08-10,
+returned HTTP 429 again. Rather than leave the claims unverified, the upstream
+source that builds the site was read directly from GitHub. `source/start-here.rst`
+confirms the four kinds and their definitions, and
+`source/how-to-use-diataxis.rst` carries the load-bearing boundary verbatim:
+"It certainly does not mean that you should create empty structures for
+tutorials/howto guides/reference/explanation with nothing in them. Don't do that.
+It's horrible." Registered as `SRC-WERPC-067`. This is source-verified, not
+page-verified, and the distinction is recorded rather than glossed.
+
+**The tutorial and explanation profile candidate is closed, not implemented.**
+Spec 052 is `active` and already decided this. `DOC-G2` declines a tutorial route
+because Diátaxis says empty structures must not be created in advance, and
+`DOC-G3` declines an explanation route on the same basis, keeping explanation
+inside ADR context and reference sub-types. The upstream sentence quoted above is
+exactly the basis `DOC-G2` cites, now checked at source instead of accepted
+secondhand. Creating these profiles would contradict both the approved local
+decision and the framework's own instruction.
+
+**What is actually open is a different thing.** `DOC-G1` requires constraining
+`Guide Type` to `how-to`, `tutorial`, `concept` in the profile registry and
+template. A 2026-08-11 registry check confirms that enum is still unenforced.
+That work, plus validating the eight current guides and recording the `DOC-G2`
+and `DOC-G3` absences deliberately, is the queued `WORK-013` package and belongs
+to its owning Plan.
+
+#### Memory
+
+A finding recorded as a "gap" by research and a question that is actually open
+are not the same thing. The research pack correctly observed that no tutorial or
+explanation route exists, and that observation alone reads like an unmade
+decision. The decision had been made months of work earlier, in an approved Spec,
+on a source-backed rationale. Checking whether an approved Spec already answers a
+research gap costs one grep and can convert an apparent backlog item into a
+closure.
+
+The second lesson is about evidence classes. When a published page is blocked,
+its upstream source is usually reachable from a different host and is stronger
+than inferring from commit dates, but it is still not the page. Recording which
+of the two was actually read keeps a later reader from over-trusting the result.
+
+#### Evidence
+
+- Three failed published-page attempts: two on 2026-08-10 from a subagent fetch
+  path, one on 2026-08-11 from a different client. All HTTP 429, including an
+  unrelated path probe, so the block is host-wide rather than page-specific.
+- `evildmp/diataxis-documentation-framework@main`, `source/start-here.rst` and
+  `source/how-to-use-diataxis.rst`, read through the GitHub API on 2026-08-11.
+- `docs/03.specs/052-document-taxonomy-consolidation/spec.md` is `status: active`
+  and carries `DOC-G1`, `DOC-G2`, and `DOC-G3` at lines 199 to 201.
+- Registry check on 2026-08-11: the `how-to`/`tutorial`/`concept` enum is not
+  enforced in `docs/99.templates/support/document-profiles.json`.
+- Repository search: no tracked document requests a tutorial or explanation
+  profile; the eight current guides carry no learning or tutorial intent signal.
+
+#### Handoff
+
+None in progress. The route question is closed. `WORK-013` stays queued under its
+Plan, and no agent should reopen `DOC-G2` or `DOC-G3` without superseding Spec 052.
+
 ### 2026-08-10 - Orphaned taxonomy-program findings recovered before cleanup
 
 #### Metadata
