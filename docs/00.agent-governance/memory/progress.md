@@ -8,6 +8,65 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - PDRR-000 standalone execution activated
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, qa
+- **Status**: in-progress
+- **Tags**: #pdrr #research #standalone-execution #activation
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: direct human approval of Spec 056 and its Plan on 2026-08-12;
+  selected execution option 1 (Subagent-Driven); branch
+  `codex/2026-08-11-partial-defer-refresh`; baseline
+  `a2d1ca69`; predecessor Plan commit `2576d510` and Spec commit `cd2823fc`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until PDRR-007 closes Spec 056 or a superseding
+  approved lifecycle record replaces it. Re-observe before acting.
+- **Next Owner**: PDRR-001 assigned worker
+
+#### Progress
+
+PDRR-000 activated the direct-approval standalone lifecycle for Spec 056, its
+reciprocal Plan and Task, ADR-0022, their three indexes, and the sorted
+`standaloneExecutions` registry relation. The activation path set is exactly
+`docs/03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md`,
+`docs/03.specs/README.md`,
+`docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
+`docs/04.execution/plans/README.md`,
+`docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
+`docs/04.execution/tasks/README.md`,
+`docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`,
+`docs/99.templates/support/document-profiles.json`, and this ledger. No research
+content has started; PDRR-001 owns the closed admission ledger and its temporary
+checker.
+
+#### Memory
+
+An active standalone execution needs all four reciprocal repository records at
+once: direct approval/no-PRD-or-ARD text in Spec and Plan, the Task's explicit
+boundary and next owner, the ADR's typed relation traceability, and a numerically
+sorted registry row. The valid draft-state links/owners result is evidence, not
+a RED prerequisite; record the observed PASS before activating.
+
+#### Evidence
+
+- Pre-activation: `python3 scripts/validate-links-and-owners.py --root . --mode strict`
+  exited 0 on the valid draft state.
+- Prohibited evidence: no external browse, GitHub remote call, provider/runtime,
+  cluster/live access, secret read, or research content occurred during PDRR-000.
+- Completion evidence is recorded in the PDRR-000 Task, activation report, and
+  activation commit after focused, affected, staged, pre-commit, and diff gates.
+
+#### Handoff
+
+PDRR-001 must create and self-test the guarded temporary checker, freeze the
+closed Gap Ledger, and record admission evidence before any research or GitHub
+metadata observation. The allowed report paths remain limited to the PDRR
+directory declared in the Task.
+
 ### 2026-08-11 - Diátaxis claims source-verified, profile candidate closed
 
 #### Metadata

@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Engineering Partial/DEFER Incremental Research Refresh Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
-updated: 2026-08-11
+updated: 2026-08-12
 ---
 
 # Workspace Engineering Partial/DEFER Incremental Research Refresh Implementation Plan
@@ -37,6 +37,15 @@ workspace evidence; existing registry, Markdown, links/owners, RIA,
 affected-surface, pre-commit, and repository-quality validators.
 
 ## Overview
+
+Direct human approval on 2026-08-12 authorizes this active standalone execution
+of [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+through its reciprocal
+[Task](../tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
+No separate PRD or ARD is required or part of this standalone lifecycle. The
+typed relation is governed by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+and no separate PRD or ARD program authority is asserted.
 
 ### Global Constraints
 

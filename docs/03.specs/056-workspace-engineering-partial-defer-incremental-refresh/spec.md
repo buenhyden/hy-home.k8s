@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Engineering Partial/DEFER Incremental Research Refresh Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-08-11
+updated: 2026-08-12
 ---
 
 # Workspace Engineering Partial/DEFER Incremental Research Refresh Technical Specification (Spec)
@@ -29,6 +29,16 @@ boundary.
 No new research pack or parallel topic report is created. Accepted findings
 are appended as dated incremental sections to the existing canonical reports,
 then reconciled through the pack README, source/claim ledger, and scope index.
+
+Direct human approval on 2026-08-12 authorizes this standalone execution
+relation. No separate PRD or ARD is required or part of this standalone
+lifecycle. The same approval authorizes this design and its reciprocal
+[Plan](../../04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md)
+and
+[Task](../../04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
+The active direct-approval standalone execution relation is governed by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
+no separate PRD or ARD program authority is asserted.
 
 ## Strategic Boundaries & Non-goals
 
