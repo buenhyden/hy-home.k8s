@@ -38,12 +38,13 @@ affected-surface, pre-commit, and repository-quality validators.
 
 ## Overview
 
-Direct human approval on 2026-08-12 authorizes this active standalone execution
-of [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)
-through its reciprocal
+Direct human approval on 2026-08-12 authorizes this active standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle.
+The approved relation connects
+[Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+to its reciprocal
 [Task](../tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
-No separate PRD or ARD is required or part of this standalone lifecycle. The
-typed relation is governed by
+The typed relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
 and no separate PRD or ARD program authority is asserted.
 
@@ -624,6 +625,25 @@ after its targeted checks and reviews. Each package enters from a clean
 worktree. Before staging, the task owner reviews the generated finite path set
 against the package `**Files:**` list and Task evidence; wildcards, directories,
 `git add -A`, and unrelated files are forbidden.
+
+PDRR-000 alone has a one-time bootstrap and replay exception because
+`/tmp/pdrr-refresh-check.py` does not exist until PDRR-001. Replay starts from
+task base `2576d5103b53c4d14225bc46fed0ec25e53cceed` in an isolated temporary
+worktree, applies activation commit `a6dbf1060fbedea65f589a73f6842b149ed40980`
+without committing, and supplies both exact NUL path inputs by process
+substitution without creating a persistent path file:
+
+```bash
+python3 scripts/run-validation-lane.py --root . --lane affected --paths-file <(git diff --cached --name-only -z) --delimiter nul
+python3 scripts/run-validation-lane.py --root . --lane staged --paths-file <(git diff --cached --name-only -z) --delimiter nul
+pre-commit run
+```
+
+The originally used `/tmp/pdrr-000-activation-paths.nul` contained only the
+nine non-secret repository-relative lifecycle paths. It is removed in fix round
+1, absence is proven, and the path is never reused. PDRR-001 onward keeps the
+guarded checker `pathset` command below as the sole persistent path-set
+producer and uses the standard procedure unchanged.
 
 ```bash
 python3 /tmp/pdrr-refresh-check.py pathset --root . --output /tmp/pdrr-paths.nul --scope package

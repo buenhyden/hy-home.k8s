@@ -20,8 +20,10 @@ inventory stays in `scripts/README.md`.
 - **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
 - **Provenance**: direct human approval of Spec 056 and its Plan on 2026-08-12;
   selected execution option 1 (Subagent-Driven); branch
-  `codex/2026-08-11-partial-defer-refresh`; baseline
-  `a2d1ca69`; predecessor Plan commit `2576d510` and Spec commit `cd2823fc`
+  `codex/2026-08-11-partial-defer-refresh`; program merge base
+  `a2d1ca69d91ff80cc2b81b27eb7bb08119cdd0db`; PDRR-000 task base
+  `2576d5103b53c4d14225bc46fed0ec25e53cceed`; approved Spec commit
+  `cd2823fc`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until PDRR-007 closes Spec 056 or a superseding
   approved lifecycle record replaces it. Re-observe before acting.
@@ -59,6 +61,10 @@ a RED prerequisite; record the observed PASS before activating.
   cluster/live access, secret read, or research content occurred during PDRR-000.
 - Completion evidence is recorded in the PDRR-000 Task, activation report, and
   activation commit after focused, affected, staged, pre-commit, and diff gates.
+- Fix round 1 records the approved PDRR-000-only process-substitution replay
+  exception before the PDRR-001 checker exists. The original non-secret
+  `/tmp/pdrr-000-activation-paths.nul` is removed, its absence is proven, and it
+  is never reused; PDRR-001 onward retains checker `pathset` ownership.
 
 #### Handoff
 

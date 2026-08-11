@@ -14,10 +14,11 @@ This Task is the durable execution and evidence ledger for the direct
 human-approved [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 and its reciprocal
 [Implementation Plan](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
-Direct human approval on 2026-08-12 authorizes this active standalone execution;
-the human selected execution option 1, Subagent-Driven. No separate PRD or ARD
-is required or part of this standalone lifecycle. The typed relation is governed
-by [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+Direct human approval on 2026-08-12 authorizes this active standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle.
+The human selected execution option 1, Subagent-Driven. The typed relation is
+governed by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 
 Detailed worker and reviewer reports are limited to the ignored directory
 `.superpowers/sdd/2026-08-11-workspace-engineering-partial-defer-incremental-refresh/`.
@@ -89,8 +90,11 @@ state. PDRR-000 activates only reciprocal lifecycle ownership and has not
 started research, created a research-pack delta, called GitHub, accessed a
 provider or cluster, or read a secret. Repository-static activation checks and
 the exact staged validation lane are recorded in the activation report and
-durable progress. Remote/live, hosted, provider-runtime, credential-bearing,
-cluster, and effectiveness evidence remain `DEFER`.
+durable progress. Fix round 1 replays the original activation from task base
+`2576d5103b53c4d14225bc46fed0ec25e53cceed` with process-substitution NUL inputs,
+removes the earlier non-secret `/tmp/pdrr-000-activation-paths.nul`, and proves
+its absence. Remote/live, hosted, provider-runtime, credential-bearing, cluster,
+and effectiveness evidence remain `DEFER`.
 
 ## Traceability
 

@@ -30,9 +30,9 @@ No new research pack or parallel topic report is created. Accepted findings
 are appended as dated incremental sections to the existing canonical reports,
 then reconciled through the pack README, source/claim ledger, and scope index.
 
-Direct human approval on 2026-08-12 authorizes this standalone execution
-relation. No separate PRD or ARD is required or part of this standalone
-lifecycle. The same approval authorizes this design and its reciprocal
+Direct human approval on 2026-08-12 authorizes this active standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle.
+The same approval authorizes this design and its reciprocal
 [Plan](../../04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md)
 and
 [Task](../../04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
