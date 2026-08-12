@@ -254,7 +254,8 @@ Spec/Plan/Task ownership, Task rows PDRR-000..007, and durable activation proof.
 ### Task 2: PDRR-001 — freeze the Gap Ledger
 
 **Files:** temporary `/tmp/pdrr-refresh-check.py` and
-`/tmp/pdrr-ledger-before.md`; PDRR Task; this Plan; durable progress.
+`/tmp/pdrr-ledger-before.md`; the exact one-line Spec 056 standalone-approval
+prerequisite correction; PDRR Task; this Plan; durable progress.
 
 **Interfaces:** Consumes current 33-row README matrix, source maximum 067, claim
 maximum 008-06, active lifecycle. Produces exact candidate rows, workstream
@@ -262,7 +263,12 @@ owners, evidence boundaries, baseline ledger hash, checker SHA, and commands
 `self-test`, `snapshot-ledger`, `admission`, `workstream`, `remote-init`,
 `remote`, `integration`, `residue`.
 
-- [ ] **Step 1: Write the fail-closed checker.** Before apply_patch, require
+The package also closes the inherited Spec 056 approval-wording prerequisite:
+`this active standalone` is corrected to the validator-owned exact
+`this standalone` form. This is a one-line validation prerequisite, not a new
+research, lifecycle, or implementation claim.
+
+- [x] **Step 1: Write the fail-closed checker.** Before apply_patch, require
   `/tmp/pdrr-refresh-check.py` to be absent and not a symlink. After creation,
   set mode `0600` and require a regular file owned by the effective user. Use
   Python 3 standard library,
@@ -292,10 +298,10 @@ owners, evidence boundaries, baseline ledger hash, checker SHA, and commands
   invalid states, missing trigger/follow-up, malformed/duplicate IDs, old-row
   mutation, missing selector/anchor, outside root, symlink root/child, forbidden
   remote route/key, repository mismatch, invalid time, extra report, residue.
-- [ ] **Step 2: Run self-test and record checker hash.** Run
+- [x] **Step 2: Run self-test and record checker hash.** Run
   `python3 /tmp/pdrr-refresh-check.py --self-test` and
   `sha256sum /tmp/pdrr-refresh-check.py`. Expected: named cases PASS.
-- [ ] **Step 3: Freeze the baseline ledger through the checker.** Run:
+- [x] **Step 3: Freeze the baseline ledger through the checker.** Run:
 
   ```bash
   python3 /tmp/pdrr-refresh-check.py snapshot-ledger --source docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md --output /tmp/pdrr-ledger-before.md
@@ -305,22 +311,22 @@ owners, evidence boundaries, baseline ledger hash, checker SHA, and commands
   `snapshot-ledger` requires an absent/non-symlink output, uses exclusive
   no-follow mode-0600 creation, verifies regular-file/current-user ownership,
   and copies exact bytes. Record SHA-256 in Task; keep the file untracked.
-- [ ] **Step 4: Capture admission RED.** Run:
+- [x] **Step 4: Capture admission RED.** Run:
 
   ```bash
   python3 /tmp/pdrr-refresh-check.py admission --root . --task docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md --require-partials 12
   ```
 
   Expected: twelve missing-candidate diagnostics.
-- [ ] **Step 5: Add the Task Gap Ledger.** Required columns: Request, Baseline,
+- [x] **Step 5: Add the Task Gap Ledger.** Required columns: Request, Baseline,
   Unresolved question, Admission, Material-change reason, Workstream, Canonical
   owner, Workspace selectors, Allowed evidence, Forbidden evidence, Final
   disposition, Follow-up evidence, Refresh trigger. Conditional rows require a
   reason and review. `Pending` is allowed only before integration.
-- [ ] **Step 6: Run admission GREEN and two reviews.** Require exact twelve,
+- [x] **Step 6: Run admission GREEN and two reviews.** Require exact twelve,
   unique closed states, zero path errors, full comparison against all 33 rows,
   and real path/symlink negative tests. Run diff check.
-- [ ] **Step 7: Update Task/Plan/progress, run the logical work-package
+- [x] **Step 7: Update Task/Plan/progress, run the logical work-package
   completion lane, and commit** `docs: classify Partial DEFER refresh scope`.
 
 ### Task 3: PDRR-002 — agent, provider, model, and memory refresh

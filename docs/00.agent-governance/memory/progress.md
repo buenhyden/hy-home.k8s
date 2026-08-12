@@ -8,6 +8,69 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - PDRR-001 closed refresh admission frozen
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, qa, security
+- **Status**: complete
+- **Tags**: #pdrr #admission #research-boundary #validation
+- **Owner**: PDRR-001 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-000 activation/fix commits `a6dbf106` and `d8c6b346`;
+  33-row WER request matrix; source ceiling `SRC-WERPC-067`; claim ceiling
+  `CLM-WERPC-008-06`; guarded source/claim snapshot SHA-256
+  `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  approved admission record. Re-observe repository and source state before use.
+- **Next Owner**: PDRR-002 assigned worker after the PDRR-001 logical commit
+
+#### Progress
+
+PDRR-001 compared all 33 current request rows and froze exactly the 12
+`Partial` candidates: 006, 008, 009, 014, 020, 022, 023, 025, 026, 028, 032,
+and 033. The Task Gap Ledger binds each candidate to one closed admission
+state, its workstream, canonical owner, exact workspace selectors, allowed and
+forbidden evidence, a pre-integration disposition, follow-up evidence, and a
+refresh trigger. No external research or GitHub query occurred. The package
+also carries the exact one-line Spec 056 standalone-approval wording correction
+needed to close the inherited strict-validator prerequisite.
+
+#### Memory
+
+A candidate list is not closed merely because its IDs are counted. Admission
+must bind every ID to the exact owner, workstream, selectors, evidence classes,
+disposition phase, and refresh trigger, while the checker independently rejects
+Git pathspec magic, unsafe file reuse, undefined source/claim reservations, raw
+remote bodies, and concurrent guarded-summary replacement.
+
+#### Evidence
+
+- The guarded checker was created only after absence/non-symlink proof with
+  `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, and current-owner regular-file
+  verification. Its current SHA-256 is recorded in the Task.
+- Checker self-test is GREEN across real admission, source/claim, safe-path,
+  creation/reuse, proposal, projected-remote, timeout/overflow, report, and
+  residue fixtures. Admission RED produced exactly 12 missing-candidate
+  diagnostics; admission GREEN reports `candidates=12 baseline=33`.
+- `/tmp/pdrr-ledger-before.md` is a current-owner regular mode-`0600`
+  byte-exact copy of the source/claim ledger. Its 752,987 bytes and SHA-256
+  match the unchanged tracked source.
+- Independent content and quality/security fix re-reviews are recorded in the
+  ignored task-2 report. Both approved the final package with zero Critical,
+  Important, or Minor findings after all earlier findings were closed.
+- No browse, GitHub, external network, provider/runtime, credential, secret,
+  cluster/live, deployment, or mutation evidence was requested or produced.
+
+#### Handoff
+
+The containing logical commit closes PDRR-001; its exact SHA and completion-lane
+evidence are recorded in the ignored task-2 report after commit. Hand PDRR-002
+only the rows admitted to its workstream. `Pending` remains legal only until
+PDRR-006 integration.
+
 ### 2026-08-12 - PDRR-000 standalone execution activated
 
 #### Metadata
