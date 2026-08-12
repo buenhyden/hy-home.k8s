@@ -137,11 +137,41 @@ Kubernetes/Security additions `SRC-WERPC-060`–`065` and
 this README, the SDLC report, the CI/CD and QA report, the Kubernetes/Security
 report, and the source/claim ledger.
 
-After the later scope index and freshness/upstream source rows, the current pack
-contains 14 physical Markdown files including this README, 33 unique request
+After the later scope index and freshness/upstream source rows, the pack
+contained 14 physical Markdown files including this README, 33 unique request
 owners, 67 unique source IDs, and 65 unique claim IDs. Static validation does
 not promote any hosted, provider-runtime, remote, credential-bearing, secret,
 artifact, or live evidence from `DEFER`.
+
+### 2026-08-11 Partial/DEFER refresh reconciliation
+
+The 2026-08-11 Partial/DEFER incremental refresh, executed and checked on
+2026-08-12, admitted exactly twelve candidates: `REQ-WERPC-006`, `008`, `009`,
+`014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, and `033`. It created no
+new research folder and no duplicate report. Findings were appended to the
+existing owners as dated 2026-08-11 sections in
+[governance](workspace-governance-and-common-agent-environment.md#2026-08-11-partialdefer-incremental-refresh),
+[AI agents](ai-agents-and-agency-agents.md#2026-08-11-partialdefer-incremental-refresh),
+[model routing](agent-model-routing-and-configuration.md#2026-08-11-partialdefer-incremental-refresh),
+[memory](agent-memory-tiers-and-management.md#2026-08-11-partialdefer-incremental-refresh),
+[Kubernetes and security](kubernetes-infrastructure-and-security.md#2026-08-11-partialdefer-incremental-refresh),
+[Diátaxis](documentation-architecture-and-diataxis.md#2026-08-11-partialdefer-incremental-refresh),
+[SDLC and document contracts](spec-driven-sdlc-and-document-contracts.md#2026-08-11-partialdefer-incremental-refresh),
+and [CI/CD, Actions, and QA](ci-cd-github-actions-and-qa.md#2026-08-11-partialdefer-incremental-refresh).
+
+All twelve candidates closed as `Partial`; none was promoted to `Verified`, so
+every Status cell in the request matrix above keeps its prior value. Rows
+`REQ-WERPC-014` and `REQ-WERPC-020` also carry `exclude-duplicate`, because
+Spec 052 `DOC-G1`, `DOC-G2`, and `DOC-G3` already own those questions.
+
+The refresh adds `SRC-WERPC-068`–`073` and `CLM-WERPC-009-01`–`12`, so the
+current pack contains 14 physical Markdown files including this README, 33
+unique request owners, 73 unique source IDs, and 77 unique claim IDs. No
+existing source or claim row was renumbered or rewritten: `SRC-WERPC-073`
+records the package's 2026-08-12 re-verification of already registered sources,
+whose baseline `Checked on` values are preserved by contract and therefore lag
+that re-verification. Hosted-runtime, provider-runtime, product and stakeholder
+validation, cluster, credential-bearing, and live evidence remain `DEFER`.
 
 ## Refresh and Succession
 
