@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Engineering Partial/DEFER Incremental Research Refresh'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-12
 ---
@@ -46,7 +46,7 @@ or remote payloads.
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Done | Rows 014 and 020 retain `Partial` / `exclude-duplicate`; current published-page provenance and exact Guide static contracts are reconciled without changing DOC-G1/G2/G3 or inferring reader effectiveness. | Two appended research-owner sections, guarded proposal, task-local progress, task-5 report, logical commit |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Done | Rows 022, 023, and 033 have a dated CI/CD section reconciling official GitHub REST contracts, the sanitized hosted observations, and exact local selectors; all three remain `Partial` with hosted-runtime, product-validation, and OIDC evidence `DEFER`. | Dated CI/CD report section, sanitized observation summary, successor checker self-test, Plan recovery contract, Task evidence |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | VAL-PDRR-003, VAL-PDRR-006, VAL-PDRR-008 | Reconcile shared WER projections atomically | assigned worker | Done | Shared projections are reconciled atomically: `SRC-WERPC-068`–`073` and `CLM-WERPC-009-01`–`12` were added, every baseline row is byte-preserved, and all nine remaining `Pending` dispositions are closed as `Partial`. | Source/claim ledger, pack README reconciliation, scope index, final Gap Ledger, integration GREEN |
-| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and hand off branch finishing | primary agent | Queued | Not executed. | Final reviews, gates, residue proof, lifecycle evidence |
+| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and hand off branch finishing | primary agent | Done | Branch-wide gates, protected-surface diff, logical-commit review, temporary-file cleanup, and lifecycle closure are complete; independent subagent review was not dispatched and is recorded as an explicit limitation. | Branch affected lane, aggregate gate, all-files pre-commit, diff checks, residue proof, lifecycle statuses, closure commit |
 
 ### Gap Ledger
 
@@ -81,7 +81,10 @@ remaining `Pending` value with one of the checker-owned final states.
 
 - **Allowed Paths**: this Task; Spec 056 and its index; the reciprocal Plan and
   its index; ADR-0022; `docs/99.templates/support/document-profiles.json`;
-  `docs/00.agent-governance/memory/progress.md`; and only these ignored reports:
+  `docs/00.agent-governance/memory/progress.md`;
+  `scripts/validate-active-corpus-residue-closure.py` for the mandatory
+  `POST_CLOSURE_SPEC_AUTHORITY_PATHS` registration of a closing Spec, following
+  the Spec 053, 054, and 055 closure precedent; and only these ignored reports:
   `.superpowers/sdd/2026-08-11-workspace-engineering-partial-defer-incremental-refresh/task-1-report.md`,
   `task-2-report.md`, `task-3-report.md`, `task-4-report.md`,
   `task-5-report.md`, `task-6-report.md`, `task-7-report.md`, and
@@ -432,6 +435,47 @@ requests, 132 byte-preserved baseline rows, and 18 new rows. All twelve
 candidates close as `Partial`; none is promoted, and the pack now holds 73
 unique source IDs and 77 unique claim IDs.
 
+### PDRR-007 Closure Evidence
+
+PDRR-007 ran on 2026-08-12 against branch HEAD. The successor checker reported
+34 named self-test PASS with zero FAIL, integration GREEN at 14 Markdown files,
+33 unique requests, 132 byte-preserved baseline rows, and 18 new rows, and the
+branch path set enumerated 21 repository-relative paths.
+
+The branch-wide affected lane passed all fifteen selected validators. The
+aggregate repository quality gate exited 0 with 53 PASS results and zero `ERR`
+or `FAIL` lines. `pre-commit run --all-files` reported no failure, both
+`git diff --check` invocations were clean, and the protected-surface diff
+across `docs/98.archive`, `docs/90.references/audits`, and the RIA baseline
+returned unchanged. The branch carries twelve non-empty logical commits, one
+per work unit.
+
+Setting Spec 056 to `done` made it a post-closure spec authority, so
+`scripts/validate-active-corpus-residue-closure.py` raised
+`ERR CLOSURE-AUTHORITY-SCOPE` until its path was registered in
+`POST_CLOSURE_SPEC_AUTHORITY_PATHS`. That registration is the same mandatory
+closure step recorded for Spec 053, 054, and 055; commit `22002d91` is the
+Spec 055 precedent. After registration the validator self-test reported 25
+PASS cases and the staged lane passed all twenty selected validators.
+
+Cleanup deleted the two surviving task-local paths and proved the absence of
+all eight enumerated one-off paths, including the five that the session
+boundary had already destroyed and the two residues carried from PDRR-003 and
+PDRR-004. No terminal command recreated a `/tmp/pdrr-*` path.
+
+One limitation is explicit and is not converted into a PASS. The Plan requires
+independent content, quality, and security review of the whole branch, but the
+resuming session was constrained from dispatching subagent reviewers, so the
+PDRR-005 through PDRR-007 review was self-performed by the primary agent. The
+earlier PDRR-000 through PDRR-004 independent reviews stand as recorded. A
+human may still dispatch an independent whole-branch review before integration;
+until then, VAL-PDRR-010 is met for the gate evidence but not for independent
+review of the final three work units.
+
+Remote, hosted-runtime, provider-runtime, credential-bearing, cluster,
+infrastructure, product and stakeholder validation, and live evidence remain
+`DEFER` for every row.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -445,4 +489,4 @@ unique source IDs and 77 unique claim IDs.
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Done. Rows 014/020 retain `Partial` / `exclude-duplicate`; official published-page provenance and exact Guide static contracts are reconciled while reader evidence remains `DEFER`. | Two research owners, guarded proposal, Plan task 5, task-local progress, task-5 report, logical commit. |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Done. Rows 022, 023, and 033 have a dated CI/CD section separating syntax, hosted metadata, administration, product validation, and live effects; all three remain `Partial` and no row is promoted. | Plan task 6, dated CI/CD report section, sanitized observations, successor checker self-test, and task-6 report. |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | Done. Ledger, README, scope index, and the final Gap Ledger agree; integration GREEN reports 14 Markdown files, 33 requests, 132 preserved baseline rows, and 18 new rows. | Plan task 7, source/claim ledger, pack README, scope index, Task Gap Ledger. |
-| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Queued. | Plan task 8. |
+| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Done. All branch gates pass and the lifecycle is closed; the only open limitation is that reviews were self-performed rather than independently dispatched. | Plan task 8, branch gate evidence, residue proof, lifecycle statuses, closure commit. |

@@ -8,6 +8,78 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - Partial/DEFER incremental refresh closed after artifact loss
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, ci, github-actions, qa, governance
+- **Status**: complete
+- **Tags**: #pdrr #research #ci-cd #github-actions #qa #closure
+- **Owner**: PDRR-005 through PDRR-007 primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: Spec 056, its reciprocal Plan, ADR-0022, and the human
+  amendment approved on 2026-08-12 after the task-local artifact loss.
+
+#### Progress
+
+PDRR-004 refreshed the Guide and Diátaxis rows, then a session boundary
+destroyed every task-local `/tmp` artifact mid-PDRR-005: the guarded checker,
+the sanitized GitHub summary, the baseline ledger snapshot, all three proposal
+files, and two previously unresolved residues. The human approved a reduced
+rebuild rather than a full reconstruction or a GitHub re-collection.
+
+PDRR-005 then closed rows 022, 023, and 033 with a dated CI/CD section.
+PDRR-006 reconciled the shared projections atomically, adding
+`SRC-WERPC-068`–`073` and the `WERPD-001` claim register
+`CLM-WERPC-009-01`–`12`, updating the pack README and scope index, and closing
+the last nine `Pending` dispositions. PDRR-007 ran the branch gates and closed
+the lifecycle. All twelve admitted candidates end as `Partial`; none was
+promoted.
+
+#### Memory
+
+Task-local evidence that lives only in `/tmp` does not survive a session
+boundary, so a resumable package needs each artifact classified by whether it
+can be re-derived from tracked content. The baseline ledger snapshot was
+recovered byte-exact from the tracked ledger, and the lost proposal files were
+superseded because the committed dated report sections already carry every
+admitted source and claim. The guarded remote summary was unrecoverable, which
+is why bounded remote observations must be written into a tracked owner in the
+same work unit that collects them.
+
+A successor checker changes its own SHA-256, so it must never be presented as
+retroactive validation of work the original checker gated. Keeping the retired
+subcommands unimplemented makes that boundary enforceable rather than merely
+stated.
+
+#### Evidence
+
+- Successor checker SHA-256
+  `3aa05aa08945439ff07c41890ace699fda6b018754fa9534e4e42bb404f17200`, mode
+  `0600`, 34 named self-test PASS and zero FAIL.
+- Baseline ledger snapshot recovered byte-exact at 752,987 bytes with pinned
+  SHA-256 `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`.
+- Integration GREEN: 14 Markdown files, 33 unique requests, 132 byte-preserved
+  baseline rows, 18 new rows.
+- Branch gates: fifteen affected validators PASS, aggregate quality gate exit 0
+  with 53 PASS, `pre-commit run --all-files` clean, both diff checks clean,
+  protected-surface diff unchanged, twelve non-empty logical commits.
+- Residue: all eight enumerated one-off `/tmp/pdrr-*` paths proven absent.
+- Limitation: independent subagent review was not dispatched for PDRR-005
+  through PDRR-007; those reviews were self-performed. PDRR-000 through
+  PDRR-004 independent reviews stand as recorded.
+- Prohibited evidence: no additional GitHub query, remote mutation, secret or
+  variable read, provider authentication, cluster access, or live validation
+  occurred.
+
+#### Handoff
+
+Next owner is the human. The branch is ready for an integration decision, and
+an independent whole-branch content, quality, and security review may still be
+dispatched before merge. Hosted-runtime, provider-runtime, product and
+stakeholder validation, cluster, and live evidence remain `DEFER`.
+
 ### 2026-08-12 - PDRR-003 Kubernetes and security evidence refreshed
 
 #### Metadata

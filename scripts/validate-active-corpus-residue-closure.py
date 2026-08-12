@@ -122,6 +122,7 @@ POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
         "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
         "docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md",
         "docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md",
+        "docs/03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md",
     }
 )
 PLAN_ROOT = "docs/04.execution/plans"
