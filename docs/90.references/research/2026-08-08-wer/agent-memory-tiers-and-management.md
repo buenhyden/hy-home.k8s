@@ -131,6 +131,47 @@ superseded by `2026-07-28`, so treat every MCP statement here as revision-scoped
 rather than current-protocol. None of the four sources publishes a last-modified
 date, so an unchanged result is content identity rather than a publisher signal.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and checked on **2026-08-12**. The heading
+identifies the approved package date rather than the check date. The ignored
+`.agent-work/checkpoint.json` was treated only as the named forbidden/unread
+boundary; its contents were not inspected. No provider-local memory,
+connected-resource content, credentials, retention/deletion result, compaction
+run, or retrieval was accessed.
+
+#### REQ-WERPC-032 provider and MCP lifecycle delta
+
+| Official source | Publication / revision and adopted scope | Rejected inference, uncertainty, and refresh trigger |
+| --- | --- | --- |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories) | Current page with no publisher date, checked 2026-08-12. Local memories are separate from ChatGPT web memory, off by default, generated under the Codex home directory, and controlled per chat for use and future generation; required guidance belongs in `AGENTS.md` or checked-in docs. | The page states no complete retention or deletion guarantee. It does not prove enablement, generation, use, redaction, or storage in this environment. Recheck when memory controls, location, lifecycle, or privacy language changes. |
+| [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/) | Current SDK documentation with no publisher date, checked 2026-08-12. Sessions retrieve and store conversation items around runs; backends have distinct persistence, `clear_session` is an interface operation, and `OpenAIResponsesCompactionSession` can rewrite an underlying session after compaction. | SDK session and compaction semantics do not transfer to Codex local memory or this repository. No backend, deletion result, or compaction was invoked. Recheck when session interfaces, storage, compaction, or deletion semantics change. |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | Current page with no publisher date, checked 2026-08-12. Auto memory is on by default, machine-local, repository-scoped and shared across worktrees; only the first 200 lines or 25KB of its index load initially, and users can inspect, edit, or delete the Markdown files. | File-level edit/delete controls are not a provider retention guarantee, secure erasure result, or proof of use. Recheck when scope, load limit, storage, compaction, or deletion changes. |
+| [MCP versioning](https://modelcontextprotocol.io/specification/versioning) and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | Current revision `2026-07-28`, checked 2026-08-12. Each request declares a protocol version; resources are application-driven, authorization-sensitive, list/read/cache capable, and optionally updated through `subscriptions/listen`. | The protocol does not make retrieved data authoritative or prove a connected server, negotiated version, access control, cache behavior, notification, or retrieval. Recheck when the current revision or Resources/caching/subscription contract changes. |
+
+**As-Is:** `memory/README.md` and `contracts/harness-contract.json` retain four
+authority classes. `memory/progress.md` is the durable shared ledger;
+`contracts/agent-checkpoint.schema.json` is the repository-static schema for an
+ignored, advisory, atomic/redacted checkpoint with repository-wins recovery,
+compaction, lifecycle, and handoff fields. Only the schema and ignore rule were
+read for this refresh.
+
+**Gap and bounded target:** Current provider and MCP documentation describes
+local-store, deletion-control, compaction, caching, and subscription surfaces,
+but none supplies this repository's authority or proves actual behavior. Keep
+provider memory and MCP results `provider-local-auxiliary`,
+re-observe repository truth before use, and promote only reviewed/redacted
+facts. Any retention, deletion, compaction, or retrieval claim needs a
+separately authorized, non-secret test against the exact provider/version and
+store; the ignored checkpoint remains unread unless a future task explicitly
+authorizes recovery inspection.
+
+**Final disposition:** `Partial`. Evidence depth is current official public
+contract plus exact repo-static memory, progress, ignore, and schema selectors.
+Owner: Stage 00 memory lifecycle and checkpoint schema. Refresh when a cited
+provider/MCP memory contract or a named local memory selector materially
+changes.
+
 ## Related Documents
 
 - [Pack coverage matrix](README.md#requirement-coverage-matrix)

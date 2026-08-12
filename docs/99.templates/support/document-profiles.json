@@ -6454,6 +6454,15 @@
       "reason": "Direct human-approved gap-only external-source refresh of the existing 2026-08-08 WER pack without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "056",
+      "plan": "docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
+      "task": "docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
+      "state": "done",
+      "reason": "Direct human-approved Partial/DEFER closed-ledger incremental refresh of the existing 2026-08-08 WER pack with bounded read-only GitHub metadata evidence and no separate PRD/ARD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }

@@ -176,6 +176,44 @@ announced revision is published, NIST policy/control assessment guidance
 changes, the Release-family decision advances, or DOC-G10/WORK-013 changes the
 Runbook automation contract.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and checked on **2026-08-12**; the heading
+retains the approved package date. It addresses only REQ-WERPC-014 and does not
+change the Guide profile, template, instances, taxonomy, Spec 052, or its
+queued execution package.
+
+#### REQ-WERPC-014 retained Guide disposition
+
+**Typed/static contract:** The `sdlc/guide` profile still selects the numbered
+Guide route, closed frontmatter and lifecycle domains, the seven required H2
+sections, and active/draft lifecycle traceability. The template still prompts
+authors to choose `how-to`, `tutorial`, or `concept`, but the profile has no
+value constraint for the required `Guide Type` section. All eight current
+numbered Guide instances declare `how-to` and pass the existing structural
+profile contract. This preserves the source/claim-ledger distinction between
+the verified static document contract in `CLM-WERPC-003-03` and the partial
+classification/usefulness boundary in `CLM-WERPC-003-09`.
+
+**Approved owner:** Spec 052 `DOC-G1` already requires the profile and template
+enumeration, and `WORK-013` remains `Queued` / `Not executed`. PDRR-004 neither
+implements that work nor changes the approved `DOC-G2`/`DOC-G3` route
+decisions. Duplicate taxonomy or enforcement work is therefore excluded.
+
+**Reader evidence:** A required heading, a declared `how-to` value, and a
+profile PASS can establish only repository-static shape. They do not establish
+that the classification matches a reader's need, that commands are safe in the
+reader's environment, or that a reader can find, understand, and complete the
+intended task. No reader test, accessibility study, task-completion observation,
+or effectiveness measure was authorized or invented. Those outcomes remain
+`DEFER` until a separately approved activity names the reader, task,
+environment, method, acceptance threshold, and evidence owner.
+
+**Final disposition:** `Partial`, retained as `exclude-duplicate`. No material
+claim change exists and no claim proposal is created. Refresh when Spec 052 is
+superseded, `WORK-013` changes Guide typing, a current Guide stops satisfying
+the static contract, or a named reader-validation activity is approved.
+
 ## Related Documents
 
 - [Documentation architecture and Diátaxis](documentation-architecture-and-diataxis.md)

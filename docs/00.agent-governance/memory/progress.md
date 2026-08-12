@@ -8,6 +8,381 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - Partial/DEFER incremental refresh closed after artifact loss
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, ci, github-actions, qa, governance
+- **Status**: complete
+- **Tags**: #pdrr #research #ci-cd #github-actions #qa #closure
+- **Owner**: PDRR-005 through PDRR-007 primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: Spec 056, its reciprocal Plan, ADR-0022, and the human
+  amendment approved on 2026-08-12 after the task-local artifact loss.
+
+#### Progress
+
+PDRR-004 refreshed the Guide and Diátaxis rows, then a session boundary
+destroyed every task-local `/tmp` artifact mid-PDRR-005: the guarded checker,
+the sanitized GitHub summary, the baseline ledger snapshot, all three proposal
+files, and two previously unresolved residues. The human approved a reduced
+rebuild rather than a full reconstruction or a GitHub re-collection.
+
+PDRR-005 then closed rows 022, 023, and 033 with a dated CI/CD section.
+PDRR-006 reconciled the shared projections atomically, adding
+`SRC-WERPC-068`–`073` and the `WERPD-001` claim register
+`CLM-WERPC-009-01`–`12`, updating the pack README and scope index, and closing
+the last nine `Pending` dispositions. PDRR-007 ran the branch gates and closed
+the lifecycle. All twelve admitted candidates end as `Partial`; none was
+promoted.
+
+#### Memory
+
+Task-local evidence that lives only in `/tmp` does not survive a session
+boundary, so a resumable package needs each artifact classified by whether it
+can be re-derived from tracked content. The baseline ledger snapshot was
+recovered byte-exact from the tracked ledger, and the lost proposal files were
+superseded because the committed dated report sections already carry every
+admitted source and claim. The guarded remote summary was unrecoverable, which
+is why bounded remote observations must be written into a tracked owner in the
+same work unit that collects them.
+
+A successor checker changes its own SHA-256, so it must never be presented as
+retroactive validation of work the original checker gated. Keeping the retired
+subcommands unimplemented makes that boundary enforceable rather than merely
+stated.
+
+#### Evidence
+
+- Successor checker SHA-256
+  `3aa05aa08945439ff07c41890ace699fda6b018754fa9534e4e42bb404f17200`, mode
+  `0600`, 34 named self-test PASS and zero FAIL.
+- Baseline ledger snapshot recovered byte-exact at 752,987 bytes with pinned
+  SHA-256 `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`.
+- Integration GREEN: 14 Markdown files, 33 unique requests, 132 byte-preserved
+  baseline rows, 18 new rows.
+- Branch gates: fifteen affected validators PASS, aggregate quality gate exit 0
+  with 53 PASS, `pre-commit run --all-files` clean, both diff checks clean,
+  protected-surface diff unchanged, twelve non-empty logical commits.
+- Residue: all eight enumerated one-off `/tmp/pdrr-*` paths proven absent.
+- Limitation: independent subagent review was not dispatched for PDRR-005
+  through PDRR-007; those reviews were self-performed. PDRR-000 through
+  PDRR-004 independent reviews stand as recorded.
+- Prohibited evidence: no additional GitHub query, remote mutation, secret or
+  variable read, provider authentication, cluster access, or live validation
+  occurred.
+
+#### Handoff
+
+Next owner is the human. The branch is ready for an integration decision, and
+an independent whole-branch content, quality, and security review may still be
+dispatched before merge. Hosted-runtime, provider-runtime, product and
+stakeholder validation, cluster, and live evidence remain `DEFER`.
+
+### 2026-08-12 - PDRR-003 Kubernetes and security evidence refreshed
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, kubernetes, infrastructure, security, qa
+- **Status**: complete
+- **Tags**: #pdrr #kubernetes #infrastructure #security #supply-chain
+- **Owner**: PDRR-003 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-008,
+  REQ-WERPC-009, and REQ-WERPC-025; official primary sources checked
+  2026-08-12; proposal SHA-256
+  `ca79849fa9c2f60eec8fa9fbeba421f0b76432fa6c82f7ce5584861fb1c38744`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  reviewed refresh. Recheck cited sources and exact selectors before use.
+- **Next Owner**: PDRR-004 assigned worker after the PDRR-003 logical commit
+
+#### Progress
+
+PDRR-003 appended one bounded refresh section to the Kubernetes,
+infrastructure, and security owner. Rows 008, 009, and 025 remain `Partial`;
+row 009 remains repository-static only, and controller need, effective RBAC,
+admission, compatibility, reconciliation, external Vault role, artifact trust,
+signature, attestation, provenance, recovery, and all runtime outcomes remain
+explicit `DEFER`. The shared source/claim ledger was not changed; its
+pre-integration `Pending` values remain owned by PDRR-006.
+
+The initial exact RED was the absent canonical proposal. Final GREEN is
+`PASS workstream name=kubernetes-infrastructure-security canonical=PDRR-003`.
+The checker owner repaired an independently found shortened Kubernetes
+proposal-path mismatch; final checker SHA-256 is
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`
+with 106 named self-test PASS results.
+
+#### Memory
+
+An exact controller page can narrow controller behavior without proving every
+permission in a combined local RBAC rule. Kubernetes now explicitly treats
+`get` on `nodes/proxy` as privileged, so least-privilege review must map
+each exact configured component before removal and verify effective
+authorization separately. Desired state, controller need, admission, Git/chart
+or image identity, signature, attestation, provenance, and runtime are separate
+evidence types. A checked source named in the owner table must also appear in
+the guarded proposal even when it is retained unchanged.
+
+#### Evidence
+
+- The proposal is current-user regular mode `0600`, schema version 1,
+  canonical `PDRR-003`, exact requests 008/009/025, twelve source proposals,
+  five claim proposals, four limitations, no final IDs, and no raw payload,
+  Secret, credential, provider/live result, or artifact content.
+- Source fidelity opened one Important source/proposal mismatch; fix round 1
+  added Helm v3 provenance and NIST source records and then approved with zero
+  findings. Content/security approved at zero. Quality opened one Important
+  checker canonical-path mismatch; the checker owner repaired and independently
+  approved it, and final quality re-review approved at zero.
+- Focused workstream, 106-case checker self-test, strict Markdown and links,
+  GitOps structure, infrastructure static contracts, Kubernetes
+  manifest/kube-linter, secret handling, Vault/ESO contracts, and diff checks
+  passed. Exact logical completion evidence is in the ignored task-4 report.
+- No Secret, cluster API, registry/artifact, cloud, gateway, hosted CI,
+  credential, provider runtime, trust store, recovery execution, or
+  remote/live mutation occurred.
+
+#### Handoff
+
+The containing logical commit and ignored task-4 report own the exact
+completion-lane evidence. PDRR-004 receives only its separately admitted rows;
+PDRR-006 later validates these proposals, assigns contiguous IDs, and updates
+the shared projections atomically.
+
+### 2026-08-12 - PDRR-002 agent, model, and memory evidence refreshed
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, qa, security
+- **Status**: complete
+- **Tags**: #pdrr #agents #models #memory #source-fidelity
+- **Owner**: PDRR-002 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-006,
+  REQ-WERPC-026, REQ-WERPC-028, and REQ-WERPC-032; official public sources
+  checked 2026-08-12; proposal SHA-256
+  `76264946aad35c59cfb3210df9581fd13aa93c9957995c1c262fc46fce7c877e`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  reviewed refresh. Re-observe every cited provider/MCP contract and named
+  repository selector before use.
+- **Next Owner**: PDRR-003 assigned worker after the PDRR-002 logical commit
+
+#### Progress
+
+PDRR-002 appended one bounded refresh section to each of the four admitted
+research owners. Rows 006, 026, 028, and 032 remain `Partial`; provider
+discovery, execution, effective permissions, model parsing/resolution/fitness,
+cost, latency, promotion, retention/deletion behavior, connected-resource
+retrieval, and other runtime/effectiveness evidence remain explicit `DEFER`.
+The shared source/claim ledger and conditional provider-status owner were not
+changed. Gap Ledger `Pending` remains the legal pre-integration state until
+PDRR-006 assigns final IDs and reconciles shared projections.
+
+The initial exact workstream RED exited 1 with
+`ERROR missing guarded file: /tmp/pdrr-agent-proposals.json`. A first GREEN
+attempt then exposed the Plan/checker identity mismatch
+`ERROR proposal-file identity mismatch`; the independently reviewed checker
+repair maps only the exact Plan alias to canonical `PDRR-002`. Final GREEN is
+`PASS workstream name=agent-provider-model-memory canonical=PDRR-002`, and the
+repaired checker self-test has 103 named PASS results.
+
+#### Memory
+
+Undated official provider pages support present, observation-time contract
+facts, not a historical change date. A `Partial` proposal is integration-ready
+only when its existing schema fields carry exact repo-relative selectors,
+evidence depth, rejected inference and uncertainty, bounded follow-up owner,
+required authority and safe collection boundary, plus a refresh trigger. A
+Plan-mandated H3 belongs under the existing `## Review and Freshness` profile
+owner rather than under the final relationship list or a new unsupported H2.
+
+#### Evidence
+
+- Official sources checked 2026-08-12:
+  [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+  [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+  [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+  [Codex memories](https://learn.chatgpt.com/docs/customization/memories),
+  [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/),
+  [Claude Code subagents](https://code.claude.com/docs/en/sub-agents),
+  [Claude Code memory](https://code.claude.com/docs/en/memory),
+  [MCP versioning](https://modelcontextprotocol.io/specification/versioning),
+  and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources).
+- The proposal is a current-user regular mode-`0600` file with schema version
+  1, canonical `PDRR-002`, exact requests 006/026/028/032, nine reviewed source
+  proposals, four reviewed claim proposals, three global limitations, no final
+  IDs, and no raw body/payload, secret, provider state, or runtime evidence.
+- Focused workstream, strict Markdown, strict links, harness `12/4/48`, roster
+  currentness, evaluation `12/48`, model-fitness `48`-tuple, checkpoint-schema
+  110-mutation, and diff checks passed. Exact logical completion evidence is
+  retained in the ignored task-3 report.
+- Source fidelity opened one Important historical-inference finding; fix round
+  1 closed it. Content/spec approved with zero findings. Quality/security
+  opened two Important completeness/hierarchy findings and one Minor metadata
+  question; fix rounds 2 and 3 closed both Important findings and accepted the
+  append-only metadata boundary. All three final reviews are approved at zero
+  Critical, Important, or Minor findings.
+- No authentication, credential or secret access, provider/model invocation,
+  cost/latency test, provider-local or ignored-checkpoint read, connected
+  resource retrieval, GitHub query, external mutation, or remote/live action
+  occurred.
+
+#### Handoff
+
+The containing logical commit and ignored task-3 report own the exact
+completion-lane evidence. PDRR-003 receives only its separately admitted rows;
+PDRR-006 later validates these proposals, assigns final contiguous IDs, and
+updates the shared ledger and projections atomically.
+
+### 2026-08-12 - PDRR-001 closed refresh admission frozen
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, qa, security
+- **Status**: complete
+- **Tags**: #pdrr #admission #research-boundary #validation
+- **Owner**: PDRR-001 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-000 activation/fix commits `a6dbf106` and `d8c6b346`;
+  33-row WER request matrix; source ceiling `SRC-WERPC-067`; claim ceiling
+  `CLM-WERPC-008-06`; guarded source/claim snapshot SHA-256
+  `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  approved admission record. Re-observe repository and source state before use.
+- **Next Owner**: PDRR-002 assigned worker after the PDRR-001 logical commit
+
+#### Progress
+
+PDRR-001 compared all 33 current request rows and froze exactly the 12
+`Partial` candidates: 006, 008, 009, 014, 020, 022, 023, 025, 026, 028, 032,
+and 033. The Task Gap Ledger binds each candidate to one closed admission
+state, its workstream, canonical owner, exact workspace selectors, allowed and
+forbidden evidence, a pre-integration disposition, follow-up evidence, and a
+refresh trigger. No external research or GitHub query occurred. The package
+also carries the exact one-line Spec 056 standalone-approval wording correction
+needed to close the inherited strict-validator prerequisite.
+
+Fix round 1 reopens only checker-evidence hardening after independent review of
+commit `342e6862`. One real self-test RED named all three defects: replacement
+unlink after a closed pathset guard, same-inode mutation accepted during a
+snapshot source read, and rejection of the actual task-local SDD artifact
+shape. The hardened checker now produces 93 named PASS results by binding
+pre-unlink identity/version metadata, checking post-read fd/path versions and
+byte count, and allowlisting only safe progress, brief, report, and review-diff
+artifact classes. Its first security review found a final pathname-unlink
+window and an overbroad review-diff pattern; verified atomic exchange with
+rollback, an exact exchange-window fixture, and two bounded hexadecimal review
+IDs close those findings. Final security re-review approved the hardened
+checker with zero Critical, Important, or Minor findings. The containing fix
+commit closes the exact completion lane.
+
+#### Memory
+
+A candidate list is not closed merely because its IDs are counted. Admission
+must bind every ID to the exact owner, workstream, selectors, evidence classes,
+disposition phase, and refresh trigger, while the checker independently rejects
+Git pathspec magic, unsafe file reuse, undefined source/claim reservations, raw
+remote bodies, and concurrent guarded-summary replacement.
+
+#### Evidence
+
+- The guarded checker was created only after absence/non-symlink proof with
+  `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, and current-owner regular-file
+  verification. Its fix-round SHA-256 is
+  `815babfea03cbf97cf79ef5726295979759812e1848c2eb3d194346ff905e0a4`.
+- Checker self-test is GREEN across real admission, source/claim, safe-path,
+  creation/reuse, proposal, projected-remote, timeout/overflow, report, and
+  residue fixtures. Admission RED produced exactly 12 missing-candidate
+  diagnostics; admission GREEN reports `candidates=12 baseline=33`.
+- `/tmp/pdrr-ledger-before.md` is a current-owner regular mode-`0600`
+  byte-exact copy of the source/claim ledger. Its 752,987 bytes and SHA-256
+  match the unchanged tracked source.
+- Independent content and quality/security fix re-reviews are recorded in the
+  ignored task-2 report. Both approved the final package with zero Critical,
+  Important, or Minor findings after all earlier findings were closed.
+- No browse, GitHub, external network, provider/runtime, credential, secret,
+  cluster/live, deployment, or mutation evidence was requested or produced.
+
+#### Handoff
+
+The containing fix commit closes independent review and the exact logical lane;
+its SHA and completion evidence are recorded in the ignored task-2 report after
+commit. Hand PDRR-002 only the rows admitted to its workstream. `Pending`
+remains legal only until PDRR-006 integration.
+
+### 2026-08-12 - PDRR-000 standalone execution activated
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, qa
+- **Status**: in-progress
+- **Tags**: #pdrr #research #standalone-execution #activation
+- **Owner**: primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: direct human approval of Spec 056 and its Plan on 2026-08-12;
+  selected execution option 1 (Subagent-Driven); branch
+  `codex/2026-08-11-partial-defer-refresh`; program merge base
+  `a2d1ca69d91ff80cc2b81b27eb7bb08119cdd0db`; PDRR-000 task base
+  `2576d5103b53c4d14225bc46fed0ec25e53cceed`; approved Spec commit
+  `cd2823fc`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until PDRR-007 closes Spec 056 or a superseding
+  approved lifecycle record replaces it. Re-observe before acting.
+- **Next Owner**: PDRR-001 assigned worker
+
+#### Progress
+
+PDRR-000 activated the direct-approval standalone lifecycle for Spec 056, its
+reciprocal Plan and Task, ADR-0022, their three indexes, and the sorted
+`standaloneExecutions` registry relation. The activation path set is exactly
+`docs/03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md`,
+`docs/03.specs/README.md`,
+`docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
+`docs/04.execution/plans/README.md`,
+`docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
+`docs/04.execution/tasks/README.md`,
+`docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`,
+`docs/99.templates/support/document-profiles.json`, and this ledger. No research
+content has started; PDRR-001 owns the closed admission ledger and its temporary
+checker.
+
+#### Memory
+
+An active standalone execution needs all four reciprocal repository records at
+once: direct approval/no-PRD-or-ARD text in Spec and Plan, the Task's explicit
+boundary and next owner, the ADR's typed relation traceability, and a numerically
+sorted registry row. The valid draft-state links/owners result is evidence, not
+a RED prerequisite; record the observed PASS before activating.
+
+#### Evidence
+
+- Pre-activation: `python3 scripts/validate-links-and-owners.py --root . --mode strict`
+  exited 0 on the valid draft state.
+- Prohibited evidence: no external browse, GitHub remote call, provider/runtime,
+  cluster/live access, secret read, or research content occurred during PDRR-000.
+- Completion evidence is recorded in the PDRR-000 Task, activation report, and
+  activation commit after focused, affected, staged, pre-commit, and diff gates.
+- Fix round 1 records the approved PDRR-000-only process-substitution replay
+  exception before the PDRR-001 checker exists. The original non-secret
+  `/tmp/pdrr-000-activation-paths.nul` is removed, its absence is proven, and it
+  is never reused; PDRR-001 onward retains checker `pathset` ownership.
+
+#### Handoff
+
+PDRR-001 must create and self-test the guarded temporary checker, freeze the
+closed Gap Ledger, and record admission evidence before any research or GitHub
+metadata observation. The allowed report paths remain limited to the PDRR
+directory declared in the Task.
+
 ### 2026-08-11 - Diátaxis claims source-verified, profile candidate closed
 
 #### Metadata

@@ -164,6 +164,45 @@ and date; they cannot inherit freshness from a static-config review. The source
 ledger keeps the URLs, date, claim boundary, and refresh triggers. WERPC-002 did
 not inspect secret values, private configuration, accounts, or live systems.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and the cited live documentation was
+checked on **2026-08-12**. The date in the heading identifies the approved
+refresh package; it is not a claim that the checks ran on 2026-08-11. No
+provider was authenticated or invoked, and no provider-local state or
+effective permission was inspected.
+
+#### REQ-WERPC-006 source and workspace reconciliation
+
+| Evidence | Official publication / revision | Adopted scope | Rejected inference, uncertainty, and refresh trigger |
+| --- | --- | --- | --- |
+| [OpenAI Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md) | Current official page; no publication or last-modified date exposed | Codex builds a global-to-project instruction chain, checks one instruction file per directory, and gives nearer project guidance later precedence. | Does not prove this session loaded the tracked gateway. Recheck when discovery order, fallback names, or size limits change. |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Current official page; no publication or last-modified date exposed | Project-scoped TOML agents, parent sandbox/approval inheritance, agent-file overrides, and explicit orchestration are current product surfaces. | Does not prove local agent discovery, spawn, inherited tools, approvals, or execution. Recheck when schema, inheritance, or orchestration changes. |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories) | Current official page; no publication or last-modified date exposed | Local Codex memories are a separate generated recall store, are off by default, have per-chat use/generation controls, and are not the required-guidance owner. | Does not prove enablement, generation, retrieval, redaction, retention, or deletion in this environment. Recheck when memory storage, controls, or lifecycle changes. |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | Current official page; no publication or last-modified date exposed | `CLAUDE.md` and auto memory are context rather than enforcement; auto memory is repository-scoped, machine-local, shared across worktrees, bounded at startup, and user-editable/deletable. | Does not prove that a Claude process loaded or changed memory. Recheck when loading, scope, compaction, deletion, or enforcement changes. |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents) | Current official page; no publication or last-modified date exposed | Current subagent definitions can scope tools, MCP servers, permission mode, hooks, skills, isolation, and memory, with parent/runtime rules affecting execution. | Does not prove discovery, effective permission order, delegation, or tool use for tracked adapters. Recheck when agent fields, permission inheritance, or memory changes. |
+
+**As-Is:** `AGENTS.md`, the `.claude/`, `.codex/`, `.gemini/`, and
+`.agents/` trees, and `docs/00.agent-governance/harness-catalog.md` still
+project one repository-neutral control plane into provider-specific edges.
+`contracts/harness-contract.json` records 12 roles, four repo-static surfaces,
+48 current projections, and four non-transitive evidence classes. The current
+Codex local-memory and Claude agent/memory contracts fit the existing
+`provider-local-auxiliary` boundary; neither moves authority away from
+checked-in owners.
+
+**Gap and bounded target:** Native discovery, parsing, permission enforcement,
+memory behavior, and cross-provider runtime parity remain unobserved. Preserve
+the current static/provider-runtime separation. If a later claim needs runtime
+parity, its owner must authorize a versioned, non-secret provider-native
+inspection for the exact surface instead of extrapolating from tracked files.
+
+**Final disposition:** `Partial`. Evidence depth is current official public
+contract plus exact repository-static selectors. This check refreshes the
+provider edge with observation-time evidence, but effective parity remains
+`DEFER`. Owner: Stage 00 harness/provider governance. Refresh when one of the
+cited provider contracts or named workspace selectors materially changes.
+
 ## Related Documents
 
 - [Harness and loop engineering](harness-and-loop-engineering.md)

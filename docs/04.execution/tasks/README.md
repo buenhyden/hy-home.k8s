@@ -113,6 +113,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-08-08-workspace-engineering-research-pack-consolidation.md
 ├── 2026-08-09-workspace-engineering-gap-only-refresh.md
 ├── 2026-08-09-workspace-governance-audit-and-remediation.md
+├── 2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md
 └── README.md
 ```
 
@@ -208,6 +209,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-08-08-workspace-engineering-research-pack-consolidation.md`](./2026-08-08-workspace-engineering-research-pack-consolidation.md) | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)과 reciprocal [Plan](../plans/2026-08-08-workspace-engineering-research-pack-consolidation.md)의 WERPC-000–009 외부·워크스페이스 조사, 통합, consumer 이관, 삭제, 검증, review, residue scan, lifecycle closure evidence를 추적한다. | Done | 2026-08-09 |
 | [`./2026-08-09-workspace-engineering-gap-only-refresh.md`](./2026-08-09-workspace-engineering-gap-only-refresh.md) | 승인된 [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)와 reciprocal [Plan](../plans/2026-08-09-workspace-engineering-gap-only-refresh.md)의 WERG-000–005 admission, gap-only 외부 조사, 기존 팩 통합, review, 논리 커밋, 검증, cleanup, closure evidence를 완료했다. | Done | 2026-08-10 |
 | [`./2026-08-09-workspace-governance-audit-and-remediation.md`](./2026-08-09-workspace-governance-audit-and-remediation.md) | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)와 reciprocal [Plan](../plans/2026-08-09-workspace-governance-audit-and-remediation.md)의 WGIA-000–014 감사, canonical-owner remediation, RIA Current cutover, no-deletion 결과, terminal review와 lifecycle closure evidence를 완료했다. | Done | 2026-08-09 |
+| [`./2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`](./2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md) | 2026-08-12 직접 승인된 [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)와 reciprocal [Plan](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md)의 PDRR-000–007 폐쇄형 Gap Ledger, 제한된 읽기 전용 GitHub 메타데이터, 기존 WER 팩 증분 통합, review, 검증, cleanup, closure evidence를 추적한다. | Done | 2026-08-12 |
 
 ## Related Documents
 

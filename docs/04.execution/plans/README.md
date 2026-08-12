@@ -112,6 +112,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-08-08-workspace-engineering-research-pack-consolidation.md
 ├── 2026-08-09-workspace-engineering-gap-only-refresh.md
 ├── 2026-08-09-workspace-governance-audit-and-remediation.md
+├── 2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md
 └── README.md
 ```
 
@@ -205,6 +206,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-08-08-workspace-engineering-research-pack-consolidation.md`](./2026-08-08-workspace-engineering-research-pack-consolidation.md) | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)의 신규 13-file 연구 팩, 25-file disposition, 외부·워크스페이스 재조사, mutable consumer 이관, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 폐쇄 검증을 완료한 계획이다. | Done | 2026-08-09 |
 | [`./2026-08-09-workspace-engineering-gap-only-refresh.md`](./2026-08-09-workspace-engineering-gap-only-refresh.md) | 승인된 [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)의 미조사·외부 근거 부족 범위만 기존 `2026-08-08-wer` 팩에 통합하고 Verification/Validation, 정확한 Kubernetes 보안 delta, 논리 커밋, 검증·review·closure를 완료한 계획이다. | Done | 2026-08-10 |
 | [`./2026-08-09-workspace-governance-audit-and-remediation.md`](./2026-08-09-workspace-governance-audit-and-remediation.md) | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)의 10-file Current 감사 팩, 30-scope owner matrix, canonical-owner remediation, RIA Current 전환, no-deletion 결과, review와 repository-static 폐쇄 검증을 완료한 실행 계획이다. | Done | 2026-08-09 |
+| [`./2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`](./2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md) | 2026-08-12 직접 승인된 [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md)의 12개 기본 `Partial` 및 조건부 qualified `DEFER`를 폐쇄형 Gap Ledger로 심사하고, 공식 소스·워크스페이스 정적 근거·읽기 전용 GitHub Actions/settings 메타데이터만 기존 `2026-08-08-wer` 팩에 증분 통합하는 활성 실행 계획이다. | Done | 2026-08-12 |
 
 ## Related Documents
 

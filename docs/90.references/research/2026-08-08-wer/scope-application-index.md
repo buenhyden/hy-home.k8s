@@ -111,6 +111,20 @@ The practical consequence for planning is that a `Partial` row is not an
 outstanding documentation task. Treating it as one produces repeated research
 passes that cannot change its status.
 
+The 2026-08-11 Partial/DEFER incremental refresh, executed on 2026-08-12,
+re-tested this grouping against current official sources and one approved
+read-only GitHub metadata batch. All twelve rows remained `Partial`, so the
+table above is unchanged. The hosted row narrowed but did not close: projected
+Actions permissions, the default workflow token setting, the ruleset list,
+`main` branch protection, environment totals, and artifact totals were observed
+as dated metadata, while OIDC customization stayed `unavailable` and effective
+per-run permissions, merge enforcement, bypass and fork behavior, deployment,
+promotion, and rollback stayed `DEFER`. The observations and their exact
+limitations are recorded in
+[CI/CD, Actions, and QA](ci-cd-github-actions-and-qa.md#2026-08-11-partialdefer-incremental-refresh);
+the other affected scopes route to the dated sections listed in the
+[pack README](README.md#2026-08-11-partialdefer-refresh-reconciliation).
+
 ## Sources
 
 - Workspace observation, 2026-08-10: the

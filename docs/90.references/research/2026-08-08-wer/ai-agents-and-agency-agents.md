@@ -125,6 +125,42 @@ publish no last-modified date, so their unchanged result is content identity
 rather than a publisher signal and is a weaker class of evidence than the pinned
 commit comparison.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and checked on **2026-08-12**; the heading
+retains the approved package date and does not backdate the source review. It
+does not refresh the pinned Agency Agents comparison because REQ-WERPC-026
+admits only the current official provider-agent delta and the pinned catalog is
+not needed to answer it.
+
+#### REQ-WERPC-026 agent-contract delta
+
+| Current official contract | Adopted scope | Rejected inference and uncertainty | Refresh trigger |
+| --- | --- | --- | --- |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), current page with no publisher date, checked 2026-08-12 | Project files under `.codex/agents/` require `name`, `description`, and `developer_instructions`; custom agents may override model/reasoning and sandbox settings, while omitted settings inherit according to the documented chain. Explicit requests or applicable project/skill instructions can trigger delegation. | A documented load path or inheritance rule does not prove this worktree's files were discovered, a child was spawned, an approval was granted, or a tool ran. | OpenAI changes project-agent discovery, schema, inheritance, orchestration, sandbox, or approvals. |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), current page with no publisher date, checked 2026-08-12 | Project Markdown agents can scope tools, disallowed tools, MCP servers, permission modes, hooks, skills, isolation, and persistent memory; main-session and subagent contexts have distinct loading rules. | Optional product fields are not mandatory local fields. The page does not prove tracked adapter discovery, effective deny/allow order, delegation, isolation, memory use, or result quality. | Anthropic changes agent discovery, fields, parent precedence, tool/permission behavior, isolation, or memory. |
+
+**As-Is:** `contracts/harness-contract.json` remains the semantic owner for 12
+roles and 48 current projections across `.agents/agents/`,
+`.claude/agents/`, `.codex/agents/`, and `.gemini/agents/`.
+`contracts/agent-evaluations.json` has 12 repository-static evaluation suites;
+its evaluation and admission dispositions remain `DEFER`. Sampled adapters
+retain the same bounded responsibilities, guardrails, handoff, and postflight
+semantics while using surface-specific metadata.
+
+**Gap and bounded target:** Current provider schemas expose more optional
+capability and inheritance controls than the common roster contract needs.
+That is not evidence that the local adapters are incomplete or effective.
+Keep role semantics provider-neutral and add a provider-specific field only
+through a separately approved roster/adapter change tied to a concrete gap.
+Native discovery, delegation, tool execution, effective permission, model
+resolution, and effectiveness require separate provider-runtime evidence.
+
+**Final disposition:** `Partial`. Evidence depth is official public agent
+contract plus exact repo-static roster, contract, evaluation, and adapter
+selectors. Owner: Stage 00 harness and roster-admission contracts. Refresh when
+a cited provider agent contract or the local roster/adapter contract changes.
+
 ## Related Documents
 
 - [Model routing](agent-model-routing-and-configuration.md)

@@ -3,7 +3,7 @@ title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-12
 ---
 
 # ADR-0022: Direct-Approval Standalone Execution Lineage
@@ -51,7 +51,7 @@ without a separate typed owner.
 
 ## Consequences
 
-Spec 053, Spec 054, and Spec 055, with each exact Plan/Task pair, gain
+Spec 053, Spec 054, Spec 055, and Spec 056, with each exact Plan/Task pair, gain
 deterministic registry ownership without a fabricated program component. Validators accept
 an exact ISO-date direct-approval statement, reject invalid calendar dates,
 missing approval fields, identity overlap, wrong owners or states, incomplete
@@ -79,3 +79,4 @@ false upstream authority.
 | Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — second typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — third typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — fourth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md) |

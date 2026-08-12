@@ -148,6 +148,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 055-workspace-engineering-gap-only-refresh/
 │   └── spec.md
+├── 056-workspace-engineering-partial-defer-incremental-refresh/
+│   └── spec.md
 └── README.md
 ```
 
@@ -233,6 +235,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./053-workspace-engineering-research-pack-consolidation/spec.md`](./053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
 | [`./054-workspace-governance-audit-and-remediation/spec.md`](./054-workspace-governance-audit-and-remediation/spec.md) | Workspace governance audit, canonical-owner remediation, current-pointer cutover, and evidence-gated cleanup specification | Done | 승인된 30개 요청 범위를 신규 10-file Current 감사 팩으로 조사하고 canonical owner 보정, sole-Current 전환, 증거 기반 no-deletion 결과, terminal QA와 review를 완료했다. 기존 감사 팩은 source-commit 고정 역사 증거로 보존하며 hosted/provider/remote/live 결과는 `DEFER`한다. | 2026-08-09 |
 | [`./055-workspace-engineering-gap-only-refresh/spec.md`](./055-workspace-engineering-gap-only-refresh/spec.md) | Existing 2026-08-08 WER gap-only external-source refresh specification | Done | 기존 팩에서 조사되지 않았거나 외부 근거가 불충분한 `Partial` 질문만 2026-08-10 공식 1차 출처와 현재 workspace evidence로 보강했다. 새 팩·중복 보고서·provider/runtime/hosted/remote/live 증거는 범위 밖이다. | 2026-08-10 |
+| [`./056-workspace-engineering-partial-defer-incremental-refresh/spec.md`](./056-workspace-engineering-partial-defer-incremental-refresh/spec.md) | Existing WER pack Partial/DEFER closed-ledger incremental refresh design | Done | 2026-08-12 직접 승인된 standalone execution은 12개 base `Partial` 행과 조건부 qualified `DEFER` 증거만 폐쇄형 원장으로 재검토한다. 공식 공개 1차 출처, 현재 repository-static 증거, 허용된 GitHub Actions/설정 읽기 전용 메타데이터만 사용하며 새 연구 팩·중복 보고서·원격 변경·secret value·provider/runtime/cluster/live 증거는 금지한다. | 2026-08-12 |
 
 ### Helper Templates
 
