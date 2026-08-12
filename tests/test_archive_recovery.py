@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import os
 import re
 import subprocess
@@ -766,6 +767,115 @@ class ArchiveRecoveryTest(unittest.TestCase):
             parked_output = parked / output.name
             parked_output.unlink(missing_ok=True)
             parked.rmdir()
+
+
+class Work107StableArchiveContractTest(unittest.TestCase):
+    """Focused WORK-107 contract for the reviewed 93-to-93 stable rehome."""
+
+    maxDiff = None
+
+    def test_work107_reviewed_mapping_is_exact_and_bijective(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+
+        self.assertEqual(
+            archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT,
+            "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c",  # pragma: allowlist secret
+        )
+        self.assertEqual(len(rows), 93)
+        self.assertEqual({row["action"] for row in rows}, {"moved"})
+        self.assertEqual({row["replacement"] for row in rows}, {None})
+        self.assertEqual(len({row["legacy_path"] for row in rows}), 93)
+        self.assertEqual(len({row["stable_path"] for row in rows}), 93)
+        self.assertEqual(len({row["artifact_id"] for row in rows}), 93)
+
+        changes: dict[str, set[str]] = {}
+        tombstones: dict[str, int] = {}
+        for row in rows:
+            stable = Path(row["stable_path"])
+            if row["record_kind"].startswith("change-"):
+                changes.setdefault(stable.parent.as_posix(), set()).add(stable.name)
+            else:
+                stage = stable.parts[3]
+                tombstones[stage] = tombstones.get(stage, 0) + 1
+            self.assertEqual(row["legacy_archive_commit"], archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT)
+            actual_blob = subprocess.run(
+                ["git", "rev-parse", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            self.assertEqual(row["legacy_envelope_blob"], actual_blob)
+
+        shapes = [frozenset(leaves) for leaves in changes.values()]
+        self.assertEqual(len(changes), 41)
+        self.assertEqual(shapes.count(frozenset({"plan.md", "task.md"})), 35)
+        self.assertEqual(shapes.count(frozenset({"plan.md"})), 2)
+        self.assertEqual(shapes.count(frozenset({"task.md"})), 4)
+        self.assertEqual(
+            tombstones,
+            {
+                "01.requirements": 3,
+                "02.architecture": 8,
+                "03.specs": 4,
+                "05.operations": 2,
+            },
+        )
+
+    def test_work107_ledger_round_trip_and_closed_mutations(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        rendered = archive_recovery.render_work107_migration_document(rows)
+        parsed = archive_recovery.parse_work107_migration_document(rendered)
+        self.assertEqual(parsed, rows)
+        self.assertEqual(tuple(parsed[0]), archive_recovery.WORK107_LEDGER_FIELDS)
+
+        mutations = []
+        duplicate = [dict(row) for row in rows]
+        duplicate[-1]["stable_path"] = duplicate[-2]["stable_path"]
+        mutations.append(duplicate)
+        wrong_action = [dict(row) for row in rows]
+        wrong_action[0]["action"] = "merged"
+        mutations.append(wrong_action)
+        wrong_object = [dict(row) for row in rows]
+        wrong_object[0]["legacy_envelope_blob"] = "0" * 40
+        mutations.append(wrong_object)
+        missing = [dict(row) for row in rows]
+        missing.pop()
+        mutations.append(missing)
+
+        for mutation in mutations:
+            with self.subTest(mutation=json.dumps(mutation[0], sort_keys=True)[:80]):
+                with self.assertRaises(ArchiveContractError):
+                    archive_recovery.validate_work107_migration_rows(ROOT, mutation)
+
+    def test_work107_stable_wrapper_preserves_payload_and_dual_recovery(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        change = next(row for row in rows if row["record_kind"] == "change-plan")
+        tombstone = next(row for row in rows if row["record_kind"] == "tombstone")
+
+        for row in (change, tombstone):
+            legacy = subprocess.run(
+                ["git", "show", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            legacy_parsed = parse_archive_envelope(legacy)
+            terminal = archive_recovery.render_work107_stable_envelope(legacy, row)
+            terminal_parsed = parse_archive_envelope(terminal)
+
+            self.assertEqual(terminal_parsed.payload, legacy_parsed.payload)
+            for key in ("source_commit", "source_blob", "content_sha256"):
+                self.assertEqual(terminal_parsed.metadata[key], legacy_parsed.metadata[key])
+            if row["record_kind"].startswith("change-"):
+                self.assertEqual(
+                    terminal_parsed.metadata["change_id"],
+                    row["artifact_id"].removeprefix("PLAN-").removeprefix("TASK-"),
+                )
+
+            recovered = archive_recovery.recover_work107_legacy_envelope(ROOT, row)
+            self.assertEqual(recovered.payload, legacy_parsed.payload)
+            self.assertEqual(recovered.metadata, legacy_parsed.metadata)
 
 
 if __name__ == "__main__":

@@ -7,12 +7,14 @@ ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 OUTPUT_PATH="$ROOT_DIR/docs/90.references/llm-wiki/wiki-index.md"
 REGISTRY_PATH="$ROOT_DIR/docs/99.templates/support/document-profiles.json"
 TAXONOMY_MANIFEST_PATH="$ROOT_DIR/scripts/document-taxonomy-migration.json"
+ARCHIVE_MIGRATION_PATH="$ROOT_DIR/docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 CHECK_MODE=false
 
 TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"
 TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"
-TRANSITION_REGISTRY_OID="fd842f60e801a39435600f35a27f22e1c659f1bd"
+TRANSITION_REGISTRY_OID="7182c40ab8ee6b40173b408ec2c366314916f1e3"
 TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"
+TRANSITION_MIGRATION_OID="619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
 TRANSITION_BASE_ROW='| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |'
 TRANSITION_CURRENT_ROW='| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |'
 
@@ -155,6 +157,7 @@ transition_overlay_matches() {
   [[ "$(blob_oid "$generated")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] || return 1
   [[ "$(blob_oid "$REGISTRY_PATH")" == "$TRANSITION_REGISTRY_OID" ]] || return 1
   [[ "$(blob_oid "$TAXONOMY_MANIFEST_PATH")" == "$TRANSITION_MANIFEST_OID" ]] || return 1
+  [[ "$(blob_oid "$ARCHIVE_MIGRATION_PATH")" == "$TRANSITION_MIGRATION_OID" ]] || return 1
   grep -Fqx '  "routeState": "transition",' "$REGISTRY_PATH" || return 1
   grep -Fqx '  "state": "transition",' "$TAXONOMY_MANIFEST_PATH" || return 1
   awk -v base="$TRANSITION_BASE_ROW" -v current="$TRANSITION_CURRENT_ROW" '

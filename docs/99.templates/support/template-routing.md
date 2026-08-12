@@ -3,7 +3,7 @@ title: 'Template Routing Contract'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-27
+updated: 2026-08-12
 ---
 
 # Template Routing Contract
@@ -52,6 +52,8 @@ source contract; it is not a second form owner.
   matched README profile keeps it frontmatter-free and defines its H2 contract.
 - A native API contract selects its native profile and form. It does not inherit
   Markdown frontmatter or comments from a helper Spec.
+- A Stage 98 migration ledger selects the authored archive-migration form. It
+  governs stable-path evidence and is not an ArchiveEnvelope record.
 - A provider snapshot selects a Stage 90 reference profile. Historical
   provider-local documentation routes are not inferred from executable example
   directories.

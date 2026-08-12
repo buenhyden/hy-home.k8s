@@ -1140,16 +1140,18 @@ def _frontmatter_body(
                 json.dumps({"missing": missing, "extra": extra}),
             )
         )
-    elif tuple(keys) != contract.order:
-        diagnostics.append(
-            _diagnostic(
-                "FM-KEY-ORDER",
-                path,
-                profile,
-                json.dumps(contract.order),
-                json.dumps(keys),
+    else:
+        present_order = tuple(key for key in contract.order if key in data)
+        if tuple(keys) != present_order:
+            diagnostics.append(
+                _diagnostic(
+                    "FM-KEY-ORDER",
+                    path,
+                    profile,
+                    json.dumps(present_order),
+                    json.dumps(keys),
+                )
             )
-        )
 
     diagnostics.extend(_value_contract_diagnostics(path, profile, data, today))
     if (

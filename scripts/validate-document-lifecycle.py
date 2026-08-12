@@ -66,6 +66,15 @@ from document_lifecycle import (
     validate_snapshot_documents,
 )
 from archive_validation import validate_archive_immutability
+from archive_recovery import (
+    ArchiveContractError,
+    WORK107_LEGACY_ARCHIVE_COMMIT,
+    WORK107_MIGRATION_DOCUMENT_SHA256,
+    WORK107_MIGRATION_PATH,
+    parse_work107_migration_document,
+    render_work107_stable_envelope,
+    validate_work107_migration_rows,
+)
 
 
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-lifecycle.json")
@@ -270,6 +279,14 @@ WORK105_ADR0023_RECIPROCAL_ROW = (
     "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
 )
 
+WORK107_BASE_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
+WORK107_PROPOSED_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
+WORK107_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+WORK107_MIGRATION_TEMPLATE_PATH = PurePosixPath(
+    "docs/99.templates/templates/common/archive-migration.template.md"
+)
+WORK107_MIGRATION_TEMPLATE_BLOB_OID = "dc3164eafd322e8139164cc16342de43fc3a72e8"
+
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
     profiles = raw_registry.get("profiles")
@@ -426,6 +443,80 @@ def finite_work105_form_cutover_paths(
         ):
             return frozenset()
         consumed.add(path)
+    return frozenset(consumed)
+
+
+def _git_blob_oid(content: bytes) -> str:
+    header = f"blob {len(content)}\0".encode("ascii")
+    return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
+
+
+def finite_work107_archive_rehome_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the reviewed 93-to-93 WORK-107 stable archive rehome."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK107_LEGACY_ARCHIVE_COMMIT
+        or base_registry_oid != WORK107_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK107_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    if (
+        migration_path in base_blobs
+        or proposed_blobs.get(migration_path) != WORK107_MIGRATION_BLOB_OID
+        or WORK107_MIGRATION_TEMPLATE_PATH in base_blobs
+        or proposed_blobs.get(WORK107_MIGRATION_TEMPLATE_PATH)
+        != WORK107_MIGRATION_TEMPLATE_BLOB_OID
+    ):
+        return frozenset()
+    migration_bytes = _blob_bytes(root, WORK107_MIGRATION_BLOB_OID)
+    if (
+        hashlib.sha256(migration_bytes).hexdigest()
+        != WORK107_MIGRATION_DOCUMENT_SHA256
+    ):
+        return frozenset()
+    try:
+        rows = validate_work107_migration_rows(
+            root,
+            parse_work107_migration_document(migration_bytes),
+        )
+    except ArchiveContractError:
+        return frozenset()
+
+    consumed: set[PurePosixPath] = {
+        migration_path,
+        WORK107_MIGRATION_TEMPLATE_PATH,
+    }
+    for row in rows:
+        legacy_path = PurePosixPath(str(row["legacy_path"]))
+        stable_path = PurePosixPath(str(row["stable_path"]))
+        legacy_oid = str(row["legacy_envelope_blob"])
+        if (
+            base_blobs.get(legacy_path) != legacy_oid
+            or legacy_path in proposed_blobs
+            or stable_path in base_blobs
+        ):
+            return frozenset()
+        stable_bytes = render_work107_stable_envelope(
+            _blob_bytes(root, legacy_oid),
+            row,
+        )
+        if proposed_blobs.get(stable_path) != _git_blob_oid(stable_bytes):
+            return frozenset()
+        consumed.update((legacy_path, stable_path))
+    if len(consumed) != 188:
+        return frozenset()
     return frozenset(consumed)
 
 
@@ -2192,6 +2283,7 @@ def _archive_immutability_diagnostics(
     proposed_blobs: Mapping[PurePosixPath, str],
     *,
     mode: str,
+    admitted_rehome_paths: frozenset[PurePosixPath] = frozenset(),
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare exact bytes for every base-selected ArchiveEnvelope record."""
 
@@ -2203,6 +2295,8 @@ def _archive_immutability_diagnostics(
         except DocumentContractError:
             continue
         if profile.profile_id != ARCHIVE_PROFILE:
+            continue
+        if path in admitted_rehome_paths:
             continue
         canonical = path.as_posix()
         baseline[canonical] = _blob_bytes(root, oid)
@@ -2702,12 +2796,23 @@ def _evaluate_comparison(
         registry, proposed_registry_raw
     )
 
+    work107_consumed_paths = finite_work107_archive_rehome_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
+
     immutability_diagnostics = _archive_immutability_diagnostics(
         root,
         base_classification_registry,
         base_blobs,
         proposed_blobs,
         mode=mode,
+        admitted_rehome_paths=work107_consumed_paths,
     )
     if immutability_diagnostics:
         return immutability_diagnostics
@@ -2789,7 +2894,10 @@ def _evaluate_comparison(
                 proposed_harness=proposed_harness,
             )
     consumed_paths = (
-        work105_consumed_paths | archive_consumed_paths | agent_consumed_paths
+        work105_consumed_paths
+        | work107_consumed_paths
+        | archive_consumed_paths
+        | agent_consumed_paths
     )
 
     def consume_finite_cutover(

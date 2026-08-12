@@ -146,8 +146,9 @@ WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT = (
 WORK105_WIKI_GENERATOR_HEADER_LINES = (
     'TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"',  # pragma: allowlist secret
     'TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"',  # pragma: allowlist secret
-    'TRANSITION_REGISTRY_OID="fd842f60e801a39435600f35a27f22e1c659f1bd"',  # pragma: allowlist secret
+    'TRANSITION_REGISTRY_OID="7182c40ab8ee6b40173b408ec2c366314916f1e3"',  # pragma: allowlist secret
     'TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"',  # pragma: allowlist secret
+    'TRANSITION_MIGRATION_OID="619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"',  # pragma: allowlist secret
     WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT,
     f"TRANSITION_CURRENT_ROW='{WORK105_WIKI_GENERATOR_CURRENT_ROW}'",
 )
@@ -2688,7 +2689,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if (
         registry.schema_version != 8
         or registry.route_state != "transition"
-        or len(registry.profiles) != 67
+        or len(registry.profiles) != 69
     ):
         raise AssertionError("production v8 profile projection differs")
     profiles = {profile.profile_id: profile for profile in registry.profiles}
@@ -2901,6 +2902,33 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ("status", "string", False, ("literal", "archived"), None, None, None),
         *standard_keys[3:],
         (
+            "artifact_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
+        (
+            "change_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^CHG-[0-9]{4}$",
+            None,
+        ),
+        (
+            "original_artifact_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
+        (
             "original_type",
             "string",
             False,
@@ -2967,6 +2995,29 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
         ),
     )
+    archive_migration_keys = (
+        *standard_keys[:2],
+        ("status", "string", False, ("literal", "accepted"), None, None, None),
+        *standard_keys[3:],
+        (
+            "artifact_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^MIG-[0-9]{4}$",
+            None,
+        ),
+        (
+            "migration_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^MIG-[0-9]{4}$",
+            None,
+        ),
+    )
     expected_value_projection: dict[str, tuple[Any, ...]] = {}
     for profile_id in (*standard_sources, *standard_templates):
         expected_value_projection[profile_id] = (
@@ -2982,6 +3033,15 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             "archive-record",
             ("content/archive",),
             archive_keys,
+        )
+    for profile_id in (
+        "content/archive-migration",
+        "template/content/archive-migration",
+    ):
+        expected_value_projection[profile_id] = (
+            "archive-migration",
+            ("content/archive-migration",),
+            archive_migration_keys,
         )
     for profile_id in (*empty_sources, *empty_templates):
         expected_value_projection[profile_id] = (
@@ -3043,6 +3103,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
             None,
             "none",
+        ),
+        "content/archive-migration": (
+            "archive-migration",
+            None,
+            "Recovery",
+            "heading-set",
         ),
         "governance/reference": (
             "governance-reference",
@@ -3119,6 +3185,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         expected_roles[profile_id] = ("native-machine-contract", None, None, "none")
     template_sources = {
         "template/content/archive": "content/archive",
+        "template/content/archive-migration": "content/archive-migration",
         "template/governance/memory": "governance/memory",
         "template/readme/repository": "readme/repository",
         "template/readme/stage-index": "readme/stage-index",
@@ -3164,7 +3231,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_roles != expected_roles or len(expected_roles) != 67:
+    if actual_roles != expected_roles or len(expected_roles) != 69:
         raise AssertionError("production complete role/source projection differs")
 
     authored_draft = tuple(
@@ -3192,6 +3259,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/generated-record",
         "exception/program-non-target",
         "template/content/archive",
+        "template/content/archive-migration",
         "template/governance/memory",
         "template/readme/repository",
         "template/readme/stage-index",
@@ -3248,6 +3316,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "archive-envelope",
         ("archived",),
     )
+    expected_admissions["content/archive-migration"] = admission_signature(
+        "archive-migration-control",
+        ("content/archive-migration",),
+        "states",
+        ("accepted",),
+    )
     for profile_id in snapshot_profiles:
         expected_admissions[profile_id] = admission_signature(
             "snapshot-only", snapshot_profiles, "snapshot-only", ()
@@ -3265,7 +3339,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_admissions != expected_admissions or len(expected_admissions) != 67:
+    if actual_admissions != expected_admissions or len(expected_admissions) != 69:
         raise AssertionError("production complete admission projection differs")
 
     lifecycle_groups = (
@@ -3334,6 +3408,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ),
         ),
         ("archive-record", ("content/archive",), ("archived",), ()),
+        (
+            "archive-migration",
+            ("content/archive-migration",),
+            ("accepted",),
+            (),
+        ),
         ("non-lifecycle", snapshot_profiles, (), ()),
     )
     expected_lifecycles: dict[str, tuple[Any, ...]] = {}
@@ -3353,7 +3433,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 67:
+    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 69:
         raise AssertionError("production complete lifecycle projection differs")
 
     def edge_rows(
@@ -4298,9 +4378,9 @@ def _assert_positive_coverage(
     native_form_paths = tuple(
         path for path in current_form_paths if path.suffix != ".md"
     )
-    if len(markdown_form_paths) != 28 or len(native_form_paths) != 3:
+    if len(markdown_form_paths) != 29 or len(native_form_paths) != 3:
         raise AssertionError(
-            "canonical form inventory must contain 28 Markdown and three native forms"
+            "canonical form inventory must contain 29 Markdown and three native forms"
         )
 
     covered_template_profiles: set[str] = set()

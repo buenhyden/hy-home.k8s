@@ -31,6 +31,27 @@ from urllib.parse import unquote
 
 import yaml
 
+try:
+    from archive_recovery import (
+        ArchiveContractError,
+        WORK107_LEGACY_ARCHIVE_COMMIT,
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_MIGRATION_PATH,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        parse_work107_migration_document,
+        validate_work107_migration_rows,
+    )
+except ModuleNotFoundError:  # Imported as a repository-root test module.
+    from scripts.archive_recovery import (
+        ArchiveContractError,
+        WORK107_LEGACY_ARCHIVE_COMMIT,
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_MIGRATION_PATH,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        parse_work107_migration_document,
+        validate_work107_migration_rows,
+    )
+
 from document_contracts import (
     Diagnostic,
     DocumentContractError,
@@ -149,6 +170,74 @@ WORK105_LEDGER_RETIRED_PATHS = frozenset(
         )
     }
 )
+
+
+def _work107_stable_archive_rows(context: "Context") -> tuple[dict[str, object], ...]:
+    """Load only the exact reviewed WORK-107 migration ledger from the candidate."""
+
+    path = PurePosixPath(WORK107_MIGRATION_PATH)
+    try:
+        content = read_repository_text(context.root, path).encode("utf-8")
+        rows = parse_work107_migration_document(content)
+        return validate_work107_migration_rows(context.root, rows)
+    except (
+        ArchiveContractError,
+        DocumentContractError,
+        OSError,
+        UnicodeError,
+        ValueError,
+    ):
+        return ()
+
+
+def _work107_stable_archive_aliases(
+    context: "Context",
+) -> dict[PurePosixPath, PurePosixPath]:
+    rows = _work107_stable_archive_rows(context)
+    aliases = {
+        PurePosixPath(str(row["legacy_path"])): PurePosixPath(
+            str(row["stable_path"])
+        )
+        for row in rows
+    }
+    return aliases if len(aliases) == 93 and len(set(aliases.values())) == 93 else {}
+
+
+def _work107_stable_archive_index_source(
+    context: "Context",
+    source: PurePosixPath,
+) -> bool:
+    """Prove the Stage 98 index is the reviewed overview/link projection."""
+
+    if source != ARCHIVE_INDEX_PATH or source not in context.texts:
+        return False
+    rows = _work107_stable_archive_rows(context)
+    if len(rows) != 93:
+        return False
+    try:
+        legacy = _read_ria_commit_path(
+            context.root,
+            WORK107_LEGACY_ARCHIVE_COMMIT,
+            Path(source.as_posix()),
+        ).decode("utf-8")
+    except (RiaContractError, RiaGitError, UnicodeDecodeError):
+        return False
+    if legacy.count(WORK107_LEGACY_INDEX_OVERVIEW) != 1:
+        return False
+    projected = legacy.replace(
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        1,
+    )
+    for row in rows:
+        old = str(row["legacy_path"]).removeprefix("docs/98.archive/")
+        new = str(row["stable_path"]).removeprefix("docs/98.archive/")
+        reviewed = f"[`{old}`](./{old})"
+        stable = f"[`{new}`](./{new})"
+        if projected.count(reviewed) != 1:
+            return False
+        projected = projected.replace(reviewed, stable, 1)
+    return projected == context.texts[source]
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
@@ -5972,6 +6061,10 @@ def _work105_immutable_history_ard_link(
         or source not in context.texts
     ):
         return False
+    if source == ARCHIVE_INDEX_PATH and _work107_stable_archive_index_source(
+        context, source
+    ):
+        return True
     try:
         source_bytes = _read_ria_commit_path(
             context.root,
@@ -6245,6 +6338,22 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 for target in move_targets.values()
             ):
                 known_paths |= {source.as_posix() for source in move_targets}
+        stable_archive_aliases = _work107_stable_archive_aliases(context)
+        if stable_archive_aliases and all(
+            target in context.tracked_regular_paths
+            and _path_exists_without_dereference(
+                context.root, target, context.adapter_targets
+            )
+            for target in stable_archive_aliases.values()
+        ):
+            known_paths |= {
+                source.as_posix() for source in stable_archive_aliases
+            }
+            known_paths |= {
+                PurePosixPath("docs", *source.parts[2:]).as_posix()
+                for source in stable_archive_aliases
+                if source.parts[:2] == ("docs", "98.archive")
+            }
         unknown_paths = set(counter) - known_paths
         predecessor_unknown = unknown_paths & WERPC_PREDECESSOR_PATHS
         if predecessor_unknown:

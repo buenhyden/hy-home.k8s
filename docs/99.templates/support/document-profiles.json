@@ -9,111 +9,111 @@
       "id": "arwb-base",
       "policy": "exact-immutable",
       "records": [
-        "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
-        "docs/98.archive/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-        "docs/98.archive/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md",
-        "docs/98.archive/02.architecture/decisions/0001-k3d-topology-and-network.md",
-        "docs/98.archive/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md",
-        "docs/98.archive/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
-        "docs/98.archive/02.architecture/decisions/0007-kubernetes-dashboard-v3.md",
-        "docs/98.archive/02.architecture/decisions/0010-headlamp-replaces-dashboard.md",
-        "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
-        "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
-        "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
-        "docs/98.archive/03.specs/001-wsl-k3d-argocd-platform/spec.md",
-        "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md",
-        "docs/98.archive/03.specs/003-platform-expansion/spec.md",
-        "docs/98.archive/03.specs/007-docs-governance-consistency/spec.md",
-        "docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md",
-        "docs/98.archive/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-        "docs/98.archive/04.execution/plans/2026-03-29-platform-expansion.md",
-        "docs/98.archive/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md",
-        "docs/98.archive/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md",
-        "docs/98.archive/04.execution/plans/2026-05-28-docs-governance-consistency.md",
-        "docs/98.archive/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md",
-        "docs/98.archive/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md",
-        "docs/98.archive/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-        "docs/98.archive/04.execution/tasks/2026-03-29-platform-expansion.md",
-        "docs/98.archive/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md",
-        "docs/98.archive/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md",
-        "docs/98.archive/04.execution/tasks/2026-05-28-docs-governance-consistency.md",
-        "docs/98.archive/04.execution/tasks/2026-05-30-governance-refactoring.md",
-        "docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md",
-        "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md"
+        "docs/98.archive/changes/chg-0008-common-agent-governance-refactoring/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/task.md",
+        "docs/98.archive/changes/chg-0016-governance-refactoring/task.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/plan.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/task.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/plan.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/task.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/plan.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/task.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/plan.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/task.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/plan.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/task.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-513540c3ab7c8c7ec2d848170c3c6df85b1780a2126ad41cb61d550456cefcac.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-54087d753dd7edf618b1cd5a0ffad654f6511e117ff7eac1ac289792c20c1e4d.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-8b107a1a83eb2e477de7f3c7b1d63050cff935af0dcfbdeb1e2636dc4ee5de06.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-61d107a63b02dcdfa33f43fbb8418afb7e4bcd4a3d83da0693b71b830da22bb8.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-a9933ec86fcda902cce202655eaef15ff4131e1b8bf40a74a316368f2b80fe57.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-daf190279d9ffd8a110eee548317c0a8ae58b86ba21220f00427c0dcace9f7b1.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-1cf8aa49bbb6bdca7c69c6f94881c636d25dc68b9aa298ecb854790d17f26548.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-59ec4c1d612f19572a59abb443a1279f998584488a41f1adb3bece1081fe774e.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-6ec9a5d55b91e0e59d9b73f4c11ced53d7a3a290c5a88e704b4d6d7f733cfb34.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-78452949112de698bd6fa9205770c51f516c900f4e42f372912612de528eac9f.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-a19264e8c774c9843b1bd489e4ea13b089f9493ddcfe5716a88764e1b41e68ad.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-013c5c6ed9d3a810044f6ce50eb9aa043472b2e3528bbdfa1810192682be76ac.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-063f6e166f3ebfc9dbcce93b3ea6aa53438f58b75935fbda294e79d87c6b52f4.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-250a2ac6df411e9506f888dd0a0db7493990b3544b20cdfdbb086fa7233034cc.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-aa76c31eb19898c6270484148791abad4d8b07b4323eaf949bddafb0b8e7097c.md",
+        "docs/98.archive/tombstones/05.operations/tmb-guide-legacy-292f0f96da3102684734a62842ee5c4d1e663f731921040911fa288a16163305.md",
+        "docs/98.archive/tombstones/05.operations/tmb-runbook-legacy-3c3f615242a98268abeac20385372ef3eafe9dd9680454d749d7ffb853cdbf4a.md"
       ]
     },
     {
       "id": "acer-additive",
       "policy": "exact-immutable",
       "records": [
-        "docs/98.archive/04.execution/plans/2026-07-12-affected-surface-agent-qa.md",
-        "docs/98.archive/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md",
-        "docs/98.archive/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md",
-        "docs/98.archive/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md",
-        "docs/98.archive/04.execution/plans/2026-07-14-template-lifecycle-contract-normalization.md",
-        "docs/98.archive/04.execution/tasks/2026-07-14-template-lifecycle-contract-normalization.md",
-        "docs/98.archive/04.execution/plans/2026-07-15-authority-and-lineage-foundation.md",
-        "docs/98.archive/04.execution/tasks/2026-07-15-authority-and-lineage-foundation.md",
-        "docs/98.archive/04.execution/plans/2026-07-16-document-schema-and-lifecycle-contract.md",
-        "docs/98.archive/04.execution/tasks/2026-07-16-document-schema-and-lifecycle-contract.md",
-        "docs/98.archive/04.execution/plans/2026-07-17-archive-record-and-workspace-boundary.md",
-        "docs/98.archive/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/plan.md",
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/task.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/plan.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/task.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/plan.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/task.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/plan.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/task.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/plan.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/task.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/plan.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/task.md"
       ]
     },
     {
       "id": "wdtc-execution",
       "policy": "exact-reviewed-manifest",
       "records": [
-        "docs/98.archive/04.execution/plans/2026-05-09-github-qa-ci-remediation.md",
-        "docs/98.archive/04.execution/plans/2026-05-09-scripts-inventory-remediation.md",
-        "docs/98.archive/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
-        "docs/98.archive/04.execution/plans/2026-05-17-template-crosslink-fix.md",
-        "docs/98.archive/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md",
-        "docs/98.archive/04.execution/plans/2026-05-22-workspace-purpose-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md",
-        "docs/98.archive/04.execution/plans/2026-05-28-workspace-skill-expansion.md",
-        "docs/98.archive/04.execution/plans/2026-05-30-antigravity-governance.md",
-        "docs/98.archive/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md",
-        "docs/98.archive/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-phase-2-governance-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
-        "docs/98.archive/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
-        "docs/98.archive/04.execution/plans/2026-06-04-harness-four-element-alignment.md",
-        "docs/98.archive/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md",
-        "docs/98.archive/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md",
-        "docs/98.archive/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
-        "docs/98.archive/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md",
-        "docs/98.archive/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
-        "docs/98.archive/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md",
-        "docs/98.archive/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
-        "docs/98.archive/04.execution/tasks/2026-05-17-template-crosslink-fix.md",
-        "docs/98.archive/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md",
-        "docs/98.archive/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md",
-        "docs/98.archive/04.execution/tasks/2026-05-28-workspace-skill-expansion.md",
-        "docs/98.archive/04.execution/tasks/2026-05-30-antigravity-governance.md",
-        "docs/98.archive/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md",
-        "docs/98.archive/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
-        "docs/98.archive/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
-        "docs/98.archive/04.execution/tasks/2026-06-04-harness-four-element-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md",
-        "docs/98.archive/04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md",
-        "docs/98.archive/04.execution/tasks/2026-06-05-language-boundary-alignment.md",
-        "docs/98.archive/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md",
-        "docs/98.archive/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
-        "docs/98.archive/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md"
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/plan.md",
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/task.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/plan.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/task.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/plan.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/task.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/plan.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/task.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/plan.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/task.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/plan.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/task.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/plan.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/task.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/plan.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/task.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/plan.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/task.md",
+        "docs/98.archive/changes/chg-0017-harness-connective-layer-risk-closure/task.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/plan.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/task.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/plan.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/task.md",
+        "docs/98.archive/changes/chg-0021-language-boundary-alignment/task.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/plan.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/task.md",
+        "docs/98.archive/changes/chg-0023-phase-1-decision-follow-up/plan.md",
+        "docs/98.archive/changes/chg-0024-phase-1-governance-alignment-audit/task.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/plan.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/task.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/plan.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/task.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/plan.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/task.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/plan.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/task.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/plan.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/task.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/plan.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/task.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/plan.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/task.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/task.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/plan.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/task.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/plan.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/task.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/plan.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/task.md"
       ]
     },
     {
@@ -1834,7 +1834,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/98\\.archive/(?!.*(?:/)?README\\.md$).+\\.md$"
+          "value": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$"
         }
       ],
       "frontmatter": {
@@ -1860,6 +1860,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1875,6 +1878,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1893,6 +1899,66 @@
         "allowed": []
       },
       "template": "docs/99.templates/templates/common/archive-record.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "content/archive-migration",
+      "class": "common",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/98\\.archive/migrations/mig-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ]
+      },
+      "statusDomain": [
+        "accepted"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null,
@@ -2870,6 +2936,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -2885,6 +2954,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -2905,6 +2977,68 @@
       "template": "docs/99.templates/templates/common/archive-record.template.md",
       "sourceProfileIds": [
         "content/archive"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "template/content/archive-migration",
+      "class": "common",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/archive-migration.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ]
+      },
+      "statusDomain": [
+        "accepted"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
+      "sourceProfileIds": [
+        "content/archive-migration"
       ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
@@ -5284,6 +5418,33 @@
             "conditional": null
           },
           {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
             "key": "original_type",
             "kind": "string",
             "nullable": false,
@@ -5363,6 +5524,83 @@
             "constant": null,
             "enum": null,
             "pattern": "^[0-9a-f]{64}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
             "conditional": null
           }
         ]
@@ -5557,6 +5795,15 @@
       },
       {
         "profileIds": [
+          "content/archive-migration"
+        ],
+        "role": "archive-migration",
+        "sourceProfileId": null,
+        "relationshipSection": "Recovery",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
           "governance/reference"
         ],
         "role": "governance-reference",
@@ -5745,6 +5992,23 @@
         "baselinePaths": []
       },
       {
+        "id": "archive-migration-control",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "create": {
+          "mode": "states",
+          "states": [
+            "accepted"
+          ],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
         "id": "snapshot-only",
         "profileIds": [
           "governance/progress-ledger",
@@ -5766,6 +6030,7 @@
           "exception/generated-record",
           "exception/program-non-target",
           "template/content/archive",
+          "template/content/archive-migration",
           "template/governance/memory",
           "template/readme/repository",
           "template/readme/stage-index",
@@ -5983,6 +6248,16 @@
         "edges": []
       },
       {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
+        "edges": []
+      },
+      {
         "id": "non-lifecycle",
         "profileIds": [
           "governance/progress-ledger",
@@ -6004,6 +6279,7 @@
           "exception/generated-record",
           "exception/program-non-target",
           "template/content/archive",
+          "template/content/archive-migration",
           "template/governance/memory",
           "template/readme/repository",
           "template/readme/stage-index",

@@ -50,6 +50,94 @@ ARCHIVE_METADATA_KEYS = (
     "source_blob",
     "content_sha256",
 )
+ARCHIVE_OPTIONAL_STABLE_KEYS = (
+    "artifact_id",
+    "change_id",
+    "original_artifact_id",
+)
+ARCHIVE_STABLE_METADATA_KEYS = (
+    "title",
+    "type",
+    "status",
+    "owner",
+    "updated",
+    *ARCHIVE_OPTIONAL_STABLE_KEYS,
+    "original_type",
+    "original_path",
+    "archived_on",
+    "archive_reason",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+)
+WORK107_LEGACY_ARCHIVE_COMMIT = (
+    "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c"  # pragma: allowlist secret
+)
+WORK107_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+WORK107_MIGRATION_PATH = (
+    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
+)
+WORK107_MIGRATION_DOCUMENT_SHA256 = (
+    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+)
+WORK107_LEGACY_INDEX_OVERVIEW = (
+    "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
+    "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
+    "historical link로 고정되고, ACER-003의 closed migration-result ledger가 현재 "
+    "12 record와 160 historical link를 가산한다. 각 record는 canonical "
+    "ArchiveEnvelope.v1 metadata 뒤에 source Git blob bytes를 EOF까지 그대로 "
+    "포함한다. Archive record는 historical evidence이며 현재 요구사항·설계·실행·운영 "
+    "권한이 아니다. 현재 문서는 개별 record가 아니라 이 index만 참조한다."
+)
+WORK107_STABLE_INDEX_OVERVIEW = (
+    "`98.archive/`는 stable `changes/chg-####-<slug>/{plan.md,task.md}`와 typed "
+    "`tombstones/<stage>/` 아래 93개의 `content/archive` record를 보관한다. "
+    "[`migrations/mig-0001-sdlc-taxonomy-convergence.md`](./migrations/mig-0001-sdlc-taxonomy-convergence.md)는 "
+    "legacy path와 stable path를 잇는 exact 14-field, 93-to-93 `moved` ledger다. 현재 "
+    "census는 41 change directory(35 pair, 2 plan-only, 4 task-only)의 76 record와 "
+    "17 tombstone(3/8/4/2)이다. 각 record의 ArchiveEnvelope payload와 source "
+    "provenance는 보존되며, 현재 문서는 개별 record가 아니라 이 index만 참조한다."
+)
+WORK107_MIGRATION_ID = "MIG-0001"
+WORK107_LEDGER_FIELDS = (
+    "schema_version",
+    "migration_id",
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "legacy_archive_commit",
+    "legacy_envelope_blob",
+    "source_blob",
+    "content_sha256",
+    "record_kind",
+    "reason",
+)
+WORK107_LEDGER_MARKER = "<!-- archive-migration-ledger:v1 format=json -->"
+WORK107_MIGRATION_METADATA_KEYS = (
+    "title",
+    "type",
+    "status",
+    "owner",
+    "updated",
+    "migration_id",
+)
+_WORK107_EXECUTION_PATH = re.compile(
+    r"docs/98\.archive/04\.execution/(?P<collection>plans|tasks)/"
+    r"[0-9]{4}-[0-9]{2}-[0-9]{2}-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\.md\Z"
+)
+_WORK107_HISTORICAL_AD_TYPE = "ar" + "d"
+_WORK107_TOMBSTONE_TYPES = {
+    "prd": "PRD",
+    _WORK107_HISTORICAL_AD_TYPE: "AD",
+    "adr": "ADR",
+    "spec": "SPEC",
+    "guide": "GUIDE",
+    "runbook": "RUNBOOK",
+}
 ARCHIVE_REASONS = frozenset(
     {
         "superseded",
@@ -692,7 +780,13 @@ def validate_archive_metadata(
 
     if not isinstance(metadata, Mapping):
         raise _error("ARCHIVE-METADATA-TYPE", "metadata must be a mapping")
-    if tuple(metadata) != ARCHIVE_METADATA_KEYS:
+    keys = tuple(metadata)
+    allowed_keys = tuple(
+        key
+        for key in ARCHIVE_STABLE_METADATA_KEYS
+        if key not in ARCHIVE_OPTIONAL_STABLE_KEYS or key in metadata
+    )
+    if keys != allowed_keys:
         raise _error(
             "ARCHIVE-METADATA-KEYS", "metadata keys or order are not canonical"
         )
@@ -704,6 +798,27 @@ def validate_archive_metadata(
         raise _error("ARCHIVE-METADATA-STATUS", "status must be archived")
     _require_string(metadata, "owner")
     _require_date(metadata, "updated")
+    artifact_id = metadata.get("artifact_id")
+    if artifact_id is not None and (
+        not isinstance(artifact_id, str)
+        or re.fullmatch(r"[A-Z0-9]+(?:-[A-Z0-9]+)*", artifact_id) is None
+    ):
+        raise _error("ARCHIVE-METADATA-IDENTITY", "artifact_id is non-canonical")
+    change_id = metadata.get("change_id")
+    if change_id is not None and (
+        not isinstance(change_id, str)
+        or re.fullmatch(r"CHG-[0-9]{4}", change_id) is None
+    ):
+        raise _error("ARCHIVE-METADATA-IDENTITY", "change_id is non-canonical")
+    original_artifact_id = metadata.get("original_artifact_id")
+    if original_artifact_id is not None and (
+        not isinstance(original_artifact_id, str)
+        or re.fullmatch(r"[A-Z0-9]+(?:-[A-Z0-9]+)*", original_artifact_id) is None
+    ):
+        raise _error(
+            "ARCHIVE-METADATA-IDENTITY",
+            "original_artifact_id is non-canonical",
+        )
     _require_string(metadata, "original_type")
     original_path = _require_repository_path(
         metadata["original_path"], field="original_path"
@@ -755,7 +870,7 @@ def validate_archive_metadata(
 
 def _metadata_bytes(metadata: Mapping[str, object]) -> bytes:
     lines = ["---\n"]
-    for key in ARCHIVE_METADATA_KEYS:
+    for key in metadata:
         lines.append(
             f"{key}: {json.dumps(metadata[key], ensure_ascii=False, separators=(',', ':'))}\n"
         )
@@ -886,6 +1001,428 @@ def parse_archive_envelope(
         payload=payload,
         replacement_reference=replacement_reference,
     )
+
+
+def _work107_commit_path_blobs(
+    root: Path,
+    commit: str,
+    paths: tuple[str, ...],
+) -> dict[str, tuple[str, bytes]]:
+    """Read an exact bounded path set from one reviewed Git commit."""
+
+    repository, object_id_length = _require_repository(root)
+    if (
+        len(commit) != object_id_length
+        or _FULL_OBJECT_ID.fullmatch(commit) is None
+        or not paths
+        or len(paths) > MAX_GIT_BATCH_OBJECTS
+    ):
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "reviewed commit input differs")
+    canonical = tuple(_require_git_tree_path(path, field="legacy_path") for path in paths)
+    if len(set(canonical)) != len(canonical):
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy paths are not unique")
+    tree = _git(
+        repository,
+        "ls-tree",
+        "-z",
+        "--full-tree",
+        commit,
+        "--",
+        *canonical,
+    )
+    if tree.returncode != 0:
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy tree lookup failed")
+    object_ids: dict[str, str] = {}
+    for raw in (record for record in tree.stdout.split(b"\0") if record):
+        try:
+            header, raw_path = raw.split(b"\t", 1)
+            mode, kind, raw_object_id = header.split(b" ", 2)
+            path = raw_path.decode("utf-8")
+            object_id = raw_object_id.decode("ascii")
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise _error(
+                "ARCHIVE-MIGRATION-PROVENANCE", "legacy tree output is malformed"
+            ) from exc
+        if (
+            path not in canonical
+            or path in object_ids
+            or mode not in {b"100644", b"100755"}
+            or kind != b"blob"
+            or len(object_id) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(object_id) is None
+        ):
+            raise _error(
+                "ARCHIVE-MIGRATION-PROVENANCE", "legacy tree member differs"
+            )
+        object_ids[path] = object_id
+    if frozenset(object_ids) != frozenset(canonical):
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy tree is incomplete")
+    unique_ids = tuple(dict.fromkeys(object_ids[path] for path in canonical))
+    blobs = _read_git_blob_batch(
+        repository,
+        unique_ids,
+        object_id_length=object_id_length,
+    )
+    return {path: (object_ids[path], blobs[object_ids[path]]) for path in canonical}
+
+
+def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
+    registry = _work107_commit_path_blobs(
+        root,
+        WORK107_LEGACY_ARCHIVE_COMMIT,
+        (WORK107_REGISTRY_PATH,),
+    )[WORK107_REGISTRY_PATH][1]
+    try:
+        loaded = json.loads(registry.decode("utf-8"))
+        namespaces = loaded["archiveNamespaces"]
+        paths = tuple(
+            path
+            for namespace in namespaces
+            for path in namespace["records"]
+        )
+    except (KeyError, TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise _error(
+            "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive registry is malformed"
+        ) from exc
+    if (
+        len(paths) != 93
+        or len(set(paths)) != 93
+        or any(
+            not isinstance(path, str)
+            or not path.startswith("docs/98.archive/")
+            or path == WORK107_MIGRATION_PATH
+            for path in paths
+        )
+    ):
+        raise _error(
+            "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive census differs"
+        )
+    return tuple(sorted(paths))
+
+
+def _work107_tombstone_identity(
+    legacy_path: str,
+    original_type: str,
+    source_blob: str,
+) -> tuple[str, str]:
+    parts = PurePosixPath(legacy_path).parts
+    if len(parts) < 4:
+        raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
+    stage = parts[2]
+    terminal_type = _WORK107_TOMBSTONE_TYPES.get(original_type)
+    allowed_stage = {
+        "01.requirements": {"PRD", "SRS", "IFC"},
+        "02.architecture": {"AD", "ADR"},
+        "03.specs": {"SPEC", "AGENT-DESIGN", "DATA-MODEL", "TESTS", "PLAN", "TASK"},
+        "05.operations": {"GUIDE", "POLICY", "RUNBOOK", "INCIDENT", "POSTMORTEM"},
+    }
+    if terminal_type is None or terminal_type not in allowed_stage.get(stage, set()):
+        raise _error(
+            "ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone type is unsupported"
+        )
+    digest = hashlib.sha256(
+        legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
+    ).hexdigest()
+    stable_path = (
+        f"docs/98.archive/tombstones/{stage}/"
+        f"tmb-{terminal_type.lower()}-legacy-{digest}.md"
+    )
+    artifact_id = f"TMB-{terminal_type}-LEGACY-{digest.upper()}"
+    return stable_path, artifact_id
+
+
+def build_work107_migration_rows(
+    repository_root: str | Path,
+) -> tuple[dict[str, object], ...]:
+    """Derive the exact reviewed 93-row stable rehome from the pinned legacy tree."""
+
+    root, _object_id_length = _require_repository(Path(repository_root))
+    legacy_paths = _work107_registry_archive_paths(root)
+    records = _work107_commit_path_blobs(
+        root, WORK107_LEGACY_ARCHIVE_COMMIT, legacy_paths
+    )
+    parsed: dict[str, ParsedArchiveEnvelope] = {}
+    execution: dict[str, tuple[str, str]] = {}
+    slugs: set[str] = set()
+    for legacy_path in legacy_paths:
+        envelope = parse_archive_envelope(records[legacy_path][1])
+        parsed[legacy_path] = envelope
+        match = _WORK107_EXECUTION_PATH.fullmatch(legacy_path)
+        if match is not None:
+            leaf = "plan" if match.group("collection") == "plans" else "task"
+            slug = match.group("slug")
+            execution[legacy_path] = (slug, leaf)
+            slugs.add(slug)
+    if len(execution) != 76 or len(slugs) != 41:
+        raise _error("ARCHIVE-MIGRATION-CENSUS", "execution grouping differs")
+    change_numbers = {slug: index for index, slug in enumerate(sorted(slugs), start=1)}
+
+    rows: list[dict[str, object]] = []
+    for legacy_path in legacy_paths:
+        envelope = parsed[legacy_path]
+        metadata = envelope.metadata
+        source_commit = metadata.get("source_commit")
+        source_blob = metadata.get("source_blob")
+        content_sha256 = metadata.get("content_sha256")
+        original_type = metadata.get("original_type")
+        if not all(
+            isinstance(value, str)
+            for value in (source_commit, source_blob, content_sha256, original_type)
+        ):
+            raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy metadata differs")
+        if legacy_path in execution:
+            slug, leaf = execution[legacy_path]
+            number = change_numbers[slug]
+            stable_path = (
+                f"docs/98.archive/changes/chg-{number:04d}-{slug}/{leaf}.md"
+            )
+            prefix = "PLAN" if leaf == "plan" else "TASK"
+            artifact_id = f"{prefix}-CHG-{number:04d}"
+            record_kind = f"change-{leaf}"
+        else:
+            stable_path, artifact_id = _work107_tombstone_identity(
+                legacy_path, str(original_type), str(source_blob)
+            )
+            record_kind = "tombstone"
+        rows.append(
+            {
+                "schema_version": 1,
+                "migration_id": WORK107_MIGRATION_ID,
+                "legacy_path": legacy_path,
+                "stable_path": stable_path,
+                "artifact_id": artifact_id,
+                "action": "moved",
+                "replacement": None,
+                "source_commit": source_commit,
+                "legacy_archive_commit": WORK107_LEGACY_ARCHIVE_COMMIT,
+                "legacy_envelope_blob": records[legacy_path][0],
+                "source_blob": source_blob,
+                "content_sha256": content_sha256,
+                "record_kind": record_kind,
+                "reason": "Reviewed stable Stage 98 rehome",
+            }
+        )
+    return tuple(sorted(rows, key=lambda row: str(row["stable_path"])))
+
+
+def _work107_validate_closed_census(rows: tuple[Mapping[str, object], ...]) -> None:
+    if len(rows) != 93:
+        raise _error("ARCHIVE-MIGRATION-CENSUS", "ledger row count differs")
+    legacy_paths: set[object] = set()
+    stable_paths: set[object] = set()
+    artifact_ids: set[object] = set()
+    change_leaves: dict[str, set[str]] = {}
+    tombstones: dict[str, int] = {}
+    for row in rows:
+        if tuple(row) != WORK107_LEDGER_FIELDS:
+            raise _error("ARCHIVE-MIGRATION-FIELDS", "ledger field set differs")
+        if (
+            row["schema_version"] != 1
+            or row["migration_id"] != WORK107_MIGRATION_ID
+            or row["action"] != "moved"
+            or row["replacement"] is not None
+            or row["reason"] != "Reviewed stable Stage 98 rehome"
+        ):
+            raise _error("ARCHIVE-MIGRATION-ROW", "ledger row contract differs")
+        for key in (
+            "legacy_path",
+            "stable_path",
+            "artifact_id",
+            "source_commit",
+            "legacy_archive_commit",
+            "legacy_envelope_blob",
+            "source_blob",
+            "content_sha256",
+            "record_kind",
+        ):
+            if not isinstance(row[key], str):
+                raise _error("ARCHIVE-MIGRATION-ROW", "ledger value type differs")
+        for key in (
+            "source_commit",
+            "legacy_archive_commit",
+            "legacy_envelope_blob",
+            "source_blob",
+        ):
+            if _FULL_OBJECT_ID.fullmatch(str(row[key])) is None:
+                raise _error("ARCHIVE-MIGRATION-PROVENANCE", "Git object differs")
+        if _SHA256.fullmatch(str(row["content_sha256"])) is None:
+            raise _error("ARCHIVE-MIGRATION-PROVENANCE", "payload digest differs")
+        legacy_paths.add(row["legacy_path"])
+        stable_paths.add(row["stable_path"])
+        artifact_ids.add(row["artifact_id"])
+        stable = PurePosixPath(str(row["stable_path"]))
+        kind = str(row["record_kind"])
+        if kind in {"change-plan", "change-task"}:
+            leaf = "plan.md" if kind == "change-plan" else "task.md"
+            if stable.name != leaf:
+                raise _error("ARCHIVE-MIGRATION-IDENTITY", "change leaf differs")
+            change_leaves.setdefault(stable.parent.as_posix(), set()).add(leaf)
+        elif kind == "tombstone" and len(stable.parts) == 5:
+            stage = stable.parts[3]
+            tombstones[stage] = tombstones.get(stage, 0) + 1
+        else:
+            raise _error("ARCHIVE-MIGRATION-IDENTITY", "record kind differs")
+    if not all(len(values) == 93 for values in (legacy_paths, stable_paths, artifact_ids)):
+        raise _error("ARCHIVE-MIGRATION-BIJECTION", "ledger identity is not unique")
+    shapes = tuple(frozenset(leaves) for leaves in change_leaves.values())
+    if (
+        len(change_leaves) != 41
+        or shapes.count(frozenset({"plan.md", "task.md"})) != 35
+        or shapes.count(frozenset({"plan.md"})) != 2
+        or shapes.count(frozenset({"task.md"})) != 4
+    ):
+        raise _error("ARCHIVE-MIGRATION-CENSUS", "change grouping differs")
+    if tombstones != {
+        "01.requirements": 3,
+        "02.architecture": 8,
+        "03.specs": 4,
+        "05.operations": 2,
+    }:
+        raise _error("ARCHIVE-MIGRATION-CENSUS", "tombstone grouping differs")
+
+
+def validate_work107_migration_rows(
+    repository_root: str | Path,
+    rows: list[Mapping[str, object]] | tuple[Mapping[str, object], ...],
+) -> tuple[dict[str, object], ...]:
+    """Require the supplied ledger to equal the reviewed Git-derived bijection."""
+
+    if not isinstance(rows, (list, tuple)):
+        raise _error("ARCHIVE-MIGRATION-ROW", "ledger must be one ordered sequence")
+    materialized = tuple(dict(row) for row in rows)
+    _work107_validate_closed_census(materialized)
+    expected = build_work107_migration_rows(repository_root)
+    if materialized != expected:
+        raise _error("ARCHIVE-MIGRATION-REVIEWED", "ledger differs from reviewed mapping")
+    return materialized
+
+
+def _work107_migration_metadata_bytes() -> bytes:
+    metadata = {
+        "title": "MIG-0001: SDLC Taxonomy Convergence",
+        "type": "content/archive-migration",
+        "status": "accepted",
+        "owner": "platform",
+        "updated": "2026-08-12",
+        "migration_id": WORK107_MIGRATION_ID,
+    }
+    return (
+        "---\n"
+        + "".join(
+            f"{key}: {json.dumps(metadata[key], ensure_ascii=False, separators=(',', ':'))}\n"
+            for key in WORK107_MIGRATION_METADATA_KEYS
+        )
+        + "---\n"
+    ).encode("utf-8")
+
+
+def render_work107_migration_document(
+    rows: list[Mapping[str, object]] | tuple[Mapping[str, object], ...],
+) -> bytes:
+    materialized = tuple(dict(row) for row in rows)
+    _work107_validate_closed_census(materialized)
+    ledger = json.dumps(materialized, ensure_ascii=False, indent=2) + "\n"
+    return (
+        _work107_migration_metadata_bytes()
+        + b"\n# MIG-0001: SDLC Taxonomy Convergence\n\n"
+        + b"## Overview\n\nExact reviewed 93-to-93 Stage 98 stable rehome.\n\n"
+        + b"## Migration Ledger\n\n"
+        + WORK107_LEDGER_MARKER.encode("ascii")
+        + b"\n\n```json\n"
+        + ledger.encode("utf-8")
+        + b"```\n\n## Recovery\n\n"
+        + b"Each row binds the original source object, legacy envelope object, and stable record.\n"
+    )
+
+
+def parse_work107_migration_document(content: bytes) -> tuple[dict[str, object], ...]:
+    if not isinstance(content, bytes) or not content.startswith(_work107_migration_metadata_bytes()):
+        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration frontmatter differs")
+    marker = WORK107_LEDGER_MARKER.encode("ascii") + b"\n\n```json\n"
+    if content.count(marker) != 1 or not content.endswith(
+        b"```\n\n## Recovery\n\nEach row binds the original source object, legacy envelope object, and stable record.\n"
+    ):
+        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration body differs")
+    raw = content.split(marker, 1)[1].split(b"\n```\n", 1)[0]
+    try:
+        loaded = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration ledger JSON differs") from exc
+    if not isinstance(loaded, list) or any(not isinstance(row, dict) for row in loaded):
+        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration ledger shape differs")
+    rows = tuple(dict(row) for row in loaded)
+    _work107_validate_closed_census(rows)
+    if render_work107_migration_document(rows) != content:
+        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration document is noncanonical")
+    return rows
+
+
+def _work107_git_blob_oid(content: bytes) -> str:
+    header = f"blob {len(content)}\0".encode("ascii")
+    return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git SHA-1 identity
+
+
+def render_work107_stable_envelope(
+    legacy_envelope: bytes,
+    row: Mapping[str, object],
+) -> bytes:
+    """Transform only the outer wrapper required by one reviewed stable row."""
+
+    materialized = dict(row)
+    if tuple(materialized) != WORK107_LEDGER_FIELDS:
+        raise _error("ARCHIVE-MIGRATION-FIELDS", "ledger field set differs")
+    parsed = parse_archive_envelope(legacy_envelope)
+    if (
+        _work107_git_blob_oid(legacy_envelope) != materialized["legacy_envelope_blob"]
+        or parsed.metadata.get("source_commit") != materialized["source_commit"]
+        or parsed.metadata.get("source_blob") != materialized["source_blob"]
+        or parsed.metadata.get("content_sha256") != materialized["content_sha256"]
+    ):
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope differs")
+    metadata: dict[str, object] = {}
+    change_id: str | None = None
+    kind = materialized.get("record_kind")
+    artifact_id = materialized.get("artifact_id")
+    if kind in {"change-plan", "change-task"} and isinstance(artifact_id, str):
+        change_id = artifact_id.removeprefix("PLAN-").removeprefix("TASK-")
+        if re.fullmatch(r"CHG-[0-9]{4}", change_id) is None:
+            raise _error("ARCHIVE-MIGRATION-IDENTITY", "change identity differs")
+    for key in ARCHIVE_STABLE_METADATA_KEYS:
+        if key == "change_id" and change_id is not None:
+            metadata[key] = change_id
+        elif key in parsed.metadata:
+            metadata[key] = parsed.metadata[key]
+    validate_archive_metadata(metadata)
+    rendered = _metadata_bytes(metadata) + ARCHIVE_ENVELOPE_MARKER + b"\n" + parsed.payload
+    reparsed = parse_archive_envelope(rendered)
+    if reparsed.payload != parsed.payload:
+        raise _error("ARCHIVE-MIGRATION-PAYLOAD", "stable payload differs")
+    return rendered
+
+
+def recover_work107_legacy_envelope(
+    repository_root: str | Path,
+    row: Mapping[str, object],
+) -> ParsedArchiveEnvelope:
+    """Recover and validate one old ArchiveEnvelope by independent commit/path/blob."""
+
+    materialized = dict(row)
+    if tuple(materialized) != WORK107_LEDGER_FIELDS:
+        raise _error("ARCHIVE-MIGRATION-FIELDS", "ledger field set differs")
+    commit = str(materialized["legacy_archive_commit"])
+    legacy_path = str(materialized["legacy_path"])
+    root, _object_id_length = _require_repository(Path(repository_root))
+    blob_id, content = _work107_commit_path_blobs(root, commit, (legacy_path,))[legacy_path]
+    if blob_id != materialized["legacy_envelope_blob"]:
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope object differs")
+    parsed = parse_archive_envelope(content)
+    if (
+        parsed.metadata.get("source_commit") != materialized["source_commit"]
+        or parsed.metadata.get("source_blob") != materialized["source_blob"]
+        or parsed.metadata.get("content_sha256") != materialized["content_sha256"]
+    ):
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope metadata differs")
+    return parsed
 
 
 MAX_ARCHIVE_RECORD_BYTES = MAX_GIT_BLOB_BYTES

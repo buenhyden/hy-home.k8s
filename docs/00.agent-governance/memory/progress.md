@@ -16003,3 +16003,64 @@ section separating static from live evidence.
 - WORK-107 may now construct the exact 93-row terminal ledger and stable paths.
   It must preserve payload/provenance and dual recovery; WORK-108 remains the
   sole owner of mandatory outer artifact-ID backfill.
+
+## 2026-08-12 - WORK-107 stable Stage 98 rehome
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, archive, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #archive #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-107 tests-first implementation on WORK-106 commit `eaf4f21c`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-108 mandatory current artifact-ID backfill
+
+### Progress
+
+- Rehomed the exact 93 Stage 98 ArchiveEnvelope records through the reviewed
+  `MIG-0001` 14-field ledger without changing embedded payload or source
+  provenance. Every legacy path maps to one stable path and artifact identity.
+- The stable corpus is exactly 76 change leaves in 41
+  `changes/chg-####-<slug>` directories (`35` pairs, `2` plan-only, `4`
+  task-only) plus 17 typed tombstones with the closed `3/8/4/2` stage census.
+- Registered the accepted Archive Migration document family and reusable Stage
+  99 form, migrated archive-aware validators and consumers to the exact ledger
+  aliases, and kept current-document links at the Stage 98 collection index.
+
+### Evidence
+
+- Archive recovery 27/27, archive cutover 33/33, archive validation 44/44,
+  migration 58/58, strict-cutover 37/37, active-corpus migration 21/21,
+  retention 101/101, validation-lane 49/49, and RIA 94/94 passed.
+- Production cutover reports `records=93 historical_links=711
+  secret_clean=93`; migration check reports `moves=82 archives=50
+  sources=132`; representative stable recovery verifies `32887` bytes.
+- Registry self-test reports 132 cases, 69 profiles, and 32 templates; strict
+  transition reports 506 paths with zero uncovered or ambiguous routes.
+  Strict Markdown and links/owners pass, residue closure reports
+  `taxonomy_archived=50 current=0 findings=0`, and the synchronized aggregate
+  ended with `[PASS] repository quality gates passed`.
+- Stage 90 protected bytes remain unchanged. No provider, hosted, remote,
+  credential-bearing, Release-family, deployment, or live action was performed
+  or claimed.
+- Final lifecycle closure added an exact finite WORK-107 admission bound to the
+  WORK-106 commit, base/proposed registry blobs, canonical `MIG-0001` blob and
+  digest, 93 legacy envelopes, 93 rendered stable envelopes, and the archive
+  migration template. Missing or mutated authority, ledger, endpoint, or form
+  evidence fails closed. Lifecycle staged validation, its 754-case self-test,
+  and the 20-test archive lifecycle module all pass.
+- The final affected and staged lanes passed over 130 rename-aware paths; plain
+  `TMPDIR=/tmp pre-commit run` passed every applicable hook. The all-files lane
+  then passed over 132 paths with one repository-quality success marker and no
+  mutation. Post-run no-renames scope is `A95/D93/M37` across 225 logical
+  records, with zero unstaged or untracked paths.
+
+### Handoff
+
+- WORK-108 may backfill mandatory current-document outer artifact IDs only
+  while the exact stable 93-row ledger, WORK-105 accepted AD authority, and all
+  WORK-107 recovery/aggregate gates remain green.

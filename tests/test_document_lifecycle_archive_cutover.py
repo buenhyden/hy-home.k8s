@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import inspect
+import hashlib
 import json
 import os
 import re
@@ -37,6 +38,13 @@ from archive_cutover import (  # noqa: E402
     EXPECTED_ARCHIVE_PATHS,
 )
 import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
+from archive_recovery import (  # noqa: E402
+    WORK107_LEGACY_ARCHIVE_COMMIT,
+    WORK107_MIGRATION_PATH,
+    build_work107_migration_rows,
+    render_work107_migration_document,
+    render_work107_stable_envelope,
+)
 from document_contracts import load_registry  # noqa: E402
 from document_lifecycle import LifecycleDocument  # noqa: E402
 
@@ -329,6 +337,108 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
         self.assertFalse(self._admit(base_documents=base, proposed_documents=proposed))
 
     def test_snapshot_or_explicit_ref_mode_is_not_admitted(self):
+        self.assertFalse(self._admit(mode="snapshot"))
+        self.assertFalse(self._admit(mode="explicit-ref"))
+
+
+class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
+    registry_path = PurePosixPath(REGISTRY_PATH)
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    template_path = PurePosixPath(
+        "docs/99.templates/templates/common/archive-migration.template.md"
+    )
+    template_blob_oid = "dc3164eafd322e8139164cc16342de43fc3a72e8"  # pragma: allowlist secret
+
+    @staticmethod
+    def _git_blob_oid(content: bytes) -> str:
+        header = f"blob {len(content)}\0".encode("ascii")
+        return hashlib.sha1(header + content).hexdigest()  # noqa: S324
+
+    def _snapshot(self):
+        rows = build_work107_migration_rows(ROOT)
+        base: dict[PurePosixPath, str] = {}
+        proposed: dict[PurePosixPath, str] = {}
+        for row in rows:
+            legacy = PurePosixPath(str(row["legacy_path"]))
+            stable = PurePosixPath(str(row["stable_path"]))
+            legacy_oid = str(row["legacy_envelope_blob"])
+            legacy_bytes = VALIDATOR._blob_bytes(ROOT, legacy_oid)
+            stable_bytes = render_work107_stable_envelope(legacy_bytes, row)
+            base[legacy] = legacy_oid
+            proposed[stable] = self._git_blob_oid(stable_bytes)
+        migration = render_work107_migration_document(rows)
+        proposed[self.migration_path] = self._git_blob_oid(migration)
+        proposed[self.template_path] = self.template_blob_oid
+        return rows, base, proposed
+
+    def _admit(
+        self,
+        *,
+        mode: str = "staged",
+        base_commit: str = WORK107_LEGACY_ARCHIVE_COMMIT,
+        base_registry_oid: str = "fd842f60e801a39435600f35a27f22e1c659f1bd",  # pragma: allowlist secret
+        proposed_registry_oid: str = "7182c40ab8ee6b40173b408ec2c366314916f1e3",  # pragma: allowlist secret
+        base_blobs: dict[PurePosixPath, str] | None = None,
+        proposed_blobs: dict[PurePosixPath, str] | None = None,
+    ) -> frozenset[PurePosixPath]:
+        admission = getattr(VALIDATOR, "finite_work107_archive_rehome_paths", None)
+        self.assertTrue(callable(admission), "WORK-107 rehome admission is missing")
+        _rows, exact_base, exact_proposed = self._snapshot()
+        return admission(
+            root=ROOT,
+            mode=mode,
+            base_commit=base_commit,
+            base_registry_oid=base_registry_oid,
+            proposed_registry_oid=proposed_registry_oid,
+            base_blobs=base_blobs or exact_base,
+            proposed_blobs=proposed_blobs or exact_proposed,
+        )
+
+    def test_exact_staged_and_ci_rehome_consume_only_ledger_bijection(self):
+        rows, _base, _proposed = self._snapshot()
+        expected = {self.migration_path, self.template_path}
+        expected.update(PurePosixPath(str(row["legacy_path"])) for row in rows)
+        expected.update(PurePosixPath(str(row["stable_path"])) for row in rows)
+        self.assertEqual(self._admit(mode="staged"), frozenset(expected))
+        self.assertEqual(self._admit(mode="ci"), frozenset(expected))
+
+    def test_rehome_rejects_authority_or_endpoint_drift(self):
+        _rows, base, proposed = self._snapshot()
+        legacy = next(iter(base))
+        stable = next(path for path in proposed if path != self.migration_path)
+        for mutation in (
+            "wrong-base",
+            "wrong-base-registry",
+            "wrong-proposed-registry",
+            "missing-legacy",
+            "wrong-stable-blob",
+            "missing-migration",
+            "missing-template",
+        ):
+            with self.subTest(mutation=mutation):
+                mutated_base = dict(base)
+                mutated_proposed = dict(proposed)
+                kwargs: dict[str, object] = {
+                    "base_blobs": mutated_base,
+                    "proposed_blobs": mutated_proposed,
+                }
+                if mutation == "wrong-base":
+                    kwargs["base_commit"] = "0" * 40
+                elif mutation == "wrong-base-registry":
+                    kwargs["base_registry_oid"] = "0" * 40
+                elif mutation == "wrong-proposed-registry":
+                    kwargs["proposed_registry_oid"] = "f" * 40
+                elif mutation == "missing-legacy":
+                    mutated_base.pop(legacy)
+                elif mutation == "wrong-stable-blob":
+                    mutated_proposed[stable] = next(iter(base.values()))
+                elif mutation == "missing-migration":
+                    mutated_proposed.pop(self.migration_path)
+                elif mutation == "missing-template":
+                    mutated_proposed.pop(self.template_path)
+                self.assertFalse(self._admit(**kwargs))
+
+    def test_rehome_is_not_admitted_outside_staged_or_ci(self):
         self.assertFalse(self._admit(mode="snapshot"))
         self.assertFalse(self._admit(mode="explicit-ref"))
 

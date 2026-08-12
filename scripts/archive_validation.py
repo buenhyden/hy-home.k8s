@@ -30,9 +30,12 @@ if __package__:
         MAX_GIT_BATCH_BYTES,
         MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        WORK107_MIGRATION_DOCUMENT_SHA256,
+        WORK107_MIGRATION_PATH,
         _git_capture_bounded,
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
+        parse_work107_migration_document,
         parse_archive_envelope,
     )
 else:  # Direct import-only execution from scripts/.
@@ -41,9 +44,12 @@ else:  # Direct import-only execution from scripts/.
         MAX_GIT_BATCH_BYTES,
         MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        WORK107_MIGRATION_DOCUMENT_SHA256,
+        WORK107_MIGRATION_PATH,
         _git_capture_bounded,
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
+        parse_work107_migration_document,
         parse_archive_envelope,
     )
 
@@ -71,6 +77,7 @@ CURRENT_MARKDOWN_PROFILES = frozenset(
         "sdlc/postmortem",
         "content/reference",
         "content/archive",
+        "content/archive-migration",
         "governance/reference",
         "governance/memory",
         "governance/template-support",
@@ -373,7 +380,10 @@ def _repository_archive_records(
                 finally:
                     os.close(child_fd)
             elif stat.S_ISREG(metadata.st_mode):
-                if relative != ARCHIVE_INDEX.as_posix() and relative.endswith(".md"):
+                if (
+                    relative not in {ARCHIVE_INDEX.as_posix(), WORK107_MIGRATION_PATH}
+                    and relative.endswith(".md")
+                ):
                     records[relative] = read_record(directory_fd, name, relative)
             else:
                 diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-TYPE", relative))
@@ -472,6 +482,22 @@ def _reviewed_manifest_records(root: Path) -> dict[str, ReviewedManifestRecord]:
     if move_count != 82 or len(reviewed) != 50:
         raise RuntimeError("reviewed migration manifest counts differ")
     return reviewed
+
+
+def _work107_stable_rows(root: Path) -> dict[str, Mapping[str, object]]:
+    """Load the exact reviewed stable ledger when WORK-107 has been applied."""
+
+    path = root / WORK107_MIGRATION_PATH
+    if not path.exists():
+        return {}
+    try:
+        content = path.read_bytes()
+        if hashlib.sha256(content).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
+            raise RuntimeError("WORK-107 stable ledger digest differs")
+        validated = parse_work107_migration_document(content)
+    except (ArchiveContractError, OSError, RuntimeError, TypeError, ValueError) as exc:
+        raise RuntimeError("WORK-107 stable ledger is unavailable") from exc
+    return {str(row["stable_path"]): row for row in validated}
 
 
 def _read_repository_index(root: Path) -> str:
@@ -637,12 +663,32 @@ def validate_repository_archive(
     actual = frozenset(records)
     diagnostics = [*namespace_diagnostics, *inventory_diagnostics]
     try:
+        stable_rows = _work107_stable_rows(root)
+    except RuntimeError:
+        stable_rows = {}
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK107_MIGRATION_PATH)
+        )
+    legacy_to_stable = {
+        str(row["legacy_path"]): stable for stable, row in stable_rows.items()
+    }
+    try:
         reviewed_manifest = _reviewed_manifest_records(root)
     except (OSError, RuntimeError, TypeError, ValueError):
         reviewed_manifest = {}
         diagnostics.append(
             _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
         )
+    if stable_rows:
+        reviewed_manifest = {
+            legacy_to_stable.get(path, path): ReviewedManifestRecord(
+                target=legacy_to_stable.get(path, path),
+                original_path=row.original_path,
+                source_commit=row.source_commit,
+                source_blob=row.source_blob,
+            )
+            for path, row in reviewed_manifest.items()
+        }
     wdtc_paths = frozenset(namespaces.get("wdtc-execution", ()))
     if frozenset(reviewed_manifest) != wdtc_paths:
         diagnostics.append(
@@ -650,11 +696,19 @@ def validate_repository_archive(
         )
     if actual != declared:
         diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-PARITY", ARCHIVE_ROOT.as_posix()))
+    if stable_rows and frozenset(stable_rows) != actual:
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-PARITY", WORK107_MIGRATION_PATH)
+        )
     typed_records = tuple(
         ArchiveRecord(path=path, content=content)
         for path, content in sorted(records.items())
     )
-    record_report = validate_archive_records(root, typed_records)
+    record_report = validate_archive_records(
+        root,
+        typed_records,
+        stable_archive_paths=frozenset(stable_rows),
+    )
     diagnostics.extend(record_report.diagnostics)
     metadata_by_path: dict[str, Mapping[str, object]] = {}
     for record in typed_records:
@@ -670,6 +724,12 @@ def validate_repository_archive(
             or parsed.metadata.get("source_blob") != reviewed.source_blob
         ):
             diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-METADATA", record.path))
+        stable_row = stable_rows.get(record.path)
+        if stable_row is not None and any(
+            parsed.metadata.get(key) != stable_row[key]
+            for key in ("source_commit", "source_blob", "content_sha256")
+        ):
+            diagnostics.append(_diagnostic("ARCHIVE-MIGRATION-PROVENANCE", record.path))
         original_path = parsed.metadata.get("original_path")
         if isinstance(original_path, str):
             try:
@@ -1340,6 +1400,8 @@ def _batch_recover(
 def validate_archive_records(
     repository_root: str | Path,
     records: Sequence[ArchiveRecord] | object,
+    *,
+    stable_archive_paths: frozenset[str] = frozenset(),
 ) -> ArchiveValidationReport:
     """Validate envelope, provenance, integrity, mirror, and historical links."""
 
@@ -1441,7 +1503,10 @@ def validate_archive_records(
         except ArchiveContractError as exc:
             diagnostics.append(_diagnostic(exc.code, archive_path))
             continue
-        if archive_path != recovered.proposed_archive_path:
+        if (
+            archive_path != recovered.proposed_archive_path
+            and archive_path not in stable_archive_paths
+        ):
             diagnostics.append(_diagnostic("ARCHIVE-MIRROR-MISMATCH", archive_path))
 
         record_link_counts[archive_path] = 0
@@ -1524,8 +1589,11 @@ def validate_current_archive_authority(
     ):
         current = status_valid and document.status in {"active", "accepted"}
         pure_path = PurePosixPath(path)
+        migration_control = path == WORK107_MIGRATION_PATH
         archive_record_path = (
-            pure_path.is_relative_to(ARCHIVE_ROOT) and pure_path != ARCHIVE_INDEX
+            pure_path.is_relative_to(ARCHIVE_ROOT)
+            and pure_path != ARCHIVE_INDEX
+            and not migration_control
         )
         if current and (
             archive_record_path
@@ -1533,6 +1601,8 @@ def validate_current_archive_authority(
             or path in canonical_individuals
         ):
             diagnostics.append(_diagnostic("ARCHIVE-REACTIVATED", path))
+        if migration_control:
+            continue
         if not status_valid or not profile_valid or not markdown_valid or not current:
             continue
         if archive_record_path:

@@ -1564,7 +1564,10 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertIn('scope="affected:paths=1"', output)
 
     def test_docs_selector_executes_every_validator_and_propagates_path(self):
-        path = "docs/98.archive/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+        path = (
+            "docs/98.archive/changes/"
+            "chg-0004-archive-record-and-workspace-boundary/task.md"
+        )
         result, statuses, output, invoked = self._run([path])
 
         self.assertEqual(result, 0)

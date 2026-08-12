@@ -781,6 +781,28 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertLessEqual(git_calls, 24)
         self.assertLess(elapsed, 60.0)
 
+    def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
+        self,
+    ) -> None:
+        source = ROOT / archive_validation.WORK107_MIGRATION_PATH
+        with tempfile.TemporaryDirectory(prefix="archive-ledger-digest-") as temporary:
+            root = Path(temporary)
+            target = root / archive_validation.WORK107_MIGRATION_PATH
+            target.parent.mkdir(parents=True)
+            target.write_bytes(
+                source.read_bytes().replace(
+                    b"Reviewed stable Stage 98 rehome",
+                    b"Unreviewed stable Stage 98 rehome",
+                    1,
+                )
+            )
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                r"^WORK-107 stable ledger is unavailable$",
+            ):
+                archive_validation._work107_stable_rows(root)  # noqa: SLF001
+
     def test_repository_index_read_is_descriptor_bounded(self) -> None:
         with tempfile.TemporaryDirectory(prefix="archive-index-limit-") as temporary:
             root = Path(temporary)
@@ -956,6 +978,23 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(
             handoff.navigation_boundary,
             "docs/98.archive/README.md#document-index",
+        )
+
+    def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
+        aliases = self.validator._work107_stable_archive_aliases(self.context)
+
+        self.assertEqual(len(aliases), 93)
+        self.assertEqual(len(set(aliases.values())), 93)
+        self.assertTrue(
+            all(target in self.context.tracked_regular_paths for target in aliases.values())
+        )
+
+    def test_work107_archive_index_is_only_the_reviewed_stable_projection(self) -> None:
+        self.assertTrue(
+            self.validator._work107_stable_archive_index_source(
+                self.context,
+                PurePosixPath("docs/98.archive/README.md"),
+            )
         )
 
     def test_non_manifest_current_source_is_not_deferred(self) -> None:

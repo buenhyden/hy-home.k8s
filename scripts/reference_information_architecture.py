@@ -45,6 +45,12 @@ DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
+ARCHIVE_MIGRATION_PATH = Path(
+    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
+)
+ARCHIVE_MIGRATION_SHA256 = (
+    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+)
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
 )
@@ -233,7 +239,7 @@ GENERATOR_TRANSITION_RULE: Mapping[str, object] = MappingProxyType(
     {
         "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
         "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
-        "currentGeneratorOid": "395d8537531b3bcd51f08bc3fe2b68e50831a5cd",
+        "currentGeneratorOid": "66790bb31950be14fea0223e62b942105ab17fbd",
         "semanticMappings": (
             MappingProxyType(
                 {
@@ -2330,8 +2336,64 @@ def _proposed_path(
     return read_proposed_regular_file(root, path, runner)
 
 
+def _work107_archive_aliases(content: bytes) -> dict[str, str]:
+    """Parse the exact reviewed 93-row legacy-to-stable archive ledger."""
+
+    if hashlib.sha256(content).hexdigest() != ARCHIVE_MIGRATION_SHA256:
+        raise _GitError("archive migration document differs")
+    marker = b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if content.count(marker) != 1:
+        raise _GitError("archive migration document differs")
+    raw = content.split(marker, 1)[1].split(b"\n```", 1)[0]
+    try:
+        rows = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise _GitError("archive migration document differs") from exc
+    fields = (
+        "schema_version",
+        "migration_id",
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "legacy_archive_commit",
+        "legacy_envelope_blob",
+        "source_blob",
+        "content_sha256",
+        "record_kind",
+        "reason",
+    )
+    if not isinstance(rows, list) or len(rows) != 93:
+        raise _GitError("archive migration document differs")
+    aliases: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    for row in rows:
+        if (
+            not isinstance(row, Mapping)
+            or tuple(row) != fields
+            or row.get("schema_version") != 1
+            or row.get("migration_id") != "MIG-0001"
+            or row.get("action") != "moved"
+            or row.get("replacement") is not None
+            or not isinstance(row.get("legacy_path"), str)
+            or not _safe_git_path(row["legacy_path"])
+            or not isinstance(row.get("stable_path"), str)
+            or not _safe_git_path(row["stable_path"])
+            or row["legacy_path"] in aliases
+            or row["stable_path"] in stable_paths
+        ):
+            raise _GitError("archive migration document differs")
+        aliases[row["legacy_path"]] = row["stable_path"]
+        stable_paths.add(row["stable_path"])
+    return aliases
+
+
 def _taxonomy_transition_sources(
-    registry: Mapping[str, object], manifest: Mapping[str, object]
+    registry: Mapping[str, object],
+    manifest: Mapping[str, object],
+    migration_document: bytes,
 ) -> frozenset[str]:
     route_state = registry.get("routeState")
     manifest_state = manifest.get("state")
@@ -2373,6 +2435,9 @@ def _taxonomy_transition_sources(
         ):
             raise _GitError("taxonomy archive namespace differs")
         namespace_records[expected_id] = frozenset(raw["records"])
+    archive_aliases = _work107_archive_aliases(migration_document)
+    if set(archive_aliases.values()) != set().union(*namespace_records.values()):
+        raise _GitError("taxonomy archive namespace differs")
     entries = manifest.get("entries")
     if (
         set(manifest) != {"state", "sourceCommit", "entries"}
@@ -2424,7 +2489,8 @@ def _taxonomy_transition_sources(
             archive_targets.add(target)
     if (
         dispositions != Counter({"move-current": 82, "archive-unique": 50})
-        or archive_targets != set(namespace_records["wdtc-execution"])
+        or {archive_aliases.get(path) for path in archive_targets}
+        != set(namespace_records["wdtc-execution"])
     ):
         raise _GitError("taxonomy manifest membership differs")
     return frozenset(archive_sources)
@@ -2446,7 +2512,10 @@ def _load_taxonomy_archive_transition(
         ),
         field=DOCUMENT_TAXONOMY_MANIFEST_PATH.as_posix(),
     )
-    return _taxonomy_transition_sources(registry, manifest)
+    migration_document = _proposed_path(
+        root, ARCHIVE_MIGRATION_PATH, proposed_oid, runner
+    )
+    return _taxonomy_transition_sources(registry, manifest, migration_document)
 
 
 def _blob_sha1(payload: bytes) -> str:

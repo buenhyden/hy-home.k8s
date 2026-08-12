@@ -744,6 +744,21 @@
       ]
     },
     {
+      "profile": "content/archive-migration",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/98.archive/migrations/mig-9999-fixture.md",
+      "positiveSource": "---\ntitle: Migration Fixture\ntype: content/archive-migration\nstatus: accepted\nowner: platform\nupdated: 2026-07-12\nmigration_id: MIG-9999\n---\n\n# Migration Fixture\n\n## Overview\n\nFixture.\n\n## Migration Ledger\n\nFixture.\n\n## Recovery\n\nFixture.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
       "profile": "governance/reference",
       "mode": "authored",
       "applicability": "validate-document",
@@ -1048,6 +1063,21 @@
           "kind": "unclosed-fence",
           "expectedRuleIds": [
             "BODY-FENCE-UNCLOSED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/content/archive-migration",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/archive-migration.template.md",
+      "positiveSource": "---\ntitle: Migration Fixture\ntype: content/archive-migration\nstatus: accepted\nowner: platform\nupdated: 2026-07-12\nmigration_id: MIG-9999\n---\n\n# Migration Fixture\n\n## Overview\n\nFixture.\n\n## Migration Ledger\n\nFixture.\n\n## Recovery\n\nFixture.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
           ]
         }
       ]
@@ -1790,6 +1820,22 @@
       "path": "docs/03.specs/999-fixture/spec.md",
       "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "expectedRuleIds": []
+    },
+    {
+      "name": "valid-optional-frontmatter-key-absent",
+      "profile": "content/archive-migration",
+      "path": "docs/98.archive/migrations/mig-9999-fixture.md",
+      "source": "---\ntitle: Migration Fixture\ntype: content/archive-migration\nstatus: accepted\nowner: platform\nupdated: 2026-07-12\nmigration_id: MIG-9999\n---\n\n# Migration Fixture\n\n## Overview\n\nFixture.\n\n## Migration Ledger\n\nFixture.\n\n## Recovery\n\nFixture.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "wrong-optional-frontmatter-key-order",
+      "profile": "content/archive-migration",
+      "path": "docs/98.archive/migrations/mig-9999-fixture.md",
+      "source": "---\ntitle: Migration Fixture\ntype: content/archive-migration\nstatus: accepted\nowner: platform\nupdated: 2026-07-12\nmigration_id: MIG-9999\nartifact_id: MIG-9999\n---\n\n# Migration Fixture\n\n## Overview\n\nFixture.\n\n## Migration Ledger\n\nFixture.\n\n## Recovery\n\nFixture.\n",
+      "expectedRuleIds": [
+        "FM-KEY-ORDER"
+      ]
     },
     {
       "name": "duplicate-key",

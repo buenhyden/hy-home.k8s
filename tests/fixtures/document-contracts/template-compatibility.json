@@ -9,7 +9,7 @@
   "behaviorCases": [
     {
       "name": "registry-derived-form-inventory",
-      "expectedMarkdownForms": 28,
+      "expectedMarkdownForms": 29,
       "expectedNativeForms": 3
     },
     {

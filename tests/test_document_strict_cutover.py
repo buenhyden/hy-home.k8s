@@ -442,7 +442,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 "behaviorCases": [
                     {
                         "name": "registry-derived-form-inventory",
-                        "expectedMarkdownForms": 28,
+                        "expectedMarkdownForms": 29,
                         "expectedNativeForms": 3,
                     },
                     {
@@ -502,7 +502,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
         profiles = registry["profiles"]
         profile_ids = {profile["id"] for profile in profiles}
-        self.assertEqual(len(profile_ids), 67)
+        self.assertEqual(len(profile_ids), 69)
         self.assertTrue(
             {
                 "sdlc/prd",
@@ -1153,7 +1153,13 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                     expected_sha256,
                 )
 
-    def test_work105_stage98_tree_remains_identical(self) -> None:
+    def test_work107_stage98_rehome_is_exact_93_to_93(self) -> None:
+        from scripts.archive_recovery import (
+            WORK107_MIGRATION_PATH,
+            parse_work107_migration_document,
+            validate_work107_migration_rows,
+        )
+
         result = subprocess.run(
             ["git", "rev-parse", f"{WORK105_BASE_COMMIT}:docs/98.archive"],
             cwd=REPOSITORY_ROOT,
@@ -1167,14 +1173,32 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
         base_inventory = _base_blob_inventory("docs/98.archive")
         staged_inventory = _staged_blob_inventory("docs/98.archive")
-        self.assertEqual(staged_inventory, base_inventory)
-        self.assertEqual(_worktree_regular_paths("docs/98.archive"), set(base_inventory))
-        for relative in base_inventory:
+        migration_path = REPOSITORY_ROOT / WORK107_MIGRATION_PATH
+        rows = validate_work107_migration_rows(
+            REPOSITORY_ROOT,
+            parse_work107_migration_document(_staged_bytes(migration_path)),
+        )
+        legacy_paths = {str(row["legacy_path"]) for row in rows}
+        stable_paths = {str(row["stable_path"]) for row in rows}
+        self.assertEqual(len(legacy_paths), 93)
+        self.assertEqual(len(stable_paths), 93)
+        self.assertEqual(
+            set(base_inventory),
+            legacy_paths | {"docs/98.archive/README.md"},
+        )
+        expected_current = stable_paths | {
+            "docs/98.archive/README.md",
+            WORK107_MIGRATION_PATH,
+        }
+        self.assertEqual(set(staged_inventory), expected_current)
+        self.assertEqual(
+            _worktree_regular_paths("docs/98.archive"), expected_current
+        )
+        self.assertFalse(legacy_paths & set(staged_inventory))
+        for relative in expected_current:
             path = REPOSITORY_ROOT / relative
             with self.subTest(path=relative):
-                _assert_staged_and_worktree_bytes(
-                    path, _work105_base_bytes(path)
-                )
+                self.assertEqual(_staged_bytes(path), path.read_bytes())
 
     def test_work105_stage98_partial_index_worktree_divergence_is_rejected(
         self,

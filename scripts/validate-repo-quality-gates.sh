@@ -1156,7 +1156,7 @@ if template_compatibility.get("retiredFields") != sorted(RETIRED_TEMPLATE_DEBT_F
 expected_behavior_cases = [
     {
         "name": "registry-derived-form-inventory",
-        "expectedMarkdownForms": 28,
+        "expectedMarkdownForms": 29,
         "expectedNativeForms": 3,
     },
     {
@@ -1311,9 +1311,9 @@ if expected_noncanonical_diagnostic not in noncanonical_errors:
     )
 markdown_form_count = sum(path.suffix == ".md" for path in physical_form_paths)
 native_form_count = len(physical_form_paths) - markdown_form_count
-if (markdown_form_count, native_form_count) != (28, 3):
+if (markdown_form_count, native_form_count) != (29, 3):
     fail(
-        "registry-derived form inventory must contain 28 Markdown and three native forms: "
+        "registry-derived form inventory must contain 29 Markdown and three native forms: "
         f"actual={(markdown_form_count, native_form_count)}"
     )
 
@@ -1420,6 +1420,9 @@ def canonical_form_content_errors(
     archive_envelope_marker = (
         "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
     )
+    archive_migration_marker = (
+        "<!-- archive-migration-ledger:v1 format=json -->"
+    )
     for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
         for marker in retired_markers:
             if marker in source:
@@ -1431,7 +1434,11 @@ def canonical_form_content_errors(
             continue
         for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
             comment = match.group(0)
-            if comment in {markdownlint_directive, archive_envelope_marker} or author_comment.fullmatch(comment):
+            if comment in {
+                markdownlint_directive,
+                archive_envelope_marker,
+                archive_migration_marker,
+            } or author_comment.fullmatch(comment):
                 continue
             errors.append(f"{form_path} contains a non-author form comment")
 
@@ -1533,6 +1540,26 @@ if expected_archive_marker_diagnostic not in canonical_form_content_errors(
     fail(
         "canonical form content mutation did not reject a drifted archive "
         "envelope marker with the stable diagnostic"
+    )
+
+archive_migration_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/common/archive-migration.template.md"
+)
+archive_migration_marker_mutation = dict(form_sources)
+archive_migration_marker_mutation[archive_migration_form] = (
+    archive_migration_marker_mutation[archive_migration_form].replace(
+        "archive-migration-ledger:v1", "archive-migration-ledger:v2", 1
+    )
+)
+expected_archive_migration_marker_diagnostic = (
+    f"{archive_migration_form} contains a non-author form comment"
+)
+if expected_archive_migration_marker_diagnostic not in canonical_form_content_errors(
+    archive_migration_marker_mutation
+):
+    fail(
+        "canonical form content mutation did not reject a drifted archive "
+        "migration marker with the stable diagnostic"
     )
 
 prompt_profile_id, prompt_form = sorted(

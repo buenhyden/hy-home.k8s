@@ -1225,8 +1225,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             for row in manifest["entries"]
             if row["disposition"] == "archive-unique"
         ]
+        archive_aliases = self.validator._work107_archive_aliases(
+            (REPOSITORY_ROOT / self.validator.WORK107_MIGRATION_PATH).read_bytes()
+        )
         archive_payloads = {
-            row["target"]: (REPOSITORY_ROOT / row["target"]).read_bytes()
+            archive_aliases[row["target"]]: (
+                REPOSITORY_ROOT / archive_aliases[row["target"]]
+            ).read_bytes()
             for row in archive_rows
         }
         move_rows = [
@@ -1265,6 +1270,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             index,
             dict(self.taxonomy_source_tree_fixture),
             dict(self.taxonomy_archive_recoveries_fixture),
+            archive_aliases,
         )
 
     def test_taxonomy_transition_closes_exact_manifest_archive_set(self) -> None:
@@ -1276,6 +1282,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             index,
             source_tree,
             archive_recoveries,
+            archive_aliases,
         ) = self.taxonomy_transition_fixture()
         rows = self.validator._build_taxonomy_transition_closure(
             registry,
@@ -1286,6 +1293,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             index,
             source_tree,
             archive_recoveries,
+            archive_aliases,
         )
         self.assertEqual(len(rows), 100)
         self.assertEqual(
@@ -1313,6 +1321,18 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             )
         )
 
+    def test_work107_archive_aliases_require_exact_migration_document(self) -> None:
+        migration = (
+            REPOSITORY_ROOT / self.validator.WORK107_MIGRATION_PATH
+        ).read_bytes()
+        aliases = self.validator._work107_archive_aliases(migration)
+        self.assertEqual(len(aliases), 93)
+        self.assertEqual(len(set(aliases.values())), 93)
+
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            self.validator._work107_archive_aliases(migration + b"\n")
+        self.assertEqual(raised.exception.code, "CLOSURE-TAXONOMY-NAMESPACE")
+
     def test_taxonomy_transition_rejects_manifest_membership_drift(self) -> None:
         for mutation, expected in (
             ("missing", "CLOSURE-TAXONOMY-MANIFEST-COUNT"),
@@ -1329,6 +1349,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     index,
                     source_tree,
                     archive_recoveries,
+                    archive_aliases,
                 ) = self.taxonomy_transition_fixture()
                 archive_rows = [
                     row
@@ -1347,7 +1368,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     )
                     namespace["records"].pop()
                 else:
-                    payloads.pop(archive_rows[0]["target"])
+                    payloads.pop(archive_aliases[archive_rows[0]["target"]])
                 with self.assertRaises(self.validator.ClosureError) as raised:
                     self.validator._build_taxonomy_transition_closure(
                         registry,
@@ -1358,6 +1379,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         index,
                         source_tree,
                         archive_recoveries,
+                        archive_aliases,
                     )
                 self.assertEqual(raised.exception.code, expected)
 
@@ -1372,13 +1394,14 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             index,
             source_tree,
             archive_recoveries,
+            archive_aliases,
         ) = self.taxonomy_transition_fixture()
         archive_row = next(
             row
             for row in manifest["entries"]
             if row["disposition"] == "archive-unique"
         )
-        archive_path = archive_row["target"]
+        archive_path = archive_aliases[archive_row["target"]]
         parsed = self.validator.parse_archive_envelope(payloads[archive_path])
         forged_payload = parsed.payload + b"\ncoherent-forgery\n"
         forged_digest = hashlib.sha256(forged_payload).hexdigest().encode("ascii")
@@ -1398,6 +1421,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 index,
                 source_tree,
                 archive_recoveries,
+                archive_aliases,
             )
         self.assertEqual(raised.exception.code, "CLOSURE-TAXONOMY-BLOB")
 
@@ -1414,6 +1438,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     index,
                     source_tree,
                     archive_recoveries,
+                    archive_aliases,
                 ) = self.taxonomy_transition_fixture()
                 frozen_sources = {
                     row["path"]
@@ -1442,6 +1467,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         index,
                         source_tree,
                         archive_recoveries,
+                        archive_aliases,
                     )
                 self.assertIn(
                     raised.exception.code,
@@ -1457,6 +1483,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             index,
             source_tree,
             archive_recoveries,
+            archive_aliases,
         ) = self.taxonomy_transition_fixture()
         plan_rows = [
             row
@@ -1481,6 +1508,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 index,
                 source_tree,
                 archive_recoveries,
+                archive_aliases,
             )
         self.assertEqual(raised.exception.code, "CLOSURE-TAXONOMY-MOVE")
 
@@ -1530,6 +1558,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     index,
                     source_tree,
                     archive_recoveries,
+                    archive_aliases,
                 ) = self.taxonomy_transition_fixture()
                 archive_row = next(
                     row
@@ -1554,6 +1583,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         index,
                         source_tree,
                         archive_recoveries,
+                        archive_aliases,
                     )
                 self.assertEqual(raised.exception.code, expected)
 
@@ -3297,7 +3327,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
 
     def test_spec038_registry_authority_is_exact_tracked_stage_zero(self) -> None:
         path = self.validator.REGISTRY_PATH
-        base_blob, current_blob = self.validator.WORK105_REGISTRY_BLOBS
+        base_blob, work105_blob = self.validator.WORK105_REGISTRY_BLOBS
+        current_blob = self.validator.WORK107_REGISTRY_BLOB
         self.assertEqual(
             subprocess.run(
                 [
@@ -3322,6 +3353,17 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ).stdout.strip(),
             current_blob,
         )
+        self.assertEqual(
+            subprocess.run(
+                ["git", "rev-parse", f"HEAD:{path}"],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip(),
+            work105_blob,
+        )
+        self.assertNotEqual(work105_blob, current_blob)
         listed = f"{path}\0".encode()
         staged = f"100644 {'a' * 40} 0\t{path}\0".encode()
         cases = (

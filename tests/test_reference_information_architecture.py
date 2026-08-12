@@ -181,6 +181,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("docs/90.references/data/README.md"),
             ria.REGISTRY_PATH,
             ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
+            ria.ARCHIVE_MIGRATION_PATH,
         )
         for path in paths:
             destination = root / path
@@ -1375,7 +1376,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             {
                 "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
                 "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
-                "currentGeneratorOid": "395d8537531b3bcd51f08bc3fe2b68e50831a5cd",
+                "currentGeneratorOid": "66790bb31950be14fea0223e62b942105ab17fbd",
                 "semanticMappings": (
                     {
                         "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",
@@ -1570,6 +1571,10 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             target = candidate / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH
             target.write_bytes(target.read_bytes() + b"\n")
 
+        def mutate_archive_migration(candidate: Path) -> None:
+            target = candidate / ria.ARCHIVE_MIGRATION_PATH
+            target.write_bytes(target.read_bytes() + b"\n")
+
         mutations = (
             ("output-bytes", mutate_output),
             ("generated-bytes", mutate_generated_content),
@@ -1577,6 +1582,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ("output-pin", mutate_output_pin),
             ("terminal-state", mutate_terminal_state),
             ("future-manifest", mutate_future_manifest),
+            ("future-archive-migration", mutate_archive_migration),
         )
         for name, mutation in mutations:
             with self.subTest(case=name):
@@ -3561,14 +3567,23 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
+        migration_document = (
+            REPOSITORY_ROOT / ria.ARCHIVE_MIGRATION_PATH
+        ).read_bytes()
         self.assertEqual(
-            len(ria._taxonomy_transition_sources(registry, manifest)),  # noqa: SLF001
+            len(
+                ria._taxonomy_transition_sources(  # noqa: SLF001
+                    registry, manifest, migration_document
+                )
+            ),
             50,
         )
         registry["routeState"] = "terminal"
         manifest["state"] = "terminal"
         self.assertEqual(
-            ria._taxonomy_transition_sources(registry, manifest),  # noqa: SLF001
+            ria._taxonomy_transition_sources(  # noqa: SLF001
+                registry, manifest, migration_document
+            ),
             frozenset(),
         )
 

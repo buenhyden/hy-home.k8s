@@ -137,6 +137,17 @@ def load_validator():
 
 
 class ActiveCorpusMigrationTests(unittest.TestCase):
+    def test_work107_stable_archive_aliases_are_exact_and_complete(self) -> None:
+        validator = load_validator()
+        aliases = validator._work107_stable_archive_aliases(ROOT)
+
+        self.assertEqual(len(aliases), 93)
+        self.assertEqual(len(set(aliases.values())), 93)
+        for legacy, stable in aliases.items():
+            with self.subTest(legacy=legacy):
+                self.assertFalse((ROOT / legacy).exists())
+                self.assertTrue((ROOT / stable).is_file())
+
     def test_all_six_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
         home = pathlib.Path(pwd.getpwuid(os.getuid()).pw_dir)

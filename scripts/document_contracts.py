@@ -1953,8 +1953,18 @@ def _document_contract_projection(
                         actual=repr(sorted(invalid_create_states)),
                     )
                 )
-            if admission.create.mode == "states" and admission.create.states != (
-                "draft",
+            migration_control_creation = (
+                profile_id == "content/archive-migration"
+                and admission.create.mode == "states"
+                and admission.create.states == ("accepted",)
+                and admission.profile_ids == ("content/archive-migration",)
+                and admission.create.evidence_predicate_id is None
+                and not admission.baseline_paths
+            )
+            if (
+                admission.create.mode == "states"
+                and admission.create.states != ("draft",)
+                and not migration_control_creation
             ):
                 diagnostics.append(
                     _diagnostic(

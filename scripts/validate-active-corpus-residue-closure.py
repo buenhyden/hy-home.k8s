@@ -22,13 +22,19 @@ try:
     from scripts.archive_recovery import (
         ArchiveContractError,
         RecoveryResult,
+        WORK107_MIGRATION_DOCUMENT_SHA256,
+        WORK107_MIGRATION_PATH,
         parse_archive_envelope,
+        parse_work107_migration_document,
     )
 except ModuleNotFoundError:  # Direct execution from scripts/.
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
         RecoveryResult,
+        WORK107_MIGRATION_DOCUMENT_SHA256,
+        WORK107_MIGRATION_PATH,
         parse_archive_envelope,
+        parse_work107_migration_document,
     )
 
 
@@ -149,6 +155,9 @@ WORK105_BASE_COMMIT = (
 WORK105_REGISTRY_BLOBS = (
     "fc9ba039906ef240d076de5eeb6c584b681ae09f",  # pragma: allowlist secret
     "fd842f60e801a39435600f35a27f22e1c659f1bd",  # pragma: allowlist secret
+)
+WORK107_REGISTRY_BLOB = (
+    "7182c40ab8ee6b40173b408ec2c366314916f1e3"  # pragma: allowlist secret
 )
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
@@ -668,6 +677,9 @@ ADR_ROOT = "docs/02.architecture/decisions"
 SPEC_ROOT = "docs/03.specs"
 ARCHIVE_PLAN_ROOT = "docs/98.archive/04.execution/plans"
 ARCHIVE_TASK_ROOT = "docs/98.archive/04.execution/tasks"
+ARCHIVE_CHANGES_ROOT = "docs/98.archive/changes"
+ARCHIVE_TOMBSTONES_ROOT = "docs/98.archive/tombstones"
+ARCHIVE_MIGRATIONS_ROOT = "docs/98.archive/migrations"
 SOURCE_PATHS = (
     "docs/90.references/data/active-corpus-retention-census.json",
     "docs/90.references/data/active-corpus-eligibility-ledger.json",
@@ -688,6 +700,9 @@ INVENTORY_ROOTS = (
     SPEC_ROOT,
     ARCHIVE_PLAN_ROOT,
     ARCHIVE_TASK_ROOT,
+    ARCHIVE_CHANGES_ROOT,
+    ARCHIVE_TOMBSTONES_ROOT,
+    ARCHIVE_MIGRATIONS_ROOT,
 )
 MANDATORY_OWNER_PATHS = {
     SPEC_ROOT: frozenset(
@@ -1459,7 +1474,10 @@ def _load_registry_authority(
 ) -> Mapping[str, Any]:
     index = _registry_inventory(root, runner)
     payload = _proposed_or_index_bytes(root, REGISTRY_PATH, index, runner)
-    if index.get(REGISTRY_PATH) != WORK105_REGISTRY_BLOBS[1]:
+    if index.get(REGISTRY_PATH) not in {
+        WORK105_REGISTRY_BLOBS[1],
+        WORK107_REGISTRY_BLOB,
+    }:
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     registry = _load_json_bytes(payload, REGISTRY_PATH)
     if not isinstance(registry, Mapping):
@@ -1539,6 +1557,38 @@ def _validate_reviewed_move_mapping(
         raise ClosureError("CLOSURE-TAXONOMY-MOVE", TAXONOMY_MANIFEST_PATH)
 
 
+def _work107_archive_aliases(content: bytes) -> dict[str, str]:
+    """Load the exact reviewed legacy-to-stable Stage 98 bijection."""
+
+    if hashlib.sha256(content).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
+    try:
+        rows = parse_work107_migration_document(content)
+    except ArchiveContractError as exc:
+        raise ClosureError(
+            "CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH
+        ) from exc
+    aliases: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    for row in rows:
+        legacy_path = row.get("legacy_path")
+        stable_path = row.get("stable_path")
+        if (
+            not is_safe_path(legacy_path)
+            or not is_safe_path(stable_path)
+            or legacy_path in aliases
+            or stable_path in stable_paths
+        ):
+            raise ClosureError(
+                "CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH
+            )
+        aliases[str(legacy_path)] = str(stable_path)
+        stable_paths.add(str(stable_path))
+    if len(aliases) != 93:
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
+    return aliases
+
+
 def _build_taxonomy_transition_closure(
     registry: Mapping[str, Any],
     manifest: Mapping[str, Any],
@@ -1548,6 +1598,7 @@ def _build_taxonomy_transition_closure(
     archive_index: Mapping[str, str],
     source_tree: Mapping[str, str],
     archive_recoveries: Mapping[str, RecoveryResult],
+    archive_aliases: Mapping[str, str],
 ) -> list[dict[str, Any]]:
     """Reconcile the frozen ACER residue snapshot with exact WDTC archives."""
 
@@ -1657,7 +1708,16 @@ def _build_taxonomy_transition_closure(
     if set(archive_recoveries) != archive_sources:
         raise ClosureError("CLOSURE-TAXONOMY-BLOB", TAXONOMY_MANIFEST_PATH)
 
-    archive_targets = {entry["target"] for entry in archive_entries}
+    if (
+        len(archive_aliases) != 93
+        or len(set(archive_aliases.values())) != 93
+        or any(
+            not is_safe_path(legacy) or not is_safe_path(stable)
+            for legacy, stable in archive_aliases.items()
+        )
+    ):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
+    archive_targets = {archive_aliases.get(entry["target"]) for entry in archive_entries}
     if archive_targets != set(namespace["records"]):
         raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
 
@@ -1689,7 +1749,8 @@ def _build_taxonomy_transition_closure(
     rows: list[dict[str, Any]] = []
     for entry in sorted(archive_entries, key=lambda row: row["source"]):
         source = entry["source"]
-        target = entry["target"]
+        legacy_target = entry["target"]
+        target = archive_aliases.get(legacy_target)
         expected_target = source.replace("docs/", "docs/98.archive/", 1)
         kind = (
             "plan"
@@ -1698,7 +1759,7 @@ def _build_taxonomy_transition_closure(
             if source.startswith(f"{TASK_ROOT}/")
             else None
         )
-        if kind is None or target != expected_target:
+        if kind is None or legacy_target != expected_target or not isinstance(target, str):
             raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", source)
         if source in current_paths:
             raise ClosureError("CLOSURE-TAXONOMY-SOURCE", source)
@@ -2804,6 +2865,7 @@ def _build_migrations(
     current_paths: set[str],
     archive_paths: set[str],
     transition_archive_paths: frozenset[str] = frozenset(),
+    archive_aliases: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     candidates = eligibility.get("candidateRows")
     batches = migration.get("batches")
@@ -2836,12 +2898,17 @@ def _build_migrations(
     candidate_paths = {
         row.get("path") for row in candidates if isinstance(row, Mapping)
     }
+    aliases = dict(archive_aliases or {})
+    stable_to_legacy = {stable: legacy for legacy, stable in aliases.items()}
+    if len(stable_to_legacy) != len(aliases):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
     observed_candidate_archives = {
-        archive
+        stable_to_legacy.get(archive, archive)
         for archive in archive_paths
         if archive not in transition_archive_paths
-        if archive.replace("docs/98.archive/04.execution/", "docs/04.execution/")
-        in candidate_paths
+        if stable_to_legacy.get(archive, archive).replace(
+            "docs/98.archive/04.execution/", "docs/04.execution/"
+        ) in candidate_paths
     }
     if observed_candidate_archives != expected_candidate_archives:
         raise ClosureError("CLOSURE-MIGRATION-ROGUE")
@@ -2849,13 +2916,15 @@ def _build_migrations(
     for path, source in sorted(eligible.items()):
         batch, record = result_by_path[path]
         archive_path = record.get("archivePath")
+        if not isinstance(archive_path, str):
+            raise ClosureError("CLOSURE-MIGRATION-SCOPE", path)
+        indexed_archive_path = aliases.get(archive_path, archive_path)
         if path in current_paths:
             raise ClosureError("CLOSURE-MIGRATION-SOURCE", path)
-        if archive_path not in archive_paths:
+        if indexed_archive_path not in archive_paths:
             raise ClosureError("CLOSURE-MIGRATION-ARCHIVE", archive_path)
         if not (
             path.startswith((f"{PLAN_ROOT}/", f"{TASK_ROOT}/"))
-            and isinstance(archive_path, str)
             and archive_path.startswith(
                 (f"{ARCHIVE_PLAN_ROOT}/", f"{ARCHIVE_TASK_ROOT}/")
             )
@@ -3297,10 +3366,16 @@ def build_observed(
     task_paths = _authored_stage04(inventories[TASK_ROOT][0], TASK_ROOT)
     archive_paths = {
         path
-        for scope in (ARCHIVE_PLAN_ROOT, ARCHIVE_TASK_ROOT)
+        for scope in (ARCHIVE_CHANGES_ROOT, ARCHIVE_TOMBSTONES_ROOT)
         for path in inventories[scope][0]
         if path.endswith(".md")
     }
+    migration_payload = inventory_payloads.get(WORK107_MIGRATION_PATH)
+    if not isinstance(migration_payload, bytes):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
+    archive_aliases = _work107_archive_aliases(migration_payload)
+    if set(archive_paths) != set(archive_aliases.values()):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
     raw_taxonomy_entries = taxonomy_manifest.get("entries")
     if not isinstance(raw_taxonomy_entries, list) or any(
         not isinstance(entry, Mapping) or not is_safe_path(entry.get("source"))
@@ -3332,6 +3407,7 @@ def build_observed(
         combined_index,
         taxonomy_source_tree,
         taxonomy_archive_recoveries,
+        archive_aliases,
     )
     taxonomy_sources = frozenset(row["path"] for row in taxonomy_transition)
     taxonomy_archives = frozenset(
@@ -3392,6 +3468,7 @@ def build_observed(
         {row["path"] for row in current},
         archive_paths,
         taxonomy_archives,
+        archive_aliases,
     )
 
     adr_paths = [

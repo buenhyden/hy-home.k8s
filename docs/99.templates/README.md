@@ -31,7 +31,8 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 ### Form Family Inventory
 
 - **Common forms**: README profile, governance reference, durable reference,
-  archive record, memory, progress entry를 위한 Markdown form이다.
+  archive record, archive migration control, memory, progress entry를 위한
+  Markdown form이다.
 - **Core SDLC forms**: PRD, optional SRS, optional Interface Requirement, AD,
   ADR, Spec, Plan, Task의 단계별 책임과
   handoff를 기록한다.

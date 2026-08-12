@@ -38,16 +38,22 @@ import yaml
 try:
     from archive_recovery import (
         ArchiveContractError,
+        WORK107_MIGRATION_PATH,
         parse_archive_envelope,
+        parse_work107_migration_document,
         recover_git_blob,
         render_archive_envelope,
+        validate_work107_migration_rows,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_recovery import (
         ArchiveContractError,
+        WORK107_MIGRATION_PATH,
         parse_archive_envelope,
+        parse_work107_migration_document,
         recover_git_blob,
         render_archive_envelope,
+        validate_work107_migration_rows,
     )
 
 
@@ -432,6 +438,8 @@ def _archive_envelope_is_exact(
     row: Mapping[str, Any],
     target: PurePosixPath,
     expected_commit: str | None,
+    *,
+    reviewed_archive_path: PurePosixPath | None = None,
 ) -> bool:
     try:
         archive_bytes = (root / target).read_bytes()
@@ -444,7 +452,8 @@ def _archive_envelope_is_exact(
         recovered = recover_git_blob(root, str(row["source"]), metadata_commit)
         if (
             recovered.source_blob != row.get("sourceBlob")
-            or recovered.proposed_archive_path != target.as_posix()
+            or recovered.proposed_archive_path
+            != (reviewed_archive_path or target).as_posix()
         ):
             return False
         parse_archive_envelope(archive_bytes, expected=recovered)
@@ -453,8 +462,27 @@ def _archive_envelope_is_exact(
     return True
 
 
+def _work107_stable_archive_aliases(root: Path) -> dict[str, PurePosixPath]:
+    """Return only the exact reviewed WORK-107 legacy-to-stable bijection."""
+
+    migration_path = root / WORK107_MIGRATION_PATH
+    try:
+        rows = parse_work107_migration_document(migration_path.read_bytes())
+        reviewed = validate_work107_migration_rows(root, rows)
+        aliases = {
+            str(row["legacy_path"]): _safe_path(row["stable_path"])
+            for row in reviewed
+        }
+    except (ArchiveContractError, MigrationAbort, OSError, KeyError, TypeError, ValueError):
+        return {}
+    if len(aliases) != 93:
+        return {}
+    return aliases
+
+
 def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit: str | None) -> tuple[str, ...]:
     diagnostics: list[str] = []
+    stable_archive_aliases = _work107_stable_archive_aliases(root)
     sources: set[str] = set()
     targets: set[str] = set()
     work_units: dict[str, set[str]] = {}
@@ -493,7 +521,8 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
                 if pinned_blob != expected_blob:
                     diagnostics.append(f"MIGRATION-SOURCE-BLOB:{source_name}")
         source_mode = _path_mode(root / source)
-        target_mode = _path_mode(root / target)
+        endpoint_target = stable_archive_aliases.get(target_name, target)
+        target_mode = _path_mode(root / endpoint_target)
         source_exists = source_mode is not None
         target_exists = target_mode is not None
         if source_exists and target_exists:
@@ -501,7 +530,7 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
         elif not source_exists and not target_exists:
             diagnostics.append(f"MIGRATION-MISSING-ENDPOINT:{source_name}")
         else:
-            active_path = source if source_exists else target
+            active_path = source if source_exists else endpoint_target
             active_mode = source_mode if source_exists else target_mode
             if (
                 active_mode is None
@@ -511,7 +540,13 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
             ):
                 diagnostics.append(f"MIGRATION-ENDPOINT-TYPE:{active_path.as_posix()}")
             elif not source_exists and disposition == "archive-unique":
-                if not _archive_envelope_is_exact(root, row, target, commit):
+                if not _archive_envelope_is_exact(
+                    root,
+                    row,
+                    endpoint_target,
+                    commit,
+                    reviewed_archive_path=target,
+                ):
                     diagnostics.append(f"MIGRATION-ARCHIVE-ENVELOPE:{source_name}")
             elif source_exists:
                 try:
@@ -521,8 +556,10 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
                 else:
                     if active_blob != expected_blob:
                         diagnostics.append(f"MIGRATION-CHANGED-SOURCE:{source_name}")
-        if _ancestor_is_file(root, target):
-            diagnostics.append(f"MIGRATION-TARGET-ANCESTOR:{target_name}")
+        if _ancestor_is_file(root, endpoint_target):
+            diagnostics.append(
+                f"MIGRATION-TARGET-ANCESTOR:{endpoint_target.as_posix()}"
+            )
         if disposition == "move-current":
             match = re.fullmatch(r"Spec-([0-9]{3})", str(row.get("workUnit")))
             target_match = MOVE_TARGET.fullmatch(target_name)

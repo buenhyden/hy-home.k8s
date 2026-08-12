@@ -107,6 +107,21 @@ class MigrationTests(unittest.TestCase):
         }
         self.assertEqual(len(move_units), 41)
 
+    def test_work107_stable_archive_paths_preserve_reviewed_manifest_endpoints(self):
+        manifest = json.loads(
+            (ROOT / "scripts/document-taxonomy-migration.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            self.tool.validate_manifest(
+                ROOT,
+                manifest["entries"],
+                manifest["sourceCommit"],
+            ),
+            (),
+        )
+
     def test_reviewed_manifest_snapshot_binds_clean_stage_zero_index(self):
         snapshot = self.tool.load_reviewed_manifest_snapshot(ROOT)
         self.assertEqual(snapshot.document.source_commit, self.tool.EXPECTED_SOURCE_COMMIT)
