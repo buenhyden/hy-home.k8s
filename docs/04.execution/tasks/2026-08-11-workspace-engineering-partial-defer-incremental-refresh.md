@@ -44,7 +44,7 @@ or remote payloads.
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Done | Rows 006, 026, 028, and 032 have current official-source and exact repository-static reconciliation; all four remain `Partial` and runtime/effectiveness evidence remains `DEFER`. | Four appended research-owner sections, guarded proposal, durable progress, task-3 report, logical commit |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Done | Rows 008, 009, and 025 have reviewed current-source and exact repository-static reconciliation; all remain `Partial`, row 009 remains static-only, and runtime evidence remains `DEFER`. | Appended research-owner section, guarded proposal, durable progress, task-4 report, logical commit |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Done | Rows 014 and 020 retain `Partial` / `exclude-duplicate`; current published-page provenance and exact Guide static contracts are reconciled without changing DOC-G1/G2/G3 or inferring reader effectiveness. | Two appended research-owner sections, guarded proposal, task-local progress, task-5 report, logical commit |
-| [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | In Progress | Exact identity preflight and nine read-only queries completed; the one-time reviewed local OIDC unavailable recovery is reconciled, and research authoring remains in progress. | Sanitized guarded summary, Plan recovery contract, checker self-test/review, existing report owner, proposal, Task evidence |
+| [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Done | Rows 022, 023, and 033 have a dated CI/CD section reconciling official GitHub REST contracts, the sanitized hosted observations, and exact local selectors; all three remain `Partial` with hosted-runtime, product-validation, and OIDC evidence `DEFER`. | Dated CI/CD report section, sanitized observation summary, successor checker self-test, Plan recovery contract, Task evidence |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | VAL-PDRR-003, VAL-PDRR-006, VAL-PDRR-008 | Reconcile shared WER projections atomically | assigned worker | Queued | Not executed. | Shared README, source/claim ledger, scope index, Task evidence |
 | [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and hand off branch finishing | primary agent | Queued | Not executed. | Final reviews, gates, residue proof, lifecycle evidence |
 
@@ -338,7 +338,7 @@ occurred.
 
 ### PDRR-005 CI/CD, GitHub Actions, QA, and V&V Refresh Evidence
 
-PDRR-005 is in progress on 2026-08-12. The required clean starting HEAD was
+PDRR-005 was executed and closed on 2026-08-12. The clean starting HEAD was
 `bf01d4b316d26e42eb6556e8b315df3ad2668eb6`; the proposal and summary paths
 were absent and not symlinks. Exact workstream RED and remote RED each exited
 1 only for their missing guarded file. An independent pre-remote security
@@ -371,8 +371,42 @@ repository with nine unique approved observations: eight `ok`, and OIDC
 `2652e4027e2d740fb3b1208990f627a21c92f925b63ad68b724254015c6322ae`.
 OIDC remains `UNPROVEN`/`DEFER`; the local recovery does not establish absence,
 an effective identity policy, token exchange, deployment, or live behavior.
-Research reconciliation, proposal creation, final dispositions, reviews, and
-completion lanes remain pending.
+
+### Task-local artifact loss and reduced rebuild
+
+The session boundary that interrupted PDRR-005 destroyed every task-local
+`/tmp` artifact. Absence was proven across the filesystem before any recovery:
+the original checker, `/tmp/pdrr-github-summary.json`,
+`/tmp/pdrr-ledger-before.md`, all three `/tmp/pdrr-*-proposals.json` files, and
+the two previously unresolved residues `/tmp/pdrr-final-selftest.out` and
+`/tmp/pdrr004-guide-paths.txt` were all gone. The human approved a reduced
+rebuild on 2026-08-12 over a full reconstruction or a remote re-collection.
+
+The successor `/tmp/pdrr-refresh-check.py` has SHA-256
+`3aa05aa08945439ff07c41890ace699fda6b018754fa9534e4e42bb404f17200`, is a
+current-user regular mode-`0600` file created with `O_CREAT|O_EXCL` semantics,
+and implements only `--self-test`, `snapshot-ledger`, `pathset`, `integration`,
+and `residue`. Its self-test reports 34 named PASS and zero FAIL. Integration
+RED against the current tree exits 1 with exactly one diagnostic, nine Gap
+Ledger rows still carrying `Pending`, while the 14-file pack count, 33 README
+requests, byte-stable baseline rows, and README and scope-index anchor
+resolution already pass.
+
+`/tmp/pdrr-ledger-before.md` was recovered deterministically from the tracked
+ledger and re-verified byte-exact at 752,987 bytes with the pinned SHA-256
+`af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`, so the
+PDRR-001 baseline comparison is intact.
+
+Three limitations are explicit and are not converted into a PASS. First, the
+retired `admission`, `workstream`, and `remote-*` commands are not
+reimplemented, so PDRR-001 through PDRR-005 are not retroactively revalidated
+and their results stand as original-checker evidence at their recorded time.
+Second, the guarded GitHub summary is unrecoverable and is not re-collected;
+the sanitized observations already recorded in the CI/CD report and this Task
+remain the sole hosted-metadata evidence, and no row is promoted because of the
+loss. Third, the three lost proposal files are superseded, so PDRR-006 admits
+only the sources and claims that the committed dated report sections already
+cite.
 
 ## Traceability
 
@@ -385,6 +419,6 @@ completion lanes remain pending.
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Done. Four admitted rows have reviewed current-source and exact repo-static reconciliation; all final owner dispositions remain `Partial` with runtime/effectiveness `DEFER`. | Four admitted research owners, guarded proposal, Plan task 3, durable progress, task-3 report, logical commit. |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Done. Rows 008, 009, and 025 have reviewed current-source and exact repo-static reconciliation; all remain `Partial`, row 009 is static-only, and runtime remains `DEFER`. | Kubernetes research owner, guarded proposal, Plan task 4, durable progress, task-4 report, logical commit. |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Done. Rows 014/020 retain `Partial` / `exclude-duplicate`; official published-page provenance and exact Guide static contracts are reconciled while reader evidence remains `DEFER`. | Two research owners, guarded proposal, Plan task 5, task-local progress, task-5 report, logical commit. |
-| [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | In Progress. The exact read-only query batch and one-time local OIDC unavailable recovery are reconciled; no retry or remote mutation occurred. | Plan task 6, guarded summary, checker self-test/review, and task-6 report. |
+| [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Done. Rows 022, 023, and 033 have a dated CI/CD section separating syntax, hosted metadata, administration, product validation, and live effects; all three remain `Partial` and no row is promoted. | Plan task 6, dated CI/CD report section, sanitized observations, successor checker self-test, and task-6 report. |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | Queued. | Plan task 7. |
 | [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Queued. | Plan task 8. |

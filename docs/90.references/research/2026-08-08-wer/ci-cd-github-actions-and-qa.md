@@ -3,7 +3,7 @@ title: 'Reference: CI/CD, GitHub Actions, and QA'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-12
 ---
 
 # Reference: CI/CD, GitHub Actions, and QA
@@ -218,6 +218,62 @@ artifact, quality-lane, or traceability contract changes, or when the cited NASA
 handbooks are revised. Attach a hosted run identity before reporting hosted CI
 `PASS`; attach a separately approved bounded procedure before reporting
 remote/live `PASS`.
+
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This incremental refresh was executed on 2026-08-12. The exact
+`github.com` repository identity, canonical URL, and default branch `main`
+passed preflight before one read-only, byte-allowlisted query batch. An
+independent security review approved the nine projected commands and checker
+boundary with zero findings. No query was retried; no logs, raw response,
+secret or variable value, artifact body, dispatch, rerun, approval,
+deployment, GraphQL, fallback endpoint, or remote mutation was used. The
+guarded mode-`0600` sanitized summary passed local `remote` validation with
+nine unique evidence classes: eight `ok` and OIDC `unavailable`.
+
+Official GitHub REST documentation checked on 2026-08-12 defines the admitted
+read surfaces for [workflow inventories](https://docs.github.com/en/rest/actions/workflows?apiVersion=2026-03-10),
+[workflow runs](https://docs.github.com/en/rest/actions/workflow-runs?apiVersion=2026-03-10),
+[Actions permissions](https://docs.github.com/en/rest/actions/permissions?apiVersion=2026-03-10),
+[repository rulesets](https://docs.github.com/en/rest/repos/rules?apiVersion=2026-03-10),
+[branch protection](https://docs.github.com/en/rest/branches/branch-protection?apiVersion=2026-03-10),
+[deployment environments](https://docs.github.com/en/rest/deployments/environments?apiVersion=2026-03-10),
+[OIDC subject customization](https://docs.github.com/en/rest/actions/oidc?apiVersion=2026-03-10),
+and [Actions artifacts](https://docs.github.com/en/rest/actions/artifacts?apiVersion=2026-03-10).
+These current endpoint contracts support interpretation of the projected
+fields, not the repository observations themselves. GitHub metadata remains
+separate remote evidence and is not an external-source row. Existing
+`SRC-WERPC-058`–`059` remain sufficient for the Verification and Validation
+definitions; no duplicate general QA research was added.
+
+| Evidence class | Sanitized observation | Bounded interpretation and rejected inference |
+| --- | --- | --- |
+| Workflow inventory | The projected repository list returned seven active workflows. Five paths match the five tracked workflows in this checkout; two projected active paths do not. | This proves a dated hosted inventory difference, not the content, safety, trigger, or current-branch provenance of either unmatched workflow. The tracked five remain the only locally reconciled workflow bodies. |
+| Run sample | The bounded latest-20 projection returned 20 completed runs: 15 `success` and five `failure`, across push, pull-request, schedule, and dynamic events. None used the current local HEAD. | Hosted execution exists for sampled historical revisions. Conclusion alone does not identify root cause, requirement coverage, current-HEAD status, deployment, promotion, rollback, or live GitOps outcome. |
+| Actions policy | Actions is enabled; the repository policy allows all actions. The default workflow token setting is `read`, and workflow approval of pull-request reviews is disabled. | This is a repository-setting snapshot. Local full-SHA pins, read-default workflow declarations, and narrow job writes remain separate static controls; neither layer proves effective per-run token use, upstream integrity, fork behavior, or runner isolation. |
+| Rules and branch protection | The projected ruleset list was empty. The `main` branch-protection projection returned one required status check, with strict up-to-date checking disabled; administrator enforcement was false and required approving review count was zero. | This records only projected settings at collection time. It does not prove a merge was blocked, a check mapped to the current local revision, higher-order review quality, bypass history, or policy effectiveness. Null projected fields are not generalized beyond the queried branch-protection shape. |
+| Environments and artifacts | Both projected repository totals were zero. | No environment or retained artifact was listed at collection time. This does not prove historical absence, deletion/retention correctness, secret absence, release state, deployment absence, or artifact integrity. The tracked changelog upload declaration remains static only. |
+| OIDC | The read executed, but the checker rejected the officially valid nullable projected claim-key shape. A reviewed local-only recovery recorded `unavailable` with empty identities and a fixed non-body limitation. | OIDC customization is `UNPROVEN`/`DEFER`. No retry, raw recovery, token request, claim observation, cloud trust, identity exchange, deployment, or absence inference is permitted. |
+
+The local reconciliation remains internally consistent. Five tracked workflow
+bodies declare default `contents: read`; remote actions are full-commit pinned
+with version comments; checkout credentials are disabled where used; `ci.yml`
+selects affected surfaces and fails closed through `ci-summary`; four validation
+jobs use the fully hashed binary-only Linux/CPython 3.12 lock; pre-commit uses
+frozen remote revisions; and the affected/staged/all-files contract keeps
+syntax and repository-static evidence distinct. The hosted inventory difference
+does not authorize importing or interpreting the two unmatched workflow bodies.
+
+| Request | Final disposition | Evidence gained | Remaining boundary and follow-up |
+| --- | --- | --- | --- |
+| `REQ-WERPC-022` | `Partial` | Bounded hosted workflow/run metadata now establishes a dated inventory and historical run sample. | No sampled run matches current local HEAD. Current-revision hosted verification, run root cause, deployment, promotion, rollback, reconciliation, and live health remain `DEFER`; refresh on workflow/run topology change or with an approved current-revision run identity. |
+| `REQ-WERPC-023` | `Partial` | Projected Actions/default-token, ruleset, branch-protection, environment, and artifact settings materially narrow the prior administration gap. | OIDC is unavailable; effective per-run permissions, merge enforcement, bypass/fork behavior, secret values, artifact integrity/retention, and any environment or identity use remain `DEFER`; refresh when an allowlisted class or named local workflow/validator changes. |
+| `REQ-WERPC-033` | `Partial` | The sampled hosted conclusions are bounded verification metadata for identified historical revisions, and local lanes remain reproducible static conformance methods. | No current-HEAD requirements-to-result trace, discrepancy/root-cause record, independence evidence, stakeholder/user participation, intended-use scenario, representative environment, deployment, or live-system result was observed. Product/stakeholder validation remains `DEFER`. |
+
+Syntax/static validation, hosted run metadata, repository administration,
+product/stakeholder validation, and deployment/live effects therefore remain
+five separate evidence depths. No row is promoted to `Verified`: all three
+admitted requests remain `Partial`, with the explicit `DEFER` boundaries above.
 
 ## Related Documents
 

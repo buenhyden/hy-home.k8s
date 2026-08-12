@@ -658,21 +658,24 @@ Spec 056 already permits limitation-aware `UNPROVEN`/`DEFER` and needs no edit.
 
 ### Task 7: PDRR-006 — reconcile shared projections
 
-**Files:** pack `README.md`, `scope-application-index.md`, source/claim ledger
-and all four reviewed `/tmp/pdrr-*-proposals.json` inputs;
-Task/Plan/progress.
+**Files:** pack `README.md`, `scope-application-index.md`, source/claim ledger;
+Task/Plan/progress. The four `/tmp/pdrr-*-proposals.json` inputs are superseded
+by the 2026-08-12 amendment and are not available.
 
 **Interfaces:** Consumes approved workstream commits, final dispositions,
-source/claim proposals, anchors, and remote summary. Produces one atomic shared
-projection commit with contiguous final source/claim IDs, exact request mapping,
-counts, cross-links, scope routing, and no duplicate report.
+committed dated report sections, anchors, and already-recorded remote
+observations. Produces one atomic shared projection commit with contiguous final
+source/claim IDs, exact request mapping, counts, cross-links, scope routing, and
+no duplicate report.
 
 - [ ] **Step 1: Run integration RED.** Run checker `integration` with Task,
   pack, and baseline ledger. Expect stale README/status/count/scope diagnostics.
-- [ ] **Step 2: Validate proposals and update the source/claim ledger.** Require
-  every proposal file to be regular/current-user/non-symlink and schema-valid.
-  Allocate final source and claim IDs contiguously in PDRR-002, 003, 004, 005
-  order with no reservation gaps; preserve the baseline ledger prefix exactly.
+- [ ] **Step 2: Derive additions and update the source/claim ledger.** The lost
+  proposal files are not reconstructed. Read every committed 2026-08-11 and
+  2026-08-12 dated section in the admitted report owners and admit only the
+  sources and claims those committed sections already cite. Allocate final
+  source and claim IDs contiguously in PDRR-002, 003, 004, 005 order with no
+  reservation gaps; preserve the baseline ledger prefix exactly.
 - [ ] **Step 3: Update README, scope index, and final Gap Ledger in the same
   staged set.** Preserve 33 IDs and primary owners. Change only admitted rows
   whose evidence/status changed, add exact dated counts, route affected scopes
@@ -689,18 +692,23 @@ counts, cross-links, scope routing, and no duplicate report.
 ### Task 8: PDRR-007 — review, gates, cleanup, closure, and finish
 
 **Files:** Spec/Plan/Task; their indexes; ADR-0022; registry; durable progress;
-temporary `/tmp/pdrr-refresh-check.py`, `/tmp/pdrr-ledger-before.md`,
+temporary `/tmp/pdrr-refresh-check.py`, `/tmp/pdrr-ledger-before.md`, and
+`/tmp/pdrr-paths.nul`. Residue proof still enumerates the lost
 `/tmp/pdrr-agent-proposals.json`, `/tmp/pdrr-kubernetes-proposals.json`,
 `/tmp/pdrr-documentation-proposals.json`, `/tmp/pdrr-ci-proposals.json`,
-`/tmp/pdrr-github-summary.json`, and `/tmp/pdrr-paths.nul`.
+`/tmp/pdrr-github-summary.json`, `/tmp/pdrr-final-selftest.out`, and
+`/tmp/pdrr004-guide-paths.txt`, whose independently observed absence also
+closes the two residue limitations carried from PDRR-003 and PDRR-004.
 
 **Interfaces:** Consumes complete branch and review packages. Produces final
 approvals, green gates, temp absence, done lifecycle, closure commit, and exact
 branch-finishing menu.
 
-- [ ] **Step 1: Run final checker commands before deletion.** Run self-test,
-  admission, every workstream, remote, integration, and residue. Require zero
-  Pending and final exact counts.
+- [ ] **Step 1: Run final checker commands before deletion.** Run the successor
+  self-test, integration, and residue. Require zero Pending and final exact
+  counts. The retired `admission`, `workstream`, and `remote` commands are
+  unavailable under the 2026-08-12 amendment; record that limitation instead of
+  reporting a substitute PASS for them.
 - [ ] **Step 2: Dispatch whole-branch content, quality, and security reviews.**
   Review merge-base..HEAD and every VAL-PDRR criterion. Allow one combined fix
   wave and one scoped re-review; unresolved load-bearing findings block closure.
@@ -860,6 +868,49 @@ HEAD-to-working-tree set plus untracked paths; `branch` records merge-base-main
 to working tree plus untracked paths; `staged` records only the exact Git index.
 All modes emit unique normalized repository-relative NUL records and fail on an
 empty or escaping path where the consuming lane requires a non-empty set.
+
+#### Successor reduced checker (2026-08-12 amendment)
+
+The original guarded checker (SHA-256 `6e9b4b91`), the guarded GitHub summary
+(SHA-256 `2652e402`), `/tmp/pdrr-ledger-before.md`, and the three
+`/tmp/pdrr-*-proposals.json` files did not survive the session boundary that
+interrupted PDRR-005. Their absence was proven across the filesystem before any
+recovery. The human approved a reduced rebuild on 2026-08-12 instead of a full
+reconstruction or a remote re-collection.
+
+The successor `/tmp/pdrr-refresh-check.py` (SHA-256 `3aa05aa0`) is created with
+`O_CREAT|O_EXCL` semantics at mode `0600` and implements only the subcommands
+the remaining packages consume:
+
+```text
+pdrr-refresh-check.py --self-test
+pdrr-refresh-check.py snapshot-ledger --source SOURCE --output OUTPUT
+pdrr-refresh-check.py pathset --root ROOT --output OUTPUT --scope SCOPE
+pdrr-refresh-check.py integration --root ROOT --task TASK --pack PACK --baseline-ledger BASELINE
+pdrr-refresh-check.py residue --root ROOT --paths PATH [PATH ...]
+```
+
+Retired `admission`, `workstream`, `remote-init`, `remote-query`,
+`remote-unavailable`, and `remote` subcommands are not reimplemented, and
+PDRR-001 through PDRR-005 are not retroactively revalidated. Their recorded
+results stand as original-checker evidence at their recorded time, and this
+successor never converts that limitation into a new PASS.
+
+Its self-test executes real parsers and safe-path functions across 34 named
+cases covering exclusive no-follow mode-`0600` creation, existing-path,
+symlink, directory and wrong-mode rejection, guarded replacement, path
+normalization and escape rejection, anchor slugging, ledger row parsing and
+duplicate rejection, source contiguity, claim-sequence contiguity, `Pending`
+detection, and residue presence and absence.
+
+`/tmp/pdrr-ledger-before.md` was recovered deterministically from the tracked
+ledger and re-verified byte-exact at 752,987 bytes with the pinned SHA-256
+`af8b1d44`, so the PDRR-001 baseline comparison remains valid. The guarded
+GitHub summary is not recoverable and is not re-collected; the sanitized
+observations already recorded in the CI/CD report and the Task remain the sole
+hosted-metadata evidence, and no row is promoted because of the loss. The three
+lost proposal files are superseded: PDRR-006 allocates final source and claim
+IDs from the committed dated report sections instead of the proposal inputs.
 
 ### Source/claim and remote evidence
 
