@@ -613,6 +613,23 @@ and no mutation.
   after safely recording an allowed-query access failure, and returns nonzero
   only for an argv, schema, path, security, timeout, or sanitization contract
   violation, which stops the workstream.
+
+  One already-executed OIDC projection has a single-use local recovery:
+
+  ```bash
+  pdrr-refresh-check.py remote-unavailable --summary SUMMARY --class oidc --reason checker-projection-incompatible
+  ```
+
+  This command is allowed exactly once only when the byte-allowlisted OIDC
+  query has already executed, the checker rejected GitHub's officially valid
+  nullable projected shape, and the guarded approved-repository summary has
+  exactly eight unique approved classes with only `oidc` missing. It appends
+  `oidc` as `unavailable`, with empty identities, the fixed non-body
+  limitation, and a fresh UTC collection time through a version-bound atomic
+  compare-and-swap. It forbids a remote retry, raw-output recovery, rollback,
+  alternate endpoint, or fallback query. Normal `remote` validation never
+  fills a missing class. This exception does not convert `UNPROVEN`/`DEFER`
+  into absence or success and is not reusable for another query or summary.
 - [ ] **Step 7: Run remote GREEN**, requiring correct repository/time, allowed
   routes, no forbidden keys/value shapes, and explicit limitations.
 - [ ] **Step 8: Reconcile official, local, and remote evidence.** Separate
@@ -627,6 +644,17 @@ and no mutation.
 - [ ] **Step 11: Require content/quality/security approval**, update evidence,
   run the logical work-package completion lane, and commit
   `docs: refresh GitHub CI and validation evidence` when non-empty.
+
+**OIDC recovery reconciliation (executed 2026-08-12):** All nine approved
+queries were invoked once in one batch after successful identity preflight.
+The OIDC query executed, but checker validation rejected the projected nullable
+claim-key shape; the artifact query was already invoked by the same batch.
+The reviewed local `remote-unavailable` recovery completed before the
+workstream stopped, without a second network call, raw-output recovery,
+rollback, or fallback endpoint. The subsequent human instruction on 2026-08-12
+authorized preserving that guarded nine-observation summary, reconciling this
+Plan/Task/progress evidence, and resuming PDRR-005 without another GitHub query.
+Spec 056 already permits limitation-aware `UNPROVEN`/`DEFER` and needs no edit.
 
 ### Task 7: PDRR-006 — reconcile shared projections
 
@@ -806,6 +834,7 @@ pdrr-refresh-check.py admission --root ROOT --task TASK --require-partials 12
 pdrr-refresh-check.py workstream --root ROOT --name NAME --task TASK --proposal PROPOSAL
 pdrr-refresh-check.py remote-init --summary SUMMARY --repository OWNER/REPO
 pdrr-refresh-check.py remote-query --summary SUMMARY --class CLASS -- GH_ARGV
+pdrr-refresh-check.py remote-unavailable --summary SUMMARY --class oidc --reason checker-projection-incompatible
 pdrr-refresh-check.py remote --root ROOT --summary SUMMARY --repository OWNER/REPO
 pdrr-refresh-check.py integration --root ROOT --task TASK --pack PACK --baseline-ledger BASELINE
 pdrr-refresh-check.py residue --root ROOT --paths PATH [PATH ...]
