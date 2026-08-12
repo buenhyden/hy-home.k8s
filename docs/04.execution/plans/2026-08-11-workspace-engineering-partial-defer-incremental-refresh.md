@@ -329,6 +329,23 @@ research, lifecycle, or implementation claim.
 - [x] **Step 7: Update Task/Plan/progress, run the logical work-package
   completion lane, and commit** `docs: classify Partial DEFER refresh scope`.
 
+#### PDRR-001 fix round 1
+
+- [x] **Step 8: Reproduce the three independent review findings.** Add real
+  path replacement, source mutation-during-read, and actual SDD inventory
+  fixtures before implementation. Require one RED naming all three gaps.
+- [x] **Step 9: Harden the checker and run GREEN.** Bind the verified pathset
+  version through immediate pre-unlink checks, verify initial/final snapshot
+  fd/path versions and byte count, and admit only exact safe SDD artifact
+  classes. After security review, replace the last pathname-unlink window with
+  verified atomic exchange/rollback, narrow review-diff names, and require all
+  93 named self-tests plus admission to pass.
+- [x] **Step 10: Obtain independent security approval.** Review only the three
+  hardened boundaries and close every Critical or Important finding.
+- [x] **Step 11: Replay the exact logical lane and commit the fix.** Update
+  Task, Plan, progress, and the ignored task-2 report; commit only the tracked
+  evidence package as `fix(docs): harden Partial DEFER admission checker evidence`.
+
 ### Task 3: PDRR-002 — agent, provider, model, and memory refresh
 
 **Files:** admitted existing owners among

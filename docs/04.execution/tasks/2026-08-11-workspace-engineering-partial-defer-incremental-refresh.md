@@ -40,7 +40,7 @@ or remote payloads.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | VAL-PDRR-001–010 | Activate Spec/Plan/Task and standalone execution relation | primary agent | Done | Activation and fix commits are complete, and the independent re-review approved the corrected activation package. | Spec 056, Plan, this Task, ADR-0022, indexes, registry, progress, activation report, `a6dbf106`, `d8c6b346` |
-| [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | VAL-PDRR-001, VAL-PDRR-002 | Freeze the closed Gap Ledger and checker baseline | assigned worker | Done | Exact 12-row admission and guarded baseline are GREEN; independent content and quality/security re-reviews approved the closed package with zero findings. | Task Gap Ledger, temporary guarded checker, reviewed baseline evidence, task-2 report, containing logical commit |
+| [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | VAL-PDRR-001, VAL-PDRR-002 | Freeze the closed Gap Ledger and checker baseline | assigned worker | Done | Fix round 1 has exact three-case RED, 93-case hardened GREEN, and final security approval with zero findings. | Task Gap Ledger, temporary guarded checker, reviewed baseline evidence, task-2 report, `342e6862`, containing fix commit |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Queued | Not executed. | Existing report owner, reviewed proposals, Task evidence |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
@@ -58,7 +58,7 @@ refresh. The baseline source ceiling is `SRC-WERPC-067`, the claim ceiling is
 `/tmp/pdrr-ledger-before.md` with SHA-256
 `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`.
 The guarded checker is `/tmp/pdrr-refresh-check.py` with SHA-256
-`a2c085616128441dd6198b4040a5aed041ef05e1842113288f4718d862a4a166`.
+`815babfea03cbf97cf79ef5726295979759812e1848c2eb3d194346ff905e0a4`.
 `Pending` is a pre-integration disposition only; PDRR-006 must replace every
 remaining `Pending` value with one of the checker-owned final states.
 
@@ -129,7 +129,7 @@ and effectiveness evidence remain `DEFER`.
 
 The guarded checker was created after explicit absence and non-symlink proof
 with `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, and `fstat` current-owner
-regular-file verification. Its real self-test currently emits 89 named PASS
+regular-file verification. Its real self-test currently emits 93 named PASS
 results covering valid and negative admission, source/claim continuity,
 safe-path and symlink handling, exclusive creation and reuse, literal pathsets,
 exact projected remote reads, bounded capture, concurrent version rejection,
@@ -155,6 +155,24 @@ Spec 056 exact approval-wording mismatch is closed by the package's one-line
 external source, GitHub, remote, provider-runtime, credential-bearing,
 cluster/live, or secret evidence was accessed.
 
+Independent task review of commit `342e6862` opened fix round 1 for three
+checker evidence gaps. The new executable fixtures reproduced all three in one
+RED: pathset reuse unlinked a replacement installed after its guard closed,
+snapshot source reads accepted same-inode mutation during the read, and report
+inventory rejected the real task-local `progress.md`, brief, and review-diff
+artifacts. GREEN now binds the guarded pathset object's full version through an
+immediate pre-unlink `lstat`, checks initial and final source fd/path versions
+plus exact byte count, and accepts only the exact safe task-local artifact
+classes while continuing to reject unexpected files. The first security fix
+review found one remaining Important final pathname-unlink window and one Minor
+overbroad review-diff name. The checker now avoids pathname deletion for equal
+payloads, atomically exchanges differing payloads with displaced/installed
+version verification and rollback, tests an exact exchange-window replacement,
+and restricts review diffs to two bounded hexadecimal commit IDs. Final
+security re-review approved the hardened checker with zero Critical, Important,
+or Minor findings. The containing fix commit carries the exact completion-lane
+evidence. No external or remote call was made in this fix round.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -162,7 +180,7 @@ cluster/live, or secret evidence was accessed.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | Done. The direct-approval standalone relation is active, the fix round is complete, and independent re-review approved the corrected activation package. | This Task, Spec 056, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation report, and commits `a6dbf106` and `d8c6b346`. |
-| [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | Done. Exact admission and baseline checks are GREEN, and both independent fix re-reviews approved the final package with zero findings. | Gap Ledger, guarded checker and ledger snapshot, Plan task 2, task-2 report, containing logical commit. |
+| [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | Done. Fix round 1 RED/GREEN and final security re-review are complete with zero findings. | Gap Ledger, guarded checker and ledger snapshot, Plan task 2, task-2 report, `342e6862`, containing fix commit. |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Queued. | Plan task 3. |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Queued. | Plan task 4. |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Queued. | Plan task 5. |

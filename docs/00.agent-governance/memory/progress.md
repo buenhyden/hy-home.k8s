@@ -38,6 +38,20 @@ refresh trigger. No external research or GitHub query occurred. The package
 also carries the exact one-line Spec 056 standalone-approval wording correction
 needed to close the inherited strict-validator prerequisite.
 
+Fix round 1 reopens only checker-evidence hardening after independent review of
+commit `342e6862`. One real self-test RED named all three defects: replacement
+unlink after a closed pathset guard, same-inode mutation accepted during a
+snapshot source read, and rejection of the actual task-local SDD artifact
+shape. The hardened checker now produces 93 named PASS results by binding
+pre-unlink identity/version metadata, checking post-read fd/path versions and
+byte count, and allowlisting only safe progress, brief, report, and review-diff
+artifact classes. Its first security review found a final pathname-unlink
+window and an overbroad review-diff pattern; verified atomic exchange with
+rollback, an exact exchange-window fixture, and two bounded hexadecimal review
+IDs close those findings. Final security re-review approved the hardened
+checker with zero Critical, Important, or Minor findings. The containing fix
+commit closes the exact completion lane.
+
 #### Memory
 
 A candidate list is not closed merely because its IDs are counted. Admission
@@ -50,7 +64,8 @@ remote bodies, and concurrent guarded-summary replacement.
 
 - The guarded checker was created only after absence/non-symlink proof with
   `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, and current-owner regular-file
-  verification. Its current SHA-256 is recorded in the Task.
+  verification. Its fix-round SHA-256 is
+  `815babfea03cbf97cf79ef5726295979759812e1848c2eb3d194346ff905e0a4`.
 - Checker self-test is GREEN across real admission, source/claim, safe-path,
   creation/reuse, proposal, projected-remote, timeout/overflow, report, and
   residue fixtures. Admission RED produced exactly 12 missing-candidate
@@ -66,10 +81,10 @@ remote bodies, and concurrent guarded-summary replacement.
 
 #### Handoff
 
-The containing logical commit closes PDRR-001; its exact SHA and completion-lane
-evidence are recorded in the ignored task-2 report after commit. Hand PDRR-002
-only the rows admitted to its workstream. `Pending` remains legal only until
-PDRR-006 integration.
+The containing fix commit closes independent review and the exact logical lane;
+its SHA and completion evidence are recorded in the ignored task-2 report after
+commit. Hand PDRR-002 only the rows admitted to its workstream. `Pending`
+remains legal only until PDRR-006 integration.
 
 ### 2026-08-12 - PDRR-000 standalone execution activated
 
