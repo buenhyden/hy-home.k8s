@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-01
+artifact_id: "TASK-046"
 ---
 
 # Task: Agent Governance Program Closure

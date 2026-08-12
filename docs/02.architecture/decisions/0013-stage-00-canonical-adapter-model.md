@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-30
+artifact_id: "ADR-0013"
 ---
 
 # ADR-0013: Stage 00 Canonical Adapter Model

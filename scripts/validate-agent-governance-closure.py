@@ -164,6 +164,28 @@ EXPECTED_PREDECESSORS = (
         ),
     ),
 )
+WORK108_PREDECESSOR_ARTIFACT_IDS = {
+    PurePosixPath("docs/01.requirements/003-workspace-agent-governance-platform.md"): "PRD-003",
+    PurePosixPath(
+        "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md"
+    ): "AD-0006",
+    PurePosixPath(
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
+    ): "ADR-0019",
+    **{
+        PurePosixPath(f"docs/03.specs/{number}-" + slug + "/spec.md"): f"SPEC-{number}"
+        for number, slug in (
+            ("038", "reference-information-architecture"),
+            ("039", "github-ci-qa-evidence"),
+            ("040", "contract-cutover-and-program-closure"),
+            ("041", "stage-00-agent-governance-contract"),
+            ("042", "provider-native-runtime-and-model-evidence"),
+            ("043", "agent-harness-loop-lifecycle"),
+            ("044", "agent-roster-evaluation-and-admission"),
+            ("045", "agent-governance-ci-qa-cutover"),
+        )
+    },
+}
 PREDECESSOR_VALIDATOR_COMMAND = (
     "python3 scripts/validate-markdown-profiles.py --root . --mode strict"
 )
@@ -581,6 +603,30 @@ def _frontmatter_status(text: str) -> str | None:
     return None
 
 
+def _work108_predecessor_digest_payload(
+    owner: PurePosixPath,
+    source: bytes,
+) -> bytes | None:
+    artifact_id = WORK108_PREDECESSOR_ARTIFACT_IDS.get(owner)
+    expected_digest = next(
+        (
+            digest
+            for _identity, path, _status, _implementation_ref, digest in EXPECTED_PREDECESSORS
+            if path == owner.as_posix()
+        ),
+        None,
+    )
+    if artifact_id is None or expected_digest is None:
+        return None
+    artifact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
+    if source.count(artifact_line) != 1:
+        return None
+    projected = source.replace(artifact_line, b"", 1)
+    if hashlib.sha256(projected).hexdigest() != expected_digest:
+        return None
+    return projected
+
+
 def _validate_predecessor_sources(root: Path, contract: dict[str, Any]) -> list[str]:
     rows = contract.get("predecessorCriteria", [])
     identities = tuple((row.get("id"), row.get("owner")) for row in rows)
@@ -593,7 +639,10 @@ def _validate_predecessor_sources(root: Path, contract: dict[str, Any]) -> list[
             expected
         )
         source = _read_regular_bytes(root, PurePosixPath(owner))
-        observed_digest = hashlib.sha256(source).hexdigest()
+        projected = _work108_predecessor_digest_payload(PurePosixPath(owner), source)
+        observed_digest = (
+            hashlib.sha256(projected).hexdigest() if projected is not None else None
+        )
         if (
             observed_digest != expected_digest
             or row.get("evidenceSha256") != observed_digest

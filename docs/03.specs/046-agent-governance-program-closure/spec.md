@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-08-01
+artifact_id: "SPEC-046"
 ---
 
 # Agent Governance Program Closure Technical Specification (Spec)

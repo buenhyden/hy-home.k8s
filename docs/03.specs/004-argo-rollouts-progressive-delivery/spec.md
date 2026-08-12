@@ -4,6 +4,7 @@ type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-07-13
+artifact_id: "SPEC-004"
 ---
 
 # Argo Rollouts Progressive Delivery Specification

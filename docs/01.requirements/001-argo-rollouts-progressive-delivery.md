@@ -4,6 +4,7 @@ type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-07-13
+artifact_id: "PRD-001"
 ---
 
 # Argo Rollouts Progressive Delivery Product Requirements

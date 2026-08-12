@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-27
+artifact_id: "SPEC-039"
 ---
 
 # GitHub CI and QA Evidence Technical Specification (Spec)

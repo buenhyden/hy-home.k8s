@@ -4,6 +4,7 @@ type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "POLICY-0002"
 ---
 
 # WSL2 k3d/k3s GitOps HA Operations Policy

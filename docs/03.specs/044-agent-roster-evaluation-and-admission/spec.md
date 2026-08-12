@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-30
+artifact_id: "SPEC-044"
 ---
 
 # Agent Roster Evaluation and Admission Technical Specification (Spec)

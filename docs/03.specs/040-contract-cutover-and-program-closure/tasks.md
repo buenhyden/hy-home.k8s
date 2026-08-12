@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-28
+artifact_id: "TASK-040"
 ---
 
 # Task: Contract Cutover and Program Closure

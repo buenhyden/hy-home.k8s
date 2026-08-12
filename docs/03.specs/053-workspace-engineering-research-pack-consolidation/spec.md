@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-08-09
+artifact_id: "SPEC-053"
 ---
 
 # Workspace Engineering Research Pack Consolidation Technical Specification (Spec)

@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-13
+artifact_id: "SPEC-019"
 ---
 
 # Template Path Numbering Contract Technical Specification

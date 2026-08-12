@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-12
+artifact_id: "SPEC-027"
 ---
 
 # Template Contract Consolidation Technical Specification (Spec)

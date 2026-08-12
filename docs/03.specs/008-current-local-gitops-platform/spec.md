@@ -4,6 +4,7 @@ type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "SPEC-008"
 ---
 
 # Current Local GitOps Platform Technical Specification (Spec)

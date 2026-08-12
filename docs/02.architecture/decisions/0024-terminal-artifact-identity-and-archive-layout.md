@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-08-11
+artifact_id: "ADR-0024"
 ---
 
 # ADR-0024: Terminal Artifact Identity and Archive Layout

@@ -49,7 +49,7 @@ ARCHIVE_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 )
 ARCHIVE_MIGRATION_SHA256 = (
-    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+    "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 )
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
@@ -239,7 +239,7 @@ GENERATOR_TRANSITION_RULE: Mapping[str, object] = MappingProxyType(
     {
         "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
         "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
-        "currentGeneratorOid": "66790bb31950be14fea0223e62b942105ab17fbd",
+        "currentGeneratorOid": "4a6657a4e7526bce32127373300261878666b6a1",
         "semanticMappings": (
             MappingProxyType(
                 {

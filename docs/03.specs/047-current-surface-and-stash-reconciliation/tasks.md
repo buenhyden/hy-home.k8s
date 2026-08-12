@@ -4,6 +4,7 @@ type: sdlc/task
 status: draft
 owner: platform
 updated: 2026-08-07
+artifact_id: "TASK-047"
 ---
 
 # Task: Current Surface and Stash Reconciliation

@@ -69,9 +69,10 @@ from archive_validation import validate_archive_immutability
 from archive_recovery import (
     ArchiveContractError,
     WORK107_LEGACY_ARCHIVE_COMMIT,
-    WORK107_MIGRATION_DOCUMENT_SHA256,
     WORK107_MIGRATION_PATH,
+    build_work107_migration_rows,
     parse_work107_migration_document,
+    render_work107_migration_document,
     render_work107_stable_envelope,
     validate_work107_migration_rows,
 )
@@ -282,10 +283,18 @@ WORK105_ADR0023_RECIPROCAL_ROW = (
 WORK107_BASE_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
 WORK107_PROPOSED_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
 WORK107_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+WORK107_MIGRATION_DOCUMENT_SHA256 = (
+    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+)
 WORK107_MIGRATION_TEMPLATE_PATH = PurePosixPath(
     "docs/99.templates/templates/common/archive-migration.template.md"
 )
 WORK107_MIGRATION_TEMPLATE_BLOB_OID = "dc3164eafd322e8139164cc16342de43fc3a72e8"
+WORK108_BASE_COMMIT = "db320b596904b52e184f01cd1b56467132ac9117"
+WORK108_BASE_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
+WORK108_PROPOSED_REGISTRY_BLOB_OID = "ce8da8f205cee1bba075bef7b26079a0708324b1"
+WORK108_BASE_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+WORK108_PROPOSED_MIGRATION_BLOB_OID = "b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -451,6 +460,24 @@ def _git_blob_oid(content: bytes) -> str:
     return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
 
 
+def _work107_without_outer_artifact_id(
+    content: bytes, expected_artifact_id: str
+) -> bytes | None:
+    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
+    lines = content.splitlines(keepends=True)
+    matches = [
+        index
+        for index, line in enumerate(lines)
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1 or matches[0] == 0:
+        return None
+    index = matches[0]
+    if not lines[index - 1].startswith(b"updated:"):
+        return None
+    return b"".join(lines[:index] + lines[index + 1 :])
+
+
 def finite_work107_archive_rehome_paths(
     *,
     root: Path,
@@ -486,12 +513,12 @@ def finite_work107_archive_rehome_paths(
         != WORK107_MIGRATION_DOCUMENT_SHA256
     ):
         return frozenset()
-    try:
-        rows = validate_work107_migration_rows(
-            root,
-            parse_work107_migration_document(migration_bytes),
-        )
-    except ArchiveContractError:
+    rows = build_work107_migration_rows(root)
+    expected_migration = _work107_without_outer_artifact_id(
+        render_work107_migration_document(rows),
+        "MIG-0001",
+    )
+    if expected_migration != migration_bytes:
         return frozenset()
 
     consumed: set[PurePosixPath] = {
@@ -508,14 +535,111 @@ def finite_work107_archive_rehome_paths(
             or stable_path in base_blobs
         ):
             return frozenset()
-        stable_bytes = render_work107_stable_envelope(
-            _blob_bytes(root, legacy_oid),
-            row,
+        stable_bytes = _work107_without_outer_artifact_id(
+            render_work107_stable_envelope(
+                _blob_bytes(root, legacy_oid),
+                row,
+            ),
+            str(row["artifact_id"]),
         )
+        if stable_bytes is None:
+            return frozenset()
         if proposed_blobs.get(stable_path) != _git_blob_oid(stable_bytes):
             return frozenset()
         consumed.update((legacy_path, stable_path))
     if len(consumed) != 188:
+        return frozenset()
+    return frozenset(consumed)
+
+
+def _work108_artifact_projection(
+    path: str, base: bytes, proposed: bytes, expected_artifact_id: str
+) -> bool:
+    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
+    lines = proposed.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return False
+    try:
+        frontmatter_end = next(
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.rstrip(b"\r\n") == b"---"
+        )
+    except StopIteration:
+        return False
+    matches = [
+        index
+        for index, line in enumerate(lines[:frontmatter_end])
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1:
+        return False
+    index = matches[0]
+    return (
+        index > 0
+        and lines[index - 1].startswith(b"updated:")
+        and b"".join(lines[:index] + lines[index + 1 :]) == base
+        and PurePosixPath(path).as_posix() == path
+    )
+
+
+def finite_work108_artifact_identity_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the reviewed WORK-108 outer artifact-ID insertion."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK108_BASE_COMMIT
+        or base_registry_oid != WORK108_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK108_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    if (
+        base_blobs.get(migration_path) != WORK108_BASE_MIGRATION_BLOB_OID
+        or proposed_blobs.get(migration_path) != WORK108_PROPOSED_MIGRATION_BLOB_OID
+    ):
+        return frozenset()
+    base_migration = _blob_bytes(root, WORK108_BASE_MIGRATION_BLOB_OID)
+    proposed_migration = _blob_bytes(root, WORK108_PROPOSED_MIGRATION_BLOB_OID)
+    if not _work108_artifact_projection(
+        migration_path.as_posix(),
+        base_migration,
+        proposed_migration,
+        "MIG-0001",
+    ):
+        return frozenset()
+    try:
+        rows = validate_work107_migration_rows(
+            root,
+            parse_work107_migration_document(proposed_migration),
+        )
+    except ArchiveContractError:
+        return frozenset()
+    consumed = {migration_path}
+    for row in rows:
+        path = PurePosixPath(str(row["stable_path"]))
+        base_oid = base_blobs.get(path)
+        proposed_oid = proposed_blobs.get(path)
+        if base_oid is None or proposed_oid is None or base_oid == proposed_oid:
+            return frozenset()
+        if not _work108_artifact_projection(
+            path.as_posix(),
+            _blob_bytes(root, base_oid),
+            _blob_bytes(root, proposed_oid),
+            str(row["artifact_id"]),
+        ):
+            return frozenset()
+        consumed.add(path)
+    if len(consumed) != 94:
         return frozenset()
     return frozenset(consumed)
 
@@ -2805,6 +2929,15 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
+    work108_consumed_paths = finite_work108_artifact_identity_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
 
     immutability_diagnostics = _archive_immutability_diagnostics(
         root,
@@ -2812,7 +2945,7 @@ def _evaluate_comparison(
         base_blobs,
         proposed_blobs,
         mode=mode,
-        admitted_rehome_paths=work107_consumed_paths,
+        admitted_rehome_paths=work107_consumed_paths | work108_consumed_paths,
     )
     if immutability_diagnostics:
         return immutability_diagnostics
@@ -2896,6 +3029,7 @@ def _evaluate_comparison(
     consumed_paths = (
         work105_consumed_paths
         | work107_consumed_paths
+        | work108_consumed_paths
         | archive_consumed_paths
         | agent_consumed_paths
     )

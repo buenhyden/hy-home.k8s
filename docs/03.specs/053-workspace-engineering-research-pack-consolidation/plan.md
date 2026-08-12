@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-09
+artifact_id: "PLAN-053"
 ---
 
 # Workspace Engineering Research Pack Consolidation Implementation Plan

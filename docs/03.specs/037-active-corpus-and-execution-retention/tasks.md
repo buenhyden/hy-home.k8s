@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-19
+artifact_id: "TASK-037"
 ---
 
 # Task: Active Corpus and Execution Retention

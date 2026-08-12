@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-26
+artifact_id: "PLAN-038"
 ---
 
 # Reference Information Architecture Implementation Plan

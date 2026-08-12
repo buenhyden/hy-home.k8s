@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-08-11
+artifact_id: "ADR-0023"
 ---
 
 # ADR-0023: Work-Unit Document Taxonomy and Governance Authority

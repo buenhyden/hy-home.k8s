@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-13
+artifact_id: "ADR-0012"
 ---
 
 # ADR-0012: Argo Notifications with Slack Webhook

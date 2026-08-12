@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-29
+artifact_id: "TASK-042"
 ---
 
 # Task: Provider-Native Runtime and Model Evidence

@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "GUIDE-0003"
 ---
 
 # Platform Expansion Bootstrap Guide

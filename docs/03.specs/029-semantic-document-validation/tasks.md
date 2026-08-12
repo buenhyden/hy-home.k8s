@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-12
+artifact_id: "TASK-029"
 ---
 
 # Task: Semantic Document Validation

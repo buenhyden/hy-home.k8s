@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-10
+artifact_id: "GUIDE-0009"
 ---
 
 # LLM Wiki Curation Guide

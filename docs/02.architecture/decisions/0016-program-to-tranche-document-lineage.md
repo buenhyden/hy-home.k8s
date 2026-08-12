@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-12
+artifact_id: "ADR-0016"
 ---
 
 # ADR-0016: Program-to-Tranche Document Lineage

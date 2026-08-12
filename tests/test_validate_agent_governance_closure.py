@@ -404,6 +404,45 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                 ):
                     self.assertEqual(validator(REPO_ROOT, contract), [expected])
 
+    def test_work108_predecessor_projection_accepts_only_exact_outer_identity(
+        self,
+    ) -> None:
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        for row, expected in zip(
+            contract["predecessorCriteria"],
+            self.module.EXPECTED_PREDECESSORS,
+            strict=True,
+        ):
+            owner = PurePosixPath(row["owner"])
+            source = self.module._read_regular_bytes(REPO_ROOT, owner)
+            projected = self.module._work108_predecessor_digest_payload(
+                owner,
+                source,
+            )
+            with self.subTest(owner=owner):
+                self.assertIsNotNone(projected)
+                self.assertEqual(
+                    self.module.hashlib.sha256(projected).hexdigest(),
+                    expected[4],
+                )
+
+            artifact_id = self.module.WORK108_PREDECESSOR_ARTIFACT_IDS[owner]
+            exact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
+            mutations = {
+                "missing": source.replace(exact_line, b"", 1),
+                "wrong": source.replace(exact_line, b'artifact_id: "ROGUE-999"\n', 1),
+                "duplicate": source.replace(exact_line, exact_line * 2, 1),
+                "payload-drift": source + b"\n",
+            }
+            for mutation, candidate in mutations.items():
+                with self.subTest(owner=owner, mutation=mutation):
+                    self.assertIsNone(
+                        self.module._work108_predecessor_digest_payload(
+                            owner,
+                            candidate,
+                        )
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()

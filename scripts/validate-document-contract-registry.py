@@ -110,6 +110,28 @@ WORK106_TOMBSTONE_TYPES = {
         {"GUIDE", "POLICY", "RUNBOOK", "INCIDENT", "POSTMORTEM"}
     ),
 }
+WORK108_MANDATORY_PROFILE_IDS = frozenset(
+    {
+        "sdlc/prd",
+        "sdlc/srs",
+        "sdlc/interface",
+        "sdlc/ad",
+        "sdlc/adr",
+        "sdlc/spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests",
+        "sdlc/plan",
+        "sdlc/task",
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+        "content/archive",
+        "content/archive-migration",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -146,9 +168,9 @@ WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT = (
 WORK105_WIKI_GENERATOR_HEADER_LINES = (
     'TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"',  # pragma: allowlist secret
     'TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"',  # pragma: allowlist secret
-    'TRANSITION_REGISTRY_OID="7182c40ab8ee6b40173b408ec2c366314916f1e3"',  # pragma: allowlist secret
+    'TRANSITION_REGISTRY_OID="ce8da8f205cee1bba075bef7b26079a0708324b1"',  # pragma: allowlist secret
     'TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"',  # pragma: allowlist secret
-    'TRANSITION_MIGRATION_OID="619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"',  # pragma: allowlist secret
+    'TRANSITION_MIGRATION_OID="b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"',  # pragma: allowlist secret
     WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT,
     f"TRANSITION_CURRENT_ROW='{WORK105_WIKI_GENERATOR_CURRENT_ROW}'",
 )
@@ -2776,10 +2798,10 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if actual_edges != expected_edges:
         raise AssertionError("production exact edge/predicate projection differs")
 
-    standard_sources = (
+    terminal_sources = (
         "sdlc/prd",
-        "sdlc/interface",
         "sdlc/srs",
+        "sdlc/interface",
         "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
@@ -2793,29 +2815,33 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "sdlc/runbook",
         "sdlc/incident",
         "sdlc/postmortem",
+    )
+    standard_sources = (
         "content/reference",
         "governance/reference",
         "governance/memory",
         "governance/template-support",
     )
-    standard_templates = (
-        "template/content/reference",
-        "template/sdlc/adr",
+    terminal_templates = (
+        "template/sdlc/prd",
+        "template/sdlc/srs",
+        "template/sdlc/interface",
         "template/sdlc/ad",
+        "template/sdlc/adr",
+        "template/sdlc/spec",
+        "template/sdlc/agent-design",
+        "template/sdlc/data-model",
+        "template/sdlc/tests",
         "template/sdlc/plan",
         "template/sdlc/task",
         "template/sdlc/guide",
-        "template/sdlc/incident",
         "template/sdlc/policy",
-        "template/sdlc/postmortem",
         "template/sdlc/runbook",
-        "template/sdlc/prd",
-        "template/sdlc/interface",
-        "template/sdlc/srs",
-        "template/sdlc/agent-design",
-        "template/sdlc/data-model",
-        "template/sdlc/spec",
-        "template/sdlc/tests",
+        "template/sdlc/incident",
+        "template/sdlc/postmortem",
+    )
+    standard_templates = (
+        "template/content/reference",
         "template/governance/memory",
         "template/governance/reference",
         "template/governance/template-support",
@@ -2897,6 +2923,18 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
         ),
     )
+    terminal_keys = (
+        *standard_keys,
+        (
+            "artifact_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
+    )
     archive_keys = (
         *standard_keys[:2],
         ("status", "string", False, ("literal", "archived"), None, None, None),
@@ -2904,7 +2942,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         (
             "artifact_id",
             "string",
-            True,
+            False,
             None,
             None,
             r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
@@ -3002,7 +3040,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         (
             "artifact_id",
             "string",
-            True,
+            False,
             None,
             None,
             r"^MIG-[0-9]{4}$",
@@ -3019,30 +3057,44 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ),
     )
     expected_value_projection: dict[str, tuple[Any, ...]] = {}
+    for profile_id in terminal_sources:
+        expected_value_projection[profile_id] = (
+            "authored-terminal-identity",
+            terminal_sources,
+            terminal_keys,
+        )
+    for profile_id in terminal_templates:
+        expected_value_projection[profile_id] = (
+            "template-terminal-authored",
+            terminal_templates,
+            standard_keys,
+        )
     for profile_id in (*standard_sources, *standard_templates):
         expected_value_projection[profile_id] = (
             "authored-standard",
             standard_sources,
             standard_keys,
         )
-    for profile_id in (
-        "content/archive",
-        "template/content/archive",
-    ):
-        expected_value_projection[profile_id] = (
-            "archive-record",
-            ("content/archive",),
-            archive_keys,
-        )
-    for profile_id in (
-        "content/archive-migration",
-        "template/content/archive-migration",
-    ):
-        expected_value_projection[profile_id] = (
-            "archive-migration",
-            ("content/archive-migration",),
-            archive_migration_keys,
-        )
+    expected_value_projection["content/archive"] = (
+        "archive-record",
+        ("content/archive",),
+        archive_keys,
+    )
+    expected_value_projection["template/content/archive"] = (
+        "template-terminal-archive-record",
+        ("template/content/archive",),
+        tuple(item for item in archive_keys if item[0] != "artifact_id"),
+    )
+    expected_value_projection["content/archive-migration"] = (
+        "archive-migration",
+        ("content/archive-migration",),
+        archive_migration_keys,
+    )
+    expected_value_projection["template/content/archive-migration"] = (
+        "template-terminal-archive-migration",
+        ("template/content/archive-migration",),
+        tuple(item for item in archive_migration_keys if item[0] != "artifact_id"),
+    )
     for profile_id in (*empty_sources, *empty_templates):
         expected_value_projection[profile_id] = (
             "frontmatter-free-or-native",
@@ -3234,10 +3286,17 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if actual_roles != expected_roles or len(expected_roles) != 69:
         raise AssertionError("production complete role/source projection differs")
 
-    authored_draft = tuple(
-        profile_id
-        for profile_id in standard_sources
-        if profile_id not in {"sdlc/plan", "sdlc/task"}
+    authored_draft = (
+        "sdlc/prd",
+        "sdlc/interface",
+        "sdlc/srs",
+        *tuple(
+            profile_id
+            for profile_id in terminal_sources
+            if profile_id
+            not in {"sdlc/prd", "sdlc/srs", "sdlc/interface", "sdlc/plan", "sdlc/task"}
+        ),
+        *standard_sources,
     )
     snapshot_profiles = (
         "governance/progress-ledger",
@@ -3610,7 +3669,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if (
         profiles["template/sdlc/prd"].role_decision.source_profile_id != "sdlc/prd"
         or profiles["template/sdlc/prd"].value_contract.contract_id
-        != "authored-standard"
+        != "template-terminal-authored"
         or profiles["template/sdlc/prd"].admission.create.mode != "snapshot-only"
     ):
         raise AssertionError("canonical form inheritance projection differs")
@@ -4177,6 +4236,24 @@ def _assert_template_source_parity(registry: Any) -> None:
             raise AssertionError(
                 f"{profile.profile_id}: template/source profile is unknown"
             )
+        source_required = source.frontmatter.required
+        source_allowed = source.frontmatter.allowed
+        source_order = source.frontmatter.order
+        source_value_contract = source.value_contract
+        if source_id in WORK108_MANDATORY_PROFILE_IDS:
+            source_required = tuple(
+                key for key in source_required if key != "artifact_id"
+            )
+            source_allowed = tuple(key for key in source_allowed if key != "artifact_id")
+            source_order = tuple(key for key in source_order if key != "artifact_id")
+            source_value_contract = replace(
+                source_value_contract,
+                keys=tuple(
+                    item
+                    for item in source_value_contract.keys
+                    if item.key != "artifact_id"
+                ),
+            )
         comparisons = (
             (
                 "frontmatter",
@@ -4187,20 +4264,24 @@ def _assert_template_source_parity(registry: Any) -> None:
                 ),
                 (
                     source.frontmatter.mode,
-                    source.frontmatter.required,
-                    source.frontmatter.allowed,
+                    source_required,
+                    source_allowed,
                 ),
             ),
             (
                 "frontmatter-order",
                 profile.frontmatter.order,
-                source.frontmatter.order,
+                source_order,
             ),
             ("status", profile.status_domain, source.status_domain),
             ("headings", profile.headings, source.headings),
             ("class", profile.profile_class, source.profile_class),
             ("body", profile.body_contract, source.body_contract),
-            ("value-contract", profile.value_contract, source.value_contract),
+            (
+                "value-contract",
+                profile.value_contract.keys,
+                source_value_contract.keys,
+            ),
         )
         role_actual = (
             profile.role_decision.role,
@@ -4264,17 +4345,15 @@ def _assert_template_source_mutation_proofs(
         elif mutation == "body":
             profile["bodyContract"]["allowExplicitExclusion"] = False
         elif mutation == "value-contract":
-            standard = next(
+            template_contract = next(
                 item
                 for item in mutated["documentContracts"]["valueContracts"]
-                if "sdlc/prd" in item["profileIds"]
+                if item["id"] == "template-terminal-authored"
             )
-            drift = copy.deepcopy(standard)
-            drift["id"] = "template-prd-value-drift"
-            drift["profileIds"] = ["template/sdlc/prd"]
-            owner = next(item for item in drift["keys"] if item["key"] == "owner")
+            owner = next(
+                item for item in template_contract["keys"] if item["key"] == "owner"
+            )
             owner["pattern"] = "^platform$"
-            mutated["documentContracts"]["valueContracts"].append(drift)
         elif mutation == "source-cardinality":
             profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/spec"]
         elif mutation == "missing-source":
@@ -4436,6 +4515,20 @@ def _assert_positive_coverage(
                 raise AssertionError(
                     f"{profile.profile_id}: unknown source profile {source_id!r}"
                 )
+            source_frontmatter = source.frontmatter
+            if source_id in WORK108_MANDATORY_PROFILE_IDS:
+                source_frontmatter = replace(
+                    source_frontmatter,
+                    required=tuple(
+                        key for key in source_frontmatter.required if key != "artifact_id"
+                    ),
+                    allowed=tuple(
+                        key for key in source_frontmatter.allowed if key != "artifact_id"
+                    ),
+                    order=tuple(
+                        key for key in source_frontmatter.order if key != "artifact_id"
+                    ),
+                )
             inherited = (
                 profile.profile_class,
                 profile.frontmatter,
@@ -4445,7 +4538,7 @@ def _assert_positive_coverage(
             )
             expected = (
                 source.profile_class,
-                source.frontmatter,
+                source_frontmatter,
                 source.status_domain,
                 source.headings,
                 source.body_contract,
@@ -5866,6 +5959,35 @@ def _work105_pinned_blob(root: Path, path: str) -> bytes:
     return result.stdout
 
 
+def _work108_without_outer_artifact_id(path: str, raw: bytes) -> bytes | None:
+    identity = _work106_derive_artifact_identity(path)
+    if identity is None:
+        return None
+    expected = f'artifact_id: "{identity.artifact_id}"'.encode("ascii")
+    lines = raw.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return None
+    try:
+        frontmatter_end = next(
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.rstrip(b"\r\n") == b"---"
+        )
+    except StopIteration:
+        return None
+    matches = [
+        index
+        for index, line in enumerate(lines[:frontmatter_end])
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1:
+        return None
+    index = matches[0]
+    if index == 0 or not lines[index - 1].startswith(b"updated:"):
+        return None
+    return b"".join(lines[:index] + lines[index + 1 :])
+
+
 def _work105_post_state(
     root: Path, patterns: tuple[dict[str, str], ...]
 ) -> dict[str, dict[str, int]]:
@@ -5876,8 +5998,9 @@ def _work105_post_state(
     for relative, raw in _work105_staged_blobs(root):
         if b"\0" in raw:
             continue
+        projected_raw = _work108_without_outer_artifact_id(relative, raw) or raw
         try:
-            text = raw.decode("utf-8")
+            text = projected_raw.decode("utf-8")
         except UnicodeDecodeError:
             continue
         historical_line_limit = 0
@@ -5893,7 +6016,10 @@ def _work105_post_state(
         elif relative in (
             WORK105_COMPLETED_HISTORY_PATHS | WORK105_ACCEPTED_BASE_HISTORY_PATHS
         ):
-            completed_history = raw == _work105_pinned_blob(root, relative)
+            pinned = _work105_pinned_blob(root, relative)
+            completed_history = raw == pinned or (
+                _work108_without_outer_artifact_id(relative, raw) == pinned
+            )
             if not completed_history:
                 raise AssertionError(
                     f"WORK-105 completed-history blob changed: {relative}"
@@ -6084,18 +6210,21 @@ def _work106_derive_artifact_identity(
         )
 
     tombstone = re.fullmatch(
-        rf"docs/98\.archive/tombstones/(?P<stage>[0-9]{{2}}\.[a-z]+)/"
-        rf"tmb-(?P<type>[a-z]+(?:-[a-z]+)*)-(?P<token>{slug})\.md",
+        r"docs/98\.archive/tombstones/(?P<stage>[0-9]{2}\.[a-z]+)/"
+        r"tmb-(?P<body>[a-z0-9]+(?:-[a-z0-9]+)*)\.md",
         raw_path,
     )
     if tombstone is not None:
-        type_token = tombstone.group("type").upper()
-        if type_token not in WORK106_TOMBSTONE_TYPES.get(tombstone.group("stage"), ()):
-            return None
-        return Work106ArtifactIdentity(
-            f"TMB-{type_token}-{tombstone.group('token').upper()}",
-            record_kind="tombstone",
-        )
+        allowed_types = WORK106_TOMBSTONE_TYPES.get(tombstone.group("stage"), ())
+        body = tombstone.group("body")
+        for type_token in sorted(allowed_types, key=len, reverse=True):
+            prefix = type_token.lower() + "-"
+            if body.startswith(prefix) and re.fullmatch(slug, body.removeprefix(prefix)):
+                return Work106ArtifactIdentity(
+                    f"TMB-{type_token}-{body.removeprefix(prefix).upper()}",
+                    record_kind="tombstone",
+                )
+        return None
     return None
 
 

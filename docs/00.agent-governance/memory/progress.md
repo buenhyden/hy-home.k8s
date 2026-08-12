@@ -16064,3 +16064,58 @@ section separating static from live evidence.
 - WORK-108 may backfill mandatory current-document outer artifact IDs only
   while the exact stable 93-row ledger, WORK-105 accepted AD authority, and all
   WORK-107 recovery/aggregate gates remain green.
+
+## 2026-08-12 - WORK-108 mandatory artifact identity backfill
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #identity #archive
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-108 tests-first implementation on WORK-107 commit `db320b59`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-109 terminal document authority and route consolidation
+
+### Progress
+
+- Backfilled the path-derived outer `artifact_id` for exactly 286 mandatory
+  records: 192 current authored documents, 93 stable Stage 98 records, and the
+  accepted `MIG-0001` ledger.
+- Required the field only on the 18 mandatory source profiles. Every Stage 99
+  template, README/navigation surface, governance/reference support record,
+  native/generated surface, fixture, and embedded archive payload remains
+  outside the mandatory identity namespace.
+- Preserved the WORK-105 accepted/completed history and WORK-107 recovery
+  contracts through exact outer-line projections. Stage 98 payload,
+  provenance, stable path, and 93-row ledger bindings remain unchanged.
+
+### Evidence
+
+- RED began at `269 != 286` and exposed the greedy tombstone-type parser, then
+  the staged lifecycle and historical-link projections exposed exact
+  transition gaps. Focused negative cases reject missing, duplicate, wrong,
+  reordered, prohibited, or non-outer identity changes.
+- GREEN: 286 declarations are globally unique and path-equal. Strict-cutover
+  38/38, archive recovery/cutover/validation 104/104, archive lifecycle 21/21,
+  lifecycle self-test 754, registry self-test 132/69/32, strict registry 506,
+  Markdown self/strict, and links self/strict all pass.
+- Final closure is green: agent-governance closure 30/30, active-corpus
+  retention 102/102, and RIA 94/94 pass. The synchronized aggregate ended with
+  `[PASS] repository quality gates passed`; affected and staged lanes each
+  passed for the exact 302-path index with one repository-quality success
+  marker. Plain and all-files pre-commit runs exited `0`, every applicable hook
+  passed, no formatter mutation occurred, and the post-run shape remained
+  exactly `M302` with zero unstaged or untracked paths.
+- Route state deliberately remains `transition`; WORK-109 exclusively owns the
+  terminal-route activation. No provider, hosted, remote, credential-bearing,
+  Release-family, deployment, or live action was performed or claimed.
+
+### Handoff
+
+- WORK-109 may consolidate the three document-authority owners and activate
+  terminal routes only while the exact 286-identity census and all WORK-108
+  finite projection checks remain green.

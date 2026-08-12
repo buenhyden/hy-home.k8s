@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "SPEC-032"
 ---
 
 # Protected Surface and Supply Chain Hardening Technical Specification (Spec)

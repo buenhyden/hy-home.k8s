@@ -4,6 +4,7 @@ type: sdlc/prd
 status: done
 owner: platform
 updated: 2026-07-28
+artifact_id: "PRD-006"
 ---
 
 # Workspace Document Lifecycle and Evidence Consolidation Product Requirements

@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-13
+artifact_id: "SPEC-010"
 ---
 
 # Workspace Harness Implementation Audit Pack Technical Specification (Spec)

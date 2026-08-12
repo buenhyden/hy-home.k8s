@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-22
+artifact_id: "GUIDE-0001"
 ---
 
 # WSL k3d ArgoCD Bootstrap Guide

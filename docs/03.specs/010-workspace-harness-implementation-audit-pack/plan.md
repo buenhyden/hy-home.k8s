@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
+artifact_id: "PLAN-010"
 ---
 
 # Workspace Harness Implementation Audit Pack Implementation Plan

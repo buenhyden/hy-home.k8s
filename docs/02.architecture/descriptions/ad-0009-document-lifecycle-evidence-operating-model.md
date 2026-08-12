@@ -4,6 +4,7 @@ type: sdlc/ad
 status: accepted
 owner: platform
 updated: 2026-07-28
+artifact_id: "AD-0009"
 ---
 
 # Document Lifecycle and Evidence Operating Model Architecture Description (AD)

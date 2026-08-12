@@ -4,6 +4,7 @@ type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-08-02
+artifact_id: "PLAN-049"
 ---
 
 # Platform Validation and Security Evidence Implementation Plan

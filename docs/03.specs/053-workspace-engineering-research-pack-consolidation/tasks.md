@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-09
+artifact_id: "TASK-053"
 ---
 
 # Task: Workspace Engineering Research Pack Consolidation

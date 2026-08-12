@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-30
+artifact_id: "TASK-044"
 ---
 
 # Task: Agent Roster Evaluation and Admission

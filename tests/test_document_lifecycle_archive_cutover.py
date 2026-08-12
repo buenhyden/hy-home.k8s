@@ -363,10 +363,18 @@ class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
             stable = PurePosixPath(str(row["stable_path"]))
             legacy_oid = str(row["legacy_envelope_blob"])
             legacy_bytes = VALIDATOR._blob_bytes(ROOT, legacy_oid)
-            stable_bytes = render_work107_stable_envelope(legacy_bytes, row)
+            stable_bytes = VALIDATOR._work107_without_outer_artifact_id(
+                render_work107_stable_envelope(legacy_bytes, row),
+                str(row["artifact_id"]),
+            )
+            self.assertIsNotNone(stable_bytes)
             base[legacy] = legacy_oid
             proposed[stable] = self._git_blob_oid(stable_bytes)
-        migration = render_work107_migration_document(rows)
+        migration = VALIDATOR._work107_without_outer_artifact_id(
+            render_work107_migration_document(rows),
+            "MIG-0001",
+        )
+        self.assertIsNotNone(migration)
         proposed[self.migration_path] = self._git_blob_oid(migration)
         proposed[self.template_path] = self.template_blob_oid
         return rows, base, proposed
@@ -441,6 +449,49 @@ class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
     def test_rehome_is_not_admitted_outside_staged_or_ci(self):
         self.assertFalse(self._admit(mode="snapshot"))
         self.assertFalse(self._admit(mode="explicit-ref"))
+
+
+class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
+    @staticmethod
+    def _git_bytes(specifier: str) -> bytes:
+        result = subprocess.run(
+            ["git", "show", specifier],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        return result.stdout
+
+    def test_outer_artifact_projection_is_exact_and_fail_closed(self):
+        row = build_work107_migration_rows(ROOT)[0]
+        path = str(row["stable_path"])
+        base = self._git_bytes(f"HEAD:{path}")
+        proposed = self._git_bytes(f":{path}")
+        helper = getattr(VALIDATOR, "_work108_artifact_projection", None)
+        self.assertTrue(callable(helper), "WORK-108 artifact projection is missing")
+        self.assertTrue(helper(path, base, proposed, str(row["artifact_id"])))
+        for mutation in (
+            proposed.replace(str(row["artifact_id"]).encode(), b"PLAN-CHG-9999", 1),
+            proposed + b"body drift\n",
+            proposed.replace(
+                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
+                b"",
+                1,
+            ),
+            proposed.replace(
+                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
+                (
+                    f'artifact_id: "{row["artifact_id"]}"\n'
+                    f'artifact_id: "{row["artifact_id"]}"\n'
+                ).encode(),
+                1,
+            ),
+        ):
+            with self.subTest(mutation=mutation[-32:]):
+                self.assertFalse(
+                    helper(path, base, mutation, str(row["artifact_id"]))
+                )
 
 
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):

@@ -1634,6 +1634,27 @@ def _emit_results(mode: str, output_format: str, rows: Sequence[ResultRow]) -> N
         )
 
 
+def _self_test_artifact_source(source: str, profile: DocumentProfile) -> str:
+    if (
+        "artifact_id" in profile.frontmatter.required
+        and source.startswith("---\n")
+        and re.search(r"(?m)^artifact_id:\s*", source) is None
+    ):
+        updated = re.search(r"(?m)^updated:[^\n]*\n", source)
+        if updated is not None:
+            artifact_id = (
+                "MIG-9999"
+                if profile.profile_id == "content/archive-migration"
+                else "FIXTURE-9999"
+            )
+            source = (
+                source[: updated.end()]
+                + f'artifact_id: "{artifact_id}"\n'
+                + source[updated.end() :]
+            )
+    return source
+
+
 def _run_source_case(
     temp_root: Path,
     path: PurePosixPath,
@@ -1643,6 +1664,7 @@ def _run_source_case(
     append_context: AppendContext | None = None,
     today: dt.date = dt.date(2026, 7, 12),
 ) -> list[str]:
+    source = _self_test_artifact_source(source, profile)
     _write_source(temp_root, path.as_posix(), source)
     return _rule_ids(
         validate_document(
@@ -2563,6 +2585,7 @@ def _self_test(root: Path) -> list[str]:
             else:
                 failures.append(f"focused section-body mutation is invalid: {mutation}")
                 continue
+            source = _self_test_artifact_source(source, profile)
             _write_source(temp_root, path.as_posix(), source)
             diagnostics = validate_document(
                 temp_root,

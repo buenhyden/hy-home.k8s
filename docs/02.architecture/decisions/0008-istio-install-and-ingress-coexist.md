@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-05-18
+artifact_id: "ADR-0008"
 ---
 
 # ADR-0008: Istio Default Profile with ingress-nginx Coexistence

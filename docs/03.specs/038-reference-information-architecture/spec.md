@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-26
+artifact_id: "SPEC-038"
 ---
 
 # Reference Information Architecture Technical Specification (Spec)

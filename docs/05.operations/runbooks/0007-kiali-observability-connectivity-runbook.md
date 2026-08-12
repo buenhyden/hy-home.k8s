@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-09
+artifact_id: "RUNBOOK-0007"
 ---
 
 # Kiali Observability 연결 복구 Runbook

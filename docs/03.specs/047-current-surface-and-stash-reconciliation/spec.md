@@ -4,6 +4,7 @@ type: sdlc/spec
 status: draft
 owner: platform
 updated: 2026-08-07
+artifact_id: "SPEC-047"
 ---
 
 # Current Surface and Stash Reconciliation Technical Specification (Spec)

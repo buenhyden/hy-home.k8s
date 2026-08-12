@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "SPEC-015"
 ---
 
 # Agent Governance Contract Normalization Technical Specification (Spec)

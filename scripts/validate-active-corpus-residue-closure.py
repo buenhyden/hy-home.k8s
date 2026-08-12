@@ -159,6 +159,9 @@ WORK105_REGISTRY_BLOBS = (
 WORK107_REGISTRY_BLOB = (
     "7182c40ab8ee6b40173b408ec2c366314916f1e3"  # pragma: allowlist secret
 )
+WORK108_REGISTRY_BLOB = (
+    "ce8da8f205cee1bba075bef7b26079a0708324b1"  # pragma: allowlist secret
+)
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
         "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",  # pragma: allowlist secret
@@ -1477,6 +1480,7 @@ def _load_registry_authority(
     if index.get(REGISTRY_PATH) not in {
         WORK105_REGISTRY_BLOBS[1],
         WORK107_REGISTRY_BLOB,
+        WORK108_REGISTRY_BLOB,
     }:
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     registry = _load_json_bytes(payload, REGISTRY_PATH)
@@ -1516,6 +1520,57 @@ def _object_identity(
     return {
         "objectMode": "proposed-nonignored-descriptor",
         "objectId": _sha256_identity(hashlib.sha256(payload).hexdigest()),
+    }
+
+
+def _git_blob_oid(payload: bytes) -> str:
+    header = f"blob {len(payload)}\0".encode("ascii")
+    return hashlib.sha1(header + payload).hexdigest()  # noqa: S324 - Git identity
+
+
+def _work108_authority_object_identity(
+    path: str, index: Mapping[str, str], payload: bytes
+) -> dict[str, str]:
+    """Project only the reviewed WORK-108 outer ID onto frozen authority bytes."""
+
+    expected_blobs = WORK105_AUTHORITY_BLOBS.get(path)
+    oid = index.get(path)
+    if expected_blobs is None or oid is None or oid != _git_blob_oid(payload):
+        return _object_identity(path, index, payload)
+    decision = re.fullmatch(
+        r"docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[a-z0-9]+"
+        r"(?:-[a-z0-9]+)*\.md",
+        path,
+    )
+    specification = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})-[a-z0-9]+(?:-[a-z0-9]+)*/spec\.md",
+        path,
+    )
+    if decision is not None:
+        expected_id = f"ADR-{decision.group('id')}"
+    elif specification is not None:
+        expected_id = f"SPEC-{specification.group('id')}"
+    else:
+        return _object_identity(path, index, payload)
+    expected = f'artifact_id: "{expected_id}"'.encode("ascii")
+    lines = payload.splitlines(keepends=True)
+    matches = [
+        line_index
+        for line_index, line in enumerate(lines)
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1 or matches[0] == 0:
+        return _object_identity(path, index, payload)
+    line_index = matches[0]
+    projected = b"".join(lines[:line_index] + lines[line_index + 1 :])
+    if (
+        not lines[line_index - 1].startswith(b"updated:")
+        or _git_blob_oid(projected) != expected_blobs[1]
+    ):
+        return _object_identity(path, index, payload)
+    return {
+        "objectMode": "index-stage-zero",
+        "objectId": _git_identity(expected_blobs[1]),
     }
 
 
@@ -2998,7 +3053,7 @@ def _authority_entries(
                 "profile": expected_type,
                 "status": expected_status,
                 "owner": "platform",
-                **_object_identity(path, index, payload),
+                **_work108_authority_object_identity(path, index, payload),
                 "disposition": "retain",
                 "reason": AUTHORITY_REASON,
                 "currentAuthority": authority,

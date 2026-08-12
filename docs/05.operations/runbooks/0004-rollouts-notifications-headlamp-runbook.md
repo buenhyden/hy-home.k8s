@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-09
+artifact_id: "RUNBOOK-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Runbook

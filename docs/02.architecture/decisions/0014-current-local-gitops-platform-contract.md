@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-13
+artifact_id: "ADR-0014"
 ---
 
 # ADR-0014: Current Local GitOps Platform Contract

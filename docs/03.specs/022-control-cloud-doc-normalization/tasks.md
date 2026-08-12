@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "TASK-022"
 ---
 
 # Task: Control Surface and Cloud Example Documentation Normalization

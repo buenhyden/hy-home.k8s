@@ -4,6 +4,7 @@ type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-05-21
+artifact_id: "POLICY-0001"
 ---
 
 # K8s GitOps Platform Operations Policy

@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest import mock
 
 
@@ -491,7 +491,9 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 self.assertIn(f"status: {status}\n", text)
                 self.assertIn("Architecture Description", text.split("---", 2)[1])
                 self.assertRegex(text, r"(?m)^# .*Architecture Description(?: \(AD\))?$")
-                self.assertNotRegex(text, r"(?m)^artifact_id:")
+                self.assertRegex(
+                    text, rf'(?m)^artifact_id: "AD-{identifier}"$'
+                )
 
     def test_work105_terminal_core_forms_and_retired_authored_routes(self) -> None:
         registry = json.loads(
@@ -599,7 +601,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         self.assertIn("93-row", ad0011)
         self.assertIn("payload", ad0011)
         self.assertIn("legacy envelope", ad0011.lower())
-        self.assertNotIn("artifact_id:", ad0011)
+        self.assertIn('artifact_id: "AD-0011"', ad0011)
 
     def test_work105_consumer_disposition_is_pinned_complete_and_closed(self) -> None:
         fixture = json.loads(_staged_bytes(REGISTRY_CASES))
@@ -1108,13 +1110,19 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
 
     def test_work105_completed_spec019_history_is_byte_exact(self) -> None:
+        validator = self.validators["registry"]
         for relative in (
             "docs/03.specs/019-template-path-numbering-contract/spec.md",
             "docs/03.specs/019-template-path-numbering-contract/plan.md",
         ):
             path = REPOSITORY_ROOT / relative
             with self.subTest(path=relative):
-                self.assertEqual(_staged_bytes(path), _work105_base_bytes(path))
+                self.assertEqual(
+                    validator._work108_without_outer_artifact_id(
+                        relative, _staged_bytes(path)
+                    ),
+                    _work105_base_bytes(path),
+                )
 
     def test_work105_stage98_invariant_blocks_105_106_and_gates_107_plus(self) -> None:
         ad0011_path = (
@@ -1334,6 +1342,119 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                     ((path, metadata),), terminal=False
                 )
                 self.assertTrue(any(item.startswith(expected) for item in diagnostics))
+
+    def test_work108_terminal_artifact_identity_census_is_exact_and_complete(self) -> None:
+        validator = self.validators["registry"]
+        registry = json.loads(
+            _staged_bytes(REPOSITORY_ROOT / validator.REGISTRY_PATH)
+        )
+        profiles = {profile["id"]: profile for profile in registry["profiles"]}
+        self.assertEqual(
+            set(validator.WORK108_MANDATORY_PROFILE_IDS),
+            {
+                profile_id
+                for profile_id, profile in profiles.items()
+                if "artifact_id" in profile["frontmatter"]["required"]
+            },
+        )
+        self.assertEqual(
+            set(validator.WORK108_MANDATORY_PROFILE_IDS),
+            {
+                profile_id
+                for profile_id, profile in profiles.items()
+                if "artifact_id" in profile["frontmatter"]["allowed"]
+                or "artifact_id" in profile["frontmatter"]["order"]
+            },
+        )
+        for source_id in validator.WORK108_MANDATORY_PROFILE_IDS:
+            template_id = f"template/{source_id}"
+            with self.subTest(source_id=source_id):
+                self.assertIn("artifact_id", profiles[source_id]["frontmatter"]["allowed"])
+                self.assertIn("artifact_id", profiles[source_id]["frontmatter"]["order"])
+                self.assertNotIn(
+                    "artifact_id", profiles[template_id]["frontmatter"]["required"]
+                )
+                self.assertNotIn(
+                    "artifact_id", profiles[template_id]["frontmatter"]["allowed"]
+                )
+                self.assertNotIn(
+                    "artifact_id", profiles[template_id]["frontmatter"]["order"]
+                )
+        records = tuple(
+            (path, validator._work106_frontmatter(raw))
+            for path, raw in validator._work105_staged_blobs(REPOSITORY_ROOT)
+            if path.endswith(".md")
+        )
+        identities = tuple(
+            (path, identity)
+            for path, _ in records
+            if (identity := validator._work106_derive_artifact_identity(path))
+            is not None
+        )
+        self.assertEqual(len(identities), 286)
+        self.assertEqual(
+            validator._work106_artifact_diagnostics(records, terminal=True), ()
+        )
+
+        tombstone_path = next(
+            path
+            for path, _ in records
+            if path.startswith(
+                "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-"
+            )
+        )
+        tombstone = validator._work106_derive_artifact_identity(tombstone_path)
+        self.assertIsNotNone(tombstone)
+        self.assertRegex(tombstone.artifact_id, r"^TMB-PRD-LEGACY-[A-F0-9]{64}$")
+
+        base = (
+            b"---\n"
+            b"title: Example\n"
+            b"type: sdlc/adr\n"
+            b"status: accepted\n"
+            b"owner: platform\n"
+            b"updated: 2026-08-12\n"
+            b"---\n\n# Example\n"
+        )
+        current = base.replace(
+            b"updated: 2026-08-12\n",
+            b"updated: 2026-08-12\nartifact_id: \"ADR-0024\"\n",
+        )
+        path = (
+            "docs/02.architecture/decisions/"
+            "0024-terminal-artifact-identity-and-archive-layout.md"
+        )
+        self.assertEqual(
+            validator._work108_without_outer_artifact_id(path, current), base
+        )
+        for invalid in (
+            current.replace(b"ADR-0024", b"ADR-0023"),
+            current.replace(
+                b"artifact_id: \"ADR-0024\"\n",
+                b"artifact_id: \"ADR-0024\"\nartifact_id: \"ADR-0024\"\n",
+            ),
+            current.replace(
+                b"updated: 2026-08-12\nartifact_id: \"ADR-0024\"\n",
+                b"artifact_id: \"ADR-0024\"\nupdated: 2026-08-12\n",
+            ),
+        ):
+            with self.subTest(invalid=invalid):
+                self.assertIsNone(
+                    validator._work108_without_outer_artifact_id(path, invalid)
+                )
+
+        links = self.validators["links"]
+        self.assertEqual(
+            links._work108_without_history_artifact_id(
+                PurePosixPath(path), current
+            ),
+            base,
+        )
+        self.assertIsNone(
+            links._work108_without_history_artifact_id(
+                PurePosixPath(path), current.replace(b"ADR-0024", b"ADR-0023")
+            )
+        )
 
     def test_work106_ledger_fixture_rejects_closed_negative_matrix(self) -> None:
         validator = self.validators["registry"]

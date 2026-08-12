@@ -4,6 +4,7 @@ type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-08-11
+artifact_id: "SPEC-052"
 ---
 
 # Document Taxonomy Consolidation Technical Specification (Spec)

@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-08-11
+artifact_id: "ADR-0018"
 ---
 
 # ADR-0018: Full-body Archive Record and Retention

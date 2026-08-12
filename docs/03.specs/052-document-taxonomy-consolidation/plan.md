@@ -4,6 +4,7 @@ type: sdlc/plan
 status: active
 owner: platform
 updated: 2026-08-12
+artifact_id: "PLAN-052"
 ---
 
 # Document Taxonomy Consolidation Implementation Plan
@@ -166,7 +167,7 @@ explicit Task 2 work and are not terminal waivers.
 | WORK-105 | Activate the AD route and Stage 99 core forms; convert exactly ARD-0004..0011 to AD-0004..0011; close all legacy ARD and authored API Spec consumers; perform the separate AD-0011/ADR-0024/projection authority gate. | Complete | Exact eight-record census, zero current/unclassified legacy consumers, retired-route negatives, native-contract preservation, atomic ADR-0024 acceptance, strict-cutover 31/31, lifecycle 754, archive cutover 31/31, RIA 94/94, and aggregate PASS. |
 | WORK-106 | Implement global artifact-identity and migration-ledger transition validators and negative fixtures. | Complete | Existing registry validator owns transition/terminal identity selection and the exact 14-field ledger; focused 37/37 plus affected/staged/aggregate gates passed with Stage 90/98 unchanged. |
 | WORK-107 | Rehome all 93 Stage 98 records under the stable grammar. | Complete | Exact 93-to-93 ledger; 76 change leaves in 41 directories and 17 typed tombstones; immutable payload/provenance, old-envelope proof, dual recovery, finite lifecycle admission, aggregate and all-files PASS. |
-| WORK-108 | Backfill mandatory outer `artifact_id` values after WORK-107 stable rehome and the complete AD conversion. | Queued | WORK-107 green and WORK-105 accepted; global uniqueness and mandatory/prohibited profile parity, including AD-0004..0011. |
+| WORK-108 | Backfill mandatory outer `artifact_id` values after WORK-107 stable rehome and the complete AD conversion. | Complete | Exact 286-identity census (`192` current + `93` stable archive + `1` migration), global uniqueness, mandatory/prohibited profile parity, closure 30/30, retention 102/102, RIA 94/94, aggregate/affected/staged, and plain/all-files pre-commit PASS. |
 | WORK-109 | Consolidate document authority and activate terminal routes. | Queued | Three disjoint prose/machine owners, Stage 04 absent, Stage 05 stable, date-free mutable routes, and terminal negatives. |
 | WORK-110 | Consolidate workspace AI-agent governance contracts and projections. | Queued | Closed risk/trust/oversight/approval/trace/evaluation/provenance shapes with non-promotable evidence. |
 | WORK-111 | Reconcile the complete 50-row script disposition ledger. | Queued | Every script has reviewed rule, consumer, argument, diagnostic, fixture, evidence, and recovery disposition. |

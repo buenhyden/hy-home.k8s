@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "RUNBOOK-0002"
 ---
 
 # ArgoCD ESO Vault Recovery Runbook

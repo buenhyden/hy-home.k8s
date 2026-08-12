@@ -79,7 +79,7 @@ WORK107_MIGRATION_PATH = (
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 )
 WORK107_MIGRATION_DOCUMENT_SHA256 = (
-    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+    "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 )
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
@@ -123,6 +123,7 @@ WORK107_MIGRATION_METADATA_KEYS = (
     "status",
     "owner",
     "updated",
+    "artifact_id",
     "migration_id",
 )
 _WORK107_EXECUTION_PATH = re.compile(
@@ -1304,6 +1305,7 @@ def _work107_migration_metadata_bytes() -> bytes:
         "status": "accepted",
         "owner": "platform",
         "updated": "2026-08-12",
+        "artifact_id": WORK107_MIGRATION_ID,
         "migration_id": WORK107_MIGRATION_ID,
     }
     return (
@@ -1388,7 +1390,9 @@ def render_work107_stable_envelope(
         if re.fullmatch(r"CHG-[0-9]{4}", change_id) is None:
             raise _error("ARCHIVE-MIGRATION-IDENTITY", "change identity differs")
     for key in ARCHIVE_STABLE_METADATA_KEYS:
-        if key == "change_id" and change_id is not None:
+        if key == "artifact_id":
+            metadata[key] = artifact_id
+        elif key == "change_id" and change_id is not None:
             metadata[key] = change_id
         elif key in parsed.metadata:
             metadata[key] = parsed.metadata[key]

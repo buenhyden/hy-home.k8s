@@ -5990,6 +5990,9 @@ def _work105_accepted_history_source(
     ):
         return False
     source_bytes = context.texts[source].encode("utf-8")
+    projected = _work108_without_history_artifact_id(source, source_bytes)
+    if projected is not None:
+        source_bytes = projected
     amended_digest = WORK105_AMENDED_ACCEPTED_ADR_SHA256.get(source)
     if amended_digest is not None:
         return hashlib.sha256(source_bytes).hexdigest() == amended_digest
@@ -6002,6 +6005,54 @@ def _work105_accepted_history_source(
     except (RiaContractError, RiaGitError):
         return False
     return source_bytes == pinned
+
+
+def _work108_without_history_artifact_id(
+    path: PurePosixPath, raw: bytes
+) -> bytes | None:
+    canonical = path.as_posix()
+    decision = re.fullmatch(
+        r"docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[a-z0-9]+"
+        r"(?:-[a-z0-9]+)*\.md",
+        canonical,
+    )
+    stage03 = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})-[a-z0-9]+(?:-[a-z0-9]+)*/"
+        r"(?P<leaf>spec|plan|tasks)\.md",
+        canonical,
+    )
+    if decision is not None:
+        expected_id = f"ADR-{decision.group('id')}"
+    elif stage03 is not None:
+        prefix = {"spec": "SPEC", "plan": "PLAN", "tasks": "TASK"}[
+            stage03.group("leaf")
+        ]
+        expected_id = f"{prefix}-{stage03.group('id')}"
+    else:
+        return None
+    expected = f'artifact_id: "{expected_id}"'.encode("ascii")
+    lines = raw.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return None
+    try:
+        frontmatter_end = next(
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.rstrip(b"\r\n") == b"---"
+        )
+    except StopIteration:
+        return None
+    matches = [
+        index
+        for index, line in enumerate(lines[:frontmatter_end])
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1 or matches[0] == 0:
+        return None
+    index = matches[0]
+    if not lines[index - 1].startswith(b"updated:"):
+        return None
+    return b"".join(lines[:index] + lines[index + 1 :])
 
 
 def _work105_accepted_history_ard_link(
@@ -6039,7 +6090,9 @@ def _work105_completed_history_ard_link(
         )
     except (RiaContractError, RiaGitError):
         return False
-    return source_bytes == context.texts[source].encode("utf-8")
+    current = context.texts[source].encode("utf-8")
+    projected = _work108_without_history_artifact_id(source, current)
+    return source_bytes == (projected if projected is not None else current)
 
 
 def _work105_immutable_history_ard_link(

@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-13
+artifact_id: "TASK-012"
 ---
 
 # Task: Template Governance Audit Enhancement

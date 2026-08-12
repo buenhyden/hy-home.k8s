@@ -4,6 +4,7 @@ type: "content/archive-migration"
 status: "accepted"
 owner: "platform"
 updated: "2026-08-12"
+artifact_id: "MIG-0001"
 migration_id: "MIG-0001"
 ---
 

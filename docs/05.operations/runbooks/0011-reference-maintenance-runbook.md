@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-17
+artifact_id: "RUNBOOK-0011"
 ---
 
 # Reference Maintenance Runbook

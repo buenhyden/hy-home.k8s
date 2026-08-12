@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-28
+artifact_id: "SPEC-040"
 ---
 
 # Contract Cutover and Program Closure Technical Specification (Spec)

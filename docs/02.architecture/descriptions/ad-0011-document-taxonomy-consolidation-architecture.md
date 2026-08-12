@@ -4,6 +4,7 @@ type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-08-11
+artifact_id: "AD-0011"
 ---
 
 # Document Taxonomy Consolidation Architecture Description (AD)

@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-26
+artifact_id: "RUNBOOK-0010"
 ---
 
 # GitHub 앱 GitOps 온보딩 런북

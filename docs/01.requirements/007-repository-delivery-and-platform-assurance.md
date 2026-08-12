@@ -4,6 +4,7 @@ type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-08-07
+artifact_id: "PRD-007"
 ---
 
 # Repository Delivery and Platform Assurance Product Requirements

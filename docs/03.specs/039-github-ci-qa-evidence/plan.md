@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-27
+artifact_id: "PLAN-039"
 ---
 
 # GitHub CI and QA Evidence Implementation Plan

@@ -1680,7 +1680,22 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     capture_output=True,
                     text=True,
                 ).stdout.strip()
-                self.assertEqual(observed_current_blob, current_blob)
+                current_payload = subprocess.run(
+                    ["git", "show", f":{row['path']}"],
+                    cwd=REPOSITORY_ROOT,
+                    check=True,
+                    capture_output=True,
+                ).stdout
+                projected = self.validator._work108_authority_object_identity(
+                    row["path"],
+                    {row["path"]: observed_current_blob},
+                    current_payload,
+                )
+                self.assertNotEqual(observed_current_blob, current_blob)
+                self.assertEqual(
+                    projected["objectId"],
+                    self.validator._git_identity(current_blob),
+                )
                 row["objectId"] = self.validator._git_identity(current_blob)
         transition = [{"path": "docs/04.execution/plans/fixture.md"}]
         self.validator._validate_authority_guard_transition(
@@ -2079,7 +2094,16 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(rows[self.validator.OWNER_SPEC]["objectId"], f"git:sha1:{old_blob}")
         self.assertEqual(work105_base_blob, base_blob)
         self.assertEqual(base_object_id, base_blob)
-        self.assertEqual(object_id, current_blob)
+        projected = self.validator._work108_authority_object_identity(
+            self.validator.OWNER_SPEC,
+            {self.validator.OWNER_SPEC: object_id},
+            payload,
+        )
+        self.assertNotEqual(object_id, current_blob)
+        self.assertEqual(
+            projected["objectId"],
+            self.validator._git_identity(current_blob),
+        )
 
         manifest = json.loads(
             (REPOSITORY_ROOT / self.validator.TAXONOMY_MANIFEST_PATH).read_text(
@@ -3328,7 +3352,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
     def test_spec038_registry_authority_is_exact_tracked_stage_zero(self) -> None:
         path = self.validator.REGISTRY_PATH
         base_blob, work105_blob = self.validator.WORK105_REGISTRY_BLOBS
-        current_blob = self.validator.WORK107_REGISTRY_BLOB
+        work107_blob = self.validator.WORK107_REGISTRY_BLOB
+        current_blob = self.validator.WORK108_REGISTRY_BLOB
         self.assertEqual(
             subprocess.run(
                 [
@@ -3361,9 +3386,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             ).stdout.strip(),
-            work105_blob,
+            work107_blob,
         )
+        self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)
+        self.assertNotEqual(work107_blob, current_blob)
         listed = f"{path}\0".encode()
         staged = f"100644 {'a' * 40} 0\t{path}\0".encode()
         cases = (
@@ -3433,6 +3460,43 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-AUTHORITY"
         )
         self.assertEqual(raised.exception.path, path)
+
+    def test_work108_authority_identity_projects_only_exact_outer_artifact(self) -> None:
+        path = next(iter(self.validator.WORK105_AUTHORITY_BLOBS))
+        old_oid = self.validator.WORK105_AUTHORITY_BLOBS[path][1]
+        staged_oid = subprocess.run(
+            ["git", "rev-parse", f":{path}"],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        current = subprocess.run(
+            ["git", "show", f":{path}"],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        helper = self.validator._work108_authority_object_identity
+        self.assertEqual(
+            helper(path, {path: staged_oid}, current),
+            {
+                "objectMode": "index-stage-zero",
+                "objectId": self.validator._git_identity(old_oid),
+            },
+        )
+        for mutation in (
+            current.replace(b"ADR-0002", b"ADR-9999", 1),
+            current + b"body drift\n",
+        ):
+            with self.subTest(mutation=mutation[-24:]):
+                self.assertNotEqual(
+                    helper(path, {path: self.validator._git_blob_oid(mutation)}, mutation),
+                    {
+                        "objectMode": "index-stage-zero",
+                        "objectId": self.validator._git_identity(old_oid),
+                    },
+                )
 
     def test_production_rejects_unadmitted_stage04_artifacts(self) -> None:
         original_inventory = self.validator._inventory

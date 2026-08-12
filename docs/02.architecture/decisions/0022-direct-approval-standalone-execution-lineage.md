@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-08-08
+artifact_id: "ADR-0022"
 ---
 
 # ADR-0022: Direct-Approval Standalone Execution Lineage

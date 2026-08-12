@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-15
+artifact_id: "SPEC-033"
 ---
 
 # Template Lifecycle Contract Normalization Technical Specification (Spec)

@@ -4,6 +4,7 @@ type: sdlc/task
 status: draft
 owner: platform
 updated: 2026-08-02
+artifact_id: "TASK-048"
 ---
 
 # Task: GitHub Routing and CI Evidence

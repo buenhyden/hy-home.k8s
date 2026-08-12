@@ -4,6 +4,7 @@ type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-08-02
+artifact_id: "PLAN-050"
 ---
 
 # Example IaC and Validator QA Implementation Plan

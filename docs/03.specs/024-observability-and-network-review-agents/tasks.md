@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "TASK-024"
 ---
 
 # Observability and Network Review Agents Task Record

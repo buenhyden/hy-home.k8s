@@ -4,6 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-27
+artifact_id: "TASK-039"
 ---
 
 # Task: GitHub CI and QA Evidence

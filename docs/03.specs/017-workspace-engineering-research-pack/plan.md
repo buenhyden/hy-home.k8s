@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
+artifact_id: "PLAN-017"
 ---
 
 # Workspace Engineering Research Pack Implementation Plan

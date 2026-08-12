@@ -4,6 +4,7 @@ type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-08-11
+artifact_id: "PRD-008"
 ---
 
 # Workspace Document Taxonomy Consolidation Product Requirements

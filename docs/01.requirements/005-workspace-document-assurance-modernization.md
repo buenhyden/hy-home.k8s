@@ -4,6 +4,7 @@ type: sdlc/prd
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "PRD-005"
 ---
 
 # Workspace Document Assurance Modernization Product Requirements

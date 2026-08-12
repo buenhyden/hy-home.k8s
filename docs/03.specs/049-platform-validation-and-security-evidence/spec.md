@@ -4,6 +4,7 @@ type: sdlc/spec
 status: draft
 owner: platform
 updated: 2026-08-02
+artifact_id: "SPEC-049"
 ---
 
 # Platform Validation and Security Evidence Technical Specification (Spec)

@@ -203,21 +203,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -304,21 +307,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -404,21 +410,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -504,21 +513,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -601,21 +613,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -694,21 +709,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -800,21 +818,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -910,21 +931,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1014,21 +1038,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1118,21 +1145,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1220,21 +1250,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1314,21 +1347,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1405,21 +1441,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1498,21 +1537,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1592,21 +1634,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1681,21 +1726,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "statusDomain": [
@@ -1845,6 +1893,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1922,6 +1971,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "migration_id"
         ],
         "allowed": [
@@ -2936,7 +2986,6 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
           "change_id",
           "original_artifact_id",
           "original_type",
@@ -2954,7 +3003,6 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
           "change_id",
           "original_artifact_id",
           "original_type",
@@ -3008,7 +3056,6 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
           "migration_id"
         ],
         "order": [
@@ -3017,7 +3064,6 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
           "migration_id"
         ]
       },
@@ -5283,11 +5329,11 @@
   "documentContracts": {
     "valueContracts": [
       {
-        "id": "authored-standard",
+        "id": "authored-terminal-identity",
         "profileIds": [
           "sdlc/prd",
-          "sdlc/interface",
           "sdlc/srs",
+          "sdlc/interface",
           "sdlc/ad",
           "sdlc/adr",
           "sdlc/spec",
@@ -5300,7 +5346,74 @@
           "sdlc/policy",
           "sdlc/runbook",
           "sdlc/incident",
-          "sdlc/postmortem",
+          "sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "authored-standard",
+        "profileIds": [
           "content/reference",
           "governance/reference",
           "governance/memory",
@@ -5420,7 +5533,7 @@
           {
             "key": "artifact_id",
             "kind": "string",
-            "nullable": true,
+            "nullable": false,
             "constant": null,
             "enum": null,
             "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
@@ -5588,10 +5701,311 @@
           {
             "key": "artifact_id",
             "kind": "string",
-            "nullable": true,
+            "nullable": false,
             "constant": null,
             "enum": null,
             "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-authored",
+        "profileIds": [
+          "template/sdlc/prd",
+          "template/sdlc/srs",
+          "template/sdlc/interface",
+          "template/sdlc/ad",
+          "template/sdlc/adr",
+          "template/sdlc/spec",
+          "template/sdlc/agent-design",
+          "template/sdlc/data-model",
+          "template/sdlc/tests",
+          "template/sdlc/plan",
+          "template/sdlc/task",
+          "template/sdlc/guide",
+          "template/sdlc/policy",
+          "template/sdlc/runbook",
+          "template/sdlc/incident",
+          "template/sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-record",
+        "profileIds": [
+          "template/content/archive"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "archived"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "original_type",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*(?:/[a-z0-9-]+)?$",
+            "conditional": null
+          },
+          {
+            "key": "original_path",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "archived_on",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "archive_reason",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "literal",
+              "values": [
+                "superseded",
+                "consolidated",
+                "completed-lineage",
+                "retired",
+                "abandoned",
+                "duplicate"
+              ]
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "replacement",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "source_commit",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "source_blob",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "content_sha256",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9a-f]{64}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-migration",
+        "profileIds": [
+          "template/content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
             "conditional": null
           },
           {

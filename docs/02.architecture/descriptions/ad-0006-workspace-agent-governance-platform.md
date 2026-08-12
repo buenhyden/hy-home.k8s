@@ -4,6 +4,7 @@ type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-08-01
+artifact_id: "AD-0006"
 ---
 
 # Workspace Agent Governance Platform Architecture Description (AD)

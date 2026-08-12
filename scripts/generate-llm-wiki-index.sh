@@ -12,9 +12,9 @@ CHECK_MODE=false
 
 TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"
 TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"
-TRANSITION_REGISTRY_OID="7182c40ab8ee6b40173b408ec2c366314916f1e3"
+TRANSITION_REGISTRY_OID="ce8da8f205cee1bba075bef7b26079a0708324b1"
 TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"
-TRANSITION_MIGRATION_OID="619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+TRANSITION_MIGRATION_OID="b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
 TRANSITION_BASE_ROW='| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |'
 TRANSITION_CURRENT_ROW='| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |'
 

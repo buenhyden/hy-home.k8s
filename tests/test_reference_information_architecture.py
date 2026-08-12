@@ -1376,7 +1376,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             {
                 "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
                 "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
-                "currentGeneratorOid": "66790bb31950be14fea0223e62b942105ab17fbd",
+                "currentGeneratorOid": "4a6657a4e7526bce32127373300261878666b6a1",
                 "semanticMappings": (
                     {
                         "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",

@@ -4,6 +4,7 @@ type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-08-02
+artifact_id: "AD-0010"
 ---
 
 # Repository Delivery Evidence Architecture Description (AD)

@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-17
+artifact_id: "SPEC-035"
 ---
 
 # Document Schema and Lifecycle Contract Technical Specification (Spec)

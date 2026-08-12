@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-07-26
+artifact_id: "GUIDE-0010"
 ---
 
 # CI/CD & QA 로컬-vs-GitHub 참조 가이드

@@ -4,6 +4,7 @@ type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-07-13
+artifact_id: "AD-0007"
 ---
 
 # Current Local GitOps Platform Architecture Description (AD)

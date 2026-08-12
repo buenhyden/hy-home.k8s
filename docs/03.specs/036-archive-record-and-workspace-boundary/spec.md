@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-19
+artifact_id: "SPEC-036"
 ---
 
 # Archive Record and Workspace Boundary Technical Specification (Spec)

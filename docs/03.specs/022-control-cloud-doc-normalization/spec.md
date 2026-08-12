@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-14
+artifact_id: "SPEC-022"
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Technical Specification

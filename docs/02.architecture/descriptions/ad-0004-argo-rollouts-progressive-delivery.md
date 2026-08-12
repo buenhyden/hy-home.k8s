@@ -4,6 +4,7 @@ type: sdlc/ad
 status: active
 owner: platform
 updated: 2026-07-13
+artifact_id: "AD-0004"
 ---
 
 # Argo Rollouts Progressive Delivery Architecture Description

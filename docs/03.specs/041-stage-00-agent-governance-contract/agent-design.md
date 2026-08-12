@@ -4,6 +4,7 @@ type: sdlc/agent-design
 status: active
 owner: platform
 updated: 2026-08-01
+artifact_id: "AGENT-DESIGN-041"
 ---
 
 # Workspace Agent Governance Program Design

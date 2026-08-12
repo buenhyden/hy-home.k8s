@@ -4,6 +4,7 @@ type: sdlc/spec
 status: done
 owner: platform
 updated: 2026-07-29
+artifact_id: "SPEC-042"
 ---
 
 # Provider-Native Runtime and Model Evidence Specification

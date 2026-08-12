@@ -4,6 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-19
+artifact_id: "PLAN-037"
 ---
 
 # Active Corpus and Execution Retention Implementation Plan

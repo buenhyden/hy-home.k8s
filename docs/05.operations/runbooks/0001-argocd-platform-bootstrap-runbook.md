@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-22
+artifact_id: "RUNBOOK-0001"
 ---
 
 # ArgoCD Platform Bootstrap Runbook

@@ -4,6 +4,7 @@ type: sdlc/ad
 status: accepted
 owner: platform
 updated: 2026-07-14
+artifact_id: "AD-0008"
 ---
 
 # Workspace Document Assurance Operating Model Architecture Description (AD)
