@@ -41,7 +41,7 @@ or remote payloads.
 | --- | --- | --- | --- | --- | --- | --- |
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | VAL-PDRR-001–010 | Activate Spec/Plan/Task and standalone execution relation | primary agent | Done | Activation and fix commits are complete, and the independent re-review approved the corrected activation package. | Spec 056, Plan, this Task, ADR-0022, indexes, registry, progress, activation report, `a6dbf106`, `d8c6b346` |
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | VAL-PDRR-001, VAL-PDRR-002 | Freeze the closed Gap Ledger and checker baseline | assigned worker | Done | Fix round 1 has exact three-case RED, 93-case hardened GREEN, and final security approval with zero findings. | Task Gap Ledger, temporary guarded checker, reviewed baseline evidence, task-2 report, `342e6862`, containing fix commit |
-| [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
+| [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Done | Rows 006, 026, 028, and 032 have current official-source and exact repository-static reconciliation; all four remain `Partial` and runtime/effectiveness evidence remains `DEFER`. | Four appended research-owner sections, guarded proposal, durable progress, task-3 report, logical commit |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Queued | Not executed. | Existing report owner, reviewed proposals, Task evidence |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Queued | Not executed. | Sanitized summary, existing report owner, reviewed proposals, Task evidence |
@@ -173,6 +173,58 @@ security re-review approved the hardened checker with zero Critical, Important,
 or Minor findings. The containing fix commit carries the exact completion-lane
 evidence. No external or remote call was made in this fix round.
 
+### PDRR-002 Agent, Model, and Memory Refresh Evidence
+
+PDRR-002 was executed and checked on 2026-08-12. Its first exact workstream RED
+exited 1 with `ERROR missing guarded file: /tmp/pdrr-agent-proposals.json`.
+After bounded owner appends and guarded proposal creation, the first GREEN
+attempt exposed `ERROR proposal-file identity mismatch`; the independently
+reviewed checker repair now maps only the exact Plan alias to canonical
+`PDRR-002`. The final exact command reports
+`PASS workstream name=agent-provider-model-memory canonical=PDRR-002`, and the
+checker self-test reports 103 named PASS results.
+
+The checked official sources were [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+[Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+[Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+[Codex memories](https://learn.chatgpt.com/docs/customization/memories),
+[OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/),
+[Claude Code subagents](https://code.claude.com/docs/en/sub-agents),
+[Claude Code memory](https://code.claude.com/docs/en/memory),
+[MCP versioning](https://modelcontextprotocol.io/specification/versioning),
+and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources).
+Provider pages without publisher dates are observation-time evidence; MCP
+revision `2026-07-28` is revision-scoped. The four owner sections therefore
+record present contract facts, explicit rejected inferences and uncertainty,
+exact Stage 00 selectors, bounded targets, evidence depth, owners, triggers,
+and `Partial` dispositions without claiming when undated provider text changed.
+
+`/tmp/pdrr-agent-proposals.json` is a current-user regular mode-`0600` file with
+SHA-256
+`76264946aad35c59cfb3210df9581fd13aa93c9957995c1c262fc46fce7c877e`.
+Its schema version 1 payload contains canonical `PDRR-002`, exactly requests
+006/026/028/032, nine reviewed source proposals, four reviewed claim proposals,
+and three global limitations, with no final IDs, raw body/payload, secret,
+provider-local state, or remote-runtime evidence. The source-fidelity reviewer
+opened one Important observation-time wording finding; fix round 1 closed it.
+The content/spec review approved with zero findings. Quality/security opened
+two Important proposal/hierarchy findings and one Minor frontmatter question;
+fix rounds 2 and 3 completed the proposal and placed each appended H3 under the
+existing freshness owner, while the reviewer accepted the append-only
+frontmatter boundary. Final source-fidelity, content/spec, and quality/security
+dispositions are each zero Critical, Important, or Minor findings.
+
+Focused strict Markdown and links, workstream, harness `12/4/48`, roster
+currentness, evaluation `12/48`, model-fitness `48`-tuple, checkpoint-schema
+110-mutation, and diff checks passed. The exact affected/staged/plain
+pre-commit, direct aggregate, all-files, mutation review, and final diff
+evidence is retained in the ignored task-3 report. The shared source/claim
+ledger remains byte-unchanged; Gap Ledger pre-integration dispositions remain
+`Pending` for PDRR-006. No provider authentication or invocation, model cost or
+latency measurement, ignored checkpoint content, provider-local or connected
+resource content, GitHub query, credential/secret, remote/live mutation, or
+effective-runtime assertion occurred.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -181,7 +233,7 @@ evidence. No external or remote call was made in this fix round.
 | --- | --- | --- |
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | Done. The direct-approval standalone relation is active, the fix round is complete, and independent re-review approved the corrected activation package. | This Task, Spec 056, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation report, and commits `a6dbf106` and `d8c6b346`. |
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | Done. Fix round 1 RED/GREEN and final security re-review are complete with zero findings. | Gap Ledger, guarded checker and ledger snapshot, Plan task 2, task-2 report, `342e6862`, containing fix commit. |
-| [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Queued. | Plan task 3. |
+| [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Done. Four admitted rows have reviewed current-source and exact repo-static reconciliation; all final owner dispositions remain `Partial` with runtime/effectiveness `DEFER`. | Four admitted research owners, guarded proposal, Plan task 3, durable progress, task-3 report, logical commit. |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Queued. | Plan task 4. |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Queued. | Plan task 5. |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Queued. | Plan task 6. |

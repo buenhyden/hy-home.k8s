@@ -8,6 +8,93 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - PDRR-002 agent, model, and memory evidence refreshed
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, qa, security
+- **Status**: complete
+- **Tags**: #pdrr #agents #models #memory #source-fidelity
+- **Owner**: PDRR-002 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-006,
+  REQ-WERPC-026, REQ-WERPC-028, and REQ-WERPC-032; official public sources
+  checked 2026-08-12; proposal SHA-256
+  `76264946aad35c59cfb3210df9581fd13aa93c9957995c1c262fc46fce7c877e`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  reviewed refresh. Re-observe every cited provider/MCP contract and named
+  repository selector before use.
+- **Next Owner**: PDRR-003 assigned worker after the PDRR-002 logical commit
+
+#### Progress
+
+PDRR-002 appended one bounded refresh section to each of the four admitted
+research owners. Rows 006, 026, 028, and 032 remain `Partial`; provider
+discovery, execution, effective permissions, model parsing/resolution/fitness,
+cost, latency, promotion, retention/deletion behavior, connected-resource
+retrieval, and other runtime/effectiveness evidence remain explicit `DEFER`.
+The shared source/claim ledger and conditional provider-status owner were not
+changed. Gap Ledger `Pending` remains the legal pre-integration state until
+PDRR-006 assigns final IDs and reconciles shared projections.
+
+The initial exact workstream RED exited 1 with
+`ERROR missing guarded file: /tmp/pdrr-agent-proposals.json`. A first GREEN
+attempt then exposed the Plan/checker identity mismatch
+`ERROR proposal-file identity mismatch`; the independently reviewed checker
+repair maps only the exact Plan alias to canonical `PDRR-002`. Final GREEN is
+`PASS workstream name=agent-provider-model-memory canonical=PDRR-002`, and the
+repaired checker self-test has 103 named PASS results.
+
+#### Memory
+
+Undated official provider pages support present, observation-time contract
+facts, not a historical change date. A `Partial` proposal is integration-ready
+only when its existing schema fields carry exact repo-relative selectors,
+evidence depth, rejected inference and uncertainty, bounded follow-up owner,
+required authority and safe collection boundary, plus a refresh trigger. A
+Plan-mandated H3 belongs under the existing `## Review and Freshness` profile
+owner rather than under the final relationship list or a new unsupported H2.
+
+#### Evidence
+
+- Official sources checked 2026-08-12:
+  [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+  [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+  [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+  [Codex memories](https://learn.chatgpt.com/docs/customization/memories),
+  [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/),
+  [Claude Code subagents](https://code.claude.com/docs/en/sub-agents),
+  [Claude Code memory](https://code.claude.com/docs/en/memory),
+  [MCP versioning](https://modelcontextprotocol.io/specification/versioning),
+  and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources).
+- The proposal is a current-user regular mode-`0600` file with schema version
+  1, canonical `PDRR-002`, exact requests 006/026/028/032, nine reviewed source
+  proposals, four reviewed claim proposals, three global limitations, no final
+  IDs, and no raw body/payload, secret, provider state, or runtime evidence.
+- Focused workstream, strict Markdown, strict links, harness `12/4/48`, roster
+  currentness, evaluation `12/48`, model-fitness `48`-tuple, checkpoint-schema
+  110-mutation, and diff checks passed. Exact logical completion evidence is
+  retained in the ignored task-3 report.
+- Source fidelity opened one Important historical-inference finding; fix round
+  1 closed it. Content/spec approved with zero findings. Quality/security
+  opened two Important completeness/hierarchy findings and one Minor metadata
+  question; fix rounds 2 and 3 closed both Important findings and accepted the
+  append-only metadata boundary. All three final reviews are approved at zero
+  Critical, Important, or Minor findings.
+- No authentication, credential or secret access, provider/model invocation,
+  cost/latency test, provider-local or ignored-checkpoint read, connected
+  resource retrieval, GitHub query, external mutation, or remote/live action
+  occurred.
+
+#### Handoff
+
+The containing logical commit and ignored task-3 report own the exact
+completion-lane evidence. PDRR-003 receives only its separately admitted rows;
+PDRR-006 later validates these proposals, assigns final contiguous IDs, and
+updates the shared ledger and projections atomically.
+
 ### 2026-08-12 - PDRR-001 closed refresh admission frozen
 
 #### Metadata

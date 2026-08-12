@@ -360,27 +360,56 @@ rows and current official OpenAI/Anthropic/MCP sources. Produces dated owner
 sections, reviewed source/claim proposals without final IDs, final
 dispositions, and explicit runtime limits.
 
-- [ ] **Step 1: Run workstream RED.** Run checker `workstream --name
+- [x] **Step 1: Run workstream RED.** Run checker `workstream --name
   agent-provider-model-memory`; expect pending-disposition/missing-section
   diagnostics for admitted rows.
-- [ ] **Step 2: Browse only admitted official primary sources.** Record exact
+- [x] **Step 2: Browse only admitted official primary sources.** Record exact
   URL, revision/publication and checked date, adopted scope, rejected inference,
   and trigger. Do not infer discovery, execution, model fitness, cost, latency,
   persistence, deletion, or effective permission.
-- [ ] **Step 3: Reconcile exact Stage 00 selectors.** Read named harness,
+- [x] **Step 3: Reconcile exact Stage 00 selectors.** Read named harness,
   provider, model, evaluation, memory, schema, and adapter owners without
   editing them. Write As-Is, gap, bounded target, evidence depth, owner/trigger.
-- [ ] **Step 4: Append dated sections and write the proposal file.** Use
+- [x] **Step 4: Append dated sections and write the proposal file.** Use
   `### 2026-08-11 Partial/DEFER incremental refresh`. The proposal records every
   source/claim field except final IDs, contains no raw response, and is created
   only after absence/symlink checks. Do not edit the shared ledger.
-- [ ] **Step 5: Run GREEN.** Run workstream checker, Markdown strict, links
+- [x] **Step 5: Run GREEN.** Run workstream checker, Markdown strict, links
   strict, and diff check. Expected: zero pending or owner/ID/path errors.
-- [ ] **Step 6: Review, run the logical work-package completion lane, and
+- [x] **Step 6: Review, run the logical work-package completion lane, and
   commit.** Require source-fidelity, content, and quality approval; update
   Task/Plan/progress; stage exact changed owners and commit
   `docs: refresh agent model and memory evidence`. A no-op records Task evidence
   and skips an empty commit.
+
+**Execution evidence (checked 2026-08-12):** The pre-edit RED exited 1 with
+`ERROR missing guarded file: /tmp/pdrr-agent-proposals.json`. The first GREEN
+attempt exposed `ERROR proposal-file identity mismatch` because the Plan alias
+was not accepted by the hardened checker; the independently reviewed checker
+repair canonicalizes only the exact alias to `PDRR-002`. The final exact command
+reports `PASS workstream name=agent-provider-model-memory canonical=PDRR-002`.
+The current proposal is a current-user regular mode-`0600` file with SHA-256
+`76264946aad35c59cfb3210df9581fd13aa93c9957995c1c262fc46fce7c877e`,
+schema version 1, nine source proposals, four claim proposals, three global
+limitations, and only requests 006, 026, 028, and 032.
+
+The exact official sources were [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+[Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+[Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
+[Codex memories](https://learn.chatgpt.com/docs/customization/memories),
+[OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/),
+[Claude Code subagents](https://code.claude.com/docs/en/sub-agents),
+[Claude Code memory](https://code.claude.com/docs/en/memory),
+[MCP versioning](https://modelcontextprotocol.io/specification/versioning),
+and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources).
+Undated provider pages are observation-time evidence, while MCP revision
+`2026-07-28` is revision-scoped. Source-fidelity fix round 1 removed unsupported
+historical-change inference; quality/security fix rounds 2 and 3 completed the
+proposal and corrected Markdown hierarchy. Final independent source-fidelity,
+content/spec, and quality/security reviews each approved with zero Critical,
+Important, or Minor findings. No provider authentication, model invocation,
+cost/latency measurement, provider-local or ignored-checkpoint read, GitHub
+query, remote/live mutation, or effective-runtime inference occurred.
 
 ### Task 4: PDRR-003 — Kubernetes, infrastructure, and security refresh
 

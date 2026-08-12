@@ -127,6 +127,43 @@ identifiers, reasoning-effort values, and precedence order, so no single page is
 sufficient on its own. None of the four sources publishes a last-modified date,
 so an unchanged result is content identity rather than a publisher signal.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and checked on **2026-08-12**. The heading
+preserves the approved package date; no model was invoked and no cost, latency,
+fitness, canary, fallback, promotion, entitlement, or effective configuration
+was observed.
+
+#### REQ-WERPC-028 current configuration reconciliation
+
+| Official source | Publication / revision and adopted scope | Rejected inference, uncertainty, and refresh trigger |
+| --- | --- | --- |
+| [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) | Current page with no publisher date, checked 2026-08-12. It documents `[agents]` defaults, per-role config layers, explicit-spawn precedence over those defaults, and `model_reasoning_effort` as `minimal`, `low`, `medium`, `high`, or model-dependent `xhigh`. | It does not prove an adapter parsed, a model exists for this account, or an effort value was applied. Recheck when agent/config/model/reasoning keys or precedence change. |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Current page with no publisher date, checked 2026-08-12. Agent-file model/effort overrides precede explicit spawn and `[agents]` defaults; the page also lists `low` through `ultra` effort guidance and current model recommendations. | `max` and `ultra` still do not appear in the configuration reference's accepted-value row. No single page establishes actual parser acceptance or account availability. Recheck when the two official surfaces converge or a runtime parse is separately authorized. |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents) | Current page with no publisher date, checked 2026-08-12. Model resolution is documented as environment override, per-invocation value, subagent frontmatter, then main conversation; aliases and full model IDs are allowed. | Does not prove the tracked frontmatter parsed, its named model resolved, or its tools/permissions were effective. Recheck when aliases, precedence, effort, or agent schema changes. |
+
+**As-Is:** `model-policy.md` still owns only `top`/`worker` and shared
+`medium`/`high`/`xhigh` intent. `contracts/agent-model-fitness.json` version
+1.1.0 still owns 48 provider-role tuples: mapping readiness is `PASS` for 21
+and `DEFER` for 27, while fitness, promotion, canary, and runtime are `DEFER`
+for all 48. The `.codex/agents/*.toml`, `.claude/agents/*.md`,
+`.agents/agents/*.md`, and `.gemini/agents/*.md` values remain configured
+projections, not observations.
+
+**Gap and bounded target:** The current Codex pages still expose a wider effort
+vocabulary on the subagents page than in the configuration reference, and all
+provider identifiers remain account/client/version sensitive. Preserve each
+configured incumbent. A future change must have platform-owner authorization,
+successful exact parsing and resolution without silent fallback, same-suite
+quality/safety evidence, independent adjudication, canary evidence, and a
+rollback record before promotion.
+
+**Final disposition:** `Partial`. Evidence depth is official configuration
+syntax plus exact repo-static model policy, fitness contract, evaluation
+bindings, and adapters. Owner: Stage 00 model policy and model-fitness
+contract. Refresh when a cited provider configuration contract or a local
+model/evaluation selector materially changes.
+
 ## Related Documents
 
 - [Provider implementation status](provider-implementation-status.md)
