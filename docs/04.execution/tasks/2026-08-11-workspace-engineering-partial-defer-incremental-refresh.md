@@ -42,7 +42,7 @@ or remote payloads.
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | VAL-PDRR-001–010 | Activate Spec/Plan/Task and standalone execution relation | primary agent | Done | Activation and fix commits are complete, and the independent re-review approved the corrected activation package. | Spec 056, Plan, this Task, ADR-0022, indexes, registry, progress, activation report, `a6dbf106`, `d8c6b346` |
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | VAL-PDRR-001, VAL-PDRR-002 | Freeze the closed Gap Ledger and checker baseline | assigned worker | Done | Fix round 1 has exact three-case RED, 93-case hardened GREEN, and final security approval with zero findings. | Task Gap Ledger, temporary guarded checker, reviewed baseline evidence, task-2 report, `342e6862`, containing fix commit |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Done | Rows 006, 026, 028, and 032 have current official-source and exact repository-static reconciliation; all four remain `Partial` and runtime/effectiveness evidence remains `DEFER`. | Four appended research-owner sections, guarded proposal, durable progress, task-3 report, logical commit |
-| [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Queued | Not executed. | Existing report owner, reviewed proposals, Task evidence |
+| [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Done | Rows 008, 009, and 025 have reviewed current-source and exact repository-static reconciliation; all remain `Partial`, row 009 remains static-only, and runtime evidence remains `DEFER`. | Appended research-owner section, guarded proposal, durable progress, task-4 report, logical commit |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Queued | Not executed. | Sanitized summary, existing report owner, reviewed proposals, Task evidence |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | VAL-PDRR-003, VAL-PDRR-006, VAL-PDRR-008 | Reconcile shared WER projections atomically | assigned worker | Queued | Not executed. | Shared README, source/claim ledger, scope index, Task evidence |
@@ -225,6 +225,67 @@ latency measurement, ignored checkpoint content, provider-local or connected
 resource content, GitHub query, credential/secret, remote/live mutation, or
 effective-runtime assertion occurred.
 
+### PDRR-003 Kubernetes, Infrastructure, and Security Refresh Evidence
+
+PDRR-003 was executed and checked on 2026-08-12. Its exact pre-edit workstream
+RED exited 1 only with
+`ERROR missing guarded file: /tmp/pdrr-kubernetes-proposals.json`. After the
+bounded owner append and guarded proposal creation, the exact GREEN reports
+`PASS workstream name=kubernetes-infrastructure-security canonical=PDRR-003`.
+The repaired checker SHA-256 is
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`,
+and its self-test reports 106 named PASS results, including the exact long
+Kubernetes proposal path and shortened-path rejection.
+
+The current primary-source reconciliation adopted one narrow material delta:
+Kubernetes RBAC revision `87470db12b` explicitly classifies `get` on
+`nodes/proxy` as privileged kubelet API access rather than read-only access.
+The exact Grafana Alloy v1.13.1 component page documents API-based Pod-log
+collection but does not prove the need for every local permission. Current
+Kubernetes admission, Argo CD source-integrity/GnuPG, Helm 4.2.3 and v3.21.1
+provenance, ESO/Vault, Gatekeeper, Sigstore Cosign, SLSA v1.2, and NIST SSDF
+sources retain their exact version and evidence limitations. New
+NetworkPolicy, kube-state-metrics, and Adminer research was rejected as
+duplicate.
+
+Static reconciliation confirmed desired k3s v1.35.0-k3s1, Alloy v1.13.1 with
+the combined `nodes/proxy` grant, twelve GitOps `targetRevision: main`
+files, an unpinned Argo CD bootstrap chart, the declared ESO `vault` audience
+and TokenReview binding, and the absence of admitted-selector source-integrity,
+digest, artifact-verification, Gatekeeper-constraint, Kubernetes admission-
+policy, or Pod Security Admission-label controls. Desired state, controller
+need, admission capability, Git/chart/image identity, signature, attestation,
+provenance, and runtime remain distinct.
+
+`/tmp/pdrr-kubernetes-proposals.json` is a current-user regular mode-`0600`
+file with SHA-256
+`ca79849fa9c2f60eec8fa9fbeba421f0b76432fa6c82f7ce5584861fb1c38744`.
+Its schema version 1 payload contains canonical `PDRR-003`, exactly requests
+008/009/025, twelve source proposals, five claim proposals, and four global
+limitations, with no final IDs, raw body/payload, Secret, credential,
+provider/live result, or artifact content. All three request dispositions
+remain `Partial`; row 009 is repository-static only and effective cluster,
+gateway, registry, cloud, hosted-CI, provider, trust, recovery, and other
+runtime outcomes remain `DEFER`.
+
+Source fidelity opened one Important proposal/source mismatch; fix round 1
+added exact Helm v3 provenance and NIST proposals and corresponding claim
+references, then approved with zero findings. Content/security approved with
+zero findings. Quality opened one Important canonical residue-path mismatch in
+the checksum-pinned checker. The checker owner repaired the exact long path,
+added shortened-path rejection fixtures, and received independent zero-finding
+approval; final quality re-review also approved with zero findings.
+
+Focused workstream, checker self-test, strict Markdown and links, GitOps
+structure, infrastructure static contracts, Kubernetes manifest/kube-linter,
+secret handling, Vault/ESO contract, and diff checks passed. The exact
+affected/staged/plain pre-commit, all-files, mutation review, and final diff
+evidence is retained in the ignored task-4 report. The shared source/claim
+ledger remains byte-unchanged; Gap Ledger pre-integration dispositions remain
+`Pending` for PDRR-006. No Secret, cluster, registry/artifact, cloud,
+gateway, hosted-CI, credential, provider runtime, trust store, recovery
+execution, or remote/live mutation occurred.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -234,7 +295,7 @@ effective-runtime assertion occurred.
 | [PDRR-000](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-1-pdrr-000--activate-the-standalone-execution) | Done. The direct-approval standalone relation is active, the fix round is complete, and independent re-review approved the corrected activation package. | This Task, Spec 056, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation report, and commits `a6dbf106` and `d8c6b346`. |
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | Done. Fix round 1 RED/GREEN and final security re-review are complete with zero findings. | Gap Ledger, guarded checker and ledger snapshot, Plan task 2, task-2 report, `342e6862`, containing fix commit. |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Done. Four admitted rows have reviewed current-source and exact repo-static reconciliation; all final owner dispositions remain `Partial` with runtime/effectiveness `DEFER`. | Four admitted research owners, guarded proposal, Plan task 3, durable progress, task-3 report, logical commit. |
-| [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Queued. | Plan task 4. |
+| [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Done. Rows 008, 009, and 025 have reviewed current-source and exact repo-static reconciliation; all remain `Partial`, row 009 is static-only, and runtime remains `DEFER`. | Kubernetes research owner, guarded proposal, Plan task 4, durable progress, task-4 report, logical commit. |
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Queued. | Plan task 5. |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Queued. | Plan task 6. |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | Queued. | Plan task 7. |

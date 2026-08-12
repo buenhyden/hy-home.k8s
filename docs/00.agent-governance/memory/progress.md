@@ -8,6 +8,79 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-08-12 - PDRR-003 Kubernetes and security evidence refreshed
+
+#### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: docs, research, kubernetes, infrastructure, security, qa
+- **Status**: complete
+- **Tags**: #pdrr #kubernetes #infrastructure #security #supply-chain
+- **Owner**: PDRR-003 assigned worker
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
+- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-008,
+  REQ-WERPC-009, and REQ-WERPC-025; official primary sources checked
+  2026-08-12; proposal SHA-256
+  `ca79849fa9c2f60eec8fa9fbeba421f0b76432fa6c82f7ce5584861fb1c38744`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
+  reviewed refresh. Recheck cited sources and exact selectors before use.
+- **Next Owner**: PDRR-004 assigned worker after the PDRR-003 logical commit
+
+#### Progress
+
+PDRR-003 appended one bounded refresh section to the Kubernetes,
+infrastructure, and security owner. Rows 008, 009, and 025 remain `Partial`;
+row 009 remains repository-static only, and controller need, effective RBAC,
+admission, compatibility, reconciliation, external Vault role, artifact trust,
+signature, attestation, provenance, recovery, and all runtime outcomes remain
+explicit `DEFER`. The shared source/claim ledger was not changed; its
+pre-integration `Pending` values remain owned by PDRR-006.
+
+The initial exact RED was the absent canonical proposal. Final GREEN is
+`PASS workstream name=kubernetes-infrastructure-security canonical=PDRR-003`.
+The checker owner repaired an independently found shortened Kubernetes
+proposal-path mismatch; final checker SHA-256 is
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`
+with 106 named self-test PASS results.
+
+#### Memory
+
+An exact controller page can narrow controller behavior without proving every
+permission in a combined local RBAC rule. Kubernetes now explicitly treats
+`get` on `nodes/proxy` as privileged, so least-privilege review must map
+each exact configured component before removal and verify effective
+authorization separately. Desired state, controller need, admission, Git/chart
+or image identity, signature, attestation, provenance, and runtime are separate
+evidence types. A checked source named in the owner table must also appear in
+the guarded proposal even when it is retained unchanged.
+
+#### Evidence
+
+- The proposal is current-user regular mode `0600`, schema version 1,
+  canonical `PDRR-003`, exact requests 008/009/025, twelve source proposals,
+  five claim proposals, four limitations, no final IDs, and no raw payload,
+  Secret, credential, provider/live result, or artifact content.
+- Source fidelity opened one Important source/proposal mismatch; fix round 1
+  added Helm v3 provenance and NIST source records and then approved with zero
+  findings. Content/security approved at zero. Quality opened one Important
+  checker canonical-path mismatch; the checker owner repaired and independently
+  approved it, and final quality re-review approved at zero.
+- Focused workstream, 106-case checker self-test, strict Markdown and links,
+  GitOps structure, infrastructure static contracts, Kubernetes
+  manifest/kube-linter, secret handling, Vault/ESO contracts, and diff checks
+  passed. Exact logical completion evidence is in the ignored task-4 report.
+- No Secret, cluster API, registry/artifact, cloud, gateway, hosted CI,
+  credential, provider runtime, trust store, recovery execution, or
+  remote/live mutation occurred.
+
+#### Handoff
+
+The containing logical commit and ignored task-4 report own the exact
+completion-lane evidence. PDRR-004 receives only its separately admitted rows;
+PDRR-006 later validates these proposals, assigns contiguous IDs, and updates
+the shared projections atomically.
+
 ### 2026-08-12 - PDRR-002 agent, model, and memory evidence refreshed
 
 #### Metadata

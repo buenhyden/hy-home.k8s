@@ -420,24 +420,60 @@ query, remote/live mutation, or effective-runtime inference occurred.
 controller, Argo CD, Helm, Sigstore/SLSA, and NIST sources. Produces dated
 findings or explicit retained DEFER results with no manifest change.
 
-- [ ] **Step 1: Run workstream RED** for
+- [x] **Step 1: Run workstream RED** for
   `kubernetes-infrastructure-security`; expect pending/missing-section results.
-- [ ] **Step 2: Re-check only admitted official deltas.** Keep controller need,
+- [x] **Step 2: Re-check only admitted official deltas.** Keep controller need,
   desired state, admission capability, identity pin, signature, attestation,
   provenance, and runtime distinct. Reject duplicate NetworkPolicy/KSM/Adminer
   claims whose current evidence is already sufficient.
-- [ ] **Step 3: Reconcile exact static selectors** under `gitops/`, `policy/`,
+- [x] **Step 3: Reconcile exact static selectors** under `gitops/`, `policy/`,
   `infrastructure/`, `traefik/`, `.kube-linter.yaml`, and validators. Do not
   access secrets, cluster, registry, or cloud.
-- [ ] **Step 4: Append one dated report section and write reviewed source/claim
+- [x] **Step 4: Append one dated report section and write reviewed source/claim
   proposals without final IDs** or record reviewed no-op dispositions with
   missing evidence and triggers. Do not edit the shared ledger.
-- [ ] **Step 5: Run GREEN** workstream checker, Markdown/links strict, diff
+- [x] **Step 5: Run GREEN** workstream checker, Markdown/links strict, diff
   check, and any focused static Kubernetes validators named by affected
   surfaces.
-- [ ] **Step 6: Require source/content/security/quality approval**, update
+- [x] **Step 6: Require source/content/security/quality approval**, update
   Task/Plan/progress, run the logical work-package completion lane, and commit
   `docs: refresh Kubernetes infrastructure security evidence` when non-empty.
+
+**Execution evidence (checked 2026-08-12):** The pre-edit exact RED exited 1
+only with
+`ERROR missing guarded file: /tmp/pdrr-kubernetes-proposals.json`. The final
+exact command reports
+`PASS workstream name=kubernetes-infrastructure-security canonical=PDRR-003`.
+The guarded proposal is a current-user regular mode-`0600` file with SHA-256
+`ca79849fa9c2f60eec8fa9fbeba421f0b76432fa6c82f7ce5584861fb1c38744`,
+schema version 1, twelve source proposals, five claim proposals, four global
+limitations, and only requests 008, 009, and 025.
+
+The only material newly adopted source delta is Kubernetes revision
+`87470db12b`, which makes the privileged `nodes/proxy` boundary explicit.
+The exact Alloy v1.13.1 source narrows controller semantics without proving
+controller need. Current Kubernetes admission, Argo CD, Helm, ESO/Vault,
+Gatekeeper, Sigstore, SLSA, and retained NIST sources preserve their distinct
+compatibility, admission, identity, signature, attestation, provenance, and
+runtime boundaries. NetworkPolicy, kube-state-metrics, and Adminer refreshes
+were rejected as duplicate. Rows 008, 009, and 025 remain `Partial`; row 009
+is repository-static only and every effective runtime result remains
+`DEFER`.
+
+Source-fidelity review opened one Important proposal/source mismatch; fix round
+1 added the exact Helm v3 provenance and NIST proposals and claim references,
+then approved with zero findings. Content/security approved with zero findings.
+Quality review opened one Important checksum-pinned checker residue-path
+mismatch. The checker owner repaired the canonical long Kubernetes proposal
+path, added negative shortened-path fixtures, reached SHA-256
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`
+and 106 named self-test PASS results, and received independent zero-finding
+approval; quality re-review then approved with zero findings. Strict Markdown
+and links, GitOps structure, infrastructure static contracts, Kubernetes
+manifest/kube-linter, secret handling, Vault/ESO contracts, and diff checks
+passed. No Secret, cluster, registry/artifact, cloud, gateway, hosted-CI,
+credential, provider-runtime, trust-store, recovery, or remote/live action
+occurred.
 
 ### Task 5: PDRR-004 — Guide and Diátaxis refresh
 
