@@ -43,7 +43,7 @@ or remote payloads.
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | VAL-PDRR-001, VAL-PDRR-002 | Freeze the closed Gap Ledger and checker baseline | assigned worker | Done | Fix round 1 has exact three-case RED, 93-case hardened GREEN, and final security approval with zero findings. | Task Gap Ledger, temporary guarded checker, reviewed baseline evidence, task-2 report, `342e6862`, containing fix commit |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted agent, provider, model, and memory evidence | assigned worker | Done | Rows 006, 026, 028, and 032 have current official-source and exact repository-static reconciliation; all four remain `Partial` and runtime/effectiveness evidence remains `DEFER`. | Four appended research-owner sections, guarded proposal, durable progress, task-3 report, logical commit |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Kubernetes, infrastructure, and security evidence | assigned worker | Done | Rows 008, 009, and 025 have reviewed current-source and exact repository-static reconciliation; all remain `Partial`, row 009 remains static-only, and runtime evidence remains `DEFER`. | Appended research-owner section, guarded proposal, durable progress, task-4 report, logical commit |
-| [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Queued | Not executed. | Existing report owners, reviewed proposals, Task evidence |
+| [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Done | Rows 014 and 020 retain `Partial` / `exclude-duplicate`; current published-page provenance and exact Guide static contracts are reconciled without changing DOC-G1/G2/G3 or inferring reader effectiveness. | Two appended research-owner sections, guarded proposal, task-local progress, task-5 report, logical commit |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Queued | Not executed. | Sanitized summary, existing report owner, reviewed proposals, Task evidence |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | VAL-PDRR-003, VAL-PDRR-006, VAL-PDRR-008 | Reconcile shared WER projections atomically | assigned worker | Queued | Not executed. | Shared README, source/claim ledger, scope index, Task evidence |
 | [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and hand off branch finishing | primary agent | Queued | Not executed. | Final reviews, gates, residue proof, lifecycle evidence |
@@ -58,7 +58,7 @@ refresh. The baseline source ceiling is `SRC-WERPC-067`, the claim ceiling is
 `/tmp/pdrr-ledger-before.md` with SHA-256
 `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`.
 The guarded checker is `/tmp/pdrr-refresh-check.py` with SHA-256
-`815babfea03cbf97cf79ef5726295979759812e1848c2eb3d194346ff905e0a4`.
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`.
 `Pending` is a pre-integration disposition only; PDRR-006 must replace every
 remaining `Pending` value with one of the checker-owned final states.
 
@@ -286,6 +286,56 @@ ledger remains byte-unchanged; Gap Ledger pre-integration dispositions remain
 gateway, hosted-CI, credential, provider runtime, trust store, recovery
 execution, or remote/live mutation occurred.
 
+### PDRR-004 Guide and Diátaxis Refresh Evidence
+
+PDRR-004 was executed and checked on 2026-08-12. Its exact pre-edit workstream
+RED exited 1 only with
+`ERROR missing guarded file: /tmp/pdrr-documentation-proposals.json`. After
+the bounded owner appends and guarded proposal creation, the exact GREEN
+reports `PASS workstream name=documentation-diataxis-guide
+canonical=PDRR-004`; the checksum-pinned checker self-test reports 106 named
+PASS results.
+
+The official [Diátaxis home](https://diataxis.fr/), [Start
+here](https://diataxis.fr/start-here/), and [guide to
+work](https://diataxis.fr/how-to-use-diataxis/) pages were reachable. Their
+2026-08-12 observation re-verifies the four documentation forms and the
+no-empty-structures boundary at the published-page level, so no upstream
+fallback was needed. This is a material provenance change after the recorded
+HTTP 429 observations, not a claim change; the pages expose no publisher
+revision date. Existing `SRC-WERPC-020`, `SRC-WERPC-067`, and
+`CLM-WERPC-003-03`/`08`/`09` remain the exact registered evidence.
+
+The current `sdlc/guide` profile enforces route, frontmatter/status/H2 shape,
+and active/draft traceability but no Guide Type value enum. Its template names
+`how-to`, `tutorial`, and `concept`, and all eight current numbered Guides
+declare `how-to`. Spec 052 remains active: DOC-G1 and queued/not-executed
+WORK-013 own enum enforcement, while DOC-G2/G3 already close the empty
+tutorial/explanation route question. Static shape and declarations do not
+prove correct reader classification, safe execution, accessibility,
+usability, or effectiveness; those outcomes remain `DEFER`.
+
+`/tmp/pdrr-documentation-proposals.json` is a current-user regular mode-`0600`
+file with SHA-256
+`8d5315b0785d991839150d4c3ffb68c300d0b82670f96e63ddb05b642060b5c1`.
+Its schema version 1 payload contains canonical `PDRR-004`, exactly requests
+014/020, one materially new official source-provenance proposal, zero claim
+proposals, and three limitations, with no final ID or raw body/payload. Both
+rows remain `Partial` / `exclude-duplicate`; PDRR-006 owns any source-ledger
+integration and contiguous ID.
+
+Independent source-fidelity, content/spec, and quality reviews each approved
+with zero Critical, Important, or Minor findings, so no fix round was needed.
+Focused workstream, checker self-test, strict Markdown/profile, strict links,
+strict registry, active-corpus role audit, and diff checks passed. Lifecycle
+snapshot returned the expected `DEFER` because snapshot mode has no comparison
+base; it did not evaluate a transition. Exact affected/staged/plain pre-commit,
+direct aggregate, all-files, formatter/mutation review, and both final
+diff-check results are retained in the ignored task-5 report. The shared
+source/claim ledger remains unchanged. No taxonomy/profile/template/Guide/Spec,
+remote, credential, provider-runtime, reader-test, or live-system mutation
+occurred.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -296,7 +346,7 @@ execution, or remote/live mutation occurred.
 | [PDRR-001](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-2-pdrr-001--freeze-the-gap-ledger) | Done. Fix round 1 RED/GREEN and final security re-review are complete with zero findings. | Gap Ledger, guarded checker and ledger snapshot, Plan task 2, task-2 report, `342e6862`, containing fix commit. |
 | [PDRR-002](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-3-pdrr-002--agent-provider-model-and-memory-refresh) | Done. Four admitted rows have reviewed current-source and exact repo-static reconciliation; all final owner dispositions remain `Partial` with runtime/effectiveness `DEFER`. | Four admitted research owners, guarded proposal, Plan task 3, durable progress, task-3 report, logical commit. |
 | [PDRR-003](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-4-pdrr-003--kubernetes-infrastructure-and-security-refresh) | Done. Rows 008, 009, and 025 have reviewed current-source and exact repo-static reconciliation; all remain `Partial`, row 009 is static-only, and runtime remains `DEFER`. | Kubernetes research owner, guarded proposal, Plan task 4, durable progress, task-4 report, logical commit. |
-| [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Queued. | Plan task 5. |
+| [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Done. Rows 014/020 retain `Partial` / `exclude-duplicate`; official published-page provenance and exact Guide static contracts are reconciled while reader evidence remains `DEFER`. | Two research owners, guarded proposal, Plan task 5, task-local progress, task-5 report, logical commit. |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Queued. | Plan task 6. |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | Queued. | Plan task 7. |
 | [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Queued. | Plan task 8. |

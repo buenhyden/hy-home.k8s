@@ -485,20 +485,60 @@ occurred.
 Spec 052 DOC-G1/G2/G3, Guide profile/template and current Guide instances.
 Produces current provenance and exact local taxonomy/enforcement disposition.
 
-- [ ] **Step 1: Run workstream RED** for
+- [x] **Step 1: Run workstream RED** for
   `documentation-diataxis-guide`.
-- [ ] **Step 2: Verify official framework evidence.** Try published pages; on
+- [x] **Step 2: Verify official framework evidence.** Try published pages; on
   rate limit use the official upstream source and record fallback/limitation.
   Do not reopen approved DOC-G2/G3 routes.
-- [ ] **Step 3: Compare Guide profile/template/instances and queued enum owner.**
+- [x] **Step 3: Compare Guide profile/template/instances and queued enum owner.**
   Keep usability/effectiveness as DEFER and do not edit taxonomy/templates.
-- [ ] **Step 4: Append dated sections and write reviewed source/claim proposals
+- [x] **Step 4: Append dated sections and write reviewed source/claim proposals
   without final IDs** only for materially new evidence; otherwise record an
   explicit retained disposition. Do not edit the shared ledger.
-- [ ] **Step 5: Run GREEN** checker, Markdown/links strict, diff check.
-- [ ] **Step 6: Require source/content/quality approval**, update execution
+- [x] **Step 5: Run GREEN** checker, Markdown/links strict, diff check.
+- [x] **Step 6: Require source/content/quality approval**, update execution
   evidence, run the logical work-package completion lane, and commit
   `docs: refresh Guide and Diataxis evidence` when non-empty.
+
+**Execution evidence (checked 2026-08-12):** The proposal path was absent and
+not a symlink, and the exact pre-edit RED exited 1 only with
+`ERROR missing guarded file: /tmp/pdrr-documentation-proposals.json`. The final
+exact command reports `PASS workstream name=documentation-diataxis-guide
+canonical=PDRR-004`; the checker SHA-256 is
+`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`
+and its self-test reports 106 named PASS results.
+
+The official Diátaxis home, Start here, and guide-to-work pages were reachable
+on the actual check date, so no upstream fallback was needed. They retain the
+four documentation forms and the no-empty-structures guidance. The successful
+published-page recheck is materially new provenance after the recorded HTTP
+429 observations but does not change the registered claim. Existing
+`SRC-WERPC-020`, `SRC-WERPC-067`, and `CLM-WERPC-003-03`/`08`/`09` stay the
+exact evidence boundary.
+
+The Guide profile still enforces structural type/route/frontmatter/status/H2
+and traceability contracts without a Guide Type value enum. The template names
+three values and all eight numbered Guides declare `how-to`. DOC-G1 and
+queued/not-executed WORK-013 retain enum ownership; DOC-G2/G3 remain closed.
+Reader classification correctness, safe execution, accessibility, usability,
+and effectiveness remain `DEFER`.
+
+The current-user regular mode-`0600` proposal has SHA-256
+`8d5315b0785d991839150d4c3ffb68c300d0b82670f96e63ddb05b642060b5c1`,
+canonical `PDRR-004`, exact requests 014/020, one materially new source
+proposal, zero claim proposals, and three limitations, with no final ID or raw
+body/payload. Both rows remain `Partial` / `exclude-duplicate`; PDRR-006 owns
+any final ledger integration.
+
+Independent source-fidelity, content/spec, and quality reviews each approved
+with zero Critical, Important, or Minor findings; no fix round was required.
+Focused strict Markdown/profile, links, registry, active-corpus, workstream,
+self-test, and diff checks passed. Lifecycle snapshot returned the expected
+`DEFER` because snapshot mode has no comparison base; it did not evaluate a
+transition. The exact affected/staged/plain pre-commit, direct aggregate,
+all-files, formatter/mutation review, and final diff evidence is retained in
+the task-5 report. No taxonomy, profile, template, Guide, Spec, source/claim
+ledger, remote, credential, reader-test, or live surface was mutated.
 
 ### Task 6: PDRR-005 — CI/CD, GitHub Actions, QA, and V&V refresh
 

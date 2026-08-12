@@ -152,6 +152,42 @@ and 2026-08-10, and the last change to the `start-here` source was a 2026-08-01
 typo fix; an upstream repository state cannot establish what the published pages
 currently say. A second independent attempt later on 2026-08-10 also failed: ten requests across `/start-here/`, `/`, `www.diataxis.fr`, and an unrelated `/map/` probe all returned HTTP 429, so the block is host-wide for this egress rather than specific to the cited pages. Two failed re-checks on the same day make this a persistent condition, not a transient one. A third attempt on 2026-08-11 from a different client also returned HTTP 429, so the published pages stay unverified. The four-mode claims and the no-mandated-structure boundary are now verified against the upstream source instead, which is a different and slightly weaker evidence class than the published page. Re-run the page check from a different egress if page-level verification is required.
 
+### 2026-08-11 Partial/DEFER incremental refresh
+
+This bounded increment was executed and checked on **2026-08-12**; the heading
+retains the approved package date. It addresses only REQ-WERPC-020 and uses
+official Diátaxis evidence plus the existing registered source and claim rows.
+No secondary source, taxonomy change, empty route, or Guide instance was added.
+
+#### Published-page provenance and retained decision
+
+| Official primary page | 2026-08-12 observation | Claim boundary |
+| --- | --- | --- |
+| [Diátaxis home](https://diataxis.fr/) and [Start here](https://diataxis.fr/start-here/) | Both published pages were reachable. They directly retain the four forms—tutorials, how-to guides, technical reference, and explanation—and distinguish them by user need. | This re-verifies the framework claims recorded by `SRC-WERPC-020`, `SRC-WERPC-067`, and `CLM-WERPC-003-08`; it does not prescribe a workspace profile or prove local reader outcomes. |
+| [Diátaxis as a guide to work](https://diataxis.fr/how-to-use-diataxis/) | The published page was reachable and directly retains the instruction not to create empty four-part structures, with documentation structure developing from internal improvements. | This is the successful published-page re-check named by `SRC-WERPC-067`'s refresh trigger. It upgrades current provenance from upstream-source-only to page-verified without changing the claim. The page exposes no publisher revision date, so it does not establish when the text changed. |
+
+No fallback was needed on this check. The exact upstream `main` files already
+registered as `SRC-WERPC-067` remain provenance for the failed 2026-08-10 and
+2026-08-11 page observations; the successful 2026-08-12 published-page result
+does not rewrite those dated facts. One source proposal records the materially
+new page-level provenance. No claim proposal is created because the supported
+claims are unchanged.
+
+Spec 052 remains `active`: `DOC-G2` declines a tutorial route, `DOC-G3`
+declines an explanation route on the same recorded basis, and `DOC-G1` assigns
+Guide Type enumeration to the existing implementation path. `WORK-013` is
+still `Queued` / `Not executed`. The current profile still has no separate
+tutorial or explanation route, all eight numbered Guides declare `how-to`, and
+`CLM-WERPC-003-09` remains `Partial` because static classification does not
+establish reader usefulness.
+
+**Final disposition:** REQ-WERPC-020 remains `Partial` and
+`exclude-duplicate`. Do not create empty tutorial or explanation structures or
+reopen `DOC-G2`/`DOC-G3`. Reconsider only if Spec 052 is superseded or a
+concrete owner, reader, consumer, instance, and validation need is approved.
+Guide classification correctness, usability, accessibility, safe execution,
+and effectiveness remain `DEFER` without actual reader evidence.
+
 ## Related Documents
 
 - [SDLC document contracts](spec-driven-sdlc-and-document-contracts.md)
