@@ -15,7 +15,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 ### Core Rules
 
 - Workspace purpose: this repository is a WSL2+k3d home-lab platform managed through ArgoCD GitOps.
-- Plan from repo-backed evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
+- Plan from repo-backed evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
 - Use [Agentic Execution Rules](agentic.md) as the Agent-first Engineering contract for non-trivial work.
 - Use spec-driven execution anchored to `docs/01.requirements/` and `docs/03.specs/`.
 - Resolve `working-short-term`, `durable-long-term`, `domain-scoped`, and
@@ -57,7 +57,7 @@ missing authority requires human clarification before execution.
 
 ### Stage Taxonomy
 
-Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical authoring matrix for `00.agent-governance`, `01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `98.archive`, and `99.templates`.
+Use [document-authoring.md](document-authoring.md) as the canonical authoring matrix for `00.agent-governance`, `01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `98.archive`, and `99.templates`.
 
 ## Current Contract
 
@@ -87,4 +87,4 @@ requires separate evidence.
 - [Persona Protocol](persona.md)
 - [Postflight Checklist](postflight-checklist.md)
 - [Harness Approval Boundaries](approval-boundaries.md)
-- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Stage Authoring Matrix](document-authoring.md)

@@ -185,66 +185,6 @@
       "new": false
     },
     {
-      "path": "docs/04.execution/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/plans/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/tasks/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
       "path": "docs/05.operations/README.md",
       "profile": "readme/stage-index",
       "requiredH2": [
@@ -1083,6 +1023,72 @@
     }
   ],
   "retiredPaths": [
+    {
+      "path": "docs/04.execution/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/03.specs/README.md"
+    },
+    {
+      "path": "docs/04.execution/plans/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/99.templates/templates/sdlc/execution/plan.template.md"
+    },
+    {
+      "path": "docs/04.execution/tasks/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/99.templates/templates/sdlc/execution/task.template.md"
+    },
     {
       "path": "docs/90.references/research/2026-07-04-wer/README.md",
       "profile": "readme/snapshot-pack",

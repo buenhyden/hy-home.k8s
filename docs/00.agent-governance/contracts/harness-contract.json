@@ -147,7 +147,7 @@
       },
       "evalSuite": {
         "id": "eval/supervisor/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -205,7 +205,7 @@
       },
       "evalSuite": {
         "id": "eval/code-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -264,7 +264,7 @@
       },
       "evalSuite": {
         "id": "eval/doc-writer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -323,7 +323,7 @@
       },
       "evalSuite": {
         "id": "eval/gitops-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -382,7 +382,7 @@
       },
       "evalSuite": {
         "id": "eval/incident-responder/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -441,7 +441,7 @@
       },
       "evalSuite": {
         "id": "eval/k8s-implementer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -500,7 +500,7 @@
       },
       "evalSuite": {
         "id": "eval/network-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -559,7 +559,7 @@
       },
       "evalSuite": {
         "id": "eval/observability-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -617,7 +617,7 @@
       },
       "evalSuite": {
         "id": "eval/security-auditor/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -675,7 +675,7 @@
       },
       "evalSuite": {
         "id": "eval/wiki-curator/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -733,7 +733,7 @@
       },
       "evalSuite": {
         "id": "eval/docs-researcher/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -792,7 +792,7 @@
       },
       "evalSuite": {
         "id": "eval/quality-engineer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
       "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
@@ -1154,7 +1154,7 @@
   },
   "targetInventory": {
     "state": "achieved",
-    "promotionOwnerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+    "promotionOwnerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
     "expectedRoleCount": 12,
     "expectedSurfaceCount": 4,
     "expectedProjectionCount": 48,
@@ -1586,7 +1586,7 @@
   "memory": {
     "canonicalDurableSharedPath": "docs/00.agent-governance/memory/progress.md",
     "transientCheckpointPath": ".agent-work/checkpoint.json",
-    "executableLifecycleOwner": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+    "executableLifecycleOwner": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
     "classes": [
       {
         "id": "working-short-term",
@@ -1616,7 +1616,7 @@
           "reviewRequired": true
         },
         "lifecyclePolicyRefs": [
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
           "docs/00.agent-governance/rules/postflight-checklist.md"
         ],
         "conflictBoundary": "Observed repository state and canonical SDLC owners always override temporary context after compaction, resume, or handoff.",
@@ -1663,8 +1663,8 @@
         },
         "lifecyclePolicyRefs": [
           "docs/00.agent-governance/memory/README.md",
-          "docs/00.agent-governance/rules/documentation-protocol.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/00.agent-governance/rules/document-authoring.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "The document-type current owner outranks the progress ledger, and newer reviewed repository evidence must explicitly reconcile older durable memory.",
         "prohibitedContent": [
@@ -1709,9 +1709,8 @@
           "reviewRequired": true
         },
         "lifecyclePolicyRefs": [
-          "docs/00.agent-governance/rules/document-stage-routing.md",
-          "docs/00.agent-governance/rules/documentation-protocol.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/00.agent-governance/rules/document-authoring.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "The canonical owner for the affected domain wins; cross-domain conflict must be escalated to the shared SDLC owner instead of copied locally.",
         "prohibitedContent": [
@@ -1756,7 +1755,7 @@
         },
         "lifecyclePolicyRefs": [
           "docs/00.agent-governance/harness-catalog.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "Provider-local context loses every conflict with observed repository state, canonical decisions, Task status, or durable handoff evidence.",
         "prohibitedContent": [

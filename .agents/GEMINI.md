@@ -25,10 +25,10 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 
 ## Workspace Contract
 
-- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
-- Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
+- Author stage documents Template-First: use `docs/99.templates/support/document-contract.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers; see `.agents/rules/graphify.md` for the full graphify contract.
 - The `.agents/` folder is the git-tracked single source of truth for provider-neutral shared content (`skills/`, `workflows`, `output-styles`) and local/Antigravity adapters. `.claude/skills`, `.claude/workflows`, `.claude/output-styles`, `.codex/skills`, `.codex/workflows`, and `.codex/output-styles` are symlink views; `.claude/agents/*`, `.codex/agents/*`, `.claude/settings.json`, and `.codex/hooks.json` remain provider-native files. `.agents/agents/*.md` and `.agents/hooks.json` are local adapter surfaces, not Gemini CLI native files.
 - The `.agents/agents/*.md` files serve as local/Antigravity role adapters and reference indexes.

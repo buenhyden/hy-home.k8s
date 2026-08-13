@@ -48,7 +48,7 @@ HARNESS_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-model-fitness.json")
 
-OWNER_SPEC = "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+OWNER_SPEC = "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 AUTHORITATIVE_CUTOFF_REF = (
     "docs/00.agent-governance/contracts/"
     "provider-runtime-evidence.json#/cutoff"

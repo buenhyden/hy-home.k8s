@@ -174,7 +174,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("docs/90.references/llm-wiki/wiki-index.md"),
             Path("docs/00.agent-governance/README.md"),
             Path("docs/00.agent-governance/harness-catalog.md"),
-            Path("docs/00.agent-governance/rules/document-stage-routing.md"),
+            Path("docs/00.agent-governance/rules/document-authoring.md"),
             Path("docs/README.md"),
             Path("scripts/README.md"),
             Path("docs/90.references/README.md"),
@@ -182,6 +182,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria.REGISTRY_PATH,
             ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
             ria.ARCHIVE_MIGRATION_PATH,
+            ria.SDLC_CONSOLIDATION_MIGRATION_PATH,
         )
         for path in paths:
             destination = root / path
@@ -1478,8 +1479,28 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 [],
             )
 
+        with (
+            mock.patch.object(
+                ria,
+                "_load_taxonomy_archive_transition",
+                return_value=active_sources,
+            ),
+            mock.patch.object(
+                ria,
+                "_run_generator_check",
+                side_effect=ria._GeneratorError("generator output is stale"),  # noqa: SLF001
+            ),
+        ):
+            self.assertEqual(ria.validate_generated_assets(root, contract), [])
+
         for name, sources, result, message in (
             ("terminal-state", frozenset(), "transition", None),
+            (
+                "stale-without-taxonomy-transition",
+                frozenset(),
+                None,
+                "generator output is stale",
+            ),
             ("unknown-success", active_sources, "unknown", None),
             ("generic-nonzero", active_sources, None, "generator command failed"),
             ("timeout", active_sources, None, "generator command timed out"),
@@ -1515,13 +1536,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     ],
                 )
 
-    def test_direct_generator_check_accepts_only_exact_transition_overlay(self) -> None:
+    def test_direct_generator_check_fails_closed_after_mig0002_projection(self) -> None:
         output_path = ria.GENERATOR_OUTPUT_PATH
         root = self._generator_repository(preserve_production_output=True)
         before = (root / output_path).read_bytes()
         result = self._run_generator_check(root)
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("transition overlay", result.stdout)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("generated LLM WIKI index is stale", result.stderr)
         self.assertEqual((root / output_path).read_bytes(), before)
         self.assertEqual(
             ria._blob_sha1(before),  # noqa: SLF001
@@ -3662,6 +3683,14 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     )
 
     def test_agent_cutover_projection_authority_is_fully_pinned(self) -> None:
+        self.assertEqual(
+            ria.AGENT_LEGACY_CUTOVER_SHA256,
+            "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb",  # pragma: allowlist secret
+        )
+        self.assertEqual(
+            ria.AGENT_LEGACY_CUTOVER_SCHEMA_SHA256,
+            "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1",  # pragma: allowlist secret
+        )
         projections = ria.load_agent_cutover_projections(
             REPOSITORY_ROOT,
             None,
@@ -3688,6 +3717,32 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                             REPOSITORY_ROOT,
                             None,
                         )
+
+    def test_generator_route_projection_is_exactly_pinned_to_mig0002(self) -> None:
+        expected = {
+            Path("docs/00.agent-governance/rules/document-stage-routing.md"): Path(
+                "docs/00.agent-governance/rules/document-authoring.md"
+            )
+        }
+        self.assertEqual(
+            ria.load_sdlc_consolidation_route_projections(
+                REPOSITORY_ROOT,
+                proposed_oid=None,
+                runner=None,
+            ),
+            expected,
+        )
+        with mock.patch.object(
+            ria,
+            "SDLC_CONSOLIDATION_MIGRATION_SHA256",
+            "0" * 64,
+        ):
+            with self.assertRaises(ria._GitError):  # noqa: SLF001
+                ria.load_sdlc_consolidation_route_projections(
+                    REPOSITORY_ROOT,
+                    proposed_oid=None,
+                    runner=None,
+                )
 
     def test_open_transition_matrix_is_closed(self) -> None:
         contract = self._minimal_contract()

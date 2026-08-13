@@ -35,8 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = "3284adc4d41dc4c430ed36c50055800c8b1f9cd61b5af8cde67abe71edc6f0aa"  # pragma: allowlist secret
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "cc47f9265e4c3f5bf5d305c232b395940ff691940f4ff8407dc1f8c8ebe0e42e"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SHA256 = "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -50,6 +50,19 @@ ARCHIVE_MIGRATION_PATH = Path(
 )
 ARCHIVE_MIGRATION_SHA256 = (
     "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
+)
+SDLC_CONSOLIDATION_MIGRATION_PATH = Path(
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+SDLC_CONSOLIDATION_MIGRATION_SHA256 = (
+    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+GENERATOR_ROUTE_LEGACY_PATH = Path(
+    "docs/00.agent-governance/rules/document-stage-routing.md"
+)
+GENERATOR_ROUTE_CURRENT_PATH = Path(
+    "docs/00.agent-governance/rules/document-authoring.md"
 )
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
@@ -151,7 +164,7 @@ _WEIA_TASK = (
 TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
     {
         Path("docs/90.references/audits/2026-07-11-weia/README.md"): {
-            "oldOid": "84b4cdae06e3882cee4b9f60cec30b01dfada873",
+            "oldOid": "84b4cdae06e3882cee4b9f60cec30b01dfada873",  # pragma: allowlist secret
             "currentOid": "dbeb6c063b36c98d620d09562a5100d5923343b5",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 5, _WEIA_TASK: 4}),
             "archiveIndexLinks": 8,
@@ -160,7 +173,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "docs/90.references/audits/2026-07-11-weia/"
             "ai-agents-model-routing-vibe-coding.md"
         ): {
-            "oldOid": "bdeb41f2cb5d7aa0b9822f7c7ffc0674c6abc895",
+            "oldOid": "bdeb41f2cb5d7aa0b9822f7c7ffc0674c6abc895",  # pragma: allowlist secret
             "currentOid": "71fdb66e9ff080aa505374dc4ab0424065153edc",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
@@ -169,7 +182,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "docs/90.references/audits/2026-07-11-weia/"
             "ci-qa-automation-pipeline-workflow.md"
         ): {
-            "oldOid": "b469ca00ffc7e226fa2f51b40c8a5bb2347a0f03",
+            "oldOid": "b469ca00ffc7e226fa2f51b40c8a5bb2347a0f03",  # pragma: allowlist secret
             "currentOid": "4cad1c4330c41d721b7fe6aa9eebb90c702e2f8f",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
@@ -178,7 +191,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "docs/90.references/audits/2026-07-11-weia/"
             "governance-harness-loop-providers.md"
         ): {
-            "oldOid": "859dd01de058474939e734ca6e5cf6c1678ff18d",
+            "oldOid": "859dd01de058474939e734ca6e5cf6c1678ff18d",  # pragma: allowlist secret
             "currentOid": "b35dce197ca96bb9341b590ef505040e86d18577",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
@@ -187,7 +200,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "docs/90.references/audits/2026-07-11-weia/"
             "kubernetes-infrastructure-security.md"
         ): {
-            "oldOid": "8d706c7b2f09a030cc3d9bf1ca9cf856779288a1",
+            "oldOid": "8d706c7b2f09a030cc3d9bf1ca9cf856779288a1",  # pragma: allowlist secret
             "currentOid": "f8cec478bbff2ee542c0738521bdb54de2fc6e38",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 2}),
             "archiveIndexLinks": 2,
@@ -196,13 +209,13 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "docs/90.references/audits/2026-07-11-weia/"
             "sdlc-document-lifecycle-frontmatter.md"
         ): {
-            "oldOid": "fa3178eab2ad0371652188b16ec9ed8d456ee21b",
+            "oldOid": "fa3178eab2ad0371652188b16ec9ed8d456ee21b",  # pragma: allowlist secret
             "currentOid": "39cdc99f265ca91c35f1f0ede114cf626359837e",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
         },
         Path("docs/90.references/audits/README.md"): {
-            "oldOid": "6020fd85b8e21578ba93fba61c03b17599118a87",
+            "oldOid": "6020fd85b8e21578ba93fba61c03b17599118a87",  # pragma: allowlist secret
             "currentOid": "16f671253013bbdda6605049bd08981b0d40556f",
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 2, _WEIA_TASK: 2}),
             "archiveIndexLinks": 4,
@@ -2172,6 +2185,20 @@ def validate_generated_assets(
 
     root = root.absolute()
     authoritative: dict[Path, bytes] = {}
+    try:
+        route_projections = load_sdlc_consolidation_route_projections(
+            root,
+            proposed_oid=commit_oid,
+            runner=runner,
+        )
+    except _GitError:
+        return [
+            Finding(
+                "RIA-GENERATOR",
+                SDLC_CONSOLIDATION_MIGRATION_PATH.as_posix(),
+                "generator route projection authority is unavailable",
+            )
+        ]
     paths = {
         path
         for relation in relations
@@ -2183,11 +2210,12 @@ def validate_generated_assets(
         )
     }
     for path in sorted(paths):
+        authority_path = route_projections.get(path, path)
         try:
             authoritative[path] = (
-                read_proposed_regular_file(root, path, runner)
+                read_proposed_regular_file(root, authority_path, runner)
                 if commit_oid is None
-                else _read_commit_path(root, commit_oid, path, runner)
+                else _read_commit_path(root, commit_oid, authority_path, runner)
             )
         except (ContractError, _GitError):
             findings.append(
@@ -2219,7 +2247,30 @@ def validate_generated_assets(
     for relation in relations:
         try:
             generator_result = _run_generator_check(root, relation.check_command)
-        except _GeneratorError:
+        except _GeneratorError as error:
+            transition_active = False
+            if str(error) == "generator output is stale":
+                try:
+                    transition_active = bool(
+                        _load_taxonomy_archive_transition(
+                            root,
+                            proposed_oid=None,
+                            runner=runner,
+                        )
+                    )
+                except (ContractError, _GitError):
+                    transition_active = False
+            if (
+                transition_active
+                and route_projections
+                == {GENERATOR_ROUTE_LEGACY_PATH: GENERATOR_ROUTE_CURRENT_PATH}
+                and _generator_transition_overlay_matches(
+                    authoritative[relation.generator_path],
+                    authoritative[relation.output_path],
+                    transition_active=True,
+                )
+            ):
+                continue
             findings.append(
                 Finding(
                     "RIA-GENERATOR",
@@ -2334,6 +2385,74 @@ def _proposed_path(
     if proposed_oid is not None:
         return _read_commit_path(root, proposed_oid, path, runner)
     return read_proposed_regular_file(root, path, runner)
+
+
+def load_sdlc_consolidation_route_projections(
+    root: Path,
+    *,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> dict[Path, Path]:
+    """Load the one generator route merged by the exact MIG-0002 authority."""
+
+    root = root.absolute()
+    if proposed_oid is None:
+        authority = root / SDLC_CONSOLIDATION_MIGRATION_PATH
+        try:
+            mode = authority.lstat().st_mode
+        except FileNotFoundError:
+            return {}
+        except OSError as error:
+            raise _GitError("SDLC consolidation route authority is unavailable") from error
+        if not stat.S_ISREG(mode):
+            raise _GitError("SDLC consolidation route authority is not regular")
+    try:
+        payload = _proposed_path(
+            root,
+            SDLC_CONSOLIDATION_MIGRATION_PATH,
+            proposed_oid,
+            runner,
+        )
+    except (ContractError, _GitError) as error:
+        if proposed_oid is not None:
+            return {}
+        raise _GitError("SDLC consolidation route authority is unavailable") from error
+    if hashlib.sha256(payload).hexdigest() != SDLC_CONSOLIDATION_MIGRATION_SHA256:
+        raise _GitError("SDLC consolidation route authority differs")
+    marker = b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if payload.count(marker) != 1 or payload.count(b"\n```\n") != 1:
+        raise _GitError("SDLC consolidation route authority differs")
+    raw = payload.split(marker, 1)[1].split(b"\n```\n", 1)[0]
+    try:
+        rows = json.loads(
+            raw.decode("utf-8", "strict"),
+            object_pairs_hook=_reject_duplicate_keys,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+        raise _GitError("SDLC consolidation route authority differs") from error
+    expected = {
+        "legacy_path": GENERATOR_ROUTE_LEGACY_PATH.as_posix(),
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": GENERATOR_ROUTE_CURRENT_PATH.as_posix(),
+        "source_commit": "160ce006969ddb49965c8af193f3e9ee290e18a8",  # pragma: allowlist secret
+        "source_blob": "f2169c842ca1f973118433db40e136e7e387e60d",  # pragma: allowlist secret
+        "content_sha256": (
+            "4af764cf03a18ac3f5db907359f2fb72826559664d30a0e04670822d4effdd41"  # pragma: allowlist secret
+        ),
+        "reason": (
+            "Merge duplicate route-sensitive authoring guidance into the "
+            "canonical Stage 00 document-authoring owner."
+        ),
+    }
+    if (
+        not isinstance(rows, list)
+        or len(rows) != 154
+        or sum(row == expected for row in rows) != 1
+    ):
+        raise _GitError("SDLC consolidation route authority differs")
+    return {GENERATOR_ROUTE_LEGACY_PATH: GENERATOR_ROUTE_CURRENT_PATH}
 
 
 def _work107_archive_aliases(content: bytes) -> dict[str, str]:
@@ -5174,7 +5293,7 @@ def load_agent_cutover_projections(
     if (
         cutover.get("schemaVersion") != 1
         or cutover.get("currentOwnerSpec")
-        != "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        != "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
         or cutover.get("currentAuthorityMigrations") != expected
     ):
         raise _GitError("agent cutover projection authority differs")

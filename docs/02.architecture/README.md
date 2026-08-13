@@ -80,6 +80,6 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - [Architecture Decisions](./decisions/README.md)
 - [Specs README](../03.specs/README.md)
 - [Operations README](../05.operations/README.md)
-- [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
+- [Document Stage Routing](../00.agent-governance/rules/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Archive Index](../98.archive/README.md)

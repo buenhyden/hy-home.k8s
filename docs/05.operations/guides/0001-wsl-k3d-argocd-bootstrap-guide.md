@@ -131,7 +131,7 @@ artifact_id: "GUIDE-0001"
 
 ## Traceability
 
-- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - **Runbook**: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - **Plan**: [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)

@@ -12,7 +12,7 @@ artifact_id: "AD-0011"
 ## Overview
 
 This architecture implements
-[PRD-008](../../01.requirements/008-workspace-document-taxonomy-consolidation.md)
+[PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 as one repository-local control plane for SDLC documents, template and profile
 contracts, AI-agent governance, and validation. It organizes change evidence
 around a Stage 03 work unit, retires the separate Stage 04 execution tree,
@@ -157,7 +157,7 @@ Cross-stage lineage continues to use the registry's closed program or
 standalone relationship data and reciprocal document links. This program does
 not add ad-hoc frontmatter keys that compete with that owner. Accepted
 [ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md)
-owns the terminal form and archive-layout direction, and the PRD-008 program
+owns the terminal form and archive-layout direction, and the PRD-0008 program
 projection names that decision without rewriting accepted predecessor records.
 
 ### Stable Stage 98 migration invariant
@@ -299,7 +299,7 @@ promoted, or a required repository-static gate fails.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-WDTC-001](../../01.requirements/008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md) and [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
+| [REQ-WDTC-001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md) and [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
 | N/A — REQ-WDTC-002 through REQ-WDTC-004 share the PRD source above. | Stable filename identity, Stage 05 stability, and registry-owned reciprocal lineage | N/A — ADR-0024 and Spec 052 share the target owners above. |
 | N/A — REQ-WDTC-005 through REQ-WDTC-007 share the PRD source above. | Authority uniqueness, template parity, and explicit Release exclusion | N/A — ADR-0024 and Spec 052 share the target owners above. |
 | N/A — REQ-WDTC-008 through REQ-WDTC-010 share the PRD source above. | Reviewed disposition, archive integrity, and fail-closed route transition | N/A — Spec 052 owns the migration contract. |

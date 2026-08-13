@@ -22,11 +22,10 @@ ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
 REQUIRED_OWNER_LINKS = {
     "docs/00.agent-governance/rules/bootstrap.md": "rules/bootstrap.md",
     "docs/00.agent-governance/rules/persona.md": "rules/persona.md",
-    "docs/00.agent-governance/rules/stage-authoring-matrix.md": "rules/stage-authoring-matrix.md",
-    "docs/03.specs/024-observability-and-network-review-agents/tasks.md": "../03.specs/024-observability-and-network-review-agents/tasks.md",
-    "docs/03.specs/025-governance-owner-and-roster-currentness/tasks.md": "../03.specs/025-governance-owner-and-roster-currentness/tasks.md",
-    "docs/99.templates/support/documentation-contract.md": "../99.templates/support/documentation-contract.md",
-    "docs/99.templates/support/template-routing.md": "../99.templates/support/template-routing.md",
+    "docs/00.agent-governance/rules/document-authoring.md": "rules/document-authoring.md",
+    "docs/03.specs/0024-observability-and-network-review-agents/tasks.md": "../03.specs/0024-observability-and-network-review-agents/tasks.md",
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/tasks.md": "../03.specs/0025-governance-owner-and-roster-currentness/tasks.md",
+    "docs/99.templates/support/document-contract.md": "../99.templates/support/document-contract.md",
 }
 STALE_COUNT_VARIANTS = (
     "8 local agents",
@@ -59,12 +58,20 @@ def missing_owner_link_error(label: str, target: str) -> str:
     return f"harness catalog missing canonical owner link: {label} -> {target}"
 
 
+def duplicate_owner_link_error(label: str, target: str) -> str:
+    return (
+        "harness catalog canonical owner link must appear exactly once: "
+        f"{label} -> {target}"
+    )
+
+
 REQUIRED_CASE_NAMES = frozenset({
     "valid",
     "missing-role",
     "surface-mismatch",
     "stale-count",
     "bad-owner",
+    "duplicate-owner",
     "missing-current-phrase",
 })
 
@@ -300,6 +307,16 @@ def fixture_case_schema(roster: HarnessRoster) -> dict[str, dict[str, Any]]:
             }),
             "catalog_variants": None,
         },
+        "duplicate-owner": {
+            "mutation": "duplicate-document-authoring-owner",
+            "expected_errors": frozenset({
+                duplicate_owner_link_error(
+                    "docs/00.agent-governance/rules/document-authoring.md",
+                    "rules/document-authoring.md",
+                ),
+            }),
+            "catalog_variants": None,
+        },
         "missing-current-phrase": {
             "mutation": "remove-current-roster-phrase",
             "expected_errors": frozenset({VALID_ROSTER_PHRASE_ERROR}),
@@ -339,13 +356,16 @@ def validate_contract(
         errors.append("harness catalog contains stale pre-12-role currentness prose")
     if catalog_text.count(VALID_ROSTER_PHRASE) != 1:
         errors.append(VALID_ROSTER_PHRASE_ERROR)
-    catalog_links = {
+    catalog_links = [
         (normalize_markdown_label(label), target)
         for label, target in MARKDOWN_LINK_RE.findall(catalog_text)
-    }
+    ]
     for label, target in REQUIRED_OWNER_LINKS.items():
-        if (label, target) not in catalog_links:
+        link_count = catalog_links.count((label, target))
+        if link_count == 0:
             errors.append(missing_owner_link_error(label, target))
+        elif link_count > 1:
+            errors.append(duplicate_owner_link_error(label, target))
     return errors
 
 
@@ -386,6 +406,16 @@ def run_self_test(
     if frozenset(data["expected_stems"]) != expected_stems:
         failures.append(
             "fixture expected_stems does not match harness current roleIds"
+        )
+    fixture_owner_links = data.get("expected_owner_links")
+    if not isinstance(fixture_owner_links, dict) or not all(
+        isinstance(label, str) and isinstance(target, str)
+        for label, target in fixture_owner_links.items()
+    ):
+        failures.append("fixture expected_owner_links must be a string map")
+    elif fixture_owner_links != REQUIRED_OWNER_LINKS:
+        failures.append(
+            "fixture expected_owner_links does not match required canonical owner links"
         )
     cases = data["cases"]
     case_schema = fixture_case_schema(roster)
@@ -519,6 +549,10 @@ def run_self_test(
                 "[`docs/00.agent-governance/rules/bootstrap.md`](rules/persona.md)",
                 1,
             )
+        elif mutation == "duplicate-document-authoring-owner":
+            label = "docs/00.agent-governance/rules/document-authoring.md"
+            target = "rules/document-authoring.md"
+            catalog = f"{catalog}\n[`{label}`]({target})"
         elif mutation == "remove-current-roster-phrase":
             catalog = catalog.replace(
                 VALID_ROSTER_PHRASE,

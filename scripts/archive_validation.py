@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import os
 import posixpath
 import re
@@ -243,6 +244,34 @@ _MANIFEST_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
 )
 _MIGRATION_MODULE_TOKEN = object()
+_WORK109_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
+MIG0002_DOCUMENT_SHA256 = (
+    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+_MIGRATION_LEDGER_PREFIX = (
+    b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+)
+_ARCHIVE_MIGRATION_CONTROLS = {
+    WORK107_MIGRATION_PATH: ("MIG-0001", 93, {"moved": 93}),
+    _WORK109_MIGRATION_PATH: (
+        "MIG-0002",
+        154,
+        {"moved": 141, "replaced": 3, "merged": 10},
+    ),
+}
+_MIGRATION_FRONTMATTER_KEYS = (
+    "title",
+    "type",
+    "status",
+    "owner",
+    "updated",
+    "artifact_id",
+    "migration_id",
+)
 
 
 def _read_stream_bounded(stream: object, limit: int) -> bytes:
@@ -265,6 +294,157 @@ class _PreparedEnvelope:
     original_path: str
     source_commit: str
     rendered_links: tuple[_RenderedLink, ...]
+
+
+def _migration_control_diagnostics(
+    path: str,
+    content: bytes,
+) -> tuple[ArchiveDiagnostic, ...]:
+    """Validate the bounded profile and row census of one declared control."""
+
+    contract = _ARCHIVE_MIGRATION_CONTROLS.get(path)
+    if contract is None:
+        return (_diagnostic("ARCHIVE-MIGRATION-CONTROL", path),)
+    expected_id, expected_rows, expected_actions = contract
+    try:
+        text = content.decode("utf-8", errors="strict")
+        lines = text.splitlines()
+        if not lines or lines[0] != "---":
+            raise ValueError
+        frontmatter_end = lines.index("---", 1)
+        metadata: dict[str, str] = {}
+        for line in lines[1:frontmatter_end]:
+            key, separator, value = line.partition(": ")
+            if not separator or key in metadata:
+                raise ValueError
+            if len(value) < 2 or value[0] != '"' or value[-1] != '"':
+                raise ValueError
+            metadata[key] = value[1:-1]
+        if (
+            tuple(metadata) != _MIGRATION_FRONTMATTER_KEYS
+            or metadata.get("type") != "content/archive-migration"
+            or metadata.get("status") != "accepted"
+            or metadata.get("owner") != "platform"
+            or metadata.get("artifact_id") != expected_id
+            or metadata.get("migration_id") != expected_id
+            or not metadata.get("title", "").startswith(f"{expected_id}: ")
+            or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", metadata.get("updated", ""))
+            is None
+        ):
+            raise ValueError
+        if content.count(_MIGRATION_LEDGER_PREFIX) != 1:
+            raise ValueError
+        _before, separator, payload = content.partition(_MIGRATION_LEDGER_PREFIX)
+        if not separator:
+            raise ValueError
+        raw_rows, fence, suffix = payload.partition(b"\n```\n")
+        if not fence or not suffix.startswith(b"\n## Recovery\n"):
+            raise ValueError
+        rows = json.loads(raw_rows.decode("utf-8", errors="strict"))
+        if type(rows) is not list or len(rows) != expected_rows:
+            raise ValueError
+        actions: dict[str, int] = {}
+        for row in rows:
+            if type(row) is not dict or not isinstance(row.get("action"), str):
+                raise ValueError
+            action = row["action"]
+            actions[action] = actions.get(action, 0) + 1
+        if actions != expected_actions:
+            raise ValueError
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError):
+        return (_diagnostic("ARCHIVE-MIGRATION-PROFILE", path),)
+    return ()
+
+
+def parse_pinned_migration_control(
+    path: str,
+    content: bytes,
+) -> tuple[dict[str, object], ...]:
+    """Parse MIG-0002 only when its complete reviewed document is byte-exact."""
+
+    if (
+        path != _WORK109_MIGRATION_PATH
+        or type(content) is not bytes
+        or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
+        or hashlib.sha256(content).hexdigest() != MIG0002_DOCUMENT_SHA256
+        or _migration_control_diagnostics(path, content)
+    ):
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "migration control differs"
+        )
+    try:
+        _prefix, marker, remainder = content.partition(_MIGRATION_LEDGER_PREFIX)
+        raw_rows, fence, _suffix = remainder.partition(b"\n```\n")
+        rows = json.loads(raw_rows.decode("utf-8", errors="strict"))
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "migration control differs"
+        ) from exc
+    if not marker or not fence or type(rows) is not list:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "migration control differs"
+        )
+    return tuple(rows)
+
+
+def read_staged_blob_bounded(
+    repository_root: str | Path,
+    path: str,
+    *,
+    max_bytes: int = MIGRATION_DOCUMENT_MAX_BYTES,
+) -> bytes:
+    """Read one regular stage-zero Git blob without worktree substitution."""
+
+    if (
+        _canonical_path(path, archive_only=True) != path
+        or type(max_bytes) is not int
+        or not 0 < max_bytes <= MIGRATION_DOCUMENT_MAX_BYTES
+    ):
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "staged migration blob differs"
+        )
+    try:
+        root = Path(repository_root).resolve(strict=True)
+        if not root.is_dir():
+            raise OSError
+        object_id_length = _repository_identity(root)
+        staged = _git_command(
+            root,
+            "ls-files",
+            "--stage",
+            "-z",
+            "--",
+            path,
+            output_limit=4096,
+        )
+        records = staged.stdout.split(b"\0")
+        if staged.returncode or len(records) != 2 or records[-1] != b"":
+            raise ValueError
+        header, raw_path = records[0].split(b"\t", 1)
+        mode, raw_object_id, stage = header.split(b" ", 2)
+        object_id = raw_object_id.decode("ascii", errors="strict")
+        if (
+            mode not in {b"100644", b"100755"}
+            or stage != b"0"
+            or raw_path.decode("utf-8", errors="strict") != path
+            or len(object_id) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(object_id) is None
+        ):
+            raise ValueError
+        return _read_git_blob_batch(
+            root,
+            (object_id,),
+            object_id_length=object_id_length,
+            per_blob_limit=max_bytes,
+            aggregate_limit=max_bytes,
+            object_limit=1,
+        )[object_id]
+    except (KeyError, OSError, RuntimeError, UnicodeDecodeError, ValueError) as exc:
+        if isinstance(exc, ArchiveContractError):
+            raise
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "staged migration blob differs"
+        ) from exc
 
 
 def _namespace_records(
@@ -380,11 +560,19 @@ def _repository_archive_records(
                 finally:
                     os.close(child_fd)
             elif stat.S_ISREG(metadata.st_mode):
-                if (
-                    relative not in {ARCHIVE_INDEX.as_posix(), WORK107_MIGRATION_PATH}
-                    and relative.endswith(".md")
-                ):
-                    records[relative] = read_record(directory_fd, name, relative)
+                if relative == ARCHIVE_INDEX.as_posix() or not relative.endswith(".md"):
+                    continue
+                content = read_record(directory_fd, name, relative)
+                if relative in _ARCHIVE_MIGRATION_CONTROLS:
+                    diagnostics.extend(
+                        _migration_control_diagnostics(relative, content)
+                    )
+                elif relative_path.parent == ARCHIVE_ROOT / "migrations":
+                    diagnostics.append(
+                        _diagnostic("ARCHIVE-MIGRATION-CONTROL", relative)
+                    )
+                else:
+                    records[relative] = content
             else:
                 diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-TYPE", relative))
 
@@ -1589,7 +1777,10 @@ def validate_current_archive_authority(
     ):
         current = status_valid and document.status in {"active", "accepted"}
         pure_path = PurePosixPath(path)
-        migration_control = path == WORK107_MIGRATION_PATH
+        migration_control = (
+            path in _ARCHIVE_MIGRATION_CONTROLS
+            and document.profile == "content/archive-migration"
+        )
         archive_record_path = (
             pure_path.is_relative_to(ARCHIVE_ROOT)
             and pure_path != ARCHIVE_INDEX

@@ -134,7 +134,7 @@ the only current delegation and role-semantic authorities.
   contract at [`_workspace/README.md`](../../_workspace/README.md). Scratch
   files must remain ignored by default, and durable outputs from scratch work
   must be promoted into the canonical docs taxonomy, such as
-  `docs/04.execution/` for task evidence, `docs/90.references/audits/` for
+  feature-local `docs/03.specs/<id>-<slug>/tasks.md` for task evidence, `docs/90.references/audits/` for
   durable audits, Stage 00 governance, or Stage 99 support contracts.
 
 ### Delegated Handoff Evidence

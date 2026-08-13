@@ -11,6 +11,7 @@ import pathlib
 import pwd
 import stat
 import subprocess
+import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest import mock
@@ -137,6 +138,54 @@ def load_validator():
 
 
 class ActiveCorpusMigrationTests(unittest.TestCase):
+    def test_legacy_program_key_compatibility_is_named_and_finite(self) -> None:
+        validator = load_validator()
+
+        self.assertEqual(validator.LEGACY_PROGRAM_ARCHITECTURE_KEY, "ard")
+        self.assertEqual(
+            validator.LEGACY_PROGRAM_ARCHITECTURE_BATCH_IDS,
+            frozenset(f"ACER-003-{sequence:03d}" for sequence in range(1, 7)),
+        )
+        self.assertEqual(
+            validator.PROGRAM_KEYS,
+            ("prd", validator.LEGACY_PROGRAM_ARCHITECTURE_KEY, "lineage"),
+        )
+
+    def test_mig0002_staged_index_bytes_are_authoritative(self) -> None:
+        validator = load_validator()
+        migration_path = validator.WORK109_MIGRATION_PATH
+        valid = (ROOT / migration_path).read_bytes()
+        marker = validator.WORK109_LEDGER_MARKER
+        rows = json.loads(valid.split(marker, 1)[1].split(b"\n```\n", 1)[0])
+        current_paths = {
+            str(row["stable_path"] if row["action"] == "moved" else row["replacement"])
+            for row in rows
+        }
+        with tempfile.TemporaryDirectory(prefix="active-mig0002-index-") as temporary:
+            root = pathlib.Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            target = root / migration_path
+            target.parent.mkdir(parents=True)
+
+            target.write_bytes(b"invalid staged migration\n")
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+            target.write_bytes(valid)
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._work109_current_replacements(root, current_paths)
+            self.assertEqual(raised.exception.code, "MIGRATION-CONSUMERS")
+
+            target.write_bytes(valid)
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+            target.write_bytes(b"invalid worktree migration\n")
+            replacements = validator._work109_current_replacements(
+                root, current_paths
+            )
+            self.assertEqual(len(replacements), 144)
+
     def test_work107_stable_archive_aliases_are_exact_and_complete(self) -> None:
         validator = load_validator()
         aliases = validator._work107_stable_archive_aliases(ROOT)
@@ -147,6 +196,32 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             with self.subTest(legacy=legacy):
                 self.assertFalse((ROOT / legacy).exists())
                 self.assertTrue((ROOT / stable).is_file())
+
+    def test_immutable_stage90_ledger_projects_to_current_four_digit_routes(
+        self,
+    ) -> None:
+        validator = load_validator()
+        eligibility, migration = validator.load_documents(ROOT)
+
+        self.assertEqual(
+            migration["ownerSpec"],
+            "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+        )
+        self.assertEqual(
+            migration["batches"][0]["upstreamSpec"],
+            "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        )
+        self.assertEqual(
+            validator.validate_ledger_document(migration, eligibility),
+            {
+                "batches": 6,
+                "records": 12,
+                "archiveRecords": 43,
+                "historicalLinksAdded": 160,
+                "historicalLinks": 362,
+                "repairedConsumers": 34,
+            },
+        )
 
     def test_all_six_atomic_batches_are_complete_and_additive(self) -> None:
         validator = load_validator()
@@ -233,7 +308,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertTrue(retired_repaired_by_batch_six <= migrated_originals)
 
         missing_current = staged_paths - {
-            "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md"
+            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md"
         }
         missing_replacements = {
             source: target
@@ -259,6 +334,32 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertEqual(
             str(raised.exception),
             "MIGRATION-CONSUMERS docs/90.references/data/active-corpus-migration-results.json",
+        )
+
+    def test_reviewed_consumer_aliases_compose_to_current_routes(self) -> None:
+        validator = load_validator()
+        current_paths = set(validator._git_paths(ROOT))
+
+        replacements = validator._reviewed_move_current_replacements(
+            ROOT, current_paths
+        )
+
+        self.assertEqual(
+            replacements[
+                "docs/04.execution/tasks/"
+                "2026-07-18-active-corpus-and-execution-retention.md"
+            ],
+            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md",
+        )
+        self.assertEqual(
+            replacements[
+                "docs/03.specs/031-affected-surface-agent-qa/spec.md"
+            ],
+            "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+        )
+        self.assertEqual(
+            replacements["docs/04.execution/plans/README.md"],
+            "docs/99.templates/templates/sdlc/execution/plan.template.md",
         )
 
     def test_incomplete_five_batch_prefix_is_rejected(self) -> None:

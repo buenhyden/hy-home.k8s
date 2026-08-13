@@ -103,6 +103,7 @@ python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.p
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_document_lifecycle_archive_cutover.py"
+python3 "$ROOT_DIR/scripts/archive_cutover.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR" --self-test
@@ -127,6 +128,7 @@ python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --roo
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
+import hashlib
 import json
 import os
 import pathlib
@@ -690,11 +692,11 @@ if requirements_stage.exists():
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
             fail(
                 "active PRDs must use numeric route "
-                f"docs/01.requirements/<###-Numbering>-<feature-or-system>.md: {rel(requirement_doc)}"
+                f"docs/01.requirements/<####-numbering>-<feature-or-system>.md: {rel(requirement_doc)}"
             )
-        if not re.fullmatch(r"\d{3}-.+\.md", requirement_doc.name):
+        if not re.fullmatch(r"\d{4}-.+\.md", requirement_doc.name):
             fail(
-                "active PRD filename must start with a three-digit numeric prefix: "
+                "active PRD filename must start with a four-digit numeric prefix: "
                 f"{rel(requirement_doc)}"
             )
 
@@ -704,9 +706,9 @@ if specs_stage.exists():
         if spec_entry.name == "README.md":
             continue
         if spec_entry.is_dir():
-            if not re.fullmatch(r"\d{3}-.+", spec_entry.name):
+            if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
                 fail(
-                    "active Spec folder must start with a three-digit numeric prefix: "
+                    "active Spec folder must start with a four-digit numeric prefix: "
                     f"{rel(spec_entry)}"
                 )
             continue
@@ -799,7 +801,6 @@ allowed_top_level_docs = {
     "01.requirements",
     "02.architecture",
     "03.specs",
-    "04.execution",
     "05.operations",
     "90.references",
     "98.archive",
@@ -812,9 +813,6 @@ required_doc_dirs = {
     "02.architecture/descriptions",
     "02.architecture/decisions",
     "03.specs",
-    "04.execution",
-    "04.execution/plans",
-    "04.execution/tasks",
     "05.operations",
     "05.operations/guides",
     "05.operations/policies",
@@ -839,6 +837,26 @@ old_top_level_docs = {
 
 docs_dir = root / "docs"
 actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
+stage04_retirement_authority = (
+    root
+    / "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+stage04_retirement_authority_sha256 = (
+    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+if "04.execution" in actual_docs:
+    fail("retired docs/04.execution must remain absent after MIG-0002")
+else:
+    try:
+        stage04_retirement_payload = read_bytes(stage04_retirement_authority)
+    except OSError as exc:
+        fail(f"Stage 04 retirement authority is unavailable: {exc}")
+    else:
+        if (
+            hashlib.sha256(stage04_retirement_payload).hexdigest()
+            != stage04_retirement_authority_sha256
+        ):
+            fail("Stage 04 retirement requires the exact MIG-0002 authority")
 for name in sorted(actual_docs & old_top_level_docs):
     fail(f"old docs stage folder must not exist after hard migration: docs/{name}")
 for name in sorted(actual_docs - allowed_top_level_docs):
@@ -1717,7 +1735,7 @@ def assert_generic_residue_delegation_probe() -> None:
         fail("generic residue mutation probe failed for active non-Markdown config")
     if generic_template_residue_lines("Target: " + "docs/example.md") != [1]:
         fail("generic residue mutation probe failed for non-structural Markdown")
-    structural = root / "docs/01.requirements/999-projection.md"
+    structural = root / "docs/01.requirements/9999-projection.md"
     if not canonical_markdown_owns_generic_residue(structural):
         fail("generic residue delegation probe must delegate authored structural Markdown")
     provider_shim = root / "AGENTS.md"
@@ -1892,14 +1910,14 @@ expected_incident_boundary_header = [
 expected_incident_boundary = [
     {
         "artifact": "Incident Record",
-        "path_rule": "./YYYY/INC-###-<title>/INC-###-<title>.md",
+        "path_rule": "./<year>/inc-####-<slug>/incident.md",
         "template": "../../99.templates/templates/sdlc/operations/incident.template.md",
         "creation_phrase": "real incident fact record",
         "current_state": "No tracked incident records.",
     },
     {
         "artifact": "Postmortem",
-        "path_rule": "./YYYY/INC-###-<title>/postmortem.md",
+        "path_rule": "./<year>/inc-####-<slug>/postmortem.md",
         "template": "../../99.templates/templates/sdlc/operations/postmortem.template.md",
         "creation_phrase": "root cause/prevention analysis",
         "current_state": "No tracked postmortems.",
@@ -1994,19 +2012,19 @@ for path in tracked_incident_docs:
     if len(parts) != 3:
         fail(
             "docs/05.operations/incidents document must live at "
-            "YYYY/INC-###-<title>/INC-###-<title>.md or "
-            f"YYYY/INC-###-<title>/postmortem.md: {rel(path)}"
+            "<year>/inc-####-<slug>/incident.md or "
+            f"<year>/inc-####-<slug>/postmortem.md: {rel(path)}"
         )
         continue
     year, incident_folder, filename = parts
     if not re.fullmatch(r"[0-9]{4}", year):
         fail(f"docs/05.operations/incidents document year folder must be YYYY: {rel(path)}")
-    if not re.fullmatch(r"INC-[0-9]{3}-[^/]+", incident_folder):
-        fail(f"docs/05.operations/incidents document folder must be INC-###-<title>: {rel(path)}")
-    if filename not in {f"{incident_folder}.md", "postmortem.md"}:
+    if not re.fullmatch(r"inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*", incident_folder):
+        fail(f"docs/05.operations/incidents document folder must be inc-####-<slug>: {rel(path)}")
+    if filename not in {"incident.md", "postmortem.md"}:
         fail(
-            "docs/05.operations/incidents document filename must match the "
-            f"incident folder or be postmortem.md: {rel(path)}"
+            "docs/05.operations/incidents document filename must be "
+            f"incident.md or postmortem.md: {rel(path)}"
         )
 if not tracked_incident_docs:
     for phrase in [
@@ -2100,18 +2118,17 @@ for operations_root in operations_index_roots:
 
 
 template_enforcement_phrase_checks = {
-    root / "docs/00.agent-governance/rules/documentation-protocol.md": [
-        "docs/99.templates/README.md",
+    root / "docs/00.agent-governance/rules/document-authoring.md": [
+        "../../99.templates/support/document-profiles.json",
+        "../../99.templates/support/document-contract.md",
         "status: draft",
-        "structural template mapping",
-        "required template headings",
-        "template path used and the validation evidence",
+        "every required heading",
+        "selected profile/form",
     ],
-    root / "docs/00.agent-governance/rules/document-stage-routing.md": [
-        "docs/99.templates/support/document-profiles.json",
-        "structural template mapping",
-        "required template headings",
-        "template path used and validation evidence",
+    root / "docs/99.templates/support/document-contract.md": [
+        "Sole machine owner of exact routes",
+        "Literal required H2 headings",
+        "selected profile, form",
     ],
     root / ".agents/skills/docs-stage-routing/skill.md": [
         "docs/99.templates/README.md",
@@ -2137,7 +2154,6 @@ for path, phrases in template_enforcement_phrase_checks.items():
 active_policy_template_routes = [
     root / ".agents/skills/docs-stage-routing/skill.md",
     root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    root / "docs/00.agent-governance/rules/document-stage-routing.md",
 ]
 for path in active_policy_template_routes:
     text = read_text(path)
@@ -2167,8 +2183,8 @@ active_template_routing_reference_files = [
 ]
 for path in active_template_routing_reference_files:
     text = read_text(path)
-    if "99.templates/support/template-routing.md" not in text:
-        fail(f"{rel(path)} must route exact template selection through docs/99.templates/support/template-routing.md")
+    if "99.templates/support/document-contract.md" not in text:
+        fail(f"{rel(path)} must route exact template selection through docs/99.templates/support/document-contract.md")
 
 legacy_denylist_literals = {
     "operation" + ".template.md": "deprecated operations policy template route",
@@ -2225,20 +2241,6 @@ if not llm_wiki_index.exists():
     fail(f"generated LLM WIKI index is missing: {rel(llm_wiki_index)}")
 if not llm_wiki_generator.exists():
     fail(f"LLM WIKI generator is missing: {rel(llm_wiki_generator)}")
-else:
-    generator_check = subprocess.run(
-        ["bash", str(llm_wiki_generator), "--check"],
-        cwd=root,
-        text=True,
-        capture_output=True,
-    )
-    if generator_check.returncode != 0:
-        detail = "\n".join(
-            item
-            for item in [generator_check.stdout.strip(), generator_check.stderr.strip()]
-            if item
-        )
-        fail(f"generated LLM WIKI index is stale; run bash scripts/generate-llm-wiki-index.sh\n{detail}")
 if llm_wiki_dir.exists():
     disallowed_llm_wiki_suffixes = {
         ".db",
@@ -2346,7 +2348,7 @@ scan_roots = [
     root / "examples",
 ]
 stale_scan_skip = {
-    root / "docs/00.agent-governance/rules/document-stage-routing.md",
+    root / "docs/00.agent-governance/rules/document-authoring.md",
 }
 for scan_root in scan_roots:
     candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
@@ -2905,21 +2907,6 @@ for phrase in [
 ]:
     if phrase not in agentic_text:
         fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")
-
-documentation_protocol_path = root / "docs/00.agent-governance/rules/documentation-protocol.md"
-documentation_protocol_text = read_text(documentation_protocol_path)
-for phrase in [
-    "Folder responsibilities are defined by `stage-authoring-matrix.md`",
-    "The canonical template map is the Template Routing Contract",
-    "AI Agent Requirements",
-    "canonical progress ledger",
-    "only tracked `progress.md`",
-    "Agent eval completion",
-    "## Drift Garbage Collection",
-    "code drift, document drift, and structure drift",
-]:
-    if phrase not in documentation_protocol_text:
-        fail(f"{rel(documentation_protocol_path)} missing documentation harness phrase: {phrase}")
 
 docs_readme_path = root / "docs/README.md"
 docs_readme_text = read_text(docs_readme_path)
@@ -5933,7 +5920,7 @@ script_command_contract_paths = [
     root / "gitops/README.md",
     root / "gitops/workloads/README.md",
     root / "docs/README.md",
-    root / "docs/00.agent-governance/rules/document-stage-routing.md",
+    root / "docs/00.agent-governance/rules/document-authoring.md",
 ]
 for path in script_command_contract_paths:
     if not path.exists():

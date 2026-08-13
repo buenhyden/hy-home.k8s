@@ -31,7 +31,7 @@
       "const": "1.0.0"
     },
     "currentOwnerSpec": {
-      "const": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+      "const": "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
     },
     "resultVocabulary": {
       "type": "array",

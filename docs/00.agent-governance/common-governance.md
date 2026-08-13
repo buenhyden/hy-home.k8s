@@ -41,7 +41,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 - **Not authoritative for**:
   - Technical implementation of specific skills or hooks (see `docs/00.agent-governance/hooks/`)
   - Concrete model IDs and reasoning-effort values (see `harness-catalog.md` and `model-policy.md`)
-  - Stage-to-template mapping details (see `docs/99.templates/support/template-routing.md` and `rules/document-stage-routing.md`)
+  - Stage-to-template mapping details (see `docs/99.templates/support/document-contract.md` and `rules/document-authoring.md`)
 
 ### Scope
 
@@ -87,7 +87,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 | Shared skills, workflows, and output-style content | `.agents/{skills,workflows,output-styles}/` | `.claude/**` and `.codex/**` expose symlinked views where supported. |
 | Role adapter surfaces | `.agents/agents/*.md` (local/Antigravity), `.claude/agents/*.md` (Claude native), `.codex/agents/*.toml` (Codex native), `.gemini/agents/*.md` (Gemini native syntax) | Agent roles stay statically aligned, while metadata, model, tool, and permission syntax remains surface-specific. |
 | Hook scripts | `docs/00.agent-governance/hooks/*.sh` | `.claude/settings.json` wires Claude native settings/hooks; `.codex/hooks.json` is Codex context/validation wiring; `.agents/hooks.json` is local/Antigravity behavioral wiring and is not Gemini CLI native configuration. |
-| Execution evidence | `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md` | Provider handoff text links to evidence rather than embedding separate ledgers. |
+| Execution evidence | `docs/03.specs/<id>-<slug>/tasks.md` and `docs/00.agent-governance/memory/progress.md` | Provider handoff text links to evidence rather than embedding separate ledgers. |
 
 ### Gemini CLI Native Boundary
 

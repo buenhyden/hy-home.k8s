@@ -24,7 +24,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Workspace Contract
 
-- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Resolve memory through the four classes in
   `docs/00.agent-governance/memory/README.md`: `working-short-term`,
@@ -41,7 +41,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
   hook delivery, permissions, model resolution, authenticated execution,
   hosted CI, remote, credential-bearing, live, or actual checkpoint execution.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
-- Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
+- Author stage documents Template-First: use `docs/99.templates/support/document-contract.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
 - Treat `.codex/agents/*.toml` and `.claude/agents/*.md` as provider-native role adapters, and `.agents/agents/*.md` as the local/Antigravity adapter for the same roster; keep repo-static role parity aligned without reporting it as Gemini CLI runtime parity.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.

@@ -107,7 +107,7 @@ Links in this README are relative to `docs/00.agent-governance/memory/`.
 - [Agent Governance Hub](../README.md)
 - [Memory Template](../../99.templates/templates/common/memory.template.md)
 - [Progress Template](../../99.templates/templates/common/progress.template.md)
-- [Documentation Protocol](../rules/documentation-protocol.md)
+- [Documentation Protocol](../rules/document-authoring.md)
 
 ### Policy
 

@@ -60,7 +60,7 @@ eligibility without false upstream authority.
 
 ## Alternatives
 
-- **Add Spec 053 to PRD-008/ARD-0011 `programLineage`**: rejected because the
+- **Add Spec 053 to PRD-0008/ARD-0011 `programLineage`**: rejected because the
   approved Spec explicitly treats those documents as conflicting inputs, not
   execution authority.
 - **Create a new PRD and ARD**: rejected because it contradicts the approved
@@ -75,4 +75,5 @@ eligibility without false upstream authority.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | B-scope SDLC and AI-agent governance consolidation including Stage 90 | [Spec 054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

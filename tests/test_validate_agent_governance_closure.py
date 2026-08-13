@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import sys
@@ -22,6 +23,58 @@ CONTRACT_PATH = (
 )
 SCHEMA_PATH = CONTRACT_PATH.with_name("agent-governance-closure.schema.json")
 FIXTURE_PATH = REPO_ROOT / "tests/fixtures/agent-governance-closure.json"
+EXPECTED_WP002_PREDECESSOR_DIGESTS = {
+    "docs/01.requirements/0003-workspace-agent-governance-platform.md": (
+        "PRD-0003",
+        "3974bd28ba0c39220ff1a79e1bedfc7a88bb85a380860cf15924f90df1454aa2",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md": (
+        "AD-0006",
+        "722632512b4724fc1b0c26c839a5b5fbdd77d5ea074386d2c3725a9ab1cb2c0b",  # pragma: allowlist secret
+    ),
+    "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md": (
+        "ADR-0019",
+        "d1e67aad49b6c62ad4e2ae6ef50476f4cbf12b24fd5a3d7fcd16c43a32b3c0eb",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0038-reference-information-architecture/spec.md": (
+        "SPEC-0038",
+        "bd24e8cf676d39387af81ed9374275c6467f1174ce66afa95d6fe438525e1081",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0039-github-ci-qa-evidence/spec.md": (
+        "SPEC-0039",
+        "bca43d5195beb15e2cc91cacb03dbb8b1150c96ff0b6350d9fb069ae5405d263",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0040-contract-cutover-and-program-closure/spec.md": (
+        "SPEC-0040",
+        "eafaf75635697132f8262e3f983976f41568e9ad4967e0ed587fec08cf0f2c80",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0041-stage-00-agent-governance-contract/spec.md": (
+        "SPEC-0041",
+        "5a95ad4c60e1076670475ff521812c868872eac3a398a732fd1fcfe817c5b280",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md": (
+        "SPEC-0042",
+        "a5a65dbc1a82c9271a316723f32c4f95eb8b9b9b09a0aa4efcfd047c7abc715a",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md": (
+        "SPEC-0043",
+        "f72a8a6dcdf6484c91b96afae8a6a417bd475c5cd4678796db1f16a7bdd5270b",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md": (
+        "SPEC-0044",
+        "e3531c5f838d1af75bae5cb077bb1e9177c2ba56d515f46eab3e29c88c75d7e9",  # pragma: allowlist secret
+    ),
+    "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md": (
+        "SPEC-0045",
+        "f28774169c39bd01dab095ad52363952edc19dd5a73dcd3c5c4402c1312e5565",  # pragma: allowlist secret
+    ),
+}
+EXPECTED_WP002_PROVIDER_DIGEST = (
+    "4dd9f4889873d98c754864aae5655b422008ac7d0b7447fbc7975930cd06df50"  # pragma: allowlist secret
+)
+EXPECTED_WP002_MODEL_DIGEST = (
+    "4ebae0fab7f51ef41acdb1f5db4bc7a454cbdd2d0526583d601579d0f001ffd1"  # pragma: allowlist secret
+)
 
 
 def load_validator():
@@ -403,6 +456,75 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                     return_value=source_bytes + b"\n",
                 ):
                     self.assertEqual(validator(REPO_ROOT, contract), [expected])
+
+    def test_wp002_current_source_digests_are_exact(self) -> None:
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        fixture_rows = {
+            row["owner"]: row["evidenceSha256"]
+            for row in self.fixture["predecessorCriteria"]
+        }
+        contract_rows = {
+            row["owner"]: row["evidenceSha256"]
+            for row in contract["predecessorCriteria"]
+        }
+        validator_rows = {row[1]: row[4] for row in self.module.EXPECTED_PREDECESSORS}
+        self.assertEqual(
+            set(EXPECTED_WP002_PREDECESSOR_DIGESTS),
+            set(fixture_rows),
+        )
+        for owner, (artifact_id, expected_digest) in (
+            EXPECTED_WP002_PREDECESSOR_DIGESTS.items()
+        ):
+            source = (REPO_ROOT / owner).read_bytes()
+            artifact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
+            with self.subTest(owner=owner):
+                self.assertEqual(source.count(artifact_line), 1)
+                projected = source.replace(artifact_line, b"", 1)
+                self.assertEqual(hashlib.sha256(projected).hexdigest(), expected_digest)
+                self.assertEqual(fixture_rows[owner], expected_digest)
+                self.assertEqual(contract_rows[owner], expected_digest)
+                self.assertEqual(validator_rows[owner], expected_digest)
+
+        for relative_path, expected_digest, validator_digest in (
+            (
+                self.module.PROVIDER_SOURCE_PATH,
+                EXPECTED_WP002_PROVIDER_DIGEST,
+                self.module.PROVIDER_SOURCE_SHA256,
+            ),
+            (
+                self.module.MODEL_SOURCE_PATH,
+                EXPECTED_WP002_MODEL_DIGEST,
+                self.module.MODEL_SOURCE_SHA256,
+            ),
+        ):
+            with self.subTest(relative_path=relative_path):
+                self.assertEqual(
+                    hashlib.sha256((REPO_ROOT / relative_path).read_bytes()).hexdigest(),
+                    expected_digest,
+                )
+                self.assertEqual(validator_digest, expected_digest)
+        self.assertEqual(
+            self.schema["properties"]["modelProfileSummary"]["properties"][
+                "sourceSha256"
+            ]["const"],
+            EXPECTED_WP002_MODEL_DIGEST,
+        )
+        self.assertEqual(
+            self.schema["$defs"]["providerCanary"]["properties"]["sourceSha256"][
+                "const"
+            ],
+            EXPECTED_WP002_PROVIDER_DIGEST,
+        )
+
+    def test_each_predecessor_contract_digest_mutation_is_rejected(self) -> None:
+        for index, row in enumerate(self.fixture["predecessorCriteria"]):
+            contract = copy.deepcopy(self.fixture)
+            contract["predecessorCriteria"][index]["evidenceSha256"] = "0" * 64
+            with self.subTest(owner=row["owner"]):
+                self.assertRejected(
+                    contract,
+                    "predecessor status, implementation ref, or digest differs",
+                )
 
     def test_work108_predecessor_projection_accepts_only_exact_outer_identity(
         self,

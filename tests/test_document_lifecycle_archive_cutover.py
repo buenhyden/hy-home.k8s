@@ -331,7 +331,7 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
 
     def test_unrelated_profile_change_is_not_admitted(self):
         base, proposed = exact_documents()
-        unrelated = PurePosixPath("docs/03.specs/999-unrelated/spec.md")
+        unrelated = PurePosixPath("docs/03.specs/0999-unrelated/spec.md")
         base[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
         proposed[unrelated] = LifecycleDocument(unrelated, "sdlc/guide", "active")
         self.assertFalse(self._admit(base_documents=base, proposed_documents=proposed))
@@ -451,6 +451,87 @@ class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
         self.assertFalse(self._admit(mode="explicit-ref"))
 
 
+class FiniteWork054Wp002TransitionAdmissionTest(unittest.TestCase):
+    """The WP-002 exception is one evidence-bound transition, not a bypass."""
+
+    def _admit(self, *, mode: str = "staged", mutation: str = "exact"):
+        fixture = getattr(
+            VALIDATOR, "_work054_wp002_transition_fixture_inputs", None
+        )
+        admission = getattr(
+            VALIDATOR, "finite_work054_wp002_transition_paths", None
+        )
+        self.assertTrue(callable(fixture), "WP-002 transition fixture is missing")
+        self.assertTrue(callable(admission), "WP-002 transition admission is missing")
+        return admission(**fixture(ROOT, mode, mutation))
+
+    def test_exact_staged_and_ci_transition_consume_only_finite_evidence(self):
+        staged = self._admit(mode="staged")
+        ci = self._admit(mode="ci")
+        self.assertEqual(len(staged), 303)
+        self.assertEqual(ci, staged)
+        self.assertIn(
+            PurePosixPath(
+                "docs/98.archive/migrations/"
+                "mig-0002-sdlc-document-and-governance-consolidation.md"
+            ),
+            staged,
+        )
+        self.assertIn(
+            PurePosixPath(
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-"
+                "consolidation/spec.md"
+            ),
+            staged,
+        )
+        self.assertNotIn(PurePosixPath("docs/README.md"), staged)
+
+    def test_authority_manifest_and_target_drift_fail_closed(self):
+        for mutation in (
+            "wrong-base",
+            "missing-migration",
+            "missing-ledger-row",
+            "extra-ledger-row",
+            "source-blob-drift",
+            "source-digest-drift",
+            "replacement-drift",
+            "target-artifact-drift",
+            "standalone-lineage-drift",
+            "missing-spec-transition",
+            "missing-decision",
+            "decision-blob-drift",
+        ):
+            with self.subTest(mutation=mutation):
+                self.assertFalse(self._admit(mutation=mutation))
+
+    def test_transition_is_not_a_generic_create_delete_or_ref_exception(self):
+        self.assertFalse(self._admit(mode="snapshot"))
+        self.assertFalse(self._admit(mode="explicit-ref"))
+
+    def test_mig0002_full_document_pin_rejects_trailing_and_oversize_bytes(self):
+        raw = (ROOT / VALIDATOR.WORK054_WP002_MIGRATION_PATH).read_bytes()
+        self.assertEqual(len(VALIDATOR._work054_wp002_migration_rows(raw)), 154)
+        self.assertEqual(
+            hashlib.sha256(raw).hexdigest(),
+            VALIDATOR.WORK054_WP002_MIGRATION_SHA256,
+        )
+        for name, candidate in (
+            ("trailing", raw + b"\nUnreviewed trailing prose.\n"),
+            (
+                "oversize",
+                raw
+                + b"x"
+                * (
+                    VALIDATOR.MIGRATION_DOCUMENT_MAX_BYTES
+                    + 1
+                    - len(raw)
+                ),
+            ),
+        ):
+            with self.subTest(name=name), self.assertRaises(VALIDATOR.InvocationError):
+                VALIDATOR._work054_wp002_migration_rows(candidate)
+
+
 class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
     @staticmethod
     def _git_bytes(specifier: str) -> bytes:
@@ -466,8 +547,10 @@ class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
     def test_outer_artifact_projection_is_exact_and_fail_closed(self):
         row = build_work107_migration_rows(ROOT)[0]
         path = str(row["stable_path"])
-        base = self._git_bytes(f"HEAD:{path}")
         proposed = self._git_bytes(f":{path}")
+        artifact_line = f'artifact_id: "{row["artifact_id"]}"\n'.encode()
+        self.assertEqual(proposed.count(artifact_line), 1)
+        base = proposed.replace(artifact_line, b"", 1)
         helper = getattr(VALIDATOR, "_work108_artifact_projection", None)
         self.assertTrue(callable(helper), "WORK-108 artifact projection is missing")
         self.assertTrue(helper(path, base, proposed, str(row["artifact_id"])))
@@ -495,8 +578,8 @@ class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
 
 
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
-    original_path = "docs/03.specs/900-fixture/spec.md"
-    archive_path = "docs/98.archive/03.specs/900-fixture/spec.md"
+    original_path = "docs/03.specs/0900-fixture/spec.md"
+    archive_path = "docs/98.archive/03.specs/0900-fixture/spec.md"
 
     @staticmethod
     def _git(root: Path, *arguments: str) -> str:
@@ -525,7 +608,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             + f'original_path: "{cls.original_path}"\n'.encode()
             + b'archived_on: "2026-07-19"\n'
             + b'archive_reason: "superseded"\n'
-            + b'replacement: "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"\n'
+            + b'replacement: "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"\n'
             + b'source_commit: "0000000000000000000000000000000000000000"\n'
             + b'source_blob: "1111111111111111111111111111111111111111"\n'
             + b'content_sha256: "2222222222222222222222222222222222222222222222222222222222222222"\n'

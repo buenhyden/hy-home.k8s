@@ -356,7 +356,7 @@
       "properties": {
         "prd": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "ad": {
           "type": "string",
@@ -384,15 +384,15 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "plan": {
           "type": "string",
-          "pattern": "^docs/03\\.specs/[0-9]{3}-[A-Za-z0-9][A-Za-z0-9._-]*/plan\\.md$"
+          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/plan\\.md$"
         },
         "task": {
           "type": "string",
-          "pattern": "^docs/03\\.specs/[0-9]{3}-[A-Za-z0-9][A-Za-z0-9._-]*/tasks\\.md$"
+          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/tasks\\.md$"
         },
         "state": {
           "enum": ["active", "done", "archived"]
@@ -417,7 +417,7 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "order": {
           "type": "integer",
@@ -443,7 +443,7 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "order": {
           "type": "integer",

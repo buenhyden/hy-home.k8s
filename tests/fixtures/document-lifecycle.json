@@ -1964,6 +1964,23 @@
     {"name": "missing-table-successor", "mutation": "missing-table-successor", "expectedUnresolvedCount": 1},
     {"name": "extra-unresolved", "mutation": "extra-unresolved", "expectedUnresolvedCount": 2}
   ],
+  "work054Wp002TransitionCases": [
+    {"name": "exact-staged", "mode": "staged", "mutation": "exact", "expectedAdmittedCount": 303},
+    {"name": "exact-ci", "mode": "ci", "mutation": "exact", "expectedAdmittedCount": 303},
+    {"name": "wrong-mode", "mode": "explicit-ref", "mutation": "exact", "expectedAdmittedCount": 0},
+    {"name": "wrong-base", "mode": "staged", "mutation": "wrong-base", "expectedAdmittedCount": 0},
+    {"name": "missing-migration", "mode": "staged", "mutation": "missing-migration", "expectedAdmittedCount": 0},
+    {"name": "missing-ledger-row", "mode": "staged", "mutation": "missing-ledger-row", "expectedAdmittedCount": 0},
+    {"name": "extra-ledger-row", "mode": "staged", "mutation": "extra-ledger-row", "expectedAdmittedCount": 0},
+    {"name": "source-blob-drift", "mode": "staged", "mutation": "source-blob-drift", "expectedAdmittedCount": 0},
+    {"name": "source-digest-drift", "mode": "staged", "mutation": "source-digest-drift", "expectedAdmittedCount": 0},
+    {"name": "replacement-drift", "mode": "staged", "mutation": "replacement-drift", "expectedAdmittedCount": 0},
+    {"name": "target-artifact-drift", "mode": "staged", "mutation": "target-artifact-drift", "expectedAdmittedCount": 0},
+    {"name": "standalone-lineage-drift", "mode": "staged", "mutation": "standalone-lineage-drift", "expectedAdmittedCount": 0},
+    {"name": "missing-spec-transition", "mode": "staged", "mutation": "missing-spec-transition", "expectedAdmittedCount": 0},
+    {"name": "missing-decision", "mode": "staged", "mutation": "missing-decision", "expectedAdmittedCount": 0},
+    {"name": "decision-blob-drift", "mode": "staged", "mutation": "decision-blob-drift", "expectedAdmittedCount": 0}
+  ],
   "snapshotCase": {
     "name": "exactly-one-base-defer",
     "expectedExit": 0,

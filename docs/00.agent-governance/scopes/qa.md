@@ -77,5 +77,5 @@ inline a full role definition when an applicable native or local adapter exists.
 
 - [Quality Standards](../rules/quality-standards.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Stage Authoring Matrix](../rules/document-authoring.md)
 - [Persona Protocol](../rules/persona.md)

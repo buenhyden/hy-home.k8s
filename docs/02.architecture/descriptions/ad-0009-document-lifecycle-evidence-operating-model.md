@@ -26,7 +26,7 @@ unidentified and unclaimed.
 - **Owns**: Program and follow-up lineage, profile-specific lifecycle graphs,
   archive provenance, execution retention, reference currentness, affected
   validation, strict cutover, and rollback interfaces.
-- **Consumes**: PRD-006, ADR-0015, ADR-0016, ADR-0017, ADR-0018, ADR-0020, the
+- **Consumes**: PRD-0006, ADR-0015, ADR-0016, ADR-0017, ADR-0018, ADR-0020, the
   Current 2026-07-11 audit pack, Git source objects, and repository-static
   validators.
 - **Does not own**: Product runtime state, secret values, remote rulesets,
@@ -135,12 +135,12 @@ transient and receives an explicit seven-day retention period.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-WDLEC-001](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Single machine authority and zero route ambiguity | [Spec 034](../../03.specs/034-authority-and-lineage-foundation/spec.md) |
-| N/A — REQ-WDLEC-002 shares the PRD-006 source linked in REQ-WDLEC-001 | Monotonic original tranche plus follow-up lineage; ADR-0017 remains unchanged accepted history. | N/A — the accepted historical decision is preserved without reopening it as same-diff evidence. |
-| N/A — REQ-WDLEC-003 shares the PRD-006 source linked in REQ-WDLEC-001 | Closed profile metadata and transition graph | [Spec 035](../../03.specs/035-document-schema-and-lifecycle-contract/spec.md) |
-| N/A — REQ-WDLEC-004 shares the PRD-006 source linked in REQ-WDLEC-001 | Byte-preserved non-current archive envelope governed by unchanged accepted ADR-0018 | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) |
-| N/A — REQ-WDLEC-006 shares the PRD-006 source linked in REQ-WDLEC-001 | Closed-lineage execution working-set boundary | [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md) |
-| N/A — REQ-WDLEC-008 shares the PRD-006 source linked in REQ-WDLEC-001 | Snapshot and currentness separation | [Spec 038](../../03.specs/038-reference-information-architecture/spec.md) |
-| N/A — REQ-WDLEC-010 shares the PRD-006 source linked in REQ-WDLEC-001 | Always-running aggregate and full-corpus escalation | [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md) |
-| N/A — REQ-WDLEC-011 shares the PRD-006 source linked in REQ-WDLEC-001 | Independent tranche rollback, closure, and terminal decision evidence | [ADR-0020](../decisions/0020-document-lifecycle-program-closure-evidence.md) and [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md) |
-| N/A — REQ-WDLEC-013 shares the PRD-006 source linked in REQ-WDLEC-001 | Role-specific operations and helper-document integrity | N/A — Specs 035 and 037 are already linked once in their owning rows. |
+| [REQ-WDLEC-001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | Single machine authority and zero route ambiguity | [Spec 034](../../03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| N/A — REQ-WDLEC-002 shares the PRD-0006 source linked in REQ-WDLEC-001 | Monotonic original tranche plus follow-up lineage; ADR-0017 remains unchanged accepted history. | N/A — the accepted historical decision is preserved without reopening it as same-diff evidence. |
+| N/A — REQ-WDLEC-003 shares the PRD-0006 source linked in REQ-WDLEC-001 | Closed profile metadata and transition graph | [Spec 035](../../03.specs/0035-document-schema-and-lifecycle-contract/spec.md) |
+| N/A — REQ-WDLEC-004 shares the PRD-0006 source linked in REQ-WDLEC-001 | Byte-preserved non-current archive envelope governed by unchanged accepted ADR-0018 | [Spec 036](../../03.specs/0036-archive-record-and-workspace-boundary/spec.md) |
+| N/A — REQ-WDLEC-006 shares the PRD-0006 source linked in REQ-WDLEC-001 | Closed-lineage execution working-set boundary | [Spec 037](../../03.specs/0037-active-corpus-and-execution-retention/spec.md) |
+| N/A — REQ-WDLEC-008 shares the PRD-0006 source linked in REQ-WDLEC-001 | Snapshot and currentness separation | [Spec 038](../../03.specs/0038-reference-information-architecture/spec.md) |
+| N/A — REQ-WDLEC-010 shares the PRD-0006 source linked in REQ-WDLEC-001 | Always-running aggregate and full-corpus escalation | [Spec 039](../../03.specs/0039-github-ci-qa-evidence/spec.md) |
+| N/A — REQ-WDLEC-011 shares the PRD-0006 source linked in REQ-WDLEC-001 | Independent tranche rollback, closure, and terminal decision evidence | [ADR-0020](../decisions/0020-document-lifecycle-program-closure-evidence.md) and [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md) |
+| N/A — REQ-WDLEC-013 shares the PRD-0006 source linked in REQ-WDLEC-001 | Role-specific operations and helper-document integrity | N/A — Specs 035 and 037 are already linked once in their owning rows. |

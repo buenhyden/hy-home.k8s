@@ -32,7 +32,7 @@
       "const": "1.0.0"
     },
     "owner": {
-      "const": "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md"
+      "const": "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
     },
     "cutoff": {
       "type": "object",

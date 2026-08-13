@@ -2,7 +2,7 @@
   "$schema": "./agent-legacy-cutover.schema.json",
   "schemaVersion": 1,
   "contractVersion": "1.0.0",
-  "currentOwnerSpec": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+  "currentOwnerSpec": "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
   "resultVocabulary": [
     "PASS",
     "FAIL"
@@ -73,7 +73,7 @@
       "tests/test_reference_information_architecture.py"
     ],
     "migrationReferences": [
-      "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+      "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
       "docs/00.agent-governance/memory/progress.md"
     ],
     "allowedReferenceCounts": [
@@ -118,7 +118,7 @@
         "counts": [0, 0, 0, 0, 4]
       },
       {
-        "path": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "path": "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
         "counts": [1, 0, 1, 1, 4]
       },
       {

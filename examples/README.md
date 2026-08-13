@@ -118,4 +118,4 @@ cp -r examples/sample-app gitops/workloads/<appname>
 
 - [AWS executable example](aws/README.md)
 - [Azure executable example](azure/README.md)
-- [README and Workspace Profiles Spec](../docs/03.specs/028-readme-workspace-profiles/spec.md)
+- [README and Workspace Profiles Spec](../docs/03.specs/0028-readme-workspace-profiles/spec.md)

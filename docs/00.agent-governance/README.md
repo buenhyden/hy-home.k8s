@@ -34,7 +34,7 @@ This README is primarily for:
 
 ### Out of Scope
 
-- Product, architecture, execution, operations, reference, archive, and template SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`
+- Product, architecture, feature-local execution, operations, reference, archive, and template SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 
@@ -70,15 +70,12 @@ status, uniqueness, and order.
 | [`agentic.md`](rules/agentic.md) | `active` |
 | [`approval-boundaries.md`](rules/approval-boundaries.md) | `active` |
 | [`bootstrap.md`](rules/bootstrap.md) | `active` |
-| [`document-stage-routing.md`](rules/document-stage-routing.md) | `active` |
-| [`documentation-protocol.md`](rules/documentation-protocol.md) | `active` |
+| [`document-authoring.md`](rules/document-authoring.md) | `active` |
 | [`git-workflow.md`](rules/git-workflow.md) | `active` |
 | [`persona.md`](rules/persona.md) | `active` |
 | [`postflight-checklist.md`](rules/postflight-checklist.md) | `active` |
 | [`preflight-checklist.md`](rules/preflight-checklist.md) | `active` |
 | [`quality-standards.md`](rules/quality-standards.md) | `active` |
-| [`stage-authoring-matrix.md`](rules/stage-authoring-matrix.md) | `active` |
-| [`stage-checklists.md`](rules/stage-checklists.md) | `active` |
 | [`standards.md`](rules/standards.md) | `active` |
 | [`architecture.md`](scopes/architecture.md) | `active` |
 | [`backend.md`](scopes/backend.md) | `active` |
@@ -96,7 +93,7 @@ status, uniqueness, and order.
 
 Key folders in this area:
 
-- `rules/`: global policy, checklists, and documentation protocol
+- `rules/`: global policy, document authoring, and execution checklists
 - `scopes/`: layer-specific execution rules
 - `providers/`: provider-specific notes
 - `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
@@ -104,7 +101,7 @@ Key folders in this area:
 
 ```text
 docs/00.agent-governance/
-├── rules/              # Global policy, checklists, and documentation protocol
+├── rules/              # Global policy, document authoring, and checklists
 ├── scopes/             # Layer-specific execution rules
 ├── providers/          # Provider-specific notes for Claude, Gemini, and gateways
 ├── hooks/              # Shared lifecycle/edit hook scripts reused by providers
@@ -121,8 +118,8 @@ docs/00.agent-governance/
 1. Start from repository gateway files: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`.
 2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
 3. Use `docs/99.templates/` when creating or restructuring governance documents.
-4. Use `rules/documentation-protocol.md` and `rules/document-stage-routing.md`
-   for folder responsibilities, language boundaries, and template routing.
+4. Use `rules/document-authoring.md` for stage selection, language,
+   Template-First execution, lifecycle checks, and validation handoff.
 5. Treat repeated agent failures as harness feedback: update the smallest
    relevant rule, prompt/skill, hook, validator, template, README index, or
    memory entry.
@@ -143,10 +140,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Model Policy](model-policy.md)
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
-- [Document Stage Routing Rules](rules/document-stage-routing.md)
-- [Documentation Protocol](rules/documentation-protocol.md)
-- [Stage Authoring Matrix](rules/stage-authoring-matrix.md)
-- [Stage Checklists](rules/stage-checklists.md)
+- [Document Authoring Policy](rules/document-authoring.md)
 - [Local Harness Catalog](harness-catalog.md)
 - [Subagent Protocol](subagent-protocol.md)
 - [Codex Provider Notes](providers/codex.md)

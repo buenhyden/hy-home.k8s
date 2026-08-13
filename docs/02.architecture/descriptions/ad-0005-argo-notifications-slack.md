@@ -99,19 +99,19 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-PRD-FUN-01](../../01.requirements/002-argo-notifications-slack.md) | ArgoCD release 안의 Notifications controller 소유 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-FUN-02](../../01.requirements/002-argo-notifications-slack.md) | Vault → ESO → Kubernetes Secret 단방향 credential 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-FUN-03](../../01.requirements/002-argo-notifications-slack.md) | GitOps ConfigMap이 소유하는 template와 trigger 카탈로그 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-FUN-04](../../01.requirements/002-argo-notifications-slack.md) | 공통 health/sync 실패 default subscription 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-FUN-05](../../01.requirements/002-argo-notifications-slack.md) | annotation 기반 앱별 배포 알림 opt-in 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-FUN-06](../../01.requirements/002-argo-notifications-slack.md) | Slack/Vault bootstrap을 repository 변경과 분리하는 승인 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-MET-01](../../01.requirements/002-argo-notifications-slack.md) | Notifications controller Pod readiness 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-MET-02](../../01.requirements/002-argo-notifications-slack.md) | ExternalSecret Ready 상태의 credential 동기화 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-MET-03](../../01.requirements/002-argo-notifications-slack.md) | sync 실패 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-MET-04](../../01.requirements/002-argo-notifications-slack.md) | health degraded 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
-| [REQ-PRD-MET-05](../../01.requirements/002-argo-notifications-slack.md) | Rollouts abort 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-01](../../01.requirements/0002-argo-notifications-slack.md) | ArgoCD release 안의 Notifications controller 소유 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-02](../../01.requirements/0002-argo-notifications-slack.md) | Vault → ESO → Kubernetes Secret 단방향 credential 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-03](../../01.requirements/0002-argo-notifications-slack.md) | GitOps ConfigMap이 소유하는 template와 trigger 카탈로그 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-04](../../01.requirements/0002-argo-notifications-slack.md) | 공통 health/sync 실패 default subscription 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-05](../../01.requirements/0002-argo-notifications-slack.md) | annotation 기반 앱별 배포 알림 opt-in 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-FUN-06](../../01.requirements/0002-argo-notifications-slack.md) | Slack/Vault bootstrap을 repository 변경과 분리하는 승인 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-MET-01](../../01.requirements/0002-argo-notifications-slack.md) | Notifications controller Pod readiness 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-MET-02](../../01.requirements/0002-argo-notifications-slack.md) | ExternalSecret Ready 상태의 credential 동기화 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-MET-03](../../01.requirements/0002-argo-notifications-slack.md) | sync 실패 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-MET-04](../../01.requirements/0002-argo-notifications-slack.md) | health degraded 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-PRD-MET-05](../../01.requirements/0002-argo-notifications-slack.md) | Rollouts abort 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
 
-- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
-- **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
-- **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../03.specs/005-argo-notifications-slack/plan.md)
+- **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
+- **Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../03.specs/0005-argo-notifications-slack/plan.md)
 - **ADR**: [`../decisions/0012-argo-notifications-slack.md`](../decisions/0012-argo-notifications-slack.md)

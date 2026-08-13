@@ -28,7 +28,7 @@ PROVIDER_SOURCE_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
 )
 PROVIDER_SOURCE_SHA256 = (
-    "7b51324f-7af9ac08-8898d48e-a0f52551-50ef399e-92731da5-953483bb-6e281e93".replace(
+    "4dd9f488-9873d98c-754864aa-e5655b42-2008ac7d-0b7447fb-c7975930-cd06df50".replace(
         "-", ""
     )
 )
@@ -36,7 +36,7 @@ MODEL_SOURCE_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-model-fitness.json"
 )
 MODEL_SOURCE_SHA256 = (
-    "0b872577-7f029d84-e689f2eb-8713c0b0-4197e6f9-def39fe5-02a43156-0b369fab".replace(
+    "4ebae0fa-b7f51ef4-1acdb1f5-db4bc7a4-54cbdd2d-0526583d-601579d0-f001ffd1".replace(
         "-", ""
     )
 )
@@ -66,10 +66,10 @@ EXPECTED_DURABLE_CONTENT = (
 EXPECTED_PREDECESSORS = (
     (
         "prd-003",
-        "docs/01.requirements/003-workspace-agent-governance-platform.md",
+        "docs/01.requirements/0003-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "56f19c27-2052da00-a2f5428c-80a2388d-f2fc2e14".replace("-", ""),
-        "ebb121d6-d12c0953-25229995-00539332-5d5db2d0-cd655542-7c07a81f-2efae756".replace(
+        "3974bd28-ba0c3922-0ff1a79e-1bedfc7a-88bb85a3-80860cf1-5924f90d-f1454aa2".replace(
             "-", ""
         ),
     ),
@@ -78,7 +78,7 @@ EXPECTED_PREDECESSORS = (
         "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "40018788-f2346828-17b59aa0-8182af64-55210866-31b7df73-62969b4d-cddd07cb".replace(
+        "72263251-2b4724fc-1b0c26c8-39a5b5fb-dd77d5ea-074386d2-c3725a9a-b1cb2c0b".replace(
             "-", ""
         ),
     ),
@@ -93,79 +93,79 @@ EXPECTED_PREDECESSORS = (
     ),
     (
         "spec-038",
-        "docs/03.specs/038-reference-information-architecture/spec.md",
+        "docs/03.specs/0038-reference-information-architecture/spec.md",
         "done",
         "git-sha1:" + "f8ad39de-4017e399-df26625f-e72ec972-04dce88e".replace("-", ""),
-        "c837ac3b-5ddaf86a-b5c5257d-0a03b9f6-2ade23ed-fd8b97c6-62077301-013dfcec".replace(
+        "bd24e8cf-676d3938-7af81ed9-374275c6-467f1174-ce66afa9-5d6fe438-525e1081".replace(
             "-", ""
         ),
     ),
     (
         "spec-039",
-        "docs/03.specs/039-github-ci-qa-evidence/spec.md",
+        "docs/03.specs/0039-github-ci-qa-evidence/spec.md",
         "done",
         "git-sha1:" + "11a020d9-b299ae91-b7af9278-c22ed89f-fccb5cfc".replace("-", ""),
-        "aeb0e6bd-0ccf61fb-eb2c8938-686e9d74-f481a7a2-4a1a66c7-817ddf2d-cd9fb2d5".replace(
+        "bca43d51-95beb15e-2cc91cac-b03dbb8b-1150c96f-f0b6350d-9fb069ae-5405d263".replace(
             "-", ""
         ),
     ),
     (
         "spec-040",
-        "docs/03.specs/040-contract-cutover-and-program-closure/spec.md",
+        "docs/03.specs/0040-contract-cutover-and-program-closure/spec.md",
         "done",
         "git-sha1:" + "4335ea60-76a68fe0-bbed3526-a21b92a3-9180faa7".replace("-", ""),
-        "e3655def-e888dc39-835281a1-98027ef8-836aeb0e-ec3c7be7-0ae6804b-1800085a".replace(
+        "eafaf756-35697132-f8262e3f-983976f4-1568e9ad-4967e0ed-587fec08-cf0f2c80".replace(
             "-", ""
         ),
     ),
     (
         "spec-041",
-        "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
+        "docs/03.specs/0041-stage-00-agent-governance-contract/spec.md",
         "done",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
-        "222faa93-25248fec-a70f584f-9234bdca-2cc63c86-48f0f32d-0b570c5a-2c4b1106".replace(
+        "5a95ad4c-60e10766-70475ff5-21812c86-8872eac3-a398a732-fd1fcfe8-17c5b280".replace(
             "-", ""
         ),
     ),
     (
         "spec-042",
-        "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
+        "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md",
         "done",
         "git-sha1:" + "90a7d856-98cc024e-26085ca7-caed1b01-8f78a04e".replace("-", ""),
-        "db582a99-c1b7887e-d2722489-f463b13a-819d1c8f-1ef28aa0-16ad2baa-3bee0c6c".replace(
+        "a5a65dbc-1a82c927-1a316723-f32c4f95-eb8b9b9b-09a0aa4e-fcfd047c-7abc715a".replace(
             "-", ""
         ),
     ),
     (
         "spec-043",
-        "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+        "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
         "done",
         "git-sha1:" + "a0bc3565-988e2919-80320dec-8442405c-7ef16eb6".replace("-", ""),
-        "591dd0ad-043790c5-b14d1e71-263a38fd-f9ec933f-8f8008b2-f7b8a951-2c488b03".replace(
+        "f72a8a6d-cdf6484c-91b96afa-e8a6a417-bd475c5c-d4678796-db1f16a7-bdd5270b".replace(
             "-", ""
         ),
     ),
     (
         "spec-044",
-        "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "done",
         "git-sha1:" + "42864832-c966744a-c4e5cf8c-28baa5bf-31ac2765".replace("-", ""),
-        "4c198fcd-15cb6142-5418dbc3-15bde986-941e7cc4-4e9eb22d-25ddbc8d-b60c0614".replace(
+        "e3531c5f-838d1af7-5bae5cb0-77bb1e91-77c2ba56-d515f46e-ab3e29c8-8c75d7e9".replace(
             "-", ""
         ),
     ),
     (
         "spec-045",
-        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
         "done",
         "git-sha1:" + "de9a88e4-550b8754-2eb7221c-5ae7416f-e5075763".replace("-", ""),
-        "14d0dd68-cc90a52b-f70272e4-c3bcd8ef-7b01006c-34e7069a-6100ecd3-1b192f00".replace(
+        "f2877416-9c39bd01-dab095ad-52363952-edc19dd5-a73dcd3c-5c4402c1-312e5565".replace(
             "-", ""
         ),
     ),
 )
 WORK108_PREDECESSOR_ARTIFACT_IDS = {
-    PurePosixPath("docs/01.requirements/003-workspace-agent-governance-platform.md"): "PRD-003",
+    PurePosixPath("docs/01.requirements/0003-workspace-agent-governance-platform.md"): "PRD-0003",
     PurePosixPath(
         "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md"
     ): "AD-0006",
@@ -175,14 +175,14 @@ WORK108_PREDECESSOR_ARTIFACT_IDS = {
     **{
         PurePosixPath(f"docs/03.specs/{number}-" + slug + "/spec.md"): f"SPEC-{number}"
         for number, slug in (
-            ("038", "reference-information-architecture"),
-            ("039", "github-ci-qa-evidence"),
-            ("040", "contract-cutover-and-program-closure"),
-            ("041", "stage-00-agent-governance-contract"),
-            ("042", "provider-native-runtime-and-model-evidence"),
-            ("043", "agent-harness-loop-lifecycle"),
-            ("044", "agent-roster-evaluation-and-admission"),
-            ("045", "agent-governance-ci-qa-cutover"),
+            ("0038", "reference-information-architecture"),
+            ("0039", "github-ci-qa-evidence"),
+            ("0040", "contract-cutover-and-program-closure"),
+            ("0041", "stage-00-agent-governance-contract"),
+            ("0042", "provider-native-runtime-and-model-evidence"),
+            ("0043", "agent-harness-loop-lifecycle"),
+            ("0044", "agent-roster-evaluation-and-admission"),
+            ("0045", "agent-governance-ci-qa-cutover"),
         )
     },
 }
@@ -927,10 +927,24 @@ def _self_test(root: Path) -> list[str]:
         "wrong predecessor owner",
         lambda item: item["predecessorCriteria"][0].__setitem__("owner", "platform"),
     )
+    for index, predecessor in enumerate(fixture["predecessorCriteria"]):
+        mutate(
+            f"predecessor digest drift {predecessor['id']}",
+            lambda item, index=index: item["predecessorCriteria"][index].__setitem__(
+                "evidenceSha256", "0" * 64
+            ),
+        )
+    for index, provider in enumerate(fixture["providerCanaries"]):
+        mutate(
+            f"provider source digest drift {provider['provider']}",
+            lambda item, index=index: item["providerCanaries"][index].__setitem__(
+                "sourceSha256", "0" * 64
+            ),
+        )
     mutate(
-        "predecessor digest drift",
-        lambda item: item["predecessorCriteria"][0].__setitem__(
-            "evidenceSha256", "0" * 64
+        "model source digest drift",
+        lambda item: item["modelProfileSummary"].__setitem__(
+            "sourceSha256", "0" * 64
         ),
     )
     mutate(

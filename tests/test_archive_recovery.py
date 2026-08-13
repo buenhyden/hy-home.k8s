@@ -113,7 +113,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
             "original_path": self.original_path,
             "archived_on": "2026-07-18",
             "archive_reason": "superseded",
-            "replacement": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            "replacement": "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
             "source_commit": self.commit,
             "source_blob": self.blob,
             "content_sha256": hashlib.sha256(self.payload).hexdigest(),
@@ -188,7 +188,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
         )
         self.assertEqual(
             replacement.path,
-            "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
         )
 
         invalid_cases = (

@@ -87,7 +87,7 @@ docs/05.operations/runbooks/
 
 - Policies: [05.operations/policies](../policies/README.md)
 - Incident Records: [05.operations/incidents](../incidents/README.md)
-- Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`
+- Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`
 
 ### Relative Link Rules
 
@@ -104,7 +104,7 @@ docs/05.operations/runbooks/
 - [05.operations/incidents](../incidents/README.md)
 - [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Operations Policy](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
 - [Runbook Template](../../99.templates/templates/sdlc/operations/runbook.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

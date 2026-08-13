@@ -30,11 +30,11 @@ CANONICAL_MEMORY_PATH = PurePosixPath(
     "docs/00.agent-governance/memory/progress.md"
 )
 LOOP_LIFECYCLE_SPEC = PurePosixPath(
-    "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+    "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
 )
 MODEL_POLICY_PATH = "docs/00.agent-governance/model-policy.md"
 EVAL_OWNER_SPEC = (
-    "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+    "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 )
 SCHEMA_VERSION = 1
 CONTRACT_VERSION = "1.0.0"
@@ -1424,6 +1424,11 @@ def _apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["memory"]["classes"][0]["sensitivity"][
             "secretMaterialAllowed"
         ] = True
+    elif name == "duplicate-lifecycle-policy-ref":
+        lifecycle_refs = contract["memory"]["classes"][2][
+            "lifecyclePolicyRefs"
+        ]
+        lifecycle_refs.insert(1, lifecycle_refs[0])
     elif name == "sensitive-payload":
         contract["canonicalRoles"][0]["purpose"] = (
             "Raw " + "transcript" + ": [REDACTED-SYNTHETIC]"

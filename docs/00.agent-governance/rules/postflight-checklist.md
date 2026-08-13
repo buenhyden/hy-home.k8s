@@ -47,7 +47,7 @@ Run this checklist before finalizing a response.
 
 ### 4. Stage Compliance
 
-- [ ] Any stage-specific guidance is consistent with `stage-authoring-matrix.md`.
+- [ ] Any stage-specific guidance is consistent with `document-authoring.md`.
 - [ ] Inputs/outputs/templates/DoD are aligned for affected stages.
 
 ## Current Contract

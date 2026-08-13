@@ -121,7 +121,7 @@ those files; provider-runtime evidence remains a separate lane.
 | --------------- | ---------------------------------------------------------- | ------------------------------------ | ------------------- | ---------- |
 | Progress ledger | `docs/00.agent-governance/memory/progress.md`              | Repo-changing work + reusable memory | repo-quality-static | itself     |
 | Memory lifecycle | `contracts/agent-loop-lifecycle.json`, `contracts/agent-checkpoint.schema.json`, `memory/README.md` | Enforce the four authority-bounded memory classes, atomic/redacted synthetic checkpoint shape, repository-wins resume, promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and bounded reviewed feedback destinations | loop lifecycle and checkpoint repo-static validators; ignored `.agent-work/checkpoint.json` is advisory and not read or written | owning Task |
-| Plans / tasks   | `docs/04.execution/plans/**`, `docs/04.execution/tasks/**` | Execution + validation evidence      | repo-quality-static | stage docs |
+| Plans / tasks   | `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks.md` | Execution + validation evidence      | repo-quality-static | stage docs |
 
 ### Operations / Runbooks
 

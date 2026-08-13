@@ -53,6 +53,10 @@ if __package__:
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
+        MIG0002_DOCUMENT_SHA256,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -84,6 +88,10 @@ else:
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
         CurrentMarkdownDocument,
+        MIG0002_DOCUMENT_SHA256,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -91,6 +99,25 @@ else:
 
 EXPECTED_HISTORICAL_LINKS = 202
 MIGRATION_RESULTS_PATH = "docs/90.references/data/active-corpus-migration-results.json"
+WORK054_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK054_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
+WORK054_SOURCE_COMMIT = (
+    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+)
+WORK054_LEDGER_FIELDS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
+)
 FIRST_SOURCE_COMMIT = (
     "5e0221525450dbdacb585e6c98ade3f060ddc827"  # pragma: allowlist secret
 )
@@ -103,6 +130,7 @@ CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
 SECRET_TIMEOUT_SECONDS = 10
 MAX_REPLACEMENT_BLOB_BYTES = 2_000_000
+GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 _RETIRED_WORD = "tomb" + "stone"
 _RETIRED_PROFILE_TOKEN = "archive-" + _RETIRED_WORD
 _FULL_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
@@ -193,6 +221,14 @@ class ArchiveIndexRow:
     historical_links: int
     replacement: str | None
     reason: str
+
+
+@dataclass(frozen=True)
+class Work054MigrationProjection:
+    """Exact historical-to-current aliases admitted by MIG-0002."""
+
+    current_by_legacy: Mapping[str, str]
+    action_counts: tuple[tuple[str, int], ...]
 
 
 _WORK105_CURRENT_AD = (
@@ -373,6 +409,108 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
     return MappingProxyType(blobs)
 
 
+def _canonical_document_path(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    path = PurePosixPath(value)
+    if (
+        not value.startswith("docs/")
+        or "\\" in value
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+        or path.is_absolute()
+        or any(part in {".", ".."} for part in path.parts)
+        or path.as_posix() != value
+    ):
+        return None
+    return value
+
+
+def _work054_migration_projection(
+    root: Path,
+    tracked_regular_blobs: Mapping[str, str],
+) -> Work054MigrationProjection:
+    """Consume only the exact MIG-0002 bytes and validate every current target."""
+
+    failure = "WORK-054 migration ledger is unavailable"
+    object_id = tracked_regular_blobs.get(WORK054_MIGRATION_PATH)
+    try:
+        content = (root / WORK054_MIGRATION_PATH).read_bytes()
+        if (
+            object_id is None
+            or not _regular_file(root, WORK054_MIGRATION_PATH)
+            or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
+        ):
+            raise ValueError
+        staged = read_staged_blob_bounded(
+            root,
+            WORK054_MIGRATION_PATH,
+            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+        if staged != content:
+            raise ValueError
+        rows = parse_pinned_migration_control(WORK054_MIGRATION_PATH, staged)
+    except (ArchiveContractError, OSError, RuntimeError, ValueError):
+        raise RuntimeError(failure) from None
+    if len(rows) != 154:
+        raise RuntimeError(failure)
+
+    current_by_legacy: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    action_counts = {"merged": 0, "moved": 0, "replaced": 0}
+    previous_legacy = ""
+    for row in rows:
+        if type(row) is not dict or tuple(row) != WORK054_LEDGER_FIELDS:
+            raise RuntimeError(failure)
+        legacy = _canonical_document_path(row.get("legacy_path"))
+        action = row.get("action")
+        if (
+            legacy is None
+            or legacy <= previous_legacy
+            or action not in action_counts
+            or row.get("source_commit") != WORK054_SOURCE_COMMIT
+            or _FULL_OBJECT_ID.fullmatch(str(row.get("source_blob", ""))) is None
+            or re.fullmatch(r"[0-9a-f]{64}", str(row.get("content_sha256", "")))
+            is None
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+            or legacy in tracked_regular_blobs
+            or _regular_file(root, legacy)
+        ):
+            raise RuntimeError(failure)
+        previous_legacy = legacy
+        action_counts[action] += 1
+
+        if action == "moved":
+            current = _canonical_document_path(row.get("stable_path"))
+            if (
+                current is None
+                or row.get("replacement") is not None
+                or not isinstance(row.get("artifact_id"), str)
+                or not row["artifact_id"]
+                or current in stable_paths
+            ):
+                raise RuntimeError(failure)
+            stable_paths.add(current)
+        else:
+            current = _canonical_document_path(row.get("replacement"))
+            if (
+                current is None
+                or row.get("stable_path") is not None
+                or row.get("artifact_id") is not None
+            ):
+                raise RuntimeError(failure)
+        if current not in tracked_regular_blobs or not _regular_file(root, current):
+            raise RuntimeError(failure)
+        current_by_legacy[legacy] = current
+
+    if action_counts != {"merged": 10, "moved": 141, "replaced": 3}:
+        raise RuntimeError(failure)
+    return Work054MigrationProjection(
+        current_by_legacy=MappingProxyType(current_by_legacy),
+        action_counts=tuple(sorted(action_counts.items())),
+    )
+
+
 def _index_blob_bytes(root: Path, object_id: str) -> bytes:
     """Read one bounded exact index blob without worktree substitution."""
 
@@ -454,7 +592,24 @@ def _secret_classifier(
     archive_path: str,
     payload: bytes,
 ) -> CutoverDiagnostic | None:
-    executable = shutil.which("gitleaks")
+    executable = None
+    hint = os.environ.get(GITLEAKS_EXECUTABLE_ENV)
+    if hint is not None:
+        try:
+            metadata = os.lstat(hint)
+        except OSError:
+            metadata = None
+        candidate = Path(hint)
+        if (
+            candidate.is_absolute()
+            and candidate.name == "gitleaks"
+            and metadata is not None
+            and stat.S_ISREG(metadata.st_mode)
+            and metadata.st_mode & 0o111
+        ):
+            executable = hint
+    else:
+        executable = shutil.which("gitleaks")
     if executable is None:
         return _diagnostic("ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE", archive_path)
     try:
@@ -801,6 +956,24 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in generic_report.diagnostics
     )
+    try:
+        tracked_regular_blobs = _tracked_regular_blobs(root)
+    except RuntimeError:
+        tracked_regular_blobs = MappingProxyType({})
+        diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
+    try:
+        work054_projection = _work054_migration_projection(
+            root,
+            tracked_regular_blobs,
+        )
+    except RuntimeError:
+        work054_projection = Work054MigrationProjection(
+            current_by_legacy=MappingProxyType({}),
+            action_counts=(),
+        )
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK054_MIGRATION_PATH)
+        )
     repository_paths = frozenset(
         path
         for namespace in registry.get("archiveNamespaces", ())
@@ -970,13 +1143,19 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 else archive_path
             )
             migration = migration_rows.get(legacy_archive_path)
+            closure_owner = (
+                migration.get("_currentClosureOwner")
+                if migration is not None
+                else None
+            )
+            current_closure_owner = work054_projection.current_by_legacy.get(
+                str(closure_owner),
+                str(closure_owner),
+            )
             if (
                 replacement is not None
                 or migration is None
-                or not _regular_file(
-                    root,
-                    str(migration.get("_currentClosureOwner", "<invalid-path>")),
-                )
+                or not _regular_file(root, current_closure_owner)
                 or migration.get("_archiveNavigationBoundary")
                 != f"{ARCHIVE_INDEX}#document-index"
             ):
@@ -1021,12 +1200,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             )
         )
     try:
-        tracked_regular_blobs = _tracked_regular_blobs(root)
-    except RuntimeError:
-        tracked_regular_blobs = MappingProxyType({})
-        diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
-
-    try:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
@@ -1069,6 +1242,10 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             )
             if replacement_target is None:
                 continue
+            replacement_target = work054_projection.current_by_legacy.get(
+                replacement_target,
+                replacement_target,
+            )
             replacement_failure = _replacement_target_diagnostic(
                 root,
                 typed_registry,
@@ -1144,6 +1321,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     )
 
     for raw_path in STALE_CONTRACT_SURFACES:
+        if raw_path in work054_projection.current_by_legacy:
+            continue
         try:
             text = (root / raw_path).read_text(encoding="utf-8")
         except OSError:

@@ -177,6 +177,75 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self.assertNotIn("execution-tracker", roles)
         self.assertIs(self.ledger["helperTests"]["executionTracker"], False)
 
+    def test_frozen_authority_routes_project_through_mig_0002(self) -> None:
+        self.assertEqual(
+            self.ledger["authority"]["ownerSpec"],
+            "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+        )
+        self.assertEqual(
+            self.ledger["inventoryBoundary"]["executionTracker"],
+            "docs/04.execution/tasks/"
+            "2026-07-18-active-corpus-and-execution-retention.md",
+        )
+        migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
+        projection = self.validator.validate_authority_projection(
+            migration,
+            {
+                self.validator.CURRENT_OWNER_SPEC,
+                self.validator.CURRENT_EXECUTION_TRACKER,
+            },
+        )
+        self.assertEqual(
+            projection,
+            {
+                self.validator.FROZEN_OWNER_SPEC: self.validator.CURRENT_OWNER_SPEC,
+                self.validator.FROZEN_EXECUTION_TRACKER: (
+                    self.validator.CURRENT_EXECUTION_TRACKER
+                ),
+            },
+        )
+
+    def test_missing_or_drifted_mig_0002_authority_projection_fails(self) -> None:
+        migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
+        owner_row = (
+            '"legacy_path": "docs/03.specs/037-active-corpus-and-execution-retention/'
+            'spec.md"'
+        )
+        current_owner = (
+            '"stable_path": "docs/03.specs/0037-active-corpus-and-execution-'
+            'retention/spec.md"'
+        )
+        candidates = {
+            "missing legacy authority": migration.replace(
+                owner_row, owner_row.replace("037-", "038-"), 1
+            ),
+            "drifted current authority": migration.replace(
+                current_owner, current_owner.replace("0037-", "0038-"), 1
+            ),
+        }
+        for name, candidate in candidates.items():
+            with self.subTest(name=name):
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator.validate_authority_projection(
+                        candidate,
+                        {
+                            self.validator.CURRENT_OWNER_SPEC,
+                            self.validator.CURRENT_EXECUTION_TRACKER,
+                        },
+                    )
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")
+
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validator.validate_authority_projection(
+                migration,
+                {self.validator.CURRENT_OWNER_SPEC},
+            )
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")
+
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)

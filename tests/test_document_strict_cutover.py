@@ -29,22 +29,12 @@ CURRENT_COMMAND_CONTRACT_DOCS = (
     / "docs"
     / "99.templates"
     / "support"
-    / "common-documentation-governance.md",
+    / "document-contract.md",
     REPOSITORY_ROOT
     / "docs"
     / "99.templates"
     / "support"
-    / "legacy-cleanup-rules.md",
-    REPOSITORY_ROOT
-    / "docs"
-    / "99.templates"
-    / "support"
-    / "sdlc-governance.md",
-    REPOSITORY_ROOT
-    / "docs"
-    / "99.templates"
-    / "support"
-    / "template-routing.md",
+    / "document-lifecycle.md",
 )
 STAGE99_SUPPORT_DOCS = CURRENT_COMMAND_CONTRACT_DOCS[2:]
 STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs" / "99.templates" / "templates"
@@ -91,6 +81,24 @@ NATIVE_SURFACE_CASES = (
     / "native-surface-cases.json"
 )
 WORK105_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
+WORK109_BASE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
+WORK109_PROSE_OWNERS = (
+    "docs/00.agent-governance/rules/document-authoring.md",
+    "docs/99.templates/support/document-contract.md",
+    "docs/99.templates/support/document-lifecycle.md",
+)
+WORK109_RETIRED_PROSE_OWNERS = (
+    "docs/00.agent-governance/rules/document-stage-routing.md",
+    "docs/00.agent-governance/rules/documentation-protocol.md",
+    "docs/00.agent-governance/rules/stage-authoring-matrix.md",
+    "docs/00.agent-governance/rules/stage-checklists.md",
+    "docs/99.templates/support/common-documentation-governance.md",
+    "docs/99.templates/support/documentation-contract.md",
+    "docs/99.templates/support/frontmatter-schema.md",
+    "docs/99.templates/support/legacy-cleanup-rules.md",
+    "docs/99.templates/support/sdlc-governance.md",
+    "docs/99.templates/support/template-routing.md",
+)
 
 
 def _staged_bytes(path: Path) -> bytes:
@@ -105,6 +113,14 @@ def _staged_bytes(path: Path) -> bytes:
 
 def _work105_base_bytes(path: Path) -> bytes:
     relative = path.relative_to(REPOSITORY_ROOT).as_posix()
+    relative = {
+        "docs/03.specs/0019-template-path-numbering-contract/spec.md": (
+            "docs/03.specs/019-template-path-numbering-contract/spec.md"
+        ),
+        "docs/03.specs/0019-template-path-numbering-contract/plan.md": (
+            "docs/03.specs/019-template-path-numbering-contract/plan.md"
+        ),
+    }.get(relative, relative)
     return subprocess.run(
         ["git", "show", f"{WORK105_BASE_COMMIT}:{relative}"],
         cwd=REPOSITORY_ROOT,
@@ -153,6 +169,30 @@ def _base_blob_inventory(prefix: str) -> dict[str, tuple[str, str]]:
     return inventory
 
 
+def _commit_blob_inventory(
+    commit: str, prefix: str
+) -> dict[str, tuple[str, str]]:
+    result = subprocess.run(
+        ["git", "ls-tree", "-r", "-z", commit, "--", prefix],
+        cwd=REPOSITORY_ROOT,
+        check=True,
+        capture_output=True,
+    )
+    inventory: dict[str, tuple[str, str]] = {}
+    for record in result.stdout.split(b"\0")[:-1]:
+        header, raw_path = record.split(b"\t", 1)
+        mode, object_type, object_id = header.split(b" ", 2)
+        path = raw_path.decode("utf-8")
+        if (
+            mode not in {b"100644", b"100755"}
+            or object_type != b"blob"
+            or path in inventory
+        ):
+            raise AssertionError("commit inventory is not unique regular blobs")
+        inventory[path] = (mode.decode("ascii"), object_id.decode("ascii"))
+    return inventory
+
+
 def _worktree_regular_paths(prefix: str) -> set[str]:
     root = REPOSITORY_ROOT / prefix
     if not root.is_dir() or root.is_symlink():
@@ -179,6 +219,16 @@ def _assert_staged_and_worktree_bytes(
         raise AssertionError(f"staged bytes differ from base: {path}")
     if working != expected:
         raise AssertionError(f"worktree bytes differ from base: {path}")
+
+
+def _replace_mig0002_rows(contents: bytes, rows: list[dict[str, object]]) -> bytes:
+    text = contents.decode("utf-8")
+    prefix, remainder = text.split("```json", 1)
+    _, suffix = remainder.split("```", 1)
+    payload = json.dumps(rows, indent=2, ensure_ascii=False)
+    return f"{prefix}```json\n{payload}\n```{suffix}".encode("utf-8")
+
+
 EXPECTED_AD_CORPUS = (
     ("0004", "argo-rollouts-progressive-delivery", "active"),
     ("0005", "argo-notifications-slack", "active"),
@@ -357,6 +407,767 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         self.assertIn("TERMINAL-MIGRATION-PROFILE", diagnostics)
         self.assertIn("TERMINAL-MIGRATION-SCHEMA", diagnostics)
         self.assertIn("TERMINAL-MIGRATION-FILE", diagnostics)
+
+    def test_work109_document_authority_is_consolidated_and_disjoint(self) -> None:
+        staged = _staged_blob_inventory("docs")
+        for path in WORK109_PROSE_OWNERS:
+            with self.subTest(owner=path):
+                self.assertIn(path, staged)
+                self.assertEqual(
+                    (REPOSITORY_ROOT / path).read_bytes(),
+                    _staged_bytes(REPOSITORY_ROOT / path),
+                )
+        for path in WORK109_RETIRED_PROSE_OWNERS:
+            with self.subTest(retired=path):
+                self.assertNotIn(path, staged)
+                self.assertFalse((REPOSITORY_ROOT / path).exists())
+
+        registry = json.loads(
+            _staged_bytes(
+                REPOSITORY_ROOT
+                / "docs/99.templates/support/document-profiles.json"
+            )
+        )
+        current_owners = registry["governanceCurrentOwners"]["paths"]
+        self.assertIn(WORK109_PROSE_OWNERS[0], current_owners)
+        self.assertTrue(
+            set(WORK109_RETIRED_PROSE_OWNERS[:4]).isdisjoint(current_owners)
+        )
+
+        expected_headings = {
+            WORK109_PROSE_OWNERS[0]: {
+                "Overview",
+                "Authority Boundary",
+                "Governance Context",
+                "Current Contract",
+                "Validation and Refresh",
+                "Related Documents",
+            },
+            WORK109_PROSE_OWNERS[1]: {
+                "Overview",
+                "Purpose",
+                "Owned Contract",
+                "Authoring Rules",
+                "Validation Contract",
+                "Related Documents",
+            },
+            WORK109_PROSE_OWNERS[2]: {
+                "Overview",
+                "Purpose",
+                "Owned Contract",
+                "Authoring Rules",
+                "Validation Contract",
+                "Related Documents",
+            },
+        }
+        for path, headings in expected_headings.items():
+            text = _staged_bytes(REPOSITORY_ROOT / path).decode("utf-8")
+            actual = set(re.findall(r"(?m)^## ([^#].+)$", text))
+            with self.subTest(owner=path):
+                self.assertEqual(actual, headings)
+
+        authoring = _staged_bytes(
+            REPOSITORY_ROOT / WORK109_PROSE_OWNERS[0]
+        ).decode("utf-8")
+        contract = _staged_bytes(
+            REPOSITORY_ROOT / WORK109_PROSE_OWNERS[1]
+        ).decode("utf-8")
+        lifecycle = _staged_bytes(
+            REPOSITORY_ROOT / WORK109_PROSE_OWNERS[2]
+        ).decode("utf-8")
+        self.assertIn("stage selection", authoring)
+        self.assertIn("Exact-One-Profile", contract)
+        self.assertIn("Supersession and Historical Preservation", lifecycle)
+        for prose in (authoring, contract, lifecycle):
+            self.assertNotIn('"profiles": [', prose)
+
+    def test_work109_terminal_document_routes_close_stage04_and_preserve_transition_assets(
+        self,
+    ) -> None:
+        self.assertEqual(_staged_blob_inventory("docs/04.execution"), {})
+        self.assertFalse((REPOSITORY_ROOT / "docs/04.execution").exists())
+
+        validator = self.validators["registry"]
+        registry = validator.load_registry(REPOSITORY_ROOT)
+        self.assertEqual(registry.route_state, "transition")
+        self.assertEqual(
+            validator.classify_path(
+                registry,
+                validator.PurePosixPath(
+                    "scripts/document-taxonomy-migration.json"
+                ),
+            ).profile_id,
+            "native/document-migration-manifest",
+        )
+        for path, profile_id in (
+            ("docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "sdlc/plan"),
+            ("docs/03.specs/0052-document-taxonomy-consolidation/tasks.md", "sdlc/task"),
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(
+                    validator.classify_path(
+                        registry, validator.PurePosixPath(path)
+                    ).profile_id,
+                    profile_id,
+                )
+
+        contracts = sys.modules["document_contracts"]
+        retired_or_invalid = (
+            "docs/04.execution/README.md",
+            "docs/04.execution/plans/README.md",
+            "docs/04.execution/tasks/README.md",
+            "docs/01.requirements/2026-08-13-dated.md",
+            "docs/02.architecture/descriptions/2026-08-13-dated.md",
+            "docs/03.specs/2026-08-13-dated/spec.md",
+            "docs/06.release/rel-001.md",
+        )
+        for path in retired_or_invalid:
+            with self.subTest(path=path):
+                with self.assertRaises(contracts.DocumentContractError):
+                    validator.classify_path(
+                        registry, validator.PurePosixPath(path)
+                    )
+
+    def test_work109_limits_stage05_to_exact_current_link_normalization(self) -> None:
+        base = _commit_blob_inventory(WORK109_BASE_COMMIT, "docs/05.operations")
+        self.assertEqual(set(_staged_blob_inventory("docs/05.operations")), set(base))
+        self.assertEqual(
+            _worktree_regular_paths("docs/05.operations"), set(base)
+        )
+        changed_paths: set[str] = set()
+        normalized_occurrences = 0
+        route_replacements = {
+            "docs/05.operations/README.md": ((
+                "2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/YYYY/INC-###-<title>/` 폴더를 만든다. Incident 파일명은 폴더명과 같은 `INC-###-<title>.md`이고, postmortem은 같은 폴더의 `postmortem.md`로 추가한다.",
+                "2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.",
+            ), (
+                "[Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)",
+                "[Document Stage Routing](../00.agent-governance/rules/document-authoring.md)",
+            )),
+            "docs/05.operations/guides/0009-llm-wiki-curation-guide.md": ((
+                "../../00.agent-governance/rules/document-stage-routing.md",
+                "../../00.agent-governance/rules/document-authoring.md",
+            ),),
+            "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md": ((
+                "../../00.agent-governance/rules/document-stage-routing.md",
+                "../../00.agent-governance/rules/document-authoring.md",
+            ),),
+            "docs/05.operations/policies/README.md": ((
+                "- Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`",
+                "- Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`",
+            ),),
+            "docs/05.operations/runbooks/README.md": ((
+                "- Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`",
+                "- Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`",
+            ),),
+            "docs/05.operations/incidents/README.md": (
+                (
+                    "첫 사고 기록이 필요할 때만 `YYYY/INC-###-<title>/` 하위 경로를 만든다.\nIncident Record 파일명은 반드시 incident 폴더명과 동일한\n`INC-###-<title>.md`여야 한다.",
+                    "첫 사고 기록이 필요할 때만 `<year>/inc-####-<slug>/` 하위 경로를 만든다.\nIncident Record와 Postmortem은 각각 고정 basename `incident.md`와\n`postmortem.md`를 사용한다.",
+                ),
+                ("`./YYYY/INC-###-<title>/INC-###-<title>.md`", "`./<year>/inc-####-<slug>/incident.md`"),
+                ("`./YYYY/INC-###-<title>/postmortem.md`", "`./<year>/inc-####-<slug>/postmortem.md`"),
+                ("├── YYYY/\n│   └── INC-###-<title>/\n│       ├── INC-###-<title>.md  # Incident fact record", "├── <year>/\n│   └── inc-####-<slug>/\n│       ├── incident.md         # Incident fact record"),
+                ("2. Incident Record는 `YYYY/INC-###-<title>/INC-###-<title>.md`로 작성해 폴더 ID와 파일 ID를 일치시킨다.", "2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다."),
+            ),
+        }
+        for path in base:
+            base_bytes = subprocess.run(
+                ["git", "show", f"{WORK109_BASE_COMMIT}:{path}"],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            expected, spec_count = re.subn(
+                rb"((?:\.\./)+)03\.specs/([0-9]{3})-",
+                rb"\g<1>03.specs/0\g<2>-",
+                base_bytes,
+            )
+            expected, prd_count = re.subn(
+                rb"((?:\.\./)+)01\.requirements/([0-9]{3})-",
+                rb"\g<1>01.requirements/0\g<2>-",
+                expected,
+            )
+            for old, new in route_replacements.get(path, ()):
+                old_bytes = old.encode("utf-8")
+                count = expected.count(old_bytes)
+                self.assertGreater(count, 0)
+                expected = expected.replace(old_bytes, new.encode("utf-8"))
+            if expected != base_bytes:
+                changed_paths.add(path)
+                normalized_occurrences += spec_count + prd_count
+            with self.subTest(path=path):
+                _assert_staged_and_worktree_bytes(
+                    REPOSITORY_ROOT / path, expected
+                )
+        self.assertEqual(len(changed_paths), 19)
+        self.assertEqual(normalized_occurrences, 49)
+
+    def test_work109_uses_four_digit_document_and_incident_routes(self) -> None:
+        base = _commit_blob_inventory(WORK109_BASE_COMMIT, "docs")
+        staged = _staged_blob_inventory("docs")
+        base_requirements = {
+            path
+            for path in base
+            if re.fullmatch(r"docs/01\.requirements/[0-9]{3}-[^/]+\.md", path)
+        }
+        base_work_units = {
+            path.split("/", 3)[2]
+            for path in base
+            if re.match(r"docs/03\.specs/[0-9]{3}-[^/]+/", path)
+        }
+        self.assertEqual(len(base_requirements), 8)
+        self.assertEqual(len(base_work_units), 49)
+
+        expected_requirements = {
+            path.replace("docs/01.requirements/", "docs/01.requirements/0", 1)
+            for path in base_requirements
+        }
+        expected_work_units = {f"0{name}" for name in base_work_units}
+        self.assertTrue(expected_requirements.issubset(staged))
+        self.assertTrue(
+            all(
+                any(path.startswith(f"docs/03.specs/{name}/") for path in staged)
+                for name in expected_work_units
+            )
+        )
+        self.assertFalse(
+            any(
+                re.fullmatch(r"docs/01\.requirements/[0-9]{3}-[^/]+\.md", path)
+                or re.match(r"docs/03\.specs/[0-9]{3}-[^/]+/", path)
+                for path in staged
+            )
+        )
+
+        validator = self.validators["registry"]
+        registry = validator.load_registry(REPOSITORY_ROOT)
+        valid = {
+            "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md": "sdlc/prd",
+            "docs/03.specs/0052-document-taxonomy-consolidation/spec.md": "sdlc/spec",
+            "docs/03.specs/0052-document-taxonomy-consolidation/plan.md": "sdlc/plan",
+            "docs/03.specs/0052-document-taxonomy-consolidation/tasks.md": "sdlc/task",
+            "docs/05.operations/incidents/2026/inc-0001-database-latency/incident.md": "sdlc/incident",
+            "docs/05.operations/incidents/2026/inc-0001-database-latency/postmortem.md": "sdlc/postmortem",
+        }
+        for path, profile_id in valid.items():
+            with self.subTest(valid=path):
+                self.assertEqual(
+                    validator.classify_path(
+                        registry, validator.PurePosixPath(path)
+                    ).profile_id,
+                    profile_id,
+                )
+
+        contracts = sys.modules["document_contracts"]
+        invalid = (
+            "docs/01.requirements/008-workspace-document-taxonomy-consolidation.md",
+            "docs/01.requirements/00008-workspace-document-taxonomy-consolidation.md",
+            "docs/03.specs/052-document-taxonomy-consolidation/spec.md",
+            "docs/03.specs/00052-document-taxonomy-consolidation/spec.md",
+            "docs/05.operations/incidents/2026/inc-001-database-latency/incident.md",
+            "docs/05.operations/incidents/2026/INC-0001-database-latency/incident.md",
+            "docs/05.operations/incidents/2026/inc-0001-database-latency/INC-0001-database-latency.md",
+            "docs/05.operations/incidents/2026/inc-0001-database-latency/nested/incident.md",
+        )
+        for path in invalid:
+            with self.subTest(invalid=path):
+                with self.assertRaises(contracts.DocumentContractError):
+                    validator.classify_path(
+                        registry, validator.PurePosixPath(path)
+                    )
+
+    def test_work109_direct_approval_lineage_is_atomic(self) -> None:
+        work_unit = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+        for leaf in ("spec.md", "plan.md", "tasks.md"):
+            with self.subTest(leaf=leaf):
+                text = _staged_bytes(REPOSITORY_ROOT / work_unit / leaf).decode(
+                    "utf-8"
+                )
+                self.assertIn("status: active\n", text)
+
+        registry = json.loads(
+            _staged_bytes(
+                REPOSITORY_ROOT
+                / "docs/99.templates/support/document-profiles.json"
+            )
+        )
+        expected = {
+            "spec": "0054",
+            "plan": f"{work_unit}/plan.md",
+            "task": f"{work_unit}/tasks.md",
+            "state": "active",
+            "reason": (
+                "Direct human-approved B-scope SDLC and AI-agent governance "
+                "consolidation including Stage 90"
+            ),
+            "decision": "0022",
+            "approvalMode": "spec-body-record",
+        }
+        self.assertEqual(registry["standaloneExecutions"][-1], expected)
+        self.assertEqual(
+            [row["spec"] for row in registry["standaloneExecutions"]],
+            sorted(row["spec"] for row in registry["standaloneExecutions"]),
+        )
+        stage03_index = _staged_bytes(
+            REPOSITORY_ROOT / "docs/03.specs/README.md"
+        ).decode("utf-8")
+        self.assertIn(
+            "./0054-sdlc-document-and-agent-governance-consolidation/spec.md",
+            stage03_index,
+        )
+        transferred = {
+            "109": "WORK-054-002",
+            "110": "WORK-054-003",
+            "111": "WORK-054-010",
+            "112": "WORK-054-011",
+            "113": "WORK-054-012",
+            "114": "WORK-054-013",
+            "115": "WORK-054-014",
+        }
+        for leaf in ("plan.md", "tasks.md"):
+            text = _staged_bytes(
+                REPOSITORY_ROOT
+                / "docs/03.specs/0052-document-taxonomy-consolidation"
+                / leaf
+            ).decode("utf-8")
+            for legacy, successor in transferred.items():
+                with self.subTest(leaf=leaf, legacy=legacy):
+                    row = next(
+                        line
+                        for line in text.splitlines()
+                        if line.startswith(f"| WORK-{legacy} |")
+                    )
+                    self.assertIn("| Transferred |", row)
+                    self.assertIn(successor, row)
+                    self.assertNotIn("| In Progress |", row)
+                    self.assertNotIn("| Queued |", row)
+
+    def test_work109_adr0022_history_admission_is_exact_and_atomic(self) -> None:
+        validator = self.validators["registry"]
+        adr_path = REPOSITORY_ROOT / validator.WORK109_DIRECT_APPROVAL_ADR_PATH
+        required_paths = (
+            validator.WORK109_DIRECT_APPROVAL_SPEC_PATH,
+            validator.WORK109_REGISTRY_PATH,
+            validator.WORK109_MANIFEST_PATH,
+            validator.WORK109_MIGRATION_LEDGER_PATH.as_posix(),
+        )
+        staged = {
+            path: _staged_bytes(REPOSITORY_ROOT / path) for path in required_paths
+        }
+        adr = _staged_bytes(adr_path)
+        self.assertTrue(
+            validator._work109_direct_approval_history_transition(
+                REPOSITORY_ROOT,
+                adr,
+                staged,
+            )
+        )
+
+        mutations: dict[str, tuple[bytes, dict[str, bytes]]] = {}
+        mutations["ADR blob drift"] = (adr + b"\n", dict(staged))
+
+        spec_drift = dict(staged)
+        spec_drift[validator.WORK109_DIRECT_APPROVAL_SPEC_PATH] = spec_drift[
+            validator.WORK109_DIRECT_APPROVAL_SPEC_PATH
+        ].replace(
+            b"authorizes this standalone execution relation",
+            b"does not authorize this standalone execution relation",
+            1,
+        )
+        mutations["Spec authority drift"] = (adr, spec_drift)
+
+        registry_drift = dict(staged)
+        registry = json.loads(
+            registry_drift[validator.WORK109_REGISTRY_PATH].decode("utf-8")
+        )
+        registry["standaloneExecutions"][-1]["decision"] = "0021"
+        registry_drift[validator.WORK109_REGISTRY_PATH] = json.dumps(
+            registry, indent=2
+        ).encode("utf-8")
+        mutations["standalone authority drift"] = (adr, registry_drift)
+
+        ledger_drift = dict(staged)
+        ledger_bytes = ledger_drift[
+            validator.WORK109_MIGRATION_LEDGER_PATH.as_posix()
+        ]
+        ledger_text = ledger_bytes.decode("utf-8")
+        rows = json.loads(ledger_text.split("```json", 1)[1].split("```", 1)[0])
+        rows.pop(next(index for index, row in enumerate(rows) if row["action"] == "moved"))
+        ledger_drift[validator.WORK109_MIGRATION_LEDGER_PATH.as_posix()] = (
+            _replace_mig0002_rows(ledger_bytes, rows)
+        )
+        mutations["MIG-0002 authority drift"] = (adr, ledger_drift)
+
+        incomplete = dict(staged)
+        incomplete.pop(validator.WORK109_DIRECT_APPROVAL_SPEC_PATH)
+        mutations["incomplete authority"] = (adr, incomplete)
+
+        for label, (candidate_adr, candidate_staged) in mutations.items():
+            with self.subTest(label=label):
+                with self.assertRaises(AssertionError):
+                    validator._work109_direct_approval_history_transition(
+                        REPOSITORY_ROOT,
+                        candidate_adr,
+                        candidate_staged,
+                    )
+
+    def test_work109_mig0002_exact_atomic_coverage(self) -> None:
+        ledger_path = (
+            REPOSITORY_ROOT
+            / "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        source = _staged_bytes(ledger_path).decode("utf-8")
+        match = re.search(
+            r"<!-- archive-migration-ledger:v1 format=json -->\s*"
+            r"```json\s*(\[.*?\])\s*```",
+            source,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(match)
+        rows = json.loads(match.group(1))
+        self.assertEqual(len(rows), 154)
+        self.assertEqual(
+            [row["legacy_path"] for row in rows],
+            sorted(row["legacy_path"] for row in rows),
+        )
+
+        base = _commit_blob_inventory(WORK109_BASE_COMMIT, "docs")
+        move_map: dict[str, str] = {}
+        for path in base:
+            if re.fullmatch(r"docs/01\.requirements/[0-9]{3}-[^/]+\.md", path):
+                move_map[path] = path.replace(
+                    "docs/01.requirements/", "docs/01.requirements/0", 1
+                )
+                continue
+            matched = re.match(r"(docs/03\.specs/)([0-9]{3}-[^/]+)(/.*)", path)
+            if matched:
+                move_map[path] = f"{matched.group(1)}0{matched.group(2)}{matched.group(3)}"
+        replacement_map = {
+            "docs/04.execution/README.md": "docs/03.specs/README.md",
+            "docs/04.execution/plans/README.md": (
+                "docs/99.templates/templates/sdlc/execution/plan.template.md"
+            ),
+            "docs/04.execution/tasks/README.md": (
+                "docs/99.templates/templates/sdlc/execution/task.template.md"
+            ),
+        }
+        merge_map = {
+            "docs/00.agent-governance/rules/document-stage-routing.md": (
+                "docs/00.agent-governance/rules/document-authoring.md"
+            ),
+            "docs/00.agent-governance/rules/documentation-protocol.md": (
+                "docs/00.agent-governance/rules/document-authoring.md"
+            ),
+            "docs/00.agent-governance/rules/stage-authoring-matrix.md": (
+                "docs/00.agent-governance/rules/document-authoring.md"
+            ),
+            "docs/00.agent-governance/rules/stage-checklists.md": (
+                "docs/00.agent-governance/rules/document-authoring.md"
+            ),
+            "docs/99.templates/support/common-documentation-governance.md": (
+                "docs/99.templates/support/document-lifecycle.md"
+            ),
+            "docs/99.templates/support/documentation-contract.md": (
+                "docs/99.templates/support/document-contract.md"
+            ),
+            "docs/99.templates/support/frontmatter-schema.md": (
+                "docs/99.templates/support/document-contract.md"
+            ),
+            "docs/99.templates/support/legacy-cleanup-rules.md": (
+                "docs/99.templates/support/document-lifecycle.md"
+            ),
+            "docs/99.templates/support/sdlc-governance.md": (
+                "docs/99.templates/support/document-lifecycle.md"
+            ),
+            "docs/99.templates/support/template-routing.md": (
+                "docs/99.templates/support/document-contract.md"
+            ),
+        }
+        self.assertEqual(len(move_map), 141)
+        self.assertEqual(
+            set(row["legacy_path"] for row in rows),
+            set(move_map) | set(replacement_map) | set(merge_map),
+        )
+
+        staged = _staged_blob_inventory("docs")
+        required_fields = {
+            "legacy_path",
+            "stable_path",
+            "artifact_id",
+            "action",
+            "replacement",
+            "source_commit",
+            "source_blob",
+            "content_sha256",
+            "reason",
+        }
+        for row in rows:
+            legacy_path = row["legacy_path"]
+            with self.subTest(legacy_path=legacy_path):
+                self.assertEqual(set(row), required_fields)
+                self.assertEqual(row["source_commit"], WORK109_BASE_COMMIT)
+                self.assertEqual(row["source_blob"], base[legacy_path][1])
+                payload = subprocess.run(
+                    ["git", "show", f"{WORK109_BASE_COMMIT}:{legacy_path}"],
+                    cwd=REPOSITORY_ROOT,
+                    check=True,
+                    capture_output=True,
+                ).stdout
+                self.assertEqual(
+                    row["content_sha256"], hashlib.sha256(payload).hexdigest()
+                )
+                self.assertTrue(row["reason"].strip())
+                if legacy_path in move_map:
+                    target = move_map[legacy_path]
+                    self.assertEqual(row["stable_path"], target)
+                    self.assertEqual(row["action"], "moved")
+                    self.assertIsNone(row["replacement"])
+                    self.assertIn(target, staged)
+                    target_text = _staged_bytes(REPOSITORY_ROOT / target).decode(
+                        "utf-8"
+                    )
+                    identity = re.search(
+                        r'(?m)^artifact_id:\s*["\']?([^"\'\n]+)', target_text
+                    )
+                    self.assertIsNotNone(identity)
+                    self.assertEqual(row["artifact_id"], identity.group(1))
+                elif legacy_path in replacement_map:
+                    self.assertIsNone(row["stable_path"])
+                    self.assertIsNone(row["artifact_id"])
+                    self.assertEqual(row["action"], "replaced")
+                    self.assertEqual(row["replacement"], replacement_map[legacy_path])
+                    self.assertIn(row["replacement"], staged)
+                else:
+                    self.assertIsNone(row["stable_path"])
+                    self.assertIsNone(row["artifact_id"])
+                    self.assertEqual(row["action"], "merged")
+                    self.assertEqual(row["replacement"], merge_map[legacy_path])
+                    self.assertIn(row["replacement"], staged)
+
+    def test_work109_transition_overlay_is_finite_and_fail_closed(self) -> None:
+        validator = self.validators["registry"]
+        tool = validator._load_migration_tool(REPOSITORY_ROOT)
+        document = tool.load_manifest_document(
+            REPOSITORY_ROOT / "scripts/document-taxonomy-migration.json"
+        )
+        ledger_path = (
+            REPOSITORY_ROOT
+            / "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        ledger_bytes = ledger_path.read_bytes()
+
+        projection = validator._work109_transition_manifest_projection(
+            REPOSITORY_ROOT,
+            document.entries,
+            route_state="transition",
+            ledger_bytes=ledger_bytes,
+        )
+        projected_moves = tuple(
+            row for row in projection if row["disposition"] == "move-current"
+        )
+        projected_archives = tuple(
+            row for row in projection if row["disposition"] == "archive-unique"
+        )
+        self.assertEqual(len(projection), 132)
+        self.assertEqual(len(projected_moves), 82)
+        self.assertEqual(len(projected_archives), 50)
+        self.assertTrue(
+            all(
+                re.fullmatch(
+                    r"docs/03\.specs/[0-9]{4}-[^/]+/(?:plan|tasks)\.md",
+                    row["target"],
+                )
+                and re.fullmatch(r"Spec-[0-9]{4}", row["workUnit"])
+                for row in projected_moves
+            )
+        )
+        self.assertEqual(
+            [row["source"] for row in projected_archives],
+            [
+                row["source"]
+                for row in document.entries
+                if row["disposition"] == "archive-unique"
+            ],
+        )
+
+        ledger_text = ledger_bytes.decode("utf-8")
+        rows = json.loads(ledger_text.split("```json", 1)[1].split("```", 1)[0])
+        moved = [row for row in rows if row["action"] == "moved"]
+        lifecycle_only = [row for row in rows if row["action"] != "moved"]
+        self.assertEqual(len(moved), 141)
+        self.assertEqual(len(lifecycle_only), 13)
+        self.assertTrue(
+            all(
+                row["legacy_path"]
+                not in {entry["target"] for entry in projected_moves}
+                for row in lifecycle_only
+            )
+        )
+
+        negative_rows: dict[str, list[dict[str, object]]] = {}
+        wrong_source_commit = json.loads(json.dumps(rows))
+        first_moved = next(row for row in wrong_source_commit if row["action"] == "moved")
+        first_moved["source_commit"] = "0" * 40
+        negative_rows["source commit drift"] = wrong_source_commit
+
+        wrong_mapping = json.loads(json.dumps(rows))
+        first_moved = next(row for row in wrong_mapping if row["action"] == "moved")
+        first_moved["stable_path"] = first_moved["stable_path"].replace(
+            "0001-", "9999-", 1
+        )
+        negative_rows["wrong stable mapping"] = wrong_mapping
+
+        missing_move = json.loads(json.dumps(rows))
+        missing_move.pop(
+            next(index for index, row in enumerate(missing_move) if row["action"] == "moved")
+        )
+        negative_rows["missing move"] = missing_move
+
+        extra_move = json.loads(json.dumps(rows))
+        extra_move.append(
+            json.loads(
+                json.dumps(next(row for row in extra_move if row["action"] == "moved"))
+            )
+        )
+        negative_rows["extra move"] = extra_move
+
+        for label, mutated in negative_rows.items():
+            with self.subTest(label=label):
+                with self.assertRaises(AssertionError):
+                    validator._work109_transition_manifest_projection(
+                        REPOSITORY_ROOT,
+                        document.entries,
+                        route_state="transition",
+                        ledger_bytes=_replace_mig0002_rows(ledger_bytes, mutated),
+                    )
+
+        with self.assertRaisesRegex(AssertionError, "transition-only"):
+            validator._work109_transition_manifest_projection(
+                REPOSITORY_ROOT,
+                document.entries,
+                route_state="terminal",
+                ledger_bytes=ledger_bytes,
+            )
+
+    def test_work109_mig0002_parser_pins_the_complete_document(self) -> None:
+        validator = self.validators["registry"]
+        ledger_path = REPOSITORY_ROOT / validator.WORK109_MIGRATION_LEDGER_PATH
+        raw = ledger_path.read_bytes()
+
+        self.assertEqual(len(validator._work109_ledger_rows(raw)), 154)
+        self.assertEqual(
+            hashlib.sha256(raw).hexdigest(),
+            validator.WORK109_MIGRATION_DOCUMENT_SHA256,
+        )
+        for name, candidate in (
+            ("trailing", raw + b"\nUnreviewed trailing prose.\n"),
+            (
+                "oversize",
+                raw
+                + b"x"
+                * (
+                    validator.MIGRATION_DOCUMENT_MAX_BYTES + 1 - len(raw)
+                ),
+            ),
+        ):
+            with self.subTest(name=name), self.assertRaises(AssertionError):
+                validator._work109_ledger_rows(candidate)
+
+    def test_work109_default_projection_reads_mig0002_from_index(self) -> None:
+        validator = self.validators["registry"]
+        tool = validator._load_migration_tool(REPOSITORY_ROOT)
+        document = tool.load_manifest_document(
+            REPOSITORY_ROOT / "scripts/document-taxonomy-migration.json"
+        )
+        staged = _staged_bytes(
+            REPOSITORY_ROOT / validator.WORK109_MIGRATION_LEDGER_PATH
+        )
+        with mock.patch.object(
+            validator,
+            "read_staged_blob_bounded",
+            return_value=staged,
+        ) as reader:
+            projection = validator._work109_transition_manifest_projection(
+                REPOSITORY_ROOT,
+                document.entries,
+                route_state="transition",
+            )
+        self.assertEqual(len(projection), 132)
+        reader.assert_called_once_with(
+            REPOSITORY_ROOT.resolve(),
+            validator.WORK109_MIGRATION_LEDGER_PATH.as_posix(),
+            max_bytes=validator.MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+
+    def test_work109_stage04_readme_retirement_profiles_are_exact(self) -> None:
+        validator = self.validators["registry"]
+        registry = validator.load_registry(REPOSITORY_ROOT)
+        fixture_path = REPOSITORY_ROOT / validator.README_FIXTURE_PATH
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        expected = {
+            "docs/04.execution/README.md": (
+                "readme/stage-index",
+                "docs/03.specs/README.md",
+            ),
+            "docs/04.execution/plans/README.md": (
+                "readme/collection-index",
+                "docs/99.templates/templates/sdlc/execution/plan.template.md",
+            ),
+            "docs/04.execution/tasks/README.md": (
+                "readme/collection-index",
+                "docs/99.templates/templates/sdlc/execution/task.template.md",
+            ),
+        }
+        actual = {
+            row["path"]: (row["profile"], row["destination"])
+            for row in fixture["retiredPaths"]
+            if row["retiredBy"] == "WORK-054-002"
+        }
+        self.assertEqual(actual, expected)
+        validator._assert_readme_family_contract(
+            REPOSITORY_ROOT,
+            registry,
+            fixture=fixture,
+        )
+
+        mutations: dict[str, dict[str, object]] = {}
+        wrong_destination = json.loads(json.dumps(fixture))
+        next(
+            row
+            for row in wrong_destination["retiredPaths"]
+            if row["path"] == "docs/04.execution/plans/README.md"
+        )["destination"] = "docs/03.specs/README.md"
+        mutations["wrong destination"] = wrong_destination
+
+        wrong_owner = json.loads(json.dumps(fixture))
+        next(
+            row
+            for row in wrong_owner["retiredPaths"]
+            if row["path"] == "docs/04.execution/tasks/README.md"
+        )["retiredBy"] = "WORK-109"
+        mutations["wrong owner"] = wrong_owner
+
+        extra_owner = json.loads(json.dumps(fixture))
+        next(
+            row
+            for row in extra_owner["retiredPaths"]
+            if row["retiredBy"] == "ADM-006"
+        )["retiredBy"] = "WORK-054-002"
+        mutations["extra path"] = extra_owner
+
+        for label, mutated in mutations.items():
+            with self.subTest(label=label):
+                with self.assertRaisesRegex(
+                    AssertionError,
+                    "WORK-054-002 retired README historical projection differs",
+                ):
+                    validator._assert_readme_family_contract(
+                        REPOSITORY_ROOT,
+                        registry,
+                        fixture=mutated,
+                    )
 
     def test_compatibility_mode_is_rejected_by_argparse(self) -> None:
         for name in VALIDATOR_PATHS:
@@ -578,11 +1389,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         programs = registry["programLineage"]["programs"]
         self.assertEqual(len(programs), 5)
         self.assertTrue(all("ad" in program and "ard" not in program for program in programs))
-        prd008 = next(program for program in programs if program["prd"] == "008")
+        prd008 = next(program for program in programs if program["prd"] == "0008")
         self.assertEqual(prd008["ad"], "0011")
         self.assertEqual(prd008["tranches"], [
             {
-                "spec": "052",
+                "spec": "0052",
                 "order": 1,
                 "state": "active",
                 "reason": "Document taxonomy consolidation",
@@ -895,7 +1706,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 for item in validator._work105_occurrence_dispositions(
                     patterns["ard"],
                     (
-                        "docs/03.specs/052-document-taxonomy-consolidation/"
+                        "docs/03.specs/0052-document-taxonomy-consolidation/"
                         "spec.md"
                     ),
                     classifier_control,
@@ -1061,11 +1872,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         self.assertTrue(_staged_bytes(progress_path).startswith(_work105_base_bytes(progress_path)))
         prd = _staged_bytes(
             REPOSITORY_ROOT
-            / "docs/01.requirements/008-workspace-document-taxonomy-consolidation.md"
+            / "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md"
         ).decode("utf-8")
         spec = _staged_bytes(
             REPOSITORY_ROOT
-            / "docs/03.specs/052-document-taxonomy-consolidation/spec.md"
+            / "docs/03.specs/0052-document-taxonomy-consolidation/spec.md"
         ).decode("utf-8")
         adr = _staged_bytes(
             REPOSITORY_ROOT
@@ -1095,7 +1906,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         surfaces = (
             REPOSITORY_ROOT / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
             REPOSITORY_ROOT
-            / "docs/00.agent-governance/rules/documentation-protocol.md",
+            / "docs/00.agent-governance/rules/document-authoring.md",
             REPOSITORY_ROOT / "scripts/validate-document-lifecycle.py",
             REPOSITORY_ROOT / "scripts/validate-repo-quality-gates.sh",
             REPOSITORY_ROOT / "tests/fixtures/markdown-profiles.json",
@@ -1112,8 +1923,8 @@ class DocumentStrictCutoverTests(unittest.TestCase):
     def test_work105_completed_spec019_history_is_byte_exact(self) -> None:
         validator = self.validators["registry"]
         for relative in (
-            "docs/03.specs/019-template-path-numbering-contract/spec.md",
-            "docs/03.specs/019-template-path-numbering-contract/plan.md",
+            "docs/03.specs/0019-template-path-numbering-contract/spec.md",
+            "docs/03.specs/0019-template-path-numbering-contract/plan.md",
         ):
             path = REPOSITORY_ROOT / relative
             with self.subTest(path=relative):
@@ -1139,11 +1950,30 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
     def test_work105_native_contract_bytes_and_ten_cases_are_preserved(self) -> None:
         native_fixture = _staged_bytes(NATIVE_SURFACE_CASES)
-        self.assertEqual(
-            hashlib.sha256(native_fixture).hexdigest(),
-            "31d0d392e80a6151275282a76c220757222b61f3cf96afa63cd454592232056a",  # pragma: allowlist secret
-        )
         fixture = json.loads(native_fixture)
+        base_fixture = json.loads(_work105_base_bytes(NATIVE_SURFACE_CASES))
+        self.assertEqual(
+            [
+                {key: value for key, value in family.items() if key != "path"}
+                for family in fixture["families"]
+            ],
+            [
+                {key: value for key, value in family.items() if key != "path"}
+                for family in base_fixture["families"]
+            ],
+        )
+        self.assertEqual(
+            [
+                family["path"]
+                for family in fixture["families"]
+                if family["id"] in {"openapi", "graphql", "protobuf"}
+            ],
+            [
+                "docs/03.specs/0999-native-fixture/contracts/openapi.yaml",
+                "docs/03.specs/0999-native-fixture/contracts/schema.graphql",
+                "docs/03.specs/0999-native-fixture/contracts/service.proto",
+            ],
+        )
         self.assertEqual(len(fixture["families"]), 5)
         self.assertEqual(
             sum(
@@ -1197,6 +2027,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         expected_current = stable_paths | {
             "docs/98.archive/README.md",
             WORK107_MIGRATION_PATH,
+            "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md",
         }
         self.assertEqual(set(staged_inventory), expected_current)
         self.assertEqual(
@@ -1255,7 +2086,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
     def test_work106_artifact_namespace_is_transition_aware_and_global(self) -> None:
         validator = self.validators["registry"]
         records = (
-            ("docs/01.requirements/008-program.md", {}),
+            ("docs/01.requirements/0008-program.md", {}),
             ("docs/02.architecture/descriptions/ad-0011-program.md", {"artifact_id": "AD-0011"}),
             (
                 "docs/90.references/current.md",
@@ -1264,14 +2095,14 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
         self.assertEqual(validator._work106_artifact_diagnostics(records, terminal=False), ())
         self.assertIn(
-            "ARTIFACT-ID-MISSING:docs/01.requirements/008-program.md",
+            "ARTIFACT-ID-MISSING:docs/01.requirements/0008-program.md",
             validator._work106_artifact_diagnostics(records, terminal=True),
         )
 
         mutations = (
-            (("docs/01.requirements/008-program.md", {"artifact_id": "PRD-009"}), "ARTIFACT-ID-PATH"),
-            (("docs/90.references/current.md", {"artifact_id": "PRD-008"}), "ARTIFACT-ID-PROHIBITED"),
-            (("docs/01.requirements/009-second.md", {"artifact_id": "PRD-008"}), "ARTIFACT-ID-PATH"),
+            (("docs/01.requirements/0008-program.md", {"artifact_id": "PRD-0009"}), "ARTIFACT-ID-PATH"),
+            (("docs/90.references/current.md", {"artifact_id": "PRD-0008"}), "ARTIFACT-ID-PROHIBITED"),
+            (("docs/01.requirements/0009-second.md", {"artifact_id": "PRD-0008"}), "ARTIFACT-ID-PATH"),
         )
         for record, expected in mutations:
             with self.subTest(expected=expected):
@@ -1281,8 +2112,8 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 self.assertTrue(any(item.startswith(expected) for item in diagnostics))
 
         duplicate = (
-            ("docs/01.requirements/008-program.md", {"artifact_id": "PRD-008"}),
-            ("docs/01.requirements/008-alias.md", {"artifact_id": "PRD-008"}),
+            ("docs/01.requirements/0008-program.md", {"artifact_id": "PRD-0008"}),
+            ("docs/01.requirements/0008-alias.md", {"artifact_id": "PRD-0008"}),
         )
         self.assertTrue(
             any(
@@ -1391,7 +2222,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if (identity := validator._work106_derive_artifact_identity(path))
             is not None
         )
-        self.assertEqual(len(identities), 286)
+        self.assertEqual(len(identities), 291)
         self.assertEqual(
             validator._work106_artifact_diagnostics(records, terminal=True), ()
         )

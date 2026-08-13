@@ -1260,8 +1260,8 @@ def _program_structure_diagnostics(
 
         for follow_up in follow_ups:
             historical_exception = (
-                program["prd"] == "005"
-                and follow_up["spec"] == "033"
+                program["prd"] == "0005"
+                and follow_up["spec"] == "0033"
                 and follow_up["decision"] == "0017"
             )
             expected_mode = (
@@ -1281,7 +1281,7 @@ def _program_structure_diagnostics(
 _PROGRAM_OWNER_CONTRACTS = {
     "prd": (
         PurePosixPath("docs/01.requirements"),
-        re.compile(r"^docs/01\.requirements/(?P<id>[0-9]{3})-[^/]+\.md$"),
+        re.compile(r"^docs/01\.requirements/(?P<id>[0-9]{4})-[^/]+\.md$"),
         "sdlc/prd",
     ),
     "ad": (
@@ -1296,7 +1296,7 @@ _PROGRAM_OWNER_CONTRACTS = {
     ),
     "spec": (
         PurePosixPath("docs/03.specs"),
-        re.compile(r"^docs/03\.specs/(?P<id>[0-9]{3})-[^/]+/spec\.md$"),
+        re.compile(r"^docs/03\.specs/(?P<id>[0-9]{4})-[^/]+/spec\.md$"),
         "sdlc/spec",
     ),
 }

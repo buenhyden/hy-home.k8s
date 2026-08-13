@@ -193,7 +193,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/01\\.requirements/[0-9]{3}-[^/]+\\.md$"
+          "value": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -297,7 +297,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/01\\.requirements/srs-[0-9]{3}-[^/]+\\.md$"
+          "value": "^docs/01\\.requirements/srs-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -400,7 +400,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/01\\.requirements/ifc-[0-9]{3}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+          "value": "^docs/01\\.requirements/ifc-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -503,7 +503,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -603,7 +603,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/decisions/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -699,7 +699,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$"
         }
       ],
       "frontmatter": {
@@ -808,7 +808,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/agent-design\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/agent-design\\.md$"
         }
       ],
       "frontmatter": {
@@ -921,7 +921,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/data-model\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/data-model\\.md$"
         }
       ],
       "frontmatter": {
@@ -1028,7 +1028,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tests\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tests\\.md$"
         }
       ],
       "frontmatter": {
@@ -1135,7 +1135,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/plan\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$"
         }
       ],
       "frontmatter": {
@@ -1240,7 +1240,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tasks\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks\\.md$"
         }
       ],
       "frontmatter": {
@@ -1337,7 +1337,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/guides/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -1431,7 +1431,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/policies/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -1527,7 +1527,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/runbooks/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -1624,7 +1624,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/INC-[0-9]{3}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$"
         }
       ],
       "frontmatter": {
@@ -1716,7 +1716,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/postmortem\\.md$"
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$"
         }
       ],
       "frontmatter": {
@@ -2307,10 +2307,6 @@
         },
         {
           "kind": "exact",
-          "value": "docs/04.execution/README.md"
-        },
-        {
-          "kind": "exact",
           "value": "docs/05.operations/README.md"
         },
         {
@@ -2372,14 +2368,6 @@
         {
           "kind": "exact",
           "value": "docs/02.architecture/descriptions/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/04.execution/plans/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/04.execution/tasks/README.md"
         },
         {
           "kind": "exact",
@@ -2821,7 +2809,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/openapi\\.yaml$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/openapi\\.yaml$"
         }
       ],
       "frontmatter": {
@@ -2848,7 +2836,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/schema\\.graphql$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/schema\\.graphql$"
         }
       ],
       "frontmatter": {
@@ -2875,7 +2863,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/service\\.proto$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$"
         }
       ],
       "frontmatter": {
@@ -5284,15 +5272,12 @@
       "docs/00.agent-governance/rules/agentic.md",
       "docs/00.agent-governance/rules/approval-boundaries.md",
       "docs/00.agent-governance/rules/bootstrap.md",
-      "docs/00.agent-governance/rules/document-stage-routing.md",
-      "docs/00.agent-governance/rules/documentation-protocol.md",
+      "docs/00.agent-governance/rules/document-authoring.md",
       "docs/00.agent-governance/rules/git-workflow.md",
       "docs/00.agent-governance/rules/persona.md",
       "docs/00.agent-governance/rules/postflight-checklist.md",
       "docs/00.agent-governance/rules/preflight-checklist.md",
       "docs/00.agent-governance/rules/quality-standards.md",
-      "docs/00.agent-governance/rules/stage-authoring-matrix.md",
-      "docs/00.agent-governance/rules/stage-checklists.md",
       "docs/00.agent-governance/rules/standards.md",
       "docs/00.agent-governance/scopes/architecture.md",
       "docs/00.agent-governance/scopes/backend.md",
@@ -7303,45 +7288,45 @@
   "programLineage": {
     "programs": [
       {
-        "prd": "003",
+        "prd": "0003",
         "tranches": [
           {
-            "spec": "041",
+            "spec": "0041",
             "order": 1,
             "state": "done",
             "reason": "Stage 00 agent governance contract",
             "decision": "0013"
           },
           {
-            "spec": "042",
+            "spec": "0042",
             "order": 2,
             "state": "done",
             "reason": "Provider-native runtime and model evidence",
             "decision": "0013"
           },
           {
-            "spec": "043",
+            "spec": "0043",
             "order": 3,
             "state": "done",
             "reason": "Agent harness loop lifecycle",
             "decision": "0013"
           },
           {
-            "spec": "044",
+            "spec": "0044",
             "order": 4,
             "state": "done",
             "reason": "Agent roster evaluation and admission",
             "decision": "0013"
           },
           {
-            "spec": "045",
+            "spec": "0045",
             "order": 5,
             "state": "done",
             "reason": "Agent governance CI and QA cutover",
             "decision": "0013"
           },
           {
-            "spec": "046",
+            "spec": "0046",
             "order": 6,
             "state": "done",
             "reason": "Agent governance program closure",
@@ -7352,52 +7337,52 @@
         "ad": "0006"
       },
       {
-        "prd": "005",
+        "prd": "0005",
         "tranches": [
           {
-            "spec": "026",
+            "spec": "0026",
             "order": 1,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "027",
+            "spec": "0027",
             "order": 2,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "028",
+            "spec": "0028",
             "order": 3,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "029",
+            "spec": "0029",
             "order": 4,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "030",
+            "spec": "0030",
             "order": 5,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "031",
+            "spec": "0031",
             "order": 6,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "032",
+            "spec": "0032",
             "order": 7,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
@@ -7406,7 +7391,7 @@
         ],
         "followUps": [
           {
-            "spec": "033",
+            "spec": "0033",
             "order": 1,
             "state": "done",
             "reason": "Post-program template lifecycle follow-up",
@@ -7417,52 +7402,52 @@
         "ad": "0008"
       },
       {
-        "prd": "006",
+        "prd": "0006",
         "tranches": [
           {
-            "spec": "034",
+            "spec": "0034",
             "order": 1,
             "state": "done",
             "reason": "Authority and lineage foundation",
             "decision": "0017"
           },
           {
-            "spec": "035",
+            "spec": "0035",
             "order": 2,
             "state": "done",
             "reason": "Document schema and lifecycle contract",
             "decision": "0017"
           },
           {
-            "spec": "036",
+            "spec": "0036",
             "order": 3,
             "state": "done",
             "reason": "Archive record and workspace boundary",
             "decision": "0017"
           },
           {
-            "spec": "037",
+            "spec": "0037",
             "order": 4,
             "state": "done",
             "reason": "Active corpus and execution retention",
             "decision": "0017"
           },
           {
-            "spec": "038",
+            "spec": "0038",
             "order": 5,
             "state": "done",
             "reason": "Reference information architecture",
             "decision": "0017"
           },
           {
-            "spec": "039",
+            "spec": "0039",
             "order": 6,
             "state": "done",
             "reason": "GitHub CI and QA evidence",
             "decision": "0017"
           },
           {
-            "spec": "040",
+            "spec": "0040",
             "order": 7,
             "state": "done",
             "reason": "Contract cutover and program closure",
@@ -7473,38 +7458,38 @@
         "ad": "0009"
       },
       {
-        "prd": "007",
+        "prd": "0007",
         "tranches": [
           {
-            "spec": "047",
+            "spec": "0047",
             "order": 1,
             "state": "draft",
             "reason": "Current surface and stash reconciliation",
             "decision": "0021"
           },
           {
-            "spec": "048",
+            "spec": "0048",
             "order": 2,
             "state": "draft",
             "reason": "GitHub routing and CI evidence",
             "decision": "0021"
           },
           {
-            "spec": "049",
+            "spec": "0049",
             "order": 3,
             "state": "draft",
             "reason": "Platform validation and security evidence",
             "decision": "0021"
           },
           {
-            "spec": "050",
+            "spec": "0050",
             "order": 4,
             "state": "draft",
             "reason": "Example IaC and validator QA",
             "decision": "0021"
           },
           {
-            "spec": "051",
+            "spec": "0051",
             "order": 5,
             "state": "draft",
             "reason": "Repository assurance integration and closure",
@@ -7515,10 +7500,10 @@
         "ad": "0010"
       },
       {
-        "prd": "008",
+        "prd": "0008",
         "tranches": [
           {
-            "spec": "052",
+            "spec": "0052",
             "order": 1,
             "state": "active",
             "reason": "Document taxonomy consolidation",
@@ -7532,11 +7517,20 @@
   },
   "standaloneExecutions": [
     {
-      "spec": "053",
-      "plan": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/plan.md",
-      "task": "docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md",
+      "spec": "0053",
+      "plan": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md",
+      "task": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks.md",
       "state": "done",
       "reason": "Direct human-approved research-pack consolidation without separate PRD/AD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0054",
+      "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md",
+      "state": "active",
+      "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",
       "approvalMode": "spec-body-record"
     }

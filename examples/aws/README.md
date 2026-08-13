@@ -48,6 +48,6 @@ the executable assets remain under this provider tree.
 ## Related Documents
 
 - [Stage 90 AWS provider handoff](../../docs/90.references/cloud-examples/aws/README.md)
-- [Authored Document Migration Spec](../../docs/03.specs/030-authored-document-migration/spec.md)
+- [Authored Document Migration Spec](../../docs/03.specs/0030-authored-document-migration/spec.md)
 - [Examples index](../README.md)
 - [Tech Stack Version Inventory](../../docs/90.references/data/tech-stack-version-inventory.md)

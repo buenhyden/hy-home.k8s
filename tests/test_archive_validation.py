@@ -107,7 +107,7 @@ class ArchiveValidationTest(unittest.TestCase):
             "original_path": self.original_path,
             "archived_on": "2026-07-18",
             "archive_reason": "superseded",
-            "replacement": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            "replacement": "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
             "source_commit": self.commit,
             "source_blob": self.blob,
             "content_sha256": hashlib.sha256(self.payload).hexdigest(),
@@ -258,7 +258,7 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_red_current_status_profile_markdown_and_path_contracts_fail_closed(
         self,
     ) -> None:
-        current_path = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        current_path = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
         cases = (
             (
                 "uppercase-status",
@@ -487,7 +487,7 @@ class ArchiveValidationTest(unittest.TestCase):
 
     def test_red_active_direct_link_fails_but_archive_index_is_permitted(self) -> None:
         direct = CurrentMarkdownDocument(
-            path="docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            path="docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
             markdown=(
                 "# Current\n\n[record](../../98.archive/03.specs/900-fixture/spec.md)\n"
             ),
@@ -495,7 +495,7 @@ class ArchiveValidationTest(unittest.TestCase):
             status="active",
         )
         via_index = CurrentMarkdownDocument(
-            path="docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+            path="docs/03.specs/0037-active-corpus-and-execution-retention/spec.md",
             markdown="# Current\n\n[archive index](../../98.archive/README.md)\n",
             profile="sdlc/spec",
             status="active",
@@ -639,6 +639,164 @@ class ArchiveValidationTest(unittest.TestCase):
                 "progress-snapshot": 0,
             },
         )
+
+    def test_repository_inventory_separates_exact_archive_migration_controls(
+        self,
+    ) -> None:
+        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+            ROOT
+        )
+
+        self.assertEqual(diagnostics, [])
+        self.assertEqual(len(records), 93)
+        self.assertNotIn(
+            "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md",
+            records,
+        )
+        self.assertNotIn(
+            "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md",
+            records,
+        )
+
+    def test_repository_inventory_rejects_unknown_or_drifted_migration_profiles(
+        self,
+    ) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        migration_bytes = (ROOT / migration_path).read_bytes()
+        cases = (
+            (
+                "unknown-control",
+                "docs/98.archive/migrations/mig-9999-unreviewed.md",
+                migration_bytes,
+                "ARCHIVE-MIGRATION-CONTROL",
+            ),
+            (
+                "profile-drift",
+                migration_path,
+                migration_bytes.replace(
+                    b'type: "content/archive-migration"',
+                    b'type: "content/archive"',
+                    1,
+                ),
+                "ARCHIVE-MIGRATION-PROFILE",
+            ),
+        )
+        for name, relative, content, expected_code in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory(
+                prefix="archive-migration-profile-"
+            ) as temporary:
+                root = Path(temporary)
+                target = root / relative
+                target.parent.mkdir(parents=True)
+                target.write_bytes(content)
+
+                records, diagnostics = (
+                    archive_validation._repository_archive_records(root)  # noqa: SLF001
+                )
+
+                self.assertEqual(records, {})
+                self.assertIn(
+                    expected_code,
+                    self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
+                )
+
+    def test_mig0002_control_pins_full_document_and_resource_envelope(self) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        migration_bytes = (ROOT / migration_path).read_bytes()
+
+        rows = archive_validation.parse_pinned_migration_control(
+            migration_path, migration_bytes
+        )
+
+        self.assertEqual(len(rows), 154)
+        self.assertEqual(
+            hashlib.sha256(migration_bytes).hexdigest(),
+            archive_validation.MIG0002_DOCUMENT_SHA256,
+        )
+        for name, candidate in (
+            ("trailing-prose", migration_bytes + b"\nUnreviewed trailing prose.\n"),
+            (
+                "oversize",
+                migration_bytes
+                + b"x"
+                * (
+                    archive_validation.MIGRATION_DOCUMENT_MAX_BYTES
+                    + 1
+                    - len(migration_bytes)
+                ),
+            ),
+        ):
+            with self.subTest(name=name), self.assertRaises(
+                archive_validation.ArchiveContractError
+            ):
+                archive_validation.parse_pinned_migration_control(
+                    migration_path, candidate
+                )
+
+    def test_staged_migration_blob_read_is_index_only_and_bounded(self) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        valid = (ROOT / migration_path).read_bytes()
+        with tempfile.TemporaryDirectory(prefix="mig0002-index-boundary-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            target = root / migration_path
+            target.parent.mkdir(parents=True)
+            staged = valid + b"\ninvalid staged suffix\n"
+            target.write_bytes(staged)
+            fixture.run("add", "--", migration_path)
+            target.write_bytes(valid)
+
+            self.assertEqual(
+                archive_validation.read_staged_blob_bounded(
+                    root,
+                    migration_path,
+                    max_bytes=archive_validation.MIGRATION_DOCUMENT_MAX_BYTES,
+                ),
+                staged,
+            )
+
+            target.write_bytes(valid)
+            fixture.run("add", "--", migration_path)
+            target.write_bytes(staged)
+            self.assertEqual(
+                archive_validation.read_staged_blob_bounded(
+                    root,
+                    migration_path,
+                    max_bytes=archive_validation.MIGRATION_DOCUMENT_MAX_BYTES,
+                ),
+                valid,
+            )
+
+    def test_current_archive_authority_accepts_declared_migration_profile(
+        self,
+    ) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "mig-0002-sdlc-document-and-governance-consolidation.md"
+        )
+        report = validate_current_archive_authority(
+            (
+                CurrentMarkdownDocument(
+                    path=migration_path,
+                    markdown=(ROOT / migration_path).read_text(encoding="utf-8"),
+                    profile="content/archive-migration",
+                    status="accepted",
+                ),
+            ),
+            individual_archive_paths=frozenset({self.archive_path}),
+        )
+
+        self.assertEqual(self.codes(report), ())
 
     def test_repository_archive_rejects_open_or_overlapping_namespaces(self) -> None:
         registry = json.loads(
@@ -943,7 +1101,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "2026-07-05-workspace-engineering-implementation-audit-pack.md"
     )
     moved_target = PurePosixPath(
-        "docs/03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md"
+        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/tasks.md"
     )
     archived_source = PurePosixPath(
         "docs/04.execution/plans/"
@@ -980,6 +1138,299 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "docs/98.archive/README.md#document-index",
         )
 
+    def _mutated_work109_context(self, mutate) -> object:
+        path = self.validator.WORK109_MIGRATION_PATH
+        text = self.context.texts[path]
+        marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+        prefix, payload = text.split(marker, 1)
+        raw, suffix = payload.split("\n```", 1)
+        rows = json.loads(raw)
+        mutate(rows)
+        changed = (
+            prefix
+            + marker
+            + json.dumps(rows, indent=2, ensure_ascii=False)
+            + "\n```"
+            + suffix
+        )
+        return dataclasses.replace(
+            self.context,
+            texts={**self.context.texts, path: changed},
+        )
+
+    def test_work109_manifest_targets_compose_through_exact_mig0002(self) -> None:
+        aliases = self.validator._work109_four_digit_aliases(self.context)
+
+        self.assertEqual(len(aliases), 141)
+        self.assertEqual(
+            aliases[
+                PurePosixPath(
+                    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md"
+                )
+            ],
+            self.moved_target,
+        )
+
+    def test_declared_spec_index_accepts_only_four_digit_work_units(self) -> None:
+        pattern = self.validator.DECLARED_INDEXES[0].target_pattern
+
+        self.assertIsNotNone(
+            pattern.fullmatch(
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+            )
+        )
+        self.assertIsNone(
+            pattern.fullmatch(
+                "docs/03.specs/054-sdlc-document-and-agent-governance-consolidation/spec.md"
+            )
+        )
+
+    def test_stage90_ledger_projects_only_source_pinned_work109_paths(
+        self,
+    ) -> None:
+        diagnostics = self.validator._ledger_diagnostics(self.context)
+
+        self.assertNotIn(
+            "LEDGER-UNKNOWN-PATH",
+            {item.rule_id for item in diagnostics},
+        )
+
+    def test_standalone_approval_statements_are_relation_specific(self) -> None:
+        statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
+
+        self.assertEqual(set(statements), {"0043", "0053", "0054"})
+        self.assertIn("2026-08-08", statements["0053"][0])
+        self.assertIn("2026-08-13", statements["0054"][0])
+        self.assertNotEqual(statements["0053"], statements["0054"])
+
+    def test_work109_mig0002_source_commit_blob_and_target_drift_fail_closed(
+        self,
+    ) -> None:
+        mutations = {
+            "source-commit": lambda rows: rows[0].__setitem__(
+                "source_commit", "0" * 40
+            ),
+            "source-blob": lambda rows: rows[0].__setitem__(
+                "source_blob", "0" * 40
+            ),
+            "stable-target": lambda rows: rows[0].__setitem__(
+                "stable_path", "docs/01.requirements/9999-unreviewed.md"
+            ),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name):
+                context = self._mutated_work109_context(mutate)
+                with self.assertRaises(self.validator.ConfigurationError):
+                    self.validator._work109_four_digit_aliases(context)
+
+    def test_immutable_history_aliases_are_exact_source_and_edge_sets(self) -> None:
+        _, move_targets, _ = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        edges = self.validator._reviewed_immutable_historical_alias_edges(
+            self.context,
+            move_targets,
+        )
+
+        self.assertEqual(len({edge.source for edge in edges}), 28)
+        self.assertEqual(len(edges), 96)
+        self.assertTrue(
+            all(
+                replacement in self.context.tracked_regular_paths
+                for replacement in edges.values()
+            )
+        )
+
+    def test_immutable_history_source_blob_and_target_drift_fail_closed(
+        self,
+    ) -> None:
+        _, move_targets, _ = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        source = next(
+            iter(
+                sorted(
+                    self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS
+                )
+            )
+        )
+        drifted_context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: self.context.texts[source] + "\n",
+            },
+        )
+        with self.assertRaises(self.validator.ConfigurationError):
+            self.validator._reviewed_immutable_historical_alias_edges(
+                drifted_context,
+                move_targets,
+            )
+
+        redirects = self.validator._immutable_historical_redirects(
+            self.context,
+            move_targets,
+        )
+        edges = self.validator._reviewed_immutable_historical_alias_edges(
+            self.context,
+            move_targets,
+        )
+        target = next(iter(sorted(edges))).target
+        drifted_redirects = {
+            **redirects,
+            target: PurePosixPath("docs/99.templates/unreviewed-target.md"),
+        }
+        with (
+            mock.patch.object(
+                self.validator,
+                "_immutable_historical_redirects",
+                return_value=drifted_redirects,
+            ),
+            self.assertRaises(self.validator.ConfigurationError),
+        ):
+            self.validator._reviewed_immutable_historical_alias_edges(
+                self.context,
+                move_targets,
+            )
+
+    def test_completed_history_aliases_are_exact_source_and_edge_sets(
+        self,
+    ) -> None:
+        _, move_targets, _ = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        edges = self.validator._reviewed_completed_history_alias_edges(
+            self.context,
+            move_targets,
+        )
+
+        self.assertEqual(len({edge.source for edge in edges}), 46)
+        self.assertEqual(len(edges), 186)
+        self.assertTrue(
+            all(
+                replacement in self.context.tracked_regular_paths
+                for replacement in edges.values()
+            )
+        )
+        self.assertTrue(
+            {
+                PurePosixPath("docs/00.agent-governance/scopes/product.md"),
+                PurePosixPath("docs/01.requirements/README.md"),
+                PurePosixPath("docs/03.specs/README.md"),
+            }.isdisjoint(
+                self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
+            )
+        )
+
+    def test_completed_history_progress_accepts_only_exact_frozen_prefix(
+        self,
+    ) -> None:
+        _, move_targets, _ = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        source = PurePosixPath(
+            "docs/00.agent-governance/memory/progress.md"
+        )
+        expected_blob = self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS[
+            source
+        ]
+        prefix_size = (
+            self.validator.COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES[source]
+        )
+        current = self.context.texts[source]
+        current_bytes = current.encode("utf-8")
+
+        self.assertEqual(len(current_bytes), prefix_size)
+        self.assertEqual(
+            self.validator._git_sha1_blob_bytes(current_bytes[:prefix_size]),
+            expected_blob,
+        )
+
+        appended_context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: current + "\n<!-- append-only fixture -->\n",
+            },
+        )
+        edges = self.validator._reviewed_completed_history_alias_edges(
+            appended_context,
+            move_targets,
+        )
+        self.assertEqual(len(edges), 186)
+
+        mutated_prefix = bytearray(current_bytes)
+        mutated_prefix[0] = ord("!")
+        drifted_context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: mutated_prefix.decode("utf-8"),
+            },
+        )
+        with self.assertRaises(self.validator.ConfigurationError):
+            self.validator._reviewed_completed_history_alias_edges(
+                drifted_context,
+                move_targets,
+            )
+
+    def test_completed_history_source_blob_and_target_drift_fail_closed(
+        self,
+    ) -> None:
+        _, move_targets, _ = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        source = next(
+            iter(
+                sorted(
+                    set(
+                        self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
+                    )
+                    - set(
+                        self.validator.COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES
+                    )
+                )
+            )
+        )
+        drifted_context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: self.context.texts[source] + "\n",
+            },
+        )
+        with self.assertRaises(self.validator.ConfigurationError):
+            self.validator._reviewed_completed_history_alias_edges(
+                drifted_context,
+                move_targets,
+            )
+
+        redirects = self.validator._immutable_historical_redirects(
+            self.context,
+            move_targets,
+        )
+        edges = self.validator._reviewed_completed_history_alias_edges(
+            self.context,
+            move_targets,
+        )
+        target = next(iter(sorted(edges))).target
+        drifted_redirects = {
+            **redirects,
+            target: PurePosixPath("docs/99.templates/unreviewed-target.md"),
+        }
+        with (
+            mock.patch.object(
+                self.validator,
+                "_immutable_historical_redirects",
+                return_value=drifted_redirects,
+            ),
+            self.assertRaises(self.validator.ConfigurationError),
+        ):
+            self.validator._reviewed_completed_history_alias_edges(
+                self.context,
+                move_targets,
+            )
+
     def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
         aliases = self.validator._work107_stable_archive_aliases(self.context)
 
@@ -999,7 +1450,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
     def test_non_manifest_current_source_is_not_deferred(self) -> None:
         source = PurePosixPath(
-            "docs/01.requirements/004-current-local-gitops-platform.md"
+            "docs/01.requirements/0004-current-local-gitops-platform.md"
         )
         target = self.archived_source
 

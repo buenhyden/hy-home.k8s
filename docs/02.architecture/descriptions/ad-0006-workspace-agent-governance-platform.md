@@ -206,44 +206,44 @@ the historical predecessor that governed the earlier tranches.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-PRD-FUN-01](../../01.requirements/003-workspace-agent-governance-platform.md) | Stage 00 durable policy와 owner graph | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-02](../../01.requirements/003-workspace-agent-governance-platform.md) | Thin gateway와 provider projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-03](../../01.requirements/003-workspace-agent-governance-platform.md) | Skill provenance와 gap evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-04](../../01.requirements/003-workspace-agent-governance-platform.md) | Strategy axis와 scope owner | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-05](../../01.requirements/003-workspace-agent-governance-platform.md) | Execution/checkpoint/handoff evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-06](../../01.requirements/003-workspace-agent-governance-platform.md) | Form/profile와 routing contract | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-07](../../01.requirements/003-workspace-agent-governance-platform.md) | GitOps, secret, privilege와 approval boundary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-08](../../01.requirements/003-workspace-agent-governance-platform.md) | Four-surface projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-09](../../01.requirements/003-workspace-agent-governance-platform.md) | Provider schema/model/effort/MCP와 canary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-10](../../01.requirements/003-workspace-agent-governance-platform.md) | Machine harness contract/schema | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-11](../../01.requirements/003-workspace-agent-governance-platform.md) | Bounded loop/checkpoint/compaction | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-12](../../01.requirements/003-workspace-agent-governance-platform.md) | 12-role/48-adapter, eval/admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-13](../../01.requirements/003-workspace-agent-governance-platform.md) | CI/QA/all-files evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-14](../../01.requirements/003-workspace-agent-governance-platform.md) | Legacy cutover/current-owner integrity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-FUN-15](../../01.requirements/003-workspace-agent-governance-platform.md) | Evidence-only external role admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-01](../../01.requirements/003-workspace-agent-governance-platform.md) | Owner graph consistency | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-02](../../01.requirements/003-workspace-agent-governance-platform.md) | Reciprocal lifecycle chain | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-03](../../01.requirements/003-workspace-agent-governance-platform.md) | Gateway/evidence-class separation | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-04](../../01.requirements/003-workspace-agent-governance-platform.md) | Repository static gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-05](../../01.requirements/003-workspace-agent-governance-platform.md) | Template form authority | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-06](../../01.requirements/003-workspace-agent-governance-platform.md) | 12/48 exact parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-07](../../01.requirements/003-workspace-agent-governance-platform.md) | Three-provider independent canary classification and readiness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-08](../../01.requirements/003-workspace-agent-governance-platform.md) | Contract/schema/provider parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-09](../../01.requirements/003-workspace-agent-governance-platform.md) | Recovery fixture and safe resume | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-10](../../01.requirements/003-workspace-agent-governance-platform.md) | Eval/model-fitness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-11](../../01.requirements/003-workspace-agent-governance-platform.md) | CI and all-files gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-PRD-MET-12](../../01.requirements/003-workspace-agent-governance-platform.md) | Zero stale legacy/orphan reference | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-01](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 00 durable policy와 owner graph | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-02](../../01.requirements/0003-workspace-agent-governance-platform.md) | Thin gateway와 provider projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-03](../../01.requirements/0003-workspace-agent-governance-platform.md) | Skill provenance와 gap evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-04](../../01.requirements/0003-workspace-agent-governance-platform.md) | Strategy axis와 scope owner | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-05](../../01.requirements/0003-workspace-agent-governance-platform.md) | Execution/checkpoint/handoff evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-06](../../01.requirements/0003-workspace-agent-governance-platform.md) | Form/profile와 routing contract | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-07](../../01.requirements/0003-workspace-agent-governance-platform.md) | GitOps, secret, privilege와 approval boundary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-08](../../01.requirements/0003-workspace-agent-governance-platform.md) | Four-surface projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-09](../../01.requirements/0003-workspace-agent-governance-platform.md) | Provider schema/model/effort/MCP와 canary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-10](../../01.requirements/0003-workspace-agent-governance-platform.md) | Machine harness contract/schema | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-11](../../01.requirements/0003-workspace-agent-governance-platform.md) | Bounded loop/checkpoint/compaction | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-12](../../01.requirements/0003-workspace-agent-governance-platform.md) | 12-role/48-adapter, eval/admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-13](../../01.requirements/0003-workspace-agent-governance-platform.md) | CI/QA/all-files evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-14](../../01.requirements/0003-workspace-agent-governance-platform.md) | Legacy cutover/current-owner integrity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-FUN-15](../../01.requirements/0003-workspace-agent-governance-platform.md) | Evidence-only external role admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-01](../../01.requirements/0003-workspace-agent-governance-platform.md) | Owner graph consistency | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-02](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reciprocal lifecycle chain | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-03](../../01.requirements/0003-workspace-agent-governance-platform.md) | Gateway/evidence-class separation | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-04](../../01.requirements/0003-workspace-agent-governance-platform.md) | Repository static gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-05](../../01.requirements/0003-workspace-agent-governance-platform.md) | Template form authority | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-06](../../01.requirements/0003-workspace-agent-governance-platform.md) | 12/48 exact parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-07](../../01.requirements/0003-workspace-agent-governance-platform.md) | Three-provider independent canary classification and readiness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-08](../../01.requirements/0003-workspace-agent-governance-platform.md) | Contract/schema/provider parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-09](../../01.requirements/0003-workspace-agent-governance-platform.md) | Recovery fixture and safe resume | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-10](../../01.requirements/0003-workspace-agent-governance-platform.md) | Eval/model-fitness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-11](../../01.requirements/0003-workspace-agent-governance-platform.md) | CI and all-files gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-PRD-MET-12](../../01.requirements/0003-workspace-agent-governance-platform.md) | Zero stale legacy/orphan reference | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 
-- **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
+- **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **Current accepted decision**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Historical accepted predecessor**: [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md)
-- **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
-  [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
-- **Delivery sequence**: [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md),
-  [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md),
-  [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md),
-  [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md),
-  [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md),
-  [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)
+- **Prerequisites**: [Spec 038](../../03.specs/0038-reference-information-architecture/spec.md),
+  [Spec 039](../../03.specs/0039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md)
+- **Delivery sequence**: [Spec 041](../../03.specs/0041-stage-00-agent-governance-contract/spec.md),
+  [Spec 042](../../03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
+  [Spec 043](../../03.specs/0043-agent-harness-loop-lifecycle/spec.md),
+  [Spec 044](../../03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
+  [Spec 045](../../03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
+  [Spec 046](../../03.specs/0046-agent-governance-program-closure/spec.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/0041-stage-00-agent-governance-contract/agent-design.md)

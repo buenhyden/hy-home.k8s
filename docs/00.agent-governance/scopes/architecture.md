@@ -58,6 +58,6 @@ inline a full role definition when an applicable native or local adapter exists.
 ## Related Documents
 
 - [Persona Protocol](../rules/persona.md)
-- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Stage Authoring Matrix](../rules/document-authoring.md)
 - [Architecture Index](../../02.architecture/README.md)
 - [Specifications Index](../../03.specs/README.md)

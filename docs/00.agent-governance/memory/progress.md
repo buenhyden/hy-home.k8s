@@ -16119,3 +16119,63 @@ section separating static from live evidence.
 - WORK-109 may consolidate the three document-authority owners and activate
   terminal routes only while the exact 286-identity census and all WORK-108
   finite projection checks remain green.
+
+## 2026-08-13 - WORK-054-002 terminal topology and four-digit identity
+
+### Metadata
+
+- **Date**: 2026-08-13
+- **Layer**: governance, documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #spec-driven #agent-governance #taxonomy #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+- **Provenance**: WORK-054-002 tests-first implementation on design authority
+  commit `de72eb7d`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 0054 terminal acceptance
+- **Next Owner**: WORK-054-003 integrated AI-agent governance
+
+### Progress
+
+- Normalized all eight active PRD files and forty-nine Stage 03 work-unit
+  directories to exact four-digit identities, removed the three Stage 04
+  transition indexes, and migrated every current mutable consumer to its
+  canonical Stage 03 sibling.
+- Consolidated the route-sensitive Stage 00 and Stage 99 owners into
+  `document-authoring.md`, `document-contract.md`, and
+  `document-lifecycle.md`; preserved completed and immutable history through
+  exact source-blob-pinned aliases rather than rewriting evidence.
+- Established the operations Incident route as
+  `incidents/<year>/inc-####-<slug>/{incident.md,postmortem.md}` with matching
+  `INC-<YYYY>-<DDDD>` and `POSTMORTEM-<YYYY>-<DDDD>` identities.
+- Added `MIG-0002` as the atomic 154-row authority: 141 moved, three replaced,
+  and ten merged records, pinned to source commit, source blobs, content
+  digests, current endpoints, and the full document SHA-256. Existing Stage 90
+  bytes and sealed Stage 98 records remain unchanged.
+
+### Evidence
+
+- Strict-cutover 49/49, registry self-test 132 cases / 69 profiles / 32
+  templates, strict registry 501 paths / zero uncovered / zero ambiguous,
+  lifecycle self-test 770 cases, staged lifecycle, Markdown, and links gates
+  all pass.
+- Archive validation 58/58 and archive cutover 35/35 pass; production archive
+  cutover reports `records=93 historical_links=711 secret_clean=93`.
+  Bounded staged-index migration readers reject oversized, trailing, timeout,
+  ambiguous-ref, and worktree/index-divergent authority.
+- Affected and staged lanes each exited `0` over the exact 315-path candidate
+  with one repository-quality success marker. Plain exact-index pre-commit
+  exited `0`; detect-secrets still rejects a synthetic high-entropy API key,
+  and shellcheck rejects the removed overlapping route pattern.
+- Independent Python and architecture/code reviews approved the candidate with
+  zero Critical, Important, or Minor findings. No provider, remote, hosted,
+  credential-bearing, Release-family, deployment, or live action was
+  performed or claimed.
+
+### Handoff
+
+- WORK-054-003 is the only active successor. It may consolidate common
+  AI-agent governance and provider-native adapters only while the four-digit
+  document routes, Stage 04 retirement, exact `MIG-0002`, Stage 90 byte
+  immutability, and all WP-002 focused gates remain green.

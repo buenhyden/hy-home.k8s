@@ -30,12 +30,12 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-legacy-cutover.json")
 FIXTURE_SHA256 = (
-    "c38a84bf4a2abe9c3571df0c0b97125a3ba386c8fc81ae57f5e9b3d565fbce7f"  # pragma: allowlist secret
+    "3f208c26840ab3755b2a73a6300c514792093d393e13e47e20abc876a9d4306d"  # pragma: allowlist secret
 )
 
 SCHEMA_VERSION = 1
 CONTRACT_VERSION = "1.0.0"
-OWNER_SPEC = "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+OWNER_SPEC = "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
 RIA_SNAPSHOT_SOURCE_COMMIT = (
     "8fb9821497aaa93d9ed5fc1a69b60c628b047b47"  # pragma: allowlist secret
 )

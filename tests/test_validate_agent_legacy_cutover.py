@@ -411,7 +411,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                     value["compatibility"] = {
                         "removalOwnerSpec": (
                             "docs/03.specs/"
-                            "045-agent-governance-ci-qa-cutover/spec.md"
+                            "0045-agent-governance-ci-qa-cutover/spec.md"
                         )
                     }
                 harness.write_text(

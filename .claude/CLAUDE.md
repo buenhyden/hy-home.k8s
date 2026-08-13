@@ -25,7 +25,7 @@ Start from the root Claude provider shim, then follow the governance JIT sequenc
 
 ## Workspace Contract
 
-- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Resolve memory through the four classes in
   `docs/00.agent-governance/memory/README.md`: `working-short-term`,

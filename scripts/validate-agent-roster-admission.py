@@ -27,7 +27,7 @@ HARNESS_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/harness-contract.json"
 )
 
-OWNER_SPEC = "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+OWNER_SPEC = "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 FIXED_CUTOFF_LOCAL = "2026-07-10 10:00 Asia/Seoul"
 FIXED_CUTOFF_UTC = "2026-07-10T01:00:00Z"
 TARGET_ROLES = (

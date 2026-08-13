@@ -71,8 +71,8 @@ this rule.
 
 ## Related Documents
 
-- [Documentation Protocol](../docs/00.agent-governance/rules/documentation-protocol.md)
+- [Documentation Protocol](../docs/00.agent-governance/rules/document-authoring.md)
 - [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md)
 - [Subagent Protocol](../docs/00.agent-governance/subagent-protocol.md)
-- [Documentation Contract](../docs/99.templates/support/documentation-contract.md)
+- [Documentation Contract](../docs/99.templates/support/document-contract.md)
 - [Workspace-staging README form](../docs/99.templates/templates/common/readme-workspace-staging.template.md)

@@ -21,16 +21,20 @@ the later archive and script migrations remain gated by their named work items.
 Accepted
 [ADR-0023](./0023-work-unit-document-taxonomy-and-governance-authority.md)
 remains the accepted transition predecessor. WORK-105 atomically accepted
-ADR-0024 with the AD-0011 invariant replacement and changed the PRD-008
+ADR-0024 with the AD-0011 invariant replacement and changed the PRD-0008
 program-decision registry projection to ADR-0024. WORK-104 remains the existing
 82-move task and was not completed by `WDTC-AMEND-001`.
+
+Accepted [ADR-0025](./0025-four-digit-document-path-identity.md) partially
+supersedes only this record's three-digit PRD, Stage 03, and Incident path/ID
+grammar. All other decisions in this record remain accepted.
 
 ## Context
 
 The reviewed transition manifest is pinned to source commit
 `713dff1fc3de58a2d1682970a7f24faa39c14263` and remains exact at 132 sources,
 82 `move-current` entries, and 50 `archive-unique` entries. The frozen Stage 04
-PRD-008 Plan and Task remain byte-identical. WORK-103 left 93 historical
+PRD-0008 Plan and Task remain byte-identical. WORK-103 left 93 historical
 ArchiveEnvelope records under Stage 98, while `scripts/` contains 50 tracked
 assets: 40 Python, eight shell, one JSON, and one README.
 
@@ -103,7 +107,7 @@ relationship, or navigation.
 
 Within that full-corpus migration, the separate AD-0011 authority gate passed
 atomically: AD-0011 contains the ledger-backed 93-row archive invariant,
-ADR-0024 is accepted, and the PRD-008 registry projection names ADR-0024.
+ADR-0024 is accepted, and the PRD-0008 registry projection names ADR-0024.
 This gate was applied only after the eight-record conversion and complete
 consumer disposition passed.
 
@@ -312,7 +316,7 @@ Stage 98 date/mirror-path immutability. ADR-0018's full-body payload,
 provenance, retention, and recovery invariants and ADR-0023's transition
 safety and all unrelated decisions remain preserved. Active AD-0011 now owns
 the replacement archive invariant. ADR-0018 and ADR-0023 remain accepted
-predecessors, while ADR-0024 is the PRD-008 registry projection.
+predecessors, while ADR-0024 is the PRD-0008 registry projection.
 
 ## Explicit Non-goals
 
@@ -358,7 +362,7 @@ The script inventory has an auditable numerical closure. The three deletions
 occur only at their named consumer/cutover gates, so the terminal count cannot
 be achieved by weakening semantically distinct validators.
 
-ADR-0024 is now authoritative for PRD-008 program-decision lineage. Until the
+ADR-0024 is now authoritative for PRD-0008 program-decision lineage. Until the
 later terminal work units implement the archive
 schema, validators continue to enforce transition-state paths and profiles.
 
@@ -390,5 +394,5 @@ schema, validators continue to enforce transition-state paths and profiles.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0018](./0018-full-body-archive-record-and-retention.md) | Partially supersedes mirror-original-path and Tombstone prohibition only; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
+| [ADR-0018](./0018-full-body-archive-record-and-retention.md) | Partially supersedes mirror-original-path and Tombstone prohibition only; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
 | [ADR-0023](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Partially supersedes terminal Stage 98 date/mirror-path immutability only; preserves transition safety and unrelated decisions | N/A — shares the affected Spec 052 above. |

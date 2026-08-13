@@ -33,7 +33,7 @@ MEMORY_README_PATH = PurePosixPath(
     "docs/00.agent-governance/memory/README.md"
 )
 SPEC_PATH = PurePosixPath(
-    "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+    "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
 )
 CHECKPOINT_PATH = ".agent-work/checkpoint.json"
 CONTRACT_VERSION = "1.0.0"
@@ -1347,7 +1347,7 @@ def apply_mutation(
         identity["taskId"] = "AHLL-999-SYNTHETIC"
     elif name == "stale-spec":
         identity["specRef"] = (
-            "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md"
+            "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
         )
     elif name == "stale-worktree":
         identity["worktreeId"] = "sha256:" + ("5" * 64)

@@ -1,7 +1,7 @@
 ---
 title: 'SDLC Document and AI Agent Governance Consolidation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-13
 artifact_id: "SPEC-0054"
@@ -34,6 +34,17 @@ from [Spec 0052](../0052-document-taxonomy-consolidation/spec.md), but accepts
 only the portions that satisfy this specification after staged-index review.
 The direct-approval lineage follows
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+The four-digit current-path and Incident identity decision is
+[ADR-0025](../../02.architecture/decisions/0025-four-digit-document-path-identity.md),
+which transfers the active WORK-109 implementation from Spec 0052 to this
+specification's WORK-054-002 package.
+
+Direct human approval on 2026-08-13 authorizes this standalone execution relation.
+No separate PRD or Architecture Description is required or part of this standalone lifecycle.
+ADR-0022 owns its approval lineage and ADR-0025 owns the topology decision.
+
+The reciprocal execution artifacts are [Plan 0054](plan.md) and
+[Tasks 0054](tasks.md).
 
 ## Strategic Boundaries & Non-goals
 
@@ -241,20 +252,19 @@ Filename similarity alone is not sufficient evidence for merging validators.
 ## Core Design
 
 The implementation is a sequence of independently reviewable cutovers rather
-than one broad rewrite:
+than one broad rewrite. Route-sensitive Stage 00 and Stage 99 changes are
+atomic with the four-digit topology cutover. A deletion, move, merge, or
+replacement is atomic with its Stage 98 migration or tombstone evidence; a
+later global archive package verifies parity but does not retroactively repair
+an evidence gap.
 
-1. Freeze the approved topology, authority map, terminology, identities, and
-   protected evidence rules.
-2. Reconcile four-digit active paths, Incident routes, templates, registry,
-   validators, fixtures, indexes, and cross-links atomically.
-3. Consolidate Stage 00 common policy and thin provider-native adapters.
-4. Reconcile Stage 05 document purposes and remove Guide/Runbook duplication.
-5. Classify and reconcile every Stage 90 file without promoting reference
-   prose into policy.
-6. Complete the script disposition and consumer graph before deleting tools.
-7. Emit Stage 98 migration/tombstone evidence and close terminal consumers.
-8. Run focused, affected, staged, aggregate, secret, and independent review
-   gates after each logical unit.
+The closed execution order is: approved design; topology and route-sensitive
+contracts; integrated agent governance; remaining templates; Stage 05
+responsibility ledger; Stage 05 cutover; Stage 90 disposition ledger; Stage 90
+cutover; global Stage 98 parity; exact fifty-script ledger; wrapper retirement
+to forty-nine; append-only progress and generated-current cleanup; transition
+asset retirement to forty-seven with terminal route state; and final
+fixed-point review and branch completion.
 
 Every cutover starts with a focused failing test that proves the old conflict
 or missing invariant. Implementation is minimal until that test passes. Broad
@@ -326,11 +336,11 @@ task. The terminal gate set must include:
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
-python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
-python3 scripts/validate-markdown-profiles.py . --self-test
-python3 scripts/validate-markdown-profiles.py . --mode strict
-python3 scripts/validate-links-and-owners.py . --self-test
-python3 scripts/validate-links-and-owners.py . --mode strict
+python3 scripts/validate-document-contract-registry.py --mode strict --route-state terminal
+python3 scripts/validate-markdown-profiles.py --root . --self-test
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --self-test
+python3 scripts/validate-links-and-owners.py --root . --mode strict
 python3 scripts/validate-document-lifecycle.py --root . --self-test
 python3 scripts/validate-document-lifecycle.py --root . --mode staged
 TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
@@ -366,16 +376,20 @@ hosted CI, deployment, incident response, or live platform correctness.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| Human-approved B scope including Stage 90 | VAL-SDLC-001, VAL-SDLC-008 | Topology and complete Stage 90 disposition audits |
-| Four-digit active SDLC identities and filename date removal | VAL-SDLC-002, VAL-SDLC-003 | Registry, Markdown, identity, date, and malformed-route negatives |
-| SDLC and Spec-driven consistency | VAL-SDLC-004, VAL-SDLC-006 | Lifecycle and cross-artifact contract tests |
-| Unified AI-agent governance | VAL-SDLC-005 | Contract/adapter/evidence-class parity and provider canaries |
-| Template and validator conflict resolution | VAL-SDLC-006, VAL-SDLC-011 | Focused RED/GREEN plus aggregate gates |
-| Operations and Incident taxonomy | VAL-SDLC-003, VAL-SDLC-007 | Purpose, route, template, and duplicate-owner audits |
-| Legacy/deprecated and one-time asset removal | VAL-SDLC-009, VAL-SDLC-010 | Consumer-zero, migration, recovery, and exact-census evidence |
-| Logical-unit commits | VAL-SDLC-012 | Commit-scope and staged-path audits |
+| N/A — the direct human-approved B-scope consolidation has no separate PRD. | VAL-SDLC-001 | Exact topology and scope audit. |
+| N/A — VAL-SDLC-002 shares the direct approved requirement source above. | VAL-SDLC-002 | Registry path, identity, date, and malformed-route negatives. |
+| N/A — VAL-SDLC-003 shares the direct approved requirement source above. | VAL-SDLC-003 | Incident and operations route, template, and metadata audits. |
+| N/A — VAL-SDLC-004 shares the direct approved requirement source above. | VAL-SDLC-004 | Lifecycle and reciprocal cross-artifact contract tests. |
+| N/A — VAL-SDLC-005 shares the direct approved requirement source above. | VAL-SDLC-005 | Agent contract, adapter, and evidence-class parity. |
+| N/A — VAL-SDLC-006 shares the direct approved requirement source above. | VAL-SDLC-006 | Template, registry, Markdown, link, and lifecycle parity. |
+| N/A — VAL-SDLC-007 shares the direct approved requirement source above. | VAL-SDLC-007 | Operations purpose and duplicate-owner audits. |
+| N/A — VAL-SDLC-008 shares the direct approved requirement source above. | VAL-SDLC-008 | Complete Stage 90 disposition and freshness audit. |
+| N/A — VAL-SDLC-009 shares the direct approved requirement source above. | VAL-SDLC-009 | Migration, tombstone, recovery, and direct-Archive-link gates. |
+| N/A — VAL-SDLC-010 shares the direct approved requirement source above. | VAL-SDLC-010 | Script disposition, consumer-zero, and exact-census gates. |
+| N/A — VAL-SDLC-011 shares the direct approved requirement source above. | VAL-SDLC-011 | Focused, affected, staged, aggregate, and review gates. |
+| N/A — VAL-SDLC-012 shares the direct approved requirement source above. | VAL-SDLC-012 | Commit-scope and staged-path audits. |
 
-## External Basis
+### External Basis
 
 - [ISO/IEC/IEEE 12207](https://www.iso.org/cms/%20render/live/en/sites/isoorg/contents/data/standard/09/02/90219.html): lifecycle processes may be applied iteratively and recursively; a numbered folder tree is not a mandated waterfall.
 - [ISO/IEC/IEEE 15289](https://www.iso.org/cms/%20render/live/en/sites/isoorg/contents/data/standard/07/49/74909.html): lifecycle information-item purpose and content, with organization-appropriate combination or separation.

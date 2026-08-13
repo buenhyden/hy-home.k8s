@@ -317,13 +317,13 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_index_only_replacement_evolution_preserves_immutable_envelope(
         self,
     ) -> None:
-        replacement = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        replacement = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
 
         def evolve_replacement(text: str) -> str:
             lines, rows = self._manifest_rows(text)
             cells = self._cells(lines[rows[0]])
             cells[7] = (
-                f"[`{replacement}`](../03.specs/036-archive-record-and-workspace-boundary/spec.md)"
+                f"[`{replacement}`](../03.specs/0036-archive-record-and-workspace-boundary/spec.md)"
             )
             lines[rows[0]] = self._row(cells)
             return "".join(lines)
@@ -350,7 +350,7 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_replacement_target_authority_fails_closed(self) -> None:
         registry = load_registry(ROOT)
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
-        current = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        current = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
         template = "docs/99.templates/templates/common/archive-record.template.md"
 
         self.assertEqual(
@@ -412,6 +412,51 @@ class ArchiveCutoverTest(unittest.TestCase):
                         ),
                         "ARCHIVE-REPLACEMENT-NONCURRENT",
                     )
+
+    def test_work054_mig0002_projection_is_exact_and_current(self) -> None:
+        tracked = archive_cutover._tracked_regular_blobs(ROOT)
+
+        projection = archive_cutover._work054_migration_projection(ROOT, tracked)
+
+        self.assertEqual(len(projection.current_by_legacy), 154)
+        self.assertEqual(
+            projection.action_counts,
+            (("merged", 10), ("moved", 141), ("replaced", 3)),
+        )
+        self.assertEqual(
+            projection.current_by_legacy[
+                "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+            ],
+            "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
+        )
+        self.assertEqual(
+            projection.current_by_legacy[
+                "docs/00.agent-governance/rules/document-stage-routing.md"
+            ],
+            "docs/00.agent-governance/rules/document-authoring.md",
+        )
+        self.assertEqual(
+            projection.current_by_legacy["docs/04.execution/plans/README.md"],
+            "docs/99.templates/templates/sdlc/execution/plan.template.md",
+        )
+
+    def test_work054_mig0002_projection_rejects_any_byte_drift(self) -> None:
+        migration_path = (ROOT / archive_cutover.WORK054_MIGRATION_PATH).resolve()
+        original_read_bytes = Path.read_bytes
+
+        def drift_migration(path: Path) -> bytes:
+            content = original_read_bytes(path)
+            return content + b"\n" if path.resolve() == migration_path else content
+
+        with patch.object(Path, "read_bytes", new=drift_migration):
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "^WORK-054 migration ledger is unavailable$",
+            ):
+                archive_cutover._work054_migration_projection(
+                    ROOT,
+                    archive_cutover._tracked_regular_blobs(ROOT),
+                )
 
     def test_work105_legacy_ad_replacement_alias_is_exact_and_fails_closed(
         self,
@@ -509,7 +554,7 @@ class ArchiveCutoverTest(unittest.TestCase):
 
     def test_replacement_target_status_comes_from_index_blob(self) -> None:
         registry = load_registry(ROOT)
-        target = "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
+        target = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
         path = PurePosixPath(target)
         staged_draft = "---\ntype: sdlc/spec\nstatus: draft\n---\n\n# Staged draft\n"
         worktree_done = staged_draft.replace("status: draft", "status: done")
@@ -938,7 +983,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         with patch.object(
             archive_cutover,
             "STALE_CONTRACT_SURFACES",
-            ("docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",),
+            ("docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",),
         ):
             report = self._validate_without_repeating_secret_classification()
         self._assert_named_partial(report, "ARCHIVE-RETIRED-AUTHORITY")

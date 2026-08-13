@@ -29,7 +29,7 @@
     "schemaVersion": {"type": "integer", "const": 1},
     "contractId": {"const": "hy-home.k8s/agent-governance-closure"},
     "contractVersion": {"const": "1.2.1"},
-    "ownerSpec": {"const": "docs/03.specs/046-agent-governance-program-closure/spec.md"},
+    "ownerSpec": {"const": "docs/03.specs/0046-agent-governance-program-closure/spec.md"},
     "cutoff": {
       "type": "object",
       "additionalProperties": false,
@@ -120,7 +120,7 @@
       "required": ["sourceRef", "sourceSha256", "validatorPassMeaning", "roleCount", "providerCount", "tupleCount", "mappingReady", "mappingDeferred", "fitnessDeferred", "thresholdDeferred", "promotionDeferred", "canaryDeferred", "runtimeDeferred", "configuredProfileResult", "actualFitnessResult", "actualPromotionResult", "owner", "limitation", "retryTrigger"],
       "properties": {
         "sourceRef": {"const": "docs/00.agent-governance/contracts/agent-model-fitness.json"},
-        "sourceSha256": {"const": "0b8725777f029d84e689f2eb8713c0b04197e6f9def39fe502a431560b369fab"},
+        "sourceSha256": {"const": "4ebae0fab7f51ef41acdb1f5db4bc7a454cbdd2d0526583d601579d0f001ffd1"},
         "validatorPassMeaning": {"const": "mapping-readiness-only"},
         "roleCount": {"const": 12},
         "providerCount": {"const": 4},
@@ -218,7 +218,7 @@
         "observedAt": {"const": "2026-07-28"},
         "sourceCutoff": {"const": "2026-07-10T10:00:00+09:00"},
         "sourceRef": {"const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json"},
-        "sourceSha256": {"const": "7b51324f7af9ac088898d48ea0f5255150ef399e92731da5953483bb6e281e93"},
+        "sourceSha256": {"const": "4dd9f4889873d98c754864aae5655b422008ac7d0b7447fbc7975930cd06df50"},
         "instructionSources": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
         "discoveredRoleSurface": {"type": "string", "minLength": 1, "maxLength": 240},
         "configuredModel": {"const": "role-specific-current-policy"},

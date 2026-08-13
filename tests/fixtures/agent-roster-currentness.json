@@ -13,6 +13,14 @@
     "docs-researcher",
     "quality-engineer"
   ],
+  "expected_owner_links": {
+    "docs/00.agent-governance/rules/bootstrap.md": "rules/bootstrap.md",
+    "docs/00.agent-governance/rules/persona.md": "rules/persona.md",
+    "docs/00.agent-governance/rules/document-authoring.md": "rules/document-authoring.md",
+    "docs/03.specs/0024-observability-and-network-review-agents/tasks.md": "../03.specs/0024-observability-and-network-review-agents/tasks.md",
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/tasks.md": "../03.specs/0025-governance-owner-and-roster-currentness/tasks.md",
+    "docs/99.templates/support/document-contract.md": "../99.templates/support/document-contract.md"
+  },
   "cases": [
     {"name": "valid", "mutation": "none", "expected_errors": []},
     {"name": "missing-role", "mutation": "remove-network-from-claude", "expected_errors": ["claude roster missing expected stems: network-reviewer", "role adapter inventory must contain exactly 48 files"]},
@@ -35,6 +43,7 @@
       "expected_errors": ["harness catalog contains stale pre-12-role currentness prose"]
     },
     {"name": "bad-owner", "mutation": "misdirect-bootstrap-owner", "expected_errors": ["harness catalog missing canonical owner link: docs/00.agent-governance/rules/bootstrap.md -> rules/bootstrap.md"]},
+    {"name": "duplicate-owner", "mutation": "duplicate-document-authoring-owner", "expected_errors": ["harness catalog canonical owner link must appear exactly once: docs/00.agent-governance/rules/document-authoring.md -> rules/document-authoring.md"]},
     {"name": "missing-current-phrase", "mutation": "remove-current-roster-phrase", "expected_errors": ["harness catalog canonical roster phrase must appear exactly once"]}
   ]
 }

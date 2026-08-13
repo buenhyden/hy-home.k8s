@@ -62,12 +62,8 @@ progress 책임을 지원한다.
 
 - [Template Support Contracts](./support/README.md)
 - [Template Forms](./templates/README.md)
-- [Documentation Contract](./support/documentation-contract.md)
-- [SDLC Governance](./support/sdlc-governance.md)
-- [Common Documentation Governance](./support/common-documentation-governance.md)
-- [Frontmatter Schema](./support/frontmatter-schema.md)
-- [Template Routing](./support/template-routing.md)
-- [Legacy Cleanup Rules](./support/legacy-cleanup-rules.md)
+- [Document Contract](./support/document-contract.md)
+- [Document Lifecycle](./support/document-lifecycle.md)
 
 ## Authoring Workflow
 
@@ -81,16 +77,14 @@ progress 책임을 지원한다.
 4. **Validate**: registry, Markdown profile, link/owner 검증과 repository quality
    gate를 실행하고 repo-static 결과와 remote/live 결과를 구분해 기록한다.
 
-Template 선택과 경로 변경 절차는 [Template Routing](./support/template-routing.md),
-다섯 frontmatter key의 의미는 [Frontmatter Schema](./support/frontmatter-schema.md),
-역할·번호·handoff·feedback 규칙은 [SDLC
-Governance](./support/sdlc-governance.md)를 따른다. README는 frontmatter-free이며
-선택된 README profile의 heading contract만 따른다.
+Template 선택, form/body/frontmatter rationale은 [Document
+Contract](./support/document-contract.md)를 따르고, lifecycle·supersession·retention·archive
+및 legacy disposition은 [Document Lifecycle](./support/document-lifecycle.md)을 따른다.
+README는 frontmatter-free이며 선택된 README profile의 heading contract만 따른다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)
-- [Documentation Protocol](../00.agent-governance/rules/documentation-protocol.md)
-- [Stage Authoring Matrix](../00.agent-governance/rules/stage-authoring-matrix.md)
+- [Document Authoring Policy](../00.agent-governance/rules/document-authoring.md)
 - [Template Support Contracts](./support/README.md)

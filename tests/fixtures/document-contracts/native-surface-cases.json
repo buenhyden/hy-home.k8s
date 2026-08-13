@@ -19,7 +19,7 @@
     },
     {
       "id": "openapi",
-      "path": "docs/03.specs/999-native-fixture/contracts/openapi.yaml",
+      "path": "docs/03.specs/0999-native-fixture/contracts/openapi.yaml",
       "ownership": "registry-profile",
       "expectedProfile": "exception/native-contract-openapi",
       "positiveSource": "---\nopenapi: 3.1.0\ninfo:\n  title: Native fixture\n  version: 1.0.0\npaths: {}\n",
@@ -27,7 +27,7 @@
     },
     {
       "id": "graphql",
-      "path": "docs/03.specs/999-native-fixture/contracts/schema.graphql",
+      "path": "docs/03.specs/0999-native-fixture/contracts/schema.graphql",
       "ownership": "registry-profile",
       "expectedProfile": "exception/native-contract-graphql",
       "positiveSource": "# --- is a GraphQL comment, not frontmatter\ntype Query { health: String! }\nschema { query: Query }\n",
@@ -35,7 +35,7 @@
     },
     {
       "id": "protobuf",
-      "path": "docs/03.specs/999-native-fixture/contracts/service.proto",
+      "path": "docs/03.specs/0999-native-fixture/contracts/service.proto",
       "ownership": "registry-profile",
       "expectedProfile": "exception/native-contract-protobuf",
       "positiveSource": "// --- is a protobuf comment, not frontmatter\nsyntax = \"proto3\";\npackage fixture;\nmessage HealthRequest {}\n",

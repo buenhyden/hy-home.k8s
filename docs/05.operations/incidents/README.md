@@ -15,16 +15,16 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 일반 정책은 [policies](../policies/README.md), 실행 복구 절차는 [runbooks](../runbooks/README.md)에 둔다.
 
 현재 tracked incident record와 postmortem 문서는 없다.
-첫 사고 기록이 필요할 때만 `YYYY/INC-###-<title>/` 하위 경로를 만든다.
-Incident Record 파일명은 반드시 incident 폴더명과 동일한
-`INC-###-<title>.md`여야 한다.
+첫 사고 기록이 필요할 때만 `<year>/inc-####-<slug>/` 하위 경로를 만든다.
+Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
+`postmortem.md`를 사용한다.
 
 ### Incident Boundary Matrix
 
 | Artifact | Path rule | Template | Creation rule | Current state |
 | --- | --- | --- | --- | --- |
-| `Incident Record` | `./YYYY/INC-###-<title>/INC-###-<title>.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
-| `Postmortem` | `./YYYY/INC-###-<title>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
+| `Incident Record` | `./<year>/inc-####-<slug>/incident.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
+| `Postmortem` | `./<year>/inc-####-<slug>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
 
 ### Collection Readers
 
@@ -53,9 +53,9 @@ Incident Record 파일명은 반드시 incident 폴더명과 동일한
 
 ```text
 05.operations/incidents/
-├── YYYY/
-│   └── INC-###-<title>/
-│       ├── INC-###-<title>.md  # Incident fact record
+├── <year>/
+│   └── inc-####-<slug>/
+│       ├── incident.md         # Incident fact record
 │       └── postmortem.md       # Postmortem, created only when analysis is needed
 └── README.md                   # This file
 ```
@@ -63,7 +63,7 @@ Incident Record 파일명은 반드시 incident 폴더명과 동일한
 ## Add and Find
 
 1. 대응 중에는 [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md)로 사실 기록을 시작한다.
-2. Incident Record는 `YYYY/INC-###-<title>/INC-###-<title>.md`로 작성해 폴더 ID와 파일 ID를 일치시킨다.
+2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다.
 3. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md)를 사용한다.
 4. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
 5. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
@@ -100,8 +100,8 @@ Incident Record 파일명은 반드시 incident 폴더명과 동일한
 
 이 README의 링크 기준 위치는 `docs/05.operations/incidents/`다.
 
-- Incident record는 `./YYYY/INC-###-<title>/INC-###-<title>.md` 경로를 사용한다.
-- Postmortem은 같은 incident 폴더의 `./YYYY/INC-###-<title>/postmortem.md` 경로를 사용한다.
+- Incident record는 `./<year>/inc-####-<slug>/incident.md` 경로를 사용한다.
+- Postmortem은 같은 incident 폴더의 `./<year>/inc-####-<slug>/postmortem.md` 경로를 사용한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../guides/`로 연결한다.
 
 ## Related Documents

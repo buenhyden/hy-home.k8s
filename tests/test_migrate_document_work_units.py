@@ -101,7 +101,7 @@ class MigrationTests(unittest.TestCase):
         self.assertIsInstance(manifest, tuple)
         self.assertIsInstance(manifest[0], MappingProxyType)
         first = manifest[0]
-        self.assertEqual({k: first[k] for k in ("source", "target", "workUnit", "disposition", "reviewed")}, {"source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md", "target": "docs/03.specs/052-document-taxonomy-consolidation/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "reviewed": True})
+        self.assertEqual({k: first[k] for k in ("source", "target", "workUnit", "disposition", "reviewed")}, {"source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md", "target": "docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "reviewed": True})
         move_units = {
             row["workUnit"] for row in manifest if row["disposition"] == "move-current"
         }

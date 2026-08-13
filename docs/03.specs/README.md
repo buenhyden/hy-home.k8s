@@ -38,191 +38,196 @@ Spec은 실행 기준을 소유하는 문서다.
 - 실시간 장애 대응 절차
 - 실행 추적의 정본 작업 목록
 
-위 내용은 각각 `01.requirements/`, `05.operations/policies/`, `05.operations/runbooks/`, `04.execution/tasks/`로 분리한다.
+위 내용은 각각 `01.requirements/`, `05.operations/policies/`,
+`05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의 `tasks.md`로 분리한다.
 
 ## Document Index
 
 ```text
 03.specs/
-├── 004-argo-rollouts-progressive-delivery/
+├── 0004-argo-rollouts-progressive-delivery/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 005-argo-notifications-slack/
+├── 0005-argo-notifications-slack/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 006-workspace-harness-gap-analysis/
+├── 0006-workspace-harness-gap-analysis/
 │   └── spec.md
-├── 008-current-local-gitops-platform/
+├── 0008-current-local-gitops-platform/
 │   └── spec.md
-├── 009-workspace-harness-research-pack/
+├── 0009-workspace-harness-research-pack/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 010-workspace-harness-implementation-audit-pack/
+├── 0010-workspace-harness-implementation-audit-pack/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 011-template-contract-governance-migration/
+├── 0011-template-contract-governance-migration/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 012-template-governance-audit-enhancement/
+├── 0012-template-governance-audit-enhancement/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 013-workspace-document-governance-hardening/
+├── 0013-workspace-document-governance-hardening/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 014-workspace-document-contract-normalization/
+├── 0014-workspace-document-contract-normalization/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 015-agent-governance-contract-normalization/
+├── 0015-agent-governance-contract-normalization/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 016-active-control-surface-governance-hardening/
+├── 0016-active-control-surface-governance-hardening/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 017-workspace-engineering-research-pack/
+├── 0017-workspace-engineering-research-pack/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 018-workspace-engineering-implementation-audit-pack/
+├── 0018-workspace-engineering-implementation-audit-pack/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 019-template-path-numbering-contract/
+├── 0019-template-path-numbering-contract/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 020-workspace-contract-governance-normalization/
+├── 0020-workspace-contract-governance-normalization/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 021-sdlc-lifecycle-contract/
+├── 0021-sdlc-lifecycle-contract/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 022-control-cloud-doc-normalization/
+├── 0022-control-cloud-doc-normalization/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 023-stage03-04-repo-static-gap-closure/
+├── 0023-stage03-04-repo-static-gap-closure/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 024-observability-and-network-review-agents/
+├── 0024-observability-and-network-review-agents/
 │   ├── spec.md
 │   ├── plan.md
 │   ├── tasks.md
 │   └── agent-design.md
-├── 025-governance-owner-and-roster-currentness/
+├── 0025-governance-owner-and-roster-currentness/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 026-document-contract-registry/
+├── 0026-document-contract-registry/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 027-template-contract-consolidation/
+├── 0027-template-contract-consolidation/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 028-readme-workspace-profiles/
+├── 0028-readme-workspace-profiles/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 029-semantic-document-validation/
+├── 0029-semantic-document-validation/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 030-authored-document-migration/
+├── 0030-authored-document-migration/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 031-affected-surface-agent-qa/
+├── 0031-affected-surface-agent-qa/
 │   └── spec.md
-├── 032-protected-surface-supply-chain-hardening/
+├── 0032-protected-surface-supply-chain-hardening/
 │   └── spec.md
-├── 033-template-lifecycle-contract-normalization/
+├── 0033-template-lifecycle-contract-normalization/
 │   └── spec.md
-├── 034-authority-and-lineage-foundation/
+├── 0034-authority-and-lineage-foundation/
 │   └── spec.md
-├── 035-document-schema-and-lifecycle-contract/
+├── 0035-document-schema-and-lifecycle-contract/
 │   └── spec.md
-├── 036-archive-record-and-workspace-boundary/
+├── 0036-archive-record-and-workspace-boundary/
 │   └── spec.md
-├── 037-active-corpus-and-execution-retention/
+├── 0037-active-corpus-and-execution-retention/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 038-reference-information-architecture/
+├── 0038-reference-information-architecture/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 039-github-ci-qa-evidence/
+├── 0039-github-ci-qa-evidence/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 040-contract-cutover-and-program-closure/
+├── 0040-contract-cutover-and-program-closure/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 041-stage-00-agent-governance-contract/
+├── 0041-stage-00-agent-governance-contract/
 │   ├── spec.md
 │   ├── plan.md
 │   ├── tasks.md
 │   └── agent-design.md
-├── 042-provider-native-runtime-and-model-evidence/
+├── 0042-provider-native-runtime-and-model-evidence/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 043-agent-harness-loop-lifecycle/
+├── 0043-agent-harness-loop-lifecycle/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 044-agent-roster-evaluation-and-admission/
+├── 0044-agent-roster-evaluation-and-admission/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 045-agent-governance-ci-qa-cutover/
+├── 0045-agent-governance-ci-qa-cutover/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 046-agent-governance-program-closure/
+├── 0046-agent-governance-program-closure/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 047-current-surface-and-stash-reconciliation/
+├── 0047-current-surface-and-stash-reconciliation/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 048-github-routing-and-ci-evidence/
+├── 0048-github-routing-and-ci-evidence/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 049-platform-validation-and-security-evidence/
+├── 0049-platform-validation-and-security-evidence/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 050-example-iac-and-validator-qa/
+├── 0050-example-iac-and-validator-qa/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 051-repository-assurance-integration-and-closure/
+├── 0051-repository-assurance-integration-and-closure/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 052-document-taxonomy-consolidation/
+├── 0052-document-taxonomy-consolidation/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
-├── 053-workspace-engineering-research-pack-consolidation/
+├── 0053-workspace-engineering-research-pack-consolidation/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0054-sdlc-document-and-agent-governance-consolidation/
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
@@ -232,9 +237,9 @@ Spec은 실행 기준을 소유하는 문서다.
 ## Authoring Workflow
 
 1. 관련 PRD, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
-2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`다.
+2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-numbering>-<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
-4. Spec 052 terminal cutover 전까지 현재 구현 및 검증 추적은 `04.execution/tasks/`로 연결하며, 새 Stage 03 Plan/Task route를 조기 사용하지 않는다. Cutover 후에는 같은 work-unit의 `plan.md`와 `tasks.md`가 실행 정본이 된다.
+4. 현재 구현 및 검증 추적은 같은 work-unit의 `plan.md`와 `tasks.md`를 실행 정본으로 사용한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
 5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 full-body Archive Record로 보존하며 `../98.archive/README.md`의 중앙 인덱스로만 분리한다.
 
 ### Relative Link Rules
@@ -242,9 +247,9 @@ Spec은 실행 기준을 소유하는 문서다.
 이 README의 링크 기준 위치는 `docs/03.specs/`다.
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
-- 같은 stage의 spec은 `./<###-Numbering>-<feature-id>/spec.md`로 연결한다.
-- Spec 052 terminal cutover 전의 current 실행 문서는 `../04.execution/`, 운영 문서는 `../05.operations/`로 연결한다. Terminal route는 같은 work-unit의 `plan.md`와 `tasks.md`다.
-- feature-local helper 문서 링크는 `docs/03.specs/<###-Numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
+- 같은 stage의 spec은 `./<####-numbering>-<feature-id>/spec.md`로 연결한다.
+- 실행 문서는 같은 work-unit의 `plan.md`와 `tasks.md`, 운영 문서는 `../05.operations/`로 연결한다.
+- feature-local helper 문서 링크는 `docs/03.specs/<####-numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
 ### Spec Authoring Rules
 
@@ -253,62 +258,63 @@ Spec은 실행 기준을 소유하는 문서다.
 3. Acceptance Criteria와 테스트는 PRD에서 이어지고, 구현 검증은 Task와 연결된다.
 4. API가 있다면 API Spec 또는 계약 파일을 함께 둔다.
 5. Agent 설계가 있다면 Role, Tool, Policy, Memory, Guardrail, Evaluation, Fallback을 명시한다.
-6. Spec 052 terminal cutover 전에는 feature-local `tasks.md`가 설계 보조 문서이고 실행 추적 정본은 `../04.execution/tasks/`다. Cutover 후 `tasks.md`가 해당 work-unit의 실행 정본이 되며 `tests.md`만 보조 문서로 남는다.
+6. Feature-local `tasks.md`가 해당 work-unit의 실행 추적 정본이며 `tests.md`만 보조 문서로 남는다.
 7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/AD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
 
 ### Current Spec Index
 
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md)                           | Argo Rollouts 점진적 배포 current-contract backfill 명세                      | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한, 앱 canary AnalysisTemplate 경계를 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                            | 2026-06-04 |
-| [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md)                                               | ArgoCD Notifications Slack current-contract backfill 명세                     | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                                                       | 2026-05-22 |
-| [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md)                                   | Workspace harness Gap analysis와 제한 구현 계약                               | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-07-11 |
-| [`./008-current-local-gitops-platform/spec.md`](./008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-06-02 |
-| [`./009-workspace-harness-research-pack/spec.md`](./009-workspace-harness-research-pack/spec.md)                                 | Workspace harness/loop engineering research pack 명세                         | Done   | `docs/90.references/research/` 아래 통합 연구 팩의 구조, 공식 외부 소스 우선순위, market scan 경계, implementation checklist 포함 방식, 검증 기준을 정의한다.                                                                                                                     | 2026-07-11 |
-| [`./010-workspace-harness-implementation-audit-pack/spec.md`](./010-workspace-harness-implementation-audit-pack/spec.md)         | Workspace harness/loop implementation audit pack 명세                         | Done   | `docs/90.references/research/` 기준 모델과 repo-backed evidence를 대조해 `docs/90.references/audits/` 아래 4개 구현 현황 감사 보고서와 README를 작성하는 계약을 정의한다.                                                                                                         | 2026-07-11 |
-| [`./011-template-contract-governance-migration/spec.md`](./011-template-contract-governance-migration/spec.md)                   | Template contract와 governance migration 명세                                 | Done   | `docs/99.templates/`를 template forms와 support contracts로 분리하고, frontmatter schema, validator, hook, governance, authored docs 적용을 4단계 migration으로 정의한다.                                                                                                         | 2026-07-11 |
-| [`./012-template-governance-audit-enhancement/spec.md`](./012-template-governance-audit-enhancement/spec.md)                     | Template governance follow-up audit와 선택 보강 명세                          | Done   | 이미 완료된 template contract migration 위에서 `docs/99.templates/**`, support contracts, Stage 00 routing, validator, authored docs 사용 상태를 audit-first로 검증하고 안정적인 보강 범위를 정의한다.                                                                            | 2026-07-11 |
-| [`./013-workspace-document-governance-hardening/spec.md`](./013-workspace-document-governance-hardening/spec.md)                 | Workspace document type, provider entrypoint, CI/QA governance hardening 명세 | Done   | template/frontmatter contracts, provider shims, README scope, workspace-wide authored docs, and repo-static validation을 staged governance hardening 흐름으로 정렬한다.                                                                                                           | 2026-07-11 |
-| [`./014-workspace-document-contract-normalization/spec.md`](./014-workspace-document-contract-normalization/spec.md)             | Workspace document contract normalization 명세                                | Done   | active 문서와 historical evidence까지 frontmatter, section, template 계약에 맞게 전면 정규화하고, 과거 증거는 current contract와 분리된 섹션으로 보존하는 후속 패스를 정의한다.                                                                                                   | 2026-07-11 |
-| [`./015-agent-governance-contract-normalization/spec.md`](./015-agent-governance-contract-normalization/spec.md)                 | Agent governance contract normalization 명세                                  | Done   | Stage 00, Claude/Codex native role files, repository-local baselines, local/Antigravity `.agents/**`, exact wiring surfaces, absent/`DEFER` Gemini CLI native boundary, QA/CI 정규화 범위를 정의한다. | 2026-07-14 |
-| [`./016-active-control-surface-governance-hardening/spec.md`](./016-active-control-surface-governance-hardening/spec.md)         | Active control surface governance hardening 명세                              | Done   | `.github`, `scripts`, `gitops`, `infrastructure`, `policy`, `tests`, `traefik`, `examples/sample-app`의 active 운영 표면을 보강하고 AWS/Azure cloud examples는 dated snapshot으로 유지하는 계약을 정의한다.                                                                       | 2026-07-11 |
-| [`./017-workspace-engineering-research-pack/spec.md`](./017-workspace-engineering-research-pack/spec.md)                         | Workspace engineering research pack specification                             | Done   | `docs/90.references/research/2026-07-04-wer/` 아래 dated research pack을 만들고 기존 4개 research reference를 재배치하며 Kubernetes, infrastructure, security, automation, pipeline, workflow, QA 주제를 보강하는 계약을 정의한다.                                                | 2026-07-11 |
-| [`./018-workspace-engineering-implementation-audit-pack/spec.md`](./018-workspace-engineering-implementation-audit-pack/spec.md) | Workspace engineering implementation audit pack specification                 | Done   | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 root audit 파일을 dated folder 구조로 정리하는 계약을 정의한다.                                                                                                                              | 2026-07-11 |
-| [`./019-template-path-numbering-contract/spec.md`](./019-template-path-numbering-contract/spec.md)                               | Template path numbering contract specification                                | Done   | `docs/01.requirements/` PRD numeric filename contract와 `docs/03.specs/` numbered feature-folder contract를 template/support/governance/validator surfaces에 맞춰 정규화하는 설계를 정의한다.                                                                                     | 2026-07-11 |
-| [`./020-workspace-contract-governance-normalization/spec.md`](./020-workspace-contract-governance-normalization/spec.md)         | Workspace contract governance normalization specification                     | Done   | `_workspace` repo-support staging 계약과 repo-wide frontmatter, section, template, governance, CI/CD, QA, validation drift 감사 및 표적 정규화 설계를 정의한다.                                                                                                                   | 2026-07-11 |
-| [`./021-sdlc-lifecycle-contract/spec.md`](./021-sdlc-lifecycle-contract/spec.md)                                                 | SDLC lifecycle contract specification                                         | Done   | `01.requirements -> 02.architecture -> 03.specs -> 04.execution` 흐름의 상태 전이, 번호, handoff, archive metadata, active-surface 제한, `_workspace` staging 경계를 하나의 검증 가능한 계약으로 정의한다.                                                                        | 2026-07-11 |
-| [`./022-control-cloud-doc-normalization/spec.md`](./022-control-cloud-doc-normalization/spec.md)                                 | Control surface and cloud example documentation normalization specification   | Done   | control surface와 당시 AWS/Azure example-local route 정규화를 완료한 historical tranche를 기록하며, 현재 cloud 문서 steady state는 Spec 030의 Stage 90 snapshot 통합과 retired-path 금지를 따른다.                                                                           | 2026-07-14 |
-| [`./023-stage03-04-repo-static-gap-closure/spec.md`](./023-stage03-04-repo-static-gap-closure/spec.md)                           | Stage 03/04 repo-static gap closure specification                             | Done   | Stage 03/04 문서의 repo-static 미구현/증적 gap을 닫고 live/runtime, secret, remote-required 항목은 operator-approved follow-up으로 분리하는 계약을 정의한다.                                                                                                                      | 2026-07-11 |
-| [`./024-observability-and-network-review-agents/spec.md`](./024-observability-and-network-review-agents/spec.md)                 | Observability and network review agents specification                         | Done   | 두 worker role을 Claude-native, Codex-native, local/Antigravity tracked adapter surface와 harness catalog에 추가한 repo-static 설계를 정의하며 Gemini CLI native 지원은 주장하지 않는다. | 2026-07-14 |
-| [`./025-governance-owner-and-roster-currentness/spec.md`](./025-governance-owner-and-roster-currentness/spec.md)                 | Governance owner and roster currentness specification                         | Done   | 전체 Spec/Plan 생명주기와 감사 IA를 증거 기반으로 정합화하고, RMD-004의 10-role/30-tracked-role-adapter roster 및 canonical-owner currentness 계약과 검증 경계를 정의한다.                                                                                                                     | 2026-07-14 |
-| [`./026-document-contract-registry/spec.md`](./026-document-contract-registry/spec.md)                                         | Document contract registry specification                                      | Done   | Registry schema v4와 `DocumentProfileContract.v3`가 62개 문서 profile의 route, metadata, lifecycle, section, README, local/native 예외와 retired cloud-tree 금지를 machine-readable 단일 정본으로 정의한다.                                                                                                    | 2026-07-14 |
-| [`./027-template-contract-consolidation/spec.md`](./027-template-contract-consolidation/spec.md)                               | Template contract consolidation specification                                 | Done   | Stage 99 support와 form을 registry에 정렬하고 중복 섹션, 작성 지침, Legacy Task form을 통합·삭제한다.                                                                                                                                | 2026-07-12 |
-| [`./028-readme-workspace-profiles/spec.md`](./028-readme-workspace-profiles/spec.md)                                           | README and workspace profile specification                                    | Done   | 67개 baseline과 5개 cloud handoff를 합친 72개 README를 6개 경로 프로필로 이행하고 `_workspace`의 non-secret repo-support staging 경계를 보존했다.                                                                  | 2026-07-12 |
-| [`./029-semantic-document-validation/spec.md`](./029-semantic-document-validation/spec.md)                                     | Semantic document validation specification                                    | Done | Frontmatter, Markdown structure, link, index, duplicate owner, template residue와 reciprocal execution lineage를 fixture 기반으로 검증한다.                                                                                          | 2026-07-12 |
-| [`./030-authored-document-migration/spec.md`](./030-authored-document-migration/spec.md)                                       | Authored document migration specification                                     | Done | reciprocal [Plan](030-authored-document-migration/plan.md)과 [Task](030-authored-document-migration/tasks.md)에 따라 전 문서 모집단을 wave별로 이행하고 AWS/Azure SDLC prose를 Stage 90 provider snapshot으로 통합한다.                    | 2026-07-13 |
-| [`./031-affected-surface-agent-qa/spec.md`](./031-affected-surface-agent-qa/spec.md)                                           | Affected surface and Agent QA specification                                   | Done | 이 Spec은 affected/staged/all-files/message/manual/CI/remote-live lane, local/Claude/Codex adapter-surface 역할 semantics, handoff evidence의 현재 closure authority를 유지한다. 완료된 Plan/Task 실행 이력은 [Archive Index](../98.archive/README.md#document-index)를 통해 탐색한다. | 2026-07-14 |
-| [`./032-protected-surface-supply-chain-hardening/spec.md`](./032-protected-surface-supply-chain-hardening/spec.md)             | Protected surface and supply-chain hardening specification                    | Done | 이 Spec은 GitHub Actions identity, workflow permissions, GitOps identity-only review, Vault/ESO 및 secret 경계의 repository-static closure authority를 유지한다. 완료된 Plan/Task 실행 이력은 [Archive Index](../98.archive/README.md#document-index)를 통해 탐색한다. | 2026-07-14 |
-| [`./033-template-lifecycle-contract-normalization/spec.md`](./033-template-lifecycle-contract-normalization/spec.md)           | Template lifecycle contract normalization specification                       | Done | Stage 99 form/support/registry 분리, 현재 문서 body contract migration, production cutover와 독립 whole-branch closure review를 완료한 명세다. | 2026-07-15 |
-| [`./034-authority-and-lineage-foundation/spec.md`](./034-authority-and-lineage-foundation/spec.md) | Authority and lineage foundation specification | Done | Spec 033 follow-up 관계, 새 program lineage, Current audit overlay, Stage 00/99 권위 경계를 정규화하고 repository-static 폐쇄 증거를 기록했다. | 2026-07-15 |
-| [`./035-document-schema-and-lifecycle-contract/spec.md`](./035-document-schema-and-lifecycle-contract/spec.md) | Document schema and lifecycle contract specification | Done | 유형별 폐쇄형 metadata, 상태 전이, 증거, template/source role, native-surface 계약과 결정적 검증을 완료했다. | 2026-07-17 |
-| [`./036-archive-record-and-workspace-boundary/spec.md`](./036-archive-record-and-workspace-boundary/spec.md) | Archive record and workspace boundary specification | Done | ARWB-001부터 ARWB-005까지 31개 full-body Archive Record, 202개 historical link, archive 권위, `_workspace` metadata-only 경계를 구현·폐쇄했다. 기존 envelope/payload는 Git object byte 단위로 불변이며, 현재 replacement 진화는 registry-selected current target을 가리키는 archive index만 소유한다. 독립 whole-tranche 검토를 통과한 [completed execution history](../98.archive/README.md#document-index)는 closure commit `855fa78` 및 postflight corrections `cdac53c`, `a12aedf`까지 기록한다. | 2026-07-19 |
-| [`./037-active-corpus-and-execution-retention/spec.md`](./037-active-corpus-and-execution-retention/spec.md) | Active corpus and execution retention specification | Done | ACER-001~005의 reviewed repository-static 결과와 ACER-006 terminal closure를 기록한다. 현재 Stage 04는 49 Plan/51 Task, 52 lineage의 48/1/3 cardinality, 100 `DEFER`/0 `retain`, accepted ADR 13개와 done Spec 29개 guard, findings 0이다. closure content commit `cfabc506`과 clean-tree postflight PASS를 관측했으며 evidence-update commit 자체는 unidentified·unclaimed이다. | 2026-07-19 |
-| [`./038-reference-information-architecture/spec.md`](./038-reference-information-architecture/spec.md) | Reference information architecture specification | Done | Reciprocal [Plan](038-reference-information-architecture/plan.md)과 [Task](038-reference-information-architecture/tasks.md)는 RIA-000~006의 reviewed contract/FSM, stage-zero authority, source·generator·duplicate-owner 증거를 기록한다. RIA-007 C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b`은 final `REQUIREMENTS COMPLIANT`/`QUALITY APPROVED`와 activation-to-C1 explicit-ref lifecycle 및 repository-static clean-tree postflight PASS를 관측했다. 현재 C2는 six lifecycle paths, 446-row ledger, contract, exact-value `.secrets.baseline` adjudication의 exact-nine staged proposal일 뿐이며 C2 SHA/postcommit, C3, settlement, terminal explicit-ref, CI-hosted/provider/remote/live 결과를 주장하지 않는다. | 2026-07-26 |
-| [`./039-github-ci-qa-evidence/spec.md`](./039-github-ci-qa-evidence/spec.md) | GitHub CI and QA evidence specification | Done | GCQE-001~005의 reviewed repository-static 구현과 GCQE-006 closure를 기록한다. Exact eight-path commit `e1d1e910840337327a557ab4b84e86f8fced11d6`, activation `2ddfe4b7697e998b41d3125be94cdc4cee295388`부터의 raw-OID explicit-ref lifecycle, clean-tree repository-static postflight는 PASS였다. Spec 040은 Active다. Hosted run `29982910320`은 과거 exact-SHA FAIL이고 current hosted/provider/live는 `DEFER`이며, 이 evidence-update commit 자체는 주장하지 않는다. | 2026-07-27 |
-| [`./040-contract-cutover-and-program-closure/spec.md`](./040-contract-cutover-and-program-closure/spec.md) | Contract cutover and program closure specification | Done | 2026-07-28 exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`은 CCPC-000~004 repository-static 완료와 final frontier `0/0·6/3·3`을 기록한다. Lifecycle `668`, staged/strict/residue/aggregate/all-files/formatter/diff gates는 PASS이고 reviewed digest `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`은 terminal requirements/quality/security approval을 받았다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 evidence-update commit 자체와 hosted/provider/remote/live는 주장하지 않는다. | 2026-07-28 |
-| [`./041-stage-00-agent-governance-contract/spec.md`](./041-stage-00-agent-governance-contract/spec.md) | Stage 00 agent governance contract specification | Done | Execution 당시 accepted ADR-0013이 지배한 첫 tranche로 provider-neutral harness machine contract, 당시 current 10/30과 target-only 12/48 분리, 네 memory class 경계, consumer migration, routing, QA/review를 완료했다. Present-tense program decision은 accepted ADR-0019이며 provider/runtime/live 결과는 `DEFER`다. | 2026-08-01 |
-| [`./042-provider-native-runtime-and-model-evidence/spec.md`](./042-provider-native-runtime-and-model-evidence/spec.md) | Provider native runtime and model evidence specification | Done | 구현 commit `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`에서 exact 10-source cutoff ledger, provider 4개, candidate-only model 8개, MCP 7개, redacted canary 12개와 focused/aggregate 검증을 완료했다. 요구사항은 `COMPLIANT`, 품질·보안은 `APPROVED`이며 provider discovery/authenticated run/model promotion/hosted/remote/live는 관찰된 `DEFER` 또는 `ABSENT` 상태를 유지한다. | 2026-07-29 |
-| [`./043-agent-harness-loop-lifecycle/spec.md`](./043-agent-harness-loop-lifecycle/spec.md) | Agent harness loop lifecycle specification | Done | bounded retry/recovery와 non-retryable stop, repository-wins checkpoint/resume, 네 memory class의 promotion/refresh/expiry/archive-GC/conflict/compaction/handoff, routing/provider projection을 구현했다. 구현·보강 commits `8a995014`, `95a6ee03`, `f0190643`, `9d8a2a36`과 focused `59/82/39`, lifecycle `668`, aggregate/all-files, 독립 요구사항·품질·보안 승인을 기록하며 provider/runtime/live와 실제 ignored checkpoint 실행은 주장하지 않는다. | 2026-08-01 |
-| [`./044-agent-roster-evaluation-and-admission/spec.md`](./044-agent-roster-evaluation-and-admission/spec.md) | Agent roster evaluation and admission specification | Done | 구현 `258955b3`, AREA-004 postflight `a15d5e10`, AREA-005 semantic reconciliation `7891368e`로 exact 12-role/4-provider-surface/48-tuple repository-static readiness와 gate enforcement를 닫았다. Mapping은 `PASS` 21 / `DEFER` 27이고 configured incumbent는 유지된다. AREA-003 evaluation readiness는 완료됐지만 observed evaluation/final admission/model fitness/threshold/promotion/canary/runtime/provider auth/hosted CI/remote/live는 해당 범위에서 계속 `DEFER`다. 다음 handoff는 Spec 045다. | 2026-07-30 |
-| [`./045-agent-governance-ci-qa-cutover/spec.md`](./045-agent-governance-ci-qa-cutover/spec.md) | Agent governance CI and QA cutover specification | Done | AGQC-000~006 repository-static CI/QA cutover를 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`에서 Python `741`, aggregate, all-files, formatter review 및 diff가 PASS했고 test-only delta는 관련 `49`, nested-subreaper probe, file pre-commit 및 세 독립 검토를 통과했다(모두 `0/0/0`). 고정 cutoff는 `2026-07-10T10:00:00+09:00`이며 hosted CI, branch protection, provider runtime/auth/model discovery, actual eval/admission/promotion, remote/live 및 provider resume/handoff canary는 Spec 046 범위로 `DEFER`한다. | 2026-08-01 |
-| [`./046-agent-governance-program-closure/spec.md`](./046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-003/AD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
-| [`./047-current-surface-and-stash-reconciliation/spec.md`](./047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 후속 Specs 048–050에 인계한다. 2026-08-07부터 PRD-008 document taxonomy consolidation 기간 동안 suspend되어 draft로 되돌아갔고, Spec 052가 `done`에 도달하면 통합된 구조에서 재개한다. | 2026-08-07 |
-| [`./048-github-routing-and-ci-evidence/spec.md`](./048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Draft | validation-surface ID를 참조하는 단일 projection contract와 native GitHub 정합성을 소유하며 branch protection 및 hosted rerun은 별도 권한으로 남긴다. | 2026-08-02 |
-| [`./049-platform-validation-and-security-evidence/spec.md`](./049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
-| [`./050-example-iac-and-validator-qa/spec.md`](./050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Provider-native non-deploy validation과 exact tool/fallback evidence를 소유하며 cloud login, plan/apply, deploy, what-if 및 live readiness는 범위 밖이다. | 2026-08-02 |
-| [`./051-repository-assurance-integration-and-closure/spec.md`](./051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Draft | 두 machine contract와 최종 target matrix를 통합하고 전체 QA/review 후 local-only fast-forward 및 cleanup을 수행하며 hosted/provider/remote/live 증거는 분리한다. | 2026-08-02 |
-| [`./052-document-taxonomy-consolidation/spec.md`](./052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Active | 2026-08-09 승인 설계에 따라 Stage 03에 Spec/Plan/Task를 통합하고 Stage 04 execution을 폐지하되 Stage 05를 유지한다. Release 제외, stable filename/date 예외, fail-closed transition, Archive/observation 무결성, harness-contract 확장, script/validator 의미 보존 및 기준선 실패 해결을 소유한다. | 2026-08-09 |
-| [`./053-workspace-engineering-research-pack-consolidation/spec.md`](./053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
+| [`./0004-argo-rollouts-progressive-delivery/spec.md`](./0004-argo-rollouts-progressive-delivery/spec.md)                           | Argo Rollouts 점진적 배포 current-contract backfill 명세                      | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한, 앱 canary AnalysisTemplate 경계를 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                            | 2026-06-04 |
+| [`./0005-argo-notifications-slack/spec.md`](./0005-argo-notifications-slack/spec.md)                                               | ArgoCD Notifications Slack current-contract backfill 명세                     | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                                                       | 2026-05-22 |
+| [`./0006-workspace-harness-gap-analysis/spec.md`](./0006-workspace-harness-gap-analysis/spec.md)                                   | Workspace harness Gap analysis와 제한 구현 계약                               | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-07-11 |
+| [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-06-02 |
+| [`./0009-workspace-harness-research-pack/spec.md`](./0009-workspace-harness-research-pack/spec.md)                                 | Workspace harness/loop engineering research pack 명세                         | Done   | `docs/90.references/research/` 아래 통합 연구 팩의 구조, 공식 외부 소스 우선순위, market scan 경계, implementation checklist 포함 방식, 검증 기준을 정의한다.                                                                                                                     | 2026-07-11 |
+| [`./0010-workspace-harness-implementation-audit-pack/spec.md`](./0010-workspace-harness-implementation-audit-pack/spec.md)         | Workspace harness/loop implementation audit pack 명세                         | Done   | `docs/90.references/research/` 기준 모델과 repo-backed evidence를 대조해 `docs/90.references/audits/` 아래 4개 구현 현황 감사 보고서와 README를 작성하는 계약을 정의한다.                                                                                                         | 2026-07-11 |
+| [`./0011-template-contract-governance-migration/spec.md`](./0011-template-contract-governance-migration/spec.md)                   | Template contract와 governance migration 명세                                 | Done   | `docs/99.templates/`를 template forms와 support contracts로 분리하고, frontmatter schema, validator, hook, governance, authored docs 적용을 4단계 migration으로 정의한다.                                                                                                         | 2026-07-11 |
+| [`./0012-template-governance-audit-enhancement/spec.md`](./0012-template-governance-audit-enhancement/spec.md)                     | Template governance follow-up audit와 선택 보강 명세                          | Done   | 이미 완료된 template contract migration 위에서 `docs/99.templates/**`, support contracts, Stage 00 routing, validator, authored docs 사용 상태를 audit-first로 검증하고 안정적인 보강 범위를 정의한다.                                                                            | 2026-07-11 |
+| [`./0013-workspace-document-governance-hardening/spec.md`](./0013-workspace-document-governance-hardening/spec.md)                 | Workspace document type, provider entrypoint, CI/QA governance hardening 명세 | Done   | template/frontmatter contracts, provider shims, README scope, workspace-wide authored docs, and repo-static validation을 staged governance hardening 흐름으로 정렬한다.                                                                                                           | 2026-07-11 |
+| [`./0014-workspace-document-contract-normalization/spec.md`](./0014-workspace-document-contract-normalization/spec.md)             | Workspace document contract normalization 명세                                | Done   | active 문서와 historical evidence까지 frontmatter, section, template 계약에 맞게 전면 정규화하고, 과거 증거는 current contract와 분리된 섹션으로 보존하는 후속 패스를 정의한다.                                                                                                   | 2026-07-11 |
+| [`./0015-agent-governance-contract-normalization/spec.md`](./0015-agent-governance-contract-normalization/spec.md)                 | Agent governance contract normalization 명세                                  | Done   | Stage 00, Claude/Codex native role files, repository-local baselines, local/Antigravity `.agents/**`, exact wiring surfaces, absent/`DEFER` Gemini CLI native boundary, QA/CI 정규화 범위를 정의한다. | 2026-07-14 |
+| [`./0016-active-control-surface-governance-hardening/spec.md`](./0016-active-control-surface-governance-hardening/spec.md)         | Active control surface governance hardening 명세                              | Done   | `.github`, `scripts`, `gitops`, `infrastructure`, `policy`, `tests`, `traefik`, `examples/sample-app`의 active 운영 표면을 보강하고 AWS/Azure cloud examples는 dated snapshot으로 유지하는 계약을 정의한다.                                                                       | 2026-07-11 |
+| [`./0017-workspace-engineering-research-pack/spec.md`](./0017-workspace-engineering-research-pack/spec.md)                         | Workspace engineering research pack specification                             | Done   | `docs/90.references/research/2026-07-04-wer/` 아래 dated research pack을 만들고 기존 4개 research reference를 재배치하며 Kubernetes, infrastructure, security, automation, pipeline, workflow, QA 주제를 보강하는 계약을 정의한다.                                                | 2026-07-11 |
+| [`./0018-workspace-engineering-implementation-audit-pack/spec.md`](./0018-workspace-engineering-implementation-audit-pack/spec.md) | Workspace engineering implementation audit pack specification                 | Done   | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 root audit 파일을 dated folder 구조로 정리하는 계약을 정의한다.                                                                                                                              | 2026-07-11 |
+| [`./0019-template-path-numbering-contract/spec.md`](./0019-template-path-numbering-contract/spec.md)                               | Template path numbering contract specification                                | Done   | `docs/01.requirements/` PRD numeric filename contract와 `docs/03.specs/` numbered feature-folder contract를 template/support/governance/validator surfaces에 맞춰 정규화하는 설계를 정의한다.                                                                                     | 2026-07-11 |
+| [`./0020-workspace-contract-governance-normalization/spec.md`](./0020-workspace-contract-governance-normalization/spec.md)         | Workspace contract governance normalization specification                     | Done   | `_workspace` repo-support staging 계약과 repo-wide frontmatter, section, template, governance, CI/CD, QA, validation drift 감사 및 표적 정규화 설계를 정의한다.                                                                                                                   | 2026-07-11 |
+| [`./0021-sdlc-lifecycle-contract/spec.md`](./0021-sdlc-lifecycle-contract/spec.md)                                                 | SDLC lifecycle contract specification                                         | Done   | `01.requirements -> 02.architecture -> 03.specs -> 04.execution` 흐름의 상태 전이, 번호, handoff, archive metadata, active-surface 제한, `_workspace` staging 경계를 하나의 검증 가능한 계약으로 정의한다.                                                                        | 2026-07-11 |
+| [`./0022-control-cloud-doc-normalization/spec.md`](./0022-control-cloud-doc-normalization/spec.md)                                 | Control surface and cloud example documentation normalization specification   | Done   | control surface와 당시 AWS/Azure example-local route 정규화를 완료한 historical tranche를 기록하며, 현재 cloud 문서 steady state는 Spec 030의 Stage 90 snapshot 통합과 retired-path 금지를 따른다.                                                                           | 2026-07-14 |
+| [`./0023-stage03-04-repo-static-gap-closure/spec.md`](./0023-stage03-04-repo-static-gap-closure/spec.md)                           | Stage 03/04 repo-static gap closure specification                             | Done   | Stage 03/04 문서의 repo-static 미구현/증적 gap을 닫고 live/runtime, secret, remote-required 항목은 operator-approved follow-up으로 분리하는 계약을 정의한다.                                                                                                                      | 2026-07-11 |
+| [`./0024-observability-and-network-review-agents/spec.md`](./0024-observability-and-network-review-agents/spec.md)                 | Observability and network review agents specification                         | Done   | 두 worker role을 Claude-native, Codex-native, local/Antigravity tracked adapter surface와 harness catalog에 추가한 repo-static 설계를 정의하며 Gemini CLI native 지원은 주장하지 않는다. | 2026-07-14 |
+| [`./0025-governance-owner-and-roster-currentness/spec.md`](./0025-governance-owner-and-roster-currentness/spec.md)                 | Governance owner and roster currentness specification                         | Done   | 전체 Spec/Plan 생명주기와 감사 IA를 증거 기반으로 정합화하고, RMD-004의 10-role/30-tracked-role-adapter roster 및 canonical-owner currentness 계약과 검증 경계를 정의한다.                                                                                                                     | 2026-07-14 |
+| [`./0026-document-contract-registry/spec.md`](./0026-document-contract-registry/spec.md)                                         | Document contract registry specification                                      | Done   | Registry schema v4와 `DocumentProfileContract.v3`가 62개 문서 profile의 route, metadata, lifecycle, section, README, local/native 예외와 retired cloud-tree 금지를 machine-readable 단일 정본으로 정의한다.                                                                                                    | 2026-07-14 |
+| [`./0027-template-contract-consolidation/spec.md`](./0027-template-contract-consolidation/spec.md)                               | Template contract consolidation specification                                 | Done   | Stage 99 support와 form을 registry에 정렬하고 중복 섹션, 작성 지침, Legacy Task form을 통합·삭제한다.                                                                                                                                | 2026-07-12 |
+| [`./0028-readme-workspace-profiles/spec.md`](./0028-readme-workspace-profiles/spec.md)                                           | README and workspace profile specification                                    | Done   | 67개 baseline과 5개 cloud handoff를 합친 72개 README를 6개 경로 프로필로 이행하고 `_workspace`의 non-secret repo-support staging 경계를 보존했다.                                                                  | 2026-07-12 |
+| [`./0029-semantic-document-validation/spec.md`](./0029-semantic-document-validation/spec.md)                                     | Semantic document validation specification                                    | Done | Frontmatter, Markdown structure, link, index, duplicate owner, template residue와 reciprocal execution lineage를 fixture 기반으로 검증한다.                                                                                          | 2026-07-12 |
+| [`./0030-authored-document-migration/spec.md`](./0030-authored-document-migration/spec.md)                                       | Authored document migration specification                                     | Done | reciprocal [Plan](0030-authored-document-migration/plan.md)과 [Task](0030-authored-document-migration/tasks.md)에 따라 전 문서 모집단을 wave별로 이행하고 AWS/Azure SDLC prose를 Stage 90 provider snapshot으로 통합한다.                    | 2026-07-13 |
+| [`./0031-affected-surface-agent-qa/spec.md`](./0031-affected-surface-agent-qa/spec.md)                                           | Affected surface and Agent QA specification                                   | Done | 이 Spec은 affected/staged/all-files/message/manual/CI/remote-live lane, local/Claude/Codex adapter-surface 역할 semantics, handoff evidence의 현재 closure authority를 유지한다. 완료된 Plan/Task 실행 이력은 [Archive Index](../98.archive/README.md#document-index)를 통해 탐색한다. | 2026-07-14 |
+| [`./0032-protected-surface-supply-chain-hardening/spec.md`](./0032-protected-surface-supply-chain-hardening/spec.md)             | Protected surface and supply-chain hardening specification                    | Done | 이 Spec은 GitHub Actions identity, workflow permissions, GitOps identity-only review, Vault/ESO 및 secret 경계의 repository-static closure authority를 유지한다. 완료된 Plan/Task 실행 이력은 [Archive Index](../98.archive/README.md#document-index)를 통해 탐색한다. | 2026-07-14 |
+| [`./0033-template-lifecycle-contract-normalization/spec.md`](./0033-template-lifecycle-contract-normalization/spec.md)           | Template lifecycle contract normalization specification                       | Done | Stage 99 form/support/registry 분리, 현재 문서 body contract migration, production cutover와 독립 whole-branch closure review를 완료한 명세다. | 2026-07-15 |
+| [`./0034-authority-and-lineage-foundation/spec.md`](./0034-authority-and-lineage-foundation/spec.md) | Authority and lineage foundation specification | Done | Spec 033 follow-up 관계, 새 program lineage, Current audit overlay, Stage 00/99 권위 경계를 정규화하고 repository-static 폐쇄 증거를 기록했다. | 2026-07-15 |
+| [`./0035-document-schema-and-lifecycle-contract/spec.md`](./0035-document-schema-and-lifecycle-contract/spec.md) | Document schema and lifecycle contract specification | Done | 유형별 폐쇄형 metadata, 상태 전이, 증거, template/source role, native-surface 계약과 결정적 검증을 완료했다. | 2026-07-17 |
+| [`./0036-archive-record-and-workspace-boundary/spec.md`](./0036-archive-record-and-workspace-boundary/spec.md) | Archive record and workspace boundary specification | Done | ARWB-001부터 ARWB-005까지 31개 full-body Archive Record, 202개 historical link, archive 권위, `_workspace` metadata-only 경계를 구현·폐쇄했다. 기존 envelope/payload는 Git object byte 단위로 불변이며, 현재 replacement 진화는 registry-selected current target을 가리키는 archive index만 소유한다. 독립 whole-tranche 검토를 통과한 [completed execution history](../98.archive/README.md#document-index)는 closure commit `855fa78` 및 postflight corrections `cdac53c`, `a12aedf`까지 기록한다. | 2026-07-19 |
+| [`./0037-active-corpus-and-execution-retention/spec.md`](./0037-active-corpus-and-execution-retention/spec.md) | Active corpus and execution retention specification | Done | ACER-001~005의 reviewed repository-static 결과와 ACER-006 terminal closure를 기록한다. 현재 Stage 04는 49 Plan/51 Task, 52 lineage의 48/1/3 cardinality, 100 `DEFER`/0 `retain`, accepted ADR 13개와 done Spec 29개 guard, findings 0이다. closure content commit `cfabc506`과 clean-tree postflight PASS를 관측했으며 evidence-update commit 자체는 unidentified·unclaimed이다. | 2026-07-19 |
+| [`./0038-reference-information-architecture/spec.md`](./0038-reference-information-architecture/spec.md) | Reference information architecture specification | Done | Reciprocal [Plan](0038-reference-information-architecture/plan.md)과 [Task](0038-reference-information-architecture/tasks.md)는 RIA-000~006의 reviewed contract/FSM, stage-zero authority, source·generator·duplicate-owner 증거를 기록한다. RIA-007 C1 exact-seven commit `8c0dcea558212e11ac93a0fe626cddb31315859b`은 final `REQUIREMENTS COMPLIANT`/`QUALITY APPROVED`와 activation-to-C1 explicit-ref lifecycle 및 repository-static clean-tree postflight PASS를 관측했다. 현재 C2는 six lifecycle paths, 446-row ledger, contract, exact-value `.secrets.baseline` adjudication의 exact-nine staged proposal일 뿐이며 C2 SHA/postcommit, C3, settlement, terminal explicit-ref, CI-hosted/provider/remote/live 결과를 주장하지 않는다. | 2026-07-26 |
+| [`./0039-github-ci-qa-evidence/spec.md`](./0039-github-ci-qa-evidence/spec.md) | GitHub CI and QA evidence specification | Done | GCQE-001~005의 reviewed repository-static 구현과 GCQE-006 closure를 기록한다. Exact eight-path commit `e1d1e910840337327a557ab4b84e86f8fced11d6`, activation `2ddfe4b7697e998b41d3125be94cdc4cee295388`부터의 raw-OID explicit-ref lifecycle, clean-tree repository-static postflight는 PASS였다. Spec 040은 Active다. Hosted run `29982910320`은 과거 exact-SHA FAIL이고 current hosted/provider/live는 `DEFER`이며, 이 evidence-update commit 자체는 주장하지 않는다. | 2026-07-27 |
+| [`./0040-contract-cutover-and-program-closure/spec.md`](./0040-contract-cutover-and-program-closure/spec.md) | Contract cutover and program closure specification | Done | 2026-07-28 exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`은 CCPC-000~004 repository-static 완료와 final frontier `0/0·6/3·3`을 기록한다. Lifecycle `668`, staged/strict/residue/aggregate/all-files/formatter/diff gates는 PASS이고 reviewed digest `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`은 terminal requirements/quality/security approval을 받았다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 evidence-update commit 자체와 hosted/provider/remote/live는 주장하지 않는다. | 2026-07-28 |
+| [`./0041-stage-00-agent-governance-contract/spec.md`](./0041-stage-00-agent-governance-contract/spec.md) | Stage 00 agent governance contract specification | Done | Execution 당시 accepted ADR-0013이 지배한 첫 tranche로 provider-neutral harness machine contract, 당시 current 10/30과 target-only 12/48 분리, 네 memory class 경계, consumer migration, routing, QA/review를 완료했다. Present-tense program decision은 accepted ADR-0019이며 provider/runtime/live 결과는 `DEFER`다. | 2026-08-01 |
+| [`./0042-provider-native-runtime-and-model-evidence/spec.md`](./0042-provider-native-runtime-and-model-evidence/spec.md) | Provider native runtime and model evidence specification | Done | 구현 commit `9c4dcc7b7572bfe8f436d81ee87ede872707cc73`에서 exact 10-source cutoff ledger, provider 4개, candidate-only model 8개, MCP 7개, redacted canary 12개와 focused/aggregate 검증을 완료했다. 요구사항은 `COMPLIANT`, 품질·보안은 `APPROVED`이며 provider discovery/authenticated run/model promotion/hosted/remote/live는 관찰된 `DEFER` 또는 `ABSENT` 상태를 유지한다. | 2026-07-29 |
+| [`./0043-agent-harness-loop-lifecycle/spec.md`](./0043-agent-harness-loop-lifecycle/spec.md) | Agent harness loop lifecycle specification | Done | bounded retry/recovery와 non-retryable stop, repository-wins checkpoint/resume, 네 memory class의 promotion/refresh/expiry/archive-GC/conflict/compaction/handoff, routing/provider projection을 구현했다. 구현·보강 commits `8a995014`, `95a6ee03`, `f0190643`, `9d8a2a36`과 focused `59/82/39`, lifecycle `668`, aggregate/all-files, 독립 요구사항·품질·보안 승인을 기록하며 provider/runtime/live와 실제 ignored checkpoint 실행은 주장하지 않는다. | 2026-08-01 |
+| [`./0044-agent-roster-evaluation-and-admission/spec.md`](./0044-agent-roster-evaluation-and-admission/spec.md) | Agent roster evaluation and admission specification | Done | 구현 `258955b3`, AREA-004 postflight `a15d5e10`, AREA-005 semantic reconciliation `7891368e`로 exact 12-role/4-provider-surface/48-tuple repository-static readiness와 gate enforcement를 닫았다. Mapping은 `PASS` 21 / `DEFER` 27이고 configured incumbent는 유지된다. AREA-003 evaluation readiness는 완료됐지만 observed evaluation/final admission/model fitness/threshold/promotion/canary/runtime/provider auth/hosted CI/remote/live는 해당 범위에서 계속 `DEFER`다. 다음 handoff는 Spec 045다. | 2026-07-30 |
+| [`./0045-agent-governance-ci-qa-cutover/spec.md`](./0045-agent-governance-ci-qa-cutover/spec.md) | Agent governance CI and QA cutover specification | Done | AGQC-000~006 repository-static CI/QA cutover를 terminal HEAD `ed892285`까지 완료했다. Baseline `a886e061`에서 Python `741`, aggregate, all-files, formatter review 및 diff가 PASS했고 test-only delta는 관련 `49`, nested-subreaper probe, file pre-commit 및 세 독립 검토를 통과했다(모두 `0/0/0`). 고정 cutoff는 `2026-07-10T10:00:00+09:00`이며 hosted CI, branch protection, provider runtime/auth/model discovery, actual eval/admission/promotion, remote/live 및 provider resume/handoff canary는 Spec 046 범위로 `DEFER`한다. | 2026-08-01 |
+| [`./0046-agent-governance-program-closure/spec.md`](./0046-agent-governance-program-closure/spec.md) | Agent governance program closure specification | Done | Specs 038-045와 active PRD-0003/AD-0006 및 accepted current ADR-0019 lineage를 closure contract `1.2.0`으로 terminally 통합했다. Repository-static PASS와 provider/hosted/actual/remote/live `DEFER`/`ABSENT` lane을 분리하며, AGPC-005 Task 행은 local merge/worktree cleanup을 post-terminal root finishing handoff로 이관하고 `Archived`다. | 2026-08-01 |
+| [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Draft | PRD-0007 program의 첫 tranche로서 전수 disposition과 stash hunk 분류를 소유하며 GitHub, platform, IaC 구현은 후속 Specs 048–050에 인계한다. 2026-08-07부터 PRD-0008 document taxonomy consolidation 기간 동안 suspend되어 draft로 되돌아갔고, Spec 052가 `done`에 도달하면 통합된 구조에서 재개한다. | 2026-08-07 |
+| [`./0048-github-routing-and-ci-evidence/spec.md`](./0048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Draft | validation-surface ID를 참조하는 단일 projection contract와 native GitHub 정합성을 소유하며 branch protection 및 hosted rerun은 별도 권한으로 남긴다. | 2026-08-02 |
+| [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 13개 Kustomize root와 명시적 evidence depth를 소유하며 live cluster/Vault/ESO/TLS 및 remote Helm 결과는 분리된 DEFER로 유지한다. | 2026-08-02 |
+| [`./0050-example-iac-and-validator-qa/spec.md`](./0050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Provider-native non-deploy validation과 exact tool/fallback evidence를 소유하며 cloud login, plan/apply, deploy, what-if 및 live readiness는 범위 밖이다. | 2026-08-02 |
+| [`./0051-repository-assurance-integration-and-closure/spec.md`](./0051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Draft | 두 machine contract와 최종 target matrix를 통합하고 전체 QA/review 후 local-only fast-forward 및 cleanup을 수행하며 hosted/provider/remote/live 증거는 분리한다. | 2026-08-02 |
+| [`./0052-document-taxonomy-consolidation/spec.md`](./0052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Active | 2026-08-09 승인 설계에 따라 Stage 03에 Spec/Plan/Task를 통합하고 Stage 04 execution을 폐지하되 Stage 05를 유지한다. Release 제외, stable filename/date 예외, fail-closed transition, Archive/observation 무결성, harness-contract 확장, script/validator 의미 보존 및 기준선 실패 해결을 소유한다. | 2026-08-09 |
+| [`./0053-workspace-engineering-research-pack-consolidation/spec.md`](./0053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
+| [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Active | 승인된 B 범위(Stage 90 포함)에 따라 4자리 문서 identity, co-located Spec/Plan/Task, 통합 agent governance, Stage 05/90/98 disposition, template/validator/script convergence를 실행한다. | 2026-08-13 |
 
 ### Helper Templates
 
@@ -329,7 +335,5 @@ Spec은 실행 기준을 소유하는 문서다.
 - [01.requirements](../01.requirements/README.md)
 - [02.architecture/descriptions](../02.architecture/descriptions/README.md)
 - [02.architecture/decisions](../02.architecture/decisions/README.md)
-- [04.execution/plans](../04.execution/plans/README.md)
-- [04.execution/tasks](../04.execution/tasks/README.md)
 - [05.operations/runbooks](../05.operations/runbooks/README.md)
 - [Archive Index](../98.archive/README.md)

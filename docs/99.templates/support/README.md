@@ -44,14 +44,10 @@ Primary readers:
 
 ```text
 support/
-├── common-documentation-governance.md
-├── documentation-contract.md
+├── document-contract.md
+├── document-lifecycle.md
 ├── document-profiles.json
 ├── document-profiles.schema.json
-├── frontmatter-schema.md
-├── legacy-cleanup-rules.md
-├── sdlc-governance.md
-├── template-routing.md
 └── README.md
 ```
 
@@ -81,23 +77,17 @@ This README is located at `docs/99.templates/support/`.
 
 | Document | Responsibility |
 | --- | --- |
-| [Documentation Contract](./documentation-contract.md) | Assigns ownership across forms, support, Stage 00 governance, authored documents, and enforcement surfaces. |
+| [Document Contract](./document-contract.md) | Owns exact-one-profile selection, form/body/frontmatter rationale, and the protected contract boundary. |
+| [Document Lifecycle](./document-lifecycle.md) | Owns lifecycle, supersession, retention, archive, date-exception, and legacy-disposition rationale. |
 | [Document Profile Registry](./document-profiles.json) | Canonical machine contract for document classification, paths, frontmatter, lifecycle domains, headings, templates, and ownership declarations. |
 | [Document Profile Registry Schema](./document-profiles.schema.json) | JSON Schema for the canonical document-profile registry shape and allowed values. |
-| [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
-| [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
-| [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |
-| [Template Routing](./template-routing.md) | Owns the exact-one-profile selection procedure and examples without copying the registry inventory. |
-| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Owns migration and removal policy for legacy keys, values, sections, and route references. |
 
 ## Related Documents
 
 - [Templates README](../README.md)
 - [Document Profile Registry](./document-profiles.json)
 - [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
-- [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- [Migration Spec](../../03.specs/011-template-contract-governance-migration/spec.md)
-- [Migration Plan](../../03.specs/011-template-contract-governance-migration/plan.md)
-- [Migration Task](../../03.specs/011-template-contract-governance-migration/tasks.md)
+- [Document Authoring Policy](../../00.agent-governance/rules/document-authoring.md)
+- [Migration Spec](../../03.specs/0011-template-contract-governance-migration/spec.md)
+- [Migration Plan](../../03.specs/0011-template-contract-governance-migration/plan.md)
+- [Migration Task](../../03.specs/0011-template-contract-governance-migration/tasks.md)

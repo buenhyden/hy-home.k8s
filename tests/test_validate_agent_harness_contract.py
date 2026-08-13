@@ -634,6 +634,18 @@ class AgentHarnessContractTests(unittest.TestCase):
                 memory_class["lifecyclePolicyRefs"],
             )
 
+    def test_domain_memory_lifecycle_refs_dedupe_converged_routes(self) -> None:
+        classes = {
+            item["id"]: item for item in self.contract["memory"]["classes"]
+        }
+        self.assertEqual(
+            classes["domain-scoped"]["lifecyclePolicyRefs"],
+            [
+                "docs/00.agent-governance/rules/document-authoring.md",
+                self.validator.LOOP_LIFECYCLE_SPEC.as_posix(),
+            ],
+        )
+
     def test_policy_labels_do_not_trigger_sensitive_payload_detection(self) -> None:
         policy_only = {
             "prohibitedActions": [
@@ -826,7 +838,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 ["--root", str(REPOSITORY_ROOT), "--self-test"]
             )
         self.assertEqual(self_test, 0)
-        self.assertIn("cases=37", stdout.getvalue())
+        self.assertIn("cases=38", stdout.getvalue())
 
 
 if __name__ == "__main__":

@@ -40,8 +40,9 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Use `docs/05.operations/incidents/<year>/inc-####-<slug>/` exactly.
 - Keep ordinary active filenames free of dates; retain dates in frontmatter or
   typed evidence metadata.
-- Do not restore `docs/02.architecture/requirements/` or
-  `docs/04.execution/` as active owners.
+- Do not restore retired `docs/02.architecture/requirements/` or
+  `docs/04.execution/` routes; Stage 01/AD and Stage 03 siblings are their
+  current replacement owners.
 - Do not create `docs/05.operations/releases/` without a separately approved
   release-record contract.
 - Resolve prose, template, registry, validator, fixture, README, hook, and
@@ -58,11 +59,12 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 ## Overview
 
 This plan executes [Spec 0054](spec.md) and supersedes conflicting unfinished
-instructions in [Spec 0052](../0052-document-taxonomy-consolidation/spec.md)
-only where Spec 0054 explicitly owns the outcome. It starts from HEAD
-`160ce006969ddb49965c8af193f3e9ee290e18a8` and an inherited, mixed WORK-109
-candidate containing staged and unstaged edits. No inherited edit is accepted
-solely because it is already staged.
+instructions in predecessor Spec 0052
+only where Spec 0054 explicitly owns the outcome. It starts from the Git parent
+of the WP-001 design-authority commit and an inherited, mixed WORK-109 candidate
+containing staged and unstaged edits. The exact object identities are execution
+evidence, not durable plan constants. No inherited edit is accepted solely
+because it is already staged.
 
 The execution sequence first records a lossless candidate disposition, then
 closes the active taxonomy before simplifying governance, operations,
@@ -116,77 +118,108 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| WP-001 | Freeze approved authority and classify inherited WORK-109 edits | None | Human-approved Spec 0054 | Spec/Plan/Task commit plus exact candidate disposition |
-| WP-002 | Complete four-digit topology, Stage 04 retirement, and Incident route | WP-001 | Candidate paths classified | Registry/Markdown/links/lifecycle GREEN; exact path map; migration evidence |
+| WP-001 | Freeze approved design authority | None | Human-approved Spec 0054 | Reviewed Spec/Plan/Task commit |
+| WP-002 | Complete four-digit topology, Stage 04 retirement, route-sensitive Stage 00/99 contracts, and Incident route | WP-001 | Inherited candidate classification starts fail-closed | Registry/Markdown/links/lifecycle GREEN; exact path map; atomic migration evidence |
 | WP-003 | Consolidate Stage 00 common governance and provider adapters | WP-002 | Active document routes stable | Canonical-owner and provider evidence validators GREEN |
-| WP-004 | Reconcile Stage 99 templates and validator ownership | WP-003 | Governance owners stable | One profile/template/lifecycle/negative-fixture contract per family |
-| WP-005 | Reconcile Stage 05 Guide/Policy/Runbook/Incident responsibilities | WP-004 | Template contract stable | Duplicate-owner audit and operations profile tests GREEN |
-| WP-006 | Classify and reconcile every Stage 90 file | WP-005 | Active owners stable | Complete Stage 90 disposition, freshness, generator, and link evidence |
-| WP-007 | Close Stage 98 migration and tombstone evidence | WP-006 | All current moves/deletions known | Migration/tombstone validator and recovery tests GREEN |
-| WP-008 | Complete script ledger and retire `validate-harness.sh` | WP-007 | Exact fifty-script census | Consumer-zero proof and exact forty-nine-script census |
-| WP-009 | Retire taxonomy transition assets | WP-008 | Terminal consumers moved to permanent contracts | Exact forty-seven-script census and recovery proof |
-| WP-010 | Final convergence and branch completion | WP-009 | All logical commits present | Focused/affected/staged/aggregate/all-files/review GREEN |
+| WP-004 | Reconcile remaining Stage 99 duplication and validator ownership | WP-003 | Governance owners stable | One profile/template/lifecycle/negative-fixture contract per family |
+| WP-005 | Record Stage 05 responsibility ledger | WP-004 | Template contract stable | Exact Guide/Policy/Runbook/Incident disposition with no deletion |
+| WP-006 | Reconcile Stage 05 ownership with atomic Stage 98 evidence | WP-005 | Operations dispositions approved | Operations, duplicate-owner, and recovery tests GREEN |
+| WP-007 | Record complete Stage 90 disposition ledger | WP-006 | Active owners stable | Every Stage 90 file classified exactly once without mutation |
+| WP-008 | Reconcile Stage 90 with atomic Stage 98 evidence | WP-007 | Stage 90 dispositions approved | Freshness, generator, link, migration, and recovery GREEN |
+| WP-009 | Close global Stage 98 parity and recovery | WP-008 | All current moves/deletions recorded atomically | Archive parity and recovery tests GREEN |
+| WP-010 | Complete exact fifty-row script ledger | WP-009 | Exact fifty-script census | Complete disposition/consumer graph with no deletion |
+| WP-011 | Retire `validate-harness.sh` | WP-010 | Wrapper consumers migrated | Consumer-zero proof and exact forty-nine-script census |
+| WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Append-only memory and generated-current ownership GREEN |
+| WP-013 | Retire taxonomy transition assets and activate terminal route state | WP-012 | Terminal consumers moved to permanent contracts | Exact forty-seven-script census, terminal registry, and recovery GREEN |
+| WP-014 | Final convergence and branch completion | WP-013 | All logical commits present | Focused/affected/staged/aggregate/all-files/review GREEN |
 
-### WP-001 — authority and inherited candidate disposition
+### WP-001 — approved design authority
 
 **Files:**
 
 - Create: `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md`
 - Create: `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md`
 - Create: `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md`
-- Test: `tests/test_document_strict_cutover.py`
-- Modify later in this package only if required for lineage:
-  `docs/03.specs/0052-document-taxonomy-consolidation/{spec.md,plan.md,tasks.md}`
 
-- [ ] Record the exact HEAD, branch, staged paths, unstaged paths, and rename-free
-  A/D/M shape without changing the inherited candidate.
-- [ ] Build a path disposition table assigning every inherited path to WP-002,
-  WP-003, WP-004, or `discard-conflicting-candidate`.
-- [ ] Add a focused test that rejects an inherited path absent from that exact
-  disposition set.
-- [ ] Run the test and confirm RED on the current unclassified candidate.
-- [ ] Add the complete set and rerun for GREEN.
-- [ ] Review the Spec for placeholders, contradictory topology, scope leakage,
+- [x] Record the approved topology, scope, protected boundaries, work-package
+  sequence, validation lanes, and logical commit policy.
+- [x] Keep Spec, Plan, and Task in `draft` until WP-002 atomically registers the
+  four-digit path and direct-approval lineage.
+- [x] Review the Spec for placeholders, contradictory topology, scope leakage,
   and ambiguous deletion authority.
-- [ ] Commit only Spec 0054, Plan 0054, and Tasks 0054:
+- [x] Commit only Spec 0054, Plan 0054, and Tasks 0054:
   `docs: define SDLC governance consolidation`.
 
 ### WP-002 — terminal topology and four-digit identity
 
 **Files:**
 
-- Modify: `docs/01.requirements/README.md` and eight PRD files.
-- Modify: `docs/02.architecture/{README.md,decisions/README.md,decisions/0024-terminal-artifact-identity-and-archive-layout.md}`.
-- Review and either accept or replace:
-  `docs/02.architecture/decisions/0025-four-digit-document-path-identity.md`.
-- Modify: `docs/03.specs/README.md` and every active Stage 03 work-unit path.
-- Delete active Stage 04 indexes only after consumers are migrated:
-  `docs/04.execution/{README.md,plans/README.md,tasks/README.md}`.
-- Modify: `docs/99.templates/support/document-profiles.json` and schema.
-- Modify: `scripts/document_contracts.py`,
+- Activate the direct-approval lineage and change Spec/Plan/Task 0054 from
+  `draft` to `active` atomically in
+  `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/`, the
+  Stage 03 index, and the registry `standaloneExecutions` projection.
+- Reconcile the inherited WORK-109 candidate in
+  `docs/03.specs/0052-document-taxonomy-consolidation/{spec.md,plan.md,tasks.md}`
+  so WORK-109 through WORK-115 have one explicit `superseded`, `transferred`,
+  or retained disposition and no competing active queue.
+- Modify the exact eight PRD records, all forty-nine Stage 03 work-unit paths,
+  their current mutable consumers, and the relevant Stage 01/02/03 indexes.
+- Delete `docs/04.execution/{README.md,plans/README.md,tasks/README.md}` only in
+  this atomic route cutover.
+- Consolidate the route-sensitive authoring owner at
+  `docs/00.agent-governance/rules/document-authoring.md` and repair every root,
+  provider, scope, skill, hook, and README link that selects an SDLC route.
+- Reconcile the route-sensitive Stage 99 owners:
+  `docs/99.templates/support/{document-contract.md,document-lifecycle.md,document-profiles.json,document-profiles.schema.json}`,
+  the exact path-bearing templates, and route/identity fixtures.
+- Modify `scripts/document_contracts.py`,
   `scripts/validate-document-contract-registry.py`,
   `scripts/validate-document-lifecycle.py`,
-  `scripts/validate-links-and-owners.py`, and affected fixtures/tests.
-- Create: `docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md`.
+  `scripts/validate-links-and-owners.py`,
+  `scripts/validate-markdown-profiles.py`, and their focused fixtures/tests.
+- Create or extend the current-path rows in
+  `docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md`
+  in the same commit as every move or deletion; do not defer evidence to
+  WP-009.
 
-- [ ] Add RED tests for three-digit PRD/Spec paths, uppercase Incident paths,
-  date-bearing active filenames, Stage 04 active owners, path/frontmatter ID
-  mismatch, and a missing migration row.
-- [ ] Run the focused strict-cutover, registry, lifecycle, and link tests and
+- [x] Inventory the inherited staged and unstaged paths against the exact
+  WP-002/003/004 disposition. Reject unknown paths and correct the inherited
+  five-digit-positive/four-digit-negative test before accepting any candidate.
+- [x] Add RED tests for three-digit PRD/Spec paths, five-digit paths,
+  uppercase Incident paths, date-bearing active filenames, Stage 04 active
+  owners, path/frontmatter ID mismatch, missing 0054 direct-approval lineage,
+  and a missing migration row.
+- [x] Run the focused strict-cutover, registry, lifecycle, and link tests and
   preserve their deterministic diagnostics.
-- [ ] Apply the exact eight-PRD and forty-nine-work-unit path map; do not infer
+- [x] Apply the exact eight-PRD and forty-nine-work-unit path map; do not infer
   targets from mutable prose.
-- [ ] Recompute every current cross-link from the path map and reject unknown
+- [x] Recompute every current cross-link from the path map and reject unknown
   source or target paths.
-- [ ] Make the Incident route exactly
+- [x] Make the Incident route exactly
   `incidents/<year>/inc-####-<slug>/{incident.md,postmortem.md}` and derive
   `INC-<YYYY>-<DDDD>` and `POSTMORTEM-<YYYY>-<DDDD>`.
-- [ ] Migrate Stage 04 current consumers to Stage 03 siblings while keeping
+- [x] Migrate Stage 04 current consumers to Stage 03 siblings while keeping
   immutable historical evidence resolvable through reviewed aliases.
-- [ ] Run registry self/strict, Markdown self/strict, links self/strict,
-  lifecycle self/staged, focused archive recovery, and `git diff --check`.
-- [ ] Obtain Python and architecture review.
-- [ ] Commit: `refactor(docs): normalize terminal SDLC routes`.
+- [x] Run:
+
+  ```bash
+  python3 -m unittest tests.test_document_strict_cutover
+  python3 scripts/validate-document-contract-registry.py --self-test
+  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 scripts/validate-markdown-profiles.py --root . --self-test
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --self-test
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/validate-document-lifecycle.py --root . --self-test
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/archive_cutover.py --root .
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  git diff --check
+  git diff --cached --check
+  ```
+
+- [x] Obtain Python and architecture review.
+- [x] Commit: `refactor(docs): normalize terminal SDLC routes`.
 
 ### WP-003 — integrated AI-agent governance
 
@@ -213,28 +246,43 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 - [ ] Collapse repeated human matrices into one contract-derived catalog and
   route variable state to machine contracts.
 - [ ] Archive or tombstone a legacy cutover control only after external
-  consumers reach zero.
-- [ ] Run every `validate-agent-*` self-test and production check, affected
-  surface selection, aggregate governance lanes, and secret handling.
+  consumers reach zero, and commit its Stage 98 disposition/recovery evidence
+  atomically with the removal.
+- [ ] Run every `scripts/validate-agent-*.py` with `--self-test` and its
+  production invocation, plus:
+
+  ```bash
+  python3 -m unittest tests.test_document_lifecycle_agent_roster_cutover
+  python3 scripts/validate-agent-harness-semantics.py --root . --self-test
+  python3 scripts/validate-agent-harness-semantics.py --root .
+  python3 scripts/validate-agent-roster-currentness.py --self-test .
+  python3 scripts/validate-agent-roster-currentness.py .
+  python3 scripts/validate-affected-surfaces.py --root . --self-test
+  python3 scripts/validate-affected-surfaces.py --root .
+  bash scripts/check-secret-handling.sh
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
 - [ ] Obtain architecture, security, and code-quality review.
 - [ ] Commit: `refactor(governance): consolidate agent control plane`.
 
-### WP-004 — Stage 99 template and contract convergence
+### WP-004 — non-route Stage 99 template deduplication
 
 **Files:**
 
 - Modify: `docs/99.templates/{README.md,templates/README.md,support/README.md}`.
-- Modify canonical support owners:
-  `support/document-contract.md`, `support/document-lifecycle.md`,
-  `support/document-profiles.json`, and its schema.
-- Modify authored templates under `templates/sdlc/**` and common templates only
-  where their profile contracts require it.
+- Modify canonical support prose and authored templates under
+  `templates/sdlc/**` and common templates only where their already-active
+  profile contracts require it.
 - Remove replaced support prose only after current links and hooks point to the
-  canonical owners.
+  canonical owners, with matching Stage 98 disposition evidence in the same
+  commit.
 
-- [ ] Add RED tests proving every authored profile has exactly one template,
-  route, frontmatter shape, status domain, heading contract, identity rule,
-  lifecycle, and negative fixture set.
+- [ ] Do not change active route state, path regexes, path-derived identity, or
+  direct-approval lineage here; those are atomic WP-002 responsibilities.
+- [ ] Add RED tests proving every authored profile has exactly one canonical
+  template, frontmatter/body form, lifecycle rationale, and negative fixture
+  set without duplicating the registry's machine values in prose.
 - [ ] Add template-instance tests for PRD, SRS, IFC, AD, ADR, Spec, Plan, Task,
   Guide, Policy, Runbook, Incident, and Postmortem.
 - [ ] Make templates include every required `artifact_id` and Incident metadata
@@ -242,54 +290,144 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 - [ ] Remove ARD, RFC, authored API-Spec, Stage 04, legacy routing, and duplicate
   support forms from active lookup surfaces while preserving native OpenAPI,
   GraphQL, and Protobuf contracts.
-- [ ] Run registry self/strict, Markdown self/strict, lifecycle self/staged,
-  template compatibility, and cross-link checks.
+- [ ] Run:
+
+  ```bash
+  python3 -m unittest tests.test_document_strict_cutover
+  python3 scripts/validate-document-contract-registry.py --self-test
+  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 scripts/validate-markdown-profiles.py --root . --self-test
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+  The strict-cutover suite consumes the template compatibility and source-
+  parity fixtures under `tests/fixtures/document-contracts/`.
 - [ ] Obtain documentation-contract and Python review.
 - [ ] Commit: `refactor(templates): converge SDLC document contracts`.
 
-### WP-005 — operations purpose and Incident readiness
+### WP-005 — Stage 05 responsibility ledger
 
 **Files:**
 
-- Modify: `docs/05.operations/{README.md,guides/README.md,policies/README.md,runbooks/README.md,incidents/README.md}`.
-- Review all eight Guides, seven Policies, and nine Runbooks.
-- Modify: Stage 05 templates, routes, validators, hooks, fixtures, and links.
-- Create Stage 98 dispositions for any merged, replaced, or deleted Guide or
-  Runbook.
+- Create `docs/90.references/data/operations-document-disposition.json` and
+  its schema with one row for every Stage 05 README and authored record.
+- Extend the existing `scripts/validate-active-corpus-role-audit.py`, its
+  ledger, fixtures, and `tests/test_active_corpus_role_audit.py`; do not add a
+  duplicate validator executable.
+- Review all eight Guides, seven Policies, nine Runbooks, the empty Incident
+  collection, and all five collection/index READMEs without changing or
+  deleting their bodies in this package.
 
 - [ ] Add RED tests for an operation document with two canonical owners, a
   Guide containing privileged mutation ownership, a Runbook lacking trigger
-  or recovery, and malformed Incident/Postmortem metadata.
-- [ ] Record a complete Guide/Policy/Runbook responsibility ledger.
+  or recovery, malformed Incident/Postmortem metadata, and a missing or
+  duplicate disposition row.
+- [ ] Record owner, purpose, audience, trigger, procedure ownership, consumers,
+  overlap group, disposition, successor, source object, and retirement gate.
+- [ ] Prove the ledger covers the exact current corpus and makes no content
+  mutation or deletion.
+- [ ] Run:
+
+  ```bash
+  python3 -m unittest tests.test_active_corpus_role_audit
+  python3 scripts/validate-active-corpus-role-audit.py --root . --self-test
+  python3 scripts/validate-active-corpus-role-audit.py --root .
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+- [ ] Obtain operations and documentation review.
+- [ ] Commit: `docs(ops): record operations document dispositions`.
+
+### WP-006 — Stage 05 ownership cutover
+
+**Files:**
+
+- Modify the Stage 05 READMEs and only the Guide, Policy, Runbook, Incident,
+  and Postmortem records authorized by WP-005.
+- Modify affected Stage 05 templates, registry body contracts, hooks, fixtures,
+  indexes, and current links without changing their WP-002 route grammar.
+- Add the matching migration/tombstone row and recoverable source evidence to
+  Stage 98 in this same commit for every merge, replacement, or deletion.
+
+- [ ] Start from the accepted WP-005 ledger; reject any path or disposition
+  absent from it.
 - [ ] Resolve the reviewed bootstrap, platform-expansion, observability,
   metrics, and GitOps-onboarding Guide/Runbook overlaps.
 - [ ] Strengthen Incident role/timeline/severity/evidence fields and Postmortem
   cause/action-owner/due-state/closure fields.
 - [ ] Prove that no Release family or placeholder release directory is added.
-- [ ] Run operations profile, link, lifecycle, secret, and aggregate checks.
+- [ ] Run:
+
+  ```bash
+  python3 -m unittest tests.test_active_corpus_role_audit tests.test_archive_recovery
+  python3 scripts/validate-active-corpus-role-audit.py --root . --self-test
+  python3 scripts/validate-active-corpus-role-audit.py --root .
+  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/archive_cutover.py --root .
+  bash scripts/check-secret-handling.sh
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+  Also run `python3 scripts/archive_recovery.py --root . --record <record>
+  --verify` once for each newly admitted Stage 98 record.
 - [ ] Obtain operations and security review.
 - [ ] Commit: `refactor(ops): clarify operations document ownership`.
 
-### WP-006 — Stage 90 reference reconciliation
+### WP-007 — Stage 90 disposition ledger
 
 **Files:**
 
 - Create: `docs/90.references/data/stage90-reference-disposition.json` and
   `docs/90.references/data/stage90-reference-disposition.schema.json`.
-- Modify: `docs/90.references/**` current indexes and authorized current
-  references according to the ledger.
 - Modify: `scripts/reference_information_architecture.py`,
   `scripts/validate-reference-information-architecture.py`,
-  `scripts/generate-llm-wiki-index.sh`, and focused tests when required by the
-  new disposition contract.
-- Create Stage 98 migration/tombstone evidence for every Stage 90 move, merge,
-  replacement, or deletion.
+  the RIA schema/fixtures, and `tests/test_reference_information_architecture.py`.
+- Do not rename, merge, delete, regenerate, or edit a Stage 90 evidence body in
+  this package.
 
 - [ ] Enumerate every Stage 90 file with blob OID, profile, current owner,
   freshness trigger, consumers, and one closed disposition.
 - [ ] Add RED tests for missing/duplicate disposition, a current reference
-  claiming policy authority, a generated output without check mode, a stale
-  Stage 04 link, and an altered historical source record.
+  claiming policy authority, and an unowned freshness or generator contract.
+- [ ] Require an exact one-to-one census of all tracked Stage 90 files,
+  including indexes, data/schema assets, generated outputs, dated evidence
+  packs, snapshots, and current semantic references.
+- [ ] Run:
+
+  ```bash
+  python3 -m unittest tests.test_reference_information_architecture
+  python3 scripts/validate-reference-information-architecture.py --root . --self-test
+  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
+  bash scripts/generate-llm-wiki-index.sh --check
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+- [ ] Obtain documentation and architecture review.
+- [ ] Commit: `docs(references): record Stage 90 dispositions`.
+
+### WP-008 — Stage 90 ownership cutover
+
+**Files:**
+
+- Modify only Stage 90 indexes and current references authorized by WP-007.
+- Modify `scripts/reference_information_architecture.py`, the RIA CLI,
+  `scripts/generate-llm-wiki-index.sh`, schemas, fixtures, and tests when needed
+  to enforce the approved disposition.
+- Add Stage 98 migration/tombstone and recovery evidence atomically for every
+  Stage 90 move, merge, replacement, or deletion.
+
+- [ ] Reject a stale Stage 04 link, an altered historical source record, an
+  unauthorized dated-current path, and a generated output without safe check
+  mode before applying the ledger.
 - [ ] Convert maintained current references to semantic undated filenames and
   move observation dates into frontmatter/source metadata.
 - [ ] Merge duplicate research findings into one current owner; preserve source
@@ -298,58 +436,156 @@ references, archive evidence, and scripts. Deletions are deliberately late.
   the directory as typed historical evidence.
 - [ ] Ensure generated indexes use canonical inputs, bounded reads, check mode,
   protected-output pins where transitional, and no write during check.
-- [ ] Run the full RIA suite, generator check, links/owners, Markdown, archive
-  recovery, and aggregate gates.
+- [ ] Run:
+
+  ```bash
+  python3 -m unittest tests.test_reference_information_architecture tests.test_archive_recovery
+  python3 scripts/validate-reference-information-architecture.py --root . --self-test
+  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
+  bash scripts/generate-llm-wiki-index.sh --check
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/archive_cutover.py --root .
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+  Also verify each newly admitted Stage 98 record with `archive_recovery.py`.
 - [ ] Obtain documentation, architecture, and Python review.
 - [ ] Commit: `refactor(references): reconcile Stage 90 ownership`.
 
-### WP-007 — Stage 98 migration and tombstone closure
+### WP-009 — global Stage 98 parity and recovery closure
 
 **Files:**
 
-- Modify or create records under `docs/98.archive/migrations/` and
-  `docs/98.archive/tombstones/` without changing sealed predecessor records.
-- Modify archive registry, validation, recovery, cutover, and link tests only
-  to enforce the approved new evidence contract.
+- Reconcile program indexes and global parity under `docs/98.archive/` without
+  changing sealed predecessor envelopes, source blobs, or embedded payloads.
+- Modify archive registry, validation, recovery, cutover, retention, and link
+  tests only to close global parity across evidence already committed in
+  WP-002, WP-006, and WP-008.
 
 - [ ] Add RED cases for duplicate artifact IDs, malformed stable IDs,
   path/frontmatter mismatch, missing source commits, missing replacement,
   orphan deletion, changed source blob, and active direct Archive-record links.
 - [ ] Require the exact seven migration fields from Spec 0054 plus any existing
   stronger archive envelope fields.
-- [ ] Join each current deletion/consolidation to exactly one migration or
-  tombstone record and a recoverable source object.
+- [ ] Join each current deletion/consolidation to exactly one already-atomic
+  migration or tombstone record and a recoverable source object; reject late
+  evidence created only to mask an earlier unproved deletion.
 - [ ] Preserve immutable archive record bytes and resolve current successor
   existence through narrow reviewed aliases only.
-- [ ] Run archive validation, cutover, recovery, active-corpus retention, link,
-  and aggregate gates.
-- [ ] Obtain archive, security, and Python review.
-- [ ] Commit: `feat(archive): record SDLC consolidation dispositions`.
+- [ ] Run:
 
-### WP-008 — script ledger and forty-nine-file cutover
+  ```bash
+  python3 -m unittest tests.test_archive_validation tests.test_archive_cutover tests.test_archive_recovery tests.test_active_corpus_migrations tests.test_active_corpus_retention tests.test_document_lifecycle_archive_cutover
+  python3 scripts/archive_cutover.py --root .
+  python3 scripts/validate-active-corpus-migrations.py --root . --self-test
+  python3 scripts/validate-active-corpus-migrations.py --root .
+  python3 scripts/validate-active-corpus-retention.py --root . --self-test
+  python3 scripts/validate-active-corpus-retention.py --root .
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+- [ ] Obtain archive, security, and Python review.
+- [ ] Commit: `test(archive): close consolidation recovery parity`.
+
+### WP-010 — exact fifty-script disposition ledger
 
 **Files:**
 
 - Create: `docs/90.references/data/script-disposition.json` and
   `docs/90.references/data/script-disposition.schema.json`.
-- Modify: `scripts/README.md`, validation-surface contracts, CI/pre-commit
-  consumers, documentation, and fixtures.
-- Delete after consumer-zero proof: `scripts/validate-harness.sh`.
+- Modify `scripts/README.md`,
+  `docs/00.agent-governance/contracts/validation-surfaces.json`,
+  `scripts/validate-affected-surfaces.py`, its schema/fixture, and focused
+  tests. This existing validator owns the script inventory; do not add a
+  fifty-first executable.
+- Do not delete or rename a script in this package.
 
 - [ ] Add RED tests requiring one exact disposition for each of the fifty
   tracked assets and rejecting missing consumers, arguments, diagnostics,
   fixtures, evidence, recovery, or retirement gates.
 - [ ] Record all fifty rows and verify the inventory digest.
+- [ ] Require owner, purpose, consumers, arguments, diagnostics, fixtures,
+  evidence, recovery, decision, replacement, and retirement gate for every
+  tracked asset; filename similarity is not a merge reason.
+- [ ] Run:
+
+  ```bash
+  python3 scripts/validate-affected-surfaces.py --root . --self-test
+  python3 scripts/validate-affected-surfaces.py --root .
+  python3 -m unittest tests.test_run_validation_lane
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+
+- [ ] Obtain script and code-quality review.
+- [ ] Commit: `docs(scripts): record exact script dispositions`.
+
+### WP-011 — forty-nine-script wrapper cutover
+
+**Files:**
+
+- Modify `scripts/README.md`, validation surfaces, CI/pre-commit contracts,
+  root and governance command documentation, fixtures, and current work-unit
+  consumers.
+- Delete only `scripts/validate-harness.sh` after consumer-zero proof.
+- Add its Stage 98 deletion/replacement and recovery evidence in the same
+  commit.
+
+- [ ] Add RED cases for each current executable or command consumer of the
+  wrapper and for any wrapper-only unique diagnostic or ordering semantic.
 - [ ] Migrate README, PR template, approval rule, fixture, CI, hook, and manual
   consumers from `validate-harness.sh` to canonical aggregate/affected lanes.
 - [ ] Prove zero current consumers, delete only the wrapper, and assert exact
   forty-nine-file inventory.
-- [ ] Run shell syntax, ShellCheck where configured, affected/staged lanes,
-  aggregate, and pre-commit.
+- [ ] Run:
+
+  ```bash
+  bash -n scripts/*.sh
+  python3 scripts/validate-affected-surfaces.py --root . --self-test
+  python3 scripts/validate-affected-surfaces.py --root .
+  test "$(git ls-files scripts | wc -l)" -eq 49
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  TMPDIR=/tmp pre-commit run
+  ```
+
+  Run ShellCheck as an additional `PASS` or explicit optional-tool `SKIP` when
+  it is available.
 - [ ] Obtain script and code-quality review.
 - [ ] Commit: `refactor(scripts): retire harness compatibility wrapper`.
 
-### WP-009 — transition asset retirement and forty-seven-file cutover
+### WP-012 — progress and generated-current cleanup
+
+**Files:**
+
+- Append to `docs/00.agent-governance/memory/progress.md`; preserve its prior
+  bytes and history through the approved archive namespace/recovery mechanism.
+- Review and remove tracked stale `graphify-out/**` only after current-consumer
+  and reproducibility proof; add atomic Stage 98 disposition evidence.
+- Modify only the indexes, ignores, contracts, tests, and current links needed
+  for that recovery boundary.
+
+- [ ] Restore the transferred intent of Spec 0052 WORK-113 explicitly; do not
+  leave it as a competing queued item.
+- [ ] Prove the progress snapshot is recoverable, the live ledger is bounded
+  and append-only, generated-current ownership is explicit, and stale graph
+  residue has zero current consumers.
+- [ ] Run:
+
+  ```bash
+  python3 scripts/validate-active-corpus-migrations.py --root . --self-test
+  python3 scripts/validate-active-corpus-migrations.py --root .
+  python3 scripts/validate-active-corpus-retention.py --root . --self-test
+  python3 scripts/validate-active-corpus-retention.py --root .
+  python3 scripts/archive_cutover.py --root .
+  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  ```
+- [ ] Obtain archive and documentation review.
+- [ ] Commit: `chore(governance): close progress and generated residue`.
+
+### WP-013 — forty-seven-script terminal cutover
 
 **Files:**
 
@@ -368,12 +604,29 @@ references, archive evidence, and scripts. Deletions are deliberately late.
   commit succeeds.
 - [ ] Delete exactly the JSON and migration tool; remove only transition-only
   tests; assert exact forty-seven-file inventory.
-- [ ] Run registry, migration/recovery, RIA, residue, Markdown, links,
-  affected/staged, aggregate, and pre-commit gates.
+- [ ] Change the registry to terminal route state atomically and reject the
+  transition profile, manifest, tool, and every live three-digit/Stage 04
+  residue.
+- [ ] Run:
+
+  ```bash
+  python3 scripts/validate-document-contract-registry.py --self-test
+  python3 scripts/validate-document-contract-registry.py --mode strict --route-state terminal
+  python3 scripts/validate-active-corpus-residue-closure.py --root . --self-test
+  python3 scripts/validate-active-corpus-residue-closure.py --root .
+  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  test "$(git ls-files 'scripts/*.py' | wc -l)" -eq 39
+  test "$(git ls-files 'scripts/*.sh' | wc -l)" -eq 7
+  test "$(git ls-files scripts/README.md | wc -l)" -eq 1
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+  TMPDIR=/tmp pre-commit run
+  ```
 - [ ] Obtain Python, archive, and code-quality review.
 - [ ] Commit: `refactor(scripts): retire taxonomy transition assets`.
 
-### WP-010 — convergence and branch completion
+### WP-014 — convergence and branch completion
 
 **Files:**
 
@@ -383,7 +636,7 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 
 - [ ] Run exact path, artifact-ID, active-date, direct-archive-link, Stage 04,
   Release-family, legacy/deprecated, and script-inventory audits.
-- [ ] Run all focused suites named by WP-002 through WP-009.
+- [ ] Run all focused suites named by WP-002 through WP-013.
 - [ ] Run affected and staged validation with identical path input.
 - [ ] Run aggregate quality, exact-index pre-commit, and all-files pre-commit to
   a byte-stable fixed point.
@@ -398,21 +651,39 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 ## Verification Plan
 
 Each work package runs its focused tests first, then the smallest relevant
-production validator. WP-002, WP-003, WP-004, WP-006, WP-007, WP-008, and
-WP-009 additionally run affected and staged lanes before commit. Aggregate and
-pre-commit run at every deletion boundary and at final convergence.
+production validator. WP-002 through WP-014 run affected and staged lanes when
+they change a validator-selected surface. Aggregate and pre-commit run at every
+route, evidence, generated-output, or deletion boundary and at final
+convergence. `transition` is valid only through WP-012; WP-013 and WP-014 must
+validate the terminal state.
+
+The owner creates NUL-delimited, normalized path files for the exact affected
+and staged scopes, records their SHA-256 digests, and invokes the lanes without
+shell reconstruction:
+
+```bash
+python3 scripts/run-validation-lane.py --root . --lane affected --paths-file /tmp/spec-0054-affected.nul --delimiter nul
+python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
+TMPDIR=/tmp pre-commit run
+```
 
 The terminal minimum is:
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
-python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
-python3 scripts/validate-markdown-profiles.py . --self-test
-python3 scripts/validate-markdown-profiles.py . --mode strict
-python3 scripts/validate-links-and-owners.py . --self-test
-python3 scripts/validate-links-and-owners.py . --mode strict
+python3 scripts/validate-document-contract-registry.py --mode strict --route-state terminal
+python3 scripts/validate-markdown-profiles.py --root . --self-test
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --self-test
+python3 scripts/validate-links-and-owners.py --root . --mode strict
 python3 scripts/validate-document-lifecycle.py --root . --self-test
 python3 scripts/validate-document-lifecycle.py --root . --mode staged
+python3 scripts/validate-reference-information-architecture.py --root . --self-test
+python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
+bash scripts/generate-llm-wiki-index.sh --check
+test "$(git ls-files 'scripts/*.py' | wc -l)" -eq 39
+test "$(git ls-files 'scripts/*.sh' | wc -l)" -eq 7
+test "$(git ls-files scripts/README.md | wc -l)" -eq 1
 TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
 TMPDIR=/tmp pre-commit run
 TMPDIR=/tmp pre-commit run --all-files
@@ -462,13 +733,13 @@ finding count, mutation status, and evidence limitation.
 | --- | --- | --- |
 | [VAL-SDLC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-002 | [WORK-054-001, WORK-054-002](tasks.md#task-table) |
 | [VAL-SDLC-002](spec.md#success-criteria--verification-plan) | WP-002 | [WORK-054-002](tasks.md#task-table) |
-| [VAL-SDLC-003](spec.md#success-criteria--verification-plan) | WP-002, WP-005 | [WORK-054-002, WORK-054-005](tasks.md#task-table) |
+| [VAL-SDLC-003](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-005, WP-006 | [WORK-054-002, WORK-054-004..WORK-054-006](tasks.md#task-table) |
 | [VAL-SDLC-004](spec.md#success-criteria--verification-plan) | WP-002, WP-004 | [WORK-054-002, WORK-054-004](tasks.md#task-table) |
 | [VAL-SDLC-005](spec.md#success-criteria--verification-plan) | WP-003 | [WORK-054-003](tasks.md#task-table) |
 | [VAL-SDLC-006](spec.md#success-criteria--verification-plan) | WP-004 | [WORK-054-004](tasks.md#task-table) |
-| [VAL-SDLC-007](spec.md#success-criteria--verification-plan) | WP-005 | [WORK-054-005](tasks.md#task-table) |
-| [VAL-SDLC-008](spec.md#success-criteria--verification-plan) | WP-006 | [WORK-054-006](tasks.md#task-table) |
-| [VAL-SDLC-009](spec.md#success-criteria--verification-plan) | WP-007 | [WORK-054-007](tasks.md#task-table) |
-| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-008, WP-009 | [WORK-054-008, WORK-054-009](tasks.md#task-table) |
-| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-002..WP-010 | [WORK-054-002..WORK-054-010](tasks.md#task-table) |
-| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001..WP-010 | [WORK-054-001..WORK-054-010](tasks.md#task-table) |
+| [VAL-SDLC-007](spec.md#success-criteria--verification-plan) | WP-005, WP-006 | [WORK-054-005, WORK-054-006](tasks.md#task-table) |
+| [VAL-SDLC-008](spec.md#success-criteria--verification-plan) | WP-007, WP-008 | [WORK-054-007, WORK-054-008](tasks.md#task-table) |
+| [VAL-SDLC-009](spec.md#success-criteria--verification-plan) | WP-002, WP-006, WP-008, WP-009, WP-012, WP-013 | [WORK-054-002, WORK-054-006, WORK-054-008, WORK-054-009, WORK-054-012, WORK-054-013](tasks.md#task-table) |
+| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-010..WP-013 | [WORK-054-010..WORK-054-013](tasks.md#task-table) |
+| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-002..WP-014 | [WORK-054-002..WORK-054-014](tasks.md#task-table) |
+| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001..WP-014 | [WORK-054-001..WORK-054-014](tasks.md#task-table) |

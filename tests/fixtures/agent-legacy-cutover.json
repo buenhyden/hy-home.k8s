@@ -214,7 +214,7 @@
       "target": "filesystem",
       "mutation": {
         "kind": "mutate-allowed-reference",
-        "path": "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        "path": "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
       },
       "expectedRule": "AGQC-LEGACY-CONSUMER"
     },

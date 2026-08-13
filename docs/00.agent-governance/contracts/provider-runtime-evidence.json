@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "contractId": "provider-runtime-evidence",
   "contractVersion": "1.0.0",
-  "owner": "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
+  "owner": "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
     "utc": "2026-07-10T01:00:00Z",

@@ -12,7 +12,7 @@ artifact_id: "AD-0010"
 ## Overview
 
 This architecture defines a repository-static assurance control plane for the
-delivery and platform surfaces covered by PRD-007. It layers routing,
+delivery and platform surfaces covered by PRD-0007. It layers routing,
 projection, validation depth, evidence classification, review, and rollback on
 top of the current platform and document contracts without creating a second
 platform topology owner.
@@ -31,7 +31,7 @@ gaps.
 - **Owns**: repository delivery assurance boundaries; GitHub projection parity;
   platform validation depth; exact tool and fallback evidence; ordered tranche
   execution; and local integration evidence.
-- **Consumes**: PRD-004/AD-0007/ADR-0014/Spec 008 current topology,
+- **Consumes**: PRD-0004/AD-0007/ADR-0014/Spec 008 current topology,
   `validation-surfaces.json` path routing, existing technology inventory,
   workflows, validators, tests, desired state, and the Current audit pack.
 - **Does not own**: platform component selection, live reconciliation state,
@@ -135,8 +135,8 @@ Vault/ESO's explicit authentication and CA boundaries.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-RDPA-001](../../01.requirements/007-repository-delivery-and-platform-assurance.md#functional-requirements) | Single current inventory, evidence-backed no-change, and protected-surface boundary | [ADR-0021](../decisions/0021-canonical-surface-routing-and-evidence-depth.md) and [Spec 047](../../03.specs/047-current-surface-and-stash-reconciliation/spec.md) |
-| N/A — REQ-RDPA-003 shares the PRD-007 source linked in REQ-RDPA-001. | Non-duplicative GitHub projection and independent CI lanes | [Spec 048](../../03.specs/048-github-routing-and-ci-evidence/spec.md) |
-| N/A — REQ-RDPA-005 shares the PRD-007 source linked in REQ-RDPA-001. | Layered platform evidence and product semantics | [Spec 049](../../03.specs/049-platform-validation-and-security-evidence/spec.md) |
-| N/A — REQ-RDPA-007 shares the PRD-007 source linked in REQ-RDPA-001. | Provider-native IaC validation and deterministic fallbacks | [Spec 050](../../03.specs/050-example-iac-and-validator-qa/spec.md) |
-| N/A — REQ-RDPA-009 shares the PRD-007 source linked in REQ-RDPA-001. | Approval boundary, rollback, closure, and no-change evidence | [Spec 051](../../03.specs/051-repository-assurance-integration-and-closure/spec.md) |
+| [REQ-RDPA-001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | Single current inventory, evidence-backed no-change, and protected-surface boundary | [ADR-0021](../decisions/0021-canonical-surface-routing-and-evidence-depth.md) and [Spec 047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md) |
+| N/A — REQ-RDPA-003 shares the PRD-0007 source linked in REQ-RDPA-001. | Non-duplicative GitHub projection and independent CI lanes | [Spec 048](../../03.specs/0048-github-routing-and-ci-evidence/spec.md) |
+| N/A — REQ-RDPA-005 shares the PRD-0007 source linked in REQ-RDPA-001. | Layered platform evidence and product semantics | [Spec 049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md) |
+| N/A — REQ-RDPA-007 shares the PRD-0007 source linked in REQ-RDPA-001. | Provider-native IaC validation and deterministic fallbacks | [Spec 050](../../03.specs/0050-example-iac-and-validator-qa/spec.md) |
+| N/A — REQ-RDPA-009 shares the PRD-0007 source linked in REQ-RDPA-001. | Approval boundary, rollback, closure, and no-change evidence | [Spec 051](../../03.specs/0051-repository-assurance-integration-and-closure/spec.md) |

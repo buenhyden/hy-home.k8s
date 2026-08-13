@@ -459,7 +459,7 @@
           "pattern": "^eval/[a-z0-9]+(?:-[a-z0-9]+)*/v[0-9]+$"
         },
         "ownerSpec": {
-          "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+          "const": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
         },
         "admissionState": {
           "const": "repository-static-evaluation-ready"
@@ -627,7 +627,7 @@
           "const": "achieved"
         },
         "promotionOwnerSpec": {
-          "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+          "const": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
         },
         "expectedRoleCount": {
           "const": 12
@@ -719,7 +719,7 @@
           "const": ".agent-work/checkpoint.json"
         },
         "executableLifecycleOwner": {
-          "const": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "const": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         },
         "classes": {
           "type": "array",

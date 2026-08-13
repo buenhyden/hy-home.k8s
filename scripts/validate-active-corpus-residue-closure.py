@@ -84,67 +84,67 @@ TRANSITION_AUTHORITY_BLOBS = {
         "4e08d6edfa7162495b630e6e15e87b627d5aca53",  # pragma: allowlist secret
         "04597c0f3c4e5c42d88a5a18383846cb49ec8c1f",  # pragma: allowlist secret
     ),
-    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+    "docs/03.specs/0011-template-contract-governance-migration/spec.md": (
         "9bb00469ff54a0c9d062c60628067704d4a2f459",  # pragma: allowlist secret
         "99e80929ac13720f646286ce2ea95b02c194672e",  # pragma: allowlist secret
     ),
-    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+    "docs/03.specs/0012-template-governance-audit-enhancement/spec.md": (
         "de80e461ef8940ff9faf343f97ff627c963fc022",  # pragma: allowlist secret
         "4fdef1a7385620dc2113b3bc1568d6a72ec7217e",  # pragma: allowlist secret
     ),
-    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+    "docs/03.specs/0013-workspace-document-governance-hardening/spec.md": (
         "024f0fe32f50aab9cc730be1e2b7b533e752c1d5",  # pragma: allowlist secret
         "ded396714e0d734908bac7126d21b7f5ecd7c211",  # pragma: allowlist secret
     ),
-    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+    "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md": (
         "62ac4e67cc9ee40352f6ac1bea7919796dd708cb",  # pragma: allowlist secret
         "3e7e9c44aba500a454db557c78279185ae4c84f2",  # pragma: allowlist secret
     ),
-    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+    "docs/03.specs/0017-workspace-engineering-research-pack/spec.md": (
         "4e72760d4eee9705c8b5e06abeef87e8c62cf82c",  # pragma: allowlist secret
         "ddbe2d692da2c709017d271ff3d713eeec600da2",  # pragma: allowlist secret
     ),
-    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md": (
         "6bf8321ccfccca8ff20287c49cfc05c919ba6038",  # pragma: allowlist secret
         "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
     ),
-    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+    "docs/03.specs/0022-control-cloud-doc-normalization/spec.md": (
         "a610eddc3ecbf7a004f168236fbd65d969a40c00",  # pragma: allowlist secret
         "32a6cb6803ac213edb69a9c5337b382c99c83edb",  # pragma: allowlist secret
     ),
-    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+    "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md": (
         "143db84ebd7ab90185b817b837d3f54663028b27",  # pragma: allowlist secret
         "5317314ce90b59b9066ec5d0f44d6184563afe33",  # pragma: allowlist secret
     ),
-    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+    "docs/03.specs/0024-observability-and-network-review-agents/spec.md": (
         "11dd647ee9ad5188a150e5c48a7892c9ee227590",  # pragma: allowlist secret
         "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
     ),
-    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md": (
         "e9aa1662ff557714a578b618875561542223e20e",  # pragma: allowlist secret
         "b56d1b3d99e20db6a1491ef51cbe3fd376da0fff",  # pragma: allowlist secret
     ),
-    "docs/03.specs/026-document-contract-registry/spec.md": (
+    "docs/03.specs/0026-document-contract-registry/spec.md": (
         "75be3a6c279bab217bab734110e18edda638e700",  # pragma: allowlist secret
         "4a97eedf1f76b367335bc8b7153c7f28b20031b5",  # pragma: allowlist secret
     ),
-    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+    "docs/03.specs/0027-template-contract-consolidation/spec.md": (
         "5cff6d0b94e962cd188287d56ccf22f6bba7e109",  # pragma: allowlist secret
         "89daed767234baa10b3a44ad7a24ed325c362135",  # pragma: allowlist secret
     ),
-    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+    "docs/03.specs/0028-readme-workspace-profiles/spec.md": (
         "9554783c31404c91cca0e5e52a0b019162bf0d5d",  # pragma: allowlist secret
         "0efdbe887101a2c5000f55e31daeb37a0a42dc56",  # pragma: allowlist secret
     ),
-    "docs/03.specs/029-semantic-document-validation/spec.md": (
+    "docs/03.specs/0029-semantic-document-validation/spec.md": (
         "a1fa5a0a28179946dccd16a8a6e349a46037ddc9",  # pragma: allowlist secret
         "ea1d54f47a7288ebbf5cff2d11e0c805dea3788d",  # pragma: allowlist secret
     ),
-    "docs/03.specs/030-authored-document-migration/spec.md": (
+    "docs/03.specs/0030-authored-document-migration/spec.md": (
         "89c0ad1acdcf3135515dea58a563857418c87a5e",  # pragma: allowlist secret
         "8b443403fb044a529cfdcbe748d1ffdb6b879dfb",  # pragma: allowlist secret
     ),
-    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+    "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md": (
         "9eb2e5c48aa30f79beaadb535d1b10c15ffe3a84",  # pragma: allowlist secret
         "a2fe213c905ce2d79623f24d728e5b32776fd06a",  # pragma: allowlist secret
     ),
@@ -161,6 +161,9 @@ WORK107_REGISTRY_BLOB = (
 )
 WORK108_REGISTRY_BLOB = (
     "ce8da8f205cee1bba075bef7b26079a0708324b1"  # pragma: allowlist secret
+)
+MIG2_REGISTRY_BLOB = (
+    "cd5fda0aee923f6010d6cbd0cfbb9ff889149233"  # pragma: allowlist secret
 )
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
@@ -215,124 +218,139 @@ WORK105_AUTHORITY_BLOBS = {
         "96daabd4098215e403237e016e771522c647bf4a",  # pragma: allowlist secret
         "0d1ae80fc1bad299491f9ab9dee49eddd472c6e8",  # pragma: allowlist secret
     ),
-    "docs/03.specs/009-workspace-harness-research-pack/spec.md": (
+    "docs/03.specs/0009-workspace-harness-research-pack/spec.md": (
         "96ee4d63145234876145e0413d69b97b79b6823f",  # pragma: allowlist secret
-        "2eb273df097d55add15717f865226b1e7c8dbbcc",  # pragma: allowlist secret
+        "0d647406d89fac9d975fd90fcee60daf4e5f382e",  # pragma: allowlist secret
     ),
-    "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md": (
+    "docs/03.specs/0010-workspace-harness-implementation-audit-pack/spec.md": (
         "e485cd00e7c9766ebc2dad849cf719431f72c2c0",  # pragma: allowlist secret
-        "ed36174654aba055ebfc2e94c7fb44809d3cb1ee",  # pragma: allowlist secret
+        "797ce6835fe9d3327c7d6d657285179f5ca2aed7",  # pragma: allowlist secret
     ),
-    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+    "docs/03.specs/0011-template-contract-governance-migration/spec.md": (
         "99e80929ac13720f646286ce2ea95b02c194672e",  # pragma: allowlist secret
-        "cb30f0ca89fa11f4e421ac3543289231204c76ef",  # pragma: allowlist secret
+        "f14252c749ebf5a2001ac983ad012faef8972459",  # pragma: allowlist secret
     ),
-    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+    "docs/03.specs/0012-template-governance-audit-enhancement/spec.md": (
         "4fdef1a7385620dc2113b3bc1568d6a72ec7217e",  # pragma: allowlist secret
-        "90623b083cf285bc99ac855170471e4d2343fec3",  # pragma: allowlist secret
+        "1b32064ab90fc30869c1b2b7ba69eaf7fa903c02",  # pragma: allowlist secret
     ),
-    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+    "docs/03.specs/0013-workspace-document-governance-hardening/spec.md": (
         "ded396714e0d734908bac7126d21b7f5ecd7c211",  # pragma: allowlist secret
-        "02fb77f0ed82408144c93e5bf08b9f0dffc2506d",  # pragma: allowlist secret
+        "4e3917e985c51bc4072d6528efea6d2bea0f6756",  # pragma: allowlist secret
     ),
-    "docs/03.specs/014-workspace-document-contract-normalization/spec.md": (
+    "docs/03.specs/0014-workspace-document-contract-normalization/spec.md": (
         "59a40eea737b1184340d41de2f94f9782c1f7a22",  # pragma: allowlist secret
-        "99cd9f8395edd2b369abcacf71fe8d841716e907",  # pragma: allowlist secret
+        "3e18d32212b2c2f539230878f7bd675ba1316556",  # pragma: allowlist secret
     ),
-    "docs/03.specs/015-agent-governance-contract-normalization/spec.md": (
+    "docs/03.specs/0015-agent-governance-contract-normalization/spec.md": (
         "2651fd2638387e784c7579129b0862dab90048e6",  # pragma: allowlist secret
-        "64de8c7810415cfe5547773f3de2ea9330c032f3",  # pragma: allowlist secret
+        "7d1c6e678a037a3d2b5e8f82e70f12895ae05cbc",  # pragma: allowlist secret
     ),
-    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+    "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md": (
         "3e7e9c44aba500a454db557c78279185ae4c84f2",  # pragma: allowlist secret
-        "1066123a7bdc079c21cd1cb745a2359ccc2da948",  # pragma: allowlist secret
+        "52ae3a2dc3f8fb4c1afb94145169a24464ad17d3",  # pragma: allowlist secret
     ),
-    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+    "docs/03.specs/0017-workspace-engineering-research-pack/spec.md": (
         "ddbe2d692da2c709017d271ff3d713eeec600da2",  # pragma: allowlist secret
-        "49d9864b5d9335db3990ffa4f4224d72831abb62",  # pragma: allowlist secret
+        "c0ff46070bd2d66ffc7cc00f233c7119514601a4",  # pragma: allowlist secret
     ),
-    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md": (
+    "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md": (
         "d688e3ed234ab264711a7949d2e05f1d5df2fcc7",  # pragma: allowlist secret
-        "935accf1f4e56c93c15a8d56ffb82f3c3c1e7b80",  # pragma: allowlist secret
+        "d6fb204999d69de6d39c0d0781cba6028da34394",  # pragma: allowlist secret
     ),
-    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md": (
         "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
         "4d268e2cd2a53ed3f563e79b6b80741bce00b090",  # pragma: allowlist secret
     ),
-    "docs/03.specs/020-workspace-contract-governance-normalization/spec.md": (
+    "docs/03.specs/0020-workspace-contract-governance-normalization/spec.md": (
         "396a84f8e2de773ebb14bfda10c87db288779274",  # pragma: allowlist secret
-        "d6a1fb47b1ca080602f9e12abe5f752a0074d899",  # pragma: allowlist secret
+        "4a11955b4e6dcbc27cefcc0d3e6da3810d8cd4d9",  # pragma: allowlist secret
     ),
-    "docs/03.specs/021-sdlc-lifecycle-contract/spec.md": (
+    "docs/03.specs/0021-sdlc-lifecycle-contract/spec.md": (
         "e877cb560bd95fecc0c7d205c31484461a8f0c2a",  # pragma: allowlist secret
-        "ef8abb13c14b8867a4f3a51f171e110fa23aa174",  # pragma: allowlist secret
+        "a0b6e71e44681af8894201ded088e478e747c9b5",  # pragma: allowlist secret
     ),
-    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+    "docs/03.specs/0022-control-cloud-doc-normalization/spec.md": (
         "32a6cb6803ac213edb69a9c5337b382c99c83edb",  # pragma: allowlist secret
-        "c1b9c8f67ae008dbd77084aa4e3477cba9c9ace6",  # pragma: allowlist secret
+        "ecab2fbd99d04d8d0d4f93f9f73d6e94afb03596",  # pragma: allowlist secret
     ),
-    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+    "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md": (
         "5317314ce90b59b9066ec5d0f44d6184563afe33",  # pragma: allowlist secret
-        "919883bd07ef0f8af7400a7e67ea297d384ac96c",  # pragma: allowlist secret
+        "b513c7f9b57b4fcaaaf4e4fb4c217a9bca055e29",  # pragma: allowlist secret
     ),
-    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+    "docs/03.specs/0024-observability-and-network-review-agents/spec.md": (
         "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
-        "6517c83a052ee5785c61877c3e0928b9b2260520",  # pragma: allowlist secret
+        "5f7a85c5c2020ce70b7e0ba6189be6331b4ff0a5",  # pragma: allowlist secret
     ),
-    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md": (
         "b56d1b3d99e20db6a1491ef51cbe3fd376da0fff",  # pragma: allowlist secret
-        "89ff3f99888aee78ef642f2742244be9d4f37265",  # pragma: allowlist secret
+        "1b75d59969a221d99ba4630feabd0b7b81a8a9fa",  # pragma: allowlist secret
     ),
-    "docs/03.specs/026-document-contract-registry/spec.md": (
+    "docs/03.specs/0026-document-contract-registry/spec.md": (
         "4a97eedf1f76b367335bc8b7153c7f28b20031b5",  # pragma: allowlist secret
-        "a8f64e4795bed6c7cd1a47d4f4cb1429c0178b87",  # pragma: allowlist secret
+        "67d158839089e16a4a32fd0b79f5dc4ae9c58b1a",  # pragma: allowlist secret
     ),
-    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+    "docs/03.specs/0027-template-contract-consolidation/spec.md": (
         "89daed767234baa10b3a44ad7a24ed325c362135",  # pragma: allowlist secret
-        "4aef90531c24136a307932f55a80c3360f45c5a3",  # pragma: allowlist secret
+        "cae6322df3505482c790ed1f80b53000c2c3f072",  # pragma: allowlist secret
     ),
-    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+    "docs/03.specs/0028-readme-workspace-profiles/spec.md": (
         "0efdbe887101a2c5000f55e31daeb37a0a42dc56",  # pragma: allowlist secret
-        "5198903bd8022e417b8bb721cb11eba0cfd207e6",  # pragma: allowlist secret
+        "7d5439be1e77822e199ba4e94e3726f893a2a211",  # pragma: allowlist secret
     ),
-    "docs/03.specs/029-semantic-document-validation/spec.md": (
+    "docs/03.specs/0029-semantic-document-validation/spec.md": (
         "ea1d54f47a7288ebbf5cff2d11e0c805dea3788d",  # pragma: allowlist secret
-        "3b226a2fb59f76519af01e655e4c7e3ae8ecbe03",  # pragma: allowlist secret
+        "20cf40876fff650874c8c818a9316e021d696020",  # pragma: allowlist secret
     ),
-    "docs/03.specs/030-authored-document-migration/spec.md": (
+    "docs/03.specs/0030-authored-document-migration/spec.md": (
         "8b443403fb044a529cfdcbe748d1ffdb6b879dfb",  # pragma: allowlist secret
-        "9c0dbe6539ddae2903c9d610bd07724f3b2264e3",  # pragma: allowlist secret
+        "17b6ef6558878d88935d86218db5b2e3095b8cd1",  # pragma: allowlist secret
     ),
-    "docs/03.specs/031-affected-surface-agent-qa/spec.md": (
+    "docs/03.specs/0031-affected-surface-agent-qa/spec.md": (
         "8314414e34d733e20d40536eb91b015d0c3e894b",  # pragma: allowlist secret
-        "cec3eb9361b9960912cf2b7efa447f8a8fde75ae",  # pragma: allowlist secret
+        "8130910b7c2a6d0e5e6e359a4c82bfa0fbce6533",  # pragma: allowlist secret
     ),
-    "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md": (
+    "docs/03.specs/0032-protected-surface-supply-chain-hardening/spec.md": (
         "70cc3eb48e65de90a027f5a81e79c616fcf6c4da",  # pragma: allowlist secret
-        "f52be661732bf4aee26477d818aab610708a497c",  # pragma: allowlist secret
+        "770b2ebac8591e61fb10c61bd820cd716d059a03",  # pragma: allowlist secret
     ),
-    "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md": (
+    "docs/03.specs/0033-template-lifecycle-contract-normalization/spec.md": (
         "1bba28ab3cf65fc7fd3092f12ff53cc685a8398e",  # pragma: allowlist secret
-        "ecb8e93b8394953e5f0583bb6f30160f1efc7ad8",  # pragma: allowlist secret
+        "9a5165c12d3a85cdc86cdc2c12bef26c7dd3cee4",  # pragma: allowlist secret
     ),
-    "docs/03.specs/034-authority-and-lineage-foundation/spec.md": (
+    "docs/03.specs/0034-authority-and-lineage-foundation/spec.md": (
         "84ebd53683214bbc2ce5f61037cea8121094b2a7",  # pragma: allowlist secret
-        "4dc1965c31bff39c25ab3d58d99b1b5065bdaab3",  # pragma: allowlist secret
+        "a2edacfff567ae42c7edd54abfe12649c6ffd05a",  # pragma: allowlist secret
     ),
-    "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md": (
+    "docs/03.specs/0035-document-schema-and-lifecycle-contract/spec.md": (
         "f217827d5867166c1a0b9ff38542caffa5618394",  # pragma: allowlist secret
-        "6a4fc6cfdea908aee132415eaae123f34bcd602f",  # pragma: allowlist secret
+        "195c8f66b9f1818e00a0729b0472445d190a0414",  # pragma: allowlist secret
     ),
-    "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md": (
+    "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md": (
         "20b7bddc865cd7f18129e9cdf02b21944a3720dd",  # pragma: allowlist secret
-        "7a55f01a4e0d6513f179185914441570de3602d5",  # pragma: allowlist secret
+        "c09228aba4c6dd3c7e859f33c55ef184c19cf30d",  # pragma: allowlist secret
     ),
-    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+    "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md": (
         "a2fe213c905ce2d79623f24d728e5b32776fd06a",  # pragma: allowlist secret
-        "829b532834ff73fcccc74850a9794410a15b2985",  # pragma: allowlist secret
+        "e359fb94010faa1c947521879737bf8c0dded22c",  # pragma: allowlist secret
     ),
 }
-WORK105_BASE_PATHS = (REGISTRY_PATH, *sorted(WORK105_AUTHORITY_BLOBS))
+WORK105_HISTORICAL_PATHS_BY_CURRENT = {
+    path: (
+        path.replace("docs/03.specs/0", "docs/03.specs/", 1)
+        if path.startswith("docs/03.specs/")
+        else path
+    )
+    for path in WORK105_AUTHORITY_BLOBS
+}
+WORK105_CURRENT_PATHS_BY_HISTORICAL = {
+    historical: current
+    for current, historical in WORK105_HISTORICAL_PATHS_BY_CURRENT.items()
+}
+WORK105_BASE_PATHS = (
+    REGISTRY_PATH,
+    *sorted(WORK105_CURRENT_PATHS_BY_HISTORICAL),
+)
 TRANSITION_AUTHORITY_REMAPS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
         (
@@ -382,55 +400,55 @@ TRANSITION_AUTHORITY_REMAPS = {
             "docs/98.archive/README.md#document-index",
         ),
     ),
-    "docs/03.specs/011-template-contract-governance-migration/spec.md": (
+    "docs/03.specs/0011-template-contract-governance-migration/spec.md": (
         (
             "docs/04.execution/plans/2026-07-03-template-contract-governance-migration.md",
-            "docs/03.specs/011-template-contract-governance-migration/plan.md",
+            "docs/03.specs/0011-template-contract-governance-migration/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-03-template-contract-governance-migration.md",
-            "docs/03.specs/011-template-contract-governance-migration/tasks.md",
+            "docs/03.specs/0011-template-contract-governance-migration/tasks.md",
         ),
     ),
-    "docs/03.specs/012-template-governance-audit-enhancement/spec.md": (
+    "docs/03.specs/0012-template-governance-audit-enhancement/spec.md": (
         (
             "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
-            "docs/03.specs/012-template-governance-audit-enhancement/plan.md",
+            "docs/03.specs/0012-template-governance-audit-enhancement/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
-            "docs/03.specs/012-template-governance-audit-enhancement/tasks.md",
+            "docs/03.specs/0012-template-governance-audit-enhancement/tasks.md",
         ),
         (
             "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
-            "docs/03.specs/012-template-governance-audit-enhancement/plan.md",
+            "docs/03.specs/0012-template-governance-audit-enhancement/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
-            "docs/03.specs/012-template-governance-audit-enhancement/tasks.md",
+            "docs/03.specs/0012-template-governance-audit-enhancement/tasks.md",
         ),
     ),
-    "docs/03.specs/013-workspace-document-governance-hardening/spec.md": (
+    "docs/03.specs/0013-workspace-document-governance-hardening/spec.md": (
         (
             "docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md",
-            "docs/03.specs/013-workspace-document-governance-hardening/plan.md",
+            "docs/03.specs/0013-workspace-document-governance-hardening/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md",
-            "docs/03.specs/013-workspace-document-governance-hardening/tasks.md",
+            "docs/03.specs/0013-workspace-document-governance-hardening/tasks.md",
         ),
     ),
-    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md": (
+    "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md": (
         (
             "docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md",
-            "docs/03.specs/016-active-control-surface-governance-hardening/plan.md",
+            "docs/03.specs/0016-active-control-surface-governance-hardening/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md",
-            "docs/03.specs/016-active-control-surface-governance-hardening/tasks.md",
+            "docs/03.specs/0016-active-control-surface-governance-hardening/tasks.md",
         ),
     ),
-    "docs/03.specs/017-workspace-engineering-research-pack/spec.md": (
+    "docs/03.specs/0017-workspace-engineering-research-pack/spec.md": (
         (
             "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
             "docs/98.archive/README.md#document-index",
@@ -441,129 +459,129 @@ TRANSITION_AUTHORITY_REMAPS = {
         ),
         (
             "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
-            "docs/03.specs/017-workspace-engineering-research-pack/plan.md",
+            "docs/03.specs/0017-workspace-engineering-research-pack/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
-            "docs/03.specs/017-workspace-engineering-research-pack/tasks.md",
+            "docs/03.specs/0017-workspace-engineering-research-pack/tasks.md",
         ),
     ),
-    "docs/03.specs/019-template-path-numbering-contract/spec.md": (
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md": (
         (
             "docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md",
-            "docs/03.specs/019-template-path-numbering-contract/plan.md",
+            "docs/03.specs/0019-template-path-numbering-contract/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md",
-            "docs/03.specs/019-template-path-numbering-contract/tasks.md",
+            "docs/03.specs/0019-template-path-numbering-contract/tasks.md",
         ),
     ),
-    "docs/03.specs/022-control-cloud-doc-normalization/spec.md": (
+    "docs/03.specs/0022-control-cloud-doc-normalization/spec.md": (
         (
             "docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md",
-            "docs/03.specs/022-control-cloud-doc-normalization/plan.md",
+            "docs/03.specs/0022-control-cloud-doc-normalization/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md",
-            "docs/03.specs/022-control-cloud-doc-normalization/tasks.md",
+            "docs/03.specs/0022-control-cloud-doc-normalization/tasks.md",
         ),
     ),
-    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md": (
+    "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md": (
         (
             "docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md",
-            "docs/03.specs/023-stage03-04-repo-static-gap-closure/plan.md",
+            "docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md",
         ),
         (
             "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
-            "docs/03.specs/017-workspace-engineering-research-pack/plan.md",
+            "docs/03.specs/0017-workspace-engineering-research-pack/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
-            "docs/03.specs/017-workspace-engineering-research-pack/tasks.md",
+            "docs/03.specs/0017-workspace-engineering-research-pack/tasks.md",
         ),
     ),
-    "docs/03.specs/024-observability-and-network-review-agents/spec.md": (
+    "docs/03.specs/0024-observability-and-network-review-agents/spec.md": (
         (
             "docs/04.execution/plans/2026-07-06-observability-and-network-review-agents.md",
-            "docs/03.specs/024-observability-and-network-review-agents/plan.md",
+            "docs/03.specs/0024-observability-and-network-review-agents/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
-            "docs/03.specs/024-observability-and-network-review-agents/tasks.md",
+            "docs/03.specs/0024-observability-and-network-review-agents/tasks.md",
         ),
     ),
-    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md": (
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md": (
         (
             "docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md",
-            "docs/03.specs/025-governance-owner-and-roster-currentness/plan.md",
+            "docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
-            "docs/03.specs/025-governance-owner-and-roster-currentness/tasks.md",
+            "docs/03.specs/0025-governance-owner-and-roster-currentness/tasks.md",
         ),
     ),
-    "docs/03.specs/026-document-contract-registry/spec.md": (
+    "docs/03.specs/0026-document-contract-registry/spec.md": (
         (
             "docs/04.execution/plans/2026-07-12-document-contract-registry.md",
-            "docs/03.specs/026-document-contract-registry/plan.md",
+            "docs/03.specs/0026-document-contract-registry/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-12-document-contract-registry.md",
-            "docs/03.specs/026-document-contract-registry/tasks.md",
+            "docs/03.specs/0026-document-contract-registry/tasks.md",
         ),
     ),
-    "docs/03.specs/027-template-contract-consolidation/spec.md": (
+    "docs/03.specs/0027-template-contract-consolidation/spec.md": (
         (
             "docs/04.execution/plans/2026-07-12-template-contract-consolidation.md",
-            "docs/03.specs/027-template-contract-consolidation/plan.md",
+            "docs/03.specs/0027-template-contract-consolidation/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md",
-            "docs/03.specs/027-template-contract-consolidation/tasks.md",
+            "docs/03.specs/0027-template-contract-consolidation/tasks.md",
         ),
     ),
-    "docs/03.specs/028-readme-workspace-profiles/spec.md": (
+    "docs/03.specs/0028-readme-workspace-profiles/spec.md": (
         (
             "docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md",
-            "docs/03.specs/028-readme-workspace-profiles/plan.md",
+            "docs/03.specs/0028-readme-workspace-profiles/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md",
-            "docs/03.specs/028-readme-workspace-profiles/tasks.md",
+            "docs/03.specs/0028-readme-workspace-profiles/tasks.md",
         ),
     ),
-    "docs/03.specs/029-semantic-document-validation/spec.md": (
+    "docs/03.specs/0029-semantic-document-validation/spec.md": (
         (
             "docs/04.execution/plans/2026-07-12-semantic-document-validation.md",
-            "docs/03.specs/029-semantic-document-validation/plan.md",
+            "docs/03.specs/0029-semantic-document-validation/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md",
-            "docs/03.specs/029-semantic-document-validation/tasks.md",
+            "docs/03.specs/0029-semantic-document-validation/tasks.md",
         ),
     ),
-    "docs/03.specs/030-authored-document-migration/spec.md": (
+    "docs/03.specs/0030-authored-document-migration/spec.md": (
         (
             "docs/04.execution/plans/2026-07-12-authored-document-migration.md",
-            "docs/03.specs/030-authored-document-migration/plan.md",
+            "docs/03.specs/0030-authored-document-migration/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-12-authored-document-migration.md",
-            "docs/03.specs/030-authored-document-migration/tasks.md",
+            "docs/03.specs/0030-authored-document-migration/tasks.md",
         ),
     ),
-    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md": (
+    "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md": (
         (
             "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md",
-            "docs/03.specs/037-active-corpus-and-execution-retention/plan.md",
+            "docs/03.specs/0037-active-corpus-and-execution-retention/plan.md",
         ),
         (
             "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md",
-            "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md",
+            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md",
         ),
     ),
 }
-OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
+OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
 EXECUTION_PLAN = (
     "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
 )
@@ -571,15 +589,15 @@ EXECUTION_TASK = (
     "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
 )
 TERMINAL_LINEAGE = "2026-07-22-reference-information-architecture"
-TERMINAL_SPEC = "docs/03.specs/038-reference-information-architecture/spec.md"
+TERMINAL_SPEC = "docs/03.specs/0038-reference-information-architecture/spec.md"
 TERMINAL_PLAN = f"docs/04.execution/plans/{TERMINAL_LINEAGE}.md"
 TERMINAL_TASK = f"docs/04.execution/tasks/{TERMINAL_LINEAGE}.md"
-TERMINAL_SUCCESSOR_SPEC = "docs/03.specs/039-github-ci-qa-evidence/spec.md"
+TERMINAL_SUCCESSOR_SPEC = "docs/03.specs/0039-github-ci-qa-evidence/spec.md"
 TERMINAL_SUCCESSOR_LINEAGE = "2026-07-26-github-ci-qa-evidence"
 TERMINAL_SUCCESSOR_PLAN = f"docs/04.execution/plans/{TERMINAL_SUCCESSOR_LINEAGE}.md"
 TERMINAL_SUCCESSOR_TASK = f"docs/04.execution/tasks/{TERMINAL_SUCCESSOR_LINEAGE}.md"
 TERMINAL_FRONTIER_SPEC = (
-    "docs/03.specs/040-contract-cutover-and-program-closure/spec.md"
+    "docs/03.specs/0040-contract-cutover-and-program-closure/spec.md"
 )
 TERMINAL_FRONTIER_LINEAGE = "2026-07-27-contract-cutover-and-program-closure"
 TERMINAL_FRONTIER_PLAN = f"docs/04.execution/plans/{TERMINAL_FRONTIER_LINEAGE}.md"
@@ -591,14 +609,14 @@ TERMINAL_PROGRAM_TASK_PATHS = frozenset(
     {TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK, TERMINAL_FRONTIER_TASK}
 )
 TERMINAL_CONTROL_REPLACEMENTS = {
-    EXECUTION_PLAN: "docs/03.specs/037-active-corpus-and-execution-retention/plan.md",
-    EXECUTION_TASK: "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md",
-    TERMINAL_PLAN: "docs/03.specs/038-reference-information-architecture/plan.md",
-    TERMINAL_TASK: "docs/03.specs/038-reference-information-architecture/tasks.md",
-    TERMINAL_SUCCESSOR_PLAN: "docs/03.specs/039-github-ci-qa-evidence/plan.md",
-    TERMINAL_SUCCESSOR_TASK: "docs/03.specs/039-github-ci-qa-evidence/tasks.md",
-    TERMINAL_FRONTIER_PLAN: "docs/03.specs/040-contract-cutover-and-program-closure/plan.md",
-    TERMINAL_FRONTIER_TASK: "docs/03.specs/040-contract-cutover-and-program-closure/tasks.md",
+    EXECUTION_PLAN: "docs/03.specs/0037-active-corpus-and-execution-retention/plan.md",
+    EXECUTION_TASK: "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md",
+    TERMINAL_PLAN: "docs/03.specs/0038-reference-information-architecture/plan.md",
+    TERMINAL_TASK: "docs/03.specs/0038-reference-information-architecture/tasks.md",
+    TERMINAL_SUCCESSOR_PLAN: "docs/03.specs/0039-github-ci-qa-evidence/plan.md",
+    TERMINAL_SUCCESSOR_TASK: "docs/03.specs/0039-github-ci-qa-evidence/tasks.md",
+    TERMINAL_FRONTIER_PLAN: "docs/03.specs/0040-contract-cutover-and-program-closure/plan.md",
+    TERMINAL_FRONTIER_TASK: "docs/03.specs/0040-contract-cutover-and-program-closure/tasks.md",
 }
 TERMINAL_PROGRAM_CLOSURE_ADR = (
     "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md"
@@ -619,35 +637,35 @@ FROZEN_ACCEPTED_ADR_PATHS = (
     "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md",
 )
 FROZEN_DONE_SPEC_PATHS = (
-    "docs/03.specs/009-workspace-harness-research-pack/spec.md",
-    "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md",
-    "docs/03.specs/011-template-contract-governance-migration/spec.md",
-    "docs/03.specs/012-template-governance-audit-enhancement/spec.md",
-    "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
-    "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
-    "docs/03.specs/015-agent-governance-contract-normalization/spec.md",
-    "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
-    "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
-    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
-    "docs/03.specs/019-template-path-numbering-contract/spec.md",
-    "docs/03.specs/020-workspace-contract-governance-normalization/spec.md",
-    "docs/03.specs/021-sdlc-lifecycle-contract/spec.md",
-    "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
-    "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
-    "docs/03.specs/024-observability-and-network-review-agents/spec.md",
-    "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md",
-    "docs/03.specs/026-document-contract-registry/spec.md",
-    "docs/03.specs/027-template-contract-consolidation/spec.md",
-    "docs/03.specs/028-readme-workspace-profiles/spec.md",
-    "docs/03.specs/029-semantic-document-validation/spec.md",
-    "docs/03.specs/030-authored-document-migration/spec.md",
-    "docs/03.specs/031-affected-surface-agent-qa/spec.md",
-    "docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md",
-    "docs/03.specs/033-template-lifecycle-contract-normalization/spec.md",
-    "docs/03.specs/034-authority-and-lineage-foundation/spec.md",
-    "docs/03.specs/035-document-schema-and-lifecycle-contract/spec.md",
-    "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
-    "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+    "docs/03.specs/0009-workspace-harness-research-pack/spec.md",
+    "docs/03.specs/0010-workspace-harness-implementation-audit-pack/spec.md",
+    "docs/03.specs/0011-template-contract-governance-migration/spec.md",
+    "docs/03.specs/0012-template-governance-audit-enhancement/spec.md",
+    "docs/03.specs/0013-workspace-document-governance-hardening/spec.md",
+    "docs/03.specs/0014-workspace-document-contract-normalization/spec.md",
+    "docs/03.specs/0015-agent-governance-contract-normalization/spec.md",
+    "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md",
+    "docs/03.specs/0017-workspace-engineering-research-pack/spec.md",
+    "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md",
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md",
+    "docs/03.specs/0020-workspace-contract-governance-normalization/spec.md",
+    "docs/03.specs/0021-sdlc-lifecycle-contract/spec.md",
+    "docs/03.specs/0022-control-cloud-doc-normalization/spec.md",
+    "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md",
+    "docs/03.specs/0024-observability-and-network-review-agents/spec.md",
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md",
+    "docs/03.specs/0026-document-contract-registry/spec.md",
+    "docs/03.specs/0027-template-contract-consolidation/spec.md",
+    "docs/03.specs/0028-readme-workspace-profiles/spec.md",
+    "docs/03.specs/0029-semantic-document-validation/spec.md",
+    "docs/03.specs/0030-authored-document-migration/spec.md",
+    "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+    "docs/03.specs/0032-protected-surface-supply-chain-hardening/spec.md",
+    "docs/03.specs/0033-template-lifecycle-contract-normalization/spec.md",
+    "docs/03.specs/0034-authority-and-lineage-foundation/spec.md",
+    "docs/03.specs/0035-document-schema-and-lifecycle-contract/spec.md",
+    "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
+    "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md",
 )
 POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
     {
@@ -661,17 +679,24 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0023-work-unit-document-taxonomy-and-governance-authority.md",
         "docs/02.architecture/decisions/"
         "0024-terminal-artifact-identity-and-archive-layout.md",
+        "docs/02.architecture/decisions/"
+        "0025-four-digit-document-path-identity.md",
     }
 )
+POST_CLOSURE_PINNED_AUTHORITY_BLOBS = {
+    "docs/02.architecture/decisions/0025-four-digit-document-path-identity.md": (
+        "5d4bea9a3072259f9f530fda0b8873afba92ca39"  # pragma: allowlist secret
+    )
+}
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
     {
-        "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
-        "docs/03.specs/042-provider-native-runtime-and-model-evidence/spec.md",
-        "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
-        "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
-        "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/03.specs/046-agent-governance-program-closure/spec.md",
-        "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
+        "docs/03.specs/0041-stage-00-agent-governance-contract/spec.md",
+        "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md",
+        "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+        "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
+        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/03.specs/0046-agent-governance-program-closure/spec.md",
+        "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md",
     }
 )
 PLAN_ROOT = "docs/04.execution/plans"
@@ -785,19 +810,19 @@ MAX_FILE_BYTES = 2_000_000
 SAFE_PATH = re.compile(r"[A-Za-z0-9._@+/-]+\Z")
 ACTIVE_CONTROL_LINEAGE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._@+-]*\Z")
 TERMINAL_RELATION_IDENTITY = {
-    "spec": "038",
+    "spec": "0038",
     "order": 5,
     "reason": "Reference information architecture",
     "decision": "0017",
 }
 TERMINAL_SUCCESSOR_IDENTITY = {
-    "spec": "039",
+    "spec": "0039",
     "order": 6,
     "reason": "GitHub CI and QA evidence",
     "decision": "0017",
 }
 TERMINAL_FRONTIER_IDENTITY = {
-    "spec": "040",
+    "spec": "0040",
     "order": 7,
     "reason": "Contract cutover and program closure",
     "decision": "0017",
@@ -1237,15 +1262,16 @@ def _work105_base_projection(
             oid = raw_oid.decode("ascii", errors="strict")
         except (ValueError, UnicodeDecodeError) as exc:
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT") from exc
+        current_path = WORK105_CURRENT_PATHS_BY_HISTORICAL.get(path, path)
         if (
-            path not in expected
+            current_path not in expected
             or mode != b"100644"
             or object_type != b"blob"
             or FULL_OID.fullmatch(oid) is None
-            or path in resolved
+            or current_path in resolved
         ):
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
-        resolved[path] = oid
+        resolved[current_path] = oid
     if resolved != expected:
         mismatch = next(
             (path for path in WORK105_BASE_PATHS if resolved.get(path) != expected[path]),
@@ -1481,6 +1507,7 @@ def _load_registry_authority(
         WORK105_REGISTRY_BLOBS[1],
         WORK107_REGISTRY_BLOB,
         WORK108_REGISTRY_BLOB,
+        MIG2_REGISTRY_BLOB,
     }:
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     registry = _load_json_bytes(payload, REGISTRY_PATH)
@@ -1528,6 +1555,18 @@ def _git_blob_oid(payload: bytes) -> str:
     return hashlib.sha1(header + payload).hexdigest()  # noqa: S324 - Git identity
 
 
+def _current_taxonomy_target(path: str) -> str:
+    """Compose a frozen three-digit Spec target with the MIG-2 path cutover."""
+
+    match = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})-(?P<suffix>[a-z0-9][a-z0-9./-]*)",
+        path,
+    )
+    if match is None:
+        return path
+    return f"docs/03.specs/0{match.group('id')}-{match.group('suffix')}"
+
+
 def _work108_authority_object_identity(
     path: str, index: Mapping[str, str], payload: bytes
 ) -> dict[str, str]:
@@ -1543,7 +1582,7 @@ def _work108_authority_object_identity(
         path,
     )
     specification = re.fullmatch(
-        r"docs/03\.specs/(?P<id>[0-9]{3})-[a-z0-9]+(?:-[a-z0-9]+)*/spec\.md",
+        r"docs/03\.specs/(?P<id>[0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*/spec\.md",
         path,
     )
     if decision is not None:
@@ -1865,7 +1904,7 @@ def _build_taxonomy_transition_closure(
     } | set(control_by_path)
     for entry in sorted(move_entries, key=lambda row: row["source"]):
         source = entry["source"]
-        target = entry["target"]
+        target = _current_taxonomy_target(entry["target"])
         kind = (
             "plan"
             if source.startswith(f"{PLAN_ROOT}/")
@@ -2040,7 +2079,7 @@ def _active_control_lineage(path: str, kind: str) -> str:
 
 
 def _terminal_program_control_scope(paths: Sequence[str], *, kind: str) -> list[str]:
-    """Select only the PRD-006 execution controls owned by ACER-006."""
+    """Select only the PRD-0006 execution controls owned by ACER-006."""
 
     if kind == "plan":
         owned = TERMINAL_PROGRAM_PLAN_PATHS
@@ -2075,14 +2114,14 @@ def _terminal_registry_relations(
 
     exact_programs: list[Mapping[str, Any]] = []
     relations: dict[str, list[tuple[Mapping[str, Any], str, Mapping[str, Any]]]] = {
-        "038": [],
-        "039": [],
-        "040": [],
+        "0038": [],
+        "0039": [],
+        "0040": [],
     }
     for program in programs:
         if not isinstance(program, Mapping):
             raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
-        if program.get("prd") == "006" and program.get("ad") == "0009":
+        if program.get("prd") == "0006" and program.get("ad") == "0009":
             if set(program) != {"prd", "ad", "tranches", "followUps"}:
                 raise ClosureError(
                     "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH
@@ -2107,15 +2146,15 @@ def _terminal_registry_relations(
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     if any(len(relations[spec_id]) > 1 for spec_id in relations):
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", REGISTRY_PATH)
-    if len(relations["038"]) != 1:
+    if len(relations["0038"]) != 1:
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
-    if len(relations["039"]) != 1:
+    if len(relations["0039"]) != 1:
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
-    if len(relations["040"]) != 1:
+    if len(relations["0040"]) != 1:
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_FRONTIER_SPEC)
 
     exact_program = exact_programs[0]
-    program_038, collection_038, relation_038 = relations["038"][0]
+    program_038, collection_038, relation_038 = relations["0038"][0]
     if program_038 is not exact_program or collection_038 != "tranches":
         raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
     if set(relation_038) != {*TERMINAL_RELATION_IDENTITY, "state"} or any(
@@ -2126,7 +2165,7 @@ def _terminal_registry_relations(
     if relation_038.get("state") not in {"active", "done"}:
         raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
 
-    program_039, collection_039, relation_039 = relations["039"][0]
+    program_039, collection_039, relation_039 = relations["0039"][0]
     if (
         program_039 is not exact_program
         or collection_039 != "tranches"
@@ -2137,7 +2176,7 @@ def _terminal_registry_relations(
         )
     ):
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
-    program_040, collection_040, relation_040 = relations["040"][0]
+    program_040, collection_040, relation_040 = relations["0040"][0]
     if (
         program_040 is not exact_program
         or collection_040 != "tranches"
@@ -2377,7 +2416,7 @@ def _partition_terminal_controls(
             "owner": "platform",
             **_object_identity(TERMINAL_SPEC, index, payloads[TERMINAL_SPEC]),
             "registryPath": REGISTRY_PATH,
-            "programPrd": "006",
+            "programPrd": "0006",
             "programAd": "0009",
             "relationClass": "original-tranche",
             **TERMINAL_RELATION_IDENTITY,
@@ -2407,7 +2446,7 @@ def _partition_terminal_controls(
                     payloads[TERMINAL_SUCCESSOR_SPEC],
                 ),
                 "registryPath": REGISTRY_PATH,
-                "programPrd": "006",
+                "programPrd": "0006",
                 "programAd": "0009",
                 "relationClass": "original-tranche",
                 **TERMINAL_SUCCESSOR_IDENTITY,
@@ -2437,7 +2476,7 @@ def _partition_terminal_controls(
                     payloads[TERMINAL_FRONTIER_SPEC],
                 ),
                 "registryPath": REGISTRY_PATH,
-                "programPrd": "006",
+                "programPrd": "0006",
                 "programAd": "0009",
                 "relationClass": "original-tranche",
                 **TERMINAL_FRONTIER_IDENTITY,
@@ -2738,7 +2777,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
                 "done",
                 "platform",
                 REGISTRY_PATH,
-                "006",
+                "0006",
                 "0009",
                 "original-tranche",
                 family["relation"]["spec"],
@@ -3068,7 +3107,7 @@ def _frozen_authority_scope(
     *,
     kind: str,
 ) -> list[str]:
-    """Select the exact PRD-006 authority paths and ignore later programs."""
+    """Select the exact PRD-0006 authority paths and ignore later programs."""
 
     if kind == "adr":
         owned = FROZEN_ACCEPTED_ADR_PATHS
@@ -3090,7 +3129,7 @@ def _frozen_authority_entries(
     *,
     kind: str,
 ) -> list[dict[str, Any]]:
-    """Build only the exact PRD-006 authority rows and require their state."""
+    """Build only the exact PRD-0006 authority rows and require their state."""
 
     scoped_paths = _frozen_authority_scope(paths, kind=kind)
     entries = _authority_entries(scoped_paths, index, payloads, kind=kind)
@@ -3113,6 +3152,9 @@ def _frozen_authority_entries(
     for row in later_authority:
         if row["path"] not in allowed_later:
             raise ClosureError("CLOSURE-AUTHORITY-SCOPE", row["path"])
+        pinned_blob = POST_CLOSURE_PINNED_AUTHORITY_BLOBS.get(row["path"])
+        if pinned_blob is not None and row["objectId"] != _git_identity(pinned_blob):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", row["path"])
     return entries
 
 
@@ -3297,7 +3339,9 @@ def _validate_authority_guard_transition(
         if not isinstance(ledger_rows, list) or not isinstance(observed_rows, list):
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
         ledger_by_path = {
-            row.get("path"): row for row in ledger_rows if isinstance(row, Mapping)
+            WORK105_CURRENT_PATHS_BY_HISTORICAL.get(row.get("path"), row.get("path")): row
+            for row in ledger_rows
+            if isinstance(row, Mapping)
         }
         observed_by_path = {
             row.get("path"): row
@@ -3328,7 +3372,11 @@ def _validate_authority_guard_transition(
                 work105_base_blob != transition_blob
                 or ledger_row.get("objectId") != _git_identity(old_blob)
                 or observed_row.get("objectId") != _git_identity(current_blob)
-                or {key: value for key, value in ledger_row.items() if key != "objectId"}
+                or {
+                    key: path if key == "path" else value
+                    for key, value in ledger_row.items()
+                    if key != "objectId"
+                }
                 != {
                     key: value
                     for key, value in observed_row.items()
@@ -3727,7 +3775,15 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> None:
     ):
         raise ClosureError("CLOSURE-SCHEMA")
     expected = _ledger_from_observed(observed)
-    if ledger.get("authority") != expected["authority"]:
+    ledger_authority = ledger.get("authority")
+    if isinstance(ledger_authority, Mapping):
+        ledger_authority = {
+            **ledger_authority,
+            "ownerSpec": WORK105_CURRENT_PATHS_BY_HISTORICAL.get(
+                ledger_authority.get("ownerSpec"), ledger_authority.get("ownerSpec")
+            ),
+        }
+    if ledger_authority != expected["authority"]:
         raise ClosureError("CLOSURE-AUTHORITY")
     if ledger.get("inventoryBoundary") != expected["inventoryBoundary"]:
         raise ClosureError("CLOSURE-BOUNDARY")
@@ -4139,7 +4195,7 @@ def _self_test_terminal_frontier() -> int:
             "programLineage": {
                 "programs": [
                     {
-                        "prd": "006",
+                        "prd": "0006",
                         "ad": "0009",
                         "tranches": [
                             {**TERMINAL_RELATION_IDENTITY, "state": "done"},
@@ -4283,6 +4339,8 @@ def _self_test_post_closure_adr_scope() -> int:
             "0023-work-unit-document-taxonomy-and-governance-authority.md",
             "docs/02.architecture/decisions/"
             "0024-terminal-artifact-identity-and-archive-layout.md",
+            "docs/02.architecture/decisions/"
+            "0025-four-digit-document-path-identity.md",
         }
     )
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:
@@ -4293,7 +4351,10 @@ def _self_test_post_closure_adr_scope() -> int:
 
     known_paths = [*FROZEN_ACCEPTED_ADR_PATHS, *sorted(expected_later)]
     payloads = {path: accepted_payload() for path in known_paths}
-    index = {path: "0" * 40 for path in known_paths}
+    index = {
+        path: POST_CLOSURE_PINNED_AUTHORITY_BLOBS.get(path, "0" * 40)
+        for path in known_paths
+    }
     rows = _frozen_authority_entries(
         known_paths,
         index,

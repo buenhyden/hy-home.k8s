@@ -125,7 +125,7 @@ against their source rather than becoming new owners.
 
 ## Traceability
 
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
 - **ADRs**: [Declarative Document Contract Registry](../decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../decisions/0016-program-to-tranche-document-lineage.md)
-- **Specs**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
+- **Specs**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
 - **Current Audit Roadmap**: [Integrated Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)

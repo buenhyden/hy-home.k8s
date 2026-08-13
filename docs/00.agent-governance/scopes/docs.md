@@ -63,8 +63,8 @@ inline a full role definition when an applicable native or local adapter exists.
 
 ## Related Documents
 
-- [Documentation Protocol](../rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../rules/document-stage-routing.md)
+- [Documentation Protocol](../rules/document-authoring.md)
+- [Document Stage Routing Rules](../rules/document-authoring.md)
 - [Operations Guides Index](../../05.operations/guides/README.md)
 - [References Index](../../90.references/README.md)
 - [Templates Index](../../99.templates/README.md)

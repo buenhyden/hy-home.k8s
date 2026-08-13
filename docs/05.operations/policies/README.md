@@ -87,7 +87,7 @@ docs/05.operations/policies/
 
 - Runbooks: [05.operations/runbooks](../runbooks/README.md)
 - Incident Records: [05.operations/incidents](../incidents/README.md)
-- Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`
+- Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`
 
 ### Relative Link Rules
 
@@ -104,7 +104,7 @@ docs/05.operations/policies/
 - [05.operations/incidents](../incidents/README.md)
 - [03.specs](../../03.specs/README.md)
 - [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
-- [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - [Operation Template](../../99.templates/templates/sdlc/operations/policy.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

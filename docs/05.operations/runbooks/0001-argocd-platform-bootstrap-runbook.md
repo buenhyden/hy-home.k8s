@@ -194,11 +194,11 @@ argocd app list
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Current Local GitOps Platform Spec](../../03.specs/008-current-local-gitops-platform/spec.md) | A new or rebuilt local cluster needs the current ArgoCD, ESO/Vault, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |
+| [Current Local GitOps Platform Spec](../../03.specs/0008-current-local-gitops-platform/spec.md) | A new or rebuilt local cluster needs the current ArgoCD, ESO/Vault, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |

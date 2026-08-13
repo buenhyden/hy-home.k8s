@@ -64,19 +64,19 @@ NATIVE_FAMILY_CONTRACT = (
     ),
     (
         "openapi",
-        "docs/03.specs/999-native-fixture/contracts/openapi.yaml",
+        "docs/03.specs/0999-native-fixture/contracts/openapi.yaml",
         "registry-profile",
         "exception/native-contract-openapi",
     ),
     (
         "graphql",
-        "docs/03.specs/999-native-fixture/contracts/schema.graphql",
+        "docs/03.specs/0999-native-fixture/contracts/schema.graphql",
         "registry-profile",
         "exception/native-contract-graphql",
     ),
     (
         "protobuf",
-        "docs/03.specs/999-native-fixture/contracts/service.proto",
+        "docs/03.specs/0999-native-fixture/contracts/service.proto",
         "registry-profile",
         "exception/native-contract-protobuf",
     ),
@@ -1748,7 +1748,8 @@ def _classification_route_mutation_registry(
         profile = next(item for item in mutated["profiles"] if item["id"] == profile_id)
     except StopIteration as exc:
         raise ContractError(
-            f"unknown classification-only profile: {profile_id}"
+            "SELFTEST-CLASSIFICATION-ROUTE",
+            f"unknown classification-only profile: {profile_id}",
         ) from exc
 
     path_text = fixture_path.as_posix()
@@ -1766,7 +1767,8 @@ def _classification_route_mutation_registry(
         mutation_count += 1
     if mutation_count != 1:
         raise ContractError(
-            f"classification-only route mutation expected one route, got {mutation_count}"
+            "SELFTEST-CLASSIFICATION-ROUTE",
+            f"classification-only route mutation expected one route, got {mutation_count}",
         )
     return validate_registry(root, mutated)
 
@@ -2130,17 +2132,17 @@ def _self_test(root: Path) -> list[str]:
     readme_paths = [row.get("path") for row in readme_path_rows]
     retired_readme_paths = [row.get("path") for row in retired_readme_rows]
     if (
-        len(readme_paths) != 51
+        len(readme_paths) != 48
         or len(readme_paths) != len(set(readme_paths))
         or readme_paths != sorted(readme_paths)
     ):
-        failures.append("README activePaths must contain 51 sorted unique entries")
+        failures.append("README activePaths must contain 48 sorted unique entries")
     if (
-        len(retired_readme_paths) != 23
+        len(retired_readme_paths) != 26
         or len(retired_readme_paths) != len(set(retired_readme_paths))
         or retired_readme_paths != sorted(retired_readme_paths)
     ):
-        failures.append("README retiredPaths must contain 23 sorted unique entries")
+        failures.append("README retiredPaths must contain 26 sorted unique entries")
     if set(readme_paths) & set(retired_readme_paths):
         failures.append("README activePaths and retiredPaths must be disjoint")
     readme_by_path = {row.get("path"): row for row in readme_path_rows}
@@ -2174,14 +2176,14 @@ def _self_test(root: Path) -> list[str]:
     retired_program_created = set(retired_readme_paths) - conceptual_baseline_readmes
     if (
         len(baseline_readmes) != 67
-        or len(active_baseline) != 45
+        or len(active_baseline) != 42
         or len(active_program_created) != 6
-        or len(retired_baseline) != 22
+        or len(retired_baseline) != 25
         or len(retired_program_created) != 1
         or active_baseline | retired_baseline != conceptual_baseline_readmes
     ):
         failures.append(
-            "README handoff must reconstruct baseline67 as active45 plus retired22, with active-new6 and retired-new1"
+            "README handoff must reconstruct baseline67 as active42 plus retired25, with active-new6 and retired-new1"
         )
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
@@ -2207,7 +2209,18 @@ def _self_test(root: Path) -> list[str]:
                 if handoff.get("profile") != selected.profile_id:
                     failures.append(f"README handoff profile mismatch: {path_text}")
             else:
-                if handoff.get("profile") != "readme/snapshot-pack":
+                retired_by = handoff.get("retiredBy")
+                stage04_profiles = {
+                    "docs/04.execution/README.md": "readme/stage-index",
+                    "docs/04.execution/plans/README.md": "readme/collection-index",
+                    "docs/04.execution/tasks/README.md": "readme/collection-index",
+                }
+                expected_retired_profile = (
+                    stage04_profiles.get(path_text)
+                    if retired_by == "WORK-054-002"
+                    else "readme/snapshot-pack"
+                )
+                if handoff.get("profile") != expected_retired_profile:
                     failures.append(
                         f"README retired historical profile mismatch: {path_text}"
                     )
@@ -2215,9 +2228,9 @@ def _self_test(root: Path) -> list[str]:
                 selected = next(
                     profile
                     for profile in registry.profiles
-                    if profile.profile_id == "readme/snapshot-pack"
+                    if profile.profile_id == expected_retired_profile
                 )
-                if handoff.get("retiredBy") == "WERPC-008":
+                if retired_by == "WERPC-008":
                     try:
                         routed = classify_path(registry, _fixture_path(path_text))
                     except (DocumentContractError, ValueError) as exc:
@@ -2253,6 +2266,27 @@ def _self_test(root: Path) -> list[str]:
                 if not (root / path_text).is_file():
                     failures.append(
                         f"README active handoff path is absent: {path_text}"
+                    )
+                continue
+            if handoff.get("retiredBy") == "WORK-054-002":
+                stage04_destinations = {
+                    "docs/04.execution/README.md": "docs/03.specs/README.md",
+                    "docs/04.execution/plans/README.md":
+                        "docs/99.templates/templates/sdlc/execution/plan.template.md",
+                    "docs/04.execution/tasks/README.md":
+                        "docs/99.templates/templates/sdlc/execution/task.template.md",
+                }
+                if handoff.get("destination") != stage04_destinations.get(path_text):
+                    failures.append(
+                        f"README Stage 04 retirement destination mismatch: {path_text}"
+                    )
+                elif not (root / handoff["destination"]).is_file():
+                    failures.append(
+                        f"README Stage 04 retirement destination is absent: {path_text}"
+                    )
+                if (root / path_text).exists() or path_text in inventory_readmes:
+                    failures.append(
+                        f"README retired handoff remains current: {path_text}"
                     )
                 continue
             if handoff.get("retiredBy") == "WERPC-008":
@@ -2896,7 +2930,7 @@ def _self_test(root: Path) -> list[str]:
             try:
                 diagnostics = body_contract_validator(
                     PurePosixPath(
-                        case.get("path", "docs/01.requirements/999-fixture.md")
+                        case.get("path", "docs/01.requirements/0999-fixture.md")
                     ),
                     selected,
                     case["body"],
