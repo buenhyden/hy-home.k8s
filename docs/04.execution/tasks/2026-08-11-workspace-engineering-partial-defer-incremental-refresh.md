@@ -3,7 +3,7 @@ title: 'Task: Workspace Engineering Partial/DEFER Incremental Research Refresh'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-08-12
+updated: 2026-08-13
 ---
 
 # Task: Workspace Engineering Partial/DEFER Incremental Research Refresh
@@ -46,7 +46,7 @@ or remote payloads.
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | VAL-PDRR-002–004, VAL-PDRR-007 | Refresh admitted Guide and Diátaxis evidence | assigned worker | Done | Rows 014 and 020 retain `Partial` / `exclude-duplicate`; current published-page provenance and exact Guide static contracts are reconciled without changing DOC-G1/G2/G3 or inferring reader effectiveness. | Two appended research-owner sections, guarded proposal, task-local progress, task-5 report, logical commit |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | VAL-PDRR-002–005, VAL-PDRR-007 | Refresh admitted CI/CD, GitHub Actions, QA, and V&V evidence | assigned worker | Done | Rows 022, 023, and 033 have a dated CI/CD section reconciling official GitHub REST contracts, the sanitized hosted observations, and exact local selectors; all three remain `Partial` with hosted-runtime, product-validation, and OIDC evidence `DEFER`. | Dated CI/CD report section, sanitized observation summary, successor checker self-test, Plan recovery contract, Task evidence |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | VAL-PDRR-003, VAL-PDRR-006, VAL-PDRR-008 | Reconcile shared WER projections atomically | assigned worker | Done | Shared projections are reconciled atomically: `SRC-WERPC-068`–`073` and `CLM-WERPC-009-01`–`12` were added, every baseline row is byte-preserved, and all nine remaining `Pending` dispositions are closed as `Partial`. | Source/claim ledger, pack README reconciliation, scope index, final Gap Ledger, integration GREEN |
-| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and hand off branch finishing | primary agent | Done | Branch-wide gates, protected-surface diff, logical-commit review, temporary-file cleanup, and lifecycle closure are complete; independent subagent review was not dispatched and is recorded as an explicit limitation. | Branch affected lane, aggregate gate, all-files pre-commit, diff checks, residue proof, lifecycle statuses, closure commit |
+| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | VAL-PDRR-009, VAL-PDRR-010 | Review, gate, clean up, close lifecycle, and finish local integration | primary agent | Done | Original branch gates, cleanup, and lifecycle closure are complete; the 2026-08-13 independent whole-branch review and corrective fix wave close the provisional review gap before this corrective closure commit. | Branch gates and residue proof, closure `8fa60bb5`, main merge `a5d2dfbb`, 2026-08-13 specification/content, quality, and security reviews, corrective closure commit |
 
 ### Gap Ledger
 
@@ -437,7 +437,8 @@ unique source IDs and 77 unique claim IDs.
 
 ### PDRR-007 Closure Evidence
 
-PDRR-007 ran on 2026-08-12 against branch HEAD. The successor checker reported
+The original PDRR-007 closure ran on 2026-08-12 against branch HEAD. The
+successor checker reported
 34 named self-test PASS with zero FAIL, integration GREEN at 14 Markdown files,
 33 unique requests, 132 byte-preserved baseline rows, and 18 new rows, and the
 branch path set enumerated 21 repository-relative paths.
@@ -463,14 +464,26 @@ all eight enumerated one-off paths, including the five that the session
 boundary had already destroyed and the two residues carried from PDRR-003 and
 PDRR-004. No terminal command recreated a `/tmp/pdrr-*` path.
 
-One limitation is explicit and is not converted into a PASS. The Plan requires
-independent content, quality, and security review of the whole branch, but the
-resuming session was constrained from dispatching subagent reviewers, so the
-PDRR-005 through PDRR-007 review was self-performed by the primary agent. The
-earlier PDRR-000 through PDRR-004 independent reviews stand as recorded. A
-human may still dispatch an independent whole-branch review before integration;
-until then, VAL-PDRR-010 is met for the gate evidence but not for independent
-review of the final three work units.
+The 2026-08-12 closure evidence was provisional: the resuming session had not
+dispatched independent whole-branch reviewers for PDRR-005 through PDRR-007,
+so at that point `VAL-PDRR-010` was met for gate evidence but not for final
+independent review. The earlier PDRR-000 through PDRR-004 independent reviews
+stand as recorded.
+
+After the branch was locally merged to `main` as `a5d2dfbb` on 2026-08-12,
+independent whole-branch specification/content, quality, and security reviews
+were dispatched on 2026-08-13. The specification reviewer reported the
+PDRR-007 done/open-review contradiction as Critical and the stale progress
+handoff as Important. The quality reviewer approved the final counts,
+identifiers, and gates. The security reviewer approved the bounded GitHub
+remote boundary and reported the ignored SDD workspace residue as Important.
+This corrective fix wave reconciles both documentation findings and records
+the SDD workspace as controller-owned review evidence retained until a clean
+scoped re-review permits its deletion. It is not a prohibited
+`/tmp/pdrr-*` artifact. Independent review and `VAL-PDRR-010` are therefore
+complete before this corrective closure commit; the original limitation is
+historical rather than current. Local integration, worktree removal, and
+topic-branch cleanup are complete, and next owner is none.
 
 Remote, hosted-runtime, provider-runtime, credential-bearing, cluster,
 infrastructure, product and stakeholder validation, and live evidence remain
@@ -489,4 +502,4 @@ infrastructure, product and stakeholder validation, and live evidence remain
 | [PDRR-004](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-5-pdrr-004--guide-and-diataxis-refresh) | Done. Rows 014/020 retain `Partial` / `exclude-duplicate`; official published-page provenance and exact Guide static contracts are reconciled while reader evidence remains `DEFER`. | Two research owners, guarded proposal, Plan task 5, task-local progress, task-5 report, logical commit. |
 | [PDRR-005](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-6-pdrr-005--cicd-github-actions-qa-and-vv-refresh) | Done. Rows 022, 023, and 033 have a dated CI/CD section separating syntax, hosted metadata, administration, product validation, and live effects; all three remain `Partial` and no row is promoted. | Plan task 6, dated CI/CD report section, sanitized observations, successor checker self-test, and task-6 report. |
 | [PDRR-006](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-7-pdrr-006--reconcile-shared-projections) | Done. Ledger, README, scope index, and the final Gap Ledger agree; integration GREEN reports 14 Markdown files, 33 requests, 132 preserved baseline rows, and 18 new rows. | Plan task 7, source/claim ledger, pack README, scope index, Task Gap Ledger. |
-| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Done. All branch gates pass and the lifecycle is closed; the only open limitation is that reviews were self-performed rather than independently dispatched. | Plan task 8, branch gate evidence, residue proof, lifecycle statuses, closure commit. |
+| [PDRR-007](../plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md#task-8-pdrr-007--review-gates-cleanup-closure-and-finish) | Done. Original branch gates, cleanup, and lifecycle closure pass; independent 2026-08-13 whole-branch review and this corrective fix wave close the provisional review gap before the corrective closure commit. | Plan task 8, branch gate evidence, residue proof, closure `8fa60bb5`, main merge `a5d2dfbb`, 2026-08-13 specification/content, quality, and security reviews. |

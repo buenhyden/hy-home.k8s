@@ -8,18 +8,20 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-08-12 - Partial/DEFER incremental refresh closed after artifact loss
+### 2026-08-13 - Partial/DEFER incremental refresh final review closure
 
 #### Metadata
 
-- **Date**: 2026-08-12
+- **Date**: 2026-08-13
 - **Layer**: docs, research, ci, github-actions, qa, governance
 - **Status**: complete
-- **Tags**: #pdrr #research #ci-cd #github-actions #qa #closure
-- **Owner**: PDRR-005 through PDRR-007 primary agent
+- **Tags**: #pdrr #research #ci-cd #github-actions #qa #closure #independent-review
+- **Owner**: PDRR-005 through PDRR-007 primary agent and final independent reviewers
 - **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: Spec 056, its reciprocal Plan, ADR-0022, and the human
-  amendment approved on 2026-08-12 after the task-local artifact loss.
+- **Provenance**: Spec 056, its reciprocal Plan, ADR-0022, the human amendment
+  approved on 2026-08-12 after task-local artifact loss, original closure
+  `8fa60bb5`, local main merge `a5d2dfbb`, and the 2026-08-13 independent
+  whole-branch review wave.
 
 #### Progress
 
@@ -34,8 +36,16 @@ PDRR-006 reconciled the shared projections atomically, adding
 `SRC-WERPC-068`–`073` and the `WERPD-001` claim register
 `CLM-WERPC-009-01`–`12`, updating the pack README and scope index, and closing
 the last nine `Pending` dispositions. PDRR-007 ran the branch gates and closed
-the lifecycle. All twelve admitted candidates end as `Partial`; none was
-promoted.
+the lifecycle in `8fa60bb5`, but its independent-review evidence was
+provisional. The topic branch was then locally merged to `main` in
+`a5d2dfbb`, and its worktree and branch were cleaned up. On 2026-08-13,
+independent specification/content, quality, and security reviewers completed
+the whole-branch review. This corrective fix wave resolves the specification
+reviewer's Critical closure contradiction and Important stale handoff. The
+quality reviewer approved counts, identifiers, and gates; the security reviewer
+approved the bounded GitHub remote boundary and identified the ignored SDD
+review workspace as controller-owned residue. All twelve admitted candidates
+still end as `Partial`; none was promoted.
 
 #### Memory
 
@@ -66,19 +76,25 @@ stated.
   with 53 PASS, `pre-commit run --all-files` clean, both diff checks clean,
   protected-surface diff unchanged, twelve non-empty logical commits.
 - Residue: all eight enumerated one-off `/tmp/pdrr-*` paths proven absent.
-- Limitation: independent subagent review was not dispatched for PDRR-005
-  through PDRR-007; those reviews were self-performed. PDRR-000 through
-  PDRR-004 independent reviews stand as recorded.
+- Original provisional limitation: independent review was not dispatched for
+  PDRR-005 through PDRR-007 before closure `8fa60bb5`. The 2026-08-13
+  whole-branch specification/content, quality, and security reviews close that
+  review criterion before the corrective closure commit.
+- The ignored PDRR SDD workspace is retained as controller-owned review
+  evidence until scoped re-review is clean; it is not a prohibited
+  `/tmp/pdrr-*` artifact and this worker does not delete it.
 - Prohibited evidence: no additional GitHub query, remote mutation, secret or
   variable read, provider authentication, cluster access, or live validation
   occurred.
 
 #### Handoff
 
-Next owner is the human. The branch is ready for an integration decision, and
-an independent whole-branch content, quality, and security review may still be
-dispatched before merge. Hosted-runtime, provider-runtime, product and
-stakeholder validation, cluster, and live evidence remain `DEFER`.
+Next owner is none. Local integration is complete on `main` at merge
+`a5d2dfbb`; the topic worktree and branch are already cleaned up, and the
+2026-08-13 independent whole-branch review is complete. The controller may
+delete the ignored SDD workspace only after its scoped re-review is clean.
+Hosted-runtime, provider-runtime, product and stakeholder validation, cluster,
+and live evidence remain `DEFER`.
 
 ### 2026-08-12 - PDRR-003 Kubernetes and security evidence refreshed
 
@@ -324,7 +340,7 @@ remains legal only until PDRR-006 integration.
 
 - **Date**: 2026-08-12
 - **Layer**: docs, qa
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #pdrr #research #standalone-execution #activation
 - **Owner**: primary agent
 - **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
@@ -335,9 +351,10 @@ remains legal only until PDRR-006 integration.
   `2576d5103b53c4d14225bc46fed0ec25e53cceed`; approved Spec commit
   `cd2823fc`
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain until PDRR-007 closes Spec 056 or a superseding
-  approved lifecycle record replaces it. Re-observe before acting.
-- **Next Owner**: PDRR-001 assigned worker
+- **Retention / Expiry**: Retain as the historical activation record after
+  PDRR-007 closure; a superseding approved lifecycle record may replace it.
+- **Next Owner**: none; PDRR-001 through PDRR-007 completed downstream by
+  2026-08-13
 
 #### Progress
 
@@ -378,10 +395,11 @@ a RED prerequisite; record the observed PASS before activating.
 
 #### Handoff
 
-PDRR-001 must create and self-test the guarded temporary checker, freeze the
-closed Gap Ledger, and record admission evidence before any research or GitHub
-metadata observation. The allowed report paths remain limited to the PDRR
-directory declared in the Task.
+Historical handoff completed: PDRR-001 created and self-tested the guarded
+temporary checker and froze the closed Gap Ledger before downstream research.
+PDRR-001 through PDRR-007 are now complete, the package is merged to `main` as
+`a5d2dfbb`, final independent review is complete, and next owner is none. The
+allowed report paths remain limited to the PDRR directory declared in the Task.
 
 ### 2026-08-11 - Diátaxis claims source-verified, profile candidate closed
 
