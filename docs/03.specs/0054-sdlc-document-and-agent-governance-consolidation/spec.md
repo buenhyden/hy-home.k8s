@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Technical Specificat
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-13
+updated: 2026-08-14
 artifact_id: "SPEC-0054"
 ---
 
@@ -58,8 +58,12 @@ The reciprocal execution artifacts are [Plan 0054](plan.md) and
   `docs/05.operations/incidents/<year>/inc-####-<slug>/`.
 - Consolidate templates, registries, validators, fixtures, navigation, and
   cross-links with the document taxonomy.
+- Keep root `DESIGN.md` as the canonical UI and design-system guide rather
+  than treating it as an SDLC work-unit design artifact.
 - Consolidate the shared AI-agent control plane and provider-specific native
   adapters without claiming unobserved runtime behavior.
+- Reduce validator, aggregate-gate, fixture, and mutable-SHA complexity while
+  preserving every permanent semantic rule and recovery guarantee.
 - Review every tracked file in `scripts/`, migrate consumers, and remove only
   assets whose replacement and recovery evidence are complete.
 - Review Stage 90 current references, generated indexes, research packs,
@@ -249,6 +253,47 @@ one-time `document-taxonomy-migration.json` and
 `migrate-document-work-units.py` are removed, yielding 47 tracked assets.
 Filename similarity alone is not sufficient evidence for merging validators.
 
+### C-SDLC-011 — design-document ownership
+
+`docs/03.specs/####-<slug>/` does not require a separate `design.md` by
+default. The Spec owns observable behavior and acceptance criteria, the Plan
+owns the change-local technical design and validation approach, and Tasks own
+ordered execution and evidence. A design that outlives one work unit or affects
+system-wide viewpoints is promoted to an Architecture Description or ADR.
+
+Root `DESIGN.md` is not part of that SDLC artifact sequence. It is the
+canonical human-readable owner for UI and design-system color, typography,
+component, and interaction rules. Validators and indexes must not reinterpret
+it as a work-unit technical design.
+
+### C-SDLC-012 — control-plane simplicity and evidence boundary
+
+Each permanent rule has one canonical machine owner and one canonical
+validator implementation. The aggregate gate composes validators; it does not
+reimplement their rules in shell or prose. A CLI wrapper and importable library
+remain separate only when they provide genuinely different supported
+interfaces.
+
+Fixtures remain finite: one representative positive per profile or contract
+and one independent negative per semantic rule family. Tests generate bounded
+mutations for combinatorial cases instead of storing an exhaustive matrix in
+large static fixture files. A completed transition gate, fixture, ledger, or
+helper is removed after its permanent invariants, current consumers, and Stage
+98 recovery evidence have moved to their terminal owners.
+
+Mutable current-state SHA pins are not policy. Branch HEADs, current validator
+blobs, and ordinary current document blobs are validated through schema,
+semantic projection, path/ID equality, lifecycle, cross-link, and
+consumer-zero contracts. A digest remains only when byte identity is itself the
+contract: immutable Stage 98 recovery sources, external supply-chain material,
+or a sealed evidence payload. Digest retention must name that purpose and its
+recovery or refresh boundary.
+
+This simplification is applied incrementally without renumbering work
+packages. Every remaining work package removes the duplication it touches;
+WP-010 closes the whole-script ownership and consumer graph, and WP-014 proves
+the terminal fixed point.
+
 ## Core Design
 
 The implementation is a sequence of independently reviewable cutovers rather
@@ -270,6 +315,19 @@ Every cutover starts with a focused failing test that proves the old conflict
 or missing invariant. Implementation is minimal until that test passes. Broad
 gates run only after the focused contract is green and the logical index and
 worktree are synchronized.
+
+The rule flow is unidirectional:
+
+```text
+approved Spec/ADR
+  -> machine contract/schema
+  -> canonical validator
+  -> bounded fixture and mutation tests
+  -> aggregate orchestration
+```
+
+Human-readable projections may explain this flow but do not become parallel
+rule owners.
 
 ## Data Modeling & Storage Strategy
 
@@ -296,6 +354,10 @@ The canonical interfaces are:
 - Stage 98 migration and tombstone records for historical recovery;
 - aggregate validation as the terminal repository-static decision surface.
 
+Every remaining work package must report any canonical-owner consolidation,
+duplicate aggregate logic removed, transition fixture retired, and mutable SHA
+pin eliminated or explicitly retained under C-SDLC-012.
+
 Human-readable READMEs and catalogs are projections or routers. They do not
 duplicate machine inventories or independently redefine lifecycle states.
 
@@ -315,6 +377,12 @@ duplicate machine inventories or independently redefine lifecycle states.
   test consumer fails.
 - A Guide and Runbook that both claim the same executable procedure fail the
   operations ownership audit.
+- A permanent rule implemented in more than one validator or inline aggregate
+  block fails the ownership audit.
+- A current-state digest without an immutable-byte, supply-chain, or recovery
+  purpose fails the evidence-boundary audit.
+- A retired transition fixture or helper with no current consumer and no
+  terminal semantic responsibility fails the residue audit.
 - An active document linking directly to an individual Archive record fails;
   collection indexes or migration ledgers are used instead.
 
@@ -367,7 +435,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 | VAL-SDLC-008 | Every Stage 90 file has exactly one disposition; current references have owners/freshness; historical evidence remains recoverable. |
 | VAL-SDLC-009 | Every move, merge, replacement, and deletion has valid Stage 98 migration/tombstone evidence and no active direct Archive-record link. |
 | VAL-SDLC-010 | The exact 50-script ledger is complete; consumer-safe transitions prove 49 and then 47 terminal assets. |
-| VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary. |
+| VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |
 
 ## Traceability
@@ -386,7 +454,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 | N/A — VAL-SDLC-008 shares the direct approved requirement source above. | VAL-SDLC-008 | Complete Stage 90 disposition and freshness audit. |
 | N/A — VAL-SDLC-009 shares the direct approved requirement source above. | VAL-SDLC-009 | Migration, tombstone, recovery, and direct-Archive-link gates. |
 | N/A — VAL-SDLC-010 shares the direct approved requirement source above. | VAL-SDLC-010 | Script disposition, consumer-zero, and exact-census gates. |
-| N/A — VAL-SDLC-011 shares the direct approved requirement source above. | VAL-SDLC-011 | Focused, affected, staged, aggregate, and review gates. |
+| N/A — VAL-SDLC-011 shares the direct approved requirement source above. | VAL-SDLC-011 | Focused, affected, staged, aggregate, review, canonical-owner, duplicate-gate, fixture-residue, and digest-purpose audits. |
 | N/A — VAL-SDLC-012 shares the direct approved requirement source above. | VAL-SDLC-012 | Commit-scope and staged-path audits. |
 
 ### External Basis
@@ -395,8 +463,8 @@ hosted CI, deployment, incident response, or live platform correctness.
 - [ISO/IEC/IEEE 15289](https://www.iso.org/cms/%20render/live/en/sites/isoorg/contents/data/standard/07/49/74909.html): lifecycle information-item purpose and content, with organization-appropriate combination or separation.
 - [ISO/IEC/IEEE 29148](https://www.iso.org/cms/%20render/live/en/sites/isoorg/contents/data/standard/07/20/72089.html): requirements engineering information items and content.
 - [ISO/IEC/IEEE 42010](https://www.iso.org/standard/74393.html): Architecture Description structure and expression, distinct from system requirements.
-- [GitHub Spec Kit](https://github.github.com/spec-kit/) and [Spec of Specs](https://github.com/github/spec-kit/blob/main/docs/concepts/spec-of-specs.md): Spec, Plan, Tasks, and implementation workflow with per-feature co-location.
-- [OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md): change-unit artifacts, current truth, and archive feedback.
+- [GitHub Spec Kit](https://github.github.com/spec-kit/), [Handling Complex Features](https://github.github.com/spec-kit/concepts/complex-features.html), and [Spec of Specs](https://github.github.com/spec-kit/concepts/spec-of-specs.html): Spec, Plan, Tasks, and implementation workflow with focused per-feature slices and bounded subagent context.
+- [OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md): change-unit artifacts, current truth, archive feedback, and the explicit principle that artifacts are enablers rather than accumulated gates.
 - [NIST AI RMF](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/) and [ISO/IEC 42001](https://www.iso.org/standard/42001): cross-cutting AI governance, traceability, monitoring, and continual improvement.
 - [NIST SP 800-61r3](https://www.nist.gov/publications/incident-response-recommendations-and-considerations-cybersecurity-risk-management-csf), [Google SRE incident management](https://sre.google/resources/practices-and-processes/incident-management-guide/), and [postmortem culture](https://sre.google/workbook/postmortem-culture/): incident facts, roles, response, recovery, learning, and action ownership.
 - [Diataxis](https://diataxis.fr/start-here/): separation of learning, how-to, reference, and explanation needs.
