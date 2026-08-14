@@ -389,18 +389,18 @@ execution was accessed.
 
 #### Admitted current-source outcomes
 
-| Official primary source | Publication / revision and adopted scope | Rejected inference, uncertainty, and refresh trigger |
-| --- | --- | --- |
-| [Kubernetes RBAC good practices](https://kubernetes.io/docs/concepts/security/rbac-good-practices/) | Last modified 2026-05-20, revision `87470db12b`; checked 2026-08-12. Adopted the newly explicit warning that `get` on `nodes/proxy` is not read-only because it reaches privileged kubelet APIs and can bypass API audit and admission. | It does not prove the local Alloy grant is exercised or unnecessary. Recheck when the RBAC page, Alloy version/configuration, or local ClusterRole changes. |
-| [Grafana Alloy `loki.source.kubernetes` at v1.13.1](https://github.com/grafana/alloy/blob/v1.13.1/docs/sources/reference/components/loki/loki.source.kubernetes.md) | Exact upstream tag matching the local image; checked 2026-08-12. The component tails Pod container logs through the Kubernetes API, not node logs, and defaults to the running Pod's ServiceAccount when no client block is supplied. | Component behavior does not by itself enumerate every permission required by the complete local Alloy graph. Removal of `nodes/proxy` needs version-compatible RBAC mapping and separately authorized runtime verification. |
-| [Kubernetes admission controllers](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/) | Last modified 2026-03-16, revision `65a8302b72`; checked 2026-08-12. It preserves admission as write-request enforcement and documents the new `ServiceAccountNodeAudienceRestriction` feature. | Current docs are v1.36 while the repository declares k3s v1.35.0. The feature gate and live admission chain were not observed, and this feature cannot establish the external Vault role's audience binding. Recheck on the declared k3s version, feature-gate, or admission-policy selectors. |
-| [Argo CD source integrity](https://argo-cd.readthedocs.io/en/latest/user-guide/source-integrity/) and [Git GnuPG verification](https://argo-cd.readthedocs.io/en/latest/user-guide/source-integrity-git-gpg/) | Current undated pages checked 2026-08-12. Project-level `spec.sourceIntegrity` can block sync when configured criteria fail; the GnuPG page identifies the Argo CD 3.5 declaration and legacy-`signatureKeys` compatibility boundary. | The local controller version is not pinned or observed, and no local `sourceIntegrity` or `signatureKeys` selector exists. Capability is not configured enforcement. Recheck when Argo CD version/bootstrap, AppProject integrity, repository trust, or revision selectors change. |
-| [Helm documentation](https://helm.sh/docs/) and [Helm v3 provenance](https://helm.sh/docs/v3/topics/provenance/) | Current docs identify Helm 4.2.3; the retained exact v3 page identifies version 3.21.1. Both were checked 2026-08-12. The v3 contract binds a chart archive checksum and signer through a `.prov` file and trusted PGP key. | Local bootstrap does not pin the Helm chart version or record provenance verification, and the local Helm client version is unobserved. The v3 procedure is not assumed compatible with every Helm 4 path. Recheck on bootstrap version/provenance or Helm major-version changes. |
-| [External Secrets Operator Vault provider](https://external-secrets.io/latest/provider/hashicorp-vault/) | Current undated page checked 2026-08-12. It now gives an exact version boundary: Vault 1.20 warns for roles without an audience and Vault 1.21+ requires an audience. | The manifest's requested `vault` audience does not prove the external Vault role, server version, token review, or authentication outcome. Recheck when ESO/Vault versions, Store authentication, ServiceAccount, or external role contract changes. |
-| [Gatekeeper](https://open-policy-agent.github.io/gatekeeper/website/docs/) | Current undated documentation checked 2026-08-12. It retains validating/mutating admission and audit as distinct effects. | No local Gatekeeper constraint selector exists, and neither deployment nor effective admission/audit was observed. Recheck when the admission design or policy selectors change. |
-| [Sigstore Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/) | Current undated page checked 2026-08-12. Keyless verification binds certificate identity and issuer; normal image verification checks the signed digest claim, while attestation uses a separate verification command. | A signature is not an attestation or provenance. `--check-claims=false` is rejected as the target because it skips payload-claim verification. No local signature, trust root, registry object, or enforcement was observed. Recheck when image identity or trust-policy selectors change. |
-| [SLSA v1.2 artifact verification](https://slsa.dev/spec/v1.2/verifying-artifacts) | Approved specification v1.2, checked 2026-08-12. Adopted the distinct verification steps for trusted builder identity, signed provenance envelope, expected build parameters, and consumer policy. | Provenance presence alone does not prove verification or policy acceptance. No artifact, attestation, builder identity, or verifier result was accessed. Recheck on SLSA revision or local provenance policy/tooling changes. |
-| [NIST SP 800-218 SSDF v1.1](https://csrc.nist.gov/pubs/sp/800/218/final) | Published February 2022; checked 2026-08-12. Retained only as secure-development practice vocabulary. | It does not certify repository conformance or prove a deployed control. Recheck on a new NIST revision or an approved local SSDF mapping. |
+| Official primary source                                                                                                                                                                                       | Publication / revision and adopted scope                                                                                                                                                                                                | Rejected inference, uncertainty, and refresh trigger                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Kubernetes RBAC good practices](https://kubernetes.io/docs/concepts/security/rbac-good-practices/)                                                                                                           | Last modified 2026-05-20, revision `87470db12b`; checked 2026-08-12. Adopted the newly explicit warning that `get` on `nodes/proxy` is not read-only because it reaches privileged kubelet APIs and can bypass API audit and admission. | It does not prove the local Alloy grant is exercised or unnecessary. Recheck when the RBAC page, Alloy version/configuration, or local ClusterRole changes.                                                                                                                                    |
+| [Grafana Alloy `loki.source.kubernetes` at v1.13.1](https://github.com/grafana/alloy/blob/v1.13.1/docs/sources/reference/components/loki/loki.source.kubernetes.md)                                           | Exact upstream tag matching the local image; checked 2026-08-12. The component tails Pod container logs through the Kubernetes API, not node logs, and defaults to the running Pod's ServiceAccount when no client block is supplied.   | Component behavior does not by itself enumerate every permission required by the complete local Alloy graph. Removal of `nodes/proxy` needs version-compatible RBAC mapping and separately authorized runtime verification.                                                                    |
+| [Kubernetes admission controllers](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)                                                                                            | Last modified 2026-03-16, revision `65a8302b72`; checked 2026-08-12. It preserves admission as write-request enforcement and documents the new `ServiceAccountNodeAudienceRestriction` feature.                                         | Current docs are v1.36 while the repository declares k3s v1.35.0. The feature gate and live admission chain were not observed, and this feature cannot establish the external Vault role's audience binding. Recheck on the declared k3s version, feature-gate, or admission-policy selectors. |
+| [Argo CD source integrity](https://argo-cd.readthedocs.io/en/latest/user-guide/source-integrity/) and [Git GnuPG verification](https://argo-cd.readthedocs.io/en/latest/user-guide/source-integrity-git-gpg/) | Current undated pages checked 2026-08-12. Project-level `spec.sourceIntegrity` can block sync when configured criteria fail; the GnuPG page identifies the Argo CD 3.5 declaration and legacy-`signatureKeys` compatibility boundary.   | The local controller version is not pinned or observed, and no local `sourceIntegrity` or `signatureKeys` selector exists. Capability is not configured enforcement. Recheck when Argo CD version/bootstrap, AppProject integrity, repository trust, or revision selectors change.             |
+| [Helm documentation](https://helm.sh/docs/) and [Helm v3 provenance](https://helm.sh/docs/v3/topics/provenance/)                                                                                              | Current docs identify Helm 4.2.3; the retained exact v3 page identifies version 3.21.1. Both were checked 2026-08-12. The v3 contract binds a chart archive checksum and signer through a `.prov` file and trusted PGP key.             | Local bootstrap does not pin the Helm chart version or record provenance verification, and the local Helm client version is unobserved. The v3 procedure is not assumed compatible with every Helm 4 path. Recheck on bootstrap version/provenance or Helm major-version changes.              |
+| [External Secrets Operator Vault provider](https://external-secrets.io/latest/provider/hashicorp-vault/)                                                                                                      | Current undated page checked 2026-08-12. It now gives an exact version boundary: Vault 1.20 warns for roles without an audience and Vault 1.21+ requires an audience.                                                                   | The manifest's requested `vault` audience does not prove the external Vault role, server version, token review, or authentication outcome. Recheck when ESO/Vault versions, Store authentication, ServiceAccount, or external role contract changes.                                           |
+| [Gatekeeper](https://open-policy-agent.github.io/gatekeeper/website/docs/)                                                                                                                                    | Current undated documentation checked 2026-08-12. It retains validating/mutating admission and audit as distinct effects.                                                                                                               | No local Gatekeeper constraint selector exists, and neither deployment nor effective admission/audit was observed. Recheck when the admission design or policy selectors change.                                                                                                               |
+| [Sigstore Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/)                                                                                                                            | Current undated page checked 2026-08-12. Keyless verification binds certificate identity and issuer; normal image verification checks the signed digest claim, while attestation uses a separate verification command.                  | A signature is not an attestation or provenance. `--check-claims=false` is rejected as the target because it skips payload-claim verification. No local signature, trust root, registry object, or enforcement was observed. Recheck when image identity or trust-policy selectors change.     |
+| [SLSA v1.2 artifact verification](https://slsa.dev/spec/v1.2/verifying-artifacts)                                                                                                                             | Approved specification v1.2, checked 2026-08-12. Adopted the distinct verification steps for trusted builder identity, signed provenance envelope, expected build parameters, and consumer policy.                                      | Provenance presence alone does not prove verification or policy acceptance. No artifact, attestation, builder identity, or verifier result was accessed. Recheck on SLSA revision or local provenance policy/tooling changes.                                                                  |
+| [NIST SP 800-218 SSDF v1.1](https://csrc.nist.gov/pubs/sp/800/218/final)                                                                                                                                      | Published February 2022; checked 2026-08-12. Retained only as secure-development practice vocabulary.                                                                                                                                   | It does not certify repository conformance or prove a deployed control. Recheck on a new NIST revision or an approved local SSDF mapping.                                                                                                                                                      |
 
 The Kubernetes Secret guidance, Pod Security Admission guidance, Argo CD
 tracking/auto-sync contract, and already registered baseline sources remain
@@ -446,16 +446,189 @@ state remain `DEFER`; no static declaration is promoted to a runtime result.
 
 #### Final request dispositions
 
-| Request / final disposition | As-Is | Gap | Bounded target | Evidence depth | Owner | Refresh trigger |
-| --- | --- | --- | --- | --- | --- | --- |
-| REQ-WERPC-008 — `Partial` | Exact Alloy v1.13.1 and GitOps/bootstrap selectors are repo-static `Verified`; the current Kubernetes source makes `nodes/proxy` privilege explicit. | Component need, effective RBAC, Argo/Helm compatibility, controller reconciliation, and immutable-source enforcement are `DEFER`. | Map each configured controller component to minimum permissions; remove `nodes/proxy` unless an exact-version need is demonstrated; separately test effective authorization and log continuity. Pin and verify Git/chart/image identities with version-compatible controls. | Current official primary sources plus exact repository-static selectors; no live or artifact evidence. | Kubernetes/observability baseline with platform delivery and security owners. | A cited upstream contract, Alloy/Argo/Helm version, RBAC, Git revision, bootstrap, image, or policy selector changes. |
-| REQ-WERPC-009 — `Partial` | Repository-static k3d, GitOps, validator, and external-gateway declarations remain observable. | Effective cluster, gateway, registry, cloud, hosted CI, and provider state are `DEFER`. | Preserve the static/runtime boundary; collect only separately authorized, read-only live evidence with rollback and secret-safe output controls. | Repository-static declarations and already registered sources only. | Infrastructure baseline and the operator for each external system. | An operator authorizes a separate live observation or a named infrastructure selector changes. |
-| REQ-WERPC-025 — `Partial` | ESO audience and TokenReview intent, static policy checks, and current identity/signature/attestation/provenance contracts are source/static `Verified`. | External Vault role/version, effective admission, trust roots, signatures, attestations, provenance, artifacts, recovery, and runtime enforcement are `DEFER`. | Design version-compatible, fail-closed admission and artifact verification with explicit identity/issuer/builder expectations; verify the external Vault audience contract and perform an approved recovery exercise separately. | Current official primary sources plus exact policy/GitOps/infrastructure/runbook selectors; no Secret, live, trust-store, artifact, or recovery evidence. | Security baseline with Kubernetes platform, delivery, Vault, and recovery owners. | A cited security source, admission or identity selector, Vault/ESO version/role, trust policy, artifact flow, or recovery contract changes. |
+| Request / final disposition | As-Is                                                                                                                                                    | Gap                                                                                                                                                            | Bounded target                                                                                                                                                                                                                                                              | Evidence depth                                                                                                                                            | Owner                                                                             | Refresh trigger                                                                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-WERPC-008 — `Partial`   | Exact Alloy v1.13.1 and GitOps/bootstrap selectors are repo-static `Verified`; the current Kubernetes source makes `nodes/proxy` privilege explicit.     | Component need, effective RBAC, Argo/Helm compatibility, controller reconciliation, and immutable-source enforcement are `DEFER`.                              | Map each configured controller component to minimum permissions; remove `nodes/proxy` unless an exact-version need is demonstrated; separately test effective authorization and log continuity. Pin and verify Git/chart/image identities with version-compatible controls. | Current official primary sources plus exact repository-static selectors; no live or artifact evidence.                                                    | Kubernetes/observability baseline with platform delivery and security owners.     | A cited upstream contract, Alloy/Argo/Helm version, RBAC, Git revision, bootstrap, image, or policy selector changes.                       |
+| REQ-WERPC-009 — `Partial`   | Repository-static k3d, GitOps, validator, and external-gateway declarations remain observable.                                                           | Effective cluster, gateway, registry, cloud, hosted CI, and provider state are `DEFER`.                                                                        | Preserve the static/runtime boundary; collect only separately authorized, read-only live evidence with rollback and secret-safe output controls.                                                                                                                            | Repository-static declarations and already registered sources only.                                                                                       | Infrastructure baseline and the operator for each external system.                | An operator authorizes a separate live observation or a named infrastructure selector changes.                                              |
+| REQ-WERPC-025 — `Partial`   | ESO audience and TokenReview intent, static policy checks, and current identity/signature/attestation/provenance contracts are source/static `Verified`. | External Vault role/version, effective admission, trust roots, signatures, attestations, provenance, artifacts, recovery, and runtime enforcement are `DEFER`. | Design version-compatible, fail-closed admission and artifact verification with explicit identity/issuer/builder expectations; verify the external Vault audience contract and perform an approved recovery exercise separately.                                            | Current official primary sources plus exact policy/GitOps/infrastructure/runbook selectors; no Secret, live, trust-store, artifact, or recovery evidence. | Security baseline with Kubernetes platform, delivery, Vault, and recovery owners. | A cited security source, admission or identity selector, Vault/ESO version/role, trust policy, artifact flow, or recovery contract changes. |
 
 No row is promoted to `Verified` because the admitted source delta and static
 reconciliation do not close their runtime and compatibility questions. No
 `Contradicted` row was found. PDRR-006 owns final shared-ledger integration and
 contiguous source/claim IDs; this increment creates proposals only.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-008`, `REQ-WERPC-009`, and `REQ-WERPC-025`, checked on
+**2026-08-14**. It did not run `kubectl`, `k3d`, `helm`, `argocd`, or `vault`,
+and it did not query the GitHub remote for this repository. The objective
+workspace check was `git diff --stat a5d2dfbb HEAD -- gitops/ policy/
+infrastructure/ traefik/`, where `a5d2dfbb` is the 2026-08-12 baseline merge
+commit; the command returned zero changed files, so every selector cited
+below was spot-verified rather than assumed unchanged.
+
+#### REQ-WERPC-008 Kubernetes workspace and source consistency check
+
+**Workspace delta:** `no-change`. The six tracked policies under
+`gitops/platform/network-policies/` still declare `policyTypes: [Egress]`
+only; `ClusterRole/kube-state-metrics` in
+`gitops/platform/monitoring/kube-state-metrics.yaml` still includes
+`secrets` with `verbs: [list, watch]` and the Deployment still has no
+`args`; `Rollout/adminer` in `gitops/workloads/adminer/rollout.yaml` still
+declares neither `serviceAccountName`, `automountServiceAccountToken`, nor a
+pod/container `securityContext`; twelve GitOps files still declare
+`targetRevision: main`; and `infrastructure/bootstrap-local.sh` still runs
+`helm upgrade --install argocd argo/argo-cd` with no `--version`. These are
+the same selectors the [Kubernetes baseline](#kubernetes-baseline), the
+[2026-08-10 refresh](#2026-08-10-gap-only-kubernetesecurity-refresh), and
+the [2026-08-11 refresh](#2026-08-11-partialdefer-incremental-refresh)
+already cite.
+
+**External result:** all fourteen distinct URLs across the registered rows
+`SRC-WERPC-023`–`028`, `SRC-WERPC-031`–`032`, `SRC-WERPC-034`, `SRC-WERPC-060`,
+and `SRC-WERPC-062`–`065` that bound this row were reachable, with one
+inconclusive sub-claim; see the [shared source-outcome
+table](#re-checked-external-sources-shared-by-req-werpc-008-and-req-werpc-025)
+below.
+
+**As-Is:** Unchanged from the 2026-08-11 section: manifest intent for the
+six Egress-only NetworkPolicies, the kube-state-metrics Secret RBAC/metric
+distinction, the Adminer ServiceAccount/hardening gap, and the Git/chart/
+image identity gaps remain repo-static `Verified`; CNI capability, effective
+RBAC, controller need, and immutable-source enforcement remain `DEFER`.
+
+**Gap and bounded target:** Unchanged. Component need, effective RBAC,
+reconciliation, and supply-chain verification are not established by static
+manifests alone.
+
+**Missing evidence:** effective RBAC, admission behavior, reconciliation
+state, and Secret-backend/runtime authorization for the cited grants and
+gaps. **Owning authority:** Kubernetes/observability baseline with platform
+delivery and security owners; the kube-state-metrics Secret-read grant and
+the absent default-deny ingress posture are already tracked as the two
+highest-value open items in `docs/00.agent-governance/memory/progress.md`'s
+2026-08-10 entry and are not re-derived here as new findings. **Safe
+boundary:** a separately authorized, non-secret, read-only effective-RBAC or
+admission observation against the exact cited selector; no cluster or
+credential access. **Refresh trigger:** a cited Kubernetes, Argo CD,
+Gatekeeper, Helm, Sigstore, or SLSA source, or a named `gitops/`, `policy/`,
+or `infrastructure/` selector, materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-05`.
+
+#### REQ-WERPC-009 Infrastructure workspace consistency check
+
+**Workspace delta:** `no-change`. `infrastructure/README.md` still
+separates `verify-contracts-static.sh` from the cluster-dependent
+`verify-cluster.sh`, `verify-gitops.sh`, `verify-network-policies.sh`,
+`verify-secrets.sh`, and `run-all.sh`; `infrastructure/k3d/k3d-cluster.yaml`
+still pins `image: rancher/k3s:v1.35.0-k3s1` with host ports `80:80` and
+`443:443`; and `gitops/clusters/local/root-application.yaml` and
+`gitops/apps/root/` still track `targetRevision: main`. These match the
+[Infrastructure baseline](#infrastructure-baseline) and the 2026-08-11
+section's static-only reconciliation.
+
+**External result:** not applicable this cycle. Consistent with the
+2026-08-11 precedent, `REQ-WERPC-009` has no dedicated row in the source
+register and continues to rely on repository-static evidence only; no
+external URL was re-fetched for it. The Kubernetes/Argo CD sources checked
+for `REQ-WERPC-008` provide shared background context but are not this row's
+own evidence.
+
+**As-Is:** Unchanged. Repository-static k3d, GitOps, validator, and
+external-gateway declarations remain observable.
+
+**Gap and bounded target:** Unchanged. Effective cluster, gateway, registry,
+cloud, hosted-CI, and provider state remain `DEFER`; preserve the static/
+runtime boundary rather than collect live evidence in this increment.
+
+**Missing evidence:** effective cluster, gateway, registry, cloud, hosted
+CI, and provider state. **Owning authority:** Infrastructure baseline and
+the operator for each external system. **Safe boundary:** an
+operator-authorized, read-only live observation with rollback and
+secret-safe output controls; no live command was run this cycle. **Refresh
+trigger:** an operator authorizes a separate live observation, or a named
+`infrastructure/` or `traefik/` selector materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-06`.
+
+#### REQ-WERPC-025 Security workspace and source consistency check
+
+**Workspace delta:** `no-change`. `policy/conftest/kubernetes.rego` still
+denies plaintext `Secret` manifests, `CreateNamespace=true`, AppProject
+wildcard groups/kinds, and `:latest` image tags; the checked paths still
+contain no tracked Pod Security Admission labels,
+ValidatingAdmissionPolicy/MutatingAdmissionPolicy resources, Gatekeeper
+installation, ConstraintTemplate, or Constraint; and
+`gitops/platform/eso/vault-secret-store.yaml` still requests the `vault`
+audience with the `system:auth-delegator` TokenReview binding. These match
+the [Security baseline](#security-baseline) and the 2026-08-11 section's
+static reconciliation.
+
+**External result:** all URLs across the registered rows `SRC-WERPC-024`–
+`026`, `SRC-WERPC-028`–`034`, `SRC-WERPC-061`, and `SRC-WERPC-065` that bound
+this row were reachable, with one inconclusive sub-claim; see the [shared
+source-outcome
+table](#re-checked-external-sources-shared-by-req-werpc-008-and-req-werpc-025)
+below.
+
+**As-Is:** Unchanged. ESO audience and TokenReview intent, static policy
+checks, and current identity/signature/attestation/provenance contracts
+remain source/static `Verified`.
+
+**Gap and bounded target:** Unchanged. External Vault role/version,
+effective admission, trust roots, signatures, attestations, provenance,
+artifacts, recovery, and runtime enforcement remain `DEFER`.
+
+**Missing evidence:** external Vault role/version, effective admission,
+trust roots, signatures, attestations, provenance, artifacts, recovery, and
+runtime enforcement. **Owning authority:** Security baseline with
+Kubernetes platform, delivery, Vault, and recovery owners. **Safe
+boundary:** a separately authorized, non-secret inspection of the exact
+cited identity/admission/trust selector; no Secret value, trust-store,
+artifact, or recovery access. **Refresh trigger:** a cited security source,
+admission or identity selector, Vault/ESO version/role, trust policy,
+artifact flow, or recovery contract changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-07`.
+
+#### Re-checked external sources (shared by REQ-WERPC-008 and REQ-WERPC-025)
+
+A representative URL from each of the eighteen registered rows
+`SRC-WERPC-023`–`034` and `SRC-WERPC-060`–`065` was re-fetched on
+**2026-08-14**. Every previously adopted claim held except one, which was
+inconclusive rather than contradicted.
+
+| Source (registered row)                                                                                                                                 | Result         | Note                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [NetworkPolicy concepts](https://kubernetes.io/docs/concepts/services-networking/network-policies/) (`SRC-WERPC-023`)                                   | `unchanged`    | Still states policies require a supporting network implementation and that isolation follows which policies select a Pod; no visible last-modified date.                                                                                                                                                                                                       |
+| [Secrets concepts](https://kubernetes.io/docs/concepts/configuration/secret/) (`SRC-WERPC-024`)                                                         | `unchanged`    | Still states Secret data is stored unencrypted in etcd by default.                                                                                                                                                                                                                                                                                             |
+| [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) (`SRC-WERPC-025`)                                        | `unchanged`    | Still describes namespace-scoped enforce/audit/warn against Pod Security Standards; page shows a last-modified date of March 7, 2024.                                                                                                                                                                                                                          |
+| [Kubernetes policy mechanisms](https://kubernetes.io/docs/concepts/policy/) (`SRC-WERPC-026`, `034`)                                                    | `unchanged`    | Still lists API objects, admission controllers, ValidatingAdmissionPolicy, dynamic admission webhooks, and OPA Gatekeeper as an implementation example; page shows a last-modified date of December 24, 2023.                                                                                                                                                  |
+| [Admission controllers reference](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/) (`SRC-WERPC-026`)                     | `inconclusive` | Still states admission enforces create/delete/modify/connect, not reads. The fetched content was truncated twice before reaching either the `ServiceAccountNodeAudienceRestriction` entry or the page footer, so the 2026-08-12 claim that this feature is newly documented could not be independently reconfirmed this cycle. Not contradicted — unconfirmed. |
+| [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) (`SRC-WERPC-027`)                                              | `unchanged`    | Still describes automated sync, prune, self-heal, and retry policy; no explicit version shown.                                                                                                                                                                                                                                                                 |
+| [Argo CD cluster bootstrapping](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/) (`SRC-WERPC-027`)                      | `unchanged`    | Still documents ApplicationSet cluster-generator and app-of-apps as the two bootstrapping approaches.                                                                                                                                                                                                                                                          |
+| [Gatekeeper introduction v3.22.x](https://open-policy-agent.github.io/gatekeeper/website/docs/v3.22.x/) (`SRC-WERPC-028`, `034`)                        | `unchanged`    | Still describes Gatekeeper as a validating and mutating OPA-backed webhook with audit capability.                                                                                                                                                                                                                                                              |
+| [RBAC good practices](https://kubernetes.io/docs/concepts/security/rbac-good-practices/) (`SRC-WERPC-031`)                                              | `unchanged`    | Still warns `get` on `nodes/proxy` is not read-only, and that `list`/`watch` on Secrets reveals contents the same as `get`.                                                                                                                                                                                                                                    |
+| [SLSA v1.2 specification](https://slsa.dev/spec/v1.2/) (`SRC-WERPC-032`)                                                                                | `unchanged`    | Still the current Approved specification version; no newer released version referenced.                                                                                                                                                                                                                                                                        |
+| [NIST SP 800-218 SSDF v1.1](https://csrc.nist.gov/pubs/sp/800/218/final) (`SRC-WERPC-033`)                                                              | `unchanged`    | Still Final, published February 2022; page now surfaces a related `SP 800-218A` part reference not previously noted, which extends rather than contradicts the adopted scope.                                                                                                                                                                                  |
+| [kube-state-metrics v2.14.0 README and standard ClusterRole](https://github.com/kubernetes/kube-state-metrics/blob/v2.14.0/README.md) (`SRC-WERPC-060`) | `unchanged`    | Content pinned to the immutable `v2.14.0` git tag; the standard `ClusterRole` example still grants `secrets` `list`/`watch`.                                                                                                                                                                                                                                   |
+| [Authorization request verbs](https://kubernetes.io/docs/reference/access-authn-authz/authorization/index.html) (`SRC-WERPC-061`)                       | `unchanged`    | Still documents `get`/`list`/`watch` as distinct verbs that are equivalent in data access, including the `list` on `secrets` caution.                                                                                                                                                                                                                          |
+| [Application security checklist](https://kubernetes.io/docs/concepts/security/application-security-checklist/) (`SRC-WERPC-062`)                        | `unchanged`    | Still recommends `automountServiceAccountToken: false` unless needed, dedicated ServiceAccounts over `default`, and deployment into a namespace enforcing an appropriate Pod Security Standard.                                                                                                                                                                |
+| [Argo CD source integrity](https://argo-cd.readthedocs.io/en/stable/user-guide/source-integrity/) (`SRC-WERPC-063`)                                     | `unchanged`    | Still describes project-level `sourceIntegrity` blocking sync on failed criteria; no version number stated on this page. The `tracking_strategies`, `source-integrity-git-gpg`, and `helm` pages under this row were not individually re-fetched this cycle.                                                                                                   |
+| [Helm v3 provenance](https://helm.sh/docs/v3/topics/provenance/) (`SRC-WERPC-064`)                                                                      | `unchanged`    | Still describes the `.prov` file, SHA256 checksum, and OpenPGP signature contract, plus `helm install --verify`. The Kubernetes image-names page under this row was not individually re-fetched this cycle.                                                                                                                                                    |
+| [Sigstore Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/) (`SRC-WERPC-065`)                                                    | `unchanged`    | Still describes keyless verification binding certificate identity and issuer, and that `--check-claims=false` skips payload-claim verification only.                                                                                                                                                                                                           |
+| [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations) (`SRC-WERPC-065`)                            | `unchanged`    | Still states attestations are not by themselves a security guarantee; the SLSA-provenance and cosign-attestation-verify pages under this row were not individually re-fetched this cycle.                                                                                                                                                                      |
+
+No `kubectl`, `k3d`, `helm`, `argocd`, or `vault` command was run, and no
+GitHub API or `gh` query was made; only public documentation pages were
+fetched. No row is promoted to `Verified`; no row is `Contradicted`. New
+source registered: `SRC-WERPC-075`. New claims registered:
+`CLM-WERPC-010-05` through `CLM-WERPC-010-07`.
 
 ## Related Documents
 
