@@ -304,17 +304,19 @@ standalone execution rules.
 
 ### Lifecycle Traceability
 
-| PRD requirement                                                     | Spec criterion             | Verification method                            |
-| ------------------------------------------------------------------- | -------------------------- | ---------------------------------------------- |
-| N/A — direct human request for topic-complete research coverage     | VAL-WRCP-001               | Topic ledger and owner-uniqueness check        |
-| N/A — direct human request for per-category workspace investigation | VAL-WRCP-002               | Separated workspace and external evidence rows |
-| N/A — direct human request for explicit status closure              | VAL-WRCP-003               | Content contract review                        |
-| N/A — direct human request for source-backed provenance             | VAL-WRCP-004               | Ledger comparison and uniqueness checks        |
-| N/A — direct human approval of two one-off cleanup targets          | VAL-WRCP-005               | Consumer check and tracked-diff review         |
-| N/A — direct human request to integrate into the existing pack      | VAL-WRCP-006               | Exact path and duplicate-owner checks          |
-| N/A — direct human request for per-scope organization               | VAL-WRCP-007               | Scope registry re-derivation                   |
-| N/A — direct human request that cross-links reflect modifications   | VAL-WRCP-008, VAL-WRCP-009 | Integration check and commit ordering          |
-| N/A — direct human request for logical-unit commits                 | VAL-WRCP-010, VAL-WRCP-011 | Commit log and validation evidence             |
+| PRD requirement                                                     | Spec criterion | Verification method                            |
+| ------------------------------------------------------------------- | -------------- | ---------------------------------------------- |
+| N/A — direct human request for topic-complete research coverage     | VAL-WRCP-001   | Topic ledger and owner-uniqueness check        |
+| N/A — direct human request for per-category workspace investigation | VAL-WRCP-002   | Separated workspace and external evidence rows |
+| N/A — direct human request for explicit status closure              | VAL-WRCP-003   | Content contract review                        |
+| N/A — direct human request for source-backed provenance             | VAL-WRCP-004   | Ledger comparison and uniqueness checks        |
+| N/A — direct human approval of two one-off cleanup targets          | VAL-WRCP-005   | Consumer check and tracked-diff review         |
+| N/A — direct human request to integrate into the existing pack      | VAL-WRCP-006   | Exact path and duplicate-owner checks          |
+| N/A — direct human request for per-scope organization               | VAL-WRCP-007   | Scope registry re-derivation                   |
+| N/A — direct human request that cross-links reflect modifications   | VAL-WRCP-008   | Integration check across shared indexes        |
+| N/A — direct human request that reconciliation observe final state  | VAL-WRCP-009   | Commit ordering of the reconciliation unit     |
+| N/A — direct human request for logical-unit commits                 | VAL-WRCP-010   | Validation lane results against the baseline   |
+| N/A — direct human request for a clean terminal tree                | VAL-WRCP-011   | Commit log and temporary-file absence check    |
 
 ### Related Documents
 
