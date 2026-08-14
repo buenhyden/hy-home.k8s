@@ -163,6 +163,24 @@ Architecture and Spec artifacts. Stage 01 owns long-lived,
 solution-independent requirements; it does not repeat one requirement across
 separate PRD, SRS, and Interface Requirement documents.
 
+Package members use the package identity as their global namespace:
+
+```text
+REQ-####-FR-####   functional requirement
+REQ-####-NFR-####  non-functional requirement
+REQ-####-IF-####   external interface requirement
+```
+
+The leading `REQ-####` must equal the containing Package `artifact_id`.
+`FR`, `NFR`, and `IF` sequences are independent, four-digit, append-only
+number spaces within that Package. A member ID is unique repository-wide and
+is never reused for a different statement. Moving or splitting a requirement
+into another Package creates a new member ID and an explicit migration or
+supersession relation to the former ID; it does not silently retain the old
+namespace. Cross-document links use the complete member ID. An `IF` member
+states the solution-independent interface need; the executable OpenAPI,
+GraphQL, or Protobuf contract remains owned by its implementing Spec Package.
+
 `docs/02.architecture/descriptions/####-<slug>.md` owns current system
 structure, boundaries, components, data flow, and deployment views under a
 stable `AD-####` frontmatter identity.
@@ -478,6 +496,9 @@ duplicate machine inventories or independently redefine lifecycle states.
 - A current document matching two profiles is rejected as ambiguous.
 - Separate PRD, SRS, or Interface Requirement documents that repeat one
   Requirement Package fail the duplicate-owner audit.
+- A Requirement Package member whose `REQ-####` namespace differs from its
+  containing Package, whose family is not `FR`, `NFR`, or `IF`, or whose
+  four-digit member number is reused fails identity validation.
 - A three-digit active identity, malformed four-digit identity, uppercase
   Incident route, nested unexpected path, or path/frontmatter mismatch fails.
 - An `ad-`, `adr-`, `res-`, or `aud-` path prefix fails even when the stable
@@ -542,7 +563,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 | Criterion | Required evidence |
 | --- | --- |
 | VAL-SDLC-001 | Exact terminal active topology; Requirement Packages replace repeated PRD/SRS/Interface forms; no Stage 02 requirements, Stage 04 owner, or unapproved Release family. |
-| VAL-SDLC-002 | Every current numeric SDLC route uses four digits; parent folders determine prefix-free document types while typed frontmatter IDs match their paths. |
+| VAL-SDLC-002 | Every current numeric SDLC route uses four digits; parent folders determine prefix-free document types while typed frontmatter IDs match their paths, and every Requirement member uses a unique package-scoped `REQ-####-(FR|NFR|IF)-####` identity. |
 | VAL-SDLC-003 | Incident and Postmortem paths, templates, metadata, links, and negative fixtures use the exact lowercase co-located route. |
 | VAL-SDLC-004 | Every work unit keeps Spec, Plan, and Tasks co-located with reciprocal criteria and state consistency. |
 | VAL-SDLC-005 | Stage 00 has one canonical common contract per concern and thin, evidence-bounded provider adapters. |
