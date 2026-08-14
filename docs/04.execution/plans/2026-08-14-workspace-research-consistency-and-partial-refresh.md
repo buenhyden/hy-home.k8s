@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Consistency and Partial Refresh Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-08-14
 ---
@@ -327,7 +327,6 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   Expected: zero matches. If a match survives the two exclusions, it is a real
   consumer — abandon the removal, record `consumer-found` and `reported-only`,
   and continue to Step 6.
-
 
 - [ ] **Step 4: Remove the superseded snapshot.**
 
@@ -856,12 +855,15 @@ never promoted into runtime or live claims.
 
 ### Related documents
 
-Targets that do not yet exist, and prior Specs outside this standalone
-relation, are recorded as code literals rather than rendered links.
+The owning Spec, the reciprocal Task, and the decision source all exist and
+already link reciprocally elsewhere in this file (see `### Lifecycle
+Traceability` above and the `WRCP-000` step). They are recorded here as code
+literals rather than rendered links; prior Specs outside this standalone
+relation are recorded the same way.
 
 - Owning Spec:
   `docs/03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md`
-- Future reciprocal Task after activation:
+- Reciprocal Task:
   `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
 - Decision source:
   `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`

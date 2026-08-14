@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Research Consistency and Partial Refresh'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-14
 ---

@@ -5022,7 +5022,7 @@
       "spec": "057",
       "plan": "docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
       "task": "docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
-      "state": "active",
+      "state": "done",
       "reason": "Direct human-approved combined constraint-consistency and Partial re-observation cycle over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
