@@ -89,22 +89,27 @@ widened beyond what this table lists.
 
 ### Cleanup record
 
-The Step 3 consumer check
+The Step 3 consumer check was first run unscoped and returned six matches,
+all of them self-referential mentions of the target path inside Spec 057
+and the reciprocal Plan — the two governance documents that describe this
+very cleanup step, not a functional or informational dependency on the
+snapshot's content. That unscoped check could never pass, since it grepped
+the documents authorizing the deletion. The Plan was corrected in commit
+`c90dba04` to exclude both self-referencing documents from the match set.
+The corrected check
 (`rtk proxy grep -rn "graphify-out/2026-06-04" --include="*.md"
 --include="*.json" --include="*.py" --include="*.sh" --include="*.yaml"
 --include="*.yml" docs/ scripts/ tests/ .github/ .claude/ .codex/ .agents/
-.gemini/ .pre-commit-config.yaml .gitignore`) returned six matches, all
-self-referential mentions of the path inside Spec 057 and the reciprocal
-Plan (the documents that describe this cleanup step itself), not a
-functional or informational dependency on the snapshot's content. Per the
-hard-gate rule for this step, any match blocks the removal regardless of
-its nature, so both approved targets below were reported rather than
-executed this cycle.
+.gemini/ .pre-commit-config.yaml .gitignore | rtk proxy grep -v
+"057-workspace-research-consistency-and-partial-refresh" | rtk proxy grep
+-v "2026-08-14-workspace-research-consistency-and-partial-refresh"`)
+returned zero matches: no script, validator, fixture, config, or workflow
+depends on the snapshot. Both approved targets were removed this cycle.
 
 | Target                                          | Tracking state    | Consumer check | Action        |
 | ----------------------------------------------- | ----------------- | -------------- | ------------- |
-| `graphify-out/2026-06-04/`                      | tracked           | consumer-found | reported-only |
-| `sessions/2026-08-11-session.md` and two others | untracked-ignored | not-applicable | reported-only |
+| `graphify-out/2026-06-04/`                      | tracked           | no-consumer    | removed       |
+| `sessions/2026-08-11-session.md` and two others | untracked-ignored | no-consumer    | removed       |
 | `.worktrees/docs-sdlc-governance-consolidation` | untracked-ignored | not-applicable | reported-only |
 
 The `.worktrees/docs-sdlc-governance-consolidation` worktree's branch is 32
@@ -113,16 +118,16 @@ explicit non-goal of this cycle.
 
 ## Task Table
 
-| ID       | Upstream criterion                           | Work item                                    | Owner           | Status      | Result                                                                                                                                                                                                                              | Evidence                                                                                    |
-| -------- | -------------------------------------------- | -------------------------------------------- | --------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| WRCP-000 | VAL-WRCP-001–011                             | Activate the standalone execution            | primary agent   | In Progress | Activation is in progress: registry entry, ADR reciprocity, three `active` statuses, and stage indexes are being recorded in this commit.                                                                                           | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, stage indexes |
-| WRCP-001 | VAL-WRCP-001, VAL-WRCP-005, VAL-WRCP-011     | Topic ledger and approved cleanup            | assigned worker | Done        | Topic ledger frozen (36 rows: 21 reconfirm-verified, 12 refresh-partial, 3 admit-new-owner). Consumer check found matches, so both approved cleanup targets were reported-only, not removed; the worktree observation was recorded. | This Task's Topic ledger and Cleanup record subsections                                     |
-| WRCP-002 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Governance, agents, model, memory refresh    | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
-| WRCP-003 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Kubernetes, infrastructure, security refresh | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
-| WRCP-004 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Guide, Diátaxis, SDLC refresh                | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
-| WRCP-005 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | CI/CD, Actions, QA, V&V refresh              | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
-| WRCP-006 | VAL-WRCP-007–009, VAL-WRCP-011               | Scope re-projection and reconciliation       | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
-| WRCP-007 | VAL-WRCP-010–012                             | Validation closure and lifecycle done        | primary agent   | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| ID       | Upstream criterion                           | Work item                                    | Owner           | Status      | Result                                                                                                                                                                                                                    | Evidence                                                                                    |
+| -------- | -------------------------------------------- | -------------------------------------------- | --------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| WRCP-000 | VAL-WRCP-001–011                             | Activate the standalone execution            | primary agent   | In Progress | Activation is in progress: registry entry, ADR reciprocity, three `active` statuses, and stage indexes are being recorded in this commit.                                                                                 | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, stage indexes |
+| WRCP-001 | VAL-WRCP-001, VAL-WRCP-005, VAL-WRCP-011     | Topic ledger and approved cleanup            | assigned worker | Done        | Topic ledger frozen (36 rows: 21 reconfirm-verified, 12 refresh-partial, 3 admit-new-owner). Consumer check found no real consumer, so both approved cleanup targets were removed; the worktree observation was recorded. | This Task's Topic ledger and Cleanup record subsections                                     |
+| WRCP-002 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Governance, agents, model, memory refresh    | assigned worker | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
+| WRCP-003 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Kubernetes, infrastructure, security refresh | assigned worker | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
+| WRCP-004 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Guide, Diátaxis, SDLC refresh                | assigned worker | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
+| WRCP-005 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | CI/CD, Actions, QA, V&V refresh              | assigned worker | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
+| WRCP-006 | VAL-WRCP-007–009, VAL-WRCP-011               | Scope re-projection and reconciliation       | assigned worker | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
+| WRCP-007 | VAL-WRCP-010–012                             | Validation closure and lifecycle done        | primary agent   | Queued      | Not executed.                                                                                                                                                                                                             | Not applicable                                                                              |
 
 ## Approval and Safety Boundaries
 
