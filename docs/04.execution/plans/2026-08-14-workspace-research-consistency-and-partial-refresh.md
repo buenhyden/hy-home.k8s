@@ -308,18 +308,26 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
       the request changed again — stop and report rather than widening the
       ledger silently.
 
-- [ ] **Step 3: Run the consumer check before deleting anything.**
+- [ ] **Step 3: Run the consumer check before deleting anything.** A consumer
+      is something that breaks when the artifact disappears. This cycle's own
+      Spec, Plan, and Task all name the path because they authorize its removal;
+      they are not consumers, and the check must exclude them or it can never
+      pass:
 
   ```bash
   rtk proxy grep -rn "graphify-out/2026-06-04" \
     --include="*.md" --include="*.json" --include="*.py" \
     --include="*.sh" --include="*.yaml" --include="*.yml" \
     docs/ scripts/ tests/ .github/ .claude/ .codex/ .agents/ .gemini/ \
-    .pre-commit-config.yaml .gitignore
+    .pre-commit-config.yaml .gitignore \
+    | rtk proxy grep -v "057-workspace-research-consistency-and-partial-refresh" \
+    | rtk proxy grep -v "2026-08-14-workspace-research-consistency-and-partial-refresh"
   ```
 
-  Expected: zero matches. If any match appears, abandon the removal, record
-  `consumer-found` and `reported-only`, and continue to Step 6.
+  Expected: zero matches. If a match survives the two exclusions, it is a real
+  consumer — abandon the removal, record `consumer-found` and `reported-only`,
+  and continue to Step 6.
+
 
 - [ ] **Step 4: Remove the superseded snapshot.**
 
