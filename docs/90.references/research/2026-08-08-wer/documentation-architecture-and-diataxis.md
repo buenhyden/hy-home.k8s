@@ -39,12 +39,12 @@ application, the tutorial/explanation gaps, and safe target-state guidance.
 
 Diátaxis separates documentation by reader need and writing mode:
 
-| Quadrant | Reader need and authoring test | Workspace relationship | Current status / gap |
-| --- | --- | --- | --- |
-| Tutorial | Learning by completing a guided lesson; success is a novice gains capability, not merely reaches a production goal. | A Guide can contain a carefully bounded lesson, but the `sdlc/guide` profile does not distinguish a learning progression. | No dedicated tutorial profile, index, or classification check was found. |
-| How-to guide | Accomplishing a specific real-world goal; success is safe, ordered, verifiable steps. | Guides and Runbooks contain how-to-shaped material. Runbooks additionally carry operations/recovery authority. | Partially implemented; the Guide template requires audience, prerequisites, steps, and pitfalls. Do not call every Guide a tutorial. |
-| Reference | Looking up accurate, complete, stable facts; success is findability and correctness. | Stage 90 references and schema/profile facts are reference-shaped; LLM-WIKI is a routing reference, not copied reference content. | Partially implemented through typed reference records and owner maps. Accuracy/freshness remains source-owner responsibility. |
-| Explanation | Understanding concepts, rationale, context, trade-offs, and why; success is a coherent mental model. | ADR consequences, architecture narratives, and research may contain explanation sections. | No dedicated explanation family or declared classification/check was found; rationale can be lost when it is mixed with procedures. |
+| Quadrant     | Reader need and authoring test                                                                                      | Workspace relationship                                                                                                            | Current status / gap                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Tutorial     | Learning by completing a guided lesson; success is a novice gains capability, not merely reaches a production goal. | A Guide can contain a carefully bounded lesson, but the `sdlc/guide` profile does not distinguish a learning progression.         | No dedicated tutorial profile, index, or classification check was found.                                                             |
+| How-to guide | Accomplishing a specific real-world goal; success is safe, ordered, verifiable steps.                               | Guides and Runbooks contain how-to-shaped material. Runbooks additionally carry operations/recovery authority.                    | Partially implemented; the Guide template requires audience, prerequisites, steps, and pitfalls. Do not call every Guide a tutorial. |
+| Reference    | Looking up accurate, complete, stable facts; success is findability and correctness.                                | Stage 90 references and schema/profile facts are reference-shaped; LLM-WIKI is a routing reference, not copied reference content. | Partially implemented through typed reference records and owner maps. Accuracy/freshness remains source-owner responsibility.        |
+| Explanation  | Understanding concepts, rationale, context, trade-offs, and why; success is a coherent mental model.                | ADR consequences, architecture narratives, and research may contain explanation sections.                                         | No dedicated explanation family or declared classification/check was found; rationale can be lost when it is mixed with procedures.  |
 
 The quadrants are orthogonal to document families. An ADR can explain a decision
 while remaining an ADR; a Runbook can include a short reference table while
@@ -53,23 +53,23 @@ authority, safety, and reader intent.
 
 ### Architecture rules by scope
 
-| Scope | Canonical owner | Authoring rule | Failure boundary |
-| --- | --- | --- | --- |
-| Work item | The selected profile/template and its stage document. | State reader goal, authority, and traceability; select a Diátaxis mode for the main content. | A profile pass does not prove readers can act safely or understand it. |
-| Collection/index | README or collection-index profile. | Link to one canonical owner; do not duplicate procedure, policy, or decision content. | An index is navigation, not a substitute for a lifecycle record. |
-| Cross-stage lineage | PRD/ARD/ADR/Spec/Plan/Task traceability. | Preserve upstream/downstream relationship and evidence boundary. | Diátaxis wording must not bypass typed status, approval, or reciprocal-link requirements. |
-| Operations/security | Policy, Runbook, Incident, Postmortem. | Keep commands, impact facts, controls, and recovery evidence in their respective owners; label assumptions and approvals. | Helpful prose never authorizes secrets, production access, deployment, or recovery action. |
-| Reference/research | Stage 90 owner and source ledger. | Date sources, record claim/support/limitation/refresh trigger, and distinguish inference. | Research cannot promote an external framework into local policy. |
+| Scope               | Canonical owner                                       | Authoring rule                                                                                                            | Failure boundary                                                                           |
+| ------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Work item           | The selected profile/template and its stage document. | State reader goal, authority, and traceability; select a Diátaxis mode for the main content.                              | A profile pass does not prove readers can act safely or understand it.                     |
+| Collection/index    | README or collection-index profile.                   | Link to one canonical owner; do not duplicate procedure, policy, or decision content.                                     | An index is navigation, not a substitute for a lifecycle record.                           |
+| Cross-stage lineage | PRD/ARD/ADR/Spec/Plan/Task traceability.              | Preserve upstream/downstream relationship and evidence boundary.                                                          | Diátaxis wording must not bypass typed status, approval, or reciprocal-link requirements.  |
+| Operations/security | Policy, Runbook, Incident, Postmortem.                | Keep commands, impact facts, controls, and recovery evidence in their respective owners; label assumptions and approvals. | Helpful prose never authorizes secrets, production access, deployment, or recovery action. |
+| Reference/research  | Stage 90 owner and source ledger.                     | Date sources, record claim/support/limitation/refresh trigger, and distinguish inference.                                 | Research cannot promote an external framework into local policy.                           |
 
 ### As-Is, gap, target
 
-| Area | As-Is evidence | Gap or risk | Target application (analysis only) |
-| --- | --- | --- | --- |
-| Typed taxonomy | Profiles define routes, lifecycle states, H2 contracts, templates, and traceability for established SDLC families. | The taxonomy identifies lifecycle family, not reader need. | Keep these layers separate; document the intended Diátaxis mode in authoring/review guidance before adding types. |
-| How-to | Guide and Runbook templates require step-oriented sections; Runbooks require verification/evidence/recovery. | Mixing novice learning with an urgent operational procedure can hide prerequisites or safety context. | Write a focused how-to for one goal; preserve operational authority and recovery rules in a Runbook. |
-| Reference | `content/reference` records and LLM-WIKI owner links support stable lookup. | A link map may be stale, and a profile cannot certify source accuracy. | Put facts in the canonical reference, date external observations, and make generated pointers fail on drift. |
-| Tutorial | No dedicated route/profile/template or index was found. | Newcomers may receive goal-oriented steps without concepts, safe setup, or a learning outcome. | Begin with a review checklist and a small pilot only if a named audience/use case warrants it; do not create a profile by implication. |
-| Explanation | No dedicated route/profile/template or index was found. | Rationale and trade-offs may be embedded in ADRs or guides where readers cannot find them. | Prefer an explicitly labelled explanation section or a canonical reference where routing justifies it; design a typed family only with an owner/consumer/validator need. |
+| Area           | As-Is evidence                                                                                                     | Gap or risk                                                                                           | Target application (analysis only)                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Typed taxonomy | Profiles define routes, lifecycle states, H2 contracts, templates, and traceability for established SDLC families. | The taxonomy identifies lifecycle family, not reader need.                                            | Keep these layers separate; document the intended Diátaxis mode in authoring/review guidance before adding types.                                                        |
+| How-to         | Guide and Runbook templates require step-oriented sections; Runbooks require verification/evidence/recovery.       | Mixing novice learning with an urgent operational procedure can hide prerequisites or safety context. | Write a focused how-to for one goal; preserve operational authority and recovery rules in a Runbook.                                                                     |
+| Reference      | `content/reference` records and LLM-WIKI owner links support stable lookup.                                        | A link map may be stale, and a profile cannot certify source accuracy.                                | Put facts in the canonical reference, date external observations, and make generated pointers fail on drift.                                                             |
+| Tutorial       | No dedicated route/profile/template or index was found.                                                            | Newcomers may receive goal-oriented steps without concepts, safe setup, or a learning outcome.        | Begin with a review checklist and a small pilot only if a named audience/use case warrants it; do not create a profile by implication.                                   |
+| Explanation    | No dedicated route/profile/template or index was found.                                                            | Rationale and trade-offs may be embedded in ADRs or guides where readers cannot find them.            | Prefer an explicitly labelled explanation section or a canonical reference where routing justifies it; design a typed family only with an owner/consumer/validator need. |
 
 ### Authoring and review checklist
 
@@ -92,11 +92,11 @@ The published pages remain unreachable, but the claims are now verified against
 the upstream source that generates them, and the local "gap" framing is
 reconciled against an approved decision.
 
-| Question | 2026-08-11 result | Evidence class |
-| --- | --- | --- |
-| Are `diataxis.fr/start-here/` and `diataxis.fr/` reachable? | No. A third attempt from a different client also returned HTTP 429. Three failed attempts across two days and two egresses make the block persistent. | Direct observation |
-| Do the four modes and their authoring tests still hold? | Yes. `source/start-here.rst` at `evildmp/diataxis-documentation-framework@main` states the four kinds are tutorials, how-to guides, reference, and explanation, and defines a tutorial as a lesson serving study, a how-to guide as addressing a real-world goal for an already-competent user at work, reference as neutral technical description, and explanation as context and background serving study ([SRC-WERPC-067](source-coverage-and-migration-ledger.md#source-register)). | Upstream source, not the published page |
-| Does the framework mandate creating the four sections? | No, and it says the opposite. `source/how-to-use-diataxis.rst` states verbatim: "It certainly does not mean that you should create empty structures for tutorials/howto guides/reference/explanation with nothing in them. Don't do that. It's horrible." It adds that "Diátaxis changes the structure of your documentation from the inside." | Upstream source, not the published page |
+| Question                                                    | 2026-08-11 result                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Evidence class                          |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Are `diataxis.fr/start-here/` and `diataxis.fr/` reachable? | No. A third attempt from a different client also returned HTTP 429. Three failed attempts across two days and two egresses make the block persistent.                                                                                                                                                                                                                                                                                                                                   | Direct observation                      |
+| Do the four modes and their authoring tests still hold?     | Yes. `source/start-here.rst` at `evildmp/diataxis-documentation-framework@main` states the four kinds are tutorials, how-to guides, reference, and explanation, and defines a tutorial as a lesson serving study, a how-to guide as addressing a real-world goal for an already-competent user at work, reference as neutral technical description, and explanation as context and background serving study ([SRC-WERPC-067](source-coverage-and-migration-ledger.md#source-register)). | Upstream source, not the published page |
+| Does the framework mandate creating the four sections?      | No, and it says the opposite. `source/how-to-use-diataxis.rst` states verbatim: "It certainly does not mean that you should create empty structures for tutorials/howto guides/reference/explanation with nothing in them. Don't do that. It's horrible." It adds that "Diátaxis changes the structure of your documentation from the inside."                                                                                                                                          | Upstream source, not the published page |
 
 The upstream repository is the source that builds the site, so it is stronger
 evidence than an inference about commit dates, but it is still not the published
@@ -161,10 +161,10 @@ No secondary source, taxonomy change, empty route, or Guide instance was added.
 
 #### Published-page provenance and retained decision
 
-| Official primary page | 2026-08-12 observation | Claim boundary |
-| --- | --- | --- |
-| [Diátaxis home](https://diataxis.fr/) and [Start here](https://diataxis.fr/start-here/) | Both published pages were reachable. They directly retain the four forms—tutorials, how-to guides, technical reference, and explanation—and distinguish them by user need. | This re-verifies the framework claims recorded by `SRC-WERPC-020`, `SRC-WERPC-067`, and `CLM-WERPC-003-08`; it does not prescribe a workspace profile or prove local reader outcomes. |
-| [Diátaxis as a guide to work](https://diataxis.fr/how-to-use-diataxis/) | The published page was reachable and directly retains the instruction not to create empty four-part structures, with documentation structure developing from internal improvements. | This is the successful published-page re-check named by `SRC-WERPC-067`'s refresh trigger. It upgrades current provenance from upstream-source-only to page-verified without changing the claim. The page exposes no publisher revision date, so it does not establish when the text changed. |
+| Official primary page                                                                   | 2026-08-12 observation                                                                                                                                                              | Claim boundary                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Diátaxis home](https://diataxis.fr/) and [Start here](https://diataxis.fr/start-here/) | Both published pages were reachable. They directly retain the four forms—tutorials, how-to guides, technical reference, and explanation—and distinguish them by user need.          | This re-verifies the framework claims recorded by `SRC-WERPC-020`, `SRC-WERPC-067`, and `CLM-WERPC-003-08`; it does not prescribe a workspace profile or prove local reader outcomes.                                                                                                         |
+| [Diátaxis as a guide to work](https://diataxis.fr/how-to-use-diataxis/)                 | The published page was reachable and directly retains the instruction not to create empty four-part structures, with documentation structure developing from internal improvements. | This is the successful published-page re-check named by `SRC-WERPC-067`'s refresh trigger. It upgrades current provenance from upstream-source-only to page-verified without changing the claim. The page exposes no publisher revision date, so it does not establish when the text changed. |
 
 No fallback was needed on this check. The exact upstream `main` files already
 registered as `SRC-WERPC-067` remain provenance for the failed 2026-08-10 and
@@ -187,6 +187,71 @@ reopen `DOC-G2`/`DOC-G3`. Reconsider only if Spec 052 is superseded or a
 concrete owner, reader, consumer, instance, and validation need is approved.
 Guide classification correctness, usability, accessibility, safe execution,
 and effectiveness remain `DEFER` without actual reader evidence.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-020` only, checked on **2026-08-14**. It did not
+invoke a provider, query the GitHub remote, or inspect a cluster.
+
+#### REQ-WERPC-020 Diátaxis workspace and source consistency check
+
+**Workspace delta:** `no-change`. `docs/05.operations/guides/` still holds
+exactly eight numbered Guide instances (`0001`, `0002`, `0003`, `0006`,
+`0007`, `0008`, `0009`, `0010`), each still declaring `` `how-to` `` under
+its `## Guide Type` heading. `git diff --stat a5d2dfbb HEAD --
+docs/05.operations/guides/ docs/99.templates/support/document-profiles.json`
+shows no change under `docs/05.operations/guides/`; the profiles file itself
+appears in the diff, but a parsed-JSON key-level comparison against the
+`a5d2dfbb` baseline shows only the `standaloneExecutions` key differs (this
+cycle's own Spec 057/Plan/Task admission) — the `profiles` array, including
+the `sdlc/guide` entry and its `Guide Type` heading requirement, is
+byte-for-byte identical; the surrounding whitespace-only reflow is the
+formatter noted in this pack's evidence boundary. Spec 052 remains `active`;
+`DOC-G1` still has no enum constraint in the `sdlc/guide` profile object,
+`DOC-G2`/`DOC-G3` remain decided and unreopened, and `WORK-013` remains
+`Queued` / `Not executed` (confirmed by re-grep; no other file assigns it a
+different state).
+
+**External result:** `SRC-WERPC-067` was re-checked first, per the pack's
+recorded evidence order. `source/start-here.rst` and
+`source/how-to-use-diataxis.rst` at
+`evildmp/diataxis-documentation-framework@main` still hold the exact
+verbatim text already adopted: the tutorial/how-to/reference/explanation
+definitions, and "It certainly does not mean that you should create empty
+structures for tutorials/howto guides/reference/explanation with nothing in
+them." The published site was then attempted once, as instructed:
+`https://diataxis.fr/start-here/` was reachable this time (unlike the three
+429 responses recorded 2026-08-10/2026-08-11) and directly confirmed the
+same four-kind definitions already recorded by `SRC-WERPC-071`'s 2026-08-12
+published-page check. This is the pack's second successful published-page
+observation of this page; no page-content or publisher-date claim beyond
+"reachable and matching" is made.
+
+**As-Is:** Unchanged from the 2026-08-12 section: the tutorial/explanation
+absence remains a decided outcome of Spec 052 `DOC-G2`/`DOC-G3`, not an open
+gap. The open item remains `DOC-G1` registry-enum enforcement, queued under
+`WORK-013`.
+
+**Gap and bounded target:** Unchanged. No tutorial or explanation route is
+proposed or reopened. `DOC-G1` enum enforcement and eight-guide
+re-validation remain the only open Diátaxis-adjacent item, and both belong
+to `WORK-013`'s owning Plan, not this reference.
+
+**Missing evidence:** a named reader, task, environment, method, acceptance
+threshold, and evidence owner for Guide classification usefulness; `DOC-G1`
+enum-enforcement and eight-guide re-validation evidence. **Owning
+authority:** Spec 052 for the `DOC-G1`–`DOC-G3` decisions; `WORK-013`'s
+owning Plan for enum-enforcement execution. **Safe boundary:** a separately
+approved, non-secret reader-validation activity, or the already-approved
+`WORK-013` registry/template change executed by its own Plan; neither is
+authorized in this increment. **Refresh trigger:** Spec 052 is superseded,
+`WORK-013` executes, a current Guide stops satisfying the static contract,
+or a named reader-validation activity is approved.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New source registered: `SRC-WERPC-076`. New claim registered:
+`CLM-WERPC-010-09`.
 
 ## Related Documents
 
