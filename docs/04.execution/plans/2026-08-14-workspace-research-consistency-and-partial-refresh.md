@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Consistency and Partial Refresh Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
 updated: 2026-08-14
 ---
@@ -169,7 +169,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 - [ ] **Step 4b: Convert the deferred Traceability links.** Every
       `Spec criterion` cell in this Plan's `### Lifecycle Traceability` table
       currently reads `N/A — approved Spec 057 criterion ...; reciprocal rendered
-  link is deferred to WRCP-000 activation`, and every `Expected Task` cell
+link is deferred to WRCP-000 activation`, and every `Expected Task` cell
       defers the same way. Replace both columns with rendered links now that
       both targets exist: the criterion cell links the Spec, and the
       `Expected Task` cell links the new Task. Then add to the Spec's
@@ -297,9 +297,9 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
   | Domain-scoped memory                             | `REQ-WERPC-031` | reconfirm-verified |
   | Memory management                                | `REQ-WERPC-032` | refresh-partial    |
   | Verification and Validation                      | `REQ-WERPC-033` | refresh-partial    |
-  | Spec document family | `REQ-WERPC-034` | admit-new-owner |
-  | Task document family | `REQ-WERPC-035` | admit-new-owner |
-  | Plan document family | `REQ-WERPC-036` | admit-new-owner |
+  | Spec document family                             | `REQ-WERPC-034` | admit-new-owner    |
+  | Task document family                             | `REQ-WERPC-035` | admit-new-owner    |
+  | Plan document family                             | `REQ-WERPC-036` | admit-new-owner    |
 
 - [ ] **Step 2: Assert the ledger is closed.** Confirm exactly twelve
       `refresh-partial` rows with IDs `006`, `008`, `009`, `014`, `020`, `022`,
@@ -530,11 +530,11 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
       no coverage-matrix owner until this cycle. Re-read their canonical
       workspace evidence and their profile and template contracts:
 
-  | Family | Canonical path | Profile and template |
-  | --- | --- | --- |
-  | Spec | `docs/03.specs/` | `sdlc/spec` profile; `docs/99.templates/templates/sdlc/specs/spec.template.md` |
-  | Task | `docs/04.execution/tasks/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
-  | Plan | `docs/04.execution/plans/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
+  | Family | Canonical path             | Profile and template                                                               |
+  | ------ | -------------------------- | ---------------------------------------------------------------------------------- |
+  | Spec   | `docs/03.specs/`           | `sdlc/spec` profile; `docs/99.templates/templates/sdlc/specs/spec.template.md`     |
+  | Task   | `docs/04.execution/tasks/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
+  | Plan   | `docs/04.execution/plans/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
 
   For each, record the enforced H2 profile, the lifecycle states the repository
   actually uses, the reciprocity rules its validator enforces, and what the
@@ -656,11 +656,11 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
       immediately after `REQ-WERPC-033`, using the same column set as every
       existing row:
 
-  | Request ID | Requested topic | Primary owner | Workspace evidence | External source class | Status |
-  | --- | --- | --- | --- | --- | --- |
-  | `REQ-WERPC-034` | Spec | the document-family matrix row for Spec | `docs/03.specs/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
-  | `REQ-WERPC-035` | Task | the document-family matrix row for Task | `docs/04.execution/tasks/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
-  | `REQ-WERPC-036` | Plan | the document-family matrix row for Plan | `docs/04.execution/plans/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | Request ID      | Requested topic | Primary owner                           | Workspace evidence         | External source class                                        | Status              |
+  | --------------- | --------------- | --------------------------------------- | -------------------------- | ------------------------------------------------------------ | ------------------- |
+  | `REQ-WERPC-034` | Spec            | the document-family matrix row for Spec | `docs/03.specs/`           | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-035` | Task            | the document-family matrix row for Task | `docs/04.execution/tasks/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-036` | Plan            | the document-family matrix row for Plan | `docs/04.execution/plans/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
 
   Link each primary owner to the anchor of the document-family matrix section,
   the way rows `REQ-WERPC-011` through `REQ-WERPC-019` already do. Then state in
@@ -832,19 +832,19 @@ never promoted into runtime or live claims.
 
 ### Lifecycle Traceability
 
-| Spec criterion                                                                                                | Work package  | Expected Task                                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| N/A — approved Spec 057 criterion `VAL-WRCP-001`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-001      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record the thirty-six-row topic ledger with unique owners             |
-| N/A — approved Spec 057 criterion `VAL-WRCP-002`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record separated workspace and external results per requirement   |
-| N/A — approved Spec 057 criterion `VAL-WRCP-003`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record four retention fields per retained Partial or DEFER        |
-| N/A — approved Spec 057 criterion `VAL-WRCP-004`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record ledger before/after comparison and ID uniqueness           |
-| N/A — approved Spec 057 criterion `VAL-WRCP-005`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-001      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record consumer check result and the unchanged worktree           |
-| N/A — approved Spec 057 criterion `VAL-WRCP-006`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record unchanged pack file inventory with dated sections only     |
-| N/A — approved Spec 057 criterion `VAL-WRCP-007`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-006      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record scope re-derivation and the unowned-path re-test           |
-| N/A — approved Spec 057 criterion `VAL-WRCP-008`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-006      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record cross-document agreement on counts and statuses            |
-| N/A — approved Spec 057 criterion `VAL-WRCP-009`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-006      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record reconciliation as the last content commit                  |
-| N/A — approved Spec 057 criterion `VAL-WRCP-010`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-007      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record full lane results compared against the baseline            |
-| N/A — approved Spec 057 criterion `VAL-WRCP-011`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-000..007 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record one commit per package and terminal temporary-file absence |
+| Spec criterion                                                                                | Work package  | Expected Task                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [VAL-WRCP-001](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record the thirty-six-row topic ledger with unique owners              |
+| [VAL-WRCP-002](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record separated workspace and external results per requirement   |
+| [VAL-WRCP-003](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record four retention fields per retained Partial or DEFER        |
+| [VAL-WRCP-004](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record ledger before/after comparison and ID uniqueness           |
+| [VAL-WRCP-005](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record consumer check result and the unchanged worktree                |
+| [VAL-WRCP-006](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record unchanged pack file inventory with dated sections only     |
+| [VAL-WRCP-007](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record scope re-derivation and the unowned-path re-test                |
+| [VAL-WRCP-008](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record cross-document agreement on counts and statuses                 |
+| [VAL-WRCP-009](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record reconciliation as the last content commit                       |
+| [VAL-WRCP-010](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record full lane results compared against the baseline                 |
+| [VAL-WRCP-011](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](../tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md) will record one commit per package and terminal temporary-file absence |
 
 ### Related documents
 

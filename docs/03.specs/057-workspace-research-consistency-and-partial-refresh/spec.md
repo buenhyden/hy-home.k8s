@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Consistency and Partial Refresh Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-14
 ---
@@ -36,6 +36,9 @@ The request also asked for topic-by-topic workspace investigation. This Spec
 treats workspace re-observation as a first-class deliverable separate from
 external source refresh, because the two produce different evidence classes and
 fail independently.
+
+Direct human approval on 2026-08-14 authorizes this standalone execution relation.
+No separate PRD or ARD is required or part of this standalone lifecycle.
 
 ### Prior-cycle constraint
 
@@ -320,7 +323,7 @@ proves only that the fetch was unavailable, never that a control is absent.
 | VAL-WRCP-009 | Cross-link reconciliation is the last content change before validation closure.                                                              | Commit order in the logical-unit sequence                   |
 | VAL-WRCP-010 | Every validation lane returns no regression against the recorded 2026-08-14 baseline.                                                        | Task evidence with exact commands and results               |
 | VAL-WRCP-011 | Each logical work unit is a separate non-empty commit and no temporary file survives.                                                        | Commit log and absence check                                |
-| VAL-WRCP-012 | Exactly three new owners exist, each anchored to an existing document-family matrix row, and no fourth owner was created.                | Coverage-matrix diff and owner-count check                  |
+| VAL-WRCP-012 | Exactly three new owners exist, each anchored to an existing document-family matrix row, and no fourth owner was created.                    | Coverage-matrix diff and owner-count check                  |
 
 ## Traceability
 
@@ -333,19 +336,19 @@ standalone execution rules.
 
 ### Lifecycle Traceability
 
-| PRD requirement                                                     | Spec criterion | Verification method                            |
-| ------------------------------------------------------------------- | -------------- | ---------------------------------------------- |
-| N/A — direct human request for topic-complete research coverage     | VAL-WRCP-001   | Topic ledger and owner-uniqueness check        |
-| N/A — direct human request for per-category workspace investigation | VAL-WRCP-002   | Separated workspace and external evidence rows |
-| N/A — direct human request for explicit status closure              | VAL-WRCP-003   | Content contract review                        |
-| N/A — direct human request for source-backed provenance             | VAL-WRCP-004   | Ledger comparison and uniqueness checks        |
-| N/A — direct human approval of two one-off cleanup targets          | VAL-WRCP-005   | Consumer check and tracked-diff review         |
-| N/A — direct human request to integrate into the existing pack      | VAL-WRCP-006   | Exact path and duplicate-owner checks          |
-| N/A — direct human request for per-scope organization               | VAL-WRCP-007   | Scope registry re-derivation                   |
-| N/A — direct human request that cross-links reflect modifications   | VAL-WRCP-008   | Integration check across shared indexes        |
-| N/A — direct human request that reconciliation observe final state  | VAL-WRCP-009   | Commit ordering of the reconciliation unit     |
-| N/A — direct human request for logical-unit commits                 | VAL-WRCP-010   | Validation lane results against the baseline   |
-| N/A — direct human request for a clean terminal tree                | VAL-WRCP-011   | Commit log and temporary-file absence check    |
+| PRD requirement                                                      | Spec criterion | Verification method                            |
+| -------------------------------------------------------------------- | -------------- | ---------------------------------------------- |
+| N/A — direct human request for topic-complete research coverage      | VAL-WRCP-001   | Topic ledger and owner-uniqueness check        |
+| N/A — direct human request for per-category workspace investigation  | VAL-WRCP-002   | Separated workspace and external evidence rows |
+| N/A — direct human request for explicit status closure               | VAL-WRCP-003   | Content contract review                        |
+| N/A — direct human request for source-backed provenance              | VAL-WRCP-004   | Ledger comparison and uniqueness checks        |
+| N/A — direct human approval of two one-off cleanup targets           | VAL-WRCP-005   | Consumer check and tracked-diff review         |
+| N/A — direct human request to integrate into the existing pack       | VAL-WRCP-006   | Exact path and duplicate-owner checks          |
+| N/A — direct human request for per-scope organization                | VAL-WRCP-007   | Scope registry re-derivation                   |
+| N/A — direct human request that cross-links reflect modifications    | VAL-WRCP-008   | Integration check across shared indexes        |
+| N/A — direct human request that reconciliation observe final state   | VAL-WRCP-009   | Commit ordering of the reconciliation unit     |
+| N/A — direct human request for logical-unit commits                  | VAL-WRCP-010   | Validation lane results against the baseline   |
+| N/A — direct human request for a clean terminal tree                 | VAL-WRCP-011   | Commit log and temporary-file absence check    |
 | N/A — direct human approval of three admitted document-family owners | VAL-WRCP-012   | Coverage-matrix diff and owner-count check     |
 
 ### Related Documents
@@ -357,3 +360,6 @@ standalone execution rules.
 - [Spec 055 — gap-only refresh](../055-workspace-engineering-gap-only-refresh/spec.md)
 - [Spec 056 — Partial/DEFER incremental refresh](../056-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
+- [ADR-0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- [Implementation Plan](../../04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md)
+- [Task](../../04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md)
