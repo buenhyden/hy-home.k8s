@@ -167,7 +167,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 - [ ] **Step 4b: Convert the deferred Traceability links.** Every
       `Spec criterion` cell in this Plan's `### Lifecycle Traceability` table
       currently reads `N/A — approved Spec 057 criterion ...; reciprocal rendered
-    link is deferred to WRCP-000 activation`, and every `Expected Task` cell
+  link is deferred to WRCP-000 activation`, and every `Expected Task` cell
       defers the same way. Replace both columns with rendered links now that
       both targets exist: the criterion cell links the Spec, and the
       `Expected Task` cell links the new Task. Then add to the Spec's
@@ -352,8 +352,12 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
   git commit -m "chore: remove superseded graphify snapshot and freeze topic ledger"
   ```
 
-  Expected: all three `PASS`. The registry path count drops by the deleted
-  Markdown file; that is expected, not a regression.
+  Expected: all three `PASS`, and the contract-registry path count is
+  **unchanged**. `scripts/document_contracts.py` `_within_target_scope`
+  returns `False` when the first path segment is `graphify-out`, so the
+  deleted `GRAPH_REPORT.md` was never counted. A count that does drop means
+  something other than this removal was staged — stop and inspect before
+  committing.
 
 ### Task 3: WRCP-002 — governance, agents, model, memory refresh
 
