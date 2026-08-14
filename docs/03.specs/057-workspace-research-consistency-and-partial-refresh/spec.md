@@ -19,8 +19,12 @@ twelve `Partial` requirement rows.
 
 The direct human request enumerated twenty-three research topics. All but three
 map onto an existing `REQ-WERPC` owner in the active pack, so this cycle
-creates no new research pack and no new topic report. It refreshes and
-reconciles what the pack already owns.
+creates no new research pack and no new topic report. Because several request
+lines name more than one document-family or document-type owner — one line
+names the Spec, Task, Plan, PRD, ARD, and ADR families, another names six
+operations document types — the twenty-three request lines expand onto
+thirty-six owner rows in the topic ledger. It refreshes and reconciles what
+the pack already owns.
 
 The three exceptions are the Spec, Task, and Plan document families. The pack's
 [document-family contract matrix](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
@@ -73,6 +77,11 @@ provided the delta and its boundaries are recorded.
 - Admission of `REQ-WERPC-034` (Spec), `REQ-WERPC-035` (Task), and
   `REQ-WERPC-036` (Plan) as coverage-matrix owners over the document-family
   matrix rows that already describe them.
+- Registering Spec 057 in `POST_CLOSURE_SPEC_AUTHORITY_PATHS` in
+  `scripts/validate-active-corpus-residue-closure.py`, required for this Spec
+  to reach status `done` under `CLOSURE-AUTHORITY-SCOPE`, following the
+  precedent of Specs `041`-`046` and `053`-`056`. This is mechanical
+  registration of a closed Spec, not a change to validator behavior.
 - Logical-unit commits with repository-static validation evidence.
 
 ### Out of scope and non-goals
@@ -98,10 +107,12 @@ provided the delta and its boundaries are recorded.
 ### C-WRCP-001 — closed topic ledger
 
 Before any refresh work, the twenty-three requested topics are mapped onto
-existing `REQ-WERPC` owners in one closed table. Each request line receives
-exactly one primary owner and one disposition: `refresh-partial`,
-`reconfirm-verified`, or `exclude-duplicate`. A topic absent from this ledger
-cannot gain new source, claim, or report content.
+existing `REQ-WERPC` owners in one closed, thirty-six-row table: a request
+line naming more than one document-family or document-type owner receives one
+row per named owner. Each ledger row receives exactly one primary owner and
+one disposition: `refresh-partial`, `reconfirm-verified`, or
+`exclude-duplicate`. A topic absent from this ledger cannot gain new source,
+claim, or report content.
 
 ### C-WRCP-002 — dual evidence classes
 
@@ -186,7 +197,8 @@ scheduled for removal, and reconciliation follows both so that link validation
 observes final state.
 
 1. **Topic ledger.** Build the closed `C-WRCP-001` mapping from the twenty-three
-   requested topics to existing owners, with dispositions.
+   requested topics to the thirty-six existing and admitted owner rows, with
+   dispositions.
 2. **Cleanup.** Execute the two approved removals behind the `C-WRCP-006`
    consumer check. Record the stale-worktree observation without acting on it.
 3. **Workspace re-observation.** For each of the twelve `Partial` rows,
@@ -310,20 +322,20 @@ proves only that the fetch was unavailable, never that a control is absent.
 
 ## Success Criteria & Verification Plan
 
-| Criterion    | Success condition                                                                                                                            | Verification evidence                                       |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| VAL-WRCP-001 | All twenty-three requested topics form one closed ledger, mapped onto existing owners plus exactly the three admitted new owners.            | Topic ledger table and owner-uniqueness check               |
-| VAL-WRCP-002 | Workspace observation and external source result are recorded separately for each of the twelve `Partial` rows.                              | Per-requirement finding rows in the dated sections          |
-| VAL-WRCP-003 | Every admitted candidate has one final disposition, and each retained `Partial` or `DEFER` names evidence, authority, boundary, and trigger. | Content contract review of dated sections                   |
-| VAL-WRCP-004 | New sources and claims continue the existing sequence with complete provenance and no existing ID is renumbered or rewritten.                | Before/after ledger comparison and ID uniqueness check      |
-| VAL-WRCP-005 | Only the two approved targets are removed, each preceded by a passing consumer check; the stale worktree is unchanged.                       | Consumer-check output, `git status`, `git worktree list`    |
-| VAL-WRCP-006 | Findings are appended as dated `2026-08-14` subsections to existing reports; no new pack or duplicate report exists.                         | Exact path allowlist and pack file inventory                |
-| VAL-WRCP-007 | The scope re-projection covers all ten scopes and re-tests the five unowned paths against the current registry.                              | Scope index diff against `docs/00.agent-governance/scopes/` |
-| VAL-WRCP-008 | Pack README, ledger, scope index, and collection README agree on counts and owner projections.                                               | Integration check and strict links/owners validation        |
-| VAL-WRCP-009 | Cross-link reconciliation is the last content change before validation closure.                                                              | Commit order in the logical-unit sequence                   |
-| VAL-WRCP-010 | Every validation lane returns no regression against the recorded 2026-08-14 baseline.                                                        | Task evidence with exact commands and results               |
-| VAL-WRCP-011 | Each logical work unit is a separate non-empty commit and no temporary file survives.                                                        | Commit log and absence check                                |
-| VAL-WRCP-012 | Exactly three new owners exist, each anchored to an existing document-family matrix row, and no fourth owner was created.                    | Coverage-matrix diff and owner-count check                  |
+| Criterion    | Success condition                                                                                                                                 | Verification evidence                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| VAL-WRCP-001 | The twenty-three requested topics form one closed, thirty-six-row ledger, mapped onto existing owners plus exactly the three admitted new owners. | Topic ledger table and owner-uniqueness check               |
+| VAL-WRCP-002 | Workspace observation and external source result are recorded separately for each of the twelve `Partial` rows.                                   | Per-requirement finding rows in the dated sections          |
+| VAL-WRCP-003 | Every admitted candidate has one final disposition, and each retained `Partial` or `DEFER` names evidence, authority, boundary, and trigger.      | Content contract review of dated sections                   |
+| VAL-WRCP-004 | New sources and claims continue the existing sequence with complete provenance and no existing ID is renumbered or rewritten.                     | Before/after ledger comparison and ID uniqueness check      |
+| VAL-WRCP-005 | Only the two approved targets are removed, each preceded by a passing consumer check; the stale worktree is unchanged.                            | Consumer-check output, `git status`, `git worktree list`    |
+| VAL-WRCP-006 | Findings are appended as dated `2026-08-14` subsections to existing reports; no new pack or duplicate report exists.                              | Exact path allowlist and pack file inventory                |
+| VAL-WRCP-007 | The scope re-projection covers all ten scopes and re-tests the five unowned paths against the current registry.                                   | Scope index diff against `docs/00.agent-governance/scopes/` |
+| VAL-WRCP-008 | Pack README, ledger, scope index, and collection README agree on counts and owner projections.                                                    | Integration check and strict links/owners validation        |
+| VAL-WRCP-009 | Cross-link reconciliation is the last content change before validation closure.                                                                   | Commit order in the logical-unit sequence                   |
+| VAL-WRCP-010 | Every validation lane returns no regression against the recorded 2026-08-14 baseline.                                                             | Task evidence with exact commands and results               |
+| VAL-WRCP-011 | Each logical work unit is a separate non-empty commit and no temporary file survives.                                                             | Commit log and absence check                                |
+| VAL-WRCP-012 | Exactly three new owners exist, each anchored to an existing document-family matrix row, and no fourth owner was created.                         | Coverage-matrix diff and owner-count check                  |
 
 ## Traceability
 

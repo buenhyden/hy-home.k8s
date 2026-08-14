@@ -16829,6 +16829,9 @@ Four deferred minors recorded as known-and-accepted, not fixed:
   the cap, splitting the ledger, or an explicit documented exception; none
   was applied here because the research pack is closed to this task and the
   cap is a shared-validator behavior change outside this task's authority.
+- **Superseded 2026-08-15**: the regression above was applied in commit
+  `fb58ebb5`; see the "2026-08-15 - WRCP quality-gate restoration after
+  closure" entry later in this file for the fix and its evidence.
 - This closes the WRCP-000..007 program. No further WRCP work package is
   queued.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish,

@@ -71,8 +71,9 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 ## Goals & In-Scope
 
 - Register and activate the standalone Spec/Plan/Task relation for spec `057`.
-- Build the closed topic ledger mapping all twenty-three requested topics onto
-  existing `REQ-WERPC` owners plus the three admitted new owners.
+- Build the closed, thirty-six-row topic ledger mapping all twenty-three
+  requested topics onto existing `REQ-WERPC` owners plus the three admitted
+  new owners.
 - Admit `REQ-WERPC-034` (Spec), `REQ-WERPC-035` (Task), and `REQ-WERPC-036`
   (Plan) as coverage-matrix owners over existing document-family research.
 - Execute the two approved one-off removals behind a consumer check.
