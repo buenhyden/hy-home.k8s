@@ -71,8 +71,10 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 ## Goals & In-Scope
 
 - Register and activate the standalone Spec/Plan/Task relation for spec `057`.
-- Build the closed topic ledger mapping all twenty-two requested topics onto
-  existing `REQ-WERPC` owners.
+- Build the closed topic ledger mapping all twenty-three requested topics onto
+  existing `REQ-WERPC` owners plus the three admitted new owners.
+- Admit `REQ-WERPC-034` (Spec), `REQ-WERPC-035` (Task), and `REQ-WERPC-036`
+  (Plan) as coverage-matrix owners over existing document-family research.
 - Execute the two approved one-off removals behind a consumer check.
 - Re-observe the workspace and re-check external sources for `REQ-WERPC-006`,
   `008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, `033`.
@@ -252,7 +254,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 **Interfaces:**
 
 - Consumes: the active relation from Task 1.
-- Produces: a frozen twenty-two-row topic ledger in the Task, and a terminal
+- Produces: a frozen thirty-six-row topic ledger in the Task, and a terminal
   repository shape that Tasks 3–6 may safely cite.
 
 - [ ] **Step 1: Write the closed topic ledger into the Task.** Add a
@@ -295,11 +297,16 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
   | Domain-scoped memory                             | `REQ-WERPC-031` | reconfirm-verified |
   | Memory management                                | `REQ-WERPC-032` | refresh-partial    |
   | Verification and Validation                      | `REQ-WERPC-033` | refresh-partial    |
+  | Spec document family | `REQ-WERPC-034` | admit-new-owner |
+  | Task document family | `REQ-WERPC-035` | admit-new-owner |
+  | Plan document family | `REQ-WERPC-036` | admit-new-owner |
 
 - [ ] **Step 2: Assert the ledger is closed.** Confirm exactly twelve
-      `refresh-partial` rows and that their IDs are `006`, `008`, `009`, `014`,
-      `020`, `022`, `023`, `025`, `026`, `028`, `032`, `033`. If the count differs,
-      stop and report; the Spec's no-new-owner premise is void.
+      `refresh-partial` rows with IDs `006`, `008`, `009`, `014`, `020`, `022`,
+      `023`, `025`, `026`, `028`, `032`, `033`, and exactly three
+      `admit-new-owner` rows with IDs `034`, `035`, `036`. Any other count means
+      the request changed again — stop and report rather than widening the
+      ledger silently.
 
 - [ ] **Step 3: Run the consumer check before deleting anything.**
 
@@ -481,7 +488,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
   git commit -m "docs: refresh Kubernetes infrastructure and security evidence"
   ```
 
-### Task 5: WRCP-004 — Guide, Diátaxis, SDLC refresh
+### Task 5: WRCP-004 — Guide, Diátaxis, SDLC, and document-family refresh
 
 **Files:**
 
@@ -494,7 +501,9 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 
 - Consumes: the frozen topic ledger from Task 2, and the next free ledger IDs
   after Task 4.
-- Produces: dated `2026-08-14` sections covering `REQ-WERPC-014` and `020`.
+- Produces: dated `2026-08-14` sections covering `REQ-WERPC-014` and `020`,
+  plus the dated evidence that `REQ-WERPC-034`, `035`, and `036` will anchor
+  to when Task 7 registers them in the coverage matrix.
 
 - [ ] **Step 1: Read the prior Diátaxis source history.** The pack records that
       the published Diátaxis site returned HTTP 429 on three attempts and that the
@@ -515,6 +524,29 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 - [ ] **Step 4: Append the dated sections.** Add
       `## 2026-08-14 consistency and Partial re-observation` to both report files,
       with the four retention fields per requirement.
+
+- [ ] **Step 4b: Re-observe the Spec, Task, and Plan document families.** These
+      three families are described in the document-family contract matrix but had
+      no coverage-matrix owner until this cycle. Re-read their canonical
+      workspace evidence and their profile and template contracts:
+
+  | Family | Canonical path | Profile and template |
+  | --- | --- | --- |
+  | Spec | `docs/03.specs/` | `sdlc/spec` profile; `docs/99.templates/templates/sdlc/specs/spec.template.md` |
+  | Task | `docs/04.execution/tasks/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
+  | Plan | `docs/04.execution/plans/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
+
+  For each, record the enforced H2 profile, the lifecycle states the repository
+  actually uses, the reciprocity rules its validator enforces, and what the
+  matrix row already claims. Append the result to the existing document-family
+  section of `spec-driven-sdlc-and-document-contracts.md` under the same dated
+  `2026-08-14` heading. Do not restate the matrix row; record only what this
+  re-observation adds or corrects.
+
+  Assign each family a status from the evidence you actually gathered. Per
+  `C-WRCP-010` the admission itself neither raises nor lowers a status, so a
+  family whose structural contract is enforced but whose effectiveness is
+  unmeasured is `Verified` on the contract and `DEFER` on the effect — say both.
 
 - [ ] **Step 5: Register sources and claims.** Continue both sequences from the
       current maximum found in the ledger.
@@ -594,7 +626,8 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 
 - Consumes: every dated section and ledger row produced by Tasks 3–6.
 - Produces: agreeing counts and owner projections across the scope index, the
-  pack README, and the collection README.
+  pack README, and the collection README, and the three admitted owner rows
+  `REQ-WERPC-034`, `035`, and `036`.
 
 - [ ] **Step 1: Re-derive the ten scope rows.** For each file under
       `docs/00.agent-governance/scopes/`, re-read its `Authority Boundary`
@@ -617,6 +650,24 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
 - [ ] **Step 3: Update the observation dates.** The scope index currently
       carries a 2026-08-10 scope observation date. Change it to `2026-08-14` and
       update the `updated:` frontmatter field.
+
+- [ ] **Step 3b: Register the three admitted owners in the coverage matrix.**
+      Add exactly three rows to the pack README's Requirement Coverage Matrix,
+      immediately after `REQ-WERPC-033`, using the same column set as every
+      existing row:
+
+  | Request ID | Requested topic | Primary owner | Workspace evidence | External source class | Status |
+  | --- | --- | --- | --- | --- | --- |
+  | `REQ-WERPC-034` | Spec | the document-family matrix row for Spec | `docs/03.specs/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-035` | Task | the document-family matrix row for Task | `docs/04.execution/tasks/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-036` | Plan | the document-family matrix row for Plan | `docs/04.execution/plans/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+
+  Link each primary owner to the anchor of the document-family matrix section,
+  the way rows `REQ-WERPC-011` through `REQ-WERPC-019` already do. Then state in
+  the reconciliation subsection why these three were absent: the matrix
+  described twelve families while the coverage matrix registered nine, and no
+  prior request named Spec, Task, or Plan explicitly. Add no fourth owner —
+  `C-WRCP-010` caps this at three.
 
 - [ ] **Step 4: Update the pack README reconciliation.** Add a
       `### 2026-08-14 consistency and Partial re-observation reconciliation`
@@ -761,8 +812,8 @@ never promoted into runtime or live claims.
 ## Completion Criteria
 
 - All eight work packages are committed as separate non-empty logical commits.
-- The topic ledger holds exactly twenty-two rows and twelve `refresh-partial`
-  dispositions.
+- The topic ledger holds exactly thirty-six rows, twelve `refresh-partial`
+  dispositions, and exactly three `admit-new-owner` dispositions.
 - Exactly two cleanup targets were removed, each behind a passing consumer
   check, and `.worktrees/docs-sdlc-governance-consolidation` is unchanged.
 - Every one of the twelve requirements carries a dated `2026-08-14` section
@@ -783,7 +834,7 @@ never promoted into runtime or live claims.
 
 | Spec criterion                                                                                                | Work package  | Expected Task                                                                                                                                           |
 | ------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| N/A — approved Spec 057 criterion `VAL-WRCP-001`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-001      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record twenty-two-row topic ledger with unique owners             |
+| N/A — approved Spec 057 criterion `VAL-WRCP-001`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-001      | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record the thirty-six-row topic ledger with unique owners             |
 | N/A — approved Spec 057 criterion `VAL-WRCP-002`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record separated workspace and external results per requirement   |
 | N/A — approved Spec 057 criterion `VAL-WRCP-003`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record four retention fields per retained Partial or DEFER        |
 | N/A — approved Spec 057 criterion `VAL-WRCP-004`; reciprocal rendered link is deferred to WRCP-000 activation | WRCP-002..005 | N/A — the matching Task row is created and linked during WRCP-000 activation; it will record ledger before/after comparison and ID uniqueness           |

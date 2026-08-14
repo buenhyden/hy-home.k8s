@@ -17,10 +17,20 @@ surface: a constraint-consistency pass over scope projection, one-off artifact
 cleanup, and cross-link integrity; and an incremental re-observation of the
 twelve `Partial` requirement rows.
 
-The direct human request enumerated twenty-two research topics. Every topic
-maps onto an existing `REQ-WERPC` owner in the active pack, so this cycle
-creates no new research pack, no new topic report, and no new requirement ID.
-It refreshes and reconciles what the pack already owns.
+The direct human request enumerated twenty-three research topics. All but three
+map onto an existing `REQ-WERPC` owner in the active pack, so this cycle
+creates no new research pack and no new topic report. It refreshes and
+reconciles what the pack already owns.
+
+The three exceptions are the Spec, Task, and Plan document families. The pack's
+[document-family contract matrix](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
+already describes all twelve families, but the coverage matrix registers owners
+for only nine — `REQ-WERPC-011` through `REQ-WERPC-019`. Spec, Task, and Plan
+therefore carry researched content with no traceable requirement owner. Three
+prior refresh cycles did not surface this because no request named those
+families explicitly. This cycle admits exactly three new owners to close the
+gap; that is a traceability correction over existing research, not new
+research.
 
 The request also asked for topic-by-topic workspace investigation. This Spec
 treats workspace re-observation as a first-class deliverable separate from
@@ -57,12 +67,16 @@ provided the delta and its boundaries are recorded.
 - External source re-check and workspace re-observation for the twelve
   `Partial` rows: `REQ-WERPC-006`, `008`, `009`, `014`, `020`, `022`, `023`,
   `025`, `026`, `028`, `032`, and `033`.
+- Admission of `REQ-WERPC-034` (Spec), `REQ-WERPC-035` (Task), and
+  `REQ-WERPC-036` (Plan) as coverage-matrix owners over the document-family
+  matrix rows that already describe them.
 - Logical-unit commits with repository-static validation evidence.
 
 ### Out of scope and non-goals
 
-- Creating a new dated research pack, a duplicate report, or a new
-  `REQ-WERPC` requirement.
+- Creating a new dated research pack or a duplicate report.
+- Creating any new `REQ-WERPC` requirement owner beyond the three admitted for
+  the Spec, Task, and Plan document families.
 - Renumbering or rewriting any existing source ID, claim ID, or requirement ID.
 - Live k3d, ArgoCD, Vault, ESO, cluster, gateway, or registry inspection.
 - Hosted CI execution, deployment, promotion, or rollback evidence.
@@ -80,7 +94,7 @@ provided the delta and its boundaries are recorded.
 
 ### C-WRCP-001 — closed topic ledger
 
-Before any refresh work, the twenty-two requested topics are mapped onto
+Before any refresh work, the twenty-three requested topics are mapped onto
 existing `REQ-WERPC` owners in one closed table. Each request line receives
 exactly one primary owner and one disposition: `refresh-partial`,
 `reconfirm-verified`, or `exclude-duplicate`. A topic absent from this ledger
@@ -147,6 +161,20 @@ Research subagents are read-only. They return findings; they do not write to
 tracked files. All tracked-file mutation is performed by the primary agent, so
 that ledger ID allocation stays serialized and collision-free.
 
+### C-WRCP-010 — admitted new owner boundary
+
+Exactly three new requirement owners may be created: `REQ-WERPC-034` for the
+Spec family, `REQ-WERPC-035` for the Task family, and `REQ-WERPC-036` for the
+Plan family. Each is admitted only because the document-family contract matrix
+already carries its research and the coverage matrix omits its owner row.
+
+Each new owner must point at the existing matrix row as its primary owner
+anchor, name its canonical workspace path, and take its status from the
+evidence already recorded there plus this cycle's dated re-observation. A new
+owner may not be used to introduce a topic the pack never researched, and no
+fourth owner may be added under this contract. Creating these rows is a
+traceability correction; it does not by itself raise or lower any status.
+
 ## Core Design
 
 The cycle uses six bounded components executed in a fixed order. The order is
@@ -154,7 +182,7 @@ load-bearing: cleanup precedes research so that research never cites a path
 scheduled for removal, and reconciliation follows both so that link validation
 observes final state.
 
-1. **Topic ledger.** Build the closed `C-WRCP-001` mapping from the twenty-two
+1. **Topic ledger.** Build the closed `C-WRCP-001` mapping from the twenty-three
    requested topics to existing owners, with dispositions.
 2. **Cleanup.** Execute the two approved removals behind the `C-WRCP-006`
    consumer check. Record the stale-worktree observation without acting on it.
@@ -281,7 +309,7 @@ proves only that the fetch was unavailable, never that a control is absent.
 
 | Criterion    | Success condition                                                                                                                            | Verification evidence                                       |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| VAL-WRCP-001 | All twenty-two requested topics form one closed ledger against existing owners, with no new requirement ID created.                          | Topic ledger table and owner-uniqueness check               |
+| VAL-WRCP-001 | All twenty-three requested topics form one closed ledger, mapped onto existing owners plus exactly the three admitted new owners.            | Topic ledger table and owner-uniqueness check               |
 | VAL-WRCP-002 | Workspace observation and external source result are recorded separately for each of the twelve `Partial` rows.                              | Per-requirement finding rows in the dated sections          |
 | VAL-WRCP-003 | Every admitted candidate has one final disposition, and each retained `Partial` or `DEFER` names evidence, authority, boundary, and trigger. | Content contract review of dated sections                   |
 | VAL-WRCP-004 | New sources and claims continue the existing sequence with complete provenance and no existing ID is renumbered or rewritten.                | Before/after ledger comparison and ID uniqueness check      |
@@ -292,6 +320,7 @@ proves only that the fetch was unavailable, never that a control is absent.
 | VAL-WRCP-009 | Cross-link reconciliation is the last content change before validation closure.                                                              | Commit order in the logical-unit sequence                   |
 | VAL-WRCP-010 | Every validation lane returns no regression against the recorded 2026-08-14 baseline.                                                        | Task evidence with exact commands and results               |
 | VAL-WRCP-011 | Each logical work unit is a separate non-empty commit and no temporary file survives.                                                        | Commit log and absence check                                |
+| VAL-WRCP-012 | Exactly three new owners exist, each anchored to an existing document-family matrix row, and no fourth owner was created.                | Coverage-matrix diff and owner-count check                  |
 
 ## Traceability
 
@@ -317,6 +346,7 @@ standalone execution rules.
 | N/A — direct human request that reconciliation observe final state  | VAL-WRCP-009   | Commit ordering of the reconciliation unit     |
 | N/A — direct human request for logical-unit commits                 | VAL-WRCP-010   | Validation lane results against the baseline   |
 | N/A — direct human request for a clean terminal tree                | VAL-WRCP-011   | Commit log and temporary-file absence check    |
+| N/A — direct human approval of three admitted document-family owners | VAL-WRCP-012   | Coverage-matrix diff and owner-count check     |
 
 ### Related Documents
 
