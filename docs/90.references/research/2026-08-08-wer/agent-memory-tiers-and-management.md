@@ -142,12 +142,12 @@ run, or retrieval was accessed.
 
 #### REQ-WERPC-032 provider and MCP lifecycle delta
 
-| Official source | Publication / revision and adopted scope | Rejected inference, uncertainty, and refresh trigger |
-| --- | --- | --- |
-| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories) | Current page with no publisher date, checked 2026-08-12. Local memories are separate from ChatGPT web memory, off by default, generated under the Codex home directory, and controlled per chat for use and future generation; required guidance belongs in `AGENTS.md` or checked-in docs. | The page states no complete retention or deletion guarantee. It does not prove enablement, generation, use, redaction, or storage in this environment. Recheck when memory controls, location, lifecycle, or privacy language changes. |
-| [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/) | Current SDK documentation with no publisher date, checked 2026-08-12. Sessions retrieve and store conversation items around runs; backends have distinct persistence, `clear_session` is an interface operation, and `OpenAIResponsesCompactionSession` can rewrite an underlying session after compaction. | SDK session and compaction semantics do not transfer to Codex local memory or this repository. No backend, deletion result, or compaction was invoked. Recheck when session interfaces, storage, compaction, or deletion semantics change. |
-| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | Current page with no publisher date, checked 2026-08-12. Auto memory is on by default, machine-local, repository-scoped and shared across worktrees; only the first 200 lines or 25KB of its index load initially, and users can inspect, edit, or delete the Markdown files. | File-level edit/delete controls are not a provider retention guarantee, secure erasure result, or proof of use. Recheck when scope, load limit, storage, compaction, or deletion changes. |
-| [MCP versioning](https://modelcontextprotocol.io/specification/versioning) and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | Current revision `2026-07-28`, checked 2026-08-12. Each request declares a protocol version; resources are application-driven, authorization-sensitive, list/read/cache capable, and optionally updated through `subscriptions/listen`. | The protocol does not make retrieved data authoritative or prove a connected server, negotiated version, access control, cache behavior, notification, or retrieval. Recheck when the current revision or Resources/caching/subscription contract changes. |
+| Official source                                                                                                                                                                      | Publication / revision and adopted scope                                                                                                                                                                                                                                                                    | Rejected inference, uncertainty, and refresh trigger                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories)                                                                                                       | Current page with no publisher date, checked 2026-08-12. Local memories are separate from ChatGPT web memory, off by default, generated under the Codex home directory, and controlled per chat for use and future generation; required guidance belongs in `AGENTS.md` or checked-in docs.                 | The page states no complete retention or deletion guarantee. It does not prove enablement, generation, use, redaction, or storage in this environment. Recheck when memory controls, location, lifecycle, or privacy language changes.                     |
+| [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/)                                                                                                | Current SDK documentation with no publisher date, checked 2026-08-12. Sessions retrieve and store conversation items around runs; backends have distinct persistence, `clear_session` is an interface operation, and `OpenAIResponsesCompactionSession` can rewrite an underlying session after compaction. | SDK session and compaction semantics do not transfer to Codex local memory or this repository. No backend, deletion result, or compaction was invoked. Recheck when session interfaces, storage, compaction, or deletion semantics change.                 |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory)                                                                                                               | Current page with no publisher date, checked 2026-08-12. Auto memory is on by default, machine-local, repository-scoped and shared across worktrees; only the first 200 lines or 25KB of its index load initially, and users can inspect, edit, or delete the Markdown files.                               | File-level edit/delete controls are not a provider retention guarantee, secure erasure result, or proof of use. Recheck when scope, load limit, storage, compaction, or deletion changes.                                                                  |
+| [MCP versioning](https://modelcontextprotocol.io/specification/versioning) and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | Current revision `2026-07-28`, checked 2026-08-12. Each request declares a protocol version; resources are application-driven, authorization-sensitive, list/read/cache capable, and optionally updated through `subscriptions/listen`.                                                                     | The protocol does not make retrieved data authoritative or prove a connected server, negotiated version, access control, cache behavior, notification, or retrieval. Recheck when the current revision or Resources/caching/subscription contract changes. |
 
 **As-Is:** `memory/README.md` and `contracts/harness-contract.json` retain four
 authority classes. `memory/progress.md` is the durable shared ledger;
@@ -171,6 +171,60 @@ contract plus exact repo-static memory, progress, ignore, and schema selectors.
 Owner: Stage 00 memory lifecycle and checkpoint schema. Refresh when a cited
 provider/MCP memory contract or a named local memory selector materially
 changes.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-032` only, checked on **2026-08-14**. The ignored
+`.agent-work/checkpoint.json` remained the named forbidden/unread boundary;
+its contents were not inspected. No provider-local memory, connected-resource
+content, credentials, retention/deletion result, compaction run, or
+retrieval was accessed.
+
+#### REQ-WERPC-032 workspace and source consistency check
+
+**Workspace delta:** `no-change`. `memory/README.md` and
+`contracts/harness-contract.json` still retain the same four authority
+classes; `memory/progress.md` remains the durable shared ledger;
+`contracts/agent-checkpoint.schema.json` remains the repository-static
+schema for the ignored, advisory, atomic/redacted checkpoint. Only the
+schema and ignore rule were re-read for this refresh.
+
+**External result:** all five sources (four distinct pages) were reachable
+and `unchanged` against their 2026-08-12 adopted scope, with one page
+disclosing additional, non-contradicting detail.
+
+| Source                                                                                                | Result      | Note                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories)                        | `unchanged` | Off-by-default, `~/.codex/memories/` storage, per-chat use/generation controls, no retention/deletion guarantee, and the `AGENTS.md`-is-the-required-guidance-owner caution still match. No publisher date.                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/)                 | `unchanged` | `clear_session` is still a plain interface operation; `OpenAIResponsesCompactionSession` still clears and rewrites session history and still names no model-selection key or identifier. The page now enumerates more backends (`SQLiteSession`, `OpenAIConversationsSession`, `RedisSession`, `SQLAlchemySession`, `MongoDBSession`, `DaprSession`, `AdvancedSQLiteSession`, `EncryptedSession`) than previously cited; this is additional detail, not a contradiction of the adopted claim. No publisher date.                                                                                                                  |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory)                                | `unchanged` | On-by-default, machine-local, repository-scoped and shared across worktrees, and the 200-line/25KB `MEMORY.md` load limit still match. The page now additionally states that `MEMORY.md` and topic files are excluded from the session-transcript `cleanupPeriodDays` sweep and "stay until you or Claude edits or deletes them," and that a subagent's own auto memory is a separate directory from the main conversation's. This extends, and does not contradict, the adopted scope; it is recorded as new supporting detail, not a promoted retention guarantee, and does not establish this workspace's effective retention. |
+| [MCP versioning](https://modelcontextprotocol.io/specification/versioning)                            | `unchanged` | The current protocol revision is still stated as `2026-07-28`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | `unchanged` | `subscriptions/listen` with a `resourceSubscriptions` filter and a subscription id in `_meta` still replaces `resources/subscribe`; `resultType`/`ttlMs`/`cacheScope` still appear on list/read/templates-list results; resource-not-found is still `-32602` with `-32002` retained for backward compatibility; every request still must carry `io.modelcontextprotocol/protocolVersion`, `clientInfo`, and `clientCapabilities` in `_meta`.                                                                                                                                                                                      |
+
+**As-Is:** Unchanged. Four authority classes remain explicit; provider and
+MCP documentation still describes local-store, deletion-control, compaction,
+caching, and subscription surfaces that do not supply this repository's
+authority or prove actual behavior.
+
+**Gap and bounded target:** Unchanged. Keep provider memory and MCP results
+`provider-local-auxiliary`, re-observe repository truth before use, and
+promote only reviewed/redacted facts. The Claude Code memory page's newly
+observed cleanup-sweep exclusion for `MEMORY.md`/topic files is a documented
+product design, not an observed local retention fact, and does not change
+the `DEFER` boundary.
+
+**Missing evidence:** an authorized, non-secret, provider/version-specific
+retention and deletion test against the exact store. **Owning authority:**
+Stage 00 memory lifecycle and checkpoint schema. **Safe boundary:** a
+separately authorized inspection of the exact provider/version and store
+only; the ignored checkpoint stays unread unless a future task explicitly
+authorizes recovery inspection. **Refresh trigger:** a cited provider/MCP
+memory contract or a named local memory selector materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New source registered: `SRC-WERPC-074`. New claim registered:
+`CLM-WERPC-010-04`.
 
 ## Related Documents
 

@@ -174,13 +174,13 @@ effective permission was inspected.
 
 #### REQ-WERPC-006 source and workspace reconciliation
 
-| Evidence | Official publication / revision | Adopted scope | Rejected inference, uncertainty, and refresh trigger |
-| --- | --- | --- | --- |
-| [OpenAI Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md) | Current official page; no publication or last-modified date exposed | Codex builds a global-to-project instruction chain, checks one instruction file per directory, and gives nearer project guidance later precedence. | Does not prove this session loaded the tracked gateway. Recheck when discovery order, fallback names, or size limits change. |
-| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Current official page; no publication or last-modified date exposed | Project-scoped TOML agents, parent sandbox/approval inheritance, agent-file overrides, and explicit orchestration are current product surfaces. | Does not prove local agent discovery, spawn, inherited tools, approvals, or execution. Recheck when schema, inheritance, or orchestration changes. |
-| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories) | Current official page; no publication or last-modified date exposed | Local Codex memories are a separate generated recall store, are off by default, have per-chat use/generation controls, and are not the required-guidance owner. | Does not prove enablement, generation, retrieval, redaction, retention, or deletion in this environment. Recheck when memory storage, controls, or lifecycle changes. |
-| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | Current official page; no publication or last-modified date exposed | `CLAUDE.md` and auto memory are context rather than enforcement; auto memory is repository-scoped, machine-local, shared across worktrees, bounded at startup, and user-editable/deletable. | Does not prove that a Claude process loaded or changed memory. Recheck when loading, scope, compaction, deletion, or enforcement changes. |
-| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents) | Current official page; no publication or last-modified date exposed | Current subagent definitions can scope tools, MCP servers, permission mode, hooks, skills, isolation, and memory, with parent/runtime rules affecting execution. | Does not prove discovery, effective permission order, delegation, or tool use for tracked adapters. Recheck when agent fields, permission inheritance, or memory changes. |
+| Evidence                                                                               | Official publication / revision                                     | Adopted scope                                                                                                                                                                               | Rejected inference, uncertainty, and refresh trigger                                                                                                                      |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md) | Current official page; no publication or last-modified date exposed | Codex builds a global-to-project instruction chain, checks one instruction file per directory, and gives nearer project guidance later precedence.                                          | Does not prove this session loaded the tracked gateway. Recheck when discovery order, fallback names, or size limits change.                                              |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Current official page; no publication or last-modified date exposed | Project-scoped TOML agents, parent sandbox/approval inheritance, agent-file overrides, and explicit orchestration are current product surfaces.                                             | Does not prove local agent discovery, spawn, inherited tools, approvals, or execution. Recheck when schema, inheritance, or orchestration changes.                        |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories)         | Current official page; no publication or last-modified date exposed | Local Codex memories are a separate generated recall store, are off by default, have per-chat use/generation controls, and are not the required-guidance owner.                             | Does not prove enablement, generation, retrieval, redaction, retention, or deletion in this environment. Recheck when memory storage, controls, or lifecycle changes.     |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory)                 | Current official page; no publication or last-modified date exposed | `CLAUDE.md` and auto memory are context rather than enforcement; auto memory is repository-scoped, machine-local, shared across worktrees, bounded at startup, and user-editable/deletable. | Does not prove that a Claude process loaded or changed memory. Recheck when loading, scope, compaction, deletion, or enforcement changes.                                 |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents)          | Current official page; no publication or last-modified date exposed | Current subagent definitions can scope tools, MCP servers, permission mode, hooks, skills, isolation, and memory, with parent/runtime rules affecting execution.                            | Does not prove discovery, effective permission order, delegation, or tool use for tracked adapters. Recheck when agent fields, permission inheritance, or memory changes. |
 
 **As-Is:** `AGENTS.md`, the `.claude/`, `.codex/`, `.gemini/`, and
 `.agents/` trees, and `docs/00.agent-governance/harness-catalog.md` still
@@ -202,6 +202,52 @@ contract plus exact repository-static selectors. This check refreshes the
 provider edge with observation-time evidence, but effective parity remains
 `DEFER`. Owner: Stage 00 harness/provider governance. Refresh when one of the
 cited provider contracts or named workspace selectors materially changes.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-006` only, checked on **2026-08-14**. It did not
+invoke a provider, query the GitHub remote, or inspect a cluster.
+
+#### REQ-WERPC-006 workspace and source consistency check
+
+**Workspace delta:** `no-change`. `harness-catalog.md` and
+`contracts/harness-contract.json` still describe exactly `12 roles / 4
+surfaces / 48 adapters` at contract version `1.0.0`; `AGENTS.md`,
+`CLAUDE.md`, `.claude/`, `.codex/`, `.gemini/`, and `.agents/` still project
+the same provider-neutral control plane onto provider-specific edges
+recorded in the 2026-08-11 section.
+
+**External result:** all five sources were reachable and `unchanged` against
+their 2026-08-12 adopted scope.
+
+| Source                                                                                 | Result      | Note                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md) | `unchanged` | Discovery order (global then project, override-then-base, `project_doc_fallback_filenames`), and the 32 KiB `project_doc_max_bytes` default still match. No publisher date.                                                                                                                                                                                                                                                                    |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | `unchanged` | Required `name`/`description`/`developer_instructions` fields, the agent-file-then-spawn-then-`[agents]`-default-then-parent precedence, and the `gpt-5.6`/`gpt-5.6-terra`/`gpt-5.6-luna`/`gpt-5.3-codex-spark` examples still match. No publisher date.                                                                                                                                                                                       |
+| [OpenAI Codex memories](https://learn.chatgpt.com/docs/customization/memories)         | `unchanged` | Off-by-default, per-chat `/memories` controls, no retention/deletion guarantee, and the `AGENTS.md`-is-the-required-guidance-owner caution still match. No publisher date.                                                                                                                                                                                                                                                                     |
+| [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory)                 | `unchanged` | The `CLAUDE.md`/auto-memory distinction, on-by-default auto memory, machine-local repository scope shared across worktrees, and the 200-line/25KB `MEMORY.md` load limit still match. The current page also documents that auto-memory files are excluded from the session-transcript cleanup sweep and that subagents may hold a separate auto-memory directory; this extends, and does not contradict, the adopted scope. No publisher date. |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents)          | `unchanged` | Tool/MCP/permission/hook/skill/isolation/memory frontmatter fields, and the environment-override-then-per-invocation-then-frontmatter-then-main-conversation model precedence, still match. No publisher date.                                                                                                                                                                                                                                 |
+
+**As-Is:** Unchanged from the 2026-08-11 section: one repository-neutral
+control plane is still projected into Codex/Claude/Gemini/local-Antigravity
+edges; `contracts/harness-contract.json` still records 12 roles, four
+tracked surfaces, 48 adapters, and four non-transitive evidence classes.
+
+**Gap and bounded target:** Unchanged. Native discovery, parsing, permission
+enforcement, memory behavior, and cross-provider runtime parity remain
+unobserved.
+
+**Missing evidence:** authenticated, per-provider runtime discovery and
+enforcement observation. **Owning authority:** Stage 00 harness/provider
+governance. **Safe boundary:** a separately authorized, non-secret,
+versioned provider-native inspection of the exact surface only; no live
+cluster or credential access. **Refresh trigger:** a cited provider contract
+or a named workspace selector materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New source registered: `SRC-WERPC-074`. New claim registered:
+`CLM-WERPC-010-01`.
 
 ## Related Documents
 
