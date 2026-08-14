@@ -43,6 +43,15 @@ Direct human approval on 2026-08-13 authorizes this standalone execution relatio
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
 ADR-0022 owns its approval lineage and ADR-0025 owns the topology decision.
 
+Direct human approval on 2026-08-14 refines that topology into package-oriented
+requirements, prefix-free architecture paths, a three-family Stage 90 library,
+a minimal Git-backed Stage 98 index, and a single Stage 99 registry. This
+revision supersedes the earlier PRD/SRS/Interface Requirement form split,
+`ad-`/`adr-` route prefixes, support-prose control plane, and snapshot-count or
+line-digest Archive design. It retains the approved four-digit identity,
+Incident route, work-unit co-location, immutable source recovery, and logical
+commit boundaries.
+
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
 [Tasks 0054](tasks.md).
 
@@ -76,7 +85,9 @@ The reciprocal execution artifacts are [Plan 0054](plan.md) and
 
 - Git history is not rewritten.
 - Existing Stage 98 archive envelopes, source blobs, and immutable records are
-  not edited to make current validators pass.
+  not edited to make current validators pass. They may be removed only by the
+  later approved Archive-compaction package after consumer-zero and Git
+  recovery are independently proven.
 - Stage 90 audit and source-provenance evidence is not cosmetically rewritten.
   It is retained in place or moved through reviewed Stage 98 evidence.
 - External publication, deployment, push, merge, release creation, live
@@ -92,11 +103,14 @@ The terminal active topology is:
 
 ```text
 docs/
-├── 00.agent-governance/
+├── 00.agent-governance/*
 ├── 01.requirements/
+│   ├── README.md
+│   └── ####-<slug>/README.md
 ├── 02.architecture/
-│   ├── descriptions/
-│   └── decisions/
+│   ├── README.md
+│   ├── descriptions/####-<slug>.md
+│   └── decisions/####-<slug>.md
 ├── 03.specs/
 │   └── ####-<slug>/
 │       ├── spec.md
@@ -108,8 +122,29 @@ docs/
 │   ├── policies/
 │   └── runbooks/
 ├── 90.references/
+│   ├── README.md
+│   ├── research/####-<slug>/
+│   ├── audits/####-<slug>/
+│   └── data/####-<slug>/
 ├── 98.archive/
+│   ├── README.md
+│   ├── migrations/####-<slug>.md
+│   └── tombstones/<original-stage>/####-<slug>.md
 └── 99.templates/
+    ├── README.md
+    ├── registry.json
+    ├── contracts/
+    │   ├── frontmatter.schema.json
+    │   └── document-profile.schema.json
+    └── templates/
+        ├── governance/
+        ├── requirements/
+        ├── architecture/
+        ├── specs/
+        ├── operations/
+        ├── references/
+        ├── archive/
+        └── common/
 
 scripts/
 ```
@@ -120,16 +155,27 @@ SDLC approval stages.
 
 ### C-SDLC-002 — requirements and architecture ownership
 
-`docs/01.requirements/` owns normative product, system/software, and interface
-requirements. `docs/02.architecture/descriptions/` owns Architecture
-Descriptions: stakeholder concerns, boundaries, viewpoints, models,
-allocations, data flow, quality attributes, scenarios, and requirement
-disposition. `docs/02.architecture/decisions/` owns decisions, alternatives,
-rationale, consequences, and supersession.
+`docs/01.requirements/####-<slug>/README.md` is one Requirement Package with
+stable `REQ-####` identity. It combines the problem and goal, users and
+stakeholders, functional and non-functional requirements, constraints,
+external interface requirements, acceptance criteria, and links to related
+Architecture and Spec artifacts. Stage 01 owns long-lived,
+solution-independent requirements; it does not repeat one requirement across
+separate PRD, SRS, and Interface Requirement documents.
+
+`docs/02.architecture/descriptions/####-<slug>.md` owns current system
+structure, boundaries, components, data flow, and deployment views under a
+stable `AD-####` frontmatter identity.
+`docs/02.architecture/decisions/####-<slug>.md` owns important choice context,
+alternatives, decision, consequences, and supersession under stable
+`ADR-####` identity. The parent directory determines the route type, so
+`ad-` and `adr-` filename prefixes are not used. A superseded ADR stays in the
+decision log and links reciprocally to its successor; it is not deleted or
+moved to Archive.
 
 `docs/02.architecture/requirements/` is not an active terminal owner. Any
-remaining record is migrated to Stage 01, converted to an AD, or dispositioned
-as historical evidence.
+remaining record is merged into a Requirement Package, converted to an
+Architecture Description, or dispositioned as historical evidence.
 
 ### C-SDLC-003 — work-unit-local Spec-driven execution
 
@@ -139,15 +185,23 @@ acceptance criteria; the Plan owns technical approach, validation, and
 recovery; Tasks own ordered execution and evidence. Cross-artifact validators
 must reject identifier, state, criterion, and path drift.
 
+Executable interface contracts such as OpenAPI, GraphQL, and Protobuf belong
+to the Spec Package that implements and validates them. Stage 01 records the
+solution-independent external interface requirement and links to that
+executable contract without duplicating it.
+
 `docs/04.execution/` is not restored as an active owner. Its numeric slot
 remains unused so retired links are not silently reinterpreted.
 
 ### C-SDLC-004 — four-digit and date policy
 
-Active SDLC filenames and directory identities use four digits. Typed prefixes
-remain part of the profile route where defined, including `ad-`, `srs-`,
-`ifc-`, and `inc-`. Ordinary active filenames do not contain dates. Dates stay
-in frontmatter or typed event metadata.
+Active SDLC filenames and directory identities use four digits. Parent
+directories determine Requirement Package, Architecture Description, ADR,
+Research, Audit, and Data types; their paths do not repeat type prefixes.
+Stable frontmatter IDs retain their typed forms, including `REQ-`, `AD-`,
+`ADR-`, `RES-`, and `AUD-`. The Incident route retains its required `inc-`
+prefix. Ordinary active filenames do not contain dates. Dates stay in
+frontmatter or typed event metadata.
 
 The closed Incident exception is:
 
@@ -193,9 +247,21 @@ hosted CI, and live evidence remain separate evidence classes.
 
 Every authored profile has exactly one canonical template, route, deterministic
 identity rule, frontmatter contract, lifecycle, relationship contract, and
-negative fixture set. Stage 00 authoring guidance, Stage 99 support prose,
-machine registry/schema, hooks, validators, fixtures, README indexes, and
-aggregate quality gates must implement the same contract.
+negative fixture set. `docs/99.templates/registry.json` is the only machine
+authority for path, profile, required sections, lifecycle, and ID rules.
+`contracts/frontmatter.schema.json` and
+`contracts/document-profile.schema.json` validate frontmatter and the registry
+itself. `templates/` contains directly copyable forms grouped under
+`governance/`, `requirements/`, `architecture/`, `specs/`, `operations/`,
+`references/`, `archive/`, and `common/`.
+
+Stage 99 `README.md` is the single human router. Former `support/*.md` rules
+are merged into that README or the registry and then removed.
+`templates/changes/` becomes `templates/specs/`. The removed
+`design.template.md`, `tests.template.md`, and separate PRD/SRS/Interface
+Requirement templates converge into the Spec/Plan/Tasks and Requirement
+Package templates. Templates reference a registry profile ID rather than
+hardcoding their destination paths or restating validator behavior.
 
 Legacy, deprecated, compatibility-only, conflicting, contradictory, or
 duplicate owners are removed after their active consumers reach zero and their
@@ -203,7 +269,23 @@ Stage 98 disposition is valid.
 
 ### C-SDLC-008 — Stage 90 reference reconciliation
 
-Every Stage 90 file receives exactly one disposition:
+The terminal Stage 90 topology contains only:
+
+```text
+docs/90.references/
+├── README.md
+├── research/####-<slug>/
+├── audits/####-<slug>/
+└── data/####-<slug>/
+```
+
+Each package has a `README.md` owner and only the bounded supporting source or
+data files that it indexes. Research owns external evidence and investigation;
+Audit owns point-in-time gap or conformance assessment; Data owns repository
+inventory and structured reference data. `RES-####` and `AUD-####` remain
+frontmatter identities, but `res-` and `aud-` are not repeated in paths.
+
+Every existing Stage 90 file receives exactly one disposition:
 
 - `retain-current`: maintained reference with a named freshness owner;
 - `regenerate`: generated projection with deterministic source and check mode;
@@ -213,17 +295,34 @@ Every Stage 90 file receives exactly one disposition:
 - `delete`: content is redundant and recoverable from a recorded source
   commit, with no live consumer.
 
-Current Stage 90 references use semantic, undated filenames. Observation dates
-remain in frontmatter or source-check metadata. Dated audit, snapshot, and
-research-pack directories may be retained only as explicitly typed evidence;
-they are not active policy owners. Current links may be rewritten to canonical
-owners. Historical source claims and audit evidence remain byte-preserved or
-recoverable through their recorded source commit.
+Current `learning/` content becomes a Stage 05 Guide when it teaches repository
+operation, or Research when it records external evidence. Deprecated redirect
+documents are removed after consumer migration. A Stage 90 link to a retired
+path is not preserved as if it were current; the historical claim is converted
+to a Git source commit or Stage 98 evidence when needed. Stage 90 never
+overrides rules owned by Stage 00, 01, 02, 03, or 05.
+
+Observation dates remain in frontmatter or source-check metadata. Historical
+source claims and audit evidence remain recoverable through their recorded Git
+source or an approved Archive record; byte-for-byte copies are not created by
+default.
 
 ### C-SDLC-009 — Stage 98 migration evidence
 
-Every moved, merged, replaced, or deleted current artifact has migration or
-tombstone evidence with at least:
+Git history is the default full-content archive. Stage 98 is a minimal lookup
+and recovery index:
+
+```text
+docs/98.archive/
+├── README.md
+├── migrations/####-<slug>.md
+└── tombstones/<original-stage>/####-<slug>.md
+```
+
+A Migration records a large path or authority cutover. A Tombstone records a
+deleted stable path, replacement, reason, and recovery commit. Every moved,
+merged, replaced, or deleted current artifact has only the minimum applicable
+evidence, including:
 
 ```yaml
 legacy_path:
@@ -231,7 +330,7 @@ stable_path:
 artifact_id:
 action: moved | merged | replaced | deleted
 replacement:
-source_commit:
+recovery_commit:
 reason:
 ```
 
@@ -239,6 +338,15 @@ The validator enforces global artifact-ID uniqueness, typed four-digit stable
 ID patterns, path/frontmatter identity equality, no unapproved date-based
 active paths, disposition evidence for deletion or consolidation, and no
 active direct links to individual Archive records.
+
+Completed Spec/Plan/Task bodies are not copied into Archive without a specific
+audit or legal retention requirement. Active documents link to the Archive
+README or an applicable Migration, not to individual Tombstones. Superseded
+ADRs remain in Stage 02. Line-number SHA ledgers, full Archive snapshot counts,
+and other restatable Git inventories are removed. The existing Archive corpus
+is reviewed path by path and reduced to minimal Migration or Tombstone evidence
+only when Git recovery and consumer-zero are proven; otherwise the record is
+retained with an explicit reason.
 
 ### C-SDLC-010 — scripts disposition and terminal inventory
 
@@ -256,10 +364,12 @@ Filename similarity alone is not sufficient evidence for merging validators.
 ### C-SDLC-011 — design-document ownership
 
 `docs/03.specs/####-<slug>/` does not require a separate `design.md` by
-default. The Spec owns observable behavior and acceptance criteria, the Plan
-owns the change-local technical design and validation approach, and Tasks own
-ordered execution and evidence. A design that outlives one work unit or affects
-system-wide viewpoints is promoted to an Architecture Description or ADR.
+default. The Spec owns observable behavior, acceptance criteria, and
+change-local design detail; the Plan owns the implementation approach,
+validation, and recovery; Tasks own ordered execution and evidence. A
+long-lived structural view is promoted to an Architecture Description, and a
+long-lived important choice is promoted to an ADR before the work-unit-local
+`design.md` is removed.
 
 Root `DESIGN.md` is not part of that SDLC artifact sequence. It is the
 canonical human-readable owner for UI and design-system color, typography,
@@ -331,7 +441,8 @@ rule owners.
 
 ## Data Modeling & Storage Strategy
 
-The document registry remains the machine authority for active profiles. A
+`docs/99.templates/registry.json` remains the machine authority for active
+profiles. A
 separate reviewed disposition ledger owns current-path migrations, Stage 90
 classification, and script retirement. Frozen archive evidence remains in
 Stage 98 and is never used as a mutable current-policy store.
@@ -345,7 +456,8 @@ claims and fail on index/worktree drift where a fixed-point proof is required.
 
 The canonical interfaces are:
 
-- `document-profiles.json` plus its schema for active document contracts;
+- `docs/99.templates/registry.json` plus the two Stage 99 contract schemas for
+  active document contracts;
 - Stage 00 contracts for agent roster, capability, evidence, and validation
   classes;
 - a document migration/disposition ledger for current path changes;
@@ -364,8 +476,12 @@ duplicate machine inventories or independently redefine lifecycle states.
 ## Edge Cases & Error Handling
 
 - A current document matching two profiles is rejected as ambiguous.
+- Separate PRD, SRS, or Interface Requirement documents that repeat one
+  Requirement Package fail the duplicate-owner audit.
 - A three-digit active identity, malformed four-digit identity, uppercase
   Incident route, nested unexpected path, or path/frontmatter mismatch fails.
+- An `ad-`, `adr-`, `res-`, or `aud-` path prefix fails even when the stable
+  frontmatter ID is valid.
 - A deleted path without migration/tombstone proof fails.
 - A current reference that claims policy authority fails Stage 90
   classification.
@@ -425,15 +541,15 @@ hosted CI, deployment, incident response, or live platform correctness.
 
 | Criterion | Required evidence |
 | --- | --- |
-| VAL-SDLC-001 | Exact terminal active topology; no Stage 02 requirements or Stage 04 active owner; no unapproved Release family. |
-| VAL-SDLC-002 | Every current numeric SDLC route uses four digits and every typed path matches its artifact ID. |
+| VAL-SDLC-001 | Exact terminal active topology; Requirement Packages replace repeated PRD/SRS/Interface forms; no Stage 02 requirements, Stage 04 owner, or unapproved Release family. |
+| VAL-SDLC-002 | Every current numeric SDLC route uses four digits; parent folders determine prefix-free document types while typed frontmatter IDs match their paths. |
 | VAL-SDLC-003 | Incident and Postmortem paths, templates, metadata, links, and negative fixtures use the exact lowercase co-located route. |
 | VAL-SDLC-004 | Every work unit keeps Spec, Plan, and Tasks co-located with reciprocal criteria and state consistency. |
 | VAL-SDLC-005 | Stage 00 has one canonical common contract per concern and thin, evidence-bounded provider adapters. |
-| VAL-SDLC-006 | Every active authored profile has one template and one consistent prose/machine/validator contract. |
+| VAL-SDLC-006 | Stage 99 has one registry, two contract schemas, one human README, and one directly copyable template per active authored profile. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
-| VAL-SDLC-008 | Every Stage 90 file has exactly one disposition; current references have owners/freshness; historical evidence remains recoverable. |
-| VAL-SDLC-009 | Every move, merge, replacement, and deletion has valid Stage 98 migration/tombstone evidence and no active direct Archive-record link. |
+| VAL-SDLC-008 | Every Stage 90 file resolves to Research, Audit, Data, Stage 05 Guide, Git history, Stage 98 evidence, or deletion exactly once; reference material cannot own active policy. |
+| VAL-SDLC-009 | Stage 98 contains only the minimal README, Migration, and Tombstone topology needed for mapping and Git recovery, with no active direct Tombstone link or redundant snapshot/count ledger. |
 | VAL-SDLC-010 | The exact 50-script ledger is complete; consumer-safe transitions prove 49 and then 47 terminal assets. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |
