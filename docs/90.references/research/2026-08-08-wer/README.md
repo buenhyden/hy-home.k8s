@@ -125,6 +125,9 @@ claims.
 | REQ-WERPC-031 | Domain-scoped memory    | [Domain-memory baseline](agent-memory-tiers-and-management.md#domain-scoped-memory-baseline)                          | `docs/03.specs/`                                                                                    | Local memory/domain-owner contract plus official provider/MCP boundaries, checked 2026-08-08                                                                                                                                                            | Verified — Spec/Runbook/Incident/Postmortem authority and archive routing defined; actual retrieval and provider integration remain DEFER                                                                                                        |
 | REQ-WERPC-032 | Memory management       | [Memory-management baseline](agent-memory-tiers-and-management.md#memory-management-baseline)                         | `docs/00.agent-governance/memory/README.md`                                                         | Official OpenAI, Anthropic, and MCP primary sources plus local memory contract, checked 2026-08-08                                                                                                                                                      | Partial — lifecycle/redaction/conflict rules verified; provider retention, deletion, compaction, and connected-resource behavior remain DEFER                                                                                                    |
 | REQ-WERPC-033 | Verification/Validation | [Verification and Validation matrix](ci-cd-github-actions-and-qa.md#verification-and-validation-question-matrix)      | `docs/00.agent-governance/rules/quality-standards.md`                                               | NASA product verification, product validation, requirements validation, and traceability guidance plus local quality-lane evidence (`SRC-WERPC-058`–`SRC-WERPC-059`), checked 2026-08-10                                                                | Partial — external questions and static workspace mapping verified; stakeholder, intended-use, independent, hosted, remote, and live evidence remain DEFER                                                                                       |
+| REQ-WERPC-034 | Spec                    | [Document-family matrix](spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)                  | `docs/03.specs/`                                                                                    | GitHub Spec Kit specification-driven and agentic SDD guidance plus local profile/template/validator evidence, checked 2026-08-08; re-observed 2026-08-14 (`SRC-WERPC-076`)                                                                              | Verified — structural contract (route, frontmatter, status domain, required H2 set, `bodyContract` reciprocity/identifier rule); content, implementation, and delivery effectiveness remain DEFER                                                |
+| REQ-WERPC-035 | Task                    | [Document-family matrix](spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)                  | `docs/04.execution/tasks/`                                                                          | GitHub Spec Kit specification-driven and agentic SDD guidance plus local profile/template/validator evidence, checked 2026-08-08; re-observed 2026-08-14 (`SRC-WERPC-076`)                                                                              | Verified — structural contract (route, frontmatter, status domain, required H2 set, `bodyContract` reciprocity/identifier rule); content, implementation, and delivery effectiveness remain DEFER                                                |
+| REQ-WERPC-036 | Plan                    | [Document-family matrix](spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)                  | `docs/04.execution/plans/`                                                                          | GitHub Spec Kit specification-driven and agentic SDD guidance plus local profile/template/validator evidence, checked 2026-08-08; re-observed 2026-08-14 (`SRC-WERPC-076`)                                                                              | Verified — structural contract (route, frontmatter, status domain, required H2 set, `bodyContract` reciprocity/identifier rule); content, implementation, and delivery effectiveness remain DEFER                                                |
 
 ### 2026-08-10 gap-only refresh reconciliation
 
@@ -172,6 +175,58 @@ records the package's 2026-08-12 re-verification of already registered sources,
 whose baseline `Checked on` values are preserved by contract and therefore lag
 that re-verification. Hosted-runtime, provider-runtime, product and stakeholder
 validation, cluster, credential-bearing, and live evidence remain `DEFER`.
+
+### 2026-08-14 consistency and Partial re-observation reconciliation
+
+This cycle (WRCP-000–WRCP-007) admitted two separate candidate sets. First,
+WRCP-002, WRCP-003, WRCP-004, and WRCP-005 re-observed all twelve `Partial`
+requirement rows carried forward from the 2026-08-11 refresh: `REQ-WERPC-006`,
+`008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, and
+`033`. Every one closed as `Partial` again; none was promoted, so **no
+Status cell in the request matrix above changed as a result of this cycle**.
+Second, WRCP-004 separately re-observed `REQ-WERPC-034`, `035`, and `036` —
+the Spec, Task, and Plan document families — as three brand-new
+coverage-matrix owner rows admitted by Spec 057 amendment `C-WRCP-010`. Per
+that contract, admitting a family neither raises nor lowers a status: each
+new row's Status is `Verified` on structural contract (route, frontmatter,
+status domain, required H2 set, `bodyContract` reciprocity/identifier rule)
+and `DEFER` on content, implementation, and delivery effectiveness, exactly
+as WRCP-004 recorded in the
+[SDLC and document contracts](spec-driven-sdlc-and-document-contracts.md#2026-08-14-consistency-and-partial-re-observation)
+dated section. `C-WRCP-010` caps this admission at exactly three rows; no
+fourth owner was added.
+
+These three rows were absent before this cycle because the
+[document-family contract matrix](spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)
+describes twelve document families (PRD, ARD, ADR, Spec, Plan, Task, Guide,
+Incident, Postmortem, Policy, Release, Runbook), while the coverage matrix
+above registered owner rows for only nine of them (PRD, ARD, ADR, Guide,
+Incident, Postmortem, Policy, Release, Runbook) before this cycle. No prior
+WRCP request line named Spec, Task, or Plan explicitly, so no request-driven
+research had ever produced a coverage-matrix row for them; three prior
+refresh cycles (the 2026-08-10 gap-only refresh, the 2026-08-11 Partial/DEFER
+refresh, and the intervening freshness pass) missed this for the same
+reason.
+
+Findings for both sets are recorded in dated 2026-08-14 sections in
+[governance](workspace-governance-and-common-agent-environment.md#2026-08-14-consistency-and-partial-re-observation),
+[AI agents](ai-agents-and-agency-agents.md#2026-08-14-consistency-and-partial-re-observation),
+[model routing](agent-model-routing-and-configuration.md#2026-08-14-consistency-and-partial-re-observation),
+[memory](agent-memory-tiers-and-management.md#2026-08-14-consistency-and-partial-re-observation),
+[Kubernetes and security](kubernetes-infrastructure-and-security.md#2026-08-14-consistency-and-partial-re-observation),
+[Diátaxis](documentation-architecture-and-diataxis.md#2026-08-14-consistency-and-partial-re-observation),
+[SDLC and document contracts](spec-driven-sdlc-and-document-contracts.md#2026-08-14-consistency-and-partial-re-observation),
+and [CI/CD, Actions, and QA](ci-cd-github-actions-and-qa.md#2026-08-14-consistency-and-partial-re-observation).
+
+The cycle registers `SRC-WERPC-074`–`077` (one per WRCP-002/003/004/005
+package) and `CLM-WERPC-010-01`–`15` (four, three, five, and three claims
+respectively). No existing source or claim row was renumbered or rewritten.
+Counted directly against the tracked files rather than carried forward, the
+pack now contains 14 physical Markdown files including this README
+(unchanged), 36 unique request owners (33 plus the three admitted rows), 77
+unique source IDs (73 plus `SRC-WERPC-074`–`077`), and 92 unique claim IDs
+(77 plus `CLM-WERPC-010-01`–`15`). Hosted-runtime, provider-runtime, cluster,
+credential-bearing, and live evidence remain `DEFER`.
 
 ## Refresh and Succession
 
