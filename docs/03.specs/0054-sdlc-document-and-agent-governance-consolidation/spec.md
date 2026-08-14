@@ -425,19 +425,23 @@ the terminal fixed point.
 ## Core Design
 
 The implementation is a sequence of independently reviewable cutovers rather
-than one broad rewrite. Route-sensitive Stage 00 and Stage 99 changes are
-atomic with the four-digit topology cutover. A deletion, move, merge, or
-replacement is atomic with its Stage 98 migration or tombstone evidence; a
-later global archive package verifies parity but does not retroactively repair
-an evidence gap.
+than one broad rewrite. Requirement Package, prefix-free Architecture, and
+route-sensitive Stage 99 changes are atomic. An existing governance candidate
+that depends on the superseded registry or expanded Archive model is not
+accepted until that foundation exists. A deletion, move, merge, or replacement
+is atomic with its Stage 98 migration or tombstone evidence; a later global
+archive package verifies parity but does not retroactively repair an evidence
+gap.
 
-The closed execution order is: approved design; topology and route-sensitive
-contracts; integrated agent governance; remaining templates; Stage 05
-responsibility ledger; Stage 05 cutover; Stage 90 disposition ledger; Stage 90
-cutover; global Stage 98 parity; exact fifty-script ledger; wrapper retirement
-to forty-nine; append-only progress and generated-current cleanup; transition
-asset retirement to forty-seven with terminal route state; and final
-fixed-point review and branch completion.
+The closed execution order is: approved design and preserved intermediate
+evidence; Requirement Package, prefix-free Architecture, and Stage 99
+foundation; reconciled integrated agent governance; Stage 05 responsibility
+ledger; Stage 05 cutover; Stage 90 disposition ledger; Stage 90 cutover;
+minimal Stage 98 reconciliation; exact fifty-script and control-complexity
+ledger; wrapper retirement to forty-nine; append-only progress and
+generated-current cleanup; transition-asset retirement to forty-seven with a
+single-registry terminal state; and final fixed-point review and branch
+completion.
 
 Every cutover starts with a focused failing test that proves the old conflict
 or missing invariant. Implementation is minimal until that test passes. Broad
