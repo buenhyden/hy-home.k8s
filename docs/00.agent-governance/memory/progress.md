@@ -16834,3 +16834,62 @@ Four deferred minors recorded as known-and-accepted, not fixed:
 - No live, hosted, provider-runtime, remote, secret-value, push, publish,
   merge, deployment, or third-party mutation was performed or evidenced by
   any WRCP package.
+
+## 2026-08-15 - WRCP quality-gate restoration after closure
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`, `scripts/validate-active-corpus-residue-closure.py`
+- Parent: Spec 057 / the WRCP-000..007 program, closed on 2026-08-14
+- Evidence class: repository-static only
+
+### Progress
+
+The WRCP-007 closure entry recorded `validate-repo-quality-gates.sh` failing
+and left it for human triage. Two failures were present, not one; the second
+was masked because the aggregate gate stops at its first error.
+
+**Failure 1 — `MIGRATION-CURRENT-READ` on the source and claim ledger.**
+`scripts/validate-active-corpus-migrations.py` refuses to read any current
+tracked Markdown file above `MAX_MARKDOWN_BYTES = 3_000_000`. The ledger stood
+at 3,019,071 bytes.
+
+The cause was table-alignment padding, not content. Across the cycle the file
+gained 55 lines and 2,252,906 bytes, because the Markdown formatter re-pads
+every row of every table in a file to match its widest cell, and the rows this
+cycle added carry long prose. Normalizing every table cell to single-space
+padding returned the file to 816,508 bytes. Content is unchanged: `diff -w`
+between the pre- and post-normalization file returns empty, and the `SRC-WERPC`
+and `CLM-WERPC` ID sets are identical before and after.
+
+**Failure 2 — `CLOSURE-AUTHORITY-SCOPE` on Spec 057.**
+`scripts/validate-active-corpus-residue-closure.py` requires every Spec that
+reaches status `done` to appear in `POST_CLOSURE_SPEC_AUTHORITY_PATHS`. Specs
+`041`–`046` and `053`–`056` are already registered. Spec 057 was not, so
+closing it failed the gate. The WRCP Plan never captured this step; it is a
+plan gap, not an implementation defect.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` → `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --self-test` → `[PASS] cross-document validator self-test passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` → `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` → `PASS document contract registry: 512 paths`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` → `PASS SUMMARY . - expected="no violations" actual="0"`
+- `python3 scripts/validate-reference-information-architecture.py --self-test` → `Reference information architecture self-test: PASS`
+- `python3 scripts/validate-affected-surfaces.py --root .` → `[PASS] affected surface validation passed: paths=863 surfaces=22/22 validators=22 ci_jobs=4 uncovered=0 ambiguous=0`
+- `git diff --check` and `git diff --cached --check` → both exit 0
+
+The lane was already green before the WRCP program began. These results are
+evidence of **no regression**, not of a newly attained state.
+
+### Handoff
+
+- The formatter's table-padding behavior remains unaddressed and will re-inflate
+  the ledger the next time a wide row is added through the Write or Edit tools.
+  Writing via a shell heredoc bypasses the formatter. A durable fix — a
+  formatter exclusion for wide reference ledgers, a higher cap, or splitting the
+  ledger — is a shared-tooling decision and is not made here.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, merge,
+  or deployment evidence was collected or claimed.
