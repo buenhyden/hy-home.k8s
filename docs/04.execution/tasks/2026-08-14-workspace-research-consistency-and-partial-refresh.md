@@ -34,18 +34,95 @@ remaining work packages defined by the Plan.
 - [Document profile registry](../../99.templates/support/document-profiles.json)
 - Direct human approval of the written Spec and Plan on 2026-08-14
 
+### Topic ledger
+
+The following thirty-six-row ledger is closed for this cycle: twenty-one
+`reconfirm-verified` rows, twelve `refresh-partial` rows (`REQ-WERPC-006`,
+`008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, `033`),
+and three `admit-new-owner` rows (`REQ-WERPC-034`, `035`, `036`) admitted by
+Spec 057 amendment `C-WRCP-010` for the Spec, Task, and Plan document
+families, which previously had no requirement owner in the coverage matrix.
+Task 7 creates the three new owner rows; this ledger only records them.
+
+| Request line                                     | Primary owner   | Disposition        |
+| ------------------------------------------------ | --------------- | ------------------ |
+| Harness engineering                              | `REQ-WERPC-001` | reconfirm-verified |
+| Loop engineering                                 | `REQ-WERPC-002` | reconfirm-verified |
+| Workspace application system, environment, rules | `REQ-WERPC-003` | reconfirm-verified |
+| Claude implementation status                     | `REQ-WERPC-004` | reconfirm-verified |
+| Codex implementation status                      | `REQ-WERPC-005` | reconfirm-verified |
+| Claude/Codex common environment and rules        | `REQ-WERPC-006` | refresh-partial    |
+| Spec-driven development                          | `REQ-WERPC-007` | reconfirm-verified |
+| Kubernetes                                       | `REQ-WERPC-008` | refresh-partial    |
+| Infrastructure                                   | `REQ-WERPC-009` | refresh-partial    |
+| SDLC                                             | `REQ-WERPC-010` | reconfirm-verified |
+| PRD                                              | `REQ-WERPC-011` | reconfirm-verified |
+| ARD                                              | `REQ-WERPC-012` | reconfirm-verified |
+| ADR                                              | `REQ-WERPC-013` | reconfirm-verified |
+| Guide                                            | `REQ-WERPC-014` | refresh-partial    |
+| Incident                                         | `REQ-WERPC-015` | reconfirm-verified |
+| Postmortem                                       | `REQ-WERPC-016` | reconfirm-verified |
+| Policy                                           | `REQ-WERPC-017` | reconfirm-verified |
+| Release                                          | `REQ-WERPC-018` | reconfirm-verified |
+| Runbook                                          | `REQ-WERPC-019` | reconfirm-verified |
+| Documentation and Diátaxis                       | `REQ-WERPC-020` | refresh-partial    |
+| LLM-WIKI                                         | `REQ-WERPC-021` | reconfirm-verified |
+| CI/CD                                            | `REQ-WERPC-022` | refresh-partial    |
+| GitHub Actions                                   | `REQ-WERPC-023` | refresh-partial    |
+| QA                                               | `REQ-WERPC-024` | reconfirm-verified |
+| Security                                         | `REQ-WERPC-025` | refresh-partial    |
+| AI agent systems                                 | `REQ-WERPC-026` | refresh-partial    |
+| agency-agents                                    | `REQ-WERPC-027` | reconfirm-verified |
+| Task-fit model and configuration                 | `REQ-WERPC-028` | refresh-partial    |
+| Short-term memory                                | `REQ-WERPC-029` | reconfirm-verified |
+| Long-term memory                                 | `REQ-WERPC-030` | reconfirm-verified |
+| Domain-scoped memory                             | `REQ-WERPC-031` | reconfirm-verified |
+| Memory management                                | `REQ-WERPC-032` | refresh-partial    |
+| Verification and Validation                      | `REQ-WERPC-033` | refresh-partial    |
+| Spec document family                             | `REQ-WERPC-034` | admit-new-owner    |
+| Task document family                             | `REQ-WERPC-035` | admit-new-owner    |
+| Plan document family                             | `REQ-WERPC-036` | admit-new-owner    |
+
+Assertion: 36 total rows, 21 `reconfirm-verified`, 12 `refresh-partial`, 3
+`admit-new-owner`. This matches the closed count; no row was added or
+widened beyond what this table lists.
+
+### Cleanup record
+
+The Step 3 consumer check
+(`rtk proxy grep -rn "graphify-out/2026-06-04" --include="*.md"
+--include="*.json" --include="*.py" --include="*.sh" --include="*.yaml"
+--include="*.yml" docs/ scripts/ tests/ .github/ .claude/ .codex/ .agents/
+.gemini/ .pre-commit-config.yaml .gitignore`) returned six matches, all
+self-referential mentions of the path inside Spec 057 and the reciprocal
+Plan (the documents that describe this cleanup step itself), not a
+functional or informational dependency on the snapshot's content. Per the
+hard-gate rule for this step, any match blocks the removal regardless of
+its nature, so both approved targets below were reported rather than
+executed this cycle.
+
+| Target                                          | Tracking state    | Consumer check | Action        |
+| ----------------------------------------------- | ----------------- | -------------- | ------------- |
+| `graphify-out/2026-06-04/`                      | tracked           | consumer-found | reported-only |
+| `sessions/2026-08-11-session.md` and two others | untracked-ignored | not-applicable | reported-only |
+| `.worktrees/docs-sdlc-governance-consolidation` | untracked-ignored | not-applicable | reported-only |
+
+The `.worktrees/docs-sdlc-governance-consolidation` worktree's branch is 32
+commits ahead of and 58 behind `main`, so it holds unmerged work and is an
+explicit non-goal of this cycle.
+
 ## Task Table
 
-| ID       | Upstream criterion                           | Work item                                    | Owner           | Status      | Result                                                                                                                                    | Evidence                                                                                    |
-| -------- | -------------------------------------------- | -------------------------------------------- | --------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| WRCP-000 | VAL-WRCP-001–011                             | Activate the standalone execution            | primary agent   | In Progress | Activation is in progress: registry entry, ADR reciprocity, three `active` statuses, and stage indexes are being recorded in this commit. | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, stage indexes |
-| WRCP-001 | VAL-WRCP-001, VAL-WRCP-005, VAL-WRCP-011     | Topic ledger and approved cleanup            | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-002 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Governance, agents, model, memory refresh    | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-003 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Kubernetes, infrastructure, security refresh | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-004 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Guide, Diátaxis, SDLC refresh                | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-005 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | CI/CD, Actions, QA, V&V refresh              | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-006 | VAL-WRCP-007–009, VAL-WRCP-011               | Scope re-projection and reconciliation       | assigned worker | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
-| WRCP-007 | VAL-WRCP-010–012                             | Validation closure and lifecycle done        | primary agent   | Queued      | Not executed.                                                                                                                             | Not applicable                                                                              |
+| ID       | Upstream criterion                           | Work item                                    | Owner           | Status      | Result                                                                                                                                                                                                                              | Evidence                                                                                    |
+| -------- | -------------------------------------------- | -------------------------------------------- | --------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| WRCP-000 | VAL-WRCP-001–011                             | Activate the standalone execution            | primary agent   | In Progress | Activation is in progress: registry entry, ADR reciprocity, three `active` statuses, and stage indexes are being recorded in this commit.                                                                                           | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, stage indexes |
+| WRCP-001 | VAL-WRCP-001, VAL-WRCP-005, VAL-WRCP-011     | Topic ledger and approved cleanup            | assigned worker | Done        | Topic ledger frozen (36 rows: 21 reconfirm-verified, 12 refresh-partial, 3 admit-new-owner). Consumer check found matches, so both approved cleanup targets were reported-only, not removed; the worktree observation was recorded. | This Task's Topic ledger and Cleanup record subsections                                     |
+| WRCP-002 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Governance, agents, model, memory refresh    | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| WRCP-003 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Kubernetes, infrastructure, security refresh | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| WRCP-004 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | Guide, Diátaxis, SDLC refresh                | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| WRCP-005 | VAL-WRCP-002–004, VAL-WRCP-006, VAL-WRCP-011 | CI/CD, Actions, QA, V&V refresh              | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| WRCP-006 | VAL-WRCP-007–009, VAL-WRCP-011               | Scope re-projection and reconciliation       | assigned worker | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
+| WRCP-007 | VAL-WRCP-010–012                             | Validation closure and lifecycle done        | primary agent   | Queued      | Not executed.                                                                                                                                                                                                                       | Not applicable                                                                              |
 
 ## Approval and Safety Boundaries
 
