@@ -1502,6 +1502,10 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md",
             "docs/03.specs/054-workspace-governance-audit-and-remediation/spec.md",
             "docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md",
+            "docs/03.specs/"
+            "056-workspace-engineering-partial-defer-incremental-refresh/spec.md",
+            "docs/03.specs/"
+            "057-workspace-research-consistency-and-partial-refresh/spec.md",
         ]
         future_adrs = sorted(self.validator.POST_CLOSURE_ADR_AUTHORITY_PATHS)
         future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
