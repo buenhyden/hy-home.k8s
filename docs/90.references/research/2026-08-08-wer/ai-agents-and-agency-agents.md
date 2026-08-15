@@ -61,20 +61,20 @@ emits Codex TOML (`name`, `description`, `developer_instructions`), and an
 installer that copies generated files. The scripts and installer were inspected
 only; they were not executed.
 
-| Upstream assertion or asset | Supported observation | Not established |
-| --- | --- | --- |
-| Persona catalog | Markdown role prompts and category layout exist at the pin. | Task fitness, quality, safety, or provider-native discovery. |
-| Conversion/install scripts | Script source transforms/copies files. | Safe overwrite behavior, successful conversion, installation, or runtime consumption. |
-| MIT license | License text exists at the pin. | License counsel, attribution plan, or approval to copy content. |
-| README marketing | It is upstream author prose. | Production readiness, automatic update behavior, or a workspace admission decision. |
+| Upstream assertion or asset | Supported observation                                       | Not established                                                                       |
+| --------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Persona catalog             | Markdown role prompts and category layout exist at the pin. | Task fitness, quality, safety, or provider-native discovery.                          |
+| Conversion/install scripts  | Script source transforms/copies files.                      | Safe overwrite behavior, successful conversion, installation, or runtime consumption. |
+| MIT license                 | License text exists at the pin.                             | License counsel, attribution plan, or approval to copy content.                       |
+| README marketing            | It is upstream author prose.                                | Production readiness, automatic update behavior, or a workspace admission decision.   |
 
 ### Adopt, adapt, or reject rule
 
-| Decision | Required condition | Current result |
-| --- | --- | --- |
-| Adopt | The exact role closes a documented workspace gap; license, security, roster-admission, provider-adapter, evaluation, and reviewer gates approve it. | No candidate is adopted. |
-| Adapt | Only bounded role language is useful; repository rules, tool/sandbox limits, evidence lanes, and local canonical owners replace external assumptions. | Existing local roles remain the canonical adapted roster. |
-| Reject / defer | The proposal duplicates an existing role, assumes unapproved tools/authority, lacks a benchmark, or requires runtime proof not collected. | Bulk import, installer execution, and unreviewed prompt copying are rejected/deferred. |
+| Decision       | Required condition                                                                                                                                    | Current result                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Adopt          | The exact role closes a documented workspace gap; license, security, roster-admission, provider-adapter, evaluation, and reviewer gates approve it.   | No candidate is adopted.                                                               |
+| Adapt          | Only bounded role language is useful; repository rules, tool/sandbox limits, evidence lanes, and local canonical owners replace external assumptions. | Existing local roles remain the canonical adapted roster.                              |
+| Reject / defer | The proposal duplicates an existing role, assumes unapproved tools/authority, lacks a benchmark, or requires runtime proof not collected.             | Bulk import, installer execution, and unreviewed prompt copying are rejected/deferred. |
 
 ### Agent-system admission and operating rules
 
@@ -135,10 +135,10 @@ not needed to answer it.
 
 #### REQ-WERPC-026 agent-contract delta
 
-| Current official contract | Adopted scope | Rejected inference and uncertainty | Refresh trigger |
-| --- | --- | --- | --- |
-| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), current page with no publisher date, checked 2026-08-12 | Project files under `.codex/agents/` require `name`, `description`, and `developer_instructions`; custom agents may override model/reasoning and sandbox settings, while omitted settings inherit according to the documented chain. Explicit requests or applicable project/skill instructions can trigger delegation. | A documented load path or inheritance rule does not prove this worktree's files were discovered, a child was spawned, an approval was granted, or a tool ran. | OpenAI changes project-agent discovery, schema, inheritance, orchestration, sandbox, or approvals. |
-| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), current page with no publisher date, checked 2026-08-12 | Project Markdown agents can scope tools, disallowed tools, MCP servers, permission modes, hooks, skills, isolation, and persistent memory; main-session and subagent contexts have distinct loading rules. | Optional product fields are not mandatory local fields. The page does not prove tracked adapter discovery, effective deny/allow order, delegation, isolation, memory use, or result quality. | Anthropic changes agent discovery, fields, parent precedence, tool/permission behavior, isolation, or memory. |
+| Current official contract                                                                                                                       | Adopted scope                                                                                                                                                                                                                                                                                                           | Rejected inference and uncertainty                                                                                                                                                           | Refresh trigger                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), current page with no publisher date, checked 2026-08-12 | Project files under `.codex/agents/` require `name`, `description`, and `developer_instructions`; custom agents may override model/reasoning and sandbox settings, while omitted settings inherit according to the documented chain. Explicit requests or applicable project/skill instructions can trigger delegation. | A documented load path or inheritance rule does not prove this worktree's files were discovered, a child was spawned, an approval was granted, or a tool ran.                                | OpenAI changes project-agent discovery, schema, inheritance, orchestration, sandbox, or approvals.            |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), current page with no publisher date, checked 2026-08-12          | Project Markdown agents can scope tools, disallowed tools, MCP servers, permission modes, hooks, skills, isolation, and persistent memory; main-session and subagent contexts have distinct loading rules.                                                                                                              | Optional product fields are not mandatory local fields. The page does not prove tracked adapter discovery, effective deny/allow order, delegation, isolation, memory use, or result quality. | Anthropic changes agent discovery, fields, parent precedence, tool/permission behavior, isolation, or memory. |
 
 **As-Is:** `contracts/harness-contract.json` remains the semantic owner for 12
 roles and 48 current projections across `.agents/agents/`,
@@ -160,6 +160,55 @@ resolution, and effectiveness require separate provider-runtime evidence.
 contract plus exact repo-static roster, contract, evaluation, and adapter
 selectors. Owner: Stage 00 harness and roster-admission contracts. Refresh when
 a cited provider agent contract or the local roster/adapter contract changes.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-026` only, checked on **2026-08-14**. It continues not
+to re-verify the pinned Agency Agents comparison: on 2026-08-11 that was
+because the pinned catalog was not needed to answer the official-provider-delta
+question; on 2026-08-14 it is additionally because this package has no
+explicit human approval for a GitHub remote query, so
+`github.com/msitarzewski/agency-agents` was not fetched. No provider was
+invoked and no cluster was inspected.
+
+#### REQ-WERPC-026 workspace and source consistency check
+
+**Workspace delta:** `no-change`. `contracts/harness-contract.json` still
+records exactly 12 roles and 48 current projections across `.agents/agents/`,
+`.claude/agents/`, `.codex/agents/`, and `.gemini/agents/`, at contract
+version `1.0.0`.
+
+**External result:** both sources were reachable and `unchanged` against
+their 2026-08-12 adopted scope.
+
+| Source                                                                                 | Result      | Note                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | `unchanged` | Project-file required fields, agent-file-first override, and the inheritance chain for omitted settings still match. No publisher date.                                                                                                                                                                  |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents)          | `unchanged` | Project Markdown agent frontmatter (`tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `skills`, `memory`, `isolation`, plus newer `background`/`effort`/`color`/`initialPrompt` fields) and the distinct main-session/subagent loading rules still match. No publisher date. |
+
+**As-Is:** Unchanged. `contracts/harness-contract.json` remains the semantic
+owner for 12 roles and 48 current projections; `contracts/agent-evaluations.json`
+still has 12 repository-static evaluation suites with `DEFER` admission
+dispositions.
+
+**Gap and bounded target:** Unchanged. Current provider schemas still expose
+more optional capability/inheritance controls than the common roster contract
+needs; that is not evidence of local incompleteness. Native discovery,
+delegation, tool execution, effective permission, model resolution, and
+effectiveness require separate provider-runtime evidence.
+
+**Missing evidence:** authenticated delegation/execution trace per tracked
+adapter. **Owning authority:** Stage 00 harness and roster-admission
+contracts. **Safe boundary:** a separately approved, non-secret
+provider-runtime observation of the exact adapter; no bulk import, installer
+execution, or unreviewed prompt copying. **Refresh trigger:** a cited
+provider agent contract, the local roster/adapter contract, or the Agency
+Agents pin changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New source registered: `SRC-WERPC-074`. New claim registered:
+`CLM-WERPC-010-02`.
 
 ## Related Documents
 

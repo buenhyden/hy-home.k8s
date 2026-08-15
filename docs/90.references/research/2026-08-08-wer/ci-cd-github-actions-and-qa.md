@@ -246,14 +246,14 @@ separate remote evidence and is not an external-source row. Existing
 `SRC-WERPC-058`–`059` remain sufficient for the Verification and Validation
 definitions; no duplicate general QA research was added.
 
-| Evidence class | Sanitized observation | Bounded interpretation and rejected inference |
-| --- | --- | --- |
-| Workflow inventory | The projected repository list returned seven active workflows. Five paths match the five tracked workflows in this checkout; two projected active paths do not. | This proves a dated hosted inventory difference, not the content, safety, trigger, or current-branch provenance of either unmatched workflow. The tracked five remain the only locally reconciled workflow bodies. |
-| Run sample | The bounded latest-20 projection returned 20 completed runs: 15 `success` and five `failure`, across push, pull-request, schedule, and dynamic events. None used the current local HEAD. | Hosted execution exists for sampled historical revisions. Conclusion alone does not identify root cause, requirement coverage, current-HEAD status, deployment, promotion, rollback, or live GitOps outcome. |
-| Actions policy | Actions is enabled; the repository policy allows all actions. The default workflow token setting is `read`, and workflow approval of pull-request reviews is disabled. | This is a repository-setting snapshot. Local full-SHA pins, read-default workflow declarations, and narrow job writes remain separate static controls; neither layer proves effective per-run token use, upstream integrity, fork behavior, or runner isolation. |
+| Evidence class              | Sanitized observation                                                                                                                                                                                                                         | Bounded interpretation and rejected inference                                                                                                                                                                                                                                                             |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workflow inventory          | The projected repository list returned seven active workflows. Five paths match the five tracked workflows in this checkout; two projected active paths do not.                                                                               | This proves a dated hosted inventory difference, not the content, safety, trigger, or current-branch provenance of either unmatched workflow. The tracked five remain the only locally reconciled workflow bodies.                                                                                        |
+| Run sample                  | The bounded latest-20 projection returned 20 completed runs: 15 `success` and five `failure`, across push, pull-request, schedule, and dynamic events. None used the current local HEAD.                                                      | Hosted execution exists for sampled historical revisions. Conclusion alone does not identify root cause, requirement coverage, current-HEAD status, deployment, promotion, rollback, or live GitOps outcome.                                                                                              |
+| Actions policy              | Actions is enabled; the repository policy allows all actions. The default workflow token setting is `read`, and workflow approval of pull-request reviews is disabled.                                                                        | This is a repository-setting snapshot. Local full-SHA pins, read-default workflow declarations, and narrow job writes remain separate static controls; neither layer proves effective per-run token use, upstream integrity, fork behavior, or runner isolation.                                          |
 | Rules and branch protection | The projected ruleset list was empty. The `main` branch-protection projection returned one required status check, with strict up-to-date checking disabled; administrator enforcement was false and required approving review count was zero. | This records only projected settings at collection time. It does not prove a merge was blocked, a check mapped to the current local revision, higher-order review quality, bypass history, or policy effectiveness. Null projected fields are not generalized beyond the queried branch-protection shape. |
-| Environments and artifacts | Both projected repository totals were zero. | No environment or retained artifact was listed at collection time. This does not prove historical absence, deletion/retention correctness, secret absence, release state, deployment absence, or artifact integrity. The tracked changelog upload declaration remains static only. |
-| OIDC | The read executed, but the checker rejected the officially valid nullable projected claim-key shape. A reviewed local-only recovery recorded `unavailable` with empty identities and a fixed non-body limitation. | OIDC customization is `UNPROVEN`/`DEFER`. No retry, raw recovery, token request, claim observation, cloud trust, identity exchange, deployment, or absence inference is permitted. |
+| Environments and artifacts  | Both projected repository totals were zero.                                                                                                                                                                                                   | No environment or retained artifact was listed at collection time. This does not prove historical absence, deletion/retention correctness, secret absence, release state, deployment absence, or artifact integrity. The tracked changelog upload declaration remains static only.                        |
+| OIDC                        | The read executed, but the checker rejected the officially valid nullable projected claim-key shape. A reviewed local-only recovery recorded `unavailable` with empty identities and a fixed non-body limitation.                             | OIDC customization is `UNPROVEN`/`DEFER`. No retry, raw recovery, token request, claim observation, cloud trust, identity exchange, deployment, or absence inference is permitted.                                                                                                                        |
 
 The local reconciliation remains internally consistent. Five tracked workflow
 bodies declare default `contents: read`; remote actions are full-commit pinned
@@ -264,16 +264,188 @@ frozen remote revisions; and the affected/staged/all-files contract keeps
 syntax and repository-static evidence distinct. The hosted inventory difference
 does not authorize importing or interpreting the two unmatched workflow bodies.
 
-| Request | Final disposition | Evidence gained | Remaining boundary and follow-up |
-| --- | --- | --- | --- |
-| `REQ-WERPC-022` | `Partial` | Bounded hosted workflow/run metadata now establishes a dated inventory and historical run sample. | No sampled run matches current local HEAD. Current-revision hosted verification, run root cause, deployment, promotion, rollback, reconciliation, and live health remain `DEFER`; refresh on workflow/run topology change or with an approved current-revision run identity. |
-| `REQ-WERPC-023` | `Partial` | Projected Actions/default-token, ruleset, branch-protection, environment, and artifact settings materially narrow the prior administration gap. | OIDC is unavailable; effective per-run permissions, merge enforcement, bypass/fork behavior, secret values, artifact integrity/retention, and any environment or identity use remain `DEFER`; refresh when an allowlisted class or named local workflow/validator changes. |
-| `REQ-WERPC-033` | `Partial` | The sampled hosted conclusions are bounded verification metadata for identified historical revisions, and local lanes remain reproducible static conformance methods. | No current-HEAD requirements-to-result trace, discrepancy/root-cause record, independence evidence, stakeholder/user participation, intended-use scenario, representative environment, deployment, or live-system result was observed. Product/stakeholder validation remains `DEFER`. |
+| Request         | Final disposition | Evidence gained                                                                                                                                                       | Remaining boundary and follow-up                                                                                                                                                                                                                                                       |
+| --------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `REQ-WERPC-022` | `Partial`         | Bounded hosted workflow/run metadata now establishes a dated inventory and historical run sample.                                                                     | No sampled run matches current local HEAD. Current-revision hosted verification, run root cause, deployment, promotion, rollback, reconciliation, and live health remain `DEFER`; refresh on workflow/run topology change or with an approved current-revision run identity.           |
+| `REQ-WERPC-023` | `Partial`         | Projected Actions/default-token, ruleset, branch-protection, environment, and artifact settings materially narrow the prior administration gap.                       | OIDC is unavailable; effective per-run permissions, merge enforcement, bypass/fork behavior, secret values, artifact integrity/retention, and any environment or identity use remain `DEFER`; refresh when an allowlisted class or named local workflow/validator changes.             |
+| `REQ-WERPC-033` | `Partial`         | The sampled hosted conclusions are bounded verification metadata for identified historical revisions, and local lanes remain reproducible static conformance methods. | No current-HEAD requirements-to-result trace, discrepancy/root-cause record, independence evidence, stakeholder/user participation, intended-use scenario, representative environment, deployment, or live-system result was observed. Product/stakeholder validation remains `DEFER`. |
 
 Syntax/static validation, hosted run metadata, repository administration,
 product/stakeholder validation, and deployment/live effects therefore remain
 five separate evidence depths. No row is promoted to `Verified`: all three
 admitted requests remain `Partial`, with the explicit `DEFER` boundaries above.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-022`, `REQ-WERPC-023`, and `REQ-WERPC-033`, checked on
+**2026-08-14**. It did not run `kubectl`, `k3d`, `helm`, `argocd`, `vault`,
+`gh`, or `gh api`, and it did not query the GitHub remote for this
+repository; the prior 2026-08-12 hosted-metadata batch (`SRC-WERPC-072`,
+`CLM-WERPC-009-09`–`010`) is carried forward by reference, not re-fetched.
+The objective workspace check was `git diff --stat a5d2dfbb HEAD -- .github/
+.pre-commit-config.yaml docs/00.agent-governance/contracts/validation-surfaces.json
+docs/00.agent-governance/rules/quality-standards.md`, where `a5d2dfbb` is the
+2026-08-12 baseline merge commit; the command returned zero changed files, so
+every selector cited below was spot-verified rather than assumed unchanged.
+
+#### REQ-WERPC-022 CI/CD workspace and source consistency check
+
+**Workspace delta:** `no-change`. The five tracked workflow files still exist
+unchanged: `ci.yml` still triggers on `push`/`pull_request` limited to `main`
+plus `workflow_dispatch`, derives affected paths through its dedicated
+`changes` job, and its `ci-summary` job still runs with `always()` and fails
+closed on any selected non-`success` dependency; `generate-changelog.yml`
+still triggers on `v*.*.*` tags and uploads `CHANGELOG.md` with exactly
+seven-day retention; `labeler.yml` still triggers on PR opened/synchronized;
+`greetings.yml` still triggers on issue/PR opened; `stale.yml` still runs on
+the `30 1 * * *` daily schedule. Concurrency groups are unchanged: `ci.yml`
+uses `ci-${{ github.ref }}` with `cancel-in-progress: true`;
+`generate-changelog.yml` uses `changelog-${{ github.ref }}` with
+`cancel-in-progress: false`; the three maintenance workflows each declare a
+per-item/scheduled group with `cancel-in-progress: true`. No `environment`,
+`id-token: write`, cloud login, deployment, publication, attestation, cache,
+reusable-workflow invocation, or rollback automation was found in any of the
+five files.
+
+**External result:** representative URLs for `SRC-WERPC-035`, `037`, `038`,
+and `044` were re-fetched; see the [shared source-outcome
+table](#re-checked-external-sources-shared-by-req-werpc-022-req-werpc-023-and-req-werpc-033)
+below. `SRC-WERPC-044`'s registered URL now returns HTTP 404; the equivalent
+content was located at a relocated path and is recorded as `changed`
+(URL relocation), not `unreachable`, because reachable equivalent content was
+confirmed this cycle.
+
+**As-Is:** Unchanged from the 2026-08-12 baseline: the desired-state/GitOps
+boundary, the five-workflow control inventory, and the
+[Workspace As-Is, gap, and target matrix](#workspace-as-is-gap-and-target-matrix)
+remain repo-static `Verified`.
+
+**Gap and bounded target:** Unchanged. A future deployable artifact still
+needs a separately approved promotion design; the current static QA setup is
+still not CD or SLSA conformance.
+
+**Missing evidence:** a hosted run identity for the current local HEAD,
+required-check/ruleset enforcement, and any environment, OIDC, artifact, or
+cache effect. **Owning authority:** platform and delivery owners named in the
+[Workspace As-Is, gap, and target matrix](#workspace-as-is-gap-and-target-matrix).
+**Safe boundary:** a separately authorized, redacted hosted-run or
+administration observation tied to a specific revision/job/run
+ID/conclusion; no dispatch, rerun, approval, or mutation. **Refresh trigger:**
+a workflow trigger/job/permission/concurrency change, an Action revision
+change, or a future approved CD/promotion design.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-13`.
+
+#### REQ-WERPC-023 GitHub Actions workspace and source consistency check
+
+**Workspace delta:** `no-change`. All five workflows still declare
+top-level default `contents: read`; only `labeler.yml`, `greetings.yml`, and
+`stale.yml` request their narrow job-level issue/pull-request write
+permissions. Every re-read remote `uses:` entry across the five files is
+still a full 40-character commit SHA accompanied by a version comment
+(for example `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #
+v7.0.1`); `actions/checkout` invocations still use `persist-credentials:
+false` where checked out.
+
+**External result:** representative URLs for `SRC-WERPC-036`, `039`, `040`,
+and `041` were re-fetched; see the [shared source-outcome
+table](#re-checked-external-sources-shared-by-req-werpc-022-req-werpc-023-and-req-werpc-033)
+below. All four hold their previously adopted claim.
+
+**As-Is:** Unchanged. Full-SHA action pinning and least-privilege default
+permissions remain repo-static `Verified`, matching the current secure-use
+guidance.
+
+**Gap and bounded target:** Unchanged. A SHA pin is still not an
+upstream-code audit, provenance claim, or hosted-run result; effective
+per-run token/secret permission is still not established by a static
+declaration.
+
+**Missing evidence:** effective per-run permission resolution, fork/bypass
+behavior, and upstream action source integrity. **Owning authority:**
+platform and security owners for `.github/workflows/` and
+`scripts/validate-github-actions-security.py`. **Safe boundary:** a
+separately authorized, redacted hosted-run or Actions-policy observation
+tied to a specific revision/job/run; no dispatch, rerun, or token
+inspection. **Refresh trigger:** an Action revision, permission, or pinning
+change, or a cited GitHub Actions/SLSA source materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-14`.
+
+#### REQ-WERPC-033 Verification and Validation workspace and source consistency check
+
+**Workspace delta:** `no-change`. `.pre-commit-config.yaml` still declares
+the same frozen remote hook set (`commitizen`, `pre-commit-hooks`,
+`gitleaks`, `detect-secrets`, `markdownlint-cli2`, `check-jsonschema`,
+`shellcheck-py`, `pre-commit-shfmt`, `zizmor-pre-commit`, `hadolint`,
+`actionlint`, and more) alongside the local static-contract/governance
+hooks; `docs/00.agent-governance/contracts/validation-surfaces.json` still
+declares its `lanes`, `protectedLevels`, `evidenceLanes`, `validators`,
+`ciJobs`, and `surfaces` keys; `docs/00.agent-governance/rules/quality-standards.md`
+still defines the same `targeted -> affected -> staged -> tests ->
+all-files -> formatter-review -> rerun -> diff-checks` canonical completion
+sequence, result vocabulary, and handoff-evidence contract.
+
+**External result:** representative URLs for `SRC-WERPC-042`, `043`, `058`,
+and `059` were re-fetched; see the [shared source-outcome
+table](#re-checked-external-sources-shared-by-req-werpc-022-req-werpc-023-and-req-werpc-033)
+below. All four hold their previously adopted claim; `SRC-WERPC-043` newly
+surfaces a `--no-require-hashes` flag (pip 26.2), which extends rather than
+contradicts the adopted `--require-hashes`/`--only-binary` basis.
+
+**As-Is:** Unchanged. The
+[Verification and Validation question matrix](#verification-and-validation-question-matrix)
+and the ordered local completion sequence remain repo-static/local-static
+`Verified` for the named command and scope; testing remains a shared method,
+not a synonym for either term.
+
+**Gap and bounded target:** Unchanged. No current-HEAD requirements-to-result
+trace, discrepancy/root-cause record, independence evidence,
+stakeholder/user participation, intended-use scenario, representative
+environment, or live-system result was observed this cycle.
+
+**Missing evidence:** stakeholder/user intended-use scenarios, an
+independent-review record proportionate to risk, and any hosted or
+remote/live V&V evidence. **Owning authority:** QA and the product/
+requirements owner named in the
+[Verification and Validation question matrix](#verification-and-validation-question-matrix).
+**Safe boundary:** a separately authorized, non-secret intended-use or
+stakeholder-scenario review against the exact cited requirement/spec
+baseline; no live or remote action. **Refresh trigger:** the requirement,
+spec, artifact, quality-lane, or traceability contract changes, or the cited
+NASA handbooks are revised.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New claim registered: `CLM-WERPC-010-15`.
+
+#### Re-checked external sources (shared by REQ-WERPC-022, REQ-WERPC-023, and REQ-WERPC-033)
+
+A representative URL from each of the twelve registered rows
+`SRC-WERPC-035`–`044` and `SRC-WERPC-058`–`059` was re-fetched on
+**2026-08-14**. Eleven held their previously adopted claim; one relocated.
+
+| Source (registered row)                                                                                                                                                                                                                                                                           | Result      | Note                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) (`SRC-WERPC-035`)                                                                                                                                                                           | `unchanged` | Still documents `on`, `jobs`, `permissions`, `if`, `needs`, and `concurrency` as distinct workflow controls; no visible last-modified date.                                                                                                                                                                                                                                                                                               |
+| [Secure use reference](https://docs.github.com/en/actions/reference/security/secure-use) (`SRC-WERPC-036`)                                                                                                                                                                                        | `unchanged` | Still states full-length commit SHA pinning is the only immutable-release option and recommends least-privilege `GITHUB_TOKEN` defaults.                                                                                                                                                                                                                                                                                                  |
+| [Concurrency](https://docs.github.com/en/actions/concepts/workflows-and-actions/concurrency) (`SRC-WERPC-037`)                                                                                                                                                                                    | `unchanged` | Still describes concurrency groups as canceling superseded pending runs by default, with an opt-in queuing mode.                                                                                                                                                                                                                                                                                                                          |
+| [Store and share data with workflow artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data) (`SRC-WERPC-038`)                                                                                                                                                               | `unchanged` | Still documents `retention-days` as a configurable per-upload period bounded by the repository/organization/enterprise limit; the paired "Removing workflow artifacts" URL under this row was not individually re-fetched this cycle.                                                                                                                                                                                                     |
+| [OpenID Connect](https://docs.github.com/en/actions/concepts/security/openid-connect) (`SRC-WERPC-039`)                                                                                                                                                                                           | `unchanged` | Still describes a per-job auto-generated OIDC token with claims a cloud provider matches against preconfigured trust conditions; the paired OIDC reference URL under this row was not individually re-fetched this cycle.                                                                                                                                                                                                                 |
+| [Using artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations) and [reusable workflows for SLSA Build L3](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating) (`SRC-WERPC-040`) | `unchanged` | Still requires `attestations: write`, `contents: read`, and `id-token: write` (plus `packages: write` for containers) for a reusable-workflow SLSA Build Level 3 path.                                                                                                                                                                                                                                                                    |
+| [Specification stages and versioning](https://slsa.dev/spec-stages) (`SRC-WERPC-041`)                                                                                                                                                                                                             | `unchanged` | Still defines Draft/Candidate/Approved/Retired stages and MAJOR.MINOR versioning; no current-version claim is adopted from this page.                                                                                                                                                                                                                                                                                                     |
+| [pre-commit autoupdate options](https://pre-commit.com/#pre-commit-autoupdate-options) (`SRC-WERPC-042`)                                                                                                                                                                                          | `unchanged` | Still documents `--bleeding-edge`, `--freeze`, `--repo`, and `-j`/`--jobs`, and that default behavior updates to the latest default-branch tag.                                                                                                                                                                                                                                                                                           |
+| [Secure installs](https://pip.pypa.io/en/stable/topics/secure-installs/) (`SRC-WERPC-043`)                                                                                                                                                                                                        | `unchanged` | Still documents hash-checking mode, `--require-hashes`, and `--only-binary :all:`; newly notes a `--no-require-hashes` flag (pip 26.2) not previously recorded, which extends rather than contradicts the adopted basis.                                                                                                                                                                                                                  |
+| [Using environments for deployment](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-environments-for-deployment) (`SRC-WERPC-044`)                                                                                                                        | `changed`   | The registered URL now returns HTTP 404. Equivalent content — protection rules, required reviewers, environment-scoped secrets/variables, and deployment-branch restrictions — is now published at `docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments`. Recorded as a relocation, not a content change; the adopted "no environment/deployment found" repository-static claim is unaffected. |
+| [NASA Product Verification](https://www.nasa.gov/reference/5-3-product-verification/) (`SRC-WERPC-058`)                                                                                                                                                                                           | `unchanged` | Still defines verification as confirming an end product conforms to its specified requirements, answering "was the end product realized right," through test/analysis/inspection/demonstration with documented objective evidence.                                                                                                                                                                                                        |
+| [NASA Product Validation](https://www.nasa.gov/reference/5-4-product-validation/) (`SRC-WERPC-059`)                                                                                                                                                                                               | `unchanged` | Still defines validation as confirming the end product satisfies stakeholder expectations within its intended operational environment, answering "was the right product done."                                                                                                                                                                                                                                                            |
+
+No `kubectl`, `k3d`, `helm`, `argocd`, `vault`, `gh`, or `gh api` command was
+run; only public documentation pages were fetched. No row is promoted to
+`Verified`; no row is `Contradicted`. New source registered: `SRC-WERPC-077`.
+New claims registered: `CLM-WERPC-010-13` through `CLM-WERPC-010-15`.
 
 ## Related Documents
 

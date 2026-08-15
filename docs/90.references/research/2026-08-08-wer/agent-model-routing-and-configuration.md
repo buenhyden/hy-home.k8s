@@ -44,12 +44,12 @@ support, evaluation readiness, and promotion state live in
 `contracts/agent-model-fitness.json`; all observed runtime/promotion/canary
 tuples remain `DEFER`.
 
-| Task characteristics | Role / tier | Tool and sandbox expectation | Review / promotion rule |
-| --- | --- | --- | --- |
-| Bounded documentation, inventory, formatting, or deterministic validation | Named worker | Read-only or minimal workspace-write surface; no credentials/live tools. | Normal reviewer when the change is material; validation evidence is required. |
-| Cross-file architecture, conflicting sources, or multi-agent coordination | Supervisor / `top` | Narrow delegation and explicit ownership; preserve a shared evidence ledger. | Independent review before canonical decision or broad edit. |
-| Security, GitOps, incident, destructive, or external-affecting work | Specialist with risk-appropriate tier | Least privilege; human approval controls live/secret/remote/destructive tools. | Independent specialist review and explicit rollback/handoff; no self-promotion. |
-| Unknown model fitness or provider feature | Existing safe incumbent or no execution | Do not broaden tools or change configuration to compensate. | `DEFER`; collect approved parsing and same-suite evaluation evidence first. |
+| Task characteristics                                                      | Role / tier                             | Tool and sandbox expectation                                                   | Review / promotion rule                                                         |
+| ------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Bounded documentation, inventory, formatting, or deterministic validation | Named worker                            | Read-only or minimal workspace-write surface; no credentials/live tools.       | Normal reviewer when the change is material; validation evidence is required.   |
+| Cross-file architecture, conflicting sources, or multi-agent coordination | Supervisor / `top`                      | Narrow delegation and explicit ownership; preserve a shared evidence ledger.   | Independent review before canonical decision or broad edit.                     |
+| Security, GitOps, incident, destructive, or external-affecting work       | Specialist with risk-appropriate tier   | Least privilege; human approval controls live/secret/remote/destructive tools. | Independent specialist review and explicit rollback/handoff; no self-promotion. |
+| Unknown model fitness or provider feature                                 | Existing safe incumbent or no execution | Do not broaden tools or change configuration to compensate.                    | `DEFER`; collect approved parsing and same-suite evaluation evidence first.     |
 
 ### Configuration baseline
 
@@ -91,11 +91,11 @@ inside the 2026-08-08 to 2026-08-10 window. The re-check did record three
 disagreements that exist between the live official pages themselves, which
 bounds how strongly any single page can be cited for model resolution.
 
-| Observation | Live evidence on 2026-08-10 | Effect on this report |
-| --- | --- | --- |
-| Model identifiers disagree across Codex pages | The config reference uses `gpt-5.5` as its `model` example; the subagents page names `gpt-5.6`, `gpt-5.6-terra`, and `gpt-5.6-luna` in prose while its own TOML example sets `gpt-5.3-codex-spark`. Three generations appear across two pages of the same product. | Do not treat any documented model identifier as a stable routing target. A model-policy tuple must be validated against the provider at run time, which is `DEFER`. |
-| Reasoning-effort value sets disagree | The config reference lists `minimal`, `low`, `medium`, `high`, `xhigh` for `model_reasoning_effort`; the subagents page lists `ultra`, `max`, `xhigh`, `high`, `medium`, `low`. `ultra` and `max` appear only on the second page; `minimal` only on the first. | A local effort value that validates against one page may be rejected by the runtime. Effort-value admission stays an unverified property. |
-| Model precedence order disagrees | The config reference says of `agents.default_subagent_model` that "An explicit spawn model takes precedence." The subagents page states the agent file value takes precedence, and only otherwise resolves explicit spawn value, then the `[agents]` default, then the parent value. | The two statements order the agent-file and explicit-spawn sources differently. This report therefore records no single authoritative Codex precedence chain; the Claude Code chain, which one page states end to end, remains separately citable. |
+| Observation                                   | Live evidence on 2026-08-10                                                                                                                                                                                                                                                          | Effect on this report                                                                                                                                                                                                                              |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Model identifiers disagree across Codex pages | The config reference uses `gpt-5.5` as its `model` example; the subagents page names `gpt-5.6`, `gpt-5.6-terra`, and `gpt-5.6-luna` in prose while its own TOML example sets `gpt-5.3-codex-spark`. Three generations appear across two pages of the same product.                   | Do not treat any documented model identifier as a stable routing target. A model-policy tuple must be validated against the provider at run time, which is `DEFER`.                                                                                |
+| Reasoning-effort value sets disagree          | The config reference lists `minimal`, `low`, `medium`, `high`, `xhigh` for `model_reasoning_effort`; the subagents page lists `ultra`, `max`, `xhigh`, `high`, `medium`, `low`. `ultra` and `max` appear only on the second page; `minimal` only on the first.                       | A local effort value that validates against one page may be rejected by the runtime. Effort-value admission stays an unverified property.                                                                                                          |
+| Model precedence order disagrees              | The config reference says of `agents.default_subagent_model` that "An explicit spawn model takes precedence." The subagents page states the agent file value takes precedence, and only otherwise resolves explicit spawn value, then the `[agents]` default, then the parent value. | The two statements order the agent-file and explicit-spawn sources differently. This report therefore records no single authoritative Codex precedence chain; the Claude Code chain, which one page states end to end, remains separately citable. |
 
 One attribution limit is also recorded. The Agents SDK sessions page
 (`SRC-WERPC-050`) documents session storage backends only; it states no
@@ -136,11 +136,11 @@ was observed.
 
 #### REQ-WERPC-028 current configuration reconciliation
 
-| Official source | Publication / revision and adopted scope | Rejected inference, uncertainty, and refresh trigger |
-| --- | --- | --- |
-| [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) | Current page with no publisher date, checked 2026-08-12. It documents `[agents]` defaults, per-role config layers, explicit-spawn precedence over those defaults, and `model_reasoning_effort` as `minimal`, `low`, `medium`, `high`, or model-dependent `xhigh`. | It does not prove an adapter parsed, a model exists for this account, or an effort value was applied. Recheck when agent/config/model/reasoning keys or precedence change. |
-| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Current page with no publisher date, checked 2026-08-12. Agent-file model/effort overrides precede explicit spawn and `[agents]` defaults; the page also lists `low` through `ultra` effort guidance and current model recommendations. | `max` and `ultra` still do not appear in the configuration reference's accepted-value row. No single page establishes actual parser acceptance or account availability. Recheck when the two official surfaces converge or a runtime parse is separately authorized. |
-| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents) | Current page with no publisher date, checked 2026-08-12. Model resolution is documented as environment override, per-invocation value, subagent frontmatter, then main conversation; aliases and full model IDs are allowed. | Does not prove the tracked frontmatter parsed, its named model resolved, or its tools/permissions were effective. Recheck when aliases, precedence, effort, or agent schema changes. |
+| Official source                                                                                     | Publication / revision and adopted scope                                                                                                                                                                                                                          | Rejected inference, uncertainty, and refresh trigger                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) | Current page with no publisher date, checked 2026-08-12. It documents `[agents]` defaults, per-role config layers, explicit-spawn precedence over those defaults, and `model_reasoning_effort` as `minimal`, `low`, `medium`, `high`, or model-dependent `xhigh`. | It does not prove an adapter parsed, a model exists for this account, or an effort value was applied. Recheck when agent/config/model/reasoning keys or precedence change.                                                                                           |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)              | Current page with no publisher date, checked 2026-08-12. Agent-file model/effort overrides precede explicit spawn and `[agents]` defaults; the page also lists `low` through `ultra` effort guidance and current model recommendations.                           | `max` and `ultra` still do not appear in the configuration reference's accepted-value row. No single page establishes actual parser acceptance or account availability. Recheck when the two official surfaces converge or a runtime parse is separately authorized. |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents)                       | Current page with no publisher date, checked 2026-08-12. Model resolution is documented as environment override, per-invocation value, subagent frontmatter, then main conversation; aliases and full model IDs are allowed.                                      | Does not prove the tracked frontmatter parsed, its named model resolved, or its tools/permissions were effective. Recheck when aliases, precedence, effort, or agent schema changes.                                                                                 |
 
 **As-Is:** `model-policy.md` still owns only `top`/`worker` and shared
 `medium`/`high`/`xhigh` intent. `contracts/agent-model-fitness.json` version
@@ -163,6 +163,55 @@ syntax plus exact repo-static model policy, fitness contract, evaluation
 bindings, and adapters. Owner: Stage 00 model policy and model-fitness
 contract. Refresh when a cited provider configuration contract or a local
 model/evaluation selector materially changes.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace and re-checked external
+sources for `REQ-WERPC-028` only, checked on **2026-08-14**. No model was
+invoked and no cost, latency, fitness, canary, fallback, promotion,
+entitlement, or effective configuration was observed.
+
+#### REQ-WERPC-028 workspace and source consistency check
+
+**Workspace delta:** `no-change`. `model-policy.md` still owns only
+`top`/`worker` and shared `medium`/`high`/`xhigh` intent.
+`contracts/agent-model-fitness.json` remains version `1.1.0` with 48
+provider-role tuples: mapping readiness is `PASS` for 21 and `DEFER` for 27,
+and fitness/promotion/canary/runtime remain `DEFER` for all 48 — an exact
+match to the 2026-08-12 baseline.
+
+**External result:** all three sources were reachable and `unchanged`
+against their 2026-08-12 adopted scope; the two Codex pages still disagree
+with each other.
+
+| Source                                                                                              | Result      | Note                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) | `unchanged` | `model_reasoning_effort` accepted values still list only `minimal, low, medium, high, xhigh`; the `model` example is still `gpt-5.5`; `agents.default_subagent_model` precedence still states an explicit spawn model takes precedence. No publisher date.                                      |
+| [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)              | `unchanged` | Still lists `ultra, max, xhigh, high, medium, low` — `ultra`/`max` still absent from the configuration reference. Agent-file model/effort overrides still precede explicit spawn and `[agents]` defaults. No publisher date.                                                                    |
+| [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents)                       | `unchanged` | Model resolution is still: `CLAUDE_CODE_SUBAGENT_MODEL` environment override, then per-invocation `model` parameter, then subagent frontmatter, then the main conversation's model; aliases (`sonnet`, `opus`, `haiku`, `fable`) and full model IDs are still both accepted. No publisher date. |
+
+**As-Is:** Unchanged. The three-generation Codex model-identifier
+disagreement, the reasoning-effort vocabulary disagreement, and the
+agent-file/explicit-spawn precedence disagreement recorded on 2026-08-10 and
+2026-08-12 all still hold; no single Codex page is sufficient on its own.
+
+**Gap and bounded target:** Unchanged. Preserve each configured incumbent. A
+future change still needs platform-owner authorization, successful exact
+parsing and resolution without silent fallback, same-suite quality/safety
+evidence, independent adjudication, canary evidence, and a rollback record
+before promotion.
+
+**Missing evidence:** authenticated same-suite evaluation and account-level
+model/effort resolution. **Owning authority:** Stage 00 model policy and
+model-fitness contract. **Safe boundary:** a platform-owner-authorized,
+non-secret parsing/resolution check against the exact configured tuple; no
+broadened tool or configuration scope to compensate for unknown fitness.
+**Refresh trigger:** a cited provider configuration contract or a local
+model/evaluation selector materially changes.
+
+**Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
+promotion. New source registered: `SRC-WERPC-074`. New claim registered:
+`CLM-WERPC-010-03`.
 
 ## Related Documents
 

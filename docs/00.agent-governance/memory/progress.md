@@ -16660,3 +16660,239 @@ CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
   the controller creates the WERPC-005 logical commit.
 - Rollback unit after commit: revert only the WERPC-005 logical commit before
   any dependent link migration. No runtime workflow or platform state changed.
+
+## 2026-08-14 - WRCP-007 workspace research consistency and partial refresh closure
+
+### Metadata
+
+- **Date**: 2026-08-14
+- **Layer**: documentation, research, governance, validation
+- **Status**: complete
+- **Tags**: #wrcp #research-pack #consistency #partial-refresh #closure
+- **Owner**: WRCP-000 through WRCP-007 primary agent
+- **Canonical Owner**: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- **Provenance**: Spec 057, its reciprocal Plan and Task, ADR-0022, branch
+  `docs/2026-08-14-workspace-research-consistency-refresh`, baseline SHA
+  `2634dbe06edd0027b953864c5d5dcad89f147c4e` (merge base with `main`).
+
+### Progress
+
+Eight work packages, each a separate logical commit branching from the
+`2634dbe0` baseline:
+
+- WRCP-000 `4dfa44ed3eb212aae49fd26ef23f2424015f3118` — activation (Spec/Plan/Task
+  lifecycle to `active`, registry entry, ADR-0022 fifth relation row).
+- WRCP-001 `2d3df7304940631ee486e3ba2a8161348b2a9a86`,
+  `c90dba046a26871c0a7435fd91278c90b94e716a`,
+  `1f748bdf043068386011097013e67fabe83743c6` — topic ledger plus the two
+  approved cleanups, corrected mid-package after the first consumer-check
+  scope was too narrow (second commit narrowed it; third executed the
+  cleanup). Tracked `graphify-out/2026-06-04/` (five files) and untracked
+  local `sessions/*.md` (three files) were removed, each behind a passing
+  consumer check. `.worktrees/docs-sdlc-governance-consolidation` was
+  reported only and never touched by any WRCP commit — its branch head moved
+  during the session only because a concurrent, unrelated session commits
+  there; `git log --name-only 2634dbe0..HEAD -- .worktrees/` returns empty.
+- WRCP-002 `e0c87fb2da22a8fbb3d90634704afde0b89f01a3` — agent governance and
+  memory dated re-observation.
+- WRCP-003 `f97701f2f17cb5a6307d8538ced9608017547d40` — Kubernetes
+  infrastructure and security dated re-observation.
+- WRCP-004 `15548652049b52e1a456d7906659109277e74772` — Guide, Diátaxis,
+  SDLC, and document-family dated re-observation; admitted
+  REQ-WERPC-034/035/036 (Spec, Task, Plan document-family owners) to close a
+  gap where the contract matrix named twelve families but the coverage
+  matrix registered only nine.
+- WRCP-005 `a0e437acc4db2136e64b04921a0806d6cc5b49bf` — CI/CD, GitHub
+  Actions, QA, and V&V dated re-observation.
+- WRCP-006 `35bf0904e8cfc5e9140ade511bb6c7f01d895d39` — scope
+  re-projection (no scope-row content changed, only dated observation
+  language), and cross-link/count reconciliation across the pack README,
+  coverage matrix, and scope index.
+- WRCP-007 (this entry) — full validation lane, lifecycle closure to `done`
+  in all four required locations, three stage-index status flips, and this
+  progress entry.
+
+Twelve `Partial` rows were re-observed with a separated workspace
+observation and external source result and zero were promoted:
+REQ-WERPC-006, 008, 009, 014, 020, 022, 023, 025, 026, 028, 032, 033. This
+was the predicted, correct outcome — the blocking evidence classes (live
+cluster, hosted CI, provider runtime, human/stakeholder judgement) are not
+obtainable from the repository.
+
+Three new owners were admitted (REQ-WERPC-034 Spec, 035 Task, 036 Plan),
+each `Verified` on structural contract (route, frontmatter, status domain,
+required H2 set, `bodyContract` reciprocity/identifier rule) and `DEFER` on
+content/implementation/delivery effectiveness.
+
+New IDs: `SRC-WERPC-074` through `077`; `CLM-WERPC-010-01` through `-15`.
+Final totals: 14 physical pack files (unchanged), 36 request owners (33+3),
+77 source IDs (73+4), 92 claim IDs (77+15).
+
+WRCP-007 also fixed a Minor deferred from Task 1's review: the Plan's
+`### Related documents` subsection said targets "do not yet exist" and
+called the Task a "Future reciprocal Task after activation" — stale
+prose left over from before WRCP-000 activated the Task. All three targets
+(Spec, Task, ADR-0022 decision source) exist and already link reciprocally
+elsewhere in the same file (`### Lifecycle Traceability`, the WRCP-000 step,
+and line 164). The prose was corrected to state that fact; the reference to
+predecessor spec `056` remains a code literal, never a rendered link, per
+`STANDALONE-EXECUTION-SPEC-BOUNDARY` (which only forbids links to Spec
+profile documents other than the owning Spec 057 — a link to 057 itself is
+not foreign and already exists elsewhere in the file).
+
+### Evidence
+
+Full validation lane, staged tree (`git add -A docs/`):
+
+- `python3 scripts/validate-links-and-owners.py --self-test` →
+  `[PASS] cross-document validator self-test passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` →
+  `PASS CROSS-DOCUMENT . cross-document expected="valid" actual="valid" owner="cross-document-validator"`
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict`
+  → `PASS document contract registry: 512 paths (strict, tracked-only plus
+explicit includes)`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` →
+  `PASS SUMMARY . - expected="no violations" actual="0" owner="markdown-profile-validator"`
+- `python3 scripts/validate-reference-information-architecture.py --self-test`
+  → `Reference information architecture self-test: PASS`
+- `python3 scripts/validate-affected-surfaces.py --root .` →
+  `[PASS] affected surface validation passed: paths=863 surfaces=22/22
+validators=22 ci_jobs=4 uncovered=0 ambiguous=0`
+- `bash scripts/validate-repo-quality-gates.sh .` → **FAIL**, final line
+  `FAIL MIGRATION-CURRENT-READ
+docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`,
+  exit 1. `scripts/validate-active-corpus-migrations.py` rejects any current
+  tracked Markdown file over `MAX_MARKDOWN_BYTES = 3_000_000` bytes before
+  reading it. The ledger file was 766,165 bytes at the `2634dbe0` baseline,
+  2,942,997 bytes after WRCP-002 (still under the cap; the aggregate gate
+  ran clean then per Task 2's report), and crossed the cap at WRCP-004
+  (3,007,658 bytes); it stands at 3,019,071 bytes now. This was undetected
+  before WRCP-007 because the Verification Plan scoped the full
+  `validate-repo-quality-gates.sh` lane to WRCP-001 and WRCP-007 only, not
+  every package — the design worked exactly as intended and the final
+  full-lane run is what caught it. This is a **new** finding, not one of
+  the deferred minors known going into WRCP-007, and it is **not fixable
+  within this task's boundaries**: the failing file is under
+  `docs/90.references/research/`, which this cycle and this task must not
+  touch, and raising `MAX_MARKDOWN_BYTES` is a shared-validator behavior
+  change outside this task's file list and authority. Recorded here for
+  human triage; not remediated.
+- `git diff --check && git diff --cached --check` → both exit 0, no
+  whitespace errors, unstaged and staged.
+- `git status --porcelain --untracked-files=all` → exactly the seven
+  intended tracked files staged as modified, nothing untracked, nothing
+  under any scratchpad path tracked.
+- Lifecycle closure: `status: done` now agrees across Spec 057, this Plan,
+  the Task, and `"state": "done"` in the `"spec": "057"` object of
+  `standaloneExecutions` in `docs/99.templates/support/document-profiles.json`.
+  All three stage indexes (`docs/03.specs/README.md`,
+  `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`)
+  flipped their Spec-057/Plan/Task rows from `Active` to `Done`.
+
+**Baseline comparison**: the `2634dbe0` pre-cycle baseline was `PASS` for the
+cross-document validator and the repository quality gates on a clean tree.
+Six of the seven lane commands above are unchanged-clean `PASS`, which is
+evidence of no regression there, not of improvement — that lane was already
+green. The seventh, `validate-repo-quality-gates.sh`, is a genuine
+regression against that baseline, introduced mid-cycle at WRCP-004 and first
+surfaced by this task's mandated full-lane run.
+
+Boundary held: no cluster, hosted CI, provider-runtime, GitHub API against
+this repository, credential, or secret evidence was collected by any WRCP
+package. All such classes remain `DEFER`, alongside human/stakeholder
+judgement.
+
+Four deferred minors recorded as known-and-accepted, not fixed:
+
+1. WRCP-001's corrected consumer check greps two `grep -v` exclusions that
+   match the whole `path:line:content` string rather than only file paths —
+   produced the right answer this cycle but is broader than ideal for reuse.
+2. A Markdown table formatter re-padded tables across
+   `document-profiles.json`, `tasks/README.md`, and the source/claim ledger,
+   producing large diffs for small real changes — systemic across the
+   cycle, not one task's defect.
+3. `kubernetes-infrastructure-and-security.md` inherits baseline phrasing
+   "policy/conftest/kubernetes.rego still denies plaintext Secret
+   manifests", which reads as a runtime-effect claim although conftest is a
+   static/CI-time check — pre-existing in the baseline section, repeated
+   rather than introduced this cycle.
+4. The source-result vocabulary would benefit from a distinct `relocated`
+   value — `SRC-WERPC-044`'s URL 404'd and its content was found at a new
+   path, recorded as `changed`.
+
+### Handoff
+
+- Next owner: human triage of the `MAX_MARKDOWN_BYTES` regression on
+  `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+  (3,019,071 bytes against a 3,000,000-byte cap in
+  `scripts/validate-active-corpus-migrations.py`). Options include raising
+  the cap, splitting the ledger, or an explicit documented exception; none
+  was applied here because the research pack is closed to this task and the
+  cap is a shared-validator behavior change outside this task's authority.
+- **Superseded 2026-08-15**: the regression above was applied in commit
+  `fb58ebb5`; see the "2026-08-15 - WRCP quality-gate restoration after
+  closure" entry later in this file for the fix and its evidence.
+- This closes the WRCP-000..007 program. No further WRCP work package is
+  queued.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish,
+  merge, deployment, or third-party mutation was performed or evidenced by
+  any WRCP package.
+
+## 2026-08-15 - WRCP quality-gate restoration after closure
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`, `scripts/validate-active-corpus-residue-closure.py`
+- Parent: Spec 057 / the WRCP-000..007 program, closed on 2026-08-14
+- Evidence class: repository-static only
+
+### Progress
+
+The WRCP-007 closure entry recorded `validate-repo-quality-gates.sh` failing
+and left it for human triage. Two failures were present, not one; the second
+was masked because the aggregate gate stops at its first error.
+
+**Failure 1 — `MIGRATION-CURRENT-READ` on the source and claim ledger.**
+`scripts/validate-active-corpus-migrations.py` refuses to read any current
+tracked Markdown file above `MAX_MARKDOWN_BYTES = 3_000_000`. The ledger stood
+at 3,019,071 bytes.
+
+The cause was table-alignment padding, not content. Across the cycle the file
+gained 55 lines and 2,252,906 bytes, because the Markdown formatter re-pads
+every row of every table in a file to match its widest cell, and the rows this
+cycle added carry long prose. Normalizing every table cell to single-space
+padding returned the file to 816,508 bytes. Content is unchanged: `diff -w`
+between the pre- and post-normalization file returns empty, and the `SRC-WERPC`
+and `CLM-WERPC` ID sets are identical before and after.
+
+**Failure 2 — `CLOSURE-AUTHORITY-SCOPE` on Spec 057.**
+`scripts/validate-active-corpus-residue-closure.py` requires every Spec that
+reaches status `done` to appear in `POST_CLOSURE_SPEC_AUTHORITY_PATHS`. Specs
+`041`–`046` and `053`–`056` are already registered. Spec 057 was not, so
+closing it failed the gate. The WRCP Plan never captured this step; it is a
+plan gap, not an implementation defect.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` → `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --self-test` → `[PASS] cross-document validator self-test passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` → `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` → `PASS document contract registry: 512 paths`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` → `PASS SUMMARY . - expected="no violations" actual="0"`
+- `python3 scripts/validate-reference-information-architecture.py --self-test` → `Reference information architecture self-test: PASS`
+- `python3 scripts/validate-affected-surfaces.py --root .` → `[PASS] affected surface validation passed: paths=863 surfaces=22/22 validators=22 ci_jobs=4 uncovered=0 ambiguous=0`
+- `git diff --check` and `git diff --cached --check` → both exit 0
+
+The lane was already green before the WRCP program began. These results are
+evidence of **no regression**, not of a newly attained state.
+
+### Handoff
+
+- The formatter's table-padding behavior remains unaddressed and will re-inflate
+  the ledger the next time a wide row is added through the Write or Edit tools.
+  Writing via a shell heredoc bypasses the formatter. A durable fix — a
+  formatter exclusion for wide reference ledgers, a higher cap, or splitting the
+  ledger — is a shared-tooling decision and is not made here.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, merge,
+  or deployment evidence was collected or claimed.

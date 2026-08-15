@@ -80,20 +80,20 @@ or exercise a live process. Required links are the profile's active/draft
 traceability relationship where one exists; “routing expectation” means the
 stage matrix, not a machine-enforced link.
 
-| Family | Role, trigger, inputs -> outputs | Owner / audience / lifecycle | Required links and quality or security rule | Workspace As-Is -> gap -> target |
-| --- | --- | --- | --- | --- |
-| PRD | Product intent, scope, and measurable acceptance before design; problem and stakeholders -> numbered product requirement. | Product Manager; product/engineering readers; `draft -> active -> done/archived`. | Active/draft traceability maps requirement IDs and acceptance criteria to ARD or Spec; make scope/non-goals and assumptions explicit. | `sdlc/prd` route/template/H2 contract exists. Preserve requirement-to-downstream reciprocity; do not claim product validation from a template pass. |
-| ARD | Architecture requirements and constraints after a PRD; upstream requirement -> quality, context, data, deployment boundaries. | System Architect; engineers/operators; `draft -> active -> accepted/archived`. | Links a PRD requirement to ADR or Spec; quality attributes and boundaries are mandatory. Security/reliability constraints need evidence, not labels. | `sdlc/ard` exists. Keep PRD reciprocity and make non-goals/quality trade-offs reviewable. |
-| ADR | Significant architectural choice and alternatives; decision context -> accepted/superseded decision with consequences. | System Architect; maintainers/reviewers; `draft -> active -> accepted/archived`. | Decision lineage from ARD/ADR to affected Spec/helper profiles; preserve supersession rather than rewriting historical acceptance. | `sdlc/adr` exists with context, decision, consequences, alternatives. AWS ADR guidance is a benchmark, not a local immutability rule. |
-| Spec | Implementation-ready technical contract before build/change; PRD/ARD/ADR constraints -> testable design, interfaces, failure handling, verification plan. | Engineering owner; implementers/testers; `draft -> active -> done/archived`. | Traceability joins PRD requirements/criteria to verification methods; failure, escalation, and security boundaries must be explicit. | `sdlc/spec` and helper profiles/templates exist. A valid spec is not proof implementation or tests succeeded. |
-| Plan | Ordered delivery and risk/validation/rollback design once a Spec is stable enough; Spec/ADR -> work packages and expected Tasks. | Product/QA/tech lead; delivery reviewers; `draft -> active -> done/archived`. | Traceability maps Spec criterion to work package and reciprocal Task. It must not be used as a live operating procedure. | `sdlc/plan` exists with execution-lineage validation. Planning evidence is not deployment approval. |
-| Task | Execution record for assigned work, safety boundaries, review, and evidence; Plan/Spec -> dated evidence and handoff. | Engineer/QA; implementers/reviewers; `draft -> active -> done/archived`. | Traceability maps criterion/work item to result/evidence; program/standalone lineage constrains active records. | `sdlc/task` exists with static lifecycle gates. A `done` document does not prove a remote or live action. |
-| Guide | Audience-facing learning or goal procedure once a surface is stable; stable promoted owner + audience need -> usable instructions and pitfalls. | Technical Writer; developers/operators/users; `draft -> active -> accepted/archived`. | Promotes an eligible Spec/helper/Task; audience, prerequisites, steps, and pitfalls are required. Never turn an unverified command into a safe operational instruction. | `sdlc/guide` exists. It is chiefly how-to-shaped; tutorial intent remains an untyped gap addressed in the Diátaxis reference. |
-| Incident | Contemporaneous factual event record during response; observed impact/timeline -> response state, evidence, follow-up. | Operations/Security; incident responders and later reviewers; `draft -> active -> accepted/archived`. | Traceability links timeline/action to a follow-up Task. Keep timestamps, source evidence, and later analysis distinct; no incident document authorizes production access. | `sdlc/incident` exists at the incident-folder route. Static contract does not prove on-call response, evidence availability, or containment. |
-| Postmortem | Blameless learning after incident closure; incident facts -> causal analysis, prevention, owned actions, feedback targets. | Operations/Security; responders, engineering, leadership; `draft -> active -> accepted/archived`. | Links root cause/actions to Task and a feedback target. Google SRE supports timely blameless learning and follow-through; local action closure is not thereby proven. | `sdlc/postmortem` exists as co-located `postmortem.md`. Target: retain explicit owner/due-state/evidence and route material learning to a canonical document. |
-| Policy | Normative operational/release controls before a controlled release or control change; requirements/risk -> scope, controls, exceptions, verification, cadence. | Operations Engineer; operators, reviewers, release stakeholders; `draft -> active -> accepted/archived`. | Promotes eligible Spec/helper/Task. Controls need a responsible owner and verification surface; exceptions must remain bounded and reviewable. | `sdlc/policy` exists. The stage matrix calls policy part of release control, but a profile does not demonstrate enforcement. |
-| Release | A discrete, auditable version/change decision; approved policy, change set, validation, version decision -> release record, approval, rollout/rollback evidence. | No canonical local owner; intended readers include release/operations and consumers. A lifecycle must be approved before use (for example `draft -> approved -> released/withdrawn`). | Should link Policy, Plan/Task, validation results, deployment/runbook and, where public API exists, SemVer decision. Must not substitute a tag or workflow for approval evidence. | **Gap:** no `sdlc/release` profile, template, canonical path/index, status domain/lifecycle, or validator was found. Target requires a separately approved cross-stage owner, state model, retention/supersession rules, template, registry/schema projection, fixtures, and negative tests together. |
-| Runbook | Safe, repeatable operational procedure after a procedure is known; policy/observed procedure -> preconditions, steps, verification, observability, recovery. | Operations Engineer; operators/responders; `draft -> active -> accepted/archived`. | Promotes eligible policy/Spec/helper/Task; require verification, evidence sources, and safe rollback/recovery. A runbook is not an incident fact record or release approval. | `sdlc/runbook` exists. Static validation cannot show a command is safe in a live environment. |
+| Family     | Role, trigger, inputs -> outputs                                                                                                                                 | Owner / audience / lifecycle                                                                                                                                                          | Required links and quality or security rule                                                                                                                                       | Workspace As-Is -> gap -> target                                                                                                                                                                                                                                                                      |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRD        | Product intent, scope, and measurable acceptance before design; problem and stakeholders -> numbered product requirement.                                        | Product Manager; product/engineering readers; `draft -> active -> done/archived`.                                                                                                     | Active/draft traceability maps requirement IDs and acceptance criteria to ARD or Spec; make scope/non-goals and assumptions explicit.                                             | `sdlc/prd` route/template/H2 contract exists. Preserve requirement-to-downstream reciprocity; do not claim product validation from a template pass.                                                                                                                                                   |
+| ARD        | Architecture requirements and constraints after a PRD; upstream requirement -> quality, context, data, deployment boundaries.                                    | System Architect; engineers/operators; `draft -> active -> accepted/archived`.                                                                                                        | Links a PRD requirement to ADR or Spec; quality attributes and boundaries are mandatory. Security/reliability constraints need evidence, not labels.                              | `sdlc/ard` exists. Keep PRD reciprocity and make non-goals/quality trade-offs reviewable.                                                                                                                                                                                                             |
+| ADR        | Significant architectural choice and alternatives; decision context -> accepted/superseded decision with consequences.                                           | System Architect; maintainers/reviewers; `draft -> active -> accepted/archived`.                                                                                                      | Decision lineage from ARD/ADR to affected Spec/helper profiles; preserve supersession rather than rewriting historical acceptance.                                                | `sdlc/adr` exists with context, decision, consequences, alternatives. AWS ADR guidance is a benchmark, not a local immutability rule.                                                                                                                                                                 |
+| Spec       | Implementation-ready technical contract before build/change; PRD/ARD/ADR constraints -> testable design, interfaces, failure handling, verification plan.        | Engineering owner; implementers/testers; `draft -> active -> done/archived`.                                                                                                          | Traceability joins PRD requirements/criteria to verification methods; failure, escalation, and security boundaries must be explicit.                                              | `sdlc/spec` and helper profiles/templates exist. A valid spec is not proof implementation or tests succeeded.                                                                                                                                                                                         |
+| Plan       | Ordered delivery and risk/validation/rollback design once a Spec is stable enough; Spec/ADR -> work packages and expected Tasks.                                 | Product/QA/tech lead; delivery reviewers; `draft -> active -> done/archived`.                                                                                                         | Traceability maps Spec criterion to work package and reciprocal Task. It must not be used as a live operating procedure.                                                          | `sdlc/plan` exists with execution-lineage validation. Planning evidence is not deployment approval.                                                                                                                                                                                                   |
+| Task       | Execution record for assigned work, safety boundaries, review, and evidence; Plan/Spec -> dated evidence and handoff.                                            | Engineer/QA; implementers/reviewers; `draft -> active -> done/archived`.                                                                                                              | Traceability maps criterion/work item to result/evidence; program/standalone lineage constrains active records.                                                                   | `sdlc/task` exists with static lifecycle gates. A `done` document does not prove a remote or live action.                                                                                                                                                                                             |
+| Guide      | Audience-facing learning or goal procedure once a surface is stable; stable promoted owner + audience need -> usable instructions and pitfalls.                  | Technical Writer; developers/operators/users; `draft -> active -> accepted/archived`.                                                                                                 | Promotes an eligible Spec/helper/Task; audience, prerequisites, steps, and pitfalls are required. Never turn an unverified command into a safe operational instruction.           | `sdlc/guide` exists. It is chiefly how-to-shaped; tutorial intent remains an untyped gap addressed in the Diátaxis reference.                                                                                                                                                                         |
+| Incident   | Contemporaneous factual event record during response; observed impact/timeline -> response state, evidence, follow-up.                                           | Operations/Security; incident responders and later reviewers; `draft -> active -> accepted/archived`.                                                                                 | Traceability links timeline/action to a follow-up Task. Keep timestamps, source evidence, and later analysis distinct; no incident document authorizes production access.         | `sdlc/incident` exists at the incident-folder route. Static contract does not prove on-call response, evidence availability, or containment.                                                                                                                                                          |
+| Postmortem | Blameless learning after incident closure; incident facts -> causal analysis, prevention, owned actions, feedback targets.                                       | Operations/Security; responders, engineering, leadership; `draft -> active -> accepted/archived`.                                                                                     | Links root cause/actions to Task and a feedback target. Google SRE supports timely blameless learning and follow-through; local action closure is not thereby proven.             | `sdlc/postmortem` exists as co-located `postmortem.md`. Target: retain explicit owner/due-state/evidence and route material learning to a canonical document.                                                                                                                                         |
+| Policy     | Normative operational/release controls before a controlled release or control change; requirements/risk -> scope, controls, exceptions, verification, cadence.   | Operations Engineer; operators, reviewers, release stakeholders; `draft -> active -> accepted/archived`.                                                                              | Promotes eligible Spec/helper/Task. Controls need a responsible owner and verification surface; exceptions must remain bounded and reviewable.                                    | `sdlc/policy` exists. The stage matrix calls policy part of release control, but a profile does not demonstrate enforcement.                                                                                                                                                                          |
+| Release    | A discrete, auditable version/change decision; approved policy, change set, validation, version decision -> release record, approval, rollout/rollback evidence. | No canonical local owner; intended readers include release/operations and consumers. A lifecycle must be approved before use (for example `draft -> approved -> released/withdrawn`). | Should link Policy, Plan/Task, validation results, deployment/runbook and, where public API exists, SemVer decision. Must not substitute a tag or workflow for approval evidence. | **Gap:** no `sdlc/release` profile, template, canonical path/index, status domain/lifecycle, or validator was found. Target requires a separately approved cross-stage owner, state model, retention/supersession rules, template, registry/schema projection, fixtures, and negative tests together. |
+| Runbook    | Safe, repeatable operational procedure after a procedure is known; policy/observed procedure -> preconditions, steps, verification, observability, recovery.     | Operations Engineer; operators/responders; `draft -> active -> accepted/archived`.                                                                                                    | Promotes eligible policy/Spec/helper/Task; require verification, evidence sources, and safe rollback/recovery. A runbook is not an incident fact record or release approval.      | `sdlc/runbook` exists. Static validation cannot show a command is safe in a live environment.                                                                                                                                                                                                         |
 
 ### 2026-08-10 gap-only source refresh
 
@@ -103,13 +103,13 @@ It does not change a profile, template, lifecycle, route, or the accepted Spec
 type; the broader release-record question remains a separate cross-stage design
 decision.
 
-| Family | External question answered | Source-backed rule | Workspace As-Is -> bounded target | Boundary |
-| --- | --- | --- | --- | --- |
-| PRD | What evidence should connect stakeholder intent to requirements and acceptance? | Requirements engineering turns stakeholder expectations into traceable requirements and information items, but ISO does not define a universal Product Requirements Document template ([SRC-WERPC-053](source-coverage-and-migration-ledger.md#source-register)). | The local PRD already owns vision, problem, personas, use cases, numbered requirements, acceptance, scope, risks, and downstream links. Keep that repository-defined contract; distinguish narrative intent from atomic technical requirements and never treat template conformance as stakeholder or product validation. | ISO clauses beyond the public abstract were not consulted; NASA uses PRD to mean Project Requirements Document, so neither source owns the local family name or format. |
-| ARD | What makes an architecture description reviewable without prescribing one notation? | An architecture description is a work product about an architecture; purpose/environment, stakeholders and concerns, context, drivers, constraints, decisions/rationale, and concern-addressing views make it useful, while ISO 42010 does not mandate a method, tool, notation, format, or medium ([SRC-WERPC-054](source-coverage-and-migration-ledger.md#source-register)). | The local ARD already owns boundaries, quality attributes, context, data, deployment, and PRD-to-ADR/Spec traceability. Review material changes proportionally for unambiguous context, named drivers, decision rationale, and concern-to-view coverage; require a diagram only when it clarifies a real boundary or concern. | The ISO text consulted was public catalog/abstract material and the NASA outline is agency guidance; no ISO conformance or universal Markdown format is claimed. |
-| Policy | How is normative intent separated from implementation and assessment? | Policy establishes accountable intent, scope, responsibilities, controls, exceptions, communication, review, and update triggers; procedures implement it and assessment evidence tests controls rather than treating the document as enforcement ([SRC-WERPC-055](source-coverage-and-migration-ledger.md#source-register)). | `sdlc/policy` already requires scope, applies-to roles, controls, exceptions, verification, cadence, and traceability. Preserve Policy as the normative owner, keep commands in Runbooks, and bind each control to an enforcement surface and assessment evidence. | NIST's detailed model is cybersecurity/privacy-specific. Its accountability and policy/procedure/evidence separation are a bounded benchmark, not a universal operations-policy standard or proof of enforcement. |
-| Release | What is an auditable release record beyond version semantics or notes? | Release engineering spans source, build, test, packaging, approval gates, deployment, audit trail, and rollback; immutable tag/commit/assets and provenance strengthen artifact identity but do not establish organizational release intent or approval ([SRC-WERPC-056](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-019](source-coverage-and-migration-ledger.md#source-register), [SRC-WERPC-032](source-coverage-and-migration-ledger.md#source-register), and [SRC-WERPC-040](source-coverage-and-migration-ledger.md#source-register)). | No `sdlc/release` owner exists. A future decision must either map identity, approval, validation, provenance, rollout, rollback, outcome, retention, and supersession to existing Policy/Plan/Task/Runbook owners or approve a complete new contract atomically. | No public API, hosted release, immutable-release setting, attestation, rollout, or rollback was observed. A tag, workflow, GitHub Release, SemVer value, release notes, provenance, or attestation alone is insufficient. |
-| Runbook | What makes an operational procedure safe, current, and improvable? | Current, known, practiced playbooks accelerate response; repeated deterministic command sequences should be evaluated for automation while preserving human judgment, escalation, and automation-failure recovery ([SRC-WERPC-057](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-018](source-coverage-and-migration-ledger.md#source-register)). | `sdlc/runbook` already requires trigger, prerequisites, procedure, expected results, stop/escalation, verification, evidence, and recovery. Route the automation counter-rule through approved DOC-G10 and queued/not-executed WORK-013; record rehearsal/currentness as evidence without silently adding a required heading. | Google uses playbook/runbook contextually rather than as a formal document standard. Static structure cannot prove commands are current, rehearsed, authorized, or safe live. |
+| Family  | External question answered                                                          | Source-backed rule                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Workspace As-Is -> bounded target                                                                                                                                                                                                                                                                                             | Boundary                                                                                                                                                                                                                  |
+| ------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRD     | What evidence should connect stakeholder intent to requirements and acceptance?     | Requirements engineering turns stakeholder expectations into traceable requirements and information items, but ISO does not define a universal Product Requirements Document template ([SRC-WERPC-053](source-coverage-and-migration-ledger.md#source-register)).                                                                                                                                                                                                                                                                                                              | The local PRD already owns vision, problem, personas, use cases, numbered requirements, acceptance, scope, risks, and downstream links. Keep that repository-defined contract; distinguish narrative intent from atomic technical requirements and never treat template conformance as stakeholder or product validation.     | ISO clauses beyond the public abstract were not consulted; NASA uses PRD to mean Project Requirements Document, so neither source owns the local family name or format.                                                   |
+| ARD     | What makes an architecture description reviewable without prescribing one notation? | An architecture description is a work product about an architecture; purpose/environment, stakeholders and concerns, context, drivers, constraints, decisions/rationale, and concern-addressing views make it useful, while ISO 42010 does not mandate a method, tool, notation, format, or medium ([SRC-WERPC-054](source-coverage-and-migration-ledger.md#source-register)).                                                                                                                                                                                                 | The local ARD already owns boundaries, quality attributes, context, data, deployment, and PRD-to-ADR/Spec traceability. Review material changes proportionally for unambiguous context, named drivers, decision rationale, and concern-to-view coverage; require a diagram only when it clarifies a real boundary or concern. | The ISO text consulted was public catalog/abstract material and the NASA outline is agency guidance; no ISO conformance or universal Markdown format is claimed.                                                          |
+| Policy  | How is normative intent separated from implementation and assessment?               | Policy establishes accountable intent, scope, responsibilities, controls, exceptions, communication, review, and update triggers; procedures implement it and assessment evidence tests controls rather than treating the document as enforcement ([SRC-WERPC-055](source-coverage-and-migration-ledger.md#source-register)).                                                                                                                                                                                                                                                  | `sdlc/policy` already requires scope, applies-to roles, controls, exceptions, verification, cadence, and traceability. Preserve Policy as the normative owner, keep commands in Runbooks, and bind each control to an enforcement surface and assessment evidence.                                                            | NIST's detailed model is cybersecurity/privacy-specific. Its accountability and policy/procedure/evidence separation are a bounded benchmark, not a universal operations-policy standard or proof of enforcement.         |
+| Release | What is an auditable release record beyond version semantics or notes?              | Release engineering spans source, build, test, packaging, approval gates, deployment, audit trail, and rollback; immutable tag/commit/assets and provenance strengthen artifact identity but do not establish organizational release intent or approval ([SRC-WERPC-056](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-019](source-coverage-and-migration-ledger.md#source-register), [SRC-WERPC-032](source-coverage-and-migration-ledger.md#source-register), and [SRC-WERPC-040](source-coverage-and-migration-ledger.md#source-register)). | No `sdlc/release` owner exists. A future decision must either map identity, approval, validation, provenance, rollout, rollback, outcome, retention, and supersession to existing Policy/Plan/Task/Runbook owners or approve a complete new contract atomically.                                                              | No public API, hosted release, immutable-release setting, attestation, rollout, or rollback was observed. A tag, workflow, GitHub Release, SemVer value, release notes, provenance, or attestation alone is insufficient. |
+| Runbook | What makes an operational procedure safe, current, and improvable?                  | Current, known, practiced playbooks accelerate response; repeated deterministic command sequences should be evaluated for automation while preserving human judgment, escalation, and automation-failure recovery ([SRC-WERPC-057](source-coverage-and-migration-ledger.md#source-register); existing [SRC-WERPC-018](source-coverage-and-migration-ledger.md#source-register)).                                                                                                                                                                                               | `sdlc/runbook` already requires trigger, prerequisites, procedure, expected results, stop/escalation, verification, evidence, and recovery. Route the automation counter-rule through approved DOC-G10 and queued/not-executed WORK-013; record rehearsal/currentness as evidence without silently adding a required heading. | Google uses playbook/runbook contextually rather than as a formal document standard. Static structure cannot prove commands are current, rehearsed, authorized, or safe live.                                             |
 
 The authoring consequence is a review checklist, not taxonomy expansion: keep
 stable requirement and evidence identities; keep architecture views
@@ -213,6 +213,166 @@ environment, method, acceptance threshold, and evidence owner.
 claim change exists and no claim proposal is created. Refresh when Spec 052 is
 superseded, `WORK-013` changes Guide typing, a current Guide stops satisfying
 the static contract, or a named reader-validation activity is approved.
+
+### 2026-08-14 consistency and Partial re-observation
+
+This bounded increment re-observed the workspace for `REQ-WERPC-014`, checked
+on **2026-08-14**, and separately re-observed the Spec, Task, and Plan
+document families named by Spec 057 amendment `C-WRCP-010` (`REQ-WERPC-034`,
+`035`, `036`), which had no coverage-matrix owner row before this cycle. It
+did not invoke a provider, query the GitHub remote, or inspect a cluster.
+
+#### REQ-WERPC-014 Guide workspace consistency check
+
+**Workspace delta:** `no-change`. `docs/05.operations/guides/` still holds
+exactly eight numbered Guide instances, each declaring `` `how-to` ``. The
+`sdlc/guide` profile object in `document-profiles.json` is unchanged (see the
+key-level comparison recorded in the Diátaxis reference's matching section).
+Spec 052 remains `active`, `DOC-G1` remains unenforced, and `WORK-013`
+remains `Queued` / `Not executed`.
+
+**External result:** not applicable this cycle. Consistent with the
+2026-08-11 precedent, `REQ-WERPC-014` has no dedicated row in the source
+register and continues to rely on repository-static evidence (Spec 052, the
+`sdlc/guide` profile, and the eight Guide instances) only.
+
+**As-Is:** Unchanged from the 2026-08-12 section: the static/typed document
+contract remains `Verified`; classification usefulness for a named reader
+remains `DEFER`.
+
+**Gap and bounded target:** Unchanged. `DOC-G1` enum enforcement is queued
+under `WORK-013` and does not enlarge this reference's scope.
+
+**Missing evidence:** a named reader, task, environment, method, acceptance
+threshold, and evidence owner for Guide classification usefulness.
+**Owning authority:** Spec 052 for `DOC-G1`–`DOC-G3`; `WORK-013`'s owning
+Plan for enum-enforcement execution. **Safe boundary:** a separately
+approved, non-secret reader-validation activity, or the already-approved
+`WORK-013` change executed by its own Plan; neither is authorized here.
+**Refresh trigger:** Spec 052 is superseded, `WORK-013` executes, a current
+Guide stops satisfying the static contract, or a named reader-validation
+activity is approved.
+
+**Final disposition:** `Partial`, retained as `exclude-duplicate`, unchanged
+from the 2026-08-12 baseline. No promotion. New claim registered:
+`CLM-WERPC-010-08`.
+
+#### Spec, Task, and Plan document-family re-observation (`REQ-WERPC-034`, `035`, `036`)
+
+Per `C-WRCP-010`, admitting these three families as coverage-matrix owner
+rows neither raises nor lowers a status; Task 7 registers the rows, this
+re-observation only supplies the dated evidence. This increment re-read the
+three canonical paths, the `sdlc/spec`/`sdlc/task`/`sdlc/plan` profile
+objects, the three templates, and `scripts/validate-markdown-profiles.py`
+and `scripts/validate-links-and-owners.py`. It does not restate the
+document-family contract matrix row above; it records only what this
+re-observation adds or corrects.
+
+**Enforced H2 profile (repository-static, matches each template exactly):**
+
+| Family | Canonical path                            | Required H2 sections (in order)                                                                                                                                                                                                                                                              |
+| ------ | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Spec   | `docs/03.specs/[0-9]{3}-*/spec.md`        | Overview; Strategic Boundaries & Non-goals; Contracts; Core Design; Data Modeling & Storage Strategy; Interfaces & Data Structures; Edge Cases & Error Handling; Failure Modes & Fallback / Human Escalation; Verification Commands; Success Criteria & Verification Plan; Traceability (11) |
+| Task   | `docs/04.execution/tasks/YYYY-MM-DD-*.md` | Overview; Inputs; Task Table; Approval and Safety Boundaries; Verification Summary; Traceability (6)                                                                                                                                                                                         |
+| Plan   | `docs/04.execution/plans/YYYY-MM-DD-*.md` | Overview; Context; Goals & In-Scope; Non-Goals & Out-of-Scope; Work Breakdown; Verification Plan; Risks & Mitigations; Completion Criteria; Traceability (9)                                                                                                                                 |
+
+**Lifecycle states the repository actually uses:** all three profiles
+declare a four-value `statusDomain` (`draft`, `active`, `done`, `archived`),
+but a frontmatter tally across every tracked instance on 2026-08-14 shows
+zero `archived` use in any family: Spec is 5 `draft` / 6 `active` / 42
+`done` / 0 `archived` of 53 files; Task is 5 `draft` / 2 `active` / 64
+`done` / 0 `archived` of 71 files; Plan is 5 `draft` / 2 `active` / 62
+`done` / 0 `archived` of 69 files. `archived` is a declared-but-unexercised
+value for all three families, not a gap in the profile itself.
+
+**Reciprocity rules the validator enforces:** the `bodyContract` on all
+three requires a `### Lifecycle Traceability` table under `## Traceability`
+and applies `reciprocalEvidence: true`, but the enforcement window is
+`draft`/`active` only — `_body_contract_is_enforced` returns `status in
+enforced_statuses` in the default `registry` body-contracts mode used by
+`--mode strict` (`scripts/validate-links-and-owners.py:2871`,
+`:636`), so a `done` or `archived` Spec/Task/Plan's own Traceability table is
+no longer link/identifier-checked. That leaves 11 of 53 Spec files, 7 of 71
+Task files, and 7 of 69 Plan files currently subject to the check.
+`allowedSourceProfileIds`/`allowedTargetProfileIds` differ per family: Spec
+links only from `sdlc/prd` (`targetLinkColumn` is `null`, so a Spec's
+downstream side is never link-checked); Plan links from
+`{sdlc/spec, sdlc/api-spec, sdlc/agent-design, sdlc/data-model, sdlc/tests}`
+and to `sdlc/task`; Task links from
+`{sdlc/plan, sdlc/spec, sdlc/api-spec, sdlc/agent-design, sdlc/data-model, sdlc/tests}`
+with no target column, consistent with this cycle's own direct
+Task-to-Spec/Plan standalone-execution links under ADR-0022.
+
+A coupling exists only where a family's `identifierColumns` entry and its
+`sourceLinkColumn`/`targetLinkColumn` name the **same** table column: Plan's
+`Spec criterion` (kind `criterion`, pattern `^VAL-[A-Z0-9-]+-[0-9]{3}$`) is
+also its `sourceLinkColumn`, and Task's `Criterion / work item` (kind
+`work-item`, pattern `^[A-Z][A-Z0-9-]+-[0-9]{3}$`) is also its
+`sourceLinkColumn`. For a coupled cell, `BODY-CONTRACT-IDENTIFIER`
+(`scripts/validate-markdown-profiles.py:721-748`) and `BODY-LINK-SOURCE`
+(`scripts/validate-links-and-owners.py:4503-4534`) both read the same
+non-`N/A` value, and `_identifier_text` unwraps a full `[label](url)` link
+to its label before pattern-matching. Verified directly against this
+cycle's own authored documents rather than assumed: the reciprocal
+[Plan](../../../04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md#traceability)'s
+`Spec criterion` column (lines 843–855) renders every non-excluded row as
+`[VAL-WRCP-0NN](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md)` —
+a plain markdown link whose visible label is the bare `VAL-` identifier, no
+backticks — and this
+[Task](../../../04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md#lifecycle-traceability)'s
+`Criterion / work item` column (lines 210–219) follows the identical
+pattern with `[WRCP-0NN](...#anchor)`. **This corrects, rather than
+confirms, the brief's illustrative example**: `sdlc/spec` itself does not
+carry this coupling, because its `sourceLinkColumn` is `PRD requirement`,
+not `Spec criterion` — `Spec criterion` is identifier-checked only. Verified
+against Spec 057's own Traceability table
+(`docs/03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md`
+lines 339–352): its `Spec criterion` column holds twelve plain bare values
+(`VAL-WRCP-001` … `VAL-WRCP-012`, no backticks, no links, since that column
+is never a link column for `sdlc/spec`), while its `PRD requirement` column
+— the one that actually is `sdlc/spec`'s `sourceLinkColumn` — holds twelve
+plain-text `N/A — direct human request for …` exclusions (no backticks
+either), because Spec 057 is a direct-approval standalone execution under
+ADR-0022 with no PRD to link. The coupled, both-constraints-on-one-cell
+pattern the brief describes is real and verified, but it lives on Plan's
+`Spec criterion` and Task's `Criterion / work item` columns, and its only
+observed non-exclusion form in this repository is a plain markdown link
+carrying the bare identifier as its label — not a backticked identifier.
+
+**What the matrix row already claims, and what this adds:** the matrix row
+states each profile/template exists and warns that a valid document does
+not prove implementation, deployment, or live action succeeded; this
+re-observation adds the exact heading counts and order, the exact lifecycle
+distribution and its `archived`-declared-but-unused fact, the exact
+enforcement window (`draft`/`active` only, `done`/`archived` exempt), the
+exact allowed source/target profile sets, and the verified identifier/link
+coupling behavior above. Nothing in the matrix row is restated or altered.
+
+**Status, split by contract and effect (`C-WRCP-010`):** the admission of
+`REQ-WERPC-034`/`035`/`036` neither raises nor lowers a status. For all
+three families, the structural contract (route, frontmatter, status domain,
+required H2 set, and `bodyContract` reciprocity/identifier rule) is
+`Verified` by the strict-mode validators run this cycle (see Verification
+below). Effectiveness — whether a Spec/Task/Plan's content is
+implementation-ready, execution-safe, or delivery-approved — is unmeasured
+and remains `DEFER`.
+
+**Missing evidence (DEFER half):** authored-content correctness,
+implementation success, execution safety, and delivery/deployment approval
+for any individual Spec/Task/Plan instance. **Owning authority:** the
+engineering owner named by each profile's matrix row (Engineering owner for
+Spec; Engineer/QA for Task; Product/QA/tech lead for Plan); Stage 99 for the
+registry/schema/template contract itself. **Safe boundary:** the existing
+strict registry, Markdown-profile, and links/owners validators against the
+exact tracked instance; no live build, deployment, or remote action is
+authorized by this reference. **Refresh trigger:** a cited profile, template,
+lifecycle, or validator rule changes, or a named Spec/Task/Plan instance is
+separately authorized for content/effectiveness review.
+
+**Final disposition:** Contract half `Verified`; effect half `DEFER` for all
+three families. No claim is promoted beyond this split. New claims
+registered: `CLM-WERPC-010-10` (`REQ-WERPC-034`), `CLM-WERPC-010-11`
+(`REQ-WERPC-035`), `CLM-WERPC-010-12` (`REQ-WERPC-036`).
 
 ## Related Documents
 
