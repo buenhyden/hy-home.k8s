@@ -228,6 +228,88 @@ unique source IDs (73 plus `SRC-WERPC-074`–`077`), and 92 unique claim IDs
 (77 plus `CLM-WERPC-010-01`–`15`). Hosted-runtime, provider-runtime, cluster,
 credential-bearing, and live evidence remain `DEFER`.
 
+### 2026-08-17 full-corpus refresh reconciliation
+
+This cycle (WRFC-000–WRFC-012, Spec 058) is the first to re-observe **all
+thirty-six** owner rows rather than a twelve-row `Partial` sample. Its scope was
+byte-equivalent to the Spec 057 request, so the cycle was deliberately redirected
+to the two places where new information was reachable: the twenty-four `Verified`
+rows that had gone unchecked since 2026-08-08, and a terminal blocking-class
+closure over every retained `Partial` and `DEFER` row.
+
+**Six rows returned `changed` externally.** Three of them — `REQ-WERPC-004`,
+`011`, and `021` — carry status `Verified` and were therefore structurally
+outside the sample the three preceding cycles re-tested.
+
+| Request ID    | Prior status  | External change observed 2026-08-17                                    |
+| ------------- | ------------- | ---------------------------------------------------------------------- |
+| REQ-WERPC-004 | Verified      | Claude Code advanced from observed `2.1.220` to `2.1.233` (2026-08-14) |
+| REQ-WERPC-006 | Partial       | Claude memory and subagent pages grew beyond the adopted scope         |
+| REQ-WERPC-008 | Partial       | kube-state-metrics pin `v2.14.0` versus upstream `v2.19.1`             |
+| REQ-WERPC-011 | Verified      | `ISO/IEC/IEEE DIS 29148` entered ballot; 2018 edition not superseded   |
+| REQ-WERPC-021 | Verified      | `llms.txt` reached v2; MCP `2026-07-28` superseded the cited path      |
+| REQ-WERPC-025 | Partial       | Argo CD `sourceIntegrity` shipped GA in `3.5.0` and `3.5.1`            |
+
+**Two of this pack's own recorded refresh triggers fired.** `SRC-WERPC-060`
+declared a kube-state-metrics version change a trigger, and `SRC-WERPC-063`
+declared an Argo CD source-integrity change a trigger. Both conditions are now
+met. That is a contract signal, not a judgement call, and it means
+`REQ-WERPC-008` and `REQ-WERPC-025` carry an admitted-but-unexecuted targeted
+refresh as their next action.
+
+**No status changed.** All thirty-six rows recorded `statusEffect` of
+`no-change`; none was promoted, demoted, or contradicted, so **every Status cell
+in the request matrix above keeps its prior value**. Under Spec 058 `C-WRFC-004`
+that is a success provided the delta is recorded, and the six `changed` results
+plus the two fired triggers are that delta.
+
+**Zero rows returned `unreachable`,** which is itself a delta. Prior cycles
+recorded `diataxis.fr` behind HTTP 429 on three separate attempts and fell back
+to the upstream source that builds the site (`SRC-WERPC-067`). On 2026-08-17 the
+published page responded directly, registered as `SRC-WERPC-089`, so that
+fallback was not needed. Two other hosts, `iso.org` and once
+`docs.aws.amazon.com`, returned HTTP 403 and were resolved through a
+search-mediated fallback rather than recorded as unreachable.
+
+**Terminal blocking-class closure** is recorded in the
+[scope application index](scope-application-index.md#2026-08-17-full-corpus-re-projection-and-blocking-class-closure).
+Twelve rows are unblocked, ten are reachable by repository-static work, and
+fourteen are structurally unreachable and are closed against further static
+re-testing with a named reopen condition each. This is why Specs 055, 056, and
+057 promoted nothing: their sample was drawn without regard to whether the
+blocking evidence was reachable at all.
+
+Findings are recorded as dated 2026-08-17 sections in
+[governance](workspace-governance-and-common-agent-environment.md#2026-08-17-full-corpus-refresh),
+[harness and loop](harness-and-loop-engineering.md#2026-08-17-full-corpus-refresh),
+[provider status](provider-implementation-status.md#2026-08-17-full-corpus-refresh),
+[SDLC and document contracts](spec-driven-sdlc-and-document-contracts.md#2026-08-17-full-corpus-refresh),
+[Diátaxis](documentation-architecture-and-diataxis.md#2026-08-17-full-corpus-refresh),
+[LLM-WIKI](llm-wiki-and-knowledge-routing.md#2026-08-17-full-corpus-refresh),
+[Kubernetes and security](kubernetes-infrastructure-and-security.md#2026-08-17-full-corpus-refresh),
+[CI/CD, Actions, and QA](ci-cd-github-actions-and-qa.md#2026-08-17-full-corpus-refresh),
+[AI agents](ai-agents-and-agency-agents.md#2026-08-17-full-corpus-refresh),
+[model routing](agent-model-routing-and-configuration.md#2026-08-17-full-corpus-refresh),
+and [memory](agent-memory-tiers-and-management.md#2026-08-17-full-corpus-refresh).
+
+The cycle registers `SRC-WERPC-078`–`089` and `CLM-WERPC-011-01`–`39`, one claim
+per owner row plus three cycle-level claims. No existing source, claim, or
+requirement row was renumbered or rewritten. Counted directly against the tracked
+files, the pack now contains **14 physical Markdown files** including this README
+(unchanged), **36 unique request owners** (unchanged), **89 unique source IDs**
+(77 plus twelve), and **131 unique claim IDs** (92 plus thirty-nine). Every
+referenced identifier has a registered ledger row: 89 source rows and 131 claim
+rows. Hosted-runtime, provider-runtime, cluster, credential-bearing, and live
+evidence remain `DEFER`.
+
+Two limitations are recorded rather than concealed. The package owning the
+document-family rows executed without a shell tool, so `Spec`, `Task`, `Plan`,
+and `Guide` instance tallies were **not** re-counted and the 2026-08-14 counts
+are carried forward unverified; and
+`bash scripts/generate-llm-wiki-index.sh --check` was **not** executed, so
+LLM-WIKI index freshness is inferred from unchanged frontmatter dates rather than
+proven.
+
 ## Refresh and Succession
 
 WERPC-002 through WERPC-006 add dated source-backed findings to their assigned
