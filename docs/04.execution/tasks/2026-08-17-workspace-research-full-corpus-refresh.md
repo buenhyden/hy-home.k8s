@@ -265,7 +265,26 @@ These findings do not map onto any of the thirty-six owner rows, so under
   were not run in that package, including
   `bash scripts/generate-llm-wiki-index.sh --check` and fresh repository-wide
   instance tallies. Those counts rest on `Glob` listings plus the pack's
-  2026-08-14 tallies and are reported as not independently re-tallied.
+  2026-08-14 tallies and were reported as not independently re-tallied.
+- **Both of those limitations were subsequently closed with executed evidence**,
+  after the cycle's content commits and before integration.
+  `bash scripts/generate-llm-wiki-index.sh --check` returns
+  `[PASS] LLM WIKI generated index is current`, so the freshness inferred from
+  unchanged frontmatter dates was correct. A fresh frontmatter tally, taken on
+  the cycle branch and adjusted for the one Spec, Plan, and Task this cycle adds,
+  reproduces the pack's 2026-08-14 baseline exactly apart from one ordinary
+  `active`-to-`done` transition per family: Spec 53 as 5 `draft` / 5 `active` /
+  43 `done`, Task 71 as 5 / 1 / 65, and Plan 69 as 5 / 1 / 63, against the
+  recorded 53 as 5 / 6 / 42, 71 as 5 / 2 / 64, and 69 as 5 / 2 / 62. Zero
+  `archived` use in any of the three families still holds, so no pack claim is
+  contradicted.
+- **One reporting defect was found and did not reach the repository.** The
+  `WRFC-004` package verbally reported nine ARD, eighteen ADR, and ten Runbook
+  dated instances. Direct enumeration returns eight, seventeen, and nine; each
+  count was inflated by one because `README.md` was counted as a dated instance.
+  Because `C-WRFC-002` required those tallies to be recorded as not re-verified
+  rather than asserted, none of the three inflated numbers was ever written into
+  the pack. Labelling an unverified count as unverified is what contained it.
 
 ## Verification Summary
 

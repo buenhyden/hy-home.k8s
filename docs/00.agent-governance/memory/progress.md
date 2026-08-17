@@ -16980,10 +16980,23 @@ newly attained state.
   have fired triggers. A targeted version-and-facility refresh for
   kube-state-metrics and Argo CD `sourceIntegrity` is the obvious next cycle, and
   it is narrow rather than another full sweep.
-- **Two limitations carried, not concealed.** Document-family instance tallies
-  were not re-counted, so the 2026-08-14 counts stand unverified; and
-  `bash scripts/generate-llm-wiki-index.sh --check` was not executed, so LLM-WIKI
-  index freshness is inferred from frontmatter dates rather than proven.
+- **Two limitations were carried, then closed before integration.** Both came
+  from the research subagent lacking a shell, not from a repository defect, and
+  both were resolved with executed evidence once the orchestrator ran the checks
+  directly. `bash scripts/generate-llm-wiki-index.sh --check` returns
+  `[PASS] LLM WIKI generated index is current`. A fresh frontmatter tally
+  reproduces the 2026-08-14 Spec, Task, and Plan baselines apart from one ordinary
+  `active`-to-`done` transition per family, and zero `archived` use still holds.
+  Neither limitation carries into a successor cycle.
+- **Reusable lesson: label unverified counts as unverified.** The research
+  package verbally reported nine ARD, eighteen ADR, and ten Runbook instances;
+  direct enumeration returns eight, seventeen, and nine, each inflated by one
+  because `README.md` was counted as a dated instance. Those numbers never
+  reached the repository only because the cycle contract required them to be
+  recorded as not re-verified rather than asserted. When a subagent reports a
+  count it could not execute a command to obtain, treat the count as a claim to
+  re-derive, not as evidence. `Glob`-based counting in particular includes README
+  files that a route regex would exclude.
 - **Uncorrected stale reference in a Stage 00 owner.** `model-policy.md` still
   links `developers.openai.com/codex/subagents` and
   `developers.openai.com/codex/guides/agents-md`, although this pack recorded on

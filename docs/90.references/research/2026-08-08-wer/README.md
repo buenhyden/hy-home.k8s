@@ -310,6 +310,17 @@ are carried forward unverified; and
 LLM-WIKI index freshness is inferred from unchanged frontmatter dates rather than
 proven.
 
+Both limitations were closed with executed evidence before integration, so
+neither carries into a successor cycle. The drift check returns
+`[PASS] LLM WIKI generated index is current`, confirming the inferred freshness.
+A fresh frontmatter tally reproduces the 2026-08-14 Spec, Task, and Plan
+baselines apart from one ordinary `active`-to-`done` transition per family, and
+zero `archived` use still holds, so no recorded tally is contradicted. Direct
+enumeration also corrected three counts that had been reported but deliberately
+not recorded: ARD, ADR, and Runbook hold eight, seventeen, and nine dated
+instances rather than nine, eighteen, and ten, each inflated by one because
+`README.md` was counted as an instance.
+
 ## Refresh and Succession
 
 WERPC-002 through WERPC-006 add dated source-backed findings to their assigned
