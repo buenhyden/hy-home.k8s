@@ -16896,3 +16896,116 @@ evidence of **no regression**, not of a newly attained state.
   ledger — is a shared-tooling decision and is not made here.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, merge,
   or deployment evidence was collected or claimed.
+
+## 2026-08-17 - WRFC full-corpus workspace research refresh
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/90.references/research/2026-08-08-wer/**`, `docs/03.specs/058-workspace-research-full-corpus-refresh/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-17-workspace-research-full-corpus-refresh.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `README.md`
+- Parent: Spec 058 / the WRFC-000..012 cycle, the fifth refresh over the 2026-08-08 WER pack
+- Evidence class: repository-static and public-documentation only
+
+### Progress
+
+The human request was byte-equivalent in scope to Spec 057: twenty-three topic
+lines expanding onto the same thirty-six `REQ-WERPC` owner rows. Recognizing that
+equivalence before planning was the decisive move. Specs 055, 056, and 057 had
+each re-tested the same twelve `Partial` rows and promoted none, so a fourth
+identical re-test was predictable waste.
+
+The cycle was therefore redirected to the two reachable places: full-corpus
+external re-observation across all thirty-six rows, and a terminal blocking-class
+closure over every retained `Partial` and `DEFER` row.
+
+**That redirection paid off.** Six rows returned `changed` externally, and three
+of them — `REQ-WERPC-004`, `011`, and `021` — carry status `Verified` and were
+structurally outside the twelve-row sample the prior three cycles used. Claude
+Code had advanced from the observed `2.1.220` to `2.1.233`; `ISO/IEC/IEEE DIS
+29148` had entered ballot; `llms.txt` had reached v2 and MCP revision
+`2026-07-28` had superseded the cited Resources path. None of that was reachable
+by sampling `Partial` rows.
+
+**Two of the pack's own recorded refresh triggers fired.** `SRC-WERPC-060`
+declared a kube-state-metrics version change a trigger and `SRC-WERPC-063`
+declared an Argo CD source-integrity change a trigger. Upstream
+kube-state-metrics reached `v2.19.1` against the repository pin `v2.14.0`, and
+Argo CD `sourceIntegrity` shipped GA in `3.5.0` and `3.5.1` rather than remaining
+forward-looking. The targeted refresh those triggers admit is **not executed** by
+this cycle and is handed off below.
+
+No status changed. All thirty-six rows recorded `no-change`. Zero rows returned
+`unreachable`, which is itself a delta: `diataxis.fr` responded directly after
+three prior cycles recorded HTTP 429, so the `SRC-WERPC-067` upstream fallback
+was not needed.
+
+Blocking-class closure is the durable output. Twelve rows are unblocked, ten are
+reachable by repository-static work, and fourteen are structurally unreachable —
+`provider-runtime`, `hosted-ci`, `live-cluster`, or `human-judgement` — and are
+now closed against further static re-testing with a named reopen condition each.
+A successor cycle should cite that closure rather than re-observe those rows.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` → `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` → `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` → `PASS SUMMARY . - actual="0"`
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict` → `PASS document contract registry: 515 paths`
+- `python3 scripts/validate-affected-surfaces.py --root .` → `[PASS] paths=866 surfaces=22/22 uncovered=0`
+- `python3 scripts/validate-active-corpus-residue-closure.py --root .` → `PASS active-corpus-residue-closure findings=0`
+- `python3 -m unittest tests.test_active_corpus_retention` → `Ran 87 tests ... OK`
+- Pack counts reconciled against tracked files: 14 files, 36 owners, 89 source IDs, 131 claim IDs, with 89 and 131 registered ledger rows
+
+The lane was green before the cycle began; these are no-regression results, not a
+newly attained state.
+
+### Handoff
+
+- **The formatter hazard is now characterized, not just observed.** The
+  table-padding inflation recorded on 2026-08-15 comes from the Write and Edit
+  tool path, not from pre-commit: `.pre-commit-config.yaml` runs no prettier, and
+  the shared PostToolUse hook runs only `end-of-file-fixer`,
+  `trailing-whitespace`, and `mixed-line-ending`. Writing wide reference tables
+  through a shell heredoc avoids it. This cycle added 51 ledger rows that way and
+  the ledger grew 816,508 → 841,164 bytes with no inflation, verified unchanged
+  after commit. A durable fix remains a shared-tooling decision.
+- **`post-validate.sh` is not worktree-aware.** It resolves
+  `scripts/select-affected-surfaces.py` against `CLAUDE_PROJECT_DIR`, so an edit
+  inside a linked worktree fails `SURFACE-PATH-NORMALIZATION` with
+  `path must be repository-relative`, and `scripts/document_contracts.py:603`
+  excludes `.worktrees` from the surface map. A worktree attempt was abandoned
+  and this cycle ran on a branch in the primary checkout. Plan for a branch until
+  the hook is made worktree-aware.
+- **Two admitted-but-unexecuted refreshes.** `REQ-WERPC-008` and `REQ-WERPC-025`
+  have fired triggers. A targeted version-and-facility refresh for
+  kube-state-metrics and Argo CD `sourceIntegrity` is the obvious next cycle, and
+  it is narrow rather than another full sweep.
+- **Two limitations carried, not concealed.** Document-family instance tallies
+  were not re-counted, so the 2026-08-14 counts stand unverified; and
+  `bash scripts/generate-llm-wiki-index.sh --check` was not executed, so LLM-WIKI
+  index freshness is inferred from frontmatter dates rather than proven.
+- **Uncorrected stale reference in a Stage 00 owner.** `model-policy.md` still
+  links `developers.openai.com/codex/subagents` and
+  `developers.openai.com/codex/guides/agents-md`, although this pack recorded on
+  2026-08-10 that the host permanently redirects to `learn.chatgpt.com/docs`.
+  Correcting a Stage 00 owner was outside this cycle's scope.
+- **Unowned surface blocking two closed rows.** `.github/**` still has no
+  declared scope owner while `REQ-WERPC-022` and `023` are closed as `hosted-ci`
+  blocked. Assigning that ownership is a `meta` decision requiring human approval.
+- **Tooling caveats for agents.** `Glob` does not traverse the `.claude/skills`,
+  `.claude/workflows`, or `.claude/output-styles` symlinks while `Read` resolves
+  them, so `Glob` alone can falsely report the shared assets missing. And a
+  single-pass documentation fetch inverted a documented precedence order this
+  cycle; precedence claims need a verbatim re-fetch before adoption.
+- **Residual cleanup requiring the human.** The abandoned worktree
+  `.worktrees/2026-08-17-workspace-research-full-corpus-refresh` could not be
+  removed because the active permission boundary denied `rm -rf`,
+  `git worktree remove --force`, and `git branch -D`. Its branch name was freed
+  non-destructively with `git checkout --detach`.
+- **Left untouched by contract.**
+  `.worktrees/docs-sdlc-governance-consolidation` and its branch belong to a
+  different session: thirty-six commits absent from `main`, `main` seventy-seven
+  ahead, plus staged uncommitted changes. Also observed read-only and not acted
+  on: Dependabot pull request 50 bumping `actions/stale` to `11.0.0`.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.

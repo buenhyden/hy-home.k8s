@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Full-Corpus Refresh Task'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-17
 ---
@@ -184,11 +184,11 @@ deleting tracked content on its own authority.
 | WRFC-005 | Platform and security      | Done    | 3 rows re-observed; 2 changed (`008`, `025`), 1 unchanged; 2 triggers fired       |
 | WRFC-006 | Delivery evidence          | Done    | 4 rows re-observed; 0 changed, 4 unchanged; no new date contradiction             |
 | WRFC-007 | Blocking-class closure     | Done    | 24 retained rows classified; 10 reachable, 14 structurally closed                 |
-| WRFC-008 | Scope re-projection        | Pending | Scope membership re-derived from `docs/00.agent-governance/scopes/`               |
-| WRFC-009 | Cleanup and contract fix   | Pending | Cleanup record above; graphify tracking contract corrected                        |
-| WRFC-010 | Cross-link reconciliation  | Pending | Four counts reconciled across pack README, collection README, and ledger          |
-| WRFC-011 | Lifecycle registration     | Pending | Stage 03/04 indexes, profiles `standaloneExecutions`, ADR 0022, closure allowlist |
-| WRFC-012 | Validation and integration | Pending | Full lane against the `WRFC-000` baseline, then integration into `main`           |
+| WRFC-008 | Scope re-projection        | Done    | Ten scope documents re-derived; five unowned paths unchanged; one match at `meta.md:27` |
+| WRFC-009 | Cleanup and contract fix   | Done    | Prunable worktree registration removed; `README.md:146` corrected to four tracked files |
+| WRFC-010 | Cross-link reconciliation  | Done    | 14 files / 36 owners / 89 source IDs / 131 claim IDs; every ID has a ledger row   |
+| WRFC-011 | Lifecycle registration     | Done    | Indexes, `standaloneExecutions`, ADR 0022 row, closure allowlist, fixture, progress ledger |
+| WRFC-012 | Validation and integration | Done    | Eight lanes green plus clean diff checks; branch integrated into `main`           |
 
 ## Approval and Safety Boundaries
 
@@ -293,16 +293,16 @@ by `WRFC-012`.
 | [VAL-WRFC-001](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Done    | 36 rows derived from the pack; zero duplicates, zero gaps, union exact  |
 | [VAL-WRFC-002](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Done    | External and workspace results recorded separately for all 36 rows      |
 | [VAL-WRFC-003](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Done    | 24 retained rows each carry exactly one blocking class                  |
-| [VAL-WRFC-004](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Source rows from `SRC-WERPC-078`, claim rows from `CLM-WERPC-011-01`    |
-| [VAL-WRFC-005](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Pack file count held at fourteen; dated sections added as H3 only       |
+| [VAL-WRFC-004](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | 89 source IDs and 131 claim IDs unique and registered; none renumbered 
+| [VAL-WRFC-005](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Pack file count held at fourteen; every dated section added as H3 
 | [VAL-WRFC-006](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Done    | Zero `unreachable` rows; two HTTP 403 hosts resolved by search fallback |
-| [VAL-WRFC-007](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Scope membership re-derived from the scope registry                     |
-| [VAL-WRFC-008](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Four counts reconciled across the three index owners                    |
-| [VAL-WRFC-009](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Reconciliation ordered as the last content commit                       |
+| [VAL-WRFC-007](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Ten scopes re-derived; the five unowned canonical paths are unchanged 
+| [VAL-WRFC-008](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Four counts agree; the collection README was already accurate 
+| [VAL-WRFC-009](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Reconciliation was the last commit changing research pack content 
 | [VAL-WRFC-010](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Done    | Consumer enumeration recorded; contract corrected, no tracked deletion  |
-| [VAL-WRFC-011](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Ledger byte size recorded before and after heredoc writes               |
-| [VAL-WRFC-012](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Full lane compared against the baseline recorded above                  |
-| [VAL-WRFC-013](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | One commit per package; terminal tree and merge state                   |
+| [VAL-WRFC-011](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Ledger 816,508 to 841,164 bytes; unchanged after commit; under 1 MB 
+| [VAL-WRFC-012](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Done                                                                    | Eight lanes green plus clean diff checks; no regression against baseline 
+| [VAL-WRFC-013](../plans/2026-08-17-workspace-research-full-corpus-refresh.md) | Pending | Partial                                                                 | One commit per logical unit; branch merged; one worktree removal blocked 
 
 ### Related Documents
 

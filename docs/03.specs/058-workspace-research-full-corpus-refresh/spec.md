@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Full-Corpus Refresh Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-08-17
 ---

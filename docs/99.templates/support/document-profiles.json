@@ -5031,7 +5031,7 @@
       "spec": "058",
       "plan": "docs/04.execution/plans/2026-08-17-workspace-research-full-corpus-refresh.md",
       "task": "docs/04.execution/tasks/2026-08-17-workspace-research-full-corpus-refresh.md",
-      "state": "active",
+      "state": "done",
       "reason": "Direct human-approved full-corpus external and workspace re-observation of all thirty-six owner rows with terminal blocking-class closure over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
