@@ -55,11 +55,11 @@ an adapter changes.
 
 ### Model Tiers (July 2026 Local Baseline)
 
-| Provider / Environment | Planning / Supervisor Tier | Worker / Subagent Tier | Reasoning / Effort Policy |
-| --- | --- | --- | --- |
-| **Local/Antigravity and Gemini CLI** | `top` | `worker` | Local adapter labels are configured incumbents only. Gemini CLI candidates and non-configurable reasoning state resolve per tuple in the model-fitness contract. |
-| **Claude** | `top` | `worker` | Exact incumbent/candidate aliases and reasoning support resolve per tuple; cutoff mapping readiness is not runtime fitness or promotion. |
-| **Codex** | `top` | `worker` | Current adapters declare `model_reasoning_effort`; exact configured/candidate values and support resolve per tuple and are not inferred from the shared vocabulary. |
+| Provider / Environment               | Planning / Supervisor Tier | Worker / Subagent Tier | Reasoning / Effort Policy                                                                                                                                           |
+| ------------------------------------ | -------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Local/Antigravity and Gemini CLI** | `top`                      | `worker`               | Local adapter labels are configured incumbents only. Gemini CLI candidates and non-configurable reasoning state resolve per tuple in the model-fitness contract.    |
+| **Claude**                           | `top`                      | `worker`               | Exact incumbent/candidate aliases and reasoning support resolve per tuple; cutoff mapping readiness is not runtime fitness or promotion.                            |
+| **Codex**                            | `top`                      | `worker`               | Current adapters declare `model_reasoning_effort`; exact configured/candidate values and support resolve per tuple and are not inferred from the shared vocabulary. |
 
 The closed AREA-004 result covers exactly `12 roles / 4 providers / 48
 tuples`. Repository-static mapping readiness is `PASS` for 21 tuples and
@@ -95,5 +95,5 @@ contract. Codex TOML role adapters must use lowercase model IDs and declare
 - [Model Fitness Contract](contracts/agent-model-fitness.json)
 - [Provider Runtime Evidence Contract](contracts/provider-runtime-evidence.json)
 - [Codex Provider Notes](providers/codex.md)
-- [Codex Subagents](https://developers.openai.com/codex/subagents)
-- [Codex AGENTS.md](https://developers.openai.com/codex/guides/agents-md)
+- [Codex Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+- [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
