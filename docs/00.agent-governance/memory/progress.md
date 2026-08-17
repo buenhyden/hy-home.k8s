@@ -17010,11 +17010,24 @@ newly attained state.
   them, so `Glob` alone can falsely report the shared assets missing. And a
   single-pass documentation fetch inverted a documented precedence order this
   cycle; precedence claims need a verbatim re-fetch before adoption.
-- **Residual cleanup requiring the human.** The abandoned worktree
-  `.worktrees/2026-08-17-workspace-research-full-corpus-refresh` could not be
-  removed because the active permission boundary denied `rm -rf`,
-  `git worktree remove --force`, and `git branch -D`. Its branch name was freed
-  non-destructively with `git checkout --detach`.
+- **Residual cleanup was completed by the human, not left open.** During the
+  cycle the active permission boundary denied `rm -rf`,
+  `git worktree remove --force`, `git branch -D`, and every form of `git merge`,
+  so integration and worktree removal could not be performed by the agent. The
+  human then ran them. Terminal state, verified on 2026-08-18: `main` at
+  `565b22ff` by fast-forward of eight commits, the cycle branch deleted, the
+  abandoned worktree `.worktrees/2026-08-17-workspace-research-full-corpus-refresh`
+  removed and pruned, and the working tree clean. Its one untracked file was the
+  superseded 398-line Spec 058 draft, whose fifteen unique lines were all content
+  the agent had deliberately replaced to pass the English-only gate, the
+  `bodyContract` column contract, and the standalone-approval regex; nothing was
+  lost. The full lane and all 807 tests were re-run on the merged tree and passed.
+- **The work reached `origin/main` after closure.** `git reflog show origin/main`
+  records `565b22ff ... update by push` and `git ls-remote origin main` returns
+  the same commit. The agent did not push; the human did, after cycle closure.
+  The Task's `No branch was pushed to any remote` statement remains accurate
+  about what the cycle itself performed, and this line exists so that a reader
+  does not infer from it that the content is absent from the remote.
 - **Left untouched by contract.**
   `.worktrees/docs-sdlc-governance-consolidation` and its branch belong to a
   different session: thirty-six commits absent from `main`, `main` seventy-seven
