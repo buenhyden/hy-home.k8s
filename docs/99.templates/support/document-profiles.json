@@ -5035,6 +5035,15 @@
       "reason": "Direct human-approved full-corpus external and workspace re-observation of all thirty-six owner rows with terminal blocking-class closure over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "059",
+      "plan": "docs/04.execution/plans/2026-08-18-platform-currency-defect-closure.md",
+      "task": "docs/04.execution/tasks/2026-08-18-platform-currency-defect-closure.md",
+      "state": "active",
+      "reason": "Direct human-approved bounded closure of two live platform version-currency defects plus the Argo CD source-integrity non-adoption decision, without separate PRD/ARD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }

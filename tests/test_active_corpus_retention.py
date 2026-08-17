@@ -1491,6 +1491,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "0021-canonical-surface-routing-and-evidence-depth.md",
             "docs/02.architecture/decisions/"
             "0022-direct-approval-standalone-execution-lineage.md",
+            "docs/02.architecture/decisions/"
+            "0023-argo-cd-source-integrity-non-adoption.md",
         ]
         expected_future_specs = [
             "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",
