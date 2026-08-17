@@ -68,6 +68,17 @@ rules:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations
     verbs: [list, watch]
+  # 아래 두 규칙은 kube-state-metrics 기본 수집 대상(default resources)이다.
+  # 이 Deployment는 `args`를 선언하지 않아 기본 수집기 집합을 그대로 사용하므로,
+  # 권한이 없으면 두 수집기가 forbidden 상태로 동작한다.
+  - apiGroups: [certificates.k8s.io]
+    resources:
+      - certificatesigningrequests
+    verbs: [list, watch]
+  - apiGroups: [coordination.k8s.io]
+    resources:
+      - leases
+    verbs: [list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

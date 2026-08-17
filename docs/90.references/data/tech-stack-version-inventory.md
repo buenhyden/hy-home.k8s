@@ -67,6 +67,21 @@ updated: 2026-07-30
 
 ```yaml
 k3s_image: 'rancher/k3s:v1.35.0-k3s1'
+# bootstrap 단계에서 GitOps 소유권 확립 이전에 helm으로 직접 설치하는 chart다.
+# `infrastructure/bootstrap-local.sh`의 `--version` 값과 반드시 일치해야 한다.
+bootstrap_helm_charts:
+  metallb:
+    repoURL: 'https://metallb.github.io/metallb'
+    chart: 'metallb'
+    version: '0.16.1'
+    appVersion: 'v0.16.1'
+    installedBy: 'infrastructure/bootstrap-local.sh [5/11]'
+  argo-cd:
+    repoURL: 'https://argoproj.github.io/argo-helm'
+    chart: 'argo-cd'
+    version: '10.4.0'
+    appVersion: 'v3.5.1'
+    installedBy: 'infrastructure/bootstrap-local.sh [8/11]'
 helm_charts:
   platform-cert-manager:
     repoURL: 'https://charts.jetstack.io'
