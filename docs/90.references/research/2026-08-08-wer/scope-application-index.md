@@ -150,6 +150,73 @@ This index's mapping stays bounded to `REQ-WERPC-001`–`REQ-WERPC-033`; no
 scope row was added for the three new IDs, and doing so was out of scope for
 this re-projection.
 
+### 2026-08-17 full-corpus re-projection and blocking-class closure
+
+This re-projection belongs to the 2026-08-17 full-corpus refresh cycle
+(WRFC-008) executed under Spec 058. It contributes no new finding, source, or
+status. It re-derives scope membership from the registry and, for the first time
+in this pack, records a terminal blocking class for every retained `Partial` and
+`DEFER` row rather than only the twelve `Partial` rows.
+
+#### Scope re-derivation result
+
+Scope membership was re-derived from `docs/00.agent-governance/scopes/` rather
+than carried forward from the previous projection. The registry still contains
+exactly ten scope documents. Re-searching all ten for `github`, `.agents`,
+`traefik`, `pre-commit`, and a root `policy/` ownership row returns exactly one
+match, `meta.md:27` for `.agents/skills/**`.
+
+The five unowned canonical paths recorded above are therefore **unchanged**. No
+scope acquired or released a path this cycle, and the scope-to-requirement map
+needs no structural revision.
+
+One consequence is worth stating plainly. `.github/**` remains unowned while
+`REQ-WERPC-022` and `REQ-WERPC-023` are both closed below as `hosted-ci`
+blocked. Those two rows can only be advanced by hosted evidence, and the surface
+that would produce it has no declared scope owner. Assigning that ownership
+remains a `meta` decision requiring human approval and is not made here.
+
+#### Terminal blocking-class closure
+
+Every retained `Partial` and `DEFER` row now carries exactly one blocking class
+and a reopen condition. Of the thirty-six owner rows, twelve are unblocked, ten
+are reachable by repository-static work, and fourteen are structurally
+unreachable.
+
+| Blocking class     | Requirements                                                                                                       | Reachable | Terminal for static work |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ | --------- | ------------------------ |
+| `none`             | `REQ-WERPC-007`, `011`, `012`, `013`, `015`, `016`, `017`, `019`, `027`, `029`, `030`, `031`                        | n/a       | n/a                      |
+| `repo-static`      | `REQ-WERPC-003`, `004`, `005`, `006`, `010`, `021`, `024`, `034`, `035`, `036`                                      | yes       | no                       |
+| `provider-runtime` | `REQ-WERPC-001`, `002`, `026`, `028`, `032`                                                                        | no        | yes                      |
+| `hosted-ci`        | `REQ-WERPC-022`, `023`                                                                                             | no        | yes                      |
+| `live-cluster`     | `REQ-WERPC-008`, `009`, `025`                                                                                      | no        | yes                      |
+| `human-judgement`  | `REQ-WERPC-014`, `018`, `020`, `033`                                                                               | no        | yes                      |
+
+The fourteen rows marked terminal are closed against further repository-static
+re-testing. A successor cycle cites this closure instead of re-observing them,
+and reopens a row only when its named condition is met.
+
+| Terminal class     | What closure means                                                                                                  | Named reopen condition                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `provider-runtime` | Manifest and adapter text states configuration; only an authenticated provider run resolves discovery and execution   | Authorized provider-runtime observation, or a provider contract that contradicts rather than extends |
+| `hosted-ci`        | Workflow declarations state intent; only a hosted run resolves effective tokens, rulesets, environments, and OIDC     | Authorized hosted-run evidence at the current revision                                              |
+| `live-cluster`     | Manifests state intent; only a live API server resolves effective RBAC, admission, and reconciliation                | Operator-authorized live observation                                                                |
+| `human-judgement`  | No file read supplies a stakeholder record, an approved enforcement decision, or a risk-proportionate review          | A named approval, reviewer record, or reader-validation activity                                    |
+
+This closure is the deliverable that distinguishes this cycle from the three that
+preceded it. Specs 055, 056, and 057 each re-tested a twelve-row `Partial` sample
+and promoted nothing, because the sample was drawn without regard to whether the
+blocking evidence was reachable at all. Recording reachability once converts a
+repeating no-op into a decision.
+
+#### What closure does not authorize
+
+Closure is a statement about evidence reachability, not about correctness or
+safety. It does not promote any status, does not lower any evidence bar, and does
+not permit a reopen condition to be waived once met. It grants no scope
+authority: a requirement appearing in a scope row still means only that the
+research touched a path the scope already owns.
+
 ## Sources
 
 - Workspace observation, 2026-08-14: the
