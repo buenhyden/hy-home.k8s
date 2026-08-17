@@ -1,7 +1,7 @@
 ---
 title: 'Platform Currency Defect Closure Task'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-18
 ---
@@ -151,12 +151,12 @@ this works nor that it breaks.
 
 ## Task Table
 
-| ID       | Package                      | Status  | Evidence                                                                     |
-| -------- | ---------------------------- | ------- | ---------------------------------------------------------------------------- |
-| PCDC-001 | kube-state-metrics RBAC      | Done    | 6 YAML docs parse; ClusterRole has 10 rules incl. both new apiGroups         |
-| PCDC-002 | Bootstrap chart version pins | Done    | `bash -n` clean; pins at lines 215 and 251 match the inventory contract      |
-| PCDC-003 | sourceIntegrity non-adoption | Done    | ADR 0023 accepted, with adoption case, alternative, and reversal condition   |
-| PCDC-004 | Lifecycle registration       | Pending | Stage 03/04 indexes, `standaloneExecutions`, ADR 0022 row, closure allowlist |
+| ID       | Package                      | Status | Evidence                                                                                |
+| -------- | ---------------------------- | ------ | --------------------------------------------------------------------------------------- |
+| PCDC-001 | kube-state-metrics RBAC      | Done   | 6 YAML docs parse; ClusterRole has 10 rules incl. both new apiGroups                    |
+| PCDC-002 | Bootstrap chart version pins | Done   | `bash -n` clean; pins at lines 215 and 251 match the inventory contract                 |
+| PCDC-003 | sourceIntegrity non-adoption | Done   | ADR 0023 accepted, with adoption case, alternative, and reversal condition              |
+| PCDC-004 | Lifecycle registration       | Done   | Stage 02/03/04 indexes, `standaloneExecutions`, ADR 0022 row, closure allowlist, ledger |
 
 ## Approval and Safety Boundaries
 
@@ -209,17 +209,17 @@ promote no live, admission, reconciliation, or chart-resolution outcome.
 
 ### Lifecycle Traceability
 
-| Criterion / work item                                                   | Result  | Evidence                                                             |
-| ----------------------------------------------------------------------- | ------- | -------------------------------------------------------------------- |
-| [VAL-PCDC-001](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | ClusterRole parses; both new apiGroups present                       |
-| [VAL-PCDC-002](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | `endpointslices` excluded as unused at the current pin               |
-| [VAL-PCDC-003](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | Both installs carry `--version`; `bash -n` clean                     |
-| [VAL-PCDC-004](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | Script values equal the inventory contract entries                   |
-| [VAL-PCDC-005](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | Both pins read from the authoritative index and `Chart.yaml`         |
-| [VAL-PCDC-006](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | ADR 0023 records the adoption case and reversal condition            |
-| [VAL-PCDC-007](../plans/2026-08-18-platform-currency-defect-closure.md) | Done    | Deferred upgrade table with target, prerequisite, and blocking class |
-| [VAL-PCDC-008](../plans/2026-08-18-platform-currency-defect-closure.md) | Pending | Full lane recorded above; terminal result recorded by `PCDC-004`     |
-| [VAL-PCDC-009](../plans/2026-08-18-platform-currency-defect-closure.md) | Pending | One commit per logical unit; commit log reviewed at closure          |
+| Criterion / work item                                                   | Result | Evidence                                                              |
+| ----------------------------------------------------------------------- | ------ | --------------------------------------------------------------------- |
+| [VAL-PCDC-001](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | ClusterRole parses; both new apiGroups present                        |
+| [VAL-PCDC-002](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | `endpointslices` excluded as unused at the current pin                |
+| [VAL-PCDC-003](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Both installs carry `--version`; `bash -n` clean                      |
+| [VAL-PCDC-004](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Script values equal the inventory contract entries                    |
+| [VAL-PCDC-005](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Both pins read from the authoritative index and `Chart.yaml`          |
+| [VAL-PCDC-006](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | ADR 0023 records the adoption case and reversal condition             |
+| [VAL-PCDC-007](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Deferred upgrade table with target, prerequisite, and blocking class  |
+| [VAL-PCDC-008](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Full lane green at closure; no cluster, registry, or remote contacted |
+| [VAL-PCDC-009](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Three commits: `f79fb545` defects, `e6c9b47a` lifecycle, this closure |
 
 ### Related Documents
 

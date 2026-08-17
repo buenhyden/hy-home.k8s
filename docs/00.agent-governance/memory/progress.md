@@ -17035,3 +17035,134 @@ newly attained state.
   on: Dependabot pull request 50 bumping `actions/stale` to `11.0.0`.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - PCDC platform currency defect closure
+
+### Metadata
+
+- Owner: platform
+- Scope: `gitops/platform/monitoring/kube-state-metrics.yaml`, `infrastructure/bootstrap-local.sh`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/02.architecture/decisions/0023-argo-cd-source-integrity-non-adoption.md`, `docs/03.specs/059-platform-currency-defect-closure/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-platform-currency-defect-closure.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `docs/00.agent-governance/model-policy.md`, `README.md`
+- Parent: Spec 059 / the PCDC-001..004 cycle, successor to the WRFC handoff
+- Evidence class: repository-static and public-documentation only
+
+### Progress
+
+This cycle consumed the two refresh triggers the WRFC handoff left open. The
+decisive move was refusing to scope the cycle to the triggers themselves.
+Evaluating whether a version bump matters requires knowing what every declared
+version is, so the cycle inventoried all versioned dependencies first. Six drift
+items surfaced rather than two, and **neither fired trigger was the most urgent
+finding.**
+
+The most urgent was a live defect no trigger pointed at.
+`gitops/platform/monitoring/kube-state-metrics.yaml` declares no `args:`, so the
+Deployment inherits the image default collector set, but its ClusterRole omitted
+`certificates.k8s.io/certificatesigningrequests` and
+`coordination.k8s.io/leases` — both default resources at the pinned `v2.14.0`.
+Two collectors have therefore been running without their required permissions
+for the life of the current pin. This is a defect at the current version, not an
+upgrade prerequisite. `discovery.k8s.io/endpointslices` was deliberately **not**
+granted: it becomes a default only at `v2.18.0`, so granting it now would be an
+unused permission, and it is recorded as a prerequisite of the deferred upgrade
+instead.
+
+The highest-leverage finding was a contract hole. `infrastructure/bootstrap-local.sh`
+ran both bootstrap-phase Helm installs with no `--version`, making bootstrap
+non-reproducible, while `tech-stack-version-inventory.md` pinned all eight
+GitOps-managed charts and had no entry for either bootstrap chart. The contract's
+boundary stopped exactly where GitOps ownership stops, leaving the hole where the
+repository has no reconciler to compensate. Both installs are now pinned
+(`metallb` chart `0.16.1`, `argo-cd` chart `10.4.0`) and a `bootstrap_helm_charts`
+block makes script-to-contract disagreement a defect.
+
+Both pins record the version an unpinned run resolves to today, so pinning changes
+nothing about what installs. It only makes the result deterministic — risk-neutral
+and determinism-positive.
+
+The Argo CD trigger was **settled rather than deferred.** ADR 0023 declines Source
+Integrity because it does not address the gap's cause: twelve declarations track
+`targetRevision: main`, and the facility verifies the signature on whichever commit
+sits at that mutable tip. It pins no revision, stops no signed force-push, and
+grants no reproducibility. Its `3.5.0`/`3.5.1` scope is also narrower than the
+recorded gap, covering GPG Git commits only. Commit-SHA pinning is recorded as the
+preferred control and is not executed. Declining with a named reversal condition is
+what stops the trigger from re-firing every cycle, the same mechanism the prior
+cycle's blocking-class closure used.
+
+### Evidence
+
+- `bash -n infrastructure/bootstrap-local.sh` exits 0; `--version` present at both
+  install sites; the inventory block parses and its versions equal the script values
+- The ClusterRole parses to six YAML documents with ten rules, both new apiGroups
+  present and `endpointslices` absent
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` reports
+  `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` reports
+  `actual="0"` violations
+- `python3 scripts/validate-affected-surfaces.py --root .` reports
+  `surfaces=22/22 uncovered=0`
+- The retention suite passes at 87 tests after the closure-allowlist change
+- Three commits, one per logical unit: `f79fb545` the two defect fixes,
+  `e6c9b47a` the Spec 059 lifecycle and registration set, and this closure
+- No k3d, kubectl, helm, argocd, docker, or registry command was run. No cluster,
+  registry, hosted CI run, or remote was contacted. No secret value was read.
+
+### Handoff
+
+- **Four upgrades are deferred with their prerequisites recorded, not forgotten.**
+  `kube-state-metrics` `v2.14.0` to `v2.19.1` requires granting
+  `discovery.k8s.io/endpointslices` first and re-checking the 128Mi memory limit.
+  `rancher/k3s` `v1.35.0-k3s1` to `v1.35.7` then `v1.36.3` has no in-place path:
+  k3d offers no `upgrade` command, so it is delete-and-recreate and therefore a
+  Runbook item rather than a manifest edit. `adminer` `4.8.1` and `grafana/alloy`
+  `v1.13.1` were measured for currency delta only; neither upgrade path was
+  evaluated. All four are `live-cluster` blocked.
+- **A second `adminer` finding surfaced incidentally.** Beyond being two major
+  versions and roughly five years behind, the workload declares no
+  `securityContext`. That is independent of the version question and is the
+  reason `adminer` ranks first by risk among the deferred items.
+- **The pinned `kube-state-metrics` already sits outside its compatibility
+  matrix.** `v2.14.0` ships client-go `v1.31` against a declared k3s `v1.35.0-k3s1`,
+  four minor versions apart. Upstream states neither that this works nor that it
+  breaks, so the deferred upgrade closes a documented gap and not only a currency
+  gap.
+- **`targetRevision: main` remains unpinned across twelve declarations.** ADR 0023
+  records commit-SHA pinning as the preferred control but explicitly does not
+  authorize it; it is a design change over all twelve and needs its own approval.
+- **`.github/**` still has no declared scope owner.** Carried forward unchanged
+  from the WRFC handoff; assigning it is a `meta` decision requiring human
+  approval, and it continues to block `REQ-WERPC-022` and `023`.
+- **The WRFC stale-link item is closed.** `model-policy.md` now links
+  `learn.chatgpt.com/docs/agent-configuration/subagents` and `.../agents-md`,
+  both re-observed as `308` redirect targets on 2026-08-17.
+- **Recorded limitations.** Whether every value path in
+  `infrastructure/argocd/values-local.yaml` remains valid in chart `10.4.0` was not
+  verified; the risk is identical with and without the pin, so it belongs to the
+  deferred upgrade evaluation. Whether the two newly granted collectors previously
+  logged, degraded, or crashed under a forbidden response is unverifiable from the
+  repository — only the manifest gap was observable. Whether the external
+  Docker-hosted Prometheus consumes any metric affected by the deferred upgrade
+  lies outside tracked paths and stays `DEFER`.
+- **Reusable lesson: a fired trigger scopes an investigation, not a change set.**
+  Both triggers named a version. Acting on them directly would have produced two
+  upgrades, closed neither live defect, and left bootstrap non-reproducible. The
+  triggers were correct to fire and wrong about what mattered; widening from
+  "evaluate this version" to "inventory every version" is what reordered the
+  priorities. Treat a trigger as an instruction to look, never as a specification
+  of what to change.
+- **Reusable lesson: contract boundaries fail where ownership changes hands.** The
+  version inventory was not neglected — it was complete for everything GitOps
+  manages. The hole sat precisely at the pre-GitOps bootstrap phase, where no
+  reconciler exists to make drift self-correcting. When auditing a contract, check
+  its edges against the surfaces it declines to cover, not only the entries it
+  holds.
+- **Reusable lesson: the quality gates caught two authoring errors this cycle.**
+  A documented `helm install/upgrade` example requires a nearby `operator-approved`,
+  `break-glass`, or `human-approved` marker; both the ADR and the Spec initially
+  lacked it. And `POST_CLOSURE_ADR_AUTHORITY_PATHS` is asserted in two places —
+  the module constant and a hardcoded `expected_later` set inside
+  `_self_test_post_closure_adr_scope()` — so adding an ADR requires editing both.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.

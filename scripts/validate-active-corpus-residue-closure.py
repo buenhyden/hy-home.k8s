@@ -109,8 +109,7 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0021-canonical-surface-routing-and-evidence-depth.md",
         "docs/02.architecture/decisions/"
         "0022-direct-approval-standalone-execution-lineage.md",
-        "docs/02.architecture/decisions/"
-        "0023-argo-cd-source-integrity-non-adoption.md",
+        "docs/02.architecture/decisions/0023-argo-cd-source-integrity-non-adoption.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -127,6 +126,7 @@ POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
         "docs/03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md",
         "docs/03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md",
         "docs/03.specs/058-workspace-research-full-corpus-refresh/spec.md",
+        "docs/03.specs/059-platform-currency-defect-closure/spec.md",
     }
 )
 PLAN_ROOT = "docs/04.execution/plans"
