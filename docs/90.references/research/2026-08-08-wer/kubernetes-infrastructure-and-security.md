@@ -377,8 +377,7 @@ rather than a judgement call.
 **External result:** `changed` (`SRC-WERPC-081`, `SRC-WERPC-084`,
 `SRC-WERPC-085`). kube-state-metrics has released five minor versions past the
 pinned `v2.14.0`. The upstream `v2.19.1` standard `ClusterRole` still grants
-`secrets` `list` and `watch`, so this report's security claim is unchanged, but
-upstream added a `serviceaccounts` resource that was absent at `v2.14.0`. Argo
+`secrets` `list` and `watch`, so this report's security claim is unchanged. Argo
 CD's `sourceIntegrity` facility, described here as newer and labeled version 3.5,
 is now shipped in stable releases rather than forward-looking. Gatekeeper's
 current documentation tracks `v3.23.x`, one minor ahead of the pinned `v3.22.x`
@@ -466,6 +465,55 @@ Gatekeeper constraints exist under `gitops/`, `policy/`, or `infrastructure/`.
 `human-judgement` remainders for the admission-architecture and trust-policy
 design decisions and a `provider-runtime` remainder for external Vault role,
 version, and audience alignment. None is closable by repository-static work.
+
+#### 2026-08-18 correction to the 2026-08-17 kube-state-metrics statement
+
+The 2026-08-17 external result above originally stated that upstream added a
+`serviceaccounts` resource that was absent at `v2.14.0`. **That statement was
+wrong and is withdrawn** (`CLM-WERPC-012-01`). Both tags' shipped
+`examples/standard/cluster-role.yaml` were retrieved and diffed directly on
+2026-08-18 (`SRC-WERPC-090`): the `v2.14.0` and `v2.19.1` files are byte-identical
+except the `app.kubernetes.io/version` label. `serviceaccounts` was already
+present at `v2.14.0`, and upstream has not changed its shipped ClusterRole rules
+anywhere in this range.
+
+The correction changes what the finding is. The divergence is not upstream adding
+a resource; it is that this repository's hand-curated `ClusterRole` at
+`gitops/platform/monitoring/kube-state-metrics.yaml:14-71` has always been a
+trimmed subset of the upstream standard role. Relative to upstream at either tag
+it omits `serviceaccounts`, `authentication.k8s.io/tokenreviews`,
+`authorization.k8s.io/subjectaccessreviews`,
+`certificates.k8s.io/certificatesigningrequests`,
+`discovery.k8s.io/endpointslices`, `coordination.k8s.io/leases`, the four
+`rbac.authorization.k8s.io` resources, and `networking.k8s.io/ingressclasses`.
+
+Two of those omissions matter now rather than after any upgrade
+(`CLM-WERPC-012-02`). `certificates.k8s.io/certificatesigningrequests` and
+`coordination.k8s.io/leases` are documented **default** resources, collected
+without any `--resources` flag, and were default at `v2.14.0` as well. The
+deployment passes no `args:`, so those two collectors have been running without
+the permissions they require for as long as the current pin has been in place.
+This is a live pre-existing defect, not an upgrade consequence.
+
+Exactly one RBAC requirement is introduced by upgrading (`CLM-WERPC-012-03`).
+Version `v2.18.0` replaced `endpoints` with `endpointslices` in the default
+resource set. Because no `args:` are declared, the new image default takes effect
+silently and no Deployment-spec diff would reveal it, so
+`discovery.k8s.io/endpointslices` `list`/`watch` must be granted or `--resources`
+must be set explicitly to retain `endpoints`. A repository-wide search for
+`kube_endpoints_` returns zero matches outside this pack, so no tracked
+dashboard, rule, or alert consumes the metrics that would stop being emitted; the
+external Docker-hosted Prometheus named at
+`gitops/platform/monitoring/kube-state-metrics.yaml:3` remains outside tracked
+paths and its query set stays `DEFER`.
+
+A further currency observation, recorded without action (`CLM-WERPC-012-04`): the
+pinned `v2.14.0` ships client-go `v1.31` while
+`infrastructure/k3d/k3d-cluster.yaml:5` declares k3s `v1.35.0-k3s1`. Upstream
+documents `v2.19.x` as the line supporting client-go `v1.35`. The current pin is
+therefore already outside the documented compatibility matrix by four minor
+versions; upstream states neither that it works nor that it breaks, and actual
+behavior against this cluster remains `live-cluster` blocked.
 
 ## Sources
 

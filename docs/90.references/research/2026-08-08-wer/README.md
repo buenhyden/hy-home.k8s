@@ -321,6 +321,38 @@ not recorded: ARD, ADR, and Runbook hold eight, seventeen, and nine dated
 instances rather than nine, eighteen, and ten, each inflated by one because
 `README.md` was counted as an instance.
 
+### 2026-08-18 correction reconciliation
+
+A follow-up verification on 2026-08-18 **withdrew one claim** made by the
+2026-08-17 cycle. The cycle had stated that upstream kube-state-metrics added a
+`serviceaccounts` resource absent at `v2.14.0`. Retrieving and diffing the shipped
+standard `ClusterRole` at both tags shows them byte-identical except the version
+label, so `serviceaccounts` was already present and upstream changed no
+ClusterRole rule in that range. The statement is corrected in place in the
+[Kubernetes and security report](kubernetes-infrastructure-and-security.md#2026-08-18-correction-to-the-2026-08-17-kube-state-metrics-statement)
+and in the cycle Task, and is registered as `CLM-WERPC-012-01` with status
+`Contradicted` — the first use of that status value in this pack.
+
+The correction sharpens rather than weakens the underlying finding. The real
+divergence is that this repository's hand-curated ClusterRole has always been a
+trimmed subset of upstream's, and two of its omissions —
+`certificates.k8s.io/certificatesigningrequests` and
+`coordination.k8s.io/leases` — are documented default resources that the
+deployment has been collecting without the required permissions for the life of
+the current pin. That is a live pre-existing defect rather than an upgrade
+consequence. Exactly one RBAC requirement is introduced by upgrading:
+`discovery.k8s.io/endpointslices`, because `v2.18.0` swapped it in as a default
+and the Deployment declares no `args:`.
+
+The correction registers `SRC-WERPC-090` and `CLM-WERPC-012-01`–`04`. No existing
+source, claim, or requirement row was renumbered, and no requirement owner was
+created. Counted against the tracked files the pack now contains 14 physical
+Markdown files, 36 unique request owners, **90 unique source IDs**, and **135
+unique claim IDs**, with 90 source rows and 135 claim rows registered in the
+ledger. `REQ-WERPC-008` keeps `Partial`; withdrawing a claim does not change a
+status, and hosted-runtime, provider-runtime, cluster, and live evidence remain
+`DEFER`.
+
 ## Refresh and Succession
 
 WERPC-002 through WERPC-006 add dated source-backed findings to their assigned

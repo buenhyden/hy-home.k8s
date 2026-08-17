@@ -90,8 +90,12 @@ fired. This is a contract signal rather than an opinion.
   `gitops/platform/monitoring/kube-state-metrics.yaml:114`, five minor versions
   behind upstream `v2.19.1` (2026-06-10). The upstream standard `ClusterRole`
   still grants `secrets` `list` and `watch`, so the pack's security claim is
-  unchanged, but upstream added a `serviceaccounts` resource absent at
-  `v2.14.0`.
+  unchanged. **Correction, 2026-08-18:** this row originally added that upstream
+  introduced a `serviceaccounts` resource absent at `v2.14.0`. That was wrong and
+  is withdrawn. A direct diff of the shipped standard `ClusterRole` at both tags
+  shows them byte-identical except the version label; the real divergence is that
+  this repository's role has always been a trimmed subset of upstream's. See the
+  dated correction in the Kubernetes and security report.
 
 ### Workspace observation result
 
