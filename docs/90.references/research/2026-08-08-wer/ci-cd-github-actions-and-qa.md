@@ -196,6 +196,86 @@ alter current controls.
 | Medium when caching is proposed                                    | No cache threat model/policy.                                                                                    | Narrow deterministic keys, trust-separated readers/writers, secret exclusion, invalidation, and poison-response procedure.                                                                           | CI + security.              |
 | Ongoing for every delivery change                                  | No hosted run identity is preserved by this static reference.                                                    | Command/version/path/job/run URL or ID/attempt/conclusion/artifact digest as applicable; report each lane as `PASS`, `SKIP`, `FAIL`, or `DEFER`.                                                     | Change owner + QA reviewer. |
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### Re-observation of the four delivery rows
+
+All four rows returned `unchanged` externally and `confirmed` in the workspace
+(`SRC-WERPC-082`). No status changed
+(`CLM-WERPC-011-22` through `CLM-WERPC-011-24`, `CLM-WERPC-011-33`).
+
+| Request ID    | External  | Workspace | Blocking class  | Reachable by static work |
+| ------------- | --------- | --------- | --------------- | ------------------------ |
+| REQ-WERPC-022 | unchanged | confirmed | hosted-ci       | no                       |
+| REQ-WERPC-023 | unchanged | confirmed | hosted-ci       | no                       |
+| REQ-WERPC-024 | unchanged | confirmed | repo-static     | yes                      |
+| REQ-WERPC-033 | unchanged | confirmed | human-judgement | no                       |
+
+**External detail.** The GitHub Actions workflow-syntax and concurrency pages
+still document `on`, `jobs`, `permissions`, `if`, `needs`, and `concurrency` as
+distinct workflow-level controls with default cancel-on-supersede. The secure-use
+page still states that pinning an action to a full-length commit SHA is currently
+the only way to use an action as an immutable release. The pre-commit and pip
+pages are unchanged against their adopted scope. Both NASA verification and
+validation pages still show unmoved page-revision dates, so the
+Verification-and-Validation question matrix rests on the same basis.
+
+**Workspace detail.** All five tracked workflows remain present. Every remote
+`uses:` entry in all five files is a full forty-character SHA with a version
+comment. Top-level `permissions: contents: read` is present in all five, with
+narrow job-level `issues: write` or `pull-requests: write` only in `labeler.yml`,
+`greetings.yml`, and `stale.yml`. Concurrency groups are present in all five.
+`ci.yml:3-15` still triggers on `push` and `pull_request` against `main` plus
+`workflow_dispatch`, and `ci-summary` at `ci.yml:230-352` still fails closed
+under `always()`. No `environment`, `id-token: write`, cloud login, deployment,
+cache, or reusable-workflow call exists in any of the five files.
+`validation-surfaces.json:10-21` and `quality-standards.md:63-87,122-149` still
+agree on the lane vocabulary and the ordered completion sequence.
+
+#### Read-only remote observation
+
+Dependabot pull request 50 on the remote proposes bumping `actions/stale` from
+`10.4.0` to `11.0.0`, targeting the pin at `.github/workflows/stale.yml:22`. It
+was opened 2026-08-09 and is still open. It was observed read-only and was
+neither approved, merged, nor dispatched. No other tracked action shows a pending
+bump in this pass. This is repository metadata, not a hosted run outcome, and it
+promotes nothing.
+
+#### Blocking-class closure for the three unreachable rows
+
+`REQ-WERPC-022` and `REQ-WERPC-023` are blocked by `hosted-ci`: current-revision
+hosted run identity, effective per-run token resolution, rulesets, secrets,
+environments, OIDC trust, and artifact provenance cannot be obtained from the
+repository. The 2026-08-12 read-only administration snapshot remains
+carried-forward reference evidence and does not by itself promote any of these.
+`REQ-WERPC-033` is blocked by `human-judgement`: stakeholder and intended-use
+participation and risk-proportionate independent review require a named reviewer
+or stakeholder record, which no file read can supply. These three rows are closed
+against further repository-static re-testing.
+
+#### Date-consistency re-check
+
+No new internal date contradiction exists in this report. The apparent mismatch
+between the `### 2026-08-11 Partial/DEFER incremental refresh` header and its
+body statement that the refresh executed on 2026-08-12 is the pack-wide
+convention of naming a package by its gap-identification date while dating
+sources and claims by execution, and it is applied identically in the ledger and
+every sibling section.
+
+A separate staleness signal is recorded rather than corrected: in several pack
+files the frontmatter `updated:` value predates the newest dated body section.
+This follows the pack's stated convention that baseline rows are preserved and
+lag re-verification, but it means `updated:` cannot be read as the latest
+observation date for any pack file without reading the body.
+
 ## Sources
 
 Current primary-source rows are `SRC-WERPC-035` through `SRC-WERPC-044` in the

@@ -144,6 +144,71 @@ outside the default path. The provider's own permission feature may add
 technical enforcement, but no repository declaration substitutes for explicit
 human approval of the protected action.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-003 re-observation
+
+**External result:** `unchanged` (`SRC-WERPC-079`). The Claude Code memory page
+still states that Claude Code reads `CLAUDE.md` and not `AGENTS.md`, and still
+documents the `@AGENTS.md` import or symlink bridge as a recommended pattern
+that this repository deliberately declines. The JIT sequence has no vendor
+counterpart to contradict and remains a repository-owned pattern.
+
+**Workspace result:** `confirmed`. `AGENTS.md:1-4` imports bootstrap, the Codex
+provider note, `.codex/CODEX.md`, and `RTK.md`, symmetric to the `CLAUDE.md`
+import set. Neither gateway imports the other, so the two-parallel-gateway
+topology recorded by the 2026-08-10 correction still holds.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-03`). **Blocking class:**
+`repo-static`, reachable. Reopens on a change to either gateway's import list.
+
+#### REQ-WERPC-006 re-observation
+
+**External result:** `changed` (`SRC-WERPC-079`, `SRC-WERPC-083`). Both pages
+this row depends on grew materially since the 2026-08-14 `unchanged` verdict.
+The Claude Code memory page now documents managed-policy `CLAUDE.md`,
+`claudeMdExcludes`, an `/import` command, an `InstructionsLoaded` hook
+cross-reference, a `modified` frontmatter timestamp, and expanded
+`.claude/rules/` symlink and brace-expansion budget details. The subagents page
+gained `disallowedTools`, `skills`, `mcpServers`, scoped `hooks`, a `memory`
+scope, `background`, `effort`, `isolation`, `color`, `initialPrompt`, and a
+`fable` model alias. The claim under test — that the `CLAUDE.md` and `AGENTS.md`
+split exists and that tool, MCP, permission, hook, skill, isolation, and memory
+frontmatter fields exist — is extended rather than contradicted.
+
+**Workspace result:** `confirmed`. `harness-catalog.md:93-100` and
+`contracts/harness-contract.json:5-6` still record `contractVersion` `1.0.0`,
+cutoff `2026-07-10T10:00:00+09:00`, and `12 roles / 4 surfaces / 48 adapters`.
+Direct enumeration returns twelve files in each of `.claude/agents/`,
+`.codex/agents/`, `.agents/agents/`, and `.gemini/agents/`, totalling
+forty-eight, an exact match. The `.claude/skills`, `.claude/workflows`, and
+`.claude/output-styles` symlinks resolve to the `.agents/` single source of
+truth.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-06`). The row keeps `Partial`:
+static shared controls remain verified and provider parity plus effective
+runtime remain `DEFER`. A documentation surface growing does not promote a
+parity claim.
+
+**Blocking class:** `repo-static`, reachable. Reopens if the harness contract's
+counts diverge from actual adapter files, or if a newly documented subagent or
+memory field must be adopted for a parity claim to hold.
+
+#### Tooling caveat recorded for successors
+
+The `Glob` tool does not traverse the `.claude/skills`, `.claude/workflows`, or
+`.claude/output-styles` symlinks, while `Read` resolves them correctly. An agent
+trusting `Glob` alone could wrongly conclude the shared assets are absent. This
+is a tool artifact, not workspace drift.
+
 ## Sources
 
 - **SRC-WERPC-004–008**: official Anthropic Claude Code documentation, checked

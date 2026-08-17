@@ -100,6 +100,52 @@ evaluation, security concern, incorrect routing, or stale external pin rolls
 back by withholding admission or reverting the isolated approved change; it
 does not authorize external cleanup or provider configuration changes.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-026 re-observation
+
+**External result:** `unchanged` (`SRC-WERPC-078`). Codex project-agent required
+fields and the override and inheritance chain are unchanged. Claude Code
+subagent frontmatter still supports the fields this report lists; the current
+page additionally documents `maxTurns` and an expanded `permissionMode` enum.
+That is non-contradicting new detail, not a claim reversal.
+
+**Workspace result:** `confirmed`. `harness-catalog.md:93-100` still records the
+machine contract as exactly `12 roles / 4 surfaces / 48 adapters` and still
+names `.gemini/agents/**` as repository-static only.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-26`). The row keeps `Partial`.
+
+**Blocking class:** `provider-runtime`, structurally unreachable. Discovery,
+permission enforcement, delegated execution, and role-design effectiveness
+cannot be observed from the repository. Reopens if a provider agent contract
+contradicts rather than extends prior scope, or if the harness contract counts
+change.
+
+#### REQ-WERPC-027 re-observation
+
+**External result:** `unchanged` (`SRC-WERPC-078`). The pinned upstream commit
+`ebe9c99acb5c96f9468de368d8bead775387d1a7` is still `HEAD` of `main`. Zero
+commits landed since the previous check, so the pin remains byte-identical and
+neither ahead nor behind.
+
+**Workspace result:** `confirmed`. `.agents/agents/` still holds exactly the
+twelve role files the pinned-commit comparison is scoped against.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-27`). **Blocking class:** `none`
+— this row is unblocked and stays `Verified` on reproducible catalog, license,
+and script comparison, with adoption, conversion, provider discovery, and
+quality remaining out of its scope. Reopens when upstream `main` moves past the
+pinned commit or the local role count changes.
+
 ## Sources
 
 - [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`).

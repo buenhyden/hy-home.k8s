@@ -107,6 +107,59 @@ claims, and it should not be cited for the latter.
 canary, and promotion still require provider runtime evidence that is `DEFER`,
 and the disagreements above make that runtime check more necessary, not less.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-028 re-observation
+
+**External result:** `unchanged` (`SRC-WERPC-078`). All three disagreements
+recorded on 2026-08-10 and re-confirmed on 2026-08-12 and 2026-08-14 persist
+verbatim. Model identifiers still differ between the configuration reference and
+the subagents page. Reasoning-effort vocabulary still differs, with `ultra` and
+`max` still absent from the configuration reference. Precedence order is still
+stated in opposite directions by the two pages: the configuration reference says
+an explicit spawn model takes precedence, while the subagents page says an agent
+file's `model` or `model_reasoning_effort` takes precedence. Claude Code
+subagent model resolution order is unchanged.
+
+**Workspace result:** `confirmed`. `model-policy.md:20,58-62` still owns only
+`top` and `worker` tiers and the `medium`, `high`, `xhigh` reasoning-intent
+vocabulary. `harness-catalog.md:134-140` still records `12 roles / 4 providers /
+48 tuples` with mapping readiness `PASS` for 21 and `DEFER` for 27, and
+fitness, promotion, canary, and runtime `DEFER` for all 48.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-28`). The row keeps `Partial`.
+
+**Blocking class:** `provider-runtime`, structurally unreachable. Parsing,
+resolution, fitness, cost, latency, canary, and promotion evidence all require
+an authenticated provider runtime. Reopens if the two Codex pages converge or
+diverge further, or if the model-fitness contract version or tuple counts
+change.
+
+#### Recorded methodology caveat
+
+A single-pass documentation fetch during this cycle returned a paraphrase that
+inverted the documented precedence order; a targeted re-fetch requesting
+verbatim text returned the correct order matching the prior finding. Precedence
+and ordering claims must be confirmed against verbatim source text before
+adoption.
+
+#### Stale reference observed in a governance owner
+
+`model-policy.md` still links `developers.openai.com/codex/subagents` and
+`developers.openai.com/codex/guides/agents-md` in its Related Documents section,
+although this pack recorded on 2026-08-10 that `developers.openai.com/codex`
+permanently redirects to `learn.chatgpt.com/docs`. This is an uncorrected stale
+reference in a Stage 00 owner rather than in this pack, and correcting a Stage 00
+owner is outside this cycle's scope.
+
 ## Sources
 
 - [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`).

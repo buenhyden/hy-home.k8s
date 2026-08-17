@@ -126,6 +126,47 @@ validating that the eight current guides declare their type and recording the
 `DOC-G2` and `DOC-G3` absences deliberately. That work is the queued `WORK-013`
 package and belongs to its owning Plan, not to this reference.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-020 re-observation
+
+**External result:** `unchanged`, and for the first time in four cycles the
+published page was directly reachable (`SRC-WERPC-089`). Prior cycles recorded
+`diataxis.fr` behind HTTP 429 on three separate attempts and verified the claims
+against the upstream source that builds the site, registered as
+`SRC-WERPC-067`. On 2026-08-17 the published page responded directly, so that
+fallback was not needed. The framework still defines tutorials, how-to guides,
+reference, and explanation as four distinct needs separated by the action-versus-
+cognition and study-versus-work axes, consistent with every prior observation.
+
+**Workspace result:** `confirmed`. No tutorial or explanation profile identifier
+exists in `document-profiles.json`.
+`docs/03.specs/052-document-taxonomy-consolidation/spec.md:200-201` still records
+`DOC-G2` and `DOC-G3`, which establish that the absence is a decision resting on
+the framework's own instruction not to create empty structures, rather than an
+open question. `DOC-G1` at `spec.md:199` remains unenforced, and `sdlc/guide`'s
+`Guide Type` heading at `document-profiles.json:733` still carries no value
+constraint. The eight tracked guides all still declare `how-to`.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-20`). `REQ-WERPC-020` keeps
+`Partial`, and that `Partial` continues to reflect unenforced `DOC-G1` enum work
+rather than an undecided route. The direct reachability of the source removes a
+standing evidence caveat without changing any status.
+
+**Blocking class:** `human-judgement`. The remaining work is an approved
+enforcement decision and, for the usability half, a named reader-validation
+activity. Neither is obtainable by reading files. Reopens when `WORK-013`
+executes, when Spec 052 is superseded, when a current Guide stops satisfying the
+static contract, or when a reader-validation activity is approved.
+
 ## Sources
 
 - [Diátaxis — Start here](https://diataxis.fr/start-here/) and [Diátaxis home](https://diataxis.fr/), checked 2026-08-08. They define tutorials, how-to guides, reference, and explanation as distinct documentation needs; they do not prescribe this repository's schema.

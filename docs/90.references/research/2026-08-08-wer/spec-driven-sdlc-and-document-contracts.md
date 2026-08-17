@@ -150,6 +150,102 @@ must never be interpreted as that approval.
    benchmarks. Any conformance, incident-response, release, or production
    claim needs separately dated local evidence.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### Re-observation of the fourteen document and lifecycle rows
+
+All fourteen rows owned by this report were re-observed (`SRC-WERPC-080`). One
+returned `changed` and thirteen returned `unchanged`. No status changed.
+
+| Request ID    | External   | Workspace | Blocking class  |
+| ------------- | ---------- | --------- | --------------- |
+| REQ-WERPC-007 | unchanged  | confirmed | none            |
+| REQ-WERPC-010 | unchanged  | confirmed | repo-static     |
+| REQ-WERPC-011 | changed    | confirmed | none            |
+| REQ-WERPC-012 | unchanged  | confirmed | none            |
+| REQ-WERPC-013 | unchanged  | confirmed | none            |
+| REQ-WERPC-014 | unchanged  | confirmed | human-judgement |
+| REQ-WERPC-015 | unchanged  | confirmed | none            |
+| REQ-WERPC-016 | unchanged  | confirmed | none            |
+| REQ-WERPC-017 | unchanged  | confirmed | none            |
+| REQ-WERPC-018 | unchanged  | absent    | human-judgement |
+| REQ-WERPC-019 | unchanged  | confirmed | none            |
+| REQ-WERPC-034 | unchanged  | confirmed | repo-static     |
+| REQ-WERPC-035 | unchanged  | confirmed | repo-static     |
+| REQ-WERPC-036 | unchanged  | confirmed | repo-static     |
+
+#### REQ-WERPC-011 — the announced ISO 29148 revision entered ballot
+
+**External result:** `changed` (`SRC-WERPC-088`). `ISO/IEC/IEEE 29148:2018` is
+itself unchanged and was reconfirmed by its 2024 systematic review. What changed
+is that a Draft International Standard, `ISO/IEC/IEEE DIS 29148`, is now visibly
+in the ISO enquiry and ballot phase to replace it. This is the announced revision
+that this report previously recorded as a future refresh trigger. The trigger has
+fired in the sense that the revision is confirmed in progress, but the draft is
+**not yet published**, so it does not supersede the 2018 edition.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-11`). `REQ-WERPC-011` keeps
+`Verified`. A draft in ballot is not a published edition, and adopting it as
+current basis would overstate the evidence.
+
+**Blocking class:** `none`. Reopens when `DIS 29148` is published as the new
+edition.
+
+#### Structural contract re-verification
+
+`REQ-WERPC-034`, `035`, and `036` were re-verified against
+`docs/99.templates/support/document-profiles.json` at the level this pack claims:
+route regex, frontmatter key set and order, status domain, the closed
+required-equals-allowed heading set, and the `bodyContract` reciprocity and
+identifier rule. `sdlc/spec` still declares eleven closed headings with
+`sourceLinkColumn` `PRD requirement`; `sdlc/plan` still declares nine with the
+coupled `Spec criterion` identifier and `Expected Task` target column;
+`sdlc/task` still declares six with the coupled `Criterion / work item`
+identifier. All three remain `Verified` on structural contract with content,
+implementation, and delivery effectiveness `DEFER`.
+
+Instance tallies were not independently re-counted this cycle. The counts
+recorded on 2026-08-14 are carried forward unchanged and are explicitly not
+re-verified, because the package that owned these rows executed without a shell
+tool. This is recorded as a bounded limitation rather than reported as a
+confirmed count (`CLM-WERPC-011-34` through `CLM-WERPC-011-36`).
+
+#### REQ-WERPC-018 — the decided Release gap is intact
+
+A case-insensitive search across `document-profiles.json` returns zero matches
+for a `release` profile: no `sdlc/release` identifier, route, template, or status
+domain exists. `docs/03.specs/052-document-taxonomy-consolidation/spec.md:203`
+still records `DOC-G5` as a decision. The workspace result is therefore `absent`
+by design rather than drifted (`CLM-WERPC-011-18`). **Blocking class:**
+`human-judgement` — creating a Release contract requires a separately approved
+cross-stage design, which repository reading cannot supply.
+
+#### REQ-WERPC-014 — Guide typing remains a queued decision
+
+`sdlc/guide` still declares the `Guide Type` heading with no value constraint,
+and `docs/03.specs/052-document-taxonomy-consolidation/spec.md:199` still records
+`DOC-G1` as unenforced with the work queued rather than executed. The eight
+tracked guides all still declare `how-to`. **Status effect:** `no-change`
+(`CLM-WERPC-011-14`). **Blocking class:** `human-judgement`.
+
+#### Retrieval caveat recorded for successors
+
+`iso.org` returned HTTP 403 to direct retrieval for the ISO rows, and
+`docs.aws.amazon.com` returned 403 once for the ADR row. Both were resolved
+through a search-mediated fallback and are therefore recorded as observed rather
+than `unreachable`. This is the same class of egress flakiness previously
+documented for `diataxis.fr` HTTP 429, with a different host and status code.
+Successor cycles re-checking ISO pages should expect 403 and prepare the
+fallback.
+
 ## Sources
 
 - [GitHub Spec Kit — Specification-Driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md) and [agentic SDD reference](https://github.com/github/spec-kit/blob/main/docs/reference/agentic-sdd.md), checked 2026-08-08: specification/plan/task flow and feedback framing; toolkit guidance only.

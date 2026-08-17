@@ -110,6 +110,53 @@ No status in this report is promoted by this re-check. `REQ-WERPC-032` stays
 `Partial` because provider retention, deletion, compaction, and
 connected-resource behavior still require runtime evidence that is `DEFER`.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-029 through REQ-WERPC-032 re-observation
+
+**External result:** `unchanged` for all four rows (`SRC-WERPC-078`). The Agents
+SDK sessions page still documents the same session backend classes and still
+declares no model-selection key. The Codex memories page is unchanged: off by
+default, stored under `~/.codex/memories/`, separate from web memory, with no
+retention or deletion guarantee, and explicitly described as a recall layer
+rather than the only source for rules that must always apply. The Claude Code
+memory page is unchanged, including the retention-sweep exclusion for memory
+files and the separate-directory statement for subagent memory. The MCP
+versioning page confirms the current protocol revision is still `2026-07-28`,
+with no newer revision published.
+
+**Workspace result:** `confirmed` for all four rows.
+`contracts/agent-checkpoint.schema.json` still requires `synthetic`,
+`atomicWrite` with the `same-directory-temp-fsync-replace` strategy, `redaction`
+with the `[REDACTED-SYNTHETIC]` marker, `resume.repositoryStateWins` and its
+conflict order, `compaction`, and `handoff`. `memory/README.md:45-50` still
+defines exactly the four memory classes with the same authority, promotion, and
+conflict table, and `memory/README.md:56-58` still forbids credentials, tokens,
+secrets, and raw prompts as memory payloads. `memory/progress.md` remains the
+single tracked durable ledger. `docs/03.specs/` remains populated and continues
+to host domain-scoped owners.
+
+**Status effect:** `no-change` for all four (`CLM-WERPC-011-29` through
+`CLM-WERPC-011-32`).
+
+**Blocking class:** `none` for `REQ-WERPC-029`, `030`, and `031`, which are
+unblocked and remain `Verified` on contract definition.
+`REQ-WERPC-032` is `provider-runtime` and structurally unreachable: provider
+retention, deletion, compaction, and connected-resource behavior cannot be
+observed from the repository. `REQ-WERPC-029` reopens if the checkpoint
+contract version changes or a task is authorized to read ignored checkpoint
+contents; `REQ-WERPC-030` reopens if the durable ledger is relocated or a second
+tracked `progress.md` appears; `REQ-WERPC-032` reopens if a cited provider or
+MCP memory contract changes retention, compaction, or subscription semantics.
+
 ## Sources
 
 - [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`–`050`).

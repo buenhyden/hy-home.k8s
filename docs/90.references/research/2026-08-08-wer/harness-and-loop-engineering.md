@@ -182,6 +182,43 @@ what remains `DEFER`; and (4) periodically inspect recurring failures to change
 the smallest authoritative rule, validator, or template. Do not promote a
 marketing feature statement or inference into implementation truth.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-001 and REQ-WERPC-002 re-observation
+
+**External result:** `unchanged` for both rows (`SRC-WERPC-078`). The Codex
+configuration reference, subagents, and `AGENTS.md` pages still describe the
+same instruction-discovery, config, hook, subagent, and sandbox surfaces this
+report cites as harness-component evidence. Discovery mechanics are unchanged:
+global override, then a project walk from the Git root, then concatenation with
+closer files winning, under a 32 KiB `project_doc_max_bytes` default. No
+provider page documents a state machine, retry budget, or termination
+vocabulary, which continues to support this report's claim that the loop's state
+names and retry counts are workspace policy rather than provider features.
+
+**Workspace result:** `confirmed` for both rows. `.codex/CODEX.md:102-105` still
+states that the presence of `.codex/agents/*.toml` or `.codex/hooks.json` is
+repository-static evidence only and does not prove native discovery or role
+consumption. `docs/00.agent-governance/rules/agentic.md:21-29` still carries the
+Direct Mutation Boundary and its no-live-mutation-without-approval rule.
+
+**Status effect:** `no-change` for both (`CLM-WERPC-011-01`,
+`CLM-WERPC-011-02`). Both rows keep `Verified` on static harness and loop
+contract, with provider-runtime delivery `DEFER`.
+
+**Blocking class:** `provider-runtime` for both, structurally unreachable by
+repository-static work. Reopens when a provider publishes documented retry or
+termination semantics, when `contracts/agent-loop-lifecycle.json` changes, or
+when authorized provider-runtime evidence is collected.
+
 ## Sources
 
 - **SRC-WERPC-009–013** — official OpenAI Codex materials, checked 2026-08-08,

@@ -351,6 +351,122 @@ must not be converted into implementation claims.
   ServiceAccount permissions, and Pod Security admission/runtime outcome.
 - An approved Git-revert/prune/auto-sync-aware recovery exercise.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### Two recorded refresh triggers fired
+
+`REQ-WERPC-008` and `REQ-WERPC-025` carried refresh triggers written into this
+report's own source rows, and both fired on 2026-08-17. This is a contract signal
+rather than a judgement call.
+
+| Trigger source  | Recorded condition                              | Observed on 2026-08-17                                  |
+| --------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| SRC-WERPC-060   | kube-state-metrics version changes              | pinned `v2.14.0`; upstream latest `v2.19.1` (2026-06-10) |
+| SRC-WERPC-063   | Argo CD source-integrity facility changes       | shipped GA in `3.5.0` (2026-08-04) and `3.5.1` (2026-08-12) |
+
+#### REQ-WERPC-008 re-observation
+
+**External result:** `changed` (`SRC-WERPC-081`, `SRC-WERPC-084`,
+`SRC-WERPC-085`). kube-state-metrics has released five minor versions past the
+pinned `v2.14.0`. The upstream `v2.19.1` standard `ClusterRole` still grants
+`secrets` `list` and `watch`, so this report's security claim is unchanged, but
+upstream added a `serviceaccounts` resource that was absent at `v2.14.0`. Argo
+CD's `sourceIntegrity` facility, described here as newer and labeled version 3.5,
+is now shipped in stable releases rather than forward-looking. Gatekeeper's
+current documentation tracks `v3.23.x`, one minor ahead of the pinned `v3.22.x`
+reference, with the concept unchanged.
+
+**Workspace result:** `confirmed`.
+`gitops/platform/monitoring/kube-state-metrics.yaml:21-24,35` still grants
+`secrets` `list` and `watch`; the Deployment container at `:112-137` still
+declares no `args` and still pins `v2.14.0` at `:114`.
+`infrastructure/bootstrap-local.sh:246-248` still installs Argo CD with no
+`--version`. Ten `gitops/apps/root/*.yaml` files plus
+`gitops/clusters/local/root-application.yaml:10` and
+`applicationset-apps.yaml:20` still track `targetRevision: main`.
+
+**New repository-static finding.** A repository-wide search for `kube_secret_`
+returns zero matches in any tracked Grafana dashboard, Prometheus rule, or alert
+configuration; only this pack's own documents mention the string
+(`CLM-WERPC-011-39`). That closes the in-repository half of the consumer-need
+sub-claim. It cannot close the claim outright, because
+`gitops/platform/monitoring/kube-state-metrics.yaml:3` states the real consumer
+is an external Docker-hosted Prometheus outside this repository's tracked paths,
+whose query set stays `DEFER`.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-08`). `REQ-WERPC-008` keeps
+`Partial`. Two fired triggers and one partially closed sub-claim are a recorded
+delta, not a promotion: effective RBAC, admission enforcement, controller
+reconciliation, and immutable delivery identity remain unobservable from the
+repository.
+
+**Blocking class:** `live-cluster`, structurally unreachable, with a
+`repo-static` remainder for the consumer-need sub-claim and a `human-judgement`
+remainder for the immutable-identity design decision. Reopens for the two fired
+triggers by admitting a targeted version and facility refresh; the remaining
+sub-claims reopen only with operator-authorized live evidence or an approved
+design decision.
+
+#### REQ-WERPC-009 re-observation
+
+**External result:** `unchanged`, and this row has no pinned primary source
+registered in the ledger, so there is nothing to re-check as changed or
+unchanged. It has always rested on repository-static evidence.
+
+**Workspace result:** `confirmed`. `infrastructure/README.md:106-110` still
+separates the static contract verifier from the five documented live verifiers.
+`infrastructure/k3d/k3d-cluster.yaml:5,12,15` still pins
+`rancher/k3s:v1.35.0-k3s1` with host ports `80:80` and `443:443`.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-09`).
+
+**Blocking class:** `live-cluster`, structurally unreachable. The static and live
+boundary itself is confirmed, but effective cluster, gateway, registry, and cloud
+state require an operator-authorized live check. Reopens when an operator
+authorizes a live observation or a named selector changes.
+
+**Version drift with no ledger home.** `infrastructure/k3d/k3d-cluster.yaml:5`
+pins `rancher/k3s:v1.35.0-k3s1` while upstream has shipped `v1.35.5`, `v1.35.6`,
+and a `v1.36.X` line. Because `REQ-WERPC-009` has no registered external source
+row, this drift has no source-row home in this pack; it reinforces the
+2026-08-12 note recorded earlier in this report. If this row ever acquires a
+dedicated source row, this delta should be its first admitted trigger.
+
+#### REQ-WERPC-025 re-observation
+
+**External result:** `changed` (`SRC-WERPC-085`), sharing the Argo CD
+`sourceIntegrity` GA change with `REQ-WERPC-008`, which bears directly on this
+row's Git, chart, and image identity gap. All other pinned security sources
+re-verified `unchanged`: the Kubernetes Secrets page still states etcd storage is
+unencrypted by default, Pod Security Admission is unchanged, RBAC good practices
+still warn that Secret `list` and `watch` reveal contents, the Vault Kubernetes
+auth documentation still describes TokenReview with an `audience` role field, and
+Cosign keyless verification is unchanged.
+
+**Workspace result:** `confirmed`.
+`gitops/platform/eso/vault-secret-store.yaml:18-24` still declares Kubernetes
+auth with a `serviceAccountRef` and an `audiences` block.
+`gitops/workloads/adminer/rollout.yaml:19-49` still declares no
+`serviceAccountName`, no `automountServiceAccountToken`, and no pod or container
+`securityContext`. No Pod Security Admission labels, admission policies, or
+Gatekeeper constraints exist under `gitops/`, `policy/`, or `infrastructure/`.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-25`). `REQ-WERPC-025` keeps
+`Partial`.
+
+**Blocking class:** `live-cluster`, structurally unreachable, with
+`human-judgement` remainders for the admission-architecture and trust-policy
+design decisions and a `provider-runtime` remainder for external Vault role,
+version, and audience alignment. None is closable by repository-static work.
+
 ## Sources
 
 The dated baseline primary-source rows are `SRC-WERPC-023` through

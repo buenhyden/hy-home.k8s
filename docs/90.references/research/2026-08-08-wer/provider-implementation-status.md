@@ -146,6 +146,70 @@ GitOps security. Provider adapters then translate only these edge capabilities:
    label provider-local retention, auth, model resolution, and runtime behavior
    `DEFER` until an approved observation proves the exact claim.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-004 re-observation
+
+**External result:** `changed` (`SRC-WERPC-083`). Claude Code advanced from the
+`2.1.220` read-only observation of 2026-07-28 recorded in
+`providers/claude.md` to `2.1.233`, dated 2026-08-14. The hooks page now
+documents roughly twenty-eight lifecycle events against the six wired locally,
+including `Setup`, `SessionEnd`, `UserPromptExpansion`, `StopFailure`,
+`PostToolUseFailure`, `PostToolBatch`, `PermissionRequest`, `SubagentStart`,
+`TaskCreated`, `InstructionsLoaded`, `ConfigChange`, `PostCompact`, and
+`Elicitation`. The `PreToolUse` hard-block mechanism, exit code 2 or
+`permissionDecision: deny`, is unchanged.
+
+**Workspace result:** `confirmed`. `.claude/settings.json:78-161` wires exactly
+`SessionStart`, `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, and
+`PreCompact`. All six remain valid current event names under the current matcher
+and command schema, and the twelve `.claude/agents/*.md` files use only core
+documented fields. No drift from current syntax was found.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-04`). The row keeps `Verified` on
+bounded product surfaces and static adapter, with local discovery and runtime
+`DEFER`. A version advance changes the observation, not the evidence class: an
+installed version string still does not prove discovery, authentication,
+entitlement, hook delivery, or delegated execution.
+
+**Blocking class:** `repo-static` for the adopted-scope question, reachable.
+Reopens if workspace hooks or settings must adopt a newly documented event or
+subagent field, or if native discovery evidence is separately authorized.
+
+#### REQ-WERPC-005 re-observation
+
+**External result:** `unchanged` (`SRC-WERPC-079`). `AGENTS.md` discovery order,
+the 32 KiB `project_doc_max_bytes` default, the TOML subagent required fields
+`name`, `description`, and `developer_instructions`, and the example model
+identifiers all match the 2026-08-14 baseline exactly. The dedicated Codex hooks
+page reconfirms that non-managed command hooks require explicit review and trust
+before running, which is not a settings-style permission gate.
+
+**Workspace result:** `confirmed`. `.codex/hooks.json:3-86` wires the same six
+events as the Claude tree through shared scripts, and `.codex/CODEX.md:46-47`
+still describes those hooks as context and validation wiring rather than a
+permission-equivalent gate.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-05`). **Blocking class:**
+`repo-static`, reachable. Reopens on a Codex change to discovery order, the TOML
+agent schema, or hook trust semantics.
+
+#### Out-of-scope provider observations
+
+Changelog entries `2.1.232` and `2.1.233` record that `subagent_type: "fork"` is
+on by default, nested subagent spawn depth rose to three, a `DirectoryAdded`
+hook was added, `SessionStart` reports `source: "fork"`, GitLab token families
+gained secret redaction, and an opt-in Bash-tool memory cgroup control was
+added. None of these bear on the two owner rows above and none is adopted here.
+
 ## Sources
 
 - **Anthropic primary sources**: [memory](https://code.claude.com/docs/en/memory),

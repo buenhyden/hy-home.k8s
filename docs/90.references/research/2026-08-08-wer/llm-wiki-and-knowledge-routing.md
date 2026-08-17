@@ -88,6 +88,66 @@ updates the generated metadata, and supplies stale-output and broken-link tests.
 It must remain a repository-navigation change until a separate authority
 approves web publication, MCP Resources, search, or RAG.
 
+### 2026-08-17 full-corpus refresh
+
+This increment is the fifth refresh cycle over this pack, executed under
+Spec 058. Unlike the three preceding cycles it re-observed every owner row in
+the pack rather than the twelve `Partial` rows, and it assigns each retained
+`Partial` or `DEFER` row a blocking class recorded in the
+[scope application index](scope-application-index.md). All observations are
+dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
+authenticated execution, or secret value was observed.
+
+#### REQ-WERPC-021 re-observation
+
+**External result:** `changed` on two distinct axes (`SRC-WERPC-086`,
+`SRC-WERPC-087`).
+
+First, the `llms.txt` proposal is now at **v2**, last modified 2026-08-10, inside
+this refresh window. It is still explicitly a community proposal rather than an
+official standards-body specification, so this report's core boundary claim
+holds; the version it cites, however, has moved.
+
+Second, the Model Context Protocol published revision **2026-07-28** as the
+current specification, which supersedes the `2025-06-18` Resources path this
+report cites. The core boundary claim — URI-addressed data, application-driven
+incorporation, hosts and clients deciding — is unchanged, but the cited version
+and URL are stale. Under revision `2026-07-28` the Resources capability gained
+`resultType`, pagination, caching through `ttlMs` and `cacheScope`, a
+`subscriptions/listen` mechanism replacing simple `subscribe`, and a
+multi-round-trip `InputRequiredResult`.
+
+**Workspace result:** `confirmed`. `docs/90.references/llm-wiki/README.md:22-30`
+still declares the generator, README, `wiki-index.md`, and `--check` contract
+unchanged. `wiki-index.md` frontmatter still records `updated: 2026-08-09` with
+matching source-checked and last-reviewed dates, and
+`scripts/generate-llm-wiki-index.sh` remains the sole generator.
+
+**Status effect:** `no-change` (`CLM-WERPC-011-21`). `REQ-WERPC-021` keeps
+`Verified` on the deterministic canonical-owner map, with publication, MCP,
+search, RAG, and retrieval `DEFER`. The two external version facts are new
+evidence about cited sources; neither changes the local link map, the generator,
+or the boundary.
+
+**Blocking class:** `repo-static`, reachable — with a bounded limitation. The
+drift check `bash scripts/generate-llm-wiki-index.sh --check` was **not executed
+this cycle**, because the package that owned this row ran without a shell tool.
+Index freshness is therefore inferred from unchanged frontmatter dates and is
+explicitly not proven by running the check. Reopens when the generator or its
+declared inputs change, when `wiki-index.md` frontmatter dates change, when
+`--check` is run and reports byte drift, or when `llms.txt` is adopted by a
+formal standards body.
+
+#### Supersession note with pack-wide reach
+
+The revision jump to `2026-07-28` is broader than the Resources capability cited
+here, spanning a stateless protocol core, multi-round-trip requests, header-based
+routing, cacheable list results, authorization hardening, an extensions
+framework, and a feature-lifecycle policy. Any other owner in this pack still
+citing `2025-06-18` for tools, prompts, or authorization needs the same
+supersession note. That correction is not applied here, because each owner row
+owns its own citations.
+
 ## Sources
 
 - [llms.txt proposal](https://llmstxt.org/), checked 2026-08-08: website-root Markdown proposal and its intentionally unspecified application processing boundary.
