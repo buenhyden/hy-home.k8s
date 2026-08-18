@@ -733,13 +733,13 @@ REVIEWED_STAGE90_MOVE_SOURCE_BLOBS = {
         "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
     ): "9fc02988093b418d8e27b464d1d341ab877c5562",  # pragma: allowlist secret
     PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"): (
-        "195a92dfb2fa064c3179284f80c64b910c54bfb7"  # pragma: allowlist secret
+        "6bfec251d8927dd82f5c12b49c013a598c64d088"  # pragma: allowlist secret
     ),
     PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
-    ): "1d99471207154d85bb26679a6993fd91239bc045",  # pragma: allowlist secret
+    ): "be0eaa802b07452eda8db1fe2e55bed58f8de713",  # pragma: allowlist secret
     PurePosixPath("docs/90.references/research/README.md"): (
-        "0de14e1978610d55708db6dd13f197fc9bf2c4ca"  # pragma: allowlist secret
+        "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523"  # pragma: allowlist secret
     ),
 }
 REVIEWED_STAGE90_MOVE_EDGE_COUNT = 31
@@ -774,18 +774,18 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     ): "4c8b4a08b7965da2c9e108c9cc83a41c2d5f8439",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/llm-wiki/README.md"
-    ): "159ba92b97b62412516bbde8c98c241852ee62ff",  # pragma: allowlist secret
+    ): "3451f28cb08bab9e23a798998e00489bdf6959b8",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/llm-wiki/wiki-index.md"
-    ): "5a1482bd94df7f52d3ba22f20e9304c29d61862c",  # pragma: allowlist secret
+    ): "dc8fc819f144404f91b36625fd568481a290bd59",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/"
         "documentation-architecture-and-diataxis.md"
-    ): "432837481ef7bcc67c1e9aa2167ea7f3632dfd51",  # pragma: allowlist secret
+    ): "e5f0495270e6a4b5b4aeb97401957d501989eb33",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/"
         "spec-driven-sdlc-and-document-contracts.md"
-    ): "dae5b09714226ece1ae1f69556b684f81e7136ab",  # pragma: allowlist secret
+    ): "8bbc256ae0e7d2beb68f861687f9cb486c66f75b",  # pragma: allowlist secret
     PurePosixPath(
         "docs/98.archive/README.md"
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret

@@ -21,7 +21,7 @@ inventory stays in `scripts/README.md`.
 - **Provenance**: WORK-104 exact move phase from manifest source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`, after WORK-103 and the approved `WDTC-AMEND-001` carrier `446e336a`.
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WORK-115 terminal closure.
-- **Next Owner**: WORK-105 — complete the exact eight-record AD conversion, Stage 99 core forms, ARD/API-Spec consumer closure, and atomic AD-0011/ADR-0027/projection acceptance.
+- **Next Owner**: WORK-105 — complete the exact eight-record AD conversion, Stage 99 core forms, ARD/API-Spec consumer closure, and atomic AD-0011/ADR-0024/projection acceptance.
 
 #### Progress
 
@@ -44,7 +44,7 @@ tree exposes the co-located siblings.
 Rebaselined only the moved Stage 03 destination Plan/Task. WORK-100 through
 WORK-103, `WDTC-AMEND-001`, and WORK-104 are complete. The prior destination
 WORK-105 through WORK-110 meanings are superseded; the only queued successor
-schedule is WORK-105 through WORK-115 from Spec 052 and ADR-0027. No
+schedule is WORK-105 through WORK-115 from Spec 052 and ADR-0024. No
 Release-family, provider, hosted, remote, credential-bearing, or live action
 was created, performed, or claimed.
 
@@ -72,7 +72,7 @@ was created, performed, or claimed.
 WORK-105 must preserve the exact eight ARD identifiers/slugs/states while
 converting them to AD, independently close authored API Spec instances and all
 consumer classes, preserve native OpenAPI/GraphQL/Protobuf contracts, and only
-then accept the separate AD-0011/ADR-0027/registry projection authority gate.
+then accept the separate AD-0011/ADR-0024/registry projection authority gate.
 WORK-107 and WORK-108 may not start before that acceptance. Rollback is a
 reviewed revert of the single WORK-104 logical commit; broad reset and archive
 payload repair remain prohibited.
@@ -94,8 +94,8 @@ payload repair remain prohibited.
 
 #### Progress
 
-Recorded active ADR-0027 as the human-approved terminal/current design while
-keeping accepted ADR-0026 as the transition program-decision registry
+Recorded active ADR-0024 as the human-approved terminal/current design while
+keeping accepted ADR-0023 as the transition program-decision registry
 projection. This completed documentation package is `WDTC-AMEND-001`; it is
 not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
 terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
@@ -110,26 +110,26 @@ execution record, Stage 98 record, or script.
 
 #### Memory
 
-At WORK-105 acceptance ADR-0027 partially supersedes only accepted ADR-0018's
-mirror-path and Tombstone-prohibition clauses plus accepted ADR-0026's Stage 98
+At WORK-105 acceptance ADR-0024 partially supersedes only accepted ADR-0018's
+mirror-path and Tombstone-prohibition clauses plus accepted ADR-0023's Stage 98
 date/mirror-path immutability. Full-body payload, provenance, retention,
 recovery, transition safety, and unrelated decisions remain intact. Active
 ARD-0011 is a conflicting transition predecessor and must atomically become
-AD-0011 with archive-invariant replacement before ADR-0027 acceptance.
+AD-0011 with archive-invariant replacement before ADR-0024 acceptance.
 
 Architecture review at clean base `833995d1` found that the current
 active/accepted `sdlc/ard` corpus is not one record but exactly eight:
 ARD-0004/0005/0006/0007/0010/0011 are active and ARD-0008/0009 are accepted.
 WORK-105 maps them one-to-one to AD-0004 through AD-0011, preserving the
 current filename slug and lifecycle state. The exact source/target paths are
-closed in ADR-0027 and Spec 052. Its full-repository classifier covers every
+closed in ADR-0024 and Spec 052. Its full-repository classifier covers every
 ARD profile/template/route/relationship, lifecycle, registry, navigation,
 authoring, validator/script/test/fixture, skill, issue-form, execution,
 operations, and generated-current consumer. Current matches migrate to AD;
 only immutable or explicit history may use `retain-history`. Acceptance
 requires zero unconverted current ARDs and zero live or unclassified ARD
 consumers. Inside that full migration, the AD-0011 invariant replacement,
-ADR-0027 acceptance, and registry projection change remain a separate atomic
+ADR-0024 acceptance, and registry projection change remain a separate atomic
 authority gate. WORK-108 backfills AD `artifact_id` fields only after the
 complete WORK-105 conversion.
 
@@ -175,7 +175,7 @@ dual recovery evidence.
 The successor sequence is closed: WORK-104 owns 82 moves and destination
 Plan/Task rebaseline; WORK-105 owns the exact eight-record AD/Stage99 core-form
 conversion, complete ARD consumer closure, the separate AD-0011 invariant /
-ADR-0027 acceptance / registry projection authority gate, authored API Spec
+ADR-0024 acceptance / registry projection authority gate, authored API Spec
 zero-instance plus complete consumer-disposition gates, negative fixtures,
 and native/history preservation; WORK-106 owns artifact/ledger
 transition validators; WORK-107 owns the 93-record rehome and cannot start
@@ -202,7 +202,7 @@ paths, filenames, stable IDs, form split, pairing, ledger, or script count.
 #### Evidence
 
 - The clean pre-change baseline had 490 strict-transition registry paths. The
-  authored package adds ADR-0027, so the post-change strict result is 491 paths
+  authored package adds ADR-0024, so the post-change strict result is 491 paths
   with zero uncovered or ambiguous routes; self-test remains 132 cases, 65
   profiles, and 30 templates. Strict Markdown and link/owner checks pass.
 - The migration check remained exact at `sources=132`, `moves=82`, and
@@ -894,7 +894,7 @@ The Plan canonical form and both Plan profiles now allow the mandatory
 `Global Constraints` section used by the approved agentic planning workflow;
 legacy Plans are not retroactively required to add it.
 
-ADR-0026 advanced from `draft` to `active` after human review. Its
+ADR-0023 advanced from `draft` to `active` after human review. Its
 `active -> accepted` transition and the PRD-008 registry correction from
 unrelated ADR-0021 remain the first atomic implementation package.
 
@@ -914,7 +914,7 @@ two families and retires the wrapper only after zero-consumer proof.
 
 #### Evidence
 
-- Approved written design: PRD-008, ARD-0011, accepted ADR-0026, and Spec 052.
+- Approved written design: PRD-008, ARD-0011, accepted ADR-0023, and Spec 052.
 - Approved implementation plan: WORK-100 through WORK-110 with one logical
   commit, focused RED/GREEN, aggregate gate, and two-stage review per package.
 - Baseline design commit: `14a0a75c`.
@@ -923,7 +923,7 @@ two families and retires the wrapper only after zero-consumer proof.
 
 #### Handoff
 
-Begin WORK-100 by accepting ADR-0026 and atomically changing only the PRD-008
+Begin WORK-100 by accepting ADR-0023 and atomically changing only the PRD-008
 decision projection. Do not renumber Stage 05, create Release artifacts, delete
 active-corpus validators, or remove `archive_cutover_manifest.py`.
 
@@ -15780,13 +15780,13 @@ section separating static from live evidence.
   Task; Stage 04 execution retires; Stage 05 operations stays stable; and no
   Release document family or releases folder is created.
 - Rebased PRD-008, ARD-0011, and Spec 052 on the current repository audit and
-  added draft ADR-0026 instead of overwriting unrelated accepted ADR-0021.
+  added draft ADR-0023 instead of overwriting unrelated accepted ADR-0021.
 - Defined stable filename/date exceptions, fail-closed legacy/transition/
   terminal routing, reviewed archive/delete/retain dispositions, Stage 00/99
   authority consolidation, harness-contract risk/approval/trust/provenance
   extension, validator semantic preservation, and baseline failure closure.
 - Recorded the current incorrect program-lineage association to ADR-0021 as a
-  defect. Registry and immutable-projection changes wait until ADR-0026 passes
+  defect. Registry and immutable-projection changes wait until ADR-0023 passes
   lifecycle acceptance after written-design review.
 
 ### Memory
@@ -15815,7 +15815,7 @@ section separating static from live evidence.
 - Strict registry: PASS, 490 paths, zero uncovered or ambiguous routes.
 - Strict Markdown profiles: PASS with zero violations.
 - Strict links/owners: PASS with a valid cross-document result.
-- Staged lifecycle: PASS after routing new ADR-0026 through required `draft`
+- Staged lifecycle: PASS after routing new ADR-0023 through required `draft`
   admission and deferring its registry projection until lifecycle review.
 - `git diff --check`: PASS.
 - `TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .`: PASS with the
@@ -15840,7 +15840,7 @@ section separating static from live evidence.
 - No push, merge, publication, provider action, credential access, deployment,
   or live mutation was performed.
 
-## 2026-08-09 - WORK-100 accepted ADR-0026 and corrected PRD-008 lineage
+## 2026-08-09 - WORK-100 accepted ADR-0023 and corrected PRD-008 lineage
 
 ### Metadata
 
@@ -15857,12 +15857,12 @@ section separating static from live evidence.
 
 ### Progress
 
-- Accepted ADR-0026 after written-design and implementation-planning review.
+- Accepted ADR-0023 after written-design and implementation-planning review.
 - Corrected only the PRD-008/ARD-0011/Spec-052 registry tranche decision from
-  unrelated ADR-0021 to ADR-0026; ADR-0021 and its original program scope are
+  unrelated ADR-0021 to ADR-0023; ADR-0021 and its original program scope are
   unchanged.
 - Updated the immutable program-lineage projection and downstream Spec/Task
-  execution record to require accepted ADR-0026.
+  execution record to require accepted ADR-0023.
 
 ### Evidence
 
@@ -15908,7 +15908,7 @@ section separating static from live evidence.
   staged-candidate classifier reports zero live and zero unclassified current
   consumers while retaining only exact history, native evidence, and negative
   controls.
-- Applied the AD-0011/ADR-0027/PRD-008 authority change only after corpus and
+- Applied the AD-0011/ADR-0024/PRD-008 authority change only after corpus and
   consumer closure. WORK-105 and WORK-106 leave Stage 98 unchanged; only the
   later ledger-gated WORK-107 tranche may change its outer record locations.
 
@@ -16420,7 +16420,7 @@ evidence of **no regression**, not of a newly attained state.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/90.references/research/2026-08-08-wer/**`, `docs/03.specs/0059-workspace-research-full-corpus-refresh/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-17-workspace-research-full-corpus-refresh.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `README.md`
+- Scope: `docs/90.references/research/2026-08-08-wer/**`, `docs/03.specs/058-workspace-research-full-corpus-refresh/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-17-workspace-research-full-corpus-refresh.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `README.md`
 - Parent: Spec 058 / the WRFC-000..012 cycle, the fifth refresh over the 2026-08-08 WER pack
 - Evidence class: repository-static and public-documentation only
 
@@ -16559,7 +16559,7 @@ newly attained state.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/platform/monitoring/kube-state-metrics.yaml`, `infrastructure/bootstrap-local.sh`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md`, `docs/03.specs/0060-platform-currency-defect-closure/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-platform-currency-defect-closure.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `docs/00.agent-governance/model-policy.md`, `README.md`
+- Scope: `gitops/platform/monitoring/kube-state-metrics.yaml`, `infrastructure/bootstrap-local.sh`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/02.architecture/decisions/0023-argo-cd-source-integrity-non-adoption.md`, `docs/03.specs/059-platform-currency-defect-closure/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-platform-currency-defect-closure.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `docs/00.agent-governance/model-policy.md`, `README.md`
 - Parent: Spec 059 / the PCDC-001..004 cycle, successor to the WRFC handoff
 - Evidence class: repository-static and public-documentation only
 
@@ -16597,7 +16597,7 @@ Both pins record the version an unpinned run resolves to today, so pinning chang
 nothing about what installs. It only makes the result deterministic — risk-neutral
 and determinism-positive.
 
-The Argo CD trigger was **settled rather than deferred.** ADR-0026 declines Source
+The Argo CD trigger was **settled rather than deferred.** ADR 0023 declines Source
 Integrity because it does not address the gap's cause: twelve declarations track
 `targetRevision: main`, and the facility verifies the signature on whichever commit
 sits at that mutable tip. It pins no revision, stops no signed force-push, and
@@ -16646,7 +16646,7 @@ cycle's blocking-class closure used.
   four minor versions apart. Upstream states neither that this works nor that it
   breaks, so the deferred upgrade closes a documented gap and not only a currency
   gap.
-- **`targetRevision: main` remains unpinned across twelve declarations.** ADR-0026
+- **`targetRevision: main` remains unpinned across twelve declarations.** ADR 0023
   records commit-SHA pinning as the preferred control but explicitly does not
   authorize it; it is a design change over all twelve and needs its own approval.
 - **`.github/**` still has no declared scope owner.** Carried forward unchanged
@@ -16690,7 +16690,7 @@ cycle's blocking-class closure used.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/workloads/adminer/rollout.yaml`, `examples/sample-app/rollout.yaml`, `docs/03.specs/0061-workload-security-context-baseline/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-workload-security-context-baseline.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `gitops/workloads/adminer/rollout.yaml`, `examples/sample-app/rollout.yaml`, `docs/03.specs/060-workload-security-context-baseline/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-workload-security-context-baseline.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: Spec 060 / the WSCB-001..004 cycle, successor to the PCDC handoff
 - Evidence class: repository-static and public-source only
 
@@ -16817,7 +16817,7 @@ template gap affected every future one.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: successor to the WSCB handoff, which named Pod Security Admission as the next candidate
 - Evidence class: repository-static and public-documentation only
 
@@ -16879,7 +16879,7 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
   not a standalone move. At Restricted the property does not hold — both
   workloads fail on `seccompProfile`, which Baseline does not require at all.
 - **The Helm-owned namespaces were not inspected at decision time.** Whether any
-  of their workloads satisfies Baseline or Restricted was unknown when ADR-0027
+  of their workloads satisfies Baseline or Restricted was unknown when ADR 0024
   was taken. A follow-up survey was commissioned immediately afterwards; see the
   next ledger entry for its results.
 - **Carried forward unchanged.** The two deferred `adminer` controls, the three
@@ -16911,13 +16911,13 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/90.references/data/istio-cni-adoption-evaluation.md`, `docs/90.references/data/reference-information-architecture.json`, `docs/90.references/data/README.md`, `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`
-- Parent: closes the two items ADR-0027 recorded as explicit non-goals
+- Scope: `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/90.references/data/istio-cni-adoption-evaluation.md`, `docs/90.references/data/reference-information-architecture.json`, `docs/90.references/data/README.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
+- Parent: closes the two items ADR 0024 recorded as explicit non-goals
 - Evidence class: repository-static, public-documentation, and local `helm template` rendering
 
 ### Progress
 
-ADR-0027 declined to apply Pod Security Admission labels and named two things it
+ADR 0024 declined to apply Pod Security Admission labels and named two things it
 had not assessed: whether the Helm-owned namespaces satisfy Baseline or
 Restricted, and whether adopting Istio CNI would actually unblock Baseline rather
 than merely reduce privilege. Both are now answered, and one answer contradicts
@@ -16930,7 +16930,7 @@ and `ingress-nginx` pods. Six workloads fail Restricted and four of those fail o
 `seccompProfile` alone — the control Restricted requires and Baseline does not,
 which is why a workload can look fully hardened and still be Restricted-dirty.
 
-**That contradicts an ADR-0027 rejection rationale.** The ADR rejected applying
+**That contradicts an ADR 0024 rejection rationale.** The ADR rejected applying
 `warn`/`audit` at Baseline everywhere partly because "the Helm-owned namespaces
 would contribute warnings this repository cannot act on". They would contribute
 none. The signal would be exactly one class — the Istio init container in two
@@ -16986,7 +16986,7 @@ one that serves none.
 - **`headlamp` is the inverse trap**: its template carries a Restricted-clean
   default dict that the shipped `values.yaml` suppresses, so emptying
   `securityContext` is what reaches compliance.
-- **ADR-0027 warrants a revisit, not a supersession.** Its decision holds, its
+- **ADR 0024 warrants a revisit, not a supersession.** Its decision holds, its
   ownership-boundary argument holds, and its Istio prerequisite is now confirmed
   stronger than recorded. Only its "unactionable warnings" rejection is
   disproven.
@@ -17020,7 +17020,7 @@ one that serves none.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/apps/root/platform-{istio-cni,istiod,kiali,headlamp,rollouts}-app.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/platform/monitoring/*.yaml`, `gitops/clusters/local/appproject-platform.yaml`, `gitops/README.md`, `docs/90.references/data/{pod-security-compliance-inventory,tech-stack-version-inventory}.md`, `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`
+- Scope: `gitops/apps/root/platform-{istio-cni,istiod,kiali,headlamp,rollouts}-app.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/platform/monitoring/*.yaml`, `gitops/clusters/local/appproject-platform.yaml`, `gitops/README.md`, `docs/90.references/data/{pod-security-compliance-inventory,tech-stack-version-inventory}.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
 - Parent: acts on the compliance survey and the CNI evaluation from the prior cycle
 - Evidence class: repository-static, local `helm template` rendering, and one read-only container image inspection
 
@@ -17085,7 +17085,7 @@ none.
   agent outright; and the new chart needed rows in the GitOps namespace-ownership
   matrix and the version inventory. Adding a new *kind* to this platform is not
   the same as adding a new Application.
-- **ADR-0027's reversal condition has fired** and is recorded in the ADR. Its
+- **ADR 0024's reversal condition has fired** and is recorded in the ADR. Its
   steps 2 and 3 — `warn`/`audit` at Baseline, then per-namespace `enforce` — are
   unblocked and need a fresh decision, not a resumption of the old one.
 - **`istio-system` now requires a `privileged` label** under any future PSS
@@ -17117,13 +17117,13 @@ none.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md`, `gitops/platform/namespaces/namespace-*.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
-- Parent: ADR-0027's reversal condition fired when the Istio CNI agent was adopted
+- Scope: `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `gitops/platform/namespaces/namespace-*.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: ADR 0024's reversal condition fired when the Istio CNI agent was adopted
 - Evidence class: repository-static plus local `helm template` rendering
 
 ### Progress
 
-ADR-0027 declined PSS labels and recorded an ordering. Its reversal condition
+ADR 0024 declined PSS labels and recorded an ordering. Its reversal condition
 fired, so the question was taken again with evidence it did not have. The answer
 is **not uniform**, and the reasoning for that is the entry's point.
 
@@ -17216,7 +17216,7 @@ containers on the default path, so this single field was the entire gap.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/00.agent-governance/scopes/meta.md`, `docs/00.agent-governance/scopes/qa.md`, `gitops/platform/namespaces/namespace-argocd.yaml`, `gitops/platform/namespaces/kustomization.yaml`, `gitops/platform/monitoring/kube-state-metrics.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md`, `docs/02.architecture/decisions/0029-mutable-target-revision-retention.md`, `docs/02.architecture/decisions/README.md`, `gitops/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `docs/00.agent-governance/scopes/meta.md`, `docs/00.agent-governance/scopes/qa.md`, `gitops/platform/namespaces/namespace-argocd.yaml`, `gitops/platform/namespaces/kustomization.yaml`, `gitops/platform/monitoring/kube-state-metrics.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `docs/02.architecture/decisions/0026-mutable-target-revision-retention.md`, `docs/02.architecture/decisions/README.md`, `gitops/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: the four items carried forward on the PCDC and PSS handoffs
 - Evidence class: repository-static
 
@@ -17237,7 +17237,7 @@ and a pruned `argocd` namespace would delete every Application inside it along
 with Argo CD itself — the entire GitOps state, removed by the mechanism meant to
 keep it accurate. `argocd.argoproj.io/sync-options: Prune=false` is therefore
 not a precaution but a precondition. `enforce` is withheld for a stronger
-version of the chart-version argument in ADR-0028: all ten `argo-cd` workloads
+version of the chart-version argument in ADR 0025: all ten `argo-cd` workloads
 pass Restricted at the pinned version, but enforcing there would let a
 regressing chart upgrade lock Argo CD out of its own namespace.
 
@@ -17255,7 +17255,7 @@ at `v2.14.0`. This also settles a question an earlier withdrawal left ambiguous:
 the Spec 059 RBAC fix and the Spec 060 decision to withhold `endpointslices`
 were both correct.
 
-**ADR-0029 declined commit-SHA pinning by reframing what the pin would be.** All
+**ADR 0026 declined commit-SHA pinning by reframing what the pin would be.** All
 twelve `targetRevision: main` declarations point at this repository, and every
 chart-consuming Application already pins its chart version, so the pin was never
 about supply chain. All twelve are `automated` with `selfHeal`, so pinning does
@@ -17279,7 +17279,7 @@ its own `targetRevision`.
 - `bash scripts/validate-repo-quality-gates.sh .` reports
   `[PASS] repository quality gates passed`; 87 retention tests OK
 - Commits: `f37b02a9` the scope split, `ca5ba0b2` the argocd adoption,
-  `ef0dd366` the kube-state-metrics upgrade, `d4c40c92` ADR-0029
+  `ef0dd366` the kube-state-metrics upgrade, `d4c40c92` ADR 0026
 - No cluster, registry, hosted CI run, or remote was contacted
 
 ### Handoff
@@ -17291,9 +17291,9 @@ its own `targetRevision`.
   `argocd` closed the namespace-level instance of it. Bootstrap still installs
   charts before GitOps ownership exists, which is the same root as the unpinned
   bootstrap charts Spec 059 closed.
-- **ADR-0029 leaves the identity gap open deliberately.** What is deployed from
+- **ADR 0026 leaves the identity gap open deliberately.** What is deployed from
   `main` is not pinned to a commit, and that is now a recorded decision with
-  reasoning rather than an unadopted recommendation carried in ADR-0026.
+  reasoning rather than an unadopted recommendation carried in ADR 0023.
 - **Reusable lesson: the comparison target decides the answer, not the
   observation.** Both the kube-state-metrics RBAC question and the earlier
   withdrawal came from comparing against an upstream example rather than against
@@ -17346,7 +17346,7 @@ The flannel minor decides the hold: Istio CNI writes its conflist into the same
 CNI directory flannel owns and chains behind it, and that adoption is still
 render-verified only. Recreating the cluster on a new flannel before the
 Baseline warning channel is read stacks an unverified change on an unverified
-change, which is the pattern ADR-0028 already declined once.
+change, which is the pattern ADR 0025 already declined once.
 
 **A second version contract was missing entirely.** The repository pins the k3s
 image but has never pinned or observed the k3d binary that runs it;
