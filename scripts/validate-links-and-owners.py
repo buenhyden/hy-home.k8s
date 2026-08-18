@@ -94,27 +94,44 @@ DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
     "scripts/document-taxonomy-migration.json"
 )
 WORK109_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_MIGRATION_SHA256 = (
-    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
-)
+WORK054_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 WORK054_HISTORICAL_SOURCE_BLOBS = {
-    PurePosixPath("docs/03.specs/0015-agent-governance-contract-normalization/plan.md"): "a93360fd3315fa3ff490485157caa323357bb67f",
-    PurePosixPath("docs/03.specs/0015-agent-governance-contract-normalization/spec.md"): "47c45671ac536bf2298251f55286395ac02e0b0e",
-    PurePosixPath("docs/03.specs/0017-workspace-engineering-research-pack/spec.md"): "70c88e6f657ade6416eee00e41372a768d1e7db7",
-    PurePosixPath("docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md"): "d9b4edf7203dcfefb9c5cee9256c3b2dc115399a",
-    PurePosixPath("docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",
-    PurePosixPath("docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"): "0403e861994bc322fbcaaabfceb1b5c8ada02572",
-    PurePosixPath("docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"): "0965758eccd42bba5e884f01270ed738c9d6410a",
-    PurePosixPath("docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"): "84830e0fa7178f820bfb189d9f129fd34209af18",
-    PurePosixPath("docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",
-    PurePosixPath("docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"): "b35dce197ca96bb9341b590ef505040e86d18577",
+    PurePosixPath(
+        "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+    ): "a93360fd3315fa3ff490485157caa323357bb67f",
+    PurePosixPath(
+        "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
+    ): "47c45671ac536bf2298251f55286395ac02e0b0e",
+    PurePosixPath(
+        "docs/03.specs/0017-workspace-engineering-research-pack/spec.md"
+    ): "70c88e6f657ade6416eee00e41372a768d1e7db7",
+    PurePosixPath(
+        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md"
+    ): "d9b4edf7203dcfefb9c5cee9256c3b2dc115399a",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"
+    ): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"
+    ): "0403e861994bc322fbcaaabfceb1b5c8ada02572",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"
+    ): "0965758eccd42bba5e884f01270ed738c9d6410a",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"
+    ): "84830e0fa7178f820bfb189d9f129fd34209af18",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"
+    ): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",
+    PurePosixPath(
+        "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"
+    ): "b35dce197ca96bb9341b590ef505040e86d18577",
 }
 WORK054_HISTORICAL_SOURCE_COUNT = 10
 WORK054_HISTORICAL_OCCURRENCE_COUNT = 41
@@ -160,27 +177,27 @@ WORK109_MERGES = {
     PurePosixPath(
         "docs/00.agent-governance/rules/stage-authoring-matrix.md"
     ): PurePosixPath("docs/00.agent-governance/rules/document-authoring.md"),
-    PurePosixPath(
-        "docs/00.agent-governance/rules/stage-checklists.md"
-    ): PurePosixPath("docs/00.agent-governance/rules/document-authoring.md"),
+    PurePosixPath("docs/00.agent-governance/rules/stage-checklists.md"): PurePosixPath(
+        "docs/00.agent-governance/rules/document-authoring.md"
+    ),
     PurePosixPath(
         "docs/99.templates/support/common-documentation-governance.md"
     ): PurePosixPath("docs/99.templates/support/document-lifecycle.md"),
-    PurePosixPath(
-        "docs/99.templates/support/documentation-contract.md"
-    ): PurePosixPath("docs/99.templates/support/document-contract.md"),
-    PurePosixPath(
-        "docs/99.templates/support/frontmatter-schema.md"
-    ): PurePosixPath("docs/99.templates/support/document-contract.md"),
-    PurePosixPath(
-        "docs/99.templates/support/legacy-cleanup-rules.md"
-    ): PurePosixPath("docs/99.templates/support/document-lifecycle.md"),
-    PurePosixPath(
-        "docs/99.templates/support/sdlc-governance.md"
-    ): PurePosixPath("docs/99.templates/support/document-lifecycle.md"),
-    PurePosixPath(
-        "docs/99.templates/support/template-routing.md"
-    ): PurePosixPath("docs/99.templates/support/document-contract.md"),
+    PurePosixPath("docs/99.templates/support/documentation-contract.md"): PurePosixPath(
+        "docs/99.templates/support/document-contract.md"
+    ),
+    PurePosixPath("docs/99.templates/support/frontmatter-schema.md"): PurePosixPath(
+        "docs/99.templates/support/document-contract.md"
+    ),
+    PurePosixPath("docs/99.templates/support/legacy-cleanup-rules.md"): PurePosixPath(
+        "docs/99.templates/support/document-lifecycle.md"
+    ),
+    PurePosixPath("docs/99.templates/support/sdlc-governance.md"): PurePosixPath(
+        "docs/99.templates/support/document-lifecycle.md"
+    ),
+    PurePosixPath("docs/99.templates/support/template-routing.md"): PurePosixPath(
+        "docs/99.templates/support/document-contract.md"
+    ),
 }
 WORK105_HISTORY_SOURCE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_COMPLETED_HISTORY_ARD_TARGETS = frozenset(
@@ -196,10 +213,9 @@ WORK105_COMPLETED_HISTORY_ARD_TARGETS = frozenset(
         "docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md",
     )
 )
-WORK105_IMMUTABLE_HISTORY_ARD_TARGETS = (
-    WORK105_COMPLETED_HISTORY_ARD_TARGETS
-    | {PurePosixPath("docs/02.architecture/requirements/README.md")}
-)
+WORK105_IMMUTABLE_HISTORY_ARD_TARGETS = WORK105_COMPLETED_HISTORY_ARD_TARGETS | {
+    PurePosixPath("docs/02.architecture/requirements/README.md")
+}
 WORK105_ACCEPTED_HISTORY_ADR_PATHS = frozenset(
     PurePosixPath(f"docs/02.architecture/decisions/{name}.md")
     for name in (
@@ -236,23 +252,15 @@ WORK105_LEDGER_PATH_ALIASES = {
         "docs/02.architecture/descriptions/README.md"
     ),
     **{
-        source: PurePosixPath(
-            "docs/02.architecture/descriptions"
-        ) / f"ad-{source.name}"
+        source: PurePosixPath("docs/02.architecture/descriptions") / f"ad-{source.name}"
         for source in WORK105_COMPLETED_HISTORY_ARD_TARGETS
     },
     PurePosixPath(
         "docs/99.templates/templates/sdlc/architecture/ard.template.md"
-    ): PurePosixPath(
-        "docs/99.templates/templates/sdlc/architecture/ad.template.md"
-    ),
+    ): PurePosixPath("docs/99.templates/templates/sdlc/architecture/ad.template.md"),
 }
 WORK105_LEDGER_RETIRED_PATHS = frozenset(
-    {
-        PurePosixPath(
-            "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
-        )
-    }
+    {PurePosixPath("docs/99.templates/templates/sdlc/specs/api-spec.template.md")}
 )
 
 
@@ -293,9 +301,7 @@ def _work107_stable_archive_aliases(
 ) -> dict[PurePosixPath, PurePosixPath]:
     rows = _work107_stable_archive_rows(context)
     aliases = {
-        PurePosixPath(str(row["legacy_path"])): PurePosixPath(
-            str(row["stable_path"])
-        )
+        PurePosixPath(str(row["legacy_path"])): PurePosixPath(str(row["stable_path"]))
         for row in rows
     }
     return aliases if len(aliases) == 93 and len(set(aliases.values())) == 93 else {}
@@ -336,6 +342,8 @@ def _work107_stable_archive_index_source(
             return False
         projected = projected.replace(reviewed, stable, 1)
     return projected == context.texts[source]
+
+
 OWNER = "cross-document-validator"
 LEDGER_SETTLEMENT_ID = "ria-0007-postflight-ledger"
 LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
@@ -735,19 +743,15 @@ REVIEWED_STAGE90_MOVE_SOURCE_BLOBS = {
     PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"): (
         "6bfec251d8927dd82f5c12b49c013a598c64d088"  # pragma: allowlist secret
     ),
-    PurePosixPath(
-        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
-    ): "be0eaa802b07452eda8db1fe2e55bed58f8de713",  # pragma: allowlist secret
     PurePosixPath("docs/90.references/research/README.md"): (
         "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523"  # pragma: allowlist secret
     ),
 }
-REVIEWED_STAGE90_MOVE_EDGE_COUNT = 31
+REVIEWED_STAGE90_MOVE_EDGE_COUNT = 29
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     **REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
     PurePosixPath(
-        "docs/90.references/audits/2026-07-11-weia/"
-        "governance-harness-loop-providers.md"
+        "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"
     ): "b35dce197ca96bb9341b590ef505040e86d18577",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/audits/2026-07-11-weia/"
@@ -763,8 +767,7 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
         "docs/90.references/cloud-examples/aws/README.md"
     ): "08a7f4d9d25bdde493dd4785e3c2ab35ed42d0b2",  # pragma: allowlist secret
     PurePosixPath(
-        "docs/90.references/cloud-examples/azure/"
-        "2026-07-12-azure-example-snapshot.md"
+        "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
     ): "7d2fea31e9174306b85d017624b1ed7df9f4c358",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/cloud-examples/azure/README.md"
@@ -785,18 +788,20 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/"
         "spec-driven-sdlc-and-document-contracts.md"
-    ): "8bbc256ae0e7d2beb68f861687f9cb486c66f75b",  # pragma: allowlist secret
+    ): "d25e1a9452ae99149cc1a4f94862fc3e96e3b418",  # pragma: allowlist secret
     PurePosixPath(
         "docs/98.archive/README.md"
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
-IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 28
-IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 96
+IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 27
+IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 94
 COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
         "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
     ),
-    PurePosixPath("docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md"): (
+    PurePosixPath(
+        "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md"
+    ): (
         "bb06fdad8e0cb549588a224646f9c95de7898c79"  # pragma: allowlist secret
     ),
     PurePosixPath("docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md"): (
@@ -2911,8 +2916,7 @@ def _work109_expected_stable_path(
     )
     if work_unit is not None:
         return PurePosixPath(
-            "docs/03.specs/"
-            f"{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
+            f"docs/03.specs/{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
         )
     return None
 
@@ -3017,9 +3021,7 @@ def _work109_migration_projection(
     try:
         rows = json.loads(raw)
     except (json.JSONDecodeError, UnicodeError) as exc:
-        raise ConfigurationError(
-            "WORK-109 migration ledger contract differs"
-        ) from exc
+        raise ConfigurationError("WORK-109 migration ledger contract differs") from exc
     if not isinstance(rows, list) or len(rows) != 154:
         raise ConfigurationError("WORK-109 migration ledger row count differs")
     legacy_values = [
@@ -3038,9 +3040,7 @@ def _work109_migration_projection(
             tuple(legacy_values),
         )
     except (RiaContractError, RiaGitError):
-        raise ConfigurationError(
-            "WORK-109 migration ledger source differs"
-        ) from None
+        raise ConfigurationError("WORK-109 migration ledger source differs") from None
 
     aliases: dict[PurePosixPath, PurePosixPath] = {}
     replacements: dict[PurePosixPath, PurePosixPath] = {}
@@ -3073,10 +3073,7 @@ def _work109_migration_projection(
             or ".." in legacy.parts
         ):
             raise ConfigurationError("WORK-109 migration ledger path differs")
-        if (
-            source_blob != row["source_blob"]
-            or content_sha256 != row["content_sha256"]
-        ):
+        if source_blob != row["source_blob"] or content_sha256 != row["content_sha256"]:
             raise ConfigurationError("WORK-109 migration ledger source differs")
 
         if row.get("action") == "moved":
@@ -3094,12 +3091,10 @@ def _work109_migration_projection(
                 or not _path_exists_without_dereference(
                     context.root, expected, context.adapter_targets
                 )
-                or context.metadata.get(expected, {}).get("artifact_id")
-                != artifact_id
+                or context.metadata.get(expected, {}).get("artifact_id") != artifact_id
             ):
                 raise ConfigurationError(
-                    "WORK-109 migration ledger target differs: "
-                    f"{legacy.as_posix()}"
+                    f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
                 )
             aliases[legacy] = expected
             stable_paths.add(expected)
@@ -3107,9 +3102,7 @@ def _work109_migration_projection(
 
         action = row.get("action")
         replacement_value = row.get("replacement")
-        expected_map = (
-            WORK109_REPLACEMENTS if action == "replaced" else WORK109_MERGES
-        )
+        expected_map = WORK109_REPLACEMENTS if action == "replaced" else WORK109_MERGES
         expected_replacement = expected_map.get(legacy)
         if (
             action not in {"replaced", "merged"}
@@ -3161,8 +3154,7 @@ def _work054_wp003_owner_merges(
     text = context.texts.get(WORK054_MIGRATION_PATH)
     if (
         text is None
-        or hashlib.sha256(text.encode("utf-8")).hexdigest()
-        != WORK054_MIGRATION_SHA256
+        or hashlib.sha256(text.encode("utf-8")).hexdigest() != WORK054_MIGRATION_SHA256
     ):
         raise ConfigurationError("WORK-054 WP-003 migration ledger differs")
     metadata = context.metadata.get(WORK054_MIGRATION_PATH, {})
@@ -3242,8 +3234,8 @@ def _work054_wp003_owner_merges(
 def _load_document_taxonomy_migration() -> Any:
     """Load the reviewed migration tool under one private canonical identity."""
 
-    path = Path(__file__).resolve(strict=True).with_name(
-        "migrate-document-work-units.py"
+    path = (
+        Path(__file__).resolve(strict=True).with_name("migrate-document-work-units.py")
     )
     name = "_links_document_taxonomy_migration"
     spec = importlib.util.spec_from_file_location(name, path)
@@ -3274,7 +3266,9 @@ def _reviewed_taxonomy_manifest(root: Path) -> Any:
             validate_repository=False,
         )
     except module.MigrationAbort as exc:
-        raise ConfigurationError("archive transition manifest contract differs") from exc
+        raise ConfigurationError(
+            "archive transition manifest contract differs"
+        ) from exc
     document = snapshot.document
     if document.source_commit != DOCUMENT_TAXONOMY_SOURCE_COMMIT:
         raise ConfigurationError("archive transition manifest source commit differs")
@@ -3330,9 +3324,7 @@ def _document_taxonomy_transition_manifest(
             tuple(manifest_source_values),
         )
     except (RiaContractError, RiaGitError):
-        raise ConfigurationError(
-            "archive transition manifest source differs"
-        ) from None
+        raise ConfigurationError("archive transition manifest source differs") from None
     move_blobs: dict[PurePosixPath, str] = {}
     move_targets: dict[PurePosixPath, PurePosixPath] = {}
     archive_sources: set[PurePosixPath] = set()
@@ -3498,9 +3490,8 @@ def _reviewed_stage90_move_edges(
                 )
             edges.add(ArchiveTransitionEdge(source, target))
             contributing_sources.add(source)
-    if (
-        len(edges) != REVIEWED_STAGE90_MOVE_EDGE_COUNT
-        or contributing_sources != set(REVIEWED_STAGE90_MOVE_SOURCE_BLOBS)
+    if len(edges) != REVIEWED_STAGE90_MOVE_EDGE_COUNT or contributing_sources != set(
+        REVIEWED_STAGE90_MOVE_SOURCE_BLOBS
     ):
         raise ConfigurationError("reviewed Stage 90 move edge set differs")
     return frozenset(edges)
@@ -3573,8 +3564,7 @@ def _reviewed_completed_history_alias_edges(
             valid = (
                 source.parts[:2] == ("docs", "03.specs")
                 and profile is not None
-                and profile.profile_id
-                in {"sdlc/spec", "sdlc/plan", "sdlc/task"}
+                and profile.profile_id in {"sdlc/spec", "sdlc/plan", "sdlc/task"}
                 and metadata.get("status") == "done"
             )
         if not valid:
@@ -3589,9 +3579,7 @@ def _reviewed_completed_history_alias_edges(
         expected_source_count=COMPLETED_HISTORY_ALIAS_SOURCE_COUNT,
         expected_edge_count=COMPLETED_HISTORY_ALIAS_EDGE_COUNT,
         contract_name="completed history alias",
-        append_only_prefix_bytes=(
-            COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES
-        ),
+        append_only_prefix_bytes=(COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES),
     )
 
 
@@ -3612,13 +3600,10 @@ def _reviewed_source_pinned_alias_edges(
     if context.route_state != "transition":
         return {}
     prefix_sizes = append_only_prefix_bytes or {}
-    if (
-        not set(prefix_sizes).issubset(source_blobs)
-        or any(size <= 0 for size in prefix_sizes.values())
+    if not set(prefix_sizes).issubset(source_blobs) or any(
+        size <= 0 for size in prefix_sizes.values()
     ):
-        raise ConfigurationError(
-            f"{contract_name} append-only prefix contract differs"
-        )
+        raise ConfigurationError(f"{contract_name} append-only prefix contract differs")
     redirects = (
         dict(exact_redirects)
         if exact_redirects is not None
@@ -3638,8 +3623,7 @@ def _reviewed_source_pinned_alias_edges(
                 text is not None
                 and prefix_size is not None
                 and len(content) >= prefix_size
-                and _git_sha1_blob_bytes(content[:prefix_size])
-                == expected_blob
+                and _git_sha1_blob_bytes(content[:prefix_size]) == expected_blob
             )
         )
         if (
@@ -3665,9 +3649,7 @@ def _reviewed_source_pinned_alias_edges(
                     context.root, replacement, context.adapter_targets
                 )
             ):
-                raise ConfigurationError(
-                    f"{contract_name} replacement is unavailable"
-                )
+                raise ConfigurationError(f"{contract_name} replacement is unavailable")
             edges[ArchiveTransitionEdge(source, target)] = replacement
             contributing_sources.add(source)
             occurrence_count += 1
@@ -3711,15 +3693,13 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
     move_targets: dict[PurePosixPath, PurePosixPath] = {}
     if context.route_state == "transition":
         _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-    reviewed_stage90_move_edges = _reviewed_stage90_move_edges(
-        context, move_targets
-    )
+    reviewed_stage90_move_edges = _reviewed_stage90_move_edges(context, move_targets)
     reviewed_historical_alias_edges = _reviewed_immutable_historical_alias_edges(
         context,
         move_targets,
     )
-    reviewed_completed_history_alias_edges = (
-        _reviewed_completed_history_alias_edges(context, move_targets)
+    reviewed_completed_history_alias_edges = _reviewed_completed_history_alias_edges(
+        context, move_targets
     )
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
         context,
@@ -3770,9 +3750,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if ArchiveTransitionEdge(source, target) in deferred_archive_edges:
                     continue
-                if _work105_immutable_history_ard_link(
-                    context, source, target
-                ):
+                if _work105_immutable_history_ard_link(context, source, target):
                     continue
                 if _work105_accepted_history_ard_link(context, source, target):
                     continue
@@ -4548,10 +4526,7 @@ def _program_local_targets(
     for raw_link in _extract_links(context.texts.get(source, "")):
         kind, target = _local_destination(source, raw_link)
         if kind == "local" and target is not None:
-            if (
-                target in WORK105_LEDGER_PATH_ALIASES
-                and accepted_history
-            ):
+            if target in WORK105_LEDGER_PATH_ALIASES and accepted_history:
                 target = WORK105_LEDGER_PATH_ALIASES[target]
             elif target in transition_aliases:
                 target = transition_aliases[target]
@@ -5360,9 +5335,7 @@ def _historical_exception_diagnostics(
         {
             target
             for raw_link in _extract_rendered_links(roadmap_section)
-            for kind, target in [
-                _local_destination(PROGRAM_LINEAGE_ROADMAP, raw_link)
-            ]
+            for kind, target in [_local_destination(PROGRAM_LINEAGE_ROADMAP, raw_link)]
             if kind == "local" and target is not None
         }
         if roadmap_section is not None
@@ -5739,12 +5712,9 @@ def _standalone_execution_diagnostics(
                 )
             )
         spec_text = context.texts[spec]
-        approval_statements = STANDALONE_APPROVAL_STATEMENTS.get(
-            relation.spec_id
-        )
-        if (
-            approval_statements is None
-            or any(statement not in spec_text for statement in approval_statements)
+        approval_statements = STANDALONE_APPROVAL_STATEMENTS.get(relation.spec_id)
+        if approval_statements is None or any(
+            statement not in spec_text for statement in approval_statements
         ):
             diagnostics.append(
                 _diag(
@@ -6794,7 +6764,15 @@ def _werpc_predecessor_disposition_map(
     for row in rows:
         if len(row) != 7:
             return None
-        raw_path, source_commit, _topic, verification, new_owner, disposition, reason = row
+        (
+            raw_path,
+            source_commit,
+            _topic,
+            verification,
+            new_owner,
+            disposition,
+            reason,
+        ) = row
         if (
             not raw_path.startswith("`")
             or not raw_path.endswith("`")
@@ -6811,9 +6789,9 @@ def _werpc_predecessor_disposition_map(
             return None
         old_path = PurePosixPath(raw_path[1:-1])
         owner_name = new_owner[1:-1]
-        owner_path = PurePosixPath(
-            "docs/90.references/research/2026-08-08-wer"
-        ) / owner_name
+        owner_path = (
+            PurePosixPath("docs/90.references/research/2026-08-08-wer") / owner_name
+        )
         if (
             old_path in dispositions
             or owner_name != PurePosixPath(owner_name).name
@@ -6895,7 +6873,10 @@ def _protected_historical_predecessor_link(
         reference_packs = baseline_registry.get("referenceCurrentPacks")
         if not isinstance(reference_packs, dict):
             return False
-        if reference_packs.get("profileId") != context.reference_current_packs.profile_id:
+        if (
+            reference_packs.get("profileId")
+            != context.reference_current_packs.profile_id
+        ):
             return False
         raw_packs = reference_packs.get("packs")
         if not isinstance(raw_packs, list):
@@ -7292,9 +7273,7 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
         if isinstance(raw_namespaces, list):
             for namespace in raw_namespaces:
                 raw_records = (
-                    namespace.get("records", ())
-                    if isinstance(namespace, dict)
-                    else ()
+                    namespace.get("records", ()) if isinstance(namespace, dict) else ()
                 )
                 if not isinstance(raw_records, list):
                     continue
@@ -7332,19 +7311,12 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             )
             for target in WORK105_LEDGER_PATH_ALIASES.values()
         ):
-            known_paths |= {
-                source.as_posix() for source in WORK105_LEDGER_PATH_ALIASES
-            }
-        if (
-            not any(
-                profile.profile_id == "sdlc/api-spec"
-                for profile in context.profiles.values()
-            )
-            and all(path not in context.paths for path in WORK105_LEDGER_RETIRED_PATHS)
-        ):
-            known_paths |= {
-                path.as_posix() for path in WORK105_LEDGER_RETIRED_PATHS
-            }
+            known_paths |= {source.as_posix() for source in WORK105_LEDGER_PATH_ALIASES}
+        if not any(
+            profile.profile_id == "sdlc/api-spec"
+            for profile in context.profiles.values()
+        ) and all(path not in context.paths for path in WORK105_LEDGER_RETIRED_PATHS):
+            known_paths |= {path.as_posix() for path in WORK105_LEDGER_RETIRED_PATHS}
         if context.route_state == "transition":
             _, move_targets, _ = _document_taxonomy_transition_manifest(context)
             if all(
@@ -7389,9 +7361,7 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 )
                 for target in work109_targets.values()
             ):
-                known_paths |= {
-                    source.as_posix() for source in work109_targets
-                }
+                known_paths |= {source.as_posix() for source in work109_targets}
         stable_archive_aliases = _work107_stable_archive_aliases(context)
         if stable_archive_aliases and all(
             target in context.tracked_regular_paths
@@ -7400,9 +7370,7 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             )
             for target in stable_archive_aliases.values()
         ):
-            known_paths |= {
-                source.as_posix() for source in stable_archive_aliases
-            }
+            known_paths |= {source.as_posix() for source in stable_archive_aliases}
             known_paths |= {
                 PurePosixPath("docs", *source.parts[2:]).as_posix()
                 for source in stable_archive_aliases
@@ -7754,12 +7722,8 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
     fixture_baseline_commit = _fixture_baseline_commit(
         root,
         (
-            PurePosixPath(
-                "docs/90.references/audits/2026-07-05-wea/historical.md"
-            ),
-            PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
-            ),
+            PurePosixPath("docs/90.references/audits/2026-07-05-wea/historical.md"),
+            PurePosixPath("docs/90.references/audits/2026-07-11-weia/audit.md"),
         ),
         reference_current_packs,
     )
@@ -7779,8 +7743,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         json.dumps(
             {
                 "currentPackBaselines": {
-                    "audits/2026-07-11-weia": "git-sha1:"
-                    + fixture_baseline_commit
+                    "audits/2026-07-11-weia": "git-sha1:" + fixture_baseline_commit
                 },
                 "snapshotGuard": {
                     "sourceCommit": "git-sha1:" + fixture_baseline_commit,
@@ -7812,8 +7775,7 @@ def _fixture_baseline_commit(
             start=protected_source.parent.as_posix(),
         )
         (root / protected_source).write_bytes(
-            original_bytes
-            + f"\n[historical predecessor]({relative_target})\n".encode()
+            original_bytes + f"\n[historical predecessor]({relative_target})\n".encode()
         )
     registry_path.write_text(
         json.dumps(
@@ -8012,14 +7974,12 @@ def _standalone_execution_fixture_context(
         plan: (
             "sdlc/plan",
             raw_relation["state"],
-            "[Spec](spec.md)\n"
-            "[Task](tasks.md)",
+            "[Spec](spec.md)\n[Task](tasks.md)",
         ),
         task: (
             "sdlc/task",
             raw_relation["state"],
-            "[Spec](spec.md)\n"
-            "[Plan](plan.md)",
+            "[Spec](spec.md)\n[Plan](plan.md)",
         ),
     }
     for path, (profile_id, status, body) in additions.items():
@@ -8031,9 +7991,7 @@ def _standalone_execution_fixture_context(
         paths=tuple(
             sorted((*mutated.paths, *additions), key=lambda item: item.as_posix())
         ),
-        tracked_regular_paths=frozenset(
-            (*mutated.tracked_regular_paths, *additions)
-        ),
+        tracked_regular_paths=frozenset((*mutated.tracked_regular_paths, *additions)),
     )
     return mutated, StandaloneExecution(
         spec_id=raw_relation["spec"],
@@ -8092,9 +8050,7 @@ def _mutated_standalone_execution_fixture(
             paths=tuple(
                 sorted((*mutated.paths, extra), key=lambda item: item.as_posix())
             ),
-            tracked_regular_paths=frozenset(
-                (*mutated.tracked_regular_paths, extra)
-            ),
+            tracked_regular_paths=frozenset((*mutated.tracked_regular_paths, extra)),
         )
         mutated.profiles[extra] = ProfileView("sdlc/task", "sdlc", "authored")
         mutated.metadata[extra] = {"type": "sdlc/task", "status": "active"}
@@ -8303,7 +8259,9 @@ def _mutated_program_lineage_fixture(
             "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)\n",
             "",
         )
-        mutated.texts[spec] += "\n`../../02.architecture/descriptions/ad-0009-fixture.md`"
+        mutated.texts[spec] += (
+            "\n`../../02.architecture/descriptions/ad-0009-fixture.md`"
+        )
     elif mutation == "program-reciprocal-unicode-space-inline":
         spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
         mutated.texts[spec] = mutated.texts[spec].replace(
@@ -8606,10 +8564,7 @@ def _mutated_program_lineage_fixture(
                 f"[AD]: {target}"
             ),
             "program-reciprocal-tab-remainder-valid-title-span": (
-                "[Other][owner]\n\n"
-                "[owner]: ./unrelated.md\t\n"
-                "  '[AD]'\n"
-                f"[AD]: {target}"
+                f"[Other][owner]\n\n[owner]: ./unrelated.md\t\n  '[AD]'\n[AD]: {target}"
             ),
             "program-reciprocal-space-remainder-nested-paren-title": (
                 f"[AD][owner]\n\n[owner]: {target}   \n  ((nested)"
@@ -8621,9 +8576,7 @@ def _mutated_program_lineage_fixture(
                 f'[AD][owner]\n\n[owner]: {target}\n  "owner" garbage'
             ),
             "program-reciprocal-invalid-next-line-title-phantom": (
-                "[Other][owner]\n\n"
-                "[owner]: ./unrelated.md\n"
-                f'  "[AD]({target})" garbage'
+                f'[Other][owner]\n\n[owner]: ./unrelated.md\n  "[AD]({target})" garbage'
             ),
             "program-reciprocal-continued-destination-invalid-title": (
                 f'[AD][owner]\n\n[owner]:\n    {target}\n    "owner" garbage'

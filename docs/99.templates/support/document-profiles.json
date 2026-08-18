@@ -5293,17 +5293,20 @@
     "profileId": "content/reference",
     "packs": [
       {
-        "id": "audits/2026-07-11-weia",
+        "id": "audits/2026-08-09-wgia",
         "allowedStates": [
-          "done"
+          "draft"
         ],
         "members": [
-          "ai-agents-model-routing-vibe-coding.md",
-          "ci-qa-automation-pipeline-workflow.md",
-          "governance-harness-loop-providers.md",
-          "kubernetes-infrastructure-security.md",
-          "remediation-roadmap.md",
-          "sdlc-document-lifecycle-frontmatter.md"
+          "ai-agents-integrated-and-role-specific-agents.md",
+          "ci-cd-github-actions-qa-and-validation.md",
+          "harness-loop-fixtures-scripts-and-blockers.md",
+          "legacy-deprecated-and-one-shot-disposition-ledger.md",
+          "llm-wiki-memory-and-knowledge-management.md",
+          "remediation-and-integration-roadmap.md",
+          "security-and-approval-boundaries.md",
+          "spec-driven-sdlc-documentation-and-templates.md",
+          "workspace-purpose-governance-and-operating-contracts.md"
         ]
       }
     ]
