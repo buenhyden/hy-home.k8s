@@ -17387,3 +17387,112 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
   mirrored test fixture. A Spec needs only two.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - PSS compliance survey and Istio CNI evaluation
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/90.references/data/istio-cni-adoption-evaluation.md`, `docs/90.references/data/reference-information-architecture.json`, `docs/90.references/data/README.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
+- Parent: closes the two items ADR 0024 recorded as explicit non-goals
+- Evidence class: repository-static, public-documentation, and local `helm template` rendering
+
+### Progress
+
+ADR 0024 declined to apply Pod Security Admission labels and named two things it
+had not assessed: whether the Helm-owned namespaces satisfy Baseline or
+Restricted, and whether adopting Istio CNI would actually unblock Baseline rather
+than merely reduce privilege. Both are now answered, and one answer contradicts
+the ADR's own reasoning.
+
+**Every deployed workload passes Baseline.** Twenty-six workloads across ten
+namespaces, and not one Baseline violation among them. The single Baseline
+violation in the platform is the `istio-init` container Istio injects into `apps`
+and `ingress-nginx` pods. Six workloads fail Restricted and four of those fail on
+`seccompProfile` alone — the control Restricted requires and Baseline does not,
+which is why a workload can look fully hardened and still be Restricted-dirty.
+
+**That contradicts an ADR 0024 rejection rationale.** The ADR rejected applying
+`warn`/`audit` at Baseline everywhere partly because "the Helm-owned namespaces
+would contribute warnings this repository cannot act on". They would contribute
+none. The signal would be exactly one class — the Istio init container in two
+namespaces — which is precise and already understood. That argument is now
+disproven by evidence; the decision itself still stands on the Istio blocker,
+but a future revisit should not reuse the disproven half.
+
+**One survey finding is an active defect, not a latent one.** The
+`argo-rollouts` dashboard is `enabled: false` upstream, so a chart-defaults
+survey reports it clean. This repository sets `dashboard.enabled: true` and gives
+it an Ingress, and its `containerSecurityContext` is empty. Chart-default
+compliance and installed-configuration compliance are different questions, and
+only the second one is about this platform.
+
+**Istio CNI genuinely unblocks Baseline.** With `pilot.cni.enabled=true` the
+injected init container becomes `istio-validation`, which carries no
+`capabilities.add` at all, `runAsNonRoot: true`, `runAsUser: 1337`, and
+`readOnlyRootFilesystem: true`. It is Baseline-clean and misses Restricted only
+on `seccompProfile`. The privilege does not vanish; it relocates to one root-UID,
+five-capability, `/proc`-mounting DaemonSet per node. `istio-system` becomes a
+permanent `privileged` exception, which trades two traffic-serving namespaces for
+one that serves none.
+
+### Evidence
+
+- Every chart verdict was produced by local `helm template` rendering against
+  this repository's own `helm.values`, not chart defaults alone: `cert-manager`
+  v1.17.2, `external-secrets` 0.14.4, `ingress-nginx` 4.12.0, `argo-rollouts`
+  2.40.9 with `dashboard.enabled=true`, `istiod` 1.25.2, `kiali-operator` 2.10.0,
+  `headlamp` 0.41.0, `argo-cd` 10.4.0
+- The injection switchover was confirmed by rendering `istiod` with and without
+  `pilot.cni.enabled`, reading the `if/else` guard and both securityContext
+  branches out of the sidecar-injector ConfigMap
+- `--set global.platform=k3d` was confirmed to reach the standalone `cni` chart's
+  flat values by rendering it and reading the resulting hostPath volumes
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`
+- Cross-document PASS; markdown profiles `actual="0"`; reference IA exit 0;
+  contract registry `525 paths`
+- No cluster was contacted, no chart was installed, no image was pulled, and no
+  secret value was read
+
+### Handoff
+
+- **`argo-rollouts` dashboard is the one concrete unhardened workload this
+  repository enabled.** The remedy is a `dashboard.containerSecurityContext`
+  block in the Application values; no fork is needed. Not applied, because the
+  approved scope for this cycle was evaluation and survey.
+- **Four workloads reach Restricted with `seccompProfile` alone**: `istiod` via a
+  single `seccompProfile.type` key, both `monitoring` workloads via a repository
+  manifest edit. `kiali-operator` needs its whole `securityContext` restated
+  because that chart replaces rather than merges.
+- **`headlamp` is the inverse trap**: its template carries a Restricted-clean
+  default dict that the shipped `values.yaml` suppresses, so emptying
+  `securityContext` is what reaches compliance.
+- **ADR 0024 warrants a revisit, not a supersession.** Its decision holds, its
+  ownership-boundary argument holds, and its Istio prerequisite is now confirmed
+  stronger than recorded. Only its "unactionable warnings" rejection is
+  disproven.
+- **Istio CNI k3d risks are recorded and none were exercised.** `cniBinDir` is
+  `/bin` on k3d and differs from bare k3s; the binary lands in the node
+  container's writable layer and does not survive node recreation; all four nodes
+  must install successfully; a force-killed node can leave a conflist entry that
+  breaks all pod networking on it; and rollback must set `pilot.cni.enabled=false`
+  before removing the chart.
+- **Reusable lesson: survey the installed configuration, not the chart default.**
+  The `argo-rollouts` dashboard is clean by chart default and broken here. A
+  compliance survey that reads upstream defaults answers a question about
+  upstream, not about this platform. Render with the repository's own values.
+- **Reusable lesson: `securityContext` values keys usually replace, not merge.**
+  Three of eight charts silently drop the hardening they already provided if a
+  partial override is supplied, and one does the opposite. Any future values edit
+  touching `securityContext` must restate the whole block deliberately.
+- **Reusable lesson: a subagent's template read and a local render are different
+  evidence classes.** The agents read chart sources and were correct every time,
+  but rendering upgraded the same conclusions to observed output and settled one
+  question the agents had to leave open. Where a render is available and cheap,
+  it is worth the extra step.
+- The reference IA `evidenceCutoff` advanced from `2026-07-22` to `2026-08-18`
+  because sources were genuinely checked on that date; the field is an upper
+  bound on `checkedOn`, and every pre-existing entry stays valid.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
