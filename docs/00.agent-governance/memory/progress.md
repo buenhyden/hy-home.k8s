@@ -17692,3 +17692,210 @@ containers on the default path, so this single field was the entire gap.
   is, is the transferable part.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - Open-item closure: scope ownership, argocd adoption, ksm upgrade, SHA-pin decision
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/00.agent-governance/scopes/meta.md`, `docs/00.agent-governance/scopes/qa.md`, `gitops/platform/namespaces/namespace-argocd.yaml`, `gitops/platform/namespaces/kustomization.yaml`, `gitops/platform/monitoring/kube-state-metrics.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `docs/02.architecture/decisions/0026-mutable-target-revision-retention.md`, `docs/02.architecture/decisions/README.md`, `gitops/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: the four items carried forward on the PCDC and PSS handoffs
+- Evidence class: repository-static
+
+### Progress
+
+**`.github/**` got an owner by splitting the surface rather than assigning it
+whole.** The gap had been carried unchanged across two handoffs because the
+directory does not belong to one persona. `meta` owns the workflow surface —
+triggers, permissions, concurrency, and every non-lane job — while
+`quality-engineer` owns lane content, meaning which validators run and how they
+are invoked. `.github/requirements/**` follows the same split as the pinned
+dependency set for that lane. Assigning the directory to either persona alone
+would have been wrong in one direction or the other.
+
+**The `argocd` namespace was adopted with prune protection, and the protection
+is the reason the adoption was safe to make.** The owning Application prunes,
+and a pruned `argocd` namespace would delete every Application inside it along
+with Argo CD itself — the entire GitOps state, removed by the mechanism meant to
+keep it accurate. `argocd.argoproj.io/sync-options: Prune=false` is therefore
+not a precaution but a precondition. `enforce` is withheld for a stronger
+version of the chart-version argument in ADR 0025: all ten `argo-cd` workloads
+pass Restricted at the pinned version, but enforcing there would let a
+regressing chart upgrade lock Argo CD out of its own namespace.
+
+**The kube-state-metrics upgrade turned on choosing the right comparison
+target.** Upstream's example ClusterRole is a superset covering optional
+collectors, and it already listed `serviceaccounts`, `endpointslices`,
+`ingressclasses` and the RBAC resources at `v2.14.0`. Comparing our manifest
+against that example suggests gaps that do not exist. `DefaultResources` in
+`pkg/options/resource.go` is what actually answers the question, and read at
+both tags it differs by exactly one entry across five minors: core `endpoints`
+removed, `discovery.k8s.io/endpointslices` added, the other 27 identical.
+Removing `endpoints` was not optional tidying — leaving it grants a permission
+the new pin does not use, which is the same rule that kept `endpointslices` out
+at `v2.14.0`. This also settles a question an earlier withdrawal left ambiguous:
+the Spec 059 RBAC fix and the Spec 060 decision to withhold `endpointslices`
+were both correct.
+
+**ADR 0026 declined commit-SHA pinning by reframing what the pin would be.** All
+twelve `targetRevision: main` declarations point at this repository, and every
+chart-consuming Application already pins its chart version, so the pin was never
+about supply chain. All twelve are `automated` with `selfHeal`, so pinning does
+not harden what is deployed; it changes when, converting automated
+reconciliation into manual promotion. That is a different deployment model, not
+a hardening control. A pin commit also cannot reference itself, so a trailing
+gap remains by construction. The tempting middle option — pin only the root
+Application — does not work at all, because each child Application reinterprets
+its own `targetRevision`.
+
+### Evidence
+
+- The ClusterRole grants exactly the 28 `v2.19.1` default resources, compared
+  programmatically rather than by reading the diff: nothing missing, nothing
+  extra
+- The version inventory gained a `workload_images` contract, because it tracked
+  Helm charts only and the three images pinned directly in GitOps manifests had
+  no entry — the same boundary hole as the unpinned bootstrap charts
+- Registering an ADR in the closure allowlist requires three sites (module
+  constant, self-test `expected_later`, and test fixture) against two for a Spec
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`; 87 retention tests OK
+- Commits: `f37b02a9` the scope split, `ca5ba0b2` the argocd adoption,
+  `ef0dd366` the kube-state-metrics upgrade, `d4c40c92` ADR 0026
+- No cluster, registry, hosted CI run, or remote was contacted
+
+### Handoff
+
+- **The kube-state-metrics upgrade renames metrics.** `kube_endpoint_*` becomes
+  `kube_endpointslice_*`. Whether the external Docker-hosted Prometheus or any
+  dashboard consumes them lies outside tracked paths and stays `DEFER`.
+- **The pre-GitOps ownership boundary is narrower but still open.** Adopting
+  `argocd` closed the namespace-level instance of it. Bootstrap still installs
+  charts before GitOps ownership exists, which is the same root as the unpinned
+  bootstrap charts Spec 059 closed.
+- **ADR 0026 leaves the identity gap open deliberately.** What is deployed from
+  `main` is not pinned to a commit, and that is now a recorded decision with
+  reasoning rather than an unadopted recommendation carried in ADR 0023.
+- **Reusable lesson: the comparison target decides the answer, not the
+  observation.** Both the kube-state-metrics RBAC question and the earlier
+  withdrawal came from comparing against an upstream example rather than against
+  the upstream default. The observation was accurate in both cases; the baseline
+  was wrong, and an accurate observation against the wrong baseline produces a
+  confident wrong conclusion.
+- **Reusable lesson: ask whether a proposed control is a control at all.** SHA
+  pinning reads as strictly safer until you notice both revisions come from the
+  same repository under `selfHeal`. Naming what the change actually alters —
+  timing, not content — is what made the decision answerable.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
+
+## 2026-08-18 - Deferred upgrade resolution: alloy, k3s hold, and image contract enforcement
+
+### Metadata
+
+- Owner: platform
+- Scope: `gitops/platform/monitoring/alloy-k8s-logs.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `gitops/README.md`, `scripts/validate-repo-quality-gates.sh`
+- Parent: the two remaining deferred upgrades on the PCDC handoff
+- Evidence class: repository-static plus local container execution of `alloy validate`
+
+### Progress
+
+**The alloy upgrade was decided by what this workload uses, not by how far
+behind it was.** Five minors and twelve releases separate `v1.13.1` from
+`v1.18.1`, and every breaking change in that range lands in `otelcol.*`
+components or `loki.secretfilter`. This Alloy runs `loki.source.kubernetes`,
+`loki.source.kubernetes_events`, `loki.process` with `stage.static_labels`,
+`loki.write`, and two discovery components; none appears in any breaking-change
+entry, and `loki.source.kubernetes` has no changelog entry at all across the
+twelve releases.
+
+**The patch releases had to be read separately, which is not obvious from the
+repository.** The CHANGELOG at the `v1.18.1` tag omits `v1.14.1`, `v1.14.2`,
+`v1.15.1`, `v1.16.1` through `v1.16.3`, and `v1.17.1` entirely; those entries
+exist only on their release branches. Reading all seven reached the same
+conclusion — the only relevant entries are backported `loki.process` fixes in
+`stage.truncate` and docker-json handling, neither of which this config uses —
+but a reader who stops at the tag's changelog would have concluded that from
+incomplete evidence.
+
+**The k3s pin was held because the version string understates the change.**
+`v1.35.0-k3s1` to `v1.35.7-k3s1` is seven Kubernetes patches, but the bundled
+components are not patches: containerd `v2.1.5` to `v2.2.5`, flannel `v0.27.4`
+to `v0.28.4`, coredns `v1.13.1` to `v1.14.6`, metrics-server `v0.8.0` to
+`v0.9.0`, and kine `v0.14.9` to `v0.16.3` are all minor bumps. Traefik moves two
+minors and costs nothing, because the cluster config passes `--disable=traefik`.
+The flannel minor decides the hold: Istio CNI writes its conflist into the same
+CNI directory flannel owns and chains behind it, and that adoption is still
+render-verified only. Recreating the cluster on a new flannel before the
+Baseline warning channel is read stacks an unverified change on an unverified
+change, which is the pattern ADR 0025 already declined once.
+
+**A second version contract was missing entirely.** The repository pins the k3s
+image but has never pinned or observed the k3d binary that runs it;
+`bootstrap-local.sh` checks only that the command exists. The installed k3d is
+`v5.8.3` against upstream `v5.9.0`. That gap is not a blocker — k3d's built-in
+default k3s is `v1.31.5-k3s1` while the cluster already runs `v1.35.0-k3s1`,
+four minors ahead, because an explicit `image` bypasses the built-in default —
+and `v5.9.0` adds `cluster restart`, not an upgrade path. The new `k3d_cli`
+entry records the observed pairing and deliberately asserts no minimum version,
+because no evidence establishes a floor.
+
+**The `workload_images` contract was enforced only after it had been relied
+on.** It was added one commit before the alloy upgrade and nothing read it,
+while every other contract in the inventory has a bidirectional drift check. The
+alloy upgrade kept it accurate by hand, which is exactly the property a gate is
+supposed to remove.
+
+### Evidence
+
+- `alloy validate` against this exact config exits `0` on both `v1.13.1` and
+  `v1.18.1`; image entrypoint, cmd, and user are identical between the two tags
+- `/-/healthy` and `/-/ready` register through the same `ReadyFunc` guard in
+  both versions, so both probes keep working
+- The 256Mi limit could not be measured: Alloy exits with `unable to load
+  in-cluster configuration` outside a cluster, identically on both versions, so
+  no resident-set comparison is possible without a live cluster
+- k3s component tables were read from the release bodies at both tags; k3d
+  `v5.9.0` release notes and PR 1589 answered the hardcoded-default question;
+  `k3d version` was observed read-only
+- The new `workload_images` check was proven by mutation, not by passing:
+  changing the manifest tag to `v1.18.0` produces both expected failures, the
+  inventory entry declared by no manifest and the manifest image absent from the
+  inventory
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`; 807 tests OK; links `PASS`;
+  `surfaces=22/22 uncovered=0`
+- Commits: `6ecbd528` the alloy upgrade, `dab2ca37` the k3s hold and k3d
+  contract, `a343eb19` the workload image gate
+- No cluster was created, deleted, or contacted
+
+### Handoff
+
+- **One live signal now gates two separate items.** The Baseline warning channel
+  on `apps` and `ingress-nginx` decides whether Istio CNI took effect. Clean
+  unblocks `enforce: baseline` there and also unblocks the k3s pin bump, because
+  the flannel minor stops compounding an unverified change once that change is
+  verified.
+- **The k3s upgrade remains operator-bound and undocumented as a procedure.**
+  k3d has no upgrade command at either version, so the bump is
+  delete-and-recreate, and this repository has no runbook for recreating the
+  cluster. That procedure gap, not the version choice, is what makes the item
+  unexecutable today.
+- **Two upgrade effects are unobservable from the repository.** Whether the
+  upgraded Alloy changes any log line, label, or timestamp the external Loki
+  already stores, and whether any workload breaks on the newer containerd,
+  coredns, or metrics-server, both require the live verification this cycle
+  declined to perform.
+- **`adminer` remains the last deferred image.** It is two major versions behind
+  with no 6.x image published upstream, so the upgrade is a choice between the 4
+  and 5 lines rather than a currency bump.
+- **Reusable lesson: a version string is not a measure of change size.** The k3s
+  patch bump carries five minor component upgrades, and the alloy five-minor jump
+  carries none that this workload can reach. Reading what the release actually
+  contains inverted the risk ordering the version numbers implied.
+- **Reusable lesson: a contract nothing reads is not a contract.** The
+  `workload_images` block was accurate only because the same author maintained
+  both sides in the same cycle. Proving the new gate by mutation rather than by a
+  passing run is what distinguishes an enforced contract from a documented one.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
