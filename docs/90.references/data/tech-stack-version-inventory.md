@@ -103,6 +103,12 @@ helm_charts:
     repoURL: 'https://istio-release.storage.googleapis.com/charts'
     chart: 'base'
     targetRevision: '1.25.2'
+  # cni는 istiod와 반드시 같은 버전 라인을 유지한다. Istio는 1.x-1 ~ 1.x+1 호환을
+  # 문서화하지만, 이 저장소는 두 값을 함께 올려 드리프트를 만들지 않는다.
+  platform-istio-cni:
+    repoURL: 'https://istio-release.storage.googleapis.com/charts'
+    chart: 'cni'
+    targetRevision: '1.25.2'
   platform-istiod:
     repoURL: 'https://istio-release.storage.googleapis.com/charts'
     chart: 'istiod'

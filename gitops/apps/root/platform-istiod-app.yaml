@@ -19,6 +19,15 @@ spec:
         seccompProfile:
           type: RuntimeDefault
         pilot:
+          # istio-cni(sync-wave 1)가 노드에 CNI 플러그인을 설치하므로, 주입되는
+          # init container가 istio-init(NET_ADMIN+NET_RAW, runAsUser 0)에서
+          # istio-validation(capabilities.add 없음, runAsUser 1337, runAsNonRoot)
+          # 으로 바뀐다. 이것이 apps/ingress-nginx의 유일한 Baseline 위반을 없앤다.
+          #
+          # 롤백 시에는 반드시 이 값을 false로 먼저 되돌린 뒤 istio-cni Application을
+          # 제거한다. 순서를 바꾸면 새 pod이 istio-init도 CNI도 받지 못한다.
+          cni:
+            enabled: true
           resources:
             requests:
               cpu: 100m

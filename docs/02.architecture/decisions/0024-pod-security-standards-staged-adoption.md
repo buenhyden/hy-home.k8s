@@ -190,6 +190,13 @@ covers at this scale.
 
 ## Traceability
 
+**This decision's reversal condition has since fired.** The Istio CNI node agent
+was adopted as `platform-istio-cni` with `pilot.cni.enabled: true` on istiod,
+which removes the `istio-init` violation from `apps` and `ingress-nginx` and
+completes step 1 of the ordering above. Steps 2 and 3 are therefore unblocked and
+require a fresh decision; this record is retained as the reasoning that produced
+the ordering, not as a current instruction to withhold labels.
+
 Reversal condition: reopen this decision when the Istio CNI node agent is
 installed, when Istio's default injection no longer requires a privileged init
 container, or when a policy requirement arrives that the built-in profiles cannot

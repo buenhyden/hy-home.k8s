@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-istio-cni
+  namespace: argocd
+  annotations:
+    # istiod(wave 2)보다 반드시 먼저 준비되어야 한다. istiod가 pilot.cni.enabled로
+    # 전환되면 주입 init container가 istio-validation으로 바뀌는데, 그 컨테이너는
+    # redirection이 설정되지 않았으면 pod 기동을 막는다. CNI가 먼저 떠야 한다.
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  project: platform
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: cni
+    targetRevision: 1.25.2
+    helm:
+      releaseName: istio-cni
+      values: |
+        # k3s는 표준 CNI 경로를 쓰지 않고, k3d는 bare k3s와도 다르다.
+        # k3d에서 "노드"는 k3s 컨테이너이므로 바이너리가 그 rootfs의 /bin에 있다.
+        # bare k3s였다면 /var/lib/rancher/k3s/data/cni 이므로 혼동에 주의한다.
+        #
+        # global.platform=k3d 만으로도 아래 두 경로가 동일하게 렌더되는 것을
+        # helm template 으로 확인했으나, 차트 버전이 올라가며 profile 병합 방식이
+        # 바뀔 수 있으므로 두 경로를 명시적으로도 고정한다.
+        global:
+          platform: k3d
+        cniBinDir: /bin
+        cniConfDir: /var/lib/rancher/k3s/agent/etc/cni/net.d
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

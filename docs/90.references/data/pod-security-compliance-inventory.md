@@ -97,6 +97,17 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 포함하고 허용 목록에 그 둘이 없다. 이 위반은 `apps`와 `ingress-nginx`의 모든
 주입 pod에 적용된다.
 
+**이 위반은 istio-cni 도입으로 제거되었다.** `platform-istio-cni` Application과
+`pilot.cni.enabled: true`가 함께 반영되면 주입 init container가
+`istio-validation`으로 바뀌며, 그 컨테이너는 `capabilities.add`를 갖지 않는다.
+
+대신 새로운 Baseline 예외가 하나 생긴다. `istio-cni-node` DaemonSet은 노드마다
+`NET_ADMIN`, `NET_RAW`, `SYS_PTRACE`, `SYS_ADMIN`, `DAC_OVERRIDE`와 `/proc`
+hostPath를 요구하므로 Baseline을 만족할 수 없다. 이는 설계상 의도된 것으로,
+**트래픽을 서비스하는 2개 네임스페이스의 예외가 트래픽을 서비스하지 않는 1개
+네임스페이스의 예외로 바뀐 것**이다. `istio-system`은 향후 PSS를 도입하더라도
+`privileged` 라벨이 필요하다.
+
 ### Restricted 판정 — 통과
 
 | 네임스페이스       | 차트 / 워크로드                                                           | 워크로드 수 |
@@ -105,13 +116,13 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `external-secrets` | `external-secrets` 0.14.4 (controller, webhook, cert-controller)          | 3           |
 | `ingress-nginx`    | `ingress-nginx` 4.12.0 (controller, admission create/patch Job)           | 3           |
 | `argo-rollouts`    | `argo-rollouts` 2.40.9 controller                                         | 1           |
-| `argo-rollouts` | `argo-rollouts` 2.40.9 dashboard (이 저장소 values로 하드닝) | 1 |
+| `argo-rollouts`    | `argo-rollouts` 2.40.9 dashboard (이 저장소 values로 하드닝)              | 1           |
 | `argocd`           | `argo-cd` 10.4.0 (10개 워크로드, `copyutil` init container 2개 포함)      | 10          |
-| `monitoring` | 저장소 저작 `kube-state-metrics`, `alloy-k8s-logs` (seccompProfile 추가) | 2 |
-| `istio-system` | `istiod` 1.25.2 (이 저장소 values로 seccompProfile 추가) | 1 |
-| `istio-system` | `kiali-operator` 2.10.0 (블록 전체 재기술 + seccompProfile) | 1 |
-| `headlamp` | `headlamp` 0.41.0 (블록 전체 재기술 + 3개 항목 추가) | 1 |
-| `apps` | 저장소 저작 `adminer` (이미지 UID 999 관측 후 identity + seccomp 적용) | 1 |
+| `monitoring`       | 저장소 저작 `kube-state-metrics`, `alloy-k8s-logs` (seccompProfile 추가)  | 2           |
+| `istio-system`     | `istiod` 1.25.2 (이 저장소 values로 seccompProfile 추가)                  | 1           |
+| `istio-system`     | `kiali-operator` 2.10.0 (블록 전체 재기술 + seccompProfile)               | 1           |
+| `headlamp`         | `headlamp` 0.41.0 (블록 전체 재기술 + 3개 항목 추가)                      | 1           |
+| `apps`             | 저장소 저작 `adminer` (이미지 UID 999 관측 후 identity + seccomp 적용)    | 1           |
 
 `argo-cd` 10.4.0은 조사한 차트 중 유일하게 모든 기본 워크로드가
 `seccompProfile.type: RuntimeDefault`를 명시한다.
@@ -120,11 +131,11 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 
 **없다.** 조사 시점에는 6개 워크로드가 걸렸으나 모두 닫혔다. 닫는 방식은 세 갈래였다.
 
-| 방식 | 대상 | 비고 |
-| ---- | ---- | ---- |
-| 저장소 매니페스트 편집 | `kube-state-metrics`, `alloy-k8s-logs`, `adminer` | 저장소가 pod spec을 저작하는 워크로드 |
-| values에 단일 키 추가 | `istiod`, `argo-rollouts` dashboard | 차트가 `securityContext`를 병합하거나 비어 있어 추가가 안전한 경우 |
-| values에 블록 전체 재기술 | `kiali-operator`, `headlamp` | 차트가 대체형이라 부분 재정의 시 기존 하드닝이 사라지는 경우 |
+| 방식                      | 대상                                              | 비고                                                               |
+| ------------------------- | ------------------------------------------------- | ------------------------------------------------------------------ |
+| 저장소 매니페스트 편집    | `kube-state-metrics`, `alloy-k8s-logs`, `adminer` | 저장소가 pod spec을 저작하는 워크로드                              |
+| values에 단일 키 추가     | `istiod`, `argo-rollouts` dashboard               | 차트가 `securityContext`를 병합하거나 비어 있어 추가가 안전한 경우 |
+| values에 블록 전체 재기술 | `kiali-operator`, `headlamp`                      | 차트가 대체형이라 부분 재정의 시 기존 하드닝이 사라지는 경우       |
 
 `adminer`만 이미지 관측이 선행되었다. 이미지 `/etc/passwd`가
 `adminer:x:999:999::/home/adminer:/bin/sh`이고 image config의 `User`가 이름

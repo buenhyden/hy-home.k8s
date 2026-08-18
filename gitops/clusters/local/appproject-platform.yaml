@@ -70,6 +70,10 @@ spec:
       kind: EndpointSlice
     - group: apps
       kind: Deployment
+    # istio-cni node agent가 DaemonSet으로 배포된다. 노드마다 CNI 플러그인을
+    # 설치해 주입 pod에서 특권 init container를 제거하는 것이 목적이다.
+    - group: apps
+      kind: DaemonSet
     - group: batch
       kind: Job
     - group: policy
