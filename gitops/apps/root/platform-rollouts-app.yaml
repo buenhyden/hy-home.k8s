@@ -4,7 +4,7 @@ metadata:
   name: platform-rollouts
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: '2'
 spec:
   project: platform
   source:
@@ -27,6 +27,26 @@ spec:
             enabled: true
         dashboard:
           enabled: true
+          # 이 차트에서 대시보드는 upstream 기본값이 enabled: false 이므로 차트 기본값
+          # 그대로면 하드닝 공백이 드러나지 않는다. 이 저장소가 켰으므로 이 저장소가
+          # 하드닝한다. 같은 차트의 controller는 아래 세 항목을 기본으로 갖는다.
+          #
+          # 세 항목 모두 이미지 정의와 포트만으로 성립한다: 이미지가
+          # gcr.io/distroless/static-debian12 + `USER 999`(숫자)이고 단일 Go 바이너리라
+          # setuid 전환이 없으며, 3100 포트는 1024를 넘어 NET_BIND_SERVICE가 필요 없다.
+          # seccompProfile은 같은 저장소·같은 base image·같은 USER를 쓰는 controller가
+          # 이미 RuntimeDefault로 동작한다.
+          #
+          # readOnlyRootFilesystem은 의도적으로 제외했다. controller 템플릿은 그 항목을
+          # 켜면서 /tmp와 /home/argo-rollouts/plugin-bin에 emptyDir을 함께 마운트하는데,
+          # 대시보드에는 볼륨이 없다. 켜려면 dashboard.volumes/volumeMounts로 쓰기 경로를
+          # 먼저 확보해야 하고, 어느 경로가 필요한지는 관측이 선행되어야 한다.
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
           ingress:
             enabled: true
             ingressClassName: nginx

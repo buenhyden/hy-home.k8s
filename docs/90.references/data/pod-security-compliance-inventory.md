@@ -27,7 +27,7 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 것은 차트도 워크로드도 아니고, Istio가 `apps`와 `ingress-nginx`의 pod에 주입하는
 `istio-init` init container 하나뿐이다.
 
-Restricted에서는 6개 워크로드가 걸리며, 그중 4개는 `seccompProfile` 하나만
+Restricted에서는 5개 워크로드가 걸리며, 그중 4개는 `seccompProfile` 하나만
 부족하다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
 하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
 
@@ -105,6 +105,7 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `external-secrets` | `external-secrets` 0.14.4 (controller, webhook, cert-controller)          | 3           |
 | `ingress-nginx`    | `ingress-nginx` 4.12.0 (controller, admission create/patch Job)           | 3           |
 | `argo-rollouts`    | `argo-rollouts` 2.40.9 controller                                         | 1           |
+| `argo-rollouts` | `argo-rollouts` 2.40.9 dashboard (이 저장소 values로 하드닝) | 1 |
 | `argocd`           | `argo-cd` 10.4.0 (10개 워크로드, `copyutil` init container 2개 포함)      | 10          |
 
 `argo-cd` 10.4.0은 조사한 차트 중 유일하게 모든 기본 워크로드가
@@ -118,7 +119,6 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `monitoring`    | `alloy-k8s-logs`        | `seccompProfile`                                                       | 저장소 매니페스트 편집                             |
 | `istio-system`  | `istiod` 1.25.2         | `seccompProfile`                                                       | `seccompProfile.type=RuntimeDefault` 단일 키       |
 | `istio-system`  | `kiali-operator` 2.10.0 | `seccompProfile`                                                       | `securityContext` **전체 재기술** (아래 함정 참조) |
-| `argo-rollouts` | **dashboard**           | `allowPrivilegeEscalation`, `drop!=ALL`, `seccompProfile`              | `dashboard.containerSecurityContext` 블록 추가     |
 | `headlamp`      | `headlamp` 0.41.0       | `allowPrivilegeEscalation`, `drop!=ALL`, `seccompProfile`              | `securityContext`를 비우면 내장 하드닝 기본값 적용 |
 | `apps`          | `adminer`               | `runAsNonRoot`/`runAsUser`, `readOnlyRootFilesystem`, `seccompProfile` | Spec 060에 전제조건과 함께 이연 기록               |
 
@@ -133,6 +133,18 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 
 `adminer`와 성격이 같다. 둘 다 "저장소가 켠 워크로드인데 하드닝은 하지 않은 것"이며,
 저장소가 _저작한_ 것과 저장소가 _활성화한_ 것 사이의 틈에서 나왔다.
+
+**조치 완료.** `gitops/apps/root/platform-rollouts-app.yaml`의
+`dashboard.containerSecurityContext`에 `allowPrivilegeEscalation: false`,
+`capabilities.drop: [ALL]`, `seccompProfile.type: RuntimeDefault`를 추가해 대시보드는
+Restricted를 통과한다. 세 항목 모두 이미지 정의와 포트만으로 성립한다: 이미지가
+`gcr.io/distroless/static-debian12` + `USER 999`(숫자)이고 단일 Go 바이너리라 setuid
+전환이 없으며, 3100 포트는 1024를 넘어 `NET_BIND_SERVICE`가 필요 없다.
+
+`readOnlyRootFilesystem`은 의도적으로 제외했다. **Restricted 요구사항이 아니며**,
+같은 차트의 controller는 그 항목을 켜면서 `/tmp`와
+`/home/argo-rollouts/plugin-bin`에 emptyDir을 함께 마운트하는 반면 대시보드에는
+볼륨이 없다. 켜려면 어느 경로에 쓰기가 필요한지 관측이 선행되어야 한다.
 
 ### values 재정의 함정
 
