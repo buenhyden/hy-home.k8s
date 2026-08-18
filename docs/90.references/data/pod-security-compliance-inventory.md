@@ -27,8 +27,9 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 것은 차트도 워크로드도 아니고, Istio가 `apps`와 `ingress-nginx`의 pod에 주입하는
 `istio-init` init container 하나뿐이다.
 
-Restricted에 남은 것은 `adminer` 하나다. 조사 시점의 6건 중 다섯은 이 저장소의
-values와 매니페스트로 닫혔고, `adminer`만 이미지 관측이 선행되어야 한다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
+**Restricted 미달은 남지 않았다.** 조사 시점의 6건은 모두 이 저장소의 values와
+매니페스트로 닫혔다. 마지막 `adminer`는 이미지 `/etc/passwd`를 직접 읽어 UID 999를
+확인한 뒤 `runAsUser`/`runAsNonRoot`를 함께 적용해 커플링을 해소했다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
 하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
 
 ## Reference Type
@@ -110,16 +111,29 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `istio-system` | `istiod` 1.25.2 (이 저장소 values로 seccompProfile 추가) | 1 |
 | `istio-system` | `kiali-operator` 2.10.0 (블록 전체 재기술 + seccompProfile) | 1 |
 | `headlamp` | `headlamp` 0.41.0 (블록 전체 재기술 + 3개 항목 추가) | 1 |
+| `apps` | 저장소 저작 `adminer` (이미지 UID 999 관측 후 identity + seccomp 적용) | 1 |
 
 `argo-cd` 10.4.0은 조사한 차트 중 유일하게 모든 기본 워크로드가
 `seccompProfile.type: RuntimeDefault`를 명시한다.
 
 ### Restricted 판정 — 실패
 
-| 네임스페이스    | 워크로드                | 차단 사유                                                              | 해결 경로                                          |
-| --------------- | ----------------------- | ---------------------------------------------------------------------- | -------------------------------------------------- |
-| `headlamp`      | `headlamp` 0.41.0       | `allowPrivilegeEscalation`, `drop!=ALL`, `seccompProfile`              | `securityContext`를 비우면 내장 하드닝 기본값 적용 |
-| `apps`          | `adminer`               | `runAsNonRoot`/`runAsUser`, `readOnlyRootFilesystem`, `seccompProfile` | Spec 060에 전제조건과 함께 이연 기록               |
+**없다.** 조사 시점에는 6개 워크로드가 걸렸으나 모두 닫혔다. 닫는 방식은 세 갈래였다.
+
+| 방식 | 대상 | 비고 |
+| ---- | ---- | ---- |
+| 저장소 매니페스트 편집 | `kube-state-metrics`, `alloy-k8s-logs`, `adminer` | 저장소가 pod spec을 저작하는 워크로드 |
+| values에 단일 키 추가 | `istiod`, `argo-rollouts` dashboard | 차트가 `securityContext`를 병합하거나 비어 있어 추가가 안전한 경우 |
+| values에 블록 전체 재기술 | `kiali-operator`, `headlamp` | 차트가 대체형이라 부분 재정의 시 기존 하드닝이 사라지는 경우 |
+
+`adminer`만 이미지 관측이 선행되었다. 이미지 `/etc/passwd`가
+`adminer:x:999:999::/home/adminer:/bin/sh`이고 image config의 `User`가 이름
+(`adminer`)이므로, `runAsUser: 999`/`runAsGroup: 999`를 `runAsNonRoot`와 함께
+지정해 커플링을 해소하면서 `/var/www/html` 소유권을 유지했다.
+
+`readOnlyRootFilesystem`은 세 워크로드(`adminer`, `argo-rollouts` dashboard,
+`headlamp`)에서 적용하지 않았다. Restricted 요구사항이 아니며, 어느 경로에 쓰기가
+필요한지는 매니페스트만으로 판정되지 않는다.
 
 ### 차트 기본값과 실제 설치의 차이
 

@@ -106,9 +106,12 @@ the mesh's own init container is the dominant violation.
   mechanism is unsuitable.
 - It does not authorize, schedule, or design the Istio CNI installation. That is a
   node-networking change with its own risk and its own approval.
-- It does not assess whether any Helm-managed workload in the six upstream
-  namespaces, or in `argocd`, satisfies Baseline or Restricted. None was
-  inspected at the time this decision was taken.
+- It did not assess whether any Helm-managed workload satisfies Baseline or
+  Restricted; none was inspected at the time this decision was taken. That
+  assessment has since been carried out and is recorded in
+  [the compliance inventory](../../90.references/data/pod-security-compliance-inventory.md),
+  which amends the `warn`/`audit` alternative below without changing this
+  decision.
 - It does not close the `adminer` deferred controls, which remain blocked on
   reading the image filesystem.
 - It does not assert any admission, scheduling, or rejection behavior. No cluster
@@ -149,11 +152,22 @@ approval.
 
 **Apply `warn` and `audit` at `baseline` to every namespace now.** Genuinely
 tempting: neither mode can reject a pod, so the change is risk-free in the
-admission sense, and it would make the gap visible immediately. Rejected because
-the loudest and most frequent warning would be the Istio init container in two
-namespaces, and the Helm-owned namespaces would contribute warnings this
-repository cannot act on. A signal that is mostly unactionable trains its reader
-to ignore it, which costs more than the missing signal.
+admission sense, and it would make the gap visible immediately.
+
+This decision originally rejected it on the grounds that the Helm-owned
+namespaces would contribute warnings this repository cannot act on. **A
+subsequent survey disproved that.** Every deployed workload passes Baseline, so
+those namespaces would contribute no warnings at all, and the entire signal
+would be the Istio init container in two namespaces — precise, singular, and
+already understood. See
+[the compliance inventory](../../90.references/data/pod-security-compliance-inventory.md).
+
+The rejection therefore rests on a narrower and weaker argument than recorded:
+the one signal Baseline would produce is a fact this decision already documents,
+so enabling it buys regression detection rather than discovery. That is real but
+modest value, and it is still ordered after the Istio prerequisite, because
+turning it on first would establish a warning channel whose only content is a
+violation the prerequisite exists to remove.
 
 **Apply PSS to `monitoring` only.** The safest possible pilot: injection is
 disabled and both workloads satisfy Baseline, so `enforce=baseline` would change
