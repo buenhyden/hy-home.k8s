@@ -1,7 +1,7 @@
 ---
 title: 'Workload Security Context Baseline Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-08-18
 ---

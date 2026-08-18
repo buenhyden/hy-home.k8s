@@ -1,7 +1,7 @@
 ---
 title: 'Workload Security Context Baseline Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-08-18
 ---

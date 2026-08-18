@@ -1,7 +1,7 @@
 ---
 title: 'Workload Security Context Baseline Task'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-08-18
 ---
@@ -132,7 +132,7 @@ upgrade and is not resolved by one.
 | WSCB-001 | adminer container controls | Done    | Parses; two controls present; no excluded field present           |
 | WSCB-002 | sample template baseline   | Done    | Parses; both coupled fields present; all three container controls |
 | WSCB-003 | deferred control record    | Done    | Coupling correction, prerequisite table, image-line table         |
-| WSCB-004 | Lifecycle registration     | Pending | Stage 03/04 indexes, `standaloneExecutions`, ADR 0022, allowlist  |
+| WSCB-004 | Lifecycle registration     | Done    | Stage 03/04 indexes, `standaloneExecutions`, ADR 0022, allowlist, ledger |
 
 ## Approval and Safety Boundaries
 
@@ -191,8 +191,8 @@ promote no admission, scheduling, reconciliation, or container-start outcome.
 | [VAL-WSCB-003](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Template pod spec carries both coupled identity fields           |
 | [VAL-WSCB-004](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Each deferred control names a prerequisite observation           |
 | [VAL-WSCB-005](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Image line recorded distinctly from the `6.0.1` source release   |
-| [VAL-WSCB-006](../plans/2026-08-18-workload-security-context-baseline.md) | Pending | Full lane recorded above; terminal result recorded by `WSCB-004` |
-| [VAL-WSCB-007](../plans/2026-08-18-workload-security-context-baseline.md) | Pending | One commit per logical unit; commit log reviewed at closure      |
+| [VAL-WSCB-006](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Full lane green at closure; no cluster or registry contacted |
+| [VAL-WSCB-007](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Three commits: `2da9eca4` manifests, `ca6be7d1` lifecycle, this closure |
 
 ### Related Documents
 

@@ -17166,3 +17166,130 @@ cycle's blocking-class closure used.
   `_self_test_post_closure_adr_scope()` — so adding an ADR requires editing both.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - WSCB workload security context baseline
+
+### Metadata
+
+- Owner: platform
+- Scope: `gitops/workloads/adminer/rollout.yaml`, `examples/sample-app/rollout.yaml`, `docs/03.specs/060-workload-security-context-baseline/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-workload-security-context-baseline.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: Spec 060 / the WSCB-001..004 cycle, successor to the PCDC handoff
+- Evidence class: repository-static and public-source only
+
+### Progress
+
+The PCDC handoff ranked `adminer` first by risk among the deferred items, noting
+it declares no `securityContext`. This cycle closed that, and two things about how
+it was closed matter more than the closure.
+
+**A kind-keyed sweep silently missed the workload it was written to find.** The
+first sweep enumerated `Deployment`, `StatefulSet`, `DaemonSet`, `CronJob`, and
+`Job`, and reported zero gaps across the repository. `adminer` is an Argo
+`Rollout` — a custom resource carrying the same pod template under a different
+`kind`. The second sweep searched by structure, matching any document whose spec
+contains a pod template with containers, and found all three workloads regardless
+of kind. In a repository with CRD-backed workloads, a kind-keyed inventory
+under-reports without erroring.
+
+**Verification overturned the approved change set before it was applied.** The
+approved plan applied `runAsNonRoot: true` to `adminer` while deferring
+`runAsUser`. That staging is invalid. The kubelet, in
+`pkg/kubelet/kuberuntime/security_context_others.go`, errors with
+`container has runAsNonRoot and image has non-numeric user (%s), cannot verify
+user is non-root` when `runAsNonRoot` is set, `runAsUser` is absent, and the image
+names its user. A dedicated test asserts it. The `adminer` image ends with
+`USER adminer`, created by `adduser -S -G adminer adminer`, which assigns an
+unpinned system UID. Applying the approved field alone would have stopped the
+container from starting.
+
+So the cycle applied **less** to `adminer` than approved: only
+`allowPrivilegeEscalation: false` and `capabilities.drop: [ALL]`, both of which
+follow from the image definition alone — a non-root listener above port 1024 needs
+no retained capability and no setuid transition.
+
+And **more** to the template. `examples/sample-app/rollout.yaml` names no image,
+so nothing about it is undecidable, and it is what new workloads are copied from.
+It took the complete baseline with the coupled fields set together, and its
+comments now carry the coupling rule and the `emptyDir` requirement forward. The
+template was the higher-leverage half: the instance gap affected one workload, the
+template gap affected every future one.
+
+### Evidence
+
+- `gitops/workloads/adminer/rollout.yaml` parses to one document; the container
+  `securityContext` equals exactly the two applied controls; the pod
+  `securityContext` is absent; no excluded field is present
+- `examples/sample-app/rollout.yaml` parses to one document; the pod
+  `securityContext` carries `runAsNonRoot`, `runAsUser`, and `fsGroup` together;
+  the container `securityContext` carries all three controls
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` reports
+  `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` reports
+  `actual="0"` violations
+- `python3 scripts/validate-affected-surfaces.py --root .` reports
+  `surfaces=22/22 uncovered=0`
+- `python3 scripts/validate-document-contract-registry.py --root .` reports
+  `522 paths`
+- The retention suite passes at 87 tests after the closure-allowlist change
+- Three commits, one per logical unit: `2da9eca4` the two manifests,
+  `ca6be7d1` the Spec 060 lifecycle and registration, and this closure
+- No k3d, kubectl, helm, argocd, docker, or registry command was run. No cluster
+  was contacted and no image was pulled. No secret value was read.
+
+### Handoff
+
+- **Two controls stay deferred on `adminer`, each with a named prerequisite.**
+  `runAsNonRoot` plus `runAsUser` need the numeric UID of `adminer` inside the
+  image, or an overriding UID plus proof that `/var/www/html` is world-readable.
+  `readOnlyRootFilesystem` needs the PHP session save path and an `emptyDir`
+  mounted there. Both are `live-cluster` blocked because both require reading the
+  image filesystem.
+- **The `adminer` upgrade target was refined and is now more precise than the
+  PCDC record.** `6.0.1`, published 2026-08-14, is the upstream **source**
+  release. The official image repository carries only image lines `4` (at adminer
+  `4.17.1`) and `5` (at adminer `5.5.1`). There is no official `6.x` image, so the
+  achievable target is an image line, not that release. Both lines end with
+  `USER adminer`, so no upgrade resolves the coupling above.
+- **Nothing enforces the hardening convention.** No namespace declares a
+  `pod-security.kubernetes.io` label and no policy engine is installed, so the
+  pattern survives only by copying. Adding enforcement was explicitly excluded
+  from this cycle's approved scope: `enforce` can reject workloads that currently
+  run, so it needs a staged `warn`/`audit` design and its own approval.
+- **`examples/azure/kubernetes/sample-app.yaml` has the same omission and was not
+  changed.** It targets Azure AKS with Workload Identity and Key Vault, not the
+  local k3d platform, and is not the template `gitops/workloads/` copies from. It
+  remains open.
+- **Carried forward unchanged from PCDC.** Three upgrades still deferred
+  (`kube-state-metrics`, `rancher/k3s`, `grafana/alloy`), `targetRevision: main`
+  unpinned across twelve declarations, and `.github/**` still without a declared
+  scope owner.
+- **Reusable lesson: inventory by structure, not by type name.** A sweep keyed on
+  known kinds cannot report what it does not enumerate, and it fails silently
+  rather than erroring. When the question is "does every workload have X",
+  match on the shape that carries X — here, a pod template with containers —
+  so custom resources are included by construction.
+- **Reusable lesson: a security field can be the thing that breaks the workload.**
+  `runAsNonRoot` is not "reject if root"; it is "admit only if non-root can be
+  proven". An image naming its user instead of numbering it makes that proof
+  impossible before start, and the kubelet fails closed. Verifying a hardening
+  field against the image definition and the runtime source is cheaper than
+  discovering the coupling as a `CreateContainerConfigError`.
+- **Reusable lesson: approval covers the intent, and verification can still
+  overturn the specifics.** The approved change set named a field that would have
+  broken the workload. Narrowing what was applied honored the approved principle
+  — apply what is safe, defer what needs verification — while correcting which
+  items fell in which bucket. Recording that correction in the Spec and Task is
+  what keeps the approval auditable.
+- **Correction to the PCDC closure commit message.** Commit `55a4938a` states
+  that adding Spec 059 to `POST_CLOSURE_SPEC_AUTHORITY_PATHS` made
+  `terminal_specs` rise from 2 to 3. That is wrong. `terminal_specs` is a fixed
+  set of three named program Specs — `TERMINAL_SPEC` plus the successor and
+  frontier Specs, each added when its state is `done` — and it is unrelated to
+  the post-closure authority allowlist. It has read 3 since the 2026-07-27
+  program closure and did not change in either cycle. The allowlist entry was
+  still required; only the metric claim was false. History is not rewritten, so
+  the commit message stands and this record corrects it.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
