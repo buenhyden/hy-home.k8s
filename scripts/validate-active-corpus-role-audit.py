@@ -23,8 +23,7 @@ LEDGER_PATH = "docs/90.references/data/active-corpus-role-audit.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-role-audit.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 FROZEN_OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
 CURRENT_OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
@@ -39,7 +38,9 @@ CURRENT_EXECUTION_TRACKER = (
 )
 OWNER_SPEC = FROZEN_OWNER_SPEC
 EXECUTION_TRACKER = FROZEN_EXECUTION_TRACKER
-MIGRATION_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+MIGRATION_SOURCE_COMMIT = (
+    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+)
 MIGRATION_MARKER = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
 MIGRATION_FIELDS = (
     "legacy_path",
@@ -284,6 +285,10 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
     "tests/test_validate_agent_harness_contract.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_harness_semantics.py": (
         "python",
         "regression-test",
     ),
@@ -983,10 +988,7 @@ def _expected_moved_path(legacy: str) -> str | None:
     )
     if work_unit is None:
         return None
-    return (
-        "docs/03.specs/"
-        f"{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
-    )
+    return f"docs/03.specs/{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
 
 
 def validate_authority_projection(
@@ -1098,9 +1100,7 @@ def verify_authority_projection(
         )
         if set(index) != paths:
             raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
-        migration_text = _authoritative_text(
-            normalized, MIGRATION_PATH, index, runner
-        )
+        migration_text = _authoritative_text(normalized, MIGRATION_PATH, index, runner)
         for path in (CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER):
             _authoritative_bytes(normalized, path, index, runner)
     else:

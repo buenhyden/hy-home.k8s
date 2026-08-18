@@ -7723,7 +7723,7 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         root,
         (
             PurePosixPath("docs/90.references/audits/2026-07-05-wea/historical.md"),
-            PurePosixPath("docs/90.references/audits/2026-07-11-weia/audit.md"),
+            PurePosixPath("docs/90.references/audits/2026-08-09-wgia/audit.md"),
         ),
         reference_current_packs,
     )
@@ -7743,8 +7743,18 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
         json.dumps(
             {
                 "currentPackBaselines": {
-                    "audits/2026-07-11-weia": "git-sha1:" + fixture_baseline_commit
+                    "audits/2026-08-09-wgia": "git-sha1:" + fixture_baseline_commit
                 },
+                "retiredCurrentPackBaselines": [
+                    {
+                        "id": "audits/2026-07-11-weia",
+                        "sourceCommit": "git-sha1:" + fixture_baseline_commit,
+                        "allowedStates": ["done"],
+                        "members": ["audit.md"],
+                        "retiredBy": "audits/2026-08-09-wgia",
+                        "reason": "Fixture Current audit retirement.",
+                    }
+                ],
                 "snapshotGuard": {
                     "sourceCommit": "git-sha1:" + fixture_baseline_commit,
                     "historicalPackIds": ["audits/2026-07-05-wea"],
@@ -10006,7 +10016,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     }:
         predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
         protected_source = PurePosixPath(
-            "docs/90.references/audits/2026-07-11-weia/audit.md"
+            "docs/90.references/audits/2026-08-09-wgia/audit.md"
         )
         snapshot_source = PurePosixPath(
             "docs/90.references/audits/2026-07-05-wea/historical.md"
@@ -10402,21 +10412,21 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         pass
     elif mutation in {
         "reference-research-draft",
-        "reference-audit-draft",
+        "reference-audit-done",
         "reference-audit-active",
     }:
         target = {
             "reference-research-draft": PurePosixPath(
                 "docs/90.references/research/2026-08-08-wer/accepted.md"
             ),
-            "reference-audit-draft": PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
+            "reference-audit-done": PurePosixPath(
+                "docs/90.references/audits/2026-08-09-wgia/audit.md"
             ),
             "reference-audit-active": PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
+                "docs/90.references/audits/2026-08-09-wgia/audit.md"
             ),
         }[mutation]
-        status = "active" if mutation == "reference-audit-active" else "draft"
+        status = "active" if mutation == "reference-audit-active" else "done"
         old_status = str(metadata[target]["status"])
         metadata[target]["status"] = status
         pack_readme = target.parent / "README.md"
@@ -11049,7 +11059,7 @@ def _self_test(root: Path) -> list[str]:
         "settled-ledger-reason-drift",
         "reference-valid",
         "reference-research-draft",
-        "reference-audit-draft",
+        "reference-audit-done",
         "reference-audit-active",
         "reference-active-undeclared",
         "reference-declared-missing",

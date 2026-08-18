@@ -47,8 +47,8 @@
           "count": 1
         },
         {
-          "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md) and [Task](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/task.md). |",
-          "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); the prior Plan and Task are retained as dated evidence in [Archive chg-0036](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md). |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Tasks](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |",
+          "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index). |",
+          "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |",
           "count": 1
         },
         {
@@ -57,13 +57,13 @@
           "count": 1
         },
         {
-          "from": "- [Current Audit Integration Plan](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md)",
+          "from": "- [Current Audit Integration Plan](../../98.archive/README.md#document-index)",
           "to": "- [Current Audit Integration Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)",
           "count": 1
         },
         {
-          "from": "- [Current Audit Integration Task](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/task.md)",
-          "to": "- [Current Audit Integration Tasks](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
+          "from": "- [Current Audit Integration Task](../../98.archive/README.md#document-index)",
+          "to": "- [Current Audit Integration Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
           "count": 1
         },
         {

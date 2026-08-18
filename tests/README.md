@@ -94,6 +94,7 @@ tests/test_validate_agent_evaluations.py
 tests/test_validate_agent_governance_ci.py
 tests/test_validate_agent_governance_closure.py
 tests/test_validate_agent_harness_contract.py
+tests/test_validate_agent_harness_semantics.py
 tests/test_validate_agent_legacy_cutover.py
 tests/test_validate_agent_loop_lifecycle.py
 tests/test_validate_agent_model_fitness.py
