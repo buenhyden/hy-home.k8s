@@ -33,6 +33,19 @@ spec:
                 use_grpc: false
             server:
               web_root: "/kiali"
+        # 이 차트는 securityContext를 병합하지 않고 통째로 대체한다. seccompProfile만
+        # 추가하면 차트가 하드코딩으로 주던 나머지 항목이 전부 사라져 오히려 Restricted
+        # 에서 멀어지므로, 차트가 렌더하던 블록을 그대로 재현하고 한 항목만 더한다.
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
         resources:
           requests:
             cpu: 50m
