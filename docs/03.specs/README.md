@@ -231,6 +231,34 @@ Spec은 실행 기준을 소유하는 문서다.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks.md
+├── 0055-workspace-governance-audit-and-remediation/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0056-workspace-engineering-gap-only-refresh/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0057-workspace-engineering-partial-defer-incremental-refresh/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0058-workspace-research-consistency-and-partial-refresh/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0059-workspace-research-full-corpus-refresh/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0060-platform-currency-defect-closure/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
+├── 0061-workload-security-context-baseline/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
 └── README.md
 ```
 
@@ -315,6 +343,13 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./0052-document-taxonomy-consolidation/spec.md`](./0052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Active | 2026-08-09 승인 설계에 따라 Stage 03에 Spec/Plan/Task를 통합하고 Stage 04 execution을 폐지하되 Stage 05를 유지한다. Release 제외, stable filename/date 예외, fail-closed transition, Archive/observation 무결성, harness-contract 확장, script/validator 의미 보존 및 기준선 실패 해결을 소유한다. | 2026-08-09 |
 | [`./0053-workspace-engineering-research-pack-consolidation/spec.md`](./0053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
 | [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Active | 승인된 B 범위(Stage 90 포함)에 따라 4자리 문서 identity, co-located Spec/Plan/Task, 통합 agent governance, Stage 05/90/98 disposition, template/validator/script convergence를 실행한다. | 2026-08-13 |
+| [`./0055-workspace-governance-audit-and-remediation/spec.md`](./0055-workspace-governance-audit-and-remediation/spec.md)                           | Workspace governance audit, canonical-owner remediation, current-pointer cutover, and evidence-gated cleanup specification                    | Done   | 승인된 30개 요청 범위를 신규 10-file Current 감사 팩으로 조사하고 canonical owner 보정, sole-Current 전환, 증거 기반 no-deletion 결과, terminal QA와 review를 완료했다. 기존 감사 팩은 source-commit 고정 역사 증거로 보존하며 hosted/provider/remote/live 결과는 `DEFER`한다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-09 |
+| [`./0056-workspace-engineering-gap-only-refresh/spec.md`](./0056-workspace-engineering-gap-only-refresh/spec.md)                                   | Existing 2026-08-08 WER gap-only external-source refresh specification                                                                        | Done   | 기존 팩에서 조사되지 않았거나 외부 근거가 불충분한 `Partial` 질문만 2026-08-10 공식 1차 출처와 현재 workspace evidence로 보강했다. 새 팩·중복 보고서·provider/runtime/hosted/remote/live 증거는 범위 밖이다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-10 |
+| [`./0057-workspace-engineering-partial-defer-incremental-refresh/spec.md`](./0057-workspace-engineering-partial-defer-incremental-refresh/spec.md) | Existing WER pack Partial/DEFER closed-ledger incremental refresh design                                                                      | Done   | 2026-08-12 직접 승인된 standalone execution은 12개 base `Partial` 행과 조건부 qualified `DEFER` 증거만 폐쇄형 원장으로 재검토한다. 공식 공개 1차 출처, 현재 repository-static 증거, 허용된 GitHub Actions/설정 읽기 전용 메타데이터만 사용하며 새 연구 팩·중복 보고서·원격 변경·secret value·provider/runtime/cluster/live 증거는 금지한다.                                                                                                                                                                                                                                                                                                                                                                                                                                               | 2026-08-12 |
+| [`./0058-workspace-research-consistency-and-partial-refresh/spec.md`](./0058-workspace-research-consistency-and-partial-refresh/spec.md)           | Combined constraint-consistency and Partial re-observation cycle over the existing WER pack                                                   | Done   | 2026-08-14 직접 요청된 23개 주제를 기존 `REQ-WERPC` 오너 36개 행으로 폐쇄 매핑하고, 승인된 2건의 일회성 산출물 정리, 12개 `Partial` 행의 workspace 재관측과 외부 출처 재확인, 10개 scope 재투영, 최종 cross-link 정합화를 하나의 사이클로 수행한다. 새 연구 팩·중복 보고서·요구사항 ID 신설은 금지하며 cluster/hosted/provider-runtime 증거는 `DEFER`로 유지한다.                                                                                                                                                                                                                                                                                                                                                                                                                         | 2026-08-14 |
+| [`./0059-workspace-research-full-corpus-refresh/spec.md`](./0059-workspace-research-full-corpus-refresh/spec.md)                                   | Full-corpus external and workspace re-observation with terminal blocking-class closure over the existing WER pack                             | Done   | 2026-08-17 직접 승인된 다섯 번째 리프레시 사이클로, 12행 `Partial` 표본을 반복하는 대신 36개 owner row 전수를 외부·워크스페이스 두 증거 클래스로 재관측하고, 잔존 `Partial`/`DEFER` 행마다 차단 evidence class를 확정해 정적 재검증 루프를 종료시킨다. 새 연구 팩·중복 보고서·요구사항 ID 신설은 금지한다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-17 |
+| [`./0060-platform-currency-defect-closure/spec.md`](./0060-platform-currency-defect-closure/spec.md)                                               | Bounded closure of live platform version-currency defects plus the source-integrity non-adoption decision                                     | Done | 2026-08-18 직접 승인된 제한 범위 보정 사이클로, 발화된 refresh trigger 평가에서 드러난 두 개의 현재 결함(kube-state-metrics 기본 수집기 RBAC 결손, bootstrap 단계 Helm chart 핀 부재)을 닫고 Argo CD source-integrity 미채택을 ADR 0023으로 확정한다. 네 건의 버전 업그레이드는 target·전제조건·차단 클래스와 함께 다음 사이클로 이연한다.                                                                                                                                                                                                                                                                                                                                                                                                                                       | 2026-08-18 |
+| [`./0061-workload-security-context-baseline/spec.md`](./0061-workload-security-context-baseline/spec.md) | Bounded closure of the workload security context asymmetry and of the sample template that propagates it | Done | 2026-08-18 직접 승인된 제한 범위 사이클로, house 하드닝 패턴에서 유일하게 빠져 있던 `adminer` Rollout에 이미지 UID·파일시스템과 무관하게 성립하는 컨트롤만 적용하고, 신규 워크로드가 복사해 가는 `examples/sample-app` 템플릿에는 완전한 기준선을 심는다. `runAsNonRoot`/`runAsUser` 커플링과 `readOnlyRootFilesystem`은 전제조건과 함께 이연한다. | 2026-08-18 |
 
 ### Helper Templates
 

@@ -23,7 +23,7 @@ verdict remains bounded by its recorded evidence depth and cannot become
   `scripts/`, 67 under `tests/`, and 16 under `.github/`.
 - Protected boundary: the observation tree contains 44 Stage 98 files; this
   work does not modify any `docs/98.archive/**` path.
-- Completion owner: the paired [Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).
+- Completion owner: the paired [Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md).
 - Current-audit transition: WGIA-012 atomically retired the 2026-07-11 pointer.
 
 ### Inventory Method
@@ -111,8 +111,8 @@ promote one of those lanes.
 ## Related Documents
 
 - [Audit Collection](../README.md)
-- [Spec 054](../../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)
-- [Implementation Plan](../../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
-- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
+- [Implementation Plan](../../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
+- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
 - [Prior Current Audit](../2026-07-11-weia/README.md)
 - [Reference Template](../../../99.templates/templates/common/reference.template.md)

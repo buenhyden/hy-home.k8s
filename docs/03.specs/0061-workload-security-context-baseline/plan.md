@@ -128,13 +128,13 @@ Verification commands are owned by
 
 | Spec criterion                                                                | Work package  | Expected Task                                                                                                      |
 | ----------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [VAL-WSCB-001](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..002 | [WSCB-001](../tasks/2026-08-18-workload-security-context-baseline.md) will record both parse results               |
-| [VAL-WSCB-002](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001      | [WSCB-001](../tasks/2026-08-18-workload-security-context-baseline.md) will record the excluded-field assertion     |
-| [VAL-WSCB-003](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-002      | [WSCB-002](../tasks/2026-08-18-workload-security-context-baseline.md) will record the coupled-field assertion      |
-| [VAL-WSCB-004](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](../tasks/2026-08-18-workload-security-context-baseline.md) will record the deferred control table       |
-| [VAL-WSCB-005](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](../tasks/2026-08-18-workload-security-context-baseline.md) will record the image-line evidence          |
-| [VAL-WSCB-006](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-004      | [WSCB-004](../tasks/2026-08-18-workload-security-context-baseline.md) will record the full lane results            |
-| [VAL-WSCB-007](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..004 | [WSCB-001..004](../tasks/2026-08-18-workload-security-context-baseline.md) will record one commit per logical unit |
+| [VAL-WSCB-001](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..002 | [WSCB-001](tasks.md) will record both parse results               |
+| [VAL-WSCB-002](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001      | [WSCB-001](tasks.md) will record the excluded-field assertion     |
+| [VAL-WSCB-003](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-002      | [WSCB-002](tasks.md) will record the coupled-field assertion      |
+| [VAL-WSCB-004](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](tasks.md) will record the deferred control table       |
+| [VAL-WSCB-005](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](tasks.md) will record the image-line evidence          |
+| [VAL-WSCB-006](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-004      | [WSCB-004](tasks.md) will record the full lane results            |
+| [VAL-WSCB-007](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..004 | [WSCB-001..004](tasks.md) will record one commit per logical unit |
 
 ### Related Documents
 

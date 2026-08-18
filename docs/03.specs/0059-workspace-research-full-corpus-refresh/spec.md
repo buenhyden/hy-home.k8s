@@ -386,8 +386,8 @@ approved full-corpus scope and the full Spec/Plan/Task lifecycle before
 authoring. It creates no PRD or ARD and authorizes no live, hosted, or
 provider-runtime observation. It is the sixth typed standalone-execution relation
 under ADR 0022, with a reciprocal
-[Plan](../../04.execution/plans/2026-08-17-workspace-research-full-corpus-refresh.md)
-and [Task](../../04.execution/tasks/2026-08-17-workspace-research-full-corpus-refresh.md)
+[Plan](plan.md)
+and [Task](tasks.md)
 authored under the repository's standalone execution rules. Its refresh target is
 the [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md),
 and its predecessor cycle is
@@ -415,6 +415,6 @@ and its predecessor cycle is
 
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
-- [Spec 053 — research pack consolidation](../053-workspace-engineering-research-pack-consolidation/spec.md)
+- [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)

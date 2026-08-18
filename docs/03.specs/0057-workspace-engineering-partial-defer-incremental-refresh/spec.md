@@ -15,7 +15,7 @@ This specification designs a closed-ledger incremental refresh of the existing
 [`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
 research pack. It targets unresolved `Partial` and explicitly qualified
 `DEFER` evidence without repeating the completed broad research owned by
-[Spec 053](../053-workspace-engineering-research-pack-consolidation/spec.md)
+[Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 or the completed gap-only refresh owned by
 [Spec 0056](../0056-workspace-engineering-gap-only-refresh/spec.md).
 
@@ -34,9 +34,9 @@ then reconciled through the pack README, source/claim ledger, and scope index.
 Direct human approval on 2026-08-12 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
 The same approval authorizes this design and its reciprocal
-[Plan](../../04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md)
+[Plan](plan.md)
 and
-[Task](../../04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
+[Task](tasks.md).
 The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
 no separate PRD or ARD program authority is asserted.

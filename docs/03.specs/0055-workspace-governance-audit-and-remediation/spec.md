@@ -35,9 +35,9 @@ governance stewards, quality and security reviewers, and AI agents.
 Direct human approval on 2026-08-09 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle. The
 same approval authorizes this design and its reciprocal
-[Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+[Plan](plan.md)
 and
-[Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).
+[Task](tasks.md).
 The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
 No separate PRD or ARD program authority is asserted.

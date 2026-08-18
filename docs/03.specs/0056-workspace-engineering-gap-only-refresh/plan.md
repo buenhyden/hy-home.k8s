@@ -92,7 +92,7 @@ execution metadata and do not become research-topic owners.
 
 The written Spec was approved by the human on 2026-08-09, and the human then
 selected subagent-driven execution. WERG-000 therefore activates this Plan,
-the reciprocal [Task](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md),
+the reciprocal [Task](tasks.md),
 their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 
 ## Context
@@ -129,7 +129,7 @@ their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
   `gitops/workloads/adminer/rollout.yaml`, `.kube-linter.yaml`, and Argo CD
   Application manifests under `gitops/apps/root/`.
 - Execution evidence owner:
-  [Task](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md).
+  [Task](tasks.md).
 
 ### Candidate primary-source families
 
@@ -978,16 +978,16 @@ for hosted, provider-runtime, remote, credential-bearing, or live evidence.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WERG-001](../../03.specs/0056-workspace-engineering-gap-only-refresh/spec.md#success-criteria--verification-plan) | WERG-001 | [Complete four-state admission matrix and review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-002 shares the Spec source above | WERG-004 | [Exact five-owner research path set](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-003 shares the Spec source above | WERG-002, WERG-003 | [New source rows and source-fidelity reviews](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-004 shares the Spec source above | WERG-002, WERG-003, WERG-004 | [Claim rows, workspace selector checks, and owner closure](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-005 shares the Spec source above | WERG-002 | [External terminology plus responsibility/evidence/failure matrix](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-006 shares the Spec source above | WERG-002 | [Document-family comparison and Spec 052 decision review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-007 shares the Spec source above | WERG-003 | [Kubernetes admission, source, duplication, and security review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-008 shares the Spec source above | WERG-004, WERG-005 | [Identifier/date/history/protected-surface diff evidence](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-009 shares the Spec source above | WERG-004 | [One-off residue inventory and cleanup review](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
-| N/A — VAL-WERG-010 shares the Spec source above | WERG-000–005 | [Logical commit ledger and canonical validation/review evidence](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md#task-table) |
+| [VAL-WERG-001](../../03.specs/0056-workspace-engineering-gap-only-refresh/spec.md#success-criteria--verification-plan) | WERG-001 | [Complete four-state admission matrix and review](tasks.md#task-table) |
+| N/A — VAL-WERG-002 shares the Spec source above | WERG-004 | [Exact five-owner research path set](tasks.md#task-table) |
+| N/A — VAL-WERG-003 shares the Spec source above | WERG-002, WERG-003 | [New source rows and source-fidelity reviews](tasks.md#task-table) |
+| N/A — VAL-WERG-004 shares the Spec source above | WERG-002, WERG-003, WERG-004 | [Claim rows, workspace selector checks, and owner closure](tasks.md#task-table) |
+| N/A — VAL-WERG-005 shares the Spec source above | WERG-002 | [External terminology plus responsibility/evidence/failure matrix](tasks.md#task-table) |
+| N/A — VAL-WERG-006 shares the Spec source above | WERG-002 | [Document-family comparison and Spec 052 decision review](tasks.md#task-table) |
+| N/A — VAL-WERG-007 shares the Spec source above | WERG-003 | [Kubernetes admission, source, duplication, and security review](tasks.md#task-table) |
+| N/A — VAL-WERG-008 shares the Spec source above | WERG-004, WERG-005 | [Identifier/date/history/protected-surface diff evidence](tasks.md#task-table) |
+| N/A — VAL-WERG-009 shares the Spec source above | WERG-004 | [One-off residue inventory and cleanup review](tasks.md#task-table) |
+| N/A — VAL-WERG-010 shares the Spec source above | WERG-000–005 | [Logical commit ledger and canonical validation/review evidence](tasks.md#task-table) |
 
 ### Related documents
 
@@ -1000,6 +1000,6 @@ for hosted, provider-runtime, remote, credential-bearing, or live evidence.
 - **Document decision boundary**:
   `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 - **Reciprocal Task**:
-  [Task](../tasks/2026-08-09-workspace-engineering-gap-only-refresh.md)
+  [Task](tasks.md)
 - **Research owner**:
   [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md)

@@ -139,15 +139,15 @@ Verification commands are owned by
 
 | Spec criterion                                                              | Work package  | Expected Task                                                                                                        |
 | --------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| [VAL-PCDC-001](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001      | [PCDC-001](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the ClusterRole parse and rule check |
-| [VAL-PCDC-002](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001      | [PCDC-001](../tasks/2026-08-18-platform-currency-defect-closure.md) will record why endpointslices was excluded      |
-| [VAL-PCDC-003](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the pins and the shell syntax result |
-| [VAL-PCDC-004](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the script-to-contract comparison    |
-| [VAL-PCDC-005](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the upstream version evidence        |
-| [VAL-PCDC-006](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-003      | [PCDC-003](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the decision and reversal condition  |
-| [VAL-PCDC-007](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-003      | [PCDC-003](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the deferred upgrade table           |
-| [VAL-PCDC-008](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-004      | [PCDC-004](../tasks/2026-08-18-platform-currency-defect-closure.md) will record the full lane results                |
-| [VAL-PCDC-009](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001..004 | [PCDC-001..004](../tasks/2026-08-18-platform-currency-defect-closure.md) will record one commit per logical unit     |
+| [VAL-PCDC-001](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001      | [PCDC-001](tasks.md) will record the ClusterRole parse and rule check |
+| [VAL-PCDC-002](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001      | [PCDC-001](tasks.md) will record why endpointslices was excluded      |
+| [VAL-PCDC-003](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](tasks.md) will record the pins and the shell syntax result |
+| [VAL-PCDC-004](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](tasks.md) will record the script-to-contract comparison    |
+| [VAL-PCDC-005](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-002      | [PCDC-002](tasks.md) will record the upstream version evidence        |
+| [VAL-PCDC-006](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-003      | [PCDC-003](tasks.md) will record the decision and reversal condition  |
+| [VAL-PCDC-007](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-003      | [PCDC-003](tasks.md) will record the deferred upgrade table           |
+| [VAL-PCDC-008](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-004      | [PCDC-004](tasks.md) will record the full lane results                |
+| [VAL-PCDC-009](../../03.specs/0060-platform-currency-defect-closure/spec.md) | PCDC-001..004 | [PCDC-001..004](tasks.md) will record one commit per logical unit     |
 
 ### Related Documents
 

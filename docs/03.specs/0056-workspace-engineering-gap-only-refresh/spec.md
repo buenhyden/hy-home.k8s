@@ -14,7 +14,7 @@ artifact_id: "SPEC-0056"
 This specification designs a gap-only external-source refresh of the existing
 `docs/90.references/research/2026-08-08-wer/` pack. It does not create a new
 dated pack and does not repeat the broad research completed by
-[Spec 053](../053-workspace-engineering-research-pack-consolidation/spec.md).
+[Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md).
 The refresh admits only two evidence classes selected by the human requester:
 
 1. a requested question with no material external-source treatment in the
@@ -26,8 +26,8 @@ The refresh admits only two evidence classes selected by the human requester:
 The user approved this design direction and the written specification on
 2026-08-09, selected subagent-driven execution, and directed the result to be
 integrated into the existing `2026-08-08-wer` pack. WERG-000 activates the
-reciprocal [Plan](../../04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
-and [Task](../../04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md)
+reciprocal [Plan](plan.md)
+and [Task](tasks.md)
 through a standalone execution relation governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 Direct human approval on 2026-08-09 authorizes this standalone execution relation.
@@ -380,9 +380,9 @@ credential-bearing, or live success.
 
 ### Related inputs and future execution owners
 
-- **Research-pack terminal design**: [Spec 053](../053-workspace-engineering-research-pack-consolidation/spec.md)
+- **Research-pack terminal design**: [Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - **Direct-approval lineage decision**: [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- **Document taxonomy decisions**: [Spec 052](../052-document-taxonomy-consolidation/spec.md)
+- **Document taxonomy decisions**: [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
 - **Current research pack**: [2026-08-08 WER](../../90.references/research/2026-08-08-wer/README.md)
-- **Plan**: [active gap-only refresh Plan](../../04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md)
-- **Task**: [active gap-only refresh Task](../../04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md)
+- **Plan**: [active gap-only refresh Plan](plan.md)
+- **Task**: [active gap-only refresh Task](tasks.md)

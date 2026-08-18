@@ -12,7 +12,7 @@ artifact_id: "TASK-0055"
 ## Overview
 
 This Task is the durable execution and evidence ledger for the approved
-[Workspace Governance Audit and Remediation Plan](../plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+[Workspace Governance Audit and Remediation Plan](plan.md)
 and [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md).
 It tracks the exact ten-file Current audit pack, canonical-owner audit and
 remediation, machine-contract cutover, evidence-gated cleanup, independent
@@ -26,7 +26,7 @@ limitations, logical commits, and unresolved blockers.
 ## Inputs
 
 - [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
-- [Implementation Plan](../plans/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Implementation Plan](plan.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Audit collection](../../90.references/audits/README.md)
 - [Document profile registry](../../99.templates/support/document-profiles.json)
@@ -1016,7 +1016,7 @@ and quality reviews are Approved with no Critical or Important finding.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WGIA-000](../plans/2026-08-09-workspace-governance-audit-and-remediation.md#work-breakdown) | Done. | RED: the different valid approval date was rejected with `STANDALONE-EXECUTION-APPROVAL`. GREEN: links/owners self-test accepts both valid dates and rejects the invalid calendar date. Strict registry reports 492 paths with 0 uncovered/ambiguous; Markdown profiles report 0 violations; strict links, Ruff, Python compile, cached diff, and complete repository quality gate pass. Python review is Approved; the Spec review's sole index-drift finding was fixed and no other Critical/Important finding remained. |
+| [WGIA-000](plan.md#work-breakdown) | Done. | RED: the different valid approval date was rejected with `STANDALONE-EXECUTION-APPROVAL`. GREEN: links/owners self-test accepts both valid dates and rejects the invalid calendar date. Strict registry reports 492 paths with 0 uncovered/ambiguous; Markdown profiles report 0 violations; strict links, Ruff, Python compile, cached diff, and complete repository quality gate pass. Python review is Approved; the Spec review's sole index-drift finding was fixed and no other Critical/Important finding remained. |
 | N/A — WGIA-001 shares the Plan and Spec sources above | Done as a bounded draft foundation. | Exact observation SHA; RED 0/0 pack/request probe and README current-inventory mismatch; malformed-fixture rejection; GREEN 10 files, 30 sequential request rows, 9 reports, 14 conceptual finding fields, 8 verdicts, 4 evidence depths, and exact observation-commit evidence paths; strict registry 502 paths, Markdown profiles 0, strict links/owners, cached/worktree diff, and complete repository quality gate PASS; specification, quality, and Python reviews Approved; Stage 98 and Current-pointer boundaries preserved. WGIA-014 owns whole-branch review. |
 | N/A — WGIA-002 shares the Plan and Spec sources above | Done. | Four complete findings: one repository-static `Aligned`, two root README `Conflict`, and one provider-runtime `DEFER`; one reviewed provisional WGIA-009 roadmap input; focused governance/closure, 12/4/48 harness contract, 12-role/48-adapter semantics, roster currentness, strict registry/profile/link, diff, Stage 98, and complete repository gate checks PASS. Specification and quality reviews Approved. |
 | N/A — WGIA-003 shares the Plan and Spec sources above | Done. | Four complete repository-static findings: eleven requested families structurally `Aligned`; broad Release mapping to DOC-G5 is a `Gap`; approved Guide Type enum enforcement under WORK-013 is `Partial`; and integration guides are `Partial` with live usability `DEFER`. Two provisional WGIA-009 dedupe/routing inputs; first quality review findings fixed; specification and fix-round quality reviews Approved; complete repository quality gate PASS. |

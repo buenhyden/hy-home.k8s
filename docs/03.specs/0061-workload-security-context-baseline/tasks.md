@@ -13,7 +13,7 @@ artifact_id: "TASK-0061"
 
 This Task records execution evidence for `WSCB-001` through `WSCB-004`, defined by
 [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md) and its
-reciprocal [Plan](../plans/2026-08-18-workload-security-context-baseline.md).
+reciprocal [Plan](plan.md).
 
 All evidence is repository-static or public-source evidence. No cluster, registry,
 or CI run was contacted, and no container start is claimed.
@@ -21,7 +21,7 @@ or CI run was contacted, and no container start is claimed.
 ## Inputs
 
 - [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md)
-- [Plan](../plans/2026-08-18-workload-security-context-baseline.md)
+- [Plan](plan.md)
 - Predecessor Spec: `docs/03.specs/0060-platform-currency-defect-closure/spec.md`
 - [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
 
@@ -187,13 +187,13 @@ promote no admission, scheduling, reconciliation, or container-start outcome.
 
 | Criterion / work item                                                     | Result  | Evidence                                                         |
 | ------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------- |
-| [VAL-WSCB-001](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Both manifests parse and carry the applied controls              |
-| [VAL-WSCB-002](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | No excluded control present in the adminer container spec        |
-| [VAL-WSCB-003](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Template pod spec carries both coupled identity fields           |
-| [VAL-WSCB-004](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Each deferred control names a prerequisite observation           |
-| [VAL-WSCB-005](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Image line recorded distinctly from the `6.0.1` source release   |
-| [VAL-WSCB-006](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Full lane green at closure; no cluster or registry contacted |
-| [VAL-WSCB-007](../plans/2026-08-18-workload-security-context-baseline.md) | Done    | Three commits: `2da9eca4` manifests, `ca6be7d1` lifecycle, this closure |
+| [VAL-WSCB-001](plan.md) | Done    | Both manifests parse and carry the applied controls              |
+| [VAL-WSCB-002](plan.md) | Done    | No excluded control present in the adminer container spec        |
+| [VAL-WSCB-003](plan.md) | Done    | Template pod spec carries both coupled identity fields           |
+| [VAL-WSCB-004](plan.md) | Done    | Each deferred control names a prerequisite observation           |
+| [VAL-WSCB-005](plan.md) | Done    | Image line recorded distinctly from the `6.0.1` source release   |
+| [VAL-WSCB-006](plan.md) | Done    | Full lane green at closure; no cluster or registry contacted |
+| [VAL-WSCB-007](plan.md) | Done    | Three commits: `2da9eca4` manifests, `ca6be7d1` lifecycle, this closure |
 
 ### Related Documents
 

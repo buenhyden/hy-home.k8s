@@ -13,7 +13,7 @@ artifact_id: "TASK-0060"
 
 This Task records execution evidence for `PCDC-001` through `PCDC-004`, defined by
 [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md) and its
-reciprocal [Plan](../plans/2026-08-18-platform-currency-defect-closure.md).
+reciprocal [Plan](plan.md).
 
 All evidence is repository-static or public-documentation evidence. No cluster,
 registry, or CI run was contacted, and no reconciliation is claimed.
@@ -21,7 +21,7 @@ registry, or CI run was contacted, and no reconciliation is claimed.
 ## Inputs
 
 - [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md)
-- [Plan](../plans/2026-08-18-platform-currency-defect-closure.md)
+- [Plan](plan.md)
 - [ADR-0029](../../02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md)
 - [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
 - [Kubernetes, infrastructure, and security research](../../90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md)
@@ -212,15 +212,15 @@ promote no live, admission, reconciliation, or chart-resolution outcome.
 
 | Criterion / work item                                                   | Result | Evidence                                                              |
 | ----------------------------------------------------------------------- | ------ | --------------------------------------------------------------------- |
-| [VAL-PCDC-001](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | ClusterRole parses; both new apiGroups present                        |
-| [VAL-PCDC-002](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | `endpointslices` excluded as unused at the current pin                |
-| [VAL-PCDC-003](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Both installs carry `--version`; `bash -n` clean                      |
-| [VAL-PCDC-004](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Script values equal the inventory contract entries                    |
-| [VAL-PCDC-005](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Both pins read from the authoritative index and `Chart.yaml`          |
-| [VAL-PCDC-006](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | ADR-0026 records the adoption case and reversal condition             |
-| [VAL-PCDC-007](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Deferred upgrade table with target, prerequisite, and blocking class  |
-| [VAL-PCDC-008](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Full lane green at closure; no cluster, registry, or remote contacted |
-| [VAL-PCDC-009](../plans/2026-08-18-platform-currency-defect-closure.md) | Done   | Three commits: `f79fb545` defects, `e6c9b47a` lifecycle, this closure |
+| [VAL-PCDC-001](plan.md) | Done   | ClusterRole parses; both new apiGroups present                        |
+| [VAL-PCDC-002](plan.md) | Done   | `endpointslices` excluded as unused at the current pin                |
+| [VAL-PCDC-003](plan.md) | Done   | Both installs carry `--version`; `bash -n` clean                      |
+| [VAL-PCDC-004](plan.md) | Done   | Script values equal the inventory contract entries                    |
+| [VAL-PCDC-005](plan.md) | Done   | Both pins read from the authoritative index and `Chart.yaml`          |
+| [VAL-PCDC-006](plan.md) | Done   | ADR-0026 records the adoption case and reversal condition             |
+| [VAL-PCDC-007](plan.md) | Done   | Deferred upgrade table with target, prerequisite, and blocking class  |
+| [VAL-PCDC-008](plan.md) | Done   | Full lane green at closure; no cluster, registry, or remote contacted |
+| [VAL-PCDC-009](plan.md) | Done   | Three commits: `f79fb545` defects, `e6c9b47a` lifecycle, this closure |
 
 ### Related Documents
 

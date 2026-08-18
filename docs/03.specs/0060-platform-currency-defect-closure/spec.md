@@ -237,8 +237,8 @@ This Spec is a bounded remediation design requested directly by the human, who
 approved the scope and then confirmed the concrete change set before any manifest
 was edited. It creates no PRD or ARD. It is the seventh typed
 standalone-execution relation under ADR 0022, with a reciprocal
-[Plan](../../04.execution/plans/2026-08-18-platform-currency-defect-closure.md)
-and [Task](../../04.execution/tasks/2026-08-18-platform-currency-defect-closure.md).
+[Plan](plan.md)
+and [Task](tasks.md).
 Its evaluation input is the 2026-08-17 cycle recorded by
 [Spec 0059](../0059-workspace-research-full-corpus-refresh/spec.md).
 

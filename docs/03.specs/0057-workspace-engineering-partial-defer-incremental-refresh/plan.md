@@ -44,7 +44,7 @@ No separate PRD or Architecture Description is required or part of this standalo
 The approved relation connects
 [Spec 0057](../../03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 to its reciprocal
-[Task](../tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md).
+[Task](tasks.md).
 The typed relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
 and no separate PRD or ARD program authority is asserted.

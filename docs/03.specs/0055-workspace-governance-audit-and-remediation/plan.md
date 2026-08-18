@@ -727,7 +727,7 @@ without history rewriting.
 
 - [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [WGIA Task](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [WGIA Task](tasks.md)
 - [Current audit collection](../../90.references/audits/README.md)
 - [RIA data owner](../../90.references/data/reference-information-architecture.json)
 
@@ -735,15 +735,15 @@ without history rewriting.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WGA-001](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md#success-criteria--verification-plan) | WGIA-001, WGIA-014 | [Exact ten-file and 30-row evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-002 shares the Spec source above | WGIA-001–009, WGIA-014 | [Finding-field completeness and independent reviews](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-003 shares the Spec source above | WGIA-002, WGIA-010, WGIA-014 | [Purpose/governance owner matrix and remediation evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-004 shares the Spec source above | WGIA-003, WGIA-010, WGIA-014 | [SDLC/document/profile/template evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-005 shares the Spec source above | WGIA-004, WGIA-011, WGIA-014 | [CI/QA/fixture/Validation/Verification evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-006 shares the Spec source above | WGIA-005, WGIA-011, WGIA-014 | [Harness/loop/script/blocker evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-007 shares the Spec source above | WGIA-006, WGIA-010, WGIA-014 | [LLM-WIKI and memory lifecycle evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-008 shares the Spec source above | WGIA-007, WGIA-011, WGIA-014 | [Exact agent/adapter/model/evaluation evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-009 shares the Spec source above | WGIA-008, WGIA-011, WGIA-014 | [Security/approval/static platform evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-010 shares the Spec source above | WGIA-009, WGIA-013, WGIA-014 | [Candidate ledger and post-delete evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-011 shares the Spec source above | WGIA-012, WGIA-014 | [Sole Current transition and historical protection evidence](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
-| N/A — VAL-WGA-012 shares the Spec source above | WGIA-010–014 | [Re-audit, blocker closure, reviews, full QA, and commit ledger](../tasks/2026-08-09-workspace-governance-audit-and-remediation.md#task-table). |
+| [VAL-WGA-001](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md#success-criteria--verification-plan) | WGIA-001, WGIA-014 | [Exact ten-file and 30-row evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-002 shares the Spec source above | WGIA-001–009, WGIA-014 | [Finding-field completeness and independent reviews](tasks.md#task-table). |
+| N/A — VAL-WGA-003 shares the Spec source above | WGIA-002, WGIA-010, WGIA-014 | [Purpose/governance owner matrix and remediation evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-004 shares the Spec source above | WGIA-003, WGIA-010, WGIA-014 | [SDLC/document/profile/template evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-005 shares the Spec source above | WGIA-004, WGIA-011, WGIA-014 | [CI/QA/fixture/Validation/Verification evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-006 shares the Spec source above | WGIA-005, WGIA-011, WGIA-014 | [Harness/loop/script/blocker evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-007 shares the Spec source above | WGIA-006, WGIA-010, WGIA-014 | [LLM-WIKI and memory lifecycle evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-008 shares the Spec source above | WGIA-007, WGIA-011, WGIA-014 | [Exact agent/adapter/model/evaluation evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-009 shares the Spec source above | WGIA-008, WGIA-011, WGIA-014 | [Security/approval/static platform evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-010 shares the Spec source above | WGIA-009, WGIA-013, WGIA-014 | [Candidate ledger and post-delete evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-011 shares the Spec source above | WGIA-012, WGIA-014 | [Sole Current transition and historical protection evidence](tasks.md#task-table). |
+| N/A — VAL-WGA-012 shares the Spec source above | WGIA-010–014 | [Re-audit, blocker closure, reviews, full QA, and commit ledger](tasks.md#task-table). |
